@@ -415,11 +415,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        SettingsHelper.Settings.Zoom.CtrlZoom = !SettingsHelper.Settings.Zoom.CtrlZoom;
-        Vm.GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
-            ? TranslationHelper.Translation.CtrlToZoom
-            : TranslationHelper.Translation.ScrollToZoom;
-        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+        await UIHelper.ChangeCtrlZoom(Vm);
     }
 
     public static async Task ToggleLooping()
@@ -428,13 +424,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        var value = !SettingsHelper.Settings.UIProperties.Looping;
-        SettingsHelper.Settings.UIProperties.Looping = value;
-        Vm.GetLooping = value
-            ? TranslationHelper.Translation.LoopingEnabled
-            : TranslationHelper.Translation.LoopingDisabled;
-        Vm.IsLooping = value;
-        await SettingsHelper.SaveSettingsAsync();
+        await UIHelper.ToggleLooping(Vm);
     }
     
     public static async Task ToggleInterface()
@@ -453,20 +443,7 @@ public static class FunctionsHelper
             return;
         }
 
-        if (SettingsHelper.Settings.Sorting.IncludeSubDirectories)
-        {
-            Vm.IsIncludingSubdirectories = false;
-            SettingsHelper.Settings.Sorting.IncludeSubDirectories = false;
-        }
-        else
-        {
-            Vm.IsIncludingSubdirectories = true;
-            SettingsHelper.Settings.Sorting.IncludeSubDirectories = true;
-        }
-
-        await Vm.ImageIterator.ReloadFileList();
-        SetTitleHelper.SetTitle(Vm);
-        await SettingsHelper.SaveSettingsAsync();
+        await UIHelper.ToggleSubdirectories(vm: Vm);
     }
     
     public static async Task ToggleBottomToolbar()
@@ -554,6 +531,7 @@ public static class FunctionsHelper
 
     public static Task EffectsWindow()
     {
+        Vm?.PlatformService?.ShowEffectsWindow();
         return Task.CompletedTask;
     }
 
@@ -565,6 +543,7 @@ public static class FunctionsHelper
 
     public static Task ResizeWindow()
     {
+        Vm?.PlatformService?.ShowResizeWindow();
         return Task.CompletedTask;
     }
 

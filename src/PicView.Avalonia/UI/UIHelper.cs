@@ -185,5 +185,49 @@ public static class UIHelper
         });
     }
     
+    public static async Task ToggleLooping(MainViewModel vm)
+    {
+        var value = !SettingsHelper.Settings.UIProperties.Looping;
+        SettingsHelper.Settings.UIProperties.Looping = value;
+        vm.GetLooping = value
+            ? TranslationHelper.Translation.LoopingEnabled
+            : TranslationHelper.Translation.LoopingDisabled;
+        vm.IsLooping = value;
+        
+        var msg = value
+            ? TranslationHelper.Translation.LoopingEnabled
+            : TranslationHelper.Translation.LoopingDisabled;
+        TooltipHelper.ShowTooltipMessage(msg);
+        
+        await SettingsHelper.SaveSettingsAsync();
+    }
+    
+    public static async Task ChangeCtrlZoom(MainViewModel vm)
+    {
+        SettingsHelper.Settings.Zoom.CtrlZoom = !SettingsHelper.Settings.Zoom.CtrlZoom;
+        vm.GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
+            ? TranslationHelper.Translation.CtrlToZoom
+            : TranslationHelper.Translation.ScrollToZoom;
+        await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+    
+    public static async Task ToggleSubdirectories(MainViewModel vm)
+    {
+        if (SettingsHelper.Settings.Sorting.IncludeSubDirectories)
+        {
+            vm.IsIncludingSubdirectories = false;
+            SettingsHelper.Settings.Sorting.IncludeSubDirectories = false;
+        }
+        else
+        {
+            vm.IsIncludingSubdirectories = true;
+            SettingsHelper.Settings.Sorting.IncludeSubDirectories = true;
+        }
+
+        await vm.ImageIterator.ReloadFileList();
+        SetTitleHelper.SetTitle(vm);
+        await SettingsHelper.SaveSettingsAsync();
+    }
+    
     #endregion
 }
