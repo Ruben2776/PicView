@@ -44,7 +44,7 @@ public class BlurMask : Control
         
         public void Render(ImmediateDrawingContext context)
         {
-            var leaseFeature = context.TryGetFeature<ISkiaSharpApiLeaseFeature>()!;
+            var leaseFeature = context.TryGetFeature<ISkiaSharpApiLeaseFeature>();
             using var skia = leaseFeature.Lease();
             if (!skia.SkCanvas.TotalMatrix.TryInvert(out var currentInvertedTransform)) return;
             
