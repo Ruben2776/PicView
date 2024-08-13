@@ -403,7 +403,7 @@ public static class NavigationHelper
             // Set to closed to ensure next gallery mode changing is fired
             vm.GalleryMode = GalleryMode.Closed;
         }
-        WindowHelper.SetSize(width, height, vm);
+        WindowHelper.SetSize(width, height, 0, vm);
         if (vm.RotationAngle != 0)
         {
             vm.ImageViewer.Rotate(vm.RotationAngle);

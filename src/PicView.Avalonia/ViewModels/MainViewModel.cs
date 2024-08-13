@@ -670,32 +670,19 @@ public class MainViewModel : ViewModelBase
         }
     }
     
-    private int _titlebarHeight;
-    public int TitlebarHeight
+    private double _titlebarHeight = SettingsHelper.Settings.WindowProperties.Fullscreen 
+                                     || !SettingsHelper.Settings.UIProperties.ShowInterface ? 0 : SizeDefaults.TitlebarHeight;
+    public double TitlebarHeight
     {
         set => this.RaiseAndSetIfChanged(ref _titlebarHeight, value);
-        get
-        {
-            if (IsFullscreen || !IsInterfaceShown || !IsTopToolbarShown)
-            {
-                return 0;
-            }
-
-            return SizeDefaults.TitlebarHeight;
-        }
+        get => _titlebarHeight;
     }
-    private int _bottombarHeight;
-    public int BottombarHeight         
+    private double _bottombarHeight = SettingsHelper.Settings.WindowProperties.Fullscreen 
+                                      || !SettingsHelper.Settings.UIProperties.ShowInterface ? 0 : SizeDefaults.BottombarHeight;
+    public double BottombarHeight         
     {
         set => this.RaiseAndSetIfChanged(ref _bottombarHeight, value);
-        get
-        {
-            if (IsFullscreen || !IsInterfaceShown || !IsBottomToolbarShown)
-            {
-                return 0;
-            }
-            return SizeDefaults.BottombarHeight;
-        }
+        get => _bottombarHeight;
     }
 
     private int _scaleX = 1;

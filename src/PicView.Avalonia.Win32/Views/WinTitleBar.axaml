@@ -132,7 +132,7 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
-                Command="{CompiledBinding MaximizeCommand}"
+                Command="{CompiledBinding ToggleFullscreenCommand}"
                 DockPanel.Dock="Right"
                 Name="RestoreButton"
                 Width="35">

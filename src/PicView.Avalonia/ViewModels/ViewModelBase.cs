@@ -218,6 +218,7 @@ public class ViewModelBase : ReactiveObject
         GallerySettings = TranslationHelper.Translation.GallerySettings;
         GalleryThumbnailStretch = TranslationHelper.Translation.GalleryThumbnailStretch;
         BottomGalleryThumbnailStretch = TranslationHelper.Translation.BottomGalleryThumbnailStretch;
+        RestoreDown = TranslationHelper.Translation.RestoreDown;
     }
 
     #region Strings
@@ -1395,6 +1396,14 @@ public class ViewModelBase : ReactiveObject
     {
         get => _close;
         set => this.RaiseAndSetIfChanged(ref _close, value);
+    }
+
+    private string? _restoreDown;
+    
+    public string? RestoreDown
+    {
+        get => _restoreDown;
+        set => this.RaiseAndSetIfChanged(ref _restoreDown, value);
     }
 
     private string? _open;

@@ -36,26 +36,31 @@ public static class StartUpHelper
             {
                 WindowHelper.Maximize();
             }
-            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            else if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
                 desktop.MainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 vm.SizeToContent = SizeToContent.WidthAndHeight;
                 vm.CanResize = false;
                 vm.IsAutoFit = true;
+                if (SettingsHelper.Settings.UIProperties.ShowInterface)
+                {
+                    vm.IsTopToolbarShown = true;
+                    vm.IsBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
+                }
             }
             else
             {
                 vm.CanResize = true;
                 vm.IsAutoFit = false;
                 WindowHelper.InitializeWindowSizeAndPosition(w);
+                if (SettingsHelper.Settings.UIProperties.ShowInterface)
+                {
+                    vm.IsTopToolbarShown = true;
+                    vm.IsBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
+                }
             }
         }
-        
-        if (SettingsHelper.Settings.UIProperties.ShowInterface)
-        {
-            vm.IsTopToolbarShown = true;
-            vm.IsBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
-        }
+
         w.Show();
         ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(w);
         UIHelper.SetControls(desktop);

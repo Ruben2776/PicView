@@ -507,6 +507,21 @@
             </MenuItem>
 
             <Separator />
+            <MenuItem
+                Command="{CompiledBinding ToggleFullscreenCommand}"
+                Header="{CompiledBinding RestoreDown,
+                                         Mode=OneWay}"
+                IsVisible="{CompiledBinding IsFullscreen,
+                                            Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource FullscreenGeometry}"
+                        Fill="{StaticResource MainIconColor}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem Command="{CompiledBinding ExitCommand}" Header="{CompiledBinding Close, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -241,12 +242,9 @@ public static class WindowHelper
             SettingsHelper.Settings.WindowProperties.Fullscreen = false;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                SetSize(vm);
-                vm.IsTopToolbarShown = SettingsHelper.Settings.UIProperties.ShowInterface;
-                vm.IsBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
-                vm.IsGalleryShown = SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+                RestoreSize(desktop.MainWindow);
+                Restore(vm, desktop);
             }
-            
         }
         else
         {
@@ -264,23 +262,14 @@ public static class WindowHelper
             return;
         }
         var vm = desktop.MainWindow.DataContext as MainViewModel;
+        // Restore
         if (desktop.MainWindow.WindowState is WindowState.Maximized or WindowState.FullScreen)
         {
-            // Restore
-            if (SettingsHelper.Settings.WindowProperties.AutoFit)
-            {
-                vm.SizeToContent = SizeToContent.WidthAndHeight;
-                vm.CanResize = false;
-            }
-            await Dispatcher.UIThread.InvokeAsync(() => 
-                desktop.MainWindow.WindowState = WindowState.Normal);
-            SettingsHelper.Settings.WindowProperties.Maximized = false;
-            SetSize(vm);
-            InitializeWindowSizeAndPosition(desktop.MainWindow);
+            Restore(vm, desktop);
         }
+        // Maximize
         else
         {
-            // Maximize
             if (!SettingsHelper.Settings.WindowProperties.AutoFit)
             {
                 SaveSize(desktop.MainWindow);
@@ -289,6 +278,37 @@ public static class WindowHelper
         }
         
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
+    }
+
+    public static void Restore(MainViewModel vm, IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        if (SettingsHelper.Settings.WindowProperties.AutoFit)
+        {
+            vm.SizeToContent = SizeToContent.WidthAndHeight;
+            vm.CanResize = false;
+        }
+        else
+        {
+            vm.SizeToContent = SizeToContent.Manual;
+            vm.CanResize = true;
+        }
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            vm.IsTopToolbarShown = true;
+            vm.TitlebarHeight = SizeDefaults.TitlebarHeight;
+            if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
+            {
+                vm.IsBottomToolbarShown = true;
+                vm.BottombarHeight = SizeDefaults.BottombarHeight;
+            }
+            vm.IsInterfaceShown = true;
+        }
+        Dispatcher.UIThread.InvokeAsync(() => 
+            desktop.MainWindow.WindowState = WindowState.Normal);
+        SettingsHelper.Settings.WindowProperties.Maximized = false;
+        SettingsHelper.Settings.WindowProperties.Fullscreen = false;
+        SetSize(vm);
+        InitializeWindowSizeAndPosition(desktop.MainWindow);
     }
 
     public static void Maximize()
@@ -341,6 +361,7 @@ public static class WindowHelper
         {
             vm.IsTopToolbarShown = false; // Hide interface in fullscreen. Remember to turn back when exiting fullscreen
             vm.IsBottomToolbarShown = false;
+            vm.IsInterfaceShown = false;
             vm.IsGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
             // TODO: Add Fullscreen mode for Windows (and maybe for Linux?)
             // macOS fullscreen version already works nicely
@@ -352,6 +373,8 @@ public static class WindowHelper
                 // TODO go to macOS fullscreen mode when auto fit is on
             }
         }
+        CenterWindowOnScreen();
+        vm.GalleryWidth = double.NaN;
     }
 
     public static async Task Minimize()
@@ -445,66 +468,15 @@ public static class WindowHelper
         vm.ImageHeight = size.Height;
         vm.GalleryMargin = new Thickness(0, 0, 0, size.Margin);
 
-        vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ?
-            Math.Max(size.Width, desktopMinWidth) : double.NaN;;
-    }
-    
-    public static void SetSize(int width, int height, MainViewModel vm)
-    {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (SettingsHelper.Settings.WindowProperties.Fullscreen || SettingsHelper.Settings.WindowProperties.Maximized)
         {
-            return;
-        }
-
-        var mainView = UIHelper.GetMainView;
-        var screenSize = ScreenHelper.ScreenSize;
-        double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
-        if (Dispatcher.UIThread.CheckAccess())
-        {
-            desktopMinWidth = desktop.MainWindow.MinWidth;
-            desktopMinHeight = desktop.MainWindow.MinHeight;
-            containerWidth = mainView.Bounds.Width;
-            containerHeight = mainView.Bounds.Height;
+            vm.GalleryWidth =  double.NaN;;
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                desktopMinWidth = desktop.MainWindow.MinWidth;
-                desktopMinHeight = desktop.MainWindow.MinHeight;
-                containerWidth = mainView.Bounds.Width;
-                containerHeight = mainView.Bounds.Height;
-            }, DispatcherPriority.Normal).Wait();
+            vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ?
+                Math.Max(size.Width, desktopMinWidth) : double.NaN;;
         }
-
-        if (double.IsNaN(containerWidth) || double.IsNaN(containerHeight) || double.IsNaN(width) || double.IsNaN(height))
-        {
-            return;
-        }
-        var size = ImageSizeCalculationHelper.GetImageSize(
-            width,
-            height,
-            screenSize.WorkingAreaWidth,
-            screenSize.WorkingAreaHeight,
-            desktopMinWidth,
-            desktopMinHeight,
-            ImageSizeCalculationHelper.GetInterfaceSize(),
-            vm.RotationAngle,
-            0,
-            screenSize.Scaling,
-            vm.TitlebarHeight,
-            vm.BottombarHeight,
-            0,
-            containerWidth,
-            containerHeight);
-        
-        vm.TitleMaxWidth = size.TitleMaxWidth;
-        vm.ImageWidth = size.Width;
-        vm.ImageHeight = size.Height;
-        vm.GalleryMargin = new Thickness(0, 0, 0, 0);
-
-        vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ?
-            Math.Max(size.Width, desktopMinWidth) : double.NaN;;
     }
     
     public static void SaveSize(Window window)
@@ -521,17 +493,34 @@ public static class WindowHelper
         return;
         void Set()
         {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                return;
-            }
-            var monitor = ScreenHelper.GetScreen(desktop.MainWindow);
-            var top = window.Position.Y + (monitor.WorkingArea.Height - monitor.Bounds.Height);
-            var left = window.Position.X + (monitor.WorkingArea.Width - monitor.Bounds.Width);
+            var top = window.Position.Y;
+            var left = window.Position.X;
             SettingsHelper.Settings.WindowProperties.Top = top;
             SettingsHelper.Settings.WindowProperties.Left = left;
             SettingsHelper.Settings.WindowProperties.Width = window.Width;
             SettingsHelper.Settings.WindowProperties.Height = window.Height;
+        }
+    }
+    
+    public static void RestoreSize(Window window)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(Set);
+        }
+
+        return;
+        void Set()
+        {
+            var x = (int)SettingsHelper.Settings.WindowProperties.Left;
+            var y = (int)SettingsHelper.Settings.WindowProperties.Top;
+            window.Position = new PixelPoint(x, y);
+            window.Width = SettingsHelper.Settings.WindowProperties.Width;
+            window.Height = SettingsHelper.Settings.WindowProperties.Height;
         }
     }
 

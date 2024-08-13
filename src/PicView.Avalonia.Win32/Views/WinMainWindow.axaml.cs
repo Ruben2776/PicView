@@ -5,6 +5,8 @@ using Avalonia.Input;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Config;
+using ReactiveUI;
 
 namespace PicView.Avalonia.Win32.Views;
 
@@ -24,6 +26,25 @@ public partial class WinMainWindow : Window
             ClientSizeProperty.Changed.Subscribe(size =>
             {
                 WindowHelper.HandleWindowResize(this, size);
+            });
+            
+            this.WhenAnyValue(x => x.WindowState).Subscribe(state =>
+            {
+                switch (state)
+                {
+                    case WindowState.Normal:
+                        SettingsHelper.Settings.WindowProperties.Maximized = false;
+                        SettingsHelper.Settings.WindowProperties.Fullscreen = false;
+                        break;
+                    case WindowState.Minimized:
+                        break;
+                    case WindowState.Maximized:
+                        WindowHelper.Maximize();
+                        break;
+                    case WindowState.FullScreen:
+                        WindowHelper.Fullscreen(DataContext as MainViewModel, Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
+                        break;
+                }
             });
         };
         PointerPressed += (_, e) => MoveWindow(e);

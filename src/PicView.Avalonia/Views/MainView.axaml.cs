@@ -1,10 +1,13 @@
 ﻿using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using ReactiveUI;
 
 namespace PicView.Avalonia.Views;
 

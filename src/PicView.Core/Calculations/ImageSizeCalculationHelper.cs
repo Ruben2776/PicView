@@ -46,10 +46,12 @@ public static class ImageSizeCalculationHelper
         double aspectRatio;
         double maxWidth, maxHeight;
         var margin = 0d;
+        
+        var fullscreen = SettingsHelper.Settings.WindowProperties.Fullscreen || SettingsHelper.Settings.WindowProperties.Maximized;
 
-        var borderSpaceHeight = SettingsHelper.Settings.WindowProperties.Fullscreen ?
+        var borderSpaceHeight = fullscreen ?
             0 : uiTopSize + uiBottomSize + galleryHeight;
-        var borderSpaceWidth = SettingsHelper.Settings.WindowProperties.Fullscreen ?
+        var borderSpaceWidth = fullscreen ?
             0 : padding;
 
         var workAreaWidth = monitorWidth * dpiScaling - borderSpaceWidth;
