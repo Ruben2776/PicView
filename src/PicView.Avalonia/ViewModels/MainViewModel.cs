@@ -1335,7 +1335,7 @@ public class MainViewModel : ViewModelBase
         if (success)
         {
             ImageIterator?.RemoveCurrentItemFromPreLoader();
-            await ImageIterator?.IterateToIndex(ImageIterator.Index);
+            await ImageIterator?.IterateToIndex(ImageIterator.CurrentIndex);
         }
         else
         {

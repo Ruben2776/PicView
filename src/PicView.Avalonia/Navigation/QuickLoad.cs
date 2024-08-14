@@ -78,13 +78,13 @@ public static class QuickLoad
                 vm.ImageIterator = new ImageIterator(fileInfo, vm);
                 
                 SetTitleHelper.SetTitle(vm, imageModel);
-                vm.GetIndex = vm.ImageIterator.Index + 1;
+                vm.GetIndex = vm.ImageIterator.CurrentIndex + 1;
                 if (SettingsHelper.Settings.WindowProperties.KeepCentered)
                 {
                     WindowHelper.CenterWindowOnScreen(false);
                 }
                 
-                _ = vm.ImageIterator.AddAsync(vm.ImageIterator.Index, imageModel);
+                _ = vm.ImageIterator.AddAsync(vm.ImageIterator.CurrentIndex, imageModel);
                 _ = vm.ImageIterator.Preload();
             }
 

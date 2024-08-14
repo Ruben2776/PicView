@@ -58,7 +58,7 @@ public static class GalleryLoad
         _cancellationTokenSource = new CancellationTokenSource();
         _currentDirectory = currentDirectory;
         IsLoading = true;
-        var index = vm.ImageIterator.Index;
+        var index = vm.ImageIterator.CurrentIndex;
         var galleryItemSize = Math.Max(vm.GetBottomGalleryItemHeight, vm.GetFullGalleryItemHeight);
         var loading = TranslationHelper.Translation.Loading;
         var endIndex = vm.ImageIterator.ImagePaths.Count;
@@ -105,7 +105,7 @@ public static class GalleryLoad
                         await vm.ImageIterator.IterateToIndex(i1);
                     };
                     galleryListBox.Items.Add(galleryItem);
-                    if (i != vm.ImageIterator?.Index)
+                    if (i != vm.ImageIterator?.CurrentIndex)
                     {
                         return;
                     }
@@ -126,7 +126,7 @@ public static class GalleryLoad
                     return;
                 }
                 var horizontalItems = (int)Math.Floor(galleryListBox.Bounds.Width / galleryItem.ImageBorder.MinWidth);
-                index = (vm.ImageIterator.Index - horizontalItems) % vm.ImageIterator.ImagePaths.Count;
+                index = (vm.ImageIterator.CurrentIndex - horizontalItems) % vm.ImageIterator.ImagePaths.Count;
             });
 
             index = index < 0 ? 0 : index;
@@ -214,7 +214,7 @@ public static class GalleryLoad
                         return;
                     }
 
-                    if (i == vm.ImageIterator.Index)
+                    if (i == vm.ImageIterator.CurrentIndex)
                     {
                         galleryListBox.ScrollToCenterOfItem(galleryItem);
                     }

@@ -89,7 +89,7 @@ public static class FileHistoryNavigation
             return;
         }
 
-        var index = vm.ImageIterator.Index;
+        var index = vm.ImageIterator.CurrentIndex;
         await LoadEntryAsync(vm, index, true).ConfigureAwait(false);
     }
 
@@ -107,7 +107,7 @@ public static class FileHistoryNavigation
             return;
         }
 
-        var index = vm.ImageIterator.Index;
+        var index = vm.ImageIterator.CurrentIndex;
         await LoadEntryAsync(vm, index, false).ConfigureAwait(false);
     }
 

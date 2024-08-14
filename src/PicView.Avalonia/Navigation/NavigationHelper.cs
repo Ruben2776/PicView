@@ -224,7 +224,7 @@ public static class NavigationHelper
         }
         if (vm.ImageIterator is not null)
         {
-            if (fileInfo.DirectoryName == vm.ImageIterator.FileInfo.DirectoryName)
+            if (fileInfo.DirectoryName == vm.ImageIterator.InitialFileInfo.DirectoryName)
             {
                 var index = vm.ImageIterator.ImagePaths.IndexOf(fileName);
                 if (index != -1)
@@ -291,7 +291,7 @@ public static class NavigationHelper
         vm.FileInfo = fileInfo;
         ExifHandling.SetImageModel(imageModel, vm);
         ExifHandling.UpdateExifValues(imageModel, vm);
-        //FileHistoryNavigation.Add(url);
+        FileHistoryNavigation.Add(url);
     }
     
     /// <summary>
@@ -363,7 +363,7 @@ public static class NavigationHelper
         vm.ImageType = imageModel.ImageType;
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
         vm.ImageIterator = new ImageIterator(fileInfo, vm);
-        await vm.ImageIterator.IterateToIndex(vm.ImageIterator.Index);
+        await vm.ImageIterator.IterateToIndex(vm.ImageIterator.CurrentIndex);
         await CheckAndReloadGallery(fileInfo, vm);
     }
     
@@ -429,7 +429,7 @@ public static class NavigationHelper
         return await Task.Run(() =>
         {
             var indexChange = next ? 1 : -1;
-            var currentFolder = Path.GetDirectoryName(vm.ImageIterator?.ImagePaths[vm.ImageIterator.Index]);
+            var currentFolder = Path.GetDirectoryName(vm.ImageIterator?.ImagePaths[vm.ImageIterator.CurrentIndex]);
             var parentFolder = Path.GetDirectoryName(currentFolder);
             var directories = Directory.GetDirectories(parentFolder, "*", SearchOption.TopDirectoryOnly);
             var directoryIndex = Array.IndexOf(directories, currentFolder);
@@ -475,7 +475,7 @@ public static class NavigationHelper
         }
         else
         {
-            vm.ImageIterator = new ImageIterator(fileInfo, files, index: 0, vm);
+            vm.ImageIterator = new ImageIterator(fileInfo, files, currentIndex: 0, vm);
             await vm.ImageIterator.IterateToIndex(0);
         }
         await CheckAndReloadGallery(fileInfo, vm);

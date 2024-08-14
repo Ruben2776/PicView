@@ -174,7 +174,7 @@ public static class GalleryNavigation
             return;
         }
         await GalleryFunctions.ToggleGallery(vm);
-        if (vm.SelectedGalleryItemIndex != vm.ImageIterator.Index) 
+        if (vm.SelectedGalleryItemIndex != vm.ImageIterator.CurrentIndex) 
         {
             await vm.ImageIterator.IterateToIndex(vm.SelectedGalleryItemIndex);
         }

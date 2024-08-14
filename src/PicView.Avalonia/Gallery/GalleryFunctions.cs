@@ -207,7 +207,7 @@ public static class GalleryFunctions
                     return;
                 }
             }
-            vm.SelectedGalleryItemIndex = files.IndexOf(files[vm.ImageIterator.Index]);
+            vm.SelectedGalleryItemIndex = files.IndexOf(files[vm.ImageIterator.CurrentIndex]);
             GalleryNavigation.CenterScrollToSelectedItem(vm);
         }
         catch (TaskCanceledException)
@@ -253,7 +253,7 @@ public static class GalleryFunctions
          galleryListBox.Items.RemoveAt(index);
          if (vm != null)
          {
-             vm.SelectedGalleryItemIndex = vm.ImageIterator.Index;
+             vm.SelectedGalleryItemIndex = vm.ImageIterator.CurrentIndex;
          }
      }
 

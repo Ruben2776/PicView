@@ -32,12 +32,15 @@ public class FileHistory
             {
                 _fileLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Ruben2776/PicView/Config/recent.txt");
             }
-            catch (Exception)
+            catch (Exception exception)
             {
 #if DEBUG
-                Trace.WriteLine($"{nameof(FileHistory)} exception, \n{e.Message}");
+                Trace.WriteLine($"{nameof(FileHistory)} exception, \n{exception.Message}");
 #endif
             }
+#if DEBUG
+            Trace.WriteLine($"{nameof(FileHistory)} exception, \n{e.Message}");
+#endif
         }
         ReadFromFile();
     }
