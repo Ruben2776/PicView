@@ -259,8 +259,8 @@ public class FileHistory
                 return GetEntryAt((foundIndex - 1 + _fileHistory.Count) % _fileHistory.Count);
             }
 
-            index--;
-            return index < 0 ? null : GetEntryAt(index);
+            foundIndex--;
+            return foundIndex < 0 ? null : GetEntryAt(foundIndex);
         }
         catch (Exception e)
         {
