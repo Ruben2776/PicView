@@ -34,17 +34,16 @@ public class FileHistory
             }
             catch (Exception)
             {
-                Trace.WriteLine($"{nameof(FileHistory)} exception, \n{e.Message}");
-            }
 #if DEBUG
-            Trace.WriteLine($"{nameof(FileHistory)} exception, \n{e.Message}");
+                Trace.WriteLine($"{nameof(FileHistory)} exception, \n{e.Message}");
 #endif
+            }
         }
         ReadFromFile();
     }
 
     /// <summary>
-    /// Reads the file history from a JSON file.
+    /// Reads the file history from the .txt file.
     /// </summary>
     /// <returns>An empty string if successful, otherwise an error message.</returns>
     public string ReadFromFile()
@@ -69,7 +68,7 @@ public class FileHistory
     }
 
     /// <summary>
-    /// Writes the file history to a JSON file.
+    /// Writes the file history to the .txt file.
     /// </summary>
     /// <returns>An empty string if successful, otherwise an error message.</returns>
     public string WriteToFile()
@@ -89,25 +88,15 @@ public class FileHistory
         return string.Empty;
     }
 
-    public int GetCount()
-    {
-        return _fileHistory.Count;
-    }
-
-    public bool Contains(string name)
-    {
-        return !string.IsNullOrWhiteSpace(name) && _fileHistory.Contains(name);
-    }
-
+    /// <summary>
+    ///  Adds a file to the history.
+    /// </summary>
+    /// <param name="fileName">The name of the file to add to the history.</param>
     public void Add(string fileName)
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(fileName))
-            {
-                return;
-            }
-            if (_fileHistory.Exists(e => e is not null && e.EndsWith(fileName)))
+            if (string.IsNullOrWhiteSpace(fileName) || _fileHistory.Exists(e => e is not null && e.EndsWith(fileName)))
             {
                 return;
             }
@@ -167,20 +156,23 @@ public class FileHistory
 #endif
         }
     }
+    
+    public int GetCount() => _fileHistory.Count;
 
-    public string? GetLastFile()
-    {
-        return _fileHistory.Count > 0 ? _fileHistory[^1] : null;
-    }
+    public bool Contains(string name) => !string.IsNullOrWhiteSpace(name) && _fileHistory.Contains(name);
+
+
+    /// <summary>
+    ///  Gets the last file in the history.
+    /// </summary>
+    /// <returns>The last file entry or null if the history is empty.</returns>
+    public string? GetLastFile() => _fileHistory.Count > 0 ? _fileHistory[^1] : null;
 
     /// <summary>
     /// Gets the first file in the history.
     /// </summary>
     /// <returns>The first file entry or null if the history is empty.</returns>
-    public string? GetFirstFile()
-    {
-        return _fileHistory.Count > 0 ? _fileHistory[0] : null;
-    }
+    public string? GetFirstFile() => _fileHistory.Count > 0 ? _fileHistory[0] : null;
 
     /// <summary>
     /// Gets the file entry at the specified index.
