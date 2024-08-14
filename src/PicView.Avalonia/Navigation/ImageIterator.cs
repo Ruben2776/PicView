@@ -431,6 +431,12 @@ public sealed class ImageIterator : IDisposable
             }
 
             UpdateSource(preLoadValue);
+            
+            // Add recent files, except when browsing archive
+            if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && ImagePaths.Count > index)
+            {
+                FileHistoryNavigation.Add(ImagePaths[index]);
+            }
             await AddAsync(Index, preLoadValue.ImageModel);
             await Preload();
         }

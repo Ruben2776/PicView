@@ -611,13 +611,27 @@ public static class FunctionsHelper
         {
             return;
         }
-        var lastFile = SettingsHelper.Settings.StartUp.LastFile;
-        if (string.IsNullOrEmpty(lastFile))
+
+        await FileHistoryNavigation.OpenLastFileAsync(Vm).ConfigureAwait(false);
+    }
+
+    public static async Task OpenPreviousFileHistoryEntry()
+    {
+        if (Vm is null)
         {
             return;
         }
 
-        await NavigationHelper.LoadPicFromStringAsync(lastFile, Vm);
+        await FileHistoryNavigation.PrevAsync(Vm).ConfigureAwait(false);
+    }
+    public static async Task OpenNextFileHistoryEntry()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+
+        await FileHistoryNavigation.NextAsync(Vm).ConfigureAwait(false);
     }
     
     public static async Task Print()

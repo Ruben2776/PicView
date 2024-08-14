@@ -19,11 +19,11 @@ public static class MouseShortcuts
 
         if (prop.IsXButton1Pressed)
         {
-            await FunctionsHelper.OpenLastFile().ConfigureAwait(false);
+            await FunctionsHelper.OpenPreviousFileHistoryEntry().ConfigureAwait(false);
         }
         else if (prop.IsXButton2Pressed)
         {
-            await FunctionsHelper.OpenLastFile().ConfigureAwait(false);
+            await FunctionsHelper.OpenNextFileHistoryEntry().ConfigureAwait(false);
         }
     }
 }

@@ -549,6 +549,7 @@ public static class WindowHelper
         await SettingsHelper.SaveSettingsAsync();
         await KeybindingsHelper.UpdateKeyBindingsFile(); // Save keybindings
         FileDeletionHelper.DeleteTempFiles();
+        FileHistoryNavigation.WriteToFile();
         Environment.Exit(0);
     }
 }
