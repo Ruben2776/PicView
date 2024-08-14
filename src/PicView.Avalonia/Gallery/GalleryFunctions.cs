@@ -257,22 +257,22 @@ public static class GalleryFunctions
          }
      }
 
-     public static async Task AddGalleryItem(int index, FileInfo fileInfo, MainViewModel? vm)
+     public static async Task<bool> AddGalleryItem(int index, FileInfo fileInfo, MainViewModel? vm)
      {
          var mainView = UIHelper.GetMainView;
 
          var galleryListBox = mainView.GalleryView.GalleryListBox;
          if (galleryListBox == null) 
-             return;
+             return false;
 
          if (galleryListBox.Items.Count <= index)
          {
-             return;
+             return false;
          }
 
          if (galleryListBox.Items.Count < 0 || index >= galleryListBox.ItemCount)
          {
-             return;
+             return false;
          }
 
          if (galleryListBox.Items.Count > 0 && index < galleryListBox.Items.Count)
@@ -314,6 +314,7 @@ public static class GalleryFunctions
                      galleryListBox.Items.Insert(index, galleryItem);
                      ImageHelper.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
                  }, DispatcherPriority.Render);
+                 return true;
              }
              catch (Exception exception)
              {
@@ -322,6 +323,7 @@ public static class GalleryFunctions
 #endif
              }
          }
+         return false;
      }
 
      public static void Clear(MainViewModel? vm)

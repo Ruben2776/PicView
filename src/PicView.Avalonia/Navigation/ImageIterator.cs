@@ -140,15 +140,22 @@ public sealed class ImageIterator : IDisposable
 
         SetTitleHelper.SetTitle(_vm);
         
-        await GalleryFunctions.AddGalleryItem(index, fileInfo, _vm);
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && ImagePaths.Count > 1)
+        var isGalleryItemAdded = await GalleryFunctions.AddGalleryItem(index, fileInfo, _vm);
+        if (isGalleryItemAdded)
         {
-            if (_vm.GalleryMode is GalleryMode.BottomToClosed or GalleryMode.FullToClosed)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && ImagePaths.Count > 1)
             {
-                _vm.GalleryMode = GalleryMode.ClosedToBottom;
+                if (_vm.GalleryMode is GalleryMode.BottomToClosed or GalleryMode.FullToClosed)
+                {
+                    _vm.GalleryMode = GalleryMode.ClosedToBottom;
+                }
             }
+            var indexOf = ImagePaths.IndexOf(_vm.FileInfo.FullName);
+            _vm.SelectedGalleryItemIndex = indexOf; // Fixes deselection bug
+            Index = indexOf;
+            GalleryNavigation.CenterScrollToSelectedItem(_vm);
         }
-        _vm.SelectedGalleryItemIndex = Index; // Fixes deselection bug
+
 
         if (cleared)
         {
@@ -209,7 +216,7 @@ public sealed class ImageIterator : IDisposable
             }
         }
 
-        //FileHistoryNavigation.Remove(e.FullPath);
+        FileHistoryNavigation.Remove(e.FullPath);
         _isRunning = false;
 
         SetTitleHelper.SetTitle(_vm);
