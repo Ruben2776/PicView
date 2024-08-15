@@ -1,12 +1,12 @@
 <UserControl
+    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.AboutView"
+    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
-    x:DataType="viewModels:MainViewModel"
-    mc:Ignorable="d">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
@@ -25,13 +25,13 @@
                     <GeometryDrawing Brush="#FFFF5E5B" Geometry="F1 M46.57 56.38C47.21 56.7 47.53 56.38 47.53 56.38C47.53 56.38 56.35 48.36 60.37 43.71C63.89 39.54 64.06 32.64 58.12 30.08C52.02 27.51 47.05 33.13 47.05 33.13C42.72 28.32 36.14 28.64 33.09 31.84C30.04 35.04 31.16 40.51 33.41 43.71C35.49 46.6 44.8 54.94 46.25 56.23C46.25 56.06 46.42 56.23 46.57 56.38L46.57 56.38Z" />
                     <GeometryDrawing Geometry="F1 M46.87 56.61C47.23 56.68 47.54 56.37 47.54 56.37C47.54 56.37 56.36 48.35 60.38 43.7C63.9 39.53 64.07 32.63 58.13 30.07C52.03 27.5 47.06 33.12 47.06 33.12C42.73 28.31 36.15 28.63 33.1 31.83C30.05 35.03 31.17 40.5 33.42 43.7C35.38 46.43 45.23 55.29 46.46 56.39C46.58 56.5 46.72 56.58 46.88 56.6L46.87 56.61Z">
                         <GeometryDrawing.Brush>
-                            <LinearGradientBrush StartPoint="34.08,1243.49" EndPoint="44.46,1211.64">
+                            <LinearGradientBrush EndPoint="44.46,1211.64" StartPoint="34.08,1243.49">
                                 <LinearGradientBrush.Transform>
                                     <MatrixTransform Matrix="1,0,0,-1,4.19,1254.03" />
                                 </LinearGradientBrush.Transform>
                                 <LinearGradientBrush.GradientStops>
-                                    <GradientStop Offset="0" Color="#FFFF4EA3" />
-                                    <GradientStop Offset="1" Color="#FFFF5E5B" />
+                                    <GradientStop Color="#FFFF4EA3" Offset="0" />
+                                    <GradientStop Color="#FFFF5E5B" Offset="1" />
                                 </LinearGradientBrush.GradientStops>
                             </LinearGradientBrush>
                         </GeometryDrawing.Brush>
@@ -63,13 +63,13 @@
                     </DrawingGroup.Transform>
                     <GeometryDrawing Geometry="F1 M0 71.41L0 13.09Q0 12.7687 0.0157675 12.4477Q0.031535 12.1268 0.0630319 11.807Q0.0945289 11.4872 0.141679 11.1693Q0.18883 10.8514 0.251521 10.5363Q0.314211 10.2211 0.392291 9.90939Q0.47037 9.59768 0.563651 9.29017Q0.656931 8.98267 0.765188 8.68011Q0.873445 8.37755 0.996417 8.08067Q1.11939 7.78379 1.25678 7.4933Q1.39417 7.20281 1.54565 6.91942Q1.69713 6.63602 1.86233 6.36039Q2.02753 6.08477 2.20606 5.81758Q2.38459 5.5504 2.57601 5.2923Q2.76744 5.03419 2.97129 4.78579Q3.17515 4.53739 3.39095 4.29929Q3.60675 4.06119 3.83397 3.83397Q4.06119 3.60675 4.29929 3.39095Q4.53739 3.17515 4.78579 2.97129Q5.03419 2.76744 5.2923 2.57601Q5.5504 2.38459 5.81758 2.20606Q6.08477 2.02753 6.36039 1.86233Q6.63602 1.69713 6.91942 1.54565Q7.20281 1.39417 7.4933 1.25678Q7.78379 1.11939 8.08067 0.996417Q8.37755 0.873445 8.68011 0.765188Q8.98267 0.656931 9.29017 0.563651Q9.59768 0.47037 9.90939 0.392291Q10.2211 0.314211 10.5363 0.251521Q10.8514 0.18883 11.1693 0.141679Q11.4872 0.0945289 11.807 0.0630319Q12.1268 0.031535 12.4477 0.0157675Q12.7687 0 13.09 0L526.91 0Q527.231 0 527.552 0.0157675Q527.873 0.031535 528.193 0.0630319Q528.513 0.0945289 528.831 0.141679Q529.148 0.18883 529.464 0.251521Q529.779 0.314211 530.091 0.392291Q530.402 0.47037 530.71 0.563651Q531.017 0.656931 531.32 0.765188Q531.622 0.873445 531.919 0.996417Q532.216 1.11939 532.507 1.25678Q532.797 1.39417 533.081 1.54565Q533.364 1.69713 533.639 1.86233Q533.915 2.02753 534.182 2.20606Q534.449 2.38459 534.708 2.57601Q534.966 2.76744 535.214 2.97129Q535.463 3.17515 535.701 3.39095Q535.939 3.60675 536.166 3.83397Q536.393 4.06119 536.609 4.29929Q536.825 4.53739 537.029 4.78579Q537.232 5.03419 537.424 5.2923Q537.615 5.5504 537.794 5.81758Q537.972 6.08477 538.137 6.36039Q538.303 6.63602 538.454 6.91942Q538.606 7.20281 538.743 7.4933Q538.88 7.78379 539.003 8.08067Q539.126 8.37755 539.235 8.68011Q539.343 8.98267 539.436 9.29017Q539.53 9.59768 539.608 9.90939Q539.686 10.2211 539.748 10.5363Q539.811 10.8514 539.858 11.1693Q539.905 11.4872 539.937 11.807Q539.968 12.1268 539.984 12.4477Q540 12.7687 540 13.09L540 71.41Q540 71.7313 539.984 72.0523Q539.968 72.3733 539.937 72.6931Q539.905 73.0128 539.858 73.3307Q539.811 73.6486 539.748 73.9637Q539.686 74.2789 539.608 74.5906Q539.53 74.9023 539.436 75.2098Q539.343 75.5173 539.235 75.8199Q539.126 76.1224 539.003 76.4193Q538.88 76.7162 538.743 77.0067Q538.606 77.2972 538.454 77.5806Q538.303 77.864 538.138 78.1396Q537.972 78.4152 537.794 78.6824Q537.615 78.9496 537.424 79.2077Q537.232 79.4658 537.029 79.7142Q536.825 79.9626 536.609 80.2007Q536.393 80.4388 536.166 80.666Q535.939 80.8932 535.701 81.109Q535.463 81.3248 535.214 81.5287Q534.966 81.7326 534.708 81.924Q534.449 82.1154 534.182 82.2939Q533.915 82.4725 533.639 82.6377Q533.364 82.8029 533.081 82.9543Q532.797 83.1058 532.507 83.2432Q532.216 83.3806 531.919 83.5036Q531.622 83.6265 531.32 83.7348Q531.017 83.843 530.71 83.9363Q530.402 84.0296 530.091 84.1077Q529.779 84.1858 529.464 84.2485Q529.148 84.3112 528.831 84.3583Q528.513 84.4055 528.193 84.437Q527.873 84.4685 527.552 84.4842Q527.231 84.5 526.91 84.5L13.09 84.5Q12.7687 84.5 12.4477 84.4842Q12.1268 84.4685 11.807 84.437Q11.4872 84.4055 11.1693 84.3583Q10.8514 84.3112 10.5363 84.2485Q10.2211 84.1858 9.90939 84.1077Q9.59768 84.0296 9.29017 83.9363Q8.98267 83.843 8.68011 83.7348Q8.37755 83.6265 8.08067 83.5036Q7.78379 83.3806 7.4933 83.2432Q7.20281 83.1058 6.91942 82.9544Q6.63602 82.8029 6.36039 82.6377Q6.08477 82.4725 5.81758 82.2939Q5.5504 82.1154 5.2923 81.924Q5.03419 81.7326 4.78579 81.5287Q4.53739 81.3248 4.29929 81.109Q4.06119 80.8932 3.83397 80.666Q3.60675 80.4388 3.39095 80.2007Q3.17515 79.9626 2.97129 79.7142Q2.76744 79.4658 2.57601 79.2077Q2.38459 78.9496 2.20606 78.6824Q2.02753 78.4152 1.86233 78.1396Q1.69713 77.864 1.54565 77.5806Q1.39417 77.2972 1.25678 77.0067Q1.11939 76.7162 0.996417 76.4193Q0.873445 76.1224 0.765188 75.8199Q0.656931 75.5173 0.563651 75.2098Q0.47037 74.9023 0.392291 74.5906Q0.314211 74.2789 0.251521 73.9637Q0.18883 73.6486 0.141679 73.3307Q0.0945289 73.0128 0.0630319 72.6931Q0.031535 72.3733 0.0157675 72.0523Q0 71.7313 0 71.41Z">
                         <GeometryDrawing.Brush>
-                            <LinearGradientBrush StartPoint="0,42.25" EndPoint="540,42.25">
+                            <LinearGradientBrush EndPoint="540,42.25" StartPoint="0,42.25">
                                 <LinearGradientBrush.Transform>
                                     <MatrixTransform Matrix="1,0,0,1,0,0" />
                                 </LinearGradientBrush.Transform>
                                 <LinearGradientBrush.GradientStops>
-                                    <GradientStop Offset="0" Color="#FFFF4EA3" />
-                                    <GradientStop Offset="1" Color="#FFFF5E5B" />
+                                    <GradientStop Color="#FFFF4EA3" Offset="0" />
+                                    <GradientStop Color="#FFFF5E5B" Offset="1" />
                                 </LinearGradientBrush.GradientStops>
                             </LinearGradientBrush>
                         </GeometryDrawing.Brush>
@@ -80,13 +80,13 @@
                     <GeometryDrawing Brush="#FFFF5E5B" Geometry="F1 M46.57 56.38C47.21 56.7 47.53 56.38 47.53 56.38C47.53 56.38 56.35 48.36 60.37 43.71C63.89 39.54 64.06 32.64 58.12 30.08C52.02 27.51 47.05 33.13 47.05 33.13C42.72 28.32 36.14 28.64 33.09 31.84C30.04 35.04 31.16 40.51 33.41 43.71C35.49 46.6 44.8 54.94 46.25 56.23C46.25 56.06 46.42 56.23 46.57 56.38L46.57 56.38Z" />
                     <GeometryDrawing Geometry="F1 M46.87 56.61C47.23 56.68 47.54 56.37 47.54 56.37C47.54 56.37 56.36 48.35 60.38 43.7C63.9 39.53 64.07 32.63 58.13 30.07C52.03 27.5 47.06 33.12 47.06 33.12C42.73 28.31 36.15 28.63 33.1 31.83C30.05 35.03 31.17 40.5 33.42 43.7C35.38 46.43 45.23 55.29 46.46 56.39C46.58 56.5 46.72 56.58 46.88 56.6L46.87 56.61Z">
                         <GeometryDrawing.Brush>
-                            <LinearGradientBrush StartPoint="34.1,479.58" EndPoint="44.48,447.72">
+                            <LinearGradientBrush EndPoint="44.48,447.72" StartPoint="34.1,479.58">
                                 <LinearGradientBrush.Transform>
                                     <MatrixTransform Matrix="1,0,0,-1,4.21,490.11" />
                                 </LinearGradientBrush.Transform>
                                 <LinearGradientBrush.GradientStops>
-                                    <GradientStop Offset="0" Color="#FFFF4EA3" />
-                                    <GradientStop Offset="1" Color="#FFFF5E5B" />
+                                    <GradientStop Color="#FFFF4EA3" Offset="0" />
+                                    <GradientStop Color="#FFFF5E5B" Offset="1" />
                                 </LinearGradientBrush.GradientStops>
                             </LinearGradientBrush>
                         </GeometryDrawing.Brush>
@@ -139,12 +139,12 @@
                     FontSize="14"
                     Text="{CompiledBinding GithubRepo}" />
                 <Path
-                    Width="16"
-                    Height="16"
-                    Margin="5,0,0,0"
                     Data="M256,32C132.3,32,32,134.9,32,261.7c0,101.5,64.2,187.5,153.2,217.9a17.56,17.56,0,0,0,3.8.4c8.3,0,11.5-6.1,11.5-11.4,0-5.5-.2-19.9-.3-39.1a102.4,102.4,0,0,1-22.6,2.7c-43.1,0-52.9-33.5-52.9-33.5-10.2-26.5-24.9-33.6-24.9-33.6-19.5-13.7-.1-14.1,1.4-14.1h.1c22.5,2,34.3,23.8,34.3,23.8,11.2,19.6,26.2,25.1,39.6,25.1a63,63,0,0,0,25.6-6c2-14.8,7.8-24.9,14.2-30.7-49.7-5.8-102-25.5-102-113.5,0-25.1,8.7-45.6,23-61.6-2.3-5.8-10-29.2,2.2-60.8a18.64,18.64,0,0,1,5-.5c8.1,0,26.4,3.1,56.6,24.1a208.21,208.21,0,0,1,112.2,0c30.2-21,48.5-24.1,56.6-24.1a18.64,18.64,0,0,1,5,.5c12.2,31.6,4.5,55,2.2,60.8,14.3,16.1,23,36.6,23,61.6,0,88.2-52.4,107.6-102.3,113.3,8,7.1,15.2,21.1,15.2,42.5,0,30.7-.3,55.5-.3,63,0,5.4,3.1,11.5,11.4,11.5a19.35,19.35,0,0,0,4-.4C415.9,449.2,480,363.1,480,261.7,480,134.9,379.7,32,256,32Z"
                     Fill="{StaticResource MainIconColor}"
-                    Stretch="Fill" />
+                    Height="16"
+                    Margin="5,0,0,0"
+                    Stretch="Fill"
+                    Width="16" />
             </StackPanel>
         </HyperlinkButton>
         <HyperlinkButton
@@ -158,10 +158,10 @@
         </HyperlinkButton>
 
         <TextBlock
-            Margin="0,7,0,2"
-            HorizontalAlignment="Center"
             Classes="txt"
             FontSize="14"
+            HorizontalAlignment="Center"
+            Margin="0,7,0,2"
             Text="2017 - 2024 © Ruben Hyldgaard Negendahl" />
 
         <HyperlinkButton
@@ -172,36 +172,46 @@
         </HyperlinkButton>
 
         <TextBlock
-            Margin="0,17,0,10"
-            HorizontalAlignment="Center"
             FontSize="14"
-            FontWeight="Bold">
+            FontWeight="Bold"
+            HorizontalAlignment="Center"
+            Margin="0,17,0,10">
             <Run Text="{CompiledBinding Version}" />
-            <Run x:Name="AppVersion" Text="" />
+            <Run Text="" x:Name="AppVersion" />
         </TextBlock>
 
         <Button
-            Margin="0,10,0,10"
+            Classes="BorderStyle altHover mainBtn"
             HorizontalAlignment="Center"
-            Classes="BorderStyle altHover mainBtn">
+            Margin="0,10,0,10">
             <TextBlock Classes="txt" Text="{CompiledBinding CheckForUpdates}" />
         </Button>
 
         <HyperlinkButton
-            Width="200"
-            Margin="0,20,0,21"
             HorizontalAlignment="Center"
-            NavigateUri="https://ko-fi.com/W7W46BJFV">
-            <Image x:Name="KofiImage" Source="{StaticResource kofi_button_strokeDrawingImage}" />
+            Margin="0,20,0,21"
+            NavigateUri="https://ko-fi.com/W7W46BJFV"
+            Width="200">
+            <Image Source="{StaticResource kofi_button_strokeDrawingImage}" x:Name="KofiImage" />
         </HyperlinkButton>
 
         <TextBlock
-            Margin="0,7,0,2"
-            HorizontalAlignment="Center"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="16"
+            HorizontalAlignment="Center"
+            Margin="0,7,0,2"
             Text="{CompiledBinding Credits}" />
+
+        <HyperlinkButton
+            HorizontalAlignment="Center"
+            NavigateUri="https://github.com/AvaloniaUI/Avalonia"
+            ToolTip.Tip="https://github.com/AvaloniaUI/Avalonia">
+            <TextBlock
+                Classes="txt"
+                FontSize="14"
+                Text="Avalonia" />
+        </HyperlinkButton>
 
         <HyperlinkButton
             HorizontalAlignment="Center"
