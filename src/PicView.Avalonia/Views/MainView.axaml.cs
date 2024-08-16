@@ -1,13 +1,14 @@
 ﻿using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
+using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.Styling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
-using ReactiveUI;
+using PicView.Core.Extensions;
 
 namespace PicView.Avalonia.Views;
 
@@ -19,22 +20,85 @@ public partial class MainView : UserControl
         // TODO add visual feedback for drag and drop
         //AddHandler(DragDrop.DragOverEvent, DragOver);
         AddHandler(DragDrop.DropEvent, Drop);
-        GotFocus += delegate
-        {
-            if (UIHelper.GetEditableTitlebar.IsOpen)
-            {
-                UIHelper.GetEditableTitlebar.CloseTitlebar();
-            }
-        };
-        PointerPressed += delegate
-        {
-            if (UIHelper.GetEditableTitlebar.IsOpen)
-            {
-                UIHelper.GetEditableTitlebar.CloseTitlebar();
-            }
-        };
+        
+        GotFocus += CloseTitlebarIfOpen;
+        PointerPressed += CloseTitlebarIfOpen;
+        
+        MainContextMenu.Opened += OnMainContextMenuOpened;
     }
     
+    private void CloseTitlebarIfOpen(object? sender, EventArgs e)
+    {
+        if (UIHelper.GetEditableTitlebar.IsOpen)
+        {
+            UIHelper.GetEditableTitlebar.CloseTitlebar();
+        }
+    }
+
+    private void OnMainContextMenuOpened(object? sender, EventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        var count = FileHistoryNavigation.GetCount();
+        if (RecentFilesCM.Items.Count < count)
+        {
+            for (var i = RecentFilesCM.Items.Count; i < count; i++)
+            {
+                AddOrReplaceMenuItem(i, vm, isReplace: false);
+            }
+        }
+        else
+        {
+            for (var i = 0; i < count; i++)
+            {
+                AddOrReplaceMenuItem(i, vm, isReplace: true);
+            }
+        }
+    }
+
+    private void AddOrReplaceMenuItem(int index, MainViewModel vm, bool isReplace)
+    {
+        if (!Application.Current.TryGetResource("LogoAccentColor", ThemeVariant.Default, out var secondaryAccentColor))
+        {
+            return;
+        }
+
+        var secondaryAccentBrush = new SolidColorBrush((Color)(secondaryAccentColor ?? Brushes.Yellow));
+        var fileLocation = FileHistoryNavigation.GetFileLocation(index);
+        var selected = vm.ImageIterator?.CurrentIndex == vm.ImageIterator?.ImagePaths.IndexOf(fileLocation);
+        var header = Path.GetFileNameWithoutExtension(fileLocation);
+        header = header.Length > 60 ? header.Shorten(60) : header;
+        
+        var item = new MenuItem
+        {
+            Header = header,
+        };
+
+        if (selected)
+        {
+            item.Foreground = secondaryAccentBrush;
+        }
+        
+        item.Click += async delegate
+        {
+            await NavigationHelper.LoadPicFromStringAsync(fileLocation, vm).ConfigureAwait(false);
+        };
+        
+        ToolTip.SetTip(item, fileLocation);
+
+        if (isReplace)
+        {
+            RecentFilesCM.Items[index] = item;
+        }
+        else
+        {
+            RecentFilesCM.Items.Insert(index, item);
+        }
+    }
+
     private async Task Drop(object? sender, DragEventArgs e)
     {
         if (DataContext is not MainViewModel vm)

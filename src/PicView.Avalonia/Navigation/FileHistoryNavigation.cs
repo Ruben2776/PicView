@@ -38,6 +38,11 @@ public static class FileHistoryNavigation
         return _fileHistory.GetLastFile() ?? string.Empty;
     }
 
+    public static int GetCount()
+    {
+        return _fileHistory?.GetCount() ?? 0;
+    }
+
     internal static async Task OpenLastFileAsync(MainViewModel vm)
     {
         _fileHistory ??= new FileHistory();
@@ -149,4 +154,9 @@ public static class FileHistoryNavigation
         _fileHistory?.WriteToFile();
     }
 
+    public static string GetFileLocation(int i)
+    {
+        _fileHistory ??= new FileHistory();
+        return _fileHistory.GetEntryAt(i) ?? string.Empty;
+    }
 }
