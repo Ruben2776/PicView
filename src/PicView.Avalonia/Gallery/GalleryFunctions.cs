@@ -232,29 +232,47 @@ public static class GalleryFunctions
     }
      #endregion
 
-     public static void RemoveGalleryItem(int index, MainViewModel? vm)
+     public static bool RemoveGalleryItem(int index, MainViewModel? vm)
      {
          var mainView = UIHelper.GetMainView;
 
          var galleryListBox = mainView.GalleryView.GalleryListBox;
          if (galleryListBox == null) 
-             return;
+             return false;
 
          if (galleryListBox.Items.Count <= index)
          {
-             return;
+             return false;
          }
 
          if (galleryListBox.Items.Count < 0 || index >= galleryListBox.ItemCount)
          {
-             return;
+             return false;
          }
 
-         galleryListBox.Items.RemoveAt(index);
+         if (galleryListBox.Items.Count <= 0 || index >= galleryListBox.Items.Count)
+         {
+             return false;
+         }
+
+         if (Dispatcher.UIThread.CheckAccess())
+         {
+             galleryListBox.Items.RemoveAt(index);
+         }
+         else
+         {
+             Dispatcher.UIThread.InvokeAsync(() =>
+             {
+                 galleryListBox.Items.RemoveAt(index);
+             });
+         }
          if (vm != null)
          {
              vm.SelectedGalleryItemIndex = vm.ImageIterator.CurrentIndex;
          }
+
+         return true;
+
      }
 
      public static async Task<bool> AddGalleryItem(int index, FileInfo fileInfo, MainViewModel? vm)
@@ -275,53 +293,55 @@ public static class GalleryFunctions
              return false;
          }
 
-         if (galleryListBox.Items.Count > 0 && index < galleryListBox.Items.Count)
+         if (galleryListBox.Items.Count <= 0 || index >= galleryListBox.Items.Count)
          {
-             GalleryItem? galleryItem;
-             var imageModel = await ImageHelper.GetImageModelAsync(fileInfo, true, (int)vm.GetGalleryItemHeight);
-             var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
-             try
+             return false;
+         }
+
+         GalleryItem? galleryItem;
+         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo, true, (int)vm.GetGalleryItemHeight);
+         var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
+         try
+         {
+             await Dispatcher.UIThread.InvokeAsync(() =>
              {
-                 await Dispatcher.UIThread.InvokeAsync(() =>
+                 galleryItem = new GalleryItem
                  {
-                     galleryItem = new GalleryItem
+                     FileLocation =
                      {
-                         FileLocation =
-                         {
-                             Text = galleryThumbInfo.FileLocation
-                         },
-                         FileDate =
-                         {
-                             Text = galleryThumbInfo.FileDate
-                         },
-                         FileSize =
-                         {
-                             Text = galleryThumbInfo.FileSize
-                         },
-                         FileName =
-                         {
-                             Text = galleryThumbInfo.FileName
-                         }
-                     };
-                     galleryItem.PointerPressed += async (_, _) =>
+                         Text = galleryThumbInfo.FileLocation
+                     },
+                     FileDate =
                      {
-                         if (IsFullGalleryOpen)
-                         {
-                             await ToggleGallery(vm);
-                         }
-                         await vm.ImageIterator.IterateToIndex(index);
-                     };
-                     galleryListBox.Items.Insert(index, galleryItem);
-                     ImageHelper.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
-                 }, DispatcherPriority.Render);
-                 return true;
-             }
-             catch (Exception exception)
-             {
+                         Text = galleryThumbInfo.FileDate
+                     },
+                     FileSize =
+                     {
+                         Text = galleryThumbInfo.FileSize
+                     },
+                     FileName =
+                     {
+                         Text = galleryThumbInfo.FileName
+                     }
+                 };
+                 galleryItem.PointerPressed += async (_, _) =>
+                 {
+                     if (IsFullGalleryOpen)
+                     {
+                         await ToggleGallery(vm);
+                     }
+                     await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(fileInfo.FullName)).ConfigureAwait(false);
+                 };
+                 galleryListBox.Items.Insert(index, galleryItem);
+                 ImageHelper.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
+             }, DispatcherPriority.Render);
+             return true;
+         }
+         catch (Exception exception)
+         {
 #if DEBUG
-                 Console.WriteLine(exception);
+             Console.WriteLine(exception);
 #endif
-             }
          }
          return false;
      }

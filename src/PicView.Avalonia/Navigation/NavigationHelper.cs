@@ -200,6 +200,7 @@ public static class NavigationHelper
 
             case "":
                 ErrorHandling.ShowStartUpMenu(vm);
+                vm.IsLoading = false;
                 return;
         }
     }

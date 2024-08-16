@@ -76,7 +76,7 @@ public static class GalleryLoad
         {
             GalleryStretchMode.SetSquareFillStretch(vm);
         }
-
+        var fileInfos = new FileInfo[endIndex];
         try
         {
             for (var i = 0; i < endIndex; i++)
@@ -88,12 +88,16 @@ public static class GalleryLoad
                 }
                 
                 _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+                fileInfos[i] = new FileInfo(vm.ImageIterator.ImagePaths[i]);
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     var galleryItem = new GalleryItem
                     {
                         DataContext = vm,
                         FileName = { Text = loading },
+                        FileSize = { Text = loading },
+                        FileDate = { Text = loading },
+                        FileLocation = { Text = fileInfos[i].FullName },
                     };
                     var i1 = i;
                     galleryItem.PointerPressed += async (_, _) =>
@@ -102,7 +106,7 @@ public static class GalleryLoad
                         {
                             await GalleryFunctions.ToggleGallery(vm);
                         }
-                        await vm.ImageIterator.IterateToIndex(i1);
+                        await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(fileInfos[i1].FullName)).ConfigureAwait(false);
                     };
                     galleryListBox.Items.Add(galleryItem);
                     if (i != vm.ImageIterator?.CurrentIndex)
@@ -175,10 +179,10 @@ public static class GalleryLoad
                 {
                     return;
                 }
-                var fileInfo = new FileInfo(vm.ImageIterator.ImagePaths[i]);
-                var thumbImageModel = await ImageHelper.GetImageModelAsync(fileInfo, isThumb: true,
+
+                var thumbImageModel = await ImageHelper.GetImageModelAsync(fileInfos[i], isThumb: true,
                     (int)galleryItemSize);
-                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
+                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfos[i]);
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {

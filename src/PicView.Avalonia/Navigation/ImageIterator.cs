@@ -204,17 +204,22 @@ public sealed class ImageIterator : IDisposable
         
         PreLoader.Remove(index, ImagePaths);
 
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        var removed = GalleryFunctions.RemoveGalleryItem(index, _vm);
+        if (removed)
         {
-            GalleryFunctions.RemoveGalleryItem(index, _vm);
-        });
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            if (ImagePaths.Count == 1)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
-                _vm.GalleryMode = GalleryMode.BottomToClosed;
+                if (ImagePaths.Count == 1)
+                {
+                    _vm.GalleryMode = GalleryMode.BottomToClosed;
+                }
             }
+            var indexOf = ImagePaths.IndexOf(_vm.FileInfo.FullName);
+            _vm.SelectedGalleryItemIndex = indexOf; // Fixes deselection bug
+            CurrentIndex = indexOf;
+            GalleryNavigation.CenterScrollToSelectedItem(_vm);
         }
+
 
         FileHistoryNavigation.Remove(e.FullPath);
         _isRunning = false;

@@ -536,16 +536,11 @@ public static class WindowHelper
             await Dispatcher.UIThread.InvokeAsync(window.Hide);
         }
 
-        if (!SettingsHelper.Settings.WindowProperties.Maximized || SettingsHelper.Settings.WindowProperties.AutoFit)
+        if (!SettingsHelper.Settings.WindowProperties.Maximized || !SettingsHelper.Settings.WindowProperties.Fullscreen || SettingsHelper.Settings.WindowProperties.AutoFit)
         {
             SaveSize(window);
         }
-
-        if (window.DataContext is MainViewModel { FileInfo: not null } vm)
-        {
-            SettingsHelper.Settings.StartUp.LastFile = vm.FileInfo.FullName;
-        }
-
+        SettingsHelper.Settings.StartUp.LastFile = FileHistoryNavigation.GetLastFile();
         await SettingsHelper.SaveSettingsAsync();
         await KeybindingsHelper.UpdateKeyBindingsFile(); // Save keybindings
         FileDeletionHelper.DeleteTempFiles();
