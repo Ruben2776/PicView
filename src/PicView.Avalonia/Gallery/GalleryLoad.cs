@@ -222,7 +222,7 @@ public static class GalleryLoad
                     {
                         galleryListBox.ScrollToCenterOfItem(galleryItem);
                     }
-                }, DispatcherPriority.Render, ct);
+                }, priority, ct);
             });
         }
     }

@@ -9,8 +9,8 @@ namespace PicView.Avalonia.Navigation;
 
 public sealed class PreLoader : IDisposable
 {
-    private static readonly object Lock = new();
-    private static bool _isRunning;
+    private readonly Lock _lock = new();
+    public static bool IsRunning{ get; private set; }
 
     public class PreLoadValue(ImageModel? imageModel)
     {
@@ -246,15 +246,15 @@ public sealed class PreLoader : IDisposable
             return;
         }
         
-        if (_isRunning)
+        if (IsRunning)
         {
             return;
         }
         
-        lock (Lock)
+        lock (_lock)
         {
-            if (_isRunning) return;
-            _isRunning = true;
+            if (IsRunning) return;
+            IsRunning = true;
         }
 
         int nextStartingIndex, prevStartingIndex;
@@ -304,9 +304,9 @@ public sealed class PreLoader : IDisposable
         }
         finally
         {
-            lock (Lock)
+            lock (_lock)
             {
-                _isRunning = false;
+                IsRunning = false;
             }
         }
 

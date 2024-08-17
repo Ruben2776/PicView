@@ -5,7 +5,6 @@ using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
 using Avalonia.Media.Imaging;
-using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
@@ -34,6 +33,8 @@ public sealed class ImageIterator : IDisposable
     private static FileSystemWatcher? _watcher;
     private static bool _isRunning;
     private readonly MainViewModel? _vm;
+    
+    private static readonly SemaphoreSlim SemaphoreSlim = new(1, 1);
 
     #endregion
 
@@ -395,62 +396,71 @@ public sealed class ImageIterator : IDisposable
         {
             CurrentIndex = index;
 
-            var preLoadValue = PreLoader.Get(index, ImagePaths);
-            if (preLoadValue is not null)
+            await Task.Run(async () =>
             {
-                if (preLoadValue.IsLoading)
+                var preLoadValue = GetPreLoadValue(index);
+                if (preLoadValue is not null)
                 {
-                    LoadingPreview(index);
-                    preLoadValue.ImageLoaded += async (_, e) =>
+                    if (preLoadValue.IsLoading)
                     {
-                        await Task.Delay(20);
-                        if (CurrentIndex != index)
+                        LoadingPreview(index);
+                        preLoadValue.ImageLoaded += async (_, e) =>
                         {
-                            // Fix loading bug
-                            if (_vm.Title == TranslationHelper.Translation.Loading)
-                            { 
-                                var nextIndex = IsReversed ? Math.Min(index,CurrentIndex) : Math.Max(index,CurrentIndex); 
-                                await IterateToIndex(nextIndex);
+                            await Task.Delay(20);
+                            if (CurrentIndex != index)
+                            {
+                                // Fix loading bug
+                                if (_vm.Title == TranslationHelper.Translation.Loading)
+                                { 
+                                    var nextIndex = IsReversed ? Math.Min(index,CurrentIndex) : Math.Max(index,CurrentIndex); 
+                                    await IterateToIndex(nextIndex);
+                                    return;
+                                }
                                 return;
                             }
-                            return;
-                        }
-                        UpdateSource(e.PreLoadValue);
-                        await AddAsync(CurrentIndex, preLoadValue.ImageModel);
-                        await Preload();
-                    };
-                    return;
-                }
-            }
-            else
-            {
-                LoadingPreview(index);
-                var added = await PreLoader.AddAsync(index, ImagePaths);
-                if (CurrentIndex != index)
-                {
-                    // Skip loading if user went to next value
-                    return;
-                }
-                if (added)
-                {
-                    preLoadValue = PreLoader.Get(index, ImagePaths);
-                }
-            }
 
-            if (CurrentIndex != index || preLoadValue is null)
-            {
+                            await Update(e.PreLoadValue);
+                        };
+                        return;
+                    }
+                }
+                else
+                {
+                    LoadingPreview(index);
+                    var added = await PreLoader.AddAsync(index, ImagePaths);
+                    if (CurrentIndex != index)
+                    {
+                        // Skip loading if user went to next value
+                        return;
+                    }
+                    if (added)
+                    {
+                        preLoadValue = PreLoader.Get(index, ImagePaths);
+                    }
+                }
+
+                if (CurrentIndex != index || preLoadValue is null)
+                {
+                    return;
+                }
+                await Update(preLoadValue);
                 return;
-            }
 
-            UpdateSource(preLoadValue);
-            
-            // Add recent files, except when browsing archive
-            if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && ImagePaths.Count > index)
-            {
-                FileHistoryNavigation.Add(ImagePaths[index]);
-            }
-            await AddAsync(CurrentIndex, preLoadValue.ImageModel);
-            await Preload();
+                async Task Update(PreLoader.PreLoadValue value)
+                {
+                    await SemaphoreSlim.WaitAsync();
+                    UpdateSource(value);
+                    SemaphoreSlim.Release();
+                    
+                    // Add recent files, except when browsing archive
+                    if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && ImagePaths.Count > index)
+                    {
+                        FileHistoryNavigation.Add(ImagePaths[index]);
+                    }
+                    await AddAsync(CurrentIndex, preLoadValue.ImageModel);
+                    await Preload();
+                }
+            });
         }
         catch (OperationCanceledException)
         {
@@ -604,6 +614,7 @@ public sealed class ImageIterator : IDisposable
             _watcher?.Dispose();
             Clear();
             _timer?.Dispose();
+            SemaphoreSlim.Dispose();
         }
 
         _disposed = true;

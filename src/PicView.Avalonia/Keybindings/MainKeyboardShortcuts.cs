@@ -119,10 +119,11 @@ public static class MainKeyboardShortcuts
             }
             // Execute the associated action
             await func.Invoke().ConfigureAwait(false);
+            Reset();
         }
     }
 
-    public static void MainWindow_KeysUp(KeyEventArgs e)
+    private static void Reset()
     {
         CtrlDown = false;
         AltDown = false;
@@ -130,5 +131,10 @@ public static class MainKeyboardShortcuts
         CurrentKeys = null;
         IsKeyHeldDown = false;
         _x = 0;
+    }
+
+    public static void MainWindow_KeysUp(KeyEventArgs e)
+    {
+        Reset();
     }
 }

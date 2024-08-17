@@ -667,7 +667,7 @@ public static class FunctionsHelper
 
     public static Task OpenInExplorer()
     {
-        Vm?.PlatformService?.LocateOnDisk(Vm.FileInfo.FullName);
+        Vm?.PlatformService?.LocateOnDisk(Vm.FileInfo?.FullName);
         return Task.CompletedTask;
     }
 
@@ -788,14 +788,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        if (!NavigationHelper.CanNavigate(Vm))
-        {
-            return;
-        }
-
-        Vm.ImageIterator?.Clear();
-        Vm.CurrentView = new ImageViewer();
-        await NavigationHelper.LoadPicFromStringAsync(Vm.FileInfo.FullName, Vm);
+        await ErrorHandling.ReloadAsync(Vm);
     }
 
     public static Task ResizeImage()

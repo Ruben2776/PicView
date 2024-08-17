@@ -2,6 +2,7 @@
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
@@ -47,5 +48,18 @@ public static class ErrorHandling
             vm.ImageIterator?.Dispose();
             vm.ImageIterator = null;
         }
+    }
+
+    public static async Task ReloadAsync(MainViewModel vm)
+    {
+        if (!NavigationHelper.CanNavigate(vm))
+        {
+            ShowStartUpMenu(vm);
+            return;
+        }
+
+        vm.ImageIterator?.Clear();
+        vm.CurrentView = new ImageViewer();
+        await NavigationHelper.LoadPicFromStringAsync(vm.FileInfo.FullName, vm);
     }
 }
