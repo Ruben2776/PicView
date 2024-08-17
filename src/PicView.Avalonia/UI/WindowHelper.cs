@@ -78,6 +78,8 @@ public static class WindowHelper
 
     public static void CenterWindowOnScreen(bool horizontal = true)
     {
+        // TODO: Add support for multiple screens
+        
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
@@ -361,7 +363,6 @@ public static class WindowHelper
             vm.IsTopToolbarShown = false; // Hide interface in fullscreen. Remember to turn back when exiting fullscreen
             vm.IsBottomToolbarShown = false;
             vm.IsInterfaceShown = false;
-            vm.IsGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
             // TODO: Add Fullscreen mode for Windows (and maybe for Linux?)
             // macOS fullscreen version already works nicely
         }
@@ -372,7 +373,6 @@ public static class WindowHelper
                 // TODO go to macOS fullscreen mode when auto fit is on
             }
         }
-        CenterWindowOnScreen();
         vm.GalleryWidth = double.NaN;
     }
 
@@ -467,14 +467,20 @@ public static class WindowHelper
         vm.ImageHeight = size.Height;
         vm.GalleryMargin = new Thickness(0, 0, 0, size.Margin);
 
-        if (SettingsHelper.Settings.WindowProperties.Fullscreen || SettingsHelper.Settings.WindowProperties.Maximized)
+        if (SettingsHelper.Settings.WindowProperties.AutoFit)
         {
-            vm.GalleryWidth =  double.NaN;;
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen || SettingsHelper.Settings.WindowProperties.Maximized)
+            {
+                vm.GalleryWidth = double.NaN;;
+            }
+            else
+            {
+                vm.GalleryWidth = Math.Max(size.Width, desktopMinWidth);;
+            }
         }
         else
         {
-            vm.GalleryWidth = SettingsHelper.Settings.WindowProperties.AutoFit ?
-                Math.Max(size.Width, desktopMinWidth) : double.NaN;;
+            vm.GalleryWidth = double.NaN;;
         }
     }
     

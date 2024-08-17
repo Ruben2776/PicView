@@ -157,6 +157,11 @@ public class MainViewModel : ViewModelBase
             {
                 return 0;
             }
+
+            if (SettingsHelper.Settings.WindowProperties.Fullscreen)
+            {
+                return SettingsHelper.Settings.Gallery.IsBottomGalleryShown ? GetBottomGalleryItemHeight + SizeDefaults.ScrollbarSize : 0;
+            }
             if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI && !IsInterfaceShown)
             {
                 return 0;
