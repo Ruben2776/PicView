@@ -1,4 +1,5 @@
 <UserControl
+    Margin="0,0,0,20"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
@@ -13,8 +14,9 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <StackPanel Margin="5,0,2,15">
+    <StackPanel Margin="5,0,2,25">
         <TextBlock
+            x:Name="ApplicationShortcutsTextBlock"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="16"
@@ -22,6 +24,7 @@
             Text="{CompiledBinding ApplicationShortcuts}"
             TextAlignment="Center" />
         <TextBlock
+            x:Name="ChangeKeybindingTextBlock"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             Text="{CompiledBinding ChangeKeybindingText}"
@@ -35,6 +38,7 @@
         </Button>
 
         <TextBlock
+            x:Name="NavigationTextBlock"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"

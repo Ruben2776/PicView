@@ -1,4 +1,6 @@
+using System.Runtime.InteropServices;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.ViewModels;
@@ -17,6 +19,21 @@ public partial class ShortcutsView : UserControl
         FullscreenBox.Text = $"{TranslationHelper.Translation.Shift} + {TranslationHelper.Translation.DoubleClick}";
         DragWindowBox.Text = $"{TranslationHelper.Translation.Shift} + {TranslationHelper.Translation.MouseDrag}";
         CloseBox.Text = TranslationHelper.Translation.Esc;
+        
+        // Fix invisible text on macOS
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            ApplicationShortcutsTextBlock.TextAlignment = TextAlignment.Left;
+            ChangeKeybindingTextBlock.TextAlignment = TextAlignment.Left;
+            NavigationTextBlock.TextAlignment = TextAlignment.Left;
+
+            Loaded += delegate
+            {
+                ApplicationShortcutsTextBlock.TextAlignment = TextAlignment.Center;
+                ChangeKeybindingTextBlock.TextAlignment = TextAlignment.Center;
+                NavigationTextBlock.TextAlignment = TextAlignment.Center;
+            };
+        }
     }
 
     private async Task SetDefault()
