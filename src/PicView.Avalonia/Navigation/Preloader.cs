@@ -108,7 +108,11 @@ public sealed class PreLoader : IDisposable
         }
         finally
         {
-            preLoadValue.IsLoading = false;
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (preLoadValue is not null)
+            {
+                preLoadValue.IsLoading = false;
+            }
         }
         return false;
     }

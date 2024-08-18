@@ -406,19 +406,10 @@ public sealed class ImageIterator : IDisposable
                         LoadingPreview(index);
                         preLoadValue.ImageLoaded += async (_, e) =>
                         {
-                            await Task.Delay(20);
-                            if (CurrentIndex != index)
+                            if (e.Index != index)
                             {
-                                // Fix loading bug
-                                if (_vm.Title == TranslationHelper.Translation.Loading)
-                                { 
-                                    var nextIndex = IsReversed ? Math.Min(index,CurrentIndex) : Math.Max(index,CurrentIndex); 
-                                    await IterateToIndex(nextIndex);
-                                    return;
-                                }
                                 return;
                             }
-
                             await Update(e.PreLoadValue);
                         };
                         return;
@@ -448,10 +439,15 @@ public sealed class ImageIterator : IDisposable
 
                 async Task Update(PreLoader.PreLoadValue value)
                 {
-                    await SemaphoreSlim.WaitAsync();
-                    UpdateSource(value);
-                    SemaphoreSlim.Release();
-                    
+                    try
+                    {
+                        await SemaphoreSlim.WaitAsync();
+                        UpdateSource(index, value);
+                    }
+                    finally
+                    {
+                        SemaphoreSlim.Release();
+                    }
                     // Add recent files, except when browsing archive
                     if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && ImagePaths.Count > index)
                     {
@@ -471,8 +467,8 @@ public sealed class ImageIterator : IDisposable
         catch (Exception e)
         {
 #if DEBUG
+            Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
             await TooltipHelper.ShowTooltipMessageAsync(e.Message);
-            Console.WriteLine(e.Message);
 #endif
         }
         finally
@@ -503,7 +499,7 @@ public sealed class ImageIterator : IDisposable
         }
 
         _timer.Interval = TimeSpan.FromSeconds(SettingsHelper.Settings.UIProperties.NavSpeed).TotalMilliseconds;
-        _timer?.Start();
+        _timer.Start();
         await IterateToIndex(index);
     }
     
@@ -517,8 +513,9 @@ public sealed class ImageIterator : IDisposable
 
     #region Update Source and Preview
 
-    private void UpdateSource(PreLoader.PreLoadValue preLoadValue)
+    private void UpdateSource(int index, PreLoader.PreLoadValue preLoadValue)
     {
+        CurrentIndex = index;
         _vm.IsLoading = false;
         ExifHandling.SetImageModel(preLoadValue.ImageModel, vm: _vm);
         _vm.ImageSource = preLoadValue.ImageModel.Image;
@@ -529,15 +526,15 @@ public sealed class ImageIterator : IDisposable
             _vm.ImageViewer.Rotate(_vm.RotationAngle);
         }
         SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
-        _vm.GetIndex = CurrentIndex + 1;
+        _vm.GetIndex = index + 1;
         if (SettingsHelper.Settings.WindowProperties.KeepCentered)
         {
             WindowHelper.CenterWindowOnScreen(false);
         }
 
-        if (_vm.SelectedGalleryItemIndex != CurrentIndex)
+        if (_vm.SelectedGalleryItemIndex != index)
         {
-            _vm.SelectedGalleryItemIndex = CurrentIndex;
+            _vm.SelectedGalleryItemIndex = index;
             if (GalleryFunctions.IsBottomGalleryOpen)
             {
                 GalleryNavigation.CenterScrollToSelectedItem(_vm);

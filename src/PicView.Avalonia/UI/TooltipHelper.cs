@@ -22,7 +22,7 @@ public static class TooltipHelper
     public static async Task ShowTooltipMessageAsync(object message, bool center, TimeSpan interval)
     {
         var startAnimation = AnimationsHelper.OpacityAnimation(0, 1, .6);
-        var endAimation = AnimationsHelper.OpacityAnimation(1, 0, .5);
+        var endAnimation = AnimationsHelper.OpacityAnimation(1, 0, .5);
         
         if (_isRunning)
         {
@@ -34,7 +34,8 @@ public static class TooltipHelper
                 GetToolTipMessage.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
             });
             await Task.Delay(interval);
-            await endAimation.RunAsync(GetToolTipMessage);
+            await endAnimation.RunAsync(GetToolTipMessage);
+            _isRunning = false;
             return;
         }
 
@@ -49,7 +50,7 @@ public static class TooltipHelper
         });
         await startAnimation.RunAsync(GetToolTipMessage);
         await Task.Delay(interval);
-        await endAimation.RunAsync(GetToolTipMessage);
+        await endAnimation.RunAsync(GetToolTipMessage);
         _isRunning = false;
     }
     

@@ -373,7 +373,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        //await Dispatcher.UIThread.InvokeAsync(Vm.ImageViewer.ZoomIn);
+        await Dispatcher.UIThread.InvokeAsync(Vm.ImageViewer.ZoomIn);
     }
 
     public static async Task ZoomOut()
@@ -382,7 +382,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        //await Dispatcher.UIThread.InvokeAsync(Vm.ImageViewer.ZoomOut);
+        await Dispatcher.UIThread.InvokeAsync(Vm.ImageViewer.ZoomOut);
     }
 
     public static async Task ResetZoom()
@@ -391,7 +391,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        //await Dispatcher.UIThread.InvokeAsync(() => Vm.ImageViewer.ResetZoom(true));
+        await Dispatcher.UIThread.InvokeAsync(() => Vm.ImageViewer.ResetZoom(true));
     }
     
     #endregion
@@ -638,7 +638,7 @@ public static class FunctionsHelper
     {
         await Task.Run(() =>
         {
-            Vm?.PlatformService?.Print(Vm.FileInfo.FullName);
+            Vm?.PlatformService?.Print(Vm.FileInfo?.FullName);
         });
     }
 
@@ -688,7 +688,7 @@ public static class FunctionsHelper
         }
         await Task.Run(() =>
         {
-            FileDeletionHelper.DeleteFileWithErrorMsg(Vm.FileInfo.FullName, true);
+            FileDeletionHelper.DeleteFileWithErrorMsg(Vm.FileInfo?.FullName, true);
         });
     }
 
@@ -702,7 +702,7 @@ public static class FunctionsHelper
     
     public static async Task ShowFileProperties()
     {
-        await Task.Run(() => Vm?.PlatformService?.ShowFileProperties(Vm.FileInfo.FullName));
+        await Task.Run(() => Vm?.PlatformService?.ShowFileProperties(Vm.FileInfo?.FullName));
     }
     
     #endregion
@@ -711,12 +711,12 @@ public static class FunctionsHelper
 
     public static async Task CopyFile()
     {
-        await ClipboardHelper.CopyFileToClipboard(Vm?.FileInfo.FullName, Vm);
+        await ClipboardHelper.CopyFileToClipboard(Vm?.FileInfo?.FullName, Vm);
     }
 
     public static async Task CopyFilePath()
     {
-        await ClipboardHelper.CopyTextToClipboard(Vm?.FileInfo.FullName);
+        await ClipboardHelper.CopyTextToClipboard(Vm?.FileInfo?.FullName);
     }
 
     public static async Task CopyImage()
@@ -725,7 +725,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await ClipboardHelper.CopyImageToClipboard(Vm.FileInfo.FullName);
+        await ClipboardHelper.CopyImageToClipboard(Vm.FileInfo?.FullName);
     }
 
     public static async Task CopyBase64()
@@ -734,7 +734,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await ClipboardHelper.CopyBase64ToClipboard(Vm.FileInfo.FullName, vm: Vm);
+        await ClipboardHelper.CopyBase64ToClipboard(Vm.FileInfo?.FullName, vm: Vm);
     }
 
     public static async Task DuplicateFile()
