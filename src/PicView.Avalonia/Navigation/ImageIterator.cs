@@ -471,7 +471,7 @@ public sealed class ImageIterator : IDisposable
         catch (Exception e)
         {
 #if DEBUG
-            TooltipHelper.ShowTooltipMessage(e.Message);
+            await TooltipHelper.ShowTooltipMessageAsync(e.Message);
             Console.WriteLine(e.Message);
 #endif
         }

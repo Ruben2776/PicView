@@ -223,7 +223,7 @@ public static class GalleryFunctions
             {
                 galleryListBox.Items.Clear();
             });
-            TooltipHelper.ShowTooltipMessage(e.Message);
+            await TooltipHelper.ShowTooltipMessageAsync(e.Message);
 #if DEBUG
             Console.WriteLine(e);
 #endif

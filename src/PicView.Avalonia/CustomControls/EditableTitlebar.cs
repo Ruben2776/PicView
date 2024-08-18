@@ -184,7 +184,7 @@ public class EditableTitlebar : TextBox
                 if (!string.IsNullOrWhiteSpace(deleteMsg))
                 {
                     // Show error message to user
-                    TooltipHelper.ShowTooltipMessage(deleteMsg);
+                    await TooltipHelper.ShowTooltipMessageAsync(deleteMsg);
                     vm.IsLoading = false;
                     return;
                 }

@@ -44,12 +44,17 @@ public static class AnimationsHelper
             }
         };
     }
-    
+
     public static Animation OpacityAnimation(double from, double to, double speed)
+    {
+        return OpacityAnimation(from, to, TimeSpan.FromSeconds(speed));
+    }
+    
+    public static Animation OpacityAnimation(double from, double to, TimeSpan timeSpan)
     {
         return new Animation
         {
-            Duration = TimeSpan.FromSeconds(speed),
+            Duration = timeSpan,
             Easing = new LinearEasing(),
             FillMode = FillMode.Forward,
             Children =

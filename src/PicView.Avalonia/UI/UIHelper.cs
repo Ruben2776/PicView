@@ -197,7 +197,7 @@ public static class UIHelper
         var msg = value
             ? TranslationHelper.Translation.LoopingEnabled
             : TranslationHelper.Translation.LoopingDisabled;
-        TooltipHelper.ShowTooltipMessage(msg);
+        await TooltipHelper.ShowTooltipMessageAsync(msg);
         
         await SettingsHelper.SaveSettingsAsync();
     }
