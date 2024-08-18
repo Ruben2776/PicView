@@ -110,6 +110,7 @@ public class EditableTitlebar : TextBox
         Cursor = new Cursor(StandardCursorType.Arrow);
         MainKeyboardShortcuts.IsKeysEnabled = true;
         IsOpen = false;
+        Text = vm.Title;
     }
     
     #endregion
