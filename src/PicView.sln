@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Windows", "PicView.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.MacOS", "PicView.MacOS\PicView.MacOS.csproj", "{FEAC727E-1102-4F11-A747-5A5789FBBF81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PicView.Tests", "PicView.Tests\PicView.Tests.csproj", "{E9901309-A077-42CF-957C-9E737DC9731C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PicView.Tests", "PicView.Tests\PicView.Tests.csproj", "{E9901309-A077-42CF-957C-9E737DC9731C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

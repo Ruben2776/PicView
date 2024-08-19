@@ -7,6 +7,7 @@ using PicView.Avalonia.Views.UC;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
+using StartUpMenu = PicView.Avalonia.Views.StartUpMenu;
 
 namespace PicView.Avalonia.Navigation;
 

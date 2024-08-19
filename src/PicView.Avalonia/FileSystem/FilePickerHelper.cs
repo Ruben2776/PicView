@@ -102,7 +102,8 @@ public static class FilePickerHelper
         {
             switch (vm.ImageType)
             {
-                case ImageType.AnimatedBitmap:
+                case ImageType.AnimatedGif:
+                case ImageType.AnimatedWebp:
                     throw new ArgumentOutOfRangeException();
                 case ImageType.Bitmap:
                     if (vm.ImageSource is not Bitmap bitmap)

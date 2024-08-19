@@ -61,7 +61,7 @@ internal static class QuickLoad
 
         if (fileInfo.Extension.Equals(".gif", StringComparison.OrdinalIgnoreCase))
         {
-            var frames = ImageFunctions.GetImageFrames(fileInfo.FullName);
+            var frames = ImageFunctionHelper.GetImageFrames(fileInfo.FullName);
             if (frames > 1)
             {
                 var uri = new Uri(fileInfo.FullName);

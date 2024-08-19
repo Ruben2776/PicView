@@ -118,7 +118,7 @@ public static class ExifHandling
                 }
             }
 
-            if (vm.DpiX is 0 && imageModel.ImageType is ImageType.Bitmap or ImageType.AnimatedBitmap)
+            if (vm.DpiX is 0 && imageModel.ImageType is ImageType.Bitmap or ImageType.AnimatedGif or ImageType.AnimatedWebp)
             {
                 if (imageModel.Image is Bitmap bmp)
                 {

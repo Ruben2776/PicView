@@ -1,4 +1,6 @@
-﻿using Avalonia;
+﻿using System.Numerics;
+using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Automation.Peers;
 using Avalonia.Controls;
 using Avalonia.Controls.Automation.Peers;
@@ -8,8 +10,11 @@ using Avalonia.Utilities;
 using PicView.Avalonia.Navigation;
 using ReactiveUI;
 using Avalonia.Media.Imaging;
+using Avalonia.Rendering.Composition;
 using Avalonia.Svg.Skia;
+using PicView.Avalonia.AnimatedImage;
 using PicView.Avalonia.UI;
+using Vector = Avalonia.Vector;
 
 
 namespace PicView.Avalonia.CustomControls;
@@ -38,6 +43,7 @@ public class PicBox : Control
 
     #region Properties
     
+    private CompositionCustomVisual? _customVisual;
     private readonly IDisposable? _imageTypeSubscription;
     
     /// <summary>
@@ -88,6 +94,13 @@ public class PicBox : Control
         set => SetValue(ImageTypeProperty, value);
     }
 
+    private FileStream? _stream;
+    private IGifInstance? _animInstance;
+    private readonly IterationCount _iterationCount = IterationCount.Infinite;
+    
+    public object? InitialAnimatedSource;
+    
+
     #endregion
 
     #region Rendering
@@ -104,6 +117,17 @@ public class PicBox : Control
         {
             case IImage source:
                 RenderBasedOnSettings(context, source);
+                if (ImageType is ImageType.AnimatedGif or ImageType.AnimatedWebp)
+                {
+                    var s = InitialAnimatedSource as string;
+                    if (!string.IsNullOrWhiteSpace(s))
+                    {
+                        context.Dispose(); // Fixes transparent images
+                        _stream = new FileStream(s, FileMode.Open, FileAccess.Read);
+                        UpdateAnimationInstance(_stream);
+                        AnimationUpdate();
+                    }
+                }
                 break;
             case string svg:
             {
@@ -279,6 +303,18 @@ public class PicBox : Control
     {
         return new ImageAutomationPeer(this);
     }
+    
+    
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        var compositor = ElementComposition.GetElementVisual(this)?.Compositor;
+        if (compositor == null || _customVisual?.Compositor == compositor)
+            return;
+        _customVisual = compositor.CreateCustomVisual(new CustomVisualHandler());
+        ElementComposition.SetElementChildVisual(this, _customVisual);
+        _customVisual.SendHandlerMessage(CustomVisualHandler.StartMessage);
+        base.OnAttachedToVisualTree(e);
+    }
 
     #endregion
     
@@ -295,13 +331,18 @@ public class PicBox : Control
                 }
                 var svgSource = SvgSource.Load(svg);
                 Source = new SvgImage { Source = svgSource };
+                _animInstance?.Dispose();
+                _stream?.Dispose();
+                break;
+            case ImageType.AnimatedGif:
+            case ImageType.AnimatedWebp:
+                Source = Source as Bitmap;
+                _animInstance?.Dispose();
                 break;
             case ImageType.Bitmap:
                 Source = Source as Bitmap;
-                break;
-            case ImageType.AnimatedBitmap:
-                Source = Source as Bitmap;
-                // TODO: Add animation
+                _animInstance?.Dispose();
+                _stream?.Dispose();
                 break;
             case ImageType.Invalid:
             default:
@@ -313,8 +354,40 @@ public class PicBox : Control
     #endregion
 
     #region Animation
+    
 
-    // TODO: Add Animation behavior
+    private void UpdateAnimationInstance(object source)
+    {
+        _animInstance?.Dispose();
+        if (ImageType == ImageType.AnimatedGif)
+        {
+            _animInstance = new GifInstance(source as FileStream);
+        }
+        else
+        {
+            _animInstance = new WebpInstance(source as FileStream);
+        }
+        _animInstance.IterationCount = _iterationCount;
+        _customVisual?.SendHandlerMessage(_animInstance);
+        AnimationUpdate();
+    }
+    
+    private void AnimationUpdate()
+    {
+        if (_customVisual is null || _animInstance is null)
+            return;
+
+        var sourceSize = Bounds.Size;
+        var viewPort = DetermineViewPort();
+
+        var scale = CalculateScaling(viewPort.Size, sourceSize);
+        var scaledSize = sourceSize * scale;
+        var destRect = viewPort.CenterRect(new Rect(scaledSize)).Intersect(viewPort);
+
+        _customVisual.Size = new Vector2((float)sourceSize.Width, (float)sourceSize.Height);
+
+        _customVisual.Offset = new Vector3((float)destRect.Position.X, (float)destRect.Position.Y, 0);
+    }
 
     #endregion
 }

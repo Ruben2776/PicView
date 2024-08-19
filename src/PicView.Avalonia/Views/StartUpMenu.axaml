@@ -4,7 +4,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
-    x:Class="PicView.Avalonia.Views.UC.StartUpMenu"
+    x:Class="PicView.Avalonia.Views.StartUpMenu"
     x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"

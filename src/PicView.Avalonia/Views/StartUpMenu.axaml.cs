@@ -9,7 +9,7 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
 
-namespace PicView.Avalonia.Views.UC;
+namespace PicView.Avalonia.Views;
 
 public partial class StartUpMenu : UserControl
 {

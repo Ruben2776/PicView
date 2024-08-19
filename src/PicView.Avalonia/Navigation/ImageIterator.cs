@@ -519,19 +519,24 @@ public sealed class ImageIterator : IDisposable
         _vm.IsLoading = false;
         ExifHandling.SetImageModel(preLoadValue.ImageModel, vm: _vm);
         _vm.ImageSource = preLoadValue.ImageModel.Image;
+        if (preLoadValue.ImageModel.ImageType is ImageType.AnimatedGif or ImageType.AnimatedWebp)
+        {
+            _vm.ImageViewer.MainImage.InitialAnimatedSource = preLoadValue.ImageModel.FileInfo.FullName;
+        }
         _vm.ImageType = preLoadValue.ImageModel.ImageType;
         WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, preLoadValue.ImageModel.Rotation, _vm);
+        SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
+
         if (_vm.RotationAngle != 0)
         {
             _vm.ImageViewer.Rotate(_vm.RotationAngle);
         }
-        SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
-        _vm.GetIndex = index + 1;
         if (SettingsHelper.Settings.WindowProperties.KeepCentered)
         {
             WindowHelper.CenterWindowOnScreen(false);
         }
-
+        
+        _vm.GetIndex = index + 1;
         if (_vm.SelectedGalleryItemIndex != index)
         {
             _vm.SelectedGalleryItemIndex = index;

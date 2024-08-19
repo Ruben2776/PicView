@@ -196,32 +196,6 @@ internal static class ImageFunctions
         }
     }
 
-    /// <summary>
-    /// Gets the number of frames in an image.
-    /// </summary>
-    /// <param name="file">The path to the image file.</param>
-    /// <returns>The number of frames in the image. Returns 0 if an error occurs.</returns>
-    /// <remarks>
-    /// This method uses the Magick.NET library to load the image and retrieve the frame count.
-    /// </remarks>
-    public static int GetImageFrames(string file)
-    {
-        try
-        {
-            // Using statement ensures proper disposal of resources.
-            using var magick = new MagickImageCollection(file);
-            return magick.Count;
-        }
-        catch (MagickException ex)
-        {
-            // Log the exception for debugging purposes.
-            Trace.WriteLine($"{nameof(GetImageFrames)} Exception \n{ex}");
-
-            // Return 0 in case of an error.
-            return 0;
-        }
-    }
-
     internal static RenderTargetBitmap? ImageErrorMessage()
     {
         var brokenBitmapImage = (DrawingImage)Application.Current.Resources["BrokenDrawingImage"];

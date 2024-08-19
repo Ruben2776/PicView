@@ -546,7 +546,8 @@ public static class WindowHelper
         {
             SaveSize(window);
         }
-        SettingsHelper.Settings.StartUp.LastFile = FileHistoryNavigation.GetLastFile();
+        var vm = window.DataContext as MainViewModel;
+        SettingsHelper.Settings.StartUp.LastFile = vm?.FileInfo?.FullName ?? FileHistoryNavigation.GetLastFile();
         await SettingsHelper.SaveSettingsAsync();
         await KeybindingsHelper.UpdateKeyBindingsFile(); // Save keybindings
         FileDeletionHelper.DeleteTempFiles();

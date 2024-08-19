@@ -1,8 +1,6 @@
-﻿using Avalonia.Threading;
-using PicView.Avalonia.ImageHandling;
+﻿using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
-using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Navigation;
 

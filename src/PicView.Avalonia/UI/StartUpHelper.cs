@@ -9,6 +9,7 @@ using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.Localization;
+using StartUpMenu = PicView.Avalonia.Views.StartUpMenu;
 
 namespace PicView.Avalonia.UI;
 

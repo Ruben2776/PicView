@@ -10,6 +10,8 @@ namespace PicView.Avalonia.ImageHandling;
 
 public static class ImageHelper
 {
+    #region Image Handling
+    
     public static async Task<ImageModel?> GetImageModelAsync(FileInfo fileInfo, bool isThumb = false, int height = 0)
     {
         return await Task.Run(async () =>
@@ -20,9 +22,35 @@ public static class ImageHelper
             {
                 switch (fileInfo.Extension.ToLower())
                 {
-                    case ".gif":
-                    case ".png":
                     case ".webp":
+                        if (isThumb)
+                        {
+                            await AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
+                            if (IsAnimated(fileInfo))
+                            {
+                                imageModel.ImageType = ImageType.AnimatedWebp;
+                            }
+                        }
+                        break;
+                    case ".gif":
+                        if (isThumb)
+                        {
+                            await AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
+                            if (IsAnimated(fileInfo))
+                            {
+                                imageModel.ImageType = ImageType.AnimatedGif;
+                            }
+                        }
+                        break;
+                    case ".png":
                     case ".jpg":
                     case ".jpeg":
                     case ".jpe":
@@ -71,6 +99,8 @@ public static class ImageHelper
             return imageModel;
         });
     }
+    
+
 
     private static async Task AddImageAsync(FileInfo fileInfo, ImageModel imageModel)
     {
@@ -83,32 +113,6 @@ public static class ImageHelper
                                         bufferSize,
                                         useAsync: fileInfo.Length > 1e7);
         Add(fs, imageModel);
-    }
-
-    private static void AddSvgImage(FileInfo fileInfo, ImageModel imageModel)
-    {
-        var svg = new MagickImage();
-        svg.Ping(fileInfo.FullName);
-        imageModel.PixelWidth = svg.Width;
-        imageModel.PixelHeight = svg.Height;
-        imageModel.ImageType = ImageType.Svg;
-        imageModel.Image = fileInfo.FullName;
-    }
-
-    private static async Task AddBase64ImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, int height)
-    {
-        using var magickImage = await ImageDecoder.Base64ToMagickImage(fileInfo.FullName).ConfigureAwait(false);
-        using var b64Stream = new MemoryStream();
-        if (isThumb)
-        {
-            magickImage.Thumbnail(0, height);
-        }
-        else
-        {
-            await magickImage.WriteAsync(b64Stream);
-            b64Stream.Position = 0;
-        }
-        Add(b64Stream, imageModel);
     }
 
     private static async Task AddDefaultImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, int height)
@@ -140,15 +144,12 @@ public static class ImageHelper
         }
     }
 
-    private static async Task AddThumbAsync(FileInfo fileInfo, ImageModel imageModel, int height)
-    {
-        var thumb = await GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
-        imageModel.Image = thumb;
-        imageModel.PixelWidth = thumb?.PixelSize.Width ?? 0;
-        imageModel.PixelHeight = thumb?.PixelSize.Height ?? 0;
-        imageModel.ImageType = ImageType.Bitmap;
-    }
 
+    
+    #endregion
+    
+    #region Bitmap
+    
     private static void Add(Stream stream, ImageModel imageModel)
     {
         var bitmap = new Bitmap(stream);
@@ -157,6 +158,44 @@ public static class ImageHelper
         imageModel.PixelHeight = bitmap?.PixelSize.Height ?? 0;
         imageModel.ImageType = ImageType.Bitmap;
     }
+    
+    #endregion
+    
+    #region SVG
+    
+    private static void AddSvgImage(FileInfo fileInfo, ImageModel imageModel)
+    {
+        var svg = new MagickImage();
+        svg.Ping(fileInfo.FullName);
+        imageModel.PixelWidth = svg.Width;
+        imageModel.PixelHeight = svg.Height;
+        imageModel.ImageType = ImageType.Svg;
+        imageModel.Image = fileInfo.FullName;
+    }
+    
+    #endregion
+
+    #region Base64
+
+    private static async Task AddBase64ImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, int height)
+    {
+        using var magickImage = await ImageDecoder.Base64ToMagickImage(fileInfo.FullName).ConfigureAwait(false);
+        using var b64Stream = new MemoryStream();
+        if (isThumb)
+        {
+            magickImage.Thumbnail(0, height);
+        }
+        else
+        {
+            await magickImage.WriteAsync(b64Stream);
+            b64Stream.Position = 0;
+        }
+        Add(b64Stream, imageModel);
+    }
+
+    #endregion
+    
+    #region Thumbnail
 
     private static async Task<Bitmap?> GetThumbAsync(string path, int height, FileInfo? fileInfo = null)
     {
@@ -184,6 +223,15 @@ public static class ImageHelper
             return null;
         }
     }
+    
+    private static async Task AddThumbAsync(FileInfo fileInfo, ImageModel imageModel, int height)
+    {
+        var thumb = await GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
+        imageModel.Image = thumb;
+        imageModel.PixelWidth = thumb?.PixelSize.Width ?? 0;
+        imageModel.PixelHeight = thumb?.PixelSize.Height ?? 0;
+        imageModel.ImageType = ImageType.Bitmap;
+    }
 
     private static async Task<Bitmap> CreateThumbAsync(IMagickImage magick, string path, int height, FileInfo? fileInfo = null)
     {
@@ -209,7 +257,10 @@ public static class ImageHelper
         memoryStream.Position = 0;
         return WriteableBitmap.Decode(memoryStream);
     }
+    
+    #endregion
 
+    #region Helpers
     
     public static void SetImage(object image, Image imageControl, ImageType imageType)
     {
@@ -217,7 +268,6 @@ public static class ImageHelper
         {
             ImageType.Svg => new SvgImage { Source = SvgSource.Load(image as string) },
             ImageType.Bitmap => image as Bitmap,
-            ImageType.AnimatedBitmap => image as Bitmap,
             _ => imageControl.Source
         };
     }
@@ -228,4 +278,12 @@ public static class ImageHelper
         magickImage.Ping(vm.FileInfo);
         return EXIFHelper.GetImageOrientation(magickImage);
     }
+    
+    public static bool IsAnimated(FileInfo fileInfo)
+    {
+        var frames = ImageFunctionHelper.GetImageFrames(fileInfo.FullName);
+        return frames > 1;
+    }
+    
+    #endregion
 }
