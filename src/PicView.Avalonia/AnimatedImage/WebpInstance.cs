@@ -9,7 +9,7 @@ namespace PicView.Avalonia.AnimatedImage;
 public class WebpInstance : IGifInstance
 {
     public IterationCount IterationCount { get; set; }
-    public bool AutoStart { get; private set; } = true;
+    public bool AutoStart => true;
 
     private readonly WriteableBitmap? _targetBitmap;
     private TimeSpan _totalTime;
@@ -17,26 +17,9 @@ public class WebpInstance : IGifInstance
     private uint _iterationCount;
     private int _currentFrameIndex;
 
-    private SKCodec? _codec;
+    private readonly SKCodec? _codec;
 
     public CancellationTokenSource CurrentCts { get; }
-
-    internal WebpInstance(object newValue)
-        : this(
-            newValue switch
-            {
-                Stream s => s,
-                Uri u => GetStreamFromUri(u),
-                string str => GetStreamFromString(str),
-                _ => throw new InvalidDataException("Unsupported source object")
-            }
-        ) { }
-
-    public WebpInstance(string uri)
-        : this(GetStreamFromString(uri)) { }
-
-    public WebpInstance(Uri uri)
-        : this(GetStreamFromUri(uri)) { }
 
     public WebpInstance(Stream currentStream)
     {
@@ -60,14 +43,12 @@ public class WebpInstance : IGifInstance
 
         _totalTime = TimeSpan.Zero;
 
-        _frameTimes = _codec
-            .FrameInfo
-            .Select(frame =>
-            {
-                _totalTime = _totalTime.Add(TimeSpan.FromMilliseconds(frame.Duration));
-                return _totalTime;
-            })
-            .ToList();
+        _frameTimes = _codec.FrameInfo.Select(frame =>
+        {
+            _totalTime = _totalTime.Add(TimeSpan.FromMilliseconds(frame.Duration));
+            return _totalTime;
+        })
+        .ToList();
 
         RenderFrame(_codec, _targetBitmap, 0);
     }
@@ -102,34 +83,15 @@ public class WebpInstance : IGifInstance
             throw new InvalidDataException($"Could not decode frame {index} of {codec.FrameCount}.");
     }
 
-    private static Stream GetStreamFromString(string str)
-    {
-        if (!Uri.TryCreate(str, UriKind.RelativeOrAbsolute, out var res))
-        {
-            throw new InvalidCastException("The string provided can't be converted to URI.");
-        }
-
-        return GetStreamFromUri(res);
-    }
-
-    private static Stream GetStreamFromUri(Uri uri)
-    {
-        var uriString = uri.OriginalString.Trim();
-
-        if (!uriString.StartsWith("resm") && !uriString.StartsWith("avares"))
-        {
-            return new FileStream(uriString, FileMode.Open, FileAccess.Read);
-        }
-
-        return AssetLoader.Open(uri);
-    }
-
     public int GifFrameCount => _frameTimes.Count;
 
     public PixelSize GifPixelSize { get; }
-
     public void Dispose()
     {
+        if (IsDisposed) return;
+            
+        GC.SuppressFinalize(this);
+
         IsDisposed = true;
         CurrentCts.Cancel();
         _targetBitmap?.Dispose();

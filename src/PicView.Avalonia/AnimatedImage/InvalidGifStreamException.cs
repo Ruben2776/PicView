@@ -1,5 +1,3 @@
-using System.Runtime.Serialization;
-
 namespace PicView.Avalonia.AnimatedImage;
 
 [Serializable]

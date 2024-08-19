@@ -68,7 +68,9 @@ public class CustomVisualHandler : CompositionCustomVisualHandler
         }
         catch (Exception e)
         {
+            #if DEBUG
             Logger.Sink?.Log(LogEventLevel.Error, "GifImage Renderer ", this, e.ToString());
+            #endif
         }
     }
 }

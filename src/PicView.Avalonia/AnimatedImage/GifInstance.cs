@@ -9,7 +9,7 @@ namespace PicView.Avalonia.AnimatedImage;
 public class GifInstance : IGifInstance
 {
     public IterationCount IterationCount { get; set; }
-    public bool AutoStart { get; private set; } = true;
+    public bool AutoStart => true;
     private readonly GifDecoder _gifDecoder;
     private readonly WriteableBitmap _targetBitmap;
     private TimeSpan _totalTime;
@@ -18,21 +18,6 @@ public class GifInstance : IGifInstance
     private int _currentFrameIndex;
 
     public CancellationTokenSource CurrentCts { get; }
-
-    internal GifInstance(object newValue) : this(newValue switch
-    {
-        Stream s => s,
-        Uri u => GetStreamFromUri(u),
-        string str => GetStreamFromString(str),
-        _ => throw new InvalidDataException("Unsupported source object")
-    })
-    { }
-
-    public GifInstance(string uri) : this(GetStreamFromString(uri))
-    { }
-
-    public GifInstance(Uri uri) : this(GetStreamFromUri(uri))
-    { }
 
     public GifInstance(Stream currentStream)
     {
@@ -61,33 +46,6 @@ public class GifInstance : IGifInstance
         }).ToList();
 
         _gifDecoder.RenderFrame(0, _targetBitmap);
-    }
-
-    private static Stream GetStreamFromString(string str)
-    {
-        if (!Uri.TryCreate(str, UriKind.RelativeOrAbsolute, out var res))
-        {
-            throw new InvalidCastException("The string provided can't be converted to URI.");
-        }
-
-        return GetStreamFromUri(res);
-    }
-
-    private static Stream GetStreamFromUri(Uri uri)
-    {
-        var uriString = uri.OriginalString.Trim();
-
-        if (!uriString.StartsWith("resm") && !uriString.StartsWith("avares"))
-            throw new InvalidDataException(
-                "The URI provided is not currently supported.");
-
-        var assetLocator = AssetLoader.Open(uri);
-
-        if (assetLocator is null)
-            throw new InvalidDataException(
-                "The resource URI was not found in the current assembly.");
-
-        return assetLocator;
     }
 
     public int GifFrameCount => _frameTimes.Count;

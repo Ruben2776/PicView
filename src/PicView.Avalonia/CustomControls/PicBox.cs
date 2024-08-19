@@ -20,31 +20,14 @@ using Vector = Avalonia.Vector;
 namespace PicView.Avalonia.CustomControls;
 public class PicBox : Control
 {
-    #region Constructors
-    
-    static PicBox()
-    {
-        // Registers the SourceProperty to render when the source changes
-        AffectsRender<PicBox>(SourceProperty);
-    }
-    public PicBox()
-    {
-        _imageTypeSubscription = this.WhenAnyValue(x => x.ImageType)
-            .Subscribe(UpdateSource);
-    }
-
-    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnDetachedFromVisualTree(e);
-        _imageTypeSubscription.Dispose();
-    }
-
-    #endregion
-
-    #region Properties
+    #region Fields and Properties
     
     private CompositionCustomVisual? _customVisual;
     private readonly IDisposable? _imageTypeSubscription;
+    private FileStream? _stream;
+    private IGifInstance? _animInstance;
+    private readonly IterationCount _iterationCount = IterationCount.Infinite;
+    public string? InitialAnimatedSource;
     
     /// <summary>
     /// Defines the <see cref="Source"/> property.
@@ -93,13 +76,21 @@ public class PicBox : Control
         get => (ImageType)(GetValue(ImageTypeProperty) ?? false);
         set => SetValue(ImageTypeProperty, value);
     }
-
-    private FileStream? _stream;
-    private IGifInstance? _animInstance;
-    private readonly IterationCount _iterationCount = IterationCount.Infinite;
     
-    public object? InitialAnimatedSource;
+    #endregion
     
+    #region Constructors
+    
+    static PicBox()
+    {
+        // Registers the SourceProperty to render when the source changes
+        AffectsRender<PicBox>(SourceProperty);
+    }
+    public PicBox()
+    {
+        _imageTypeSubscription = this.WhenAnyValue(x => x.ImageType)
+            .Subscribe(UpdateSource);
+    }
 
     #endregion
 
@@ -117,23 +108,11 @@ public class PicBox : Control
         {
             case IImage source:
                 RenderBasedOnSettings(context, source);
-                if (ImageType is ImageType.AnimatedGif or ImageType.AnimatedWebp)
-                {
-                    var s = InitialAnimatedSource as string;
-                    if (!string.IsNullOrWhiteSpace(s))
-                    {
-                        context.Dispose(); // Fixes transparent images
-                        _stream = new FileStream(s, FileMode.Open, FileAccess.Read);
-                        UpdateAnimationInstance(_stream);
-                        AnimationUpdate();
-                    }
-                }
+                RenderAnimatedImageIfRequired(context);
                 break;
             case string svg:
             {
-                var svgSource = SvgSource.Load(svg);
-                var svgImage = new SvgImage { Source = svgSource };
-                RenderBasedOnSettings(context, svgImage);
+                RenderSvgImage(context, svg);
                 break;
             }
             default:
@@ -143,6 +122,31 @@ public class PicBox : Control
 #endif
                 break;
         }
+    }
+
+    private void RenderSvgImage(DrawingContext context, string svg)
+    {
+        var svgSource = SvgSource.Load(svg);
+        var svgImage = new SvgImage { Source = svgSource };
+        RenderBasedOnSettings(context, svgImage);
+    }
+
+    private void RenderAnimatedImageIfRequired(DrawingContext context)
+    {
+        if (ImageType is not (ImageType.AnimatedGif or ImageType.AnimatedWebp))
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(InitialAnimatedSource))
+        {
+            return;
+        }
+
+        context.Dispose(); // Fixes transparent images
+        _stream = new FileStream(InitialAnimatedSource, FileMode.Open, FileAccess.Read);
+        UpdateAnimationInstance(_stream);
+        AnimationUpdate();
     }
 
     private void RenderBasedOnSettings(DrawingContext context, IImage source)
@@ -190,17 +194,6 @@ public class PicBox : Control
         }
     }
 
-    private Rect DetermineViewPort()
-    {
-        if (!(Bounds.Width <= 0) && !(Bounds.Height <= 0))
-        {
-            return new Rect(Bounds.Size);
-        }
-
-        var mainView = UIHelper.GetMainView;
-        return mainView == null ? new Rect() : new Rect(Bounds.X, Bounds.Y, mainView.Bounds.Width, mainView.Bounds.Height);
-    }
-
     private void RenderImage1To1(DrawingContext context, IImage source, Rect viewPort, Size sourceSize)
     {
         var scale = 1.0;
@@ -245,33 +238,9 @@ public class PicBox : Control
         context.DrawImage(secondarySource, new Rect(secondarySource.Size), secondarySourceRect);
     }
     
-    
-    private static Vector CalculateScaling(Size destinationSize, Size sourceSize)
-    {
-        var isConstrainedWidth = !double.IsPositiveInfinity(destinationSize.Width);
-        var isConstrainedHeight = !double.IsPositiveInfinity(destinationSize.Height);
+    #endregion
 
-        // Compute scaling factors for both axes
-        var scaleX = MathUtilities.IsZero(sourceSize.Width) ? 0.0 : destinationSize.Width / sourceSize.Width;
-        var scaleY = MathUtilities.IsZero(sourceSize.Height) ? 0.0 : destinationSize.Height / sourceSize.Height;
-
-        if (!isConstrainedWidth)
-        {
-            scaleX = scaleY;
-        }
-        else if (!isConstrainedHeight)
-        {
-            scaleY = scaleX;
-        }
-
-        return new Vector(scaleX, scaleY);
-    }
-    
-    public static Size CalculateSize(Size destinationSize, Size sourceSize)
-    {
-        return sourceSize * CalculateScaling(destinationSize, sourceSize);
-    }
-
+    #region Measurement and Layout
     /// <summary>
     /// Measures the control.
     /// </summary>
@@ -299,23 +268,34 @@ public class PicBox : Control
         return base.ArrangeOverride(finalSize);
     }
 
-    protected override AutomationPeer OnCreateAutomationPeer()
-    {
-        return new ImageAutomationPeer(this);
-    }
+    #endregion
     
-    
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    #region Calculations
+    private static Vector CalculateScaling(Size destinationSize, Size sourceSize)
     {
-        var compositor = ElementComposition.GetElementVisual(this)?.Compositor;
-        if (compositor == null || _customVisual?.Compositor == compositor)
-            return;
-        _customVisual = compositor.CreateCustomVisual(new CustomVisualHandler());
-        ElementComposition.SetElementChildVisual(this, _customVisual);
-        _customVisual.SendHandlerMessage(CustomVisualHandler.StartMessage);
-        base.OnAttachedToVisualTree(e);
-    }
+        var isConstrainedWidth = !double.IsPositiveInfinity(destinationSize.Width);
+        var isConstrainedHeight = !double.IsPositiveInfinity(destinationSize.Height);
 
+        // Compute scaling factors for both axes
+        var scaleX = MathUtilities.IsZero(sourceSize.Width) ? 0.0 : destinationSize.Width / sourceSize.Width;
+        var scaleY = MathUtilities.IsZero(sourceSize.Height) ? 0.0 : destinationSize.Height / sourceSize.Height;
+
+        if (!isConstrainedWidth)
+        {
+            scaleX = scaleY;
+        }
+        else if (!isConstrainedHeight)
+        {
+            scaleY = scaleX;
+        }
+
+        return new Vector(scaleX, scaleY);
+    }
+    
+    public static Size CalculateSize(Size destinationSize, Size sourceSize)
+    {
+        return sourceSize * CalculateScaling(destinationSize, sourceSize);
+    }
     #endregion
     
     #region Helper Methods
@@ -350,22 +330,33 @@ public class PicBox : Control
                 break;
         }
     }
+    
+    private Rect DetermineViewPort()
+    {
+        if (!(Bounds.Width <= 0) && !(Bounds.Height <= 0))
+        {
+            return new Rect(Bounds.Size);
+        }
+
+        var mainView = UIHelper.GetMainView;
+        return mainView == null ? new Rect() : new Rect(Bounds.X, Bounds.Y, mainView.Bounds.Width, mainView.Bounds.Height);
+    }
 
     #endregion
 
     #region Animation
     
 
-    private void UpdateAnimationInstance(object source)
+    private void UpdateAnimationInstance(FileStream fileStream)
     {
         _animInstance?.Dispose();
         if (ImageType == ImageType.AnimatedGif)
         {
-            _animInstance = new GifInstance(source as FileStream);
+            _animInstance = new GifInstance(fileStream);
         }
         else
         {
-            _animInstance = new WebpInstance(source as FileStream);
+            _animInstance = new WebpInstance(fileStream);
         }
         _animInstance.IterationCount = _iterationCount;
         _customVisual?.SendHandlerMessage(_animInstance);
@@ -387,6 +378,33 @@ public class PicBox : Control
         _customVisual.Size = new Vector2((float)sourceSize.Width, (float)sourceSize.Height);
 
         _customVisual.Offset = new Vector3((float)destRect.Position.X, (float)destRect.Position.Y, 0);
+    }
+
+    #endregion
+    
+    #region Visual Tree
+    
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        _imageTypeSubscription.Dispose();
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        var compositor = ElementComposition.GetElementVisual(this)?.Compositor;
+        if (compositor == null || _customVisual?.Compositor == compositor) return;
+
+        _customVisual = compositor.CreateCustomVisual(new CustomVisualHandler());
+        ElementComposition.SetElementChildVisual(this, _customVisual);
+        _customVisual.SendHandlerMessage(CustomVisualHandler.StartMessage);
+
+        base.OnAttachedToVisualTree(e);
+    }
+
+    protected override AutomationPeer OnCreateAutomationPeer()
+    {
+        return new ImageAutomationPeer(this);
     }
 
     #endregion

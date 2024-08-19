@@ -10,7 +10,6 @@ using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using Avalonia;
 using Avalonia.Media.Imaging;
 using static PicView.Avalonia.AnimatedImage.Extensions.StreamExtensions;
 
@@ -54,67 +53,67 @@ public sealed class GifDecoder : IDisposable
 
     public GifHeader? Header { get; private set; }
 
-    public readonly List<GifFrame> Frames = new();
-
-    public PixelSize Size => new(Header?.Dimensions.Width ?? 0, Header?.Dimensions.Height ?? 0);
+    public readonly List<GifFrame> Frames = [];
 
     public GifDecoder(Stream fileStream, CancellationToken currentCtsToken)
     {
-            _fileStream = fileStream;
-            _currentCtsToken = currentCtsToken;
+        _fileStream = fileStream;
+        _currentCtsToken = currentCtsToken;
 
-            ProcessHeaderData();
-            ProcessFrameData();
+        ProcessHeaderData();
+        ProcessFrameData();
 
-            if (Header != null)
-                Header.IterationCount = Header.Iterations switch
-                {
-                    -1 => new GifRepeatBehavior { Count = 1 },
-                    0 => new GifRepeatBehavior { LoopForever = true },
-                    > 0 => new GifRepeatBehavior { Count = Header.Iterations },
-                    _ => Header.IterationCount
-                };
-
-            var pixelCount = _gifDimensions.TotalPixels;
-
-            _hasFrameBackups = Frames
-                .Any(f => f.FrameDisposalMethod == FrameDisposal.Restore);
-
-            _bitmapBackBuffer = new GifColor[pixelCount];
-            _indexBuf = new byte[pixelCount];
-
-            if (_hasFrameBackups)
-                _backupFrameIndexBuf = new byte[pixelCount];
-
-            _prefixBuf = new short[MaxStackSize];
-            _suffixBuf = new byte[MaxStackSize];
-            _pixelStack = new byte[MaxStackSize + 1];
-
-            _backBufferBytes = pixelCount * Marshal.SizeOf(typeof(GifColor));
+        if (Header != null)
+        {
+            Header.IterationCount = Header.Iterations switch
+            {
+                -1 => new GifRepeatBehavior { Count = 1 },
+                0 => new GifRepeatBehavior { LoopForever = true },
+                > 0 => new GifRepeatBehavior { Count = Header.Iterations },
+                _ => Header.IterationCount
+            };
         }
+
+        var pixelCount = _gifDimensions.TotalPixels;
+
+        _hasFrameBackups = Frames
+            .Any(f => f.FrameDisposalMethod == FrameDisposal.Restore);
+
+        _bitmapBackBuffer = new GifColor[pixelCount];
+        _indexBuf = new byte[pixelCount];
+
+        if (_hasFrameBackups)
+            _backupFrameIndexBuf = new byte[pixelCount];
+
+        _prefixBuf = new short[MaxStackSize];
+        _suffixBuf = new byte[MaxStackSize];
+        _pixelStack = new byte[MaxStackSize + 1];
+
+        _backBufferBytes = pixelCount * Marshal.SizeOf<GifColor>();
+    }
 
     public void Dispose()
     {
-            Frames.Clear();
+        Frames.Clear();
 
-            _bitmapBackBuffer = null;
-            _prefixBuf = null;
-            _suffixBuf = null;
-            _pixelStack = null;
-            _indexBuf = null;
-            _backupFrameIndexBuf = null;
-        }
+        _bitmapBackBuffer = null;
+        _prefixBuf = null;
+        _suffixBuf = null;
+        _pixelStack = null;
+        _indexBuf = null;
+        _backupFrameIndexBuf = null;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int PixCoord(int x, int y) => x + y * _gifDimensions.Width;
 
-    static readonly (int Start, int Step)[] Pass =
-    {
+    private static readonly (int Start, int Step)[] Pass =
+    [
         (0, 8),
         (4, 8),
         (2, 4),
         (1, 2)
-    };
+    ];
 
     private void ClearImage()
     {
@@ -144,20 +143,21 @@ public sealed class GifDecoder : IDisposable
         _prevFrame++;
 
         // render intermediate frame
-        for (int idx = _prevFrame; idx < fIndex; ++idx)
+        for (var idx = _prevFrame; idx < fIndex; ++idx)
         {
             var prevFrame = Frames[idx];
 
-            if (prevFrame.FrameDisposalMethod == FrameDisposal.Restore)
-                continue;
-
-            if (prevFrame.FrameDisposalMethod == FrameDisposal.Background)
+            switch (prevFrame.FrameDisposalMethod)
             {
-                ClearArea(prevFrame.Dimensions);
-                continue;
+                case FrameDisposal.Restore:
+                    continue;
+                case FrameDisposal.Background:
+                    ClearArea(prevFrame.Dimensions);
+                    continue;
+                default:
+                    RenderFrameAt(idx, writeableBitmap);
+                    break;
             }
-
-            RenderFrameAt(idx, writeableBitmap);
         }
 
         RenderFrameAt(fIndex, writeableBitmap);
@@ -207,7 +207,7 @@ public sealed class GifDecoder : IDisposable
 
         if (curFrame.IsInterlaced)
         {
-            int curSrcRow = 0;
+            var curSrcRow = 0;
             for (var i = 0; i < 4; i++)
             {
                 var curPass = Pass[i];
@@ -460,7 +460,7 @@ public sealed class GifDecoder : IDisposable
         {
             Dimensions = _gifDimensions,
             GlobalColorTable =
-                _gctUsed ? ProcessColorTable(ref str, tmpB, _gctSize) : Array.Empty<GifColor>(),
+                _gctUsed ? ProcessColorTable(ref str, tmpB, _gctSize) : [],
             HeaderSize = _fileStream.Position
         };
 
