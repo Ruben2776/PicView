@@ -2,19 +2,16 @@
     <Design.PreviewWith>
         <PathIcon />
     </Design.PreviewWith>
-    <ControlTheme x:Key="{x:Type PathIcon}" TargetType="PathIcon">
-        <Setter Property="Foreground" Value="{TemplateBinding Foreground}" />
+    <ControlTheme TargetType="PathIcon" x:Key="{x:Type PathIcon}">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Height" Value="{TemplateBinding Height}" />
-        <Setter Property="Width" Value="{TemplateBinding Width}" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Background="{TemplateBinding Background}">
-                    <Viewbox Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                    <Viewbox Height="{TemplateBinding Height}" Width="{TemplateBinding Width}">
                         <Path
-                            Name="PART_ContentPresenter"
                             Data="{TemplateBinding Data}"
                             Fill="{TemplateBinding Foreground}"
+                            Name="PART_ContentPresenter"
                             Stretch="Uniform" />
                     </Viewbox>
                 </Border>
@@ -22,7 +19,7 @@
         </Setter>
         <Style Selector="^.iconHover:pointerover /template/ Path#PART_ContentPresenter">
             <Style.Animations>
-                <Animation IterationCount="1" Duration=".35">
+                <Animation Duration=".35" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Fill">
                             <SolidColorBrush Color="{StaticResource MainIconColor}" />

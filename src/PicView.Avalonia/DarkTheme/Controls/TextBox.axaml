@@ -1,14 +1,14 @@
 <ResourceDictionary
+    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:ClassModifier="internal">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <ControlTheme x:Key="{x:Type TextBox}" TargetType="TextBox">
+    <ControlTheme TargetType="TextBox" x:Key="{x:Type TextBox}">
         <Setter Property="CaretBrush" Value="{StaticResource MainTextColor}" />
-        <Setter Property="Background" Value="{TemplateBinding Background}" />
-        <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
-        <Setter Property="Foreground" Value="{TemplateBinding Foreground}" />
-        <Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}" />
+        <!-- <Setter Property="Background" Value="{TemplateBinding Background}" /> -->
+        <!-- <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" /> -->
+        <!-- <Setter Property="Foreground" Value="{TemplateBinding Foreground}" /> -->
+        <!-- <Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}" /> -->
         <Setter Property="SelectionBrush" Value="{DynamicResource AccentColor}" />
         <Setter Property="SelectionForegroundBrush" Value="{StaticResource MainTextColor}" />
         <Setter Property="Padding" Value="4" />
@@ -16,49 +16,49 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
-                    Name="border"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}">
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Name="border">
                     <DockPanel
-                        Margin="{TemplateBinding Padding}"
                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        Margin="{TemplateBinding Padding}"
                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
 
                         <DataValidationErrors>
 
                             <Grid ColumnDefinitions="Auto,*,Auto">
                                 <ContentPresenter
+                                    Content="{TemplateBinding InnerLeftContent}"
                                     Grid.Column="0"
-                                    Grid.ColumnSpan="1"
-                                    Content="{TemplateBinding InnerLeftContent}" />
+                                    Grid.ColumnSpan="1" />
                                 <ScrollViewer
-                                    Name="PART_ScrollViewer"
-                                    Grid.Column="1"
-                                    Grid.ColumnSpan="1"
                                     AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
                                     BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="1"
                                     HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
                                     IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+                                    Name="PART_ScrollViewer"
                                     VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
                                     <Panel>
                                         <TextBlock
-                                            Name="watermark"
                                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                             IsVisible="{TemplateBinding Text,
                                                                         Converter={x:Static StringConverters.IsNullOrEmpty}}"
+                                            Name="watermark"
                                             Opacity="0.5"
                                             Text="{TemplateBinding Watermark}"
                                             TextAlignment="{TemplateBinding TextAlignment}"
-                                            TextWrapping="{TemplateBinding TextWrapping}" />
+                                            TextWrapping="{TemplateBinding TextWrapping}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                                         <TextPresenter
-                                            Name="PART_TextPresenter"
                                             CaretBrush="{TemplateBinding CaretBrush}"
                                             CaretIndex="{TemplateBinding CaretIndex}"
                                             LetterSpacing="{TemplateBinding LetterSpacing}"
                                             LineHeight="{TemplateBinding LineHeight}"
+                                            Name="PART_TextPresenter"
                                             PasswordChar="{TemplateBinding PasswordChar}"
                                             RevealPassword="{TemplateBinding RevealPassword}"
                                             SelectionBrush="{TemplateBinding SelectionBrush}"
@@ -77,9 +77,9 @@
                                     </ScrollViewer.Styles>
                                 </ScrollViewer>
                                 <ContentPresenter
+                                    Content="{TemplateBinding InnerRightContent}"
                                     Grid.Column="2"
-                                    Grid.ColumnSpan="1"
-                                    Content="{TemplateBinding InnerRightContent}" />
+                                    Grid.ColumnSpan="1" />
                             </Grid>
                         </DataValidationErrors>
                     </DockPanel>
