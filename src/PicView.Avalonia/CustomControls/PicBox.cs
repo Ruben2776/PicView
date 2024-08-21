@@ -12,8 +12,11 @@ using ReactiveUI;
 using Avalonia.Media.Imaging;
 using Avalonia.Rendering.Composition;
 using Avalonia.Svg.Skia;
+using ImageMagick;
 using PicView.Avalonia.AnimatedImage;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.ViewModels;
+using PicView.Core.FileHandling;
 using Vector = Avalonia.Vector;
 
 
@@ -117,6 +120,10 @@ public class PicBox : Control
             }
             default:
                 // Handle invalid source or log error
+                if (Source is null)
+                {
+                    return;
+                }
 #if DEBUG
                 Console.WriteLine("Invalid source type.");
 #endif
@@ -163,7 +170,26 @@ public class PicBox : Control
 #if DEBUG
             Console.WriteLine(e);
 #endif
-            return;
+            if (DataContext is not MainViewModel vm)
+            {
+                return;
+            }
+
+            var preloadValue = vm.ImageIterator?.GetCurrentPreLoadValue();
+            if (preloadValue?.ImageModel != null)
+            {
+                sourceSize = new Size(preloadValue.ImageModel.PixelWidth, preloadValue.ImageModel.PixelHeight);
+            }
+            else
+            {
+                if (vm.FileInfo is not null)
+                {
+                    using var magickImage = new MagickImage();
+                    magickImage.Ping(vm.FileInfo);
+                    sourceSize = new Size(magickImage.Width, magickImage.Height);
+                }
+                else return;
+            }
         }
     
         var is1To1 = false; // TODO: replace with settings value
@@ -257,7 +283,25 @@ public class PicBox : Control
 #if DEBUG
             Console.WriteLine(e);
 #endif
-            return new Size();
+            if (DataContext is not MainViewModel vm)
+            {
+                return new Size();
+            }
+
+            var preloadValue = vm.ImageIterator?.GetCurrentPreLoadValue();
+            if (preloadValue is not null)
+            {
+                return new Size(preloadValue.ImageModel.PixelWidth, preloadValue.ImageModel.PixelHeight);
+            }
+
+            if (vm.FileInfo is null)
+            {
+                return new Size();
+            }
+
+            using var magickImage = new MagickImage();
+            magickImage.Ping(vm.FileInfo);
+            return new Size(magickImage.Width, magickImage.Height);
         }
     }
 
