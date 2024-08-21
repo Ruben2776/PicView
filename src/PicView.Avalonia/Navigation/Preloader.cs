@@ -105,6 +105,7 @@ public sealed class PreLoader : IDisposable
 #if DEBUG
             Trace.WriteLine($"{nameof(AddAsync)} exception: \n{ex}");
 #endif
+            return false;
         }
         finally
         {
@@ -170,6 +171,31 @@ public sealed class PreLoader : IDisposable
         }
 
         return !Contains(key, list) ? null : _preLoadList[key];
+    }
+    
+    public async Task<PreLoadValue?> GetAsync(int key, List<string> list)
+    {
+        if (list == null)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(PreLoader)}.{nameof(Get)} list null \n{key}");
+#endif
+            return null;
+        }
+        if (key < 0 || key >= list.Count)
+        {
+#if DEBUG
+            Trace.WriteLine($"{nameof(PreLoader)}.{nameof(Get)} invalid key: \n{key}");
+#endif
+            return null;
+        }
+
+        if (Contains(key, list))
+        {
+            return _preLoadList[key];
+        } 
+        await AddAsync(key, list).ConfigureAwait(false);
+        return _preLoadList[key];
     }
 
     public bool Contains(int key, List<string> list)

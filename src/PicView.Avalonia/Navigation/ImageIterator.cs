@@ -5,12 +5,12 @@ using PicView.Core.FileHandling;
 using PicView.Core.Navigation;
 using System.Diagnostics;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Core.Gallery;
-using PicView.Core.Localization;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation;
@@ -34,7 +34,7 @@ public sealed class ImageIterator : IDisposable
     private static bool _isRunning;
     private readonly MainViewModel? _vm;
     
-    private static readonly SemaphoreSlim SemaphoreSlim = new(1, 1);
+    private CancellationTokenSource _cts = new();
 
     #endregion
 
@@ -395,18 +395,20 @@ public sealed class ImageIterator : IDisposable
         try
         {
             CurrentIndex = index;
+            await _cts.CancelAsync();
+            _cts = new CancellationTokenSource();
 
             await Task.Run(async () =>
             {
-                var preLoadValue = GetPreLoadValue(index);
+                var preLoadValue = GetCurrentPreLoadValue();
                 if (preLoadValue is not null)
                 {
                     if (preLoadValue.IsLoading)
                     {
-                        LoadingPreview(index);
+                        LoadingPreview(CurrentIndex);
                         preLoadValue.ImageLoaded += async (_, e) =>
                         {
-                            if (e.Index != index)
+                            if (e.Index != CurrentIndex)
                             {
                                 return;
                             }
@@ -417,22 +419,8 @@ public sealed class ImageIterator : IDisposable
                 }
                 else
                 {
-                    LoadingPreview(index);
-                    var added = await PreLoader.AddAsync(index, ImagePaths);
-                    if (CurrentIndex != index)
-                    {
-                        // Skip loading if user went to next value
-                        return;
-                    }
-                    if (added)
-                    {
-                        preLoadValue = PreLoader.Get(index, ImagePaths);
-                    }
-                }
-
-                if (CurrentIndex != index || preLoadValue is null)
-                {
-                    return;
+                    LoadingPreview(CurrentIndex);
+                    preLoadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths);
                 }
                 await Update(preLoadValue);
                 return;
@@ -441,13 +429,22 @@ public sealed class ImageIterator : IDisposable
                 {
                     try
                     {
-                        await SemaphoreSlim.WaitAsync();
-                        UpdateSource(index, value);
+                        if (CurrentIndex != index)
+                        {
+                            // Skip loading if user went to next value
+                            await _cts.CancelAsync();
+                            _cts.Token.ThrowIfCancellationRequested();
+                            return;
+                        }
+                        await UpdateSource(index, value, _cts);                   
                     }
-                    finally
+                    catch (OperationCanceledException)
                     {
-                        SemaphoreSlim.Release();
+#if DEBUG
+                        Console.WriteLine($"{nameof(IterateToIndex)} canceled at index {index}");
+#endif
                     }
+
                     // Add recent files, except when browsing archive
                     if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && ImagePaths.Count > index)
                     {
@@ -513,9 +510,20 @@ public sealed class ImageIterator : IDisposable
 
     #region Update Source and Preview
 
-    private void UpdateSource(int index, PreLoader.PreLoadValue preLoadValue)
+    private async Task UpdateSource(int index, PreLoader.PreLoadValue? preLoadValue, CancellationTokenSource cts)
     {
-        CurrentIndex = index;
+        preLoadValue ??= await PreLoader.GetAsync(index, ImagePaths);
+        if (preLoadValue.ImageModel?.Image is null)
+        {
+            var fileInfo = preLoadValue.ImageModel?.FileInfo ?? new FileInfo(ImagePaths[index]);
+            preLoadValue.ImageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+        }
+        if (index != CurrentIndex)
+        {
+            await cts.CancelAsync();
+            cts.Token.ThrowIfCancellationRequested();
+            return;
+        }
         _vm.IsLoading = false;
         ExifHandling.SetImageModel(preLoadValue.ImageModel, vm: _vm);
         _vm.ImageSource = preLoadValue.ImageModel.Image;
@@ -524,29 +532,41 @@ public sealed class ImageIterator : IDisposable
             _vm.ImageViewer.MainImage.InitialAnimatedSource = preLoadValue.ImageModel.FileInfo.FullName;
         }
         _vm.ImageType = preLoadValue.ImageModel.ImageType;
-        WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, preLoadValue.ImageModel.Rotation, _vm);
-        SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
-
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight, preLoadValue.ImageModel.Rotation, _vm);
+            SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
+        });
+        
         if (_vm.RotationAngle != 0)
         {
-            _vm.ImageViewer.Rotate(_vm.RotationAngle);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _vm.ImageViewer.Rotate(_vm.RotationAngle);
+            });
         }
         if (SettingsHelper.Settings.WindowProperties.KeepCentered)
         {
-            WindowHelper.CenterWindowOnScreen(false);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                WindowHelper.CenterWindowOnScreen(false);
+            });
         }
         
-        _vm.GetIndex = index + 1;
-        if (_vm.SelectedGalleryItemIndex != index)
+        _vm.GetIndex = CurrentIndex + 1;
+        if (_vm.SelectedGalleryItemIndex != CurrentIndex)
         {
-            _vm.SelectedGalleryItemIndex = index;
+            _vm.SelectedGalleryItemIndex = CurrentIndex;
             if (GalleryFunctions.IsBottomGalleryOpen)
             {
-                GalleryNavigation.CenterScrollToSelectedItem(_vm);
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    GalleryNavigation.CenterScrollToSelectedItem(_vm);
+                });
             }
         }
-        TooltipHelper.CloseToolTipMessage();
-
+        await Dispatcher.UIThread.InvokeAsync(TooltipHelper.CloseToolTipMessage);
+        
         ExifHandling.UpdateExifValues(preLoadValue.ImageModel, vm: _vm);
     }
     
@@ -616,7 +636,6 @@ public sealed class ImageIterator : IDisposable
             _watcher?.Dispose();
             Clear();
             _timer?.Dispose();
-            SemaphoreSlim.Dispose();
         }
 
         _disposed = true;
