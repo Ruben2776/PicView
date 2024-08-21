@@ -28,9 +28,9 @@ public sealed class GifDecoder : IDisposable
     private static readonly TimeSpan FrameDelayThreshold = TimeSpan.FromMilliseconds(10);
     private static readonly TimeSpan FrameDelayDefault = TimeSpan.FromMilliseconds(100);
     private static readonly GifColor TransparentColor = new(0, 0, 0, 0);
-    private static readonly int MaxTempBuf = 768;
-    private static readonly int MaxStackSize = 4096;
-    private static readonly int MaxBits = 4097;
+    private const int MaxTempBuf = 768;
+    private const int MaxStackSize = 4096;
+    private const int MaxBits = 4097;
 
     private readonly Stream _fileStream;
     private readonly CancellationToken _currentCtsToken;
@@ -444,7 +444,7 @@ public sealed class GifDecoder : IDisposable
         var tmpB = ArrayPool<byte>.Shared.Rent(MaxTempBuf);
         var tempBuf = tmpB.AsSpan();
 
-        var _ = str.Read(tmpB, 0, 6);
+        _ = str.Read(tmpB, 0, 6);
 
         if (!tempBuf[..3].SequenceEqual(G87AMagic[..3].Span))
             throw new InvalidGifStreamException("Not a GIF stream.");
