@@ -436,12 +436,12 @@ public sealed class ImageIterator : IDisposable
                             _cts.Token.ThrowIfCancellationRequested();
                             return;
                         }
-                        await UpdateSource(index, value, _cts);                   
+                        await UpdateSource(value);                   
                     }
                     catch (OperationCanceledException)
                     {
 #if DEBUG
-                        Console.WriteLine($"{nameof(IterateToIndex)} canceled at index {index}");
+                        Console.WriteLine($"{nameof(IterateToIndex)} canceled at index {index}, current index {CurrentIndex}");
 #endif
                     }
 
@@ -510,19 +510,13 @@ public sealed class ImageIterator : IDisposable
 
     #region Update Source and Preview
 
-    private async Task UpdateSource(int index, PreLoader.PreLoadValue? preLoadValue, CancellationTokenSource cts)
+    private async Task UpdateSource(PreLoader.PreLoadValue? preLoadValue)
     {
-        preLoadValue ??= await PreLoader.GetAsync(index, ImagePaths);
+        preLoadValue ??= await PreLoader.GetAsync(CurrentIndex, ImagePaths);
         if (preLoadValue.ImageModel?.Image is null)
         {
-            var fileInfo = preLoadValue.ImageModel?.FileInfo ?? new FileInfo(ImagePaths[index]);
+            var fileInfo = preLoadValue.ImageModel?.FileInfo ?? new FileInfo(ImagePaths[CurrentIndex]);
             preLoadValue.ImageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-        }
-        if (index != CurrentIndex)
-        {
-            await cts.CancelAsync();
-            cts.Token.ThrowIfCancellationRequested();
-            return;
         }
         _vm.IsLoading = false;
         ExifHandling.SetImageModel(preLoadValue.ImageModel, vm: _vm);
@@ -559,10 +553,7 @@ public sealed class ImageIterator : IDisposable
             _vm.SelectedGalleryItemIndex = CurrentIndex;
             if (GalleryFunctions.IsBottomGalleryOpen)
             {
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    GalleryNavigation.CenterScrollToSelectedItem(_vm);
-                });
+                GalleryNavigation.CenterScrollToSelectedItem(_vm);
             }
         }
         await Dispatcher.UIThread.InvokeAsync(TooltipHelper.CloseToolTipMessage);
@@ -577,11 +568,6 @@ public sealed class ImageIterator : IDisposable
             return;
         }
         SetTitleHelper.SetLoadingTitle(_vm);
-        _vm.SelectedGalleryItemIndex = index;
-        if (GalleryFunctions.IsBottomGalleryOpen)
-        {
-            GalleryNavigation.CenterScrollToSelectedItem(_vm);
-        }
         using var image = new MagickImage();
         image.Ping(_vm.ImageIterator.ImagePaths[index]);
         var thumb = image.GetExifProfile()?.CreateThumbnail();

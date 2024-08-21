@@ -446,13 +446,23 @@ public sealed class GifDecoder : IDisposable
 
         _ = str.Read(tmpB, 0, 6);
 
-        if (!tempBuf[..3].SequenceEqual(G87AMagic[..3].Span))
-            throw new InvalidGifStreamException("Not a GIF stream.");
+        try
+        {
+            if (!tempBuf[..3].SequenceEqual(G87AMagic[..3].Span))
+                throw new InvalidGifStreamException("Not a GIF stream.");
 
-        if (!(tempBuf[..6].SequenceEqual(G87AMagic.Span) |
-              tempBuf[..6].SequenceEqual(G89AMagic.Span)))
-            throw new InvalidGifStreamException("Unsupported GIF Version: " +
-                                                Encoding.ASCII.GetString(tempBuf[..6].ToArray()));
+            if (!(tempBuf[..6].SequenceEqual(G87AMagic.Span) |
+                  tempBuf[..6].SequenceEqual(G89AMagic.Span)))
+                throw new InvalidGifStreamException("Unsupported GIF Version: " +
+                                                    Encoding.ASCII.GetString(tempBuf[..6].ToArray()));
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Console.WriteLine(e);
+#endif
+            return;
+        }
 
         ProcessScreenDescriptor(tmpB);
 
@@ -476,9 +486,19 @@ public sealed class GifDecoder : IDisposable
         var target = new GifColor[nColors];
 
         var n = stream.Read(rawBufSpan, 0, nBytes);
-
-        if (n < nBytes)
-            throw new InvalidOperationException("Wrong color table bytes.");
+        
+        try
+        {
+            if (n < nBytes)
+                throw new InvalidOperationException("Wrong color table bytes.");
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Console.WriteLine(e);
+#endif
+            return target;
+        }
 
         int i = 0, j = 0;
 
