@@ -29,7 +29,6 @@ public class PicBox : Control
     private readonly IDisposable? _imageTypeSubscription;
     private FileStream? _stream;
     private IGifInstance? _animInstance;
-    private readonly IterationCount _iterationCount = IterationCount.Infinite;
     public string? InitialAnimatedSource;
 
     private static readonly Lock Lock = new();
@@ -416,7 +415,7 @@ public class PicBox : Control
             {
                 _animInstance = new WebpInstance(fileStream);
             }
-            _animInstance.IterationCount = _iterationCount;
+            _animInstance.IterationCount = IterationCount.Infinite;
             _customVisual?.SendHandlerMessage(_animInstance);
         }
         AnimationUpdate();
@@ -435,7 +434,6 @@ public class PicBox : Control
         var destRect = viewPort.CenterRect(new Rect(scaledSize)).Intersect(viewPort);
 
         _customVisual.Size = new Vector2((float)sourceSize.Width, (float)sourceSize.Height);
-
         _customVisual.Offset = new Vector3((float)destRect.Position.X, (float)destRect.Position.Y, 0);
     }
 
