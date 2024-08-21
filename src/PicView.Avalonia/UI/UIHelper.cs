@@ -2,13 +2,12 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.Threading;
-using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.Localization;
 

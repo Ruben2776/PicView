@@ -665,6 +665,14 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isOpeningInSameWindow, value);
     }
 
+    private bool _isEditableTitlebarOpen;
+    
+    public bool IsEditableTitlebarOpen
+    {
+        get => _isEditableTitlebarOpen;
+        set => this.RaiseAndSetIfChanged(ref _isEditableTitlebarOpen, value);
+    }
+
     #endregion Booleans
 
     public double WindowMinSize

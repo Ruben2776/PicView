@@ -12,6 +12,7 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -159,24 +160,7 @@
                         Stretch="Fill" />
                 </Viewbox>
             </Button>
-            <customControls:EditableTitlebar
-                Background="{StaticResource SecondaryBackgroundColor}"
-                FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                FontSize="13"
-                FontWeight="Medium"
-                Foreground="{StaticResource MainTextColor}"
-                Height="{CompiledBinding TitlebarHeight,
-                                         Mode=OneWay}"
-                IsTabStop="False"
-                MaxWidth="{CompiledBinding TitleMaxWidth,
-                                           Mode=OneWay}"
-                Name="EditableTitlebar"
-                Text="{CompiledBinding Title,
-                                       Mode=OneWay}"
-                TextAlignment="Center"
-                ToolTip.Tip="{CompiledBinding TitleTooltip,
-                                              Mode=OneWay}"
-                VerticalAlignment="Center" />
+            <uc:EditableTitlebar Background="{StaticResource SecondaryBackgroundColor}" x:Name="EditableTitlebar" />
         </DockPanel>
     </Border>
 </UserControl>

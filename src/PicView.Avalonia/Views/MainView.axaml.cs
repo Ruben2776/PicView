@@ -29,9 +29,13 @@ public partial class MainView : UserControl
     
     private void CloseTitlebarIfOpen(object? sender, EventArgs e)
     {
-        if (UIHelper.GetEditableTitlebar.IsOpen)
+        if (DataContext is not MainViewModel vm)
         {
-            UIHelper.GetEditableTitlebar.CloseTitlebar();
+            return;
+        }
+        if (vm.IsEditableTitlebarOpen)
+        {
+            vm.IsEditableTitlebarOpen = false;
         }
     }
 
