@@ -9,7 +9,9 @@ using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Config;
 using PicView.Core.Extensions;
+using PicView.Core.ProcessHandling;
 
 namespace PicView.Avalonia.Views;
 
@@ -19,7 +21,7 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
         // TODO add visual feedback for drag and drop
-        //AddHandler(DragDrop.DragOverEvent, DragOver);
+        AddHandler(DragDrop.DragOverEvent, DragOver);
         AddHandler(DragDrop.DropEvent, Drop);
         
         GotFocus += CloseTitlebarIfOpen;
@@ -122,9 +124,21 @@ public partial class MainView : UserControl
         var firstFile = storageItems.FirstOrDefault();
         var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
         await NavigationHelper.LoadPicFromStringAsync(path, vm).ConfigureAwait(false);
-        foreach (var file in storageItems.Skip(1))
+        if (!SettingsHelper.Settings.UIProperties.OpenInSameWindow)
         {
-            // TODO Open each file in a new window if the setting to open in the same window is false
+            foreach (var file in storageItems.Skip(1))
+            {
+                var filepath = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? file.Path.AbsolutePath : file.Path.LocalPath;
+                ProcessHelper.StartNewProcess(filepath);
+            }
         }
+    }
+    
+    private async Task DragOver(object? sender, DragEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+    
+        
     }
 }

@@ -173,6 +173,8 @@ public static class NavigationHelper
         
         vm.CurrentView = vm.ImageViewer;
         UIHelper.CloseMenus(vm);
+        vm.IsLoading = true;
+        SetTitleHelper.SetLoadingTitle(vm);
         
         var check = ErrorHelper.CheckIfLoadableString(source);
         
@@ -180,26 +182,31 @@ public static class NavigationHelper
         {
             default:
                 await LoadPicFromFile(check, vm).ConfigureAwait(false);
+                vm.IsLoading = false;
                 return;
 
             case "web":
                 await LoadPicFromUrlAsync(source, vm).ConfigureAwait(false);
+                vm.IsLoading = false;
                 return;
 
             case "base64":
                 await LoadPicFromBase64Async(source, vm).ConfigureAwait(false);
+                vm.IsLoading = false;
                 return;
 
             case "directory":
                 await LoadPicFromDirectoryAsync(source, vm).ConfigureAwait(false);
+                vm.IsLoading = false;
                 return;
 
             case "zip":
                 await LoadPicFromArchiveAsync(source, vm).ConfigureAwait(false);
+                vm.IsLoading = false;
                 return;
 
             case "":
-                ErrorHandling.ShowStartUpMenu(vm);
+                await ErrorHandling.ReloadAsync(vm);
                 vm.IsLoading = false;
                 return;
         }
@@ -288,11 +295,13 @@ public static class NavigationHelper
             return;
         }
         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-        SetSingleImage(imageModel.Image as Bitmap, url, vm);
+        SetSingleImage(imageModel.Image, imageModel.ImageType, url, vm);
         vm.FileInfo = fileInfo;
         ExifHandling.SetImageModel(imageModel, vm);
         ExifHandling.UpdateExifValues(imageModel, vm);
         FileHistoryNavigation.Add(url);
+
+        vm.IsLoading = false;
     }
     
     /// <summary>
@@ -326,7 +335,7 @@ public static class NavigationHelper
                     PixelHeight = bitmap?.PixelSize.Height ?? 0,
                     ImageType = ImageType.Bitmap
                 };
-                SetSingleImage(imageModel.Image as Bitmap, TranslationHelper.Translation.Base64Image, vm);
+                SetSingleImage(imageModel.Image, imageModel.ImageType, TranslationHelper.Translation.Base64Image, vm);
                 ExifHandling.SetImageModel(imageModel, vm);
                 ExifHandling.UpdateExifValues(imageModel, vm);
             }
@@ -371,14 +380,15 @@ public static class NavigationHelper
     #endregion
     
     #region Set image
-    
+
     /// <summary>
     /// Sets the given image as the single image displayed in the view.
     /// </summary>
-    /// <param name="bitmap">The bitmap of the image to display.</param>
+    /// <param name="source">The source of the image to display.</param>
+    /// <param name="imageType"></param>
     /// <param name="name">The name of the image.</param>
     /// <param name="vm">The main view model instance.</param>
-    public static void SetSingleImage(Bitmap bitmap, string name, MainViewModel vm)
+    public static void SetSingleImage(object source, ImageType imageType, string name, MainViewModel vm)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -389,10 +399,25 @@ public static class NavigationHelper
         }, DispatcherPriority.Render);
 
         vm.ImageIterator = null;
-        vm.ImageSource = bitmap;
-        vm.ImageType = ImageType.Bitmap;
-        var width = bitmap.PixelSize.Width;
-        var height = bitmap.PixelSize.Height;
+        int width, height;
+        if (imageType is ImageType.Svg)
+        {
+            var path = source as string;
+            using var magickImage = new MagickImage();
+            magickImage.Ping(path);
+            vm.ImageSource = source;
+            vm.ImageType = ImageType.Svg;
+            width = magickImage.Width;
+            height = magickImage.Height;
+        }
+        else
+        {
+            var bitmap = source as Bitmap;
+            vm.ImageSource = source;
+            vm.ImageType = imageType == ImageType.Invalid ? ImageType.Bitmap : imageType;
+            width = bitmap?.PixelSize.Width ?? 0;
+            height = bitmap?.PixelSize.Height ?? 0;
+        }
 
         if (GalleryFunctions.IsBottomGalleryOpen)
         {
@@ -413,6 +438,7 @@ public static class NavigationHelper
         vm.WindowTitle = titleString[0];
         vm.Title = titleString[1];
         vm.TitleTooltip = titleString[1];
+        vm.GalleryMargin = new Thickness(0, 0, 0, 0);
     }
     
     #endregion
@@ -458,7 +484,6 @@ public static class NavigationHelper
     /// Previews the picture and loads the gallery with the specified files.
     /// </summary>
     /// <param name="fileInfo">The file info of the picture to preview.</param>
-    /// <param name="fileName">The name of the picture file.</param>
     /// <param name="vm">The main view model instance.</param>
     /// <param name="files">Optional: List of file paths in the gallery.</param>
     /// <returns>A task representing the asynchronous operation.</returns>

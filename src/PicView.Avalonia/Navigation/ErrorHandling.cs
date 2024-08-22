@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia;
+using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -48,22 +49,24 @@ public static class ErrorHandling
             UIHelper.CloseMenus(vm);
             vm.ImageIterator?.Dispose();
             vm.ImageIterator = null;
+            vm.GalleryMargin = new Thickness(0, 0, 0, 0);
         }
     }
 
     public static async Task ReloadAsync(MainViewModel vm)
     {
-        if (!NavigationHelper.CanNavigate(vm))
-        {
-            ShowStartUpMenu(vm);
-            return;
-        }
-
-        vm.ImageIterator?.Clear();
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             vm.CurrentView = new ImageViewer();
         });
+        
+        if (!NavigationHelper.CanNavigate(vm))
+        {
+            await FileHistoryNavigation.OpenLastFileAsync(vm);
+            return;
+        }
+
+        vm.ImageIterator?.Clear();
         
         await NavigationHelper.LoadPicFromStringAsync(vm.FileInfo.FullName, vm);
     }

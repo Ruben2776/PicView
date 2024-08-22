@@ -88,7 +88,10 @@ public static class GalleryFunctions
         IsBottomGalleryOpen = true;
         IsFullGalleryOpen = false;
         SettingsHelper.Settings.Gallery.IsBottomGalleryShown = true;
-        vm.GalleryMode = GalleryMode.ClosedToBottom;
+        if (NavigationHelper.CanNavigate(vm))
+        {
+            vm.GalleryMode = GalleryMode.ClosedToBottom;
+        }
         vm.GetBottomGallery = TranslationHelper.Translation.HideBottomGallery;
         await SettingsHelper.SaveSettingsAsync();
         if (!NavigationHelper.CanNavigate(vm))

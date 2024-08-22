@@ -16,6 +16,7 @@ using Point = Avalonia.Point;
 using ReactiveUI;
 using System.Reactive.Linq;
 using PicView.Avalonia.Keybindings;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.Views;
@@ -176,6 +177,10 @@ public partial class ImageViewer : UserControl
 
         async Task LoadNextPic()
         {
+            if (!NavigationHelper.CanNavigate(mainViewModel))
+            {
+                return;
+            }
             var navigateTo = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? NavigateTo.Previous : NavigateTo.Next;
             if (reverse)
             {
