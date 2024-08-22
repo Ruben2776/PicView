@@ -99,6 +99,10 @@ public static class ExifHandling
         
         try
         {
+            if (!vm.FileInfo.Exists)
+            {
+                return;
+            }
             magick.Ping(vm.FileInfo);
             var profile = magick.GetExifProfile();
 

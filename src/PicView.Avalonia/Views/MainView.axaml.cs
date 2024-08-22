@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
+using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -37,6 +38,8 @@ public partial class MainView : UserControl
         {
             vm.IsEditableTitlebarOpen = false;
         }
+
+        MainKeyboardShortcuts.ClearKeyDownModifiers();
     }
 
     private void OnMainContextMenuOpened(object? sender, EventArgs e)

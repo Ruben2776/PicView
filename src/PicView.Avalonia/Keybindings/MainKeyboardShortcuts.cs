@@ -55,6 +55,10 @@ public static class MainKeyboardShortcuts
                 await FunctionsHelper.ShowStartUpMenu();
                 return;
 #endif
+            
+            case Key.Escape:
+                await FunctionsHelper.Close().ConfigureAwait(false);
+                return;
 
             case Key.LeftShift:
             case Key.RightShift:
@@ -125,10 +129,7 @@ public static class MainKeyboardShortcuts
 
     private static void Reset()
     {
-        CtrlDown = false;
-        AltDown = false;
-        ShiftDown = false;
-        CurrentKeys = null;
+        ClearKeyDownModifiers();
         IsKeyHeldDown = false;
         _x = 0;
     }
@@ -136,5 +137,13 @@ public static class MainKeyboardShortcuts
     public static void MainWindow_KeysUp(KeyEventArgs e)
     {
         Reset();
+    }
+
+    public static void ClearKeyDownModifiers()
+    {
+        CtrlDown = false;
+        AltDown = false;
+        ShiftDown = false;
+        CurrentKeys = null;
     }
 }
