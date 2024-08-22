@@ -185,9 +185,24 @@ public class PicBox : Control
             {
                 if (vm.FileInfo is not null)
                 {
-                    using var magickImage = new MagickImage();
-                    magickImage.Ping(vm.FileInfo);
-                    sourceSize = new Size(magickImage.Width, magickImage.Height);
+                    try
+                    {
+                        using var magickImage = new MagickImage();
+                        if (vm.FileInfo.Exists)
+                        {
+                            magickImage.Ping(vm.FileInfo);
+                            sourceSize = new Size(magickImage.Width, magickImage.Height);
+                        }
+                        else return;
+                    }
+                    catch (Exception exception)
+                    {
+#if DEBUG
+                        Console.WriteLine(exception);
+#endif
+                        return;
+                    }
+                    
                 }
                 else return;
             }
@@ -238,7 +253,17 @@ public class PicBox : Control
         var destRect = viewPort.CenterRect(new Rect(scaledSize)).Intersect(viewPort);
         var sourceRect = new Rect(sourceSize).CenterRect(new Rect(destRect.Size / scale));
 
-        context.DrawImage(source, sourceRect, destRect);
+        try
+        {
+            context.DrawImage(source, sourceRect, destRect);
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Console.WriteLine(e);
+            TooltipHelper.ShowTooltipMessage(e, true);
+#endif
+        }
     }
 
     private void RenderImageSideBySide(DrawingContext context, IImage source, IImage secondarySource, Rect viewPort)

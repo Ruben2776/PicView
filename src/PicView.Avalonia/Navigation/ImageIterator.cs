@@ -409,7 +409,7 @@ public sealed class ImageIterator : IDisposable
             await IterateToIndex(index);
         }
         else
-        {
+        { 
             await TimerIteration(index);
         }
     }
@@ -465,7 +465,7 @@ public sealed class ImageIterator : IDisposable
                             _cts.Token.ThrowIfCancellationRequested();
                             return;
                         }
-                        await UpdateSource(value);                   
+                        await UpdateSource(value);   
                     }
                     catch (OperationCanceledException)
                     {

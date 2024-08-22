@@ -178,14 +178,14 @@ public sealed class PreLoader : IDisposable
         if (list == null)
         {
 #if DEBUG
-            Trace.WriteLine($"{nameof(PreLoader)}.{nameof(Get)} list null \n{key}");
+            Trace.WriteLine($"{nameof(PreLoader)}.{nameof(GetAsync)} list null \n{key}");
 #endif
             return null;
         }
         if (key < 0 || key >= list.Count)
         {
 #if DEBUG
-            Trace.WriteLine($"{nameof(PreLoader)}.{nameof(Get)} invalid key: \n{key}");
+            Trace.WriteLine($"{nameof(PreLoader)}.{nameof(GetAsync)} invalid key: \n{key}");
 #endif
             return null;
         }
@@ -194,8 +194,8 @@ public sealed class PreLoader : IDisposable
         {
             return _preLoadList[key];
         } 
-        await AddAsync(key, list).ConfigureAwait(false);
-        return _preLoadList[key];
+        await AddAsync(key, list);
+        return Get(key, list);
     }
 
     public bool Contains(int key, List<string> list)
@@ -271,7 +271,7 @@ public sealed class PreLoader : IDisposable
         if (list == null)
         {
 #if DEBUG
-            Trace.WriteLine($"{nameof(PreLoader)}.{nameof(Get)} list null \n{currentIndex}");
+            Trace.WriteLine($"{nameof(PreLoader)}.{nameof(PreLoadAsync)} list null \n{currentIndex}");
 #endif
             return;
         }

@@ -60,7 +60,11 @@ public static class ErrorHandling
         }
 
         vm.ImageIterator?.Clear();
-        vm.CurrentView = new ImageViewer();
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            vm.CurrentView = new ImageViewer();
+        });
+        
         await NavigationHelper.LoadPicFromStringAsync(vm.FileInfo.FullName, vm);
     }
 }

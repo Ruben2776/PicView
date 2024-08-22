@@ -493,6 +493,24 @@ public static class FunctionsHelper
     
     public static async Task Close()
     {
+        if (UIHelper.IsAnyMenuOpen(Vm))
+        {
+            UIHelper.CloseMenus(Vm);
+            return;
+        }
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            // TODO: Make it a setting to close the window
+            desktop.MainWindow?.Close();
+        });
+    }
+    
+    public static async Task Quit()
+    {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
@@ -1136,7 +1154,7 @@ public static class FunctionsHelper
             args = Vm.FileInfo.FullName;
         }
         ProcessHelper.RestartApp(args);
-        await Close();
+        await Quit();
     }
 
     #endregion

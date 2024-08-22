@@ -21,37 +21,46 @@ public static class TooltipHelper
     /// <param name="interval">The duration for which the tooltip should be visible.</param>
     public static async Task ShowTooltipMessageAsync(object message, bool center, TimeSpan interval)
     {
-        var startAnimation = AnimationsHelper.OpacityAnimation(0, 1, .6);
-        var endAnimation = AnimationsHelper.OpacityAnimation(1, 0, .5);
-        
-        if (_isRunning)
+        try
         {
+            var startAnimation = AnimationsHelper.OpacityAnimation(0, 1, .6);
+            var endAnimation = AnimationsHelper.OpacityAnimation(1, 0, .5);
+        
+            if (_isRunning)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    GetToolTipMessage.Opacity = 1;
+                    GetToolTipMessage.ToolTipMessageText.Text = message.ToString();
+                    GetToolTipMessage.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
+                    GetToolTipMessage.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
+                });
+                await Task.Delay(interval);
+                await endAnimation.RunAsync(GetToolTipMessage);
+                _isRunning = false;
+                return;
+            }
+
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                GetToolTipMessage.Opacity = 1;
+                _isRunning = true;
+                GetToolTipMessage.IsVisible = true;
                 GetToolTipMessage.ToolTipMessageText.Text = message.ToString();
                 GetToolTipMessage.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
                 GetToolTipMessage.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
+                GetToolTipMessage.Opacity = 0;
             });
+            await startAnimation.RunAsync(GetToolTipMessage);
             await Task.Delay(interval);
             await endAnimation.RunAsync(GetToolTipMessage);
             _isRunning = false;
-            return;
         }
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        catch (Exception e)
         {
-            _isRunning = true;
-            GetToolTipMessage.IsVisible = true;
-            GetToolTipMessage.ToolTipMessageText.Text = message.ToString();
-            GetToolTipMessage.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
-            GetToolTipMessage.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
-            GetToolTipMessage.Opacity = 0;
-        });
-        await startAnimation.RunAsync(GetToolTipMessage);
-        await Task.Delay(interval);
-        await endAnimation.RunAsync(GetToolTipMessage);
-        _isRunning = false;
+#if DEBUG
+            Console.WriteLine(e);
+#endif
+        }
     }
     
     /// <summary>

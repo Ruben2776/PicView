@@ -123,7 +123,7 @@ public static class MainKeyboardShortcuts
             }
             // Execute the associated action
             await func.Invoke().ConfigureAwait(false);
-            Reset();
+            ClearKeyDownModifiers();
         }
     }
 
@@ -131,6 +131,7 @@ public static class MainKeyboardShortcuts
     {
         ClearKeyDownModifiers();
         IsKeyHeldDown = false;
+        CurrentKeys = null;
         _x = 0;
     }
 
@@ -144,6 +145,5 @@ public static class MainKeyboardShortcuts
         CtrlDown = false;
         AltDown = false;
         ShiftDown = false;
-        CurrentKeys = null;
     }
 }

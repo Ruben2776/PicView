@@ -89,6 +89,11 @@ public static class UIHelper
         vm.IsToolsMenuVisible = false;
     }
 
+    public static bool IsAnyMenuOpen(MainViewModel vm)
+    {
+        return vm.IsFileMenuVisible || vm.IsImageMenuVisible || vm.IsSettingsMenuVisible || vm.IsToolsMenuVisible;
+    }
+
     public static void ToggleFileMenu(MainViewModel vm)
     {
         vm.IsFileMenuVisible = !vm.IsFileMenuVisible;
