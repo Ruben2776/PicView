@@ -13,9 +13,11 @@ public partial class AboutView : UserControl
         InitializeComponent();
         Loaded += (sender, e) =>
         {
-            AppVersion.Text = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
-                VersionHelper.GetFileVersionInfo().FileVersion :
-                GetType().Assembly.GetName().Version.ToString();
+            // TODO: Add version check when ready for release
+            // AppVersion.Text = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+            //     VersionHelper.GetFileVersionInfo().FileVersion :
+            //     GetType().Assembly.GetName().Version.ToString();
+            AppVersion.Text = "Avalonia Beta Preview 1";
 
             // TODO Check if https://github.com/NetSparkleUpdater/NetSparkle is a good choice for auto-updates
 
