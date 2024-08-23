@@ -21,13 +21,20 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
         // TODO add visual feedback for drag and drop
-        AddHandler(DragDrop.DragOverEvent, DragOver);
-        AddHandler(DragDrop.DropEvent, Drop);
-        
-        GotFocus += CloseTitlebarIfOpen;
-        PointerPressed += PointerPressedBehavior;
-        
-        MainContextMenu.Opened += OnMainContextMenuOpened;
+
+        Loaded += delegate
+        {
+            AddHandler(DragDrop.DragOverEvent, DragOver);
+            AddHandler(DragDrop.DropEvent, Drop);
+
+            GotFocus += CloseTitlebarIfOpen;
+            PointerPressed += PointerPressedBehavior;
+
+            MainContextMenu.Opened += OnMainContextMenuOpened;
+            
+            HideInterfaceLogic.AddHoverButtonEvents(AltButtonsPanel, DataContext as MainViewModel);
+        };
+
     }
     
     private void PointerPressedBehavior(object? sender, PointerPressedEventArgs e)

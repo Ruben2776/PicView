@@ -114,6 +114,18 @@ public static class HideInterfaceLogic
 
     #region HoverButtons
     
+    public static void AddHoverButtonEvents(Control parent, MainViewModel vm)
+    {
+        parent.PointerEntered += async delegate
+        {
+            await DoHoverButtonAnimation(isShown:true, parent, vm);
+        };
+        parent.PointerExited += async delegate
+        {
+            await DoHoverButtonAnimation(isShown: false, parent, vm);
+        };
+    }
+    
     public static void AddHoverButtonEvents(Control parent, Control childControl, MainViewModel vm)
     {
         childControl.PointerEntered += delegate
@@ -172,6 +184,33 @@ public static class HideInterfaceLogic
     }
     
     private static bool _isHoverButtonAnimationRunning;
+    
+    private static async Task DoHoverButtonAnimation(bool isShown, Control parent, MainViewModel vm)
+    {
+        if (_isHoverButtonAnimationRunning)
+        {
+            return;
+        }
+
+        if (vm.ImageIterator is null)
+        {
+            parent.Opacity = 0;
+            return;
+        }
+
+        if (vm.ImageIterator.ImagePaths?.Count <= 1)
+        {
+            parent.Opacity = 0;
+            return;
+        }
+        _isHoverButtonAnimationRunning = true;
+        var from = isShown ? 0d : 1d;
+        var to = isShown ? 1d : 0d;
+        var speed = isShown ? 0.3 : 0.45;
+        var anim = AnimationsHelper.OpacityAnimation(from, to, speed);
+        await anim.RunAsync(parent);
+        _isHoverButtonAnimationRunning = false;
+    }
     private static async Task DoHoverButtonAnimation(bool isShown, Control parent, Control childControl, MainViewModel vm)
     {
         if (_isHoverButtonAnimationRunning)

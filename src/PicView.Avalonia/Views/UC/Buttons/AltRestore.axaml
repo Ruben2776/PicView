@@ -3,7 +3,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
-    x:Class="PicView.Avalonia.Views.UC.Buttons.AltClose"
+    x:Class="PicView.Avalonia.Views.UC.Buttons.AltRestore"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,21 +12,21 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Button
         Background="{StaticResource AltBackgroundColor}"
+        BorderBrush="{StaticResource MainBorderColor}"
         BorderThickness="1,0,0,1"
         Classes="ButtonBorder noBorderHover"
-        Command="{CompiledBinding ExitCommand}"
+        Command="{CompiledBinding ToggleFullscreenCommand}"
         CornerRadius="0,0,0,0"
         DockPanel.Dock="Right"
         Height="30"
         HorizontalAlignment="Right"
         IsVisible="{CompiledBinding !IsInterfaceShown}"
-        ToolTip.Tip="{Binding Close, Mode=OneWay}"
         VerticalAlignment="Top"
         Width="35"
         ZIndex="99"
-        x:Name="XButton">
+        x:Name="RestoreButton">
         <Path
-            Data="{StaticResource CloseGeometry}"
+            Data="{StaticResource FullscreenGeometry}"
             Fill="{StaticResource MainIconColor}"
             Height="12"
             Margin="0,0,0,3"

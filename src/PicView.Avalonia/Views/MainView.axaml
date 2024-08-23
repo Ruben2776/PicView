@@ -556,11 +556,18 @@
             Opacity="0"
             VerticalAlignment="Center"
             x:Name="ClickArrowLeft" />
-        <buttons:AltClose
+        <StackPanel
+            Background="Transparent"
+            Height="150"
             HorizontalAlignment="Right"
-            Opacity="0"
+            IsVisible="{CompiledBinding !IsInterfaceShown}"
+            Orientation="Horizontal"
             VerticalAlignment="Top"
-            x:Name="AltClose" />
+            x:Name="AltButtonsPanel">
+            <buttons:AltMinimize />
+            <buttons:AltRestore />
+            <buttons:AltClose />
+        </StackPanel>
         <buttons:GalleryShortcut
             HorizontalAlignment="Right"
             Opacity="0"

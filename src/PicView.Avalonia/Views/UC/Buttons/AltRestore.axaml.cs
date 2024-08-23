@@ -1,9 +1,9 @@
 ﻿using Avalonia.Controls;
 
 namespace PicView.Avalonia.Views.UC.Buttons;
-public partial class AltClose : UserControl
+public partial class AltRestore : UserControl
 {
-    public AltClose()
+    public AltRestore()
     {
         InitializeComponent();
     }

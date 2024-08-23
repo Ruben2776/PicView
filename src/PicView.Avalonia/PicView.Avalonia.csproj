@@ -40,6 +40,14 @@
       <DependentUpon>DragDrogView.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\UC\Buttons\AltRestore.axaml.cs">
+      <DependentUpon>AltRestore.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UC\Buttons\AltMinimize.axaml.cs">
+      <DependentUpon>AltMinimize.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   
