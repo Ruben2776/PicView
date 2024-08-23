@@ -20,7 +20,42 @@ public static class ImageHelper
 
             try
             {
-                switch (fileInfo.Extension.ToLower())
+                var ext = fileInfo.Extension.ToLower();
+                if (string.IsNullOrEmpty(ext))
+                {
+                    using var magickImage = new MagickImage();
+                    magickImage.Ping(fileInfo);
+                    ext = magickImage.Format.ToString();
+                    var gif = ext.Equals("gif", StringComparison.InvariantCultureIgnoreCase);
+                    var webp = ext.Equals("webp", StringComparison.InvariantCultureIgnoreCase);
+                    if (!isThumb)
+                    {
+                        await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
+                        if (IsAnimated(fileInfo))
+                        {
+                            if (gif)
+                            {
+                                imageModel.ImageType = ImageType.AnimatedGif;
+                            }
+                            else if (webp)
+                            {
+                                imageModel.ImageType = ImageType.AnimatedWebp;
+                            }
+                        }
+                        return imageModel;
+                    }
+                    
+                    var svg = ext.Equals("svg", StringComparison.InvariantCultureIgnoreCase) || ext.Equals("svgz", StringComparison.InvariantCultureIgnoreCase);
+                    if (svg)
+                    {
+                        AddSvgImage(fileInfo, imageModel);
+                        return imageModel;
+                    }
+
+                    await AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
+                    return imageModel;
+                }
+                switch (ext)
                 {
                     case ".webp":
                         if (isThumb)

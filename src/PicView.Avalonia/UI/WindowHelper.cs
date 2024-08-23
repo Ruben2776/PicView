@@ -549,7 +549,17 @@ public static class WindowHelper
             SaveSize(window);
         }
         var vm = window.DataContext as MainViewModel;
-        SettingsHelper.Settings.StartUp.LastFile = vm?.FileInfo?.FullName ?? FileHistoryNavigation.GetLastFile();
+        string lastFile;
+        if (NavigationHelper.CanNavigate(vm))
+        {
+            lastFile = vm?.FileInfo?.FullName ?? FileHistoryNavigation.GetLastFile();
+        }
+        else
+        {
+            var url = vm?.Title.GetURL();
+            lastFile = !string.IsNullOrWhiteSpace(url) ? url : FileHistoryNavigation.GetLastFile();
+        }
+        SettingsHelper.Settings.StartUp.LastFile = lastFile;
         await SettingsHelper.SaveSettingsAsync();
         await KeybindingsHelper.UpdateKeyBindingsFile(); // Save keybindings
         FileDeletionHelper.DeleteTempFiles();

@@ -274,7 +274,7 @@ public static class NavigationHelper
                 vm.TitleTooltip = displayProgress;
                 vm.WindowTitle = displayProgress;
             };
-            await client.StartDownloadAsync();
+            await client.StartDownloadAsync().ConfigureAwait(false);
             destination = httpDownload.DownloadPath;
         }
         catch (Exception e)
@@ -282,18 +282,18 @@ public static class NavigationHelper
 #if DEBUG
             Console.WriteLine("LoadPicFromUrlAsync exception = \n" + e.Message);
 #endif
-            ErrorHandling.ShowStartUpMenu(vm);
+            await ErrorHandling.ReloadAsync(vm);
 
             return;
         }
-
-        var check = ErrorHelper.CheckIfLoadableString(destination);
-        var fileInfo = new FileInfo(check);
+        
+        var fileInfo = new FileInfo(destination);
         if (!fileInfo.Exists)
         {
-            ErrorHandling.ShowStartUpMenu(vm);
+            await ErrorHandling.ReloadAsync(vm);
             return;
         }
+        
         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         SetSingleImage(imageModel.Image, imageModel.ImageType, url, vm);
         vm.FileInfo = fileInfo;
@@ -302,6 +302,44 @@ public static class NavigationHelper
         FileHistoryNavigation.Add(url);
 
         vm.IsLoading = false;
+        
+//         var ext = Path.GetExtension(destination);
+//         if (string.IsNullOrEmpty(ext))
+//         {
+//             using var magickImage = new MagickImage();
+//             magickImage.Ping(fileInfo);
+//             ext = magickImage.Format.ToString();
+//             if (!string.IsNullOrEmpty(ext))
+//             {
+//                 var gif = ext.Equals("gif", StringComparison.InvariantCultureIgnoreCase);
+//                 var webp = ext.Equals("webp", StringComparison.InvariantCultureIgnoreCase);
+//                 if (gif || webp)
+//                 {
+//                     try
+//                     {
+//                         using var magickCollection = new MagickImageCollection();
+//                         magickCollection.Read(destination);
+//                         if (magickCollection.Count > 1)
+//                         {
+//                             if (gif)
+//                             {
+//                                 SetSingleImage(imageModel.Image, ImageType.AnimatedGif, url, vm);
+//                             }
+//                             else if (webp)
+//                             {
+//                                 SetSingleImage(imageModel.Image, ImageType.AnimatedWebp, url, vm);
+//                             }
+//                         }
+//                     }
+//                     catch (Exception e)
+//                     {
+// #if DEBUG
+//                         Console.WriteLine(e);
+// #endif
+//                     }
+//                 }
+//             }
+//         }
     }
     
     /// <summary>
