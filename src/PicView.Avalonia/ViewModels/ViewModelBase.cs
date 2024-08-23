@@ -183,6 +183,7 @@ public class ViewModelBase : ReactiveObject
         InterfaceConfiguration = TranslationHelper.Translation.InterfaceConfiguration;
         FileManagement = TranslationHelper.Translation.FileManagement;
         ToggleFullscreen = TranslationHelper.Translation.ToggleFullscreen;
+        FullscreenTxt = TranslationHelper.Translation.Fullscreen;
         ShowImageGallery = TranslationHelper.Translation.ShowImageGallery;
         WindowManagement = TranslationHelper.Translation.WindowManagement;
         CenterWindow = TranslationHelper.Translation.CenterWindow;
@@ -222,6 +223,14 @@ public class ViewModelBase : ReactiveObject
     }
 
     #region Strings
+
+    private string? _fullscreenTxt;
+    
+    public string? FullscreenTxt
+    {
+        get => _fullscreenTxt;
+        set => this.RaiseAndSetIfChanged(ref _fullscreenTxt, value);
+    }
     
     private string? _bottomGalleryThumbnailStretch;
     

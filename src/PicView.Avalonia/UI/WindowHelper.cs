@@ -284,16 +284,6 @@ public static class WindowHelper
 
     public static void Restore(MainViewModel vm, IClassicDesktopStyleApplicationLifetime desktop)
     {
-        if (SettingsHelper.Settings.WindowProperties.AutoFit)
-        {
-            vm.SizeToContent = SizeToContent.WidthAndHeight;
-            vm.CanResize = false;
-        }
-        else
-        {
-            vm.SizeToContent = SizeToContent.Manual;
-            vm.CanResize = true;
-        }
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             if (SettingsHelper.Settings.UIProperties.ShowInterface)
@@ -312,8 +302,19 @@ public static class WindowHelper
             desktop.MainWindow.WindowState = WindowState.Normal);
         SettingsHelper.Settings.WindowProperties.Maximized = false;
         SettingsHelper.Settings.WindowProperties.Fullscreen = false;
-        SetSize(vm);
+        vm.IsInterfaceShown = SettingsHelper.Settings.UIProperties.ShowInterface;
         InitializeWindowSizeAndPosition(desktop.MainWindow);
+        SetSize(vm);
+        if (SettingsHelper.Settings.WindowProperties.AutoFit)
+        {
+            vm.SizeToContent = SizeToContent.WidthAndHeight;
+            vm.CanResize = false;
+        }
+        else
+        {
+            vm.SizeToContent = SizeToContent.Manual;
+            vm.CanResize = true;
+        }
     }
 
     public static void Maximize()

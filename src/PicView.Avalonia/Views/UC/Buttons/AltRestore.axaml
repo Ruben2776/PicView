@@ -25,12 +25,23 @@
         Width="35"
         ZIndex="99"
         x:Name="RestoreButton">
-        <Path
-            Data="{StaticResource FullscreenGeometry}"
-            Fill="{StaticResource MainIconColor}"
-            Height="12"
-            Margin="0,0,0,3"
-            Stretch="Fill"
-            Width="12" />
+        <Panel>
+            <Path
+                Data="{StaticResource FullscreenGeometry}"
+                Fill="{StaticResource MainIconColor}"
+                Height="12"
+                IsVisible="{CompiledBinding !IsFullscreen}"
+                Margin="0,0,0,3"
+                Stretch="Fill"
+                Width="12" />
+            <Path
+                Data="{StaticResource RestoreGeometry}"
+                Fill="{StaticResource MainIconColor}"
+                Height="12"
+                IsVisible="{CompiledBinding IsFullscreen}"
+                Margin="0,0,0,3"
+                Stretch="Fill"
+                Width="12" />
+        </Panel>
     </Button>
 </UserControl>

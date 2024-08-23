@@ -32,7 +32,12 @@ public partial class MainView : UserControl
 
             MainContextMenu.Opened += OnMainContextMenuOpened;
             
-            HideInterfaceLogic.AddHoverButtonEvents(AltButtonsPanel, DataContext as MainViewModel);
+            if (DataContext is not MainViewModel vm)
+            {
+                return;
+            }
+            HideInterfaceLogic.AddHoverButtonEvents(AltButtonsPanel, vm);
+            PointerWheelChanged += async (_, e) => await vm.ImageViewer.PreviewOnPointerWheelChanged(this, e);
         };
 
     }
