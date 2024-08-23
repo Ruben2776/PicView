@@ -47,7 +47,6 @@ public partial class WinMainWindow : Window
                 }
             });
         };
-        PointerPressed += (_, e) => MoveWindow(e);
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
@@ -57,15 +56,6 @@ public partial class WinMainWindow : Window
         {
             await WindowHelper.WindowClosingBehavior(this);
         };
-    }
-
-    private void MoveWindow(PointerPressedEventArgs e)
-    {
-        if (VisualRoot is null) { return; }
-        if (!MainKeyboardShortcuts.ShiftDown) { return; }
-
-        var hostWindow = (Window)VisualRoot;
-        hostWindow?.BeginMoveDrag(e);
     }
 
     protected override async void OnClosing(WindowClosingEventArgs e)

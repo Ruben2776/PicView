@@ -276,6 +276,7 @@ public static class NavigationHelper
             };
             await client.StartDownloadAsync().ConfigureAwait(false);
             destination = httpDownload.DownloadPath;
+            // TODO add `destination` to be cleared at application exit
         }
         catch (Exception e)
         {

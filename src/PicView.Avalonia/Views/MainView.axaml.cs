@@ -25,9 +25,21 @@ public partial class MainView : UserControl
         AddHandler(DragDrop.DropEvent, Drop);
         
         GotFocus += CloseTitlebarIfOpen;
-        PointerPressed += CloseTitlebarIfOpen;
+        PointerPressed += PointerPressedBehavior;
         
         MainContextMenu.Opened += OnMainContextMenuOpened;
+    }
+    
+    private void PointerPressedBehavior(object? sender, PointerPressedEventArgs e)
+    {
+        CloseTitlebarIfOpen(sender, e);
+        if (MainKeyboardShortcuts.ShiftDown)
+        {
+            var hostWindow = (Window)VisualRoot!;
+            WindowHelper.WindowDragAndDoubleClickBehavior(hostWindow, e);
+        }
+        
+        MainKeyboardShortcuts.ClearKeyDownModifiers();
     }
     
     private void CloseTitlebarIfOpen(object? sender, EventArgs e)
@@ -40,8 +52,6 @@ public partial class MainView : UserControl
         {
             vm.IsEditableTitlebarOpen = false;
         }
-
-        MainKeyboardShortcuts.ClearKeyDownModifiers();
     }
 
     private void OnMainContextMenuOpened(object? sender, EventArgs e)

@@ -17,7 +17,8 @@ public static class ImageFunctionHelper
     {
         try
         {
-            using var magickImageCollection = new MagickImageCollection(file);
+            using var magickImageCollection = new MagickImageCollection();
+            magickImageCollection.Ping(file);
             return magickImageCollection.Count;
         }
         catch (MagickException ex)
@@ -26,7 +27,7 @@ public static class ImageFunctionHelper
             Trace.WriteLine($"{nameof(GetImageFrames)} Exception \n{ex}");
             #endif
             
-            return 1;
+            return 0;
         }
     }
 }

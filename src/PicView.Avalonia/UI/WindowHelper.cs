@@ -26,6 +26,7 @@ public static class WindowHelper
         }
 
         window.BeginMoveDrag(e);
+        ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(window);
     }
 
     public static void InitializeWindowSizeAndPosition(Window window)
@@ -85,12 +86,12 @@ public static class WindowHelper
             return;
         }
 
-        var screen = ScreenHelper.GetScreen(desktop.MainWindow);
+        var window = desktop.MainWindow;
+        var screen = window.Screens.ScreenFromWindow(window);
         if (screen is null)
         {
             return;
         }
-        var window = desktop.MainWindow;
 
         Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -295,14 +296,17 @@ public static class WindowHelper
         }
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            vm.IsTopToolbarShown = true;
-            vm.TitlebarHeight = SizeDefaults.TitlebarHeight;
-            if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
+            if (SettingsHelper.Settings.UIProperties.ShowInterface)
             {
-                vm.IsBottomToolbarShown = true;
-                vm.BottombarHeight = SizeDefaults.BottombarHeight;
+                vm.IsTopToolbarShown = true;
+                vm.TitlebarHeight = SizeDefaults.TitlebarHeight;
+                if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
+                {
+                    vm.IsBottomToolbarShown = true;
+                    vm.BottombarHeight = SizeDefaults.BottombarHeight;
+                }
+                vm.IsInterfaceShown = true;
             }
-            vm.IsInterfaceShown = true;
         }
         Dispatcher.UIThread.InvokeAsync(() => 
             desktop.MainWindow.WindowState = WindowState.Normal);

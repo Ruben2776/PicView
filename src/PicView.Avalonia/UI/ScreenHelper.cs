@@ -5,21 +5,21 @@ using Avalonia.Platform;
 
 namespace PicView.Avalonia.UI;
 
-public struct ScreenSize(int width, int height, int workingAreaWidth, int workingAreaHeight, double scaling)
+public readonly struct ScreenSize(int width, int height, int workingAreaWidth, int workingAreaHeight, double scaling)
 {
-    public int Width { get; set; } = width;
-    public int Height { get; set; } = height;
-    public int WorkingAreaWidth { get; set; } = workingAreaWidth;
-    public int WorkingAreaHeight { get; set; } = workingAreaHeight;
-    public double Scaling { get; set; } = scaling;
+    public int Width { get; init; } = width;
+    public int Height { get; init; } = height;
+    public int WorkingAreaWidth { get; init; } = workingAreaWidth;
+    public int WorkingAreaHeight { get; init; } = workingAreaHeight;
+    public double Scaling { get; init; } = scaling;
 }
 
 public static class ScreenHelper
 {
     public static ScreenSize ScreenSize { get; set; }
-    public static ScreenSize GetScreenSize(Control control)
+    public static ScreenSize GetScreenSize(Window window)
     {
-        var screen = GetScreen(control);
+        var screen = window.Screens.ScreenFromWindow(window);
         
         return new ScreenSize
         {
@@ -29,11 +29,5 @@ public static class ScreenHelper
             WorkingAreaHeight = screen.WorkingArea.Height,
             Scaling = screen.Scaling
         };
-    }
-    public static Screen? GetScreen(Control control)
-    {
-        var window = control.GetSelfAndLogicalAncestors().OfType<Window>().First();
-        
-        return window.Screens.ScreenFromPoint(new PixelPoint());
     }
 }
