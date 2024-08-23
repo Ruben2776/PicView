@@ -42,7 +42,7 @@ public partial class WinMainWindow : Window
                         WindowHelper.Maximize();
                         break;
                     case WindowState.FullScreen:
-                        WindowHelper.Fullscreen(DataContext as MainViewModel, Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
+                        //WindowHelper.Fullscreen(DataContext as MainViewModel, Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
                         break;
                 }
             });

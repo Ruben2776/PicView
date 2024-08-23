@@ -347,6 +347,7 @@ public static class WindowHelper
     {
         vm.SizeToContent = SizeToContent.Manual;
         vm.IsFullscreen = true;
+        vm.CanResize = false;
         if (Dispatcher.UIThread.CheckAccess())
         {
             desktop.MainWindow.WindowState = WindowState.FullScreen;
@@ -363,6 +364,7 @@ public static class WindowHelper
             vm.IsTopToolbarShown = false; // Hide interface in fullscreen. Remember to turn back when exiting fullscreen
             vm.IsBottomToolbarShown = false;
             vm.IsInterfaceShown = false;
+            Dispatcher.UIThread.Post(() => CenterWindowOnScreen());
             // TODO: Add Fullscreen mode for Windows (and maybe for Linux?)
             // macOS fullscreen version already works nicely
         }
