@@ -232,7 +232,7 @@ public static class ImageHelper
     
     #region Thumbnail
 
-    private static async Task<Bitmap?> GetThumbAsync(string path, int height, FileInfo? fileInfo = null)
+    public static async Task<Bitmap?> GetThumbAsync(string path, int height, FileInfo? fileInfo = null)
     {
         try
         {

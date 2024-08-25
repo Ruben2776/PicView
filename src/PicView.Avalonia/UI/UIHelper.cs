@@ -132,7 +132,7 @@ public static class UIHelper
     public static void AddToolTipMessage()
     {
         var mainView = GetMainView;
-        var toolTipMessage = new Views.UC.ToolTipMessage
+        var toolTipMessage = new ToolTipMessage
         {
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Center,

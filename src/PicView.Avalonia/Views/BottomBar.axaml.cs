@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Styling;
+using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.Views;
 
@@ -48,6 +49,10 @@ public partial class BottomBar : UserControl
             PrevIcon.Fill = brush;
         };
         PointerPressed += (_, e) => MoveWindow(e);
+        PointerExited += (_, _) =>
+        {
+            DragAndDropHelper.RemoveDragDropView();
+        };
     }
 
     private void MoveWindow(PointerPressedEventArgs e)

@@ -1,33 +1,40 @@
 ﻿using System.Runtime.InteropServices;
+using System.Text;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
+using Avalonia.Threading;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.Extensions;
+using PicView.Core.FileHandling;
 using PicView.Core.ProcessHandling;
 
 namespace PicView.Avalonia.Views;
 
 public partial class MainView : UserControl
 {
+    private DragDropView? _dragDropView;
     public MainView()
     {
         InitializeComponent();
-        // TODO add visual feedback for drag and drop
 
         Loaded += delegate
         {
-            AddHandler(DragDrop.DragOverEvent, DragOver);
+            AddHandler(DragDrop.DragEnterEvent, DragEnter);
+            AddHandler(DragDrop.DragLeaveEvent, DragLeave);
             AddHandler(DragDrop.DropEvent, Drop);
 
             GotFocus += CloseTitlebarIfOpen;
+            LostFocus += HandleLostFocus;
             PointerPressed += PointerPressedBehavior;
 
             MainContextMenu.Opened += OnMainContextMenuOpened;
@@ -41,7 +48,7 @@ public partial class MainView : UserControl
         };
 
     }
-    
+
     private void PointerPressedBehavior(object? sender, PointerPressedEventArgs e)
     {
         CloseTitlebarIfOpen(sender, e);
@@ -52,6 +59,7 @@ public partial class MainView : UserControl
         }
         
         MainKeyboardShortcuts.ClearKeyDownModifiers();
+        RemoveDragDropView();
     }
     
     private void CloseTitlebarIfOpen(object? sender, EventArgs e)
@@ -64,6 +72,11 @@ public partial class MainView : UserControl
         {
             vm.IsEditableTitlebarOpen = false;
         }
+    }
+    
+    private void HandleLostFocus(object? sender, EventArgs e)
+    {
+        RemoveDragDropView();
     }
 
     private void OnMainContextMenuOpened(object? sender, EventArgs e)
@@ -132,17 +145,19 @@ public partial class MainView : UserControl
 
     private async Task Drop(object? sender, DragEventArgs e)
     {
+        RemoveDragDropView();
+        
         if (DataContext is not MainViewModel vm)
             return;
 
-        var data = e.Data.GetFiles();
-        if (data == null)
+        var files = e.Data.GetFiles();
+        if (files == null)
         {
-            // TODO Handle URL and folder drops
+            await HandleDropFromUrl(e, vm);
             return;
         }
 
-        var storageItems = data as IStorageItem[] ?? data.ToArray();
+        var storageItems = files as IStorageItem[] ?? files.ToArray();
         var firstFile = storageItems.FirstOrDefault();
         var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
         await NavigationHelper.LoadPicFromStringAsync(path, vm).ConfigureAwait(false);
@@ -156,11 +171,130 @@ public partial class MainView : UserControl
         }
     }
     
-    private async Task DragOver(object? sender, DragEventArgs e)
+    private async Task HandleDropFromUrl(DragEventArgs e, MainViewModel vm)
+    {
+        var urlObject = e.Data.Get("text/x-moz-url");
+        if (urlObject is byte[] bytes)
+        {
+            var dataStr = Encoding.Unicode.GetString(bytes);
+            var url = dataStr.Split((char)10).FirstOrDefault();
+            if (url != null)
+            {
+                await NavigationHelper.LoadPicFromUrlAsync(url, vm).ConfigureAwait(false);
+            }
+        }
+    }
+    
+    private async Task DragEnter(object? sender, DragEventArgs e)
     {
         if (DataContext is not MainViewModel vm)
             return;
+
+        var files = e.Data.GetFiles();
+        if (files == null)
+        {
+            await HandleDragEnterFromUrl(e, vm);
+            return;
+        }
+
+        await HandleDragEnter(files, vm);
+    }
+
+    private async Task HandleDragEnter(IEnumerable<IStorageItem> files, MainViewModel vm)
+    {
+        var fileArray = files as IStorageItem[] ?? files.ToArray();
+        if (fileArray is null || fileArray.Length < 1)
+        {
+            RemoveDragDropView();
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (_dragDropView == null)
+            {
+                _dragDropView = new DragDropView
+                {
+                    DataContext = vm
+                };
+                if (!IsPointerOver)
+                {
+                    MainGrid.Children.Add(_dragDropView);
+                }
+            }
+            else
+            {
+                _dragDropView.RemoveThumbnail();
+            }
+        });
+        var firstFile = fileArray[0];
+        var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
+        if (Directory.Exists(path))
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (!IsPointerOver)
+                {
+                    _dragDropView.AddDirectoryIcon();
+                }
+            });
+        }
+        else
+        {
+            if (path.IsArchive())
+            {
+                if (!IsPointerOver)
+                {
+                    _dragDropView.AddZipIcon();
+                }
+            }
+            else if (path.IsSupported())
+            {
+                var thumb = await ImageHelper.GetThumbAsync(path, 340).ConfigureAwait(false);
+
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _dragDropView?.UpdateThumbnail(thumb);
+                });
+            }
+            else
+            {
+                RemoveDragDropView();
+            }
+        }
+    }
     
-        
+    private async Task HandleDragEnterFromUrl(DragEventArgs e, MainViewModel vm)
+    {
+        var urlObject = e.Data.Get("text/x-moz-url");
+        if (urlObject != null)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (_dragDropView == null)
+                {
+                    _dragDropView = new DragDropView { DataContext = vm };
+                    _dragDropView.AddLinkChain();
+                    MainGrid.Children.Add(_dragDropView);
+                }
+                else
+                {
+                    _dragDropView.RemoveThumbnail();
+                }
+            });
+        }
+    }
+    
+    private void DragLeave(object? sender, DragEventArgs e)
+    {
+        if (!IsPointerOver)
+        {
+            RemoveDragDropView();
+        }
+    }
+    
+    public void RemoveDragDropView()
+    {
+        MainGrid.Children.Remove(_dragDropView);
+        _dragDropView = null;
     }
 }

@@ -1,8 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input;
-using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
@@ -46,6 +44,10 @@ public partial class WinMainWindow : Window
                         break;
                 }
             });
+            PointerExited += (_, _) =>
+            {
+                MainView.RemoveDragDropView();
+            };
         };
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
