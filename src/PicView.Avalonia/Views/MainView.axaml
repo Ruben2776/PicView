@@ -299,8 +299,10 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
+                IsEnabled="False"
                 Command="{CompiledBinding SetAsLockScreenCommand}"
-                CommandParameter="{CompiledBinding FileInfo.FullName}"
+                CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}"
                 Header="{CompiledBinding SetAsLockScreenImage,
                                          Mode=OneWay}">
                 <MenuItem.Icon>

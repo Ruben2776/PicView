@@ -19,9 +19,7 @@
             <Border
                 ClipToBounds="True"
                 CornerRadius="6"
-                Height="340"
                 RenderOptions.BitmapInterpolationMode="HighQuality"
-                Width="600"
                 x:Name="ContentHolder" />
 
             <TextBlock
@@ -29,6 +27,7 @@
                 FontFamily="/Assets/Fonts/Roboto-Black.ttf#Roboto"
                 FontSize="16"
                 Margin="0,20,0,0"
+                HorizontalAlignment="Center"
                 TextAlignment="Center"
                 x:Name="TxtDragToView" />
         </StackPanel>

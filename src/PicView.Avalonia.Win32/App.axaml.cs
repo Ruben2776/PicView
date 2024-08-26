@@ -1,17 +1,21 @@
-﻿using Avalonia;
+﻿using System.Runtime;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Win32.Views;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
-using System.Runtime;
-using PicView.Avalonia.Interfaces;
-using PicView.Avalonia.Navigation;
-using PicView.Avalonia.UI;
 using PicView.Core.ProcessHandling;
+using PicView.Windows;
+using PicView.Windows.FileHandling;
+using PicView.Windows.Lockscreen;
+using PicView.Windows.Wallpaper;
 using Dispatcher = Avalonia.Threading.Dispatcher;
 
 namespace PicView.Avalonia.Win32;
@@ -74,7 +78,7 @@ public class App : Application, IPlatformSpecificService
 
     public void SetCursorPos(int x, int y)
     {
-        Windows.NativeMethods.SetCursorPos(x, y);
+        NativeMethods.SetCursorPos(x, y);
     }
 
     public List<string> GetFiles(FileInfo fileInfo)
@@ -85,7 +89,7 @@ public class App : Application, IPlatformSpecificService
 
     public int CompareStrings(string str1, string str2)
     {
-        return Windows.NativeMethods.StrCmpLogicalW(str1, str2);
+        return NativeMethods.StrCmpLogicalW(str1, str2);
     }
 
     public void OpenWith(string path)
@@ -96,12 +100,12 @@ public class App : Application, IPlatformSpecificService
     public void LocateOnDisk(string path)
     {
         var folder = Path.GetDirectoryName(path);
-        Windows.FileHandling.FileExplorer.OpenFolderAndSelectFile(folder, path);
+        FileExplorer.OpenFolderAndSelectFile(folder, path);
     }
 
     public void ShowFileProperties(string path)
     {
-        Windows.FileHandling.FileExplorer.ShowFileProperties(path);
+        FileExplorer.ShowFileProperties(path);
     }
 
     public void ShowAboutWindow()
@@ -271,18 +275,19 @@ public class App : Application, IPlatformSpecificService
 
     public void SetAsWallpaper(string path, int wallpaperStyle)
     {
-        var style = (Windows.Wallpaper.WallpaperHelper.WallpaperStyle)wallpaperStyle;
-        Windows.Wallpaper.WallpaperHelper.SetDesktopWallpaper(path, style);
+        var style = (WallpaperHelper.WallpaperStyle)wallpaperStyle;
+        WallpaperHelper.SetDesktopWallpaper(path, style);
     }
     
     public void SetAsLockScreen(string path)
     {
-        Windows.Lockscreen.LockscreenHelper.SetLockScreenImage(path);
+        // TODO: Run a new instance with admin rights and execute SetLockScreenImage
+        LockscreenHelper.SetLockScreenImage(path);
     }
 
     public void CopyFile(string path)
     {
-        Windows.FileHandling.ClipboardHelper.CopyFileToClipboard(path);
+        ClipboardHelper.CopyFileToClipboard(path);
     }
     
     #endregion

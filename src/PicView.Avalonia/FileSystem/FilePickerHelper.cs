@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
@@ -42,7 +43,10 @@ public static class FilePickerHelper
         }
         catch (Exception e)
         {
-            // TODO write exception service to display error messages
+            #if DEBUG
+            Console.WriteLine(e);
+            #endif
+            await TooltipHelper.ShowTooltipMessageAsync(e);
         }
 
         return null;

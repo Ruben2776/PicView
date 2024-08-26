@@ -3,6 +3,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Calculations;
 using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Views.UC;
@@ -68,14 +69,15 @@ public partial class DragDropView : UserControl
         }
 
         var screen = ScreenHelper.ScreenSize;
-        var padding = vm.BottombarHeight + vm.TitlebarHeight + 200;
+        const int maxSize = SizeDefaults.WindowMinSize - 30;
+        var padding = vm.BottombarHeight + vm.TitlebarHeight + 20;
         var boxedWidth = UIHelper.GetMainView.Bounds.Width * screen.Scaling - padding;
         var boxedHeight = UIHelper.GetMainView.Bounds.Height * screen.Scaling - padding;
-        var scaledWidth = boxedWidth / image?.PixelSize.Width ?? 600;
-        var scaledHeight = boxedHeight / image?.PixelSize.Height ?? 340;
+        var scaledWidth = boxedWidth / image?.PixelSize.Width ?? maxSize;
+        var scaledHeight = boxedHeight / image?.PixelSize.Height ?? maxSize;
         var scale = Math.Min(scaledWidth, scaledHeight);
-        ContentHolder.Width = image?.PixelSize.Width * scale ?? 550;
-        ContentHolder.Height = image?.PixelSize.Height * scale ?? 340;
+        ContentHolder.Width = image?.PixelSize.Width * scale ?? maxSize;
+        ContentHolder.Height = image?.PixelSize.Height * scale ?? maxSize; 
         ContentHolder.Background = new ImageBrush
         {
             Opacity = 0.95,

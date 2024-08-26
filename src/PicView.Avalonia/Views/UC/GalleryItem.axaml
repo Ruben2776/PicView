@@ -108,6 +108,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
+                    IsEnabled="False"
                     Command="{CompiledBinding SetAsLockScreenCommand}"
                     CommandParameter="{CompiledBinding Path=Text,
                                                        ElementName=FileLocation}"

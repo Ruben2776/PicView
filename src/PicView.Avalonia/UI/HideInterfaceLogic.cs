@@ -30,7 +30,7 @@ public static class HideInterfaceLogic
                 if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI)
                 {
                     vm.GalleryMode = GalleryMode.Closed;
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         if (UIHelper.GetGalleryView.Bounds.Height > 0)
                         {
@@ -62,7 +62,7 @@ public static class HideInterfaceLogic
                 {
                     if (NavigationHelper.CanNavigate(vm))
                     {
-                        Dispatcher.UIThread.InvokeAsync(() =>
+                        await Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             if (UIHelper.GetGalleryView.Bounds.Height <= 0)
                             {

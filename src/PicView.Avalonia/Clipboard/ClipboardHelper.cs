@@ -4,7 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
-using Avalonia.Svg.Skia;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Localization;
@@ -23,8 +22,8 @@ public static class ClipboardHelper
     }
 
     public static async Task CopyFileToClipboard(string? file, MainViewModel vm)
-    {            
-        vm.PlatformService.CopyFile(file);
+    {
+        await Task.Run(() => vm.PlatformService.CopyFile(file));
     }
 
     public static async Task CopyImageToClipboard(string path)
