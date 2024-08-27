@@ -73,7 +73,7 @@ public class App : Application, IPlatformSpecificService
     
     public void SetTaskbarProgress(double progress)
     {
-        
+        // TODO: Implement SetTaskbarProgress
     }
 
     public void SetCursorPos(int x, int y)

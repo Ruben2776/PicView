@@ -1,16 +1,17 @@
-﻿using PicView.Avalonia.Keybindings;
-using PicView.Avalonia.ViewModels;
-using PicView.Core.Config;
-using PicView.Core.FileHandling;
-using PicView.Core.Navigation;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.ViewModels;
+using PicView.Core.Config;
+using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
+using PicView.Core.Localization;
+using PicView.Core.Navigation;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation;
@@ -439,6 +440,23 @@ public sealed class ImageIterator : IDisposable
                         {
                             if (e.Index != CurrentIndex)
                             {
+                                await Task.Delay(50).ConfigureAwait(false);
+                                if (_vm.Title == TranslationHelper.Translation.Loading && _vm.ImageSource is null)
+                                {
+                                    CurrentIndex = e.Index;
+                                    try
+                                    {
+                                        await UpdateSource(e.PreLoadValue);
+                                    }
+                                    catch (Exception exception)
+                                    {
+#if DEBUG
+                                        Console.WriteLine(exception);
+                                        await TooltipHelper.ShowTooltipMessageAsync(exception);
+#endif
+                                        await ErrorHandling.ReloadAsync(_vm);
+                                    }
+                                }
                                 return;
                             }
                             await Update(e.PreLoadValue);
@@ -477,6 +495,7 @@ public sealed class ImageIterator : IDisposable
                     // Add recent files, except when browsing archive
                     if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && ImagePaths.Count > index)
                     {
+                        _vm.PlatformService.SetTaskbarProgress(index / (double)ImagePaths.Count);
                         FileHistoryNavigation.Add(ImagePaths[index]);
                     }
                     await AddAsync(CurrentIndex, preLoadValue.ImageModel);
