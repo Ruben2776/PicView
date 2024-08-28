@@ -1,9 +1,9 @@
-﻿using ImageMagick;
-using PicView.Core.ImageDecoding;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using Avalonia.Media.Imaging;
+using ImageMagick;
 using PicView.Avalonia.ImageHandling;
+using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Navigation;
 
@@ -11,7 +11,13 @@ public sealed class PreLoader : IDisposable
 {
     private readonly Lock _lock = new();
     public static bool IsRunning{ get; private set; }
-
+    private static readonly SemaphoreSlim Semaphore = new(1, 2);
+    
+    private readonly ConcurrentDictionary<int, PreLoadValue> _preLoadList = new();
+    private const int PositiveIterations = 6;
+    private const int NegativeIterations = 4;
+    public const int MaxCount = PositiveIterations + NegativeIterations + 2;
+    
     public class PreLoadValue(ImageModel? imageModel)
     {
         public ImageModel? ImageModel { get; set; } = imageModel;
@@ -37,18 +43,13 @@ public sealed class PreLoader : IDisposable
         #endregion
     }
 
-    private readonly ConcurrentDictionary<int, PreLoadValue> _preLoadList = new();
-    private const int PositiveIterations = 6;
-    private const int NegativeIterations = 4;
-    public const int MaxCount = PositiveIterations + NegativeIterations + 2;
-
 #if DEBUG
 
     // ReSharper disable once ConvertToConstant.Local
     private static readonly bool ShowAddRemove = true;
 
 #endif
-
+    
     public async Task<bool> AddAsync(int index, List<string> list, ImageModel? imageModel = null)
     {
         if (list == null)
@@ -193,8 +194,21 @@ public sealed class PreLoader : IDisposable
         if (Contains(key, list))
         {
             return _preLoadList[key];
-        } 
-        await AddAsync(key, list);
+        }
+
+        try
+        {
+            await Semaphore.WaitAsync(500).ConfigureAwait(false);
+            if (Contains(key, list))
+            {
+                return _preLoadList[key];
+            }
+            await AddAsync(key, list);
+        }
+        finally
+        {
+            Semaphore.Release();
+        }
         return Get(key, list);
     }
 
@@ -276,14 +290,10 @@ public sealed class PreLoader : IDisposable
             return;
         }
         
-        if (IsRunning)
-        {
-            return;
-        }
-        
         lock (_lock)
         {
-            if (IsRunning) return;
+            if (IsRunning) 
+                return;
             IsRunning = true;
         }
 
@@ -340,7 +350,15 @@ public sealed class PreLoader : IDisposable
             }
         }
 
-        RemoveLoop();
+        try
+        {
+            await Semaphore.WaitAsync(500);
+            RemoveLoop();
+        }
+        finally
+        {
+            Semaphore.Release();
+        }
 
         return;
 
@@ -365,16 +383,24 @@ public sealed class PreLoader : IDisposable
             }
             else
             {
-                for (var i = 0; i < PositiveIterations; i++)
+                try
                 {
-                    if (list.Count == 0 || count != list.Count)
+                    await Semaphore.WaitAsync(500);
+                    for (var i = 0; i < PositiveIterations; i++)
                     {
-                        Clear();
-                        return;
+                        if (list.Count == 0 || count != list.Count)
+                        {
+                            Clear();
+                            return;
+                        }
+                        var index = (nextStartingIndex + i) % list.Count;
+                        await AddAsync(index, list);
+                        array[i] = index;
                     }
-                    var index = (nextStartingIndex + i) % list.Count;
-                    await AddAsync(index, list);
-                    array[i] = index;
+                }
+                finally
+                {
+                    Semaphore.Release();
                 }
             }
         }
@@ -400,16 +426,24 @@ public sealed class PreLoader : IDisposable
             }
             else
             {
-                for (var i = 0; i < NegativeIterations; i++)
+                try
                 {
-                    if (list.Count == 0 || count != list.Count)
+                    await Semaphore.WaitAsync(500);
+                    for (var i = 0; i < NegativeIterations; i++)
                     {
-                        Clear();
-                        return;
+                        if (list.Count == 0 || count != list.Count)
+                        {
+                            Clear();
+                            return;
+                        }
+                        var index = (prevStartingIndex - i + list.Count) % list.Count;
+                        await AddAsync(index, list);
+                        array[i] = index;
                     }
-                    var index = (prevStartingIndex - i + list.Count) % list.Count;
-                    await AddAsync(index, list);
-                    array[i] = index;
+                }
+                finally
+                {
+                    Semaphore.Release();
                 }
             }
         }
@@ -443,18 +477,14 @@ public sealed class PreLoader : IDisposable
     }
 
     #region IDisposable
-
-    // Flag to detect redundant calls
-    private bool _disposed = false;
-
-    // Dispose method to be called by consumers
+    
+    private bool _disposed;
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
-
-    // Protected method to handle cleanup
+    
     private void Dispose(bool disposing)
     {
         if (_disposed)
@@ -462,22 +492,15 @@ public sealed class PreLoader : IDisposable
 
         if (disposing)
         {
-            // Clean up managed resources
             _preLoadList.Clear();
         }
-
-        // Clean up unmanaged resources
-        // (none in this example, but would go here)
-
         _disposed = true;
     }
-
-    // Finalizer
+    
     ~PreLoader()
     {
         Dispose(false);
     }
 
     #endregion
-    
 }

@@ -440,7 +440,7 @@ public sealed class ImageIterator : IDisposable
                         {
                             if (e.Index != CurrentIndex)
                             {
-                                await Task.Delay(50).ConfigureAwait(false);
+                                await Task.Delay(50);
                                 if (_vm.Title == TranslationHelper.Translation.Loading && _vm.ImageSource is null)
                                 {
                                     CurrentIndex = e.Index;
@@ -491,15 +491,31 @@ public sealed class ImageIterator : IDisposable
                         Console.WriteLine($"{nameof(IterateToIndex)} canceled at index {index}, current index {CurrentIndex}");
 #endif
                     }
+                    catch (Exception e)
+                    {
+#if DEBUG
+                        Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
+                        await TooltipHelper.ShowTooltipMessageAsync(e.Message);
+#endif
+                        await ErrorHandling.ReloadAsync(_vm);
+                        return;
+                    }
+
+                    if (ImagePaths.Count > 1)
+                    {
+                        if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
+                        {
+                            _vm.PlatformService.SetTaskbarProgress(index / (double)ImagePaths.Count);   
+                        }
+                        await Preload();
+                    }
 
                     // Add recent files, except when browsing archive
                     if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && ImagePaths.Count > index)
                     {
-                        _vm.PlatformService.SetTaskbarProgress(index / (double)ImagePaths.Count);
                         FileHistoryNavigation.Add(ImagePaths[index]);
                     }
                     await AddAsync(CurrentIndex, preLoadValue.ImageModel);
-                    await Preload();
                 }
             });
         }
@@ -515,6 +531,7 @@ public sealed class ImageIterator : IDisposable
             Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
             await TooltipHelper.ShowTooltipMessageAsync(e.Message);
 #endif
+            await ErrorHandling.ReloadAsync(_vm);
         }
         finally
         {
