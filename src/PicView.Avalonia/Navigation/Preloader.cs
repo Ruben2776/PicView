@@ -11,7 +11,6 @@ public sealed class PreLoader : IDisposable
 {
     private readonly Lock _lock = new();
     public static bool IsRunning{ get; private set; }
-    private static readonly SemaphoreSlim Semaphore = new(1, 2);
     
     private readonly ConcurrentDictionary<int, PreLoadValue> _preLoadList = new();
     private const int PositiveIterations = 6;
@@ -196,19 +195,7 @@ public sealed class PreLoader : IDisposable
             return _preLoadList[key];
         }
 
-        try
-        {
-            await Semaphore.WaitAsync(500).ConfigureAwait(false);
-            if (Contains(key, list))
-            {
-                return _preLoadList[key];
-            }
-            await AddAsync(key, list);
-        }
-        finally
-        {
-            Semaphore.Release();
-        }
+        await AddAsync(key, list);
         return Get(key, list);
     }
 
@@ -229,7 +216,7 @@ public sealed class PreLoader : IDisposable
             return false;
         }
 
-        return !_preLoadList.IsEmpty && _preLoadList.ContainsKey(key);
+        return _preLoadList.ContainsKey(key);
     }
 
     public bool Remove(int key, List<string> list)
@@ -350,15 +337,7 @@ public sealed class PreLoader : IDisposable
             }
         }
 
-        try
-        {
-            await Semaphore.WaitAsync(500);
-            RemoveLoop();
-        }
-        finally
-        {
-            Semaphore.Release();
-        }
+        RemoveLoop();
 
         return;
 
@@ -383,24 +362,16 @@ public sealed class PreLoader : IDisposable
             }
             else
             {
-                try
+                for (var i = 0; i < PositiveIterations; i++)
                 {
-                    await Semaphore.WaitAsync(500);
-                    for (var i = 0; i < PositiveIterations; i++)
+                    if (list.Count == 0 || count != list.Count)
                     {
-                        if (list.Count == 0 || count != list.Count)
-                        {
-                            Clear();
-                            return;
-                        }
-                        var index = (nextStartingIndex + i) % list.Count;
-                        await AddAsync(index, list);
-                        array[i] = index;
+                        Clear();
+                        return;
                     }
-                }
-                finally
-                {
-                    Semaphore.Release();
+                    var index = (nextStartingIndex + i) % list.Count;
+                    await AddAsync(index, list);
+                    array[i] = index;
                 }
             }
         }
@@ -426,24 +397,16 @@ public sealed class PreLoader : IDisposable
             }
             else
             {
-                try
+                for (var i = 0; i < NegativeIterations; i++)
                 {
-                    await Semaphore.WaitAsync(500);
-                    for (var i = 0; i < NegativeIterations; i++)
+                    if (list.Count == 0 || count != list.Count)
                     {
-                        if (list.Count == 0 || count != list.Count)
-                        {
-                            Clear();
-                            return;
-                        }
-                        var index = (prevStartingIndex - i + list.Count) % list.Count;
-                        await AddAsync(index, list);
-                        array[i] = index;
+                        Clear();
+                        return;
                     }
-                }
-                finally
-                {
-                    Semaphore.Release();
+                    var index = (prevStartingIndex - i + list.Count) % list.Count;
+                    await AddAsync(index, list);
+                    array[i] = index;
                 }
             }
         }

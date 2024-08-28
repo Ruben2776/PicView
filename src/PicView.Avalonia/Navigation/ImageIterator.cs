@@ -34,8 +34,7 @@ public sealed class ImageIterator : IDisposable
     private static FileSystemWatcher? _watcher;
     private static bool _isRunning;
     private readonly MainViewModel? _vm;
-    
-    private CancellationTokenSource _cts = new();
+    private readonly Lock _lock = new();
 
     #endregion
 
@@ -335,6 +334,11 @@ public sealed class ImageIterator : IDisposable
         return PreLoader.Get(CurrentIndex, ImagePaths);
     }
     
+    public async Task<PreLoader.PreLoadValue?> GetCurrentPreLoadValueAsync()
+    {
+        return await PreLoader.GetAsync(CurrentIndex, ImagePaths);
+    }
+    
     public void RemoveItemFromPreLoader(int index)
     {
         PreLoader.Remove(index, ImagePaths);
@@ -422,120 +426,92 @@ public sealed class ImageIterator : IDisposable
             ErrorHandling.ShowStartUpMenu(_vm);
             return;
         }
+
         try
         {
-            CurrentIndex = index;
-            await _cts.CancelAsync();
-            _cts = new CancellationTokenSource();
-
-            await Task.Run(async () =>
+            lock (_lock)
             {
-                var preLoadValue = GetCurrentPreLoadValue();
-                if (preLoadValue is not null)
+                CurrentIndex = index;
+            }
+            PreLoader.PreLoadValue? preloadValue;
+            if (PreLoader.Contains(index, ImagePaths))
+            {
+                preloadValue = await PreLoader.GetAsync(index, ImagePaths);
+                if (preloadValue is not null)
                 {
-                    if (preLoadValue.IsLoading)
+                    if (preloadValue.IsLoading)
                     {
-                        LoadingPreview(CurrentIndex);
-                        preLoadValue.ImageLoaded += async (_, e) =>
+                        if (index == CurrentIndex)
+                        {
+                            LoadingPreview(index);
+                        }
+                        preloadValue.ImageLoaded += async (_, e) =>
                         {
                             if (e.Index != CurrentIndex)
                             {
-                                await Task.Delay(50);
+                                await Task.Delay(500);
                                 if (_vm.Title == TranslationHelper.Translation.Loading && _vm.ImageSource is null)
                                 {
-                                    CurrentIndex = e.Index;
-                                    try
-                                    {
-                                        await UpdateSource(e.PreLoadValue);
-                                    }
-                                    catch (Exception exception)
-                                    {
-#if DEBUG
-                                        Console.WriteLine(exception);
-                                        await TooltipHelper.ShowTooltipMessageAsync(exception);
-#endif
-                                        await ErrorHandling.ReloadAsync(_vm);
-                                    }
+                                    await IterateToIndex(CurrentIndex);
                                 }
                                 return;
                             }
-                            await Update(e.PreLoadValue);
+                            await HandleUpdate(preloadValue);
                         };
                         return;
                     }
                 }
-                else
+            }
+            else
+            {
+                LoadingPreview(CurrentIndex);
+                preloadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths);
+            }
+
+            lock (_lock)
+            {
+                if (CurrentIndex != index)
                 {
-                    LoadingPreview(CurrentIndex);
-                    preLoadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths);
+                    // Skip loading if user went to next value
+                    return;
                 }
-                await Update(preLoadValue);
-                return;
-
-                async Task Update(PreLoader.PreLoadValue value)
-                {
-                    try
-                    {
-                        if (CurrentIndex != index)
-                        {
-                            // Skip loading if user went to next value
-                            await _cts.CancelAsync();
-                            _cts.Token.ThrowIfCancellationRequested();
-                            return;
-                        }
-                        await UpdateSource(value);   
-                    }
-                    catch (OperationCanceledException)
-                    {
-#if DEBUG
-                        Console.WriteLine($"{nameof(IterateToIndex)} canceled at index {index}, current index {CurrentIndex}");
-#endif
-                    }
-                    catch (Exception e)
-                    {
-#if DEBUG
-                        Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
-                        await TooltipHelper.ShowTooltipMessageAsync(e.Message);
-#endif
-                        await ErrorHandling.ReloadAsync(_vm);
-                        return;
-                    }
-
-                    if (ImagePaths.Count > 1)
-                    {
-                        if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
-                        {
-                            _vm.PlatformService.SetTaskbarProgress(index / (double)ImagePaths.Count);   
-                        }
-                        await Preload();
-                    }
-
-                    // Add recent files, except when browsing archive
-                    if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && ImagePaths.Count > index)
-                    {
-                        FileHistoryNavigation.Add(ImagePaths[index]);
-                    }
-                    await AddAsync(CurrentIndex, preLoadValue.ImageModel);
-                }
-            });
-        }
-        catch (OperationCanceledException)
-        {
-#if DEBUG
-            Console.WriteLine($"{nameof(IterateToIndex)} canceled at index {index}");
-#endif
+            }
+            
+            await HandleUpdate(preloadValue);
         }
         catch (Exception e)
         {
-#if DEBUG
+    #if DEBUG
             Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
             await TooltipHelper.ShowTooltipMessageAsync(e.Message);
-#endif
-            await ErrorHandling.ReloadAsync(_vm);
+    #endif
         }
         finally
         {
             _vm.IsLoading = false;
+        }
+        return;
+
+        async Task HandleUpdate(PreLoader.PreLoadValue? preloadValue)
+        {
+            await UpdateSource(index, preloadValue);
+            if (ImagePaths.Count > 1)
+            {
+                if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
+                {
+                    _vm.PlatformService.SetTaskbarProgress(index / (double)ImagePaths.Count);
+                }
+
+                await Preload();
+            }
+
+            // Add recent files, except when browsing archive
+            if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && ImagePaths.Count > index)
+            {
+                FileHistoryNavigation.Add(ImagePaths[index]);
+            }
+
+            await AddAsync(index, preloadValue.ImageModel);
         }
     }
 
@@ -575,12 +551,12 @@ public sealed class ImageIterator : IDisposable
 
     #region Update Source and Preview
 
-    private async Task UpdateSource(PreLoader.PreLoadValue? preLoadValue)
+    private async Task UpdateSource(int index, PreLoader.PreLoadValue? preLoadValue)
     {
-        preLoadValue ??= await PreLoader.GetAsync(CurrentIndex, ImagePaths);
+        preLoadValue ??= await PreLoader.GetAsync(index, ImagePaths);
         if (preLoadValue.ImageModel?.Image is null)
         {
-            var fileInfo = preLoadValue.ImageModel?.FileInfo ?? new FileInfo(ImagePaths[CurrentIndex]);
+            var fileInfo = preLoadValue.ImageModel?.FileInfo ?? new FileInfo(ImagePaths[index]);
             preLoadValue.ImageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         }
         _vm.IsLoading = false;
@@ -612,10 +588,10 @@ public sealed class ImageIterator : IDisposable
             });
         }
         
-        _vm.GetIndex = CurrentIndex + 1;
-        if (_vm.SelectedGalleryItemIndex != CurrentIndex)
+        _vm.GetIndex = index + 1;
+        if (_vm.SelectedGalleryItemIndex != index)
         {
-            _vm.SelectedGalleryItemIndex = CurrentIndex;
+            _vm.SelectedGalleryItemIndex = index;
             if (GalleryFunctions.IsBottomGalleryOpen)
             {
                 GalleryNavigation.CenterScrollToSelectedItem(_vm);

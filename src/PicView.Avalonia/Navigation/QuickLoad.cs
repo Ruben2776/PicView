@@ -68,17 +68,25 @@ public static class QuickLoad
         {
             WindowHelper.CenterWindowOnScreen(false);
         }
-            
-        _ = vm.ImageIterator.AddAsync(vm.ImageIterator.CurrentIndex, imageModel);
-        _ = vm.ImageIterator.Preload();
+        
+        var tasks = new List<Task>
+        {
+            vm.ImageIterator.AddAsync(vm.ImageIterator.CurrentIndex, imageModel),
+            vm.ImageIterator.Preload()
+        };
 
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
-            if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI && !vm.IsInterfaceShown)
+            if (vm.IsInterfaceShown)
             {
-                return;
+                tasks.Add(GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));
             }
-            await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName);
+            else if (SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI)
+            {
+                tasks.Add(GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));
+            }
         }
+
+        await Task.WhenAll(tasks).ConfigureAwait(false);
     }
 }
