@@ -8,6 +8,7 @@ using Avalonia.Styling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
+using PicView.Core.Config;
 
 namespace PicView.Avalonia.Views;
 
@@ -104,35 +105,56 @@ public partial class StartUpMenu : UserControl
     {
         const int breakPoint = 900;
         const int bottomMargin = 16;
-        switch (width)
-        {
-            case < breakPoint:
-                if (this.TryFindResource("Icon", ThemeVariant.Default, out var icon))
-                    Logo.Source = icon as DrawingImage;
-                LogoViewbox.Width = 350;
-                Buttons.Margin = new Thickness(0, 0, 0, bottomMargin);
-                Buttons.VerticalAlignment = VerticalAlignment.Bottom;
-                break;
-
-            case > breakPoint:
-                if (this.TryFindResource("Logo", ThemeVariant.Default, out var logo))
-                    Logo.Source = logo as DrawingImage;
-                LogoViewbox.Width = double.NaN;
-                Buttons.Margin = new Thickness(0, 220, 25, bottomMargin - 100);
-                Buttons.VerticalAlignment = VerticalAlignment.Center;
-                break;
-        }
+        const int logoWidth = 350;
+        
         LogoViewbox.Height = double.NaN;
-
+        
         if (DataContext is not MainViewModel vm)
             return;
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
         }
+        
+        if (SettingsHelper.Settings.WindowProperties.AutoFit)
+        {
+            ShowIcon();
+            vm.TitleMaxWidth = logoWidth;
+            return;
+        }
+
+        switch (width)
+        {
+            case < breakPoint:
+                ShowIcon();
+                break;
+            case > breakPoint:
+                ShowFullLogo();
+                break;
+        }
 
         vm.TitleMaxWidth = ImageSizeCalculationHelper.GetTitleMaxWidth(vm.RotationAngle, width, height,
             desktop.MainWindow.MinWidth, desktop.MainWindow.MinHeight, ImageSizeCalculationHelper.GetInterfaceSize(),
             desktop.MainWindow.Width);
+        
+        return;
+
+        void ShowIcon()
+        {
+            if (this.TryFindResource("Icon", ThemeVariant.Default, out var icon))
+                Logo.Source = icon as DrawingImage;
+            LogoViewbox.Width = logoWidth;
+            Buttons.Margin = new Thickness(0, 0, 0, bottomMargin);
+            Buttons.VerticalAlignment = VerticalAlignment.Bottom;
+        }
+
+        void ShowFullLogo()
+        {
+            if (this.TryFindResource("Logo", ThemeVariant.Default, out var logo))
+                Logo.Source = logo as DrawingImage;
+            LogoViewbox.Width = double.NaN;
+            Buttons.Margin = new Thickness(0, 220, 25, bottomMargin - 100);
+            Buttons.VerticalAlignment = VerticalAlignment.Center;
+        }
     }
 }

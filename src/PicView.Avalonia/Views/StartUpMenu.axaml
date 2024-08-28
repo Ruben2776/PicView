@@ -1,6 +1,6 @@
 <UserControl
-    MinHeight="400"
-    MinWidth="435"
+    MinHeight="{CompiledBinding WindowMinSize}"
+    MinWidth="{CompiledBinding WindowMinSize}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
