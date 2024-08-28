@@ -3,8 +3,6 @@ using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Views;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
@@ -33,18 +31,26 @@ public static class ErrorHandling
         return;
         void Start()
         {
-            var startUpMenu = new StartUpMenu();
-            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            if (vm.CurrentView is not StartUpMenu)
             {
-                startUpMenu.Width = SizeDefaults.WindowMinSize;
-                startUpMenu.Height = SizeDefaults.WindowMinSize;
-                if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+                var startUpMenu = new StartUpMenu();
+                if (SettingsHelper.Settings.WindowProperties.AutoFit)
                 {
-                    vm.GalleryWidth = SizeDefaults.WindowMinSize;
+                    startUpMenu.Width = SizeDefaults.WindowMinSize;
+                    startUpMenu.Height = SizeDefaults.WindowMinSize;
+                    if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+                    {
+                        vm.GalleryWidth = SizeDefaults.WindowMinSize;
+                    }
                 }
+                vm.CurrentView = startUpMenu;
             }
-            vm.CurrentView = vm.CurrentView = startUpMenu;
-            vm.GalleryMode = GalleryMode.BottomToClosed;
+            else
+            {
+                SetTitleHelper.ResetTitle(vm);
+            }
+
+            vm.GalleryMode = GalleryMode.Closed;
             GalleryFunctions.Clear(vm);
             UIHelper.CloseMenus(vm);
             vm.ImageIterator?.Dispose();
@@ -55,19 +61,33 @@ public static class ErrorHandling
 
     public static async Task ReloadAsync(MainViewModel vm)
     {
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        if (vm.ImageSource is null)
         {
-            vm.CurrentView = new ImageViewer();
-        });
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ShowStartUpMenu(vm);
+            });
+            return;
+        }
+        
+        vm.ImageIterator?.Clear();
         
         if (!NavigationHelper.CanNavigate(vm))
         {
             await FileHistoryNavigation.OpenLastFileAsync(vm);
             return;
         }
-
-        vm.ImageIterator?.Clear();
         
-        await NavigationHelper.LoadPicFromStringAsync(vm.FileInfo.FullName, vm);
+        if (File.Exists(vm.FileInfo.FullName))
+        {
+            await NavigationHelper.LoadPicFromStringAsync(vm.FileInfo.FullName, vm);
+        }
+        else
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ShowStartUpMenu(vm);
+            });
+        }
     }
 }

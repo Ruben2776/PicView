@@ -171,7 +171,6 @@ public static class NavigationHelper
             return;
         }
         
-        vm.CurrentView = vm.ImageViewer;
         UIHelper.CloseMenus(vm);
         vm.IsLoading = true;
         SetTitleHelper.SetLoadingTitle(vm);
@@ -181,26 +180,31 @@ public static class NavigationHelper
         switch (check)
         {
             default:
+                vm.CurrentView = vm.ImageViewer;
                 await LoadPicFromFile(check, vm).ConfigureAwait(false);
                 vm.IsLoading = false;
                 return;
 
             case "web":
+                vm.CurrentView = vm.ImageViewer;
                 await LoadPicFromUrlAsync(source, vm).ConfigureAwait(false);
                 vm.IsLoading = false;
                 return;
 
             case "base64":
+                vm.CurrentView = vm.ImageViewer;
                 await LoadPicFromBase64Async(source, vm).ConfigureAwait(false);
                 vm.IsLoading = false;
                 return;
 
             case "directory":
+                vm.CurrentView = vm.ImageViewer;
                 await LoadPicFromDirectoryAsync(source, vm).ConfigureAwait(false);
                 vm.IsLoading = false;
                 return;
 
             case "zip":
+                vm.CurrentView = vm.ImageViewer;
                 await LoadPicFromArchiveAsync(source, vm).ConfigureAwait(false);
                 vm.IsLoading = false;
                 return;

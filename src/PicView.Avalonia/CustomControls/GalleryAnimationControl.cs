@@ -35,7 +35,7 @@ public class GalleryAnimationControl : UserControl
                         GalleryMode.BottomToClosed => BottomToClosedAnimation(),
                         GalleryMode.ClosedToFull => ClosedToFullAnimation(),
                         GalleryMode.ClosedToBottom => ClosedToBottomAnimation(),
-                        GalleryMode.Closed => Task.CompletedTask
+                        GalleryMode.Closed => CloseWithNoAnimation()
                     };
                 }).Subscribe();
             
@@ -46,7 +46,7 @@ public class GalleryAnimationControl : UserControl
             parent.SizeChanged += (_, e) => ParentSizeChanged(parent, e);
         };
     }
-    
+
     #endregion
     
     #region Properties
@@ -65,6 +65,16 @@ public class GalleryAnimationControl : UserControl
     #endregion
 
     #region Animation Methods
+    
+    private async Task CloseWithNoAnimation()
+    {
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            IsVisible = false;
+            UIHelper.GetGalleryView.BlurMask.BlurEnabled = false;
+            Height = 0;
+        });
+    }
 
     private async Task ClosedToFullAnimation()
     {

@@ -6,8 +6,8 @@ using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
+using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using StartUpMenu = PicView.Avalonia.Views.StartUpMenu;
 
@@ -117,19 +117,19 @@ public static class StartUpHelper
 
         if (!settingsExists)
         {
-            vm.GetBottomGalleryItemHeight = Core.Gallery.GalleryDefaults.DefaultBottomGalleryHeight;
-            vm.GetFullGalleryItemHeight = Core.Gallery.GalleryDefaults.DefaultFullGalleryHeight;
+            vm.GetBottomGalleryItemHeight = GalleryDefaults.DefaultBottomGalleryHeight;
+            vm.GetFullGalleryItemHeight = GalleryDefaults.DefaultFullGalleryHeight;
         }
         // Set default gallery sizes if they are out of range or upgrading from an old version
         if (vm.GetBottomGalleryItemHeight < vm.MinBottomGalleryItemHeight ||
             vm.GetBottomGalleryItemHeight > vm.MaxBottomGalleryItemHeight)
         {
-            vm.GetBottomGalleryItemHeight = Core.Gallery.GalleryDefaults.DefaultBottomGalleryHeight;
+            vm.GetBottomGalleryItemHeight = GalleryDefaults.DefaultBottomGalleryHeight;
         }
         if (vm.GetFullGalleryItemHeight < vm.MinFullGalleryItemHeight ||
             vm.GetFullGalleryItemHeight > vm.MaxFullGalleryItemHeight)
         {
-            vm.GetFullGalleryItemHeight = Core.Gallery.GalleryDefaults.DefaultFullGalleryHeight;
+            vm.GetFullGalleryItemHeight = GalleryDefaults.DefaultFullGalleryHeight;
         }
 
         if (!settingsExists)
