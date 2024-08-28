@@ -85,6 +85,10 @@ public static class QuickLoad
             {
                 tasks.Add(GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));
             }
+            else if (SettingsHelper.Settings.WindowProperties.Fullscreen)
+            {
+                tasks.Add(GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));
+            }
         }
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
