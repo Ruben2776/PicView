@@ -1,7 +1,7 @@
 <UserControl
     Background="{StaticResource AltBackgroundColor}"
     IsHitTestVisible="False"
-    ZIndex="999"
+    ZIndex="99"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.UC.DragDropView"
     x:DataType="viewModels:MainViewModel"
@@ -22,7 +22,7 @@
                 RenderOptions.BitmapInterpolationMode="HighQuality"
                 x:Name="ContentHolder" />
 
-            <TextBlock
+            <TextBlock 
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Black.ttf#Roboto"
                 FontSize="16"

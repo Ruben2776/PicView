@@ -13,6 +13,7 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.Extensions;
 using PicView.Core.FileHandling;
@@ -249,7 +250,7 @@ public partial class MainView : UserControl
             }
             else if (path.IsSupported())
             {
-                var thumb = await ImageHelper.GetThumbAsync(path, 340).ConfigureAwait(false);
+                var thumb = await ImageHelper.GetThumbAsync(path, SizeDefaults.WindowMinSize - 30).ConfigureAwait(false);
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {

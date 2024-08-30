@@ -35,7 +35,8 @@ public class GalleryAnimationControl : UserControl
                         GalleryMode.BottomToClosed => BottomToClosedAnimation(),
                         GalleryMode.ClosedToFull => ClosedToFullAnimation(),
                         GalleryMode.ClosedToBottom => ClosedToBottomAnimation(),
-                        GalleryMode.Closed => CloseWithNoAnimation()
+                        GalleryMode.Closed => CloseWithNoAnimation(),
+                        _ => throw new ArgumentOutOfRangeException(nameof(galleryMode), galleryMode, null)
                     };
                 }).Subscribe();
             

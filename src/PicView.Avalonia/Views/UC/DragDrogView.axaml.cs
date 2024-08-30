@@ -70,7 +70,7 @@ public partial class DragDropView : UserControl
 
         var screen = ScreenHelper.ScreenSize;
         const int maxSize = SizeDefaults.WindowMinSize - 30;
-        var padding = vm.BottombarHeight + vm.TitlebarHeight + 20;
+        var padding = vm.BottombarHeight + vm.TitlebarHeight + 50;
         var boxedWidth = UIHelper.GetMainView.Bounds.Width * screen.Scaling - padding;
         var boxedHeight = UIHelper.GetMainView.Bounds.Height * screen.Scaling - padding;
         var scaledWidth = boxedWidth / image?.PixelSize.Width ?? maxSize;

@@ -1,23 +1,22 @@
+using System.Reactive.Linq;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PicView.Avalonia.ViewModels;
-using PicView.Core.Config;
-using PicView.Core.Navigation;
-using System.Runtime.InteropServices;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Primitives;
-using PicView.Core.ImageTransformations;
-using Point = Avalonia.Point;
-using ReactiveUI;
-using System.Reactive.Linq;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.ViewModels;
+using PicView.Core.Config;
+using PicView.Core.ImageTransformations;
+using PicView.Core.Navigation;
+using ReactiveUI;
+using Point = Avalonia.Point;
 
 namespace PicView.Avalonia.Views;
 
@@ -477,7 +476,7 @@ public partial class ImageViewer : UserControl
         }
 
         WindowHelper.SetSize(vm);
-        //MainImage.InvalidateVisual();
+        MainImage.InvalidateVisual();
     }
     
     public void Rotate(double angle)
