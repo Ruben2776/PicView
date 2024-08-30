@@ -461,7 +461,7 @@ public static class WindowHelper
             desktopMinHeight,
             ImageSizeCalculationHelper.GetInterfaceSize(),
             rotation,
-            padding: SettingsHelper.Settings.ImageScaling.StretchImage ? 2 : 45,
+            padding: SettingsHelper.Settings.ImageScaling.StretchImage ? 15 : 45,
             screenSize.Scaling,
             vm.TitlebarHeight,
             vm.BottombarHeight,
@@ -478,11 +478,13 @@ public static class WindowHelper
         {
             if (SettingsHelper.Settings.WindowProperties.Fullscreen || SettingsHelper.Settings.WindowProperties.Maximized)
             {
-                vm.GalleryWidth = double.NaN;;
+                vm.GalleryWidth = double.NaN;
             }
             else
             {
-                vm.GalleryWidth = Math.Max(size.Width, desktopMinWidth);;
+                vm.GalleryWidth = vm.RotationAngle is 90 or 270 ?
+                    Math.Max(size.Height, desktopMinHeight) :
+                    Math.Max(size.Width, desktopMinWidth);
             }
         }
         else
