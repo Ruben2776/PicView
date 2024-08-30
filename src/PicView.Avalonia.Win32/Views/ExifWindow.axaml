@@ -166,7 +166,6 @@
             Width="899" />
         <views:ExifView
             Background="{StaticResource NoisyTexture}"
-            PointerPressed="MoveWindow"
             x:Name="ExifView" />
     </DockPanel>
 </Window>
