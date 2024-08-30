@@ -145,6 +145,8 @@ public static class StartUpHelper
             }
         }
         
+        ThemeHelper.SetBackground(vm);
+        
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
             GalleryFunctions.OpenBottomGallery(vm);

@@ -68,7 +68,7 @@
                     Classes="noBorderHover"
                     Command="{CompiledBinding ShowAboutWindowCommand}"
                     Height="45"
-                    ToolTip.Tip="{CompiledBinding InfoWinow,
+                    ToolTip.Tip="{CompiledBinding AboutWindow,
                                                   Mode=OneWay}"
                     Width="135">
                     <StackPanel Orientation="Horizontal">

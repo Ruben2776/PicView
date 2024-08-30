@@ -320,5 +320,11 @@ public static class ImageHelper
         return frames > 1;
     }
     
+    public static bool HasTransparentBackground(object imageSource)
+    {
+        // TODO implement
+        return true;
+    }
+    
     #endregion
 }

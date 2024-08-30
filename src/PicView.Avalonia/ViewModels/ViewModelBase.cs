@@ -47,7 +47,7 @@ public class ViewModelBase : ReactiveObject
         Forward = TranslationHelper.Translation.Forward;
         Slideshow = TranslationHelper.Translation.Slideshow;
         Settings = TranslationHelper.Translation.Settings;
-        InfoWinow = TranslationHelper.Translation.InfoWindow;
+        AboutWindow = TranslationHelper.Translation.InfoWindow;
         ImageInfo = TranslationHelper.Translation.ImageInfo;
         About = TranslationHelper.Translation.About;
         ShowAllSettingsWindow = TranslationHelper.Translation.ShowAllSettingsWindow;
@@ -1607,12 +1607,12 @@ public class ViewModelBase : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _settings, value);
     }
 
-    private string? _infoWinow;
+    private string? _aboutWindow;
 
-    public string? InfoWinow
+    public string? AboutWindow
     {
-        get => _infoWinow;
-        set => this.RaiseAndSetIfChanged(ref _infoWinow, value);
+        get => _aboutWindow;
+        set => this.RaiseAndSetIfChanged(ref _aboutWindow, value);
     }
 
     private string? _about;

@@ -127,4 +127,68 @@
             </GeometryDrawing>
         </DrawingGroup>
     </DrawingImage>
+    <DrawingImage x:Key="CanvasImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{StaticResource MainIconColor}"
+                            LineJoin="Round"
+                            Thickness="32" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry
+                            RadiusX="32"
+                            RadiusY="32"
+                            Rect="48,80,416,272" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{StaticResource MainIconColor}"
+                            LineJoin="Round"
+                            Thickness="32" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <LineGeometry EndPoint="256,352" StartPoint="256,416" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{StaticResource MainIconColor}"
+                            LineJoin="Round"
+                            Thickness="32" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <LineGeometry EndPoint="256,48" StartPoint="256,80" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{StaticResource MainIconColor}"
+                            LineJoin="Round"
+                            Thickness="32" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <LineGeometry EndPoint="368,352" StartPoint="400,464" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+                <GeometryDrawing>
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{StaticResource MainIconColor}"
+                            LineJoin="Round"
+                            Thickness="32" />
+                    </GeometryDrawing.Pen>
+                    <GeometryDrawing.Geometry>
+                        <LineGeometry EndPoint="144,352" StartPoint="112,464" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
 </ResourceDictionary>

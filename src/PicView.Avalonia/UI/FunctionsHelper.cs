@@ -10,12 +10,10 @@ using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Views;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
-using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
 
 namespace PicView.Avalonia.UI;
@@ -795,9 +793,15 @@ public static class FunctionsHelper
 
     #region Image Functions
     
-    public static Task ChangeBackground()
+    public static async Task ChangeBackground()
     {
-        return Task.CompletedTask;
+        if (Vm is null)
+        {
+            return;
+        }
+        
+        ThemeHelper.ChangeBackground(Vm);
+        await SettingsHelper.SaveSettingsAsync();
     }
     
     public static async Task Reload()

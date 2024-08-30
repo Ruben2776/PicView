@@ -5,18 +5,17 @@ using Avalonia.Automation.Peers;
 using Avalonia.Controls;
 using Avalonia.Controls.Automation.Peers;
 using Avalonia.Media;
-using Avalonia.Metadata;
-using Avalonia.Utilities;
-using PicView.Avalonia.Navigation;
-using ReactiveUI;
 using Avalonia.Media.Imaging;
+using Avalonia.Metadata;
 using Avalonia.Rendering.Composition;
 using Avalonia.Svg.Skia;
+using Avalonia.Utilities;
 using ImageMagick;
 using PicView.Avalonia.AnimatedImage;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
-using PicView.Core.FileHandling;
+using ReactiveUI;
 using Vector = Avalonia.Vector;
 
 
@@ -81,6 +80,21 @@ public class PicBox : Control
         set => SetValue(ImageTypeProperty, value);
     }
     
+    /// <summary>
+    /// Defines the <see cref="Background"/> property.
+    /// </summary>
+    public static readonly StyledProperty<IBrush?> BackgroundProperty =
+        AvaloniaProperty.Register<Border, IBrush?>(nameof(Background));
+    
+    /// <summary>
+    /// Gets or sets a brush with which to paint the background.
+    /// </summary>
+    public IBrush? Background
+    {
+        get => GetValue(BackgroundProperty);
+        set => SetValue(BackgroundProperty, value);
+    }
+    
     #endregion
     
     #region Constructors
@@ -89,6 +103,7 @@ public class PicBox : Control
     {
         // Registers the SourceProperty to render when the source changes
         AffectsRender<PicBox>(SourceProperty);
+        AffectsRender<PicBox>(BackgroundProperty);
     }
     public PicBox()
     {
@@ -107,6 +122,13 @@ public class PicBox : Control
     public sealed override void Render(DrawingContext context)
     {
         base.Render(context);
+        
+        var background = Background;
+        if (background != null)
+        {
+            var renderSize = Bounds.Size;
+            context.FillRectangle(background, new Rect(renderSize));
+        }
 
         switch (Source)
         {

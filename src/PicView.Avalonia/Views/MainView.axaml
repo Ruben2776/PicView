@@ -211,7 +211,12 @@
                     IsChecked="{CompiledBinding IsStretched}"
                     ToggleType="CheckBox" />
                 <MenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding GetCtrlZoom, Mode=OneWay}" />
-                <MenuItem Command="{CompiledBinding ToggleUICommand}" Header="{Binding HideShowInterface, Mode=OneWay}">
+                <MenuItem Command="{CompiledBinding ChangeBackgroundCommand}" Header="{CompiledBinding ChangeBackground, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image Height="12" Width="12" Source="{StaticResource CanvasImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding HideShowInterface, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image Height="12" Width="12">
                             <DrawingImage>

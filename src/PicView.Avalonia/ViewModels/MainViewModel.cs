@@ -1,22 +1,22 @@
-﻿using Avalonia;
+﻿using System.Reactive;
+using System.Reactive.Linq;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
-using PicView.Avalonia.Navigation;
-using PicView.Core.Config;
-using PicView.Core.FileHandling;
-using PicView.Core.ProcessHandling;
-using ReactiveUI;
-using System.Reactive;
-using System.Reactive.Linq;
 using Avalonia.Media;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Converters;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Core.Calculations;
+using PicView.Core.Config;
+using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
+using PicView.Core.ProcessHandling;
+using ReactiveUI;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
 
 namespace PicView.Avalonia.ViewModels;
@@ -65,6 +65,14 @@ public class MainViewModel : ViewModelBase
     {
         get => _imageHeight;
         set => this.RaiseAndSetIfChanged(ref _imageHeight, value);
+    }
+
+    private Brush? _imageBackground;
+    
+    public Brush? ImageBackground
+    {
+        get => _imageBackground;
+        set => this.RaiseAndSetIfChanged(ref _imageBackground, value);
     }
     
     #endregion

@@ -13,20 +13,14 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
-
-    <Panel>
         <LayoutTransformControl x:Name="ImageLayoutTransformControl">
             <customControls:AutoScrollViewer
                 Focusable="False"
                 ScrollChanged="ImageScrollViewer_OnScrollChanged"
                 VerticalScrollBarVisibility="{CompiledBinding ToggleScrollBarVisibility}"
                 x:Name="ImageScrollViewer">
-                <Border
-                    PointerMoved="ImageZoomBorder_OnPointerMoved"
-                    PointerPressed="ImageZoomBorder_OnPointerPressed"
-                    PointerReleased="ImageZoomBorder_OnPointerReleased"
-                    x:Name="ImageZoomBorder">
                     <customControls:PicBox
+                        Background="{CompiledBinding ImageBackground, Mode=OneWay}"
                         Height="{CompiledBinding ImageHeight,
                                                  Mode=OneWay}"
                         ImageType="{CompiledBinding ImageType,
@@ -39,9 +33,10 @@
                         UseLayoutRounding="True"
                         Width="{CompiledBinding ImageWidth,
                                                 Mode=OneWay}"
-                        x:Name="MainImage" />
-                </Border>
+                        x:Name="MainImage" 
+                        PointerMoved="MainImage_OnPointerMoved"
+                        PointerPressed="MainImage_OnPointerPressed"
+                        PointerReleased="MainImage_OnPointerReleased"/>
             </customControls:AutoScrollViewer>
         </LayoutTransformControl>
-    </Panel>
 </UserControl>

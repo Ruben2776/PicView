@@ -8,6 +8,7 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
+using PicView.Avalonia.Views.UC.Menus;
 using PicView.Core.Config;
 using PicView.Core.Localization;
 
@@ -40,7 +41,7 @@ public static class UIHelper
     public static void AddMenus()
     {
         var mainView = GetMainView;
-        var fileMenu = new Views.UC.Menus.FileMenu
+        var fileMenu = new FileMenu
         {
             VerticalAlignment = VerticalAlignment.Bottom,
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -50,7 +51,7 @@ public static class UIHelper
 
         mainView.MainGrid.Children.Add(fileMenu);
 
-        var imageMenu = new Views.UC.Menus.ImageMenu
+        var imageMenu = new ImageMenu
         {
             VerticalAlignment = VerticalAlignment.Bottom,
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -60,7 +61,7 @@ public static class UIHelper
 
         mainView.MainGrid.Children.Add(imageMenu);
 
-        var settingsMenu = new Views.UC.Menus.SettingsMenu
+        var settingsMenu = new SettingsMenu
         {
             VerticalAlignment = VerticalAlignment.Bottom,
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -70,7 +71,7 @@ public static class UIHelper
 
         mainView.MainGrid.Children.Add(settingsMenu);
 
-        var toolsMenu = new Views.UC.Menus.ToolsMenu
+        var toolsMenu = new ToolsMenu
         {
             VerticalAlignment = VerticalAlignment.Bottom,
             HorizontalAlignment = HorizontalAlignment.Center,
@@ -234,4 +235,5 @@ public static class UIHelper
     }
     
     #endregion
+    
 }

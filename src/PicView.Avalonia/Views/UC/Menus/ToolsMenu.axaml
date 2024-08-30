@@ -251,78 +251,14 @@
                     Canvas.Left="182"
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
-                    IsEnabled="False"
+                    Command="{CompiledBinding ChangeBackgroundCommand}"
                     Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Image
+                            Source="{StaticResource CanvasImage}"
                             Height="20"
                             Margin="10,0,10,0"
-                            Width="20">
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                        <GeometryDrawing>
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource MainIconColor}"
-                                                    LineJoin="Round"
-                                                    Thickness="32" />
-                                            </GeometryDrawing.Pen>
-                                            <GeometryDrawing.Geometry>
-                                                <RectangleGeometry
-                                                    RadiusX="32"
-                                                    RadiusY="32"
-                                                    Rect="48,80,416,272" />
-                                            </GeometryDrawing.Geometry>
-                                        </GeometryDrawing>
-                                        <GeometryDrawing>
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource MainIconColor}"
-                                                    LineJoin="Round"
-                                                    Thickness="32" />
-                                            </GeometryDrawing.Pen>
-                                            <GeometryDrawing.Geometry>
-                                                <LineGeometry EndPoint="256,352" StartPoint="256,416" />
-                                            </GeometryDrawing.Geometry>
-                                        </GeometryDrawing>
-                                        <GeometryDrawing>
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource MainIconColor}"
-                                                    LineJoin="Round"
-                                                    Thickness="32" />
-                                            </GeometryDrawing.Pen>
-                                            <GeometryDrawing.Geometry>
-                                                <LineGeometry EndPoint="256,48" StartPoint="256,80" />
-                                            </GeometryDrawing.Geometry>
-                                        </GeometryDrawing>
-                                        <GeometryDrawing>
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource MainIconColor}"
-                                                    LineJoin="Round"
-                                                    Thickness="32" />
-                                            </GeometryDrawing.Pen>
-                                            <GeometryDrawing.Geometry>
-                                                <LineGeometry EndPoint="368,352" StartPoint="400,464" />
-                                            </GeometryDrawing.Geometry>
-                                        </GeometryDrawing>
-                                        <GeometryDrawing>
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource MainIconColor}"
-                                                    LineJoin="Round"
-                                                    Thickness="32" />
-                                            </GeometryDrawing.Pen>
-                                            <GeometryDrawing.Geometry>
-                                                <LineGeometry EndPoint="144,352" StartPoint="112,464" />
-                                            </GeometryDrawing.Geometry>
-                                        </GeometryDrawing>
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image>
+                            Width="20" />
                         <TextBlock
                             Classes="txt"
                             MaxWidth="150"

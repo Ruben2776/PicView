@@ -194,7 +194,7 @@ public partial class ImageViewer : UserControl
 
     private void InitializeZoom()
     {
-        ImageZoomBorder.RenderTransform = new TransformGroup
+        MainImage.RenderTransform = new TransformGroup
         {
             Children =
             [
@@ -202,12 +202,12 @@ public partial class ImageViewer : UserControl
                 new TranslateTransform()
             ]
         };
-        _scaleTransform = (ScaleTransform)((TransformGroup)ImageZoomBorder.RenderTransform)
+        _scaleTransform = (ScaleTransform)((TransformGroup)MainImage.RenderTransform)
             .Children.First(tr => tr is ScaleTransform);
 
-        _translateTransform = (TranslateTransform)((TransformGroup)ImageZoomBorder.RenderTransform)
+        _translateTransform = (TranslateTransform)((TransformGroup)MainImage.RenderTransform)
             .Children.First(tr => tr is TranslateTransform);
-        ImageZoomBorder.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
+        MainImage.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
     }
 
     public void ZoomIn(PointerWheelEventArgs e)
@@ -520,15 +520,14 @@ public partial class ImageViewer : UserControl
                     new DoubleTransition { Property = ScaleTransform.ScaleXProperty, Duration = TimeSpan.FromSeconds(.2) },
                 ]
             };
-            MainImage.RenderTransform = flipTransform;
+            ImageLayoutTransformControl.RenderTransform = flipTransform;
             flipTransform.ScaleX = vm.ScaleX;
         }
         else
         {
             var flipTransform = new ScaleTransform(vm.ScaleX, 1);
-            MainImage.RenderTransform = flipTransform;
+            ImageLayoutTransformControl.RenderTransform = flipTransform;
         }
-        MainImage.InvalidateVisual();
     }
     
     public void SetScaleX()
@@ -560,7 +559,7 @@ public partial class ImageViewer : UserControl
         }
     }
 
-    private void ImageZoomBorder_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    private void MainImage_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
@@ -576,7 +575,7 @@ public partial class ImageViewer : UserControl
         }
     }
 
-    private void ImageZoomBorder_OnPointerMoved(object? sender, PointerEventArgs e)
+    private void MainImage_OnPointerMoved(object? sender, PointerEventArgs e)
     {
         Pan(e);
     }
@@ -590,7 +589,7 @@ public partial class ImageViewer : UserControl
         Capture(e);
     }
 
-    private void ImageZoomBorder_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+    private void MainImage_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
         _captured = false;
     }
