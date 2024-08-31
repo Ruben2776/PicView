@@ -50,14 +50,14 @@
                 BorderBrush="{StaticResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding DuplicateFileCommand}"
+                Command="{CompiledBinding DuplicateFileCommand}"
                 Height="28"
                 Width="130">
                 <TextBlock
                     Classes="txt"
                     Foreground="{StaticResource MainTextColor}"
                     HorizontalAlignment="Center"
-                    Text="{Binding DuplicateFile}"
+                    Text="{CompiledBinding DuplicateFile}"
                     VerticalAlignment="Center" />
             </Button>
 
@@ -96,7 +96,8 @@
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
                 Command="{CompiledBinding OpenWithCommand}"
-                CommandParameter="{CompiledBinding FileInfo.FullName}"
+                CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}"
                 Height="28"
                 Width="130">
                 <TextBlock
@@ -112,7 +113,8 @@
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
                 Command="{CompiledBinding LocateOnDiskCommand}"
-                CommandParameter="{CompiledBinding FileInfo.FullName}"
+                CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}"
                 Height="28"
                 Width="130">
                 <TextBlock

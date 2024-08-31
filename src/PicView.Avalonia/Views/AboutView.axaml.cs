@@ -1,8 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Styling;
-using PicView.Core.Config;
-using System.Runtime.InteropServices;
+using PicView.Core.ProcessHandling;
 
 namespace PicView.Avalonia.Views;
 
@@ -11,15 +10,13 @@ public partial class AboutView : UserControl
     public AboutView()
     {
         InitializeComponent();
-        Loaded += (sender, e) =>
+        Loaded += (_, _) =>
         {
             // TODO: Add version check when ready for release
             // AppVersion.Text = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
             //     VersionHelper.GetFileVersionInfo().FileVersion :
             //     GetType().Assembly.GetName().Version.ToString();
             AppVersion.Text = "Avalonia Beta Preview 1";
-
-            // TODO Check if https://github.com/NetSparkleUpdater/NetSparkle is a good choice for auto-updates
 
             KofiImage.PointerEntered += (_, _) =>
             {
@@ -44,6 +41,12 @@ public partial class AboutView : UserControl
                 {
                     KofiImage.Source = drawingImage;
                 }
+            };
+
+            // TODO: replace with auto download service
+            UpdateButton.Click += (_, _) =>
+            {
+                ProcessHelper.OpenLink("https://picview.org/Avalonia-Download");
             };
         };
     }

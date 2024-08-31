@@ -132,6 +132,7 @@
         <Setter Property="Width" Value="NaN" />
         <Setter Property="Height" Value="35" />
         <Setter Property="Padding" Value="10" />
+        <Setter Property="Background" Value="{StaticResource SecondaryBackgroundColor}" />
     </Style>
 
     <Style Selector="TextBox.TStyle">
