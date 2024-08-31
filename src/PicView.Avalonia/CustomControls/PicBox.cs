@@ -176,6 +176,10 @@ public class PicBox : Control
     {
         var viewPort = DetermineViewPort();
         Size sourceSize;
+        if (source is null)
+        {
+            return;
+        }
         try
         {
             sourceSize = source.Size;

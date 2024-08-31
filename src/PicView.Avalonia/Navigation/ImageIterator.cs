@@ -10,7 +10,6 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
-using PicView.Core.Localization;
 using PicView.Core.Navigation;
 using Timer = System.Timers.Timer;
 
@@ -433,38 +432,37 @@ public sealed class ImageIterator : IDisposable
             {
                 CurrentIndex = index;
             }
-            PreLoader.PreLoadValue? preloadValue;
-            if (PreLoader.Contains(index, ImagePaths))
+
+            // ReSharper disable once MethodHasAsyncOverload
+            var preloadValue = PreLoader.Get(index, ImagePaths);
+            if (preloadValue is not null)
             {
-                preloadValue = await PreLoader.GetAsync(index, ImagePaths);
-                if (preloadValue is not null)
+                if (preloadValue.IsLoading)
                 {
-                    if (preloadValue.IsLoading)
+                    if (index == CurrentIndex)
                     {
-                        if (index == CurrentIndex)
+                        LoadingPreview(index);
+                    }
+                }
+                while (preloadValue.IsLoading)
+                {
+                    await Task.Delay(20);
+                    lock (_lock)
+                    {
+                        if (CurrentIndex != index)
                         {
-                            LoadingPreview(index);
+                            // Skip loading if user went to next value
+                            return;
                         }
-                        preloadValue.ImageLoaded += async (_, e) =>
-                        {
-                            if (e.Index != CurrentIndex)
-                            {
-                                await Task.Delay(500);
-                                if (_vm.Title == TranslationHelper.Translation.Loading && _vm.ImageSource is null)
-                                {
-                                    await IterateToIndex(CurrentIndex);
-                                }
-                                return;
-                            }
-                            await HandleUpdate(preloadValue);
-                        };
-                        return;
                     }
                 }
             }
             else
             {
-                LoadingPreview(CurrentIndex);
+                if (index == CurrentIndex)
+                {
+                    LoadingPreview(index);
+                }
                 preloadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths);
             }
 

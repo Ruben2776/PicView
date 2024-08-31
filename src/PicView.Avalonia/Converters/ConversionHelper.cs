@@ -41,7 +41,7 @@ internal static class ConversionHelper
 
     internal static async Task<string> ConvertTask(FileInfo fileInfo, int selectedIndex)
     {
-        var currentExtension = fileInfo.Extension;
+        var currentExtension = fileInfo.Extension.ToLower();
         var newExtension = selectedIndex switch
         {
             1 => ".png",

@@ -22,24 +22,6 @@ public sealed class PreLoader : IDisposable
         public ImageModel? ImageModel { get; set; } = imageModel;
 
         public bool IsLoading = true;
-        
-        #region Event
-
-        public event ImageLoadedEventHandler? ImageLoaded;
-        public delegate void ImageLoadedEventHandler(object sender, ImageLoadedEventArgs e);
-
-        internal void OnImageLoaded(int index, PreLoadValue preLoadValue)
-        {
-            ImageLoaded?.Invoke(this, new ImageLoadedEventArgs(index, preLoadValue));
-        }
-
-        public class ImageLoadedEventArgs(int index, PreLoadValue preLoadValue) : EventArgs
-        {
-            public int Index { get; } = index;
-            public PreLoadValue PreLoadValue { get; } = preLoadValue;
-        }
-
-        #endregion
     }
 
 #if DEBUG
@@ -96,7 +78,6 @@ public sealed class PreLoader : IDisposable
                 if (ShowAddRemove)
                     Trace.WriteLine($"{imageModel?.FileInfo?.Name} added at {index}");
 #endif
-                preLoadValue.OnImageLoaded(index, preLoadValue); 
                 return true;
             }
         }
