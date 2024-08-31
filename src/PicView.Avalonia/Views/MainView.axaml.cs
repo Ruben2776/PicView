@@ -250,12 +250,24 @@ public partial class MainView : UserControl
             }
             else if (path.IsSupported())
             {
-                var thumb = await ImageHelper.GetThumbAsync(path, SizeDefaults.WindowMinSize - 30).ConfigureAwait(false);
-
-                await Dispatcher.UIThread.InvokeAsync(() =>
+                var ext = Path.GetExtension(path);
+                if (ext.Equals(".svg", StringComparison.InvariantCultureIgnoreCase) || ext.Equals(".svgz", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    _dragDropView?.UpdateThumbnail(thumb);
-                });
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _dragDropView?.UpdateSvgThumbnail(path);
+                    });
+                }
+                else
+                {
+                    var thumb = await ImageHelper.GetThumbAsync(path, SizeDefaults.WindowMinSize - 30).ConfigureAwait(false);
+
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _dragDropView?.UpdateThumbnail(thumb);
+                    });
+                }
+
             }
             else
             {

@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Svg.Skia;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
@@ -31,6 +32,7 @@ public partial class DragDropView : UserControl
         }
         ContentHolder.Background = null;
         ContentHolder.IsVisible = false;
+        ContentHolder.Child = null;
     }
 
     public void AddDirectoryIcon()
@@ -43,6 +45,7 @@ public partial class DragDropView : UserControl
         }
         ContentHolder.Background = null;
         ContentHolder.IsVisible = false;
+        ContentHolder.Child = null;
     }
 
     public void AddZipIcon()
@@ -55,6 +58,7 @@ public partial class DragDropView : UserControl
         }
         ContentHolder.Background = null;
         ContentHolder.IsVisible = false;
+        ContentHolder.Child = null;
     }
 
     public void UpdateThumbnail(Bitmap image)
@@ -82,6 +86,44 @@ public partial class DragDropView : UserControl
         {
             Opacity = 0.95,
             Source = image
+        };
+        ContentHolder.Child = null;
+        ContentHolder.IsVisible = true;
+    }
+    
+    public void UpdateSvgThumbnail(object svg)
+    {
+        TxtDragToView.Text = TranslationHelper.Translation.DropToLoad;
+        Width = UIHelper.GetMainView.Bounds.Width;
+        Height = UIHelper.GetMainView.Bounds.Height;
+        
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+        
+        var svgSource = SvgSource.Load(svg as string);
+        var svgImage = new SvgImage { Source = svgSource };
+
+        var screen = ScreenHelper.ScreenSize;
+        const int maxSize = SizeDefaults.WindowMinSize - 30;
+        var padding = vm.BottombarHeight + vm.TitlebarHeight + 50;
+        var boxedWidth = UIHelper.GetMainView.Bounds.Width * screen.Scaling - padding;
+        var boxedHeight = UIHelper.GetMainView.Bounds.Height * screen.Scaling - padding;
+        var scaledWidth = boxedWidth / svgImage?.Size. Width ?? maxSize;
+        var scaledHeight = boxedHeight / svgImage?.Size.Height ?? maxSize;
+        var scale = Math.Min(scaledWidth, scaledHeight);
+        ContentHolder.Width = svgImage?.Size.Width * scale ?? maxSize;
+        ContentHolder.Height = svgImage?.Size.Height * scale ?? maxSize; 
+        ContentHolder.Background = new ImageBrush
+        {
+            Opacity = 0.95,
+        };
+        ContentHolder.Child = new Image
+        {
+            Source = svgImage,
+            Width = svgImage?.Size.Width * scale ?? maxSize,
+            Height = svgImage?.Size.Height * scale ?? maxSize
         };
         ContentHolder.IsVisible = true;
     }
