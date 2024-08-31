@@ -122,13 +122,6 @@ public class PicBox : Control
     public sealed override void Render(DrawingContext context)
     {
         base.Render(context);
-        
-        var background = Background;
-        if (background != null)
-        {
-            var renderSize = Bounds.Size;
-            context.FillRectangle(background, new Rect(renderSize));
-        }
 
         switch (Source)
         {
@@ -265,6 +258,7 @@ public class PicBox : Control
         var destRect = viewPort.CenterRect(new Rect(scaledSize)).Intersect(viewPort);
         var sourceRect = new Rect(sourceSize).CenterRect(new Rect(destRect.Size / scale));
 
+        RenderBackground(context);
         context.DrawImage(source, sourceRect, destRect);
     }
 
@@ -275,6 +269,7 @@ public class PicBox : Control
         var destRect = viewPort.CenterRect(new Rect(scaledSize)).Intersect(viewPort);
         var sourceRect = new Rect(sourceSize).CenterRect(new Rect(destRect.Size / scale));
 
+        RenderBackground(context);
         try
         {
             context.DrawImage(source, sourceRect, destRect);
@@ -304,12 +299,24 @@ public class PicBox : Control
         // Calculate the rectangles for each image
         var sourceRect = new Rect(0, 0, halfViewportWidth, sourceHeight);
         var secondarySourceRect = new Rect(halfViewportWidth, 0, halfViewportWidth, secondarySourceHeight);
+        
+        RenderBackground(context);
 
         // Draw the first image
         context.DrawImage(source, new Rect(source.Size), sourceRect);
 
         // Draw the second image
         context.DrawImage(secondarySource, new Rect(secondarySource.Size), secondarySourceRect);
+    }
+
+    private void RenderBackground(DrawingContext context)
+    {
+        var background = Background;
+        if (background != null)
+        {
+            var renderSize = Bounds.Size;
+            context.FillRectangle(background, new Rect(renderSize));
+        }
     }
     
     #endregion
