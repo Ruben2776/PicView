@@ -22,6 +22,7 @@
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <AssemblyName>PicView</AssemblyName>
     <StartupObject>PicView.Avalonia.Win32.Program</StartupObject>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>none</DebugType>
