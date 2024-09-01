@@ -16,6 +16,9 @@ Additional features includes viewing EXIF metadata, image compression, batch res
     <img alt="Windows OS" src="https://img.shields.io/badge/OS-Windows%2010/11%2064%20bit-00adef.svg?maxAge=3600&style=flat-square">
 </p>
 
+# Project status
+PicView is currently being rewritten to the Avalonia platform. You can read more at [https://github.com/Ruben2776/PicView/issues/159](here) or download the preview versions [https://picview.org/avalonia-download](https://picview.org/avalonia-download)
+
 # Downloads
 
 [![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.3.1/PicView-v.2.3.1-win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.3.1/PicView-v.2.3.1-win-arm64.zip)
