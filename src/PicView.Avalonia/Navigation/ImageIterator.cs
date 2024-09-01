@@ -475,23 +475,6 @@ public sealed class ImageIterator : IDisposable
                 }
             }
             
-            await HandleUpdate(preloadValue);
-        }
-        catch (Exception e)
-        {
-    #if DEBUG
-            Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
-            await TooltipHelper.ShowTooltipMessageAsync(e.Message);
-    #endif
-        }
-        finally
-        {
-            _vm.IsLoading = false;
-        }
-        return;
-
-        async Task HandleUpdate(PreLoader.PreLoadValue? preloadValue)
-        {
             await UpdateSource(index, preloadValue);
             if (ImagePaths.Count > 1)
             {
@@ -510,6 +493,17 @@ public sealed class ImageIterator : IDisposable
             }
 
             await AddAsync(index, preloadValue.ImageModel);
+        }
+        catch (Exception e)
+        {
+    #if DEBUG
+            Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
+            await TooltipHelper.ShowTooltipMessageAsync(e.Message);
+    #endif
+        }
+        finally
+        {
+            _vm.IsLoading = false;
         }
     }
 
