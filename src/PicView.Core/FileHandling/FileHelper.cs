@@ -73,7 +73,7 @@ public static partial class FileHelper
         return value.ToString($"0.## {prefix}B", CultureInfo.CurrentCulture);
     }
 
-    [GeneratedRegex("\\b(?:https?://|www\\.)\\S+\\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
+    [GeneratedRegex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
     private static partial Regex URLregex();
 
     /// <summary>
@@ -140,11 +140,12 @@ public static partial class FileHelper
         return newFile;
     }
 
+    [GeneratedRegex(@"(\d+)\s*([KMGTP]B)", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex MyRegex();
     public static string? ExtractFileSize(this string input)
     {
         // Define a regular expression pattern to match file size formats like "2GB", "100MB", etc.
-        const string pattern = @"(\d+)\s*([KMGTP]B)";
-        var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+        var regex = MyRegex();
 
         var match = regex.Match(input);
 
@@ -154,8 +155,7 @@ public static partial class FileHelper
     public static long GetFileSizeFromString(string input)
     {
         // Define a regular expression pattern to match file size formats like "2GB", "100MB", etc.
-        const string pattern = @"(\d+)\s*([KMGTP]B)";
-        var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+        var regex = MyRegex();
 
         var match = regex.Match(input);
 
