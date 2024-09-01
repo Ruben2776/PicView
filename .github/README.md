@@ -17,7 +17,7 @@ Additional features includes viewing EXIF metadata, image compression, batch res
 </p>
 
 # Project status
-PicView is currently being rewritten to the Avalonia platform. You can read more at [https://github.com/Ruben2776/PicView/issues/159](here) or download the preview versions [https://picview.org/avalonia-download](https://picview.org/avalonia-download)
+PicView is currently being rewritten to the Avalonia platform. You can read more [here](https://github.com/Ruben2776/PicView/issues/159) or download the preview versions [https://picview.org/avalonia-download](https://picview.org/avalonia-download)
 
 # Downloads
 
