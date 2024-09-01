@@ -21,8 +21,9 @@ public static class ErrorHelper
         if (s.StartsWith("file:///"))
         {
             s = s.Replace("file:///", "");
+            s = s.Replace("%20", " ");
         }
-
+        
         if (File.Exists(s))
             return Path.GetExtension(s).IsArchive() ? "zip" : s;
 
@@ -32,10 +33,6 @@ public static class ErrorHelper
         if (!string.IsNullOrWhiteSpace(s.GetURL()))
             return "web";
 
-        if (Base64Helper.IsBase64String(s))
-            return "base64";
-
-        s = string.Join("_", s.Split(Path.GetInvalidFileNameChars()));
-        return File.Exists(s) ? s : string.Empty;
+        return Base64Helper.IsBase64String(s) ? "base64" : string.Empty;
     }
 }
