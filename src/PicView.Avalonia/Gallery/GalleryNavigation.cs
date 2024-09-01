@@ -47,15 +47,8 @@ public static class GalleryNavigation
 
     public static void CenterScrollToSelectedItem(MainViewModel vm)
     {
-        if (Dispatcher.UIThread.CheckAccess())
-        {
-            ScrollToSelected();
-        }
-        else
-        {
-            Dispatcher.UIThread.InvokeAsync(ScrollToSelected);
-        }
-        
+        // Use post to ensure the UI update takes place after resize
+        Dispatcher.UIThread.Post(ScrollToSelected, DispatcherPriority.Background);;
         return;
         void ScrollToSelected()
         {
