@@ -5,7 +5,7 @@ public static class HttpHelper
     public sealed class HttpClientDownloadWithProgress(string downloadUrl, string destinationFilePath) : IDisposable
     {
         private HttpClient? _httpClient;
-        private bool _disposedValue;
+        private bool _disposed;
 
         public delegate void ProgressChangedHandler(long? totalFileSize, long? totalBytesDownloaded,
             double? progressPercentage);
@@ -57,21 +57,32 @@ public static class HttpHelper
             ProgressChanged?.Invoke(totalDownloadSize, totalBytesRead, progressPercentage);
         }
 
-        private void Dispose(bool disposing)
-        {
-            if (_disposedValue) return;
-            if (disposing)
-            {
-                _httpClient?.Dispose();
-            }
-
-            _disposedValue = true;
-        }
+        #region IDisposable
 
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                _httpClient?.Dispose();
+            }
+
+            _disposed = true;
+        }
+
+        ~HttpClientDownloadWithProgress()
+        {
+            Dispose(false);
+        }
+    
+        #endregion
     }
 }
