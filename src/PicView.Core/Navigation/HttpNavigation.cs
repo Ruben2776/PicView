@@ -14,13 +14,14 @@ public static class HttpNavigation
     public static HttpDownload GetDownloadClient(string url)
     {
         // Create temp directory
-        var tempPath = Path.GetTempPath();
-        var fileName = Path.GetFileName(url);
-        var createTempPath = ArchiveHelper.CreateTempDirectory(tempPath);
+        var createTempPath = TempFileHelper.CreateTempDirectory();
+        var tempPath = TempFileHelper.TempFilePath;
         if (createTempPath == false)
         {
             throw new Exception(TranslationHelper.GetTranslation("UnexpectedError"));
         }
+        
+        var fileName = Path.GetFileName(url);
 
         // Remove past "?" to not get file exceptions
         var index = fileName.IndexOf('?');
@@ -30,7 +31,7 @@ public static class HttpNavigation
         }
 
         tempPath = Path.Combine(tempPath, fileName);
-        ArchiveHelper.TempFilePath = string.Empty; // Reset it, since not browsing archive
+        TempFileHelper.TempFilePath = string.Empty; // Reset it, since not browsing archive
 
         var client = new HttpHelper.HttpClientDownloadWithProgress(url, tempPath);
 

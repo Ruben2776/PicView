@@ -1,5 +1,5 @@
-﻿using PicView.Core.Config;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using PicView.Core.Config;
 
 namespace PicView.Core.FileHandling;
 
@@ -77,7 +77,7 @@ public static class FileListHelper
         string[] enumerable;
         // Check if the subdirectories are to be included in the search
         var recurseSubdirectories =
-            SettingsHelper.Settings.Sorting.IncludeSubDirectories && string.IsNullOrWhiteSpace(ArchiveHelper.TempZipFile);
+            SettingsHelper.Settings.Sorting.IncludeSubDirectories && string.IsNullOrWhiteSpace(TempFileHelper.TempFilePath);
         try
         {
             // Get the list of files in the directory

@@ -7,12 +7,12 @@ public class FileFunctionTest
     [Fact]
     public void TestTemporaryFiles()
     {
-        var path = Path.GetTempPath() + Path.GetRandomFileName();
-        var result = ArchiveHelper.CreateTempDirectory(path);
+        var result = TempFileHelper.CreateTempDirectory();
+        var path = TempFileHelper.TempFilePath;
         Assert.True(result);
-        Assert.True(Directory.Exists(ArchiveHelper.TempFilePath));
+        Assert.True(Directory.Exists(TempFileHelper.TempFilePath));
         FileDeletionHelper.DeleteTempFiles();
         Assert.False(Directory.Exists(path));
-        Assert.False(Directory.Exists(ArchiveHelper.TempFilePath));
+        Assert.False(Directory.Exists(TempFileHelper.TempFilePath));
     }
 }

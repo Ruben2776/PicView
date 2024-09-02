@@ -487,7 +487,7 @@ public sealed class ImageIterator : IDisposable
             }
 
             // Add recent files, except when browsing archive
-            if (string.IsNullOrWhiteSpace(ArchiveHelper.TempFilePath) && ImagePaths.Count > index)
+            if (string.IsNullOrWhiteSpace(TempFileHelper.TempFilePath) && ImagePaths.Count > index)
             {
                 FileHistoryNavigation.Add(ImagePaths[index]);
             }

@@ -59,12 +59,11 @@ public class FileHistoryTest
     private static void AddRandomFiles(FileHistory history, List<string> list)
     {
         var imageFileExtensionArray = new[] { ".jpg", ".png", ".bmp", ".gif", ".tiff", ".webp" };
-        var path = Path.GetTempPath() + Path.GetRandomFileName();
-        var directory = ArchiveHelper.CreateTempDirectory(path);
+        var directory = TempFileHelper.CreateTempDirectory();
         Assert.True(directory);
         var randomExtension = imageFileExtensionArray[new Random().Next(0, imageFileExtensionArray.Length)];
-        var randomFileNameWithExtension = path + randomExtension;
-        var fullPath = Path.Combine(ArchiveHelper.TempFilePath, randomFileNameWithExtension);
+        var randomFileNameWithExtension = TempFileHelper.TempFilePath + randomExtension;
+        var fullPath = Path.Combine(TempFileHelper.TempFilePath, randomFileNameWithExtension);
         using var fs = File.Create(fullPath);
         Assert.True(File.Exists(fullPath));
         history.Add(randomFileNameWithExtension);

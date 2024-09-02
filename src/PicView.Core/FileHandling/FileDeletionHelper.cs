@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Microsoft.VisualBasic.FileIO;
 
 namespace PicView.Core.FileHandling;
 
@@ -42,21 +42,21 @@ public static class FileDeletionHelper
     /// </summary>
     public static void DeleteTempFiles()
     {
-        if (!Directory.Exists(ArchiveHelper.TempFilePath))
+        if (!Directory.Exists(TempFileHelper.TempFilePath))
         {
             return;
         }
 
         try
         {
-            Array.ForEach(Directory.GetFiles(ArchiveHelper.TempFilePath), File.Delete);
+            Array.ForEach(Directory.GetFiles(TempFileHelper.TempFilePath), File.Delete);
 #if DEBUG
             Trace.WriteLine("Temp zip files deleted");
 #endif
 
-            Directory.Delete(ArchiveHelper.TempFilePath);
+            Directory.Delete(TempFileHelper.TempFilePath);
 #if DEBUG
-            Trace.WriteLine("Temp zip folder " + ArchiveHelper.TempFilePath + " deleted");
+            Trace.WriteLine("Temp zip folder " + TempFileHelper.TempFilePath + " deleted");
 #endif
         }
         catch (Exception exception)
@@ -66,7 +66,5 @@ public static class FileDeletionHelper
 #endif
             return;
         }
-
-        ArchiveHelper.TempZipFile = ArchiveHelper.TempFilePath = null;
     }
 }

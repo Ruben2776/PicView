@@ -7,6 +7,7 @@ using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.ArchiveHandling;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
@@ -252,8 +253,21 @@ public static class NavigationHelper
 
     public static async Task LoadPicFromArchiveAsync(string path, MainViewModel vm)
     {
-        // TODO: implement load from archive
-        throw new NotImplementedException();
+        var extraction = await ArchiveExtraction.ExtractArchiveAsync(path);
+        if (!extraction)
+        {
+            await ErrorHandling.ReloadAsync(vm);
+            return;
+        }
+
+        if (Directory.Exists(ArchiveExtraction.TempZipDirectory))
+        {
+            await LoadPicFromDirectoryAsync(ArchiveExtraction.TempZipDirectory, vm);
+        }
+        else
+        {
+            await ErrorHandling.ReloadAsync(vm);
+        }
     }
     
     /// <summary>

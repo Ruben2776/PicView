@@ -7,6 +7,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.ArchiveHandling;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -571,6 +572,7 @@ public static class WindowHelper
         await KeybindingsHelper.UpdateKeyBindingsFile(); // Save keybindings
         FileDeletionHelper.DeleteTempFiles();
         FileHistoryNavigation.WriteToFile();
+        ArchiveExtraction.Cleanup();
         Environment.Exit(0);
     }
 }
