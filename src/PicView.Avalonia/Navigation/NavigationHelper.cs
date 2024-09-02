@@ -184,24 +184,28 @@ public static class NavigationHelper
                 vm.CurrentView = vm.ImageViewer;
                 await LoadPicFromFile(check, vm).ConfigureAwait(false);
                 vm.IsLoading = false;
+                ArchiveExtraction.Cleanup();
                 return;
 
             case "web":
                 vm.CurrentView = vm.ImageViewer;
                 await LoadPicFromUrlAsync(source, vm).ConfigureAwait(false);
                 vm.IsLoading = false;
+                ArchiveExtraction.Cleanup();
                 return;
 
             case "base64":
                 vm.CurrentView = vm.ImageViewer;
                 await LoadPicFromBase64Async(source, vm).ConfigureAwait(false);
                 vm.IsLoading = false;
+                ArchiveExtraction.Cleanup();
                 return;
 
             case "directory":
                 vm.CurrentView = vm.ImageViewer;
                 await LoadPicFromDirectoryAsync(source, vm).ConfigureAwait(false);
                 vm.IsLoading = false;
+                ArchiveExtraction.Cleanup();
                 return;
 
             case "zip":
@@ -213,6 +217,7 @@ public static class NavigationHelper
             case "":
                 await ErrorHandling.ReloadAsync(vm);
                 vm.IsLoading = false;
+                ArchiveExtraction.Cleanup();
                 return;
         }
     }

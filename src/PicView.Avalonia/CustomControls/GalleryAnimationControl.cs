@@ -17,6 +17,21 @@ namespace PicView.Avalonia.CustomControls;
 
 public class GalleryAnimationControl : UserControl
 {
+    #region Properties
+
+    public static readonly AvaloniaProperty<GalleryMode?> GalleryModeProperty =
+        AvaloniaProperty.Register<GalleryAnimationControl, GalleryMode?>(nameof(GalleryMode));
+
+    public GalleryMode GalleryMode
+    {
+        get => (GalleryMode)(GetValue(GalleryModeProperty) ?? false);
+        set => SetValue(GalleryModeProperty, value);
+    }
+
+    private bool _isAnimating;
+    
+    #endregion
+    
     #region Constructors
     protected GalleryAnimationControl()
     {
@@ -36,6 +51,7 @@ public class GalleryAnimationControl : UserControl
                         GalleryMode.ClosedToFull => ClosedToFullAnimation(),
                         GalleryMode.ClosedToBottom => ClosedToBottomAnimation(),
                         GalleryMode.Closed => CloseWithNoAnimation(),
+                        GalleryMode.BottomNoAnimation => BottomNoAnimation(),
                         _ => throw new ArgumentOutOfRangeException(nameof(galleryMode), galleryMode, null)
                     };
                 }).Subscribe();
@@ -49,21 +65,6 @@ public class GalleryAnimationControl : UserControl
     }
 
     #endregion
-    
-    #region Properties
-
-    public static readonly AvaloniaProperty<GalleryMode?> GalleryModeProperty =
-        AvaloniaProperty.Register<GalleryAnimationControl, GalleryMode?>(nameof(GalleryMode));
-
-    public GalleryMode GalleryMode
-    {
-        get => (GalleryMode)(GetValue(GalleryModeProperty) ?? false);
-        set => SetValue(GalleryModeProperty, value);
-    }
-
-    private bool _isAnimating;
-    
-    #endregion
 
     #region Animation Methods
     
@@ -74,6 +75,21 @@ public class GalleryAnimationControl : UserControl
             IsVisible = false;
             UIHelper.GetGalleryView.BlurMask.BlurEnabled = false;
             Height = 0;
+        });
+    }
+
+    private async Task BottomNoAnimation()
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            IsVisible = true;
+            Opacity = 1;
+            Height = double.NaN;
+            vm.GalleryOrientation = Orientation.Horizontal;
         });
     }
 

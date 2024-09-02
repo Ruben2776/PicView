@@ -103,7 +103,7 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShownInHiddenUi, value);
     }
 
-    private GalleryMode _galleryMode;
+    private GalleryMode _galleryMode = GalleryMode.Closed;
 
     public GalleryMode GalleryMode
     {
@@ -127,7 +127,7 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _selectedGalleryItemIndex, value);
     }
 
-    private VerticalAlignment _galleryVerticalAlignment;
+    private VerticalAlignment _galleryVerticalAlignment = VerticalAlignment.Bottom;
 
     public VerticalAlignment GalleryVerticalAlignment
     {

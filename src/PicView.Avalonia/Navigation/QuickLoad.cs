@@ -5,6 +5,7 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.Gallery;
 
 namespace PicView.Avalonia.Navigation;
 
@@ -79,14 +80,17 @@ public static class QuickLoad
         {
             if (vm.IsInterfaceShown)
             {
+                vm.GalleryMode = GalleryMode.BottomNoAnimation;
                 tasks.Add(GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));
             }
             else if (SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI)
             {
+                vm.GalleryMode = GalleryMode.BottomNoAnimation;
                 tasks.Add(GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));
             }
             else if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
+                vm.GalleryMode = GalleryMode.BottomNoAnimation;
                 tasks.Add(GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));
             }
         }

@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
-using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -146,11 +145,6 @@ public static class StartUpHelper
         }
         
         ThemeHelper.SetBackground(vm);
-        
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            GalleryFunctions.OpenBottomGallery(vm);
-        }
         
         Task.Run(KeybindingsHelper.LoadKeybindings);
         

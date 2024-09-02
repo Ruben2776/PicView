@@ -141,6 +141,7 @@
             BorderThickness="0,1,0,0"
             Focusable="False"
             Padding="0"
+            VerticalAlignment="{CompiledBinding GalleryVerticalAlignment}"
             ScrollViewer.HorizontalScrollBarVisibility="Visible"
             ScrollViewer.IsScrollInertiaEnabled="True"
             ScrollViewer.VerticalScrollBarVisibility="Disabled"

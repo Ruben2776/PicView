@@ -10,5 +10,6 @@
         BottomToClosed,
         ClosedToFull,
         ClosedToBottom,
-        Closed
+        Closed,
+        BottomNoAnimation
     }

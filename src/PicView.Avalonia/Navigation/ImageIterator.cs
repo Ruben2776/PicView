@@ -584,7 +584,7 @@ public sealed class ImageIterator : IDisposable
         if (_vm.SelectedGalleryItemIndex != index)
         {
             _vm.SelectedGalleryItemIndex = index;
-            if (GalleryFunctions.IsBottomGalleryOpen)
+            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
             {
                 GalleryNavigation.CenterScrollToSelectedItem(_vm);
             }
