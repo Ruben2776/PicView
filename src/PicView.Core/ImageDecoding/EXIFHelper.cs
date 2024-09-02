@@ -89,20 +89,6 @@ public static class EXIFHelper
         return true;
     }
 
-    public static IExifProfile? GetExifProfile(string path)
-    {
-        using var magick = new MagickImage();
-        try
-        {
-            magick.Ping(path);
-            return magick.GetExifProfile();
-        }
-        catch (Exception)
-        {
-            return null;
-        }
-    }
-
     public static string GetDateTaken(IExifProfile profile)
     {
         var getDateTaken =

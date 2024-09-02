@@ -76,11 +76,6 @@ public static class SupportedFiles
         ".xpm"
     ];
 
-    public static List<string> ConvertFilesToGlobFormat()
-    {
-        return FileExtensions.Select(ext => $"*{ext}").ToList();
-    }
-
     /// <summary>
     /// List of supported archive file extensions.
     /// </summary>
@@ -102,11 +97,6 @@ public static class SupportedFiles
         ".iso",
         ".cab"
     ];
-
-    public static List<string> ConvertArchivesToGlobFormat()
-    {
-        return FileExtensionsArchives.Select(ext => $"*{ext}").ToList();
-    }
 
     /// <summary>
     /// Extension method to check if a file is supported.
