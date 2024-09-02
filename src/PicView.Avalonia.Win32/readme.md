@@ -1,1 +1,0 @@
-This project is for containing the views specific for the Windows platform.
