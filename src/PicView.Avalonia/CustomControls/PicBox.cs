@@ -208,6 +208,7 @@ public class PicBox : Control
         }
 
         context.Dispose(); // Fixes transparent images
+        RenderBackground(context);
         _stream = new FileStream(InitialAnimatedSource, FileMode.Open, FileAccess.Read);
         UpdateAnimationInstance(_stream);
         AnimationUpdate();

@@ -31,6 +31,7 @@ public class CustomVisualHandler : CompositionCustomVisualHandler
         {
             _currentInstance?.Dispose();
             _currentInstance = instance;
+            _animationElapsed = TimeSpan.Zero;
         }
     }
 
