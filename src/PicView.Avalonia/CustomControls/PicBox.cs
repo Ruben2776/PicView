@@ -15,7 +15,6 @@ using PicView.Avalonia.AnimatedImage;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
-using ReactiveUI;
 using Vector = Avalonia.Vector;
 
 
@@ -25,7 +24,6 @@ public class PicBox : Control
     #region Fields and Properties
     
     private CompositionCustomVisual? _customVisual;
-    private readonly IDisposable? _imageTypeSubscription;
     private FileStream? _stream;
     private IGifInstance? _animInstance;
     public string? InitialAnimatedSource;
@@ -105,15 +103,58 @@ public class PicBox : Control
         AffectsRender<PicBox>(SourceProperty);
         AffectsRender<PicBox>(BackgroundProperty);
     }
-    public PicBox()
-    {
-        _imageTypeSubscription = this.WhenAnyValue(x => x.ImageType)
-            .Subscribe(UpdateSource);
-    }
 
     #endregion
 
     #region Rendering
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property != SourceProperty)
+        {
+            return;
+        }
+
+        switch (ImageType)
+        {
+            case ImageType.Svg:
+                if (Source is not string svg)
+                {
+                    goto default;
+                }
+                var svgSource = SvgSource.Load(svg);
+                Source = new SvgImage { Source = svgSource };
+                lock (Lock)
+                {
+                    _animInstance?.Dispose();
+                }
+                _stream?.Dispose();
+                break;
+            case ImageType.AnimatedGif:
+            case ImageType.AnimatedWebp:
+                Source = Source as Bitmap;
+                lock (Lock)
+                {
+                    _animInstance?.Dispose();
+                }
+                
+                break;
+            case ImageType.Bitmap:
+                Source = Source as Bitmap;
+                lock (Lock)
+                {
+                    _animInstance?.Dispose();
+                }
+                _stream?.Dispose();
+                break;
+            case ImageType.Invalid:
+            default:
+                // TODO: Add invalid image graphic
+                break;
+        }
+    }
 
     /// <summary>
     /// Renders the control.
@@ -402,47 +443,6 @@ public class PicBox : Control
     #endregion
     
     #region Helper Methods
-
-    private void UpdateSource(ImageType imageType)
-    {
-        switch (imageType)
-        {
-            case ImageType.Svg:
-                if (Source is not string svg)
-                {
-                    goto default;
-                }
-                var svgSource = SvgSource.Load(svg);
-                Source = new SvgImage { Source = svgSource };
-                lock (Lock)
-                {
-                    _animInstance?.Dispose();
-                }
-                _stream?.Dispose();
-                break;
-            case ImageType.AnimatedGif:
-            case ImageType.AnimatedWebp:
-                Source = Source as Bitmap;
-                lock (Lock)
-                {
-                    _animInstance?.Dispose();
-                }
-                
-                break;
-            case ImageType.Bitmap:
-                Source = Source as Bitmap;
-                lock (Lock)
-                {
-                    _animInstance?.Dispose();
-                }
-                _stream?.Dispose();
-                break;
-            case ImageType.Invalid:
-            default:
-                // TODO: Add invalid image graphic
-                break;
-        }
-    }
     
     private Rect DetermineViewPort()
     {
@@ -502,7 +502,9 @@ public class PicBox : Control
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
-        _imageTypeSubscription.Dispose();
+        if (_customVisual is null) return;
+        _customVisual.SendHandlerMessage(CustomVisualHandler.StopMessage);
+        _customVisual = null;
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
