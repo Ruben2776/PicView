@@ -34,4 +34,6 @@ public interface IPlatformSpecificService
     void SetAsLockScreen(string path);
     
     void CopyFile(string path);
+    
+    Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory);
 }

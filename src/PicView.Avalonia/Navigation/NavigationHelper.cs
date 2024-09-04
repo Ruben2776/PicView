@@ -256,9 +256,18 @@ public static class NavigationHelper
         await PreviewPicAndLoadGallery(fileInfo, vm);
     }
 
+    /// <summary>
+    /// Asynchronously loads a picture from a specified archive file.
+    /// </summary>
+    /// <param name="path">The path to the archive file containing the picture(s) to load.</param>
+    /// <param name="vm">The main view model instance used to manage UI state and operations.</param>
+    /// <returns>
+    /// A task representing the asynchronous operation. This task completes when the picture is loaded
+    /// from the archive or when an error occurs during the extraction or loading process.
+    /// </returns>
     public static async Task LoadPicFromArchiveAsync(string path, MainViewModel vm)
     {
-        var extraction = await ArchiveExtraction.ExtractArchiveAsync(path);
+        var extraction = await ArchiveExtraction.ExtractArchiveAsync(path, vm.PlatformService.ExtractWithLocalSoftwareAsync);
         if (!extraction)
         {
             await ErrorHandling.ReloadAsync(vm);

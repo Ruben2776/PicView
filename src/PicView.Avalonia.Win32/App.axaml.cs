@@ -290,5 +290,10 @@ public class App : Application, IPlatformSpecificService
         ClipboardHelper.CopyFileToClipboard(path);
     }
     
+    public async Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory)
+    {
+        return await ArchiveExtractionHelper.ExtractWithLocalSoftwareAsync(path, tempDirectory);
+    }
+    
     #endregion
 }

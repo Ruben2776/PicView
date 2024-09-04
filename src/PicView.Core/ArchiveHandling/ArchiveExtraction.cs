@@ -13,17 +13,42 @@ public static class ArchiveExtraction
     /// Gets the path of the temporary directory where the archive contents are extracted.
     /// </summary>
     public static string? TempZipDirectory { get; private set; }
-    
+
     /// <summary>
     /// Asynchronously extracts supported files from a given archive to a temporary directory.
     /// </summary>
-    /// <param name="archivePath">The path of the archive file to extract.</param>
+    /// <param name="archivePath">
+    /// The path of the archive file to extract. The method throws an <see cref="ArgumentException"/>
+    /// if this path is null, empty, or the file does not exist.
+    /// </param>
+    /// <param name="extractWithLocalSoftwareAsync">
+    /// A delegate function that attempts to extract the archive using local software (e.g., 7-Zip, WinRAR).
+    /// This function should return a boolean value indicating whether the extraction was successful.
+    /// It takes two parameters: the path to the archive and the path to the temporary extraction directory.
+    /// </param>
     /// <returns>
-    /// A task that represents the asynchronous operation. The task result contains a boolean value:
-    /// <c>true</c> if any supported files were extracted successfully; otherwise, <c>false</c>.
+    /// A task representing the asynchronous operation. The task result is a boolean:
+    /// <c>true</c> if any supported files were successfully extracted; otherwise, <c>false</c>.
     /// </returns>
-    /// <exception cref="ArgumentException">Thrown when the <paramref name="archivePath"/> is null, empty, or the file does not exist.</exception>
-    public static async Task<bool> ExtractArchiveAsync(string archivePath)
+    /// <exception cref="ArgumentException">
+    /// Thrown when the <paramref name="archivePath"/> is null, empty, or the file does not exist.
+    /// </exception>
+    /// <exception cref="IOException">
+    /// Thrown if there is an I/O error during the extraction process (e.g., issues with reading or writing files).
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    /// Thrown if the extraction process encounters access issues (e.g., insufficient permissions to access files or directories).
+    /// </exception>
+    /// <exception cref="Exception">
+    /// A general exception that can be thrown for any other unexpected issues during extraction.
+    /// </exception>
+    /// <remarks>
+    /// The method first checks the file extension of the archive to determine if it should be extracted using local software.
+    /// If the file is supported by the local software (e.g., 7z, cb7), it delegates the extraction to the provided
+    /// <paramref name="extractWithLocalSoftwareAsync"/> function. If the archive is in another format, it uses SharpCompress
+    /// to read and extract supported files asynchronously.
+    /// </remarks>
+    public static async Task<bool> ExtractArchiveAsync(string archivePath, Func<string, string, Task<bool>> extractWithLocalSoftwareAsync)
     {
         try
         {
@@ -35,6 +60,12 @@ public static class ArchiveExtraction
             var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(tempDirectory);
             TempZipDirectory = tempDirectory;
+            
+            var ext = Path.GetExtension(archivePath);
+            if (ext.Equals(".7z", StringComparison.OrdinalIgnoreCase) || ext.Equals(".cb7", StringComparison.OrdinalIgnoreCase))
+            {
+                return await extractWithLocalSoftwareAsync(archivePath, tempDirectory);
+            }
             
             await using var stream = File.OpenRead(archivePath);
             using var reader = ReaderFactory.Open(stream);

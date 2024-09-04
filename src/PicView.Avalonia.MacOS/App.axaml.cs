@@ -1,21 +1,21 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Threading;
-using PicView.Avalonia.MacOS.Views;
-using PicView.Avalonia.ViewModels;
-using PicView.Core.Config;
-using PicView.Core.FileHandling;
-using PicView.Core.Localization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime;
 using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.ViewModels;
+using PicView.Core.Config;
+using PicView.Core.FileHandling;
+using PicView.Core.Localization;
 
 namespace PicView.Avalonia.MacOS;
 
@@ -275,5 +275,11 @@ public void ShowAboutWindow()
     public void CopyFile(string path)
     {
         // TODO: Implement CopyFile
+    }
+    
+    public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory)
+    {
+        // TODO: Implement ExtractWithLocalSoftwareAsync
+        return Task.FromResult(false);
     }
 }
