@@ -1,13 +1,10 @@
-﻿
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
-#if DEBUG
-using PicView.Avalonia.ViewModels;
-#endif
 
 namespace PicView.Avalonia.Gallery;
 

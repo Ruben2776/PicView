@@ -601,6 +601,11 @@ public sealed class ImageIterator : IDisposable
             return;
         }
         SetTitleHelper.SetLoadingTitle(_vm);
+        _vm.SelectedGalleryItemIndex = index;
+        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
+        {
+            GalleryNavigation.CenterScrollToSelectedItem(_vm);
+        }
         using var image = new MagickImage();
         image.Ping(_vm.ImageIterator.ImagePaths[index]);
         var thumb = image.GetExifProfile()?.CreateThumbnail();

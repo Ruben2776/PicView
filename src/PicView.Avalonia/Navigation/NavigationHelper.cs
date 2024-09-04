@@ -5,6 +5,7 @@ using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.ArchiveHandling;
@@ -276,7 +277,18 @@ public static class NavigationHelper
 
         if (Directory.Exists(ArchiveExtraction.TempZipDirectory))
         {
-            await LoadPicFromDirectoryAsync(ArchiveExtraction.TempZipDirectory, vm);
+            var dirInfo = new DirectoryInfo(ArchiveExtraction.TempZipDirectory);
+            if (dirInfo.EnumerateDirectories().Any())
+            {
+                var firstDir = dirInfo.EnumerateDirectories().First();
+                var fileInfo = firstDir.EnumerateFiles().First();
+                await LoadPicFromFile(fileInfo.FullName, vm, fileInfo);
+            }
+            else
+            {
+                await LoadPicFromDirectoryAsync(ArchiveExtraction.TempZipDirectory, vm);
+            }
+            MainKeyboardShortcuts.ClearKeyDownModifiers(); // Fix possible modifier key state issue
         }
         else
         {
@@ -401,12 +413,18 @@ public static class NavigationHelper
     {
         fileInfo ??= new FileInfo(file);
         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+        if (imageModel is null)
+        {
+            await ErrorHandling.ReloadAsync(vm);
+            return;
+        }
         ExifHandling.SetImageModel(imageModel, vm);
         vm.ImageSource = imageModel;
         vm.ImageType = imageModel.ImageType;
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+        vm.ImageIterator.Dispose();
         vm.ImageIterator = new ImageIterator(fileInfo, vm);
-        await vm.ImageIterator.IterateToIndex(vm.ImageIterator.CurrentIndex);
+        await vm.ImageIterator.IterateToIndex(0);
         await CheckAndReloadGallery(fileInfo, vm);
     }
     
