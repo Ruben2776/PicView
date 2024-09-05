@@ -62,9 +62,9 @@ public static class StartUpHelper
         }
 
         w.Show();
+        vm.IsLoading = true;
         ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(w);
         UIHelper.SetControls(desktop);
-        vm.IsLoading = true;
         vm.UpdateLanguage();
         vm.GetFlipped = vm.Flip;
         
@@ -94,6 +94,7 @@ public static class StartUpHelper
         var args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
+            vm.CurrentView = vm.ImageViewer;
             Task.Run(() => QuickLoad.QuickLoadAsync(vm, args[1]));
         }
         else if (SettingsHelper.Settings.StartUp.OpenLastFile)
@@ -105,6 +106,7 @@ public static class StartUpHelper
             }
             else
             {
+                vm.CurrentView = vm.ImageViewer;
                 Task.Run(() => QuickLoad.QuickLoadAsync(vm, SettingsHelper.Settings.StartUp.LastFile));
             }
         }

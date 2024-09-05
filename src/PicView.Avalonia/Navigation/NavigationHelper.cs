@@ -281,8 +281,8 @@ public static class NavigationHelper
             if (dirInfo.EnumerateDirectories().Any())
             {
                 var firstDir = dirInfo.EnumerateDirectories().First();
-                var fileInfo = firstDir.EnumerateFiles().First();
-                await LoadPicFromFile(fileInfo.FullName, vm, fileInfo);
+                var firstFile = firstDir.EnumerateFiles().First();
+                await LoadPicFromFile(firstFile.FullName, vm, firstFile);
             }
             else
             {
@@ -412,17 +412,7 @@ public static class NavigationHelper
     public static async Task LoadPicFromDirectoryAsync(string file, MainViewModel vm, FileInfo? fileInfo = null)
     {
         fileInfo ??= new FileInfo(file);
-        var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-        if (imageModel is null)
-        {
-            await ErrorHandling.ReloadAsync(vm);
-            return;
-        }
-        ExifHandling.SetImageModel(imageModel, vm);
-        vm.ImageSource = imageModel;
-        vm.ImageType = imageModel.ImageType;
-        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
-        vm.ImageIterator.Dispose();
+        vm.ImageIterator?.Dispose();
         vm.ImageIterator = new ImageIterator(fileInfo, vm);
         await vm.ImageIterator.IterateToIndex(0);
         await CheckAndReloadGallery(fileInfo, vm);
