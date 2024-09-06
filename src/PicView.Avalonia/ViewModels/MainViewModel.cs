@@ -90,6 +90,23 @@ public class MainViewModel : ViewModelBase
         get => _isShowingSideBySide;
         set => this.RaiseAndSetIfChanged(ref _isShowingSideBySide, value);
     }
+
+    private double _scrollViewerWidth = double.NaN;
+    
+    public double ScrollViewerWidth
+    {
+        get => _scrollViewerWidth;
+        set => this.RaiseAndSetIfChanged(ref _scrollViewerWidth, value);
+    }
+    
+    private double _scrollViewerHeight = double.NaN;
+    
+    public double ScrollViewerHeight
+    {
+        get => _scrollViewerHeight;
+        set => this.RaiseAndSetIfChanged(ref _scrollViewerHeight, value);
+    }
+    
     
     #endregion
 

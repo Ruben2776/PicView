@@ -505,11 +505,16 @@ public static class WindowHelper
                 containerWidth,
                 containerHeight);
         }
+        
         vm.TitleMaxWidth = size.TitleMaxWidth;
         vm.ImageWidth = size.Width;
         vm.SecondaryImageWidth = size.SecondaryWidth;
         vm.ImageHeight = size.Height;
         vm.GalleryMargin = new Thickness(0, 0, 0, size.Margin);
+        
+        vm.ScrollViewerWidth = size.ScrollViewerWidth;
+        vm.ScrollViewerHeight = size.ScrollViewerHeight;
+
 
         if (SettingsHelper.Settings.WindowProperties.AutoFit)
         {

@@ -16,8 +16,12 @@
     <LayoutTransformControl x:Name="ImageLayoutTransformControl">
         <customControls:AutoScrollViewer
             Focusable="False"
+            Height="{CompiledBinding ScrollViewerHeight,
+                                     Mode=OneWay}"
             ScrollChanged="ImageScrollViewer_OnScrollChanged"
             VerticalScrollBarVisibility="{CompiledBinding ToggleScrollBarVisibility}"
+            Width="{CompiledBinding ScrollViewerWidth,
+                                    Mode=OneWay}"
             x:Name="ImageScrollViewer">
             <customControls:PicBox
                 Background="{CompiledBinding ImageBackground,
