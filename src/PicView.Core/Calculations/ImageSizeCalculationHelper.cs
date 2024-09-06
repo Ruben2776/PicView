@@ -183,22 +183,24 @@ namespace PicView.Core.Calculations
             // Combined width of both images
             var combinedWidth = xWidth1 + xWidth2;
 
-            // Available width (monitor width minus 2 for constraint)
-            var availableWidth = monitorWidth - 2;
+            var widthPadding = SettingsHelper.Settings.ImageScaling.StretchImage ? 4 : padding;
+            var availableWidth = monitorWidth - widthPadding;
 
             // If combined width exceeds available width, scale both images down proportionally
             if (combinedWidth > availableWidth)
             {
                 var scaleFactor = availableWidth / combinedWidth;
+                xWidth1 *= scaleFactor;
                 xWidth2 *= scaleFactor;
-                xHeight *= scaleFactor;  // Adjust the height accordingly
+                xHeight *= scaleFactor;
+                
+                combinedWidth = xWidth1 + xWidth2;
             }
 
-            // Calculate title max width for the first image (this can be adapted for the second image too)
             var titleMaxWidth = GetTitleMaxWidth(rotationAngle, combinedWidth, xHeight, monitorMinWidth, monitorMinHeight, interfaceSize, containerWidth);
 
-            // Return the size of the first image (adjust if needed to return both images' sizes)
-            return new ImageSize(combinedWidth, xHeight, xWidth2, titleMaxWidth, 0, firstSize.AspectRatio);
+            var margin = firstSize.Height > secondSize.Height ? firstSize.Margin : secondSize.Margin;
+            return new ImageSize(combinedWidth, xHeight, xWidth2, titleMaxWidth, margin, firstSize.AspectRatio);
         }
 
 

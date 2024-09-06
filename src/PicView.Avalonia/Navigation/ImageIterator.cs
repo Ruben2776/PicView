@@ -515,10 +515,7 @@ namespace PicView.Avalonia.Navigation
                 {
                     if (preloadValue.IsLoading)
                     {
-                        if (index == CurrentIndex)
-                        {
-                            LoadingPreview(index);
-                        }
+                        TryShowPreview(preloadValue);
                     }
 
                     while (preloadValue.IsLoading)
@@ -536,11 +533,7 @@ namespace PicView.Avalonia.Navigation
                 }
                 else
                 {
-                    if (index == CurrentIndex)
-                    {
-                        LoadingPreview(index);
-                    }
-
+                    TryShowPreview(preloadValue);
                     preloadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths);
                 }
 
@@ -556,6 +549,14 @@ namespace PicView.Avalonia.Navigation
                 if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
                 {
                     var nextPreloadValue = await GetNextPreLoadValueAsync();
+                    lock (_lock)
+                    {
+                        if (CurrentIndex != index)
+                        {
+                            // Skip loading if user went to next value
+                            return;
+                        }
+                    }
                     _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
                     await UpdateSource(index, preloadValue, nextPreloadValue);
                 }
@@ -593,6 +594,32 @@ namespace PicView.Avalonia.Navigation
             finally
             {
                 _vm.IsLoading = false;
+            }
+            
+            return;
+
+            void TryShowPreview(PreLoader.PreLoadValue preloadValue)
+            {
+                if (preloadValue is null)
+                    return;
+                
+                if (!preloadValue.IsLoading)
+                    return;
+
+                if (index != CurrentIndex)
+                    return;
+
+                if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+                {
+                    SetTitleHelper.SetLoadingTitle(_vm);
+                    _vm.IsLoading = true;
+                    _vm.ImageSource = null;
+                    _vm.SecondaryImageSource = null;
+                }
+                else
+                {
+                    LoadingPreview(index);
+                }
             }
         }
 
@@ -642,8 +669,22 @@ namespace PicView.Avalonia.Navigation
                 preLoadValue.ImageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
             }
 
+            if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+            {
+                nextPreloadValue ??= await GetNextPreLoadValueAsync();
+                if (nextPreloadValue.ImageModel?.Image is null)
+                {
+                    var fileInfo = nextPreloadValue.ImageModel?.FileInfo ?? new FileInfo(ImagePaths[GetIteration(index, IsReversed ? NavigateTo.Previous : NavigateTo.Next, true)]);
+                    nextPreloadValue.ImageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+                }
+            }
+
             _vm.IsLoading = false;
             ExifHandling.SetImageModel(preLoadValue.ImageModel, _vm);
+            if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+            {
+                _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
+            }
             _vm.ImageSource = preLoadValue.ImageModel.Image;
             if (preLoadValue.ImageModel.ImageType is ImageType.AnimatedGif or ImageType.AnimatedWebp)
             {
