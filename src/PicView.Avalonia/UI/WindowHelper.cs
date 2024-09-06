@@ -169,7 +169,10 @@ public static class WindowHelper
             vm.IsAutoFit = true;
         }
         SetSize(vm);
-        vm.ImageViewer.MainImage.InvalidateVisual();
+        if (SettingsHelper.Settings.WindowProperties.AutoFit)
+        {
+            CenterWindowOnScreen();
+        }
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
@@ -514,7 +517,6 @@ public static class WindowHelper
         
         vm.ScrollViewerWidth = size.ScrollViewerWidth;
         vm.ScrollViewerHeight = size.ScrollViewerHeight;
-
 
         if (SettingsHelper.Settings.WindowProperties.AutoFit)
         {

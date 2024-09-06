@@ -194,18 +194,33 @@ namespace PicView.Core.Calculations
             // Combined width of both images
             var combinedWidth = xWidth1 + xWidth2;
 
-            var widthPadding = SettingsHelper.Settings.ImageScaling.StretchImage ? 4 : padding;
-            var availableWidth = monitorWidth - widthPadding;
-
-            // If combined width exceeds available width, scale both images down proportionally
-            if (combinedWidth > availableWidth)
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
-                var scaleFactor = availableWidth / combinedWidth;
-                xWidth1 *= scaleFactor;
-                xWidth2 *= scaleFactor;
-                xHeight *= scaleFactor;
+                var widthPadding = SettingsHelper.Settings.ImageScaling.StretchImage ? 4 : padding;
+                var availableWidth = monitorWidth - widthPadding;
+
+                // If combined width exceeds available width, scale both images down proportionally
+                if (combinedWidth > availableWidth)
+                {
+                    var scaleFactor = availableWidth / combinedWidth;
+                    xWidth1 *= scaleFactor;
+                    xWidth2 *= scaleFactor;
+                    xHeight *= scaleFactor;
                 
-                combinedWidth = xWidth1 + xWidth2;
+                    combinedWidth = xWidth1 + xWidth2;
+                }
+            }
+            else
+            {
+                if (combinedWidth > containerWidth)
+                {
+                    var scaleFactor = containerWidth / combinedWidth;
+                    xWidth1 *= scaleFactor;
+                    xWidth2 *= scaleFactor;
+                    xHeight *= scaleFactor;
+                
+                    combinedWidth = xWidth1 + xWidth2;
+                }
             }
             
             double scrollWidth, scrollHeight;
@@ -213,19 +228,15 @@ namespace PicView.Core.Calculations
             {
                 if (SettingsHelper.Settings.WindowProperties.AutoFit)
                 {
-                    combinedWidth = combinedWidth - SizeDefaults.ScrollbarSize - 8;
-                    xHeight = combinedWidth * height / width;
-                
-                    scrollWidth = combinedWidth;
+                    combinedWidth -= SizeDefaults.ScrollbarSize;
+                    scrollWidth = combinedWidth + SizeDefaults.ScrollbarSize + 8;
                     scrollHeight = containerHeight - padding - 8;
                 }
                 else
                 {
-                    combinedWidth = combinedWidth - SizeDefaults.ScrollbarSize - 8;
-                    xHeight = combinedWidth * height / width;
-                
-                    scrollWidth = combinedWidth;
-                    scrollHeight = containerHeight - padding - 8;
+                    combinedWidth -= SizeDefaults.ScrollbarSize + 8;
+                    scrollWidth = double.NaN;
+                    scrollHeight = double.NaN;
                 }
             }
             else
@@ -267,10 +278,6 @@ namespace PicView.Core.Calculations
             {
                 // Fix title width to window size
                 titleMaxWidth = containerWidth - interfaceSize <= 0 ? 0 : containerWidth - interfaceSize;
-                if (SettingsHelper.Settings.Zoom.ScrollEnabled)
-                {
-                    titleMaxWidth += SizeDefaults.ScrollbarSize;
-                }
             }
 
             return titleMaxWidth;
