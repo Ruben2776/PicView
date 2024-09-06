@@ -12,7 +12,7 @@ public static class ImageHelper
 {
     #region Image Handling
     
-    public static async Task<ImageModel?> GetImageModelAsync(FileInfo fileInfo, bool isThumb = false, int height = 0)
+    public static async Task<ImageModel?> GetImageModelAsync(FileInfo fileInfo, bool isThumb = false, uint height = 0)
     {
         return await Task.Run(async () =>
         {
@@ -150,7 +150,7 @@ public static class ImageHelper
         Add(fs, imageModel);
     }
 
-    private static async Task AddDefaultImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, int height)
+    private static async Task AddDefaultImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, uint height)
     {
         if (isThumb)
         {
@@ -202,8 +202,8 @@ public static class ImageHelper
     {
         var svg = new MagickImage();
         svg.Ping(fileInfo.FullName);
-        imageModel.PixelWidth = svg.Width;
-        imageModel.PixelHeight = svg.Height;
+        imageModel.PixelWidth = (int)svg.Width;
+        imageModel.PixelHeight = (int)svg.Height;
         imageModel.ImageType = ImageType.Svg;
         imageModel.Image = fileInfo.FullName;
     }
@@ -212,7 +212,7 @@ public static class ImageHelper
 
     #region Base64
 
-    private static async Task AddBase64ImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, int height)
+    private static async Task AddBase64ImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, uint height)
     {
         using var magickImage = await ImageDecoder.Base64ToMagickImage(fileInfo.FullName).ConfigureAwait(false);
         using var b64Stream = new MemoryStream();
@@ -232,7 +232,7 @@ public static class ImageHelper
     
     #region Thumbnail
 
-    public static async Task<Bitmap?> GetThumbAsync(string path, int height, FileInfo? fileInfo = null)
+    public static async Task<Bitmap?> GetThumbAsync(string path, uint height, FileInfo? fileInfo = null)
     {
         try
         {
@@ -259,7 +259,7 @@ public static class ImageHelper
         }
     }
     
-    private static async Task AddThumbAsync(FileInfo fileInfo, ImageModel imageModel, int height)
+    private static async Task AddThumbAsync(FileInfo fileInfo, ImageModel imageModel, uint height)
     {
         var thumb = await GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
         imageModel.Image = thumb;
@@ -268,7 +268,7 @@ public static class ImageHelper
         imageModel.ImageType = ImageType.Bitmap;
     }
 
-    private static async Task<Bitmap> CreateThumbAsync(IMagickImage magick, string path, int height, FileInfo? fileInfo = null)
+    private static async Task<Bitmap> CreateThumbAsync(IMagickImage magick, string path, uint height, FileInfo? fileInfo = null)
     {
         fileInfo ??= new FileInfo(path);
         await using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read,

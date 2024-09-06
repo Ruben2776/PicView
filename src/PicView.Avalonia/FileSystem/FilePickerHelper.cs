@@ -115,8 +115,8 @@ public static class FilePickerHelper
                         throw new ArgumentOutOfRangeException();
                     }
                     var stream = new FileStream(path, FileMode.Create);
-                    var quality = 100;
-                    bitmap.Save(stream, quality);
+                    const uint quality = 100;
+                    bitmap.Save(stream, (int)quality);
                     await stream.DisposeAsync();
                     var ext = Path.GetExtension(path);
                     if (ext != ".jpg" || ext != ".jpeg" || ext != ".png" || ext != ".bmp" || vm.RotationAngle != 0)

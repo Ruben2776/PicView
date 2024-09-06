@@ -448,8 +448,8 @@ public static class NavigationHelper
             magickImage.Ping(path);
             vm.ImageSource = source;
             vm.ImageType = ImageType.Svg;
-            width = magickImage.Width;
-            height = magickImage.Height;
+            width = (int)magickImage.Width;
+            height = (int)magickImage.Height;
         }
         else
         {

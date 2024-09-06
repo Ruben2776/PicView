@@ -302,7 +302,7 @@ public static class GalleryFunctions
          }
 
          GalleryItem? galleryItem;
-         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo, true, (int)vm.GetGalleryItemHeight);
+         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo, true, (uint)vm.GetGalleryItemHeight);
          var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
          try
          {

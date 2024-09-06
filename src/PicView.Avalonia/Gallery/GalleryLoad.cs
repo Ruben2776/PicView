@@ -175,7 +175,7 @@ public static class GalleryLoad
                 }
 
                 var thumbImageModel = await ImageHelper.GetImageModelAsync(fileInfos[i], isThumb: true,
-                    (int)galleryItemSize);
+                    (uint)galleryItemSize);
                 var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfos[i]);
 
                 await Dispatcher.UIThread.InvokeAsync(() =>

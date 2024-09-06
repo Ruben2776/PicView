@@ -26,7 +26,7 @@ internal static class ConversionHelper
             return false;
         }
 
-        return await SaveImageFileHelper.ResizeImageAsync(fileInfo, (int)width, 0).ConfigureAwait(false);
+        return await SaveImageFileHelper.ResizeImageAsync(fileInfo, (uint)width, 0).ConfigureAwait(false);
     }
 
     internal static async Task<bool> ResizeByHeight(FileInfo fileInfo, double height)
@@ -36,7 +36,7 @@ internal static class ConversionHelper
             return false;
         }
 
-        return await SaveImageFileHelper.ResizeImageAsync(fileInfo, 0, (int)height).ConfigureAwait(false);
+        return await SaveImageFileHelper.ResizeImageAsync(fileInfo, 0, (uint)height).ConfigureAwait(false);
     }
 
     internal static async Task<string> ConvertTask(FileInfo fileInfo, int selectedIndex)
