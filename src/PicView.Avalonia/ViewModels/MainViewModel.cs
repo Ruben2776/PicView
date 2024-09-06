@@ -66,6 +66,14 @@ public class MainViewModel : ViewModelBase
         get => _imageHeight;
         set => this.RaiseAndSetIfChanged(ref _imageHeight, value);
     }
+    
+    private double _imageSecondaryWidth;
+    
+    public double SecondaryImageWidth
+    {
+        get => _imageSecondaryWidth;
+        set => this.RaiseAndSetIfChanged(ref _imageSecondaryWidth, value);
+    }
 
     private Brush? _imageBackground;
     
@@ -73,6 +81,14 @@ public class MainViewModel : ViewModelBase
     {
         get => _imageBackground;
         set => this.RaiseAndSetIfChanged(ref _imageBackground, value);
+    }
+
+    private bool _isShowingSideBySide = SettingsHelper.Settings.ImageScaling.ShowImageSideBySide;
+    
+    public bool IsShowingSideBySide
+    {
+        get => _isShowingSideBySide;
+        set => this.RaiseAndSetIfChanged(ref _isShowingSideBySide, value);
     }
     
     #endregion
@@ -482,6 +498,8 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<string, Unit>? GalleryItemStretchCommand { get; }
     
     public ReactiveCommand<Unit, Unit>? ResetSettingsCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit>? ShowSideBySideCommand { get; }
 
     #endregion Commands
 
@@ -1741,6 +1759,8 @@ public class MainViewModel : ViewModelBase
         OptimizeImageCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OptimizeImage);
         
         ChangeBackgroundCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ChangeBackground);
+        
+        ShowSideBySideCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ShowSideBySide);
 
         #endregion Image commands
 

@@ -34,7 +34,14 @@ public static class QuickLoad
         }
         vm.ImageSource = imageModel.Image;
         vm.ImageType = imageModel.ImageType;
-        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+        PreLoader.PreLoadValue? secondaryPreloadValue = null;
+        if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+        {
+            vm.ImageIterator = new ImageIterator(fileInfo, vm);
+            secondaryPreloadValue = await vm.ImageIterator.GetNextPreLoadValueAsync();
+            vm.SecondaryImageSource = secondaryPreloadValue?.ImageModel?.Image;
+        }
+        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, secondaryPreloadValue?.ImageModel?.PixelWidth ?? 0, secondaryPreloadValue?.ImageModel?.PixelHeight ?? 0, imageModel.Rotation, vm);
         vm.IsLoading = false;
         imageModel.EXIFOrientation = ImageHelper.GetExifOrientation(vm);
         ExifHandling.SetImageModel(imageModel, vm);
@@ -57,11 +64,11 @@ public static class QuickLoad
         }
         if (changed)
         {
-            WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+            WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, secondaryPreloadValue?.ImageModel?.PixelWidth ?? 0, secondaryPreloadValue?.ImageModel?.PixelHeight ?? 0, imageModel.Rotation, vm);
         }
             
         ExifHandling.UpdateExifValues(imageModel, vm);
-        vm.ImageIterator = new ImageIterator(fileInfo, vm);
+        vm.ImageIterator ??= new ImageIterator(fileInfo, vm);
             
         SetTitleHelper.SetTitle(vm, imageModel);
         vm.GetIndex = vm.ImageIterator.CurrentIndex + 1;

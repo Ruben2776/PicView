@@ -62,6 +62,8 @@ public class ImageScaling
 {
     public bool StretchImage { get; set; } = false;
     public bool IsScalingSetToNearestNeighbor { get; set; } = false;
+    
+    public bool ShowImageSideBySide { get; set; } = false;
 }
 
 public class Zoom

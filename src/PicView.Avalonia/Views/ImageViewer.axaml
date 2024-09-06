@@ -13,30 +13,33 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
-        <LayoutTransformControl x:Name="ImageLayoutTransformControl">
-            <customControls:AutoScrollViewer
-                Focusable="False"
-                ScrollChanged="ImageScrollViewer_OnScrollChanged"
-                VerticalScrollBarVisibility="{CompiledBinding ToggleScrollBarVisibility}"
-                x:Name="ImageScrollViewer">
-                    <customControls:PicBox
-                        Background="{CompiledBinding ImageBackground, Mode=OneWay}"
-                        Height="{CompiledBinding ImageHeight,
-                                                 Mode=OneWay}"
-                        ImageType="{CompiledBinding ImageType,
-                                                    Mode=OneWay}"
-                        RenderOptions.BitmapInterpolationMode="HighQuality"
-                        SecondarySource="{CompiledBinding SecondaryImageSource,
-                                                          Mode=OneWay}"
-                        Source="{CompiledBinding ImageSource,
-                                                 Mode=OneWay}"
-                        UseLayoutRounding="True"
-                        Width="{CompiledBinding ImageWidth,
-                                                Mode=OneWay}"
-                        x:Name="MainImage" 
-                        PointerMoved="MainImage_OnPointerMoved"
-                        PointerPressed="MainImage_OnPointerPressed"
-                        PointerReleased="MainImage_OnPointerReleased"/>
-            </customControls:AutoScrollViewer>
-        </LayoutTransformControl>
+    <LayoutTransformControl x:Name="ImageLayoutTransformControl">
+        <customControls:AutoScrollViewer
+            Focusable="False"
+            ScrollChanged="ImageScrollViewer_OnScrollChanged"
+            VerticalScrollBarVisibility="{CompiledBinding ToggleScrollBarVisibility}"
+            x:Name="ImageScrollViewer">
+            <customControls:PicBox
+                Background="{CompiledBinding ImageBackground,
+                                             Mode=OneWay}"
+                Height="{CompiledBinding ImageHeight,
+                                         Mode=OneWay}"
+                ImageType="{CompiledBinding ImageType,
+                                            Mode=OneWay}"
+                PointerMoved="MainImage_OnPointerMoved"
+                PointerPressed="MainImage_OnPointerPressed"
+                PointerReleased="MainImage_OnPointerReleased"
+                RenderOptions.BitmapInterpolationMode="HighQuality"
+                SecondaryImageWidth="{CompiledBinding SecondaryImageWidth,
+                                                      Mode=OneWay}"
+                SecondarySource="{CompiledBinding SecondaryImageSource,
+                                                  Mode=OneWay}"
+                Source="{CompiledBinding ImageSource,
+                                         Mode=OneWay}"
+                UseLayoutRounding="True"
+                Width="{CompiledBinding ImageWidth,
+                                        Mode=OneWay}"
+                x:Name="MainImage" />
+        </customControls:AutoScrollViewer>
+    </LayoutTransformControl>
 </UserControl>

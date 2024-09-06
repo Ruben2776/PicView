@@ -470,7 +470,7 @@ public static class NavigationHelper
             // Set to closed to ensure next gallery mode changing is fired
             vm.GalleryMode = GalleryMode.Closed;
         }
-        WindowHelper.SetSize(width, height, 0, vm);
+        WindowHelper.SetSize(width, height, 0,0, 0, vm);
         if (vm.RotationAngle != 0)
         {
             vm.ImageViewer.Rotate(vm.RotationAngle);
@@ -534,7 +534,7 @@ public static class NavigationHelper
         ExifHandling.SetImageModel(imageModel, vm);
         vm.ImageSource = imageModel.Image;
         vm.ImageType = imageModel.ImageType;
-        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, imageModel.Rotation, vm);
+        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0,0, imageModel.Rotation, vm);
         if (files is null)
         {
             vm.ImageIterator = new ImageIterator(fileInfo, vm);

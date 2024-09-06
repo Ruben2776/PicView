@@ -279,25 +279,19 @@
                     </StackPanel>
                 </Button>
 
-                <Button
+                <ToggleButton
                     Canvas.Left="160"
                     Canvas.Top="99"
                     Classes="ButtonBorder altHover"
-                    IsEnabled="False"
+                    Command="{CompiledBinding ShowSideBySideCommand}"
+                    IsChecked="{CompiledBinding IsShowingSideBySide}"
                     ToolTip.Tip="View image side by side">
-                    <StackPanel Orientation="Horizontal">
-                        <Image
-                            Height="20"
-                            Margin="9,0,8,0"
-                            Source="{StaticResource DisplayImage}"
-                            Width="20" />
-                        <TextBlock
-                            Classes="txt"
-                            Margin="1,0,6,0"
-                            MaxWidth="175"
-                            Text="Side by side" />
-                    </StackPanel>
-                </Button>
+                    <TextBlock
+                        Classes="txt"
+                        Margin="1,0,6,0"
+                        MaxWidth="175"
+                        Text="Side by side" />
+                </ToggleButton>
 
                 <ToggleButton
                     Canvas.Left="7"

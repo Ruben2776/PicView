@@ -115,6 +115,7 @@ public static class FunctionsHelper
 
             // Misc
             "ChangeBackground" => ChangeBackground,
+            "ShowSideBySide" => ShowSideBySide,
             "GalleryClick" => GalleryClick,
             "Slideshow" => Slideshow,
             "ColorPicker" => ColorPicker,
@@ -801,6 +802,38 @@ public static class FunctionsHelper
         }
         
         ThemeHelper.ChangeBackground(Vm);
+        await SettingsHelper.SaveSettingsAsync();
+    }
+    
+    public static async Task ShowSideBySide()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Vm.ImageViewer.MainImage.InvalidateVisual();
+        });
+
+        if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+        {
+            SettingsHelper.Settings.ImageScaling.ShowImageSideBySide = false;
+            Vm.IsShowingSideBySide = false;
+            Vm.SecondaryImageSource = null;
+            WindowHelper.SetSize(Vm.ImageWidth, Vm.ImageHeight, 0, 0, Vm.RotationAngle, Vm);
+        }
+        else
+        {
+            SettingsHelper.Settings.ImageScaling.ShowImageSideBySide = true;
+            Vm.IsShowingSideBySide = true;
+            if (NavigationHelper.CanNavigate(Vm))
+            {
+                var preloadValue = await Vm.ImageIterator?.GetNextPreLoadValueAsync();
+                Vm.SecondaryImageSource = preloadValue?.ImageModel.Image;
+                WindowHelper.SetSize(Vm.ImageWidth, Vm.ImageHeight, preloadValue.ImageModel.PixelWidth, preloadValue.ImageModel.PixelHeight, Vm.RotationAngle, Vm);
+            }
+        }
         await SettingsHelper.SaveSettingsAsync();
     }
     

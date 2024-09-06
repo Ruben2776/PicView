@@ -15,6 +15,7 @@ using PicView.Avalonia.AnimatedImage;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Config;
 using Vector = Avalonia.Vector;
 
 
@@ -60,6 +61,14 @@ public class PicBox : Control
     {
         get => GetValue(SecondarySourceProperty);
         set => SetValue(SecondarySourceProperty, value);
+    }
+    
+    public static readonly StyledProperty<double> SecondaryImageWidthProperty = AvaloniaProperty.Register<PicBox, double>(nameof(SecondaryImageWidth));
+
+    public double SecondaryImageWidth
+    {
+        get => GetValue(SecondaryImageWidthProperty);
+        set => SetValue(SecondaryImageWidthProperty, value);
     }
 
     /// <summary>
@@ -216,15 +225,24 @@ public class PicBox : Control
 
     private void RenderBasedOnSettings(DrawingContext context, IImage source)
     {
+        var is1To1 = false; // TODO: replace with settings value
+        var isSideBySide = SettingsHelper.Settings.ImageScaling.ShowImageSideBySide;
+        var secondarySource = SecondarySource as IImage;
+        
         var viewPort = DetermineViewPort();
         Size sourceSize;
         if (source is null)
         {
             return;
         }
+        Size? secondarySourceSize = null;
         try
         {
             sourceSize = source.Size;
+            if (isSideBySide)
+            {
+                secondarySourceSize = secondarySource.Size;
+            }
         }
         catch (Exception e)
         {
@@ -267,10 +285,19 @@ public class PicBox : Control
                 }
                 else return;
             }
+            if (isSideBySide)
+            {
+                var nextPreloadValue = vm.ImageIterator?.GetNextPreLoadValue();
+                if (nextPreloadValue?.ImageModel != null)
+                {
+                    secondarySourceSize = new Size(nextPreloadValue.ImageModel.PixelWidth, nextPreloadValue.ImageModel.PixelHeight);
+                }
+                else
+                {
+                    return;
+                }
+            }
         }
-    
-        var is1To1 = false; // TODO: replace with settings value
-        var isSideBySide = false; // TODO: replace with settings value
     
         if (is1To1)
         {
@@ -278,18 +305,7 @@ public class PicBox : Control
         }
         else if (isSideBySide)
         {
-            if (SecondarySource is IImage secondarySource)
-            {
-                RenderImageSideBySide(context, source, secondarySource, viewPort);
-            }
-            else
-            {
-                // Handle invalid secondary source
-#if DEBUG
-                Console.WriteLine("Invalid secondary source type.");
-                TooltipHelper.ShowTooltipMessage("Invalid secondary source type.", true);
-#endif
-            }
+            RenderImageSideBySide(context, source, secondarySource, viewPort, sourceSize, secondarySourceSize);
         }
         else
         {
@@ -329,30 +345,56 @@ public class PicBox : Control
         }
     }
 
-    private void RenderImageSideBySide(DrawingContext context, IImage source, IImage secondarySource, Rect viewPort)
+    private void RenderImageSideBySide(DrawingContext context, IImage source, IImage secondarySource, Rect viewPort, Size sourceSize, Size? secondarySourceSize)
     {
-        // Get the aspect ratios of the images
-        var sourceAspectRatio = source.Size.Width / source.Size.Height;
-        var secondarySourceAspectRatio = secondarySource.Size.Width / secondarySource.Size.Height;
+        if (source == null || secondarySource == null || secondarySourceSize == null)
+        {
+            return;
+        }
 
-        // Calculate the width for each image
-        var halfViewportWidth = viewPort.Width / 2;
+        // Scale both images based on the height of the viewport
+        var scale = viewPort.Height / Math.Max(sourceSize.Height, secondarySourceSize.Value.Height);
 
-        // Calculate heights based on the aspect ratio
-        var sourceHeight = halfViewportWidth / sourceAspectRatio;
-        var secondarySourceHeight = halfViewportWidth / secondarySourceAspectRatio;
+        // Calculate the scaled size of the second image based on the specified width (SecondaryImageWidth)
+        var scaledSecondarySize = new Size(SecondaryImageWidth, secondarySourceSize.Value.Height * scale);
+    
+        // Calculate the remaining width for the first image
+        var firstImageWidth = viewPort.Width - scaledSecondarySize.Width;
 
-        // Calculate the rectangles for each image
-        var sourceRect = new Rect(0, 0, halfViewportWidth, sourceHeight);
-        var secondarySourceRect = new Rect(halfViewportWidth, 0, halfViewportWidth, secondarySourceHeight);
-        
+        if (firstImageWidth <= 0)
+        {
+            // If there's no space left for the first image, don't render anything
+            return;
+        }
+
+        // Scale the first image to fit within the remaining width while keeping the same height
+        var scaledSourceSize = new Size(firstImageWidth, sourceSize.Height * scale);
+
+        // Calculate the destination rectangles for both images
+        var sourceDestRect = new Rect(0, 0, firstImageWidth, viewPort.Height);
+        var secondaryDestRect = new Rect(firstImageWidth, 0, SecondaryImageWidth, viewPort.Height);
+
+        // Calculate the source rectangles (ensuring the aspect ratio is maintained)
+        var sourceRect = new Rect(sourceSize);
+        var secondarySourceRect = new Rect(secondarySourceSize.Value);
+
+        // Render the background before the images
         RenderBackground(context);
 
-        // Draw the first image
-        context.DrawImage(source, new Rect(source.Size), sourceRect);
+        try
+        {
+            // Render the first image (filling the remaining space)
+            context.DrawImage(source, sourceRect, sourceDestRect);
 
-        // Draw the second image
-        context.DrawImage(secondarySource, new Rect(secondarySource.Size), secondarySourceRect);
+            // Render the second image (with the fixed SecondaryImageWidth)
+            context.DrawImage(secondarySource, secondarySourceRect, secondaryDestRect);
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Console.WriteLine(e);
+#endif
+        }
     }
 
     private void RenderBackground(DrawingContext context)

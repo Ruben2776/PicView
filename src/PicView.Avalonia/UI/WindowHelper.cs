@@ -416,10 +416,21 @@ public static class WindowHelper
         }
 
         var preloadValue = vm.ImageIterator?.GetCurrentPreLoadValue();
-        SetSize(preloadValue?.ImageModel?.PixelWidth ?? vm.ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? vm.ImageHeight, vm.RotationAngle, vm);
+        if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+        {
+            var secondaryPreloadValue = vm.ImageIterator?.GetNextPreLoadValue();
+            if (secondaryPreloadValue != null)
+            {
+                SetSize(preloadValue?.ImageModel?.PixelWidth ?? vm.ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? vm.ImageHeight, secondaryPreloadValue.ImageModel?.PixelWidth ?? vm.ImageWidth, secondaryPreloadValue.ImageModel?.PixelHeight ?? vm.ImageHeight, vm.RotationAngle, vm);
+            }
+        }
+        else
+        {
+            SetSize(preloadValue?.ImageModel?.PixelWidth ?? vm.ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? vm.ImageHeight, 0, 0, vm.RotationAngle, vm);
+        }
     }
-
-    public static void SetSize(double width, double height, double rotation, MainViewModel vm)
+    
+    public static void SetSize(double width, double height, double secondWidth, double secondHeight, double rotation, MainViewModel vm)
     {
         width = width == 0 ? vm.ImageWidth : width;
         height = height == 0 ? vm.ImageHeight : height;
@@ -453,25 +464,50 @@ public static class WindowHelper
         {
             return;
         }
-        var size = ImageSizeCalculationHelper.GetImageSize(
-            width,
-            height,
-            screenSize.WorkingAreaWidth,
-            screenSize.WorkingAreaHeight,
-            desktopMinWidth,
-            desktopMinHeight,
-            ImageSizeCalculationHelper.GetInterfaceSize(),
-            rotation,
-            padding: SettingsHelper.Settings.ImageScaling.StretchImage ? 15 : 45,
-            screenSize.Scaling,
-            vm.TitlebarHeight,
-            vm.BottombarHeight,
-            vm.GalleryHeight,
-            containerWidth,
-            containerHeight);
-        
+        ImageSizeCalculationHelper.ImageSize size;
+        if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide && secondWidth > 0 && secondHeight > 0)
+        {
+            size = ImageSizeCalculationHelper.GetImageSize(
+                width,
+                height,
+                secondWidth,
+                secondHeight,
+                screenSize.WorkingAreaWidth,
+                screenSize.WorkingAreaHeight,
+                desktopMinWidth,
+                desktopMinHeight,
+                ImageSizeCalculationHelper.GetInterfaceSize(),
+                rotation,
+                padding: SettingsHelper.Settings.ImageScaling.StretchImage ? 15 : 45,
+                screenSize.Scaling,
+                vm.TitlebarHeight,
+                vm.BottombarHeight,
+                vm.GalleryHeight,
+                containerWidth,
+                containerHeight);
+        }
+        else
+        {
+            size = ImageSizeCalculationHelper.GetImageSize(
+                width,
+                height,
+                screenSize.WorkingAreaWidth,
+                screenSize.WorkingAreaHeight,
+                desktopMinWidth,
+                desktopMinHeight,
+                ImageSizeCalculationHelper.GetInterfaceSize(),
+                rotation,
+                padding: SettingsHelper.Settings.ImageScaling.StretchImage ? 15 : 45,
+                screenSize.Scaling,
+                vm.TitlebarHeight,
+                vm.BottombarHeight,
+                vm.GalleryHeight,
+                containerWidth,
+                containerHeight);
+        }
         vm.TitleMaxWidth = size.TitleMaxWidth;
         vm.ImageWidth = size.Width;
+        vm.SecondaryImageWidth = size.SecondaryWidth;
         vm.ImageHeight = size.Height;
         vm.GalleryMargin = new Thickness(0, 0, 0, size.Margin);
 
