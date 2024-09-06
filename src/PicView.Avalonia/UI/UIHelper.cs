@@ -174,7 +174,6 @@ namespace PicView.Avalonia.UI
                         preloadValue.ImageModel.PixelHeight, vm.RotationAngle, vm);
                 }
             }
-            await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.MainImage.InvalidateVisual(); });
             await SettingsHelper.SaveSettingsAsync();
         }
 

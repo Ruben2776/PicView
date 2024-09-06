@@ -10,7 +10,6 @@ namespace PicView.Core.Calculations
             return RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 165 : 228;
         }
 
-
         public static ImageSize GetImageSize(double width,
             double height,
             double monitorWidth,
@@ -29,7 +28,7 @@ namespace PicView.Core.Calculations
         {
             if (width <= 0 || height <= 0 || rotationAngle > 360 || rotationAngle < 0)
             {
-                return new ImageSize(0, 0, 0, 0, 0, 0,0,0);
+                return new ImageSize(0, 0, 0, 0, 0, 0, 0, 0);
             }
 
             double aspectRatio;
@@ -49,7 +48,7 @@ namespace PicView.Core.Calculations
             {
                 workAreaWidth -= SizeDefaults.ScrollbarSize * dpiScaling;
                 containerWidth -= SizeDefaults.ScrollbarSize * dpiScaling;
-                
+
                 maxWidth = workAreaWidth - padding;
                 maxHeight = height;
             }
@@ -124,7 +123,7 @@ namespace PicView.Core.Calculations
                 {
                     xWidth = maxWidth - SizeDefaults.ScrollbarSize - 10;
                     xHeight = maxWidth * height / width;
-                
+
                     scrollWidth = maxWidth;
                     scrollHeight = containerHeight - padding - 8;
                 }
@@ -132,16 +131,16 @@ namespace PicView.Core.Calculations
                 {
                     scrollWidth = containerWidth + SizeDefaults.ScrollbarSize;
                     scrollHeight = containerHeight;
-                    
+
                     xWidth = containerWidth - SizeDefaults.ScrollbarSize + 10;
                     xHeight = height / width * xWidth;
                 }
             }
             else
-            {   
+            {
                 scrollWidth = double.NaN;
                 scrollHeight = double.NaN;
-                
+
                 xWidth = width * aspectRatio;
                 xHeight = height * aspectRatio;
             }
@@ -173,17 +172,19 @@ namespace PicView.Core.Calculations
             if (width <= 0 || height <= 0 || secondaryWidth <= 0 || secondaryHeight <= 0 || rotationAngle > 360 ||
                 rotationAngle < 0)
             {
-                return new ImageSize(0, 0, 0, 0, 0,0, 0,0);
+                return new ImageSize(0, 0, 0, 0, 0, 0, 0, 0);
             }
 
             // Get sizes for both images
             var firstSize = GetImageSize(width, height, monitorWidth, monitorHeight, monitorMinWidth, monitorMinHeight,
-                interfaceSize, rotationAngle, padding, dpiScaling, uiTopSize, uiBottomSize, galleryHeight, containerWidth,
+                interfaceSize, rotationAngle, padding, dpiScaling, uiTopSize, uiBottomSize, galleryHeight,
+                containerWidth,
                 containerHeight);
             var secondSize = GetImageSize(secondaryWidth, secondaryHeight, monitorWidth, monitorHeight, monitorMinWidth,
-                monitorMinHeight, interfaceSize, rotationAngle, padding, dpiScaling, uiTopSize, uiBottomSize, galleryHeight,
+                monitorMinHeight, interfaceSize, rotationAngle, padding, dpiScaling, uiTopSize, uiBottomSize,
+                galleryHeight,
                 containerWidth, containerHeight);
-    
+
             // Determine maximum height for both images
             var xHeight = Math.Max(firstSize.Height, secondSize.Height);
 
@@ -206,7 +207,7 @@ namespace PicView.Core.Calculations
                     xWidth1 *= scaleFactor;
                     xWidth2 *= scaleFactor;
                     xHeight *= scaleFactor;
-                
+
                     combinedWidth = xWidth1 + xWidth2;
                 }
             }
@@ -218,11 +219,11 @@ namespace PicView.Core.Calculations
                     xWidth1 *= scaleFactor;
                     xWidth2 *= scaleFactor;
                     xHeight *= scaleFactor;
-                
+
                     combinedWidth = xWidth1 + xWidth2;
                 }
             }
-            
+
             double scrollWidth, scrollHeight;
             if (SettingsHelper.Settings.Zoom.ScrollEnabled)
             {
@@ -230,7 +231,14 @@ namespace PicView.Core.Calculations
                 {
                     combinedWidth -= SizeDefaults.ScrollbarSize;
                     scrollWidth = combinedWidth + SizeDefaults.ScrollbarSize + 8;
-                    scrollHeight = containerHeight - padding - 8;
+
+                    var fullscreen = SettingsHelper.Settings.WindowProperties.Fullscreen ||
+                                     SettingsHelper.Settings.WindowProperties.Maximized;
+                    var borderSpaceHeight = fullscreen ? 0 : uiTopSize + uiBottomSize + galleryHeight;
+                    var workAreaHeight = monitorHeight * dpiScaling - borderSpaceHeight;
+                    scrollHeight = SettingsHelper.Settings.ImageScaling.StretchImage
+                        ? workAreaHeight
+                        : workAreaHeight - padding;
                 }
                 else
                 {
@@ -245,10 +253,12 @@ namespace PicView.Core.Calculations
                 scrollHeight = double.NaN;
             }
 
-            var titleMaxWidth = GetTitleMaxWidth(rotationAngle, combinedWidth, xHeight, monitorMinWidth, monitorMinHeight, interfaceSize, containerWidth);
+            var titleMaxWidth = GetTitleMaxWidth(rotationAngle, combinedWidth, xHeight, monitorMinWidth,
+                monitorMinHeight, interfaceSize, containerWidth);
 
             var margin = firstSize.Height > secondSize.Height ? firstSize.Margin : secondSize.Margin;
-            return new ImageSize(combinedWidth, xHeight, xWidth2, scrollWidth, scrollHeight, titleMaxWidth, margin, firstSize.AspectRatio);
+            return new ImageSize(combinedWidth, xHeight, xWidth2, scrollWidth, scrollHeight, titleMaxWidth, margin,
+                firstSize.AspectRatio);
         }
 
 
@@ -268,7 +278,7 @@ namespace PicView.Core.Calculations
                 titleMaxWidth = titleMaxWidth - interfaceSize < interfaceSize
                     ? interfaceSize
                     : titleMaxWidth - interfaceSize;
-                
+
                 if (SettingsHelper.Settings.Zoom.ScrollEnabled)
                 {
                     titleMaxWidth += SizeDefaults.ScrollbarSize + 4;
@@ -283,17 +293,25 @@ namespace PicView.Core.Calculations
             return titleMaxWidth;
         }
 
-        public struct ImageSize(double width, double height, double secondaryWidth, double scrollViewerWidth, double scrollViewerHeight, double titleMaxWidth, double margin, double aspectRatio)
+        public readonly struct ImageSize(
+            double width,
+            double height,
+            double secondaryWidth,
+            double scrollViewerWidth,
+            double scrollViewerHeight,
+            double titleMaxWidth,
+            double margin,
+            double aspectRatio)
         {
-            public double TitleMaxWidth { get; private set; } = titleMaxWidth;
+            public double TitleMaxWidth { get; } = titleMaxWidth;
             public double Width { get; } = width;
             public double Height { get; } = height;
-            
+
             public double ScrollViewerWidth { get; } = scrollViewerWidth;
             public double ScrollViewerHeight { get; } = scrollViewerHeight;
-            
+
             public double SecondaryWidth { get; } = secondaryWidth;
-            public double Margin { get; private set; } = margin;
+            public double Margin { get; } = margin;
 
             public double AspectRatio { get; } = aspectRatio;
         }

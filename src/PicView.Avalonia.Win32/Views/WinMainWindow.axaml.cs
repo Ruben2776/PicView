@@ -78,6 +78,11 @@ public partial class WinMainWindow : Window
         {
             return;
         }
+
+        if (SettingsHelper.Settings.WindowProperties.AutoFit)
+        {
+            return;
+        }
         var wm = (MainViewModel)DataContext;
         WindowHelper.SetSize(wm);
     }
