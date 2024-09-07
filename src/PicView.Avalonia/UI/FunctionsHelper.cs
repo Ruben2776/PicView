@@ -115,7 +115,7 @@ public static class FunctionsHelper
 
             // Misc
             "ChangeBackground" => ChangeBackground,
-            "ShowSideBySide" => ShowSideBySide,
+            "SideBySide" => SideBySide,
             "GalleryClick" => GalleryClick,
             "Slideshow" => Slideshow,
             "ColorPicker" => ColorPicker,
@@ -805,9 +805,9 @@ public static class FunctionsHelper
         await SettingsHelper.SaveSettingsAsync();
     }
     
-    public static async Task ShowSideBySide()
+    public static async Task SideBySide()
     {
-        await UIHelper.ShowSideBySide(Vm);
+        await UIHelper.SideBySide(Vm);
     }
     
     public static async Task Reload()

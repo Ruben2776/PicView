@@ -16,19 +16,19 @@
     </Design.DataContext>
     <StackPanel Margin="5,0,2,25">
         <TextBlock
-            x:Name="ApplicationShortcutsTextBlock"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="16"
             Margin="10,20,10,15"
             Text="{CompiledBinding ApplicationShortcuts}"
-            TextAlignment="Center" />
+            TextAlignment="Center"
+            x:Name="ApplicationShortcutsTextBlock" />
         <TextBlock
-            x:Name="ChangeKeybindingTextBlock"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             Text="{CompiledBinding ChangeKeybindingText}"
-            TextAlignment="Center" />
+            TextAlignment="Center"
+            x:Name="ChangeKeybindingTextBlock" />
         <Button
             Classes="BorderStyle altHover mainBtn"
             HorizontalAlignment="Center"
@@ -38,13 +38,13 @@
         </Button>
 
         <TextBlock
-            x:Name="NavigationTextBlock"
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Margin="10,10,10,15"
             Text="{CompiledBinding Navigation}"
-            TextAlignment="Center" />
+            TextAlignment="Center"
+            x:Name="NavigationTextBlock" />
 
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
             <TextBlock
@@ -518,6 +518,27 @@
             Margin="10,10,10,15"
             Text="{CompiledBinding ImageControl}"
             TextAlignment="Center" />
+
+        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
+            <TextBlock
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                Text="{CompiledBinding SideBySide}"
+                Width="170" />
+            <customControls:KeybindTextBox
+                Background="{StaticResource SecondaryBackgroundColor}"
+                Classes="hover TStyle"
+                MethodName="SideBySide"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
+                Width="140" />
+            <customControls:KeybindTextBox
+                Alt="True"
+                Background="{StaticResource SecondaryBackgroundColor}"
+                Classes="hover TStyle"
+                MethodName="SideBySide"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
+                Width="140" />
+        </StackPanel>
 
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
             <TextBlock

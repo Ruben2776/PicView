@@ -1777,7 +1777,7 @@ public class MainViewModel : ViewModelBase
         
         ChangeBackgroundCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ChangeBackground);
         
-        ShowSideBySideCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ShowSideBySide);
+        ShowSideBySideCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SideBySide);
 
         #endregion Image commands
 

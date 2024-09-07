@@ -148,7 +148,7 @@ namespace PicView.Avalonia.UI
 
         #region Settings
 
-        public static async Task ShowSideBySide(MainViewModel vm)
+        public static async Task SideBySide(MainViewModel vm)
         {
             if (vm is null)
             {
