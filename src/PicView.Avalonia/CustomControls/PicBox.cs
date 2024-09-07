@@ -16,6 +16,7 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
+using PicView.Core.Navigation;
 using Vector = Avalonia.Vector;
 
 
@@ -224,6 +225,10 @@ public class PicBox : Control
             sourceSize = source.Size;
             if (isSideBySide)
             {
+                if (secondarySource is null)
+                {
+                    return;
+                }
                 secondarySourceSize = secondarySource.Size;
             }
         }
@@ -264,7 +269,6 @@ public class PicBox : Control
 #endif
                         return;
                     }
-                    
                 }
                 else return;
             }
@@ -277,7 +281,14 @@ public class PicBox : Control
                 }
                 else
                 {
-                    return;
+                    if (vm.ImageIterator is not null)
+                    {
+                        var nextIndex = vm.ImageIterator.GetIteration(vm.ImageIterator.CurrentIndex, vm.ImageIterator.IsReversed ? NavigateTo.Previous : NavigateTo.Next);
+                        var magickImage = new MagickImage();
+                        magickImage.Ping(vm.ImageIterator.ImagePaths[nextIndex]);
+                        secondarySourceSize = new Size(magickImage.Width, magickImage.Height);
+                    }
+                    else return;
                 }
             }
         }
