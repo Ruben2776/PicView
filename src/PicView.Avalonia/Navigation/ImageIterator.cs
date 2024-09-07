@@ -534,7 +534,7 @@ namespace PicView.Avalonia.Navigation
                 else
                 {
                     TryShowPreview(preloadValue);
-                    preloadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths);
+                    preloadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths).ConfigureAwait(false);
                 }
 
                 lock (_lock)
@@ -548,7 +548,7 @@ namespace PicView.Avalonia.Navigation
 
                 if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
                 {
-                    var nextPreloadValue = await GetNextPreLoadValueAsync();
+                    var nextPreloadValue = await GetNextPreLoadValueAsync().ConfigureAwait(false);
                     lock (_lock)
                     {
                         if (CurrentIndex != index)
@@ -558,14 +558,13 @@ namespace PicView.Avalonia.Navigation
                         }
                     }
                     _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
-                    await UpdateSource(index, preloadValue, nextPreloadValue);
+                    await UpdateSource(index, preloadValue, nextPreloadValue).ConfigureAwait(false);
                 }
                 else
                 {
-                    await UpdateSource(index, preloadValue);
+                    await UpdateSource(index, preloadValue).ConfigureAwait(false);
                 }
-
-
+                
                 if (ImagePaths.Count > 1)
                 {
                     if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
@@ -573,16 +572,16 @@ namespace PicView.Avalonia.Navigation
                         _vm.PlatformService.SetTaskbarProgress(index / (double)ImagePaths.Count);
                     }
 
-                    await Preload();
+                    _ = Task.Run(Preload);
                 }
+                
+                await AddAsync(index, preloadValue.ImageModel);
 
                 // Add recent files, except when browsing archive
                 if (string.IsNullOrWhiteSpace(TempFileHelper.TempFilePath) && ImagePaths.Count > index)
                 {
                     FileHistoryNavigation.Add(ImagePaths[index]);
                 }
-
-                await AddAsync(index, preloadValue.ImageModel);
             }
             catch (Exception e)
             {
@@ -772,7 +771,6 @@ namespace PicView.Avalonia.Navigation
 
             _vm.ImageSource = new Bitmap(stream);
             _vm.ImageType = ImageType.Bitmap;
-            //WindowHelper.SetSize(image?.Width ?? 0, image?.Height ?? 0, 0,0, 0, _vm);
         }
 
         #endregion

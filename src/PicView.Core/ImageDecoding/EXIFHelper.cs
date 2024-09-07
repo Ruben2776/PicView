@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using ImageMagick;
-using PicView.Core.Localization;
 using System.Globalization;
 using System.Text;
+using ImageMagick;
+using PicView.Core.Localization;
 
 namespace PicView.Core.ImageDecoding;
 
@@ -30,9 +30,11 @@ public static class EXIFHelper
     // 6 = 90 degrees
     // 7 = 90 degrees, flipped
     // 8 = 270 degrees, flipped
-    public static EXIFOrientation GetImageOrientation(MagickImage image)
+    public static EXIFOrientation GetImageOrientation(string filePath)
     {
-        var profile = image.GetExifProfile();
+        using var magickImage = new MagickImage();
+        magickImage.Ping(filePath);
+        var profile = magickImage.GetExifProfile();
 
         var orientationValue = profile?.GetValue(ExifTag.Orientation);
         if (orientationValue is null)
@@ -52,6 +54,11 @@ public static class EXIFHelper
             8 => EXIFOrientation.Rotated270,
             _ => EXIFOrientation.None
         };
+    }
+    
+    public static EXIFOrientation GetImageOrientation(FileInfo fileInfo)
+    {
+        return GetImageOrientation(fileInfo.FullName);
     }
 
     // ReSharper disable once InconsistentNaming

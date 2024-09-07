@@ -6,6 +6,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
+using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Navigation;
 
@@ -43,7 +44,7 @@ public static class QuickLoad
         }
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, secondaryPreloadValue?.ImageModel?.PixelWidth ?? 0, secondaryPreloadValue?.ImageModel?.PixelHeight ?? 0, imageModel.Rotation, vm);
         vm.IsLoading = false;
-        imageModel.EXIFOrientation = ImageHelper.GetExifOrientation(vm);
+        imageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(filePath: file);
         ExifHandling.SetImageModel(imageModel, vm);
         var changed = false; // Need to recalculate size if changed
         if (vm.ScaleX != 1)

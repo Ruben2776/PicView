@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using Avalonia.Media.Imaging;
-using ImageMagick;
 using PicView.Avalonia.ImageHandling;
 using PicView.Core.ImageDecoding;
 
@@ -66,9 +65,7 @@ public sealed class PreLoader : IDisposable
 
                 if (imageModel.EXIFOrientation is null || imageModel is { EXIFOrientation: EXIFHelper.EXIFOrientation.None, Image: not null })
                 {
-                    using var magickImage = new MagickImage();
-                    magickImage.Ping(imageModel.FileInfo);
-                    preLoadValue.ImageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(magickImage);
+                    preLoadValue.ImageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(imageModel.FileInfo);
                 }
                 else
                 {
