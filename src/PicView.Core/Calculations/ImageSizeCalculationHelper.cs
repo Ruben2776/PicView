@@ -203,29 +203,60 @@ namespace PicView.Core.Calculations
             {
                 var widthPadding = SettingsHelper.Settings.ImageScaling.StretchImage ? 4 : padding;
                 var availableWidth = monitorWidth - widthPadding;
-
-                // If combined width exceeds available width, scale both images down proportionally
-                if (combinedWidth > availableWidth)
+                var availableHeight = monitorHeight - (widthPadding + uiBottomSize + uiTopSize);
+                if (rotationAngle is 0 or 180)
                 {
-                    var scaleFactor = availableWidth / combinedWidth;
-                    xWidth1 *= scaleFactor;
-                    xWidth2 *= scaleFactor;
-                    xHeight *= scaleFactor;
+                    // If combined width exceeds available width, scale both images down proportionally
+                    if (combinedWidth > availableWidth)
+                    {
+                        var scaleFactor = availableWidth / combinedWidth;
+                        xWidth1 *= scaleFactor;
+                        xWidth2 *= scaleFactor;
+                        xHeight *= scaleFactor;
 
-                    combinedWidth = xWidth1 + xWidth2;
+                        combinedWidth = xWidth1 + xWidth2;
+                    }
+                }
+                else
+                {
+                    if (combinedWidth > availableHeight)
+                    {
+                        var scaleFactor = availableHeight / combinedWidth;
+                        xWidth1 *= scaleFactor;
+                        xWidth2 *= scaleFactor;
+                        xHeight *= scaleFactor;
+                        
+                        combinedWidth = xWidth1 + xWidth2;
+                    }
                 }
             }
             else
             {
-                if (combinedWidth > containerWidth)
+                if (rotationAngle is 0 or 180)
                 {
-                    var scaleFactor = containerWidth / combinedWidth;
-                    xWidth1 *= scaleFactor;
-                    xWidth2 *= scaleFactor;
-                    xHeight *= scaleFactor;
+                    if (combinedWidth > containerWidth)
+                    {
+                        var scaleFactor = containerWidth / combinedWidth;
+                        xWidth1 *= scaleFactor;
+                        xWidth2 *= scaleFactor;
+                        xHeight *= scaleFactor;
 
-                    combinedWidth = xWidth1 + xWidth2;
+                        combinedWidth = xWidth1 + xWidth2;
+                    }
                 }
+                else
+                {
+                    if (combinedWidth > containerHeight)
+                    {
+                        var scaleFactor = containerHeight / combinedWidth;
+                        xWidth1 *= scaleFactor;
+                        xWidth2 *= scaleFactor;
+                        xHeight *= scaleFactor;
+                        
+                        combinedWidth = xWidth1 + xWidth2;
+                    }
+                }
+
             }
 
             double scrollWidth, scrollHeight;

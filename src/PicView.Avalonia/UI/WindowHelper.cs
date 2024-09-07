@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Threading;
+using ImageMagick;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -11,6 +12,7 @@ using PicView.Core.ArchiveHandling;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
+using PicView.Core.Navigation;
 
 namespace PicView.Avalonia.UI;
 
@@ -418,18 +420,58 @@ public static class WindowHelper
             return;
         }
 
+        double firstWidth, firstHeight;
         var preloadValue = vm.ImageIterator?.GetCurrentPreLoadValue();
-        if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+        if (preloadValue == null)
         {
-            var secondaryPreloadValue = vm.ImageIterator?.GetNextPreLoadValue();
-            if (secondaryPreloadValue != null)
-            {
-                SetSize(preloadValue?.ImageModel?.PixelWidth ?? vm.ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? vm.ImageHeight, secondaryPreloadValue.ImageModel?.PixelWidth ?? vm.ImageWidth, secondaryPreloadValue.ImageModel?.PixelHeight ?? vm.ImageHeight, vm.RotationAngle, vm);
-            }
+            var magickImage = new MagickImage();
+            magickImage.Ping(vm.FileInfo);
+            firstWidth = magickImage.Width;
+            firstHeight = magickImage.Height;
         }
         else
         {
-            SetSize(preloadValue?.ImageModel?.PixelWidth ?? vm.ImageWidth, preloadValue?.ImageModel?.PixelHeight ?? vm.ImageHeight, 0, 0, vm.RotationAngle, vm);
+            firstWidth = GetWidth(preloadValue);
+            firstHeight = GetHeight(preloadValue);
+        }
+        if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+        {
+            var secondaryPreloadValue = vm.ImageIterator?.GetNextPreLoadValue();
+            double secondWidth, secondHeight;
+            if (secondaryPreloadValue != null)
+            {
+                secondWidth = GetWidth(secondaryPreloadValue);
+                secondHeight = GetHeight(secondaryPreloadValue);
+            }
+            else if (vm.ImageIterator is not null)
+            {
+                var nextIndex = vm.ImageIterator.GetIteration(vm.ImageIterator.CurrentIndex, vm.ImageIterator.IsReversed ? NavigateTo.Previous : NavigateTo.Next);
+                var magickImage = new MagickImage();
+                magickImage.Ping(vm.ImageIterator.ImagePaths[nextIndex]);
+                secondWidth = magickImage.Width;
+                secondHeight = magickImage.Height;
+            }
+            else
+            {
+                secondWidth = 0;
+                secondHeight = 0;
+            }
+            SetSize(firstWidth, firstHeight, secondWidth, secondHeight, vm.RotationAngle, vm);
+        }
+        else
+        {
+            SetSize(firstWidth, firstHeight, 0, 0, vm.RotationAngle, vm);
+        }
+
+        return;
+        double GetWidth(PreLoader.PreLoadValue preloadValue)
+        {
+            return preloadValue?.ImageModel?.PixelWidth ?? vm.ImageWidth;
+        }
+        
+        double GetHeight(PreLoader.PreLoadValue preloadValue)
+        {
+            return preloadValue?.ImageModel?.PixelHeight ?? vm.ImageHeight;
         }
     }
     

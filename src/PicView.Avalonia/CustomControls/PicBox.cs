@@ -359,9 +359,6 @@ public class PicBox : Control
             return;
         }
 
-        // Scale the first image to fit within the remaining width while keeping the same height
-        var scaledSourceSize = new Size(firstImageWidth, sourceSize.Height * scale);
-
         // Calculate the destination rectangles for both images
         var sourceDestRect = new Rect(0, 0, firstImageWidth, viewPort.Height);
         var secondaryDestRect = new Rect(firstImageWidth, 0, SecondaryImageWidth, viewPort.Height);

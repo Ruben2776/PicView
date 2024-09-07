@@ -138,6 +138,13 @@ public static class ImageHelper
 
     private static async Task AddImageAsync(FileInfo fileInfo, ImageModel imageModel)
     {
+        if (fileInfo is null)
+        {
+#if DEBUG
+            Console.WriteLine($"Error: {nameof(ImageHelper)}:{nameof(AddImageAsync)}: {nameof(fileInfo)} is null");
+#endif
+            return;
+        }
         const int bufferSize = 4096;
         await using var fs = new FileStream(
                                         fileInfo.FullName,
@@ -177,8 +184,6 @@ public static class ImageHelper
             Add(memoryStream, imageModel);
         }
     }
-
-
     
     #endregion
     
@@ -186,6 +191,13 @@ public static class ImageHelper
     
     private static void Add(Stream stream, ImageModel imageModel)
     {
+        if (stream is null)
+        {
+#if DEBUG
+            Console.WriteLine($"Error: {nameof(ImageHelper)}:{nameof(Add)}: {nameof(stream)} is null");
+#endif
+            return;
+        }
         var bitmap = new Bitmap(stream);
         imageModel.Image = bitmap;
         imageModel.PixelWidth = bitmap?.PixelSize.Width ?? 0;
