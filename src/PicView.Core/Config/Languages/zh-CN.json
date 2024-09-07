@@ -321,6 +321,8 @@
   "ShowInfoWindow": "显示应用程序信息窗口",
   "ShowResizeWindow": "显示调整尺寸窗口",
   "ShutterPriority": "快门优先",
+  "SideBySide": "并排",
+  "SideBySideTooltip": "并排显示图像",
   "Size": "大小",
   "SizeMp": "大小（兆像素）",
   "SizeTooltip": "以像素或百分比输入所需的尺寸。",

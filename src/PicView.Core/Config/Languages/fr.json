@@ -321,6 +321,8 @@
   "ShowInfoWindow": "Afficher la fenêtre d'infos",
   "ShowResizeWindow": "Afficher la fenêtre de redimensionnement",
   "ShutterPriority": "Priorité à l'obturateur",
+  "SideBySide": "Côte à côte",
+  "SideBySideTooltip": "Afficher les images côte à côte",
   "Size": "Taille",
   "SizeMp": "Taille (mp)",
   "SizeTooltip": "Entrez la taille souhaitée en pixels ou en pourcentage.",

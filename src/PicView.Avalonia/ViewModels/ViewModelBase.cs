@@ -220,9 +220,27 @@ public class ViewModelBase : ReactiveObject
         GalleryThumbnailStretch = TranslationHelper.Translation.GalleryThumbnailStretch;
         BottomGalleryThumbnailStretch = TranslationHelper.Translation.BottomGalleryThumbnailStretch;
         RestoreDown = TranslationHelper.Translation.RestoreDown;
+        SideBySide = TranslationHelper.Translation.SideBySide;
+        SideBySideTooltip = TranslationHelper.Translation.SideBySideTooltip;
     }
 
     #region Strings
+    
+    private string? _sideBySide;
+    
+    public string? SideBySide
+    {
+        get => _sideBySide;
+        set => this.RaiseAndSetIfChanged(ref _sideBySide, value);
+    }
+    
+    private string? _sideBySideTooltip;
+    
+    public string? SideBySideTooltip
+    {
+        get => _sideBySideTooltip;
+        set => this.RaiseAndSetIfChanged(ref _sideBySideTooltip, value);
+    }
 
     private string? _fullscreenTxt;
     

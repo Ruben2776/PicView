@@ -285,12 +285,12 @@
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ShowSideBySideCommand}"
                     IsChecked="{CompiledBinding IsShowingSideBySide}"
-                    ToolTip.Tip="View image side by side">
+                    ToolTip.Tip="{CompiledBinding SideBySideTooltip}">
                     <TextBlock
                         Classes="txt"
                         Margin="1,0,6,0"
                         MaxWidth="175"
-                        Text="Side by side" />
+                        Text="{CompiledBinding SideBySide}" />
                 </ToggleButton>
 
                 <ToggleButton

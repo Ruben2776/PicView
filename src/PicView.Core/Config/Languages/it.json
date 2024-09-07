@@ -321,6 +321,8 @@
   "ShowInfoWindow": "Mostra finestra informativa",
   "ShowResizeWindow": "Mostra la finestra Ridimensiona",
   "ShutterPriority": "Priorità dell'otturatore",
+  "SideBySide": "Fianco a fianco",
+  "SideBySideTooltip": "Mostra le immagini affiancate",
   "Size": "Dimensione",
   "SizeMp": "Dimensione (mp)",
   "SizeTooltip": "Inserisci la dimensione desiderata in pixel o in percentuale.",

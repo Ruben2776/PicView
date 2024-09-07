@@ -321,6 +321,8 @@
   "ShowInfoWindow": "Åbn vindue for info og genveje",
   "ShowResizeWindow": "Vis størrelsesændringsvinduet",
   "ShutterPriority": "Lukker prioritet",
+  "SideBySide": "Side om side",
+  "SideBySideTooltip": "Vis billeder side om side",
   "Size": "Størrelse",
   "SizeMp": "Størrelse (mp)",
   "SizeTooltip": "Indtast størrelse i pixels eller procent.",

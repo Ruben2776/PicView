@@ -321,6 +321,8 @@
   "ShowInfoWindow": "Arată fereastra cu informații",
   "ShowResizeWindow": "Arată fereastra de redimensionare",
   "ShutterPriority": "Prioritate obturator",
+  "SideBySide": "Alăturat",
+  "SideBySideTooltip": "Afișați imagini una lângă alta",
   "Size": "Dimensiune",
   "SizeMp": "Dimensiune (mp)",
   "SizeTooltip": "Introdu dimensiunea dorită în pixeli sau în procent.",

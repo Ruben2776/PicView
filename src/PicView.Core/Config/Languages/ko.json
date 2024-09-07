@@ -321,6 +321,8 @@
   "ShowInfoWindow": "정보 창 표시",
   "ShowResizeWindow": "크기 조정 창 표시",
   "ShutterPriority": "셔터 우선",
+  "SideBySide": "나란히",
+  "SideBySideTooltip": "이미지를 나란히 표시",
   "Size": "크기",
   "SizeMp": "크기 (mp)",
   "SizeTooltip": "원하는 크기를 픽셀 또는 백분율로 입력하세요.",

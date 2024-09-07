@@ -321,6 +321,8 @@
   "ShowInfoWindow": "Pokaż okno z informacją",
   "ShowResizeWindow": "Pokaż okno Zmiana rozmiaru",
   "ShutterPriority": "Priorytet migawki",
+  "SideBySide": "Obok siebie",
+  "SideBySideTooltip": "Pokaż obrazy obok siebie",
   "Size": "Szerokość",
   "SizeMp": "Rozmiar (mp)",
   "SizeTooltip": "Wprowadź rozmiar w pikselach lub procentach.",

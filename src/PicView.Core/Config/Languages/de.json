@@ -321,6 +321,8 @@
   "ShowInfoWindow": "Info Fenster anzeigen",
   "ShowResizeWindow": "Größenänderungsfenster anzeigen",
   "ShutterPriority": "Verschlusspriorität",
+  "SideBySide": "Seitenspalte",
+  "SideBySideTooltip": "Bilder nebeneinander anzeigen",
   "Size": "Größe",
   "SizeMp": "Größe (mp)",
   "SizeTooltip": "Die gewünschte Größe in Pixeln oder Prozent eingeben.",

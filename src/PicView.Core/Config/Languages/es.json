@@ -321,6 +321,8 @@
   "ShowInfoWindow": "Mostrar ventana de información",
   "ShowResizeWindow": "Mostrar la ventana de cambio de tamaño",
   "ShutterPriority": "Prioridad de obturador",
+  "SideBySide": "Vista lateral",
+  "SideBySideTooltip": "Mostrar las imagenes uno al lado del otro",
   "Size": "Tamaño",
   "SizeMp": "Tamaño (mp)",
   "SizeTooltip": "Ingrese el tamaño deseado en píxeles o porcentaje.",
