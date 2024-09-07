@@ -11,10 +11,8 @@ using PicView.Core.Localization;
 
 namespace PicView.Avalonia.CustomControls;
 
-public class KeybindTextBox : TextBox
+public class KeybindTextBox : FuncTextBox
 {
-    protected override Type StyleKeyOverride => typeof(TextBox);
-
     public static readonly AvaloniaProperty<KeyGesture?> KeybindProperty =
         AvaloniaProperty.Register<KeybindTextBox, KeyGesture?>(nameof(Keybind));
 

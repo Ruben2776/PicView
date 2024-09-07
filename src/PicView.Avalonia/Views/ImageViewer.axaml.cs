@@ -194,7 +194,7 @@ public partial class ImageViewer : UserControl
 
     private void InitializeZoom()
     {
-        MainImage.RenderTransform = new TransformGroup
+        MainBorder.RenderTransform = new TransformGroup
         {
             Children =
             [
@@ -202,12 +202,12 @@ public partial class ImageViewer : UserControl
                 new TranslateTransform()
             ]
         };
-        _scaleTransform = (ScaleTransform)((TransformGroup)MainImage.RenderTransform)
+        _scaleTransform = (ScaleTransform)((TransformGroup)MainBorder.RenderTransform)
             .Children.First(tr => tr is ScaleTransform);
 
-        _translateTransform = (TranslateTransform)((TransformGroup)MainImage.RenderTransform)
+        _translateTransform = (TranslateTransform)((TransformGroup)MainBorder.RenderTransform)
             .Children.First(tr => tr is TranslateTransform);
-        MainImage.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
+        MainBorder.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
     }
 
     public void ZoomIn(PointerWheelEventArgs e)
@@ -307,13 +307,10 @@ public partial class ImageViewer : UserControl
         var newTranslateValueX = Math.Abs(zoomValue - 1) > .2 ? absoluteX - point.X * zoomValue : 0;
         var newTranslateValueY = Math.Abs(zoomValue - 1) > .2 ? absoluteY - point.Y * zoomValue : 0;
         
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _scaleTransform.ScaleX = zoomValue;
-            _scaleTransform.ScaleY = zoomValue;
-            _translateTransform.X = newTranslateValueX;
-            _translateTransform.Y = newTranslateValueY;
-        }, DispatcherPriority.Normal);
+        _scaleTransform.ScaleX = zoomValue;
+        _scaleTransform.ScaleY = zoomValue;
+        _translateTransform.X = newTranslateValueX;
+        _translateTransform.Y = newTranslateValueY;
         vm.ZoomValue = zoomValue;
         _isZoomed = zoomValue != 0;
         if (_isZoomed)

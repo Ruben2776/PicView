@@ -87,21 +87,6 @@ public class PicBox : Control
         set => SetValue(ImageTypeProperty, value);
     }
     
-    /// <summary>
-    /// Defines the <see cref="Background"/> property.
-    /// </summary>
-    public static readonly StyledProperty<IBrush?> BackgroundProperty =
-        AvaloniaProperty.Register<Border, IBrush?>(nameof(Background));
-    
-    /// <summary>
-    /// Gets or sets a brush with which to paint the background.
-    /// </summary>
-    public IBrush? Background
-    {
-        get => GetValue(BackgroundProperty);
-        set => SetValue(BackgroundProperty, value);
-    }
-    
     #endregion
     
     #region Constructors
@@ -110,7 +95,6 @@ public class PicBox : Control
     {
         // Registers the SourceProperty to render when the source changes
         AffectsRender<PicBox>(SourceProperty);
-        AffectsRender<PicBox>(BackgroundProperty);
     }
 
     #endregion
@@ -217,7 +201,6 @@ public class PicBox : Control
         }
 
         context.Dispose(); // Fixes transparent images
-        RenderBackground(context);
         _stream = new FileStream(InitialAnimatedSource, FileMode.Open, FileAccess.Read);
         UpdateAnimationInstance(_stream);
         AnimationUpdate();
@@ -320,7 +303,6 @@ public class PicBox : Control
         var destRect = viewPort.CenterRect(new Rect(scaledSize)).Intersect(viewPort);
         var sourceRect = new Rect(sourceSize).CenterRect(new Rect(destRect.Size / scale));
 
-        RenderBackground(context);
         context.DrawImage(source, sourceRect, destRect);
     }
 
@@ -331,7 +313,6 @@ public class PicBox : Control
         var destRect = viewPort.CenterRect(new Rect(scaledSize)).Intersect(viewPort);
         var sourceRect = new Rect(sourceSize).CenterRect(new Rect(destRect.Size / scale));
 
-        RenderBackground(context);
         try
         {
             context.DrawImage(source, sourceRect, destRect);
@@ -378,9 +359,6 @@ public class PicBox : Control
         var sourceRect = new Rect(sourceSize);
         var secondarySourceRect = new Rect(secondarySourceSize.Value);
 
-        // Render the background before the images
-        RenderBackground(context);
-
         try
         {
             // Render the first image (filling the remaining space)
@@ -394,16 +372,6 @@ public class PicBox : Control
 #if DEBUG
             Console.WriteLine(e);
 #endif
-        }
-    }
-
-    private void RenderBackground(DrawingContext context)
-    {
-        var background = Background;
-        if (background != null)
-        {
-            var renderSize = Bounds.Size;
-            context.FillRectangle(background, new Rect(renderSize));
         }
     }
     
