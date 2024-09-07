@@ -5,8 +5,12 @@ namespace PicView.Core.Calculations
 {
     public static class ImageSizeCalculationHelper
     {
+        /// <summary>
+        ///  Returns the interface size of the titlebar based on OS
+        /// </summary>
         public static double GetInterfaceSize()
         {
+            // TODO: find a more elegant solution
             return RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 165 : 228;
         }
 
@@ -271,9 +275,24 @@ namespace PicView.Core.Calculations
 
             if (SettingsHelper.Settings.WindowProperties.AutoFit && !maximized)
             {
-                titleMaxWidth = rotationAngle is 0 or 180
-                    ? Math.Max(width, monitorMinWidth)
-                    : Math.Max(height, monitorMinHeight);
+                switch (rotationAngle)
+                {
+                    case 0 or 180:
+                        titleMaxWidth = Math.Max(width, monitorMinWidth);
+                        break;
+                    case 90 or 270:
+                        titleMaxWidth = Math.Max(height, monitorMinHeight);
+                        break;
+                    default:
+                    {
+                        var rotationRadians = rotationAngle * Math.PI / 180;
+                        var newWidth = Math.Abs(width * Math.Cos(rotationRadians)) +
+                                       Math.Abs(height * Math.Sin(rotationRadians));
+
+                        titleMaxWidth = Math.Max(newWidth, monitorMinWidth);
+                        break;
+                    }
+                }
 
                 titleMaxWidth = titleMaxWidth - interfaceSize < interfaceSize
                     ? interfaceSize

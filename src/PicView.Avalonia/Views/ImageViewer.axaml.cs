@@ -33,6 +33,8 @@ public partial class ImageViewer : UserControl
 
     public ImageViewer()
     {
+        // TODO: Make a zoom and pan custom control that will work for MVVM
+        
         InitializeComponent();
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
         AddHandler(Gestures.PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
@@ -443,20 +445,38 @@ public partial class ImageViewer : UserControl
         {
             return;
         }
-        if (RotationHelper.IsValidRotation(vm.RotationAngle))
+
+        if (MainKeyboardShortcuts.IsKeyHeldDown)
         {
-            var nextAngle = RotationHelper.Rotate(vm.RotationAngle, clockWise);
-            vm.RotationAngle = nextAngle switch
+            vm.RotationAngle = clockWise ? vm.RotationAngle + 1 : vm.RotationAngle -1;
+            if (vm.RotationAngle < 0)
             {
-                360 => 0,
-                -90 => 270,
-                _ => nextAngle
-            };
+                vm.RotationAngle = 359;
+            }
+
+            if (vm.RotationAngle > 359)
+            {
+                vm.RotationAngle = 0;
+            }
         }
         else
         {
-            vm.RotationAngle = RotationHelper.NextRotationAngle(vm.RotationAngle, true);
+            if (RotationHelper.IsValidRotation(vm.RotationAngle))
+            {
+                var nextAngle = RotationHelper.Rotate(vm.RotationAngle, clockWise);
+                vm.RotationAngle = nextAngle switch
+                {
+                    360 => 0,
+                    -90 => 270,
+                    _ => nextAngle
+                };
+            }
+            else
+            {
+                vm.RotationAngle = RotationHelper.NextRotationAngle(vm.RotationAngle, true);
+            }
         }
+
 
         var rotateTransform = new RotateTransform(vm.RotationAngle);
 
@@ -473,7 +493,6 @@ public partial class ImageViewer : UserControl
         }
 
         WindowHelper.SetSize(vm);
-        MainImage.InvalidateVisual();
     }
     
     public void Rotate(double angle)
