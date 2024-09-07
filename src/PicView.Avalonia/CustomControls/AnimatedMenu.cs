@@ -1,6 +1,6 @@
 ﻿using System.Reactive.Linq;
-using Avalonia.Controls;
 using Avalonia;
+using Avalonia.Controls;
 using PicView.Avalonia.Animations;
 using ReactiveUI;
 
@@ -48,7 +48,8 @@ public class AnimatedMenu : UserControl
     {
         var from = isOpen ? 0 : 1;
         var to = isOpen ? 1 : 0;
-        var anim = AnimationsHelper.OpacityAnimation(from, to, 0.3);
+        const double speed = 0.3;
+        var anim = AnimationsHelper.OpacityAnimation(from, to, speed);
         await anim.RunAsync(this);
     }
 }

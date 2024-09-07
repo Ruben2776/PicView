@@ -32,7 +32,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding FileName}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
@@ -56,7 +56,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding Folder}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
@@ -80,7 +80,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding FullPath}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
@@ -104,7 +104,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding Created}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding FileInfo.CreationTime}" />
@@ -127,7 +127,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding Modified}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding FileInfo.LastWriteTime}" />
@@ -150,7 +150,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding LastAccessTime}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding FileInfo.LastAccessTime}" />
@@ -173,7 +173,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding BitDepth}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes="TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetBitDepth}" />
@@ -199,7 +199,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding Width}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
@@ -225,7 +225,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding Height}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
@@ -251,7 +251,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding SizeMp}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetSizeMp}" />
@@ -274,7 +274,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding Resolution}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetResolution}" />
@@ -297,7 +297,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding PrintSizeCm}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetPrintSizeCm}" />
@@ -320,7 +320,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding PrintSizeIn}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetPrintSizeInch}" />
@@ -343,7 +343,7 @@
                             Margin="0,8,0,0"
                             Text="{CompiledBinding AspectRatio}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetAspectRatio}" />
@@ -486,7 +486,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding DateTaken}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetDateTaken}"
@@ -510,7 +510,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding Authors}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetAuthors}"
@@ -536,7 +536,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding Copyright}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetCopyright}"
@@ -560,7 +560,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding Software}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetSoftware}"
@@ -587,7 +587,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding XPTitle}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetTitle}"
@@ -611,7 +611,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding Subject}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetSubject}"
@@ -661,7 +661,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding Latitude}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetLatitude}"
@@ -685,7 +685,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding Longitude}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetLongitude}"
@@ -710,7 +710,7 @@
                         Margin="0,8,2,0"
                         Text="{CompiledBinding Altitude}"
                         Width="100" />
-                    <TextBox
+                    <customControls:FuncTextBox
                         Classes=" TStyle"
                         IsReadOnly="True"
                         Text="{CompiledBinding GetAltitude}"
@@ -780,7 +780,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding ResolutionUnit}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetResolutionUnit}"
@@ -804,7 +804,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding ColorRepresentation}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetColorRepresentation}"
@@ -831,7 +831,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding Compression}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetCompression}"
@@ -855,7 +855,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding CompressedBitsPixel}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetCompressedBitsPixel}"
@@ -912,7 +912,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding CameraMaker}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetCameraMaker}"
@@ -936,7 +936,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding CameraModel}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetCameraModel}"
@@ -963,7 +963,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding Fstop}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetFNumber}"
@@ -987,7 +987,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding MaxAperture}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetMaxAperture}"
@@ -1015,7 +1015,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding ExposureBias}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetExposureBias}"
@@ -1039,7 +1039,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding ExposureTime}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetExposureTime}"
@@ -1067,7 +1067,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding ExposureProgram}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetExposureProgram}"
@@ -1091,7 +1091,7 @@
                                 Margin="0,8,2,0"
                                 Text="{Binding DigitalZoom}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetDigitalZoom}"
@@ -1119,7 +1119,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding FocalLength}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetFocalLength}"
@@ -1143,7 +1143,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding FocalLength35mm}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetFocalLength35Mm}"
@@ -1171,7 +1171,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding ISOSpeed}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetISOSpeed}"
@@ -1195,7 +1195,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding MeteringMode}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetMeteringMode}"
@@ -1223,7 +1223,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding Contrast}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetContrast}"
@@ -1247,7 +1247,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding Saturation}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetSaturation}"
@@ -1275,7 +1275,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding Sharpness}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetSharpness}"
@@ -1299,7 +1299,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding WhiteBalance}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetWhiteBalance}"
@@ -1327,7 +1327,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding FlashEnergy}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetFlashEnergy}"
@@ -1351,7 +1351,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding FlashMode}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetFlashMode}"
@@ -1379,7 +1379,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding LightSource}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetLightSource}"
@@ -1403,7 +1403,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding Brightness}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetBrightness}"
@@ -1431,7 +1431,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding PhotometricInterpretation}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetPhotometricInterpretation}"
@@ -1455,7 +1455,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding Orientation}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetOrientation}"
@@ -1483,7 +1483,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding LensMaker}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetLensMaker}"
@@ -1507,7 +1507,7 @@
                                 Margin="0,8,2,0"
                                 Text="{CompiledBinding LensModel}"
                                 Width="100" />
-                            <TextBox
+                            <customControls:FuncTextBox
                                 Classes=" TStyle"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding GetLensModel}"
@@ -1534,7 +1534,7 @@
                             Margin="0,8,2,0"
                             Text="{CompiledBinding ExifVersion}"
                             Width="100" />
-                        <TextBox
+                        <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetExifVersion}"
