@@ -103,7 +103,7 @@ internal static class Thumbnails
     /// <returns>
     /// A task representing the asynchronous operation that returns a <see cref="BitmapSource"/> thumbnail.
     /// </returns>
-    internal static async Task<BitmapSource?> GetBitmapSourceThumbAsync(string file, int size, FileInfo? fileInfo = null)
+    internal static async Task<BitmapSource?> GetBitmapSourceThumbAsync(string file, uint size, FileInfo? fileInfo = null)
     {
         try
         {

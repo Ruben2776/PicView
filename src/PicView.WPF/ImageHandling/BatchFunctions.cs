@@ -8,7 +8,7 @@ namespace PicView.WPF.ImageHandling;
 
 internal static class BatchFunctions
 {
-    internal static async Task<string> RunAsync(FileInfo sourceFile, int width, int height, int quality,
+    internal static async Task<string> RunAsync(FileInfo sourceFile, uint width, uint height, uint quality,
         string? ext, Percentage? percentage, bool? compress, string? outputFolder, bool toResize)
     {
         var destination = outputFolder is null ? null : outputFolder + @"/" + sourceFile.Name;
@@ -231,11 +231,11 @@ internal static class BatchFunctions
     internal class ThumbNailHolder
     {
         internal readonly string? Directory;
-        internal readonly int Width;
-        internal readonly int Height;
+        internal readonly uint Width;
+        internal readonly uint Height;
         internal readonly Percentage? Percentage;
 
-        internal ThumbNailHolder(string? directory, int width, int height, Percentage? percentage)
+        internal ThumbNailHolder(string? directory, uint width, uint height, Percentage? percentage)
         {
             Directory = directory;
             Width = width;

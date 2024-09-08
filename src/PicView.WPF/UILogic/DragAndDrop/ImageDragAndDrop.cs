@@ -92,10 +92,10 @@ internal static class ImageDragAndDrop
 
         if (getImage is not null && _dragging)
         {
-            var actualWidth = 0;
+            uint actualWidth = 0;
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>
             {
-                actualWidth = (int)ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
+                actualWidth = (uint)ConfigureWindows.GetMainWindow.ParentContainer.ActualWidth;
             });
             var thumb = await GetBitmapSourceThumbAsync(getImage, actualWidth).ConfigureAwait(false);
             await ConfigureWindows.GetMainWindow.Dispatcher.InvokeAsync(() =>

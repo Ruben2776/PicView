@@ -17,8 +17,8 @@ public static class SaveImageFileHelper
     /// <param name="ext">The file extension of the output image.</param>
     /// <param name="rotationAngle">The angle to rotate the image, in degrees.</param>
     /// <returns>True if the image is saved successfully; otherwise, false.</returns>
-    public static async Task<bool> SaveImageAsync(Stream? stream, string? path, string? destination = null, int? width = null,
-        int? height = null, int? quality = null, string? ext = null, double? rotationAngle = null)
+    public static async Task<bool> SaveImageAsync(Stream? stream, string? path, string? destination = null, uint? width = null,
+        uint? height = null, uint? quality = null, string? ext = null, double? rotationAngle = null)
     {
         try
         {
@@ -107,7 +107,7 @@ public static class SaveImageFileHelper
     /// <param name="compress">Indicates whether to compress the image.</param>
     /// <param name="ext">The file extension of the output image.</param>
     /// <returns>True if the image is resized and saved successfully; otherwise, false.</returns>
-    public static async Task<bool> ResizeImageAsync(FileInfo fileInfo, int width, int height, int quality = 100,
+    public static async Task<bool> ResizeImageAsync(FileInfo fileInfo, uint width, uint height, uint quality = 100,
         Percentage? percentage = null, string? destination = null, bool? compress = null, string? ext = null)
     {
         if (fileInfo.Exists == false)

@@ -330,7 +330,7 @@ internal static class FileUpdateNavigation
                 return;
             }
             var thumbSource = await Thumbnails.GetBitmapSourceThumbAsync(e.FullPath,
-                (int)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
+                (uint)GalleryNavigation.PicGalleryItemSize, fileInfo).ConfigureAwait(false);
             var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
             await UC.GetPicGallery?.Dispatcher?.InvokeAsync(() =>
             {

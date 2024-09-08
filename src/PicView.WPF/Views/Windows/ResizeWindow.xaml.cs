@@ -270,10 +270,10 @@ public partial class ResizeWindow
         running = true;
 
         var toResize = false;
-        int width = 0, height = 0;
+        uint width = 0, height = 0;
         Percentage? percentage = null;
 
-        var quality = 100;
+        uint quality = 100;
         bool? compress = null;
 
         string? ext = null;
@@ -282,7 +282,7 @@ public partial class ResizeWindow
 
         var cancelToken = new CancellationTokenSource();
 
-        int thumbW = 0, thumbH = 0;
+        uint thumbW = 0, thumbH = 0;
         Percentage? thumbPercentage = null;
 
         List<string>? sourceFileist = null;
@@ -306,7 +306,7 @@ public partial class ResizeWindow
             var selectedQ = QualityPercentage.SelectedItem as ComboBoxItem;
             var parseQ = selectedQ.Content.ToString();
             parseQ = parseQ.Remove(parseQ.Length - 1);
-            if (int.TryParse(parseQ, out var q))
+            if (uint.TryParse(parseQ, out var q))
             {
                 quality = q;
             }
@@ -332,11 +332,11 @@ public partial class ResizeWindow
                 }
                 else
                 {
-                    if (WidthResize.IsSelected && int.TryParse(WidthValue.Text, out var resizeWidth))
+                    if (WidthResize.IsSelected && uint.TryParse(WidthValue.Text, out var resizeWidth))
                     {
                         width = resizeWidth;
                     }
-                    else if (HeightResize.IsSelected && int.TryParse(HeightValue.Text, out var resizeHeight))
+                    else if (HeightResize.IsSelected && uint.TryParse(HeightValue.Text, out var resizeHeight))
                     {
                         height = resizeHeight;
                     }
@@ -368,13 +368,13 @@ public partial class ResizeWindow
                 }
                 else
                 {
-                    if (container.WidthBox.IsSelected && int.TryParse(container.ValueBox.Text, out var resizeWidth))
+                    if (container.WidthBox.IsSelected && uint.TryParse(container.ValueBox.Text, out var resizeWidth))
                     {
                         thumbW = resizeWidth;
                         thumbH = 0;
                     }
                     else if (container.HeightBox.IsSelected &&
-                             int.TryParse(container.ValueBox.Text, out var resizeHeight))
+                             uint.TryParse(container.ValueBox.Text, out var resizeHeight))
                     {
                         thumbW = 0;
                         thumbH = resizeHeight;

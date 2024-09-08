@@ -176,7 +176,7 @@ internal static partial class QuickResizeShortcuts
         var fileInfo = PreLoader.Get(Navigation.FolderIndex)?.FileInfo;
         fileInfo ??= new FileInfo(Navigation.Pics[Navigation.FolderIndex]);
         PreLoader.Remove(Navigation.FolderIndex);
-        if (int.TryParse(widthText, out var width) && int.TryParse(heightText, out var height))
+        if (uint.TryParse(widthText, out var width) && uint.TryParse(heightText, out var height))
         {
             var resize = await SaveImageFileHelper.ResizeImageAsync(fileInfo, width, height, 0)
                 .ConfigureAwait(false);

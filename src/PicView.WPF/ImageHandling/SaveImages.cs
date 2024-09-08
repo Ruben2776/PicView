@@ -68,7 +68,7 @@ internal static class SaveImages
             if (rect is not null && bitmapSource is not null && hlsl is false)
             {
                 magickImage.Crop(
-                    new MagickGeometry(rect.Value.X, rect.Value.Y, rect.Value.Width, rect.Value.Height));
+                    new MagickGeometry(rect.Value.X, rect.Value.Y, (uint)rect.Value.Width, (uint)rect.Value.Height));
             }
 
             if (rotate != 0)
@@ -140,8 +140,8 @@ internal static class SaveImages
     /// <param name="quality">The quality level of the image.</param>
     /// <param name="ext">The file extension of the output image.</param>
     /// <returns>True if the image is saved successfully; otherwise, false.</returns>
-    internal static async Task<bool> SaveImageAsync(Stream? stream, string? path, string? destination, int? width,
-        int? height, int? quality, string? ext)
+    internal static async Task<bool> SaveImageAsync(Stream? stream, string? path, string? destination, uint? width,
+        uint? height, uint? quality, string? ext)
     {
         return await SaveImageFileHelper.SaveImageAsync(stream, path, destination, width, height, quality, ext);
     }
