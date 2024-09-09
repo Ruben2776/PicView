@@ -180,7 +180,7 @@
     <Resource Include="Themes\Resources\img\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.9.0" />
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.9.2" />
     <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="14.0.0" />
     <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="8.0.0" />
     <PackageReference Include="WpfScreenHelper" Version="2.1.1" />
