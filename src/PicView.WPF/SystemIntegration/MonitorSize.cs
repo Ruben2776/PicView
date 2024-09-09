@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using WpfScreenHelper;
 using Application = System.Windows.Application;
 
 namespace PicView.WPF.SystemIntegration;

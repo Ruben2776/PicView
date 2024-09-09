@@ -183,6 +183,7 @@
     <PackageReference Include="Autoupdater.NET.Official" Version="1.9.0" />
     <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="14.0.0" />
     <PackageReference Include="Magick.NET.SystemWindowsMedia" Version="8.0.0" />
+    <PackageReference Include="WpfScreenHelper" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Views\UserControls\Buttons\LinkButton.xaml.cs">
@@ -319,6 +320,7 @@
     <Title>PicView</Title>
     <Version>2.3.1</Version>
     <PackageIcon>Themes\Resources\img\icon.png</PackageIcon>
+    <UseWindowsForms>False</UseWindowsForms>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
