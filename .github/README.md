@@ -21,7 +21,7 @@ PicView is currently being rewritten to the Avalonia platform. You can read more
 
 # Downloads
 
-[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.3.1/PicView-v.2.3.1-win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.3.1/PicView-v.2.3.1-win-arm64.zip)
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.3.2/PicView-v.2.3.2-win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.3.2/PicView-v.2.3.2-win-arm64.zip)
 
 Latest releases at https://picview.org/download
 
