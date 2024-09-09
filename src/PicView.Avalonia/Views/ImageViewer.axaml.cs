@@ -33,8 +33,6 @@ public partial class ImageViewer : UserControl
 
     public ImageViewer()
     {
-        // TODO: Make a zoom and pan custom control that will work for MVVM
-        
         InitializeComponent();
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
         AddHandler(Gestures.PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
@@ -210,6 +208,7 @@ public partial class ImageViewer : UserControl
         _translateTransform = (TranslateTransform)((TransformGroup)MainBorder.RenderTransform)
             .Children.First(tr => tr is TranslateTransform);
         MainBorder.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
+        MainImage.RenderTransformOrigin = new RelativePoint(0, 0, RelativeUnit.Relative);
     }
 
     public void ZoomIn(PointerWheelEventArgs e)
@@ -236,6 +235,10 @@ public partial class ImageViewer : UserControl
 
     public void ZoomTo(Point point, bool isZoomIn)
     {
+        if (_scaleTransform == null || _translateTransform == null)
+        {
+            return;
+        }
         var currentZoom = _scaleTransform.ScaleX;
         var zoomSpeed = SettingsHelper.Settings.Zoom.ZoomSpeed;
 
@@ -325,6 +328,10 @@ public partial class ImageViewer : UserControl
 
     public void ResetZoom(bool enableAnimations)
     {
+        if (_scaleTransform == null || _translateTransform == null)
+        {
+            return;
+        }
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             if (enableAnimations)
@@ -401,6 +408,10 @@ public partial class ImageViewer : UserControl
         {
             return;
         }
+        if (_scaleTransform == null || _translateTransform == null)
+        {
+            return;
+        }
 
         var mainView = UIHelper.GetMainView;
 
@@ -445,38 +456,20 @@ public partial class ImageViewer : UserControl
         {
             return;
         }
-
-        if (MainKeyboardShortcuts.IsKeyHeldDown)
+        if (RotationHelper.IsValidRotation(vm.RotationAngle))
         {
-            vm.RotationAngle = clockWise ? vm.RotationAngle + 1 : vm.RotationAngle -1;
-            if (vm.RotationAngle < 0)
+            var nextAngle = RotationHelper.Rotate(vm.RotationAngle, clockWise);
+            vm.RotationAngle = nextAngle switch
             {
-                vm.RotationAngle = 359;
-            }
-
-            if (vm.RotationAngle > 359)
-            {
-                vm.RotationAngle = 0;
-            }
+                360 => 0,
+                -90 => 270,
+                _ => nextAngle
+            };
         }
         else
         {
-            if (RotationHelper.IsValidRotation(vm.RotationAngle))
-            {
-                var nextAngle = RotationHelper.Rotate(vm.RotationAngle, clockWise);
-                vm.RotationAngle = nextAngle switch
-                {
-                    360 => 0,
-                    -90 => 270,
-                    _ => nextAngle
-                };
-            }
-            else
-            {
-                vm.RotationAngle = RotationHelper.NextRotationAngle(vm.RotationAngle, true);
-            }
+            vm.RotationAngle = RotationHelper.NextRotationAngle(vm.RotationAngle, true);
         }
-
 
         var rotateTransform = new RotateTransform(vm.RotationAngle);
 
@@ -493,6 +486,7 @@ public partial class ImageViewer : UserControl
         }
 
         WindowHelper.SetSize(vm);
+        MainImage.InvalidateVisual();
     }
     
     public void Rotate(double angle)

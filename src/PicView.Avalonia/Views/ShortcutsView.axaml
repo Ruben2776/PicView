@@ -1308,15 +1308,14 @@
                 Text="{CompiledBinding MoveWindow}"
                 Width="170" />
             <TextBox
-                Classes="hover TStyle"
+                Classes="TStyle"
                 IsReadOnly="True"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140"
                 x:Name="DragWindowBox" />
             <TextBox
-                Classes="hover TStyle"
+                Classes="TStyle"
                 IsReadOnly="True"
-                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
         </StackPanel>
 

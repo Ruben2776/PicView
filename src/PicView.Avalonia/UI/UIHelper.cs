@@ -4,12 +4,14 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Views.UC.Menus;
 using PicView.Core.Config;
+using PicView.Core.Gallery;
 using PicView.Core.Localization;
 
 namespace PicView.Avalonia.UI
@@ -263,5 +265,101 @@ namespace PicView.Avalonia.UI
         }
 
         #endregion
+
+        #region Navigation
+
+        public static async Task NavigateUp(MainViewModel? vm)
+        {
+            if (vm is null)
+            {
+                return;
+            }
+
+            if (GalleryFunctions.IsFullGalleryOpen)
+            {
+                GalleryNavigation.NavigateGallery(Direction.Up, vm);
+                return;
+            }
+
+            if (vm.IsScrollingEnabled)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    vm.ImageViewer.ImageScrollViewer.LineUp();
+                });
+            }
+            else
+            {
+                vm.ImageViewer.Rotate(clockWise: true);
+            }
+        }
+
+        public static async Task NavigateDown(MainViewModel? vm)
+        {
+            if (vm is null)
+            {
+                return;
+            }
+
+            if (GalleryFunctions.IsFullGalleryOpen)
+            {
+                GalleryNavigation.NavigateGallery(Direction.Down, vm);
+                return;
+            }
+
+            if (vm.IsScrollingEnabled)
+            {
+                vm.ImageViewer.ImageScrollViewer.LineDown();
+            }
+            else
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    vm.ImageViewer.Rotate(clockWise: false);
+                });
+            }
+        }
+
+        public static async Task RotateRight(MainViewModel? vm)
+        {
+            if (vm is null)
+            {
+                return;
+            }
+
+            if (GalleryFunctions.IsFullGalleryOpen)
+            {
+                return;
+            }
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                vm.ImageViewer.Rotate(clockWise: false);
+            });
+        
+            // Check if it should move the cursor
+            if (!SettingsHelper.Settings.WindowProperties.AutoFit)
+            {
+                return;
+            }
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            
+            // Move cursor when button is clicked
+            // TODO: Dynamically figure out which button is clicked
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                var titleBar = desktop.MainWindow.GetControl<Control>("Titlebar");
+                var button = titleBar.GetControl<Button>("RotateRightButton");
+                if (button.IsPointerOver)
+                {
+                    var p = button.PointToScreen(new Point(10, 15));
+                    vm.PlatformService?.SetCursorPos(p.X, p.Y);
+                }
+            });
+        }
+        
+        #endregion Navigation
     }
 }

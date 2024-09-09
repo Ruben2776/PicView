@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using ImageMagick;
@@ -12,7 +11,6 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
-using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ProcessHandling;
 
@@ -214,73 +212,12 @@ public static class FunctionsHelper
 
     public static async Task Up()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            GalleryNavigation.NavigateGallery(Direction.Up, Vm);
-            return;
-        }
-
-        if (Vm.IsScrollingEnabled)
-        {
-            if (Vm.ImageViewer.ImageScrollViewer.Offset.Y == 0)
-            {
-               Vm.ImageViewer.Rotate(clockWise: true);
-            }
-            else
-            {
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    Vm.ImageViewer.ImageScrollViewer.LineUp();
-                });
-            }
-        }
-        else
-        {
-            Vm.ImageViewer.Rotate(clockWise: true);
-        }
+        await UIHelper.NavigateUp(Vm);
     }
 
     public static async Task RotateRight()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            return;
-        }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            Vm.ImageViewer.Rotate(clockWise: false);
-        });
-        
-        // Check if it should move the cursor
-        if (!SettingsHelper.Settings.WindowProperties.AutoFit)
-        {
-            return;
-        }
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            var titleBar = desktop.MainWindow.GetControl<Control>("Titlebar");
-            var button = titleBar.GetControl<Button>("RotateRightButton");
-            if (button.IsPointerOver)
-            {
-                var p = button.PointToScreen(new Point(10, 15));
-                Vm.PlatformService?.SetCursorPos(p.X, p.Y);
-            }
-        });
+        await UIHelper.RotateRight(Vm);
     }
 
     public static Task RotateLeft()
@@ -300,38 +237,7 @@ public static class FunctionsHelper
 
     public static async Task Down()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            GalleryNavigation.NavigateGallery(Direction.Down, Vm);
-            return;
-        }
-
-        if (Vm.IsScrollingEnabled)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                if (Vm.ImageViewer.ImageScrollViewer.Offset.Y == 0)
-                {
-                    Vm.ImageViewer.Rotate(clockWise: false);
-                }
-                else
-                {
-                    Vm.ImageViewer.ImageScrollViewer.LineUp();
-                }
-            });
-        }
-        else
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Vm.ImageViewer.Rotate(clockWise: false);
-            });
-        }
+        await UIHelper.NavigateDown(Vm);
     }
     
     public static async Task ScrollDown()

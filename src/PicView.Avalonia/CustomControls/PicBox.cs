@@ -110,7 +110,7 @@ public class PicBox : Control
         {
             return;
         }
-
+        
         switch (ImageType)
         {
             case ImageType.Svg:
