@@ -211,9 +211,18 @@
                     IsChecked="{CompiledBinding IsStretched}"
                     ToggleType="CheckBox" />
                 <MenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding GetCtrlZoom, Mode=OneWay}" />
+                <MenuItem
+                    Command="{CompiledBinding ShowSideBySideCommand}"
+                    Header="{CompiledBinding SideBySide,
+                                             Mode=OneWay}"
+                    IsChecked="{CompiledBinding IsShowingSideBySide}"
+                    ToggleType="CheckBox" />
                 <MenuItem Command="{CompiledBinding ChangeBackgroundCommand}" Header="{CompiledBinding ChangeBackground, Mode=OneWay}">
                     <MenuItem.Icon>
-                        <Image Height="12" Width="12" Source="{StaticResource CanvasImage}" />
+                        <Image
+                            Height="12"
+                            Source="{StaticResource CanvasImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding HideShowInterface, Mode=OneWay}">
@@ -304,12 +313,12 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                IsEnabled="False"
                 Command="{CompiledBinding SetAsLockScreenCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
                                                    FallbackValue=''}"
                 Header="{CompiledBinding SetAsLockScreenImage,
-                                         Mode=OneWay}">
+                                         Mode=OneWay}"
+                IsEnabled="False">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PanoramaGeometry}"
