@@ -294,7 +294,7 @@
 	</ItemGroup>
 	
   <PropertyGroup>
-    <FileVersion>2.3.1</FileVersion>
+    <FileVersion>2.3.2</FileVersion>
     <SignAssembly>False</SignAssembly>
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <PackageProjectUrl>https://PicView.org</PackageProjectUrl>
@@ -304,7 +304,7 @@
     <LangVersion>preview</LangVersion>
     <Authors>Ruben2776</Authors>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <AssemblyVersion>2.3.1</AssemblyVersion>
+    <AssemblyVersion>2.3.2</AssemblyVersion>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <TargetFramework>net9.0-windows10.0.22621.0</TargetFramework>
