@@ -1,10 +1,15 @@
 ﻿using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Shapes;
 using Avalonia.Input;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
+using PicView.Avalonia.Animations;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
@@ -12,6 +17,30 @@ using PicView.Core.ProcessHandling;
 namespace PicView.Avalonia.Clipboard;
 public static class ClipboardHelper
 {
+    private static async Task CopyAnimation()
+    {
+        var startOpacityAnimation = AnimationsHelper.OpacityAnimation(0, .5, 0.25);
+        var endOpacityAnimation = AnimationsHelper.OpacityAnimation(.5, 0, 0.25);
+        Rectangle? rectangle = null;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            rectangle = new Rectangle
+            {
+                Width = UIHelper.GetMainView.Width,
+                Height = UIHelper.GetMainView.Height,
+                Opacity = 0,
+                Fill = Brushes.Black
+            };
+            UIHelper.GetMainView.MainGrid.Children.Add(rectangle);
+        });
+        await startOpacityAnimation.RunAsync(rectangle);
+        await endOpacityAnimation.RunAsync(rectangle);
+        await Task.Delay(500);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            UIHelper.GetMainView.MainGrid.Children.Remove(rectangle);
+        });
+    }
     public static async Task CopyTextToClipboard(string text)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
@@ -19,11 +48,13 @@ public static class ClipboardHelper
             return;
         }
         await desktop.MainWindow.Clipboard.SetTextAsync(text);
+        await CopyAnimation();
     }
 
     public static async Task CopyFileToClipboard(string? file, MainViewModel vm)
     {
         await Task.Run(() => vm.PlatformService.CopyFile(file));
+        await CopyAnimation();
     }
 
     public static async Task CopyImageToClipboard(string path)
@@ -38,7 +69,7 @@ public static class ClipboardHelper
             return;
         }
         var clipboard = desktop.MainWindow.Clipboard;
-        var base64 = string.Empty;
+        string base64;
         if (string.IsNullOrWhiteSpace(path))
         {
             switch (vm.ImageType)
@@ -72,6 +103,7 @@ public static class ClipboardHelper
         }
 
         await clipboard.SetTextAsync(base64);
+        await CopyAnimation();
     }   
 
     public static async Task CutFile(string path)

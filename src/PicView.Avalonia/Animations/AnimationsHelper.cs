@@ -227,6 +227,5 @@ public static class AnimationsHelper
             }
         };
     }
-    
 }
         
