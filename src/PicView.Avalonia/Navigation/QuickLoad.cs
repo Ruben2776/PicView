@@ -77,6 +77,11 @@ public static class QuickLoad
         {
             WindowHelper.CenterWindowOnScreen(false);
         }
+
+        if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
+        {
+            vm.PlatformService.SetTaskbarProgress((ulong)vm.ImageIterator.CurrentIndex, (ulong)vm.ImageIterator.ImagePaths.Count);
+        }
         
         var tasks = new List<Task>
         {

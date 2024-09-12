@@ -56,6 +56,8 @@ public static class ErrorHandling
             vm.ImageIterator?.Dispose();
             vm.ImageIterator = null;
             vm.GalleryMargin = new Thickness(0, 0, 0, 0);
+            vm.GetIndex = 0;
+            vm.PlatformService.StopTaskbarProgress();
         }
     }
 

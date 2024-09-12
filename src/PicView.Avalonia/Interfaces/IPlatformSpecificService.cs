@@ -2,7 +2,8 @@
 
 public interface IPlatformSpecificService
 {
-    void SetTaskbarProgress(double progress);
+    void SetTaskbarProgress(ulong progress, ulong maximum);
+    void StopTaskbarProgress();
     void SetCursorPos(int x, int y);
 
     List<string> GetFiles(FileInfo fileInfo);

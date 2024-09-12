@@ -569,7 +569,10 @@ namespace PicView.Avalonia.Navigation
                 {
                     if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
                     {
-                        _vm.PlatformService.SetTaskbarProgress(index / (double)ImagePaths.Count);
+                        await Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            _vm.PlatformService.SetTaskbarProgress((ulong)CurrentIndex, (ulong)ImagePaths.Count);
+                        });
                     }
 
                     _ = Task.Run(Preload);

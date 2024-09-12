@@ -11,5 +11,5 @@ public static partial class NativeMethods
     // Change cursor position
     [LibraryImport("User32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static partial bool SetCursorPos(int x, int y);
+    public static partial bool SetCursorPos(int x, int y);    
 }

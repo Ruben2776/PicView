@@ -15,6 +15,7 @@ using PicView.Core.ProcessHandling;
 using PicView.Windows;
 using PicView.Windows.FileHandling;
 using PicView.Windows.Lockscreen;
+using PicView.Windows.Taskbar;
 using PicView.Windows.Wallpaper;
 using Dispatcher = Avalonia.Threading.Dispatcher;
 
@@ -22,11 +23,14 @@ namespace PicView.Avalonia.Win32;
 
 public class App : Application, IPlatformSpecificService
 {
+    private WinMainWindow? _mainWindow;
     private ExifWindow? _exifWindow;
     private SettingsWindow? _settingsWindow;
     private KeybindingsWindow? _keybindingsWindow;
     private AboutWindow? _aboutWindow;
     private MainViewModel? _vm;
+    
+    private TaskbarProgress? _taskbarProgress;
 
     public override void Initialize()
     {
@@ -55,25 +59,44 @@ public class App : Application, IPlatformSpecificService
             return;
         }
 
-        Window? window = null;
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            window = new WinMainWindow();
-            desktop.MainWindow = window;
+            _mainWindow = new WinMainWindow();
+            desktop.MainWindow = _mainWindow;
         });
         _vm = new MainViewModel(this);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            window.DataContext = _vm;
-            StartUpHelper.Start(_vm, settingsExists, desktop, window);
+            _mainWindow.DataContext = _vm;
+            StartUpHelper.Start(_vm, settingsExists, desktop, _mainWindow);
         });
     }
     
-    #region Interface Implementation
+    #region Interface Implementations
     
-    public void SetTaskbarProgress(double progress)
+    public void SetTaskbarProgress(ulong progress, ulong maximum)
     {
-        // TODO: Implement SetTaskbarProgress
+        var handle = _mainWindow?.TryGetPlatformHandle()?.Handle;
+    
+        // Ensure the handle is valid before proceeding
+        if (handle == IntPtr.Zero || handle is null)
+        {
+            return;
+        }
+        _taskbarProgress ??= new TaskbarProgress();
+        _taskbarProgress.SetProgress(handle.Value, progress, maximum);
+    }
+    
+    public void StopTaskbarProgress()
+    {
+        var handle = _mainWindow?.TryGetPlatformHandle()?.Handle;
+    
+        // Ensure the handle is valid before proceeding
+        if (handle == IntPtr.Zero || handle is null)
+        {
+            return;
+        }
+        _taskbarProgress?.StopProgress(handle.Value);
     }
 
     public void SetCursorPos(int x, int y)
