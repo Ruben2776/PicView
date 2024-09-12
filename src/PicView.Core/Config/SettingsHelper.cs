@@ -215,7 +215,7 @@ public static class SettingsHelper
             foreach (var property in properties)
             {
                 // Check if the property exists in the existing JSON
-                var jsonProperty = existingSettings.GetType().GetProperty(property.Name);
+                var jsonProperty = typeof(AppSettings).GetProperty(property.Name);
                 if (jsonProperty == null)
                 {
                     // Property exists in C# class but not in JSON, initialize it
