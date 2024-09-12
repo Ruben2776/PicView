@@ -653,11 +653,7 @@ public static class FunctionsHelper
 
     public static async Task CopyImage()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-        await ClipboardHelper.CopyImageToClipboard(Vm.FileInfo?.FullName);
+        await ClipboardHelper.CopyImageToClipboard();
     }
 
     public static async Task CopyBase64()

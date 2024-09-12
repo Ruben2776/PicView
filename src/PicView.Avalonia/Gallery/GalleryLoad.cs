@@ -178,7 +178,7 @@ public static class GalleryLoad
                     (uint)galleryItemSize);
                 var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfos[i]);
 
-                await Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.Post(() =>
                 {
                     if (i < 0 || i >= galleryListBox.Items.Count)
                     {
@@ -216,7 +216,7 @@ public static class GalleryLoad
                     {
                         galleryListBox.ScrollToCenterOfItem(galleryItem);
                     }
-                }, priority, ct);
+                }, priority);
             });
         }
     }

@@ -440,7 +440,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<string, Unit>? CopyBase64Command { get; }
     public ReactiveCommand<string, Unit>? CopyFilePathCommand { get; }
     public ReactiveCommand<string, Unit>? FilePropertiesCommand { get; }
-    public ReactiveCommand<string, Unit>? CopyImageCommand { get; }
+    public ReactiveCommand<Unit, Unit>? CopyImageCommand { get; }
     public ReactiveCommand<string, Unit>? CutCommand { get; }
     public ReactiveCommand<Unit, Unit>? ReloadCommand { get; }
     public ReactiveCommand<string, Unit>? PrintCommand { get; }
@@ -1450,19 +1450,6 @@ public class MainViewModel : ViewModelBase
         await ClipboardHelper.CopyTextToClipboard(path);
     }
     
-    private async Task CopyImageTask(string path)
-    {
-        if (string.IsNullOrWhiteSpace(path))
-        {
-            return;
-        }
-        if (PlatformService is null)
-        {
-            return;
-        }
-        await ClipboardHelper.CopyImageToClipboard(path);
-    }
-    
     private async Task CopyBase64Task(string path)
     {
         if (PlatformService is null)
@@ -1796,7 +1783,7 @@ public class MainViewModel : ViewModelBase
         
         FilePropertiesCommand = ReactiveCommand.CreateFromTask<string>(ShowFilePropertiesTask);
 
-        CopyImageCommand = ReactiveCommand.CreateFromTask<string>(CopyImageTask);
+        CopyImageCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.CopyImage);
         
         CopyBase64Command = ReactiveCommand.CreateFromTask<string>(CopyBase64Task);
 

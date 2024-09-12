@@ -19,8 +19,10 @@ public static class ClipboardHelper
 {
     private static async Task CopyAnimation()
     {
-        var startOpacityAnimation = AnimationsHelper.OpacityAnimation(0, .5, 0.25);
-        var endOpacityAnimation = AnimationsHelper.OpacityAnimation(.5, 0, 0.25);
+        const double speed = 0.2;
+        const double opacity = 0.4;
+        var startOpacityAnimation = AnimationsHelper.OpacityAnimation(0, opacity, speed);
+        var endOpacityAnimation = AnimationsHelper.OpacityAnimation(opacity, 0, speed);
         Rectangle? rectangle = null;
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -29,13 +31,14 @@ public static class ClipboardHelper
                 Width = UIHelper.GetMainView.Width,
                 Height = UIHelper.GetMainView.Height,
                 Opacity = 0,
-                Fill = Brushes.Black
+                Fill = Brushes.Black,
+                IsHitTestVisible = false
             };
             UIHelper.GetMainView.MainGrid.Children.Add(rectangle);
         });
         await startOpacityAnimation.RunAsync(rectangle);
         await endOpacityAnimation.RunAsync(rectangle);
-        await Task.Delay(500);
+        await Task.Delay(200);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             UIHelper.GetMainView.MainGrid.Children.Remove(rectangle);
@@ -57,7 +60,7 @@ public static class ClipboardHelper
         await CopyAnimation();
     }
 
-    public static async Task CopyImageToClipboard(string path)
+    public static async Task CopyImageToClipboard()
     {
         // TODO: Implement CopyImageToClipboard
     }
