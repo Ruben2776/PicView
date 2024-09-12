@@ -360,6 +360,15 @@ public static class FunctionsHelper
         await HideInterfaceLogic.ToggleBottomToolbar(Vm);
     }
     
+    public static async Task ToggleTaskbarProgress()
+    {
+        if (Vm is null)
+        {
+            return;
+        }
+        await UIHelper.ToggleTaskbarProgress(Vm);
+    }
+    
     #endregion
 
     #region Gallery functions
@@ -1076,6 +1085,4 @@ public static class FunctionsHelper
     #endregion
     
     #endregion
-
-
 }

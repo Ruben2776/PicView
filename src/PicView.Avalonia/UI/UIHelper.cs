@@ -176,6 +176,7 @@ namespace PicView.Avalonia.UI
                         preloadValue.ImageModel.PixelHeight, vm.RotationAngle, vm);
                 }
             }
+
             await SettingsHelper.SaveSettingsAsync();
         }
 
@@ -264,6 +265,32 @@ namespace PicView.Avalonia.UI
             await SettingsHelper.SaveSettingsAsync();
         }
 
+        public static async Task ToggleTaskbarProgress(MainViewModel vm)
+        {
+            if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
+            {
+                SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled = false;
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    vm.PlatformService.StopTaskbarProgress();
+                });
+            }
+            else
+            {
+                SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled = true;
+                if (NavigationHelper.CanNavigate(vm))
+                {
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        vm.PlatformService.SetTaskbarProgress((ulong)vm.ImageIterator.CurrentIndex,
+                            (ulong)vm.ImageIterator.ImagePaths.Count);
+                    });
+                }
+            }
+
+            await SettingsHelper.SaveSettingsAsync();
+        }
+
         #endregion
 
         #region Navigation
@@ -283,14 +310,11 @@ namespace PicView.Avalonia.UI
 
             if (vm.IsScrollingEnabled)
             {
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    vm.ImageViewer.ImageScrollViewer.LineUp();
-                });
+                await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.ImageScrollViewer.LineUp(); });
             }
             else
             {
-                vm.ImageViewer.Rotate(clockWise: true);
+                vm.ImageViewer.Rotate(true);
             }
         }
 
@@ -313,10 +337,7 @@ namespace PicView.Avalonia.UI
             }
             else
             {
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    vm.ImageViewer.Rotate(clockWise: false);
-                });
+                await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(false); });
             }
         }
 
@@ -331,21 +352,20 @@ namespace PicView.Avalonia.UI
             {
                 return;
             }
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                vm.ImageViewer.Rotate(clockWise: false);
-            });
-        
+
+            await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(false); });
+
             // Check if it should move the cursor
             if (!SettingsHelper.Settings.WindowProperties.AutoFit)
             {
                 return;
             }
+
             if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             {
                 return;
             }
-            
+
             // Move cursor when button is clicked
             // TODO: Dynamically figure out which button is clicked
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -359,7 +379,7 @@ namespace PicView.Avalonia.UI
                 }
             });
         }
-        
+
         #endregion Navigation
     }
 }

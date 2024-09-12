@@ -469,6 +469,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>? ChangeBackgroundCommand { get; }
     public ReactiveCommand<Unit, Unit>? ToggleBottomNavBarCommand { get; }
     public ReactiveCommand<Unit, Unit>? ToggleBottomGalleryShownInHiddenUICommand { get; }
+    public ReactiveCommand<Unit, Unit>? ToggleTaskbarProgressCommand { get; }
     public ReactiveCommand<Unit, Unit>? ShowExifWindowCommand { get; }
     public ReactiveCommand<Unit, Unit>? ShowAboutWindowCommand { get; }
     public ReactiveCommand<Unit, Unit>? ShowSettingsWindowCommand { get; }
@@ -1867,6 +1868,8 @@ public class MainViewModel : ViewModelBase
         ColorPickerCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ColorPicker);
         
         SlideshowCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Slideshow);
+        
+        ToggleTaskbarProgressCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleTaskbarProgress);
 
         #endregion UI Commands
 
