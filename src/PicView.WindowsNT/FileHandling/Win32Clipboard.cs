@@ -2,7 +2,7 @@
 
 namespace PicView.WindowsNT.FileHandling;
 
-public static partial class ClipboardHelper
+public static partial class Win32Clipboard
 {
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]

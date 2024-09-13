@@ -314,12 +314,12 @@ public class App : Application, IPlatformSpecificService
 
     public bool CopyFile(string path)
     {
-        return ClipboardHelper.CopyFileToClipboard(false, path);
+        return Win32Clipboard.CopyFileToClipboard(false, path);
     }
     
     public bool CutFile(string path)
     {
-        return ClipboardHelper.CopyFileToClipboard(true, path);
+        return Win32Clipboard.CopyFileToClipboard(true, path);
     }
     
     public async Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory)
