@@ -1,4 +1,4 @@
-﻿namespace PicView.Windows.Taskbar;
+﻿namespace PicView.WindowsNT.Taskbar;
 
 public enum TaskbarStates
 {

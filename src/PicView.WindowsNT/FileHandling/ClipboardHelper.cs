@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace PicView.Windows.FileHandling;
+namespace PicView.WindowsNT.FileHandling;
 
 public static partial class ClipboardHelper
 {

@@ -12,11 +12,11 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
-using PicView.Windows;
-using PicView.Windows.FileHandling;
-using PicView.Windows.Lockscreen;
-using PicView.Windows.Taskbar;
-using PicView.Windows.Wallpaper;
+using PicView.WindowsNT;
+using PicView.WindowsNT.FileHandling;
+using PicView.WindowsNT.Lockscreen;
+using PicView.WindowsNT.Taskbar;
+using PicView.WindowsNT.Wallpaper;
 using Dispatcher = Avalonia.Threading.Dispatcher;
 
 namespace PicView.Avalonia.Win32;

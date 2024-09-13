@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-namespace PicView.Windows.Wallpaper;
+namespace PicView.WindowsNT.Wallpaper;
 
 public static class WallpaperHelper
 {

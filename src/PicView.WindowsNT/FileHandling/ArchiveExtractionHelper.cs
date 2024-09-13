@@ -2,7 +2,7 @@
 using Microsoft.Win32;
 using PicView.Core.FileHandling;
 
-namespace PicView.Windows.FileHandling;
+namespace PicView.WindowsNT.FileHandling;
 
 public static class ArchiveExtractionHelper
 {
