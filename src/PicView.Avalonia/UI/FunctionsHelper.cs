@@ -689,7 +689,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await ClipboardHelper.CutFile(Vm.FileInfo.FullName);
+        await ClipboardHelper.CutFile(Vm.FileInfo.FullName, Vm);
     }
 
     public static async Task Paste()

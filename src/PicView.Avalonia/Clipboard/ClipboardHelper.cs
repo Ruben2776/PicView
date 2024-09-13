@@ -56,8 +56,11 @@ public static class ClipboardHelper
 
     public static async Task CopyFileToClipboard(string? file, MainViewModel vm)
     {
-        await Task.Run(() => vm.PlatformService.CopyFile(file));
-        await CopyAnimation();
+        var success = await Task.Run(() => vm.PlatformService.CopyFile(file));
+        if (success)
+        {
+            await CopyAnimation();
+        }
     }
 
     public static async Task CopyImageToClipboard()
@@ -109,9 +112,13 @@ public static class ClipboardHelper
         await CopyAnimation();
     }   
 
-    public static async Task CutFile(string path)
+    public static async Task CutFile(string path, MainViewModel vm)
     {
-        // TODO: Implement CutFile
+        var success = await Task.Run(() => vm.PlatformService.CutFile(path));
+        if (success)
+        {
+            await CopyAnimation();
+        }
     }
     
     public static async Task Paste(MainViewModel vm)

@@ -277,9 +277,16 @@ public void ShowAboutWindow()
         // TODO: Implement SetAsLockScreen
     }
     
-    public void CopyFile(string path)
+    public bool CopyFile(string path)
     {
         // TODO: Implement CopyFile
+        return false;
+    }
+    
+    public bool CutFile(string path)
+    {
+        // TODO: Implement CutFile
+        return false;
     }
     
     public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory)

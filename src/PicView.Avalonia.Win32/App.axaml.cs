@@ -312,9 +312,14 @@ public class App : Application, IPlatformSpecificService
         LockscreenHelper.SetLockScreenImage(path);
     }
 
-    public void CopyFile(string path)
+    public bool CopyFile(string path)
     {
-        ClipboardHelper.CopyFileToClipboard(path);
+        return ClipboardHelper.CopyFileToClipboard(false, path);
+    }
+    
+    public bool CutFile(string path)
+    {
+        return ClipboardHelper.CopyFileToClipboard(true, path);
     }
     
     public async Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory)

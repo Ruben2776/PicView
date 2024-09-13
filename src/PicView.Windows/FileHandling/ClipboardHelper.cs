@@ -2,42 +2,43 @@
 
 namespace PicView.Windows.FileHandling;
 
-public static class ClipboardHelper
+public static partial class ClipboardHelper
 {
-    [DllImport("user32.dll", SetLastError = true)]
+    [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool OpenClipboard(IntPtr hWndNewOwner);
+    public static partial bool OpenClipboard(IntPtr hWndNewOwner);
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool CloseClipboard();
+    public static partial bool CloseClipboard();
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool EmptyClipboard();
+    public static partial bool EmptyClipboard();
 
-    [DllImport("user32.dll", SetLastError = true)]
-    public static extern IntPtr SetClipboardData(uint uFormat, IntPtr hMem);
+    [LibraryImport("user32.dll", SetLastError = true)]
+    public static partial IntPtr SetClipboardData(uint uFormat, IntPtr hMem);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern IntPtr GlobalAlloc(uint uFlags, UIntPtr dwBytes);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    public static partial IntPtr GlobalAlloc(uint uFlags, UIntPtr dwBytes);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern IntPtr GlobalLock(IntPtr hMem);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    public static partial IntPtr GlobalLock(IntPtr hMem);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [LibraryImport("kernel32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    public static extern bool GlobalUnlock(IntPtr hMem);
+    public static partial bool GlobalUnlock(IntPtr hMem);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern IntPtr GlobalFree(IntPtr hMem);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    public static partial IntPtr GlobalFree(IntPtr hMem);
 
     public const uint CF_HDROP = 15;
     public const uint CF_PREFERREDDROPEFFECT = 0x000D; // CFSTR_PREFERREDDROPEFFECT
     public const uint GMEM_MOVEABLE = 0x0002;
     public const uint DROPEFFECT_MOVE = 2;
+    public const uint DROPEFFECT_COPY = 1;
 
-    public static bool CopyFileToClipboard(string filePath)
+    public static bool CopyFileToClipboard(bool cut, string filePath)
     {
         if (!OpenClipboard(IntPtr.Zero))
         {
@@ -89,14 +90,23 @@ public static class ClipboardHelper
                 return false;
             }
 
-            // Set the preferred drop effect to move
+            
             var dropEffect = Marshal.AllocHGlobal(sizeof(uint));
-            Marshal.WriteInt32(dropEffect, (int)DROPEFFECT_MOVE);
+            if (cut)
+            {
+                // Setting the drop effect to move doesn't work.
+                Marshal.WriteInt32(dropEffect, (int)DROPEFFECT_MOVE);
+            }
+            else
+            {
+                Marshal.WriteInt32(dropEffect, (int)DROPEFFECT_COPY);
+            }
             if (SetClipboardData(CF_PREFERREDDROPEFFECT, dropEffect) == IntPtr.Zero)
             {
                 Marshal.FreeHGlobal(dropEffect);
                 return false;
             }
+
         }
         finally
         {
@@ -106,6 +116,8 @@ public static class ClipboardHelper
         return true;
 
     }
+
+
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     private struct Dropfiles

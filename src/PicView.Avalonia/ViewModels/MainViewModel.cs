@@ -1469,7 +1469,7 @@ public class MainViewModel : ViewModelBase
         {
             return;
         }
-        await ClipboardHelper.CutFile(path);
+        await ClipboardHelper.CutFile(path, this);
     }
     
     private async Task DeleteFileTask(string path)
