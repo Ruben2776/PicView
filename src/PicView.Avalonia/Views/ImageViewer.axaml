@@ -24,7 +24,12 @@
             Width="{CompiledBinding ScrollViewerWidth,
                                     Mode=OneWay}"
             x:Name="ImageScrollViewer">
-            <Border x:Name="MainBorder">
+            <Border
+                Height="{CompiledBinding ImageHeight,
+                                         Mode=OneWay}"
+                Width="{CompiledBinding ImageWidth,
+                                        Mode=OneWay}"
+                x:Name="MainBorder">
                 <customControls:PicBox
                     ImageType="{CompiledBinding ImageType,
                                                 Mode=OneWay}"
