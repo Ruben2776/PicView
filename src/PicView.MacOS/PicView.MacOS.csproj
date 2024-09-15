@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.2.0-beta2" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.0-beta2" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.2.0-beta2" />
+    <PackageReference Include="Avalonia.Headless.XUnit" Version="11.2.0-beta2" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.0-beta2" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.0-beta2" />
+  </ItemGroup>
+
 </Project>

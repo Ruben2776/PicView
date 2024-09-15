@@ -36,8 +36,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.2.999-cibuild0051810-alpha" />
-    <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.999-cibuild0051810-alpha" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.0-beta2" />
+    <PackageReference Include="Avalonia.Headless.XUnit" Version="11.2.0-beta2" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.0-beta2" />
   </ItemGroup>
 
   <ItemGroup>
