@@ -475,7 +475,7 @@ public static class NavigationHelper
         {
             vm.ImageViewer.Rotate(vm.RotationAngle);
         }
-        var titleString = TitleHelper.TitleString(width, height, name, 1);
+        var titleString = ImageTitleFormatter.GenerateTitleFromPath(width, height, name, 1);
         vm.WindowTitle = titleString[0];
         vm.Title = titleString[1];
         vm.TitleTooltip = titleString[1];

@@ -27,14 +27,14 @@ public static class SetTitleHelper
                 title = TranslationHelper.Translation.ClipboardImage ?? "ClipboardImage";
             }
             
-            var titleString = TitleHelper.TitleString((int)vm.ImageWidth, (int)vm.ImageHeight, title, vm.ZoomValue);
+            var titleString = ImageTitleFormatter.GenerateTitleFromPath((int)vm.ImageWidth, (int)vm.ImageHeight, title, vm.ZoomValue);
             vm.WindowTitle = titleString[0];
             vm.Title = titleString[1];
             vm.TitleTooltip = titleString[1];
             return;
         }
 
-        var getTitle = TitleHelper.GetTitle((int)vm.ImageWidth, (int)vm.ImageHeight, vm.ImageIterator.CurrentIndex,
+        var getTitle = ImageTitleFormatter.GenerateTitleStrings((int)vm.ImageWidth, (int)vm.ImageHeight, vm.ImageIterator.CurrentIndex,
             vm.FileInfo, vm.ZoomValue, vm.ImageIterator.ImagePaths);
         vm.WindowTitle = getTitle[0];
         vm.Title = getTitle[1];
@@ -73,7 +73,7 @@ public static class SetTitleHelper
             return;
         }
 
-        var titleString = TitleHelper.GetTitle(imageModel.PixelWidth, imageModel.PixelHeight,  vm.ImageIterator.CurrentIndex,
+        var titleString = ImageTitleFormatter.GenerateTitleStrings(imageModel.PixelWidth, imageModel.PixelHeight,  vm.ImageIterator.CurrentIndex,
             imageModel.FileInfo,  vm.ZoomValue,  vm.ImageIterator.ImagePaths);
         vm.WindowTitle = titleString[0];
         vm.Title = titleString[1];

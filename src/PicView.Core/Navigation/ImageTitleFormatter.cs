@@ -5,7 +5,7 @@ using PicView.Core.Localization;
 
 namespace PicView.Core.Navigation;
 
-public static class TitleHelper
+public static class ImageTitleFormatter
 {
     /// <summary>
     /// The name of the application.
@@ -13,7 +13,7 @@ public static class TitleHelper
     internal const string AppName = "PicView";
 
     /// <summary>
-    /// Gets the title string based on the specified parameters.
+    /// Generates the title strings based on the specified parameters.
     /// </summary>
     /// <param name="width">The width of the image.</param>
     /// <param name="height">The height of the image.</param>
@@ -22,12 +22,12 @@ public static class TitleHelper
     /// <param name="zoomValue">The zoom value of the image.</param>
     /// <param name="filesList">The list of files.</param>
     /// <returns>An array of three strings representing different aspects of the title.</returns>
-    public static string[] GetTitle(int width, int height, int index, FileInfo? fileInfo, double zoomValue, List<string> filesList)
+    public static string[] GenerateTitleStrings(int width, int height, int index, FileInfo? fileInfo, double zoomValue, List<string> filesList)
     {
         // Check index validity
         if (index < 0 || index >= filesList.Count)
         {
-            return ReturnError("index invalid");
+            return GenerateErrorTitle("index invalid");
         }
 
         // Check if file info is present or not
@@ -39,7 +39,7 @@ public static class TitleHelper
             }
             catch (Exception e)
             {
-                return ReturnError("FileInfo exception " + e.Message);
+                return GenerateErrorTitle("FileInfo exception " + e.Message);
             }
         }
 
@@ -49,7 +49,9 @@ public static class TitleHelper
             fileInfo = new FileInfo(Path.GetInvalidFileNameChars().Aggregate(fileInfo.FullName,
                 (current, c) => current.Replace(c.ToString(), string.Empty)));
             if (!fileInfo.Exists)
-                return ReturnError("FileInfo does not exist?");
+            {
+                return GenerateErrorTitle($"{nameof(ImageTitleFormatter)}:{nameof(GenerateTitleStrings)} - FileInfo does not exist");
+            }
         }
 
         var files = filesList.Count == 1
@@ -68,14 +70,14 @@ public static class TitleHelper
         sb.Append(width);
         sb.Append(" x ");
         sb.Append(height);
-        sb.Append(StringAspect(width, height));
+        sb.Append(FormatAspectRatio(width, height));
         sb.Append(fileInfo.Length.GetReadableFileSize());
 
         // Check if ZoomPercentage is not empty
-        if (!string.IsNullOrEmpty(ZoomPercentage(zoomValue)))
+        if (!string.IsNullOrEmpty(FormatZoomPercentage(zoomValue)))
         {
             sb.Append(", ");
-            sb.Append(ZoomPercentage(zoomValue));
+            sb.Append(FormatZoomPercentage(zoomValue));
         }
 
         sb.Append(" - ");
@@ -91,7 +93,7 @@ public static class TitleHelper
         return array;
     }
 
-    private static string[] ReturnError(string exception)
+    private static string[] GenerateErrorTitle(string exception)
     {
 #if DEBUG
         Trace.WriteLine(exception);
@@ -104,7 +106,7 @@ public static class TitleHelper
         ];
     }
 
-    private static string ZoomPercentage(double zoomValue)
+    private static string FormatZoomPercentage(double zoomValue)
     {
         if (zoomValue is 1)
         {
@@ -125,7 +127,7 @@ public static class TitleHelper
     /// <param name="path"></param>
     /// <param name="zoomValue"></param>
     /// <returns></returns>
-    public static string[] TitleString(int width, int height, string path, double zoomValue)
+    public static string[] GenerateTitleFromPath(int width, int height, string path, double zoomValue)
     {
         using var sb = ZString.CreateStringBuilder(true);
         sb.Append(path);
@@ -133,12 +135,12 @@ public static class TitleHelper
         sb.Append(width);
         sb.Append(" x ");
         sb.Append(height);
-        sb.Append(StringAspect(width, height));
+        sb.Append(FormatAspectRatio(width, height));
 
-        if (!string.IsNullOrEmpty(ZoomPercentage(zoomValue)))
+        if (!string.IsNullOrEmpty(FormatZoomPercentage(zoomValue)))
         {
             sb.Append(", ");
-            sb.Append((string?)ZoomPercentage(zoomValue));
+            sb.Append((string?)FormatZoomPercentage(zoomValue));
         }
 
         sb.Append(" - ");
@@ -156,12 +158,9 @@ public static class TitleHelper
     /// </summary>
     /// <param name="width">The width of the image.</param>
     /// <param name="height">The height of the image.</param>
-    /// <returns>
-    /// A string representation of the aspect ratio if within specified limits; otherwise, an empty string.
-    /// </returns>
-    internal static string StringAspect(int width, int height)
+    private static string FormatAspectRatio(int width, int height)
     {
-        if (width is 0 || height is 0)
+        if (width <= 0 || height <= 0)
         {
             return ") ";
         }
@@ -172,12 +171,12 @@ public static class TitleHelper
         var y = height / gcd;
 
         // Check if aspect ratio is within specified limits
-        if (x > 48 || y > 18)
+        if ((x > 21 && y > 9) || (x < 1 && y < 1))
         {
             return ") ";
         }
 
-        return $", {x} : {y}) ";
+        return $", {x}:{y}) ";
     }
 
     /// <summary>

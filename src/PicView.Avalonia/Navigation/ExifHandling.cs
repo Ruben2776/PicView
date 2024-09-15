@@ -165,7 +165,7 @@ public static class ExifHandling
                 vm.GetResolution = $"{vm.DpiX} x {vm.DpiY} {TranslationHelper.Translation.Dpi}";
             }
 
-            var gcd = TitleHelper.GCD(vm.PixelWidth, vm.PixelHeight);
+            var gcd = ImageTitleFormatter.GCD(vm.PixelWidth, vm.PixelHeight);
             if (gcd != 0) // Check for zero before division
             {
                 var firstRatio = vm.PixelWidth / gcd;
