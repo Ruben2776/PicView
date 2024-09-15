@@ -58,49 +58,36 @@ namespace PicView.Core.Calculations
             }
             else if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
-                if (rotationAngle is 90 or 270)
+                if (rotationAngle is 0 or 180)
                 {
                     maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage
-                        ? workAreaHeight - padding
-                        : Math.Min(workAreaHeight - padding, height);
-                    
-                    maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
                         ? workAreaWidth - padding
                         : Math.Min(workAreaWidth - padding, width);
+                    
+                    maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
+                        ? workAreaHeight - padding
+                        : Math.Min(workAreaHeight - padding, height);
                 }
                 else
                 {
                     maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage
-                        ? workAreaWidth - padding
-                        : Math.Min(workAreaWidth - padding, width);
-                    
-                    maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
                         ? workAreaHeight - padding
                         : Math.Min(workAreaHeight - padding, height);
+                    
+                    maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
+                        ? workAreaWidth - padding
+                        : Math.Min(workAreaWidth - padding, width);
                 }
             }
             else
             {
-                if (rotationAngle is 90 or 270)
-                {
-                    maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage
-                        ? containerHeight - galleryHeight
-                        : height;
+                maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage
+                    ? containerWidth
+                    : Math.Min(containerWidth, width);
 
-                    maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
-                        ? containerHeight - galleryHeight
-                        : Math.Min(containerHeight, height);
-                }
-                else
-                {
-                    maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage
-                        ? containerWidth
-                        : Math.Min(containerWidth, width);
-
-                    maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
-                        ? containerHeight - galleryHeight
-                        : Math.Min(containerHeight - galleryHeight, height);
-                }
+                maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
+                    ? containerHeight - galleryHeight
+                    : Math.Min(containerHeight - galleryHeight, height);
             }
 
             if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)

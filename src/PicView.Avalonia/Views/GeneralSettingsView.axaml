@@ -49,6 +49,7 @@
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
+            Command="{CompiledBinding ToggleSubdirectoriesCommand}"
             IsChecked="{CompiledBinding IsIncludingSubdirectories}"
             Margin="0,0,0,3"
             Width="270">

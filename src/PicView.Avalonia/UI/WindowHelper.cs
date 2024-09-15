@@ -171,10 +171,6 @@ public static class WindowHelper
             vm.IsAutoFit = true;
         }
         SetSize(vm);
-        if (SettingsHelper.Settings.WindowProperties.AutoFit)
-        {
-            CenterWindowOnScreen();
-        }
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
