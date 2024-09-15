@@ -18,7 +18,7 @@ public static class ThemeHelper
         {
             return;
         }
-        SettingsHelper.Settings.UIProperties.BgColorChoice = (SettingsHelper.Settings.UIProperties.BgColorChoice + 1) % 8;
+        SettingsHelper.Settings.UIProperties.BgColorChoice = (SettingsHelper.Settings.UIProperties.BgColorChoice + 1) % 9;
         vm.ImageBackground = BackgroundColorBrush;
     }
     
@@ -30,12 +30,14 @@ public static class ThemeHelper
     private static Brush BackgroundColorBrush => SettingsHelper.Settings.UIProperties.BgColorChoice switch
     {
         0 => new SolidColorBrush(Colors.Transparent),
-        1 => new SolidColorBrush(Colors.White),
-        3 => new SolidColorBrush(Color.FromRgb(35, 35, 35)),
-        4 => new SolidColorBrush(Color.FromRgb(15, 15, 15)),
-        5 => new SolidColorBrush(Color.FromRgb(5, 5, 5)),
-        6 => CreateCheckerboardBrush(),
-        7 => CreateCheckerboardBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
+        1 => CreateCheckerboardBrush(),
+        2 => CreateCheckerboardBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
+        3 => new SolidColorBrush(Colors.White),
+        4 => new SolidColorBrush(Color.FromRgb(200, 200, 200)),
+        5 => new SolidColorBrush(Color.FromRgb(155, 155, 155)),
+        6 => new SolidColorBrush(Color.FromArgb(90,35, 35, 35)),
+        7 => new SolidColorBrush(Color.FromArgb(90, 15, 15, 15)),
+        8 => new SolidColorBrush(Color.FromRgb(5, 5, 5)),
         _ => new SolidColorBrush(Colors.Transparent),
     };
     
