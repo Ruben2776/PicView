@@ -1,5 +1,6 @@
 <UserControl
-    Background="Transparent"
+    Background="{CompiledBinding ImageBackground,
+                                 Mode=OneWay}"
     PointerPressed="InputElement_OnPointerPressed"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.ImageViewer"
@@ -23,14 +24,7 @@
             Width="{CompiledBinding ScrollViewerWidth,
                                     Mode=OneWay}"
             x:Name="ImageScrollViewer">
-            <Border
-                Background="{CompiledBinding ImageBackground,
-                                             Mode=OneWay}"
-                Height="{CompiledBinding ImageHeight,
-                                         Mode=OneWay}"
-                Width="{CompiledBinding ImageWidth,
-                                        Mode=OneWay}"
-                x:Name="MainBorder">
+            <Border x:Name="MainBorder">
                 <customControls:PicBox
                     ImageType="{CompiledBinding ImageType,
                                                 Mode=OneWay}"

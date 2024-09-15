@@ -16,7 +16,7 @@ public partial class AboutView : UserControl
             // AppVersion.Text = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
             //     VersionHelper.GetFileVersionInfo().FileVersion :
             //     GetType().Assembly.GetName().Version.ToString();
-            AppVersion.Text = "Avalonia Beta Preview 1";
+            AppVersion.Text = "Avalonia Beta Preview 3";
 
             KofiImage.PointerEntered += (_, _) =>
             {
@@ -46,7 +46,7 @@ public partial class AboutView : UserControl
             // TODO: replace with auto download service
             UpdateButton.Click += (_, _) =>
             {
-                ProcessHelper.OpenLink("https://picview.org/Avalonia-Download");
+                ProcessHelper.OpenLink("https://picview.org/avalonia-download");
             };
         };
     }

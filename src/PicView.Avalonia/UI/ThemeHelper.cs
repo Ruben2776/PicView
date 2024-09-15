@@ -18,7 +18,7 @@ public static class ThemeHelper
         {
             return;
         }
-        SettingsHelper.Settings.UIProperties.BgColorChoice = (SettingsHelper.Settings.UIProperties.BgColorChoice + 1) % 5;
+        SettingsHelper.Settings.UIProperties.BgColorChoice = (SettingsHelper.Settings.UIProperties.BgColorChoice + 1) % 6;
         vm.ImageBackground = BackgroundColorBrush;
     }
     
@@ -32,8 +32,9 @@ public static class ThemeHelper
         0 => new SolidColorBrush(Colors.Transparent),
         1 => new SolidColorBrush(Colors.White),
         2 => new SolidColorBrush(Color.FromRgb(15, 15, 15)),
-        3 => CreateCheckerboardBrush(),
-        4 => CreateCheckerboardBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
+        3 => new SolidColorBrush(Color.FromRgb(5, 5, 5)),
+        4 => CreateCheckerboardBrush(),
+        5 => CreateCheckerboardBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
         _ => new SolidColorBrush(Colors.Transparent),
     };
     
