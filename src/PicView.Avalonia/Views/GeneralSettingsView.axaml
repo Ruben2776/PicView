@@ -98,8 +98,7 @@
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
-            IsChecked="{CompiledBinding IsFileSavingDialogShown,
-                                        Mode=OneWay}"
+            IsChecked="{CompiledBinding IsFileSavingDialogShown}"
             Margin="0,0,0,3"
             Width="270">
             <TextBlock
@@ -167,8 +166,7 @@
             <ComboBoxItem
                 Content="{CompiledBinding Reverse,
                                           Mode=OneWay}"
-                IsSelected="{CompiledBinding IsNavigatingInReverse,
-                                             Mode=OneWay}"
+                IsSelected="{CompiledBinding IsNavigatingInReverse}"
                 x:Name="ReverseDirectionBoxItem" />
             <ComboBoxItem Content="{CompiledBinding Forward, Mode=OneWay}" x:Name="ForwardDirectionBoxItem" />
         </ComboBox>

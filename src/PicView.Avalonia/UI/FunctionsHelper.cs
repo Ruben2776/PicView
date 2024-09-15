@@ -605,11 +605,7 @@ public static class FunctionsHelper
 
     public static async Task Save()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-        await FilePickerHelper.SaveFileAsync(Vm.FileInfo?.FullName, Vm);
+        await FileSaverHelper.SaveCurrentFile(Vm);
     }
     
     public static async Task DeleteFile()

@@ -616,7 +616,6 @@ public class MainViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref _isStretched, value);
             SettingsHelper.Settings.ImageScaling.StretchImage = value;
             WindowHelper.SetSize(this);
-            _ = SettingsHelper.SaveSettingsAsync();
         }
     }
 
@@ -645,7 +644,6 @@ public class MainViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _isCtrlToZoomEnabled, value);
             SettingsHelper.Settings.Zoom.CtrlZoom = value;
-            _ = SettingsHelper.SaveSettingsAsync();
         }
     }
 
@@ -658,7 +656,6 @@ public class MainViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _isNavigatingInReverse, value);
             SettingsHelper.Settings.Zoom.HorizontalReverseScroll = value;
-            _ = SettingsHelper.SaveSettingsAsync();
         }
     }
 
@@ -671,7 +668,6 @@ public class MainViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _isOpeningLastFileOnStartup, value);
             SettingsHelper.Settings.StartUp.OpenLastFile = value;
-            _ = SettingsHelper.SaveSettingsAsync();
         }
     }
 
@@ -684,7 +680,6 @@ public class MainViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _isStayingCentered, value);
             SettingsHelper.Settings.WindowProperties.KeepCentered = value;
-            _ = SettingsHelper.SaveSettingsAsync();
         }
     }
 
@@ -697,7 +692,6 @@ public class MainViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _isFileSavingDialogShown, value);
             SettingsHelper.Settings.UIProperties.ShowFileSavingDialog = value;
-            _ = SettingsHelper.SaveSettingsAsync();
         }
     }
 

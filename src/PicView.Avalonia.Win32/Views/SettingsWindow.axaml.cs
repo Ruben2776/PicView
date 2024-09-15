@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using PicView.Core.Config;
 using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Win32.Views;
@@ -22,6 +23,12 @@ public partial class SettingsWindow : Window
             {
                 Close();
             }
+        };
+
+        Closing += async delegate
+        {
+            Hide();
+            await SettingsHelper.SaveSettingsAsync();
         };
     }
 
