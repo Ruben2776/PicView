@@ -1,7 +1,7 @@
-﻿using PicView.Core.FileHandling;
+﻿using System.Diagnostics;
+using Cysharp.Text;
+using PicView.Core.FileHandling;
 using PicView.Core.Localization;
-using System.Diagnostics;
-using System.Text;
 
 namespace PicView.Core.Navigation;
 
@@ -55,39 +55,39 @@ public static class TitleHelper
         var files = filesList.Count == 1
             ? TranslationHelper.Translation.File
             : TranslationHelper.Translation.Files;
-
-        var stringBuilder = new StringBuilder(90);
-        stringBuilder.Append(fileInfo.Name)
-            .Append(' ')
-            .Append(index + 1)
-            .Append('/')
-            .Append(filesList.Count)
-            .Append(' ')
-            .Append(files)
-            .Append(" (")
-            .Append(width)
-            .Append(" x ")
-            .Append(height)
-            .Append(StringAspect(width, height))
-            .Append(fileInfo.Length.GetReadableFileSize());
+        
+        using var sb = ZString.CreateStringBuilder(true);
+        sb.Append(fileInfo.Name);
+        sb.Append(' ');
+        sb.Append(index + 1);
+        sb.Append('/');
+        sb.Append(filesList.Count);
+        sb.Append(' ');
+        sb.Append(files);
+        sb.Append(" (");
+        sb.Append(width);
+        sb.Append(" x ");
+        sb.Append(height);
+        sb.Append(StringAspect(width, height));
+        sb.Append(fileInfo.Length.GetReadableFileSize());
 
         // Check if ZoomPercentage is not empty
         if (!string.IsNullOrEmpty(ZoomPercentage(zoomValue)))
         {
-            stringBuilder.Append(", ")
-                .Append(ZoomPercentage(zoomValue));
+            sb.Append(", ");
+            sb.Append(ZoomPercentage(zoomValue));
         }
 
-        stringBuilder.Append(" - ")
-            .Append(AppName);
+        sb.Append(" - ");
+        sb.Append(AppName);
 
         var array = new string[3];
-        array[0] = stringBuilder.ToString();
-        stringBuilder.Remove(stringBuilder.Length - (AppName.Length + 3),
+        array[0] = sb.ToString();
+        sb.Remove(sb.Length - (AppName.Length + 3),
             AppName.Length + 3); // Remove AppName + " - "
-        array[1] = stringBuilder.ToString();
-        stringBuilder.Replace(Path.GetFileName(filesList[index]), filesList[index]);
-        array[2] = stringBuilder.ToString();
+        array[1] = sb.ToString();
+        sb.Replace(fileInfo.Name, filesList[index]);
+        array[2] = sb.ToString();
         return array;
     }
 
@@ -127,20 +127,27 @@ public static class TitleHelper
     /// <returns></returns>
     public static string[] TitleString(int width, int height, string path, double zoomValue)
     {
-        var s1 = new StringBuilder();
-        s1.Append(path).Append(" (").Append(width).Append(" x ").Append(height).Append(StringAspect(width, height));
+        using var sb = ZString.CreateStringBuilder(true);
+        sb.Append(path);
+        sb.Append(" (");
+        sb.Append(width);
+        sb.Append(" x ");
+        sb.Append(height);
+        sb.Append(StringAspect(width, height));
 
         if (!string.IsNullOrEmpty(ZoomPercentage(zoomValue)))
         {
-            s1.Append(", ").Append((string?)ZoomPercentage(zoomValue));
+            sb.Append(", ");
+            sb.Append((string?)ZoomPercentage(zoomValue));
         }
 
-        s1.Append(" - ").Append(AppName);
+        sb.Append(" - ");
+        sb.Append(AppName);
 
         var array = new string[2];
-        array[0] = s1.ToString();
-        s1.Remove(s1.Length - (AppName.Length + 3), AppName.Length + 3); // Remove AppName + " - "
-        array[1] = s1.ToString();
+        array[0] = sb.ToString();
+        sb.Remove(sb.Length - (AppName.Length + 3), AppName.Length + 3); // Remove AppName + " - "
+        array[1] = sb.ToString();
         return array;
     }
 

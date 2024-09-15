@@ -24,6 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="14.0.0" />
     <PackageReference Include="SharpCompress" Version="0.38.0" />
+    <PackageReference Include="ZString" Version="2.6.0" />
   </ItemGroup>
 
   <ItemGroup>
