@@ -1,0 +1,90 @@
+name: Build and Publish PicView Avalonia WinX64
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Setup .NET 9 SDK
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.x'
+
+      # Step 3: Extract AssemblyVersion from the project file
+      - name: Extract AssemblyVersion
+        id: version
+        run: |
+          $projectPath = ".\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj"
+          $projectFile = [xml](Get-Content $projectPath)
+          $assemblyVersion = $projectFile.Project.PropertyGroup.AssemblyVersion
+          echo "##[set-output name=version;]$assemblyVersion"
+        shell: pwsh
+
+      # Step 4: Define paths
+      - name: Define paths
+        id: paths
+        run: |
+          $outputDir = "PicView-v.$(${{ steps.version.outputs.version }})-win-x64"
+          echo "##[set-output name=output_dir;]$outputDir"
+        shell: pwsh
+
+      # Step 5: Run dotnet publish
+      - name: Publish the project
+        run: |
+          $projectPath = ".\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj"
+          $tempPath = [System.IO.Path]::GetTempPath() + "PicView"
+          dotnet publish $projectPath --runtime win-x64 --self-contained true --configuration Release --output $tempPath /p:PublishReadyToRun=true
+        shell: pwsh
+
+      # Step 6: Copy output to final directory
+      - name: Copy build to final output directory
+        run: |
+          $tempPath = [System.IO.Path]::GetTempPath() + "PicView"
+          $outputPath = "${{ steps.paths.outputs.output_dir }}"
+          
+          if (Test-Path $outputPath) {
+            Remove-Item -Path $outputPath -Recurse -Force
+          }
+          New-Item -Path $outputPath -ItemType Directory | Out-Null
+          
+          Copy-Item -Path "$tempPath\*" -Destination $outputPath -Recurse -Force
+        shell: pwsh
+
+      # Step 7: Remove unnecessary files
+      - name: Clean up unnecessary files
+        run: |
+          $outputPath = "${{ steps.paths.outputs.output_dir }}"
+          
+          $licensePath = Join-Path -Path $outputPath -ChildPath "Licenses\XamlAnimatedGif LICENSE.txt"
+          if (Test-Path $licensePath) {
+            Remove-Item -Path $licensePath -Force
+          }
+          
+          $pdbPath = Join-Path -Path $outputPath -ChildPath "PicView.Avalonia.pdb"
+          if (Test-Path $pdbPath) {
+            Remove-Item -Path $pdbPath -Force
+          }
+
+          Rename-Item -Path $outputPath -NewName $outputPath.Replace(" ","")
+        shell: pwsh
+
+      # Step 8: Clean up temp directory
+      - name: Clean up temp directory
+        run: |
+          $tempPath = [System.IO.Path]::GetTempPath() + "PicView"
+          Start-Sleep -Seconds 2
+          Remove-Item -Path $tempPath -Recurse -Force
+        shell: pwsh
