@@ -101,6 +101,8 @@ public class App : Application, IPlatformSpecificService
             return;
         }
         _taskbarProgress?.StopProgress();
+        
+        _taskbarProgress = null;
     }
 
     public void SetCursorPos(int x, int y)

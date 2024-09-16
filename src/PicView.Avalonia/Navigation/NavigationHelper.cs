@@ -152,6 +152,7 @@ public static class NavigationHelper
         }
         else
         {
+            vm.PlatformService.StopTaskbarProgress();
             await PreviewPicAndLoadGallery(new FileInfo(fileList[0]), vm, fileList);
         }
     }
@@ -241,6 +242,10 @@ public static class NavigationHelper
         {
             return;
         }
+        if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
+        {
+            vm.PlatformService.StopTaskbarProgress();
+        }
         if (vm.ImageIterator is not null)
         {
             if (fileInfo.DirectoryName == vm.ImageIterator.InitialFileInfo.DirectoryName)
@@ -308,19 +313,28 @@ public static class NavigationHelper
 
         try
         {
+            vm.PlatformService.StopTaskbarProgress();
+
             var httpDownload = HttpNavigation.GetDownloadClient(url);
             using var client = httpDownload.Client;
             client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) => 
             {
+                if (totalFileSize is null || totalBytesDownloaded is null || progressPercentage is null)
+                {
+                    return;
+                }
                 var displayProgress = HttpNavigation.GetProgressDisplay(totalFileSize, totalBytesDownloaded,
                     progressPercentage);
                 vm.Title = displayProgress;
                 vm.TitleTooltip = displayProgress;
                 vm.WindowTitle = displayProgress;
+                if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
+                {
+                    vm.PlatformService.SetTaskbarProgress((ulong)totalBytesDownloaded, (ulong)totalFileSize);
+                }
             };
             await client.StartDownloadAsync().ConfigureAwait(false);
             destination = httpDownload.DownloadPath;
-            // TODO add `destination` to be cleared at application exit
         }
         catch (Exception e)
         {
@@ -411,6 +425,10 @@ public static class NavigationHelper
     /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task LoadPicFromDirectoryAsync(string file, MainViewModel vm, FileInfo? fileInfo = null)
     {
+        if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
+        {
+            vm.PlatformService.StopTaskbarProgress();
+        }
         fileInfo ??= new FileInfo(file);
         vm.ImageIterator?.Dispose();
         vm.ImageIterator = new ImageIterator(fileInfo, vm);
@@ -480,6 +498,8 @@ public static class NavigationHelper
         vm.Title = titleString[1];
         vm.TitleTooltip = titleString[1];
         vm.GalleryMargin = new Thickness(0, 0, 0, 0);
+        
+        vm.PlatformService.StopTaskbarProgress();
     }
     
     #endregion
