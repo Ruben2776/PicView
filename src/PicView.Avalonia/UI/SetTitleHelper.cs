@@ -27,14 +27,14 @@ public static class SetTitleHelper
                 title = TranslationHelper.Translation.ClipboardImage ?? "ClipboardImage";
             }
             
-            var titleString = ImageTitleFormatter.GenerateTitleFromPath((int)vm.ImageWidth, (int)vm.ImageHeight, title, vm.ZoomValue);
+            var titleString = ImageTitleFormatter.GenerateTitleForSingleImage(vm.ImageWidth, vm.ImageHeight, title, vm.ZoomValue);
             vm.WindowTitle = titleString[0];
             vm.Title = titleString[1];
             vm.TitleTooltip = titleString[1];
             return;
         }
 
-        var getTitle = ImageTitleFormatter.GenerateTitleStrings((int)vm.ImageWidth, (int)vm.ImageHeight, vm.ImageIterator.CurrentIndex,
+        var getTitle = ImageTitleFormatter.GenerateTitleStrings(vm.ImageWidth, vm.ImageHeight, vm.ImageIterator.CurrentIndex,
             vm.FileInfo, vm.ZoomValue, vm.ImageIterator.ImagePaths);
         vm.WindowTitle = getTitle[0];
         vm.Title = getTitle[1];

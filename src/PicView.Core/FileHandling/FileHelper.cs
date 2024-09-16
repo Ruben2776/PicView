@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace PicView.Core.FileHandling;
@@ -33,45 +32,6 @@ public static partial class FileHelper
         return true;
     }
 
-    /// <summary>
-    /// Returns the human-readable file size for an arbitrary, 64-bit file size
-    /// The default format is "0.## XB", e.g. "4.2 KB" or "1.43 GB"
-    /// </summary>
-    /// <param name="fileSize">FileInfo.Length</param>
-    /// <returns>E.g. "3.34 MB"</returns>
-    /// Credits to http://www.somacon.com/p576.php
-    public static string GetReadableFileSize(this long fileSize)
-    {
-        const int kilobyte = 1024;
-        double value;
-        char prefix;
-
-        switch (fileSize)
-        {
-            // Gigabyte
-            case >= 0x40000000:
-                prefix = 'G';
-                value = fileSize >> 20;
-                break;
-            // Megabyte
-            case >= 0x100000:
-                prefix = 'M';
-                value = fileSize >> 10;
-                break;
-            // Kilobyte
-            case >= 0x400:
-                prefix = 'K';
-                value = fileSize;
-                break;
-
-            default:
-                return fileSize.ToString("0 B", CultureInfo.CurrentCulture); // Byte
-        }
-
-        value /= kilobyte; // Divide by 1024 to get fractional value
-
-        return value.ToString($"0.## {prefix}B", CultureInfo.CurrentCulture);
-    }
 
     [GeneratedRegex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
     private static partial Regex URLregex();
@@ -140,71 +100,6 @@ public static partial class FileHelper
         return newFile;
     }
 
-    [GeneratedRegex(@"(\d+)\s*([KMGTP]B)", RegexOptions.IgnoreCase, "en-US")]
-    private static partial Regex MyRegex();
-    public static string? ExtractFileSize(this string input)
-    {
-        // Define a regular expression pattern to match file size formats like "2GB", "100MB", etc.
-        var regex = MyRegex();
-
-        var match = regex.Match(input);
-
-        return match.Success ? match.Value : null;
-    }
-
-    public static long GetFileSizeFromString(string input)
-    {
-        // Define a regular expression pattern to match file size formats like "2GB", "100MB", etc.
-        var regex = MyRegex();
-
-        var match = regex.Match(input);
-
-        if (!match.Success)
-        {
-            return -1;
-        }
-
-        // Extract the size and unit from the matched groups
-        var size = long.Parse(match.Groups[1].Value);
-        var unit = match.Groups[2].Value.ToUpper();
-
-        // Convert the size to bytes based on the unit
-        switch (unit)
-        {
-            case "KB":
-                size *= 1024;
-                break;
-
-            case "MB":
-                size *= 1024 * 1024;
-                break;
-
-            case "GB":
-                size *= 1024 * 1024 * 1024;
-                break;
-
-            case "TB":
-                size *= 1024L * 1024 * 1024 * 1024;
-                break;
-
-            case "PB":
-                size *= 1024L * 1024 * 1024 * 1024 * 1024;
-                break;
-        }
-
-        return size;
-
-        // If no match is found, return an appropriate value (e.g., -1 indicating an error)
-    }
-
-    /// <summary>
-    /// Checks if the given directory is empty.
-    /// </summary>
-    public static bool IsDirectoryEmpty(string path)
-    {
-        return !Directory.EnumerateFileSystemEntries(path).Any();
-    }
-
     public static bool IsFileInUse(string filePath)
     {
         try
@@ -217,40 +112,6 @@ public static partial class FileHelper
         {
             // If an IOException occurs, the file is in use by another process
             return true;
-        }
-    }
-
-    public static async Task<byte[]> GetBytesFromFile(FileInfo fileInfo)
-    {
-        return await GetBytesFromFile(fileInfo.FullName, useAsync: fileInfo.Length > 1e7).ConfigureAwait(false);
-    }
-
-    public static async Task<byte[]> GetBytesFromFile(string filePath, bool useAsync = false)
-    {
-        const int bufferSize = 4096;
-        await using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, bufferSize, useAsync: useAsync);
-        if (fs.Length >= int.MaxValue)
-        {
-            var bytes = new List<byte>();
-            var buffer = new byte[bufferSize]; // Buffer size for reading chunks from the file
-            int bytesRead;
-            while ((bytesRead = await fs.ReadAsync(buffer).ConfigureAwait(false)) > 0)
-            {
-                bytes.AddRange(buffer.Take(bytesRead));
-            }
-            return bytes.ToArray();
-        }
-        else
-        {
-            var length = (int)fs.Length;
-            var bytes = new byte[length];
-            var writeIndex = 0;
-            while (writeIndex < length)
-            {
-                var readBytes = await fs.ReadAsync(bytes.AsMemory(writeIndex, length - writeIndex)).ConfigureAwait(false);
-                writeIndex += readBytes;
-            }
-            return bytes;
         }
     }
 }

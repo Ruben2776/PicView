@@ -578,10 +578,10 @@ public sealed class ImageIterator : IDisposable
                     });
                 }
 
-                _ = Task.Run(Preload);
+                await PreLoader.PreLoadAsync(CurrentIndex, ImagePaths.Count, IsReversed, ImagePaths).ConfigureAwait(false);
             }
 
-            await AddAsync(index, preloadValue.ImageModel);
+            await AddAsync(index, preloadValue.ImageModel).ConfigureAwait(false);
 
             // Add recent files, except when browsing archive
             if (string.IsNullOrWhiteSpace(TempFileHelper.TempFilePath) && ImagePaths.Count > index)
@@ -711,8 +711,8 @@ public sealed class ImageIterator : IDisposable
             WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight,
                 nextPreloadValue?.ImageModel?.PixelWidth ?? 0, nextPreloadValue?.ImageModel?.PixelHeight ?? 0,
                 preLoadValue.ImageModel.Rotation, _vm);
-            SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
         });
+        SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
 
         if (_vm.RotationAngle != 0)
         {

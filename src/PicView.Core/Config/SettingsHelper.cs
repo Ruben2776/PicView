@@ -41,14 +41,22 @@ public static class SettingsHelper
                 return await Retry().ConfigureAwait(false);
             }
         }
+#if DEBUG
         catch (Exception ex)
         {
-#if DEBUG
+
             Trace.WriteLine($"{nameof(LoadSettingsAsync)} error loading settings:\n {ex.Message}");
-#endif
+
             SetDefaults();
             return false;
         }
+#else
+        catch
+        {
+            SetDefaults();  
+            return false;
+        }
+#endif
         return true;
 
         async Task<bool> Retry()

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using Cysharp.Text;
-using PicView.Core.FileHandling;
+using PicView.Core.Extensions;
 using PicView.Core.Localization;
 
 namespace PicView.Core.Navigation;
@@ -22,15 +22,14 @@ public static class ImageTitleFormatter
     /// <param name="zoomValue">The zoom value of the image.</param>
     /// <param name="filesList">The list of files.</param>
     /// <returns>An array of three strings representing different aspects of the title.</returns>
-    public static string[] GenerateTitleStrings(int width, int height, int index, FileInfo? fileInfo, double zoomValue, List<string> filesList)
+    public static string[] GenerateTitleStrings(int width, int height, int index, FileInfo? fileInfo, double zoomValue,
+        List<string> filesList)
     {
-        // Check index validity
         if (index < 0 || index >= filesList.Count)
         {
-            return GenerateErrorTitle("index invalid");
+            return GenerateErrorTitle($"{nameof(ImageTitleFormatter)}:{nameof(GenerateTitleStrings)} - index invalid");
         }
 
-        // Check if file info is present or not
         if (fileInfo == null)
         {
             try
@@ -39,33 +38,27 @@ public static class ImageTitleFormatter
             }
             catch (Exception e)
             {
-                return GenerateErrorTitle("FileInfo exception " + e.Message);
+                return GenerateErrorTitle(
+                    $"{nameof(ImageTitleFormatter)}:{nameof(GenerateTitleStrings)} - FileInfo exception \n{e.Message}");
             }
         }
 
-        // Check if file exists or not
         if (!fileInfo.Exists)
         {
-            fileInfo = new FileInfo(Path.GetInvalidFileNameChars().Aggregate(fileInfo.FullName,
-                (current, c) => current.Replace(c.ToString(), string.Empty)));
-            if (!fileInfo.Exists)
-            {
-                return GenerateErrorTitle($"{nameof(ImageTitleFormatter)}:{nameof(GenerateTitleStrings)} - FileInfo does not exist");
-            }
+            return GenerateErrorTitle(
+                $"{nameof(ImageTitleFormatter)}:{nameof(GenerateTitleStrings)} - FileInfo does not exist");
         }
 
-        var files = filesList.Count == 1
-            ? TranslationHelper.Translation.File
-            : TranslationHelper.Translation.Files;
-        
         using var sb = ZString.CreateStringBuilder(true);
+        
+        // Build the base title (common parts)
         sb.Append(fileInfo.Name);
         sb.Append(' ');
         sb.Append(index + 1);
         sb.Append('/');
         sb.Append(filesList.Count);
         sb.Append(' ');
-        sb.Append(files);
+        sb.Append(filesList.Count == 1 ? TranslationHelper.Translation.File : TranslationHelper.Translation.Files);
         sb.Append(" (");
         sb.Append(width);
         sb.Append(" x ");
@@ -73,44 +66,55 @@ public static class ImageTitleFormatter
         sb.Append(FormatAspectRatio(width, height));
         sb.Append(fileInfo.Length.GetReadableFileSize());
 
-        // Check if ZoomPercentage is not empty
-        if (!string.IsNullOrEmpty(FormatZoomPercentage(zoomValue)))
+        // Add zoom information if applicable
+        var zoomString = FormatZoomPercentage(zoomValue);
+        if (zoomString is not null)
         {
             sb.Append(", ");
-            sb.Append(FormatZoomPercentage(zoomValue));
+            sb.Append(zoomString);
         }
 
-        sb.Append(" - ");
-        sb.Append(AppName);
+        var baseTitle = sb.ToString();
 
-        var array = new string[3];
-        array[0] = sb.ToString();
-        sb.Remove(sb.Length - (AppName.Length + 3),
-            AppName.Length + 3); // Remove AppName + " - "
-        array[1] = sb.ToString();
-        sb.Replace(fileInfo.Name, filesList[index]);
-        array[2] = sb.ToString();
-        return array;
+        // Full title with AppName
+        var fullTitle = $"{baseTitle} - {AppName}";
+
+        // Title with file path instead of file name
+        var filePathTitle = baseTitle.Replace(fileInfo.Name, fileInfo.FullName);
+
+        return [fullTitle, baseTitle, filePathTitle];
+    }
+
+
+    /// <inheritdoc cref="GenerateTitleStrings(int, int, int, FileInfo, double, List{string})" />
+    public static string[] GenerateTitleStrings(double width, double height, int index, FileInfo? fileInfo,
+        double zoomValue, List<string> filesList)
+    {
+        var newWidth = Convert.ToInt32(width);
+        var newHeight = Convert.ToInt32(height);
+        return GenerateTitleStrings(newWidth, newHeight, index, fileInfo, zoomValue, filesList);
     }
 
     private static string[] GenerateErrorTitle(string exception)
     {
 #if DEBUG
         Trace.WriteLine(exception);
+        Debug.Assert(TranslationHelper.Translation.UnexpectedError != null, "TranslationHelper.Translation.UnexpectedError != null");
 #endif
+        
         return
         [
-            TranslationHelper.Translation.UnexpectedError ?? "UnexpectedError",
-            TranslationHelper.Translation.UnexpectedError ?? "UnexpectedError",
-            TranslationHelper.Translation.UnexpectedError ?? "UnexpectedError",
+            TranslationHelper.Translation.UnexpectedError,
+            TranslationHelper.Translation.UnexpectedError,
+            TranslationHelper.Translation.UnexpectedError
         ];
     }
 
-    private static string FormatZoomPercentage(double zoomValue)
+    private static string? FormatZoomPercentage(double zoomValue)
     {
         if (zoomValue is 1)
         {
-            return string.Empty;
+            return null;
         }
 
         var zoom = Math.Round(zoomValue * 100);
@@ -119,38 +123,46 @@ public static class ImageTitleFormatter
     }
 
     /// <summary>
-    /// Returns string with file name,
-    /// zoom, aspect ratio and resolution
+    /// Returns string with file name, zoom, aspect ratio and resolution
     /// </summary>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
-    /// <param name="path"></param>
-    /// <param name="zoomValue"></param>
-    /// <returns></returns>
-    public static string[] GenerateTitleFromPath(int width, int height, string path, double zoomValue)
+    /// <param name="width">The width of the image.</param>
+    /// <param name="height">The height of the image.</param>
+    /// <param name="name">The name to display.</param>
+    /// <param name="zoomValue">The zoom value of the image.</param>
+    public static string[] GenerateTitleForSingleImage(int width, int height, string name, double zoomValue)
     {
         using var sb = ZString.CreateStringBuilder(true);
-        sb.Append(path);
+
+        // Build the base title (common parts)
+        sb.Append(name);
         sb.Append(" (");
         sb.Append(width);
         sb.Append(" x ");
         sb.Append(height);
         sb.Append(FormatAspectRatio(width, height));
 
-        if (!string.IsNullOrEmpty(FormatZoomPercentage(zoomValue)))
+        // Add zoom information if applicable
+        var zoomString = FormatZoomPercentage(zoomValue);
+        if (zoomString is not null)
         {
             sb.Append(", ");
-            sb.Append((string?)FormatZoomPercentage(zoomValue));
+            sb.Append(zoomString);
         }
 
-        sb.Append(" - ");
-        sb.Append(AppName);
+        var baseTitle = sb.ToString(); // Save the base title (without AppName)
 
-        var array = new string[2];
-        array[0] = sb.ToString();
-        sb.Remove(sb.Length - (AppName.Length + 3), AppName.Length + 3); // Remove AppName + " - "
-        array[1] = sb.ToString();
-        return array;
+        // Full title with AppName
+        var fullTitle = $"{baseTitle} - {AppName}";
+
+        return [fullTitle, baseTitle];
+    }
+
+    /// <inheritdoc cref="GenerateTitleForSingleImage(int, int, string, double)" />
+    public static string[] GenerateTitleForSingleImage(double width, double height, string name, double zoomValue)
+    {
+        var newWidth = Convert.ToInt32(width);
+        var newHeight = Convert.ToInt32(height);
+        return GenerateTitleForSingleImage(newWidth, newHeight, name, zoomValue);
     }
 
     /// <summary>
@@ -171,7 +183,7 @@ public static class ImageTitleFormatter
         var y = height / gcd;
 
         // Check if aspect ratio is within specified limits
-        if ((x > 21 && y > 9) || (x < 1 && y < 1))
+        if (x > 48 || y > 18)
         {
             return ") ";
         }
@@ -190,7 +202,11 @@ public static class ImageTitleFormatter
     {
         while (true)
         {
-            if (y == 0) return x;
+            if (y == 0)
+            {
+                return x;
+            }
+
             var x1 = x;
             x = y;
             y = x1 % y;
