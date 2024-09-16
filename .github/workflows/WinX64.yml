@@ -78,7 +78,11 @@ jobs:
             Remove-Item -Path $pdbPath -Force
           }
 
-          Rename-Item -Path $outputPath -NewName $outputPath.Replace(" ","")
+          # Only rename if there are spaces in the path
+          if ($outputPath -match " ") {
+            $newOutputPath = $outputPath.Replace(" ","")
+            Rename-Item -Path $outputPath -NewName $newOutputPath
+          }
         shell: pwsh
 
       # Step 8: Clean up temp directory
