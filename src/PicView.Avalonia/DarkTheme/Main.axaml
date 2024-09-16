@@ -55,10 +55,12 @@
                 <ResourceInclude Source="/DarkTheme/Controls/ListBox.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/ListBoxItem.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Menu.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/MenuFlyoutPresenter.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/PathIcon.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/RadioButton.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Scrollbar.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/Slider.axaml" />
+                <ResourceInclude Source="/DarkTheme/Controls/SplitButton.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/TabItem.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/TextBlock.axaml" />
                 <ResourceInclude Source="/DarkTheme/Controls/TextBox.axaml" />
@@ -107,7 +109,7 @@
         </Style>
     </Style>
 
-    <Style Selector="Button.ButtonBorder, ToggleButton.ButtonBorder">
+    <Style Selector="Button.ButtonBorder, ToggleButton.ButtonBorder, SplitButton.ButtonBorder">
         <Setter Property="Height" Value="40" />
         <Setter Property="Width" Value="147" />
         <Setter Property="CornerRadius" Value="4" />

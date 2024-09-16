@@ -1,0 +1,182 @@
+<ResourceDictionary
+    x:ClassModifier="internal"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:converters="using:Avalonia.Controls.Converters"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <x:Double x:Key="SplitButtonPrimaryButtonSize">24</x:Double>
+    <x:Double x:Key="SplitButtonSecondaryButtonSize">24</x:Double>
+    <x:Double x:Key="SplitButtonSeparatorWidth">1</x:Double>
+    <x:Double x:Key="SplitButtonMinHeight">24</x:Double>
+    <Thickness x:Key="SplitButtonBorderThemeThickness">1</Thickness>
+
+    <converters:MarginMultiplierConverter
+        Bottom="True"
+        Indent="1"
+        Left="True"
+        Top="True"
+        x:Key="PrimaryButtonBorderMultiplier" />
+    <converters:MarginMultiplierConverter
+        Bottom="True"
+        Indent="1"
+        Right="True"
+        Top="True"
+        x:Key="SecondaryButtonBorderMultiplier" />
+    <converters:MarginMultiplierConverter
+        Bottom="True"
+        Indent="1"
+        Top="True"
+        x:Key="SeparatorBorderMultiplier" />
+    <converters:CornerRadiusFilterConverter Filter="TopLeft, TopRight" x:Key="TopCornerRadiusFilterConverter" />
+    <converters:CornerRadiusFilterConverter Filter="TopRight, BottomRight" x:Key="RightCornerRadiusFilterConverter" />
+    <converters:CornerRadiusFilterConverter Filter="BottomLeft, BottomRight" x:Key="BottomCornerRadiusFilterConverter" />
+    <converters:CornerRadiusFilterConverter Filter="TopLeft, BottomLeft" x:Key="LeftCornerRadiusFilterConverter" />
+
+    <ControlTheme TargetType="Button" x:Key="SimpleSplitButtonComponent">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ContentPresenter
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    Content="{TemplateBinding Content}"
+                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    Padding="{TemplateBinding Padding}"
+                    RecognizesAccessKey="True"
+                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                    x:Name="PART_ContentPresenter" />
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover /template/ ContentPresenter">
+            <Style.Animations>
+                <Animation Duration=".35" IterationCount="1">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{StaticResource SecondaryBackgroundColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{StaticResource BackgroundHoverColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
+        </Style>
+
+        <Style Selector="^:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
+        </Style>
+
+        <Style Selector="^[Tag=flyout-open] /template/ ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
+        </Style>
+
+        <Style Selector="^[Tag=checked]">
+            <Style Selector="^ /template/ ContentPresenter">
+                <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
+            </Style>
+        </Style>
+
+        <Style Selector="^[Tag=checked-flyout-open] /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ThemeBorderHighColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeControlHighColor}" />
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundColor}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme TargetType="SplitButton" x:Key="{x:Type SplitButton}">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="KeyboardNavigation.IsTabStop" Value="True" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid ColumnDefinitions="*,Auto,Auto">
+
+                    <Button
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness,
+                                                          Converter={StaticResource PrimaryButtonBorderMultiplier}}"
+                        Command="{TemplateBinding Command}"
+                        CommandParameter="{TemplateBinding CommandParameter}"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        CornerRadius="{TemplateBinding CornerRadius,
+                                                       Converter={StaticResource LeftCornerRadiusFilterConverter}}"
+                        Focusable="False"
+                        FontFamily="{TemplateBinding FontFamily}"
+                        FontSize="{TemplateBinding FontSize}"
+                        FontWeight="{TemplateBinding FontWeight}"
+                        Foreground="{TemplateBinding Foreground}"
+                        Grid.Column="0"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        KeyboardNavigation.IsTabStop="False"
+                        MinWidth="{DynamicResource SplitButtonPrimaryButtonSize}"
+                        Padding="{TemplateBinding Padding}"
+                        Theme="{StaticResource SimpleSplitButtonComponent}"
+                        VerticalAlignment="Stretch"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        x:Name="PART_PrimaryButton" />
+
+                    <Border
+                        Background="Transparent"
+                        BorderBrush="{StaticResource MainBorderColor}"
+                        BorderThickness="1,0,0,0"
+                        Grid.Column="1"
+                        x:Name="SeparatorBorder" />
+
+                    <Button
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness,
+                                                          Converter={StaticResource SecondaryButtonBorderMultiplier}}"
+                        CornerRadius="{TemplateBinding CornerRadius,
+                                                       Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                        Focusable="False"
+                        Foreground="{TemplateBinding Foreground}"
+                        Grid.Column="2"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        KeyboardNavigation.IsTabStop="False"
+                        MinWidth="{DynamicResource SplitButtonSecondaryButtonSize}"
+                        Padding="0"
+                        Theme="{StaticResource SimpleSplitButtonComponent}"
+                        VerticalAlignment="Stretch"
+                        VerticalContentAlignment="Center"
+                        x:Name="PART_SecondaryButton">
+                        <PathIcon
+                            Data="{StaticResource ChevronUpGeometry}"
+                            Height="12"
+                            Width="12" />
+                    </Button>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:flyout-open /template/ Button">
+            <Setter Property="Tag" Value="flyout-open" />
+        </Style>
+
+        <Style Selector="^:checked /template/ Button">
+            <Setter Property="Tag" Value="checked" />
+        </Style>
+
+        <Style Selector="^:checked:flyout-open /template/ Button">
+            <Setter Property="Tag" Value="checked-flyout-open" />
+        </Style>
+
+        <Style Selector="^:disabled">
+            <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

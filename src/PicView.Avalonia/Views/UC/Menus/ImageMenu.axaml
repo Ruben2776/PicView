@@ -195,7 +195,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Canvas Height="54" Width="45">
                             <Image
-                                Canvas.Left="7"
+                                Canvas.Left="5"
                                 Canvas.Top="16"
                                 Height="19">
                                 <Image.Source>
@@ -209,7 +209,7 @@
                                 </Image.Source>
                             </Image>
                             <Image
-                                Canvas.Left="23"
+                                Canvas.Left="20"
                                 Canvas.Top="20.5"
                                 Height="14"
                                 Opacity=".8">
@@ -226,6 +226,7 @@
                         </Canvas>
                         <TextBlock
                             Classes="txt"
+                            Margin="-3,0,0,0"
                             MaxWidth="150"
                             Text="{CompiledBinding Resize,
                                                    Mode=OneWay}" />
@@ -255,7 +256,8 @@
                     </StackPanel>
                 </Button>
 
-                <Button
+
+                <SplitButton
                     Canvas.Left="7"
                     Canvas.Top="99"
                     Classes="ButtonBorder altHover"
@@ -268,16 +270,53 @@
                             Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
                             Fill="{StaticResource MainIconColor}"
                             Height="20"
-                            Margin="9,0,12,0"
+                            Margin="3,0,12,0"
                             Stretch="Fill"
                             Width="24" />
                         <TextBlock
                             Classes="txt"
+                            Margin="0,2,0,0"
                             MaxWidth="150"
                             Text="{CompiledBinding Slideshow,
                                                    Mode=OneWay}" />
                     </StackPanel>
-                </Button>
+                    <SplitButton.Flyout>
+                        <MenuFlyout Placement="Top">
+                            <TextBlock Classes="txt" Width="86">
+                                <Run Text="5 " />
+                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock Classes="txt" Width="86">
+                                <Run Text="10 " />
+                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock Classes="txt" Width="86">
+                                <Run Text="20 " />
+                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock Classes="txt" Width="86">
+                                <Run Text="30 " />
+                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock Classes="txt" Width="86">
+                                <Run Text="60 " />
+                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock Classes="txt" Width="86">
+                                <Run Text="120 " />
+                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock Classes="txt" Width="86">
+                                <Run Text="180 " />
+                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock Classes="txt" Width="86">
+                                <Run Text="300 " />
+                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                            </TextBlock>
+                        </MenuFlyout>
+                    </SplitButton.Flyout>
+                </SplitButton>
 
                 <ToggleButton
                     Canvas.Left="160"
