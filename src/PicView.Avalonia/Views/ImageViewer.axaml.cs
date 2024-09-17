@@ -8,7 +8,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -77,8 +76,8 @@ public partial class ImageViewer : UserControl
             // Use touch gestures for zooming on macOS
             return;
         }
-        var ctrl = MainKeyboardShortcuts.CtrlDown;
-        var shift = MainKeyboardShortcuts.ShiftDown;
+        var ctrl = e.KeyModifiers == KeyModifiers.Control;
+        var shift = e.KeyModifiers == KeyModifiers.Shift;
         var reverse = e.Delta.Y < 0;
         
         if (SettingsHelper.Settings.Zoom.ScrollEnabled)
