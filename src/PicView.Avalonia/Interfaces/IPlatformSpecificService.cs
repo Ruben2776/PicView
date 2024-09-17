@@ -5,6 +5,9 @@ public interface IPlatformSpecificService
     void SetTaskbarProgress(ulong progress, ulong maximum);
     void StopTaskbarProgress();
     void SetCursorPos(int x, int y);
+    
+    void DisableScreensaver();
+    void EnableScreensaver();
 
     List<string> GetFiles(FileInfo fileInfo);
 

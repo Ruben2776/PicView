@@ -231,7 +231,7 @@ public static class WindowHelper
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
-    public static async Task ToggleFullscreen(MainViewModel vm)
+    public static async Task ToggleFullscreen(MainViewModel vm, bool saveSettings = true)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -243,7 +243,11 @@ public static class WindowHelper
             vm.IsFullscreen = false;
             await Dispatcher.UIThread.InvokeAsync(() => 
                 desktop.MainWindow.WindowState = WindowState.Normal);
-            SettingsHelper.Settings.WindowProperties.Fullscreen = false;
+            if (saveSettings)
+            {
+                SettingsHelper.Settings.WindowProperties.Fullscreen = false;
+            }
+            
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 RestoreSize(desktop.MainWindow);
@@ -254,6 +258,10 @@ public static class WindowHelper
         {
             SaveSize(desktop.MainWindow);
             Fullscreen(vm, desktop);
+            if (saveSettings)
+            {
+                SettingsHelper.Settings.WindowProperties.Fullscreen = true;
+            }
         }
 
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
@@ -363,8 +371,6 @@ public static class WindowHelper
         {
             Dispatcher.UIThread.Invoke(() => desktop.MainWindow.WindowState = WindowState.FullScreen);
         }
-
-        SettingsHelper.Settings.WindowProperties.Fullscreen = true;
             
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {

@@ -1,5 +1,8 @@
+using System.Reactive.Linq;
 using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.ViewModels;
+using ReactiveUI;
 
 namespace PicView.Avalonia.Views.UC.Menus;
 
@@ -9,13 +12,16 @@ public partial class ImageMenu  : AnimatedMenu
     {
         InitializeComponent();
         GoToPicBox.KeyDown += async (_, e) => await GoToPicBox_OnKeyDown(e);
+        this.WhenAnyValue(x => x.IsVisible)
+            .Where(isVisible => !isVisible)
+            .Subscribe(_ => SlideShowButton.Flyout.Hide());
     }
 
     private async Task GoToPicBox_OnKeyDown(KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
         {
-            if (DataContext is not ViewModels.MainViewModel vm)
+            if (DataContext is not MainViewModel vm)
             {
                 return;
             }

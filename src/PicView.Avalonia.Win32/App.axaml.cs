@@ -329,5 +329,15 @@ public class App : Application, IPlatformSpecificService
         return await ArchiveExtractionHelper.ExtractWithLocalSoftwareAsync(path, tempDirectory);
     }
     
+    public void DisableScreensaver()
+    {
+        NativeMethods.DisableScreensaver();
+    }
+    
+    public void EnableScreensaver()
+    {
+        NativeMethods.EnableScreensaver();
+    }
+    
     #endregion
 }

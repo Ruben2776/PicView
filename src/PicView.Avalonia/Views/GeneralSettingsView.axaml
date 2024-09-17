@@ -210,8 +210,7 @@
             Minimum="1"
             TickFrequency="1"
             TickPlacement="BottomRight"
-            Value="{CompiledBinding GetSlideshowSpeed,
-                                    Mode=OneWay}"
+            Value="{CompiledBinding GetSlideshowSpeed}"
             Width="270" />
         <TextBlock
             Classes="txt"

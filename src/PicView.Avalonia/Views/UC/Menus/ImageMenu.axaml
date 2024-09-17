@@ -261,10 +261,12 @@
                     Canvas.Left="7"
                     Canvas.Top="99"
                     Classes="ButtonBorder altHover"
-                    IsEnabled="False"
+                    Command="{CompiledBinding StartSlideShowTask}"
+                    CommandParameter="0"
                     ToolTip.Placement="Top"
                     ToolTip.Tip="{CompiledBinding Slideshow,
-                                                  Mode=OneWay}">
+                                                  Mode=OneWay}"
+                    x:Name="SlideShowButton">
                     <StackPanel Orientation="Horizontal">
                         <Path
                             Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
@@ -281,39 +283,87 @@
                                                    Mode=OneWay}" />
                     </StackPanel>
                     <SplitButton.Flyout>
-                        <MenuFlyout Placement="Top">
-                            <TextBlock Classes="txt" Width="86">
-                                <Run Text="5 " />
-                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
-                            </TextBlock>
-                            <TextBlock Classes="txt" Width="86">
-                                <Run Text="10 " />
-                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
-                            </TextBlock>
-                            <TextBlock Classes="txt" Width="86">
-                                <Run Text="20 " />
-                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
-                            </TextBlock>
-                            <TextBlock Classes="txt" Width="86">
-                                <Run Text="30 " />
-                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
-                            </TextBlock>
-                            <TextBlock Classes="txt" Width="86">
-                                <Run Text="60 " />
-                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
-                            </TextBlock>
-                            <TextBlock Classes="txt" Width="86">
-                                <Run Text="120 " />
-                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
-                            </TextBlock>
-                            <TextBlock Classes="txt" Width="86">
-                                <Run Text="180 " />
-                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
-                            </TextBlock>
-                            <TextBlock Classes="txt" Width="86">
-                                <Run Text="300 " />
-                                <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
-                            </TextBlock>
+                        <MenuFlyout Placement="Top" ShowMode="Transient">
+                            <Button
+                                Background="Transparent"
+                                Command="{CompiledBinding StartSlideShowTask}"
+                                CommandParameter="5000"
+                                Width="86">
+                                <TextBlock Classes="txt">
+                                    <Run Text="5 " />
+                                    <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                                </TextBlock>
+                            </Button>
+                            <Button
+                                Background="Transparent"
+                                Command="{CompiledBinding StartSlideShowTask}"
+                                CommandParameter="10000"
+                                Width="86">
+                                <TextBlock Classes="txt">
+                                    <Run Text="10 " />
+                                    <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                                </TextBlock>
+                            </Button>
+                            <Button
+                                Background="Transparent"
+                                Command="{CompiledBinding StartSlideShowTask}"
+                                CommandParameter="20000"
+                                Width="86">
+                                <TextBlock Classes="txt">
+                                    <Run Text="20 " />
+                                    <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                                </TextBlock>
+                            </Button>
+                            <Button
+                                Background="Transparent"
+                                Command="{CompiledBinding StartSlideShowTask}"
+                                CommandParameter="30000"
+                                Width="86">
+                                <TextBlock Classes="txt">
+                                    <Run Text="30 " />
+                                    <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                                </TextBlock>
+                            </Button>
+                            <Button
+                                Background="Transparent"
+                                Command="{CompiledBinding StartSlideShowTask}"
+                                CommandParameter="60000"
+                                Width="86">
+                                <TextBlock Classes="txt">
+                                    <Run Text="60 " />
+                                    <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                                </TextBlock>
+                            </Button>
+                            <Button
+                                Background="Transparent"
+                                Command="{CompiledBinding StartSlideShowTask}"
+                                CommandParameter="120000"
+                                Width="86">
+                                <TextBlock Classes="txt">
+                                    <Run Text="120 " />
+                                    <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                                </TextBlock>
+                            </Button>
+                            <Button
+                                Background="Transparent"
+                                Command="{CompiledBinding StartSlideShowTask}"
+                                CommandParameter="180000"
+                                Width="86">
+                                <TextBlock Classes="txt">
+                                    <Run Text="180 " />
+                                    <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                                </TextBlock>
+                            </Button>
+                            <Button
+                                Background="Transparent"
+                                Command="{CompiledBinding StartSlideShowTask}"
+                                CommandParameter="300000"
+                                Width="86">
+                                <TextBlock Classes="txt">
+                                    <Run Text="300 " />
+                                    <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                                </TextBlock>
+                            </Button>
                         </MenuFlyout>
                     </SplitButton.Flyout>
                 </SplitButton>

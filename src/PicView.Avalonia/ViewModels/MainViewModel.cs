@@ -507,7 +507,7 @@ public class MainViewModel : ViewModelBase
 
     public ReactiveCommand<Unit, Unit>? ColorPickerCommand { get; }
 
-    public ReactiveCommand<Unit, Unit>? SlideshowCommand { get; }
+    public ReactiveCommand<int, Unit>? SlideshowCommand { get; }
     
     public ReactiveCommand<string, Unit>? SetAsWallpaperCommand { get; }
     
@@ -1647,6 +1647,18 @@ public class MainViewModel : ViewModelBase
         }
     }
 
+    public async Task StartSlideShowTask(int milliseconds)
+    {
+        if (milliseconds <= 0)
+        {
+            await Avalonia.Navigation.Slideshow.StartSlideshow(this);
+        }
+        else
+        {
+            await Avalonia.Navigation.Slideshow.StartSlideshow(this, milliseconds);
+        }
+    }
+
     #endregion Methods
 
     public MainViewModel(IPlatformSpecificService? platformSpecificService)
@@ -1848,7 +1860,7 @@ public class MainViewModel : ViewModelBase
         
         ColorPickerCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ColorPicker);
         
-        SlideshowCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Slideshow);
+        SlideshowCommand = ReactiveCommand.CreateFromTask<int>(StartSlideShowTask);
         
         ToggleTaskbarProgressCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleTaskbarProgress);
 

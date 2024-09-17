@@ -412,6 +412,12 @@ public static class FunctionsHelper
             UIHelper.CloseMenus(Vm);
             return;
         }
+
+        if (Navigation.Slideshow.IsRunning)
+        {
+            Navigation.Slideshow.StopSlideshow(Vm);
+            return;
+        }
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
@@ -777,9 +783,9 @@ public static class FunctionsHelper
         SetTitleHelper.RefreshTitle(Vm);
     }
 
-    public static Task Slideshow()
+    public static async Task Slideshow()
     {
-        return Task.CompletedTask;
+        await Navigation.Slideshow.StartSlideshow(Vm);
     }
 
     public static Task ColorPicker()
