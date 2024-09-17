@@ -20,15 +20,36 @@ public partial class GeneralSettingsView : UserControl
                 SettingsHelper.Settings.StartUp.OpenLastFile = ApplicationStartupBox.SelectedIndex == 1;
                 await SettingsHelper.SaveSettingsAsync();
             };
+            ApplicationStartupBox.DropDownOpened += delegate
+            {
+                if (ApplicationStartupBox.SelectedIndex == -1)
+                {
+                    ApplicationStartupBox.SelectedIndex = SettingsHelper.Settings.StartUp.OpenLastFile ? 0 : 1;
+                }
+            };
             MouseWheelBox.SelectionChanged += async delegate
             {
                 SettingsHelper.Settings.Zoom.CtrlZoom = MouseWheelBox.SelectedIndex == 0;
                 await SettingsHelper.SaveSettingsAsync();
             };
+            MouseWheelBox.DropDownOpened += delegate
+            {
+                if (MouseWheelBox.SelectedIndex == -1)
+                {
+                    MouseWheelBox.SelectedIndex = SettingsHelper.Settings.Zoom.CtrlZoom ? 0 : 1;
+                }
+            };
             ScrollDirectionBox.SelectionChanged += async delegate
             {
                 SettingsHelper.Settings.Zoom.HorizontalReverseScroll = ScrollDirectionBox.SelectedIndex == 0;
                 await SettingsHelper.SaveSettingsAsync();
+            };
+            ScrollDirectionBox.DropDownOpened += delegate
+            {
+                if (ScrollDirectionBox.SelectedIndex == -1)
+                {
+                    ScrollDirectionBox.SelectedIndex = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? 0 : 1;
+                }
             };
             MouseWheelBox.SelectedIndex = SettingsHelper.Settings.Zoom.CtrlZoom ? 0 : 1;
             ScrollDirectionBox.SelectedIndex = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? 0 : 1;
@@ -69,6 +90,11 @@ public partial class GeneralSettingsView : UserControl
                 {
                     return;
                 }
+
+                if (language == SettingsHelper.Settings.UIProperties.UserLanguage)
+                {
+                    return;
+                }
                 SettingsHelper.Settings.UIProperties.UserLanguage = language;
 
                 await TranslationHelper.LoadLanguage(language).ConfigureAwait(false);
@@ -85,11 +111,29 @@ public partial class GeneralSettingsView : UserControl
                     {
                         return;
                     }
-                    window.Close();
+                    window.Close(); 
                 });
 
                 await FunctionsHelper.SettingsWindow();
                 await SettingsHelper.SaveSettingsAsync();
+            };
+            LanguageBox.DropDownOpened += delegate
+            {
+                if (LanguageBox.SelectedIndex != -1)
+                {
+                    return;
+                }
+
+                // Find the ComboBoxItem whose Tag matches UserLanguage
+                for (var i = 0; i < LanguageBox.Items.Count; i++)
+                {
+                    if (LanguageBox.Items[i] is ComboBoxItem { Tag: string tag } && 
+                        tag == SettingsHelper.Settings.UIProperties.UserLanguage)
+                    {
+                        LanguageBox.SelectedIndex = i;
+                        break;
+                    }
+                }
             };
         };
     }
