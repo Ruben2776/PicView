@@ -287,6 +287,16 @@
                             <Button
                                 Background="Transparent"
                                 Command="{CompiledBinding StartSlideShowTask}"
+                                CommandParameter="2000"
+                                Width="86">
+                                <TextBlock Classes="txt">
+                                    <Run Text="2 " />
+                                    <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
+                                </TextBlock>
+                            </Button>
+                            <Button
+                                Background="Transparent"
+                                Command="{CompiledBinding StartSlideShowTask}"
                                 CommandParameter="5000"
                                 Width="86">
                                 <TextBlock Classes="txt">

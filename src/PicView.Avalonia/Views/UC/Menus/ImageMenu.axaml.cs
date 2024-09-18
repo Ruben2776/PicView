@@ -1,6 +1,7 @@
 using System.Reactive.Linq;
 using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using ReactiveUI;
 
@@ -26,6 +27,11 @@ public partial class ImageMenu  : AnimatedMenu
                 return;
             }
 
+            if (!NavigationHelper.CanNavigate(vm))
+            {
+                return;
+            }
+
             if (!int.TryParse(GoToPicBox.Text, out var number))
             {
                 return;
@@ -42,11 +48,6 @@ public partial class ImageMenu  : AnimatedMenu
             else
             {
                 number--;
-            }
-
-            if (vm.ImageIterator is null)
-            {
-                return;
             }
 
             await vm.ImageIterator.IterateToIndex(number).ConfigureAwait(false);

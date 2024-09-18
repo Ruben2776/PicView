@@ -54,8 +54,8 @@ public static class Slideshow
         _timer = null;
         vm.PlatformService.EnableScreensaver();
     }
-    
-    static bool InitiateAndStart(MainViewModel vm)
+
+    private static bool InitiateAndStart(MainViewModel vm)
     {
         if (!NavigationHelper.CanNavigate(vm))
         {
@@ -69,7 +69,10 @@ public static class Slideshow
                 Enabled = true,
             };
             _timer.Elapsed += async (_, _) =>
+            {
+                // TODO: add animation
                 await vm.ImageIterator.NextIteration(NavigateTo.Next);
+            };
         }
         else if (_timer.Enabled)
         {
@@ -96,7 +99,7 @@ public static class Slideshow
         {
             await WindowHelper.ToggleFullscreen(vm, false);
         }
-        // TODO: add animation
+        
         await vm.ImageIterator.NextIteration(NavigateTo.Next);
     }
 }
