@@ -85,10 +85,16 @@ jobs:
           }
         shell: pwsh
 
-      # Step 8: Clean up temp directory
-      - name: Clean up temp directory
+      # Step 8: Zip the output directory
+      - name: Zip the output
         run: |
-          $tempPath = [System.IO.Path]::GetTempPath() + "PicView"
-          Start-Sleep -Seconds 2
-          Remove-Item -Path $tempPath -Recurse -Force
+          $outputPath = "${{ steps.paths.outputs.output_dir }}"
+          Compress-Archive -Path "$outputPath\*" -DestinationPath "$outputPath.zip"
         shell: pwsh
+
+      # Step 9: Upload the zip file as an artifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: PicView-win-x64
+          path: ${{ steps.paths.outputs.output_dir }}.zip
