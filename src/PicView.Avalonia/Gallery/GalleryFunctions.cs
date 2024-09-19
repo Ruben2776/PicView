@@ -167,6 +167,8 @@ public static class GalleryFunctions
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
+                    if (galleryListBox.Items.Count <= i)
+                        return;
                     if (galleryListBox.Items[i] is not GalleryItem galleryItem)
                         return;
                     
