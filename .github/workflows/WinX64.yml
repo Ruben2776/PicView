@@ -78,17 +78,10 @@ jobs:
             Rename-Item -Path $outputPath -NewName $newOutputPath
           }
         shell: pwsh
-
-      # Step 8: Zip the output directory
-      - name: Zip the output
-        run: |
-          $outputPath = "${{ steps.paths.outputs.output_dir }}"
-          Compress-Archive -Path "$outputPath\*" -DestinationPath "$outputPath.zip"
-        shell: pwsh
-
-      # Step 9: Upload the zip file as an artifact
+        
+      # Step 8: Upload the zip file as an artifact
       - name: Upload the artifact
         uses: actions/upload-artifact@v4
         with:
           name: PicView-win-x64
-          path: ${{ steps.paths.outputs.output_dir }}.zip
+          path: ${{ steps.paths.outputs.output_dir }}
