@@ -72,7 +72,6 @@ jobs:
           if (Test-Path $pdbPath) {
             Remove-Item -Path $pdbPath -Force
           }
-
           # Only rename if there are spaces in the path
           if ($outputPath -match " ") {
             $newOutputPath = $outputPath.Replace(" ","")
@@ -88,8 +87,8 @@ jobs:
         shell: pwsh
 
       # Step 9: Upload the zip file as an artifact
-      - name: Upload library
+      - name: Upload the artifact
         uses: actions/upload-artifact@v4
         with:
           name: PicView-win-x64
-          path: $outputPath
+          path: ${{ steps.paths.outputs.output_dir }}.zip
