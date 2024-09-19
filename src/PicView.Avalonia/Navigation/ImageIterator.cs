@@ -503,54 +503,44 @@ public sealed class ImageIterator : IDisposable
             ErrorHandling.ShowStartUpMenu(_vm);
             return;
         }
-
-        try
+        
+        await Task.Run(async () => 
         {
-            lock (_lock)
+            try
             {
-                CurrentIndex = index;
-            }
-
-            // ReSharper disable once MethodHasAsyncOverload
-            var preloadValue = PreLoader.Get(index, ImagePaths);
-            if (preloadValue is not null)
-            {
-                if (preloadValue.IsLoading)
+                lock (_lock)
                 {
-                    TryShowPreview(preloadValue);
+                    CurrentIndex = index;
                 }
 
-                while (preloadValue.IsLoading)
+                // ReSharper disable once MethodHasAsyncOverload
+                var preloadValue = PreLoader.Get(index, ImagePaths);
+                if (preloadValue is not null)
                 {
-                    await Task.Delay(20);
-                    lock (_lock)
+                    if (preloadValue.IsLoading)
                     {
-                        if (CurrentIndex != index)
+                        TryShowPreview(preloadValue);
+                    }
+
+                    while (preloadValue.IsLoading)
+                    {
+                        await Task.Delay(20);
+                        lock (_lock)
                         {
-                            // Skip loading if user went to next value
-                            return;
+                            if (CurrentIndex != index)
+                            {
+                                // Skip loading if user went to next value
+                                return;
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                TryShowPreview(preloadValue);
-                preloadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths).ConfigureAwait(false);
-            }
-
-            lock (_lock)
-            {
-                if (CurrentIndex != index)
+                else
                 {
-                    // Skip loading if user went to next value
-                    return;
+                    TryShowPreview(preloadValue);
+                    preloadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths).ConfigureAwait(false);
                 }
-            }
 
-            if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
-            {
-                var nextPreloadValue = await GetNextPreLoadValueAsync().ConfigureAwait(false);
                 lock (_lock)
                 {
                     if (CurrentIndex != index)
@@ -560,78 +550,91 @@ public sealed class ImageIterator : IDisposable
                     }
                 }
 
-                _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
-                await UpdateSource(index, preloadValue, nextPreloadValue).ConfigureAwait(false);
-            }
-            else
-            {
-                await UpdateSource(index, preloadValue).ConfigureAwait(false);
-            }
-
-            if (ImagePaths.Count > 1)
-            {
-                if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
+                if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
                 {
-                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    var nextPreloadValue = await GetNextPreLoadValueAsync().ConfigureAwait(false);
+                    lock (_lock)
                     {
-                        _vm.PlatformService.SetTaskbarProgress((ulong)CurrentIndex, (ulong)ImagePaths.Count);
-                    });
+                        if (CurrentIndex != index)
+                        {
+                            // Skip loading if user went to next value
+                            return;
+                        }
+                    }
+
+                    _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
+                    await UpdateSource(index, preloadValue, nextPreloadValue).ConfigureAwait(false);
+                }
+                else
+                {
+                    await UpdateSource(index, preloadValue).ConfigureAwait(false);
                 }
 
-                await PreLoader.PreLoadAsync(CurrentIndex, ImagePaths.Count, IsReversed, ImagePaths).ConfigureAwait(false);
+                if (ImagePaths.Count > 1)
+                {
+                    if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
+                    {
+                        await Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            _vm.PlatformService.SetTaskbarProgress((ulong)CurrentIndex, (ulong)ImagePaths.Count);
+                        });
+                    }
+
+                    await PreLoader.PreLoadAsync(CurrentIndex, ImagePaths.Count, IsReversed, ImagePaths).ConfigureAwait(false);
+                }
+
+                await AddAsync(index, preloadValue.ImageModel).ConfigureAwait(false);
+
+                // Add recent files, except when browsing archive
+                if (string.IsNullOrWhiteSpace(TempFileHelper.TempFilePath) && ImagePaths.Count > index)
+                {
+                    FileHistoryNavigation.Add(ImagePaths[index]);
+                }
             }
-
-            await AddAsync(index, preloadValue.ImageModel).ConfigureAwait(false);
-
-            // Add recent files, except when browsing archive
-            if (string.IsNullOrWhiteSpace(TempFileHelper.TempFilePath) && ImagePaths.Count > index)
+            catch (Exception e)
             {
-                FileHistoryNavigation.Add(ImagePaths[index]);
+    #if DEBUG
+                Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
+                await TooltipHelper.ShowTooltipMessageAsync(e.Message);
+    #endif
             }
-        }
-        catch (Exception e)
-        {
-#if DEBUG
-            Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
-            await TooltipHelper.ShowTooltipMessageAsync(e.Message);
-#endif
-        }
-        finally
-        {
-            _vm.IsLoading = false;
-        }
-
-        return;
-
-        void TryShowPreview(PreLoader.PreLoadValue preloadValue)
-        {
-            if (preloadValue is null)
+            finally
             {
-                return;
+                _vm.IsLoading = false;
             }
 
-            if (!preloadValue.IsLoading)
-            {
-                return;
-            }
+            return;
 
-            if (index != CurrentIndex)
+            void TryShowPreview(PreLoader.PreLoadValue preloadValue)
             {
-                return;
-            }
+                if (preloadValue is null)
+                {
+                    return;
+                }
 
-            if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
-            {
-                SetTitleHelper.SetLoadingTitle(_vm);
-                _vm.IsLoading = true;
-                _vm.ImageSource = null;
-                _vm.SecondaryImageSource = null;
+                if (!preloadValue.IsLoading)
+                {
+                    return;
+                }
+
+                if (index != CurrentIndex)
+                {
+                    return;
+                }
+
+                if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+                {
+                    SetTitleHelper.SetLoadingTitle(_vm);
+                    _vm.IsLoading = true;
+                    _vm.ImageSource = null;
+                    _vm.SecondaryImageSource = null;
+                }
+                else
+                {
+                    LoadingPreview(index);
+                }
             }
-            else
-            {
-                LoadingPreview(index);
-            }
-        }
+        });
     }
 
     private static Timer? _timer;
