@@ -92,4 +92,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PicView-win-x64
-          path: publish/output
+          path: $outputPath
