@@ -216,7 +216,7 @@ public static class ExifHandling
             vm.GetDateTaken = EXIFHelper.GetDateTaken(profile);
             vm.GetCopyright = profile?.GetValue(ExifTag.Copyright)?.Value ?? string.Empty;
             vm.GetTitle = EXIFHelper.GetTitle(profile);
-            vm.GetSubject = profile?.GetValue(ExifTag.XPSubject)?.Value.ToString() ?? string.Empty;
+            vm.GetSubject = EXIFHelper.GetSubject(profile);
             vm.GetSoftware = profile?.GetValue(ExifTag.Software)?.Value ?? string.Empty;
             vm.GetResolutionUnit = EXIFHelper.GetResolutionUnit(profile);
             vm.GetColorRepresentation = EXIFHelper.GetColorSpace(profile);

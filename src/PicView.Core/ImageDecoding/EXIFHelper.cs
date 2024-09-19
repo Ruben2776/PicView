@@ -469,4 +469,16 @@ public static class EXIFHelper
         var titleTag = profile?.GetValue(ExifTag.ImageDescription)?.Value;
         return titleTag ?? string.Empty;
     }
+
+    public static string? GetSubject(IExifProfile? profile)
+    {
+        var xPSubject = profile?.GetValue(ExifTag.XPSubject)?.Value;
+        var subject = xPSubject is null ? string.Empty : Encoding.ASCII.GetString(xPSubject);
+        if (!string.IsNullOrEmpty(subject))
+        {
+            return subject;
+        }
+        var subjectTag = profile?.GetValue(ExifTag.XPSubject)?.Value;
+        return subjectTag?.GetValue(0)?.ToString() ?? string.Empty;
+    }
 }
