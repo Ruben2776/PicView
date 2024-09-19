@@ -68,11 +68,6 @@ jobs:
         run: |
           $outputPath = "${{ steps.paths.outputs.output_dir }}"
           
-          $licensePath = Join-Path -Path $outputPath -ChildPath "Licenses\XamlAnimatedGif LICENSE.txt"
-          if (Test-Path $licensePath) {
-            Remove-Item -Path $licensePath -Force
-          }
-          
           $pdbPath = Join-Path -Path $outputPath -ChildPath "PicView.Avalonia.pdb"
           if (Test-Path $pdbPath) {
             Remove-Item -Path $pdbPath -Force
@@ -93,8 +88,8 @@ jobs:
         shell: pwsh
 
       # Step 9: Upload the zip file as an artifact
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload library
+        uses: actions/upload-artifact@v4
         with:
           name: PicView-win-x64
-          path: ${{ steps.paths.outputs.output_dir }}.zip
+          path: publish/output
