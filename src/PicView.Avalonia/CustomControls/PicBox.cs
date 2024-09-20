@@ -17,6 +17,7 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.Navigation;
+using ReactiveUI;
 using Vector = Avalonia.Vector;
 
 
@@ -29,6 +30,7 @@ public class PicBox : Control
     private FileStream? _stream;
     private IGifInstance? _animInstance;
     public string? InitialAnimatedSource;
+    private readonly IDisposable? _imageTypeSubscription;
 
     private static readonly Lock Lock = new();
     
@@ -98,19 +100,18 @@ public class PicBox : Control
         AffectsRender<PicBox>(SourceProperty);
     }
 
+    public PicBox()
+    {
+        _imageTypeSubscription = this.WhenAnyValue(x => x.ImageType)
+            .Subscribe(UpdateSource);
+    }
+
     #endregion
 
     #region Rendering
 
-    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    private void UpdateSource(ImageType imageType)
     {
-        base.OnPropertyChanged(change);
-
-        if (change.Property != SourceProperty)
-        {
-            return;
-        }
-        
         switch (ImageType)
         {
             case ImageType.Svg:
@@ -524,6 +525,7 @@ public class PicBox : Control
         if (_customVisual is null) return;
         _customVisual.SendHandlerMessage(CustomVisualHandler.StopMessage);
         _customVisual = null;
+        _imageTypeSubscription.Dispose();
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
