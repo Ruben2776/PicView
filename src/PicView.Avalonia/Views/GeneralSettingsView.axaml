@@ -143,7 +143,7 @@
             Padding="5,7,0,7"
             Width="270"
             x:Name="MouseWheelBox">
-            <ComboBoxItem Content="{CompiledBinding CtrlToZoom, Mode=OneWay}" IsSelected="{CompiledBinding IsCtrlToZoomEnabled}" />
+            <ComboBoxItem Content="{CompiledBinding CtrlToZoom, Mode=OneWay}" />
             <ComboBoxItem Content="{CompiledBinding ScrollToZoom, Mode=OneWay}" />
         </ComboBox>
 
@@ -164,12 +164,8 @@
             Padding="5,7,0,7"
             Width="270"
             x:Name="ScrollDirectionBox">
-            <ComboBoxItem
-                Content="{CompiledBinding Reverse,
-                                          Mode=OneWay}"
-                IsSelected="{CompiledBinding IsNavigatingInReverse}"
-                x:Name="ReverseDirectionBoxItem" />
-            <ComboBoxItem Content="{CompiledBinding Forward, Mode=OneWay}" x:Name="ForwardDirectionBoxItem" />
+            <ComboBoxItem Content="{CompiledBinding Reverse, Mode=OneWay}" />
+            <ComboBoxItem Content="{CompiledBinding Forward, Mode=OneWay}" />
         </ComboBox>
 
         <TextBlock
@@ -190,7 +186,7 @@
             Width="270"
             x:Name="ApplicationStartupBox">
             <ComboBoxItem Content="{CompiledBinding None, Mode=OneWay}" />
-            <ComboBoxItem Content="{CompiledBinding OpenLastFile, Mode=OneWay}" IsSelected="{CompiledBinding IsOpeningLastFileOnStartup}" />
+            <ComboBoxItem Content="{CompiledBinding OpenLastFile, Mode=OneWay}" />
         </ComboBox>
 
         <TextBlock

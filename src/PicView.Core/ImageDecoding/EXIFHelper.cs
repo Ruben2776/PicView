@@ -458,7 +458,7 @@ public static class EXIFHelper
         return exifVersion is null ? string.Empty : Encoding.ASCII.GetString(exifVersion);
     }
 
-    public static string? GetTitle(IExifProfile? profile)
+    public static string GetTitle(IExifProfile? profile)
     {
         var xPTitle = profile?.GetValue(ExifTag.XPTitle)?.Value;
         var title = xPTitle is null ? string.Empty : Encoding.ASCII.GetString(xPTitle);
@@ -470,7 +470,7 @@ public static class EXIFHelper
         return titleTag ?? string.Empty;
     }
 
-    public static string? GetSubject(IExifProfile? profile)
+    public static string GetSubject(IExifProfile? profile)
     {
         var xPSubject = profile?.GetValue(ExifTag.XPSubject)?.Value;
         var subject = xPSubject is null ? string.Empty : Encoding.ASCII.GetString(xPSubject);

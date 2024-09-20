@@ -22,14 +22,12 @@ public static class FilePickerHelper
             {
                 Title = $"{TranslationHelper.Translation.OpenFileDialog} - PicView",
                 AllowMultiple = false,
-                FileTypeFilter = new[] { AllFileType, FilePickerFileTypes.ImageAll, ArchiveFileType }
+                FileTypeFilter = [AllFileType, FilePickerFileTypes.ImageAll, ArchiveFileType]
             };
             IReadOnlyList<IStorageFile> files;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                files  = await provider.OpenFilePickerAsync(new FilePickerOpenOptions
-                {
-                });
+                files  = await provider.OpenFilePickerAsync(new FilePickerOpenOptions());
             }
             else
             {

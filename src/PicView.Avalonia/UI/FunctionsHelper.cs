@@ -594,7 +594,7 @@ public static class FunctionsHelper
         }
         
         var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? file.Path.AbsolutePath : file.Path.LocalPath;
-        _ = Task.Run(() => NavigationHelper.LoadPicFromStringAsync(path, Vm));
+        await Task.Run(() => NavigationHelper.LoadPicFromStringAsync(path, Vm));
     }
 
     public static Task OpenWith()

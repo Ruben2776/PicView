@@ -635,42 +635,6 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isAutoFit, value);
     }
 
-    private bool _isCtrlToZoomEnabled = SettingsHelper.Settings.Zoom.CtrlZoom;
-
-    public bool IsCtrlToZoomEnabled
-    {
-        get => _isCtrlToZoomEnabled;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _isCtrlToZoomEnabled, value);
-            SettingsHelper.Settings.Zoom.CtrlZoom = value;
-        }
-    }
-
-    private bool _isNavigatingInReverse = SettingsHelper.Settings.Zoom.HorizontalReverseScroll;
-
-    public bool IsNavigatingInReverse
-    {
-        get => _isNavigatingInReverse;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _isNavigatingInReverse, value);
-            SettingsHelper.Settings.Zoom.HorizontalReverseScroll = value;
-        }
-    }
-
-    private bool _isOpeningLastFileOnStartup = SettingsHelper.Settings.StartUp.OpenLastFile;
-
-    public bool IsOpeningLastFileOnStartup
-    {
-        get => _isOpeningLastFileOnStartup;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _isOpeningLastFileOnStartup, value);
-            SettingsHelper.Settings.StartUp.OpenLastFile = value;
-        }
-    }
-
     private bool _isStayingCentered = SettingsHelper.Settings.WindowProperties.KeepCentered;
 
     public bool IsStayingCentered

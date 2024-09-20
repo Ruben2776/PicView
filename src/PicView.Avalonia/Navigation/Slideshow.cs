@@ -71,6 +71,7 @@ public static class Slideshow
             _timer.Elapsed += async (_, _) =>
             {
                 // TODO: add animation
+                // E.g. https://codepen.io/arrive/pen/EOGyzK
                 await vm.ImageIterator.NextIteration(NavigateTo.Next);
             };
         }
