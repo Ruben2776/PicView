@@ -30,10 +30,8 @@ public static class EXIFHelper
     // 6 = 90 degrees
     // 7 = 90 degrees, flipped
     // 8 = 270 degrees, flipped
-    public static EXIFOrientation GetImageOrientation(string filePath)
+    public static EXIFOrientation GetImageOrientation(MagickImage magickImage)
     {
-        using var magickImage = new MagickImage();
-        magickImage.Ping(filePath);
         var profile = magickImage.GetExifProfile();
 
         var orientationValue = profile?.GetValue(ExifTag.Orientation);
@@ -54,6 +52,13 @@ public static class EXIFHelper
             8 => EXIFOrientation.Rotated270,
             _ => EXIFOrientation.None
         };
+    }
+    
+    public static EXIFOrientation GetImageOrientation(string filePath)
+    {
+        using var magickImage = new MagickImage();
+        magickImage.Ping(filePath);
+        return GetImageOrientation(magickImage);
     }
     
     public static EXIFOrientation GetImageOrientation(FileInfo fileInfo)

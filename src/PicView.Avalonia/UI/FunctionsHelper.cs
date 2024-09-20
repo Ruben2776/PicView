@@ -220,19 +220,9 @@ public static class FunctionsHelper
         await UIHelper.RotateRight(Vm);
     }
 
-    public static Task RotateLeft()
+    public static async Task RotateLeft()
     {
-        if (Vm is null)
-        {
-            return Task.CompletedTask;
-        }
-
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            return Task.CompletedTask;
-        }
-        Vm.ImageViewer.Rotate(clockWise: true);
-        return Task.CompletedTask;
+        await UIHelper.RotateLeft(Vm);
     }
 
     public static async Task Down()
@@ -732,10 +722,6 @@ public static class FunctionsHelper
 
     public static async Task Flip()
     {
-        if (Vm is null)
-        {
-            return;
-        }
         await UIHelper.Flip(Vm);
     }
 

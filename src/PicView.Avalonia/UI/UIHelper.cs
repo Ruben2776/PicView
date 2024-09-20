@@ -379,7 +379,23 @@ namespace PicView.Avalonia.UI
                 }
             });
         }
+        
+        public static async Task RotateLeft(MainViewModel? vm)
+        {
+            if (vm is null)
+            {
+                return;
+            }
+
+            if (GalleryFunctions.IsFullGalleryOpen)
+            {
+                return;
+            }
+            await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(true); });
+        }
 
         #endregion Navigation
+
+
     }
 }
