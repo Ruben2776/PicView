@@ -53,24 +53,29 @@ public sealed class PreLoader : IDisposable
             var add = _preLoadList.TryAdd(index, preLoadValue);
             if (add)
             {
-                imageModel ??= new ImageModel();
-                imageModel.FileInfo ??= new FileInfo(list[index]);
-                preLoadValue.ImageModel = imageModel;
-                if (imageModel.Image is null)
+                if (imageModel is null)
                 {
                     preLoadValue.IsLoading = true;
-
-                    preLoadValue.ImageModel = await ImageHelper.GetImageModelAsync(imageModel.FileInfo).ConfigureAwait(false);
-                }
-
-                if (imageModel.EXIFOrientation is null || imageModel is { EXIFOrientation: EXIFHelper.EXIFOrientation.None, Image: not null })
-                {
-                    preLoadValue.ImageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(imageModel.FileInfo);
+                    var fileInfo = new FileInfo(list[index]);
+                    imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+                    preLoadValue.ImageModel = imageModel;
                 }
                 else
                 {
-                    preLoadValue.ImageModel.EXIFOrientation = EXIFHelper.EXIFOrientation.None;
+                    preLoadValue.ImageModel = imageModel;
+                    if (imageModel.Image is null)
+                    {
+                        preLoadValue.IsLoading = true;
+
+                        preLoadValue.ImageModel = await ImageHelper.GetImageModelAsync(imageModel.FileInfo).ConfigureAwait(false);
+                    }
                 }
+                
+                if (imageModel.EXIFOrientation is null)
+                {
+                    preLoadValue.ImageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(imageModel.FileInfo);
+                }
+
 #if DEBUG
                 if (ShowAddRemove)
                     Trace.WriteLine($"{imageModel?.FileInfo?.Name} added at {index}");
