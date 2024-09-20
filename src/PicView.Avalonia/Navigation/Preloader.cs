@@ -280,13 +280,10 @@ public sealed class PreLoader : IDisposable
             Trace.WriteLine($"\nPreLoading started at {currentIndex}\n");
 #endif
 
-        var parallel = _preLoadList.IsEmpty;
-        var options = parallel
-            ? new ParallelOptions
-            {
-                MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
-            }
-            : null;
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
+        };
 
         try
         {
@@ -321,72 +318,38 @@ public sealed class PreLoader : IDisposable
 
         async Task PositiveLoop(ParallelOptions parallelOptions)
         {
-            if (parallel)
+            await Parallel.ForAsync(0, PositiveIterations, parallelOptions, async (i, _) =>
             {
-                await Parallel.ForAsync(0, PositiveIterations, parallelOptions, async (i, _) =>
+                if (list.Count == 0 || count != list.Count)
                 {
-                    if (list.Count == 0 || count != list.Count)
-                    {
-                        Clear();
-                        return;
-                    }
-                    var index = (nextStartingIndex + i) % list.Count;
-                    var isAdded = await AddAsync(index, list);
-                    if (isAdded)
-                    {
-                        array[i] = index;
-                    }
-                });
-            }
-            else
-            {
-                for (var i = 0; i < PositiveIterations; i++)
+                    Clear();
+                    return;
+                }
+                var index = (nextStartingIndex + i) % list.Count;
+                var isAdded = await AddAsync(index, list);
+                if (isAdded)
                 {
-                    if (list.Count == 0 || count != list.Count)
-                    {
-                        Clear();
-                        return;
-                    }
-                    var index = (nextStartingIndex + i) % list.Count;
-                    await AddAsync(index, list);
                     array[i] = index;
                 }
-            }
+            });
         }
 
         async Task NegativeLoop(ParallelOptions parallelOptions)
         {
-            if (parallel)
+            await Parallel.ForAsync(0, NegativeIterations, parallelOptions, async (i, _) =>
             {
-                await Parallel.ForAsync(0, NegativeIterations, parallelOptions, async (i, _) =>
+                if (list.Count == 0 || count != list.Count)
                 {
-                    if (list.Count == 0 || count != list.Count)
-                    {
-                        Clear();
-                        return;
-                    }
-                    var index = (prevStartingIndex - i + list.Count) % list.Count;
-                    var isAdded = await AddAsync(index, list);
-                    if (isAdded)
-                    {
-                        array[i] = index;
-                    }
-                });
-            }
-            else
-            {
-                for (var i = 0; i < NegativeIterations; i++)
+                    Clear();
+                    return;
+                }
+                var index = (prevStartingIndex - i + list.Count) % list.Count;
+                var isAdded = await AddAsync(index, list);
+                if (isAdded)
                 {
-                    if (list.Count == 0 || count != list.Count)
-                    {
-                        Clear();
-                        return;
-                    }
-                    var index = (prevStartingIndex - i + list.Count) % list.Count;
-                    await AddAsync(index, list);
                     array[i] = index;
                 }
-            }
+            });
         }
 
         void RemoveLoop()
