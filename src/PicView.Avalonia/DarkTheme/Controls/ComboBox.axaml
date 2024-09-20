@@ -72,7 +72,10 @@
                                     HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                     IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
                                     VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
-                                    <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" Name="PART_ItemsPresenter" />
+                                    <ItemsPresenter
+                                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                                        Margin="4"
+                                        Name="PART_ItemsPresenter" />
                                 </ScrollViewer>
                             </Border>
                         </Popup>

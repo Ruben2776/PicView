@@ -582,19 +582,7 @@ public static class FunctionsHelper
 
     public static async Task Open()
     {
-        if (Vm is null)
-        {
-            return;
-        }
-
-        var file = await FilePickerHelper.OpenFile();
-        if (file is null)
-        {
-            return;
-        }
-        
-        var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? file.Path.AbsolutePath : file.Path.LocalPath;
-        await Task.Run(() => NavigationHelper.LoadPicFromStringAsync(path, Vm));
+        await FilePickerHelper.SelectAndLoadFile(Vm);
     }
 
     public static Task OpenWith()

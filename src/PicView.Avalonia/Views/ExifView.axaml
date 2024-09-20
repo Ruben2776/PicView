@@ -36,10 +36,11 @@
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
-                            Text="{Binding FileInfo.Name}" />
+                            Text="{Binding FileInfo.Name, FallbackValue=''}" />
                         <customControls:CopyButton
                             Classes="altHover BorderStyle"
-                            CopyText="{CompiledBinding FileInfo.Name}"
+                            CopyText="{CompiledBinding FileInfo.Name,
+                                                       FallbackValue=''}"
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
@@ -60,10 +61,12 @@
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
-                            Text="{CompiledBinding FileInfo.DirectoryName}" />
+                            Text="{CompiledBinding FileInfo.DirectoryName,
+                                                   FallbackValue=''}" />
                         <customControls:CopyButton
                             Classes="altHover BorderStyle"
-                            CopyText="{CompiledBinding FileInfo.DirectoryName}"
+                            CopyText="{CompiledBinding FileInfo.DirectoryName,
+                                                       FallbackValue=''}"
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
@@ -84,10 +87,12 @@
                             Background="{StaticResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             Foreground="{StaticResource MainTextColor}"
-                            Text="{CompiledBinding FileInfo.FullName}" />
+                            Text="{CompiledBinding FileInfo.FullName,
+                                                   FallbackValue=''}" />
                         <customControls:CopyButton
                             Classes="altHover BorderStyle"
-                            CopyText="{CompiledBinding FileInfo.FullName}"
+                            CopyText="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
@@ -107,10 +112,12 @@
                         <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{CompiledBinding FileInfo.CreationTime}" />
+                            Text="{CompiledBinding FileInfo.CreationTime,
+                                                   FallbackValue=''}" />
                         <customControls:CopyButton
                             Classes="altHover BorderStyle"
-                            CopyText="{CompiledBinding FileInfo.CreationTime}"
+                            CopyText="{CompiledBinding FileInfo.CreationTime,
+                                                       FallbackValue=''}"
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
@@ -130,10 +137,12 @@
                         <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{CompiledBinding FileInfo.LastWriteTime}" />
+                            Text="{CompiledBinding FileInfo.LastWriteTime,
+                                                   FallbackValue=''}" />
                         <customControls:CopyButton
                             Classes="altHover BorderStyle"
-                            CopyText="{CompiledBinding FileInfo.LastWriteTime}"
+                            CopyText="{CompiledBinding FileInfo.LastWriteTime,
+                                                       FallbackValue=''}"
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
@@ -153,10 +162,12 @@
                         <customControls:FuncTextBox
                             Classes=" TStyle"
                             IsReadOnly="True"
-                            Text="{CompiledBinding FileInfo.LastAccessTime}" />
+                            Text="{CompiledBinding FileInfo.LastAccessTime,
+                                                   FallbackValue=''}" />
                         <customControls:CopyButton
                             Classes="altHover BorderStyle"
-                            CopyText="{CompiledBinding FileInfo.LastAccessTime}"
+                            CopyText="{CompiledBinding FileInfo.LastAccessTime,
+                                                       FallbackValue=''}"
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"

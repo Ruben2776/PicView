@@ -2,6 +2,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
@@ -11,7 +12,24 @@ namespace PicView.Avalonia.FileSystem;
 
 public static class FilePickerHelper
 {
-    public static async Task<IStorageFile?> OpenFile()
+    public static async Task SelectAndLoadFile(MainViewModel vm)
+    {
+        if (vm is null)
+        {
+            return;
+        }
+
+        var file = await SelectFile();
+        if (file is null)
+        {
+            return;
+        }
+        
+        var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? file.Path.AbsolutePath : file.Path.LocalPath;
+        await Task.Run(() => NavigationHelper.LoadPicFromStringAsync(path, vm));
+    }
+    
+    public static async Task<IStorageFile?> SelectFile()
     {
         try
         {
