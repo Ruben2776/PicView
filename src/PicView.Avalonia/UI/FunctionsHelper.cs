@@ -692,7 +692,7 @@ public static class FunctionsHelper
             return;
         }
         
-        ThemeHelper.ChangeBackground(Vm);
+        BackgroundManager.ChangeBackground(Vm);
         await SettingsHelper.SaveSettingsAsync();
     }
     

@@ -146,7 +146,7 @@ public static class StartUpHelper
             }
         }
         
-        ThemeHelper.SetBackground(vm);
+        BackgroundManager.SetBackground(vm);
         
         Task.Run(KeybindingsHelper.LoadKeybindings);
         
