@@ -1,12 +1,12 @@
 <Application
+    RequestedThemeVariant="Default"
     x:Class="PicView.Avalonia.Win32.App"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:CompileBindings="True"
-    RequestedThemeVariant="Default">
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Application.Styles>
         <SimpleTheme />
-        <StyleInclude Source="avares://PicView.Avalonia/DarkTheme/Main.axaml" />
+        <StyleInclude Source="avares://PicView.Avalonia/PicViewTheme/Main.axaml" />
     </Application.Styles>
 </Application>

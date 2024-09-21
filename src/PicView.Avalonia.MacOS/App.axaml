@@ -11,6 +11,6 @@
 
     <Application.Styles>
         <SimpleTheme />
-        <StyleInclude Source="avares://PicView.Avalonia/DarkTheme/Main.axaml" />
+        <StyleInclude Source="avares://PicView.Avalonia/PicViewTheme/Main.axaml" />
     </Application.Styles>
 </Application>

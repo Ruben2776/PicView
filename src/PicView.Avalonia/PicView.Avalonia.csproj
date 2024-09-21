@@ -63,7 +63,7 @@
 
   
   <ItemGroup>
-    <AvaloniaResource Include="DarkTheme\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
+    <AvaloniaResource Include="PicViewTheme\Resources\noisy-texture-200x200-o4-d31-c-161616-t0.png" />
   </ItemGroup>
 
   <ItemGroup>
