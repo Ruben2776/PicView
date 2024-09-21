@@ -1,4 +1,5 @@
-﻿using PicView.Avalonia.Gallery;
+﻿using Avalonia.Threading;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -26,7 +27,9 @@ public static class QuickLoad
         }
         vm.CurrentView = vm.ImageViewer;
         vm.FileInfo ??= fileInfo;
+        
         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+        
         if (imageModel.ImageType is ImageType.AnimatedGif or ImageType.AnimatedWebp)
         {
             vm.ImageViewer.MainImage.InitialAnimatedSource = file;
@@ -40,8 +43,12 @@ public static class QuickLoad
             secondaryPreloadValue = await vm.ImageIterator.GetNextPreLoadValueAsync();
             vm.SecondaryImageSource = secondaryPreloadValue?.ImageModel?.Image;
         }
-        vm.ImageViewer.SetTransform(imageModel.EXIFOrientation);
-        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, secondaryPreloadValue?.ImageModel?.PixelWidth ?? 0, secondaryPreloadValue?.ImageModel?.PixelHeight ?? 0, imageModel.Rotation, vm);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            vm.ImageViewer.SetTransform(imageModel.EXIFOrientation);
+            WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, secondaryPreloadValue?.ImageModel?.PixelWidth ?? 0, secondaryPreloadValue?.ImageModel?.PixelHeight ?? 0, imageModel.Rotation, vm);
+        }, DispatcherPriority.Send);
+
         vm.IsLoading = false;
             
         ExifHandling.UpdateExifValues(imageModel, vm);

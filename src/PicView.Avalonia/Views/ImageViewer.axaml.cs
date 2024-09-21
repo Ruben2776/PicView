@@ -531,11 +531,6 @@ public partial class ImageViewer : UserControl
 
         vm.ScaleX = scaleX;
         vm.RotationAngle = rotationAngle;
-        
-        if (MainImage.Source is null)
-        {
-            return;
-        }
         var flipTransform = new ScaleTransform(vm.ScaleX, 1);
         ImageLayoutTransformControl.RenderTransform = flipTransform;
         
