@@ -356,7 +356,6 @@ public static class NavigationHelper
         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         SetSingleImage(imageModel.Image, imageModel.ImageType, url, vm);
         vm.FileInfo = fileInfo;
-        ExifHandling.SetImageModel(imageModel, vm);
         ExifHandling.UpdateExifValues(imageModel, vm);
         FileHistoryNavigation.Add(url);
 
@@ -395,7 +394,6 @@ public static class NavigationHelper
                     ImageType = ImageType.Bitmap
                 };
                 SetSingleImage(imageModel.Image, imageModel.ImageType, TranslationHelper.Translation.Base64Image, vm);
-                ExifHandling.SetImageModel(imageModel, vm);
                 ExifHandling.UpdateExifValues(imageModel, vm);
             }
             catch (Exception e)
@@ -551,7 +549,6 @@ public static class NavigationHelper
     private static async Task PreviewPicAndLoadGallery(FileInfo fileInfo, MainViewModel vm, List<string>? files = null)
     {
         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-        ExifHandling.SetImageModel(imageModel, vm);
         vm.ImageSource = imageModel.Image;
         vm.ImageType = imageModel.ImageType;
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0,0, imageModel.Rotation, vm);

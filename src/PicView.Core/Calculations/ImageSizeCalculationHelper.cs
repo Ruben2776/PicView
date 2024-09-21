@@ -58,26 +58,13 @@ namespace PicView.Core.Calculations
             }
             else if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
-                if (rotationAngle is 0 or 180)
-                {
-                    maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage
-                        ? workAreaWidth - padding
-                        : Math.Min(workAreaWidth - padding, width);
+                maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage
+                    ? workAreaWidth - padding
+                    : Math.Min(workAreaWidth - padding, width);
                     
-                    maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
-                        ? workAreaHeight - padding
-                        : Math.Min(workAreaHeight - padding, height);
-                }
-                else
-                {
-                    maxWidth = SettingsHelper.Settings.ImageScaling.StretchImage
-                        ? workAreaHeight - padding
-                        : Math.Min(workAreaHeight - padding, height);
-                    
-                    maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
-                        ? workAreaWidth - padding
-                        : Math.Min(workAreaWidth - padding, width);
-                }
+                maxHeight = SettingsHelper.Settings.ImageScaling.StretchImage
+                    ? workAreaHeight - padding
+                    : Math.Min(workAreaHeight - padding, height);
             }
             else
             {

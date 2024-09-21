@@ -154,6 +154,7 @@ public static class ImageHelper
                                         bufferSize,
                                         useAsync: fileInfo.Length > 1e7);
         Add(fs, imageModel);
+        imageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(fileInfo);
     }
 
     private static async Task AddDefaultImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, uint height)
@@ -182,6 +183,7 @@ public static class ImageHelper
             await magickImage.WriteAsync(memoryStream);
             memoryStream.Position = 0;
             Add(memoryStream, imageModel);
+            imageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(magickImage);
         }
     }
     

@@ -23,11 +23,12 @@ public class ImageModel
 
             return EXIFOrientation switch
             {
-                EXIFHelper.EXIFOrientation.None or EXIFHelper.EXIFOrientation.Normal
-                    or EXIFHelper.EXIFOrientation.Flipped => 0,
-                EXIFHelper.EXIFOrientation.Rotated180 or EXIFHelper.EXIFOrientation.Rotated180Flipped => 180,
-                EXIFHelper.EXIFOrientation.Rotated270Flipped or EXIFHelper.EXIFOrientation.Rotated270 => 270,
-                EXIFHelper.EXIFOrientation.Rotated90 or EXIFHelper.EXIFOrientation.Rotated90Flipped => 90,
+                EXIFHelper.EXIFOrientation.None or EXIFHelper.EXIFOrientation.Horizontal
+                    or EXIFHelper.EXIFOrientation.MirrorHorizontal => 0,
+                EXIFHelper.EXIFOrientation.Rotate180 or EXIFHelper.EXIFOrientation.MirrorVertical => 180,
+                EXIFHelper.EXIFOrientation.MirrorHorizontalRotate270Cw or EXIFHelper.EXIFOrientation.Rotated270Cw => 90,
+                EXIFHelper.EXIFOrientation.Rotate90Cw => 90,
+                EXIFHelper.EXIFOrientation.MirrorHorizontalRotate90Cw => 270,
                 _ => 0
             };
         }

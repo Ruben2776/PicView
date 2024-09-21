@@ -12,83 +12,6 @@ namespace PicView.Avalonia.Navigation;
 
 public static class ExifHandling
 {
-    public static void SetImageModel(ImageModel imageModel, MainViewModel vm)
-    {
-        vm.FileInfo = imageModel?.FileInfo ?? null;
-        if (imageModel?.EXIFOrientation.HasValue ?? false)
-        {
-            switch (imageModel.EXIFOrientation.Value)
-            {
-                default:
-                    vm.ScaleX = 1;
-                    vm.RotationAngle = 0;
-                    vm.GetOrientation =  string.Empty;
-                    break;
-                
-                case EXIFHelper.EXIFOrientation.Normal:
-                    vm.ScaleX = 1;
-                    vm.RotationAngle = 0;
-                    vm.GetOrientation = TranslationHelper.Translation.Normal;
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Flipped:
-                    vm.ScaleX = -1;
-                    vm.RotationAngle = 0;
-                    vm.GetOrientation = TranslationHelper.Translation.Flipped;
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated180:
-                    vm.RotationAngle = 180;
-                    vm.ScaleX = 1;
-                    vm.GetOrientation = $"{TranslationHelper.Translation.Rotated} 180\u00b0";
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated180Flipped:
-                    vm.RotationAngle = 180;
-                    vm.ScaleX = -1;
-                    vm.GetOrientation =
-                        $"{TranslationHelper.Translation.Rotated} 180\u00b0, {TranslationHelper.Translation.Flipped}";
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated270Flipped:
-                    vm.RotationAngle = 270;
-                    vm.ScaleX = -1;
-                    vm.GetOrientation =
-                        $"{TranslationHelper.Translation.Rotated} 270\u00b0, {TranslationHelper.Translation.Flipped}";
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated90:
-                    vm.RotationAngle = 90;
-                    vm.ScaleX = 1;
-                    vm.GetOrientation = $"{TranslationHelper.Translation.Rotated} 90\u00b0";
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated90Flipped:
-                    vm.RotationAngle = 90;
-                    vm.ScaleX = -1;
-                    vm.GetOrientation =
-                        $"{TranslationHelper.Translation.Rotated} 90\u00b0, {TranslationHelper.Translation.Flipped}";
-                    break;
-
-                case EXIFHelper.EXIFOrientation.Rotated270:
-                    vm.RotationAngle = 270;
-                    vm.ScaleX = 1;
-                    vm.GetOrientation = $"{TranslationHelper.Translation.Rotated} 270\u00b0";
-                    break;
-            }
-        }
-        else
-        {
-            vm.ScaleX = 1;
-            vm.RotationAngle = 0;
-            vm.GetOrientation = string.Empty;
-        }
-
-        vm.ZoomValue = 1;
-        vm.PixelWidth = imageModel?.PixelWidth ?? 0;
-        vm.PixelHeight = imageModel?.PixelHeight ?? 0;
-    }
-    
     public static void UpdateExifValues(ImageModel imageModel, MainViewModel vm)
     {
         if (vm.FileInfo is null || vm is { PixelWidth: <= 0, PixelHeight: <= 0 })
@@ -130,6 +53,22 @@ public static class ExifHandling
                     vm.DpiY = bmp?.Dpi.Y ?? 0;
                 }
             }
+
+            vm.GetOrientation = imageModel.EXIFOrientation switch
+            {
+                EXIFHelper.EXIFOrientation.Horizontal => TranslationHelper.Translation.Normal,
+                EXIFHelper.EXIFOrientation.MirrorHorizontal => TranslationHelper.Translation.Flipped,
+                EXIFHelper.EXIFOrientation.Rotate180 => $"{TranslationHelper.Translation.Rotated} 180\u00b0",
+                EXIFHelper.EXIFOrientation.MirrorVertical =>
+                    $"{TranslationHelper.Translation.Rotated} 180\u00b0, {TranslationHelper.Translation.Flipped}",
+                EXIFHelper.EXIFOrientation.MirrorHorizontalRotate270Cw =>
+                    $"{TranslationHelper.Translation.Rotated} 270\u00b0, {TranslationHelper.Translation.Flipped}",
+                EXIFHelper.EXIFOrientation.Rotate90Cw => $"{TranslationHelper.Translation.Rotated} 90\u00b0",
+                EXIFHelper.EXIFOrientation.MirrorHorizontalRotate90Cw =>
+                    $"{TranslationHelper.Translation.Rotated} 90\u00b0, {TranslationHelper.Translation.Flipped}",
+                EXIFHelper.EXIFOrientation.Rotated270Cw => $"{TranslationHelper.Translation.Rotated} 270\u00b0",
+                _ => string.Empty
+            };
 
             var meter = TranslationHelper.Translation.Meter;
             var cm = TranslationHelper.Translation.Centimeters;

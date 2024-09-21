@@ -73,7 +73,7 @@ public sealed class ImageIterator : IDisposable
 
         _watcher = new FileSystemWatcher();
 #if DEBUG
-        Debug.Assert(fileInfo.DirectoryName != null, "fileInfo.DirectoryName != null");
+        Debug.Assert(fileInfo.DirectoryName != null);
 #endif
         _watcher.Path = fileInfo.DirectoryName;
         _watcher.EnableRaisingEvents = true;
@@ -503,8 +503,8 @@ public sealed class ImageIterator : IDisposable
             ErrorHandling.ShowStartUpMenu(_vm);
             return;
         }
-        
-        await Task.Run(async () => 
+
+        await Task.Run(async () =>
         {
             try
             {
@@ -580,7 +580,8 @@ public sealed class ImageIterator : IDisposable
                         });
                     }
 
-                    await PreLoader.PreLoadAsync(CurrentIndex, ImagePaths.Count, IsReversed, ImagePaths).ConfigureAwait(false);
+                    await PreLoader.PreLoadAsync(CurrentIndex, ImagePaths.Count, IsReversed, ImagePaths)
+                        .ConfigureAwait(false);
                 }
 
                 await AddAsync(index, preloadValue.ImageModel).ConfigureAwait(false);
@@ -593,10 +594,10 @@ public sealed class ImageIterator : IDisposable
             }
             catch (Exception e)
             {
-    #if DEBUG
+#if DEBUG
                 Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
                 await TooltipHelper.ShowTooltipMessageAsync(e.Message);
-    #endif
+#endif
             }
             finally
             {
@@ -696,31 +697,30 @@ public sealed class ImageIterator : IDisposable
         }
 
         _vm.IsLoading = false;
-        ExifHandling.SetImageModel(preLoadValue.ImageModel, _vm);
-        if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
-        {
-            _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
-        }
-
-        _vm.ImageSource = preLoadValue.ImageModel.Image;
-        if (preLoadValue.ImageModel.ImageType is ImageType.AnimatedGif or ImageType.AnimatedWebp)
-        {
-            _vm.ImageViewer.MainImage.InitialAnimatedSource = preLoadValue.ImageModel.FileInfo.FullName;
-        }
-
-        _vm.ImageType = preLoadValue.ImageModel.ImageType;
+        
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
+            _vm.ImageViewer.SetTransform(preLoadValue.ImageModel.EXIFOrientation);
+            if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+            {
+                _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
+            }
+
+            _vm.ImageSource = preLoadValue.ImageModel.Image;
+            if (preLoadValue.ImageModel.ImageType is ImageType.AnimatedGif or ImageType.AnimatedWebp)
+            {
+                _vm.ImageViewer.MainImage.InitialAnimatedSource = preLoadValue.ImageModel.FileInfo.FullName;
+            }
+
+            _vm.ImageType = preLoadValue.ImageModel.ImageType;
+        
             WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight,
                 nextPreloadValue?.ImageModel?.PixelWidth ?? 0, nextPreloadValue?.ImageModel?.PixelHeight ?? 0,
                 preLoadValue.ImageModel.Rotation, _vm);
-        });
-        SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
+        }, DispatcherPriority.Send);
 
-        if (_vm.RotationAngle != 0)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() => { _vm.ImageViewer.Rotate(_vm.RotationAngle); });
-        }
+
+        SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
 
         if (SettingsHelper.Settings.WindowProperties.KeepCentered)
         {

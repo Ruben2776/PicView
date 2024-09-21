@@ -1,12 +1,10 @@
-﻿using Avalonia.Threading;
-using PicView.Avalonia.Gallery;
+﻿using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
-using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.Navigation;
 
@@ -42,31 +40,9 @@ public static class QuickLoad
             secondaryPreloadValue = await vm.ImageIterator.GetNextPreLoadValueAsync();
             vm.SecondaryImageSource = secondaryPreloadValue?.ImageModel?.Image;
         }
+        vm.ImageViewer.SetTransform(imageModel.EXIFOrientation);
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, secondaryPreloadValue?.ImageModel?.PixelWidth ?? 0, secondaryPreloadValue?.ImageModel?.PixelHeight ?? 0, imageModel.Rotation, vm);
         vm.IsLoading = false;
-        imageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(filePath: file);
-        ExifHandling.SetImageModel(imageModel, vm);
-        var changed = false; // Need to recalculate size if changed
-        if (vm.ScaleX != 1)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                vm.ImageViewer.SetScaleX();
-            });
-            changed = true;
-        }
-        if (vm.RotationAngle != 0)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                vm.ImageViewer.Rotate(vm.RotationAngle);
-            });
-            changed = true;
-        }
-        if (changed)
-        {
-            WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, secondaryPreloadValue?.ImageModel?.PixelWidth ?? 0, secondaryPreloadValue?.ImageModel?.PixelHeight ?? 0, imageModel.Rotation, vm);
-        }
             
         ExifHandling.UpdateExifValues(imageModel, vm);
         vm.ImageIterator ??= new ImageIterator(fileInfo, vm);

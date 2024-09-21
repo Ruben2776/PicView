@@ -504,7 +504,7 @@ public static class WindowHelper
                 desktopMinHeight = desktop.MainWindow.MinHeight;
                 containerWidth = mainView.Bounds.Width;
                 containerHeight = mainView.Bounds.Height;
-            }, DispatcherPriority.Normal).Wait();
+            }, DispatcherPriority.Send).Wait();
         }
 
         if (double.IsNaN(containerWidth) || double.IsNaN(containerHeight) || double.IsNaN(width) || double.IsNaN(height))

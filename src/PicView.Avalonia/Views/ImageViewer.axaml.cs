@@ -1,4 +1,3 @@
-using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Animation;
@@ -12,9 +11,9 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
+using PicView.Core.ImageDecoding;
 using PicView.Core.ImageTransformations;
 using PicView.Core.Navigation;
-using ReactiveUI;
 using Point = Avalonia.Point;
 
 namespace PicView.Avalonia.Views;
@@ -44,15 +43,6 @@ public partial class ImageViewer : UserControl
                 _captured = false;
             };
         };
-        this.WhenAnyValue(x => x.MainImage.Source).Select(x => x is not null).Subscribe(x =>
-        {
-            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
-            {
-                ImageScrollViewer.ScrollToHome();
-            }
-
-            Reset();
-        });
     }
 
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e)
@@ -389,15 +379,7 @@ public partial class ImageViewer : UserControl
                 ResetZoom(false);
             }
             ImageLayoutTransformControl.LayoutTransform = null;
-            if (vm.ScaleX == -1)
-            {
-                var flipTransform = new ScaleTransform(vm.ScaleX, 1);
-                MainImage.RenderTransform = flipTransform;
-            }
-            else
-            {
-                MainImage.RenderTransform = null;
-            }
+            MainImage.RenderTransform = null;
         }
     }
     
@@ -494,6 +476,9 @@ public partial class ImageViewer : UserControl
         {
             var rotateTransform = new RotateTransform(angle);
             ImageLayoutTransformControl.LayoutTransform = rotateTransform;
+            
+            WindowHelper.SetSize(DataContext as MainViewModel);
+            MainImage.InvalidateVisual();
         });
     }
 
@@ -539,16 +524,80 @@ public partial class ImageViewer : UserControl
         }
     }
     
-    public void SetScaleX()
+    public void SetTransform(int scaleX, int rotationAngle)
     {
         if (DataContext is not MainViewModel vm)
             return;
+
+        vm.ScaleX = scaleX;
+        vm.RotationAngle = rotationAngle;
+        
         if (MainImage.Source is null)
         {
             return;
         }
         var flipTransform = new ScaleTransform(vm.ScaleX, 1);
-        MainImage.RenderTransform = flipTransform;
+        ImageLayoutTransformControl.RenderTransform = flipTransform;
+        
+        var rotateTransform = new RotateTransform(rotationAngle);
+        ImageLayoutTransformControl.LayoutTransform = rotateTransform;
+        
+        if (_isZoomed)
+        {
+            ResetZoom(false);
+        }
+    }
+
+    public void SetTransform(EXIFHelper.EXIFOrientation? orientation)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(Set, DispatcherPriority.Send);
+        }
+        return;
+
+        void Set()
+        {
+            if (SettingsHelper.Settings.Zoom.ScrollEnabled)
+            {
+                ImageScrollViewer.ScrollToHome();
+            }
+
+            switch (orientation)
+            {
+                case null:
+                default:
+                case EXIFHelper.EXIFOrientation.None:
+                case EXIFHelper.EXIFOrientation.Horizontal:
+                    Reset();
+                    break;
+                case EXIFHelper.EXIFOrientation.MirrorHorizontal:
+                    SetTransform(-1, 0);
+                    break;
+                case EXIFHelper.EXIFOrientation.Rotate180:
+                    SetTransform(1, 180);
+                    break;
+                case EXIFHelper.EXIFOrientation.MirrorVertical:
+                    SetTransform(-1, 180);
+                    break;
+                case EXIFHelper.EXIFOrientation.MirrorHorizontalRotate270Cw:
+                    SetTransform(-1, 90); // should be 270, but it's not working
+                    break;
+                case EXIFHelper.EXIFOrientation.Rotate90Cw:
+                    SetTransform(1, 90);
+                    break;
+                case EXIFHelper.EXIFOrientation.MirrorHorizontalRotate90Cw:
+                    SetTransform(-1, 270); // should be 90, but it's not working
+                    break;
+                case EXIFHelper.EXIFOrientation.Rotated270Cw:
+                    SetTransform(1, 270);
+                    break;
+            }
+        }
     }
 
     #endregion Rotation and Flip
@@ -604,4 +653,8 @@ public partial class ImageViewer : UserControl
     }
 
     #endregion Events
+
+    
+
+    
 }
