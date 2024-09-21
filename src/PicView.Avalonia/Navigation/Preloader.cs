@@ -133,6 +133,13 @@ public sealed class PreLoader : IDisposable
     /// </summary>
     public void Clear()
     {
+        foreach (var item in _preLoadList.Values)
+        {
+            if (item.ImageModel.Image is Bitmap img)
+            {
+                img.Dispose();
+            }
+        }
         _preLoadList.Clear();
     }
 
@@ -401,7 +408,7 @@ public sealed class PreLoader : IDisposable
 
         if (disposing)
         {
-            _preLoadList.Clear();
+            Clear();
         }
         _disposed = true;
     }
