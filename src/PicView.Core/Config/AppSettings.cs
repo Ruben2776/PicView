@@ -44,7 +44,6 @@ public class UIProperties
 public class Theme
 {
     public bool Dark { get; set; } = true;
-    public bool Light { get; set; } = false;
     public int ColorTheme { get; set; } = 3;
 }
 

@@ -99,7 +99,7 @@ public static class ImageTitleFormatter
     {
 #if DEBUG
         Trace.WriteLine(exception);
-        Debug.Assert(TranslationHelper.Translation.UnexpectedError != null, "TranslationHelper.Translation.UnexpectedError != null");
+        Debug.Assert(TranslationHelper.Translation.UnexpectedError != null);
 #endif
         
         return
