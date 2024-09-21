@@ -1,4 +1,4 @@
-﻿namespace PicView.Avalonia.Navigation;
+﻿namespace PicView.Avalonia.ImageHandling;
 
 public enum ImageType
 {

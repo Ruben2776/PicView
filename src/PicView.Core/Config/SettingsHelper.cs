@@ -5,13 +5,13 @@ using System.Text.Json.Serialization;
 
 namespace PicView.Core.Config;
 
-[JsonSourceGenerationOptions(AllowTrailingCommas = true)]
+[JsonSourceGenerationOptions(AllowTrailingCommas = true, WriteIndented = true)]
 [JsonSerializable(typeof(AppSettings))]
 internal partial class SourceGenerationContext : JsonSerializerContext;
 
 public static class SettingsHelper
 {
-    private const double CurrentSettingsVersion = 1;
+    private const double CurrentSettingsVersion = 1.1;
     private const string ConfigPath = "Config/UserSettings.json";
     private const string RoamingConfigPath = "Ruben2776/PicView/Config/UserSettings.json";
 

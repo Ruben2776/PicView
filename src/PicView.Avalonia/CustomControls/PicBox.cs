@@ -12,7 +12,7 @@ using Avalonia.Svg.Skia;
 using Avalonia.Utilities;
 using ImageMagick;
 using PicView.Avalonia.AnimatedImage;
-using PicView.Avalonia.Navigation;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;

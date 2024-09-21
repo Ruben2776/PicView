@@ -1,5 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
-using PicView.Avalonia.Navigation;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.ImageDecoding;

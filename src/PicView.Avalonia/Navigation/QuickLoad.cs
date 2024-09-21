@@ -56,9 +56,12 @@ public static class QuickLoad
             
         SetTitleHelper.SetTitle(vm, imageModel);
         vm.GetIndex = vm.ImageIterator.CurrentIndex + 1;
-        if (SettingsHelper.Settings.WindowProperties.KeepCentered)
+        if (SettingsHelper.Settings.WindowProperties.KeepCentered || SettingsHelper.Settings.WindowProperties.AutoFit)
         {
-            WindowHelper.CenterWindowOnScreen(false);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                WindowHelper.CenterWindowOnScreen();
+            }, DispatcherPriority.Send);
         }
 
         if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
