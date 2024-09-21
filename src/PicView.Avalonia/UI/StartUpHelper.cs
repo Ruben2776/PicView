@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using PicView.Avalonia.Keybindings;
@@ -166,5 +167,7 @@ public static class StartUpHelper
         w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
         w.KeyUp += (_, e) => MainKeyboardShortcuts.MainWindow_KeysUp(e);
         w.PointerPressed += async (_, e) => await MouseShortcuts.MainWindow_PointerPressed(e).ConfigureAwait(false);
+        
+        Application.Current.Name = "PicView";
     }
 }

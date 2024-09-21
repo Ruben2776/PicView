@@ -34,6 +34,8 @@
   
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+    <None Remove="PicViewTheme\Resources\noisy-texture-200x200-o4-d23-c-ffffff-t1.png" />
+    <AvaloniaResource Include="PicViewTheme\Resources\noisy-texture-200x200-o4-d23-c-ffffff-t1.png" />
   </ItemGroup>
 
   

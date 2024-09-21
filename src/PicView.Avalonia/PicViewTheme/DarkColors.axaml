@@ -1,9 +1,5 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Color x:Key="AccentColor">#FFDB5B3D</Color>
-    <Color x:Key="SecondaryAccentColor">#e0755a</Color>
-    <Color x:Key="LogoAccentColor">#FFf8af3c</Color>
-
     <Color x:Key="MainTextColor">#FFf6f4f4</Color>
     <Color x:Key="MainTextColorFaded">#d6d4d4</Color>
 
@@ -29,7 +25,9 @@
     <Color x:Key="BackgroundAlpha">#442e2e2e</Color>
 
     <Color x:Key="MenuBackgroundColor">#292929</Color>
+
     <Color x:Key="ContextMenuBackgroundColor">#EE2b2b2b</Color>
+    <Color x:Key="ContextMenuTextColor">#EDEBEB</Color>
 
     <Color x:Key="WindowBackgroundColor">#66000000</Color>
     <ImageBrush

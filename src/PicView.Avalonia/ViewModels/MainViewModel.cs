@@ -519,6 +519,8 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>? ResetSettingsCommand { get; }
     
     public ReactiveCommand<Unit, Unit>? ShowSideBySideCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit>? ChangeThemeCommand { get; }
 
     #endregion Commands
 
@@ -1828,6 +1830,8 @@ public class MainViewModel : ViewModelBase
         SlideshowCommand = ReactiveCommand.CreateFromTask<int>(StartSlideShowTask);
         
         ToggleTaskbarProgressCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleTaskbarProgress);
+        
+        ChangeThemeCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ChangeTheme);
 
         #endregion UI Commands
 

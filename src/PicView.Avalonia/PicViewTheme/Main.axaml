@@ -5,10 +5,16 @@
     <Styles.Resources>
         <ResourceDictionary>
 
+            <Color x:Key="AccentColor">#FFDB5B3D</Color>
+            <Color x:Key="SecondaryAccentColor">#e0755a</Color>
+            <Color x:Key="LogoAccentColor">#FFf8af3c</Color>
+
+
             <ResourceDictionary.MergedDictionaries>
 
                 <!--  TODO: Figure out switching themes  -->
                 <ResourceInclude Source="/PicViewTheme/DarkColors.axaml" />
+                <!-- <ResourceInclude Source="/PicViewTheme/LightColors.axaml" /> -->
                 <!--  TODO: Figure out switching themes  -->
 
 

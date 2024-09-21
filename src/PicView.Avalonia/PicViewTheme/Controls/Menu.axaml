@@ -1,12 +1,13 @@
 <ResourceDictionary
+    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:conv="using:Avalonia.Controls.Converters"
     xmlns:sys="using:System"
-    x:ClassModifier="internal">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <conv:PlatformKeyGestureConverter x:Key="KeyGestureConverter" />
 
-    <ControlTheme x:Key="{x:Type ContextMenu}" TargetType="ContextMenu">
+    <ControlTheme TargetType="ContextMenu" x:Key="{x:Type ContextMenu}">
+        <Setter Property="Foreground" Value="{StaticResource ContextMenuTextColor}" />
         <Setter Property="Background" Value="{StaticResource ContextMenuBackgroundColor}" />
         <Setter Property="BorderBrush" Value="{StaticResource MainBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -17,21 +18,21 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
-                    Padding="{TemplateBinding Padding}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="8">
+                    CornerRadius="8"
+                    Padding="{TemplateBinding Padding}">
                     <ItemsPresenter
-                        Name="PART_ItemsPresenter"
                         ItemsPanel="{TemplateBinding ItemsPanel}"
-                        KeyboardNavigation.TabNavigation="Continue" />
+                        KeyboardNavigation.TabNavigation="Continue"
+                        Name="PART_ItemsPresenter" />
                 </Border>
             </ControlTemplate>
         </Setter>
     </ControlTheme>
 
-    <ControlTheme x:Key="{x:Type MenuItem}" TargetType="MenuItem">
+    <ControlTheme TargetType="MenuItem" x:Key="{x:Type MenuItem}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="6" />
@@ -43,32 +44,32 @@
                             <ColumnDefinition Width="20" />
                             <ColumnDefinition Width="5" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIGT" />
+                            <ColumnDefinition SharedSizeGroup="MenuItemIGT" Width="Auto" />
                             <ColumnDefinition Width="20" />
                         </Grid.ColumnDefinitions>
                         <ContentControl
-                            Name="icon"
-                            Width="16"
+                            Content="{TemplateBinding Icon}"
                             Height="16"
-                            Margin="5,0,0,0"
                             HorizontalAlignment="Center"
+                            Margin="5,0,0,0"
+                            Name="icon"
                             VerticalAlignment="Center"
-                            Content="{TemplateBinding Icon}" />
+                            Width="16" />
                         <ContentControl
-                            x:Name="PART_ToggleIconPresenter"
                             Grid.Column="0"
-                            Width="16"
                             Height="16"
+                            IsVisible="True"
                             Margin="5,0,0,0"
                             VerticalAlignment="Center"
-                            IsVisible="True" />
+                            Width="16"
+                            x:Name="PART_ToggleIconPresenter" />
                         <ContentPresenter
-                            Name="PART_HeaderPresenter"
+                            Content="{TemplateBinding Header}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}"
                             Grid.Column="2"
                             Margin="{TemplateBinding Padding}"
-                            VerticalAlignment="Center"
-                            Content="{TemplateBinding Header}"
-                            ContentTemplate="{TemplateBinding HeaderTemplate}">
+                            Name="PART_HeaderPresenter"
+                            VerticalAlignment="Center">
                             <ContentPresenter.DataTemplates>
                                 <DataTemplate DataType="sys:String">
                                     <AccessText Text="{Binding}" />
@@ -76,26 +77,26 @@
                             </ContentPresenter.DataTemplates>
                         </ContentPresenter>
                         <TextBlock
-                            x:Name="PART_InputGestureText"
                             Grid.Column="3"
-                            VerticalAlignment="Center"
                             Text="{TemplateBinding InputGesture,
-                                                   Converter={StaticResource KeyGestureConverter}}" />
-                        <Path
-                            Name="rightArrow"
-                            Grid.Column="4"
-                            Width="8"
-                            Height="8"
-                            Margin="6,0,4,0"
+                                                   Converter={StaticResource KeyGestureConverter}}"
                             VerticalAlignment="Center"
+                            x:Name="PART_InputGestureText" />
+                        <Path
                             Data="F1M0.002,31.062L0,0 27.01,15.534z"
                             Fill="{StaticResource MainIconColor}"
-                            Stretch="Fill" />
+                            Grid.Column="4"
+                            Height="8"
+                            Margin="6,0,4,0"
+                            Name="rightArrow"
+                            Stretch="Fill"
+                            VerticalAlignment="Center"
+                            Width="8" />
                         <Popup
-                            Name="PART_Popup"
                             IsLightDismissEnabled="False"
                             IsOpen="{TemplateBinding IsSubMenuOpen,
                                                      Mode=TwoWay}"
+                            Name="PART_Popup"
                             Placement="RightEdgeAlignedTop">
                             <Border
                                 Background="{StaticResource ContextMenuBackgroundColor}"
@@ -104,10 +105,10 @@
                                 CornerRadius="8">
                                 <ScrollViewer>
                                     <ItemsPresenter
-                                        Name="PART_ItemsPresenter"
-                                        Margin="2"
                                         Grid.IsSharedSizeScope="True"
-                                        ItemsPanel="{TemplateBinding ItemsPanel}" />
+                                        ItemsPanel="{TemplateBinding ItemsPanel}"
+                                        Margin="2"
+                                        Name="PART_ItemsPresenter" />
                                 </ScrollViewer>
                             </Border>
                         </Popup>
@@ -133,9 +134,9 @@
             <Setter Property="Content">
                 <Template>
                     <Path
-                        VerticalAlignment="Center"
                         Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z"
-                        Fill="{StaticResource MainIconColor}" />
+                        Fill="{StaticResource MainIconColor}"
+                        VerticalAlignment="Center" />
                 </Template>
             </Setter>
         </Style>
@@ -143,10 +144,10 @@
             <Setter Property="Content">
                 <Template>
                     <Ellipse
-                        Width="8"
+                        Fill="{StaticResource MainIconColor}"
                         Height="8"
                         Margin="4"
-                        Fill="{StaticResource MainIconColor}" />
+                        Width="8" />
                 </Template>
             </Setter>
         </Style>
@@ -173,7 +174,7 @@
         </Style>
     </ControlTheme>
 
-    <ControlTheme x:Key="{x:Type Separator}" TargetType="Separator">
+    <ControlTheme TargetType="Separator" x:Key="{x:Type Separator}">
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Background" Value="{StaticResource MainBorderColor}" />
         <Setter Property="Opacity" Value=".8" />

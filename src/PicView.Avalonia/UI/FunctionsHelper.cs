@@ -8,6 +8,7 @@ using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.PicViewTheme;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -1052,6 +1053,12 @@ public static class FunctionsHelper
         }
         ProcessHelper.RestartApp(args);
         await Quit();
+    }
+    
+    public static Task ChangeTheme()
+    {
+        ThemeManager.ChangeTheme();
+        return Task.CompletedTask;
     }
 
     #endregion

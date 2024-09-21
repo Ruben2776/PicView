@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.PicViewTheme;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 
@@ -38,6 +39,12 @@ public partial class AppearanceView : UserControl
             return;
         }
         GalleryStretchMode.DetermineStretchMode(vm);
+        
+        ThemeBox.SelectedItem = SettingsHelper.Settings.Theme.Dark ? DarkThemeBox : LightThemeBox;
+        ThemeBox.SelectionChanged += delegate
+        {
+            ThemeManager.SetTheme(ThemeBox.SelectedIndex == 0);
+        };
         
         if (vm.IsUniformFullChecked)
         {
