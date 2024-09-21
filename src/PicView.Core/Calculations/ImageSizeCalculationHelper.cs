@@ -11,7 +11,7 @@ namespace PicView.Core.Calculations
         public static double GetInterfaceSize()
         {
             // TODO: find a more elegant solution
-            return RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 165 : 228;
+            return RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 165 : 232;
         }
 
         public static ImageSize GetImageSize(double width,
