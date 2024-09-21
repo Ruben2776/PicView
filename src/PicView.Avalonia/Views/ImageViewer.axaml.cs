@@ -353,6 +353,7 @@ public partial class ImageViewer : UserControl
             return;
         }
         vm.ZoomValue = 1;
+        vm.RotationAngle = 0;
         SetTitleHelper.SetTitle(vm);
         _isZoomed = false;
     }
@@ -569,7 +570,7 @@ public partial class ImageViewer : UserControl
                 case EXIFHelper.EXIFOrientation.None:
                 case EXIFHelper.EXIFOrientation.Horizontal:
                     Reset();
-                    break;
+                    return;
                 case EXIFHelper.EXIFOrientation.MirrorHorizontal:
                     SetTransform(-1, 0);
                     break;

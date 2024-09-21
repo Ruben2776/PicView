@@ -5,24 +5,51 @@ using PicView.Core.Localization;
 
 namespace PicView.Core.Navigation;
 
+/// <summary>
+/// Provides methods for generating window titles for image display,
+/// including the ability to format titles with image properties such as
+/// file name, resolution, zoom level, and aspect ratio.
+/// </summary>
 public static class ImageTitleFormatter
 {
+    /// <summary>
+    /// Struct that holds different representations of a window title.
+    /// </summary>
+    public readonly struct WindowTitles
+    {
+        /// <summary>
+        /// The base title containing the image name, index, file count, resolution, and other details.
+        /// </summary>
+        public string BaseTitle { get; init; }
+
+        /// <summary>
+        /// The base title with the application name appended at the end.
+        /// </summary>
+        public string TitleWithAppName { get; init; }
+
+        /// <summary>
+        /// The title with the full file path instead of just the file name.
+        /// </summary>
+        public string FilePathTitle { get; init; }
+    }
+    
     /// <summary>
     /// The name of the application.
     /// </summary>
     internal const string AppName = "PicView";
 
     /// <summary>
-    /// Generates the title strings based on the specified parameters.
+    /// Generates the title strings based on the specified parameters, including image properties
+    /// such as width, height, file name, zoom level, and current index in the file list.
     /// </summary>
-    /// <param name="width">The width of the image.</param>
-    /// <param name="height">The height of the image.</param>
-    /// <param name="index">The index of the image's location.</param>
-    /// <param name="fileInfo">The file information of the image.</param>
-    /// <param name="zoomValue">The zoom value of the image.</param>
-    /// <param name="filesList">The list of files.</param>
-    /// <returns>An array of three strings representing different aspects of the title.</returns>
-    public static string[] GenerateTitleStrings(int width, int height, int index, FileInfo? fileInfo, double zoomValue,
+    /// <param name="width">The width of the image in pixels.</param>
+    /// <param name="height">The height of the image in pixels.</param>
+    /// <param name="index">The index of the image in the list.</param>
+    /// <param name="fileInfo">The <see cref="FileInfo"/> object representing the image file.</param>
+    /// <param name="zoomValue">The current zoom level of the image.</param>
+    /// <param name="filesList">The list of image file paths.</param>
+    /// <returns>A <see cref="WindowTitles"/> struct containing the generated titles.</returns>
+    public static WindowTitles GenerateTitleStrings(int width, int height, int index, FileInfo? fileInfo, double zoomValue,
         List<string> filesList)
     {
         if (index < 0 || index >= filesList.Count)
@@ -82,12 +109,17 @@ public static class ImageTitleFormatter
         // Title with file path instead of file name
         var filePathTitle = baseTitle.Replace(fileInfo.Name, fileInfo.FullName);
 
-        return [fullTitle, baseTitle, filePathTitle];
+        return new WindowTitles
+        {
+            BaseTitle = baseTitle,
+            TitleWithAppName = fullTitle,
+            FilePathTitle = filePathTitle
+        };
     }
 
 
     /// <inheritdoc cref="GenerateTitleStrings(int, int, int, FileInfo, double, List{string})" />
-    public static string[] GenerateTitleStrings(double width, double height, int index, FileInfo? fileInfo,
+    public static WindowTitles GenerateTitleStrings(double width, double height, int index, FileInfo? fileInfo,
         double zoomValue, List<string> filesList)
     {
         var newWidth = Convert.ToInt32(width);
@@ -95,21 +127,31 @@ public static class ImageTitleFormatter
         return GenerateTitleStrings(newWidth, newHeight, index, fileInfo, zoomValue, filesList);
     }
 
-    private static string[] GenerateErrorTitle(string exception)
+    /// <summary>
+    /// Generates a set of error titles in case of invalid parameters or exceptions during title generation.
+    /// </summary>
+    /// <param name="exception">A string representing the error message or exception details.</param>
+    /// <returns>A <see cref="WindowTitles"/> struct containing error titles.</returns>
+    private static WindowTitles GenerateErrorTitle(string exception)
     {
 #if DEBUG
         Trace.WriteLine(exception);
         Debug.Assert(TranslationHelper.Translation.UnexpectedError != null);
 #endif
-        
-        return
-        [
-            TranslationHelper.Translation.UnexpectedError,
-            TranslationHelper.Translation.UnexpectedError,
-            TranslationHelper.Translation.UnexpectedError
-        ];
+
+        return new WindowTitles
+        {
+            BaseTitle = TranslationHelper.Translation.UnexpectedError,
+            TitleWithAppName = TranslationHelper.Translation.UnexpectedError,
+            FilePathTitle = TranslationHelper.Translation.UnexpectedError
+        };
     }
 
+    /// <summary>
+    /// Formats the zoom percentage for display, omitting the zoom information if it's 0 or 100%.
+    /// </summary>
+    /// <param name="zoomValue">The current zoom level of the image as a double value.</param>
+    /// <returns>A formatted string representing the zoom percentage, or null if the zoom is 0 or 100%.</returns>
     private static string? FormatZoomPercentage(double zoomValue)
     {
         if (zoomValue is 0 or 1)
@@ -123,13 +165,14 @@ public static class ImageTitleFormatter
     }
 
     /// <summary>
-    /// Returns string with file name, zoom, aspect ratio and resolution
+    /// Generates a window title for a single image, including its name, resolution, aspect ratio, and zoom level.
     /// </summary>
-    /// <param name="width">The width of the image.</param>
-    /// <param name="height">The height of the image.</param>
-    /// <param name="name">The name to display.</param>
-    /// <param name="zoomValue">The zoom value of the image.</param>
-    public static string[] GenerateTitleForSingleImage(int width, int height, string name, double zoomValue)
+    /// <param name="width">The width of the image in pixels.</param>
+    /// <param name="height">The height of the image in pixels.</param>
+    /// <param name="name">Display name of the image.</param>
+    /// <param name="zoomValue">The current zoom level of the image.</param>
+    /// <returns>A <see cref="WindowTitles"/> struct containing the generated titles for the single image.</returns>
+    public static WindowTitles GenerateTitleForSingleImage(int width, int height, string name, double zoomValue)
     {
         using var sb = ZString.CreateStringBuilder(true);
 
@@ -154,11 +197,16 @@ public static class ImageTitleFormatter
         // Full title with AppName
         var fullTitle = $"{baseTitle} - {AppName}";
 
-        return [fullTitle, baseTitle];
+        return new WindowTitles
+        {
+            BaseTitle = baseTitle,
+            TitleWithAppName = fullTitle,
+            FilePathTitle = baseTitle
+        };
     }
 
     /// <inheritdoc cref="GenerateTitleForSingleImage(int, int, string, double)" />
-    public static string[] GenerateTitleForSingleImage(double width, double height, string name, double zoomValue)
+    public static WindowTitles GenerateTitleForSingleImage(double width, double height, string name, double zoomValue)
     {
         var newWidth = Convert.ToInt32(width);
         var newHeight = Convert.ToInt32(height);
@@ -166,10 +214,12 @@ public static class ImageTitleFormatter
     }
 
     /// <summary>
-    /// Generates a string representation of the aspect ratio based on the provided width and height.
+    /// Generates a string representing the aspect ratio of an image based on its width and height.
+    /// If the aspect ratio exceeds a certain limit, no aspect ratio is returned.
     /// </summary>
-    /// <param name="width">The width of the image.</param>
-    /// <param name="height">The height of the image.</param>
+    /// <param name="width">The width of the image in pixels.</param>
+    /// <param name="height">The height of the image in pixels.</param>
+    /// <returns>A string representing the aspect ratio in the format "x:y", or an empty string if the ratio is too large.</returns>
     private static string FormatAspectRatio(int width, int height)
     {
         if (width <= 0 || height <= 0)

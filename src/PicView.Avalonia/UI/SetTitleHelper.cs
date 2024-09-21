@@ -27,18 +27,18 @@ public static class SetTitleHelper
                 title = TranslationHelper.Translation.ClipboardImage ?? "ClipboardImage";
             }
             
-            var titleString = ImageTitleFormatter.GenerateTitleForSingleImage(vm.ImageWidth, vm.ImageHeight, title, vm.ZoomValue);
-            vm.WindowTitle = titleString[0];
-            vm.Title = titleString[1];
-            vm.TitleTooltip = titleString[1];
+            var singeImageWindowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(vm.ImageWidth, vm.ImageHeight, title, vm.ZoomValue);
+            vm.WindowTitle = singeImageWindowTitles.BaseTitle;
+            vm.Title = singeImageWindowTitles.TitleWithAppName;
+            vm.TitleTooltip = singeImageWindowTitles.TitleWithAppName;
             return;
         }
 
-        var getTitle = ImageTitleFormatter.GenerateTitleStrings(vm.ImageWidth, vm.ImageHeight, vm.ImageIterator.CurrentIndex,
+        var windowTitles = ImageTitleFormatter.GenerateTitleStrings(vm.ImageWidth, vm.ImageHeight, vm.ImageIterator.CurrentIndex,
             vm.FileInfo, vm.ZoomValue, vm.ImageIterator.ImagePaths);
-        vm.WindowTitle = getTitle[0];
-        vm.Title = getTitle[1];
-        vm.TitleTooltip = getTitle[2];
+        vm.WindowTitle = windowTitles.TitleWithAppName;
+        vm.Title = windowTitles.BaseTitle;
+        vm.TitleTooltip = windowTitles.FilePathTitle;
     }
 
     public static void RefreshTitle(MainViewModel vm)
@@ -73,11 +73,11 @@ public static class SetTitleHelper
             return;
         }
 
-        var titleString = ImageTitleFormatter.GenerateTitleStrings(imageModel.PixelWidth, imageModel.PixelHeight,  vm.ImageIterator.CurrentIndex,
+        var windowTitles = ImageTitleFormatter.GenerateTitleStrings(imageModel.PixelWidth, imageModel.PixelHeight,  vm.ImageIterator.CurrentIndex,
             imageModel.FileInfo,  vm.ZoomValue,  vm.ImageIterator.ImagePaths);
-        vm.WindowTitle = titleString[0];
-        vm.Title = titleString[1];
-        vm.TitleTooltip = titleString[2];
+        vm.WindowTitle = windowTitles.TitleWithAppName;
+        vm.Title = windowTitles.BaseTitle;
+        vm.TitleTooltip = windowTitles.FilePathTitle;
 
         return;
 

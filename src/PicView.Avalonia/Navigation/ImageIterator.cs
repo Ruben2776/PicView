@@ -724,7 +724,7 @@ public sealed class ImageIterator : IDisposable
 
         if (SettingsHelper.Settings.WindowProperties.KeepCentered)
         {
-            await Dispatcher.UIThread.InvokeAsync(() => { WindowHelper.CenterWindowOnScreen(false); });
+            await Dispatcher.UIThread.InvokeAsync(() => { WindowHelper.CenterWindowOnScreen(); });
         }
 
         _vm.GetIndex = index + 1;
@@ -739,6 +739,10 @@ public sealed class ImageIterator : IDisposable
 
         await Dispatcher.UIThread.InvokeAsync(TooltipHelper.CloseToolTipMessage);
 
+        _vm.FileInfo = preLoadValue.ImageModel.FileInfo;
+        _vm.ZoomValue = 1;
+        _vm.PixelWidth = preLoadValue.ImageModel.PixelWidth;
+        _vm.PixelHeight = preLoadValue.ImageModel.PixelHeight;
         ExifHandling.UpdateExifValues(preLoadValue.ImageModel, _vm);
     }
 

@@ -164,7 +164,7 @@ public static class GetImageModel
             return;
         }
 
-        const int bufferSize = 4096;
+        const int bufferSize = 16384;
         await using var fs = new FileStream(
             fileInfo.FullName,
             FileMode.Open,

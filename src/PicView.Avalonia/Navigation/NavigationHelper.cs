@@ -491,10 +491,10 @@ public static class NavigationHelper
         {
             vm.ImageViewer.Rotate(vm.RotationAngle);
         }
-        var titleString = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, 1);
-        vm.WindowTitle = titleString[0];
-        vm.Title = titleString[1];
-        vm.TitleTooltip = titleString[1];
+        var singeImageWindowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, 1);
+        vm.WindowTitle = singeImageWindowTitles.BaseTitle;
+        vm.Title = singeImageWindowTitles.TitleWithAppName;
+        vm.TitleTooltip = singeImageWindowTitles.TitleWithAppName;
         vm.GalleryMargin = new Thickness(0, 0, 0, 0);
         
         vm.PlatformService.StopTaskbarProgress();

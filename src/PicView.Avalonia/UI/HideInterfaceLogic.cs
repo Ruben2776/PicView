@@ -106,7 +106,11 @@ public static class HideInterfaceLogic
             vm.IsBottomToolbarShownSetting = true;
             vm.BottombarHeight = SizeDefaults.BottombarHeight;
         }
-        WindowHelper.SetSize(vm);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            WindowHelper.SetSize(vm);
+        });
+        
         await SettingsHelper.SaveSettingsAsync();
     }
     

@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Keybindings;
@@ -417,19 +418,31 @@ public static class WindowHelper
 
     public static void SetSize(MainViewModel vm)
     {
-        if (!NavigationHelper.CanNavigate(vm))
-        {
-            return;
-        }
-
         double firstWidth, firstHeight;
         var preloadValue = vm.ImageIterator?.GetCurrentPreLoadValue();
         if (preloadValue == null)
         {
-            var magickImage = new MagickImage();
-            magickImage.Ping(vm.FileInfo);
-            firstWidth = magickImage.Width;
-            firstHeight = magickImage.Height;
+            if (vm.FileInfo is null)
+            {
+                switch (vm.ImageSource)
+                {
+                    default:
+                        firstWidth = SizeDefaults.WindowMinSize;
+                        firstHeight = SizeDefaults.WindowMinSize;
+                        break;
+                    case Bitmap bitmap:
+                        firstWidth = bitmap.PixelSize.Width;
+                        firstHeight = bitmap.PixelSize.Height;
+                        break;
+                }
+            }
+            else
+            {
+                var magickImage = new MagickImage();
+                magickImage.Ping(vm.FileInfo);
+                firstWidth = magickImage.Width;
+                firstHeight = magickImage.Height;
+            }
         }
         else
         {
@@ -487,6 +500,10 @@ public static class WindowHelper
         }
 
         var mainView = UIHelper.GetMainView;
+        if (mainView is null)
+        {
+            return;
+        }
         var screenSize = ScreenHelper.ScreenSize;
         double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
         if (Dispatcher.UIThread.CheckAccess())
