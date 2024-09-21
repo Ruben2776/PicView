@@ -2,7 +2,7 @@
 using Avalonia.Styling;
 using PicView.Core.Config;
 
-namespace PicView.Avalonia.UI;
+namespace PicView.Avalonia.PicViewTheme;
 public static class ThemeManager
 {
     // TODO: Implement changing Dark/Light theme

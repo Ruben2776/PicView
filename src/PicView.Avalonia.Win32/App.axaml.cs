@@ -113,7 +113,7 @@ public class App : Application, IPlatformSpecificService
     public List<string> GetFiles(FileInfo fileInfo)
     {
         var files = FileListHelper.RetrieveFiles(fileInfo);
-        return SortingHelper.SortIEnumerable(files, this);
+        return FileListManager.SortIEnumerable(files, this);
     }
 
     public int CompareStrings(string str1, string str2)

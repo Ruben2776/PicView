@@ -4,6 +4,10 @@ using PicView.Core.Navigation;
 
 namespace PicView.Avalonia.Navigation;
 
+
+// TODO: This file needs to me removed and the FileHistory class needs to use interfaces instead.
+
+
 public static class FileHistoryNavigation
 {
     private static FileHistory? _fileHistory;

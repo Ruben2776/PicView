@@ -7,7 +7,7 @@ using PicView.Core.FileHandling;
 
 namespace PicView.Avalonia.Navigation;
 
-public static class SortingHelper
+public static class FileListManager
 {
     public static List<string> SortIEnumerable(IEnumerable<string> files, IPlatformSpecificService? platformService)
     {

@@ -777,7 +777,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await SortingHelper.UpdateFileList(Vm.PlatformService, Vm, FileListHelper.SortFilesBy.Name);
+        await FileListManager.UpdateFileList(Vm.PlatformService, Vm, FileListHelper.SortFilesBy.Name);
     }
 
     public static async Task SortFilesByCreationTime()
@@ -786,7 +786,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.CreationTime);
+        await FileListManager.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.CreationTime);
     }
 
     public static async Task SortFilesByLastAccessTime()
@@ -795,7 +795,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.LastAccessTime);
+        await FileListManager.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.LastAccessTime);
     }
 
     public static async Task SortFilesByLastWriteTime()
@@ -804,7 +804,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.LastWriteTime);
+        await FileListManager.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.LastWriteTime);
     }
 
     public static async Task SortFilesBySize()
@@ -813,7 +813,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.FileSize);
+        await FileListManager.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.FileSize);
     }
 
     public static async Task SortFilesByExtension()
@@ -822,7 +822,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.Extension);
+        await FileListManager.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.Extension);
     }
 
     public static async Task SortFilesRandomly()
@@ -831,7 +831,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.Random);
+        await FileListManager.UpdateFileList(Vm?.PlatformService, Vm, FileListHelper.SortFilesBy.Random);
     }
 
     public static async Task SortFilesAscending()
@@ -840,7 +840,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, ascending: true);
+        await FileListManager.UpdateFileList(Vm?.PlatformService, Vm, ascending: true);
     }
 
     public static async Task SortFilesDescending()
@@ -849,7 +849,7 @@ public static class FunctionsHelper
         {
             return;
         }
-        await SortingHelper.UpdateFileList(Vm?.PlatformService, Vm, ascending: false);
+        await FileListManager.UpdateFileList(Vm?.PlatformService, Vm, ascending: false);
     }
 
     #endregion Sorting
