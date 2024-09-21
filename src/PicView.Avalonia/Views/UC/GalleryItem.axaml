@@ -30,17 +30,20 @@
                     Classes="txt"
                     FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                     FontSize="14"
-                    Margin="0,0,0,2"
+                    Margin="2,0,2,6"
                     x:Name="FileName" />
                 <TextBlock
                     Classes="txt"
-                    Margin="0,0,0,2"
+                    Margin="2,0,2,2"
                     x:Name="FileLocation" />
                 <TextBlock
                     Classes="txt"
-                    Margin="0,0,0,2"
+                    Margin="2,0,2,2"
                     x:Name="FileSize" />
-                <TextBlock Classes="txt" x:Name="FileDate" />
+                <TextBlock
+                    Classes="txt"
+                    Margin="2,0,2,4"
+                    x:Name="FileDate" />
             </StackPanel>
         </ToolTip.Tip>
         <Border.ContextMenu>
@@ -108,12 +111,12 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
-                    IsEnabled="False"
                     Command="{CompiledBinding SetAsLockScreenCommand}"
                     CommandParameter="{CompiledBinding Path=Text,
                                                        ElementName=FileLocation}"
                     Header="{CompiledBinding SetAsLockScreenImage,
-                                             Mode=OneWay}">
+                                             Mode=OneWay}"
+                    IsEnabled="False">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"

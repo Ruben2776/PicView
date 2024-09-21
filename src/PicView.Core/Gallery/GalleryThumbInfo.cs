@@ -1,7 +1,6 @@
-﻿using PicView.Core.FileHandling;
-using PicView.Core.Localization;
-using System.Globalization;
+﻿using System.Globalization;
 using PicView.Core.Extensions;
+using PicView.Core.Localization;
 
 namespace PicView.Core.Gallery;
 
@@ -10,7 +9,7 @@ public static class GalleryThumbInfo
     /// <summary>
     /// Represents the data for a gallery thumbnail.
     /// </summary>
-    public struct GalleryThumbHolder
+    public readonly struct GalleryThumbHolder
     {
         public string FileLocation { get; }
         public string FileName { get; }
@@ -18,7 +17,7 @@ public static class GalleryThumbInfo
         public string FileDate { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GalleryThumbHolder"/> class.
+        /// Initializes a new instance of the <see cref="GalleryThumbHolder"/> struct.
         /// </summary>
         /// <param name="fileLocation">The file location of the thumbnail.</param>
         /// <param name="fileName">The file name of the thumbnail.</param>
@@ -35,14 +34,13 @@ public static class GalleryThumbInfo
         /// <summary>
         /// Gets thumbnail data for the specified index.
         /// </summary>
-        /// <param name="index">The index of the thumbnail.</param>
-        /// <param name="imageSource">The image source of the thumbnail.</param>
         /// <param name="fileInfo">The file information of the thumbnail.</param>
         /// <returns>The <see cref="GalleryThumbHolder"/> instance containing thumbnail data.</returns>
         public static GalleryThumbHolder GetThumbData(FileInfo? fileInfo)
         {
-            const int fileNameLength = 60;
+            const int fileNameLength = 75;
             var fileLocation = fileInfo.FullName;
+            fileLocation = fileLocation.Length > fileNameLength ? $"{fileLocation.Shorten(fileNameLength)}{fileInfo.Extension}" : fileLocation;
             var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
             fileName = fileName.Length > fileNameLength ? fileName.Shorten(fileNameLength) : fileName;
             var fileSize = 
