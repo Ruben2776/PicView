@@ -112,7 +112,7 @@ public static class ImageTitleFormatter
 
     private static string? FormatZoomPercentage(double zoomValue)
     {
-        if (zoomValue is 1)
+        if (zoomValue is 0 or 1)
         {
             return null;
         }
