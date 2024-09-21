@@ -1,5 +1,5 @@
 <Application
-    RequestedThemeVariant="Default"
+    RequestedThemeVariant="Dark"
     x:Class="PicView.Avalonia.Win32.App"
     x:CompileBindings="True"
     xmlns="https://github.com/avaloniaui"
