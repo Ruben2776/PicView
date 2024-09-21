@@ -28,7 +28,7 @@ public static class QuickLoad
         vm.CurrentView = vm.ImageViewer;
         vm.FileInfo ??= fileInfo;
         
-        var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+        var imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         
         if (imageModel.ImageType is ImageType.AnimatedGif or ImageType.AnimatedWebp)
         {

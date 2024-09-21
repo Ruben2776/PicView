@@ -57,7 +57,7 @@ public sealed class PreLoader : IDisposable
                 {
                     preLoadValue.IsLoading = true;
                     var fileInfo = new FileInfo(list[index]);
-                    imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+                    imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
                     preLoadValue.ImageModel = imageModel;
                 }
                 else
@@ -67,7 +67,7 @@ public sealed class PreLoader : IDisposable
                     {
                         preLoadValue.IsLoading = true;
 
-                        preLoadValue.ImageModel = await ImageHelper.GetImageModelAsync(imageModel.FileInfo).ConfigureAwait(false);
+                        preLoadValue.ImageModel = await GetImageModel.GetImageModelAsync(imageModel.FileInfo).ConfigureAwait(false);
                     }
                 }
                 

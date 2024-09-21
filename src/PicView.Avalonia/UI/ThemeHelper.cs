@@ -14,7 +14,7 @@ public static class ThemeHelper
         {
             return;
         }
-        if (!ImageHelper.HasTransparentBackground(vm.ImageSource))
+        if (!ImageFunctions.HasTransparentBackground(vm.ImageSource))
         {
             return;
         }

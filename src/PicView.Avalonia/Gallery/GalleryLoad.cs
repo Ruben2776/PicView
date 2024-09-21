@@ -174,7 +174,7 @@ public static class GalleryLoad
                     return;
                 }
 
-                var thumbImageModel = await ImageHelper.GetImageModelAsync(fileInfos[i], isThumb: true,
+                var thumbImageModel = await GetImageModel.GetImageModelAsync(fileInfos[i], isThumb: true,
                     (uint)galleryItemSize);
                 var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfos[i]);
 
@@ -191,7 +191,7 @@ public static class GalleryLoad
 
                     if (thumbImageModel?.Image is not null)
                     {
-                        ImageHelper.SetImage(thumbImageModel.Image, galleryItem.GalleryImage,
+                        ImageFunctions.SetImage(thumbImageModel.Image, galleryItem.GalleryImage,
                             thumbImageModel.ImageType);
                     }
 

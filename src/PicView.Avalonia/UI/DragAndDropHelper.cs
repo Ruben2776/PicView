@@ -120,7 +120,7 @@ public static class DragAndDropHelper
             }
             else if (path.IsSupported())
             {
-                var thumb = await ImageHelper.GetThumbAsync(path, 340).ConfigureAwait(false);
+                var thumb = await GetThumbnails.GetThumbAsync(path, 340).ConfigureAwait(false);
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {

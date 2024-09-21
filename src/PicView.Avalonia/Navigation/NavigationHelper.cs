@@ -353,7 +353,7 @@ public static class NavigationHelper
             return;
         }
         
-        var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+        var imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         SetSingleImage(imageModel.Image, imageModel.ImageType, url, vm);
         vm.FileInfo = fileInfo;
         ExifHandling.UpdateExifValues(imageModel, vm);
@@ -548,7 +548,7 @@ public static class NavigationHelper
     /// <returns>A task representing the asynchronous operation.</returns>
     private static async Task PreviewPicAndLoadGallery(FileInfo fileInfo, MainViewModel vm, List<string>? files = null)
     {
-        var imageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+        var imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         vm.ImageSource = imageModel.Image;
         vm.ImageType = imageModel.ImageType;
         WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0,0, imageModel.Rotation, vm);

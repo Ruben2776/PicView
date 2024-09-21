@@ -682,7 +682,7 @@ public sealed class ImageIterator : IDisposable
         if (preLoadValue.ImageModel?.Image is null)
         {
             var fileInfo = preLoadValue.ImageModel?.FileInfo ?? new FileInfo(ImagePaths[index]);
-            preLoadValue.ImageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+            preLoadValue.ImageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         }
 
         if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
@@ -692,7 +692,7 @@ public sealed class ImageIterator : IDisposable
             {
                 var fileInfo = nextPreloadValue.ImageModel?.FileInfo ?? new FileInfo(
                     ImagePaths[GetIteration(index, IsReversed ? NavigateTo.Previous : NavigateTo.Next, true)]);
-                nextPreloadValue.ImageModel = await ImageHelper.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+                nextPreloadValue.ImageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
             }
         }
 

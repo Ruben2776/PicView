@@ -30,7 +30,6 @@ public static class EXIFHelper
         Rotated270Cw = 8
     }
 
-
     public static EXIFOrientation GetImageOrientation(MagickImage magickImage)
     {
         var profile = magickImage.GetExifProfile();

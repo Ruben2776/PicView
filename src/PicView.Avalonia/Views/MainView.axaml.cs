@@ -260,7 +260,7 @@ public partial class MainView : UserControl
                 }
                 else
                 {
-                    var thumb = await ImageHelper.GetThumbAsync(path, SizeDefaults.WindowMinSize - 30).ConfigureAwait(false);
+                    var thumb = await GetThumbnails.GetThumbAsync(path, SizeDefaults.WindowMinSize - 30).ConfigureAwait(false);
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {

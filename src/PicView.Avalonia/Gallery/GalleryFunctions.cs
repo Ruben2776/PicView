@@ -304,7 +304,7 @@ public static class GalleryFunctions
          }
 
          GalleryItem? galleryItem;
-         var imageModel = await ImageHelper.GetImageModelAsync(fileInfo, true, (uint)vm.GetGalleryItemHeight);
+         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo, true, (uint)vm.GetGalleryItemHeight);
          var galleryThumbInfo = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfo);
          try
          {
@@ -338,7 +338,7 @@ public static class GalleryFunctions
                      await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(fileInfo.FullName)).ConfigureAwait(false);
                  };
                  galleryListBox.Items.Insert(index, galleryItem);
-                 ImageHelper.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
+                 ImageFunctions.SetImage(imageModel.Image, galleryItem.GalleryImage, imageModel.ImageType);
              }, DispatcherPriority.Render);
              return true;
          }
