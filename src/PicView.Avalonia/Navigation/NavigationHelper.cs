@@ -573,7 +573,7 @@ public static class NavigationHelper
     /// <returns>A task representing the asynchronous operation.</returns>
     private static async Task CheckAndReloadGallery(FileInfo fileInfo, MainViewModel vm)
     {
-        GalleryFunctions.Clear(vm);
+        GalleryFunctions.Clear();
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown || GalleryFunctions.IsFullGalleryOpen)
         {
             // Check if the bottom gallery should be shown

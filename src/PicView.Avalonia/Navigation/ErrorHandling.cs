@@ -51,7 +51,7 @@ public static class ErrorHandling
             }
 
             vm.GalleryMode = GalleryMode.Closed;
-            GalleryFunctions.Clear(vm);
+            GalleryFunctions.Clear();
             UIHelper.CloseMenus(vm);
             vm.ImageIterator?.Dispose();
             vm.ImageIterator = null;

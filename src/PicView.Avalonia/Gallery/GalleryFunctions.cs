@@ -351,7 +351,7 @@ public static class GalleryFunctions
          return false;
      }
 
-     public static void Clear(MainViewModel? vm)
+     public static void Clear()
      {
          if (Dispatcher.UIThread.CheckAccess())
          {
