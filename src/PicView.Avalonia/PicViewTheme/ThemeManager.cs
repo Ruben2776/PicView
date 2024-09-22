@@ -18,6 +18,10 @@ public static class ThemeManager
             return;
         
         // https://www.codeproject.com/Articles/5317972/Theming-and-Localization-Functionality-for-Multipl
+        // StyleInclude breaks trimming and AOT
+        // Change colors with keys like https://github.com/AvaloniaUI/Avalonia/blob/master/src/Avalonia.Themes.Simple/Accents/Base.xaml
+
+        var test = Application.Current.Resources.MergedDictionaries[1];
 
         // Add the new theme
         if (dark)
