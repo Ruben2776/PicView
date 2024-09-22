@@ -424,17 +424,13 @@ public static class WindowHelper
         {
             if (vm.FileInfo is null)
             {
-                switch (vm.ImageSource)
+                if (vm.ImageSource is Bitmap bitmap)
                 {
-                    default:
-                        firstWidth = SizeDefaults.WindowMinSize;
-                        firstHeight = SizeDefaults.WindowMinSize;
-                        break;
-                    case Bitmap bitmap:
-                        firstWidth = bitmap.PixelSize.Width;
-                        firstHeight = bitmap.PixelSize.Height;
-                        break;
+                    firstWidth = bitmap.PixelSize.Width;
+                    firstHeight = bitmap.PixelSize.Height;
                 }
+                else 
+                    return;
             }
             else
             {
