@@ -6,7 +6,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="TransparencyBackgroundFallback" Value="{StaticResource MenuBackgroundColor}" />
         <Setter Property="Foreground" Value="{StaticResource MainTextColor}" />
-        <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}" />
+        <Setter Property="BorderBrush" Value="{StaticResource MainBorderColor}" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
@@ -28,15 +28,13 @@
                                 </ExperimentalAcrylicBorder.Material>
                             </ExperimentalAcrylicBorder>
 
-                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                <ContentPresenter
-                                    Content="{TemplateBinding Content}"
-                                    ContentTemplate="{TemplateBinding ContentTemplate}"
-                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    Margin="{TemplateBinding Padding}"
-                                    Name="PART_ContentPresenter"
-                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                            </Border>
+                            <ContentPresenter
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                Margin="{TemplateBinding Padding}"
+                                Name="PART_ContentPresenter"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Panel>
                     </VisualLayerManager>
                 </Panel>

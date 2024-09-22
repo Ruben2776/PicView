@@ -8,6 +8,7 @@
     SizeToContent="{CompiledBinding SizeToContent}"
     Title="{CompiledBinding WindowTitle,
                             Mode=OneWay}"
+    TransparencyBackgroundFallback="{StaticResource MenuBackgroundColor}"
     TransparencyLevelHint="AcrylicBlur"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -26,7 +27,7 @@
     </Design.DataContext>
 
     <Border
-        BorderBrush="{StaticResource MainBorderColor}"
+        BorderBrush="{StaticResource WindowBorderColor}"
         BorderThickness="1"
         CornerRadius="8">
         <DockPanel LastChildFill="True">

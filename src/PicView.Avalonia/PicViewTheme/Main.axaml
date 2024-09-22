@@ -13,7 +13,7 @@
             <ResourceDictionary.MergedDictionaries>
 
                 <!--  TODO: Figure out switching themes  -->
-                <ResourceInclude Source="/PicViewTheme/DarkColors.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Accents/Base.axaml" />
                 <!-- <ResourceInclude Source="/PicViewTheme/LightColors.axaml" /> -->
                 <!--  TODO: Figure out switching themes  -->
 

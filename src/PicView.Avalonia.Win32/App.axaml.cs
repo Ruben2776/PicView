@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
@@ -61,6 +62,7 @@ public class App : Application, IPlatformSpecificService
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
+            Current.RequestedThemeVariant = SettingsHelper.Settings.Theme.Dark ? ThemeVariant.Dark : ThemeVariant.Light;
             _mainWindow = new WinMainWindow();
             desktop.MainWindow = _mainWindow;
         });

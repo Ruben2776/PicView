@@ -31,7 +31,6 @@
             BorderBrush="{StaticResource MainBorderColor}"
             BorderThickness="1"
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-            IsEnabled="False"
             Margin="0,0,0,5"
             Padding="5,7,0,7"
             Width="270"

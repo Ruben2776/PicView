@@ -151,6 +151,7 @@
                             </DrawingImage>
                         </Image>
                         <AutoCompleteBox
+                            Background="{StaticResource BackgroundAlpha}"
                             BorderBrush="{StaticResource MainBorderColor}"
                             FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                             Foreground="{StaticResource MainIconColor}"

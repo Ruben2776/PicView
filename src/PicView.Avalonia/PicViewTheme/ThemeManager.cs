@@ -21,8 +21,6 @@ public static class ThemeManager
         // StyleInclude breaks trimming and AOT
         // Change colors with keys like https://github.com/AvaloniaUI/Avalonia/blob/master/src/Avalonia.Themes.Simple/Accents/Base.xaml
 
-        var test = Application.Current.Resources.MergedDictionaries[1];
-
         // Add the new theme
         if (dark)
         {
