@@ -47,6 +47,10 @@ public static class QuickLoad
         {
             vm.ImageViewer.SetTransform(imageModel.EXIFOrientation);
             WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, secondaryPreloadValue?.ImageModel?.PixelWidth ?? 0, secondaryPreloadValue?.ImageModel?.PixelHeight ?? 0, imageModel.Rotation, vm);
+            if (SettingsHelper.Settings.WindowProperties.AutoFit)
+            {
+                WindowHelper.CenterWindowOnScreen();
+            }
         }, DispatcherPriority.Send);
 
         vm.IsLoading = false;
@@ -56,6 +60,7 @@ public static class QuickLoad
             
         SetTitleHelper.SetTitle(vm, imageModel);
         vm.GetIndex = vm.ImageIterator.CurrentIndex + 1;
+
 
         if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
         {
