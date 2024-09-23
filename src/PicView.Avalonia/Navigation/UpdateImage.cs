@@ -154,13 +154,8 @@ public static class UpdateImage
         vm.PlatformService.StopTaskbarProgress();
     }
 
-    public static void LoadingPreview(MainViewModel vm, int index, int currentIndex)
+    public static void LoadingPreview(MainViewModel vm, int index)
     {
-        if (index != currentIndex)
-        {
-            return;
-        }
-
         SetTitleHelper.SetLoadingTitle(vm);
         vm.SelectedGalleryItemIndex = index;
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
@@ -171,35 +166,14 @@ public static class UpdateImage
         using var image = new MagickImage();
         image.Ping(vm.ImageIterator.ImagePaths[index]);
         var thumb = image.GetExifProfile()?.CreateThumbnail();
-        if (thumb is null)
-        {
-            if (index == currentIndex)
-            {
-                vm.IsLoading = true;
-                vm.ImageSource = null;
-            }
 
-            return;
-        }
-
-        var byteArray = thumb.ToByteArray();
+        var byteArray = thumb?.ToByteArray();
         if (byteArray is null)
         {
-            if (index == currentIndex)
-            {
-                vm.IsLoading = true;
-                vm.ImageSource = null;
-            }
-
             return;
         }
 
         var stream = new MemoryStream(byteArray);
-        if (index != currentIndex)
-        {
-            return;
-        }
-
         vm.ImageSource = new Bitmap(stream);
         vm.ImageType = ImageType.Bitmap;
     }

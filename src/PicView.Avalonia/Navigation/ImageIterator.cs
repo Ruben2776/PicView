@@ -635,7 +635,7 @@ public sealed class ImageIterator : IDisposable
                 }
                 else
                 {
-                    UpdateImage.LoadingPreview(_vm, index, CurrentIndex);
+                    UpdateImage.LoadingPreview(_vm, index);
                 }
             }
         });
