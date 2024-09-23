@@ -2,31 +2,32 @@
     <Styles.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/PicViewTheme/Accents/AccentColors.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Accents/MainColors.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Icons.axaml" />
+                <ResourceInclude Source="ResourceDictionaries/AccentColors.axaml" />
+                <ResourceInclude Source="ResourceDictionaries/MainColors.axaml" />
+                <ResourceInclude Source="ResourceDictionaries/Variables.axaml" />
+                <ResourceInclude Source="Icons.axaml" />
 
-                <ResourceInclude Source="/PicViewTheme/Controls/AutoScrollViewer.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/Border.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/Button.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/ComboBox.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/ComboBoxItem.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/FlyoutPresenter.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/ListBox.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/ListBoxItem.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/Menu.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/MenuFlyoutPresenter.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/PathIcon.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/RadioButton.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/Scrollbar.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/Slider.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/SplitButton.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/TabItem.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/TextBlock.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/TextBox.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/ToggleButton.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/ToolTip.axaml" />
-                <ResourceInclude Source="/PicViewTheme/Controls/Window.axaml" />
+                <ResourceInclude Source="Controls/AutoScrollViewer.axaml" />
+                <ResourceInclude Source="Controls/Border.axaml" />
+                <ResourceInclude Source="Controls/Button.axaml" />
+                <ResourceInclude Source="Controls/ComboBox.axaml" />
+                <ResourceInclude Source="Controls/ComboBoxItem.axaml" />
+                <ResourceInclude Source="Controls/FlyoutPresenter.axaml" />
+                <ResourceInclude Source="Controls/ListBox.axaml" />
+                <ResourceInclude Source="Controls/ListBoxItem.axaml" />
+                <ResourceInclude Source="Controls/Menu.axaml" />
+                <ResourceInclude Source="Controls/MenuFlyoutPresenter.axaml" />
+                <ResourceInclude Source="Controls/PathIcon.axaml" />
+                <ResourceInclude Source="Controls/RadioButton.axaml" />
+                <ResourceInclude Source="Controls/Scrollbar.axaml" />
+                <ResourceInclude Source="Controls/Slider.axaml" />
+                <ResourceInclude Source="Controls/SplitButton.axaml" />
+                <ResourceInclude Source="Controls/TabItem.axaml" />
+                <ResourceInclude Source="Controls/TextBlock.axaml" />
+                <ResourceInclude Source="Controls/TextBox.axaml" />
+                <ResourceInclude Source="Controls/ToggleButton.axaml" />
+                <ResourceInclude Source="Controls/ToolTip.axaml" />
+                <ResourceInclude Source="Controls/Window.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>

@@ -52,7 +52,7 @@
                 Classes="noBorderHover"
                 Command="{CompiledBinding DuplicateFileCommand}"
                 Height="28"
-                Width="130">
+                Width="131">
                 <TextBlock
                     Classes="txt"
                     HorizontalAlignment="Center"
@@ -112,7 +112,7 @@
                 CommandParameter="{CompiledBinding FileInfo.FullName,
                                                    FallbackValue=''}"
                 Height="28"
-                Width="130">
+                Width="131">
                 <TextBlock
                     Classes="txt"
                     HorizontalAlignment="Center"

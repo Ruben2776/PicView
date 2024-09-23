@@ -142,7 +142,7 @@
 
         <Style Selector="^.altHover:pointerover /template/ Button#PART_PrimaryButton">
             <Style.Animations>
-                <Animation Duration=".35" IterationCount="1">
+                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
@@ -167,7 +167,7 @@
 
         <Style Selector="^.altHover:pointerover /template/ Button#PART_SecondaryButton">
             <Style.Animations>
-                <Animation Duration=".35" IterationCount="1">
+                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />

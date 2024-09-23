@@ -81,7 +81,7 @@
 
         <Style Selector="^.hover:pointerover /template/ Border#border">
             <Style.Animations>
-                <Animation Duration=".35" IterationCount="1">
+                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
@@ -98,7 +98,7 @@
         </Style>
         <Style Selector="^.altHover:pointerover /template/ Border#border">
             <Style.Animations>
-                <Animation Duration=".35" IterationCount="1">
+                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
@@ -122,7 +122,7 @@
         </Style>
         <Style Selector="^.noBorderHover:pointerover /template/ Border#border">
             <Style.Animations>
-                <Animation Duration=".35" IterationCount="1">
+                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="Transparent" />
