@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
-using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Keybindings;
@@ -380,6 +378,11 @@ public sealed class ImageIterator : IDisposable
     {
         return PreLoader.Get(index, ImagePaths);
     }
+    
+    public async Task<PreLoader.PreLoadValue?> GetPreLoadValueAsync(int index)
+    {
+        return await PreLoader.GetAsync(index, ImagePaths);
+    }
 
     public PreLoader.PreLoadValue? GetCurrentPreLoadValue()
     {
@@ -563,11 +566,11 @@ public sealed class ImageIterator : IDisposable
                     }
 
                     _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
-                    await UpdateSource(index, preloadValue, nextPreloadValue).ConfigureAwait(false);
+                    await UpdateImage.UpdateSource(_vm, index, ImagePaths, IsReversed, preloadValue, nextPreloadValue).ConfigureAwait(false);
                 }
                 else
                 {
-                    await UpdateSource(index, preloadValue).ConfigureAwait(false);
+                    await UpdateImage.UpdateSource(_vm, index, ImagePaths, IsReversed, preloadValue).ConfigureAwait(false);
                 }
 
                 if (ImagePaths.Count > 1)
@@ -632,7 +635,7 @@ public sealed class ImageIterator : IDisposable
                 }
                 else
                 {
-                    LoadingPreview(index);
+                    UpdateImage.LoadingPreview(_vm, index, CurrentIndex);
                 }
             }
         });
@@ -673,130 +676,7 @@ public sealed class ImageIterator : IDisposable
 
     #endregion
 
-    #region Update Source and Preview
-
-    private async Task UpdateSource(int index, PreLoader.PreLoadValue? preLoadValue,
-        PreLoader.PreLoadValue? nextPreloadValue = null)
-    {
-        preLoadValue ??= await PreLoader.GetAsync(index, ImagePaths);
-        if (preLoadValue.ImageModel?.Image is null)
-        {
-            var fileInfo = preLoadValue.ImageModel?.FileInfo ?? new FileInfo(ImagePaths[index]);
-            preLoadValue.ImageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-        }
-
-        if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
-        {
-            nextPreloadValue ??= await GetNextPreLoadValueAsync();
-            if (nextPreloadValue.ImageModel?.Image is null)
-            {
-                var fileInfo = nextPreloadValue.ImageModel?.FileInfo ?? new FileInfo(
-                    ImagePaths[GetIteration(index, IsReversed ? NavigateTo.Previous : NavigateTo.Next, true)]);
-                nextPreloadValue.ImageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-            }
-        }
-
-        _vm.IsLoading = false;
-        
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _vm.ImageViewer.SetTransform(preLoadValue.ImageModel.EXIFOrientation);
-            if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
-            {
-                _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
-            }
-
-            _vm.ImageSource = preLoadValue.ImageModel.Image;
-            if (preLoadValue.ImageModel.ImageType is ImageType.AnimatedGif or ImageType.AnimatedWebp)
-            {
-                _vm.ImageViewer.MainImage.InitialAnimatedSource = preLoadValue.ImageModel.FileInfo.FullName;
-            }
-
-            _vm.ImageType = preLoadValue.ImageModel.ImageType;
-        
-            WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight,
-                nextPreloadValue?.ImageModel?.PixelWidth ?? 0, nextPreloadValue?.ImageModel?.PixelHeight ?? 0,
-                preLoadValue.ImageModel.Rotation, _vm);
-        }, DispatcherPriority.Send);
-
-
-        SetTitleHelper.SetTitle(_vm, preLoadValue.ImageModel);
-
-        if (SettingsHelper.Settings.WindowProperties.KeepCentered)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() => { WindowHelper.CenterWindowOnScreen(); });
-        }
-
-        _vm.GetIndex = index + 1;
-        if (_vm.SelectedGalleryItemIndex != index)
-        {
-            _vm.SelectedGalleryItemIndex = index;
-            if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-            {
-                GalleryNavigation.CenterScrollToSelectedItem(_vm);
-            }
-        }
-
-        await Dispatcher.UIThread.InvokeAsync(TooltipHelper.CloseToolTipMessage);
-
-        _vm.FileInfo = preLoadValue.ImageModel.FileInfo;
-        _vm.ZoomValue = 1;
-        _vm.PixelWidth = preLoadValue.ImageModel.PixelWidth;
-        _vm.PixelHeight = preLoadValue.ImageModel.PixelHeight;
-        ExifHandling.UpdateExifValues(preLoadValue.ImageModel, _vm);
-    }
-
-    public void LoadingPreview(int index)
-    {
-        if (index != CurrentIndex)
-        {
-            return;
-        }
-
-        SetTitleHelper.SetLoadingTitle(_vm);
-        _vm.SelectedGalleryItemIndex = index;
-        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
-        {
-            GalleryNavigation.CenterScrollToSelectedItem(_vm);
-        }
-
-        using var image = new MagickImage();
-        image.Ping(_vm.ImageIterator.ImagePaths[index]);
-        var thumb = image.GetExifProfile()?.CreateThumbnail();
-        if (thumb is null)
-        {
-            if (index == CurrentIndex)
-            {
-                _vm.IsLoading = true;
-                _vm.ImageSource = null;
-            }
-
-            return;
-        }
-
-        var byteArray = thumb.ToByteArray();
-        if (byteArray is null)
-        {
-            if (index == CurrentIndex)
-            {
-                _vm.IsLoading = true;
-                _vm.ImageSource = null;
-            }
-
-            return;
-        }
-
-        var stream = new MemoryStream(byteArray);
-        if (index != CurrentIndex)
-        {
-            return;
-        }
-
-        _vm.ImageSource = new Bitmap(stream);
-        _vm.ImageType = ImageType.Bitmap;
-    }
-
-    #endregion
+    
 
     #region IDisposable
 

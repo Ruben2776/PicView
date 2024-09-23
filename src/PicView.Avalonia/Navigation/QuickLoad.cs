@@ -54,14 +54,16 @@ public static class QuickLoad
         }, DispatcherPriority.Send);
 
         vm.IsLoading = false;
+        vm.GetIndex = vm.ImageIterator.CurrentIndex + 1;
+        vm.ZoomValue = 1;
+        vm.PixelWidth = imageModel.PixelWidth;
+        vm.PixelHeight = imageModel.PixelHeight;
             
         ExifHandling.UpdateExifValues(imageModel, vm);
         vm.ImageIterator ??= new ImageIterator(fileInfo, vm);
             
         SetTitleHelper.SetTitle(vm, imageModel);
-        vm.GetIndex = vm.ImageIterator.CurrentIndex + 1;
-
-
+        
         if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
         {
             vm.PlatformService.SetTaskbarProgress((ulong)vm.ImageIterator.CurrentIndex, (ulong)vm.ImageIterator.ImagePaths.Count);
