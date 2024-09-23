@@ -18,6 +18,7 @@
             FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             FontSize="13"
             FontWeight="Medium"
+            Foreground="{DynamicResource MainTextColor}"
             Height="{CompiledBinding TitlebarHeight,
                                      Mode=OneWay}"
             IsTabStop="False"
@@ -38,6 +39,7 @@
                 FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                 FontSize="13"
                 FontWeight="Medium"
+                Foreground="{DynamicResource MainTextColor}"
                 Height="{CompiledBinding TitlebarHeight,
                                          Mode=OneWay}"
                 IsTabStop="False"

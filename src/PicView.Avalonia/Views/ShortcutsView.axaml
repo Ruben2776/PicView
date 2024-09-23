@@ -54,14 +54,14 @@
                 Width="170" />
             <customControls:KeybindTextBox
                 Alt="False"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Next"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Next"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -76,13 +76,13 @@
                 Width="170" />
             <customControls:KeybindTextBox
                 Alt="False"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Last"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Last"
                 Width="140" />
@@ -96,14 +96,14 @@
                 Width="170" />
             <customControls:KeybindTextBox
                 Alt="False"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 IsReadOnly="True"
                 MethodName="NextFolder"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="NextFolder"
                 Width="140" />
@@ -116,14 +116,14 @@
                 Text="{CompiledBinding PrevImage}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Prev"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Prev"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -137,13 +137,13 @@
                 Text="{CompiledBinding FirstImage}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="First"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="First"
                 Width="140" />
@@ -156,13 +156,13 @@
                 Text="{CompiledBinding PrevFolder}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="PrevFolder"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="PrevFolder"
                 Width="140" />
@@ -175,14 +175,14 @@
                 Text="{CompiledBinding SelectGalleryThumb}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="GalleryClick"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="GalleryClick"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -196,14 +196,14 @@
                 Text="{CompiledBinding ToggleLooping}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ToggleLooping"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ToggleLooping"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -225,14 +225,14 @@
                 Text="{CompiledBinding RotateRight}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Up"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Up"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -265,13 +265,13 @@
                 Text="{CompiledBinding ScrollUp}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ScrollUp"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ScrollUp"
                 Width="140" />
@@ -284,14 +284,14 @@
                 Text="{CompiledBinding RotateLeft}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Down"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Down"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -324,13 +324,13 @@
                 Text="{CompiledBinding ScrollDown}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ScrollDown"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ScrollDown"
                 Width="140" />
@@ -343,14 +343,14 @@
                 Text="{CompiledBinding ScrollToTop}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ScrollToTop"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ScrollToTop"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -364,14 +364,14 @@
                 Text="{CompiledBinding ScrollToBottom}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ScrollToBottom"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ScrollToBottom"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -385,14 +385,14 @@
                 Text="{CompiledBinding ToggleScroll}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ToggleScroll"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ToggleScroll"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -406,14 +406,14 @@
                 Text="{CompiledBinding GetCtrlZoom}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ChangeCtrlZoom"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ChangeCtrlZoom"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -435,14 +435,14 @@
                 Text="{CompiledBinding ZoomIn}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ZoomIn"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 IsReadOnly="True"
                 MethodName="ZoomIn"
@@ -457,14 +457,14 @@
                 Text="{CompiledBinding ZoomOut}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ZoomOut"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 IsReadOnly="True"
                 MethodName="ZoomOut"
@@ -498,7 +498,7 @@
                 Text="{CompiledBinding ResetZoom}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ResetZoom"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -526,14 +526,14 @@
                 Text="{CompiledBinding SideBySide}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="SideBySide"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="SideBySide"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -547,14 +547,14 @@
                 Text="{CompiledBinding Stretch}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Stretch"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Stretch"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -568,14 +568,14 @@
                 Text="{CompiledBinding Flip}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Flip"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Flip"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -589,14 +589,14 @@
                 Text="{CompiledBinding Crop}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Crop"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Crop"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -610,14 +610,14 @@
                 Text="{CompiledBinding ChangeBackground}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ChangeBackground"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ChangeBackground"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -631,14 +631,14 @@
                 Text="{CompiledBinding OptimizeImage}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="OptimizeImage"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="OptimizeImage"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -660,14 +660,14 @@
                 Text="{CompiledBinding HideShowInterface}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ToggleInterface"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ToggleInterface"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -681,7 +681,7 @@
                 Text="{CompiledBinding ToggleFullscreen}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Fullscreen"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -701,7 +701,7 @@
                 Width="170" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Fullscreen"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -719,14 +719,14 @@
                 Text="{CompiledBinding Slideshow}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Slideshow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Slideshow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -740,14 +740,14 @@
                 Text="{CompiledBinding ShowImageGallery}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ToggleGallery"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ToggleGallery"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -769,14 +769,14 @@
                 Text="{CompiledBinding Open}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Open"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Open"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -790,14 +790,14 @@
                 Text="{CompiledBinding OpenWith}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="OpenWith"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="OpenWith"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -811,14 +811,14 @@
                 Text="{CompiledBinding Reload}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Reload"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Reload"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -832,14 +832,14 @@
                 Text="{CompiledBinding Save}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Save"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Save"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -853,14 +853,14 @@
                 Text="{CompiledBinding Print}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Print"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Print"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -874,14 +874,14 @@
                 Text="{CompiledBinding DeleteFile}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="DeleteFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="DeleteFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -895,14 +895,14 @@
                 Text="{CompiledBinding RenameFile}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Rename"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Rename"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -916,14 +916,14 @@
                 Text="{CompiledBinding FileProperties}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ShowFileProperties"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ShowFileProperties"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -945,14 +945,14 @@
                 Text="{CompiledBinding CopyFile}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="CopyFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="CopyFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -966,14 +966,14 @@
                 Text="{CompiledBinding FileCopyPath}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="CopyFilePath"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="CopyFilePath"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -987,14 +987,14 @@
                 Text="{CompiledBinding CopyImage}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="CopyImage"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="CopyImage"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1010,14 +1010,14 @@
                 <Run Text=" base64" />
             </TextBlock>
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="CopyBase64"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="CopyBase64"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1031,14 +1031,14 @@
                 Text="{CompiledBinding FileCut}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="CutFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="CutFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1052,14 +1052,14 @@
                 Text="{CompiledBinding FilePaste}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Paste"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Paste"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1073,14 +1073,14 @@
                 Text="{CompiledBinding DuplicateFile}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="DuplicateFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="DuplicateFile"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1102,14 +1102,14 @@
                 Text="{CompiledBinding About}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="AboutWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="AboutWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1123,14 +1123,14 @@
                 Text="{CompiledBinding Settings}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="SettingsWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="SettingsWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1144,14 +1144,14 @@
                 Text="{CompiledBinding ImageInfo}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ImageInfoWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ImageInfoWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1165,14 +1165,14 @@
                 Text="{CompiledBinding ApplicationShortcuts}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="KeybindingsWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="KeybindingsWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1186,14 +1186,14 @@
                 Text="{CompiledBinding Resize}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ResizeWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="ResizeWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1224,14 +1224,14 @@
                 Text="{CompiledBinding Close}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Close"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Close"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1245,14 +1245,14 @@
                 Text="{CompiledBinding NewWindow}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="NewWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="NewWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1266,14 +1266,14 @@
                 Text="{CompiledBinding CenterWindow}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Center"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Center"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1287,14 +1287,14 @@
                 Text="{CompiledBinding StayTopMost}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="SetTopMost"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="SetTopMost"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1334,14 +1334,14 @@
                 Text="{CompiledBinding AutoFitWindow}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="AutoFitWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="AutoFitWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1357,14 +1357,14 @@
                 <Run Text="{CompiledBinding Stretch}" />
             </TextBlock>
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="AutoFitWindowAndStretch"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="AutoFitWindowAndStretch"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1378,14 +1378,14 @@
                 Text="{CompiledBinding NormalWindow}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="NormalWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="NormalWindow"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1401,14 +1401,14 @@
                 <Run Text="{CompiledBinding Stretch}" />
             </TextBlock>
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="NormalWindowAndStretch"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="NormalWindowAndStretch"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1430,14 +1430,14 @@
                 Text="{CompiledBinding _1Star}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set1Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set1Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1451,14 +1451,14 @@
                 Text="{CompiledBinding _2Star}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set2Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set2Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1472,14 +1472,14 @@
                 Text="{CompiledBinding _3Star}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set3Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set3Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1493,14 +1493,14 @@
                 Text="{CompiledBinding _4Star}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set4Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set4Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1514,14 +1514,14 @@
                 Text="{CompiledBinding _5Star}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set5Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set2Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
@@ -1535,14 +1535,14 @@
                 Text="{CompiledBinding RemoveStarRating}"
                 Width="170" />
             <customControls:KeybindTextBox
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set0Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
-                Background="{StaticResource SecondaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 Classes="hover TStyle"
                 MethodName="Set0Star"
                 ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"

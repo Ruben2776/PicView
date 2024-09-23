@@ -3,8 +3,8 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ControlTheme TargetType="ToolTip" x:Key="{x:Type ToolTip}">
-        <Setter Property="Background" Value="{StaticResource SecondaryBackgroundColor}" />
-        <Setter Property="BorderBrush" Value="{StaticResource MainBorderColor}" />
+        <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
@@ -12,13 +12,14 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <ContentPresenter
-                    Background="{StaticResource ContextMenuBackgroundColor}"
-                    BorderBrush="{StaticResource MainBorderColor}"
+                    Background="{DynamicResource ContextMenuBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     Content="{TemplateBinding Content}"
                     ContentTemplate="{TemplateBinding ContentTemplate}"
                     CornerRadius="5"
-                    Foreground="{StaticResource ContextMenuTextColor}"
+                    Foreground="{DynamicResource ContextMenuTextColor}"
+                    IsHitTestVisible="False"
                     Name="PART_ContentPresenter"
                     Padding="8" />
             </ControlTemplate>

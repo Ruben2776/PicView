@@ -23,7 +23,7 @@
     </Design.DataContext>
     <DockPanel Background="Transparent" PointerPressed="MoveWindow">
         <StackPanel
-            Background="{StaticResource SecondaryBackgroundColor}"
+            Background="{DynamicResource SecondaryBackgroundColor}"
             DockPanel.Dock="Top"
             Height="28"
             Orientation="Horizontal">
@@ -47,7 +47,7 @@
             </Image>
 
             <Button
-                BorderBrush="{StaticResource MainBorderColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="noBorderHover"
                 Command="{CompiledBinding DuplicateFileCommand}"
@@ -55,29 +55,27 @@
                 Width="130">
                 <TextBlock
                     Classes="txt"
-                    Foreground="{StaticResource MainTextColor}"
                     HorizontalAlignment="Center"
                     Text="{CompiledBinding DuplicateFile}"
                     VerticalAlignment="Center" />
             </Button>
 
             <Button
-                BorderBrush="{StaticResource MainBorderColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{Binding RecycleFileCommand}"
+                Command="{CompiledBinding RecycleFileCommand}"
                 Height="28"
                 Width="130">
                 <TextBlock
                     Classes="txt"
-                    Foreground="{StaticResource MainTextColor}"
                     HorizontalAlignment="Center"
                     Text="{Binding DeleteFile}"
                     VerticalAlignment="Center" />
             </Button>
 
             <Button
-                BorderBrush="{StaticResource MainBorderColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
                 Command="{Binding OptimizeImageCommand}"
@@ -85,14 +83,13 @@
                 Width="130">
                 <TextBlock
                     Classes="txt"
-                    Foreground="{StaticResource MainTextColor}"
                     HorizontalAlignment="Center"
                     Text="{Binding OptimizeImage}"
                     VerticalAlignment="Center" />
             </Button>
 
             <Button
-                BorderBrush="{StaticResource MainBorderColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
                 Command="{CompiledBinding OpenWithCommand}"
@@ -102,14 +99,13 @@
                 Width="130">
                 <TextBlock
                     Classes="txt"
-                    Foreground="{StaticResource MainTextColor}"
                     HorizontalAlignment="Center"
                     Text="{Binding OpenWith}"
                     VerticalAlignment="Center" />
             </Button>
 
             <Button
-                BorderBrush="{StaticResource MainBorderColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
                 Command="{CompiledBinding LocateOnDiskCommand}"
@@ -119,19 +115,18 @@
                 Width="130">
                 <TextBlock
                     Classes="txt"
-                    Foreground="{StaticResource MainTextColor}"
                     HorizontalAlignment="Center"
                     Text="{Binding ShowInFolder}"
                     VerticalAlignment="Center" />
             </Button>
             <buttons:StarOutlineButtons
-                Background="{StaticResource FadedBackgroundColor}"
+                Background="{DynamicResource FadedBackgroundColor}"
                 Padding="5,0,0,3"
                 x:Name="StarOutlineButtons" />
 
             <Button
-                Background="{StaticResource MainButtonBackgroundColor}"
-                BorderBrush="{StaticResource MainBorderColor}"
+                Background="{DynamicResource MainButtonBackgroundColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="hover"
                 Click="Minimize"
@@ -146,8 +141,8 @@
             </Button>
 
             <Button
-                Background="{StaticResource MainButtonBackgroundColor}"
-                BorderBrush="{StaticResource MainBorderColor}"
+                Background="{DynamicResource MainButtonBackgroundColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Click="Close"
@@ -163,7 +158,7 @@
         </StackPanel>
         <Rectangle
             DockPanel.Dock="Top"
-            Fill="{StaticResource MainBorderColor}"
+            Fill="{DynamicResource MainBorderColor}"
             Height="1"
             Width="899" />
         <views:ExifView Background="{StaticResource NoisyTexture}" x:Name="ExifView" />

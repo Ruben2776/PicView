@@ -6,8 +6,8 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
-                    Background="{StaticResource ContextMenuBackgroundColor}"
-                    BorderBrush="{StaticResource MainBorderColor}"
+                    Background="{DynamicResource ContextMenuBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     CornerRadius="8"
                     Name="LayoutRoot">

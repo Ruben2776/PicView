@@ -1,5 +1,5 @@
 <UserControl
-    Background="{StaticResource SecondaryBackgroundColor}"
+    Background="{DynamicResource SecondaryBackgroundColor}"
     MaxWidth="{CompiledBinding TitleMaxWidth,
                                Mode=OneWay}"
     d:DesignHeight="450"
@@ -29,7 +29,8 @@
                                    Mode=OneWay}"
             TextAlignment="Center"
             TextTrimming="CharacterEllipsis"
-            ToolTip.Tip="{Binding TitleTooltip, Mode=OneWay}"
+            ToolTip.Tip="{CompiledBinding TitleTooltip,
+                                          Mode=OneWay}"
             VerticalAlignment="Center" />
         <TextBox
             FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"

@@ -13,8 +13,8 @@
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Button
-        Background="{StaticResource AltBackgroundColor}"
-        BorderBrush="{StaticResource MainBorderColor}"
+        Background="{DynamicResource AltBackgroundColor}"
+        BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="0,1,1,1"
         Classes="hover"
         Command="{CompiledBinding PreviousArrowButtonCommand}"
@@ -24,7 +24,7 @@
         Width="50"
         x:Name="PolyButton">
         <Polygon
-            Fill="{StaticResource MainIconColor}"
+            Fill="{DynamicResource MainIconColor}"
             Height="40"
             Margin="0,5,5,0"
             Points="352,128.4 319.7,96 160,256 160,256 160,256 319.7,416 352,383.6 224.7,256"

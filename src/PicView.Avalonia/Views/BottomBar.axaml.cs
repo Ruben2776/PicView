@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using Avalonia.Styling;
 using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.Views;
@@ -14,7 +13,7 @@ public partial class BottomBar : UserControl
         InitializeComponent();
         NextButton.PointerEntered += (s, e) =>
         {
-            if (!Application.Current.TryGetResource("ButtonForegroundPointerOver", ThemeVariant.Default, out var buttonForegroundPointerOver))
+            if (!Application.Current.TryGetResource("ButtonForegroundPointerOver", Application.Current.RequestedThemeVariant, out var buttonForegroundPointerOver))
             {
                 return;
             }
@@ -23,7 +22,7 @@ public partial class BottomBar : UserControl
         };
         NextButton.PointerExited += (s, e) =>
         {
-            if (!Application.Current.TryGetResource("MainIconColor", ThemeVariant.Default, out var mainIconColor))
+            if (!Application.Current.TryGetResource("MainIconColor", Application.Current.RequestedThemeVariant, out var mainIconColor))
             {
                 return;
             }
@@ -32,7 +31,7 @@ public partial class BottomBar : UserControl
         };
         PreviousButton.PointerEntered += (s, e) =>
         {
-            if (!Application.Current.TryGetResource("ButtonForegroundPointerOver", ThemeVariant.Default, out var buttonForegroundPointerOver))
+            if (!Application.Current.TryGetResource("ButtonForegroundPointerOver", Application.Current.RequestedThemeVariant, out var buttonForegroundPointerOver))
             {
                 return;
             }
@@ -41,7 +40,7 @@ public partial class BottomBar : UserControl
         };
         PreviousButton.PointerExited += (s, e) =>
         {
-            if (!Application.Current.TryGetResource("MainIconColor", ThemeVariant.Default, out var mainIconColor))
+            if (!Application.Current.TryGetResource("MainIconColor", Application.Current.RequestedThemeVariant, out var mainIconColor))
             {
                 return;
             }

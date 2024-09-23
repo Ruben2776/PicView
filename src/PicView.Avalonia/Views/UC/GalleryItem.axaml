@@ -57,7 +57,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PrintGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -73,7 +73,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource OpenWithGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -88,7 +88,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ShowInFolderGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -104,7 +104,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -120,7 +120,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -136,7 +136,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CopyGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -146,7 +146,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CopyGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -162,7 +162,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CopyGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -177,7 +177,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CopyGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -188,7 +188,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CutGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -203,7 +203,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource RecycleGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />

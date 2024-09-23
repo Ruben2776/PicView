@@ -1,40 +1,36 @@
 <ResourceDictionary
+    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:ClassModifier="internal">
-    <ControlTheme x:Key="{x:Type ToggleButton}" TargetType="ToggleButton">
-        <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}" />
-        <Setter Property="BorderThickness" Value="{DynamicResource ThemeBorderThickness}" />
-        <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ControlTheme TargetType="ToggleButton" x:Key="{x:Type ToggleButton}">
         <Setter Property="Padding" Value="4" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <ControlTemplate TargetType="{x:Type ToggleButton}">
                 <Border
-                    Name="border"
-                    Padding="{TemplateBinding Padding}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}">
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Name="border"
+                    Padding="{TemplateBinding Padding}">
                     <StackPanel Orientation="Horizontal">
                         <Decorator
-                            Margin="{TemplateBinding Padding}"
                             HorizontalAlignment="Center"
+                            Margin="{TemplateBinding Padding}"
                             VerticalAlignment="Center">
 
-                            <Canvas Width="20" Height="20">
+                            <Canvas Height="20" Width="20">
                                 <Border
-                                    x:Name="TickMark"
-                                    Width="16"
-                                    Height="16"
-                                    Margin="1,2.2,4,0"
-                                    Background="{StaticResource MainIconColor}"
+                                    Background="#eeebebeb"
                                     CornerRadius="9"
+                                    Height="16"
                                     IsVisible="False"
-                                    UseLayoutRounding="True">
+                                    Margin="1,2.2,4,0"
+                                    UseLayoutRounding="True"
+                                    Width="16"
+                                    x:Name="TickMark">
                                     <Path
                                         Data="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"
                                         Fill="{DynamicResource AccentColor}"
@@ -42,24 +38,24 @@
                                 </Border>
 
                                 <Path
-                                    x:Name="CrossMark"
-                                    Width="11"
-                                    Height="11"
-                                    Margin="2,3.9,3,0"
                                     Data="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
+                                    Height="11"
                                     IsVisible="True"
-                                    Stretch="Fill" />
+                                    Margin="2,3.9,3,0"
+                                    Stretch="Fill"
+                                    Width="11"
+                                    x:Name="CrossMark" />
                             </Canvas>
                         </Decorator>
                         <ContentPresenter
-                            Name="PART_ContentPresenter"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            Name="PART_ContentPresenter"
                             RecognizesAccessKey="True"
-                            TextElement.Foreground="{TemplateBinding Foreground}" />
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </StackPanel>
                 </Border>
             </ControlTemplate>
@@ -85,10 +81,10 @@
 
         <Style Selector="^.hover:pointerover /template/ Border#border">
             <Style.Animations>
-                <Animation IterationCount="1" Duration=".35">
+                <Animation Duration=".35" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{StaticResource SecondaryBackgroundColor}" />
+                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
                         </Setter>
                     </KeyFrame>
                     <KeyFrame Cue="1">
@@ -102,24 +98,31 @@
         </Style>
         <Style Selector="^.altHover:pointerover /template/ Border#border">
             <Style.Animations>
-                <Animation IterationCount="1" Duration=".35">
+                <Animation Duration=".35" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{StaticResource SecondaryBackgroundColor}" />
+                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
                         </Setter>
                     </KeyFrame>
                     <KeyFrame Cue="1">
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{StaticResource BackgroundHoverColor}" />
+                            <SolidColorBrush Color="{DynamicResource BackgroundHoverColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource SecondaryBorderColor}" />
                         </Setter>
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
-            <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
+            <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
         </Style>
         <Style Selector="^.noBorderHover:pointerover /template/ Border#border">
             <Style.Animations>
-                <Animation IterationCount="1" Duration=".35">
+                <Animation Duration=".35" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="Transparent" />
@@ -127,12 +130,12 @@
                     </KeyFrame>
                     <KeyFrame Cue="1">
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{StaticResource AltBackgroundHoverColor}" />
+                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
                         </Setter>
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
-            <Setter Property="Background" Value="{StaticResource AltBackgroundHoverColor}" />
+            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
         </Style>
         <Style Selector="^.hover:pressed  /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />

@@ -11,8 +11,8 @@
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Button
-        Background="{StaticResource AltBackgroundColor}"
-        BorderBrush="{StaticResource MainBorderColor}"
+        Background="{DynamicResource AltBackgroundColor}"
+        BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="1,0,0,0"
         Classes="ButtonBorder noBorderHover"
         Command="{CompiledBinding MinimizeCommand}"
@@ -28,7 +28,7 @@
         <Viewbox Height="15" Width="15">
             <Path
                 Data="{StaticResource MinimizeGeometry}"
-                Fill="{StaticResource MainIconColor}"
+                Fill="{DynamicResource MainIconColor}"
                 Margin="7.5,0,0,7"
                 Stretch="Fill" />
         </Viewbox>

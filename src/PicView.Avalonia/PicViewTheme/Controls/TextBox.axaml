@@ -4,13 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ControlTheme TargetType="TextBox" x:Key="{x:Type TextBox}">
-        <Setter Property="CaretBrush" Value="{StaticResource MainTextColor}" />
-        <!-- <Setter Property="Background" Value="{TemplateBinding Background}" /> -->
-        <!-- <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" /> -->
-        <!-- <Setter Property="Foreground" Value="{TemplateBinding Foreground}" /> -->
-        <!-- <Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}" /> -->
+        <Setter Property="CaretBrush" Value="{DynamicResource MainTextColor}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource AccentColor}" />
-        <Setter Property="SelectionForegroundBrush" Value="{StaticResource MainTextColor}" />
+        <Setter Property="SelectionForegroundBrush" Value="{DynamicResource MainTextColor}" />
         <Setter Property="Padding" Value="4" />
         <Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
         <Setter Property="Template">
@@ -29,15 +25,11 @@
                         <DataValidationErrors>
 
                             <Grid ColumnDefinitions="Auto,*,Auto">
-                                <ContentPresenter
-                                    Content="{TemplateBinding InnerLeftContent}"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="1" />
+                                <ContentPresenter Content="{TemplateBinding InnerLeftContent}" Grid.Column="0" />
                                 <ScrollViewer
                                     AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
                                     BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}"
                                     Grid.Column="1"
-                                    Grid.ColumnSpan="1"
                                     HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
                                     IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
                                     Name="PART_ScrollViewer"
@@ -76,10 +68,7 @@
                                         </Style>
                                     </ScrollViewer.Styles>
                                 </ScrollViewer>
-                                <ContentPresenter
-                                    Content="{TemplateBinding InnerRightContent}"
-                                    Grid.Column="2"
-                                    Grid.ColumnSpan="1" />
+                                <ContentPresenter Content="{TemplateBinding InnerRightContent}" Grid.Column="2" />
                             </Grid>
                         </DataValidationErrors>
                     </DockPanel>
@@ -88,19 +77,19 @@
         </Setter>
 
         <Style Selector="^:pointerover /template/ Border#border">
-            <Setter Property="BorderBrush" Value="{StaticResource SecondaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
         </Style>
         <Style Selector="^:focus /template/ Border#border">
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
         </Style>
         <Style Selector="^:error /template/ Border#border">
-            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource ErrorBrush}" />
         </Style>
         <Style Selector="^ /template/ DockPanel">
             <Setter Property="Cursor" Value="IBeam" />
         </Style>
         <Style Selector="^:disabled /template/ Border#border">
-            <Setter Property="Background" Value="{StaticResource BackgroundAlpha}" />
+            <Setter Property="Background" Value="{DynamicResource BackgroundAlpha}" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

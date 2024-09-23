@@ -10,8 +10,8 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <ContentPresenter
-                    Background="{StaticResource SecondaryBackgroundColor}"
-                    BorderBrush="{StaticResource MainBorderColor}"
+                    Background="{DynamicResource SecondaryBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     Content="{TemplateBinding Content}"
                     ContentTemplate="{TemplateBinding ContentTemplate}"

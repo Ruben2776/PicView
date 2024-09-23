@@ -27,8 +27,8 @@
                                    Mode=OneWay}" />
 
         <ComboBox
-            Background="{StaticResource SecondaryBackgroundColor}"
-            BorderBrush="{StaticResource MainBorderColor}"
+            Background="{DynamicResource SecondaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
             BorderThickness="1"
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             Margin="0,0,0,5"
@@ -134,7 +134,7 @@
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            Foreground="{StaticResource MainTextColorFaded}"
+            Foreground="{DynamicResource MainTextColorFaded}"
             Margin="0,0,0,15"
             Text="{CompiledBinding GetFullGalleryItemHeight,
                                    Mode=OneWay}" />
@@ -151,7 +151,7 @@
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            Foreground="{StaticResource MainTextColorFaded}"
+            Foreground="{DynamicResource MainTextColorFaded}"
             Margin="0,0,0,15"
             Text="{CompiledBinding GetBottomGalleryItemHeight,
                                    Mode=OneWay}" />
@@ -165,8 +165,8 @@
             Text="{CompiledBinding GalleryThumbnailStretch,
                                    Mode=OneWay}" />
         <ComboBox
-            Background="{StaticResource SecondaryBackgroundColor}"
-            BorderBrush="{StaticResource MainBorderColor}"
+            Background="{DynamicResource SecondaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
             BorderThickness="1"
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             Margin="0,0,0,10"
@@ -189,8 +189,8 @@
             MaxWidth="270"
             Text="{CompiledBinding BottomGalleryThumbnailStretch}" />
         <ComboBox
-            Background="{StaticResource SecondaryBackgroundColor}"
-            BorderBrush="{StaticResource MainBorderColor}"
+            Background="{DynamicResource SecondaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
             BorderThickness="1"
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             Margin="0,0,0,10"

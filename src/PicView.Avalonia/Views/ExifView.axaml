@@ -33,9 +33,9 @@
                             Text="{CompiledBinding FileName}"
                             Width="100" />
                         <customControls:FuncTextBox
-                            Background="{StaticResource SecondaryBackgroundColor}"
+                            Background="{DynamicResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
-                            Foreground="{StaticResource MainTextColor}"
+                            Foreground="{DynamicResource MainTextColor}"
                             Text="{Binding FileInfo.Name, FallbackValue=''}" />
                         <customControls:CopyButton
                             Classes="altHover BorderStyle"
@@ -44,7 +44,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -58,9 +58,9 @@
                             Text="{CompiledBinding Folder}"
                             Width="100" />
                         <customControls:FuncTextBox
-                            Background="{StaticResource SecondaryBackgroundColor}"
+                            Background="{DynamicResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
-                            Foreground="{StaticResource MainTextColor}"
+                            Foreground="{DynamicResource MainTextColor}"
                             Text="{CompiledBinding FileInfo.DirectoryName,
                                                    FallbackValue=''}" />
                         <customControls:CopyButton
@@ -70,7 +70,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -84,9 +84,9 @@
                             Text="{CompiledBinding FullPath}"
                             Width="100" />
                         <customControls:FuncTextBox
-                            Background="{StaticResource SecondaryBackgroundColor}"
+                            Background="{DynamicResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
-                            Foreground="{StaticResource MainTextColor}"
+                            Foreground="{DynamicResource MainTextColor}"
                             Text="{CompiledBinding FileInfo.FullName,
                                                    FallbackValue=''}" />
                         <customControls:CopyButton
@@ -96,7 +96,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -121,7 +121,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -146,7 +146,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -171,7 +171,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -194,7 +194,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -211,9 +211,9 @@
                             Text="{CompiledBinding Width}"
                             Width="100" />
                         <customControls:FuncTextBox
-                            Background="{StaticResource SecondaryBackgroundColor}"
+                            Background="{DynamicResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
-                            Foreground="{StaticResource MainTextColor}"
+                            Foreground="{DynamicResource MainTextColor}"
                             Text="{CompiledBinding PixelWidth}"
                             ToolTip.Tip="{CompiledBinding SizeTooltip}"
                             x:Name="PixelWidthTextBox" />
@@ -223,7 +223,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -237,9 +237,9 @@
                             Text="{CompiledBinding Height}"
                             Width="100" />
                         <customControls:FuncTextBox
-                            Background="{StaticResource SecondaryBackgroundColor}"
+                            Background="{DynamicResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
-                            Foreground="{StaticResource MainTextColor}"
+                            Foreground="{DynamicResource MainTextColor}"
                             Text="{CompiledBinding PixelHeight}"
                             ToolTip.Tip="{CompiledBinding SizeTooltip}"
                             x:Name="PixelHeightTextBox" />
@@ -249,7 +249,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -272,7 +272,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -295,7 +295,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -318,7 +318,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -341,7 +341,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -364,7 +364,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -380,7 +380,7 @@
                         Text="{CompiledBinding ConvertTo}"
                         TextAlignment="Center" />
                     <ComboBox
-                        Background="{StaticResource SecondaryBackgroundColor}"
+                        Background="{DynamicResource SecondaryBackgroundColor}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         BorderThickness="1"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -397,7 +397,7 @@
                         <ComboBoxItem Content=".jxl" />
                     </ComboBox>
                     <Button
-                        Background="{StaticResource SecondaryBackgroundColor}"
+                        Background="{DynamicResource SecondaryBackgroundColor}"
                         Classes="altHover BorderStyle"
                         Command="{CompiledBinding ConvertCommand}"
                         CommandParameter="{CompiledBinding Path=SelectedIndex,
@@ -420,7 +420,7 @@
                         Text="{CompiledBinding Resize}"
                         TextAlignment="Center" />
                     <ComboBox
-                        Background="{StaticResource SecondaryBackgroundColor}"
+                        Background="{DynamicResource SecondaryBackgroundColor}"
                         BorderBrush="{StaticResource MainBorderColor}"
                         BorderThickness="1"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -450,7 +450,7 @@
                         <ComboBoxItem Content="5%" />
                     </ComboBox>
                     <Button
-                        Background="{StaticResource SecondaryBackgroundColor}"
+                        Background="{DynamicResource SecondaryBackgroundColor}"
                         Classes="altHover BorderStyle"
                         Command="{CompiledBinding ResizeCommand}"
                         CommandParameter="{CompiledBinding Path=SelectedIndex,
@@ -479,7 +479,7 @@
                     Width="395" />
                 <Path
                     Data="M256 8C118.941 8 8 118.919 8 256c0 137.059 110.919 248 248 248 48.154 0 95.342-14.14 135.408-40.223 12.005-7.815 14.625-24.288 5.552-35.372l-10.177-12.433c-7.671-9.371-21.179-11.667-31.373-5.129C325.92 429.757 291.314 440 256 440c-101.458 0-184-82.542-184-184S154.542 72 256 72c100.139 0 184 57.619 184 160 0 38.786-21.093 79.742-58.17 83.693-17.349-.454-16.91-12.857-13.476-30.024l23.433-121.11C394.653 149.75 383.308 136 368.225 136h-44.981a13.518 13.518 0 0 0-13.432 11.993l-.01.092c-14.697-17.901-40.448-21.775-59.971-21.775-74.58 0-137.831 62.234-137.831 151.46 0 65.303 36.785 105.87 96 105.87 26.984 0 57.369-15.637 74.991-38.333 9.522 34.104 40.613 34.103 70.71 34.103C462.609 379.41 504 307.798 504 232 504 95.653 394.023 8 256 8zm-21.68 304.43c-22.249 0-36.07-15.623-36.07-40.771 0-44.993 30.779-72.729 58.63-72.729 22.292 0 35.601 15.241 35.601 40.77 0 45.061-33.875 72.73-58.161 72.73z"
-                    Fill="{StaticResource MainIconColor}"
+                    Fill="{DynamicResource MainIconColor}"
                     Stretch="Uniform" />
                 <Rectangle
                     Fill="{StaticResource MainBorderColor}"
@@ -508,7 +508,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -532,7 +532,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -558,7 +558,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -582,7 +582,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -609,7 +609,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -633,7 +633,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -654,7 +654,7 @@
                     Width="395" />
                 <Path
                     Data="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"
-                    Fill="{StaticResource MainIconColor}"
+                    Fill="{DynamicResource MainIconColor}"
                     Stretch="Uniform" />
                 <Rectangle
                     Fill="{StaticResource MainBorderColor}"
@@ -683,7 +683,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -707,7 +707,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -732,7 +732,7 @@
                         ToolTip.Tip="{CompiledBinding Copy}">
                         <Path
                             Data="{StaticResource CopyGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="16"
                             Stretch="Fill"
                             Width="16" />
@@ -745,7 +745,7 @@
                             Margin="30,0,15,0">
                             <Path
                                 Data="M473.16 221.48l-2.26-9.59H262.46v88.22H387c-12.93 61.4-72.93 93.72-121.94 93.72-35.66 0-73.25-15-98.13-39.11a140.08 140.08 0 01-41.8-98.88c0-37.16 16.7-74.33 41-98.78s61-38.13 97.49-38.13c41.79 0 71.74 22.19 82.94 32.31l62.69-62.36C390.86 72.72 340.34 32 261.6 32c-60.75 0-119 23.27-161.58 65.71C58 139.5 36.25 199.93 36.25 256s20.58 113.48 61.3 155.6c43.51 44.92 105.13 68.4 168.58 68.4 57.73 0 112.45-22.62 151.45-63.66 38.34-40.4 58.17-96.3 58.17-154.9 0-24.67-2.48-39.32-2.59-39.96z"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="20"
                                 Stretch="Fill"
                                 Width="20" />
@@ -753,7 +753,7 @@
                         <Button Classes="altHover BorderStyle" Command="{CompiledBinding OpenBingLinkCommand}">
                             <Path
                                 Data="M31.87 30.58H244.7v212.81H31.87zM266.89 30.58H479.7v212.81H266.89zM31.87 265.61H244.7v212.8H31.87zM266.89 265.61H479.7v212.8H266.89z"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="20"
                                 Stretch="Fill"
                                 Width="20" />
@@ -773,7 +773,7 @@
                     Width="395" />
                 <Path
                     Data="M384 121.941V128H256V0h6.059a24 24 0 0 1 16.97 7.029l97.941 97.941a24.002 24.002 0 0 1 7.03 16.971zM248 160c-13.2 0-24-10.8-24-24V0H24C10.745 0 0 10.745 0 24v464c0 13.255 10.745 24 24 24h336c13.255 0 24-10.745 24-24V160H248zm-135.455 16c26.51 0 48 21.49 48 48s-21.49 48-48 48-48-21.49-48-48 21.491-48 48-48zm208 240h-256l.485-48.485L104.545 328c4.686-4.686 11.799-4.201 16.485.485L160.545 368 264.06 264.485c4.686-4.686 12.284-4.686 16.971 0L320.545 304v112z"
-                    Fill="{StaticResource MainIconColor}"
+                    Fill="{DynamicResource MainIconColor}"
                     Stretch="Uniform" />
                 <Rectangle
                     Fill="{StaticResource MainBorderColor}"
@@ -802,7 +802,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -826,7 +826,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -853,7 +853,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -877,7 +877,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -901,7 +901,7 @@
                         <DrawingImage>
                             <DrawingImage.Drawing>
                                 <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                    <GeometryDrawing Brush="{StaticResource MainIconColor}" Geometry="F1 M512,512z M0,0z M48,32C21.5,32,0,53.5,0,80L0,432C0,458.5,21.5,480,48,480L464,480C490.5,480,512,458.5,512,432L512,80C512,53.5,490.5,32,464,32L48,32z M48,64L154,64C157.3,64,160,66.7,160,70L160,90C160,93.3,157.3,96,154,96L38,96C34.7,96,32,93.3,32,90L32,80C32,71.2,39.2,64,48,64z M474,160L38,160C34.7,160,32,157.3,32,154L32,118C32,114.7,34.7,112,38,112L176,112 206.2,66.7C207.3,65,209.2,64,211.2,64L464,64C472.8,64,480,71.2,480,80L480,154C480,157.3,477.3,160,474,160z M256,424C189.8,424 136,370.2 136,304 136,237.8 189.8,184 256,184 322.2,184 376,237.8 376,304 376,370.2 322.2,424 256,424z M256,216C207.5,216 168,255.5 168,304 168,352.5 207.5,392 256,392 304.5,392 344,352.5 344,304 344,255.5 304.5,216 256,216z M208,320C199.2,320 192,312.8 192,304 192,268.7 220.7,240 256,240 264.8,240 272,247.2 272,256 272,264.8 264.8,272 256,272 238.4,272 224,286.4 224,304 224,312.8 216.8,320 208,320z" />
+                                    <GeometryDrawing Brush="{DynamicResource MainIconColor}" Geometry="F1 M512,512z M0,0z M48,32C21.5,32,0,53.5,0,80L0,432C0,458.5,21.5,480,48,480L464,480C490.5,480,512,458.5,512,432L512,80C512,53.5,490.5,32,464,32L48,32z M48,64L154,64C157.3,64,160,66.7,160,70L160,90C160,93.3,157.3,96,154,96L38,96C34.7,96,32,93.3,32,90L32,80C32,71.2,39.2,64,48,64z M474,160L38,160C34.7,160,32,157.3,32,154L32,118C32,114.7,34.7,112,38,112L176,112 206.2,66.7C207.3,65,209.2,64,211.2,64L464,64C472.8,64,480,71.2,480,80L480,154C480,157.3,477.3,160,474,160z M256,424C189.8,424 136,370.2 136,304 136,237.8 189.8,184 256,184 322.2,184 376,237.8 376,304 376,370.2 322.2,424 256,424z M256,216C207.5,216 168,255.5 168,304 168,352.5 207.5,392 256,392 304.5,392 344,352.5 344,304 344,255.5 304.5,216 256,216z M208,320C199.2,320 192,312.8 192,304 192,268.7 220.7,240 256,240 264.8,240 272,247.2 272,256 272,264.8 264.8,272 256,272 238.4,272 224,286.4 224,304 224,312.8 216.8,320 208,320z" />
                                 </DrawingGroup>
                             </DrawingImage.Drawing>
                         </DrawingImage>
@@ -934,7 +934,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -958,7 +958,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />
@@ -985,7 +985,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1009,7 +1009,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1037,7 +1037,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1061,7 +1061,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1089,7 +1089,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1113,7 +1113,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1141,7 +1141,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1165,7 +1165,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1193,7 +1193,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1217,7 +1217,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1245,7 +1245,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1269,7 +1269,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1297,7 +1297,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1321,7 +1321,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1349,7 +1349,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1373,7 +1373,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1401,7 +1401,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1425,7 +1425,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1453,7 +1453,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1477,7 +1477,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1505,7 +1505,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1529,7 +1529,7 @@
                                 ToolTip.Tip="{CompiledBinding Copy}">
                                 <Path
                                     Data="{StaticResource CopyGeometry}"
-                                    Fill="{StaticResource MainIconColor}"
+                                    Fill="{DynamicResource MainIconColor}"
                                     Height="16"
                                     Stretch="Fill"
                                     Width="16" />
@@ -1556,7 +1556,7 @@
                             ToolTip.Tip="{CompiledBinding Copy}">
                             <Path
                                 Data="{StaticResource CopyGeometry}"
-                                Fill="{StaticResource MainIconColor}"
+                                Fill="{DynamicResource MainIconColor}"
                                 Height="16"
                                 Stretch="Fill"
                                 Width="16" />

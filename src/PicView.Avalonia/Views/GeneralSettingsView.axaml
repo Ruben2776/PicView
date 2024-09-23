@@ -27,8 +27,8 @@
                                    Mode=OneWay}" />
 
         <ComboBox
-            Background="{StaticResource SecondaryBackgroundColor}"
-            BorderBrush="{StaticResource MainBorderColor}"
+            Background="{DynamicResource SecondaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
             BorderThickness="1"
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             Margin="0,0,0,15"
@@ -135,8 +135,8 @@
             Margin="0,10,0,10"
             Text="{Binding MouseWheel}" />
         <ComboBox
-            Background="{StaticResource SecondaryBackgroundColor}"
-            BorderBrush="{StaticResource MainBorderColor}"
+            Background="{DynamicResource SecondaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
             BorderThickness="1"
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             Margin="0,6,0,10"
@@ -156,8 +156,8 @@
             Text="{CompiledBinding ScrollDirection,
                                    Mode=OneWay}" />
         <ComboBox
-            Background="{StaticResource SecondaryBackgroundColor}"
-            BorderBrush="{StaticResource MainBorderColor}"
+            Background="{DynamicResource SecondaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
             BorderThickness="1"
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             Margin="0,6,0,10"
@@ -177,8 +177,8 @@
             Text="{CompiledBinding ApplicationStartup,
                                    Mode=OneWay}" />
         <ComboBox
-            Background="{StaticResource SecondaryBackgroundColor}"
-            BorderBrush="{StaticResource MainBorderColor}"
+            Background="{DynamicResource SecondaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
             BorderThickness="1"
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             Margin="0,6,0,10"
@@ -211,7 +211,7 @@
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            Foreground="{StaticResource MainTextColorFaded}"
+            Foreground="{DynamicResource MainTextColorFaded}"
             Margin="0,0,0,15">
             <Run Text="{CompiledBinding GetSlideshowSpeed, Mode=OneWay}" />
             <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
@@ -240,7 +240,7 @@
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            Foreground="{StaticResource MainTextColorFaded}"
+            Foreground="{DynamicResource MainTextColorFaded}"
             Margin="0,0,0,15"
             Text="{CompiledBinding GetZoomSpeed,
                                    Mode=OneWay}" />
@@ -268,7 +268,7 @@
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            Foreground="{StaticResource MainTextColorFaded}"
+            Foreground="{DynamicResource MainTextColorFaded}"
             Margin="0,0,0,15">
             <Run Text="{CompiledBinding GetNavSpeed, Mode=OneWay}" />
             <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />

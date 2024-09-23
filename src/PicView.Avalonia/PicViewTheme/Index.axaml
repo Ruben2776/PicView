@@ -1,0 +1,43 @@
+<Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/PicViewTheme/Accents/AccentColors.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Accents/MainColors.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Icons.axaml" />
+
+                <ResourceInclude Source="/PicViewTheme/Controls/AutoScrollViewer.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/Border.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/Button.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/ComboBox.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/ComboBoxItem.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/FlyoutPresenter.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/ListBox.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/ListBoxItem.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/Menu.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/MenuFlyoutPresenter.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/PathIcon.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/RadioButton.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/Scrollbar.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/Slider.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/SplitButton.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/TabItem.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/TextBlock.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/TextBox.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/ToggleButton.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/ToolTip.axaml" />
+                <ResourceInclude Source="/PicViewTheme/Controls/Window.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
+    <Style Selector="Window">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="ExtendClientAreaChromeHints" Value="NoChrome" />
+        <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="32" />
+        <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
+        <Setter Property="TransparencyLevelHint" Value="AcrylicBlur" />
+    </Style>
+
+    <StyleInclude Source="Classes.axaml" />
+
+</Styles>

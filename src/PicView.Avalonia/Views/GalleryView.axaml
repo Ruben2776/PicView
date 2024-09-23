@@ -25,7 +25,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ImageGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -81,7 +81,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource ImageGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -89,8 +89,8 @@
                     <FlyoutBase.AttachedFlyout>
                         <Flyout>
                             <Border
-                                Background="{StaticResource MainButtonBackgroundColor}"
-                                BorderBrush="{StaticResource MainBorderColor}"
+                                Background="{DynamicResource MainButtonBackgroundColor}"
+                                BorderBrush="{DynamicResource MainBorderColor}"
                                 BorderThickness="2"
                                 CornerRadius="4"
                                 Padding="10,3">
@@ -104,7 +104,7 @@
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CloseGeometry}"
-                            Fill="{StaticResource MainIconColor}"
+                            Fill="{DynamicResource MainIconColor}"
                             Height="12"
                             Stretch="Fill"
                             Width="12" />
@@ -127,7 +127,7 @@
             ZIndex="99">
             <Path
                 Data="{StaticResource CloseGeometry}"
-                Fill="{StaticResource MainIconColor}"
+                Fill="{DynamicResource MainIconColor}"
                 Height="23"
                 Margin="7,0,0,11"
                 Stretch="Fill"
@@ -136,8 +136,8 @@
 
         <customControls:GalleryListBox
             AutoScrollToSelectedItem="False"
-            Background="{StaticResource BackgroundAlpha}"
-            BorderBrush="{StaticResource TertiaryBorderColor}"
+            Background="{DynamicResource BackgroundAlpha}"
+            BorderBrush="{DynamicResource TertiaryBorderColor}"
             BorderThickness="0,1,0,0"
             Focusable="False"
             Padding="0"

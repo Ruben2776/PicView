@@ -1,8 +1,8 @@
 <ResourceDictionary
+    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:ClassModifier="internal">
-    <ControlTheme x:Key="SliderDecreaseTheme" TargetType="RepeatButton">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ControlTheme TargetType="RepeatButton" x:Key="SliderDecreaseTheme">
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Height" Value="12" />
         <Setter Property="Template">
@@ -11,7 +11,7 @@
             </ControlTemplate>
         </Setter>
     </ControlTheme>
-    <ControlTheme x:Key="SliderIncreaseTheme" TargetType="RepeatButton">
+    <ControlTheme TargetType="RepeatButton" x:Key="SliderIncreaseTheme">
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Height" Value="12" />
         <Setter Property="Template">
@@ -21,7 +21,7 @@
         </Setter>
     </ControlTheme>
 
-    <ControlTheme x:Key="{x:Type Slider}" TargetType="Slider">
+    <ControlTheme TargetType="Slider" x:Key="{x:Type Slider}">
         <Style Selector="^:horizontal">
             <Setter Property="MinWidth" Value="40" />
             <Setter Property="MinHeight" Value="20" />
@@ -34,9 +34,9 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Track
-                            Name="PART_Track"
                             Grid.Row="1"
                             IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+                            Name="PART_Track"
                             Orientation="Horizontal">
                             <Track.DecreaseButton>
                                 <RepeatButton Name="PART_DecreaseButton" Theme="{StaticResource SliderDecreaseTheme}" />
@@ -44,13 +44,13 @@
                             <Track.IncreaseButton>
                                 <RepeatButton Name="PART_IncreaseButton" Theme="{StaticResource SliderIncreaseTheme}" />
                             </Track.IncreaseButton>
-                            <Thumb Width="22" Height="22">
+                            <Thumb Height="22" Width="22">
                                 <Thumb.Template>
                                     <ControlTemplate>
                                         <Rectangle
+                                            Fill="{DynamicResource MainButtonBackgroundColor}"
                                             Name="thumb"
-                                            Fill="{StaticResource MainButtonBackgroundColor}"
-                                            Stroke="{StaticResource MainBorderColor}"
+                                            Stroke="{DynamicResource MainBorderColor}"
                                             StrokeThickness="1.5" />
                                     </ControlTemplate>
                                 </Thumb.Template>

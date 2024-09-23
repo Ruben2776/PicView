@@ -50,42 +50,18 @@
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^:pointerover /template/ ContentPresenter">
-            <Style.Animations>
-                <Animation Duration=".35" IterationCount="1">
-                    <KeyFrame>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{StaticResource SecondaryBackgroundColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{StaticResource BackgroundHoverColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
-        </Style>
-
         <Style Selector="^:pressed /template/ ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
         </Style>
 
         <Style Selector="^[Tag=flyout-open] /template/ ContentPresenter">
-            <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
+            <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
         </Style>
 
         <Style Selector="^[Tag=checked]">
             <Style Selector="^ /template/ ContentPresenter">
-                <Setter Property="Background" Value="{StaticResource BackgroundHoverColor}" />
+                <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
             </Style>
-        </Style>
-
-        <Style Selector="^[Tag=checked-flyout-open] /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ThemeBorderHighColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeControlHighColor}" />
-            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundColor}" />
         </Style>
     </ControlTheme>
 
@@ -130,7 +106,7 @@
 
                     <Border
                         Background="Transparent"
-                        BorderBrush="{StaticResource MainBorderColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
                         BorderThickness="1,0,0,0"
                         Grid.Column="1"
                         x:Name="SeparatorBorder" />
@@ -156,12 +132,63 @@
                         x:Name="PART_SecondaryButton">
                         <PathIcon
                             Data="{StaticResource ChevronUpGeometry}"
+                            Foreground="{DynamicResource MainIconColor}"
                             Height="12"
                             Width="12" />
                     </Button>
                 </Grid>
             </ControlTemplate>
         </Setter>
+
+        <Style Selector="^.altHover:pointerover /template/ Button#PART_PrimaryButton">
+            <Style.Animations>
+                <Animation Duration=".35" IterationCount="1">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource BackgroundHoverColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource SecondaryBorderColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+        </Style>
+
+        <Style Selector="^.altHover:pointerover /template/ Button#PART_SecondaryButton">
+            <Style.Animations>
+                <Animation Duration=".35" IterationCount="1">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource BackgroundHoverColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource SecondaryBorderColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+        </Style>
 
         <Style Selector="^:flyout-open /template/ Button">
             <Setter Property="Tag" Value="flyout-open" />

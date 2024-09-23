@@ -4,14 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ControlTheme TargetType="TabItem" x:Key="{x:Type TabItem}">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource MainTextColorFaded}" />
+        <Setter Property="Foreground" Value="{DynamicResource MainTextColorFaded}" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="Padding" Value="14,9" />
         <Setter Property="Template">
             <ControlTemplate>
                 <ContentPresenter
                     Background="{TemplateBinding Background}"
-                    BorderBrush="{StaticResource MainBorderColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Content="{TemplateBinding Header}"
                     ContentTemplate="{TemplateBinding HeaderTemplate}"

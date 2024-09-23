@@ -11,7 +11,7 @@
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Button
-        Background="{StaticResource AltBackgroundColor}"
+        Background="{DynamicResource AltBackgroundColor}"
         BorderThickness="1,0,0,1"
         Classes="ButtonBorder noBorderHover"
         Command="{CompiledBinding ExitCommand}"
@@ -27,7 +27,7 @@
         x:Name="XButton">
         <Path
             Data="{StaticResource CloseGeometry}"
-            Fill="{StaticResource MainIconColor}"
+            Fill="{DynamicResource MainIconColor}"
             Height="12"
             Margin="0,0,0,3"
             Stretch="Fill"

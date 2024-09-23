@@ -1,0 +1,9 @@
+<ResourceDictionary
+    x:ClassModifier="internal"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="AccentColor">#FFDB5B3D</Color>
+    <Color x:Key="SecondaryAccentColor">#e0755a</Color>
+    <Color x:Key="LogoAccentColor">#FFf8af3c</Color>
+</ResourceDictionary>

@@ -36,6 +36,7 @@
 
             <Color x:Key="WindowBackgroundColor">#66000000</Color>
             <Color x:Key="WindowBorderColor">#FF3A3A3A</Color>
+
             <ImageBrush
                 DestinationRect="0,0,100,100"
                 Opacity=".6"
@@ -61,13 +62,16 @@
 
             <Color x:Key="MainBackgroundColor">White</Color>
             <Color x:Key="SecondaryBackgroundColor">White</Color>
-            <Color x:Key="TertiaryBackgroundColor">#CC3d3d3d</Color>
-            <Color x:Key="FadedBackgroundColor">#FF333333</Color>
-            <Color x:Key="BackgroundHoverColor">#D5FFFFFF</Color>
-            <Color x:Key="AltBackgroundHoverColor">#22FFFFFF</Color>
-            <Color x:Key="AltBackgroundColor">#A7222222</Color>
+            <Color x:Key="TertiaryBackgroundColor">#eee</Color>
 
-            <Color x:Key="MainButtonBackgroundColor">#81FFFFFF</Color>
+            <Color x:Key="FadedBackgroundColor">#E9EEEEEE</Color>
+
+            <Color x:Key="BackgroundHoverColor">#A2EEEEEE</Color>
+
+            <Color x:Key="AltBackgroundHoverColor">#22FFFFFF</Color>
+            <Color x:Key="AltBackgroundColor">#A7FFFFFF</Color>
+
+            <Color x:Key="MainButtonBackgroundColor">White</Color>
 
             <Color x:Key="MainBorderColor">#78B5B5B5</Color>
             <Color x:Key="SecondaryBorderColor">#95B5B5B5</Color>
@@ -75,22 +79,17 @@
 
             <Color x:Key="ButtonForegroundPointerOver">#FFF</Color>
 
-            <Color x:Key="BackgroundAlpha">#442e2e2e</Color>
+            <Color x:Key="BackgroundAlpha">#32FFFFFF</Color>
 
             <Color x:Key="MenuBackgroundColor">#D1EEEEEE</Color>
 
             <Color x:Key="ContextMenuBackgroundColor">#D1EEEEEE</Color>
             <Color x:Key="ContextMenuTextColor">#474139</Color>
 
-            <Color x:Key="WindowBackgroundColor">#66FFFFFF</Color>
-            <ImageBrush
-                DestinationRect="0,0,100,100"
-                Opacity=".6"
-                Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d23-c-ffffff-t1.png"
-                SourceRect="0,0,200,200"
-                Stretch="Fill"
-                TileMode="FlipXY"
-                x:Key="NoisyTexture" />
+            <Color x:Key="WindowBackgroundColor">#78B5B5B5</Color>
+            <Color x:Key="WindowBorderColor">#66FFFFFF</Color>
+
+            <Color x:Key="NoisyTexture">#fff</Color>
 
             <DropShadowEffect
                 BlurRadius="5"
