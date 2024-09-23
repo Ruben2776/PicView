@@ -29,7 +29,7 @@
     <Border
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
-        CornerRadius="8">
+        CornerRadius="0,0,8,8">
         <DockPanel LastChildFill="True">
             <views1:WinTitleBar DockPanel.Dock="Top" x:Name="Titlebar" />
             <views:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />
