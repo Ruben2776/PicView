@@ -27,6 +27,7 @@
             Classes="noBorderHover"
             Command="{CompiledBinding FlipCommand}"
             DockPanel.Dock="Right"
+            IsTabStop="False"
             Margin="0"
             ToolTip.Tip="{CompiledBinding Flip}"
             Width="30">
@@ -45,6 +46,7 @@
             Classes="noBorderHover"
             Command="{CompiledBinding RotateRightCommand}"
             DockPanel.Dock="Right"
+            IsTabStop="False"
             Margin="0"
             ToolTip.Tip="{CompiledBinding RotateRight}"
             Width="30"
@@ -64,6 +66,7 @@
             Classes="noBorderHover"
             Command="{CompiledBinding ToggleGalleryCommand}"
             DockPanel.Dock="Right"
+            IsTabStop="False"
             Name="GalleryButton"
             Width="30">
             <Image Width="17">
