@@ -1,5 +1,5 @@
 <Window
-    BorderBrush="{StaticResource SecondaryBackgroundColor}"
+    BorderBrush="{DynamicResource SecondaryBackgroundColor}"
     BorderThickness="1"
     CanResize="{Binding CanResize}"
     ExtendClientAreaChromeHints="SystemChrome"
@@ -156,6 +156,6 @@
     <DockPanel LastChildFill="True">
         <views1:MacOSTitlebar DockPanel.Dock="Top" x:Name="Titlebar" />
         <views:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />
-        <views:MainView Background="{StaticResource WindowBackgroundColor}" x:Name="MainView" />
+        <views:MainView Background="{DynamicResource WindowBackgroundColor}" x:Name="MainView" />
     </DockPanel>
 </Window>

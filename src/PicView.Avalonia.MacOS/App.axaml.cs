@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.MacOS.Views;
@@ -21,6 +22,7 @@ namespace PicView.Avalonia.MacOS;
 
 public class App : Application, IPlatformSpecificService
 {
+    private MacMainWindow? _mainWindow;
     private ExifWindow? _exifWindow;
     private SettingsWindow? _settingsWindow;
     private KeybindingsWindow? _keybindingsWindow;
@@ -47,17 +49,25 @@ public class App : Application, IPlatformSpecificService
         bool settingsExists;
         try
         {
-            settingsExists = await SettingsHelper.LoadSettingsAsync();
+            settingsExists = await SettingsHelper.LoadSettingsAsync().ConfigureAwait(false);
             _ = Task.Run(() => TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage));
         }
         catch (TaskCanceledException)
         {
             return;
         }
-        var w = desktop.MainWindow = new MacMainWindow();
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Current.RequestedThemeVariant = SettingsHelper.Settings.Theme.Dark ? ThemeVariant.Dark : ThemeVariant.Light;
+            _mainWindow = new MacMainWindow();
+            desktop.MainWindow = _mainWindow;
+        });
         _vm = new MainViewModel(this);
-        w.DataContext = _vm;
-        StartUpHelper.Start(_vm, settingsExists, desktop, w);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _mainWindow.DataContext = _vm;
+            StartUpHelper.Start(_vm, settingsExists, desktop, _mainWindow);
+        });
     }
 
     public void SetTaskbarProgress(ulong progress, ulong maximum)
