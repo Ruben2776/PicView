@@ -330,6 +330,8 @@ public static class WindowHelper
 
     public static void Maximize()
     {
+        // TODO: Fix incorrect size for bottom button bar
+        
         if (Dispatcher.UIThread.CheckAccess())
         {
             Set();

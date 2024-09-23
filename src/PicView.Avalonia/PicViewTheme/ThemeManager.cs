@@ -18,16 +18,13 @@ public static class ThemeManager
         
         // StyleInclude breaks trimming and AOT
 
-        // Add the new theme
         if (dark)
         {
-            // Load Dark theme
             SettingsHelper.Settings.Theme.Dark = true;
             application.RequestedThemeVariant = ThemeVariant.Dark;
         }
         else
         {
-            // Load Light theme
             SettingsHelper.Settings.Theme.Dark = false;
             application.RequestedThemeVariant = ThemeVariant.Light;
         }

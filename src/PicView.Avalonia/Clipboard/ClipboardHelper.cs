@@ -171,62 +171,62 @@ public static class ClipboardHelper
         var bitmap = await GetBitmapFromBytes("PNG");
         if (bitmap is not null)
         {
-            NavigationHelper.SetSingleImage(bitmap, imageType, name, vm);
+            UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
             return;
         }
         
         bitmap = await GetBitmapFromBytes("image/jpeg");
         if (bitmap is not null)
         {
-            NavigationHelper.SetSingleImage(bitmap, imageType, name, vm);
+            UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
             return;
         }
         bitmap = await GetBitmapFromBytes("image/png");
         if (bitmap is not null)
         {
-            NavigationHelper.SetSingleImage(bitmap, imageType, name, vm);
+            UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
             return;
         }
         bitmap = await GetBitmapFromBytes("image/bmp");
         if (bitmap is not null)
         {
-            NavigationHelper.SetSingleImage(bitmap, imageType, name, vm);
+            UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
             return;
         }
         bitmap = await GetBitmapFromBytes("BMP");
         if (bitmap is not null)
         {
-            NavigationHelper.SetSingleImage(bitmap, imageType, name, vm);
+            UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
             return;
         }
         bitmap = await GetBitmapFromBytes("JPG");
         if (bitmap is not null)
         {
-            NavigationHelper.SetSingleImage(bitmap, imageType, name, vm);
+            UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
             return;
         }
         bitmap = await GetBitmapFromBytes("JPEG");
         if (bitmap is not null)
         {
-            NavigationHelper.SetSingleImage(bitmap, imageType, name, vm);
+            UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
             return;
         }
         bitmap = await GetBitmapFromBytes("image/tiff");
         if (bitmap is not null)
         {
-            NavigationHelper.SetSingleImage(bitmap, imageType, name, vm);
+            UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
             return;
         }
         bitmap = await GetBitmapFromBytes("GIF");
         if (bitmap is not null)
         {
-            NavigationHelper.SetSingleImage(bitmap, imageType, name, vm);
+            UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
             return;
         }
         bitmap = await GetBitmapFromBytes("image/gif");
         if (bitmap is not null)
         {
-            NavigationHelper.SetSingleImage(bitmap, imageType, name, vm);
+            UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
             return;
         }
         return;

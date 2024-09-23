@@ -354,7 +354,7 @@ public static class NavigationHelper
         }
         
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-        SetSingleImage(imageModel.Image, imageModel.ImageType, url, vm);
+        UpdateImage.SetSingleImage(imageModel.Image, imageModel.ImageType, url, vm);
         vm.FileInfo = fileInfo;
         ExifHandling.UpdateExifValues(imageModel, vm);
         FileHistoryNavigation.Add(url);
@@ -393,7 +393,7 @@ public static class NavigationHelper
                     PixelHeight = bitmap?.PixelSize.Height ?? 0,
                     ImageType = ImageType.Bitmap
                 };
-                SetSingleImage(imageModel.Image, imageModel.ImageType, TranslationHelper.Translation.Base64Image, vm);
+                UpdateImage.SetSingleImage(imageModel.Image, imageModel.ImageType, TranslationHelper.Translation.Base64Image, vm);
                 ExifHandling.UpdateExifValues(imageModel, vm);
             }
             catch (Exception e)
@@ -432,72 +432,6 @@ public static class NavigationHelper
         vm.ImageIterator = new ImageIterator(fileInfo, vm);
         await vm.ImageIterator.IterateToIndex(0);
         await CheckAndReloadGallery(fileInfo, vm);
-    }
-    
-    #endregion
-    
-    #region Set image
-
-    /// <summary>
-    /// Sets the given image as the single image displayed in the view.
-    /// </summary>
-    /// <param name="source">The source of the image to display.</param>
-    /// <param name="imageType"></param>
-    /// <param name="name">The name of the image.</param>
-    /// <param name="vm">The main view model instance.</param>
-    public static void SetSingleImage(object source, ImageType imageType, string name, MainViewModel vm)
-    {
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            if (vm.CurrentView != vm.ImageViewer)
-            {
-                vm.CurrentView = vm.ImageViewer;
-            }
-        }, DispatcherPriority.Render);
-
-        vm.ImageIterator = null;
-        int width, height;
-        if (imageType is ImageType.Svg)
-        {
-            var path = source as string;
-            using var magickImage = new MagickImage();
-            magickImage.Ping(path);
-            vm.ImageSource = source;
-            vm.ImageType = ImageType.Svg;
-            width = (int)magickImage.Width;
-            height = (int)magickImage.Height;
-        }
-        else
-        {
-            var bitmap = source as Bitmap;
-            vm.ImageSource = source;
-            vm.ImageType = imageType == ImageType.Invalid ? ImageType.Bitmap : imageType;
-            width = bitmap?.PixelSize.Width ?? 0;
-            height = bitmap?.PixelSize.Height ?? 0;
-        }
-
-        if (GalleryFunctions.IsBottomGalleryOpen)
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                // Trigger animation
-                vm.GalleryMode = GalleryMode.BottomToClosed;
-            });
-            // Set to closed to ensure next gallery mode changing is fired
-            vm.GalleryMode = GalleryMode.Closed;
-        }
-        WindowHelper.SetSize(width, height, 0,0, 0, vm);
-        if (vm.RotationAngle != 0)
-        {
-            vm.ImageViewer.Rotate(vm.RotationAngle);
-        }
-        var singeImageWindowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, 1);
-        vm.WindowTitle = singeImageWindowTitles.BaseTitle;
-        vm.Title = singeImageWindowTitles.TitleWithAppName;
-        vm.TitleTooltip = singeImageWindowTitles.TitleWithAppName;
-        vm.GalleryMargin = new Thickness(0, 0, 0, 0);
-        
-        vm.PlatformService.StopTaskbarProgress();
     }
     
     #endregion
