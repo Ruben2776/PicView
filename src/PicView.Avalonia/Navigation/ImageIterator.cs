@@ -676,8 +676,6 @@ public sealed class ImageIterator : IDisposable
 
     #endregion
 
-    
-
     #region IDisposable
 
     public void Dispose()
