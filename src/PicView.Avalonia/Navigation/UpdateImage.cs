@@ -20,7 +20,7 @@ public static class UpdateImage
         PreLoader.PreLoadValue? preLoadValue,
         PreLoader.PreLoadValue? nextPreloadValue = null)
     {
-        preLoadValue ??= await vm.ImageIterator.GetPreLoadValueAsync(index);
+        preLoadValue ??= await vm.ImageIterator.GetPreLoadValueAsync(index).ConfigureAwait(false);
         if (preLoadValue.ImageModel?.Image is null)
         {
             var fileInfo = preLoadValue.ImageModel?.FileInfo ?? new FileInfo(imagePaths[index]);
@@ -29,7 +29,7 @@ public static class UpdateImage
 
         if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
         {
-            nextPreloadValue ??= await vm.ImageIterator.GetNextPreLoadValueAsync();
+            nextPreloadValue ??= await vm.ImageIterator.GetNextPreLoadValueAsync().ConfigureAwait(false);
             if (nextPreloadValue.ImageModel?.Image is null)
             {
                 var fileInfo = nextPreloadValue.ImageModel?.FileInfo ?? new FileInfo(

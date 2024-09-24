@@ -172,6 +172,7 @@ public static class WindowHelper
             vm.IsAutoFit = true;
         }
         SetSize(vm);
+        await Dispatcher.UIThread.InvokeAsync(() => CenterWindowOnScreen(false));
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
@@ -197,7 +198,7 @@ public static class WindowHelper
             vm.IsStretched = true;
         }
         SetSize(vm);
-        vm.ImageViewer.MainImage.InvalidateVisual();
+        await Dispatcher.UIThread.InvokeAsync(() => CenterWindowOnScreen(false));
         await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
     }
 
@@ -513,13 +514,13 @@ public static class WindowHelper
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
+            Dispatcher.UIThread.Invoke(() =>
             {
                 desktopMinWidth = desktop.MainWindow.MinWidth;
                 desktopMinHeight = desktop.MainWindow.MinHeight;
                 containerWidth = mainView.Bounds.Width;
                 containerHeight = mainView.Bounds.Height;
-            }, DispatcherPriority.Send).Wait();
+            }, DispatcherPriority.Send);
         }
 
         if (double.IsNaN(containerWidth) || double.IsNaN(containerHeight) || double.IsNaN(width) || double.IsNaN(height))
