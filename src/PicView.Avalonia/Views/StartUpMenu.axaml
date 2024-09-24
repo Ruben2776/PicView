@@ -43,9 +43,9 @@
             </DrawingImage.Drawing>
         </DrawingImage>
 
-        <SolidColorBrush Color="{StaticResource MainTextColor}" x:Key="SelectFileBrush" />
-        <SolidColorBrush Color="{StaticResource MainTextColor}" x:Key="OpenLastFileBrush" />
-        <SolidColorBrush Color="{StaticResource MainTextColor}" x:Key="PasteBrush" />
+        <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="SelectFileBrush" />
+        <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="OpenLastFileBrush" />
+        <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="PasteBrush" />
     </UserControl.Resources>
     <Panel>
         <Viewbox
@@ -101,9 +101,11 @@
                         </Image.Source>
                     </Image>
                     <Label
-                        Content="{Binding SelectFile}"
+                        Content="{CompiledBinding SelectFile}"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
                         Foreground="{StaticResource SelectFileBrush}"
-                        Padding="8,8,15,5"
+                        Padding="8,9,15,5"
                         x:Name="OpenFileDialogLabel" />
                 </StackPanel>
             </Button>
@@ -140,6 +142,8 @@
                     </Image>
                     <Label
                         Content="{CompiledBinding OpenLastFile}"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
                         Foreground="{StaticResource OpenLastFileBrush}"
                         Padding="8,8,15,2"
                         x:Name="OpenLastFileLabel" />
@@ -149,15 +153,17 @@
             <Button Command="{CompiledBinding PasteCommand}" x:Name="PasteButton">
                 <StackPanel Height="30" Orientation="Horizontal">
                     <Path
-                        Data="M768 1664h896v-640h-416q-40 0-68-28t-28-68v-416h-384v1152zm256-1440v-64q0-13-9.5-22.5t-22.5-9.5h-704q-13 0-22.5 9.5t-9.5 22.5v64q0 13 9.5 22.5t22.5 9.5h704q13 0 22.5-9.5t9.5-22.5zm256 672h299l-299-299v299zm512 128v672q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-544q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h1088q40 0 68 28t28 68v328q21 13 36 28l408 408q28 28 48 76t20 88z"
+                        Data="{StaticResource PasteGeometry}"
                         Fill="{StaticResource PasteBrush}"
                         Height="20"
                         Stretch="Fill"
                         Width="20" />
                     <Label
                         Content="{CompiledBinding FilePaste}"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
                         Foreground="{StaticResource PasteBrush}"
-                        Padding="8,8,15,5"
+                        Padding="8,9,15,5"
                         x:Name="FilePasteLabel" />
                 </StackPanel>
             </Button>
