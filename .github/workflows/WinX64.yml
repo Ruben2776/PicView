@@ -23,15 +23,11 @@ jobs:
         with:
           dotnet-version: '9.x'
 
-      # Step 3: Extract AssemblyVersion from the project file
-      - name: Extract AssemblyVersion
-        id: version
-        run: |
-          $projectPath = ".\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj"
-          $projectFile = [xml](Get-Content $projectPath)
-          $assemblyVersion = $projectFile.Project.PropertyGroup.AssemblyVersion
-          echo "##[set-output name=version;]$assemblyVersion"
-        shell: pwsh
+      # Step 3: Get version from the project file
+      - name: Get version from the project file
+        id: get-version
+        with:
+          proj-path: .\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj
 
       # Step 4: Define paths
       - name: Define paths
