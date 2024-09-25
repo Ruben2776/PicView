@@ -15,11 +15,11 @@ jobs:
     steps:
       # Step 1: Checkout the code
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Step 2: Setup .NET 9 SDK
       - name: Setup .NET 9 SDK
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.x'
 
@@ -30,6 +30,7 @@ jobs:
           $projectPath = ".\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj"
           $projectFile = [xml](Get-Content $projectPath)
           $assemblyVersion = $projectFile.Project.PropertyGroup.AssemblyVersion
+          $assemblyVersion = $assemblyVersion.Trim()
           echo "##[set-output name=version;]$assemblyVersion"
         shell: pwsh
 
@@ -86,32 +87,5 @@ jobs:
           path: ${{ steps.paths.outputs.output_dir }}
           retention-days: 14
 
-      # Step 9: Generate the Inno Setup Installer
-      - name: Generate Inno Setup Installer
-        run: |
-          $appVersion = "${{ steps.version.outputs.version }}"
-          $outputDir = "${{ steps.paths.outputs.output_dir }}"
-          $setupOutputDir = Join-Path $outputDir "Installer"
-          $appIconPath = Join-Path $PWD "src\PicView.Avalonia.Win32\icon.ico"
-          $licenseFilePath = Join-Path $PWD "src\PicView.Core\Licenses\LICENSE.txt"
-          
-          # Create output directory for installer
-          New-Item -Path $setupOutputDir -ItemType Directory -Force
-      
-          # Run Inno Setup Compiler with resolved paths
-          iscc.exe "/dMyAppVersion=$appVersion" `
-                   "/dMyAppOutputDir=$outputDir" `
-                   "/dMyAppExeName=PicView.exe" `
-                   "/dMyAppIcon=$appIconPath" `
-                   "/dMyAppLicenseFile=$licenseFilePath" `
-                   "/o$setupOutputDir" install.iss
-        shell: pwsh
-        
-      # Step 10: Upload the Inno Setup Installer as an artifact
-      - name: Upload Inno Setup Installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: PicView-Installer
-          path: $outputDir\Installer\PicView-${{ steps.version.outputs.version }}-setup.exe
-          retention-days: 14
+
 
