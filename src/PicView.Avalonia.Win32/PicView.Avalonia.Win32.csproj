@@ -24,7 +24,7 @@
     <StartupObject>PicView.Avalonia.Win32.Program</StartupObject>
     <LangVersion>preview</LangVersion>
     <AssemblyVersion>3.0.0.3</AssemblyVersion>
-    <FileVersion>3.0</FileVersion>
+    <FileVersion>3.0.0.3</FileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>none</DebugType>
