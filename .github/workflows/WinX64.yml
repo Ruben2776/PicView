@@ -28,6 +28,13 @@ jobs:
         id: get-version
         with:
           proj-path: .\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj
+      - run: echo "${{steps.get-version.outputs.version}}"
+      - run: echo "${{steps.get-version.outputs.version-prefix}}" 
+      - run: echo "${{steps.get-version.outputs.version-suffix}}" 
+      - run: echo "${{steps.get-version.outputs.package-version}}" 
+      - run: echo "${{steps.get-version.outputs.assembly-version}}" 
+      - run: echo "${{steps.get-version.outputs.file-version}}" 
+      - run: echo "${{steps.get-version.outputs.informational-version}}" 
 
       # Step 4: Define paths
       - name: Define paths
@@ -78,14 +85,14 @@ jobs:
       - name: Upload the artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PicView-v${{ steps.version.outputs.version }}-win-x64
+          name: PicView-v${{steps.get-version.outputs.assembly-version}}-win-x64
           path: ${{ steps.paths.outputs.output_dir }}
           retention-days: 14
           
       # Step 9: Generate the Inno Setup Installer
       - name: Generate Inno Setup Installer
         run: |
-          $appVersion = "${{ steps.version.outputs.version }}"
+          $appVersion = "${{steps.get-version.outputs.assembly-version}}"
           $outputDir = "${{ steps.paths.outputs.output_dir }}"
           $setupOutputDir = "${{ steps.paths.outputs.output_dir }}\install"
           $appIconPath = "${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico"
