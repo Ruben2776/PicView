@@ -30,11 +30,7 @@ jobs:
           $projectPath = ".\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj"
           $projectFile = [xml](Get-Content $projectPath)
           $assemblyVersion = $projectFile.Project.PropertyGroup.AssemblyVersion
-          if (-not $assemblyVersion) {
-            throw "AssemblyVersion not found in project file."
-          }
-          $trimmedVersion = $assemblyVersion.Trim()
-          echo "$trimmedVersion" >> $GITHUB_OUTPUT
+          echo "##[set-output name=version;]$assemblyVersion"
         shell: pwsh
 
       # Step 4: Define paths
