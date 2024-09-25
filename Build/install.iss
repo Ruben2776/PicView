@@ -1,0 +1,45 @@
+#define MyAppName "PicView"
+#define MyAppVersion "{#MyAppVersion}"
+#define MyAppPublisher "Ruben2776"
+#define MyAppURL "https://picview.org/"
+#define MyAppExeName "{#MyAppExeName}"
+#define AppIcon "..\src\PicView.Avalonia.Win32\icon.ico"
+
+[Setup]
+AppId={{F102E394-0FA6-4AEA-826D-9FE699115BAB}
+AppName={#MyAppName}
+AppVersion={#MyAppVersion}
+AppPublisher={#MyAppPublisher}
+AppPublisherURL={#MyAppURL}
+AppSupportURL=https://github.com/Ruben2776/PicView/issues
+AppUpdatesURL={#MyAppURL}
+DefaultDirName={sd}\PicView
+DisableProgramGroupPage=yes
+LicenseFile="..\src\PicView.Core\Licenses\LICENSE.txt"
+PrivilegesRequired=lowest
+OutputDir={#MyAppOutputDir}
+OutputBaseFilename={#MyAppName}-{#MyAppVersion}
+SetupIconFile={#AppIcon}
+Compression=lzma
+SolidCompression=yes
+WizardStyle=modern
+UninstallDisplayIcon={app}\{#MyAppExeName}
+UninstallDisplayName={#MyAppName}-{#MyAppVersion}
+ChangesAssociations=yes
+VersionInfoVersion={#MyAppVersion}
+
+[Files]
+Source: "{#MyAppOutputDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+[Icons]
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+
+[Run]
+Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+
+
+#include 'uninstallPrev.iss'
+
+#include 'registry.iss'
