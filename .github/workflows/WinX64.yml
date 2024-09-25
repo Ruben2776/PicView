@@ -85,26 +85,26 @@ jobs:
           name: PicView-v${{ steps.version.outputs.version }}-win-x64
           path: ${{ steps.paths.outputs.output_dir }}
           retention-days: 14
-
+          
       # Step 9: Generate the Inno Setup Installer
       - name: Generate Inno Setup Installer
         run: |
           $appVersion = "${{ steps.version.outputs.version }}"
           $outputDir = "${{ steps.paths.outputs.output_dir }}"
           $setupOutputDir = "${{ steps.paths.outputs.output_dir }}\install"
-          $appIconPath = ${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico
-          $licenseFilePath = ${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
+          $appIconPath = "${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico"
+          $licenseFilePath = "${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt"
           
           # Create output directory for installer
           New-Item -Path $setupOutputDir -ItemType Directory -Force
-      
+        
           # Run Inno Setup Compiler with resolved paths
           iscc.exe "/dMyAppVersion=$appVersion" `
                    "/dMyAppOutputDir=$outputDir" `
                    "/dMyAppExeName=PicView.exe" `
                    "/dMyAppIcon=$appIconPath" `
                    "/dMyAppLicenseFile=$licenseFilePath" `
-                   "/o$setupOutputDir" ${{ github.workspace }}\Build\install.iss
+                   "/o$setupOutputDir" "${{ github.workspace }}\Build\install.iss"
         shell: pwsh
   
       # Step 10: Upload the Inno Setup Installer as an artifact
