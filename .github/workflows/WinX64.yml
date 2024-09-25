@@ -29,7 +29,7 @@ jobs:
         run: |
           $projectPath = ".\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj"
           $projectFile = [xml](Get-Content $projectPath)
-          $assemblyVersion = $projectFile.Project.PropertyGroup.AssemblyVersion
+          $assemblyVersion = $projectFile.Project.PropertyGroup.AssemblyVersion.Trim()
           echo "##[set-output name=version;]$assemblyVersion"
         shell: pwsh
 
@@ -91,12 +91,14 @@ jobs:
         run: |
           $appVersion = "${{ steps.version.outputs.version }}"
           $outputDir = "${{ steps.paths.outputs.output_dir }}"
-          $setupOutputDir = "$outputDir\Installer"
-          $appIconPath = "$(Resolve-Path .\src\PicView.Avalonia.Win32\icon.ico)"
-          $licenseFilePath = "$(Resolve-Path .\src\PicView.Core\Licenses\LICENSE.txt)"
+          $setupOutputDir = Join-Path $outputDir "Installer"
+          $appIconPath = Join-Path $PWD "src\PicView.Avalonia.Win32\icon.ico"
+          $licenseFilePath = Join-Path $PWD "src\PicView.Core\Licenses\LICENSE.txt"
           
+          # Create output directory for installer
           New-Item -Path $setupOutputDir -ItemType Directory -Force
       
+          # Run Inno Setup Compiler with resolved paths
           iscc.exe "/dMyAppVersion=$appVersion" `
                    "/dMyAppOutputDir=$outputDir" `
                    "/dMyAppExeName=PicView.exe" `
@@ -104,7 +106,7 @@ jobs:
                    "/dMyAppLicenseFile=$licenseFilePath" `
                    "/o$setupOutputDir" install.iss
         shell: pwsh
-
+        
       # Step 10: Upload the Inno Setup Installer as an artifact
       - name: Upload Inno Setup Installer
         uses: actions/upload-artifact@v4
@@ -112,3 +114,4 @@ jobs:
           name: PicView-Installer
           path: $outputDir\Installer\PicView-${{ steps.version.outputs.version }}-setup.exe
           retention-days: 14
+
