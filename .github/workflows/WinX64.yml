@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.x'
-      
+
       # Step 3: Get version from the project file
       - name: Get version from the project file
         uses: kzrnm/get-net-sdk-project-versions-action@v2
@@ -34,7 +34,7 @@ jobs:
       - name: Define paths
         id: paths
         run: |
-          $outputDir = "PicView-v.${{steps.get-version.outputs.assembly-version}}-win-x64"
+          $outputDir = "PicView-v.${{steps.get-version.outputs.file-version}}-win-x64"
           echo "##[set-output name=output_dir;]$outputDir"
         shell: pwsh
 
@@ -96,11 +96,11 @@ jobs:
           New-Item -Path $setupOutputDir -ItemType Directory -Force
         
           # Run Inno Setup Compiler with resolved paths
-          iscc.exe "/dMyAppVersion=$appVersion" 
-                   "/dMyAppOutputDir=$outputDir" 
-                   "/dMyAppExeName=PicView.exe" 
-                   "/dMyAppIcon=$appIconPath" 
-                   "/dMyAppLicenseFile=$licenseFilePath" 
+          iscc.exe "/dMyAppVersion=$appVersion" `
+                   "/dMyAppOutputDir=$outputDir" `
+                   "/dMyAppExeName=PicView.exe" `
+                   "/dMyAppIcon=$appIconPath" `
+                   "/dMyAppLicenseFile=$licenseFilePath" `
                    "/o$setupOutputDir" "${{ github.workspace }}\Build\install.iss"
         shell: pwsh
   
