@@ -22,26 +22,19 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.x'
-
+      
       # Step 3: Get version from the project file
       - name: Get version from the project file
-      - uses: kzrnm/get-net-sdk-project-versions-action@v2
+        uses: kzrnm/get-net-sdk-project-versions-action@v2
         id: get-version
         with:
           proj-path: .\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj
-      - run: echo "${{steps.get-version.outputs.version}}"
-      - run: echo "${{steps.get-version.outputs.version-prefix}}" 
-      - run: echo "${{steps.get-version.outputs.version-suffix}}" 
-      - run: echo "${{steps.get-version.outputs.package-version}}" 
-      - run: echo "${{steps.get-version.outputs.assembly-version}}" 
-      - run: echo "${{steps.get-version.outputs.file-version}}" 
-      - run: echo "${{steps.get-version.outputs.informational-version}}" 
 
       # Step 4: Define paths
       - name: Define paths
         id: paths
         run: |
-          $outputDir = "PicView-v.$(${{ steps.version.outputs.version }})-win-x64"
+          $outputDir = "PicView-v.${{steps.get-version.outputs.assembly-version}}-win-x64"
           echo "##[set-output name=output_dir;]$outputDir"
         shell: pwsh
 
