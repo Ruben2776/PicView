@@ -82,8 +82,23 @@ jobs:
       - name: Upload the artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PicView-win-x64
+          name: PicView-v${{ steps.version.outputs.version }}-win-x64
           path: ${{ steps.paths.outputs.output_dir }}
+          retention-days: 14
+
+      # Step 9: Generate the Inno Setup Installer
+      - name: Generate Inno Setup
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: ${{ github.workspace }}\install.iss
+          options: /O+ /dMyAppVersion=${{ steps.version.outputs.version }} /dMyAppOutputDir=${{ steps.paths.outputs.output_dir }} /dMyAppExeName=PicView.exe /dMyAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /dMyAppLicenseFile=$licenseFilePath ${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
+        
+      # Step 10: Upload the Inno Setup Installer as an artifact
+      - name: Upload Inno Setup Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: PicView-Installer
+          path: $outputDir\Installer\PicView-${{ steps.version.outputs.version }}-setup.exe
           retention-days: 14
 
 
