@@ -92,8 +92,17 @@ jobs:
           $appVersion = "${{ steps.version.outputs.version }}"
           $outputDir = "${{ steps.paths.outputs.output_dir }}"
           $setupOutputDir = "$outputDir\Installer"
+          $appIconPath = "$(Resolve-Path .\src\PicView.Avalonia.Win32\icon.ico)"
+          $licenseFilePath = "$(Resolve-Path .\src\PicView.Core\Licenses\LICENSE.txt)"
+          
           New-Item -Path $setupOutputDir -ItemType Directory -Force
-          iscc.exe "/dMyAppVersion=$appVersion" "/dMyAppOutputDir=$outputDir" "/dMyAppExeName=PicView.exe" "/o$setupOutputDir" install.iss
+      
+          iscc.exe "/dMyAppVersion=$appVersion" `
+                   "/dMyAppOutputDir=$outputDir" `
+                   "/dMyAppExeName=PicView.exe" `
+                   "/dMyAppIcon=$appIconPath" `
+                   "/dMyAppLicenseFile=$licenseFilePath" `
+                   "/o$setupOutputDir" install.iss
         shell: pwsh
 
       # Step 10: Upload the Inno Setup Installer as an artifact
