@@ -30,18 +30,6 @@ jobs:
         with:
           proj-path: .\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj
 
-      # Step 3.1: Ensure version format is valid for Inno Setup
-      - name: Format version for Inno Setup
-        id: format-version
-        run: |
-          $version = "${{ steps.get-version.outputs.assembly-version }}"
-          # Ensure version has four parts
-          if ($version -notmatch "^\d+\.\d+\.\d+\.\d+$") {
-            $version += ".0" while ($version -split "\.").Count -lt 4
-          }
-          echo "##[set-output name=formatted_version;]$version"
-        shell: pwsh
-
       # Step 4: Define paths
       - name: Define paths
         id: paths
@@ -91,14 +79,14 @@ jobs:
       - name: Upload the artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PicView-v${{steps.get-version.outputs.assembly-version}}-win-x64
+          name: PicView-v${{steps.get-version.outputs.file-version}}-win-x64
           path: ${{ steps.paths.outputs.output_dir }}
           retention-days: 14
           
       # Step 9: Generate the Inno Setup Installer
       - name: Generate Inno Setup Installer
         run: |
-          $appVersion = "${{ steps.format-version.outputs.formatted_version }}"
+          $appVersion = "${{steps.get-version.outputs.assembly-version}}"
           $outputDir = "${{ steps.paths.outputs.output_dir }}"
           $setupOutputDir = "${{ steps.paths.outputs.output_dir }}\install"
           $appIconPath = "${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico"
@@ -108,11 +96,11 @@ jobs:
           New-Item -Path $setupOutputDir -ItemType Directory -Force
         
           # Run Inno Setup Compiler with resolved paths
-          iscc.exe "/dMyAppVersion=$appVersion" `
-                   "/dMyAppOutputDir=$outputDir" `
-                   "/dMyAppExeName=PicView.exe" `
-                   "/dMyAppIcon=$appIconPath" `
-                   "/dMyAppLicenseFile=$licenseFilePath" `
+          iscc.exe "/dMyAppVersion=$appVersion" 
+                   "/dMyAppOutputDir=$outputDir" 
+                   "/dMyAppExeName=PicView.exe" 
+                   "/dMyAppIcon=$appIconPath" 
+                   "/dMyAppLicenseFile=$licenseFilePath" 
                    "/o$setupOutputDir" "${{ github.workspace }}\Build\install.iss"
         shell: pwsh
   
@@ -123,6 +111,3 @@ jobs:
           name: PicView-v${{ steps.version.outputs.version }}
           path: ${{ steps.paths.outputs.output_dir }}\install
           retention-days: 14
-
-
-
