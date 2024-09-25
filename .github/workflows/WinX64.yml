@@ -86,7 +86,7 @@ jobs:
       # Step 9: Generate the Inno Setup Installer
       - name: Generate Inno Setup Installer
         run: |
-          $appVersion = "${{steps.get-version.outputs.assembly-version}}"
+          $appVersion = "${{steps.get-version.outputs.assembly-version}}.0"
           $outputDir = "${{ steps.paths.outputs.output_dir }}"
           $setupOutputDir = "${{ steps.paths.outputs.output_dir }}\install"
           $appIconPath = "${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico"
