@@ -86,7 +86,7 @@ jobs:
       # Step 9: Generate the Inno Setup Installer
       - name: Generate Inno Setup Installer
         run: |
-          $appVersion = "${{steps.get-version.outputs.assembly-version}}.0"
+          $appVersion = "${{steps.get-version.outputs.assembly-version}}"
           $outputDir = "${{ steps.paths.outputs.output_dir }}"
           $setupOutputDir = "${{ steps.paths.outputs.output_dir }}\install"
           $appIconPath = "${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico"
@@ -108,6 +108,6 @@ jobs:
       - name: Upload Inno Setup Installer
         uses: actions/upload-artifact@v4
         with:
-          name: PicView-v${{ steps.version.outputs.version }}
+          name: PicView-${{steps.get-version.outputs.file-version}}
           path: ${{ steps.paths.outputs.output_dir }}\install
           retention-days: 14
