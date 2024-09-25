@@ -9,7 +9,7 @@
 [Setup]
 AppId={{F102E394-0FA6-4AEA-826D-9FE699115BAB}
 AppName={#MyAppName}
-AppVersion=3.0.0.3
+AppVersion=3.0
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL=https://github.com/Ruben2776/PicView/issues
@@ -25,7 +25,7 @@ Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 UninstallDisplayIcon={app}\{#MyAppExeName}
-UninstallDisplayName={#MyAppName}-{#MyAppVersion}
+UninstallDisplayName={#MyAppName}-3.0
 ChangesAssociations=yes
 VersionInfoVersion=3.0.0.3
 
