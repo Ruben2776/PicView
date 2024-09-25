@@ -72,7 +72,6 @@ jobs:
           if (Test-Path $pdbPath) {
             Remove-Item -Path $pdbPath -Force
           }
-          # Only rename if there are spaces in the path
           if ($outputPath -match " ") {
             $newOutputPath = $outputPath.Replace(" ","")
             Rename-Item -Path $outputPath -NewName $newOutputPath
@@ -85,4 +84,22 @@ jobs:
         with:
           name: PicView-win-x64
           path: ${{ steps.paths.outputs.output_dir }}
+          retention-days: 14
+
+      # Step 9: Generate the Inno Setup Installer
+      - name: Generate Inno Setup Installer
+        run: |
+          $appVersion = "${{ steps.version.outputs.version }}"
+          $outputDir = "${{ steps.paths.outputs.output_dir }}"
+          $setupOutputDir = "$outputDir\Installer"
+          New-Item -Path $setupOutputDir -ItemType Directory -Force
+          iscc.exe "/dMyAppVersion=$appVersion" "/dMyAppOutputDir=$outputDir" "/dMyAppExeName=PicView.exe" "/o$setupOutputDir" install.iss
+        shell: pwsh
+
+      # Step 10: Upload the Inno Setup Installer as an artifact
+      - name: Upload Inno Setup Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: PicView-Installer
+          path: $outputDir\Installer\PicView-${{ steps.version.outputs.version }}-setup.exe
           retention-days: 14
