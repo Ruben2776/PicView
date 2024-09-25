@@ -3,7 +3,8 @@
 #define MyAppPublisher "Ruben2776"
 #define MyAppURL "https://picview.org/"
 #define MyAppExeName "{#MyAppExeName}"
-#define AppIcon "..\src\PicView.Avalonia.Win32\icon.ico"
+#define AppIcon "{#MyAppIcon}"
+#define LicenseFile "{#MyAppLicenseFile}"
 
 [Setup]
 AppId={{F102E394-0FA6-4AEA-826D-9FE699115BAB}
@@ -15,7 +16,7 @@ AppSupportURL=https://github.com/Ruben2776/PicView/issues
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={sd}\PicView
 DisableProgramGroupPage=yes
-LicenseFile="..\src\PicView.Core\Licenses\LICENSE.txt"
+LicenseFile={#LicenseFile}
 PrivilegesRequired=lowest
 OutputDir={#MyAppOutputDir}
 OutputBaseFilename={#MyAppName}-{#MyAppVersion}
@@ -38,8 +39,5 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
-
-
 #include 'uninstallPrev.iss'
-
 #include 'registry.iss'
