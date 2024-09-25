@@ -30,7 +30,6 @@ jobs:
           $projectPath = ".\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj"
           $projectFile = [xml](Get-Content $projectPath)
           $assemblyVersion = $projectFile.Project.PropertyGroup.AssemblyVersion
-          $assemblyVersion = $assemblyVersion.Trim()
           echo "##[set-output name=version;]$assemblyVersion"
         shell: pwsh
 
