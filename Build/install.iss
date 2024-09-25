@@ -9,7 +9,7 @@
 [Setup]
 AppId={{F102E394-0FA6-4AEA-826D-9FE699115BAB}
 AppName={#MyAppName}
-AppVersion={#MyAppVersion}
+AppVersion=3.0.0.3
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL=https://github.com/Ruben2776/PicView/issues
