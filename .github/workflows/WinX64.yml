@@ -102,7 +102,7 @@ jobs:
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         with:
           path: .\Build\install.iss
-          options: /O+ //dMyAppVersion=${{steps.get-version.outputs.assembly-version}} /dMyAppOutputDir=${{ steps.paths.outputs.output_dir }} /dMyAppExeName=PicView${{steps.get-version.outputs.file-version}}.exe /dMyAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /dMyAppLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
+          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.assembly-version}} /DMyAppOutputDir=${{ steps.paths.outputs.output_dir }} /DMyAppExeName=PicView${{steps.get-version.outputs.file-version}}.exe /DMyAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DMyAppLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
   
       # Step 11: Upload the Inno Setup Installer as an artifact
       - name: Upload Inno Setup Installer
