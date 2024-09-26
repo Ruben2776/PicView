@@ -84,7 +84,7 @@ jobs:
           retention-days: 14
           
       # Step 9: Generate the Inno Setup Installer
-      - name: Generate Inno Setup Installer
+      - name: Generate Inno Setup variables
         run: |
           $appVersion = "${{steps.get-version.outputs.assembly-version}}"
           $outputDir = "${{ steps.paths.outputs.output_dir }}"
@@ -95,16 +95,16 @@ jobs:
           # Create output directory for installer
           New-Item -Path $setupOutputDir -ItemType Directory -Force
         
-          # Run Inno Setup Compiler with resolved paths
-          iscc.exe "/dMyAppVersion=$appVersion" `
-                   "/dMyAppOutputDir=$outputDir" `
-                   "/dMyAppExeName=PicView.exe" `
-                   "/dMyAppIcon=$appIconPath" `
-                   "/dMyAppLicenseFile=$licenseFilePath" `
-                   "/o$setupOutputDir" "${{ github.workspace }}\Build\install.iss"
         shell: pwsh
+
+       # Step 10: Compile .ISS to .EXE Installer
+      - name: Compile .ISS to .EXE Installer
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: .\Build\install.iss
+          options: /O+ //dMyAppVersion=${{steps.get-version.outputs.assembly-version}} /dMyAppOutputDir=${{ steps.paths.outputs.output_dir }} /dMyAppExeName=PicView${{steps.get-version.outputs.file-version}}.exe /dMyAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /dMyAppLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
   
-      # Step 10: Upload the Inno Setup Installer as an artifact
+      # Step 11: Upload the Inno Setup Installer as an artifact
       - name: Upload Inno Setup Installer
         uses: actions/upload-artifact@v4
         with:
