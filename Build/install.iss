@@ -27,7 +27,6 @@ WizardStyle=modern
 UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName={#MyAppName}
 ChangesAssociations=yes
-VersionInfoVersion={#MyAppVersionInfo}
 
 [Files]
 Source: "{#MyAppOutputDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
