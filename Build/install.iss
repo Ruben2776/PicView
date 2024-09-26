@@ -1,7 +1,6 @@
 #define MyAppName "PicView"
 #define MyAppVersion "{#MyAppVersion}"
 #define MyAppPublisher "Ruben2776"
-#define MyAppURL "https://picview.org/"
 #define MyAppExeName "{#MyAppExeName}"
 #define AppIcon "{#MyAppIcon}"
 #define LicenseFile "{#MyAppLicenseFile}"
@@ -9,25 +8,25 @@
 [Setup]
 AppId={{F102E394-0FA6-4AEA-826D-9FE699115BAB}
 AppName={#MyAppName}
-AppVersion=3.0
+AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
-AppPublisherURL={#MyAppURL}
+AppPublisherURL=https://picview.org/
 AppSupportURL=https://github.com/Ruben2776/PicView/issues
-AppUpdatesURL={#MyAppURL}
+AppUpdatesURL=https://picview.org/download
 DefaultDirName={sd}\PicView
 DisableProgramGroupPage=yes
 LicenseFile={#LicenseFile}
 PrivilegesRequired=lowest
 OutputDir={#MyAppOutputDir}
-OutputBaseFilename={#MyAppName}
+OutputBaseFilename={#MyAppName}-{#MyAppVersion}
 SetupIconFile={#AppIcon}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 UninstallDisplayIcon={app}\{#MyAppExeName}
-UninstallDisplayName={#MyAppName}-3.0
+UninstallDisplayName={#MyAppName}
 ChangesAssociations=yes
-VersionInfoVersion=3.0.0.3
+VersionInfoVersion={#MyAppVersion}
 
 [Files]
 Source: "{#MyAppOutputDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
