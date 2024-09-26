@@ -86,14 +86,9 @@ jobs:
       # Step 9: Generate the Inno Setup Installer
       - name: Generate Inno Setup variables
         run: |
-          $appVersion = "${{steps.get-version.outputs.assembly-version}}"
-          $outputDir = "${{ steps.paths.outputs.output_dir }}"
-          $setupOutputDir = "${{ steps.paths.outputs.output_dir }}\install"
-          $appIconPath = "${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico"
-          $licenseFilePath = "${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt"
           
           # Create output directory for installer
-          New-Item -Path $setupOutputDir -ItemType Directory -Force
+          New-Item -Path ${{ steps.paths.outputs.output_dir }}\install -ItemType Directory -Force
         
         shell: pwsh
 

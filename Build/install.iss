@@ -1,5 +1,6 @@
 #define MyAppName "PicView"
 #define MyAppVersion "{#MyAppVersion}"
+#define MyAppVersionInfo "{#MyAppVersionInfo}"
 #define MyAppPublisher "Ruben2776"
 #define MyAppExeName "{#MyAppExeName}"
 #define AppIcon "{#MyAppIcon}"
@@ -26,7 +27,7 @@ WizardStyle=modern
 UninstallDisplayIcon={app}\{#MyAppExeName}
 UninstallDisplayName={#MyAppName}
 ChangesAssociations=yes
-VersionInfoVersion={#MyAppVersion}
+VersionInfoVersion={#MyAppVersionInfo}
 
 [Files]
 Source: "{#MyAppOutputDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
