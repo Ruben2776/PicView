@@ -110,5 +110,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PicView-${{steps.get-version.outputs.file-version}}-installer
-          path: ${{ github.workspace }}\Build\install
+          path: ${{ github.workspace }}\Build\install\PicView-${{steps.get-version.outputs.file-version}}.exe
           retention-days: 14
