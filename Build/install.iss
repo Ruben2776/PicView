@@ -24,6 +24,15 @@ UninstallDisplayName={#MyAppExeName}
 ChangesAssociations=yes
 VersionInfoVersion={#MyAppVersion}
 
+[Messages]
+SetupWindowTitle=Setup - {#MyAppName} v{#MyAppVersion}
+SetupAppTitle=Setup - {#MyAppName} v{#MyAppVersion}
+
+[Tasks]
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "openwith"; Description: "Open with {#MyAppName}"; GroupDescription: "Context menu:"; Flags: unchecked
+Name: "browsefolder"; Description: "Browse folder with {#MyAppName}"; GroupDescription: "Context menu:"; Flags: unchecked
+
 [Files]
 Source: "{#MyAppOutputDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
