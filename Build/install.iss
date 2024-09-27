@@ -28,13 +28,23 @@ VersionInfoVersion={#MyAppVersion}
 SetupWindowTitle=Setup - {#MyAppName} v{#MyAppVersion}
 SetupAppTitle=Setup - {#MyAppName} v{#MyAppVersion}
 
+[Languages]
+Name: "en"; MessagesFile: "compiler:Default.isl"
+Name: "de"; MessagesFile: "compiler:Languages\German.isl"
+Name: "da"; MessagesFile: "compiler:Languages\Danish.isl"
+Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "fr"; MessagesFile: "compiler:Languages\French.isl"
+Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
+Name: "ko"; MessagesFile: "compiler:Languages\Korean.isl"
+Name: "pl"; MessagesFile: "compiler:Languages\Polish.isl"
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "openwith"; Description: "Open with {#MyAppName}"; GroupDescription: "Context menu:"; Flags: unchecked
 Name: "browsefolder"; Description: "Browse folder with {#MyAppName}"; GroupDescription: "Context menu:"; Flags: unchecked
 
 [Files]
-Source: "{#MyAppOutputDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#MyFileSource}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{autoprograms}\PicView"; Filename: "{app}\PicView.exe"
