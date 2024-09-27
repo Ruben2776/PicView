@@ -33,10 +33,10 @@ jobs:
       # Step 4: Define paths
       - name: Define paths
         id: paths
-        run: |
-          $outputDir = "PicView-v.${{steps.get-version.outputs.file-version}}-win-x64"
-          echo "##[set-output name=output_dir;]$outputDir"
         shell: pwsh
+        run: |
+          $outputDir = (Resolve-Path "PicView-v.${{steps.get-version.outputs.file-version}}-win-x64").Path
+          echo "##[set-output name=output_dir;]$outputDir"
 
       # Step 5: Run dotnet publish
       - name: Publish the project
