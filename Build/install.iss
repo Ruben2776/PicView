@@ -1,35 +1,35 @@
 [Setup]
 AppId={{F102E394-0FA6-4AEA-826D-9FE699115BAB}
-AppName={param:appName|PicView}
-AppVersion={param:version|1.0}
-AppPublisher="Ruben2776"
+AppName=PicView
+AppVersion={#MyAppVersion}
+AppPublisher=Ruben2776
 AppPublisherURL=https://picview.org/
 AppSupportURL=https://github.com/Ruben2776/PicView/issues
 AppUpdatesURL=https://picview.org/download
 DefaultDirName={sd}\PicView
 DisableProgramGroupPage=yes
-LicenseFile={param:appLicense|license.txt}
+LicenseFile={#LicenseFile}
+OutputDir={#MyAppOutputDir}
 PrivilegesRequired=lowest
-OutputDir={param:outputDir|/}
-OutputBaseFilename={param:appName|PicView}-{param:version|1.0}
-SetupIconFile={param:appIcon|icon.ico}
+OutputBaseFilename=PicView-{#MyAppVersion}.exe
+SetupIconFile={#AppIcon}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-UninstallDisplayIcon={app}\{param:appExe|PicView.exe}
-UninstallDisplayName={param:appName|PicView}
+UninstallDisplayIcon={app}\PicView.exe
+UninstallDisplayName=PicView
 ChangesAssociations=yes
-VersionInfoVersion={param:version|1.0}
+VersionInfoVersion={#MyAppVersion}
 
 [Files]
-Source: "{param:outputDir|/}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#MyAppOutputDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autoprograms}\{param:appName|PicView}"; Filename: "{app}\{param:appExe|PicView.exe}"
-Name: "{autodesktop}\{param:appName|PicView}"; Filename: "{app}\{param:appExe|PicView.exe}"; Tasks: desktopicon
+Name: "{autoprograms}\PicView"; Filename: "{app}\PicView.exe"
+Name: "{autodesktop}\PicView"; Filename: "{app}\PicView.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{param:appExe|PicView.exe}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\PicView.exe"; Description: "{cm:LaunchProgram,{#StringChange(PicView, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 #include 'uninstallPrev.iss'
 #include 'registry.iss'
