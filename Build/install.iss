@@ -29,7 +29,7 @@ Name: "{autoprograms}\PicView"; Filename: "{app}\PicView.exe"
 Name: "{autodesktop}\PicView"; Filename: "{app}\PicView.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\PicView.exe"; Description: "{cm:LaunchProgram,{#StringChange(PicView, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\PicView.exe"; Description: "{cm:LaunchProgram,PicView}"; Flags: nowait postinstall skipifsilent
 
 #include 'uninstallPrev.iss'
 #include 'registry.iss'
