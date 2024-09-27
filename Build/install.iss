@@ -1,3 +1,6 @@
+#define MyAppName "PicView"
+#define MyAppExeName "PicView.exe"
+
 [Setup]
 AppId={{F102E394-0FA6-4AEA-826D-9FE699115BAB}
 AppName=PicView
@@ -11,13 +14,13 @@ DisableProgramGroupPage=yes
 LicenseFile={#LicenseFile}
 OutputDir={#MyAppOutputDir}
 PrivilegesRequired=lowest
-OutputBaseFilename=PicView-{#MyAppVersion}.exe
+OutputBaseFilename={#MyAppName}-{#MyAppVersion}
 SetupIconFile={#AppIcon}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-UninstallDisplayIcon={app}\PicView.exe
-UninstallDisplayName=PicView
+UninstallDisplayIcon={app}\{#MyAppExeName}
+UninstallDisplayName={#MyAppExeName}
 ChangesAssociations=yes
 VersionInfoVersion={#MyAppVersion}
 
