@@ -86,24 +86,24 @@ jobs:
       # Step 9: Generate the Inno Setup Installer and copy files to the build directory
       - name: Generate Inno Setup variables and copy files to Build directory
         run: |
-            # Create the directory inside 'Build'
-            $buildDir = Join-Path -Path "${{ github.workspace }}" -ChildPath "Build\install"
-            if (Test-Path $buildDir) {
-              Remove-Item -Path $buildDir -Recurse -Force
-            }
-            New-Item -Path $buildDir -ItemType Directory | Out-Null
+          # Create the directory inside 'Build'
+          $buildDir = Join-Path -Path "${{ github.workspace }}" -ChildPath "Build\install"
+          if (Test-Path $buildDir) {
+            Remove-Item -Path $buildDir -Recurse -Force
+          }
+          New-Item -Path $buildDir -ItemType Directory | Out-Null
 
-            # Copy the portable build output to this new directory
-            $outputPath = "${{ steps.paths.outputs.output_dir }}"
-            Copy-Item -Path "$outputPath\*" -Destination $buildDir -Recurse -Force
-          shell: pwsh
+          # Copy the portable build output to this new directory
+          $outputPath = "${{ steps.paths.outputs.output_dir }}"
+          Copy-Item -Path "$outputPath\*" -Destination $buildDir -Recurse -Force
+        shell: pwsh
 
        # Step 10: Compile .ISS to .EXE Installer
       - name: Compile .ISS to .EXE Installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         with:
           path: .\Build\install.iss
-           options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\install /DMyFileSource=${{ github.workspace }}\Build\install /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
+          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\install /DMyFileSource=${{ github.workspace }}\Build\install /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
   
       # Step 11: Upload the Inno Setup Installer as an artifact
       - name: Upload Inno Setup Installer
