@@ -56,6 +56,26 @@
       <DependentUpon>AltMinimize.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\SettingsView.axaml.cs">
+      <DependentUpon>SettingsView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\GallerySettingsView.axaml.cs">
+      <DependentUpon>GalleryViewView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\ImageSettingsView.axaml.cs">
+      <DependentUpon>ImageSettingsView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\MouseWheelView.axaml.cs">
+      <DependentUpon>MouseWheelView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\SlideshowSettingsView.axaml.cs">
+      <DependentUpon>SlideshowSettingsView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   

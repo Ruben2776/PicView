@@ -1,0 +1,90 @@
+﻿<UserControl
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.Views.MouseWheelView"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
+    <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Margin="0,20,0,20"
+            Text="{CompiledBinding MouseWheel,
+                                   Mode=OneWay}" />
+
+        <ComboBox
+            Background="{DynamicResource SecondaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderThickness="1"
+            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+            Margin="0,6,0,15"
+            Padding="5,7,0,7"
+            Width="300"
+            x:Name="MouseWheelBox">
+            <ComboBoxItem Content="{CompiledBinding CtrlToZoom, Mode=OneWay}" />
+            <ComboBoxItem Content="{CompiledBinding ScrollToZoom, Mode=OneWay}" />
+        </ComboBox>
+
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Margin="0,10,0,10"
+            MaxWidth="300"
+            Text="{CompiledBinding ScrollDirection,
+                                   Mode=OneWay}" />
+        <ComboBox
+            Background="{DynamicResource SecondaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderThickness="1"
+            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+            Margin="0,6,0,15"
+            Padding="5,7,0,7"
+            Width="300"
+            x:Name="ScrollDirectionBox">
+            <ComboBoxItem Content="{CompiledBinding Reverse, Mode=OneWay}" />
+            <ComboBoxItem Content="{CompiledBinding Forward, Mode=OneWay}" />
+        </ComboBox>
+
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="12"
+            Margin="0,10,0,10"
+            MaxWidth="300"
+            Text="{CompiledBinding AdjustTimingForZoom,
+                                   Mode=OneWay}" />
+        <customControls:CustomSlider
+            Height="30"
+            HorizontalAlignment="Center"
+            IsSnapToTickEnabled="True"
+            Margin="0,1,0,1"
+            Maximum="1.5"
+            Minimum=".1"
+            TickFrequency=".1"
+            TickPlacement="BottomRight"
+            Value="{CompiledBinding GetZoomSpeed,
+                                    Mode=OneWay}"
+            Width="300" />
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            Foreground="{DynamicResource MainTextColorFaded}"
+            Margin="0,0,0,15"
+            Text="{CompiledBinding GetZoomSpeed,
+                                   Mode=OneWay}" />
+
+
+
+    </StackPanel>
+</UserControl>

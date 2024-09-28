@@ -22,5 +22,5 @@
         Value="{CompiledBinding GetFullGalleryItemHeight,
                                 Mode=TwoWay}"
         ValueChanged="FullGallery_OnValueChanged"
-        Width="270" />
+        Width="300" />
 </UserControl>

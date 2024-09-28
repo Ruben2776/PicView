@@ -1,8 +1,8 @@
-<UserControl
+﻿<UserControl
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
-    x:Class="PicView.Avalonia.Views.GeneralSettingsView"
+    x:Class="PicView.Avalonia.Views.ImageSettingsView"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,49 +13,29 @@
         <viewModels:MainViewModel />
     </Design.DataContext>
     <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
-
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Margin="0,20,0,20"
-            Text="{CompiledBinding ApplicationStartup,
-                                   Mode=OneWay}" />
-        <ComboBox
-            Background="{DynamicResource SecondaryBackgroundColor}"
-            BorderBrush="{DynamicResource MainBorderColor}"
-            BorderThickness="1"
-            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-            Margin="0,6,0,10"
-            Padding="5,7,0,7"
-            Width="300"
-            x:Name="ApplicationStartupBox">
-            <ComboBoxItem Content="{CompiledBinding None, Mode=OneWay}" />
-            <ComboBoxItem Content="{CompiledBinding OpenLastFile, Mode=OneWay}" />
-        </ComboBox>
-
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="0,20,0,20"
-            Text="{CompiledBinding MiscSettings,
+            Text="{CompiledBinding ImageTxt,
                                    Mode=OneWay}" />
 
         <ToggleButton
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
-            Command="{CompiledBinding ChangeTopMostCommand}"
-            IsChecked="{CompiledBinding IsTopMost}"
+            IsChecked="{CompiledBinding IsStretched}"
             Margin="0,0,0,10"
+            ToolTip.Tip="{CompiledBinding Stretch,
+                                          Mode=OneWay}"
             Width="300">
             <TextBlock
                 Classes="txt"
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"
-                Text="{CompiledBinding StayTopMost,
+                Text="{CompiledBinding Stretch,
                                        Mode=OneWay}" />
         </ToggleButton>
 
@@ -63,7 +43,7 @@
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
-            IsChecked="{CompiledBinding IsStayingCentered}"
+            IsChecked="{CompiledBinding IsScrollingEnabled}"
             Margin="0,0,0,10"
             Width="300">
             <TextBlock
@@ -71,15 +51,17 @@
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"
-                Text="{CompiledBinding StayCentered,
+                Text="{CompiledBinding GetScrolling,
                                        Mode=OneWay}" />
         </ToggleButton>
+
 
         <ToggleButton
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
-            IsChecked="{CompiledBinding IsFileSavingDialogShown}"
+            Command="{CompiledBinding ShowSideBySideCommand}"
+            IsChecked="{CompiledBinding IsShowingSideBySide}"
             Margin="0,0,0,10"
             Width="300">
             <TextBlock
@@ -87,24 +69,7 @@
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"
-                Text="{CompiledBinding ShowFileSavingDialog,
-                                       Mode=OneWay}" />
-        </ToggleButton>
-
-        <ToggleButton
-            Background="Transparent"
-            BorderThickness="0"
-            Classes="altHover"
-            IsChecked="{CompiledBinding IsOpeningInSameWindow}"
-            IsEnabled="False"
-            Margin="0,0,0,10"
-            Width="300">
-            <TextBlock
-                Classes="txt"
-                Margin="0"
-                MaxWidth="240"
-                Padding="0,1,5,0"
-                Text="{CompiledBinding OpenInSameWindow,
+                Text="{CompiledBinding SideBySide,
                                        Mode=OneWay}" />
         </ToggleButton>
 
