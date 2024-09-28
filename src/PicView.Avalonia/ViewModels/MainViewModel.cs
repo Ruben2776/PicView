@@ -527,6 +527,14 @@ public class MainViewModel : ViewModelBase
     #region Fields
 
     #region Booleans
+    
+    private IImage? _changeCtrlZoomImage;
+
+    public IImage? ChangeCtrlZoomImage
+    {
+        get => _changeCtrlZoomImage;
+        set => this.RaiseAndSetIfChanged(ref _changeCtrlZoomImage, value);
+    }
 
     private bool _isLoading;
 
@@ -782,7 +790,7 @@ public class MainViewModel : ViewModelBase
 
     public string? GetFlipped
     {
-        get => _getFlipped;
+        get => ScaleX == -1 ? UnFlip : Flip;
         set => this.RaiseAndSetIfChanged(ref _getFlipped, value);
     }
 

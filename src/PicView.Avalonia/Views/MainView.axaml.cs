@@ -87,6 +87,20 @@ public partial class MainView : UserControl
             return;
         }
 
+        // Set source for ChangeCtrlZoomImage
+        // TODO should probably be refactored inside a command
+        if (!Application.Current.TryGetResource("ScanEyeImage", Application.Current.RequestedThemeVariant, out var scanEyeImage ))
+        {
+            return;
+        }
+        if (!Application.Current.TryGetResource("LeftRightArrowsImage", Application.Current.RequestedThemeVariant, out var leftRightArrowsImage ))
+        {
+            return;
+        }
+        var isNavigatingWithCtrl = SettingsHelper.Settings.Zoom.CtrlZoom;
+        vm.ChangeCtrlZoomImage = isNavigatingWithCtrl ? leftRightArrowsImage as DrawingImage : scanEyeImage as DrawingImage;
+
+        // Update file history
         var count = FileHistoryNavigation.GetCount();
         if (RecentFilesCM.Items.Count < count)
         {

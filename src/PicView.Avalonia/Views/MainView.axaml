@@ -211,13 +211,25 @@
                                              Mode=OneWay}"
                     IsChecked="{CompiledBinding IsStretched}"
                     ToggleType="CheckBox" />
-                <MenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding GetCtrlZoom, Mode=OneWay}" />
+
                 <MenuItem
                     Command="{CompiledBinding ShowSideBySideCommand}"
                     Header="{CompiledBinding SideBySide,
                                              Mode=OneWay}"
                     IsChecked="{CompiledBinding IsShowingSideBySide}"
                     ToggleType="CheckBox" />
+
+                <Separator />
+
+                <MenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding GetCtrlZoom, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{CompiledBinding ChangeCtrlZoomImage}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
                 <MenuItem Command="{CompiledBinding ChangeBackgroundCommand}" Header="{CompiledBinding ChangeBackground, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
@@ -297,7 +309,92 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+
             <Separator />
+
+            <MenuItem Header="{CompiledBinding Navigation, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Image
+                        Height="14"
+                        Source="{StaticResource SignPostImage}"
+                        Width="14" />
+                </MenuItem.Icon>
+
+                <!--  Next  -->
+                <MenuItem
+                    Command="{CompiledBinding NextCommand}"
+                    Header="{CompiledBinding NextImage,
+                                             Mode=OneWay}"
+                    StaysOpenOnClick="True">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{StaticResource NextImage}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <!--  Prev  -->
+                <MenuItem
+                    Command="{CompiledBinding PreviousCommand}"
+                    Header="{CompiledBinding PrevImage,
+                                             Mode=OneWay}"
+                    StaysOpenOnClick="True">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{StaticResource PrevImage}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <Separator />
+
+                <!--  First Image  -->
+                <MenuItem Command="{CompiledBinding FirstCommand}" Header="{CompiledBinding FirstImage}">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{StaticResource FirstImage}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <!--  Last Image  -->
+                <MenuItem Command="{CompiledBinding LastCommand}" Header="{CompiledBinding LastImage, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{StaticResource LastImage}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <Separator />
+
+                <!--  Next folder  -->
+                <MenuItem Command="{CompiledBinding NextFolderCommand}" Header="{CompiledBinding NextFolder, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="14"
+                            Source="{StaticResource NextFolderImage}"
+                            Width="14" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <!--  Prev folder  -->
+                <MenuItem Command="{CompiledBinding PreviousFolderCommand}" Header="{CompiledBinding PrevFolder, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="14"
+                            Source="{StaticResource PrevFolderImage}"
+                            Width="14" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+            <Separator />
+
             <MenuItem
                 Command="{CompiledBinding SetAsWallpaperCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -330,6 +427,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
+
             <MenuItem Header="{CompiledBinding ImageTxt, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
@@ -369,8 +467,78 @@
 
                 <MenuItem Header="{CompiledBinding ResizeImage, Mode=OneWay}" IsEnabled="False">
                     <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{StaticResource BatchResizeImage}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem Header="{CompiledBinding BatchResize, Mode=OneWay}" IsEnabled="False">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{StaticResource BatchResizeImage}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <Separator />
+
+                <MenuItem Command="{CompiledBinding OptimizeImageCommand}" Header="{CompiledBinding OptimizeImage, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{StaticResource PortalImage}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <Separator />
+
+                <MenuItem
+                    Command="{CompiledBinding CropCommand}"
+                    Header="{CompiledBinding Crop,
+                                             Mode=OneWay}"
+                    IsEnabled="False">
+                    <MenuItem.Icon>
                         <Path
-                            Data="{StaticResource ImageGeometry}"
+                            Data="{StaticResource CropGeometry}"
+                            Fill="{DynamicResource MainIconColor}"
+                            Height="12"
+                            Stretch="Fill"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <Separator />
+
+                <MenuItem
+                    Command="{CompiledBinding FlipCommand}"
+                    Header="{CompiledBinding GetFlipped}"
+                    StaysOpenOnClick="True">
+                    <MenuItem.Icon>
+                        <Path
+                            Data="{StaticResource FlipGeometry}"
+                            Fill="{DynamicResource MainIconColor}"
+                            Height="12"
+                            Stretch="Fill"
+                            Width="12">
+                            <Path.RenderTransform>
+                                <ScaleTransform ScaleX="{CompiledBinding ScaleX}" />
+                            </Path.RenderTransform>
+                        </Path>
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem
+                    Command="{CompiledBinding RotateLeftCommand}"
+                    Header="{CompiledBinding RotateLeft,
+                                             Mode=OneWay}"
+                    StaysOpenOnClick="True">
+                    <MenuItem.Icon>
+                        <Path
+                            Data="{StaticResource RotateLeftGeometry}"
                             Fill="{StaticResource Brush0}"
                             Height="12"
                             Stretch="Fill"
@@ -378,10 +546,14 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <MenuItem Header="{CompiledBinding BatchResize, Mode=OneWay}" IsEnabled="False">
+                <MenuItem
+                    Command="{CompiledBinding RotateRightCommand}"
+                    Header="{CompiledBinding RotateRight,
+                                             Mode=OneWay}"
+                    StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Path
-                            Data="{StaticResource ImageGeometry}"
+                            Data="{StaticResource RotateRightGeometry}"
                             Fill="{StaticResource Brush0}"
                             Height="12"
                             Stretch="Fill"

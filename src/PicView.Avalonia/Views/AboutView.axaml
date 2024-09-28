@@ -232,5 +232,13 @@
             ToolTip.Tip="https://fontawesome.com/">
             <TextBlock Classes="txt" Text="Font Awesome" />
         </HyperlinkButton>
+
+        <HyperlinkButton
+            HorizontalAlignment="Center"
+            Margin="0,1,0,1"
+            NavigateUri="https://lucide.dev/"
+            ToolTip.Tip="https://lucide.dev/">
+            <TextBlock Classes="txt" Text="Lucide" />
+        </HyperlinkButton>
     </StackPanel>
 </UserControl>
