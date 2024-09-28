@@ -18,20 +18,22 @@
         <viewModels:MainViewModel />
     </Design.DataContext>
     <Border
+        Background="{DynamicResource WindowBackgroundColor}"
         BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="1"
         CornerRadius="0,0,8,8"
         Name="ParentBorder">
         <Panel>
-            <Panel
+            <DockPanel
                 Background="{DynamicResource SecondaryBackgroundColor}"
                 Height="28"
+                LastChildFill="True"
                 PointerPressed="MoveWindow"
                 VerticalAlignment="Top">
 
                 <Image
+                    DockPanel.Dock="Left"
                     Height="25"
-                    HorizontalAlignment="Left"
                     Margin="7,1,7,1"
                     Width="20">
                     <Image.Source>
@@ -48,51 +50,21 @@
                     </Image.Source>
                 </Image>
 
-                <TabControl
-                    Background="{DynamicResource SecondaryBackgroundColor}"
+                <Button
+                    Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="1,0,0,0"
-                    HorizontalAlignment="Center"
-                    Margin="0"
-                    Padding="0"
-                    PointerPressed="MoveWindow">
-                    <TabItem PointerPressed="MoveWindow" x:Name="GeneralSettingsTabItem">
-
-                        <TabItem.Header>
-                            <StackPanel MinWidth="95" Orientation="Horizontal">
-                                <Path
-                                    Data="{StaticResource CogGeometry}"
-                                    Fill="{DynamicResource MainIconColor}"
-                                    Height="14"
-                                    Margin="0,0,5,0"
-                                    Stretch="Fill"
-                                    Width="14" />
-                                <TextBlock
-                                    Classes="txt"
-                                    Text="{Binding GeneralSettings}"
-                                    TextAlignment="Center" />
-                            </StackPanel>
-                        </TabItem.Header>
-                    </TabItem>
-                    <TabItem
-                        MinWidth="95"
-                        PointerPressed="MoveWindow"
-                        x:Name="AppearanceTabItem">
-                        <TabItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <Image
-                                    Height="14"
-                                    Margin="0,0,5,0"
-                                    Source="{StaticResource DisplayImage}"
-                                    Width="14" />
-                                <TextBlock
-                                    Classes="txt"
-                                    Text="{Binding Appearance}"
-                                    TextAlignment="Center" />
-                            </StackPanel>
-                        </TabItem.Header>
-                    </TabItem>
-                </TabControl>
+                    BorderThickness="0,0,1,0"
+                    Classes="hover"
+                    Click="Close"
+                    DockPanel.Dock="Right"
+                    Width="30">
+                    <Path
+                        Data="{StaticResource CloseGeometry}"
+                        Fill="{DynamicResource MainIconColor}"
+                        Height="10"
+                        Stretch="Fill"
+                        Width="10" />
+                </Button>
 
                 <Button
                     Background="{DynamicResource MainButtonBackgroundColor}"
@@ -100,8 +72,7 @@
                     BorderThickness="0,0,1,0"
                     Classes="hover"
                     Click="Minimize"
-                    HorizontalAlignment="Right"
-                    Margin="0,0,30,0"
+                    DockPanel.Dock="Right"
                     Width="30">
                     <Viewbox Height="12" Width="12">
                         <Path
@@ -111,43 +82,152 @@
                     </Viewbox>
                 </Button>
 
-                <Button
-                    Background="{DynamicResource MainButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="hover"
-                    Click="Close"
-                    HorizontalAlignment="Right"
-                    Width="30">
-                    <Path
-                        Data="{StaticResource CloseGeometry}"
-                        Fill="{DynamicResource MainIconColor}"
-                        Height="10"
-                        Stretch="Fill"
-                        Width="10" />
-                </Button>
-            </Panel>
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{DynamicResource MainTextColor}"
+                    HorizontalAlignment="Center"
+                    Text="{CompiledBinding Settings,
+                                           Mode=OneWay}"
+                    TextAlignment="Center" />
+            </DockPanel>
 
-            <Rectangle
-                Fill="{DynamicResource MainBorderColor}"
-                Height="1"
-                Margin="0,28,0,0"
-                VerticalAlignment="Top"
-                Width="{Binding #ParentBorder.Bounds.Width}"
-                ZIndex="1" />
+
+            <TabControl
+                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderThickness="0"
+                HorizontalAlignment="Left"
+                Margin="0,28,0,35"
+                Padding="0"
+                PointerPressed="MoveWindow"
+                TabStripPlacement="Right"
+                VerticalAlignment="Top">
+                <TabControl.Styles>
+                    <Styles>
+                        <Style Selector="TabItem.headerStyle">
+                            <Setter Property="HorizontalContentAlignment" Value="Left" />
+                            <Setter Property="Padding" Value="10" />
+                            <Setter Property="Width" Value="250" />
+                        </Style>
+                        <Style Selector="Image.imageStyle">
+                            <Setter Property="Margin" Value="0,0,7,0" />
+                            <Setter Property="Width" Value="14" />
+                            <Setter Property="Height" Value="14" />
+                        </Style>
+                        <Style Selector="Path.pathStyle">
+                            <Setter Property="Margin" Value="0,0,7,0" />
+                            <Setter Property="Width" Value="14" />
+                            <Setter Property="Height" Value="14" />
+                            <Setter Property="Stretch" Value="Fill" />
+                            <Setter Property="Fill" Value="{DynamicResource MainIconColor}" />
+                        </Style>
+                    </Styles>
+                </TabControl.Styles>
+                <TabItem Classes="headerStyle" x:Name="GeneralSettingsTabItem">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Classes="pathStyle" Data="{StaticResource CogGeometry}" />
+                            <TextBlock Classes="txt" Text="{Binding GeneralSettings}" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem Classes="headerStyle" x:Name="AppearanceTabItem">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Classes="imageStyle" Source="{StaticResource DisplayImage}" />
+                            <TextBlock Classes="txt" Text="{Binding Appearance}" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem Classes="headerStyle" x:Name="GalleryTabItem">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Classes="imageStyle" Source="{StaticResource GalleryImage}" />
+                            <TextBlock Classes="txt" Text="{CompiledBinding GallerySettings}" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem Classes="headerStyle" x:Name="NavigationTabItem">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Classes="imageStyle" Source="{StaticResource SignPostImage}" />
+                            <TextBlock Classes="txt" Text="{CompiledBinding Navigation}" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem Classes="headerStyle" x:Name="SlideshowTabItem">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Classes="imageStyle" Source="{StaticResource DisplayImage}" />
+                            <TextBlock Classes="txt" Text="{CompiledBinding Slideshow}" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem Classes="headerStyle" x:Name="LanguageTabItem">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Classes="imageStyle" Source="{StaticResource LanguageImage}" />
+                            <TextBlock Classes="txt" Text="{CompiledBinding Language}" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem
+                    Classes="headerStyle"
+                    IsEnabled="False"
+                    x:Name="FileAssociationsTabItem ">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Classes="imageStyle" Source="{StaticResource FileKeyImage}" />
+                            <TextBlock Classes="txt" Text="File associations (Get translation)" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem Classes="headerStyle" x:Name="MouseWheelTabItem">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Classes="imageStyle" Source="{StaticResource MouseImage}" />
+                            <TextBlock Classes="txt" Text="{CompiledBinding MouseWheel}" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+                <TabItem Classes="headerStyle" x:Name="AppShortcutsTabItem">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Classes="imageStyle" Source="{StaticResource ShortcutsImage}" />
+                            <TextBlock Classes="txt" Text="{CompiledBinding ApplicationShortcuts}" />
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+            </TabControl>
+
+            <Button
+                Classes="BorderStyle altHover mainBtn"
+                Command="{CompiledBinding ResetSettingsCommand}"
+                HorizontalAlignment="Left"
+                Margin="0"
+                VerticalAlignment="Bottom"
+                Width="251">
+                <TextBlock
+                    Classes="txt"
+                    Text="{CompiledBinding ResetButtonText,
+                                           Mode=OneWay}"
+                    TextAlignment="Center" />
+            </Button>
+
+
             <ScrollViewer
-                Background="{DynamicResource NoisyTexture}"
+                HorizontalAlignment="Right"
                 IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}"
-                Margin="0,28,0,0">
-                <views:GeneralSettingsView Background="Transparent" PointerPressed="MoveWindow" />
+                Margin="235,28,0,0">
+                <views:GeneralSettingsView Background="Transparent" />
             </ScrollViewer>
 
             <ScrollViewer
-                Background="{DynamicResource NoisyTexture}"
+                HorizontalAlignment="Right"
                 IsVisible="{Binding Path=IsSelected, ElementName=AppearanceTabItem}"
-                Margin="0,28,0,0">
-                <views:AppearanceView Background="Transparent" PointerPressed="MoveWindow" />
+                Margin="235,28,0,0">
+                <views:AppearanceView Background="Transparent" />
             </ScrollViewer>
+
         </Panel>
     </Border>
 </Window>

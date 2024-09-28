@@ -402,16 +402,8 @@
                         <Image
                             Height="20"
                             Margin="2,0,0,0"
-                            Width="20">
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                        <GeometryDrawing Brush="{StaticResource Brush0}" Geometry="F1 M512,512z M0,0z M80,132L80,460A20,20,0,0,0,100,480L492,480A20,20,0,0,0,512,460L512,132A20,20,0,0,0,492,112L100,112A20,20,0,0,0,80,132z M373.14,173.33A46,46,0,1,1,326.86,219.33A46.19,46.19,0,0,1,373.14,173.33z M111.73,449.33L111.73,353.85 234.49,243.65 328.27,337 215.27,449.33z M480,449.33L259,449.33 403.58,305.33 480,370.59z" />
-                                        <GeometryDrawing Brush="{StaticResource Brush0}" Geometry="F1 M512,512z M0,0z M20,32A20,20,0,0,0,0,52L0,396A20,20,0,0,0,20,416L48,416 48,100A20,20,0,0,1,68,80L448,80 448,52A20,20,0,0,0,428,32z" />
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image>
+                            Source="{StaticResource GalleryImage}"
+                            Width="20" />
                         <TextBlock
                             Classes="txt"
                             Margin="10,0,6,0"
