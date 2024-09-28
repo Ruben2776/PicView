@@ -12,7 +12,6 @@
     <Trimming>full</Trimming>
     <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
     <OptimizationPreference>Speed</OptimizationPreference>
-    <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
     <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
     <Platforms>x64;arm64</Platforms>
     <ImplicitUsings>enable</ImplicitUsings>
