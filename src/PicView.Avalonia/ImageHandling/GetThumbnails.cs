@@ -1,6 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using ImageMagick;
-using PicView.Avalonia.Navigation;
+using PicView.Core.FileHandling;
 
 namespace PicView.Avalonia.ImageHandling;
 
@@ -47,8 +47,7 @@ public static class GetThumbnails
         FileInfo? fileInfo = null)
     {
         fileInfo ??= new FileInfo(path);
-        await using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read,
-            FileShare.ReadWrite, 4096, true);
+        await using var fileStream = FileHelper.GetOptimizedFileStream(fileInfo);
         if (fileInfo.Length >= 2147483648)
         {
             // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."

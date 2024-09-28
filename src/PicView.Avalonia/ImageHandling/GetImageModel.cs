@@ -1,6 +1,6 @@
 using Avalonia.Media.Imaging;
 using ImageMagick;
-using PicView.Avalonia.Navigation;
+using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.ImageHandling;
@@ -9,148 +9,116 @@ public static class GetImageModel
 {
     public static async Task<ImageModel?> GetImageModelAsync(FileInfo fileInfo, bool isThumb = false, uint height = 0)
     {
-        if (fileInfo is not null)
+        if (fileInfo is null)
         {
-            return await Task.Run(async () =>
+#if DEBUG
+            Console.WriteLine($"Error: {nameof(GetImageModel)}:{nameof(GetImageModelAsync)}: fileInfo is null");
+#endif
+            return new ImageModel
             {
-                var imageModel = new ImageModel { FileInfo = fileInfo };
-
-                try
-                {
-                    var ext = fileInfo.Extension.ToLower();
-                    if (string.IsNullOrEmpty(ext))
-                    {
-                        using var magickImage = new MagickImage();
-                        magickImage.Ping(fileInfo);
-                        ext = magickImage.Format.ToString();
-                        var gif = ext.Equals("gif", StringComparison.InvariantCultureIgnoreCase);
-                        var webp = ext.Equals("webp", StringComparison.InvariantCultureIgnoreCase);
-                        if (!isThumb)
-                        {
-                            await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
-                            if (ImageFunctions.IsAnimated(fileInfo))
-                            {
-                                if (gif)
-                                {
-                                    imageModel.ImageType = ImageType.AnimatedGif;
-                                }
-                                else if (webp)
-                                {
-                                    imageModel.ImageType = ImageType.AnimatedWebp;
-                                }
-                            }
-
-                            return imageModel;
-                        }
-
-                        var svg = ext.Equals("svg", StringComparison.InvariantCultureIgnoreCase) ||
-                                  ext.Equals("svgz", StringComparison.InvariantCultureIgnoreCase);
-                        if (svg)
-                        {
-                            AddSvgImage(fileInfo, imageModel);
-                            return imageModel;
-                        }
-
-                        await GetThumbnails.AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
-                        return imageModel;
-                    }
-
-                    switch (ext)
-                    {
-                        case ".webp":
-                            if (isThumb)
-                            {
-                                await GetThumbnails.AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
-                            }
-                            else
-                            {
-                                await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
-                                if (ImageFunctions.IsAnimated(fileInfo))
-                                {
-                                    imageModel.ImageType = ImageType.AnimatedWebp;
-                                }
-                            }
-
-                            break;
-                        case ".gif":
-                            if (isThumb)
-                            {
-                                await GetThumbnails.AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
-                            }
-                            else
-                            {
-                                await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
-                                if (ImageFunctions.IsAnimated(fileInfo))
-                                {
-                                    imageModel.ImageType = ImageType.AnimatedGif;
-                                }
-                            }
-
-                            break;
-                        case ".png":
-                        case ".jpg":
-                        case ".jpeg":
-                        case ".jpe":
-                        case ".bmp":
-                        case ".jfif":
-                        case ".ico":
-                        case ".wbmp":
-                            if (isThumb)
-                            {
-                                await GetThumbnails.AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
-                            }
-                            else
-                            {
-                                await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
-                            }
-
-                            break;
-
-                        case ".svg":
-                        case ".svgz":
-                            AddSvgImage(fileInfo, imageModel);
-                            break;
-
-                        case ".b64":
-                            await AddBase64ImageAsync(fileInfo, imageModel, isThumb, height).ConfigureAwait(false);
-                            break;
-
-                        default:
-                            await AddDefaultImageAsync(fileInfo, imageModel, isThumb, height).ConfigureAwait(false);
-                            break;
-                    }
-                }
-                catch (Exception e)
-                {
-#if DEBUG
-                    Console.WriteLine($"Error: {nameof(GetImageModel)}:{nameof(GetImageModelAsync)}: \n{e}");
-#endif
-                    return new ImageModel
-                    {
-                        FileInfo = fileInfo,
-                        ImageType = ImageType.Invalid,
-                        Image = null, // TODO replace with error image
-                        PixelHeight = 0,
-                        PixelWidth = 0,
-                        EXIFOrientation = EXIFHelper.EXIFOrientation.None
-                    };
-                }
-
-                return imageModel;
-            });
+                FileInfo = null,
+                ImageType = ImageType.Invalid,
+                Image = null, // TODO replace with error image
+                PixelHeight = 0,
+                PixelWidth = 0,
+                EXIFOrientation = EXIFHelper.EXIFOrientation.None
+            };
         }
-#if DEBUG
-        Console.WriteLine($"Error: {nameof(GetImageModel)}:{nameof(GetImageModelAsync)}: fileInfo is null");
-#endif
-        return new ImageModel
+
+        var imageModel = new ImageModel { FileInfo = fileInfo };
+
+        try
         {
-            FileInfo = fileInfo,
-            ImageType = ImageType.Invalid,
-            Image = null, // TODO replace with error image
-            PixelHeight = 0,
-            PixelWidth = 0,
-            EXIFOrientation = EXIFHelper.EXIFOrientation.None
-        };
+            var ext = fileInfo.Extension.ToLower();
+            if (string.IsNullOrEmpty(ext))
+            {
+                using var magickImage = new MagickImage();
+                magickImage.Ping(fileInfo);
+                ext = magickImage.Format.ToString().ToLower();
+            }
+
+            switch (ext)
+            {
+                case ".webp":
+                    if (isThumb)
+                    {
+                        await GetThumbnails.AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
+                        if (ImageFunctions.IsAnimated(fileInfo))
+                        {
+                            imageModel.ImageType = ImageType.AnimatedWebp;
+                        }
+                    }
+
+                    break;
+                case ".gif":
+                    if (isThumb)
+                    {
+                        await GetThumbnails.AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
+                        if (ImageFunctions.IsAnimated(fileInfo))
+                        {
+                            imageModel.ImageType = ImageType.AnimatedGif;
+                        }
+                    }
+
+                    break;
+                case ".png":
+                case ".jpg":
+                case ".jpeg":
+                case ".jpe":
+                case ".bmp":
+                case ".jfif":
+                case ".ico":
+                case ".wbmp":
+                    if (isThumb)
+                    {
+                        await GetThumbnails.AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
+                    }
+
+                    break;
+
+                case ".svg":
+                case ".svgz":
+                    AddSvgImage(fileInfo, imageModel);
+                    break;
+
+                case ".b64":
+                    await AddBase64ImageAsync(fileInfo, imageModel, isThumb, height).ConfigureAwait(false);
+                    break;
+
+                default:
+                    await AddDefaultImageAsync(fileInfo, imageModel, isThumb, height).ConfigureAwait(false);
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+#if DEBUG
+            Console.WriteLine($"Error: {nameof(GetImageModel)}:{nameof(GetImageModelAsync)}: \n{e}");
+#endif
+            return new ImageModel
+            {
+                FileInfo = fileInfo,
+                ImageType = ImageType.Invalid,
+                Image = null, // TODO replace with error image
+                PixelHeight = 0,
+                PixelWidth = 0,
+                EXIFOrientation = EXIFHelper.EXIFOrientation.None
+            };
+        }
+
+        return imageModel;
     }
 
 
@@ -164,15 +132,8 @@ public static class GetImageModel
             return;
         }
 
-        const int bufferSize = 16384;
-        await using var fs = new FileStream(
-            fileInfo.FullName,
-            FileMode.Open,
-            FileAccess.Read,
-            FileShare.ReadWrite,
-            bufferSize,
-            fileInfo.Length > 1e7);
-        Add(fs, imageModel);
+        await using var fileStream = FileHelper.GetOptimizedFileStream(fileInfo);
+        Add(fileStream, imageModel);
         imageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(fileInfo);
     }
 
