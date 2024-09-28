@@ -70,6 +70,12 @@ public static class QuickLoad
             vm.PlatformService.SetTaskbarProgress((ulong)vm.ImageIterator.CurrentIndex, (ulong)vm.ImageIterator.ImagePaths.Count);
         }
         
+        // Add recent files, except when browsing archive
+        if (string.IsNullOrWhiteSpace(TempFileHelper.TempFilePath))
+        {
+            FileHistoryNavigation.Add(fileInfo.FullName);
+        }
+        
         var tasks = new List<Task>
         {
             vm.ImageIterator.AddAsync(vm.ImageIterator.CurrentIndex, imageModel),
