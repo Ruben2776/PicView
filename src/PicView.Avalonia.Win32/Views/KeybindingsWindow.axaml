@@ -16,11 +16,14 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <Border BorderBrush="{DynamicResource WindowBorderColor}" BorderThickness="1">
+    <Border
+        BorderBrush="{DynamicResource WindowBorderColor}"
+        BorderThickness="1"
+        CornerRadius="0,0,8,8">
         <Panel>
 
             <DockPanel
-                Background="{DynamicResource SecondaryBackgroundColor}"
+                Background="{DynamicResource WindowBackgroundColor}"
                 Height="28"
                 PointerPressed="MoveWindow"
                 VerticalAlignment="Top">
@@ -28,7 +31,6 @@
                 <Border
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,1"
-                    CornerRadius="8,0,0,0"
                     DockPanel.Dock="Left">
                     <Image
                         Height="25"
@@ -59,7 +61,7 @@
                     Width="30">
                     <Path
                         Data="{StaticResource CloseGeometry}"
-                        Fill="{DynamicResource MainIconColor}"
+                        Fill="{DynamicResource MainTextColor}"
                         Height="10"
                         Stretch="Fill"
                         Width="10" />
@@ -76,7 +78,7 @@
                     <Viewbox Height="12" Width="12">
                         <Path
                             Data="{StaticResource MinimizeGeometry}"
-                            Fill="{DynamicResource MainIconColor}"
+                            Fill="{DynamicResource MainTextColor}"
                             Stretch="Fill" />
                     </Viewbox>
                 </Button>
@@ -84,6 +86,7 @@
                 <Border BorderBrush="{DynamicResource MainBorderColor}" BorderThickness="0,0,0,1">
                     <TextBlock
                         Classes="txt"
+                        Foreground="{DynamicResource MainTextColor}"
                         Text="{CompiledBinding ApplicationShortcuts}"
                         TextAlignment="Center" />
                 </Border>

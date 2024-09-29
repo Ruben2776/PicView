@@ -28,7 +28,7 @@
         <Panel>
             <Path
                 Data="{StaticResource FullscreenGeometry}"
-                Fill="{DynamicResource MainIconColor}"
+                Fill="{DynamicResource MainTextColor}"
                 Height="12"
                 IsVisible="{CompiledBinding !IsFullscreen}"
                 Margin="0,0,0,3"
@@ -36,7 +36,7 @@
                 Width="12" />
             <Path
                 Data="{StaticResource RestoreGeometry}"
-                Fill="{DynamicResource MainIconColor}"
+                Fill="{DynamicResource MainTextColor}"
                 Height="12"
                 IsVisible="{CompiledBinding IsFullscreen}"
                 Margin="0,0,0,3"

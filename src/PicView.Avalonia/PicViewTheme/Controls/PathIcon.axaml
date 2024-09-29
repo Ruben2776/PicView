@@ -22,7 +22,7 @@
                 <Animation Duration=".35" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Fill">
-                            <SolidColorBrush Color="{StaticResource MainIconColor}" />
+                            <SolidColorBrush Color="{StaticResource MainTextColor}" />
                         </Setter>
                     </KeyFrame>
                     <KeyFrame Cue="1">

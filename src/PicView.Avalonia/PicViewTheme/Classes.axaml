@@ -5,7 +5,7 @@
 
     <Style Selector="TextBlock.txt">
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+        <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
@@ -56,7 +56,7 @@
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{DynamicResource MainTextColorFaded}" />
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
-        <Setter Property="Background" Value="{DynamicResource TertiaryBackgroundColor}" />
+        <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="2" />

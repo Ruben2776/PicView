@@ -18,15 +18,17 @@
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
+            Foreground="{StaticResource SecondaryTextColor}"
             Margin="0,20,0,20"
             Text="{CompiledBinding Theme,
                                    Mode=OneWay}" />
 
         <ComboBox
-            Background="{DynamicResource SecondaryBackgroundColor}"
-            BorderBrush="{DynamicResource MainBorderColor}"
+            Background="{DynamicResource TertiaryBackgroundColor}"
+            BorderBrush="{DynamicResource TertiaryBorderColor}"
             BorderThickness="1"
             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+            Foreground="{StaticResource SecondaryTextColor}"
             Margin="0,0,0,10"
             Padding="5,7,0,7"
             Width="300"
@@ -39,6 +41,7 @@
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
+            Foreground="{StaticResource SecondaryTextColor}"
             Margin="0,15,0,10"
             Text="{CompiledBinding MiscSettings}" />
 
@@ -52,6 +55,7 @@
             Width="300">
             <TextBlock
                 Classes="txt"
+                Foreground="{StaticResource SecondaryTextColor}"
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"

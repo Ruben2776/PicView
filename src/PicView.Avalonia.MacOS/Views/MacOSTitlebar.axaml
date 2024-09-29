@@ -15,8 +15,8 @@
     </Design.DataContext>
     <DockPanel Background="{DynamicResource MainBackgroundColor}" LastChildFill="True">
         <DockPanel.Resources>
-            <SolidColorBrush Color="{DynamicResource MainIconColor}" x:Key="Brush0" />
-            <SolidColorBrush Color="{DynamicResource MainIconColor}" x:Key="Brush1" />
+            <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="Brush0" />
+            <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="Brush1" />
         </DockPanel.Resources>
         <Rectangle DockPanel.Dock="Left" Width="70" />
 

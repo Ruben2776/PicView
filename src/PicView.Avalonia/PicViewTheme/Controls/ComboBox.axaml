@@ -4,12 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ControlTheme TargetType="ComboBox" x:Key="{x:Type ComboBox}">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+        <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="4" />
         <Setter Property="MinHeight" Value="20" />
-        <Setter Property="PlaceholderForeground" Value="{StaticResource MainTextColor}" />
+        <Setter Property="PlaceholderForeground" Value="{StaticResource MainTextColorFaded}" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="Template">
             <ControlTemplate>
@@ -46,7 +46,7 @@
                                     Width="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}" />
                                 <Path
                                     Data="F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z"
-                                    Fill="{DynamicResource MainIconColor}"
+                                    Fill="{TemplateBinding Foreground}"
                                     Height="17"
                                     HorizontalAlignment="Right"
                                     Margin="0,0,5,0"
@@ -65,8 +65,8 @@
                             Name="PART_Popup"
                             PlacementTarget="{TemplateBinding}">
                             <Border
-                                Background="{DynamicResource SecondaryBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource TertiaryBackgroundColor}"
+                                BorderBrush="{DynamicResource TertiaryBorderColor}"
                                 BorderThickness="1,0,1,1">
                                 <ScrollViewer
                                     HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
@@ -87,7 +87,8 @@
             <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
         </Style>
         <Style Selector="^:disabled /template/ Border#border">
-            <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
+            <Setter Property="Opacity" Value="{StaticResource ThemeDisabledOpacity}" />
         </Style>
+
     </ControlTheme>
 </ResourceDictionary>

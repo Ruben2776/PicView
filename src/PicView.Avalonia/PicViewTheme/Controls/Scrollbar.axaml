@@ -24,7 +24,7 @@
                                 Width="16">
                                 <Path
                                     Data="M321.94 98L158.82 237.78a24 24 0 000 36.44L321.94 414c15.57 13.34 39.62 2.28 39.62-18.22v-279.6c0-20.5-24.05-31.56-39.62-18.18z"
-                                    Fill="{DynamicResource MainIconColor}"
+                                    Fill="{TemplateBinding Foreground}"
                                     Height="12"
                                     HorizontalAlignment="Center"
                                     Stretch="Fill"
@@ -69,7 +69,7 @@
                                 Width="16">
                                 <Path
                                     Data="M190.06 414l163.12-139.78a24 24 0 000-36.44L190.06 98c-15.57-13.34-39.62-2.28-39.62 18.22v279.6c0 20.5 24.05 31.56 39.62 18.18z"
-                                    Fill="{DynamicResource MainIconColor}"
+                                    Fill="{TemplateBinding Foreground}"
                                     Height="12"
                                     HorizontalAlignment="Center"
                                     Stretch="Fill"
@@ -98,7 +98,7 @@
                                 Name="PART_LineUpButton">
                                 <Path
                                     Data="F1 M512,512z M0,0z M414,321.94L274.22,158.82A24,24,0,0,0,237.78,158.82L98,321.94C84.66,337.51,95.72,361.56,116.22,361.56L395.82,361.56C416.32,361.56,427.38,337.51,414,321.94z"
-                                    Fill="{DynamicResource MainIconColor}"
+                                    Fill="{TemplateBinding Foreground}"
                                     Height="16"
                                     HorizontalAlignment="Center"
                                     Stretch="Fill"
@@ -143,7 +143,7 @@
                                 Name="PART_LineDownButton">
                                 <Path
                                     Data="F1 M512,512z M0,0z M98,190.06L237.78,353.18A24,24,0,0,0,274.22,353.18L414,190.06C427.34,174.49,416.28,150.44,395.78,150.44L116.18,150.44C95.6799999999999,150.44,84.6199999999999,174.49,97.9999999999999,190.06z"
-                                    Fill="{DynamicResource MainIconColor}"
+                                    Fill="{TemplateBinding Foreground}"
                                     Height="16"
                                     HorizontalAlignment="Center"
                                     Stretch="Fill"
@@ -195,7 +195,7 @@
         </Style>
 
         <Style Selector="^ /template/ RepeatButton &gt; Path">
-            <Setter Property="Fill" Value="{DynamicResource MainIconColor}" />
+            <Setter Property="Fill" Value="{DynamicResource MainTextColor}" />
         </Style>
 
         <Style Selector="^ /template/ RepeatButton:pointerover &gt; Path">

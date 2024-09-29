@@ -50,6 +50,7 @@
                         <TextBlock
                             Classes="txt"
                             FontSize="14"
+                            Foreground="{DynamicResource MainTextColor}"
                             Margin="10,0,7,0"
                             MaxWidth="130"
                             Text="{CompiledBinding BatchResize,
@@ -85,6 +86,7 @@
                         <TextBlock
                             Classes="txt"
                             FontSize="14"
+                            Foreground="{DynamicResource MainTextColor}"
                             Margin="10,0,6,0"
                             MaxWidth="130"
                             Text="{CompiledBinding Effects,
@@ -113,6 +115,7 @@
                 </Button>
 
                 <Button
+                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     Canvas.Left="7"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
@@ -129,6 +132,7 @@
                             Width="17" />
                         <TextBlock
                             Classes="txt"
+                            Foreground="{DynamicResource MainTextColor}"
                             Margin="10,0,6,0"
                             Text="{CompiledBinding ImageInfo,
                                                    Mode=OneWay}"
@@ -137,6 +141,7 @@
                 </Button>
 
                 <Button
+                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     Canvas.Left="182"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
@@ -153,6 +158,7 @@
                             Width="20" />
                         <TextBlock
                             Classes="txt"
+                            Foreground="{DynamicResource MainTextColor}"
                             MaxWidth="150"
                             Text="{CompiledBinding OptimizeImage,
                                                    Mode=OneWay}" />
@@ -160,6 +166,7 @@
                 </Button>
 
                 <Button
+                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     Canvas.Left="7"
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
@@ -177,6 +184,7 @@
                             Width="17" />
                         <TextBlock
                             Classes="txt"
+                            Foreground="{DynamicResource MainTextColor}"
                             MaxWidth="150"
                             Text="{CompiledBinding ColorPickerTool,
                                                    Mode=OneWay}" />
@@ -184,6 +192,7 @@
                 </Button>
 
                 <Button
+                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     Canvas.Left="182"
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
@@ -197,6 +206,7 @@
                             Width="20" />
                         <TextBlock
                             Classes="txt"
+                            Foreground="{DynamicResource MainTextColor}"
                             MaxWidth="150"
                             Text="{CompiledBinding ChangeBackground,
                                                    Mode=OneWay}" />
@@ -204,6 +214,7 @@
                 </Button>
 
                 <Button
+                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     Canvas.Left="7"
                     Canvas.Top="150"
                     Classes="ButtonBorder altHover"
@@ -219,6 +230,7 @@
                             Width="17" />
                         <TextBlock
                             Classes="txt"
+                            Foreground="{DynamicResource MainTextColor}"
                             MaxWidth="150"
                             Text="{CompiledBinding ApplicationShortcuts,
                                                    Mode=OneWay}" />
@@ -226,6 +238,7 @@
                 </Button>
 
                 <Button
+                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     Canvas.Left="182"
                     Canvas.Top="150"
                     Classes="ButtonBorder altHover"
@@ -239,6 +252,7 @@
                             Width="18" />
                         <TextBlock
                             Classes="txt"
+                            Foreground="{DynamicResource MainTextColor}"
                             MaxWidth="150"
                             Text="{CompiledBinding HideShowInterface,
                                                    Mode=OneWay}" />

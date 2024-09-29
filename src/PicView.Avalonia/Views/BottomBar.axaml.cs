@@ -22,11 +22,11 @@ public partial class BottomBar : UserControl
         };
         NextButton.PointerExited += (s, e) =>
         {
-            if (!Application.Current.TryGetResource("MainIconColor", Application.Current.RequestedThemeVariant, out var mainIconColor))
+            if (!Application.Current.TryGetResource("MainTextColor", Application.Current.RequestedThemeVariant, out var MainTextColor))
             {
                 return;
             }
-            var brush = new SolidColorBrush((Color)(mainIconColor ?? Brushes.White));
+            var brush = new SolidColorBrush((Color)(MainTextColor ?? Brushes.White));
             NextIcon.Fill = brush;
         };
         PreviousButton.PointerEntered += (s, e) =>
@@ -40,11 +40,11 @@ public partial class BottomBar : UserControl
         };
         PreviousButton.PointerExited += (s, e) =>
         {
-            if (!Application.Current.TryGetResource("MainIconColor", Application.Current.RequestedThemeVariant, out var mainIconColor))
+            if (!Application.Current.TryGetResource("MainTextColor", Application.Current.RequestedThemeVariant, out var MainTextColor))
             {
                 return;
             }
-            var brush = new SolidColorBrush((Color)(mainIconColor ?? Brushes.White));
+            var brush = new SolidColorBrush((Color)(MainTextColor ?? Brushes.White));
             PrevIcon.Fill = brush;
         };
         PointerPressed += (_, e) => MoveWindow(e);

@@ -75,7 +75,7 @@
                         </ContentPresenter>
                         <Path
                             Data="F1M0.002,31.062L0,0 27.01,15.534z"
-                            Fill="{DynamicResource MainIconColor}"
+                            Fill="{DynamicResource MainTextColor}"
                             Grid.Column="4"
                             Height="8"
                             Margin="6,0,4,0"
@@ -127,7 +127,7 @@
                 <Template>
                     <Path
                         Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z"
-                        Fill="{DynamicResource MainIconColor}"
+                        Fill="{DynamicResource MainTextColor}"
                         VerticalAlignment="Center" />
                 </Template>
             </Setter>
@@ -136,7 +136,7 @@
             <Setter Property="Content">
                 <Template>
                     <Ellipse
-                        Fill="{DynamicResource MainIconColor}"
+                        Fill="{DynamicResource MainTextColor}"
                         Height="8"
                         Margin="4"
                         Width="8" />
@@ -150,7 +150,7 @@
         </Style>
 
         <Style Selector="^:selected /template/ ContentPresenter#PART_HeaderPresenter">
-            <Setter Property="Foreground" Value="#fff" />
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
         </Style>
 
         <Style Selector="^:nth-child(1) /template/ Border#root">

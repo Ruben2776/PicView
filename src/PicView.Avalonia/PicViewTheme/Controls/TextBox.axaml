@@ -79,6 +79,9 @@
         <Style Selector="^:pointerover /template/ Border#border">
             <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
         </Style>
+        <Style Selector="^.disabled:pointerover /template/ Border#border">
+            <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
+        </Style>
         <Style Selector="^:focus /template/ Border#border">
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
         </Style>
@@ -89,7 +92,7 @@
             <Setter Property="Cursor" Value="IBeam" />
         </Style>
         <Style Selector="^:disabled /template/ Border#border">
-            <Setter Property="Background" Value="{DynamicResource BackgroundAlpha}" />
+            <Setter Property="Background" Value="{StaticResource DisabledBackgroundColor}" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

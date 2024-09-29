@@ -14,7 +14,7 @@
     </Design.DataContext>
     <StackPanel>
         <StackPanel.Resources>
-            <SolidColorBrush Color="{DynamicResource MainIconColor}" x:Key="Brush0" />
+            <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="Brush0" />
         </StackPanel.Resources>
 
         <Border
@@ -46,7 +46,7 @@
                     Width="45">
                     <Path
                         Data="{StaticResource RotateLeftGeometry}"
-                        Fill="{DynamicResource MainIconColor}"
+                        Fill="{DynamicResource MainTextColor}"
                         Height="15"
                         Stretch="Fill"
                         Width="15" />
@@ -65,7 +65,7 @@
                     Width="45">
                     <Path
                         Data="{StaticResource RotateRightGeometry}"
-                        Fill="{DynamicResource MainIconColor}"
+                        Fill="{DynamicResource MainTextColor}"
                         Height="15"
                         Stretch="Fill"
                         Width="15" />
@@ -84,7 +84,7 @@
                     Width="45">
                     <Path
                         Data="{StaticResource FlipGeometry}"
-                        Fill="{DynamicResource MainIconColor}"
+                        Fill="{DynamicResource MainTextColor}"
                         Height="13"
                         Stretch="Fill"
                         Width="13">
@@ -107,7 +107,7 @@
                     <Image Height="17" Width="17">
                         <DrawingImage>
                             <DrawingGroup>
-                                <GeometryDrawing Brush="{DynamicResource MainIconColor}" Geometry="F1 M142.9 142.9C205.1 80.7 305.6 80.4 368.2 141.9L327 183C320.1 189.9 318.1 200.2 321.8 209.2C325.5 218.2 334.3 224 344 224L463.5 224C463.5 224 463.5 224 463.5 224L472 224C485.3 224 496 213.3 496 200L496 72C496 62.3 490.2 53.5 481.2 49.8C472.2 46.1 461.9 48.1 455 55L413.4 96.6C325.8 10.1 184.7 10.4 97.6 97.6C73.2 122 55.6 150.7 44.8 181.4C38.9 198.1 47.7 216.3 64.3 222.2C80.9 228.1 99.2 219.3 105.1 202.7C112.8 180.9 125.3 160.4 142.9 142.9L142.9 142.9ZM16 312L16 319.6L16 320.3L16 440C16 449.7 21.8 458.5 30.8 462.2C39.8 465.9 50.1 463.9 57 457L98.6 415.4C186.2 501.9 327.3 501.6 414.4 414.4C438.8 390 456.5 361.3 467.3 330.7C473.2 314 464.4 295.8 447.8 289.9C431.2 284 412.9 292.8 407 309.4C399.3 331.2 386.8 351.7 369.2 369.2C307 431.4 206.5 431.7 143.9 370.2L185 329C191.9 322.1 193.9 311.8 190.2 302.8C186.5 293.8 177.7 288 168 288L48.4 288L47.7 288L40 288C26.7 288 16 298.7 16 312Z" />
+                                <GeometryDrawing Brush="{DynamicResource MainTextColor}" Geometry="F1 M142.9 142.9C205.1 80.7 305.6 80.4 368.2 141.9L327 183C320.1 189.9 318.1 200.2 321.8 209.2C325.5 218.2 334.3 224 344 224L463.5 224C463.5 224 463.5 224 463.5 224L472 224C485.3 224 496 213.3 496 200L496 72C496 62.3 490.2 53.5 481.2 49.8C472.2 46.1 461.9 48.1 455 55L413.4 96.6C325.8 10.1 184.7 10.4 97.6 97.6C73.2 122 55.6 150.7 44.8 181.4C38.9 198.1 47.7 216.3 64.3 222.2C80.9 228.1 99.2 219.3 105.1 202.7C112.8 180.9 125.3 160.4 142.9 142.9L142.9 142.9ZM16 312L16 319.6L16 320.3L16 440C16 449.7 21.8 458.5 30.8 462.2C39.8 465.9 50.1 463.9 57 457L98.6 415.4C186.2 501.9 327.3 501.6 414.4 414.4C438.8 390 456.5 361.3 467.3 330.7C473.2 314 464.4 295.8 447.8 289.9C431.2 284 412.9 292.8 407 309.4C399.3 331.2 386.8 351.7 369.2 369.2C307 431.4 206.5 431.7 143.9 370.2L185 329C191.9 322.1 193.9 311.8 190.2 302.8C186.5 293.8 177.7 288 168 288L48.4 288L47.7 288L40 288C26.7 288 16 298.7 16 312Z" />
                             </DrawingGroup>
                         </DrawingImage>
                     </Image>
@@ -130,7 +130,7 @@
                                     <GeometryDrawing Geometry="F1 M112 111L112 401C112 418.44 129 429.52 143 421.16L390.9 272.79C403.02 265.54 403.02 246.46 390.9 239.21L143 90.84C129 82.48 112 93.56 112 111Z">
                                         <GeometryDrawing.Pen>
                                             <Pen
-                                                Brush="{DynamicResource MainIconColor}"
+                                                Brush="{DynamicResource MainTextColor}"
                                                 LineJoin="Miter"
                                                 Thickness="32" />
                                         </GeometryDrawing.Pen>
@@ -138,7 +138,7 @@
                                     <GeometryDrawing Geometry="F1 M400 80L400 432">
                                         <GeometryDrawing.Pen>
                                             <Pen
-                                                Brush="{DynamicResource MainIconColor}"
+                                                Brush="{DynamicResource MainTextColor}"
                                                 LineCap="Round"
                                                 LineJoin="Miter"
                                                 Thickness="32" />
@@ -151,7 +151,7 @@
                             Background="{DynamicResource BackgroundAlpha}"
                             BorderBrush="{DynamicResource MainBorderColor}"
                             FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
-                            Foreground="{DynamicResource MainIconColor}"
+                            Foreground="{DynamicResource MainTextColor}"
                             Height="26"
                             IsEnabled="True"
                             IsTabStop="False"
@@ -177,13 +177,14 @@
                     Width="45">
                     <Path
                         Data="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
-                        Fill="{DynamicResource MainIconColor}"
+                        Fill="{DynamicResource MainTextColor}"
                         Height="10"
                         Stretch="Fill"
                         Width="10" />
                 </Button>
 
                 <Button
+                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     Canvas.Left="7"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
@@ -224,6 +225,7 @@
                         </Canvas>
                         <TextBlock
                             Classes="txt"
+                            Foreground="{DynamicResource MainTextColor}"
                             Margin="-3,0,0,0"
                             MaxWidth="150"
                             Text="{CompiledBinding Resize,
@@ -232,6 +234,7 @@
                 </Button>
 
                 <Button
+                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     Canvas.Left="160"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
@@ -241,13 +244,14 @@
                     <StackPanel Orientation="Horizontal">
                         <Path
                             Data="{StaticResource CropGeometry}"
-                            Fill="{DynamicResource MainIconColor}"
+                            Fill="{DynamicResource MainTextColor}"
                             Height="17"
                             Margin="9,0,9,0"
                             Stretch="Fill"
                             Width="17" />
                         <TextBlock
                             Classes="txt"
+                            Foreground="{DynamicResource MainTextColor}"
                             MaxWidth="150"
                             Text="{CompiledBinding Crop,
                                                    Mode=OneWay}" />
@@ -256,6 +260,7 @@
 
 
                 <SplitButton
+                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     Canvas.Left="7"
                     Canvas.Top="99"
                     Classes="ButtonBorder altHover"
@@ -272,6 +277,7 @@
                             Width="20" />
                         <TextBlock
                             Classes="txt"
+                            Foreground="{DynamicResource MainTextColor}"
                             Margin="0,2,0,0"
                             MaxWidth="150"
                             Text="{CompiledBinding Slideshow,
@@ -284,7 +290,7 @@
                                 Command="{CompiledBinding StartSlideShowTask}"
                                 CommandParameter="2000"
                                 Width="86">
-                                <TextBlock Classes="txt">
+                                <TextBlock Classes="txt" Foreground="{DynamicResource MainTextColor}">
                                     <Run Text="2 " />
                                     <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
                                 </TextBlock>
@@ -294,7 +300,7 @@
                                 Command="{CompiledBinding StartSlideShowTask}"
                                 CommandParameter="5000"
                                 Width="86">
-                                <TextBlock Classes="txt">
+                                <TextBlock Classes="txt" Foreground="{DynamicResource MainTextColor}">
                                     <Run Text="5 " />
                                     <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
                                 </TextBlock>
@@ -304,7 +310,7 @@
                                 Command="{CompiledBinding StartSlideShowTask}"
                                 CommandParameter="10000"
                                 Width="86">
-                                <TextBlock Classes="txt">
+                                <TextBlock Classes="txt" Foreground="{DynamicResource MainTextColor}">
                                     <Run Text="10 " />
                                     <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
                                 </TextBlock>
@@ -314,7 +320,7 @@
                                 Command="{CompiledBinding StartSlideShowTask}"
                                 CommandParameter="20000"
                                 Width="86">
-                                <TextBlock Classes="txt">
+                                <TextBlock Classes="txt" Foreground="{DynamicResource MainTextColor}">
                                     <Run Text="20 " />
                                     <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
                                 </TextBlock>
@@ -324,7 +330,7 @@
                                 Command="{CompiledBinding StartSlideShowTask}"
                                 CommandParameter="30000"
                                 Width="86">
-                                <TextBlock Classes="txt">
+                                <TextBlock Classes="txt" Foreground="{DynamicResource MainTextColor}">
                                     <Run Text="30 " />
                                     <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
                                 </TextBlock>
@@ -334,7 +340,7 @@
                                 Command="{CompiledBinding StartSlideShowTask}"
                                 CommandParameter="60000"
                                 Width="86">
-                                <TextBlock Classes="txt">
+                                <TextBlock Classes="txt" Foreground="{DynamicResource MainTextColor}">
                                     <Run Text="60 " />
                                     <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
                                 </TextBlock>
@@ -344,7 +350,7 @@
                                 Command="{CompiledBinding StartSlideShowTask}"
                                 CommandParameter="120000"
                                 Width="86">
-                                <TextBlock Classes="txt">
+                                <TextBlock Classes="txt" Foreground="{DynamicResource MainTextColor}">
                                     <Run Text="120 " />
                                     <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
                                 </TextBlock>
@@ -354,7 +360,7 @@
                                 Command="{CompiledBinding StartSlideShowTask}"
                                 CommandParameter="180000"
                                 Width="86">
-                                <TextBlock Classes="txt">
+                                <TextBlock Classes="txt" Foreground="{DynamicResource MainTextColor}">
                                     <Run Text="180 " />
                                     <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
                                 </TextBlock>
@@ -364,7 +370,7 @@
                                 Command="{CompiledBinding StartSlideShowTask}"
                                 CommandParameter="300000"
                                 Width="86">
-                                <TextBlock Classes="txt">
+                                <TextBlock Classes="txt" Foreground="{DynamicResource MainTextColor}">
                                     <Run Text="300 " />
                                     <Run Text="{CompiledBinding SecAbbreviation, Mode=OneWay}" />
                                 </TextBlock>
@@ -374,20 +380,24 @@
                 </SplitButton>
 
                 <ToggleButton
+                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     Canvas.Left="160"
                     Canvas.Top="99"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ShowSideBySideCommand}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding IsShowingSideBySide}"
                     ToolTip.Tip="{CompiledBinding SideBySideTooltip}">
                     <TextBlock
                         Classes="txt"
+                        Foreground="{DynamicResource MainTextColor}"
                         Margin="1,0,6,0"
                         MaxWidth="175"
                         Text="{CompiledBinding SideBySide}" />
                 </ToggleButton>
 
                 <ToggleButton
+                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     Canvas.Left="7"
                     Canvas.Top="145"
                     Classes="ButtonBorder altHover"
@@ -404,6 +414,7 @@
                             Width="20" />
                         <TextBlock
                             Classes="txt"
+                            Foreground="{DynamicResource MainTextColor}"
                             Margin="10,0,6,0"
                             MaxWidth="175"
                             Text="{CompiledBinding GetBottomGallery,

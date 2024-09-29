@@ -27,7 +27,7 @@
         x:Name="XButton">
         <Path
             Data="{StaticResource CloseGeometry}"
-            Fill="{DynamicResource MainIconColor}"
+            Fill="{DynamicResource MainTextColor}"
             Height="12"
             Margin="0,0,0,3"
             Stretch="Fill"

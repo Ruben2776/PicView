@@ -79,7 +79,7 @@
         <TextBlock
             Classes="txt"
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            Foreground="{DynamicResource MainTextColorFaded}"
+            Foreground="{StaticResource MainTextColorFaded}"
             Margin="0,0,0,15"
             Text="{CompiledBinding GetZoomSpeed,
                                    Mode=OneWay}" />

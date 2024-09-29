@@ -132,7 +132,7 @@
                         x:Name="PART_SecondaryButton">
                         <PathIcon
                             Data="{StaticResource ChevronUpGeometry}"
-                            Foreground="{DynamicResource MainIconColor}"
+                            Foreground="{DynamicResource MainTextColor}"
                             Height="12"
                             Width="12" />
                     </Button>

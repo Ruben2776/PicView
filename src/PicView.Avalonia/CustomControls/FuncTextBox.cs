@@ -10,12 +10,12 @@ namespace PicView.Avalonia.CustomControls
     {
         public FuncTextBox()
         {
-            if (!Application.Current.TryGetResource("MainIconColor", ThemeVariant.Default, out var mainIconColor))
+            if (!Application.Current.TryGetResource("MainTextColor", ThemeVariant.Default, out var MainTextColor))
             {
                 return;
             }
 
-            var iconBrush = new SolidColorBrush((Color)(mainIconColor ?? Brushes.White));
+            var iconBrush = new SolidColorBrush((Color)(MainTextColor ?? Brushes.White));
             if (!Application.Current.TryGetResource("CopyGeometry", ThemeVariant.Default, out var copyGeometry))
             {
                 return;

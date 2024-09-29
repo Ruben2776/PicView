@@ -135,7 +135,7 @@
                 <Viewbox Height="12" Width="12">
                     <Path
                         Data="M24,11c0-0.6-0.4-1-1-1H1c-0.6,0-1,0.4-1,1v2c0,0.6,0.4,1,1,1h22c0.6,0,1-0.4,1-1V11z"
-                        Fill="{StaticResource MainIconColor}"
+                        Fill="{StaticResource MainTextColor}"
                         Stretch="Fill" />
                 </Viewbox>
             </Button>
@@ -150,7 +150,7 @@
                 Width="30">
                 <Path
                     Data="{StaticResource CloseGeometry}"
-                    Fill="{StaticResource MainIconColor}"
+                    Fill="{StaticResource MainTextColor}"
                     Height="10"
                     Stretch="Fill"
                     Width="10" />

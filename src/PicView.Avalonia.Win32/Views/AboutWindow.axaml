@@ -23,7 +23,7 @@
         <StackPanel>
 
             <DockPanel
-                Background="{DynamicResource SecondaryBackgroundColor}"
+                Background="{DynamicResource WindowBackgroundColor}"
                 Height="28"
                 PointerPressed="MoveWindow">
 
@@ -62,7 +62,7 @@
                     Width="30">
                     <Path
                         Data="{StaticResource CloseGeometry}"
-                        Fill="{DynamicResource MainIconColor}"
+                        Fill="{DynamicResource MainTextColor}"
                         Height="10"
                         Stretch="Fill"
                         Width="10" />
@@ -79,7 +79,7 @@
                     <Viewbox Height="12" Width="12">
                         <Path
                             Data="{StaticResource MinimizeGeometry}"
-                            Fill="{DynamicResource MainIconColor}"
+                            Fill="{DynamicResource MainTextColor}"
                             Stretch="Fill" />
                     </Viewbox>
                 </Button>
