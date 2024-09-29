@@ -9,6 +9,9 @@
             <Color x:Key="MainTextColorFaded">#d6d4d4</Color>
 
             <Color x:Key="MainIconColor">#eeebebeb</Color>
+
+            <!--  Used for icons that should stay white in both themes  -->
+            <Color x:Key="SecondaryTextColor">#FFf6f4f4</Color>
             <Color x:Key="SecondaryIconColor">#eeebebeb</Color>
 
             <Color x:Key="MainBackgroundColor">#CC2b2b2b</Color>
@@ -58,7 +61,6 @@
             <Color x:Key="MainTextColorFaded">#61574a</Color>
 
             <Color x:Key="MainIconColor">#474139</Color>
-            <Color x:Key="SecondaryIconColor">#eeebebeb</Color>
 
             <Color x:Key="MainBackgroundColor">White</Color>
             <Color x:Key="SecondaryBackgroundColor">White</Color>
@@ -83,20 +85,20 @@
 
             <Color x:Key="MenuBackgroundColor">#D1EEEEEE</Color>
 
-            <Color x:Key="ContextMenuBackgroundColor">#D1EEEEEE</Color>
-            <Color x:Key="ContextMenuTextColor">#474139</Color>
+            <Color x:Key="ContextMenuBackgroundColor">#E3FFFFFF</Color>
+            <Color x:Key="ContextMenuTextColor">#2B251E</Color>
 
             <Color x:Key="WindowBackgroundColor">#78B5B5B5</Color>
             <Color x:Key="WindowBorderColor">#66FFFFFF</Color>
 
-            <Color x:Key="NoisyTexture">#fff</Color>
-
-            <DropShadowEffect
-                BlurRadius="5"
-                Color="#112e2e2e"
-                OffsetX="2"
-                OffsetY="2"
-                x:Key="MenuShadowButtonBorder" />
+            <ImageBrush
+                DestinationRect="0,0,100,100"
+                Opacity=".6"
+                Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d23-c-ffffff-t1.png"
+                SourceRect="0,0,200,200"
+                Stretch="Fill"
+                TileMode="FlipXY"
+                x:Key="NoisyTexture" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

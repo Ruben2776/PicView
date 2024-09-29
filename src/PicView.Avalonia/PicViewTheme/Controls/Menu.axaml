@@ -1,13 +1,10 @@
 <ResourceDictionary
     x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:conv="using:Avalonia.Controls.Converters"
     xmlns:sys="using:System"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <conv:PlatformKeyGestureConverter x:Key="KeyGestureConverter" />
 
     <ControlTheme TargetType="ContextMenu" x:Key="{x:Type ContextMenu}">
-        <Setter Property="Foreground" Value="{DynamicResource ContextMenuTextColor}" />
         <Setter Property="Background" Value="{DynamicResource ContextMenuBackgroundColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -65,6 +62,7 @@
                         <ContentPresenter
                             Content="{TemplateBinding Header}"
                             ContentTemplate="{TemplateBinding HeaderTemplate}"
+                            Foreground="{DynamicResource ContextMenuTextColor}"
                             Grid.Column="2"
                             Margin="{TemplateBinding Padding}"
                             Name="PART_HeaderPresenter"
@@ -75,12 +73,6 @@
                                 </DataTemplate>
                             </ContentPresenter.DataTemplates>
                         </ContentPresenter>
-                        <TextBlock
-                            Grid.Column="3"
-                            Text="{TemplateBinding InputGesture,
-                                                   Converter={StaticResource KeyGestureConverter}}"
-                            VerticalAlignment="Center"
-                            x:Name="PART_InputGestureText" />
                         <Path
                             Data="F1M0.002,31.062L0,0 27.01,15.534z"
                             Fill="{DynamicResource MainIconColor}"
@@ -157,6 +149,10 @@
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
         </Style>
 
+        <Style Selector="^:selected /template/ ContentPresenter#PART_HeaderPresenter">
+            <Setter Property="Foreground" Value="#fff" />
+        </Style>
+
         <Style Selector="^:nth-child(1) /template/ Border#root">
             <Setter Property="CornerRadius" Value="6,6,0,0" />
         </Style>
@@ -172,6 +168,8 @@
         <Style Selector="^:disabled">
             <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
         </Style>
+
+
     </ControlTheme>
 
     <ControlTheme TargetType="Separator" x:Key="{x:Type Separator}">

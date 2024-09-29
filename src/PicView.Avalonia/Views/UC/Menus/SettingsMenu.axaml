@@ -207,16 +207,9 @@
                 </ToggleButton>
             </Canvas>
         </Border>
-        <Rectangle
-            Fill="{DynamicResource MenuBackgroundColor}"
-            Height="4"
-            HorizontalAlignment="Left"
-            Margin="302,-2,0,0"
-            Width="24"
-            ZIndex="1" />
         <Polygon
             Fill="{DynamicResource MenuBackgroundColor}"
-            Margin="302,-3.5,0,0"
+            Margin="302,-1,0,0"
             Points="0,0 15,30, 30,0"
             Stroke="{DynamicResource MainBorderColor}"
             StrokeThickness="1" />

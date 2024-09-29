@@ -601,7 +601,6 @@
                         Thickness="32" />
                 </GeometryDrawing.Pen>
             </GeometryDrawing>
-            <GeometryDrawing Brush="{StaticResource MainIconColor}" Geometry="F1 M304 448L296 384L216 384L208 448L304 448Z" />
             <GeometryDrawing Geometry="F1 M304 448L296 384L216 384L208 448L304 448Z">
                 <GeometryDrawing.Pen>
                     <Pen

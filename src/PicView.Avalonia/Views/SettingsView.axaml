@@ -19,7 +19,7 @@
             BorderBrush="{DynamicResource MainBorderColor}"
             BorderThickness="0"
             HorizontalAlignment="Left"
-            Margin="0,28,0,35"
+            Margin="0,0,0,35"
             Padding="0"
             TabStripPlacement="Right"
             VerticalAlignment="Top">
@@ -48,7 +48,10 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Path Classes="pathStyle" Data="{StaticResource CogGeometry}" />
-                        <TextBlock Classes="txt" Text="{Binding GeneralSettings}" />
+                        <TextBlock
+                            Classes="txt"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="{Binding GeneralSettings, Mode=OneWay}" />
                     </StackPanel>
                 </TabItem.Header>
             </TabItem>
@@ -57,7 +60,10 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource DisplayImage}" />
-                        <TextBlock Classes="txt" Text="{Binding Appearance}" />
+                        <TextBlock
+                            Classes="txt"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="{Binding Appearance, Mode=OneWay}" />
                     </StackPanel>
                 </TabItem.Header>
             </TabItem>
@@ -66,7 +72,10 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource Image}" />
-                        <TextBlock Classes="txt" Text="{Binding ImageTxt, Mode=OneWay}" />
+                        <TextBlock
+                            Classes="txt"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="{Binding ImageTxt, Mode=OneWay}" />
                     </StackPanel>
                 </TabItem.Header>
             </TabItem>
@@ -75,7 +84,11 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource GalleryImage}" />
-                        <TextBlock Classes="txt" Text="{CompiledBinding GallerySettings}" />
+                        <TextBlock
+                            Classes="txt"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="{CompiledBinding GallerySettings,
+                                                   Mode=OneWay}" />
                     </StackPanel>
                 </TabItem.Header>
             </TabItem>
@@ -84,7 +97,11 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource SlideshowImage}" />
-                        <TextBlock Classes="txt" Text="{CompiledBinding Slideshow}" />
+                        <TextBlock
+                            Classes="txt"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="{CompiledBinding Slideshow,
+                                                   Mode=OneWay}" />
                     </StackPanel>
                 </TabItem.Header>
             </TabItem>
@@ -93,7 +110,10 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource SignPostImage}" />
-                        <TextBlock Classes="txt" Text="{CompiledBinding Navigation}" />
+                        <TextBlock
+                            Classes="txt"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="{CompiledBinding Navigation}" />
                     </StackPanel>
                 </TabItem.Header>
             </TabItem>
@@ -102,7 +122,10 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource MouseImage}" />
-                        <TextBlock Classes="txt" Text="{CompiledBinding MouseWheel}" />
+                        <TextBlock
+                            Classes="txt"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="{CompiledBinding MouseWheel}" />
                     </StackPanel>
                 </TabItem.Header>
             </TabItem>
@@ -111,7 +134,10 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource LanguageImage}" />
-                        <TextBlock Classes="txt" Text="{CompiledBinding Language}" />
+                        <TextBlock
+                            Classes="txt"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="{CompiledBinding Language}" />
                     </StackPanel>
                 </TabItem.Header>
             </TabItem>
@@ -120,7 +146,10 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource ShortcutsImage}" />
-                        <TextBlock Classes="txt" Text="{CompiledBinding ApplicationShortcuts}" />
+                        <TextBlock
+                            Classes="txt"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="{CompiledBinding ApplicationShortcuts}" />
                     </StackPanel>
                 </TabItem.Header>
             </TabItem>
@@ -132,7 +161,10 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource FileKeyImage}" />
-                        <TextBlock Classes="txt" Text="File associations (Get translation)" />
+                        <TextBlock
+                            Classes="txt"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="File associations (Get translation)" />
                     </StackPanel>
                 </TabItem.Header>
             </TabItem>
@@ -157,54 +189,55 @@
         <ScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}"
-            Margin="235,28,0,0">
+            Margin="235,0,0,0">
             <views:GeneralSettingsView Background="Transparent" Margin="20,5,40,20" />
         </ScrollViewer>
 
         <ScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=AppearanceTabItem}"
-            Margin="235,28,0,0">
+            Margin="235,0,0,0">
             <views:AppearanceView Background="Transparent" Margin="20,5,40,20" />
         </ScrollViewer>
 
         <ScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=LanguageTabItem}"
-            Margin="235,28,0,0">
+            Margin="235,0,0,0">
             <views:LanguageView Background="Transparent" Margin="20,5,40,20" />
         </ScrollViewer>
 
         <ScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=GalleryTabItem}"
-            Margin="235,28,0,0">
+            Margin="235,0,0,0">
             <views:GalleryView Background="Transparent" Margin="20,5,40,20" />
         </ScrollViewer>
 
         <ScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=NavigationTabItem}"
-            Margin="235,28,0,0">
+            Margin="235,0,0,0">
             <views:NavigationView Background="Transparent" Margin="20,5,40,20" />
         </ScrollViewer>
 
         <ScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=ImageTabItem}"
-            Margin="235,28,0,0">
+            Margin="235,0,0,0">
             <views:ImageSettingsView Background="Transparent" Margin="20,5,40,20" />
         </ScrollViewer>
 
         <ScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=MouseWheelTabItem}"
-            Margin="235,28,0,0">
+            Margin="235,0,0,0">
             <views:MouseWheelView Background="Transparent" Margin="20,5,40,20" />
         </ScrollViewer>
 
         <Button
-            Background="Transparent"
+            Background="{DynamicResource BackgroundAlpha}"
+            BorderBrush="{DynamicResource SecondaryBorderColor}"
             Classes="ButtonBorder altHover"
             Command="{CompiledBinding ShowKeybindingsWindowCommand}"
             HorizontalAlignment="Left"
@@ -220,14 +253,18 @@
                     Margin="9,0,12,0"
                     Source="{StaticResource ShortcutsImage}"
                     Width="17" />
-                <TextBlock Classes="txt" Text="{CompiledBinding ApplicationShortcuts, Mode=OneWay}" />
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    Text="{CompiledBinding ApplicationShortcuts,
+                                           Mode=OneWay}" />
             </StackPanel>
         </Button>
 
         <ScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=SlideshowTabItem}"
-            Margin="235,28,0,0">
+            Margin="235,0,0,0">
             <views:SlideshowSettingsView Background="Transparent" Margin="20,5,40,20" />
         </ScrollViewer>
     </Panel>

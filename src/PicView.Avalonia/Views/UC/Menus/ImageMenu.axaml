@@ -265,13 +265,11 @@
                                                   Mode=OneWay}"
                     x:Name="SlideShowButton">
                     <StackPanel Orientation="Horizontal">
-                        <Path
-                            Data="M20 16v16l10-8-10-8zm18-10h-28c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4v-28c0-2.21-1.79-4-4-4zm0 32h-28v-28h28v28z"
-                            Fill="{DynamicResource MainIconColor}"
+                        <Image
                             Height="20"
-                            Margin="3,0,12,0"
-                            Stretch="Fill"
-                            Width="24" />
+                            Margin="5,0,10,0"
+                            Source="{StaticResource SlideshowImage}"
+                            Width="20" />
                         <TextBlock
                             Classes="txt"
                             Margin="0,2,0,0"
@@ -414,16 +412,9 @@
                 </ToggleButton>
             </Canvas>
         </Border>
-        <Rectangle
-            Fill="{DynamicResource MenuBackgroundColor}"
-            Height="4"
-            HorizontalAlignment="Left"
-            Margin="55,-2,0,0"
-            Width="26"
-            ZIndex="1" />
         <Polygon
             Fill="{DynamicResource MenuBackgroundColor}"
-            Margin="54,-3.5,0,0"
+            Margin="54,-1,0,0"
             Points="0,0 15,30, 30,0"
             Stroke="{DynamicResource MainBorderColor}"
             StrokeThickness="1" />

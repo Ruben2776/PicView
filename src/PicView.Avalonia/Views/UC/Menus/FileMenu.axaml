@@ -326,16 +326,9 @@
                 </Button>
             </Canvas>
         </Border>
-        <Rectangle
-            Fill="{DynamicResource MenuBackgroundColor}"
-            Height="4"
-            HorizontalAlignment="Left"
-            Margin="34,-2,0,0"
-            Width="26"
-            ZIndex="1" />
         <Polygon
             Fill="{DynamicResource MenuBackgroundColor}"
-            Margin="33,-3.5,0,0"
+            Margin="29,-1,0,0"
             Points="0,0 15,30, 30,0"
             Stroke="{DynamicResource MainBorderColor}"
             StrokeThickness="1" />

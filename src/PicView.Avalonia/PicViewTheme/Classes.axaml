@@ -31,7 +31,7 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
-        <Setter Property="Effect" Value="{DynamicResource MenuShadowButtonBorder}" />
+        <Setter Property="Effect" Value="{StaticResource MenuShadowButtonBorder}" />
         <Setter Property="Background" Value="{DynamicResource MainButtonBackgroundColor}" />
     </Style>
 
