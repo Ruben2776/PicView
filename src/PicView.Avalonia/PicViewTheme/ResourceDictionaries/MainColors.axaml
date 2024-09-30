@@ -45,10 +45,9 @@
             <Color x:Key="WindowBorderColor">#FF3A3A3A</Color>
 
             <ImageBrush
-                DestinationRect="0,0,100,100"
+                DestinationRect="0,0,200,200"
                 Opacity=".3"
                 Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
-                SourceRect="0,0,200,200"
                 Stretch="Fill"
                 TileMode="FlipXY"
                 x:Key="NoisyTexture" />
@@ -98,10 +97,9 @@
             <Color x:Key="WindowBorderColor">#66FFFFFF</Color>
 
             <ImageBrush
-                DestinationRect="0,0,100,100"
+                DestinationRect="0,0,200,200"
                 Opacity=".6"
                 Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d23-c-ffffff-t1.png"
-                SourceRect="0,0,200,200"
                 Stretch="Fill"
                 TileMode="FlipXY"
                 x:Key="NoisyTexture" />
