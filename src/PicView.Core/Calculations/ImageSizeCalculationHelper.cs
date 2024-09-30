@@ -45,8 +45,8 @@ namespace PicView.Core.Calculations
             var borderSpaceHeight = fullscreen ? 0 : uiTopSize + uiBottomSize + galleryHeight;
             var borderSpaceWidth = fullscreen ? 0 : padding;
 
-            var workAreaWidth = monitorWidth * dpiScaling - borderSpaceWidth;
-            var workAreaHeight = monitorHeight * dpiScaling - borderSpaceHeight;
+            var workAreaWidth = monitorWidth - borderSpaceWidth;
+            var workAreaHeight = monitorHeight - borderSpaceHeight;
 
             if (SettingsHelper.Settings.Zoom.ScrollEnabled)
             {

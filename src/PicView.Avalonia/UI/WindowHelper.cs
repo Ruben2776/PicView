@@ -32,6 +32,12 @@ public static class WindowHelper
         window.BeginMoveDrag(e);
         ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(window);
     }
+    
+    public static void WindowDragBehavior(Window window, PointerPressedEventArgs e)
+    {
+        window.BeginMoveDrag(e);
+        ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(window);
+    }
 
     public static void InitializeWindowSizeAndPosition(Window window)
     {
@@ -89,42 +95,48 @@ public static class WindowHelper
         {
             return;
         }
-
-        var window = desktop.MainWindow;
-        var screen = window.Screens.ScreenFromWindow(window);
-        if (screen is null)
+        
+        Dispatcher.UIThread.Post(() =>
         {
-            return;
-        }
+            var window = desktop.MainWindow;
+            
+            // Get the screen that the window is currently on
+            var screens = window.Screens;
+            var screen = screens.ScreenFromVisual(window);
 
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            var getWidth = window?.Bounds.Width == 0 ? window?.Width : window?.Bounds.Width ?? 0;
-            if (!getWidth.HasValue)
+            if (screen == null)
             {
-                return;
+                return; // No screen found (edge case)
             }
-            var width = getWidth.Value;
-            width = double.IsNaN(width) ? window.MinWidth : width;
-            var getHeight = window?.Bounds.Height == 0 ? window?.Height : window?.Bounds.Height;
-            if (!getHeight.HasValue)
-            {
-                return;
-            }
-            var height = getHeight.Value;
-            height = double.IsNaN(height) ? window.MinHeight : height;
-            var verticalPos = Math.Max(screen.WorkingArea.Y, screen.WorkingArea.Y + (screen.WorkingArea.Height * screen.Scaling - height) / 2);
+
+            // Get the scaling factor of the screen (DPI scaling)
+            var scalingFactor = screen.Scaling;
+
+            // Get the current screen's bounds (in physical pixels, not adjusted for scaling)
+            var screenBounds = screen.Bounds;
+
+            // Calculate the actual bounds in logical units (adjusting for scaling)
+            var screenWidth = screenBounds.Width / scalingFactor;
+            var screenHeight = screenBounds.Height / scalingFactor;
+
+            // Get the size of the window
+            var windowSize = window.ClientSize;
+
+            // Calculate the position to center the window on the screen
+            var centeredX = screenBounds.X + (screenWidth - windowSize.Width) / 2;
+            var centeredY = screenBounds.Y + (screenHeight - windowSize.Height) / 2;
+
+            // Set the window's new position
             if (horizontal)
             {
-                window.Position = new PixelPoint(
-                    x: (int)Math.Max(screen.WorkingArea.X, screen.WorkingArea.X + (screen.WorkingArea.Width * screen.Scaling - width) / 2),
-                    y: (int)verticalPos
-                );
+                window.Position = new PixelPoint((int)centeredX, (int)centeredY);
             }
             else
             {
-                window.Position = new PixelPoint(window.Position.X, (int)verticalPos);
+                window.Position = new PixelPoint(window.Position.X, (int)centeredY);
             }
+            
+        
         });
     }
 
