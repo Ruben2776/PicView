@@ -168,7 +168,7 @@
                 </Button>
 
                 <Button
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                    Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
@@ -195,7 +195,7 @@
                 </Button>
 
                 <Button
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                    Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
                     Canvas.Top="99"
                     Classes="ButtonBorder altHover"
@@ -223,7 +223,7 @@
                 </Button>
 
                 <Button
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                    Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="160"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
@@ -251,7 +251,7 @@
                 </Button>
 
                 <Button
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                    Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="160"
                     Canvas.Top="99"
                     Classes="ButtonBorder altHover"
@@ -278,7 +278,7 @@
                 </Button>
 
                 <Button
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                    Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
                     Canvas.Top="144"
                     Classes="ButtonBorder altHover"
@@ -305,7 +305,7 @@
                 </Button>
 
                 <Button
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                    Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="160"
                     Canvas.Top="144"
                     Classes="ButtonBorder altHover"

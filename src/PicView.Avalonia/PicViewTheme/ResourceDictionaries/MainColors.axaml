@@ -35,7 +35,8 @@
 
             <Color x:Key="BackgroundAlpha">#442e2e2e</Color>
 
-            <Color x:Key="MenuBackgroundColor">#292929</Color>
+            <Color x:Key="MenuBackgroundColor">#F6292929</Color>
+            <Color x:Key="MenuButtonColor">#2F2F2F</Color>
 
             <Color x:Key="ContextMenuBackgroundColor">#EE2b2b2b</Color>
             <Color x:Key="ContextMenuTextColor">#EDEBEB</Color>
@@ -88,6 +89,7 @@
             <Color x:Key="BackgroundAlpha">#32FFFFFF</Color>
 
             <Color x:Key="MenuBackgroundColor">#ECF8F8F8</Color>
+            <Color x:Key="MenuButtonColor">#fff</Color>
 
             <Color x:Key="ContextMenuBackgroundColor">#E3FFFFFF</Color>
             <Color x:Key="ContextMenuTextColor">#2B251E</Color>
