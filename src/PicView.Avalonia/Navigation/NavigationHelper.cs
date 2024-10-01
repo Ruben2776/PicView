@@ -485,7 +485,11 @@ public static class NavigationHelper
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         vm.ImageSource = imageModel.Image;
         vm.ImageType = imageModel.ImageType;
-        WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0,0, imageModel.Rotation, vm);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0,0, imageModel.Rotation, vm);
+        });
+        
         if (files is null)
         {
             vm.ImageIterator = new ImageIterator(fileInfo, vm);

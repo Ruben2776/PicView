@@ -172,8 +172,11 @@ namespace PicView.Avalonia.UI
                 {
                     var preloadValue = await vm.ImageIterator?.GetNextPreLoadValueAsync();
                     vm.SecondaryImageSource = preloadValue?.ImageModel.Image;
-                    WindowHelper.SetSize(vm.ImageWidth, vm.ImageHeight, preloadValue.ImageModel.PixelWidth,
-                        preloadValue.ImageModel.PixelHeight, vm.RotationAngle, vm);
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        WindowHelper.SetSize(vm.ImageWidth, vm.ImageHeight, preloadValue.ImageModel.PixelWidth,
+                                                preloadValue.ImageModel.PixelHeight, vm.RotationAngle, vm);
+                    });
                 }
             }
 

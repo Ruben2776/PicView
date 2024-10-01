@@ -99,7 +99,7 @@ public static class UpdateImage
     /// <param name="vm">The main view model instance.</param>
     public static void SetSingleImage(object source, ImageType imageType, string name, MainViewModel vm)
     {
-        Dispatcher.UIThread.InvokeAsync(() =>
+        Dispatcher.UIThread.Invoke(() =>
         {
             if (vm.CurrentView != vm.ImageViewer)
             {
@@ -130,7 +130,7 @@ public static class UpdateImage
 
         if (GalleryFunctions.IsBottomGalleryOpen)
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
+            Dispatcher.UIThread.Invoke(() =>
             {
                 // Trigger animation
                 vm.GalleryMode = GalleryMode.BottomToClosed;
@@ -139,7 +139,11 @@ public static class UpdateImage
             vm.GalleryMode = GalleryMode.Closed;
         }
 
-        WindowHelper.SetSize(width, height, 0, 0, 0, vm);
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            WindowHelper.SetSize(width, height, 0, 0, 0, vm);
+        });
+        
         if (vm.RotationAngle != 0)
         {
             vm.ImageViewer.Rotate(vm.RotationAngle);

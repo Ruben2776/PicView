@@ -531,11 +531,26 @@ public static class WindowHelper
                 secondWidth = 0;
                 secondHeight = 0;
             }
-            SetSize(firstWidth, firstHeight, secondWidth, secondHeight, vm.RotationAngle, vm);
+
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                SetSize(firstWidth, firstHeight, secondWidth, secondHeight, vm.RotationAngle, vm);
+            }
+            else
+            {
+                Dispatcher.UIThread.InvokeAsync(() => SetSize(firstWidth, firstHeight, secondWidth, secondHeight, vm.RotationAngle, vm));
+            }
         }
         else
         {
-            SetSize(firstWidth, firstHeight, 0, 0, vm.RotationAngle, vm);
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                SetSize(firstWidth, firstHeight, 0, 0, vm.RotationAngle, vm);
+            }
+            else
+            {
+                Dispatcher.UIThread.InvokeAsync(() => SetSize(firstWidth, firstHeight, 0, 0, vm.RotationAngle, vm));
+            }
         }
 
         return;
