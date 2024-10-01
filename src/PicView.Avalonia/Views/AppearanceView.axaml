@@ -43,6 +43,53 @@
             FontSize="14"
             Foreground="{StaticResource SecondaryTextColor}"
             Margin="0,15,0,10"
+            Text="{CompiledBinding HighlightColor}" />
+
+        <WrapPanel Orientation="Horizontal">
+            <WrapPanel.Styles>
+                <Styles>
+                    <Style Selector="Button.colorBtn">
+                        <Setter Property="CornerRadius" Value="6" />
+                        <Setter Property="Margin" Value="5" />
+                        <Setter Property="Width" Value="35" />
+                        <Setter Property="Height" Value="35" />
+                    </Style>
+                </Styles>
+            </WrapPanel.Styles>
+
+            <!--  Blue  -->
+            <Button Background="#1A8CF0" Classes="colorBtn" />
+            <!--  Cyan  -->
+            <Button Background="#1BA1E2" Classes="colorBtn" />
+            <!--  Aqua  -->
+            <Button Background="#36E6CC" Classes="colorBtn" />
+            <!--  Teal  -->
+            <Button Background="#44A1A0" Classes="colorBtn" />
+            <!--  Lime  -->
+            <Button Background="#20E76B" Classes="colorBtn" />
+            <!--  Green  -->
+            <Button Background="#22CB97" Classes="colorBtn" />
+            <!--  Gold  -->
+            <Button Background="#FEA955" Classes="colorBtn" />
+            <!--  Orange  -->
+            <Button Background="#DB5B3D" Classes="colorBtn" />
+            <!--  Red  -->
+            <Button Background="#F91110" Classes="colorBtn" />
+            <!--  Pink  -->
+            <Button Background="#FF35C5" Classes="colorBtn" />
+            <!--  Magenta  -->
+            <Button Background="#E68BEE" Classes="colorBtn" />
+            <!--  Purple  -->
+            <Button Background="#9738EB" Classes="colorBtn" />
+        </WrapPanel>
+
+
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Foreground="{StaticResource SecondaryTextColor}"
+            Margin="0,15,0,10"
             Text="{CompiledBinding MiscSettings}" />
 
         <ToggleButton

@@ -94,7 +94,7 @@
             <Color x:Key="ContextMenuTextColor">#2B251E</Color>
 
             <Color x:Key="WindowBackgroundColor">#EAFFFFFF</Color>
-            <Color x:Key="WindowBorderColor">#66FFFFFF</Color>
+            <Color x:Key="WindowBorderColor">#13FFFFFF</Color>
 
             <ImageBrush
                 DestinationRect="0,0,200,200"

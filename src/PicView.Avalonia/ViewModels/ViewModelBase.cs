@@ -222,9 +222,18 @@ public class ViewModelBase : ReactiveObject
         RestoreDown = TranslationHelper.Translation.RestoreDown;
         SideBySide = TranslationHelper.Translation.SideBySide;
         SideBySideTooltip = TranslationHelper.Translation.SideBySideTooltip;
+        HighlightColor = TranslationHelper.Translation.HighlightColor;
     }
 
     #region Strings
+    
+    private string? _highlightColor;
+    
+    public string? HighlightColor
+    {
+        get => _highlightColor;
+        set => this.RaiseAndSetIfChanged(ref _highlightColor, value);
+    }
     
     private string? _sideBySide;
     
