@@ -28,15 +28,35 @@ public static class WindowHelper
             _ = MaximizeRestore();
             return;
         }
-
+        
+        var currentScreen = ScreenHelper.ScreenSize;
         window.BeginMoveDrag(e);
-        ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(window);
+        var screen = window.Screens.ScreenFromVisual(window);
+        if (screen != null)
+        {
+            if (screen.WorkingArea.Width != currentScreen.WorkingAreaWidth ||
+                screen.WorkingArea.Height != currentScreen.WorkingAreaHeight || screen.Scaling != currentScreen.Scaling)
+            {
+                ScreenHelper.UpdateScreenSize(window);
+                SetSize(window.DataContext as MainViewModel);
+            }
+        }
     }
     
     public static void WindowDragBehavior(Window window, PointerPressedEventArgs e)
     {
+        var currentScreen = ScreenHelper.ScreenSize;
         window.BeginMoveDrag(e);
-        ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(window);
+        var screen = window.Screens.ScreenFromVisual(window);
+        if (screen != null)
+        {
+            if (screen.WorkingArea.Width != currentScreen.WorkingAreaWidth ||
+                screen.WorkingArea.Height != currentScreen.WorkingAreaHeight || screen.Scaling != currentScreen.Scaling)
+            {
+                ScreenHelper.UpdateScreenSize(window);
+                SetSize(window.DataContext as MainViewModel);
+            }
+        }
     }
 
     public static void InitializeWindowSizeAndPosition(Window window)

@@ -46,7 +46,7 @@ public partial class WinMainWindow : Window
             });
             ScalingChanged += (_, _) =>
             {
-                ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(this);
+                ScreenHelper.UpdateScreenSize(this);
                 WindowHelper.SetSize(DataContext as MainViewModel);
             };
             PointerExited += (_, _) =>

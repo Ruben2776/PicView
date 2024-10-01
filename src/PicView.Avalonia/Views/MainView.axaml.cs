@@ -56,7 +56,7 @@ public partial class MainView : UserControl
         if (MainKeyboardShortcuts.ShiftDown)
         {
             var hostWindow = (Window)VisualRoot!;
-            WindowHelper.WindowDragAndDoubleClickBehavior(hostWindow, e);
+            WindowHelper.WindowDragBehavior(hostWindow, e);
         }
         
         MainKeyboardShortcuts.ClearKeyDownModifiers();

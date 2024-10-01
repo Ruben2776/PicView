@@ -1,8 +1,7 @@
 ﻿using Avalonia.Controls;
 
 namespace PicView.Avalonia.UI;
-
-public class ScreenSize(double workingAreaWidth, double workingAreaHeight, double scaling)
+public readonly struct ScreenSize(double workingAreaWidth, double workingAreaHeight, double scaling)
 {
     public double WorkingAreaWidth { get; init; } = workingAreaWidth;
     public double WorkingAreaHeight { get; init; } = workingAreaHeight;
@@ -11,20 +10,24 @@ public class ScreenSize(double workingAreaWidth, double workingAreaHeight, doubl
 
 public static class ScreenHelper
 {
-    public static ScreenSize? ScreenSize { get; set; }
-    public static ScreenSize? GetScreenSize(Window window)
+    private static readonly Lock _lock = new();
+    public static ScreenSize ScreenSize { get; private set; }
+    public static void UpdateScreenSize(Window window)
     {
-        var screen = window.Screens.ScreenFromVisual(window);
-        
-        var monitorWidth = screen.Bounds.Width / screen.Scaling;
-        var monitorHeight = screen.Bounds.Height / screen.Scaling;
-
-        
-        return new ScreenSize(monitorWidth, monitorHeight, screen.Scaling)
+        // Need to lock it to prevent multiple calls
+        lock (_lock)
         {
-            WorkingAreaWidth = monitorWidth,
-            WorkingAreaHeight = monitorHeight,
-            Scaling = screen.Scaling,
-        };
+            var screen = window.Screens.ScreenFromVisual(window);
+        
+            var monitorWidth = screen.Bounds.Width / screen.Scaling;
+            var monitorHeight = screen.Bounds.Height / screen.Scaling;
+        
+            ScreenSize = new ScreenSize(monitorWidth, monitorHeight, screen.Scaling)
+            {
+                WorkingAreaWidth = monitorWidth,
+                WorkingAreaHeight = monitorHeight,
+                Scaling = screen.Scaling,
+            };
+        }
     }
 }

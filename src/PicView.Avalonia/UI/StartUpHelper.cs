@@ -64,7 +64,7 @@ public static class StartUpHelper
 
         w.Show();
         vm.IsLoading = true;
-        ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(w);
+        ScreenHelper.UpdateScreenSize(w);
         UIHelper.SetControls(desktop);
         vm.UpdateLanguage();
         vm.GetFlipped = vm.Flip;
