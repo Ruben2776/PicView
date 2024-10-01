@@ -13,8 +13,7 @@ public partial class SettingsWindow : Window
         InitializeComponent();
         Loaded += delegate
         {
-            MinWidth = MaxWidth = Width;
-            Height = 500;
+            MinWidth = Width;
             Title = TranslationHelper.GetTranslation("Settings") + " - PicView";
         };
         KeyDown += (_, e) =>

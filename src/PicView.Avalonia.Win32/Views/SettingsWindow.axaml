@@ -1,4 +1,5 @@
 <Window
+    CanResize="False"
     CornerRadius="0,0,8,8"
     Height="300"
     MinHeight="260"

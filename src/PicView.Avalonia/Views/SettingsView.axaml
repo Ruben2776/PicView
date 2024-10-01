@@ -5,6 +5,7 @@
     x:Class="PicView.Avalonia.Views.SettingsView"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
@@ -118,7 +119,8 @@
             Margin="0,0,0,35"
             Padding="0"
             TabStripPlacement="Right"
-            VerticalAlignment="Top">
+            VerticalAlignment="Top"
+            x:Name="MainTabControl">
             <TabControl.Styles>
                 <Styles>
                     <Style Selector="TabItem.headerStyle">
@@ -860,69 +862,98 @@
 
 
         <Button
+            BorderThickness="0,1,1,0"
             Classes="BorderStyle altHover mainBtn"
             Command="{CompiledBinding ResetSettingsCommand}"
             HorizontalAlignment="Left"
             Margin="0"
             VerticalAlignment="Bottom"
             Width="251">
-            <TextBlock
-                Classes="txt"
-                Foreground="{StaticResource SecondaryTextColor}"
-                Text="{CompiledBinding ResetButtonText,
-                                       Mode=OneWay}"
-                TextAlignment="Center" />
+            <StackPanel Orientation="Horizontal">
+                <Image Margin="5,0,10,0">
+                    <DrawingImage>
+                        <DrawingGroup>
+                            <GeometryDrawing Geometry="F1 M9 10L4 15L9 20">
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        Brush="{StaticResource SecondaryTextColor}"
+                                        LineCap="Round"
+                                        LineJoin="Round"
+                                        MiterLimit="4"
+                                        Thickness="2" />
+                                </GeometryDrawing.Pen>
+                            </GeometryDrawing>
+                            <GeometryDrawing Geometry="F1 M20 4L20 11Q20 11.1965 19.9807 11.3921Q19.9615 11.5876 19.9231 11.7804Q19.8848 11.9731 19.8278 12.1611Q19.7707 12.3492 19.6955 12.5307Q19.6203 12.7123 19.5277 12.8856Q19.435 13.0589 19.3259 13.2223Q19.2167 13.3857 19.092 13.5376Q18.9674 13.6895 18.8284 13.8284Q18.6895 13.9674 18.5376 14.092Q18.3857 14.2167 18.2223 14.3259Q18.0589 14.4351 17.8856 14.5277Q17.7123 14.6203 17.5307 14.6955Q17.3492 14.7707 17.1611 14.8278Q16.9731 14.8848 16.7804 14.9231Q16.5876 14.9615 16.3921 14.9807Q16.1965 15 16 15L4 15">
+                                <GeometryDrawing.Pen>
+                                    <Pen
+                                        Brush="{StaticResource SecondaryTextColor}"
+                                        LineCap="Round"
+                                        LineJoin="Round"
+                                        MiterLimit="4"
+                                        Thickness="2" />
+                                </GeometryDrawing.Pen>
+                            </GeometryDrawing>
+                        </DrawingGroup>
+                    </DrawingImage>
+                </Image>
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    Text="{CompiledBinding ResetButtonText,
+                                           Mode=OneWay}" />
+            </StackPanel>
+
         </Button>
 
 
-        <ScrollViewer
+        <customControls:AutoScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=GeneralSettingsTabItem}"
             Margin="235,0,0,0">
             <views:GeneralSettingsView Background="Transparent" Margin="20,5,40,20" />
-        </ScrollViewer>
+        </customControls:AutoScrollViewer>
 
-        <ScrollViewer
+        <customControls:AutoScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=AppearanceTabItem}"
             Margin="235,0,0,0">
             <views:AppearanceView Background="Transparent" Margin="20,5,40,20" />
-        </ScrollViewer>
+        </customControls:AutoScrollViewer>
 
-        <ScrollViewer
+        <customControls:AutoScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=LanguageTabItem}"
             Margin="235,0,0,0">
             <views:LanguageView Background="Transparent" Margin="20,5,40,20" />
-        </ScrollViewer>
+        </customControls:AutoScrollViewer>
 
-        <ScrollViewer
+        <customControls:AutoScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=GalleryTabItem}"
             Margin="235,0,0,0">
             <views:GalleryView Background="Transparent" Margin="20,5,40,20" />
-        </ScrollViewer>
+        </customControls:AutoScrollViewer>
 
-        <ScrollViewer
+        <customControls:AutoScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=NavigationTabItem}"
             Margin="235,0,0,0">
             <views:NavigationView Background="Transparent" Margin="20,5,40,20" />
-        </ScrollViewer>
+        </customControls:AutoScrollViewer>
 
-        <ScrollViewer
+        <customControls:AutoScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=ImageTabItem}"
             Margin="235,0,0,0">
             <views:ImageSettingsView Background="Transparent" Margin="20,5,40,20" />
-        </ScrollViewer>
+        </customControls:AutoScrollViewer>
 
-        <ScrollViewer
+        <customControls:AutoScrollViewer
             HorizontalAlignment="Right"
             IsVisible="{Binding Path=IsSelected, ElementName=MouseWheelTabItem}"
             Margin="235,0,0,0">
             <views:MouseWheelView Background="Transparent" Margin="20,5,40,20" />
-        </ScrollViewer>
+        </customControls:AutoScrollViewer>
 
         <Button
             Background="{DynamicResource BackgroundAlpha}"

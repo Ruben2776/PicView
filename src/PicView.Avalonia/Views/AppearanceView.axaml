@@ -42,10 +42,13 @@
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Foreground="{StaticResource SecondaryTextColor}"
-            Margin="0,15,0,10"
+            Margin="0,20,0,20"
             Text="{CompiledBinding HighlightColor}" />
 
-        <WrapPanel Orientation="Horizontal">
+        <WrapPanel
+            HorizontalAlignment="Center"
+            MaxWidth="300"
+            Orientation="Horizontal">
             <WrapPanel.Styles>
                 <Styles>
                     <Style Selector="Button.colorBtn">
