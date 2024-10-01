@@ -44,6 +44,11 @@ public partial class WinMainWindow : Window
                         break;
                 }
             });
+            ScalingChanged += (_, _) =>
+            {
+                ScreenHelper.ScreenSize = ScreenHelper.GetScreenSize(this);
+                WindowHelper.SetSize(DataContext as MainViewModel);
+            };
             PointerExited += (_, _) =>
             {
                 MainView.RemoveDragDropView();

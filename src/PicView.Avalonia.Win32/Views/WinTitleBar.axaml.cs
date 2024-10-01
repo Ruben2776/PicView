@@ -29,6 +29,6 @@ public partial class WinTitleBar : UserControl
         {
             return;
         }
-        WindowHelper.WindowDragBehavior((Window)VisualRoot, e);
+        WindowHelper.WindowDragAndDoubleClickBehavior((Window)VisualRoot, e);
     }
 }

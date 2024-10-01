@@ -41,7 +41,7 @@ namespace PicView.Core.Calculations
 
             var fullscreen = SettingsHelper.Settings.WindowProperties.Fullscreen ||
                              SettingsHelper.Settings.WindowProperties.Maximized;
-
+            
             var borderSpaceHeight = fullscreen ? 0 : uiTopSize + uiBottomSize + galleryHeight;
             var borderSpaceWidth = fullscreen ? 0 : padding;
 
@@ -151,7 +151,7 @@ namespace PicView.Core.Calculations
             }
 
             var titleMaxWidth = GetTitleMaxWidth(rotationAngle, xWidth, xHeight, monitorMinWidth, monitorMinHeight,
-                interfaceSize, containerWidth);
+                interfaceSize, containerWidth, dpiScaling);
 
             return new ImageSize(xWidth, xHeight, 0, scrollWidth, scrollHeight, titleMaxWidth, margin, aspectRatio);
         }
@@ -290,7 +290,7 @@ namespace PicView.Core.Calculations
             }
 
             var titleMaxWidth = GetTitleMaxWidth(rotationAngle, combinedWidth, xHeight, monitorMinWidth,
-                monitorMinHeight, interfaceSize, containerWidth);
+                monitorMinHeight, interfaceSize, containerWidth, dpiScaling);
 
             var margin = firstSize.Height > secondSize.Height ? firstSize.Margin : secondSize.Margin;
             return new ImageSize(combinedWidth, xHeight, xWidth2, scrollWidth, scrollHeight, titleMaxWidth, margin,
@@ -299,7 +299,7 @@ namespace PicView.Core.Calculations
 
 
         public static double GetTitleMaxWidth(double rotationAngle, double width, double height, double monitorMinWidth,
-            double monitorMinHeight, double interfaceSize, double containerWidth)
+            double monitorMinHeight, double interfaceSize, double containerWidth, double dpiScaling)
         {
             double titleMaxWidth;
             var maximized = SettingsHelper.Settings.WindowProperties.Fullscreen ||
