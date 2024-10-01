@@ -72,6 +72,8 @@ public static class Slideshow
             {
                 // TODO: add animation
                 // E.g. https://codepen.io/arrive/pen/EOGyzK
+                // https://docs.avaloniaui.net/docs/guides/graphics-and-animation/page-transitions/how-to-create-a-custom-page-transition
+                // https://docs.avaloniaui.net/docs/guides/graphics-and-animation/page-transitions/page-slide-transition
                 await vm.ImageIterator.NextIteration(NavigateTo.Next);
             };
         }
