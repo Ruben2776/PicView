@@ -36,7 +36,7 @@
                     DockPanel.Dock="Left">
                     <Image
                         Height="25"
-                        Margin="7,1,7,1"
+                        Margin="10,1,7,1"
                         Width="20">
                         <Image.Source>
                             <DrawingImage>

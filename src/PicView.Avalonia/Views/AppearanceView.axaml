@@ -57,6 +57,14 @@
                         <Setter Property="Width" Value="35" />
                         <Setter Property="Height" Value="35" />
                     </Style>
+                    <Style Selector="Button.colorBtn.active">
+                        <Setter Property="BorderThickness" Value="2" />
+                        <Setter Property="BorderBrush" Value="#FFFFFF" />
+                    </Style>
+                    <Style Selector="Button.colorBtn:pointerover">
+                        <Setter Property="BorderThickness" Value="2" />
+                        <Setter Property="BorderBrush" Value="#FFFFFF" />
+                    </Style>
                 </Styles>
             </WrapPanel.Styles>
 
@@ -75,7 +83,7 @@
             <!--  Gold  -->
             <Button Background="#FEA955" Classes="colorBtn" />
             <!--  Orange  -->
-            <Button Background="#DB5B3D" Classes="colorBtn" />
+            <Button Background="#DB5B3D" Classes="colorBtn active" />
             <!--  Red  -->
             <Button Background="#F91110" Classes="colorBtn" />
             <!--  Pink  -->

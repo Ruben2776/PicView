@@ -12,107 +12,109 @@
     <Design.DataContext>
         <viewModels:MainViewModel />
     </Design.DataContext>
-    <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
+    <Panel>
+        <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
 
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Foreground="{StaticResource SecondaryTextColor}"
-            Margin="0,20,0,20"
-            Text="{CompiledBinding ApplicationStartup,
-                                   Mode=OneWay}" />
-        <ComboBox
-            Background="{DynamicResource TertiaryBackgroundColor}"
-            BorderBrush="{DynamicResource MainBorderColor}"
-            BorderThickness="1"
-            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-            Margin="0,6,0,10"
-            Padding="5,7,0,7"
-            Width="300"
-            x:Name="ApplicationStartupBox">
-            <ComboBoxItem Content="{CompiledBinding None, Mode=OneWay}" />
-            <ComboBoxItem Content="{CompiledBinding OpenLastFile, Mode=OneWay}" />
-        </ComboBox>
-
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Foreground="{StaticResource SecondaryTextColor}"
-            Margin="0,20,0,20"
-            Text="{CompiledBinding MiscSettings,
-                                   Mode=OneWay}" />
-
-        <ToggleButton
-            Background="Transparent"
-            BorderThickness="0"
-            Classes="altHover alt"
-            Command="{CompiledBinding ChangeTopMostCommand}"
-            IsChecked="{CompiledBinding IsTopMost}"
-            Margin="0,0,0,10"
-            Width="300">
             <TextBlock
                 Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                FontSize="14"
                 Foreground="{StaticResource SecondaryTextColor}"
-                Margin="0"
-                MaxWidth="240"
-                Padding="0,1,5,0"
-                Text="{CompiledBinding StayTopMost,
+                Margin="0,20,0,20"
+                Text="{CompiledBinding ApplicationStartup,
                                        Mode=OneWay}" />
-        </ToggleButton>
+            <ComboBox
+                Background="{DynamicResource TertiaryBackgroundColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderThickness="1"
+                FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                Margin="0,6,0,10"
+                Padding="5,7,0,7"
+                Width="300"
+                x:Name="ApplicationStartupBox">
+                <ComboBoxItem Content="{CompiledBinding None, Mode=OneWay}" />
+                <ComboBoxItem Content="{CompiledBinding OpenLastFile, Mode=OneWay}" />
+            </ComboBox>
 
-        <ToggleButton
-            Background="Transparent"
-            BorderThickness="0"
-            Classes="altHover"
-            IsChecked="{CompiledBinding IsStayingCentered}"
-            Margin="0,0,0,10"
-            Width="300">
             <TextBlock
                 Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                FontSize="14"
                 Foreground="{StaticResource SecondaryTextColor}"
-                Margin="0"
-                MaxWidth="240"
-                Padding="0,1,5,0"
-                Text="{CompiledBinding StayCentered,
+                Margin="0,20,0,20"
+                Text="{CompiledBinding MiscSettings,
                                        Mode=OneWay}" />
-        </ToggleButton>
 
-        <ToggleButton
-            Background="Transparent"
-            BorderThickness="0"
-            Classes="altHover"
-            IsChecked="{CompiledBinding IsFileSavingDialogShown}"
-            Margin="0,0,0,10"
-            Width="300">
-            <TextBlock
-                Classes="txt"
-                Foreground="{StaticResource SecondaryTextColor}"
-                Margin="0"
-                MaxWidth="240"
-                Padding="0,1,5,0"
-                Text="{CompiledBinding ShowFileSavingDialog,
-                                       Mode=OneWay}" />
-        </ToggleButton>
+            <ToggleButton
+                Background="Transparent"
+                BorderThickness="0"
+                Classes="altHover alt"
+                Command="{CompiledBinding ChangeTopMostCommand}"
+                IsChecked="{CompiledBinding IsTopMost}"
+                Margin="0,0,0,10"
+                Width="300">
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    Margin="0"
+                    MaxWidth="240"
+                    Padding="0,1,5,0"
+                    Text="{CompiledBinding StayTopMost,
+                                           Mode=OneWay}" />
+            </ToggleButton>
 
-        <ToggleButton
-            Background="Transparent"
-            BorderThickness="0"
-            Classes="altHover"
-            IsChecked="{CompiledBinding IsOpeningInSameWindow}"
-            IsEnabled="False"
-            Margin="0,0,0,10"
-            Width="300">
-            <TextBlock
-                Classes="txt"
-                Foreground="{StaticResource SecondaryTextColor}"
-                Margin="0"
-                MaxWidth="240"
-                Padding="0,1,5,0"
-                Text="{CompiledBinding OpenInSameWindow,
-                                       Mode=OneWay}" />
-        </ToggleButton>
+            <ToggleButton
+                Background="Transparent"
+                BorderThickness="0"
+                Classes="altHover"
+                IsChecked="{CompiledBinding IsStayingCentered}"
+                Margin="0,0,0,10"
+                Width="300">
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    Margin="0"
+                    MaxWidth="240"
+                    Padding="0,1,5,0"
+                    Text="{CompiledBinding StayCentered,
+                                           Mode=OneWay}" />
+            </ToggleButton>
 
-    </StackPanel>
+            <ToggleButton
+                Background="Transparent"
+                BorderThickness="0"
+                Classes="altHover"
+                IsChecked="{CompiledBinding IsFileSavingDialogShown}"
+                Margin="0,0,0,10"
+                Width="300">
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    Margin="0"
+                    MaxWidth="240"
+                    Padding="0,1,5,0"
+                    Text="{CompiledBinding ShowFileSavingDialog,
+                                           Mode=OneWay}" />
+            </ToggleButton>
+
+            <ToggleButton
+                Background="Transparent"
+                BorderThickness="0"
+                Classes="altHover"
+                IsChecked="{CompiledBinding IsOpeningInSameWindow}"
+                IsEnabled="False"
+                Margin="0,0,0,10"
+                Width="300">
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    Margin="0"
+                    MaxWidth="240"
+                    Padding="0,1,5,0"
+                    Text="{CompiledBinding OpenInSameWindow,
+                                           Mode=OneWay}" />
+            </ToggleButton>
+
+        </StackPanel>
+    </Panel>
 </UserControl>
