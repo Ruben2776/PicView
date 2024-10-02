@@ -254,7 +254,11 @@ public static class NavigationHelper
                 if (index != -1)
                 {
                    await vm.ImageIterator.IterateToIndex(index);
-                   return;
+                }
+                else
+                {
+                    await ErrorHandling.ReloadAsync(vm);
+                    return;
                 }
             }
         }

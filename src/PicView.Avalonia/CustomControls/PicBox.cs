@@ -419,6 +419,11 @@ public class PicBox : Control
                 return new Size();
             }
 
+            if (!vm.FileInfo.Exists)
+            {
+                return new Size();
+            }
+
             using var magickImage = new MagickImage();
             magickImage.Ping(vm.FileInfo);
             return new Size(magickImage.Width, magickImage.Height);

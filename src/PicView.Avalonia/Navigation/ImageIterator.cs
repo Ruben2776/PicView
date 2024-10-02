@@ -21,8 +21,6 @@ public sealed class ImageIterator : IDisposable
 
     public List<string> ImagePaths { get; private set; }
 
-    public bool IsRenamingInProgress { get; set; }
-
     public int CurrentIndex { get; private set; }
 
     public FileInfo InitialFileInfo { get; private set; } = null!;
@@ -84,11 +82,6 @@ public sealed class ImageIterator : IDisposable
 
     private async Task OnFileAdded(FileSystemEventArgs e)
     {
-        if (IsRenamingInProgress)
-        {
-            return;
-        }
-
         if (ImagePaths.Contains(e.FullPath))
         {
             return;
@@ -188,11 +181,6 @@ public sealed class ImageIterator : IDisposable
 
     private async Task OnFileDeleted(FileSystemEventArgs e)
     {
-        if (IsRenamingInProgress)
-        {
-            return;
-        }
-
         if (e.FullPath.IsSupported() == false)
         {
             return;
@@ -290,11 +278,6 @@ public sealed class ImageIterator : IDisposable
 
     private async Task OnFileRenamed(RenamedEventArgs e)
     {
-        if (IsRenamingInProgress)
-        {
-            return;
-        }
-
         if (e.FullPath.IsSupported() == false)
         {
             if (ImagePaths.Contains(e.OldFullPath))
@@ -313,7 +296,7 @@ public sealed class ImageIterator : IDisposable
         _isRunning = true;
 
         var oldIndex = ImagePaths.IndexOf(e.OldFullPath);
-
+        var sameFile = CurrentIndex == oldIndex;
         var fileInfo = new FileInfo(e.FullPath);
         if (fileInfo.Exists == false)
         {
@@ -344,9 +327,13 @@ public sealed class ImageIterator : IDisposable
             return;
         }
 
-        SetTitleHelper.SetTitle(_vm);
-
         await PreLoader.RefreshFileInfo(oldIndex, ImagePaths);
+        if (sameFile)
+        {
+            _vm.FileInfo = fileInfo;
+        }
+        
+        SetTitleHelper.SetTitle(_vm);
 
         _isRunning = false;
         FileHistoryNavigation.Rename(e.OldFullPath, e.FullPath);

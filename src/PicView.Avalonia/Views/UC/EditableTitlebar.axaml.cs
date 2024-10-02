@@ -8,34 +8,13 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
+using PicView.Core.Localization;
+using PicView.Core.Navigation;
 
 namespace PicView.Avalonia.Views.UC;
 
 public partial class EditableTitlebar : UserControl
 {
-    #region Properties
-
-    public bool IsRenaming
-    {
-        get
-        {
-            if (DataContext is not MainViewModel vm)
-            {
-                return false;
-            }
-            return vm.ImageIterator?.IsRenamingInProgress ?? false;
-        }
-        private set
-        {
-            if (DataContext is not MainViewModel vm)
-            {
-                return;
-            }
-            vm.ImageIterator.IsRenamingInProgress = value;
-        }
-    }
-
-    #endregion
     public EditableTitlebar()
     {
         InitializeComponent();
@@ -56,7 +35,7 @@ public partial class EditableTitlebar : UserControl
             return;
         }
 
-        if (IsRenaming || vm.IsEditableTitlebarOpen)
+        if (vm.IsEditableTitlebarOpen)
         {
             return;
         }
@@ -136,14 +115,21 @@ public partial class EditableTitlebar : UserControl
             return;
         }
         vm.IsLoading = true;
-        IsRenaming = true;
         var oldPath = vm.FileInfo.FullName;
         var newPath = Path.Combine(vm.FileInfo.DirectoryName, TextBox.Text);
+
+        if (File.Exists(newPath))
+        {
+            // Show error message to user
+            return;
+        }
         
         // Check if the file is being moved to a different directory
         if (Path.GetDirectoryName(oldPath) != Path.GetDirectoryName(newPath))
         {
-            await Renamed().ConfigureAwait(false);
+            vm.ImageIterator?.RemoveCurrentItemFromPreLoader();
+            await vm.ImageIterator?.NextIteration(NavigateTo.Next);
+            FileHelper.RenameFile(oldPath, newPath);
             return;
         }
         
@@ -158,10 +144,9 @@ public partial class EditableTitlebar : UserControl
 
             if (saved)
             {
-                // Navigate to newly saved file
-                await NavigationHelper.LoadPicFromFile(newPath, vm).ConfigureAwait(false);
-                
                 // Delete old file
+                vm.ImageIterator?.RemoveCurrentItemFromPreLoader();
+                
                 var deleteMsg = FileDeletionHelper.DeleteFileWithErrorMsg(oldPath, false);
                 if (!string.IsNullOrWhiteSpace(deleteMsg))
                 {
@@ -172,36 +157,34 @@ public partial class EditableTitlebar : UserControl
                 }
             }
             await End();
-            return;
         }
-        var renamed = await Renamed().ConfigureAwait(false);
-        if (!renamed)
+        else
         {
-            IsRenaming = false;
-            return;
+            var renamed = FileHelper.RenameFile(oldPath, newPath);
+            if (!renamed)
+            {
+                // TODO Show error message
+                await TooltipHelper.ShowTooltipMessageAsync(TranslationHelper.Translation.UnexpectedError);
+                return;
+            }
+            await End();
         }
-        await End();
-        return;
 
-        async Task<bool> Renamed()
-        {
-            return await Task.FromResult(FileHelper.RenameFile(oldPath, newPath));
-        }
+        return;
 
         async Task End()
         {
-            SetTitleHelper.SetTitle(vm);
+            // vm.ImageIterator?.RemoveCurrentItemFromPreLoader();
+            // await NavigationHelper.LoadPicFromFile(newPath, vm).ConfigureAwait(false);
             vm.IsLoading = false;
-            IsRenaming = false;
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 TextBox.ClearSelection();
-                SetTitleHelper.RefreshTitle(vm);
-                vm.IsEditableTitlebarOpen = false;
                 Cursor = new Cursor(StandardCursorType.Arrow);
                 MainKeyboardShortcuts.IsKeysEnabled = true;
                 UIHelper.GetMainView.Focus();
             });
+            vm.IsEditableTitlebarOpen = false;
         }
     }
     
@@ -229,7 +212,7 @@ public partial class EditableTitlebar : UserControl
         TextBox.SelectionEnd = end;
         vm.IsEditableTitlebarOpen = true;
         Cursor = new Cursor(StandardCursorType.Ibeam);
-        Focus();
+        TextBox.Focus();
     }
 
     #endregion

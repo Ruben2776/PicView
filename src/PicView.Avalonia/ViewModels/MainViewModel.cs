@@ -1376,20 +1376,10 @@ public class MainViewModel : ViewModelBase
             return;
         }
 
-        if (ImageIterator is not null)
-        {
-            ImageIterator.IsRenamingInProgress = true;
-        }
-
         var newPath = await ConversionHelper.ConvertTask(FileInfo, index);
         if (!string.IsNullOrWhiteSpace(newPath))
         {
             await NavigationHelper.LoadPicFromStringAsync(newPath, this);
-        }
-
-        if (ImageIterator is not null)
-        {
-            ImageIterator.IsRenamingInProgress = false;
         }
     }
     
@@ -1472,7 +1462,8 @@ public class MainViewModel : ViewModelBase
             return;
         }
 
-        if (Path.GetFileName(path) == FileInfo.FullName)
+        IsLoading = true;
+        if (path == FileInfo.FullName)
         {
             await FunctionsHelper.DuplicateFile();
         }
@@ -1483,6 +1474,7 @@ public class MainViewModel : ViewModelBase
                 FileHelper.DuplicateAndReturnFileName(path);
             });
         }
+        IsLoading = false;
     }
     
     private async Task ShowFilePropertiesTask(string path)

@@ -146,6 +146,10 @@ public static class GalleryFunctions
 
         var galleryListBox = mainView.GalleryView.GalleryListBox;
         if (galleryListBox == null) return;
+        if (galleryListBox.Items.Count < 0)
+        {
+            return;
+        }
         var initialDirectory = Path.GetDirectoryName(vm.FileInfo.FullName);
         try
         {
@@ -186,8 +190,8 @@ public static class GalleryFunctions
                     return;
                 }
             }
-            
-            thumbs = thumbs.OrderBySequence(files, x => x.FileLocation).ToList();
+            await Dispatcher.UIThread.InvokeAsync(() =>
+                thumbs = thumbs.OrderBySequence(files, x => x.FileLocation).ToList());
             vm.SelectedGalleryItemIndex = -1;
 
             for (var i = 0; i < files.Count; i++)

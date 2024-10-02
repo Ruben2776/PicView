@@ -648,10 +648,6 @@ public static class FunctionsHelper
 
     public static async Task DuplicateFile()
     {
-        if (Vm is null)
-        {
-            return;
-        }
         if (!NavigationHelper.CanNavigate(Vm))
         {
             return;
