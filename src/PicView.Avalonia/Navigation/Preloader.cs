@@ -135,7 +135,7 @@ public sealed class PreLoader : IDisposable
     {
         foreach (var item in _preLoadList.Values)
         {
-            if (item.ImageModel.Image is Bitmap img)
+            if (item?.ImageModel?.Image is Bitmap img)
             {
                 img.Dispose();
             }
