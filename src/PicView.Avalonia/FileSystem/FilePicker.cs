@@ -10,7 +10,7 @@ using PicView.Core.Localization;
 
 namespace PicView.Avalonia.FileSystem;
 
-public static class FilePickerHelper
+public static class FilePicker
 {
     public static async Task SelectAndLoadFile(MainViewModel vm)
     {
@@ -68,15 +68,15 @@ public static class FilePickerHelper
     private static FilePickerFileType AllFileType { get; } = new(TranslationHelper.GetTranslation("SupportedFiles"))
     {
         Patterns = SupportedFiles.ConvertFilesToGlobFormat(),
-        AppleUniformTypeIdentifiers = new[] { "public.image" },
-        MimeTypes = new[] { "image/*" },
+        AppleUniformTypeIdentifiers = ["public.image"],
+        MimeTypes = ["image/*"],
     };
 
     private static FilePickerFileType ArchiveFileType { get; } = new(TranslationHelper.GetTranslation("SupportedFiles"))
     {
         Patterns = SupportedFiles.ConvertArchivesToGlobFormat(),
-        AppleUniformTypeIdentifiers = new[] { "public.archive" },
-        MimeTypes = new[] { "archive/*" }
+        AppleUniformTypeIdentifiers = ["public.archive"],
+        MimeTypes = ["archive/*"]
     };
 
     public static async Task PickAndSaveFileAsAsync(string? fileName, MainViewModel vm)
@@ -95,7 +95,7 @@ public static class FilePickerHelper
             var options = new FilePickerSaveOptions
             {
                 Title = $"{TranslationHelper.Translation.OpenFileDialog} - PicView",
-                FileTypeChoices  = new[] { AllFileType, FilePickerFileTypes.ImageAll, ArchiveFileType },
+                FileTypeChoices  = [AllFileType, FilePickerFileTypes.ImageAll, ArchiveFileType],
                 SuggestedFileName = string.IsNullOrWhiteSpace(fileName) ? Path.GetRandomFileName() : fileName,
                 SuggestedStartLocation = await desktop.MainWindow.StorageProvider.TryGetFolderFromPathAsync(fileName)
             

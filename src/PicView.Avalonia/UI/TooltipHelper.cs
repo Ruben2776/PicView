@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
-using PicView.Avalonia.Views.UC;
 using VerticalAlignment = Avalonia.Layout.VerticalAlignment;
 
 namespace PicView.Avalonia.UI;
@@ -23,6 +22,7 @@ public static class TooltipHelper
     {
         try
         {
+            var toolTip = UIHelper.GetToolTipMessage;
             var startAnimation = AnimationsHelper.OpacityAnimation(0, 1, .6);
             var endAnimation = AnimationsHelper.OpacityAnimation(1, 0, .5);
         
@@ -30,13 +30,13 @@ public static class TooltipHelper
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    GetToolTipMessage.Opacity = 1;
-                    GetToolTipMessage.ToolTipMessageText.Text = message.ToString();
-                    GetToolTipMessage.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
-                    GetToolTipMessage.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
+                    UIHelper.GetToolTipMessage.Opacity = 1;
+                    toolTip.ToolTipMessageText.Text = message.ToString();
+                    toolTip.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
+                    toolTip.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
                 });
                 await Task.Delay(interval);
-                await endAnimation.RunAsync(GetToolTipMessage);
+                await endAnimation.RunAsync(UIHelper.GetToolTipMessage);
                 _isRunning = false;
                 return;
             }
@@ -44,15 +44,15 @@ public static class TooltipHelper
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _isRunning = true;
-                GetToolTipMessage.IsVisible = true;
-                GetToolTipMessage.ToolTipMessageText.Text = message.ToString();
-                GetToolTipMessage.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
-                GetToolTipMessage.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
-                GetToolTipMessage.Opacity = 0;
+                UIHelper.GetToolTipMessage.IsVisible = true;
+                UIHelper.GetToolTipMessage.ToolTipMessageText.Text = message.ToString();
+                UIHelper.GetToolTipMessage.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
+                UIHelper.GetToolTipMessage.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
+                UIHelper.GetToolTipMessage.Opacity = 0;
             });
-            await startAnimation.RunAsync(GetToolTipMessage);
+            await startAnimation.RunAsync(UIHelper.GetToolTipMessage);
             await Task.Delay(interval);
-            await endAnimation.RunAsync(GetToolTipMessage);
+            await endAnimation.RunAsync(UIHelper.GetToolTipMessage);
             _isRunning = false;
         }
         catch (Exception e)
@@ -78,7 +78,7 @@ public static class TooltipHelper
             {
                 Dispatcher.UIThread.Invoke(() =>
                 {
-                    var toolTip = GetToolTipMessage;
+                    var toolTip = UIHelper.GetToolTipMessage;
                     if (toolTip != null)
                     {
                         toolTip.Opacity = 0;
@@ -94,7 +94,7 @@ public static class TooltipHelper
         {
             Dispatcher.UIThread.Invoke(() =>
             {
-                var toolTip = GetToolTipMessage;
+                var toolTip = UIHelper.GetToolTipMessage;
                 if (toolTip is null)
                 {
                     return;
@@ -133,41 +133,5 @@ public static class TooltipHelper
     internal static async Task ShowTooltipMessageAsync(object message, bool center = false)
     {
         await ShowTooltipMessageAsync(message, center, TimeSpan.FromSeconds(2));
-    }
-
-    /// <summary>
-    /// Gets the tooltip message control from the main view.
-    /// </summary>
-    private static ToolTipMessage? GetToolTipMessage
-    {
-        get
-        {
-            return Dispatcher.UIThread.Invoke(() =>
-            {
-                var mainView = UIHelper.GetMainView;
-                return mainView.MainGrid.Children.OfType<ToolTipMessage>().FirstOrDefault();
-            });
-        }
-    }
-
-    /// <summary>
-    /// Closes the tooltip message.
-    /// </summary>
-    internal static void CloseToolTipMessage()
-    {
-        var toolTip = GetToolTipMessage;
-        if (toolTip == null)
-        {
-            return;
-        }
-
-        if (toolTip.CheckAccess())
-        {
-            toolTip.IsVisible = false;
-        }
-        else
-        {
-            Dispatcher.UIThread.Invoke(() => toolTip.IsVisible = false);
-        }
     }
 }

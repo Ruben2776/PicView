@@ -573,7 +573,7 @@ public static class FunctionsHelper
 
     public static async Task Open()
     {
-        await FilePickerHelper.SelectAndLoadFile(Vm);
+        await FilePicker.SelectAndLoadFile(Vm);
     }
 
     public static Task OpenWith()

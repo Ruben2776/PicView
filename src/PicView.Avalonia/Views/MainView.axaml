@@ -754,5 +754,10 @@
             Width="{CompiledBinding GalleryWidth,
                                     Mode=OneWay}"
             x:Name="GalleryView" />
+        <uc:ToolTipMessage
+            HorizontalAlignment="Center"
+            Opacity="0"
+            VerticalAlignment="Center"
+            x:Name="ToolTipMessage" />
     </Panel>
 </UserControl>

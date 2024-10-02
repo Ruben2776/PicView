@@ -18,23 +18,6 @@ namespace PicView.Avalonia.UI
 {
     public static class UIHelper
     {
-        #region Add Controls
-
-        public static void AddToolTipMessage()
-        {
-            var mainView = GetMainView;
-            var toolTipMessage = new ToolTipMessage
-            {
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Opacity = 0
-            };
-
-            mainView.MainGrid.Children.Add(toolTipMessage);
-        }
-
-        #endregion
-
         #region GetControls
 
         public static MainView? GetMainView { get; private set; }
@@ -43,6 +26,8 @@ namespace PicView.Avalonia.UI
         public static GalleryAnimationControlView? GetGalleryView { get; private set; }
 
         public static BottomBar? GetBottomBar { get; private set; }
+        
+        public static ToolTipMessage? GetToolTipMessage { get; private set; }
 
         public static void SetControls(IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -51,6 +36,7 @@ namespace PicView.Avalonia.UI
             GetEditableTitlebar = GetTitlebar.FindControl<EditableTitlebar>("EditableTitlebar");
             GetGalleryView = GetMainView.MainGrid.GetControl<GalleryAnimationControlView>("GalleryView");
             GetBottomBar = desktop.MainWindow.FindControl<BottomBar>("BottomBar");
+            GetToolTipMessage = GetMainView.MainGrid.FindControl<ToolTipMessage>("ToolTipMessage");
         }
 
         #endregion

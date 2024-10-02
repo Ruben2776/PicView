@@ -61,8 +61,9 @@ public static class UpdateImage
             WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight,
                 nextPreloadValue?.ImageModel?.PixelWidth ?? 0, nextPreloadValue?.ImageModel?.PixelHeight ?? 0,
                 preLoadValue.ImageModel.Rotation, vm);
+            
+            UIHelper.GetToolTipMessage.IsVisible = false;
         }, DispatcherPriority.Send);
-
 
         SetTitleHelper.SetTitle(vm, preLoadValue.ImageModel);
 
@@ -86,8 +87,6 @@ public static class UpdateImage
         vm.PixelWidth = preLoadValue.ImageModel.PixelWidth;
         vm.PixelHeight = preLoadValue.ImageModel.PixelHeight;
         ExifHandling.UpdateExifValues(preLoadValue.ImageModel, vm);
-
-        await Dispatcher.UIThread.InvokeAsync(TooltipHelper.CloseToolTipMessage);
     }
 
     /// <summary>

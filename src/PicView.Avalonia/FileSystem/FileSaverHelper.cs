@@ -23,7 +23,7 @@ public static class FileSaverHelper
             }
             else
             {
-                await FilePickerHelper.PickAndSaveFileAsAsync(vm.FileInfo.FullName, vm);
+                await FilePicker.PickAndSaveFileAsAsync(vm.FileInfo.FullName, vm);
             }
             
         }

@@ -332,7 +332,7 @@ public sealed class ImageIterator : IDisposable
         {
             _vm.FileInfo = fileInfo;
         }
-        
+
         SetTitleHelper.SetTitle(_vm);
 
         _isRunning = false;
@@ -365,7 +365,7 @@ public sealed class ImageIterator : IDisposable
     {
         return PreLoader.Get(index, ImagePaths);
     }
-    
+
     public async Task<PreLoader.PreLoadValue?> GetPreLoadValueAsync(int index)
     {
         return await PreLoader.GetAsync(index, ImagePaths);
@@ -494,43 +494,53 @@ public sealed class ImageIterator : IDisposable
             return;
         }
 
-        await Task.Run(async () =>
+        try
         {
-            try
+            lock (_lock)
             {
-                lock (_lock)
+                CurrentIndex = index;
+            }
+
+            // ReSharper disable once MethodHasAsyncOverload
+            var preloadValue = PreLoader.Get(index, ImagePaths);
+            if (preloadValue is not null)
+            {
+                if (preloadValue.IsLoading)
                 {
-                    CurrentIndex = index;
+                    TryShowPreview(preloadValue);
                 }
 
-                // ReSharper disable once MethodHasAsyncOverload
-                var preloadValue = PreLoader.Get(index, ImagePaths);
-                if (preloadValue is not null)
+                while (preloadValue.IsLoading)
                 {
-                    if (preloadValue.IsLoading)
+                    await Task.Delay(20).ConfigureAwait(false);
+                    lock (_lock)
                     {
-                        TryShowPreview(preloadValue);
-                    }
-
-                    while (preloadValue.IsLoading)
-                    {
-                        await Task.Delay(20).ConfigureAwait(false);
-                        lock (_lock)
+                        if (CurrentIndex != index)
                         {
-                            if (CurrentIndex != index)
-                            {
-                                // Skip loading if user went to next value
-                                return;
-                            }
+                            // Skip loading if user went to next value
+                            return;
                         }
                     }
                 }
-                else
-                {
-                    TryShowPreview(preloadValue);
-                    preloadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths).ConfigureAwait(false);
-                }
+            }
+            else
+            {
+                TryShowPreview(preloadValue);
+                preloadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths).ConfigureAwait(false);
+            }
 
+            lock (_lock)
+            {
+                if (CurrentIndex != index)
+                {
+                    // Skip loading if user went to next value
+                    return;
+                }
+            }
+
+            if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+            {
+                var nextPreloadValue = await GetNextPreLoadValueAsync().ConfigureAwait(false);
                 lock (_lock)
                 {
                     if (CurrentIndex != index)
@@ -540,92 +550,80 @@ public sealed class ImageIterator : IDisposable
                     }
                 }
 
-                if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
-                {
-                    var nextPreloadValue = await GetNextPreLoadValueAsync().ConfigureAwait(false);
-                    lock (_lock)
-                    {
-                        if (CurrentIndex != index)
-                        {
-                            // Skip loading if user went to next value
-                            return;
-                        }
-                    }
-
-                    _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
-                    await UpdateImage.UpdateSource(_vm, index, ImagePaths, IsReversed, preloadValue, nextPreloadValue).ConfigureAwait(false);
-                }
-                else
-                {
-                    await UpdateImage.UpdateSource(_vm, index, ImagePaths, IsReversed, preloadValue).ConfigureAwait(false);
-                }
-
-                if (ImagePaths.Count > 1)
-                {
-                    if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
-                    {
-                        await Dispatcher.UIThread.InvokeAsync(() =>
-                        {
-                            _vm.PlatformService.SetTaskbarProgress((ulong)CurrentIndex, (ulong)ImagePaths.Count);
-                        });
-                    }
-
-                    await PreLoader.PreLoadAsync(CurrentIndex, ImagePaths.Count, IsReversed, ImagePaths)
-                        .ConfigureAwait(false);
-                }
-
-                await AddAsync(index, preloadValue.ImageModel).ConfigureAwait(false);
-
-                // Add recent files, except when browsing archive
-                if (string.IsNullOrWhiteSpace(TempFileHelper.TempFilePath) && ImagePaths.Count > index)
-                {
-                    FileHistoryNavigation.Add(ImagePaths[index]);
-                }
+                _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
+                await UpdateImage.UpdateSource(_vm, index, ImagePaths, IsReversed, preloadValue, nextPreloadValue)
+                    .ConfigureAwait(false);
             }
-            catch (Exception e)
+            else
             {
+                await UpdateImage.UpdateSource(_vm, index, ImagePaths, IsReversed, preloadValue).ConfigureAwait(false);
+            }
+
+            if (ImagePaths.Count > 1)
+            {
+                if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _vm.PlatformService.SetTaskbarProgress((ulong)CurrentIndex, (ulong)ImagePaths.Count);
+                    });
+                }
+
+                await PreLoader.PreLoadAsync(CurrentIndex, ImagePaths.Count, IsReversed, ImagePaths)
+                    .ConfigureAwait(false);
+            }
+
+            await AddAsync(index, preloadValue.ImageModel).ConfigureAwait(false);
+
+            // Add recent files, except when browsing archive
+            if (string.IsNullOrWhiteSpace(TempFileHelper.TempFilePath) && ImagePaths.Count > index)
+            {
+                FileHistoryNavigation.Add(ImagePaths[index]);
+            }
+        }
+        catch (Exception e)
+        {
 #if DEBUG
-                Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
-                await TooltipHelper.ShowTooltipMessageAsync(e.Message);
+            Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
+            await TooltipHelper.ShowTooltipMessageAsync(e.Message);
 #endif
-            }
-            finally
+        }
+        finally
+        {
+            _vm.IsLoading = false;
+        }
+
+        return;
+
+        void TryShowPreview(PreLoader.PreLoadValue preloadValue)
+        {
+            if (preloadValue is null)
             {
-                _vm.IsLoading = false;
+                return;
             }
 
-            return;
-
-            void TryShowPreview(PreLoader.PreLoadValue preloadValue)
+            if (!preloadValue.IsLoading)
             {
-                if (preloadValue is null)
-                {
-                    return;
-                }
-
-                if (!preloadValue.IsLoading)
-                {
-                    return;
-                }
-
-                if (index != CurrentIndex)
-                {
-                    return;
-                }
-
-                if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
-                {
-                    SetTitleHelper.SetLoadingTitle(_vm);
-                    _vm.IsLoading = true;
-                    _vm.ImageSource = null;
-                    _vm.SecondaryImageSource = null;
-                }
-                else
-                {
-                    UpdateImage.LoadingPreview(_vm, index);
-                }
+                return;
             }
-        });
+
+            if (index != CurrentIndex)
+            {
+                return;
+            }
+
+            if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+            {
+                SetTitleHelper.SetLoadingTitle(_vm);
+                _vm.IsLoading = true;
+                _vm.ImageSource = null;
+                _vm.SecondaryImageSource = null;
+            }
+            else
+            {
+                UpdateImage.LoadingPreview(_vm, index);
+            }
+        }
     }
 
     private static Timer? _timer;
