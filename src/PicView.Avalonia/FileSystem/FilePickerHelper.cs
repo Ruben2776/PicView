@@ -109,7 +109,7 @@ public static class FilePickerHelper
             return;
         }
 
-        var destination = file.Path.AbsolutePath;
+        var destination = file.Path.LocalPath; // TODO: Handle macOS
         await FileSaverHelper.SaveFileAsync(fileName, destination, vm);
     }
 }
