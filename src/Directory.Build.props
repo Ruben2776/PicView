@@ -1,6 +1,9 @@
 <Project>
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <AvaloniaVersion>11.0.2</AvaloniaVersion>
+    <VersionPrefix>2.3.3</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
+    <AssemblyVersion>2.3.3</AssemblyVersion>
+    <FileVersion>2.3.3</FileVersion>
   </PropertyGroup>
 </Project>

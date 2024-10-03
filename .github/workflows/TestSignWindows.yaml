@@ -1,4 +1,4 @@
-name: Build and Sign PicView on Windows
+name: Build and Sign PicView
 run-name: workflow test signing with SignPath
 
 on: workflow_dispatch
@@ -18,17 +18,10 @@ jobs:
         id: get-version
         run: pwsh -File "${{ github.workspace }}/Build/Get-VersionInfo.ps1"
 
-      # Step 3: Get version from the project file
-      - name: Get version from the project file
-        uses: kzrnm/get-net-sdk-project-versions-action@v2
-        id: get-version
-        with:
-          proj-path: .\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj
-
       # Step 4 (x64): Publish x64 version
       - name: Publish x64 version
         run: |
-          pwsh -File "${{ github.workspace }}\Build\Build Avalonia.Win32.ps1" -Platform "x64" -outputPath "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64"
+          pwsh -File "${{ github.workspace }}\Build\Build WPF.ps1" -Platform "x64" -selfContained true -outputPath "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64"
         shell: pwsh
 
       # Step 5 (x64): Compile .ISS to .EXE Installer for x64
@@ -41,7 +34,7 @@ jobs:
       # Step 6 (arm64): Publish arm64 version
       - name: Publish arm64 version
         run: |
-          pwsh -File "${{ github.workspace }}\Build\Build Avalonia.Win32.ps1" -Platform "arm64" -outputPath "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64"
+          pwsh -File "${{ github.workspace }}\Build\Build WPF.ps1" -Platform "arm64" -selfContained true -outputPath "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64"
         shell: pwsh
 
 
