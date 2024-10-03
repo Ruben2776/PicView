@@ -1,4 +1,4 @@
-name: Build and Publish PicView Avalonia
+name: Build PicView Avalonia on Windows
 
 on:
   push:
@@ -41,33 +41,22 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PicView-v${{steps.get-version.outputs.file-version}}-win-x64
-          path: ${{ github.workspace }}\Build\output\x64
+          path: ${{ github.workspace }}\Build\
           retention-days: 14
 
-      # Step 6 (x64): Generate the Inno Setup Installer and copy x64 files to the build directory
-      - name: Generate Inno Setup variables and copy x64 files to Build directory
-        run: |
-          $buildDir = Join-Path -Path "${{ github.workspace }}" -ChildPath "Build\install\x64"
-          if (Test-Path $buildDir) {
-            Remove-Item -Path $buildDir -Recurse -Force
-          }
-          New-Item -Path $buildDir -ItemType Directory | Out-Null
-          Copy-Item -Path "${{ github.workspace }}\Build\output\x64\*" -Destination $buildDir -Recurse -Force
-        shell: pwsh
-
-      # Step 7 (x64): Compile .ISS to .EXE Installer for x64
+      # Step 6 (x64): Compile .ISS to .EXE Installer for x64
       - name: Compile .ISS to .EXE Installer (x64)
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: .\Build\install.iss
-          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\install\x64 /DMyFileSource=${{ github.workspace }}\Build\install\x64 /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
+          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.file-version}}-win-x64\install /DMyFileSource=${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.file-version}}-win-x64 /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
 
-      # Step 8 (x64): Upload the Inno Setup Installer for x64 as an artifact
+      # Step 7 (x64): Upload the Inno Setup Installer for x64 as an artifact
       - name: Upload Inno Setup Installer (x64)
         uses: actions/upload-artifact@v4
         with:
           name: PicView-${{steps.get-version.outputs.file-version}}-installer-x64
-          path: ${{ github.workspace }}\Build\install\x64\PicView-${{steps.get-version.outputs.file-version}}.exe
+          path: ${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.file-version}}-win-x64\install
           retention-days: 14
 
       # Step 4 (arm64): Publish arm64 version
@@ -81,31 +70,20 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PicView-v${{steps.get-version.outputs.file-version}}-win-arm64
-          path: ${{ github.workspace }}\Build\output\arm64
+          path: ${{ github.workspace }}\Build\
           retention-days: 14
-
-      # Step 6 (arm64): Generate the Inno Setup Installer and copy arm64 files to the build directory
-      - name: Generate Inno Setup variables and copy arm64 files to Build directory
-        run: |
-          $buildDir = Join-Path -Path "${{ github.workspace }}" -ChildPath "Build\install_arm64"
-          if (Test-Path $buildDir) {
-            Remove-Item -Path $buildDir -Recurse -Force
-          }
-          New-Item -Path $buildDir -ItemType Directory | Out-Null
-          Copy-Item -Path "${{ github.workspace }}\Build\output\arm64\*" -Destination $buildDir -Recurse -Force
-        shell: pwsh
 
       # Step 7 (arm64): Compile .ISS to .EXE Installer for arm64
       - name: Compile .ISS to .EXE Installer (arm64)
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
-          path: .\Build\install_arm64.iss
-          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\install_arm64 /DMyFileSource=${{ github.workspace }}\Build\install_arm64 /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
+          path: .\Build\install.iss
+          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.file-version}}-win-x64\install /DMyFileSource=${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.file-version}}-win-x64\ /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
 
       # Step 8 (arm64): Upload the Inno Setup Installer for arm64 as an artifact
       - name: Upload Inno Setup Installer (arm64)
         uses: actions/upload-artifact@v4
         with:
           name: PicView-${{steps.get-version.outputs.file-version}}-installer-arm64
-          path: ${{ github.workspace }}\Build\install_arm64\PicView-${{steps.get-version.outputs.file-version}}.exe
+          path: ${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.file-version}}-win-arm64\install
           retention-days: 14
