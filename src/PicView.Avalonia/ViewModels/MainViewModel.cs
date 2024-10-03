@@ -528,6 +528,18 @@ public class MainViewModel : ViewModelBase
 
     #region Booleans
     
+    private bool _isAvoidingZoomingOut = SettingsHelper.Settings.Zoom.AvoidZoomingOut;
+    
+    public bool IsAvoidingZoomingOut
+    {
+        get => _isAvoidingZoomingOut;
+        set
+        {
+            SettingsHelper.Settings.Zoom.AvoidZoomingOut = value;
+            this.RaiseAndSetIfChanged(ref _isAvoidingZoomingOut, value);
+        } 
+    }
+    
     private IImage? _changeCtrlZoomImage;
 
     public IImage? ChangeCtrlZoomImage
