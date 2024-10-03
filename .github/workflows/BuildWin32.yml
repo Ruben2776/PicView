@@ -33,7 +33,7 @@ jobs:
       # Step 4 (x64): Publish x64 version
       - name: Publish x64 version
         run: |
-          pwsh -File "${{ github.workspace }}\Build\Build Avalonia.Win32.ps1" -Platform "x64"
+          pwsh -File "${{ github.workspace }}\Build\Build Avalonia.Win32.ps1" -Platform "x64" -outputPath "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.file-version}}-win-x64"
         shell: pwsh
 
       # Step 5 (x64): Upload the x64 zip file as an artifact
@@ -62,7 +62,7 @@ jobs:
       # Step 4 (arm64): Publish arm64 version
       - name: Publish arm64 version
         run: |
-          pwsh -File "${{ github.workspace }}\Build\Build Avalonia.Win32.ps1" -Platform "arm64"
+          pwsh -File "${{ github.workspace }}\Build\Build Avalonia.Win32.ps1" -Platform "arm64" -outputPath "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.file-version}}-win-arm64"
         shell: pwsh
 
       # Step 5 (arm64): Upload the arm64 zip file as an artifact

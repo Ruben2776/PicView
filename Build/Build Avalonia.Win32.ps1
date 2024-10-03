@@ -1,6 +1,9 @@
 ﻿param (
     [string]$Platform = "x64"  # Default to x64 if no parameter is passed
 )
+param (
+    [string]$outputPath = $PSScriptRoot
+)
 
 # Define the core project path relative to the script's location
 $coreProjectPath = Join-Path -Path $PSScriptRoot -ChildPath "..\src\PicView.Core\PicView.Core.csproj"
@@ -29,13 +32,6 @@ $coreCsproj.Save($coreProjectPath)
 
 # Define the project path for the actual build target
 $avaloniaProjectPath = Join-Path -Path $PSScriptRoot -ChildPath "..\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj"
-
-# Load the .csproj file as XML to extract the AssemblyVersion
-$avaloniaProjectFile = [xml](Get-Content $avaloniaProjectPath)
-$assemblyVersion = $avaloniaProjectFile.Project.PropertyGroup.AssemblyVersion
-
-# Define the final output path relative to the script's location
-$outputPath = Join-Path -Path $PSScriptRoot -ChildPath "PicView-v.$assemblyVersion-win-$Platform"
 
 # Run dotnet publish for the Avalonia project
 dotnet publish $avaloniaProjectPath --runtime "win-$Platform" --self-contained true --configuration Release --output $outputPath /p:PublishReadyToRun=true
