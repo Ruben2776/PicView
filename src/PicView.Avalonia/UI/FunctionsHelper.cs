@@ -409,6 +409,12 @@ public static class FunctionsHelper
             Navigation.Slideshow.StopSlideshow(Vm);
             return;
         }
+
+        if (SettingsHelper.Settings.WindowProperties.Fullscreen)
+        {
+            await WindowHelper.MaximizeRestore();
+            return;
+        }
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
