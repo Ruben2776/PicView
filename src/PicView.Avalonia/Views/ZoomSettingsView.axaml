@@ -21,19 +21,17 @@
             FontSize="12"
             Margin="0,10,0,10"
             MaxWidth="300"
-            Text="{CompiledBinding AdjustTimingForZoom,
-                                   Mode=OneWay}" />
+            Text="{CompiledBinding AdjustTimingForZoom}" />
         <customControls:CustomSlider
             Height="30"
             HorizontalAlignment="Center"
             IsSnapToTickEnabled="True"
             Margin="0,1,0,1"
-            Maximum="1.5"
+            Maximum="1.7"
             Minimum=".1"
             TickFrequency=".1"
             TickPlacement="BottomRight"
-            Value="{CompiledBinding GetZoomSpeed,
-                                    Mode=OneWay}"
+            Value="{CompiledBinding GetZoomSpeed}"
             Width="300" />
         <TextBlock
             Classes="txt"
