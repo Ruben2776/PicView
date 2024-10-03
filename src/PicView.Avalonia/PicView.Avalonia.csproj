@@ -89,12 +89,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.2.0-beta2" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.2.0-beta2" />
-    <PackageReference Include="Avalonia.Headless.XUnit" Version="11.2.0-beta2" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.0-beta2" />
+    <PackageReference Include="Avalonia" Version="11.2.0-rc1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.0-rc1" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.0-rc1" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.0-beta2" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.0-rc1" />
     <PackageReference Include="Avalonia.Svg.Skia" Version="11.1.0.1" />
   </ItemGroup>
 
