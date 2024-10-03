@@ -27,7 +27,7 @@ jobs:
       - name: Publish x64 version
         run: |
           # Call the PowerShell script with x64 as the platform argument
-          pwsh -File "${{ github.workspace }}\Build Avalonia.Win32.ps1" -Platform "x64"
+          pwsh -File "${{ github.workspace }}\Build\Build Avalonia.Win32.ps1" -Platform "x64"
         shell: pwsh
 
       # Step 4 (x64): Upload the x64 zip file as an artifact
