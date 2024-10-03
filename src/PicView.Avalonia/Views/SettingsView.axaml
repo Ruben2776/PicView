@@ -699,6 +699,51 @@
                 </DrawingGroup>
             </DrawingGroup>
         </DrawingImage>
+
+        <DrawingImage x:Key="ZoomSettingsIcon">
+            <DrawingGroup>
+                <GeometryDrawing Geometry="F1 M19 11Q19 11.1964 18.9904 11.3925Q18.9807 11.5887 18.9615 11.7841Q18.9422 11.9796 18.9134 12.1738Q18.8846 12.3681 18.8463 12.5607Q18.808 12.7533 18.7602 12.9438Q18.7125 13.1343 18.6555 13.3223Q18.5985 13.5102 18.5323 13.6951Q18.4662 13.88 18.391 14.0615Q18.3159 14.2429 18.2319 14.4204Q18.1479 14.598 18.0554 14.7712Q17.9628 14.9444 17.8618 15.1128Q17.7609 15.2813 17.6518 15.4446Q17.5426 15.6079 17.4257 15.7656Q17.3087 15.9233 17.1841 16.0751Q17.0595 16.227 16.9276 16.3725Q16.7957 16.518 16.6569 16.6569Q16.518 16.7957 16.3725 16.9276Q16.227 17.0595 16.0751 17.1841Q15.9233 17.3087 15.7656 17.4257Q15.6079 17.5426 15.4446 17.6518Q15.2813 17.7609 15.1128 17.8618Q14.9444 17.9628 14.7712 18.0554Q14.598 18.1479 14.4204 18.2319Q14.2429 18.3159 14.0615 18.391Q13.88 18.4662 13.6951 18.5323Q13.5102 18.5985 13.3223 18.6555Q13.1343 18.7125 12.9438 18.7602Q12.7533 18.808 12.5607 18.8463Q12.3681 18.8846 12.1738 18.9134Q11.9796 18.9422 11.7841 18.9615Q11.5887 18.9807 11.3925 18.9904Q11.1964 19 11 19Q10.8036 19 10.6075 18.9904Q10.4113 18.9807 10.2159 18.9615Q10.0204 18.9422 9.82616 18.9134Q9.63189 18.8846 9.43928 18.8463Q9.24666 18.808 9.05616 18.7602Q8.86565 18.7125 8.67772 18.6555Q8.48979 18.5985 8.30488 18.5323Q8.11997 18.4662 7.93853 18.391Q7.75709 18.3159 7.57956 18.2319Q7.40203 18.1479 7.22883 18.0554Q7.05563 17.9628 6.88718 17.8618Q6.71873 17.7609 6.55544 17.6518Q6.39215 17.5426 6.2344 17.4257Q6.07666 17.3087 5.92485 17.1841Q5.77304 17.0595 5.62753 16.9276Q5.48201 16.7957 5.34315 16.6569Q5.20428 16.518 5.07239 16.3725Q4.9405 16.227 4.81592 16.0751Q4.69133 15.9233 4.57434 15.7656Q4.45735 15.6079 4.34824 15.4446Q4.23913 15.2813 4.13817 15.1128Q4.03721 14.9444 3.94463 14.7712Q3.85205 14.598 3.76809 14.4204Q3.68412 14.2429 3.60896 14.0615Q3.53381 13.88 3.46765 13.6951Q3.40149 13.5102 3.34448 13.3223Q3.28747 13.1343 3.23975 12.9438Q3.19203 12.7533 3.15372 12.5607Q3.1154 12.3681 3.08659 12.1738Q3.05777 11.9796 3.03852 11.7841Q3.01927 11.5887 3.00964 11.3925Q3 11.1964 3 11Q3 10.8036 3.00964 10.6075Q3.01927 10.4113 3.03852 10.2159Q3.05777 10.0204 3.08659 9.82616Q3.1154 9.63189 3.15372 9.43928Q3.19203 9.24666 3.23975 9.05616Q3.28747 8.86565 3.34448 8.67772Q3.40149 8.48979 3.46765 8.30488Q3.53381 8.11997 3.60896 7.93853Q3.68412 7.75709 3.76809 7.57956Q3.85205 7.40203 3.94463 7.22883Q4.03721 7.05563 4.13817 6.88718Q4.23913 6.71873 4.34824 6.55544Q4.45735 6.39215 4.57434 6.2344Q4.69133 6.07666 4.81592 5.92485Q4.9405 5.77304 5.07239 5.62753Q5.20428 5.48201 5.34315 5.34315Q5.48201 5.20428 5.62753 5.07239Q5.77304 4.9405 5.92485 4.81592Q6.07666 4.69133 6.23441 4.57434Q6.39215 4.45735 6.55544 4.34824Q6.71873 4.23913 6.88718 4.13817Q7.05563 4.03721 7.22883 3.94463Q7.40203 3.85205 7.57956 3.76809Q7.75709 3.68412 7.93853 3.60896Q8.11997 3.53381 8.30488 3.46765Q8.48979 3.40149 8.67772 3.34448Q8.86565 3.28747 9.05616 3.23975Q9.24666 3.19203 9.43928 3.15372Q9.63189 3.1154 9.82616 3.08659Q10.0204 3.05777 10.2159 3.03852Q10.4113 3.01927 10.6075 3.00964Q10.8036 3 11 3Q11.1964 3 11.3925 3.00964Q11.5887 3.01927 11.7841 3.03852Q11.9796 3.05777 12.1738 3.08659Q12.3681 3.1154 12.5607 3.15372Q12.7533 3.19203 12.9438 3.23975Q13.1343 3.28747 13.3223 3.34448Q13.5102 3.40149 13.6951 3.46765Q13.88 3.53381 14.0615 3.60896Q14.2429 3.68412 14.4204 3.76809Q14.598 3.85205 14.7712 3.94463Q14.9444 4.03721 15.1128 4.13817Q15.2813 4.23913 15.4446 4.34824Q15.6079 4.45735 15.7656 4.57434Q15.9233 4.69133 16.0751 4.81592Q16.227 4.9405 16.3725 5.07239Q16.518 5.20428 16.6569 5.34315Q16.7957 5.48201 16.9276 5.62753Q17.0595 5.77304 17.1841 5.92485Q17.3087 6.07666 17.4257 6.23441Q17.5426 6.39215 17.6518 6.55544Q17.7609 6.71873 17.8618 6.88718Q17.9628 7.05563 18.0554 7.22883Q18.1479 7.40203 18.2319 7.57956Q18.3159 7.75709 18.391 7.93853Q18.4662 8.11997 18.5323 8.30488Q18.5985 8.48979 18.6555 8.67772Q18.7125 8.86565 18.7602 9.05616Q18.808 9.24666 18.8463 9.43928Q18.8846 9.63189 18.9134 9.82616Q18.9422 10.0204 18.9615 10.2159Q18.9807 10.4113 18.9904 10.6075Q19 10.8036 19 11Z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{StaticResource SecondaryTextColor}"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            MiterLimit="4"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M21 21L16.65 16.65">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{StaticResource SecondaryTextColor}"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            MiterLimit="4"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M11 8L11 14">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{StaticResource SecondaryTextColor}"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            MiterLimit="4"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+                <GeometryDrawing Geometry="F1 M8 11L14 11">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{StaticResource SecondaryTextColor}"
+                            LineCap="Round"
+                            LineJoin="Round"
+                            MiterLimit="4"
+                            Thickness="2" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage>
     </UserControl.Resources>
     <Panel>
 
@@ -832,6 +877,22 @@
                 </customControls:AutoScrollViewer>
             </TabItem>
 
+            <!--  Zoom Settings  -->
+            <TabItem Classes="headerStyle">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Classes="imageStyle" Source="{StaticResource ZoomSettingsIcon}" />
+                        <TextBlock
+                            Classes="txt"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="{CompiledBinding Zoom}" />
+                    </StackPanel>
+                </TabItem.Header>
+                <customControls:AutoScrollViewer>
+                    <views:ZoomSettingsView Background="Transparent" Margin="20,5,40,20" />
+                </customControls:AutoScrollViewer>
+            </TabItem>
+
             <!--  Mouse Wheel Settings  -->
             <TabItem Classes="headerStyle" x:Name="MouseWheelTabItem">
                 <TabItem.Header>
@@ -843,6 +904,9 @@
                             Text="{CompiledBinding MouseWheel}" />
                     </StackPanel>
                 </TabItem.Header>
+                <customControls:AutoScrollViewer>
+                    <views:MouseWheelView Background="Transparent" Margin="20,5,40,20" />
+                </customControls:AutoScrollViewer>
             </TabItem>
 
             <!--  Language Settings  -->
@@ -960,25 +1024,6 @@
             </StackPanel>
 
         </Button>
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <customControls:AutoScrollViewer
-            HorizontalAlignment="Right"
-            IsVisible="{Binding Path=IsSelected, ElementName=MouseWheelTabItem}"
-            Margin="235,0,0,0">
-            <views:MouseWheelView Background="Transparent" Margin="20,5,40,20" />
-        </customControls:AutoScrollViewer>
 
 
 

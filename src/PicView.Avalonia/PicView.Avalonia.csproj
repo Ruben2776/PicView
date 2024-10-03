@@ -76,6 +76,10 @@
       <DependentUpon>SlideshowSettingsView.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\ZoomSettingsView.axaml.cs">
+      <DependentUpon>ZoomSettingsView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   
