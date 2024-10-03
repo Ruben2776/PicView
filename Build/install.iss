@@ -38,6 +38,9 @@ Name: "ru"; MessagesFile: "compiler:Languages\Russian.isl"
 Name: "ko"; MessagesFile: "compiler:Languages\Korean.isl"
 Name: "pl"; MessagesFile: "compiler:Languages\Polish.isl"
 
+Name: "ro"; MessagesFile: "Romanian.isl"
+Name: "zh_CN"; MessagesFile: "ChineseSimplified.isl"
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "openwith"; Description: "Open with {#MyAppName}"; GroupDescription: "Context menu:"; Flags: unchecked
