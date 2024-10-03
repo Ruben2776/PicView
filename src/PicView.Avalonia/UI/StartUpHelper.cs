@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -148,6 +149,7 @@ public static class StartUpHelper
         }
         
         BackgroundManager.SetBackground(vm);
+        ColorManager.UpdateAccentColors(SettingsHelper.Settings.Theme.ColorTheme);
         
         Task.Run(KeybindingsHelper.LoadKeybindings);
         

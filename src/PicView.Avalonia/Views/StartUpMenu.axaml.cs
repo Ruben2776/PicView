@@ -4,7 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
-using Avalonia.Styling;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
@@ -25,22 +25,19 @@ public partial class StartUpMenu : UserControl
     {
         SelectFileButton.PointerEntered += (_, _) =>
         {
-            if (!this.TryFindResource("SelectFileBrush", ThemeVariant.Default, out var brush))
-                return;
-
-            if (!this.TryFindResource("AccentColor", ThemeVariant.Default, out var color))
+            if (!this.TryFindResource("SelectFileBrush", Application.Current.RequestedThemeVariant, out var brush))
                 return;
 
             var selectFileBrush = brush as SolidColorBrush;
-            selectFileBrush.Color = color as Color? ?? default;
+            selectFileBrush.Color = ColorManager.GetPrimaryAccentColor;
         };
 
         SelectFileButton.PointerExited += (_, _) =>
         {
-            if (!this.TryFindResource("SelectFileBrush", ThemeVariant.Default, out var brush))
+            if (!this.TryFindResource("SelectFileBrush", Application.Current.RequestedThemeVariant, out var brush))
                 return;
 
-            if (!this.TryFindResource("MainTextColor", ThemeVariant.Default, out var color))
+            if (!this.TryFindResource("SecondaryTextColor", Application.Current.RequestedThemeVariant, out var color))
                 return;
 
             var selectFileBrush = brush as SolidColorBrush;
@@ -49,22 +46,19 @@ public partial class StartUpMenu : UserControl
 
         OpenLastFileButton.PointerEntered += (_, _) =>
         {
-            if (!this.TryFindResource("OpenLastFileBrush", ThemeVariant.Default, out var brush))
-                return;
-
-            if (!this.TryFindResource("AccentColor", ThemeVariant.Default, out var color))
+            if (!this.TryFindResource("OpenLastFileBrush", Application.Current.RequestedThemeVariant, out var brush))
                 return;
 
             var selectFileBrush = brush as SolidColorBrush;
-            selectFileBrush.Color = color as Color? ?? default;
+            selectFileBrush.Color = ColorManager.GetPrimaryAccentColor;
         };
 
         OpenLastFileButton.PointerExited += (_, _) =>
         {
-            if (!this.TryFindResource("OpenLastFileBrush", ThemeVariant.Default, out var brush))
+            if (!this.TryFindResource("OpenLastFileBrush", Application.Current.RequestedThemeVariant, out var brush))
                 return;
 
-            if (!this.TryFindResource("MainTextColor", ThemeVariant.Default, out var color))
+            if (!this.TryFindResource("SecondaryTextColor", Application.Current.RequestedThemeVariant, out var color))
                 return;
 
             var selectFileBrush = brush as SolidColorBrush;
@@ -73,26 +67,23 @@ public partial class StartUpMenu : UserControl
 
         PasteButton.PointerEntered += (_, _) =>
         {
-            if (!this.TryFindResource("PasteBrush", ThemeVariant.Default, out var brush))
-                return;
-
-            if (!this.TryFindResource("AccentColor", ThemeVariant.Default, out var color))
+            if (!this.TryFindResource("PasteBrush", Application.Current.RequestedThemeVariant, out var brush))
                 return;
 
             var selectFileBrush = brush as SolidColorBrush;
-            selectFileBrush.Color = color as Color? ?? default;
+            selectFileBrush.Color = ColorManager.GetPrimaryAccentColor;
         };
 
         PasteButton.PointerExited += (_, _) =>
         {
-            if (!this.TryFindResource("PasteBrush", ThemeVariant.Default, out var brush))
+            if (!this.TryFindResource("PasteBrush", Application.Current.RequestedThemeVariant, out var brush))
                 return;
-
-            if (!this.TryFindResource("MainTextColor", ThemeVariant.Default, out var color))
+            
+            if (!this.TryFindResource("SecondaryTextColor", Application.Current.RequestedThemeVariant, out var color))
                 return;
-
-            var selectFileBrush = brush as SolidColorBrush;
-            selectFileBrush.Color = color as Color? ?? default;
+            
+            var pasteBrush = brush as SolidColorBrush;
+            pasteBrush.Color = color as Color? ?? default;
         };
 
         if (DataContext is not MainViewModel vm)
@@ -141,7 +132,7 @@ public partial class StartUpMenu : UserControl
 
         void ShowIcon()
         {
-            if (this.TryFindResource("Icon", ThemeVariant.Default, out var icon))
+            if (this.TryFindResource("Icon", Application.Current.RequestedThemeVariant, out var icon))
                 Logo.Source = icon as DrawingImage;
             LogoViewbox.Width = logoWidth;
             Buttons.Margin = new Thickness(0, 0, 0, bottomMargin);
@@ -150,7 +141,7 @@ public partial class StartUpMenu : UserControl
 
         void ShowFullLogo()
         {
-            if (this.TryFindResource("Logo", ThemeVariant.Default, out var logo))
+            if (this.TryFindResource("Logo", Application.Current.RequestedThemeVariant, out var logo))
                 Logo.Source = logo as DrawingImage;
             LogoViewbox.Width = double.NaN;
             Buttons.Margin = new Thickness(0, 220, 25, bottomMargin - 100);

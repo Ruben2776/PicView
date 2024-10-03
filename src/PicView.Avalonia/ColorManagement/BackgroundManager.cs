@@ -3,7 +3,7 @@ using Avalonia.Media;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 
-namespace PicView.Avalonia.UI;
+namespace PicView.Avalonia.ColorManagement;
 public static class BackgroundManager
 {
     public static void ChangeBackground(MainViewModel vm)

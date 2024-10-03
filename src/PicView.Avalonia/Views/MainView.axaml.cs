@@ -88,7 +88,7 @@ public partial class MainView : UserControl
         }
 
         // Set source for ChangeCtrlZoomImage
-        // TODO should probably be refactored inside a command
+        // TODO should probably be refactored inside a command (It doesn't update the UI in the zoom view, so should be made into a command)
         if (!Application.Current.TryGetResource("ScanEyeImage", Application.Current.RequestedThemeVariant, out var scanEyeImage ))
         {
             return;

@@ -24,7 +24,7 @@
                 Text="{CompiledBinding ApplicationStartup,
                                        Mode=OneWay}" />
             <ComboBox
-                Background="{DynamicResource TertiaryBackgroundColor}"
+                Background="{DynamicResource SecondaryBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="1"
                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"

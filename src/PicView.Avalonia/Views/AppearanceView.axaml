@@ -69,29 +69,77 @@
             </WrapPanel.Styles>
 
             <!--  Blue  -->
-            <Button Background="#1A8CF0" Classes="colorBtn" />
+            <Button
+                Background="#1A8CF0"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="BlueButton" />
             <!--  Cyan  -->
-            <Button Background="#1BA1E2" Classes="colorBtn" />
+            <Button
+                Background="#1BA1E2"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="CyanButton" />
             <!--  Aqua  -->
-            <Button Background="#36E6CC" Classes="colorBtn" />
+            <Button
+                Background="#36E6CC"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="AquaButton" />
             <!--  Teal  -->
-            <Button Background="#44A1A0" Classes="colorBtn" />
+            <Button
+                Background="#44A1A0"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="TealButton" />
             <!--  Lime  -->
-            <Button Background="#20E76B" Classes="colorBtn" />
+            <Button
+                Background="#20E76B"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="LimeButton" />
             <!--  Green  -->
-            <Button Background="#22CB97" Classes="colorBtn" />
+            <Button
+                Background="#22CB97"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="GreenButton" />
             <!--  Gold  -->
-            <Button Background="#FEA955" Classes="colorBtn" />
+            <Button
+                Background="#FEA955"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="GoldButton" />
             <!--  Orange  -->
-            <Button Background="#DB5B3D" Classes="colorBtn active" />
+            <Button
+                Background="#DB5B3D"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="OrangeButton" />
             <!--  Red  -->
-            <Button Background="#F91110" Classes="colorBtn" />
+            <Button
+                Background="#F91110"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="RedButton" />
             <!--  Pink  -->
-            <Button Background="#FF35C5" Classes="colorBtn" />
+            <Button
+                Background="#FF35C5"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="PinkButton" />
             <!--  Magenta  -->
-            <Button Background="#E68BEE" Classes="colorBtn" />
+            <Button
+                Background="#E68BEE"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="MagentaButton" />
             <!--  Purple  -->
-            <Button Background="#9738EB" Classes="colorBtn" />
+            <Button
+                Background="#9738EB"
+                Classes="colorBtn"
+                Click="ColorButton_OnClick"
+                x:Name="PurpleButton" />
         </WrapPanel>
 
 

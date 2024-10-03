@@ -58,6 +58,11 @@
                 OffsetX="2"
                 OffsetY="2"
                 x:Key="MenuShadowButtonBorder" />
+
+            <DropShadowDirectionEffect
+                BlurRadius="1"
+                Direction="360"
+                x:Key="TextShadow" />
         </ResourceDictionary>
 
 

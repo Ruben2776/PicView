@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
@@ -233,6 +234,18 @@ namespace PicView.Avalonia.UI
             vm.GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
                 ? TranslationHelper.Translation.CtrlToZoom
                 : TranslationHelper.Translation.ScrollToZoom;
+            
+            // Set source for ChangeCtrlZoomImage
+            if (!Application.Current.TryGetResource("ScanEyeImage", Application.Current.RequestedThemeVariant, out var scanEyeImage ))
+            {
+                return;
+            }
+            if (!Application.Current.TryGetResource("LeftRightArrowsImage", Application.Current.RequestedThemeVariant, out var leftRightArrowsImage ))
+            {
+                return;
+            }
+            var isNavigatingWithCtrl = SettingsHelper.Settings.Zoom.CtrlZoom;
+            vm.ChangeCtrlZoomImage = isNavigatingWithCtrl ? leftRightArrowsImage as DrawingImage : scanEyeImage as DrawingImage;
             await SettingsHelper.SaveSettingsAsync().ConfigureAwait(false);
         }
 
