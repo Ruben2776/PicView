@@ -398,12 +398,49 @@ public partial class ImageViewer : UserControl
         var newXproperty = _origin.X - dragMousePosition.X;
         var newYproperty = _origin.Y - dragMousePosition.Y;
 
-        Dispatcher.UIThread.Invoke(() =>
+        if (SettingsHelper.Settings.WindowProperties.Fullscreen)
         {
+            // TODO: figure out how to pan in fullscreen
             _translateTransform.Transitions = null;
             _translateTransform.X = newXproperty;
             _translateTransform.Y = newYproperty;
-        });
+            e.Handled = true;
+            return;
+        }
+        
+        var actualScrollWidth = ImageScrollViewer.Bounds.Width;
+        var actualBorderWidth = MainBorder.Bounds.Width;
+        var actualScrollHeight = ImageScrollViewer.Bounds.Height;
+        var actualBorderHeight = MainBorder.Bounds.Height;
+
+        var isXOutOfBorder = actualScrollWidth < actualBorderWidth * _scaleTransform.ScaleX;
+        var isYOutOfBorder = actualScrollHeight < actualBorderHeight * _scaleTransform.ScaleY;
+        var maxX = actualScrollWidth - actualBorderWidth * _scaleTransform.ScaleX;
+        var maxY = actualScrollHeight - actualBorderHeight * _scaleTransform.ScaleY;
+        
+        if (isXOutOfBorder && newXproperty < maxX || isXOutOfBorder == false && newXproperty > maxX)
+        {
+            newXproperty = maxX;
+        }
+
+        if (isXOutOfBorder && newYproperty < maxY || isXOutOfBorder == false && newYproperty > maxY)
+        {
+            newYproperty = maxY;
+        }
+
+        if (isXOutOfBorder && newXproperty > 0 || isXOutOfBorder == false && newXproperty < 0)
+        {
+            newXproperty = 0;
+        }
+
+        if (isYOutOfBorder && newYproperty > 0 || isYOutOfBorder == false && newYproperty < 0)
+        {
+            newYproperty = 0;
+        }
+
+        _translateTransform.Transitions = null;
+        _translateTransform.X = newXproperty;
+        _translateTransform.Y = newYproperty;
         e.Handled = true;
     }
 
