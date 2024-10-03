@@ -1,8 +1,9 @@
 ﻿param (
-    [string]$Platform = "x64"  # Default to x64 if no parameter is passed
-)
-param (
-    [string]$outputPath = $PSScriptRoot
+    [Parameter()]
+    [string]$Platform,
+    
+    [Parameter()]
+    [string]$outputPath
 )
 
 # Define the core project path relative to the script's location
