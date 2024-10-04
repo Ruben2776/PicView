@@ -14,11 +14,10 @@ using PicView.Core.ProcessHandling;
 
 namespace PicView.Avalonia.UI;
 
-
 public static class DragAndDropHelper
 {
     private static DragDropView? _dragDropView;
-    
+
     public static async Task Drop(DragEventArgs e, MainViewModel vm)
     {
         RemoveDragDropView();
@@ -32,18 +31,29 @@ public static class DragAndDropHelper
 
         var storageItems = files as IStorageItem[] ?? files.ToArray();
         var firstFile = storageItems.FirstOrDefault();
-        var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
-        await NavigationHelper.LoadPicFromStringAsync(path, vm).ConfigureAwait(false);
+        var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+            ? firstFile.Path.AbsolutePath
+            : firstFile.Path.LocalPath;
+        if (path.IsSupported())
+        {
+            await NavigationHelper.LoadPicFromStringAsync(path, vm).ConfigureAwait(false);
+        }
+
         if (!SettingsHelper.Settings.UIProperties.OpenInSameWindow)
         {
             foreach (var file in storageItems.Skip(1))
             {
-                var filepath = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? file.Path.AbsolutePath : file.Path.LocalPath;
-                ProcessHelper.StartNewProcess(filepath);
+                var filepath = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+                    ? file.Path.AbsolutePath
+                    : file.Path.LocalPath;
+                if (filepath.IsSupported())
+                {
+                    ProcessHelper.StartNewProcess(filepath);
+                }
             }
         }
     }
-    
+
     private static async Task HandleDropFromUrl(DragEventArgs e, MainViewModel vm)
     {
         var urlObject = e.Data.Get("text/x-moz-url");
@@ -57,10 +67,9 @@ public static class DragAndDropHelper
             }
         }
     }
-    
+
     public static async Task DragEnter(DragEventArgs e, MainViewModel vm, Control control)
     {
-
         var files = e.Data.GetFiles();
         if (files == null)
         {
@@ -79,6 +88,7 @@ public static class DragAndDropHelper
             RemoveDragDropView();
             return;
         }
+
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             if (_dragDropView == null)
@@ -89,7 +99,7 @@ public static class DragAndDropHelper
                 };
                 if (!control.IsPointerOver)
                 {
-                   UIHelper.GetMainView.MainGrid.Children.Add(_dragDropView);
+                    UIHelper.GetMainView.MainGrid.Children.Add(_dragDropView);
                 }
             }
             else
@@ -98,7 +108,9 @@ public static class DragAndDropHelper
             }
         });
         var firstFile = fileArray[0];
-        var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? firstFile.Path.AbsolutePath : firstFile.Path.LocalPath;
+        var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+            ? firstFile.Path.AbsolutePath
+            : firstFile.Path.LocalPath;
         if (Directory.Exists(path))
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -122,10 +134,10 @@ public static class DragAndDropHelper
             {
                 var thumb = await GetThumbnails.GetThumbAsync(path, 340).ConfigureAwait(false);
 
-                await Dispatcher.UIThread.InvokeAsync(() =>
+                if (thumb is not null)
                 {
-                    _dragDropView?.UpdateThumbnail(thumb);
-                });
+                    await Dispatcher.UIThread.InvokeAsync(() => { _dragDropView?.UpdateThumbnail(thumb); });
+                }
             }
             else
             {
@@ -133,7 +145,7 @@ public static class DragAndDropHelper
             }
         }
     }
-    
+
     private static async Task HandleDragEnterFromUrl(DragEventArgs e, MainViewModel vm)
     {
         var urlObject = e.Data.Get("text/x-moz-url");
@@ -154,7 +166,7 @@ public static class DragAndDropHelper
             });
         }
     }
-    
+
     public static void DragLeave(DragEventArgs e, Control control)
     {
         if (!control.IsPointerOver)
@@ -162,7 +174,7 @@ public static class DragAndDropHelper
             RemoveDragDropView();
         }
     }
-    
+
     public static void RemoveDragDropView()
     {
         UIHelper.GetMainView.MainGrid.Children.Remove(_dragDropView);

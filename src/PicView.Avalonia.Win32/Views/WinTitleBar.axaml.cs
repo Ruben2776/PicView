@@ -13,7 +13,7 @@ public partial class WinTitleBar : UserControl
         PointerPressed += (_, e) => MoveWindow(e);
         PointerExited += (_, _) =>
         {
-            UIHelper.GetMainView.RemoveDragDropView();
+            DragAndDropHelper.RemoveDragDropView();
         };
     }
 

@@ -51,7 +51,7 @@ public partial class WinMainWindow : Window
             };
             PointerExited += (_, _) =>
             {
-                MainView.RemoveDragDropView();
+                DragAndDropHelper.RemoveDragDropView();
             };
         };
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
