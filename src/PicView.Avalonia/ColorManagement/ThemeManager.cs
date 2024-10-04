@@ -2,7 +2,7 @@
 using Avalonia.Styling;
 using PicView.Core.Config;
 
-namespace PicView.Avalonia.PicViewTheme;
+namespace PicView.Avalonia.ColorManagement;
 public static class ThemeManager
 {
     public static void ChangeTheme()
@@ -28,5 +28,7 @@ public static class ThemeManager
             SettingsHelper.Settings.Theme.Dark = false;
             application.RequestedThemeVariant = ThemeVariant.Light;
         }
+        
+        ColorManager.UpdateAccentColors(SettingsHelper.Settings.Theme.ColorTheme);
     }
 }

@@ -2,7 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Gallery;
-using PicView.Avalonia.PicViewTheme;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.ColorHandling;
 using PicView.Core.Config;

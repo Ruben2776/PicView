@@ -24,7 +24,7 @@ public static class ColorManager
         5 => Color.FromRgb(250, 192, 92), // Red
         6 => Color.FromRgb(254, 172, 150), // Teal
         7 => Color.FromRgb(228, 209, 17), // Aqua
-        8 => Color.FromRgb(255, 253, 42), // Golden
+        8 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(255, 253, 42) : Color.FromRgb(248, 175, 60), // Golden
         9 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(237, 184, 135) : Color.FromRgb(137, 84, 55), // Purple
         10 => Color.FromRgb(255, 253, 66), // Cyan
         11 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(255, 237, 38) : Color.FromRgb(185, 167, 38), // Magenta
@@ -40,9 +40,9 @@ public static class ColorManager
     /// </value>
     public static Color GetSecondaryAccentColor => SettingsHelper.Settings.Theme.ColorTheme switch
     {
-        0 => Color.FromArgb(0xF2, 0xFF, 0x64, 0x41),  // Blue -> #F2FF6441
+        0 => Color.FromArgb(0xF2, 0x0D, 0x80, 0xEE),  // Blue -> #F200ADEE
         2 => Color.FromArgb(0xF2, 0xFF, 0x86, 0xDB),  // Pink -> #F2FF86DB
-        3 => Color.FromArgb(0xF2, 0x0D, 0x80, 0x39),  // Orange -> #F20D8039
+        3 => Color.FromArgb(0xF2, 0xFF, 0x64, 0x41),  // Orange -> #F2FF6441
         4 => Color.FromArgb(0xF2, 0x0D, 0x80, 0x39),  // Green -> #F20D8039
         5 => Color.FromArgb(0xF2, 0xF3, 0x53, 0x53),  // Red -> #F2F35353
         6 => Color.FromArgb(0xF2, 0x1F, 0xAE, 0x98),  // Teal -> #F21FAE98

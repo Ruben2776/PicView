@@ -9,7 +9,6 @@ using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.PicViewTheme;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
