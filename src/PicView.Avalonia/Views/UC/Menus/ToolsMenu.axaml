@@ -20,7 +20,7 @@
             BorderThickness="1"
             CornerRadius="8"
             Effect="{DynamicResource MenuShadowButtonBorder}">
-            <Canvas Height="201" Width="359">
+            <Canvas Height="208" Width="359">
 
                 <Border
                     Background="{DynamicResource SecondaryBackgroundColor}"
@@ -120,7 +120,7 @@
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ShowExifWindowCommand}"
-                    Height="45"
+                    Height="46"
                     Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Path
@@ -146,7 +146,7 @@
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding OptimizeImageCommand}"
-                    Height="45"
+                    Height="46"
                     ToolTip.Tip="{CompiledBinding OptimizeImage,
                                                   Mode=OneWay}"
                     Width="169">
@@ -170,6 +170,7 @@
                     Canvas.Left="7"
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
+                    Height="46"
                     IsEnabled="False"
                     ToolTip.Tip="{CompiledBinding ColorPickerToolTooltip,
                                                   Mode=OneWay}"
@@ -197,6 +198,7 @@
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ChangeBackgroundCommand}"
+                    Height="46"
                     Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Image
@@ -216,9 +218,10 @@
                 <Button
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
-                    Canvas.Top="150"
+                    Canvas.Top="155"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ShowKeybindingsWindowCommand}"
+                    Height="46"
                     ToolTip.Tip="{CompiledBinding ApplicationShortcuts,
                                                   Mode=OneWay}"
                     Width="169">
@@ -240,9 +243,10 @@
                 <Button
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="182"
-                    Canvas.Top="150"
+                    Canvas.Top="155"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ToggleUICommand}"
+                    Height="46"
                     Width="169">
                     <StackPanel Orientation="Horizontal">
                         <Image

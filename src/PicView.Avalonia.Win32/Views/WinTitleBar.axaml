@@ -25,9 +25,12 @@
         BorderThickness="0,0,0,1">
         <DockPanel LastChildFill="True">
 
-            <Border BorderBrush="{DynamicResource SecondaryButtonBackgroundColor}" BorderThickness="0,0,1,0">
+            <Border
+                Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                BorderBrush="{DynamicResource SecondaryButtonBackgroundColor}"
+                BorderThickness="0,0,1,0"
+                DockPanel.Dock="Left">
                 <Image
-                    DockPanel.Dock="Left"
                     Height="25"
                     Margin="7,1,7,1"
                     Source="{StaticResource LogoImage}"

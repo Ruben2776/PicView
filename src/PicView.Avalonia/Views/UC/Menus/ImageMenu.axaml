@@ -23,7 +23,7 @@
             BorderThickness="1"
             CornerRadius="8"
             Effect="{DynamicResource MenuShadowButtonBorder}">
-            <Canvas Height="193" Width="315">
+            <Canvas Height="208" Width="315">
 
                 <Border
                     Background="{DynamicResource SecondaryBackgroundColor}"
@@ -188,6 +188,7 @@
                     Canvas.Left="7"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
+                    Height="46"
                     IsEnabled="False"
                     ToolTip.Tip="{CompiledBinding ResizeImage,
                                                   Mode=OneWay}">
@@ -238,6 +239,7 @@
                     Canvas.Left="160"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
+                    Height="46"
                     IsEnabled="False"
                     ToolTip.Tip="{CompiledBinding Crop,
                                                   Mode=OneWay}">
@@ -262,10 +264,11 @@
                 <SplitButton
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
-                    Canvas.Top="99"
+                    Canvas.Top="104"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding StartSlideShowTask}"
                     CommandParameter="0"
+                    Height="46"
                     ToolTip.Tip="{CompiledBinding Slideshow,
                                                   Mode=OneWay}"
                     x:Name="SlideShowButton">
@@ -382,10 +385,11 @@
                 <ToggleButton
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="160"
-                    Canvas.Top="99"
+                    Canvas.Top="104"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ShowSideBySideCommand}"
                     Foreground="{DynamicResource MainTextColor}"
+                    Height="46"
                     IsChecked="{CompiledBinding IsShowingSideBySide}"
                     ToolTip.Tip="{CompiledBinding SideBySideTooltip}">
                     <TextBlock
@@ -399,9 +403,11 @@
                 <ToggleButton
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
-                    Canvas.Top="145"
+                    Canvas.Top="155"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ToggleBottomGalleryCommand}"
+                    Foreground="{DynamicResource MainTextColor}"
+                    Height="46"
                     IsChecked="{CompiledBinding IsGalleryShown}"
                     ToolTip.Tip="{CompiledBinding GetBottomGallery,
                                                   Mode=OneWay}"

@@ -20,7 +20,7 @@
             BorderThickness="1"
             CornerRadius="8"
             Effect="{DynamicResource MenuShadowButtonBorder}">
-            <Canvas Height="205" Width="359">
+            <Canvas Height="208" Width="359">
 
                 <Border
                     Background="{DynamicResource SecondaryBackgroundColor}"
@@ -37,7 +37,7 @@
                     Classes="noBorderHover"
                     Command="{Binding ShowSettingsWindowCommand}"
                     CornerRadius="8,0,0,0"
-                    Height="45"
+                    Height="46"
                     ToolTip.Tip="{CompiledBinding ShowAllSettingsWindow,
                                                   Mode=OneWay}"
                     Width="179">
@@ -68,7 +68,7 @@
                     Canvas.Left="179"
                     Classes="noBorderHover"
                     Command="{CompiledBinding ShowAboutWindowCommand}"
-                    Height="45"
+                    Height="46"
                     ToolTip.Tip="{CompiledBinding AboutWindow,
                                                   Mode=OneWay}"
                     Width="135">
@@ -116,7 +116,7 @@
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ToggleScrollCommand}"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="45"
+                    Height="46"
                     IsChecked="{CompiledBinding IsScrollingEnabled}"
                     ToolTip.Tip="{CompiledBinding ToggleScroll,
                                                   Mode=OneWay}"
@@ -135,7 +135,7 @@
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="45"
+                    Height="46"
                     IsChecked="{CompiledBinding IsStretched}"
                     ToolTip.Tip="{CompiledBinding Stretch,
                                                   Mode=OneWay}"
@@ -155,6 +155,7 @@
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ToggleLoopingCommand}"
                     Foreground="{DynamicResource MainTextColor}"
+                    Height="46"
                     IsChecked="{CompiledBinding IsLooping}"
                     ToolTip.Tip="{CompiledBinding ToggleLooping,
                                                   Mode=OneWay}"
@@ -174,6 +175,7 @@
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ChangeAutoFitCommand}"
                     Foreground="{DynamicResource MainTextColor}"
+                    Height="46"
                     IsChecked="{CompiledBinding IsAutoFit}"
                     ToolTip.Tip="{CompiledBinding AutoFitWindow,
                                                   Mode=OneWay}"
@@ -189,11 +191,11 @@
                 <ToggleButton
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
-                    Canvas.Top="150"
+                    Canvas.Top="155"
                     Classes="ButtonBorder altHover"
                     Command="{Binding ChangeTopMostCommand}"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="45"
+                    Height="46"
                     IsChecked="{CompiledBinding IsTopMost}"
                     ToolTip.Tip="{CompiledBinding StayTopMost,
                                                   Mode=OneWay}"
@@ -209,11 +211,11 @@
                 <ToggleButton
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="182"
-                    Canvas.Top="150"
+                    Canvas.Top="155"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding ToggleSubdirectoriesCommand}"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="45"
+                    Height="46"
                     IsChecked="{CompiledBinding IsIncludingSubdirectories}"
                     ToolTip.Tip="{CompiledBinding SearchSubdirectory,
                                                   Mode=OneWay}"
@@ -221,7 +223,7 @@
                     <TextBlock
                         Classes="txt"
                         Foreground="{DynamicResource MainTextColor}"
-                        MaxWidth="150"
+                        MaxWidth="135"
                         Text="{CompiledBinding SearchSubdirectory,
                                                Mode=OneWay}" />
                 </ToggleButton>

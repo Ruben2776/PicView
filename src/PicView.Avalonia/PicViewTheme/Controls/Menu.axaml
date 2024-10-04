@@ -151,6 +151,7 @@
 
         <Style Selector="^:selected /template/ ContentPresenter#PART_HeaderPresenter">
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+            <Setter Property="Effect" Value="{StaticResource TextShadow}" />
         </Style>
 
         <Style Selector="^:nth-child(1) /template/ Border#root">

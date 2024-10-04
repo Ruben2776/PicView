@@ -19,7 +19,7 @@
             BorderThickness="1"
             CornerRadius="8"
             Effect="{DynamicResource MenuShadowButtonBorder}">
-            <Canvas Height="193" Width="315">
+            <Canvas Height="208" Width="315">
 
                 <Border
                     Background="{DynamicResource SecondaryBackgroundColor}"
@@ -173,6 +173,7 @@
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding OpenFileCommand}"
+                    Height="46"
                     ToolTip.Tip="{CompiledBinding OpenFileDialog,
                                                   Mode=OneWay}">
                     <StackPanel Orientation="Horizontal">
@@ -197,11 +198,12 @@
                 <Button
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
-                    Canvas.Top="99"
+                    Canvas.Top="104"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding OpenWithCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
+                    Height="46"
                     ToolTip.Tip="{CompiledBinding OpenWith}">
                     <StackPanel Orientation="Horizontal">
                         <Path
@@ -230,6 +232,7 @@
                     Command="{CompiledBinding LocateOnDiskCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
+                    Height="46"
                     ToolTip.Tip="{CompiledBinding ShowInFolder,
                                                   Mode=OneWay}">
                     <StackPanel Orientation="Horizontal">
@@ -253,9 +256,10 @@
                 <Button
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="160"
-                    Canvas.Top="99"
+                    Canvas.Top="104"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding RenameCommand}"
+                    Height="46"
                     ToolTip.Tip="{CompiledBinding RenameFile,
                                                   Mode=OneWay}">
                     <StackPanel Orientation="Horizontal">
@@ -280,9 +284,10 @@
                 <Button
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
-                    Canvas.Top="144"
+                    Canvas.Top="155"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding PasteCommand}"
+                    Height="46"
                     ToolTip.Tip="{CompiledBinding FilePaste,
                                                   Mode=OneWay}">
                     <StackPanel Orientation="Horizontal">
@@ -307,9 +312,10 @@
                 <Button
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="160"
-                    Canvas.Top="144"
+                    Canvas.Top="155"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding NewWindowCommand}"
+                    Height="46"
                     ToolTip.Tip="{Binding NewWindow, Mode=OneWay}">
                     <StackPanel Orientation="Horizontal">
                         <Image

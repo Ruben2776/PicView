@@ -140,7 +140,7 @@ public partial class StartUpMenu : UserControl
 
         void ShowFullLogo()
         {
-            if (this.TryFindResource("Logo", Application.Current.RequestedThemeVariant, out var logo))
+            if (this.TryFindResource("LogoFullImage", Application.Current.RequestedThemeVariant, out var logo))
                 Logo.Source = logo as DrawingImage;
             LogoViewbox.Width = double.NaN;
             Buttons.Margin = new Thickness(0, 220, 25, bottomMargin - 100);

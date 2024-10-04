@@ -98,7 +98,7 @@
             <Color x:Key="ContextMenuBackgroundColor">#E3FFFFFF</Color>
             <Color x:Key="ContextMenuTextColor">#2B251E</Color>
 
-            <Color x:Key="WindowBackgroundColor">#EAFFFFFF</Color>
+            <Color x:Key="WindowBackgroundColor">#fff</Color>
             <Color x:Key="WindowBorderColor">#13FFFFFF</Color>
 
             <ImageBrush
