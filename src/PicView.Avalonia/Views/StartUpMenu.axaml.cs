@@ -102,10 +102,9 @@ public partial class StartUpMenu : UserControl
         
         if (DataContext is not MainViewModel vm)
             return;
+        
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
             return;
-        }
         
         if (SettingsHelper.Settings.WindowProperties.AutoFit)
         {
@@ -132,7 +131,7 @@ public partial class StartUpMenu : UserControl
 
         void ShowIcon()
         {
-            if (this.TryFindResource("Icon", Application.Current.RequestedThemeVariant, out var icon))
+            if (this.TryFindResource("LogoImage", Application.Current.RequestedThemeVariant, out var icon))
                 Logo.Source = icon as DrawingImage;
             LogoViewbox.Width = logoWidth;
             Buttons.Margin = new Thickness(0, 0, 0, bottomMargin);

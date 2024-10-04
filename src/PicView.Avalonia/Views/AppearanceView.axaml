@@ -47,6 +47,7 @@
 
         <WrapPanel
             HorizontalAlignment="Center"
+            Margin="0,0,0,10"
             MaxWidth="300"
             Orientation="Horizontal">
             <WrapPanel.Styles>

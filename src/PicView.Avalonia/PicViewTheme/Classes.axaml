@@ -11,6 +11,9 @@
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="LineHeight" Value="18" />
+    </Style>
+
+    <Style Selector="TextBlock.txtShadow">
         <Setter Property="Effect" Value="{StaticResource TextShadow}" />
     </Style>
 

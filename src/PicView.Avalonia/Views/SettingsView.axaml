@@ -784,7 +784,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource GeneralSettingsIcon}" />
                         <TextBlock
-                            Classes="txt"
+                            Classes="txt txtShadow"
                             Foreground="{StaticResource SecondaryTextColor}"
                             Text="{Binding GeneralSettings, Mode=OneWay}" />
                     </StackPanel>
@@ -800,7 +800,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource AppearanceSettingsIcon}" />
                         <TextBlock
-                            Classes="txt"
+                            Classes="txt txtShadow"
                             Foreground="{StaticResource SecondaryTextColor}"
                             Text="{Binding Appearance, Mode=OneWay}" />
                     </StackPanel>
@@ -816,7 +816,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource ImageSettingsIcon}" />
                         <TextBlock
-                            Classes="txt"
+                            Classes="txt txtShadow"
                             Foreground="{StaticResource SecondaryTextColor}"
                             Text="{Binding ImageTxt, Mode=OneWay}" />
                     </StackPanel>
@@ -832,7 +832,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource GallerySettingsIcon}" />
                         <TextBlock
-                            Classes="txt"
+                            Classes="txt txtShadow"
                             Foreground="{StaticResource SecondaryTextColor}"
                             Text="{CompiledBinding GallerySettings,
                                                    Mode=OneWay}" />
@@ -849,7 +849,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource SlideshowSettingsIcon}" />
                         <TextBlock
-                            Classes="txt"
+                            Classes="txt txtShadow"
                             Foreground="{StaticResource SecondaryTextColor}"
                             Text="{CompiledBinding Slideshow,
                                                    Mode=OneWay}" />
@@ -866,7 +866,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource NavigationSettingsIcon}" />
                         <TextBlock
-                            Classes="txt"
+                            Classes="txt txtShadow"
                             Foreground="{StaticResource SecondaryTextColor}"
                             Text="{CompiledBinding Navigation}" />
                     </StackPanel>
@@ -883,7 +883,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource ZoomSettingsIcon}" />
                         <TextBlock
-                            Classes="txt"
+                            Classes="txt txtShadow"
                             Foreground="{StaticResource SecondaryTextColor}"
                             Text="{CompiledBinding Zoom}" />
                     </StackPanel>
@@ -899,7 +899,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource MouseWheelSettingsIcon}" />
                         <TextBlock
-                            Classes="txt"
+                            Classes="txt txtShadow"
                             Foreground="{StaticResource SecondaryTextColor}"
                             Text="{CompiledBinding MouseWheel}" />
                     </StackPanel>
@@ -915,7 +915,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource LanguageSettingsIcon}" />
                         <TextBlock
-                            Classes="txt"
+                            Classes="txt txtShadow"
                             Foreground="{StaticResource SecondaryTextColor}"
                             Text="{CompiledBinding Language}" />
                     </StackPanel>
@@ -931,7 +931,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Classes="imageStyle" Source="{StaticResource KeyboardImage}" />
                         <TextBlock
-                            Classes="txt"
+                            Classes="txt txtShadow"
                             Foreground="{StaticResource SecondaryTextColor}"
                             Text="{CompiledBinding ApplicationShortcuts}" />
                     </StackPanel>

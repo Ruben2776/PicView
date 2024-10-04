@@ -1,11 +1,11 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
-using Avalonia.Styling;
 using Avalonia.Threading;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Keybindings;
@@ -120,42 +120,56 @@ public partial class MainView : UserControl
 
     private void AddOrReplaceMenuItem(int index, MainViewModel vm, bool isReplace)
     {
-        if (!Application.Current.TryGetResource("LogoAccentColor", ThemeVariant.Default, out var secondaryAccentColor))
+        if (!Application.Current.TryGetResource("SecondaryAccentColor", Application.Current.RequestedThemeVariant, out var secondaryAccentColor))
         {
             return;
         }
 
-        var secondaryAccentBrush = new SolidColorBrush((Color)(secondaryAccentColor ?? Brushes.Yellow));
-        var fileLocation = FileHistoryNavigation.GetFileLocation(index);
-        var selected = vm.ImageIterator?.CurrentIndex == vm.ImageIterator?.ImagePaths.IndexOf(fileLocation);
-        var header = Path.GetFileNameWithoutExtension(fileLocation);
-        header = header.Length > 60 ? header.Shorten(60) : header;
-        
-        var item = new MenuItem
+        try
         {
-            Header = header,
-        };
+#if DEBUG
+            Debug.Assert(secondaryAccentColor != null, nameof(secondaryAccentColor) + " != null");
+#endif
+            var secondaryAccentBrush = (SolidColorBrush)secondaryAccentColor;
+            var fileLocation = FileHistoryNavigation.GetFileLocation(index);
+            var selected = vm.ImageIterator?.CurrentIndex == vm.ImageIterator?.ImagePaths.IndexOf(fileLocation);
+            var header = Path.GetFileNameWithoutExtension(fileLocation);
+            header = header.Length > 60 ? header.Shorten(60) : header;
+        
+            var item = new MenuItem
+            {
+                Header = header,
+            };
 
-        if (selected)
-        {
-            item.Foreground = secondaryAccentBrush;
-        }
+            if (selected)
+            {
+                item.Foreground = secondaryAccentBrush;
+            }
         
-        item.Click += async delegate
-        {
-            await NavigationHelper.LoadPicFromStringAsync(fileLocation, vm).ConfigureAwait(false);
-        };
+            item.Click += async delegate
+            {
+                await NavigationHelper.LoadPicFromStringAsync(fileLocation, vm).ConfigureAwait(false);
+            };
         
-        ToolTip.SetTip(item, fileLocation);
+            ToolTip.SetTip(item, fileLocation);
 
-        if (isReplace)
-        {
-            RecentFilesCM.Items[index] = item;
+            if (isReplace)
+            {
+                RecentFilesCM.Items[index] = item;
+            }
+            else
+            {
+                RecentFilesCM.Items.Insert(index, item);
+            }
         }
-        else
+#if DEBUG
+        catch (Exception e)
         {
-            RecentFilesCM.Items.Insert(index, item);
+            Console.WriteLine(e);
         }
+#else
+        catch (Exception){}
+#endif
     }
 
     private async Task Drop(object? sender, DragEventArgs e)
