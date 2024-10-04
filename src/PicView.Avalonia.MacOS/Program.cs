@@ -22,6 +22,11 @@ internal class Program
             .LogToTrace()
 #endif
             .UseReactiveUI()
-            .UsePlatformDetect();
+            .UsePlatformDetect()
+            .With(new SkiaOptions
+            {
+                MaxGpuResourceSizeBytes = 256_000_000,
+                UseOpacitySaveLayer = true
+            });
     }
 }

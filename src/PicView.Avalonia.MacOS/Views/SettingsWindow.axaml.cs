@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
 using PicView.Core.Config;
 using PicView.Core.Localization;
 

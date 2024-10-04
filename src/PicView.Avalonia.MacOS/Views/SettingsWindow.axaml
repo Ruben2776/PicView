@@ -21,9 +21,20 @@
         <viewModels:MainViewModel />
     </Design.DataContext>
     <Border
-        BorderBrush="{StaticResource MainBorderColor}"
+        BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="1"
         CornerRadius="8">
-        <views:SettingsView />
+        <StackPanel>
+            <TextBlock
+                Classes="txt"
+                Height="28"
+                Margin="0,7,0,0"
+                PointerPressed="MoveWindow"
+                Text="{CompiledBinding Settings,
+                                       Mode=OneWay}"
+                TextAlignment="Center" />
+
+            <views:SettingsView x:Name="XSettingsView" />
+        </StackPanel>
     </Border>
 </Window>

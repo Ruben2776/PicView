@@ -982,6 +982,7 @@
 
 
         <Button
+            Background="#27FFFFFF"
             BorderThickness="0,1,1,0"
             Classes="BorderStyle altHover mainBtn"
             Command="{CompiledBinding ResetSettingsCommand}"

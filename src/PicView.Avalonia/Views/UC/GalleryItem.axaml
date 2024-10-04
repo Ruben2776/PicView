@@ -30,18 +30,22 @@
                     Classes="txt"
                     FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                     FontSize="14"
+                    Foreground="{DynamicResource MainTextColor}"
                     Margin="2,0,2,6"
                     x:Name="FileName" />
                 <TextBlock
                     Classes="txt"
+                    Foreground="{DynamicResource MainTextColor}"
                     Margin="2,0,2,2"
                     x:Name="FileLocation" />
                 <TextBlock
                     Classes="txt"
+                    Foreground="{DynamicResource MainTextColor}"
                     Margin="2,0,2,2"
                     x:Name="FileSize" />
                 <TextBlock
                     Classes="txt"
+                    Foreground="{DynamicResource MainTextColor}"
                     Margin="2,0,2,4"
                     x:Name="FileDate" />
             </StackPanel>

@@ -28,7 +28,8 @@
                 Background="{DynamicResource WindowBackgroundColor}"
                 Height="28"
                 PointerPressed="MoveWindow"
-                VerticalAlignment="Top">
+                VerticalAlignment="Top"
+                x:Name="WindowBorder">
 
                 <TextBlock
                     Classes="txt"
