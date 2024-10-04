@@ -384,7 +384,7 @@ public static class NavigationHelper
             // TODO: Handle base64 if it's SVG image
             try
             {
-                var magickImage = await ImageDecoder.Base64ToMagickImage(base64).ConfigureAwait(false);
+                var magickImage = ImageDecoder.Base64ToMagickImage(base64);
                 magickImage.Format = MagickFormat.Png;
                 await using var memoryStream = new MemoryStream();
                 await magickImage.WriteAsync(memoryStream);

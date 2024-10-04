@@ -34,16 +34,7 @@ public static class GetThumbnails
         }
     }
 
-    public static async Task AddThumbAsync(FileInfo fileInfo, ImageModel imageModel, uint height)
-    {
-        var thumb = await GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
-        imageModel.Image = thumb;
-        imageModel.PixelWidth = thumb?.PixelSize.Width ?? 0;
-        imageModel.PixelHeight = thumb?.PixelSize.Height ?? 0;
-        imageModel.ImageType = ImageType.Bitmap;
-    }
-
-    public static async Task<Bitmap> CreateThumbAsync(IMagickImage magick, string path, uint height,
+    public static async Task<Bitmap?> CreateThumbAsync(MagickImage magick, string path, uint height,
         FileInfo? fileInfo = null)
     {
         fileInfo ??= new FileInfo(path);

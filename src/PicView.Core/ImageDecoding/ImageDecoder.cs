@@ -1,6 +1,6 @@
-﻿using ImageMagick;
+﻿using System.Diagnostics;
+using ImageMagick;
 using ImageMagick.Formats;
-using System.Diagnostics;
 
 namespace PicView.Core.ImageDecoding;
 
@@ -138,7 +138,7 @@ public static class ImageDecoder
         }
     }
 
-    public static async Task<MagickImage?> Base64ToMagickImage(string base64)
+    public static MagickImage Base64ToMagickImage(string base64)
     {
         try
         {
@@ -155,8 +155,8 @@ public static class ImageDecoder
                 BackgroundColor = MagickColors.Transparent
             };
 
-            await magickImage.ReadAsync(new MemoryStream(base64Data), readSettings).ConfigureAwait(false);
-            return magickImage;
+           magickImage.Read(new MemoryStream(base64Data), readSettings);
+           return magickImage;
         }
         catch (Exception e)
         {
@@ -170,6 +170,6 @@ public static class ImageDecoder
     public static async Task<MagickImage?> Base64ToMagickImage(FileInfo fileInfo)
     {
         var base64String = await File.ReadAllTextAsync(fileInfo.FullName).ConfigureAwait(false);
-        return await Base64ToMagickImage(base64String).ConfigureAwait(false);
+        return Base64ToMagickImage(base64String);
     }
 }

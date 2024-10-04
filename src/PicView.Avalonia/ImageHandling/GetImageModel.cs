@@ -1,6 +1,5 @@
 using Avalonia.Media.Imaging;
 using ImageMagick;
-using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.ImageHandling;
@@ -42,7 +41,8 @@ public static class GetImageModel
                 case ".webp":
                     if (isThumb)
                     {
-                        await GetThumbnails.AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
+                        var thumb = await GetThumbnails.GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
+                        SetModel(thumb, fileInfo, imageModel);
                     }
                     else
                     {
@@ -57,7 +57,8 @@ public static class GetImageModel
                 case ".gif":
                     if (isThumb)
                     {
-                        await GetThumbnails.AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
+                        var thumb = await GetThumbnails.GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
+                        SetModel(thumb, fileInfo, imageModel);
                     }
                     else
                     {
@@ -79,7 +80,8 @@ public static class GetImageModel
                 case ".wbmp":
                     if (isThumb)
                     {
-                        await GetThumbnails.AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
+                        var thumb = await GetThumbnails.GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
+                        SetModel(thumb, fileInfo, imageModel);
                     }
                     else
                     {
@@ -121,71 +123,36 @@ public static class GetImageModel
         return imageModel;
     }
 
-
-    private static async Task AddImageAsync(FileInfo fileInfo, ImageModel imageModel)
-    {
-        if (fileInfo is null)
-        {
-#if DEBUG
-            Console.WriteLine($"Error: {nameof(GetImageModel)}:{nameof(AddImageAsync)}: {nameof(fileInfo)} is null");
-#endif
-            return;
-        }
-
-        await using var fileStream = FileHelper.GetOptimizedFileStream(fileInfo);
-        Add(fileStream, imageModel);
-        imageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(fileInfo);
-    }
-
     private static async Task AddDefaultImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, uint height)
     {
         if (isThumb)
         {
-            await GetThumbnails.AddThumbAsync(fileInfo, imageModel, height).ConfigureAwait(false);
+            var thumb = await GetThumbnails.GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
+            SetModel(thumb, fileInfo, imageModel);
         }
         else
         {
-            using var magickImage = new MagickImage();
-            await using var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
-                FileShare.ReadWrite, 4096, true);
-            if (imageModel.FileInfo.Length >= 2147483648)
-            {
-                // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
-                // ReSharper disable once MethodHasAsyncOverload
-                magickImage.Read(fileStream);
-            }
-            else
-            {
-                await magickImage.ReadAsync(fileStream).ConfigureAwait(false);
-            }
-
-            magickImage.Format = MagickFormat.Png;
-            await using var memoryStream = new MemoryStream();
-            await magickImage.WriteAsync(memoryStream);
-            memoryStream.Position = 0;
-            Add(memoryStream, imageModel);
-            imageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(magickImage);
+            var bitmap = await GetImage.GetDefaultBitmapAsync(fileInfo).ConfigureAwait(false);
+            SetModel(bitmap, fileInfo, imageModel);
         }
     }
 
 
     #region Bitmap
 
-    private static void Add(Stream stream, ImageModel imageModel)
+    private static async Task AddImageAsync(FileInfo fileInfo, ImageModel imageModel)
     {
-        if (stream is null)
-        {
-#if DEBUG
-            Console.WriteLine($"Error: {nameof(GetImageModel)}:{nameof(Add)}: {nameof(stream)} is null");
-#endif
-            return;
-        }
+        var bitmap = await GetImage.GetStandardBitmapAsync(fileInfo).ConfigureAwait(false);
+        SetModel(bitmap, fileInfo, imageModel);
+    }
 
-        var bitmap = new Bitmap(stream);
+    private static void SetModel(Bitmap bitmap, FileInfo fileInfo, ImageModel imageModel)
+    {
         imageModel.Image = bitmap;
         imageModel.PixelWidth = bitmap?.PixelSize.Width ?? 0;
         imageModel.PixelHeight = bitmap?.PixelSize.Height ?? 0;
         imageModel.ImageType = ImageType.Bitmap;
+        imageModel.EXIFOrientation = EXIFHelper.GetImageOrientation(fileInfo);
     }
 
     #endregion
@@ -203,24 +170,21 @@ public static class GetImageModel
     }
 
     #endregion
-
+    
     #region Base64
 
     private static async Task AddBase64ImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, uint height)
     {
-        using var magickImage = await ImageDecoder.Base64ToMagickImage(fileInfo.FullName).ConfigureAwait(false);
-        using var b64Stream = new MemoryStream();
         if (isThumb)
         {
-            magickImage.Thumbnail(0, height);
+            var thumb = await GetThumbnails.GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
+            SetModel(thumb, fileInfo, imageModel);
         }
         else
         {
-            await magickImage.WriteAsync(b64Stream);
-            b64Stream.Position = 0;
+            var base64 = await GetImage.GetBase64ImageAsync(fileInfo).ConfigureAwait(false);
+            SetModel(base64, fileInfo, imageModel);
         }
-
-        Add(b64Stream, imageModel);
     }
 
     #endregion

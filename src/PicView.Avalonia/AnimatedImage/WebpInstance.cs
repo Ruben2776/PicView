@@ -77,10 +77,20 @@ public class WebpInstance : IGifInstance
 
         using var frameBuffer = targetBitmap.Lock();
 
-        var result = codec.GetPixels(decodeInfo, frameBuffer.Address, new SKCodecOptions(index, priorIndex));
-
-        if (result != SKCodecResult.Success)
-            throw new InvalidDataException($"Could not decode frame {index} of {codec.FrameCount}.");
+        try
+        {
+            var result = codec.GetPixels(decodeInfo, frameBuffer.Address, new SKCodecOptions(index, priorIndex));
+            if (result != SKCodecResult.Success)
+                throw new InvalidDataException($"Could not decode frame {index} of {codec.FrameCount}.");
+        }
+        #if DEBUG
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        #else
+        catch{}
+        #endif
     }
 
     public int GifFrameCount => _frameTimes.Count;
