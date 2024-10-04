@@ -11,8 +11,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border
         Background="Transparent"
-        BorderThickness="3"
-        CornerRadius="8"
+        BorderThickness="2"
         Height="{CompiledBinding GetGalleryItemHeight,
                                  Mode=OneWay}"
         MinWidth="25"
@@ -51,7 +50,7 @@
             </StackPanel>
         </ToolTip.Tip>
         <Border.ContextMenu>
-            <ContextMenu>
+            <ContextMenu x:Name="GalleryContextMenu">
                 <MenuItem
                     Command="{CompiledBinding PrintCommand}"
                     CommandParameter="{CompiledBinding Path=Text,
