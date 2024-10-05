@@ -1,5 +1,5 @@
 <Window
-    BorderThickness="0"
+    BorderThickness="1"
     CanResize="False"
     CornerRadius="8"
     SizeToContent="WidthAndHeight"
@@ -8,6 +8,7 @@
     x:Class="PicView.Avalonia.Win32.Views.AboutWindow"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
@@ -19,20 +20,19 @@
     <Border
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
-        CornerRadius="0,0,8,8">
+        CornerRadius="8"
+        PointerPressed="MoveWindow">
         <StackPanel>
 
-            <DockPanel
-                Background="{DynamicResource WindowBackgroundColor}"
-                Height="28"
-                PointerPressed="MoveWindow">
+            <DockPanel Height="28" LastChildFill="True">
 
                 <Border
+                    Background="{DynamicResource WindowBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     CornerRadius="8,0,0,0"
                     DockPanel.Dock="Left"
-                    Margin="0,0,23,0">
+                    x:Name="IconBorder">
                     <Image
                         Height="25"
                         Margin="7,1,7,1"
@@ -40,46 +40,49 @@
                         Width="20" />
                 </Border>
 
-                <Button
+                <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
+                    BorderThickness="0"
                     Classes="hover"
                     Click="Close"
+                    CornerRadius="0,8,0,0"
+                    Data="{StaticResource CloseGeometry}"
                     DockPanel.Dock="Right"
-                    Width="30">
-                    <Path
-                        Data="{StaticResource CloseGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="10"
-                        Stretch="Fill"
-                        Width="10" />
-                </Button>
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    IconHeight="10"
+                    IconWidth="10"
+                    Width="30"
+                    x:Name="CloseButton" />
 
-                <Button
+                <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
                     Click="Minimize"
+                    Data="{StaticResource MinimizeGeometry}"
                     DockPanel.Dock="Right"
-                    Width="30">
-                    <Viewbox Height="12" Width="12">
-                        <Path
-                            Data="{StaticResource MinimizeGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
-                    </Viewbox>
-                </Button>
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    IconHeight="12"
+                    IconWidth="12"
+                    Width="30"
+                    x:Name="MinimizeButton" />
 
                 <TextBlock
+                    Background="{DynamicResource SecondaryBackgroundColor}"
                     Classes="txt"
-                    Foreground="{DynamicResource MainTextColor}"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    Height="28"
+                    LineHeight="28"
                     Text="{CompiledBinding About}"
-                    TextAlignment="Center" />
+                    TextAlignment="Center"
+                    x:Name="AboutText" />
             </DockPanel>
 
-            <Rectangle Fill="{DynamicResource WindowBorderColor}" Height="1" />
+            <Rectangle
+                Fill="{DynamicResource WindowBorderColor}"
+                Height="1"
+                x:Name="BorderRectangle" />
 
             <views:AboutView
                 Background="{DynamicResource NoisyTexture}"

@@ -25,6 +25,9 @@
                 <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource MainTextColor}" />
+                        </Setter>
+                        <Setter Property="Background">
                             <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
                         </Setter>
                         <Setter Property="BorderBrush">
@@ -32,6 +35,9 @@
                         </Setter>
                     </KeyFrame>
                     <KeyFrame Cue="1">
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
+                        </Setter>
                         <Setter Property="Background">
                             <SolidColorBrush Color="{DynamicResource AccentColor}" />
                         </Setter>
@@ -41,6 +47,7 @@
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
         </Style>

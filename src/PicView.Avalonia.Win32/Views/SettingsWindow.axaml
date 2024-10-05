@@ -10,6 +10,7 @@
     x:Class="PicView.Avalonia.Win32.Views.SettingsWindow"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
@@ -22,18 +23,19 @@
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
         CornerRadius="0,0,8,8"
-        Name="ParentBorder">
+        PointerPressed="MoveWindow"
+        x:Name="ParentBorder">
         <Panel>
             <DockPanel
-                Background="{DynamicResource WindowBackgroundColor}"
                 Height="28"
                 LastChildFill="True"
-                PointerPressed="MoveWindow"
                 VerticalAlignment="Top">
                 <Border
+                    Background="{DynamicResource WindowBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,1"
-                    DockPanel.Dock="Left">
+                    DockPanel.Dock="Left"
+                    x:Name="TopWindowBorder">
                     <Image
                         Height="25"
                         Margin="10,1,10,1"
@@ -41,45 +43,45 @@
                         Width="20" />
                 </Border>
 
-                <Button
+                <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
                     Click="Close"
+                    Data="{StaticResource CloseGeometry}"
                     DockPanel.Dock="Right"
-                    Width="30">
-                    <Path
-                        Data="{StaticResource CloseGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="10"
-                        Stretch="Fill"
-                        Width="10" />
-                </Button>
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    IconHeight="10"
+                    IconWidth="10"
+                    ToolTip.Tip="{CompiledBinding Close,
+                                                  Mode=OneWay}"
+                    Width="30"
+                    x:Name="CloseButton" />
 
-                <Button
+                <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
                     Click="Minimize"
+                    Data="{StaticResource MinimizeGeometry}"
                     DockPanel.Dock="Right"
-                    Width="30">
-                    <Viewbox Height="12" Width="12">
-                        <Path
-                            Data="{StaticResource MinimizeGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
-                    </Viewbox>
-                </Button>
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    IconHeight="12"
+                    IconWidth="12"
+                    Width="30"
+                    x:Name="MinimizeButton" />
 
                 <TextBlock
+                    Background="{StaticResource SecondaryBackgroundColor}"
                     Classes="txt"
-                    Foreground="{DynamicResource MainTextColor}"
-                    HorizontalAlignment="Center"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    LineHeight="28"
                     Text="{CompiledBinding Settings,
                                            Mode=OneWay}"
-                    TextAlignment="Center" />
+                    TextAlignment="Center"
+                    x:Name="SettingsText" />
             </DockPanel>
 
 

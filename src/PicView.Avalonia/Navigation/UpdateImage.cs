@@ -71,8 +71,7 @@ public static class UpdateImage
         {
             await Dispatcher.UIThread.InvokeAsync(() => { WindowHelper.CenterWindowOnScreen(); });
         }
-
-        vm.GetIndex = index + 1;
+        
         if (vm.SelectedGalleryItemIndex != index)
         {
             vm.SelectedGalleryItemIndex = index;
@@ -82,6 +81,7 @@ public static class UpdateImage
             }
         }
 
+        vm.GetIndex = index + 1;
         vm.FileInfo = preLoadValue.ImageModel.FileInfo;
         vm.ZoomValue = 1;
         vm.PixelWidth = preLoadValue.ImageModel.PixelWidth;

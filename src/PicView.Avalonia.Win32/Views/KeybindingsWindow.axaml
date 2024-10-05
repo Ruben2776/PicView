@@ -19,19 +19,21 @@
     <Border
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
-        CornerRadius="0,0,8,8">
+        CornerRadius="0,0,8,8"
+        PointerPressed="MoveWindow">
         <Panel>
 
             <DockPanel
-                Background="{DynamicResource WindowBackgroundColor}"
                 Height="28"
-                PointerPressed="MoveWindow"
+                LastChildFill="True"
                 VerticalAlignment="Top">
 
                 <Border
+                    Background="{DynamicResource WindowBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,1"
-                    DockPanel.Dock="Left">
+                    DockPanel.Dock="Left"
+                    x:Name="TopWindowBorder">
                     <Image
                         Height="25"
                         Margin="7,1,7,1"
@@ -39,46 +41,48 @@
                         Width="20" />
                 </Border>
 
-                <Button
+                <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,1"
                     Classes="hover"
                     Click="Close"
+                    Data="{StaticResource CloseGeometry}"
                     DockPanel.Dock="Right"
-                    Width="30">
-                    <Path
-                        Data="{StaticResource CloseGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="10"
-                        Stretch="Fill"
-                        Width="10" />
-                </Button>
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    IconHeight="10"
+                    IconWidth="10"
+                    ToolTip.Tip="{CompiledBinding Close,
+                                                  Mode=OneWay}"
+                    Width="30"
+                    x:Name="CloseButton" />
 
-                <Button
+                <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,1"
                     Classes="hover"
-                    Click="Minimize"
+                    Data="{StaticResource MinimizeGeometry}"
                     DockPanel.Dock="Right"
-                    Width="30">
-                    <Viewbox Height="12" Width="12">
-                        <Path
-                            Data="{StaticResource MinimizeGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
-                    </Viewbox>
-                </Button>
+                    IconHeight="12"
+                    IconWidth="12"
+                    Width="30"
+                    x:Name="MinimizeButton" />
 
-                <Border BorderBrush="{DynamicResource MainBorderColor}" BorderThickness="0,0,0,1">
-                    <TextBlock
-                        Classes="txt"
-                        Foreground="{DynamicResource MainTextColor}"
-                        Text="{CompiledBinding ApplicationShortcuts}"
-                        TextAlignment="Center" />
-                </Border>
+                <TextBlock
+                    Background="{StaticResource SecondaryBackgroundColor}"
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    LineHeight="28"
+                    Text="{CompiledBinding ApplicationShortcuts}"
+                    TextAlignment="Center"
+                    x:Name="TitleText" />
             </DockPanel>
+
+            <Rectangle
+                Fill="{DynamicResource WindowBorderColor}"
+                Height="1"
+                x:Name="BorderRectangle" />
 
             <customControls:AutoScrollViewer
                 Background="{DynamicResource NoisyTexture}"

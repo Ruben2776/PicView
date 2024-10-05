@@ -33,66 +33,57 @@
                     Height="47"
                     Width="315" />
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
                     Command="{CompiledBinding RotateLeftCommand}"
                     CornerRadius="8,0,0,0"
+                    Data="{StaticResource RotateLeftGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="45"
+                    IconHeight="15"
+                    IconWidth="15"
                     ToolTip.Tip="{CompiledBinding RotateLeft,
                                                   Mode=OneWay}"
-                    Width="45">
-                    <Path
-                        Data="{StaticResource RotateLeftGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="15"
-                        Stretch="Fill"
-                        Width="15" />
-                </Button>
+                    Width="45" />
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Canvas.Left="45"
                     Classes="hover"
                     Command="{CompiledBinding RotateRightCommand}"
+                    Data="{StaticResource RotateRightGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="45"
+                    IconHeight="15"
+                    IconWidth="15"
                     ToolTip.Tip="{CompiledBinding RotateRight,
                                                   Mode=OneWay}"
-                    Width="45">
-                    <Path
-                        Data="{StaticResource RotateRightGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="15"
-                        Stretch="Fill"
-                        Width="15" />
-                </Button>
+                    Width="45" />
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Canvas.Left="90"
                     Classes="hover"
                     Command="{CompiledBinding FlipCommand}"
+                    Data="{StaticResource FlipGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="45"
+                    IconHeight="13"
+                    IconWidth="13"
                     ToolTip.Tip="{CompiledBinding GetFlipped,
                                                   Mode=OneWay}"
                     Width="45">
-                    <Path
-                        Data="{StaticResource FlipGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="13"
-                        Stretch="Fill"
-                        Width="13">
-                        <Path.RenderTransform>
-                            <ScaleTransform ScaleX="{CompiledBinding ScaleX}" />
-                        </Path.RenderTransform>
-                    </Path>
-                </Button>
+                    <customControls:IconButton.RenderTransform>
+                        <ScaleTransform ScaleX="{CompiledBinding ScaleX}" />
+                    </customControls:IconButton.RenderTransform>
+                </customControls:IconButton>
 
                 <Button
                     Background="Transparent"
@@ -165,23 +156,20 @@
                     </StackPanel>
                 </Button>
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
                     Canvas.Left="270"
                     Classes="hover"
                     Command="{CompiledBinding CloseMenuCommand}"
                     CornerRadius="0,8,0,0"
+                    Data="{StaticResource CloseGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="45"
+                    IconHeight="10"
+                    IconWidth="10"
                     ToolTip.Tip="{CompiledBinding Close,
                                                   Mode=OneWay}"
-                    Width="45">
-                    <Path
-                        Data="{StaticResource CloseGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="10"
-                        Stretch="Fill"
-                        Width="10" />
-                </Button>
+                    Width="45" />
 
                 <Button
                     Background="{DynamicResource MenuButtonColor}"

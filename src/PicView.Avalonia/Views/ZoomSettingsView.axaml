@@ -67,6 +67,14 @@
                                        Mode=OneWay}" />
         </ToggleButton>
 
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Margin="0,20,0,20"
+            Text="{CompiledBinding MouseWheel,
+                                   Mode=OneWay}" />
+
         <ComboBox
             Background="{DynamicResource SecondaryBackgroundColor}"
             BorderBrush="{DynamicResource MainBorderColor}"

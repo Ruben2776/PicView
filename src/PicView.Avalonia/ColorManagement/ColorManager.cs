@@ -18,16 +18,16 @@ public static class ColorManager
     public static Color GetLogoAccentColor => SettingsHelper.Settings.Theme.ColorTheme switch
     {
         0 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(255, 240, 90) : Color.FromRgb(225, 210, 80), // Blue
-        2 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(255, 237, 38) : Color.FromRgb(230, 160, 38), // Pink
+        2 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(255, 237, 38) : Color.FromRgb(250, 180, 38), // Pink
         3 => Color.FromRgb(248, 175, 60), // Orange
-        4 => Color.FromRgb(209, 237, 93), // Green
+        4 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(209, 237, 93) : Color.FromRgb(175, 157, 38), // Green
         5 => Color.FromRgb(250, 192, 92), // Red
         6 => Color.FromRgb(254, 172, 150), // Teal
         7 => Color.FromRgb(228, 209, 17), // Aqua
-        8 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(255, 253, 42) : Color.FromRgb(248, 175, 60), // Golden
-        9 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(237, 184, 135) : Color.FromRgb(137, 84, 55), // Purple
-        10 => Color.FromRgb(255, 253, 66), // Cyan
-        11 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(255, 237, 38) : Color.FromRgb(185, 167, 38), // Magenta
+        8 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(255, 253, 42) : Color.FromRgb(226, 180, 224), // Golden
+        9 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(237, 184, 135) : Color.FromRgb(226, 141, 223), // Purple
+        10 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(255, 253, 66) : Color.FromRgb(215, 200, 70), // Cyan
+        11 => SettingsHelper.Settings.Theme.Dark ? Color.FromRgb(255, 237, 38) : Color.FromRgb(226, 141, 223), // Magenta
         12 => Color.FromRgb(255, 253, 42), // Lime
         _ => throw new ArgumentOutOfRangeException(nameof(GetLogoAccentColor))
     };

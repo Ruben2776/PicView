@@ -9,6 +9,7 @@
     x:Class="PicView.Avalonia.Win32.Views.WinTitleBar"
     x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
@@ -22,13 +23,15 @@
     <Border
         Background="{DynamicResource MainButtonBackgroundColor}"
         BorderBrush="{DynamicResource MainBorderColor}"
-        BorderThickness="0,0,0,1">
+        BorderThickness="0,0,0,1"
+        CornerRadius="8,8,0,0">
         <DockPanel LastChildFill="True">
 
             <Border
                 Background="{DynamicResource SecondaryButtonBackgroundColor}"
                 BorderBrush="{DynamicResource SecondaryButtonBackgroundColor}"
                 BorderThickness="0,0,1,0"
+                CornerRadius="8,0,0,0"
                 DockPanel.Dock="Left">
                 <Image
                     Height="25"
@@ -37,116 +40,96 @@
                     Width="20" />
             </Border>
 
-            <Button
+            <customControls:IconButton
                 Background="{DynamicResource SecondaryButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Command="{CompiledBinding ToggleGalleryCommand}"
+                Data="F1 M22 16L22 4C22 2.9 21.1 2 20 2L8 2C6.9 2 6 2.9 6 4L6 16C6 17.1 6.9 18 8 18L20 18C21.1 18 22 17.1 22 16ZM11 12L13.03 14.71L16 11L20 16L8 16L11 12ZM2 6L2 20C2 21.1 2.9 22 4 22L18 22L18 20L4 20L4 6L2 6Z"
                 DockPanel.Dock="Left"
-                Width="30">
-                <Image Width="17">
-                    <Image.Resources>
-                        <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="Brush0" />
-                    </Image.Resources>
-                    <DrawingImage>
-                        <DrawingGroup>
-                            <GeometryDrawing Brush="{StaticResource Brush0}" Geometry="F1 M22 16L22 4C22 2.9 21.1 2 20 2L8 2C6.9 2 6 2.9 6 4L6 16C6 17.1 6.9 18 8 18L20 18C21.1 18 22 17.1 22 16ZM11 12L13.03 14.71L16 11L20 16L8 16L11 12ZM2 6L2 20C2 21.1 2.9 22 4 22L18 22L18 20L4 20L4 6L2 6Z" />
-                        </DrawingGroup>
-                    </DrawingImage>
-                </Image>
-            </Button>
+                Foreground="{DynamicResource MainTextColor}"
+                IconHeight="17"
+                IconWidth="17"
+                Width="30" />
 
-            <Button
+            <customControls:IconButton
                 Background="{DynamicResource SecondaryButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Command="{CompiledBinding RotateRightCommand}"
                 DockPanel.Dock="Left"
+                Foreground="{DynamicResource MainTextColor}"
+                Icon="{StaticResource RefreshCcwDot}"
+                IconHeight="16"
+                IconWidth="16"
                 Margin="0"
                 Name="RotateRightButton"
-                ToolTip.Tip="{CompiledBinding RotateLeft,
+                ToolTip.Tip="{CompiledBinding RotateRight,
                                               Mode=OneWay}"
-                Width="30">
-                <Path
-                    Data="M142.9 142.9c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8H463.5c0 0 0 0 0 0H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1C73.2 122 55.6 150.7 44.8 181.4c-5.9 16.7 2.9 34.9 19.5 40.8s34.9-2.9 40.8-19.5c7.7-21.8 20.2-42.3 37.8-59.8zM16 312v7.6 .7V440c0 9.7 5.8 18.5 14.8 22.2s19.3 1.7 26.2-5.2l41.6-41.6c87.6 86.5 228.7 86.2 315.8-1c24.4-24.4 42.1-53.1 52.9-83.7c5.9-16.7-2.9-34.9-19.5-40.8s-34.9 2.9-40.8 19.5c-7.7 21.8-20.2 42.3-37.8 59.8c-62.2 62.2-162.7 62.5-225.3 1L185 329c6.9-6.9 8.9-17.2 5.2-26.2s-12.5-14.8-22.2-14.8H48.4h-.7H40c-13.3 0-24 10.7-24 24z"
-                    Fill="{DynamicResource MainTextColor}"
-                    Height="13"
-                    Stretch="Fill"
-                    Width="13" />
-            </Button>
+                Width="30" />
 
-            <Button
+            <customControls:IconButton
                 Background="{DynamicResource SecondaryButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Command="{CompiledBinding FlipCommand}"
+                Data="{StaticResource FlipGeometry}"
                 DockPanel.Dock="Left"
+                Foreground="{DynamicResource MainTextColor}"
+                IconHeight="13"
+                IconWidth="13"
                 Margin="0"
                 ToolTip.Tip="{CompiledBinding GetFlipped,
                                               Mode=OneWay}"
                 Width="30">
-                <Path
-                    Data="M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z"
-                    Fill="{DynamicResource MainTextColor}"
-                    Height="13"
-                    Stretch="Fill"
-                    Width="13" />
                 <Button.RenderTransform>
                     <ScaleTransform ScaleX="{CompiledBinding ScaleX}" />
                 </Button.RenderTransform>
-            </Button>
+            </customControls:IconButton>
 
-            <Button
+            <customControls:IconButton
                 Background="{DynamicResource SecondaryButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Command="{CompiledBinding ExitCommand}"
+                CornerRadius="0,8,0,0"
+                Data="{StaticResource CloseGeometry}"
                 DockPanel.Dock="Right"
-                Width="35">
-                <Path
-                    Data="{StaticResource CloseGeometry}"
-                    Fill="{DynamicResource MainTextColor}"
-                    Height="10"
-                    Stretch="Fill"
-                    Width="10" />
-            </Button>
+                Foreground="{DynamicResource MainTextColor}"
+                IconHeight="10"
+                IconWidth="10"
+                Width="35" />
 
-            <Button
+            <customControls:IconButton
                 Background="{DynamicResource SecondaryButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
                 Command="{CompiledBinding ToggleFullscreenCommand}"
+                Data="{StaticResource FullscreenGeometry}"
                 DockPanel.Dock="Right"
+                Foreground="{DynamicResource MainTextColor}"
+                IconHeight="12"
+                IconWidth="12"
                 Name="RestoreButton"
-                Width="35">
-                <Path
-                    Data="{StaticResource FullscreenGeometry}"
-                    Fill="{DynamicResource MainTextColor}"
-                    Height="12"
-                    Stretch="Fill"
-                    Width="12" />
-            </Button>
+                Width="35" />
 
-            <Button
+            <customControls:IconButton
                 Background="{DynamicResource SecondaryButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="hover"
                 Command="{CompiledBinding MinimizeCommand}"
+                Data="{StaticResource MinimizeGeometry}"
                 DockPanel.Dock="Right"
-                Width="35">
-                <Viewbox Height="12" Width="12">
-                    <Path
-                        Data="{StaticResource MinimizeGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Stretch="Fill" />
-                </Viewbox>
-            </Button>
+                Foreground="{DynamicResource MainTextColor}"
+                IconHeight="12"
+                IconWidth="12"
+                Width="35" />
             <uc:EditableTitlebar
                 Background="{DynamicResource SecondaryBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"

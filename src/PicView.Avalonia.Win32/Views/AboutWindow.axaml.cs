@@ -1,6 +1,9 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
+using PicView.Core.Config;
 using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Win32.Views;
@@ -10,6 +13,17 @@ public partial class AboutWindow : Window
     public AboutWindow()
     {
         InitializeComponent();
+        if (!SettingsHelper.Settings.Theme.Dark)
+        {
+            IconBorder.Background = Brushes.Transparent;
+            IconBorder.BorderThickness = new Thickness(0);
+            MinimizeButton.Background = Brushes.Transparent;
+            MinimizeButton.BorderThickness = new Thickness(0);
+            CloseButton.Background = Brushes.Transparent;
+            CloseButton.BorderThickness = new Thickness(0);
+            BorderRectangle.Height = 0;
+            AboutText.Background = Brushes.Transparent;
+        }
         Loaded += delegate
         {
             MinWidth = MaxWidth = Width;

@@ -71,7 +71,7 @@
                     Height="46"
                     ToolTip.Tip="{CompiledBinding AboutWindow,
                                                   Mode=OneWay}"
-                    Width="135">
+                    Width="136">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Height="17"
@@ -90,24 +90,21 @@
                     </StackPanel>
                 </Button>
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
                     Canvas.Left="315"
                     Canvas.Top="-1"
                     Classes="hover"
                     Command="{CompiledBinding CloseMenuCommand}"
                     CornerRadius="0,8,0,0"
+                    Data="{StaticResource CloseGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="46"
+                    IconHeight="10"
+                    IconWidth="10"
                     ToolTip.Tip="{CompiledBinding Close,
                                                   Mode=OneWay}"
-                    Width="45">
-                    <Path
-                        Data="{StaticResource CloseGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="10"
-                        Stretch="Fill"
-                        Width="10" />
-                </Button>
+                    Width="45" />
 
                 <ToggleButton
                     Background="{DynamicResource MenuButtonColor}"

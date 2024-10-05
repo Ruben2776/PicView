@@ -29,26 +29,23 @@
                     Height="47"
                     Width="315" />
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
                     Command="{Binding ReloadCommand}"
                     CornerRadius="8,0,0,0"
+                    Data="{StaticResource ReloadGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="45"
+                    IconHeight="17"
+                    IconWidth="17"
                     ToolTip.Tip="{CompiledBinding Reload,
                                                   Mode=OneWay}"
-                    Width="45">
-                    <Path
-                        Data="M416,352l96-111.9h-64.7c-2.3-27.9-10.5-54-23.5-77.3c-27.4-49.2-75.8-85.1-133-95.6c-0.7-0.1-1.5-0.3-2.2-0.4  c-0.5-0.1-0.9-0.2-1.4-0.2C277.1,64.9,266.6,64,256,64c-0.1,0-0.3,0-0.4,0c0,0,0,0,0,0c-90.9,0.2-167,63.6-186.7,148.6  c0,0,0,0.1,0,0.1c-0.3,1.1-0.5,2.2-0.7,3.3c-0.1,0.5-0.2,0.9-0.3,1.4c-0.1,0.7-0.3,1.4-0.4,2.1c-0.2,0.9-0.3,1.7-0.5,2.6  c-0.1,0.4-0.1,0.7-0.2,1.1c-0.2,1.2-0.4,2.4-0.6,3.6c0,0.1,0,0.1,0,0.2c-1,6.3-1.6,12.7-1.9,19.1c0,0.3,0,0.6,0,0.8  c-0.1,1.4-0.1,2.7-0.2,4.1c0,1.6-0.1,3.3-0.1,5c0,1.7,0,3.3,0.1,5c0,1.4,0.1,2.7,0.2,4.1c0,0.3,0,0.6,0,0.9c0.3,6.5,1,12.9,1.9,19.1  c0,0.1,0,0.1,0,0.2c0.2,1.2,0.4,2.4,0.6,3.6c0.1,0.4,0.1,0.7,0.2,1.1c0.2,0.9,0.3,1.8,0.5,2.6c0.1,0.7,0.3,1.4,0.4,2.1  c0.1,0.5,0.2,1,0.3,1.4c0.2,1.1,0.5,2.2,0.7,3.2c0,0,0,0.1,0,0.1c19.7,85,96.1,148.4,187.1,148.6c42.9-0.1,83.1-14.2,116.9-40.7  l7.5-5.9l-43.2-46.2l-6.2,4.6c-22.1,16.3-47.5,24.2-75,24.2c-70.6,0-128-57-128-128c0-71,57.4-128,128-128  c66.4,0,122.8,46.6,129.5,112H312L416,352z"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="17"
-                        Stretch="Fill"
-                        Width="17" />
-                </Button>
+                    Width="45" />
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -57,19 +54,16 @@
                     Command="{CompiledBinding PrintCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
+                    Data="{StaticResource PrintGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="45"
+                    IconHeight="17"
+                    IconWidth="17"
                     ToolTip.Tip="{CompiledBinding Print,
                                                   Mode=OneWay}"
-                    Width="45">
-                    <Path
-                        Data="M448 1536h896v-256h-896v256zm0-640h896v-384h-160q-40 0-68-28t-28-68v-160h-640v640zm1152 64q0-26-19-45t-45-19-45 19-19 45 19 45 45 19 45-19 19-45zm128 0v416q0 13-9.5 22.5t-22.5 9.5h-224v160q0 40-28 68t-68 28h-960q-40 0-68-28t-28-68v-160h-224q-13 0-22.5-9.5t-9.5-22.5v-416q0-79 56.5-135.5t135.5-56.5h64v-544q0-40 28-68t68-28h672q40 0 88 20t76 48l152 152q28 28 48 76t20 88v256h64q79 0 135.5 56.5t56.5 135.5z"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="17"
-                        Stretch="Fill"
-                        Width="17" />
-                </Button>
+                    Width="45" />
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -78,37 +72,31 @@
                     Command="{CompiledBinding RecycleFileCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
+                    Data="{StaticResource RecycleGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="45"
+                    IconHeight="17"
+                    IconWidth="17"
                     ToolTip.Tip="{CompiledBinding DeleteFile}"
-                    Width="45">
-                    <Path
-                        Data="M836 1169l-15 368-2 22-420-29q-36-3-67-31.5t-47-65.5q-11-27-14.5-55t4-65 12-55 21.5-64 19-53q78 12 509 28zm-387-586l180 379-147-92q-63 72-111.5 144.5t-72.5 125-39.5 94.5-18.5 63l-4 21-190-357q-17-26-18-56t6-47l8-18q35-63 114-188l-140-86zm1231 517l-188 359q-12 29-36.5 46.5t-43.5 20.5l-18 4q-71 7-219 12l8 164-230-367 211-362 7 173q170 16 283 5t170-33zm-785-924q-47 63-265 435l-317-187-19-12 225-356q20-31 60-42t80-10q24 2 48.5 12t42 21 41.5 33 36 34.5 36 39.5 32 35zm655 307l212 363q18 37 12.5 76t-27.5 74q-13 20-33 37t-38 28-48.5 22-47 16-51.5 14-46 12q-34-72-265-436l313-195zm-143-226l142-83-220 373-419-20 151-86q-34-89-75-166t-75.5-123.5-64.5-80-47-46.5l-17-13 405 1q31-3 58 10.5t39 28.5l11 15q39 61 112 190z"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="17"
-                        Stretch="Fill"
-                        Width="17" />
-                </Button>
+                    Width="45" />
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Canvas.Left="135"
                     Classes="hover"
                     Command="{CompiledBinding SaveFileCommand}"
+                    Data="{StaticResource SaveGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="45"
+                    IconHeight="17"
+                    IconWidth="17"
                     ToolTip.Tip="{CompiledBinding Save,
                                                   Mode=OneWay}"
-                    Width="45">
-                    <Path
-                        Data="M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="17"
-                        Stretch="Fill"
-                        Width="17" />
-                </Button>
+                    Width="45" />
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -117,18 +105,15 @@
                     Command="{CompiledBinding CopyFileCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
+                    Data="{StaticResource CopyGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="45"
+                    IconHeight="17"
+                    IconWidth="17"
                     ToolTip.Tip="{CompiledBinding CopyFile}"
-                    Width="45">
-                    <Path
-                        Data="M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16l140.1 0L400 115.9V320c0 8.8-7.2 16-16 16zM192 384H384c35.3 0 64-28.7 64-64V115.9c0-12.7-5.1-24.9-14.1-33.9L366.1 14.1c-9-9-21.2-14.1-33.9-14.1H192c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64zM64 128c-35.3 0-64 28.7-64 64V448c0 35.3 28.7 64 64 64H256c35.3 0 64-28.7 64-64V416H272v32c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16H96V128H64z"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="17"
-                        Stretch="Fill"
-                        Width="17" />
-                </Button>
+                    Width="45" />
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -137,35 +122,31 @@
                     Command="{CompiledBinding DuplicateFileCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
+                    Data="{StaticResource DuplicateGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="45"
+                    IconHeight="17"
+                    IconWidth="17"
                     ToolTip.Tip="{CompiledBinding DuplicateFile,
                                                   Mode=OneWay}"
-                    Width="45">
-                    <Path
-                        Data="M448 384H256c-35.3 0-64-28.7-64-64V64c0-35.3 28.7-64 64-64H396.1c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9V320c0 35.3-28.7 64-64 64zM64 128h96v48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H256c8.8 0 16-7.2 16-16V416h48v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="17"
-                        Stretch="Fill"
-                        Width="17" />
-                </Button>
+                    Width="45" />
 
-                <Button
+                <customControls:IconButton
                     Background="Transparent"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
                     Canvas.Left="270"
                     Classes="hover"
                     Command="{CompiledBinding CloseMenuCommand}"
                     CornerRadius="0,8,0,0"
+                    Data="{StaticResource CloseGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="45"
+                    IconHeight="10"
+                    IconWidth="10"
                     ToolTip.Tip="{CompiledBinding Close,
                                                   Mode=OneWay}"
-                    Width="45">
-                    <Path
-                        Data="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="10"
-                        Stretch="Fill"
-                        Width="10" />
-                </Button>
+                    Width="45" />
 
                 <Button
                     Background="{DynamicResource MenuButtonColor}"
