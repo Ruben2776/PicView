@@ -11,6 +11,11 @@ public partial class SettingsWindow : Window
     public SettingsWindow()
     {
         InitializeComponent();
+        if (!SettingsHelper.Settings.Theme.Dark)
+        {
+            TitleText.Background = Brushes.Transparent;
+            XSettingsView.Background = Brushes.Transparent;
+        }
         Loaded += delegate
         {
             MinWidth = MaxWidth = Width;

@@ -23,18 +23,20 @@
     <Border
         BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="1"
-        CornerRadius="8">
+        CornerRadius="8"
+        PointerPressed="MoveWindow">
         <StackPanel>
             <TextBlock
+                Background="{StaticResource WindowBackgroundColor}"
                 Classes="txt"
                 Height="28"
-                Margin="0,7,0,0"
-                PointerPressed="MoveWindow"
+                LineHeight="28"
                 Text="{CompiledBinding Settings,
                                        Mode=OneWay}"
-                TextAlignment="Center" />
+                TextAlignment="Center"
+                x:Name="TitleText" />
 
-            <views:SettingsView x:Name="XSettingsView" />
+            <views:SettingsView Background="{StaticResource WindowBackgroundColor}" x:Name="XSettingsView" />
         </StackPanel>
     </Border>
 </Window>

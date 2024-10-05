@@ -21,6 +21,7 @@
             <Style Selector="TextBox.x">
                 <Setter Property="CaretBrush" Value="{StaticResource SecondaryTextColor}" />
                 <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+                <Setter Property="SelectionForegroundBrush" Value="{StaticResource SecondaryTextColor}" />
             </Style>
         </Styles>
     </UserControl.Styles>
