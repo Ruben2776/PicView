@@ -5,12 +5,14 @@ using PicView.Core.Config;
 namespace PicView.Avalonia.ColorManagement;
 public static class ThemeManager
 {
-    public static void ChangeTheme()
+    public enum Theme
     {
-        SetTheme(SettingsHelper.Settings.Theme.Dark);
+        Dark = 0,
+        Light = 1,
+        Glass = 2
     }
     
-    public static void SetTheme(bool dark)
+    public static void SetTheme(Theme theme)
     {
         var application = Application.Current;
         if (application is null)
@@ -18,15 +20,22 @@ public static class ThemeManager
         
         // StyleInclude breaks trimming and AOT
 
-        if (dark)
+        switch (theme)
         {
-            SettingsHelper.Settings.Theme.Dark = true;
-            application.RequestedThemeVariant = ThemeVariant.Dark;
-        }
-        else
-        {
-            SettingsHelper.Settings.Theme.Dark = false;
-            application.RequestedThemeVariant = ThemeVariant.Light;
+            default:
+                SettingsHelper.Settings.Theme.Dark = true;
+                SettingsHelper.Settings.Theme.GlassTheme = false;
+                application.RequestedThemeVariant = ThemeVariant.Dark;
+                break;
+            case Theme.Light:
+                SettingsHelper.Settings.Theme.Dark = false;
+                SettingsHelper.Settings.Theme.GlassTheme = false;
+                application.RequestedThemeVariant = ThemeVariant.Light;
+                break;
+            case Theme.Glass:
+                SettingsHelper.Settings.Theme.GlassTheme = true;
+                application.RequestedThemeVariant = ThemeVariant.Light;
+                break;
         }
         
         ColorManager.UpdateAccentColors(SettingsHelper.Settings.Theme.ColorTheme);

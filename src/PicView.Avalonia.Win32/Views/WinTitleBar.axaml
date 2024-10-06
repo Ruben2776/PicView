@@ -21,18 +21,20 @@
     </Design.DataContext>
 
     <Border
-        Background="{DynamicResource MainButtonBackgroundColor}"
+        Background="{DynamicResource WindowBackgroundColor}"
         BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="0,0,0,1"
-        CornerRadius="8,8,0,0">
+        CornerRadius="8,8,0,0"
+        x:Name="TopWindowBorder">
         <DockPanel LastChildFill="True">
 
             <Border
-                Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                BorderBrush="{DynamicResource SecondaryButtonBackgroundColor}"
+                Background="{DynamicResource WindowButtonBackgroundColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 CornerRadius="8,0,0,0"
-                DockPanel.Dock="Left">
+                DockPanel.Dock="Left"
+                x:Name="LogoBorder">
                 <Image
                     Height="25"
                     Margin="7,1,7,1"
@@ -41,7 +43,7 @@
             </Border>
 
             <customControls:IconButton
-                Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                Background="{DynamicResource WindowButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
@@ -51,10 +53,11 @@
                 Foreground="{DynamicResource MainTextColor}"
                 IconHeight="17"
                 IconWidth="17"
-                Width="30" />
+                Width="30"
+                x:Name="GalleryButton" />
 
             <customControls:IconButton
-                Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                Background="{DynamicResource WindowButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
@@ -68,10 +71,11 @@
                 Name="RotateRightButton"
                 ToolTip.Tip="{CompiledBinding RotateRight,
                                               Mode=OneWay}"
-                Width="30" />
+                Width="30"
+                x:Name="RotateLeftButton" />
 
             <customControls:IconButton
-                Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                Background="{DynamicResource WindowButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
@@ -79,19 +83,20 @@
                 Data="{StaticResource FlipGeometry}"
                 DockPanel.Dock="Left"
                 Foreground="{DynamicResource MainTextColor}"
-                IconHeight="13"
-                IconWidth="13"
+                IconHeight="16"
+                IconWidth="16"
                 Margin="0"
                 ToolTip.Tip="{CompiledBinding GetFlipped,
                                               Mode=OneWay}"
-                Width="30">
+                Width="30"
+                x:Name="FlipButton">
                 <Button.RenderTransform>
                     <ScaleTransform ScaleX="{CompiledBinding ScaleX}" />
                 </Button.RenderTransform>
             </customControls:IconButton>
 
             <customControls:IconButton
-                Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                Background="{DynamicResource WindowButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
@@ -102,10 +107,11 @@
                 Foreground="{DynamicResource MainTextColor}"
                 IconHeight="10"
                 IconWidth="10"
-                Width="35" />
+                Width="35"
+                x:Name="CloseButton" />
 
             <customControls:IconButton
-                Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                Background="{DynamicResource WindowButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
@@ -115,11 +121,11 @@
                 Foreground="{DynamicResource MainTextColor}"
                 IconHeight="12"
                 IconWidth="12"
-                Name="RestoreButton"
-                Width="35" />
+                Width="35"
+                x:Name="RestoreButton" />
 
             <customControls:IconButton
-                Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                Background="{DynamicResource WindowButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="hover"
@@ -129,11 +135,13 @@
                 Foreground="{DynamicResource MainTextColor}"
                 IconHeight="12"
                 IconWidth="12"
-                Width="35" />
+                Width="35"
+                x:Name="MinimizeButton" />
             <uc:EditableTitlebar
-                Background="{DynamicResource SecondaryBackgroundColor}"
+                Background="{DynamicResource WindowSecondaryBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,0,1"
+                Foreground="{DynamicResource MainTextColor}"
                 x:Name="EditableTitlebar" />
         </DockPanel>
     </Border>

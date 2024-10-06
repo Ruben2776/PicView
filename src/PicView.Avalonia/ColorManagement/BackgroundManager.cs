@@ -12,7 +12,7 @@ public static class BackgroundManager
         {
             return;
         }
-        SettingsHelper.Settings.UIProperties.BgColorChoice = (SettingsHelper.Settings.UIProperties.BgColorChoice + 1) % 9;
+        SettingsHelper.Settings.UIProperties.BgColorChoice = (SettingsHelper.Settings.UIProperties.BgColorChoice + 1) % 10;
         vm.ImageBackground = BackgroundColorBrush;
     }
     
@@ -24,17 +24,33 @@ public static class BackgroundManager
     private static Brush BackgroundColorBrush => SettingsHelper.Settings.UIProperties.BgColorChoice switch
     {
         0 => new SolidColorBrush(Colors.Transparent),
-        1 => CreateCheckerboardBrush(),
-        2 => CreateCheckerboardBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
-        3 => new SolidColorBrush(Colors.White),
-        4 => new SolidColorBrush(Color.FromRgb(200, 200, 200)),
-        5 => new SolidColorBrush(Color.FromRgb(155, 155, 155)),
-        6 => new SolidColorBrush(Color.FromArgb(90,35, 35, 35)),
-        7 => new SolidColorBrush(Color.FromArgb(90, 15, 15, 15)),
-        8 => new SolidColorBrush(Color.FromRgb(5, 5, 5)),
+        1 => GetNoiseTextureBrush(),
+        2 => CreateCheckerboardBrush(),
+        3 => CreateCheckerboardBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
+        4 => new SolidColorBrush(Colors.White),
+        5 => new SolidColorBrush(Color.FromRgb(200, 200, 200)),
+        6 => new SolidColorBrush(Color.FromRgb(155, 155, 155)),
+        7 => new SolidColorBrush(Color.FromArgb(90,35, 35, 35)),
+        8 => new SolidColorBrush(Color.FromArgb(90, 15, 15, 15)),
+        9 => new SolidColorBrush(Color.FromRgb(5, 5, 5)),
         _ => new SolidColorBrush(Colors.Transparent),
     };
-    
+
+    private static Brush GetNoiseTextureBrush()
+    {
+        if (!Application.Current.TryGetResource("NoisyTexture", Application.Current.RequestedThemeVariant,
+                out var texture))
+        {
+            return new SolidColorBrush(Colors.Transparent);
+        }
+
+        if (texture is ImageBrush imageBrush)
+        {
+            return imageBrush;
+        }
+        return new SolidColorBrush(Colors.Transparent);
+    }
+
     private static DrawingBrush CreateCheckerboardBrush(Color primaryColor = default, Color secondaryColor = default, int size = 30)
     {
         if (primaryColor == default)

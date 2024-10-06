@@ -21,7 +21,8 @@
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
         CornerRadius="8"
-        PointerPressed="MoveWindow">
+        PointerPressed="MoveWindow"
+        x:Name="ParentBorder">
         <StackPanel>
 
             <DockPanel Height="28" LastChildFill="True">
@@ -41,42 +42,42 @@
                 </Border>
 
                 <customControls:IconButton
-                    Background="{DynamicResource MainButtonBackgroundColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderThickness="0"
                     Classes="hover"
                     Click="Close"
                     CornerRadius="0,8,0,0"
                     Data="{StaticResource CloseGeometry}"
                     DockPanel.Dock="Right"
-                    Foreground="{StaticResource SecondaryTextColor}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IconHeight="10"
                     IconWidth="10"
                     Width="30"
                     x:Name="CloseButton" />
 
                 <customControls:IconButton
-                    Background="{DynamicResource MainButtonBackgroundColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
                     Click="Minimize"
                     Data="{StaticResource MinimizeGeometry}"
                     DockPanel.Dock="Right"
-                    Foreground="{StaticResource SecondaryTextColor}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IconHeight="12"
                     IconWidth="12"
                     Width="30"
                     x:Name="MinimizeButton" />
 
                 <TextBlock
-                    Background="{DynamicResource SecondaryBackgroundColor}"
+                    Background="{DynamicResource WindowSecondaryBackgroundColor}"
                     Classes="txt"
-                    Foreground="{StaticResource SecondaryTextColor}"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="28"
                     LineHeight="28"
                     Text="{CompiledBinding About}"
                     TextAlignment="Center"
-                    x:Name="AboutText" />
+                    x:Name="TitleText" />
             </DockPanel>
 
             <Rectangle

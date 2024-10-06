@@ -2,7 +2,7 @@
 
 public class AppSettings
 {
-    public double Version { get; set; } = 1;
+    public double Version { get; set; } = 1.1;
     public WindowProperties? WindowProperties { get; set; }
     public UIProperties? UIProperties { get; set; }
     public Theme? Theme { get; set; }
@@ -45,6 +45,9 @@ public class Theme
 {
     public bool Dark { get; set; } = true;
     public int ColorTheme { get; set; } = 3;
+    public bool UseSystemTheme { get; set; } = false;
+    
+    public bool GlassTheme { get; set; } = false;
 }
 
 public class Gallery

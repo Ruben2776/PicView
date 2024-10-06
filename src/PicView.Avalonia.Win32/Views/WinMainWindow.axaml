@@ -33,7 +33,7 @@
         <DockPanel LastChildFill="True">
             <views1:WinTitleBar DockPanel.Dock="Top" x:Name="Titlebar" />
             <views:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />
-            <views:MainView Background="{DynamicResource NoisyTexture}" x:Name="MainView" />
+            <views:MainView x:Name="MainView" />
         </DockPanel>
     </Border>
 </Window>

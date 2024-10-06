@@ -32,6 +32,28 @@
     <StreamGeometry x:Key="FlipGeometry">M192,96v64h248c4.4,0,8,3.6,8,8v240c0,4.4-3.6,8-8,8H136c-4.4,0-8-3.6-8-8v-48c0-4.4,3.6-8,8-8h248V224H192v64L64,192  L192,96z</StreamGeometry>
     <StreamGeometry x:Key="CropGeometry">M488 352h-40V109.25l59.31-59.31c6.25-6.25 6.25-16.38 0-22.63L484.69 4.69c-6.25-6.25-16.38-6.25-22.63 0L402.75 64H192v96h114.75L160 306.75V24c0-13.26-10.75-24-24-24H88C74.75 0 64 10.74 64 24v40H24C10.75 64 0 74.74 0 88v48c0 13.25 10.75 24 24 24h40v264c0 13.25 10.75 24 24 24h232v-96H205.25L352 205.25V488c0 13.25 10.75 24 24 24h48c13.25 0 24-10.75 24-24v-40h40c13.25 0 24-10.75 24-24v-48c0-13.26-10.75-24-24-24z</StreamGeometry>
     <StreamGeometry x:Key="SaveGeometry">M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z</StreamGeometry>
+    <DrawingImage x:Key="StarFilledDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                <GeometryDrawing Brush="{StaticResource SecondaryTextColor}" Geometry="F1 M512,512z M0,0z M394,480A16,16,0,0,1,384.61,477L256,383.76 127.39,477A16,16,0,0,1,102.84,458.92L153,310.35 23,221.2A16,16,0,0,1,32,192L192.38,192 240.78,43.05A16,16,0,0,1,271.22,43.05L319.62,192.05 480,192.05A16,16,0,0,1,489.05,221.25L359,310.35 409.13,458.88A16,16,0,0,1,394,480z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <DrawingImage x:Key="StarOutlineDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                <GeometryDrawing Geometry="F1 M512,512z M0,0z M480,208L308,208 256,48 204,208 32,208 172,304 118,464 256,364 394,464 340,304z">
+                    <GeometryDrawing.Pen>
+                        <Pen
+                            Brush="{DynamicResource MainTextColor}"
+                            LineCap="Flat"
+                            LineJoin="Round"
+                            Thickness="32" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
     <DrawingImage x:Key="RefreshCcwDot">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M 0,0 L 24,0 24,24 0,24 Z">
@@ -40,7 +62,7 @@
                         <Pen
                             LineCap="Round"
                             LineJoin="Round"
-                            Thickness="2" />
+                            Thickness="2.5" />
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing Geometry="F1 M21 12A9 9 0 0 0 6 5.3L3 8">
@@ -48,7 +70,7 @@
                         <Pen
                             LineCap="Round"
                             LineJoin="Round"
-                            Thickness="2" />
+                            Thickness="2.5" />
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing Geometry="F1 M21 22v-6h-6">
@@ -56,7 +78,7 @@
                         <Pen
                             LineCap="Round"
                             LineJoin="Round"
-                            Thickness="2" />
+                            Thickness="2.5" />
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing Geometry="F1 M3 12a9 9 0 0 0 15 6.7l3-2.7">
@@ -64,7 +86,7 @@
                         <Pen
                             LineCap="Round"
                             LineJoin="Round"
-                            Thickness="2" />
+                            Thickness="2.5" />
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
                 <GeometryDrawing>
@@ -72,7 +94,7 @@
                         <Pen
                             LineCap="Round"
                             LineJoin="Round"
-                            Thickness="2" />
+                            Thickness="2.5" />
                     </GeometryDrawing.Pen>
                     <GeometryDrawing.Geometry>
                         <EllipseGeometry

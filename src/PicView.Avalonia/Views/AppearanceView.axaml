@@ -35,6 +35,7 @@
             x:Name="ThemeBox">
             <ComboBoxItem Content="{CompiledBinding DarkTheme, Mode=OneWay}" x:Name="DarkThemeBox" />
             <ComboBoxItem Content="{CompiledBinding LightTheme, Mode=OneWay}" x:Name="LightThemeBox" />
+            <ComboBoxItem Content="{CompiledBinding GlassTheme, Mode=OneWay}" x:Name="GlassThemeBox" />
         </ComboBox>
 
         <TextBlock

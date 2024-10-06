@@ -13,7 +13,7 @@ public partial class ExifWindow : Window
     public ExifWindow()
     {
         InitializeComponent();
-        if (!SettingsHelper.Settings.Theme.Dark)
+        if (SettingsHelper.Settings.Theme.GlassTheme)
         {
             TopWindowBorder.Background = Brushes.Transparent;
             
@@ -21,6 +21,29 @@ public partial class ExifWindow : Window
             CloseButton.BorderThickness = new Thickness(0);
             MinimizeButton.Background = Brushes.Transparent;
             MinimizeButton.BorderThickness = new Thickness(0);
+            
+            if (!Application.Current.TryGetResource("SecondaryTextColor",
+                    Application.Current.RequestedThemeVariant, out var textColor))
+            {
+                return;
+            }
+
+            if (textColor is not Color color)
+            {
+                return;
+            }
+            
+            MinimizeButton.Foreground = new SolidColorBrush(color);
+            CloseButton.Foreground = new SolidColorBrush(color);
+            RecycleText.Foreground = new SolidColorBrush(color);
+            DuplicateText.Foreground = new SolidColorBrush(color);
+            OptimizeText.Foreground = new SolidColorBrush(color);
+            OpenWithText.Foreground = new SolidColorBrush(color);
+            LocateOnDiskText.Foreground = new SolidColorBrush(color);
+        }
+        else if (!SettingsHelper.Settings.Theme.Dark)
+        {
+            ParentBorder.Background = new SolidColorBrush(Color.FromArgb(114,132, 132, 132));
         }
         Title = TranslationHelper.GetTranslation("ImageInfo") + " - PicView";
         KeyDown += (_, e) =>

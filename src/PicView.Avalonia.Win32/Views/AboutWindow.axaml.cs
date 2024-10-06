@@ -13,7 +13,7 @@ public partial class AboutWindow : Window
     public AboutWindow()
     {
         InitializeComponent();
-        if (!SettingsHelper.Settings.Theme.Dark)
+        if (SettingsHelper.Settings.Theme.GlassTheme)
         {
             IconBorder.Background = Brushes.Transparent;
             IconBorder.BorderThickness = new Thickness(0);
@@ -22,7 +22,26 @@ public partial class AboutWindow : Window
             CloseButton.Background = Brushes.Transparent;
             CloseButton.BorderThickness = new Thickness(0);
             BorderRectangle.Height = 0;
-            AboutText.Background = Brushes.Transparent;
+            TitleText.Background = Brushes.Transparent;
+            
+            if (!Application.Current.TryGetResource("SecondaryTextColor",
+                    Application.Current.RequestedThemeVariant, out var textColor))
+            {
+                return;
+            }
+
+            if (textColor is not Color color)
+            {
+                return;
+            }
+            
+            TitleText.Foreground = new SolidColorBrush(color);
+            MinimizeButton.Foreground = new SolidColorBrush(color);
+            CloseButton.Foreground = new SolidColorBrush(color);
+        }
+        else if (!SettingsHelper.Settings.Theme.Dark)
+        {
+            ParentBorder.Background = new SolidColorBrush(Color.FromArgb(114,132, 132, 132));
         }
         Loaded += delegate
         {

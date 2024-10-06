@@ -2,7 +2,9 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Metadata;
 using Avalonia.Threading;
+using PicView.Core.Config;
 
 namespace PicView.Avalonia.CustomControls;
 
@@ -48,6 +50,7 @@ public class IconButton : Button
     /// <summary>
     /// Gets or sets the <see cref="DrawingImage"/> displayed as the icon of the button.
     /// </summary>
+    [Content]
     public DrawingImage? Icon
     {
         get => (DrawingImage?)GetValue(IconProperty);
@@ -91,6 +94,16 @@ public class IconButton : Button
         Content = BuildIcon();
     }
 
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == IconProperty)
+        {
+            Content = BuildIcon();
+        }
+    }
+
     /// <summary>
     /// Builds the icon for the button, either from a <see cref="DrawingImage"/> or a <see cref="StreamGeometry"/>.
     /// It also sets up dynamic brush updates on mouse hover.
@@ -103,7 +116,25 @@ public class IconButton : Button
             // Set the initial pen brush to match the Foreground color
             foreach (var drawing in drawingGroup.Children)
             {
-                if (drawing is GeometryDrawing { Pen: Pen pen })
+                if (drawing is not GeometryDrawing { Pen: Pen pen })
+                {
+                    continue;
+                }
+
+                if (SettingsHelper.Settings.Theme.GlassTheme)
+                {
+                    if (!Application.Current.TryGetResource("SecondaryTextColor",
+                            Application.Current.RequestedThemeVariant, out var secondaryAccentColor))
+                    {
+                        continue;
+                    }
+
+                    if (secondaryAccentColor is Color color)
+                    {
+                        pen.Brush = new SolidColorBrush(color);
+                    }
+                }
+                else
                 {
                     pen.Brush = Foreground;
                 }
@@ -142,6 +173,10 @@ public class IconButton : Button
             // Revert brush to main text color on pointer exit
             PointerExited += delegate
             {
+                if (SettingsHelper.Settings.Theme.GlassTheme)
+                {
+return;
+                }
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     if (!Application.Current.TryGetResource("MainTextColor", Application.Current.RequestedThemeVariant,

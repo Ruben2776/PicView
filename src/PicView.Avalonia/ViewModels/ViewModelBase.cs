@@ -224,9 +224,18 @@ public class ViewModelBase : ReactiveObject
         SideBySideTooltip = TranslationHelper.Translation.SideBySideTooltip;
         HighlightColor = TranslationHelper.Translation.HighlightColor;
         AllowZoomOut = TranslationHelper.Translation.AllowZoomOut;
+        GlassTheme = TranslationHelper.Translation.GlassTheme;
     }
 
     #region Strings
+    
+    private string? _glassTheme;
+    
+    public string? GlassTheme
+    {
+        get => _glassTheme;
+        set => this.RaiseAndSetIfChanged(ref _glassTheme, value);
+    }
     
     private string? _allowZoomOut;
     

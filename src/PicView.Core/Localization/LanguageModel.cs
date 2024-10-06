@@ -387,4 +387,5 @@ public class LanguageModel
     public string? BottomGalleryThumbnailStretch { get; set; }
     public string? SideBySide { get; set; }
     public string? SideBySideTooltip { get; set; }
+    public string? GlassTheme { get; set; }
 }

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using PicView.Avalonia.UI;
+using PicView.Core.Config;
 
 namespace PicView.Avalonia.Views;
 
@@ -11,46 +12,60 @@ public partial class BottomBar : UserControl
     public BottomBar()
     {
         InitializeComponent();
-        NextButton.PointerEntered += (s, e) =>
+
+        Loaded += delegate
         {
-            if (!Application.Current.TryGetResource("ButtonForegroundPointerOver", Application.Current.RequestedThemeVariant, out var buttonForegroundPointerOver))
+            PointerPressed += (_, e) => MoveWindow(e);
+            PointerExited += (_, _) =>
+            {
+                DragAndDropHelper.RemoveDragDropView();
+            };
+
+            if (!SettingsHelper.Settings.Theme.GlassTheme)
             {
                 return;
             }
-            var brush = new SolidColorBrush((Color)(buttonForegroundPointerOver ?? Brushes.White));
-            NextIcon.Fill = brush;
-        };
-        NextButton.PointerExited += (s, e) =>
-        {
-            if (!Application.Current.TryGetResource("MainTextColor", Application.Current.RequestedThemeVariant, out var MainTextColor))
+
+            MainBottomBorder.Background = Brushes.Transparent;
+            MainBottomBorder.BorderThickness = new Thickness(0);
+                
+            FileMenuButton.Background = Brushes.Transparent;
+            FileMenuButton.BorderThickness = new Thickness(0);
+                
+            ImageMenuButton.Background = Brushes.Transparent;
+            ImageMenuButton.BorderThickness = new Thickness(0);
+                
+            ToolsMenuButton.Background = Brushes.Transparent;
+            ToolsMenuButton.BorderThickness = new Thickness(0);
+                
+            SettingsMenuButton.Background = Brushes.Transparent;
+            SettingsMenuButton.BorderThickness = new Thickness(0);
+            
+            NextButton.Background = new SolidColorBrush(Color.FromArgb(15, 255, 255, 255));
+            NextButton.BorderThickness = new Thickness(0);
+                
+            PreviousButton.Background = new SolidColorBrush(Color.FromArgb(15, 255, 255, 255));
+            PreviousButton.BorderThickness = new Thickness(0);
+
+            if (!Application.Current.TryGetResource("SecondaryTextColor",
+                    Application.Current.RequestedThemeVariant, out var textColor))
             {
                 return;
             }
-            var brush = new SolidColorBrush((Color)(MainTextColor ?? Brushes.White));
-            NextIcon.Fill = brush;
-        };
-        PreviousButton.PointerEntered += (s, e) =>
-        {
-            if (!Application.Current.TryGetResource("ButtonForegroundPointerOver", Application.Current.RequestedThemeVariant, out var buttonForegroundPointerOver))
+
+            if (textColor is not Color color)
             {
                 return;
             }
-            var brush = new SolidColorBrush((Color)(buttonForegroundPointerOver ?? Brushes.White));
-            PrevIcon.Fill = brush;
-        };
-        PreviousButton.PointerExited += (s, e) =>
-        {
-            if (!Application.Current.TryGetResource("MainTextColor", Application.Current.RequestedThemeVariant, out var MainTextColor))
-            {
-                return;
-            }
-            var brush = new SolidColorBrush((Color)(MainTextColor ?? Brushes.White));
-            PrevIcon.Fill = brush;
-        };
-        PointerPressed += (_, e) => MoveWindow(e);
-        PointerExited += (_, _) =>
-        {
-            DragAndDropHelper.RemoveDragDropView();
+
+            FileMenuButton.Foreground = new SolidColorBrush(color);
+            ImageMenuButton.Foreground = new SolidColorBrush(color);
+            ToolsMenuButton.Foreground = new SolidColorBrush(color);
+            SettingsMenuButton.Foreground = new SolidColorBrush(color);
+            
+            NextButton.Foreground = new SolidColorBrush(color);
+            PreviousButton.Foreground = new SolidColorBrush(color);
+
         };
     }
 

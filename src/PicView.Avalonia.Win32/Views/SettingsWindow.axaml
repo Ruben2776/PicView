@@ -22,7 +22,7 @@
     <Border
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
-        CornerRadius="0,0,8,8"
+        CornerRadius="8"
         PointerPressed="MoveWindow"
         x:Name="ParentBorder">
         <Panel>
@@ -34,6 +34,7 @@
                     Background="{DynamicResource WindowBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,1"
+                    CornerRadius="8,8,0,0"
                     DockPanel.Dock="Left"
                     x:Name="TopWindowBorder">
                     <Image
@@ -44,14 +45,15 @@
                 </Border>
 
                 <customControls:IconButton
-                    Background="{DynamicResource MainButtonBackgroundColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
                     Click="Close"
+                    CornerRadius="0,8,0,0"
                     Data="{StaticResource CloseGeometry}"
                     DockPanel.Dock="Right"
-                    Foreground="{StaticResource SecondaryTextColor}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IconHeight="10"
                     IconWidth="10"
                     ToolTip.Tip="{CompiledBinding Close,
@@ -60,28 +62,28 @@
                     x:Name="CloseButton" />
 
                 <customControls:IconButton
-                    Background="{DynamicResource MainButtonBackgroundColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
                     Click="Minimize"
                     Data="{StaticResource MinimizeGeometry}"
                     DockPanel.Dock="Right"
-                    Foreground="{StaticResource SecondaryTextColor}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IconHeight="12"
                     IconWidth="12"
                     Width="30"
                     x:Name="MinimizeButton" />
 
                 <TextBlock
-                    Background="{StaticResource SecondaryBackgroundColor}"
+                    Background="{StaticResource WindowSecondaryBackgroundColor}"
                     Classes="txt"
-                    Foreground="{StaticResource SecondaryTextColor}"
+                    Foreground="{DynamicResource MainTextColor}"
                     LineHeight="28"
                     Text="{CompiledBinding Settings,
                                            Mode=OneWay}"
                     TextAlignment="Center"
-                    x:Name="SettingsText" />
+                    x:Name="TitleText" />
             </DockPanel>
 
 

@@ -1056,12 +1056,6 @@ public static class FunctionsHelper
         ProcessHelper.RestartApp(args);
         await Quit();
     }
-    
-    public static Task ChangeTheme()
-    {
-        ThemeManager.ChangeTheme();
-        return Task.CompletedTask;
-    }
 
     #endregion
     

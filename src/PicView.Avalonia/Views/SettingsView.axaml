@@ -986,6 +986,7 @@
             BorderThickness="0,1,1,0"
             Classes="BorderStyle altHover mainBtn"
             Command="{CompiledBinding ResetSettingsCommand}"
+            CornerRadius="0,0,0,8"
             HorizontalAlignment="Left"
             Margin="0"
             VerticalAlignment="Bottom"

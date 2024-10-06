@@ -294,7 +294,7 @@ public sealed class PreLoader : IDisposable
 
         var options = new ParallelOptions
         {
-            MaxDegreeOfParallelism = Environment.ProcessorCount - 2 < 1 ? 1 : Environment.ProcessorCount - 2
+            MaxDegreeOfParallelism = Environment.ProcessorCount - 3 < 1 ? 1 : Environment.ProcessorCount - 3
         };
 
         try

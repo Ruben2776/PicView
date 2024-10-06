@@ -25,8 +25,10 @@
     <Border
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
-        CornerRadius="0,0,8,8">
-        <DockPanel Background="Transparent" PointerPressed="MoveWindow">
+        CornerRadius="0,0,8,8"
+        PointerPressed="MoveWindow"
+        x:Name="ParentBorder">
+        <DockPanel Background="Transparent">
             <StackPanel
                 Background="{DynamicResource WindowBackgroundColor}"
                 DockPanel.Dock="Top"
@@ -49,9 +51,11 @@
                     Width="131">
                     <TextBlock
                         Classes="txt"
+                        Foreground="{DynamicResource MainTextColor}"
                         HorizontalAlignment="Center"
                         Text="{CompiledBinding DuplicateFile}"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Center"
+                        x:Name="DuplicateText" />
                 </Button>
 
                 <Button
@@ -63,9 +67,11 @@
                     Width="130">
                     <TextBlock
                         Classes="txt"
+                        Foreground="{DynamicResource MainTextColor}"
                         HorizontalAlignment="Center"
                         Text="{Binding DeleteFile}"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Center"
+                        x:Name="RecycleText" />
                 </Button>
 
                 <Button
@@ -77,9 +83,11 @@
                     Width="130">
                     <TextBlock
                         Classes="txt"
+                        Foreground="{DynamicResource MainTextColor}"
                         HorizontalAlignment="Center"
                         Text="{Binding OptimizeImage}"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Center"
+                        x:Name="OptimizeText" />
                 </Button>
 
                 <Button
@@ -93,9 +101,11 @@
                     Width="130">
                     <TextBlock
                         Classes="txt"
+                        Foreground="{DynamicResource MainTextColor}"
                         HorizontalAlignment="Center"
                         Text="{Binding OpenWith}"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Center"
+                        x:Name="OpenWithText" />
                 </Button>
 
                 <Button
@@ -109,12 +119,14 @@
                     Width="131">
                     <TextBlock
                         Classes="txt"
+                        Foreground="{DynamicResource MainTextColor}"
                         HorizontalAlignment="Center"
                         Text="{Binding ShowInFolder}"
-                        VerticalAlignment="Center" />
+                        VerticalAlignment="Center"
+                        x:Name="LocateOnDiskText" />
                 </Button>
                 <buttons:StarOutlineButtons
-                    Background="{DynamicResource FadedBackgroundColor}"
+                    Background="{DynamicResource SecondaryBackgroundColor}"
                     Padding="5,0,0,3"
                     x:Name="StarOutlineButtons" />
 
@@ -126,7 +138,7 @@
                     Click="Minimize"
                     Data="{StaticResource MinimizeGeometry}"
                     DockPanel.Dock="Right"
-                    Foreground="{StaticResource SecondaryTextColor}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IconHeight="12"
                     IconWidth="12"
                     Width="29"
@@ -140,7 +152,7 @@
                     Click="Close"
                     Data="{StaticResource CloseGeometry}"
                     DockPanel.Dock="Right"
-                    Foreground="{StaticResource SecondaryTextColor}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IconHeight="10"
                     IconWidth="10"
                     Width="29"

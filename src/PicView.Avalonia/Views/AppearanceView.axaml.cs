@@ -23,11 +23,40 @@ public partial class AppearanceView : UserControl
             return;
         }
         GalleryStretchMode.DetermineStretchMode(vm);
-        
-        ThemeBox.SelectedItem = SettingsHelper.Settings.Theme.Dark ? DarkThemeBox : LightThemeBox;
+
+        if (SettingsHelper.Settings.Theme.GlassTheme)
+        {
+            ThemeBox.SelectedItem = GlassThemeBox;
+        }
+        else
+        {
+            ThemeBox.SelectedItem = SettingsHelper.Settings.Theme.Dark ? DarkThemeBox : LightThemeBox;
+        }
         ThemeBox.SelectionChanged += delegate
         {
-            ThemeManager.SetTheme(ThemeBox.SelectedIndex == 0);
+            // Adjust based on which theme is selected
+            if (Equals(ThemeBox.SelectedItem, GlassThemeBox))
+            {
+                SettingsHelper.Settings.Theme.GlassTheme = true;
+            }
+            else if (Equals(ThemeBox.SelectedItem, DarkThemeBox))
+            {
+                SettingsHelper.Settings.Theme.GlassTheme = false;
+                SettingsHelper.Settings.Theme.Dark = true;
+            }
+            else
+            {
+                SettingsHelper.Settings.Theme.GlassTheme = false;
+                SettingsHelper.Settings.Theme.Dark = false;
+            }
+
+            var selectedTheme = SettingsHelper.Settings.Theme.GlassTheme
+                ? ThemeManager.Theme.Glass
+                : SettingsHelper.Settings.Theme.Dark
+                    ? ThemeManager.Theme.Dark
+                    : ThemeManager.Theme.Light;
+
+            ThemeManager.SetTheme(selectedTheme);
         };
 
         ClearButtonsActiveState();
