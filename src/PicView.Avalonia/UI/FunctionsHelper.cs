@@ -8,6 +8,7 @@ using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
@@ -35,6 +36,10 @@ public static class FunctionsHelper
             "Down" => Down,
             "Last" => Last,
             "First" => First,
+            
+            // Rotate
+            "RotateLeft" => RotateLeft,
+            "RotateRight" => RotateRight,
 
             // Scroll
             "ScrollUp" => ScrollUp,
@@ -218,12 +223,12 @@ public static class FunctionsHelper
 
     public static async Task RotateRight()
     {
-        await UIHelper.RotateRight(Vm);
+        await Rotation.RotateRight(Vm);
     }
 
     public static async Task RotateLeft()
     {
-        await UIHelper.RotateLeft(Vm);
+        await Rotation.RotateLeft(Vm);
     }
 
     public static async Task Down()

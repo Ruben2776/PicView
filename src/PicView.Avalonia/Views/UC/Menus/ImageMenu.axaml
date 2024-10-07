@@ -38,7 +38,7 @@
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="hover"
-                    Command="{CompiledBinding RotateLeftCommand}"
+                    Command="{CompiledBinding RotateLeftButtonCommand}"
                     CornerRadius="8,0,0,0"
                     Data="{StaticResource RotateLeftGeometry}"
                     Foreground="{DynamicResource MainTextColor}"
@@ -47,7 +47,8 @@
                     IconWidth="15"
                     ToolTip.Tip="{CompiledBinding RotateLeft,
                                                   Mode=OneWay}"
-                    Width="45" />
+                    Width="45"
+                    x:Name="RotateLeftButton" />
 
                 <customControls:IconButton
                     Background="Transparent"
@@ -55,7 +56,7 @@
                     BorderThickness="0,0,1,0"
                     Canvas.Left="45"
                     Classes="hover"
-                    Command="{CompiledBinding RotateRightCommand}"
+                    Command="{CompiledBinding RotateRightButtonCommand}"
                     Data="{StaticResource RotateRightGeometry}"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="45"
@@ -63,7 +64,8 @@
                     IconWidth="15"
                     ToolTip.Tip="{CompiledBinding RotateRight,
                                                   Mode=OneWay}"
-                    Width="45" />
+                    Width="45"
+                    x:Name="RotateRightButton" />
 
                 <customControls:IconButton
                     Background="Transparent"

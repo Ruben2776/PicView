@@ -9,6 +9,7 @@ using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Converters;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
@@ -459,7 +460,10 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<string, Unit>? DuplicateFileCommand { get; }
     public ReactiveCommand<Unit, Unit>? ToggleLoopingCommand { get; }
     public ReactiveCommand<Unit, Unit>? RotateLeftCommand { get; }
+    public ReactiveCommand<Unit, Unit>? RotateLeftButtonCommand { get; }
     public ReactiveCommand<Unit, Unit>? RotateRightCommand { get; }
+    public ReactiveCommand<Unit, Unit>? RotateRightButtonCommand { get; }
+    public ReactiveCommand<Unit, Unit>? RotateRightWindowBorderButtonCommand { get; }
     public ReactiveCommand<Unit, Unit>? FlipCommand { get; }
     public ReactiveCommand<Unit, Unit>? StretchCommand { get; }
     public ReactiveCommand<Unit, Unit>? CropCommand { get; }
@@ -1733,8 +1737,21 @@ public class MainViewModel : ViewModelBase
         #region Image commands
 
         RotateLeftCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.RotateLeft);
+        RotateLeftButtonCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await Rotation.RotateLeft(this, Rotation.RotationButton.RotateLeftButton);
+        });
 
         RotateRightCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.RotateRight);
+        RotateRightButtonCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await Rotation.RotateRight(this, Rotation.RotationButton.RotateRightButton);
+        });
+        
+        RotateRightWindowBorderButtonCommand = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await Rotation.RotateRight(this, Rotation.RotationButton.WindowBorderButton);
+        });
 
         FlipCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Flip);
 

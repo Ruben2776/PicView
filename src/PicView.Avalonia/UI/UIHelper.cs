@@ -343,58 +343,7 @@ namespace PicView.Avalonia.UI
             }
         }
 
-        public static async Task RotateRight(MainViewModel? vm)
-        {
-            if (vm is null)
-            {
-                return;
-            }
 
-            if (GalleryFunctions.IsFullGalleryOpen)
-            {
-                return;
-            }
-
-            await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(false); });
-
-            // Check if it should move the cursor
-            if (!SettingsHelper.Settings.WindowProperties.AutoFit)
-            {
-                return;
-            }
-
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                return;
-            }
-
-            // Move cursor when button is clicked
-            // TODO: Dynamically figure out which button is clicked
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                var titleBar = desktop.MainWindow.GetControl<Control>("Titlebar");
-                var button = titleBar.GetControl<Button>("RotateRightButton");
-                if (button.IsPointerOver)
-                {
-                    var p = button.PointToScreen(new Point(10, 15));
-                    vm.PlatformService?.SetCursorPos(p.X, p.Y);
-                }
-            });
-        }
-        
-        public static async Task RotateLeft(MainViewModel? vm)
-        {
-            if (vm is null)
-            {
-                return;
-            }
-
-            if (GalleryFunctions.IsFullGalleryOpen)
-            {
-                return;
-            }
-            await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(true); });
-        }
 
         #endregion Navigation
 
