@@ -30,22 +30,24 @@ public partial class BottomBar : UserControl
             MainBottomBorder.BorderThickness = new Thickness(0);
                 
             FileMenuButton.Background = Brushes.Transparent;
-            FileMenuButton.BorderThickness = new Thickness(0);
+            FileMenuButton.Classes.Remove("noBorderHover");
+            FileMenuButton.Classes.Add("hover");
                 
             ImageMenuButton.Background = Brushes.Transparent;
-            ImageMenuButton.BorderThickness = new Thickness(0);
+            ImageMenuButton.Classes.Remove("noBorderHover");
+            ImageMenuButton.Classes.Add("hover");
                 
             ToolsMenuButton.Background = Brushes.Transparent;
-            ToolsMenuButton.BorderThickness = new Thickness(0);
+            ToolsMenuButton.Classes.Remove("noBorderHover");
+            ToolsMenuButton.Classes.Add("hover");
                 
             SettingsMenuButton.Background = Brushes.Transparent;
-            SettingsMenuButton.BorderThickness = new Thickness(0);
+            SettingsMenuButton.Classes.Remove("noBorderHover");
+            SettingsMenuButton.Classes.Add("hover");
             
             NextButton.Background = new SolidColorBrush(Color.FromArgb(15, 255, 255, 255));
-            NextButton.BorderThickness = new Thickness(0);
                 
             PreviousButton.Background = new SolidColorBrush(Color.FromArgb(15, 255, 255, 255));
-            PreviousButton.BorderThickness = new Thickness(0);
 
             if (!Application.Current.TryGetResource("SecondaryTextColor",
                     Application.Current.RequestedThemeVariant, out var textColor))

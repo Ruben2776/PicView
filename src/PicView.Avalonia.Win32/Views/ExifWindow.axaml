@@ -48,7 +48,8 @@
                     Classes="noBorderHover"
                     Command="{CompiledBinding DuplicateFileCommand}"
                     Height="28"
-                    Width="131">
+                    Width="131"
+                    x:Name="DuplicateButton">
                     <TextBlock
                         Classes="txt"
                         Foreground="{DynamicResource MainTextColor}"
@@ -64,7 +65,8 @@
                     Classes="noBorderHover"
                     Command="{CompiledBinding RecycleFileCommand}"
                     Height="28"
-                    Width="130">
+                    Width="130"
+                    x:Name="RecycleButton">
                     <TextBlock
                         Classes="txt"
                         Foreground="{DynamicResource MainTextColor}"
@@ -80,7 +82,8 @@
                     Classes="noBorderHover"
                     Command="{Binding OptimizeImageCommand}"
                     Height="28"
-                    Width="130">
+                    Width="130"
+                    x:Name="OptimizeButton">
                     <TextBlock
                         Classes="txt"
                         Foreground="{DynamicResource MainTextColor}"
@@ -98,7 +101,8 @@
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
                     Height="28"
-                    Width="130">
+                    Width="130"
+                    x:Name="OpenWithButton">
                     <TextBlock
                         Classes="txt"
                         Foreground="{DynamicResource MainTextColor}"
@@ -116,7 +120,8 @@
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
                     Height="28"
-                    Width="131">
+                    Width="131"
+                    x:Name="LocateOnDiskButton">
                     <TextBlock
                         Classes="txt"
                         Foreground="{DynamicResource MainTextColor}"
@@ -162,7 +167,8 @@
                 DockPanel.Dock="Top"
                 Fill="{DynamicResource MainBorderColor}"
                 Height="1"
-                Width="899" />
+                Width="899"
+                x:Name="BorderRectangle" />
             <views:ExifView Background="{StaticResource NoisyTexture}" x:Name="ExifView" />
         </DockPanel>
     </Border>

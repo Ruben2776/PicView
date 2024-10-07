@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Media;
 using Avalonia.Styling;
 using PicView.Core.Config;
 
@@ -35,9 +36,38 @@ public static class ThemeManager
             case Theme.Glass:
                 SettingsHelper.Settings.Theme.GlassTheme = true;
                 application.RequestedThemeVariant = ThemeVariant.Light;
+                GlassThemeUpdates();
                 break;
         }
         
         ColorManager.UpdateAccentColors(SettingsHelper.Settings.Theme.ColorTheme);
+    }
+
+    public static void GlassThemeUpdates()
+    {
+        if (!Application.Current.TryGetResource("MainTextColor",
+                ThemeVariant.Dark, out var textColor))
+        {
+            return;
+        }
+
+        if (textColor is not Color mainColor)
+        {
+            return;
+        }
+
+        Application.Current.Resources["MainTextColor"] = mainColor;
+        
+        Application.Current.Resources["MainButtonBackgroundColor"] = Color.Parse("#E5F1F1F1");
+
+        Application.Current.Resources["MainBorderColor"] = Colors.Transparent;
+        Application.Current.Resources["SecondaryBorderColor"] = Colors.Transparent;
+        Application.Current.Resources["TertiaryBorderColor"] = Colors.Transparent;
+        
+        Application.Current.Resources["ContextMenuTextColor"] = mainColor;
+        Application.Current.Resources["ContextMenuBackgroundColor"] = Color.Parse("#A1464646");
+            
+        Application.Current.Resources["MenuBackgroundColor"] = Color.Parse("#D73E3E3E");
+        Application.Current.Resources["MenuButtonColor"] = Color.Parse("#76909090");
     }
 }

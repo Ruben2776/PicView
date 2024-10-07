@@ -15,12 +15,35 @@ public partial class ExifWindow : Window
         InitializeComponent();
         if (SettingsHelper.Settings.Theme.GlassTheme)
         {
+            BorderRectangle.Height = 0;
+            
             TopWindowBorder.Background = Brushes.Transparent;
             
             CloseButton.Background = Brushes.Transparent;
             CloseButton.BorderThickness = new Thickness(0);
             MinimizeButton.Background = Brushes.Transparent;
             MinimizeButton.BorderThickness = new Thickness(0);
+            
+            RecycleButton.BorderThickness = new Thickness(0);
+            DuplicateButton.BorderThickness = new Thickness(0);
+            OptimizeButton.BorderThickness = new Thickness(0);
+            OpenWithButton.BorderThickness = new Thickness(0);
+            LocateOnDiskButton.BorderThickness = new Thickness(0);
+
+            RecycleButton.Classes.Remove("noBorderHover");
+            RecycleButton.Classes.Add("hover");
+            
+            DuplicateButton.Classes.Remove("noBorderHover");
+            DuplicateButton.Classes.Add("hover");
+            
+            OptimizeButton.Classes.Remove("noBorderHover");
+            OptimizeButton.Classes.Add("hover");
+            
+            OpenWithButton.Classes.Remove("noBorderHover");
+            OpenWithButton.Classes.Add("hover");
+            
+            LocateOnDiskButton.Classes.Remove("noBorderHover");
+            LocateOnDiskButton.Classes.Add("hover");
             
             if (!Application.Current.TryGetResource("SecondaryTextColor",
                     Application.Current.RequestedThemeVariant, out var textColor))

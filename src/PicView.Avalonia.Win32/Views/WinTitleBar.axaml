@@ -61,7 +61,7 @@
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="hover"
-                Command="{CompiledBinding RotateRightCommand}"
+                Command="{CompiledBinding RotateRightWindowBorderButtonCommand}"
                 DockPanel.Dock="Left"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource RefreshCcwDot}"

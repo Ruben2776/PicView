@@ -580,6 +580,7 @@ public static class WindowHelper
             return;
         }
 
+        const int padding = 45;
         var screenSize = ScreenHelper.ScreenSize;
         double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
         desktopMinWidth = desktop.MainWindow.MinWidth;
@@ -605,7 +606,7 @@ public static class WindowHelper
                 desktopMinHeight,
                 ImageSizeCalculationHelper.GetInterfaceSize(),
                 rotation,
-                padding: SettingsHelper.Settings.ImageScaling.StretchImage ? 15 : 45,
+                padding,
                 screenSize.Scaling,
                 vm.TitlebarHeight,
                 vm.BottombarHeight,
@@ -624,7 +625,7 @@ public static class WindowHelper
                 desktopMinHeight,
                 ImageSizeCalculationHelper.GetInterfaceSize(),
                 rotation,
-                padding: SettingsHelper.Settings.ImageScaling.StretchImage ? 15 : 45,
+                padding,
                 screenSize.Scaling,
                 vm.TitlebarHeight,
                 vm.BottombarHeight,

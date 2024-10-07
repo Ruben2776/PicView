@@ -66,6 +66,10 @@ public static class StartUpHelper
         w.Show();
         vm.IsLoading = true;
         ScreenHelper.UpdateScreenSize(w);
+        if (SettingsHelper.Settings.Theme.GlassTheme)
+        {
+            ThemeManager.GlassThemeUpdates();
+        }
         UIHelper.SetControls(desktop);
         vm.UpdateLanguage();
         vm.GetFlipped = vm.Flip;

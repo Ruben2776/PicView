@@ -485,7 +485,7 @@
                 Margin="15,15,15,10"
                 Orientation="Horizontal">
                 <Rectangle
-                    Fill="{StaticResource MainBorderColor}"
+                    Fill="{DynamicResource MainBorderColor}"
                     Height="1"
                     Margin="0,0,7,0"
                     Width="395" />
@@ -494,7 +494,7 @@
                     Fill="{StaticResource SecondaryTextColor}"
                     Stretch="Uniform" />
                 <Rectangle
-                    Fill="{StaticResource MainBorderColor}"
+                    Fill="{DynamicResource MainBorderColor}"
                     Height="1"
                     Margin="7,0,0,0"
                     Width="395" />
@@ -660,7 +660,7 @@
                 Margin="15,15,15,10"
                 Orientation="Horizontal">
                 <Rectangle
-                    Fill="{StaticResource MainBorderColor}"
+                    Fill="{DynamicResource MainBorderColor}"
                     Height="1"
                     Margin="0,0,7,0"
                     Width="395" />
@@ -669,7 +669,7 @@
                     Fill="{StaticResource SecondaryTextColor}"
                     Stretch="Uniform" />
                 <Rectangle
-                    Fill="{StaticResource MainBorderColor}"
+                    Fill="{DynamicResource MainBorderColor}"
                     Height="1"
                     Margin="7,0,0,0"
                     Width="395" />
@@ -779,7 +779,7 @@
                 Margin="15,15,15,10"
                 Orientation="Horizontal">
                 <Rectangle
-                    Fill="{StaticResource MainBorderColor}"
+                    Fill="{DynamicResource MainBorderColor}"
                     Height="1"
                     Margin="0,0,7,0"
                     Width="395" />
@@ -788,7 +788,7 @@
                     Fill="{StaticResource SecondaryTextColor}"
                     Stretch="Uniform" />
                 <Rectangle
-                    Fill="{StaticResource MainBorderColor}"
+                    Fill="{DynamicResource MainBorderColor}"
                     Height="1"
                     Margin="7,0,0,0"
                     Width="395" />
@@ -904,7 +904,7 @@
                 Margin="15,15,15,10"
                 Orientation="Horizontal">
                 <Rectangle
-                    Fill="{StaticResource MainBorderColor}"
+                    Fill="{DynamicResource MainBorderColor}"
                     Height="1"
                     Margin="0,0,7,0"
                     Width="395" />
@@ -920,7 +920,7 @@
                     </Image.Source>
                 </Image>
                 <Rectangle
-                    Fill="{StaticResource MainBorderColor}"
+                    Fill="{DynamicResource MainBorderColor}"
                     Height="1"
                     Margin="7,0,0,0"
                     Width="395" />
