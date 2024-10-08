@@ -46,7 +46,7 @@ jobs:
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: .\Build\install.iss
-          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-arm64\install /DMyFileSource=${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.file-version}}-win-arm64\ /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
+          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-arm64\install /DMyFileSource=${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-arm64\ /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
 
 
       - name: upload-unsigned-artifact
