@@ -38,10 +38,15 @@
             <ComboBoxItem Content="{CompiledBinding GlassTheme, Mode=OneWay}" x:Name="GlassThemeBox" />
         </ComboBox>
 
-        <Button Command="{Binding RestartCommand}" Margin="0,5,0,20">
+        <Button
+            Classes="altHover"
+            Command="{Binding RestartCommand}"
+            Margin="0,0,0,20">
             <TextBlock
-                Classes="txt hover"
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Foreground="{StaticResource SecondaryTextColor}"
+                Padding="5"
                 Text="{CompiledBinding ChangingThemeRequiresRestart,
                                        Mode=OneWay}" />
         </Button>

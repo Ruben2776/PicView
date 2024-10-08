@@ -56,7 +56,7 @@
                 <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AltBackgroundColor}" />
+                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
                         </Setter>
                         <Setter Property="BorderBrush">
                             <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
@@ -67,12 +67,12 @@
                             <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
                         </Setter>
                         <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
+                            <SolidColorBrush Color="{DynamicResource SecondaryBorderColor}" />
                         </Setter>
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
         </Style>
         <Style Selector="^.noBorderHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
