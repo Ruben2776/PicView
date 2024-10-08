@@ -3,6 +3,7 @@ using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Config;
 using ReactiveUI;
 
 namespace PicView.Avalonia.Views.UC.Menus;
@@ -12,10 +13,16 @@ public partial class ImageMenu  : AnimatedMenu
     public ImageMenu()
     {
         InitializeComponent();
-        GoToPicBox.KeyDown += async (_, e) => await GoToPicBox_OnKeyDown(e);
-        this.WhenAnyValue(x => x.IsVisible)
-            .Where(isVisible => !isVisible)
-            .Subscribe(_ => SlideShowButton.Flyout.Hide());
+        Loaded += delegate
+        {
+            if (SettingsHelper.Settings.Theme.GlassTheme || !SettingsHelper.Settings.Theme.Dark)
+            {
+                // TODO fix when not using dark theme
+            }
+            GoToPicBox.KeyDown += async (_, e) => await GoToPicBox_OnKeyDown(e);
+            this.WhenAnyValue(x => x.IsVisible)
+                .Where(isVisible => !isVisible).Subscribe(_ => SlideShowButton.Flyout.Hide());
+        };
     }
 
     private async Task GoToPicBox_OnKeyDown(KeyEventArgs e)

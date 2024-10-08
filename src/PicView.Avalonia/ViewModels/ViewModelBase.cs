@@ -225,9 +225,18 @@ public class ViewModelBase : ReactiveObject
         HighlightColor = TranslationHelper.Translation.HighlightColor;
         AllowZoomOut = TranslationHelper.Translation.AllowZoomOut;
         GlassTheme = TranslationHelper.Translation.GlassTheme;
+        ChangingThemeRequiresRestart = TranslationHelper.Translation.ChangingThemeRequiresRestart;
     }
 
     #region Strings
+    
+    private string? _changingThemeRequiresRestart;
+    
+    public string? ChangingThemeRequiresRestart
+    {
+        get => _changingThemeRequiresRestart;
+        set => this.RaiseAndSetIfChanged(ref _changingThemeRequiresRestart, value);
+    }
     
     private string? _glassTheme;
     

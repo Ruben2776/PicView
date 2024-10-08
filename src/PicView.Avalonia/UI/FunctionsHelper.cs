@@ -1061,6 +1061,22 @@ public static class FunctionsHelper
         ProcessHelper.RestartApp(args);
         await Quit();
     }
+    
+    public static async Task Restart()
+    {
+        ProcessHelper.RestartApp(Environment.GetCommandLineArgs()?.ToString());
+
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            Environment.Exit(0);
+            return;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            // TODO: Make it a setting to close the window
+            desktop.MainWindow?.Close();
+        });
+    }
 
     #endregion
     

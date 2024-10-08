@@ -523,6 +523,8 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>? ResetSettingsCommand { get; }
     
     public ReactiveCommand<Unit, Unit>? ShowSideBySideCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit>? RestartCommand { get; }
 
     #endregion Commands
 
@@ -1871,6 +1873,8 @@ public class MainViewModel : ViewModelBase
         ToggleLoopingCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleLooping);
         
         ResetSettingsCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ResetSettings);
+        
+        RestartCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Restart);
 
         #endregion Settings commands
     }

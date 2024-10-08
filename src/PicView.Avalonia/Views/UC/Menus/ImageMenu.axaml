@@ -115,7 +115,8 @@
                     Height="45"
                     ToolTip.Tip="{CompiledBinding GoToImageAtSpecifiedIndex,
                                                   Mode=OneWay}"
-                    Width="90">
+                    Width="90"
+                    x:Name="GoToPicButton">
                     <StackPanel Margin="5,0" Orientation="Horizontal">
                         <Image Height="17" Width="17">
                             <DrawingImage>
