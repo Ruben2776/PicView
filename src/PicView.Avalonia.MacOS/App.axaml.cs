@@ -58,7 +58,18 @@ public class App : Application, IPlatformSpecificService
         }
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            Current.RequestedThemeVariant = SettingsHelper.Settings.Theme.Dark ? ThemeVariant.Dark : ThemeVariant.Light;
+            if (SettingsHelper.Settings.Theme.GlassTheme)
+            {
+                Current.RequestedThemeVariant = ThemeVariant.Light;
+            }
+            else if (SettingsHelper.Settings.Theme.UseSystemTheme)
+            {
+                Current.RequestedThemeVariant = ThemeVariant.Dark; // TODO : Figure out how to get the system theme
+            }
+            else
+            {
+                Current.RequestedThemeVariant = SettingsHelper.Settings.Theme.Dark ? ThemeVariant.Dark : ThemeVariant.Light;
+            }
             _mainWindow = new MacMainWindow();
             desktop.MainWindow = _mainWindow;
         });
