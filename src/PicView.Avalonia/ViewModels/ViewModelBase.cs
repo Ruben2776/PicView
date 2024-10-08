@@ -1565,7 +1565,7 @@ public class ViewModelBase : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _hideBottomGallery, value);
     }
 
-    private string? _loopingDisabled = TranslationHelper.Translation.LoopingDisabled;
+    private string? _loopingDisabled;
 
     public string? LoopingDisabled
     {
@@ -1573,7 +1573,7 @@ public class ViewModelBase : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _loopingDisabled, value);
     }
 
-    private string? _loopingEnabled = TranslationHelper.Translation.LoopingEnabled;
+    private string? _loopingEnabled;
 
     public string? LoopingEnabled
     {
