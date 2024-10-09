@@ -7,9 +7,10 @@
 
         <Style Selector="^:horizontal">
             <Setter Property="Height" Value="18" />
+            <Setter Property="Focusable" Value="False" />
             <Setter Property="Template">
                 <ControlTemplate>
-                    <Border Background="{DynamicResource SecondaryBackgroundColor}" UseLayoutRounding="False">
+                    <Border Background="{DynamicResource TertiaryBackgroundColor}" UseLayoutRounding="False">
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <RepeatButton
                                 Background="Transparent"
@@ -156,13 +157,14 @@
             </Setter>
         </Style>
         <Style Selector="^ /template/ Thumb#thumb">
-            <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
+            <Setter Property="Background" Value="{DynamicResource MainBackgroundColor}" />
+            <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
                         <Border
                             Background="{TemplateBinding Background}"
-                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderBrush="{DynamicResource TertiaryBorderColor}"
                             BorderThickness="1" />
                     </ControlTemplate>
                 </Setter.Value>
@@ -195,7 +197,7 @@
         </Style>
 
         <Style Selector="^ /template/ RepeatButton &gt; Path">
-            <Setter Property="Fill" Value="{StaticResource SecondaryTextColor}" />
+            <Setter Property="Fill" Value="{TemplateBinding Foreground}" />
         </Style>
 
         <Style Selector="^ /template/ RepeatButton:pointerover &gt; Path">

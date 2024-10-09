@@ -28,7 +28,7 @@
 
             <Color x:Key="MainBorderColor">#FF3A3A3A</Color>
             <Color x:Key="SecondaryBorderColor">#777</Color>
-            <Color x:Key="TertiaryBorderColor">#555</Color>
+            <Color x:Key="TertiaryBorderColor">#4B4B4B</Color>
 
             <Color x:Key="ButtonForegroundPointerOver">#FFF</Color>
 
@@ -73,22 +73,22 @@
 
             <Color x:Key="MainBackgroundColor">White</Color>
             <Color x:Key="SecondaryBackgroundColor">#1CFFFFFF</Color>
-            <Color x:Key="TertiaryBackgroundColor">#AC676767</Color>
+            <Color x:Key="TertiaryBackgroundColor">#FAA6A6A6</Color>
 
             <Color x:Key="DisabledBackgroundColor">#DE5B5B5B</Color>
             <Color x:Key="DisabledTextColor">#ACA1A1A1</Color>
 
             <Color x:Key="BackgroundHoverColor">#A2EEEEEE</Color>
 
-            <Color x:Key="AltBackgroundHoverColor">#22FFFFFF</Color>
+            <Color x:Key="AltBackgroundHoverColor">#CDFFFFFF</Color>
             <Color x:Key="AltBackgroundColor">#A7FFFFFF</Color>
 
-            <Color x:Key="MainButtonBackgroundColor">#F1F2F2F2</Color>
+            <Color x:Key="MainButtonBackgroundColor">#fff</Color>
             <Color x:Key="SecondaryButtonBackgroundColor">#F1E1E1E1</Color>
 
             <Color x:Key="MainBorderColor">#78B5B5B5</Color>
             <Color x:Key="SecondaryBorderColor">#95B5B5B5</Color>
-            <Color x:Key="TertiaryBorderColor">#77FFFFFF</Color>
+            <Color x:Key="TertiaryBorderColor">#77D8D8D8</Color>
 
             <Color x:Key="ButtonForegroundPointerOver">#FFF</Color>
 

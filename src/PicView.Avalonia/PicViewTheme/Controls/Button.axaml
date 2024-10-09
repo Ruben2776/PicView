@@ -56,7 +56,7 @@
                 <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
                     <KeyFrame>
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
+                            <SolidColorBrush Color="Transparent" />
                         </Setter>
                         <Setter Property="BorderBrush">
                             <SolidColorBrush Color="{DynamicResource MainBorderColor}" />

@@ -70,6 +70,7 @@ public class App : Application, IPlatformSpecificService
             {
                 Current.RequestedThemeVariant = SettingsHelper.Settings.Theme.Dark ? ThemeVariant.Dark : ThemeVariant.Light;
             }
+            
             _mainWindow = new MacMainWindow();
             desktop.MainWindow = _mainWindow;
         });
