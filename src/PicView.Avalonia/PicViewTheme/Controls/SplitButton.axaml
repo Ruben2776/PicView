@@ -153,7 +153,7 @@
                     </KeyFrame>
                     <KeyFrame Cue="1">
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource BackgroundHoverColor}" />
+                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
                         </Setter>
                         <Setter Property="BorderBrush">
                             <SolidColorBrush Color="{DynamicResource SecondaryBorderColor}" />
@@ -161,10 +161,9 @@
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
         </Style>
-
         <Style Selector="^.altHover:pointerover /template/ Button#PART_SecondaryButton">
             <Style.Animations>
                 <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
@@ -178,7 +177,7 @@
                     </KeyFrame>
                     <KeyFrame Cue="1">
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource BackgroundHoverColor}" />
+                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
                         </Setter>
                         <Setter Property="BorderBrush">
                             <SolidColorBrush Color="{DynamicResource SecondaryBorderColor}" />
@@ -186,7 +185,7 @@
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource BackgroundHoverColor}" />
+            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
         </Style>
 

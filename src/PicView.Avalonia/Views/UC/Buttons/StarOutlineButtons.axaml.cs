@@ -157,16 +157,19 @@ public partial class StarOutlineButtons : UserControl
 
     public void OutlineStars()
     {
-        if (!this.TryFindResource("StarOutlineDrawingImage", Application.Current.RequestedThemeVariant, out var resourceValue))
+        if (!this.TryFindResource("StarOutlineDrawingImage", Application.Current.RequestedThemeVariant,
+                out var resourceValue))
         {
             return;
         }
+
         var drawingImage = resourceValue as DrawingImage;
         Star1.Icon = drawingImage;
         Star2.Icon = drawingImage;
         Star3.Icon = drawingImage;
         Star4.Icon = drawingImage;
         Star5.Icon = drawingImage;
+            
     }
 
     private void Star1_OnPointerEntered(object? sender, PointerEventArgs e)

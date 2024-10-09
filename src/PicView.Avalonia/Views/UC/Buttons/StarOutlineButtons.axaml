@@ -15,74 +15,80 @@
     </Design.DataContext>
 
     <StackPanel Orientation="Horizontal">
-        <Canvas Height="28" Width="30">
+        <Canvas
+            PointerEntered="Star1_OnPointerEntered"
+            PointerExited="Stars_OnPointerExited"
+            Width="30">
             <customControls:IconButton
                 Background="Transparent"
-                Canvas.Left="3"
-                Canvas.Top="5"
+                Canvas.Left="5"
+                Canvas.Top="3"
                 Click="OneStarCLick"
                 Command="{Binding SetExifRating1Command}"
+                Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource StarOutlineDrawingImage}"
                 IconHeight="20"
                 IconWidth="20"
-                PointerEntered="Star1_OnPointerEntered"
-                PointerExited="Stars_OnPointerExited"
                 x:Name="Star1" />
         </Canvas>
-        <Canvas Height="28" Width="30">
+        <Canvas
+            PointerEntered="Star2_OnPointerEntered"
+            PointerExited="Stars_OnPointerExited"
+            Width="30">
             <customControls:IconButton
                 Background="Transparent"
                 Canvas.Left="3"
-                Canvas.Top="5"
+                Canvas.Top="3"
                 Click="TwoStarCLick"
                 Command="{Binding SetExifRating2Command}"
                 Icon="{StaticResource StarOutlineDrawingImage}"
                 IconHeight="20"
                 IconWidth="20"
-                PointerEntered="Star2_OnPointerEntered"
-                PointerExited="Stars_OnPointerExited"
                 x:Name="Star2" />
         </Canvas>
-        <Canvas Height="28" Width="30">
+        <Canvas
+            PointerEntered="Star3_OnPointerEntered"
+            PointerExited="Stars_OnPointerExited"
+            Width="30">
             <customControls:IconButton
                 Background="Transparent"
                 Canvas.Left="3"
-                Canvas.Top="5"
+                Canvas.Top="3"
                 Click="ThreeStarCLick"
                 Command="{Binding SetExifRating3Command}"
                 Icon="{StaticResource StarOutlineDrawingImage}"
                 IconHeight="20"
                 IconWidth="20"
-                PointerEntered="Star3_OnPointerEntered"
-                PointerExited="Stars_OnPointerExited"
                 x:Name="Star3" />
         </Canvas>
-        <Canvas Height="28" Width="30">
+        <Canvas
+            PointerEntered="Star4_OnPointerEntered"
+            PointerExited="Stars_OnPointerExited"
+            Width="30">
             <customControls:IconButton
                 Background="Transparent"
                 Canvas.Left="3"
-                Canvas.Top="5"
+                Canvas.Top="3"
                 Click="FourStarCLick"
                 Command="{Binding SetExifRating4Command}"
                 Icon="{StaticResource StarOutlineDrawingImage}"
                 IconHeight="20"
                 IconWidth="20"
-                PointerEntered="Star4_OnPointerEntered"
-                PointerExited="Stars_OnPointerExited"
                 x:Name="Star4" />
         </Canvas>
-        <Canvas Height="28" Width="30">
+        <Canvas
+            PointerEntered="Star5_OnPointerEntered"
+            PointerExited="Stars_OnPointerExited"
+            Width="30">
             <customControls:IconButton
                 Background="Transparent"
                 Canvas.Left="3"
-                Canvas.Top="5"
+                Canvas.Top="3"
                 Click="FiveStarCLick"
                 Command="{Binding SetExifRating5Command}"
                 Icon="{StaticResource StarOutlineDrawingImage}"
                 IconHeight="20"
                 IconWidth="20"
-                PointerEntered="Star5_OnPointerEntered"
-                PointerExited="Stars_OnPointerExited"
                 x:Name="Star5" />
         </Canvas>
     </StackPanel>

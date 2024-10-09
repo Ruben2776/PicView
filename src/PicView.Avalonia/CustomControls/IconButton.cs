@@ -111,7 +111,7 @@ public class IconButton : Button
     /// <returns>A <see cref="Control"/> representing the icon, or <c>null</c> if no icon is set.</returns>
     private Control? BuildIcon()
     {
-        if (Icon is DrawingImage { Drawing: DrawingGroup drawingGroup })
+        if (Icon is { Drawing: DrawingGroup drawingGroup })
         {
             // Set the initial pen brush to match the Foreground color
             foreach (var drawing in drawingGroup.Children)

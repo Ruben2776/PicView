@@ -136,7 +136,7 @@
 
         <customControls:GalleryListBox
             AutoScrollToSelectedItem="False"
-            Background="{DynamicResource BackgroundAlpha}"
+            Background="{DynamicResource SecondaryBackgroundColor}"
             BorderBrush="{DynamicResource TertiaryBorderColor}"
             BorderThickness="0,1,0,0"
             Focusable="False"

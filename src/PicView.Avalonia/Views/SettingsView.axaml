@@ -937,9 +937,9 @@
                     </StackPanel>
                 </TabItem.Header>
                 <Button
-                    Background="{DynamicResource BackgroundAlpha}"
+                    Background="{DynamicResource AltBackgroundHoverColor}"
                     BorderBrush="{DynamicResource SecondaryBorderColor}"
-                    Classes="ButtonBorder altHover"
+                    Classes="ButtonBorder hover"
                     Command="{CompiledBinding ShowKeybindingsWindowCommand}"
                     HorizontalAlignment="Left"
                     Margin="20,40,00,20"
@@ -981,10 +981,11 @@
         </TabControl>
 
 
+        <!--  Reset settings  -->
         <Button
             Background="#27FFFFFF"
             BorderThickness="0,1,1,0"
-            Classes="BorderStyle altHover mainBtn"
+            Classes="BorderStyle errorHover mainBtn"
             Command="{CompiledBinding ResetSettingsCommand}"
             CornerRadius="0,0,0,8"
             HorizontalAlignment="Left"

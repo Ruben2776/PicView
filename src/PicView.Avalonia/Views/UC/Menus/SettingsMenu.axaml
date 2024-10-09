@@ -28,13 +28,14 @@
                     BorderThickness="0,0,0,1"
                     CornerRadius="8,8,0,0"
                     Height="47"
-                    Width="359" />
+                    Width="359"
+                    x:Name="TopBorder" />
 
                 <Button
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    Classes="altHover"
+                    Classes="noBorderHover"
                     Command="{Binding ShowSettingsWindowCommand}"
                     CornerRadius="8,0,0,0"
                     Height="46"
@@ -66,7 +67,7 @@
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Canvas.Left="179"
-                    Classes="altHover"
+                    Classes="noBorderHover"
                     Command="{CompiledBinding ShowAboutWindowCommand}"
                     Height="46"
                     ToolTip.Tip="{CompiledBinding AboutWindow,

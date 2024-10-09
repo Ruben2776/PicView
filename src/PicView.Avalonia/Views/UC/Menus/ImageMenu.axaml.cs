@@ -1,5 +1,6 @@
 using System.Reactive.Linq;
 using Avalonia.Input;
+using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -15,9 +16,13 @@ public partial class ImageMenu  : AnimatedMenu
         InitializeComponent();
         Loaded += delegate
         {
-            if (SettingsHelper.Settings.Theme.GlassTheme || !SettingsHelper.Settings.Theme.Dark)
+            if (SettingsHelper.Settings.Theme.GlassTheme)
             {
-                // TODO fix when not using dark theme
+               GoToPicBox.Background = new SolidColorBrush(Color.Parse("#2CFFFFFF"));
+            }
+            else if (!SettingsHelper.Settings.Theme.Dark)
+            {
+                TopBorder.Background = Brushes.White;
             }
             GoToPicBox.KeyDown += async (_, e) => await GoToPicBox_OnKeyDown(e);
             this.WhenAnyValue(x => x.IsVisible)

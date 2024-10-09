@@ -32,8 +32,6 @@
 
             <Color x:Key="ButtonForegroundPointerOver">#FFF</Color>
 
-            <Color x:Key="BackgroundAlpha">#442e2e2e</Color>
-
             <Color x:Key="MenuBackgroundColor">#292929</Color>
             <Color x:Key="MenuButtonColor">#2F2F2F</Color>
 
@@ -73,14 +71,14 @@
 
             <Color x:Key="MainBackgroundColor">White</Color>
             <Color x:Key="SecondaryBackgroundColor">#1CFFFFFF</Color>
-            <Color x:Key="TertiaryBackgroundColor">#FAA6A6A6</Color>
+            <Color x:Key="TertiaryBackgroundColor">#E29E9E9E</Color>
 
             <Color x:Key="DisabledBackgroundColor">#DE5B5B5B</Color>
             <Color x:Key="DisabledTextColor">#ACA1A1A1</Color>
 
             <Color x:Key="BackgroundHoverColor">#A2EEEEEE</Color>
 
-            <Color x:Key="AltBackgroundHoverColor">#CDFFFFFF</Color>
+            <Color x:Key="AltBackgroundHoverColor">#1CF0F0F0</Color>
             <Color x:Key="AltBackgroundColor">#A7FFFFFF</Color>
 
             <Color x:Key="MainButtonBackgroundColor">#fff</Color>
@@ -91,8 +89,6 @@
             <Color x:Key="TertiaryBorderColor">#77D8D8D8</Color>
 
             <Color x:Key="ButtonForegroundPointerOver">#FFF</Color>
-
-            <Color x:Key="BackgroundAlpha">#32FFFFFF</Color>
 
             <Color x:Key="MenuBackgroundColor">#ECF8F8F8</Color>
             <Color x:Key="MenuButtonColor">#fff</Color>

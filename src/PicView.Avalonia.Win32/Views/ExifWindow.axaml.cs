@@ -18,6 +18,7 @@ public partial class ExifWindow : Window
             BorderRectangle.Height = 0;
             
             TopWindowBorder.Background = Brushes.Transparent;
+            StarOutlineButtons.Background = Brushes.Transparent;
             
             CloseButton.Background = Brushes.Transparent;
             CloseButton.BorderThickness = new Thickness(0);

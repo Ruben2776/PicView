@@ -82,7 +82,7 @@
                     Classes="noBorderHover"
                     Command="{Binding OptimizeImageCommand}"
                     Height="28"
-                    Width="130"
+                    Width="133"
                     x:Name="OptimizeButton">
                     <TextBlock
                         Classes="txt"
@@ -120,7 +120,7 @@
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
                     Height="28"
-                    Width="131"
+                    Width="133"
                     x:Name="LocateOnDiskButton">
                     <TextBlock
                         Classes="txt"
@@ -130,10 +130,7 @@
                         VerticalAlignment="Center"
                         x:Name="LocateOnDiskText" />
                 </Button>
-                <buttons:StarOutlineButtons
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    Padding="5,0,0,3"
-                    x:Name="StarOutlineButtons" />
+                <buttons:StarOutlineButtons Background="{DynamicResource TertiaryBackgroundColor}" x:Name="StarOutlineButtons" />
 
                 <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"

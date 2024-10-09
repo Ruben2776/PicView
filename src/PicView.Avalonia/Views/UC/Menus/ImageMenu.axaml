@@ -31,7 +31,8 @@
                     BorderThickness="0,0,0,1"
                     CornerRadius="8,8,0,0"
                     Height="47"
-                    Width="315" />
+                    Width="315"
+                    x:Name="TopBorder" />
 
                 <customControls:IconButton
                     Background="Transparent"
@@ -142,7 +143,7 @@
                             </DrawingImage>
                         </Image>
                         <AutoCompleteBox
-                            Background="{DynamicResource BackgroundAlpha}"
+                            Background="{DynamicResource AltBackgroundColor}"
                             BorderBrush="{DynamicResource MainBorderColor}"
                             FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                             Foreground="{DynamicResource MainTextColor}"

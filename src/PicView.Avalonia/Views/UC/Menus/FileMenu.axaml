@@ -27,7 +27,8 @@
                     BorderThickness="0,0,0,1"
                     CornerRadius="8,8,0,0"
                     Height="47"
-                    Width="315" />
+                    Width="315"
+                    x:Name="TopBorder" />
 
                 <customControls:IconButton
                     Background="Transparent"

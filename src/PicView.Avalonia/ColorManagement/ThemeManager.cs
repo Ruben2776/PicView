@@ -69,5 +69,6 @@ public static class ThemeManager
             
         Application.Current.Resources["MenuBackgroundColor"] = Color.Parse("#D73E3E3E");
         Application.Current.Resources["MenuButtonColor"] = Color.Parse("#76909090");
+        
     }
 }
