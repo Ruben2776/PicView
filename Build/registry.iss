@@ -133,6 +133,13 @@ Root: HKCR; Subkey: "{#MyAppName}\DefaultIcon";             ValueData: "{app}\{#
 Root: HKCR; Subkey: "HdrImg\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 
 
+; AVIF
+Root: HKCR; Subkey: ".avif"; ValueType: string; ValueName: ""; ValueData: "AvifImg"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "AvifImg"; ValueType: string; ValueName: ""; ValueData: "AV1 Image File Format"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "{#MyAppName}\DefaultIcon";             ValueData: "{app}\{#MyAppExeName},0";               ValueType: string;  ValueName: ""
+Root: HKCR; Subkey: "AvifImg\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
+
+
 
 ; SVG
 Root: HKCR; Subkey: ".svg"; ValueType: string; ValueName: ""; ValueData: "SvgImg"; Flags: uninsdeletevalue
