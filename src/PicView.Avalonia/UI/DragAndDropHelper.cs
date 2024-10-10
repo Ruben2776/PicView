@@ -34,9 +34,17 @@ public static class DragAndDropHelper
         var path = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
             ? firstFile.Path.AbsolutePath
             : firstFile.Path.LocalPath;
-        if (path.IsSupported())
+        if (e.Data.Contains("text/x-moz-url"))
+        {
+            await HandleDropFromUrl(e, vm);
+        }
+        else if (path.IsSupported())
         {
             await NavigationHelper.LoadPicFromStringAsync(path, vm).ConfigureAwait(false);
+        }
+        else if (Directory.Exists(path))
+        {
+            await NavigationHelper.LoadPicFromDirectoryAsync(path, vm).ConfigureAwait(false);
         }
 
         if (!SettingsHelper.Settings.UIProperties.OpenInSameWindow)
@@ -77,10 +85,10 @@ public static class DragAndDropHelper
             return;
         }
 
-        await HandleDragEnter(files, vm, control);
+        await HandleDragEnter(files, e, vm, control);
     }
 
-    private static async Task HandleDragEnter(IEnumerable<IStorageItem> files, MainViewModel vm, Control control)
+    private static async Task HandleDragEnter(IEnumerable<IStorageItem> files, DragEventArgs e, MainViewModel vm, Control control)
     {
         var fileArray = files as IStorageItem[] ?? files.ToArray();
         if (fileArray is null || fileArray.Length < 1)
@@ -141,30 +149,41 @@ public static class DragAndDropHelper
             }
             else
             {
-                RemoveDragDropView();
+                var handledFromUrl = await HandleDragEnterFromUrl(e, vm);
+                if (!handledFromUrl)
+                {
+                    RemoveDragDropView();
+                }
             }
         }
     }
+    
+    private static async Task<bool> HandleDragEnterFromUrl(object? urlObject, MainViewModel vm)
+    {
+        if (urlObject is null)
+        {
+            return false;
+        }
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (_dragDropView == null)
+            {
+                _dragDropView = new DragDropView { DataContext = vm };
+                _dragDropView.AddLinkChain();
+                UIHelper.GetMainView.MainGrid.Children.Add(_dragDropView);
+            }
+            else
+            {
+                _dragDropView.RemoveThumbnail();
+            }
+        });
+        return true;
+    }
 
-    private static async Task HandleDragEnterFromUrl(DragEventArgs e, MainViewModel vm)
+    private static async Task<bool> HandleDragEnterFromUrl(DragEventArgs e, MainViewModel vm)
     {
         var urlObject = e.Data.Get("text/x-moz-url");
-        if (urlObject != null)
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                if (_dragDropView == null)
-                {
-                    _dragDropView = new DragDropView { DataContext = vm };
-                    _dragDropView.AddLinkChain();
-                    UIHelper.GetMainView.MainGrid.Children.Add(_dragDropView);
-                }
-                else
-                {
-                    _dragDropView.RemoveThumbnail();
-                }
-            });
-        }
+        return await HandleDragEnterFromUrl(urlObject, vm);
     }
 
     public static void DragLeave(DragEventArgs e, Control control)
