@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Styling;
+using PicView.Core.Config;
 using PicView.Core.ProcessHandling;
 
 namespace PicView.Avalonia.Views;
@@ -12,11 +13,7 @@ public partial class AboutView : UserControl
         InitializeComponent();
         Loaded += (_, _) =>
         {
-            // TODO: Add version check when ready for release
-            // AppVersion.Text = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
-            //     VersionHelper.GetFileVersionInfo().FileVersion :
-            //     GetType().Assembly.GetName().Version.ToString();
-            AppVersion.Text = "Avalonia Preview 4";
+            AppVersion.Text = VersionHelper.GetCurrentVersion();
 
             KofiImage.PointerEntered += (_, _) =>
             {

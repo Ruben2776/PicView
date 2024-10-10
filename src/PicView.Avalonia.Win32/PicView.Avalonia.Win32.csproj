@@ -34,6 +34,11 @@
     </AvaloniaResource>
   </ItemGroup>
 
+  <PropertyGroup>
+    <VersionPrefix>3.0.0</VersionPrefix>
+    <VersionSuffix>rc-preview-4</VersionSuffix>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Platform)' == 'x64'">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
