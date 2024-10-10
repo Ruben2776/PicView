@@ -345,6 +345,7 @@ public static class NavigationHelper
 #if DEBUG
             Console.WriteLine("LoadPicFromUrlAsync exception = \n" + e.Message);
 #endif
+            await TooltipHelper.ShowTooltipMessageAsync(e.Message, true);
             await ErrorHandling.ReloadAsync(vm);
 
             return;
