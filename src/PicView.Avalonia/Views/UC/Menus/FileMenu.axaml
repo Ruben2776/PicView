@@ -13,6 +13,23 @@
         <viewModels:MainViewModel />
     </Design.DataContext>
     <StackPanel>
+        <StackPanel.Styles>
+            <Styles>
+                <Style Selector="TextBlock.btnTxt">
+                    <Setter Property="MaxWidth" Value="137" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+                </Style>
+                <Style Selector="Button.btn">
+                    <Setter Property="Width" Value="45" />
+                    <Setter Property="Height" Value="45" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value="0,0,1,0" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+                    <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+                </Style>
+            </Styles>
+        </StackPanel.Styles>
         <Border
             Background="{DynamicResource MenuBackgroundColor}"
             BorderBrush="{DynamicResource MainBorderColor}"
@@ -31,123 +48,83 @@
                     x:Name="TopBorder" />
 
                 <customControls:IconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="hover"
+                    Classes="hover btn"
                     Command="{Binding ReloadCommand}"
                     CornerRadius="8,0,0,0"
                     Data="{StaticResource ReloadGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="45"
                     IconHeight="17"
                     IconWidth="17"
                     ToolTip.Tip="{CompiledBinding Reload,
-                                                  Mode=OneWay}"
-                    Width="45" />
+                                                  Mode=OneWay}" />
 
                 <customControls:IconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
                     Canvas.Left="45"
-                    Classes="hover"
+                    Classes="hover btn"
                     Command="{CompiledBinding PrintCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
                     Data="{StaticResource PrintGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="45"
                     IconHeight="17"
                     IconWidth="17"
                     ToolTip.Tip="{CompiledBinding Print,
-                                                  Mode=OneWay}"
-                    Width="45" />
+                                                  Mode=OneWay}" />
 
                 <customControls:IconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
                     Canvas.Left="90"
-                    Classes="hover"
+                    Classes="hover btn"
                     Command="{CompiledBinding RecycleFileCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
                     Data="{StaticResource RecycleGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="45"
                     IconHeight="17"
                     IconWidth="17"
-                    ToolTip.Tip="{CompiledBinding DeleteFile}"
-                    Width="45" />
+                    ToolTip.Tip="{CompiledBinding DeleteFile,
+                                                  Mode=OneWay}" />
 
                 <customControls:IconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
                     Canvas.Left="135"
-                    Classes="hover"
+                    Classes="hover btn"
                     Command="{CompiledBinding SaveFileCommand}"
                     Data="{StaticResource SaveGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="45"
                     IconHeight="17"
                     IconWidth="17"
                     ToolTip.Tip="{CompiledBinding Save,
-                                                  Mode=OneWay}"
-                    Width="45" />
+                                                  Mode=OneWay}" />
 
                 <customControls:IconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
                     Canvas.Left="180"
-                    Classes="hover"
+                    Classes="hover btn"
                     Command="{CompiledBinding CopyFileCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
                     Data="{StaticResource CopyGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="45"
                     IconHeight="17"
                     IconWidth="17"
-                    ToolTip.Tip="{CompiledBinding CopyFile}"
-                    Width="45" />
+                    ToolTip.Tip="{CompiledBinding CopyFile,
+                                                  Mode=OneWay}" />
 
                 <customControls:IconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
                     Canvas.Left="225"
-                    Classes="hover"
+                    Classes="hover btn"
                     Command="{CompiledBinding DuplicateFileCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
                                                        FallbackValue=''}"
                     Data="{StaticResource DuplicateGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="45"
                     IconHeight="17"
                     IconWidth="17"
                     ToolTip.Tip="{CompiledBinding DuplicateFile,
-                                                  Mode=OneWay}"
-                    Width="45" />
+                                                  Mode=OneWay}" />
 
                 <customControls:IconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
                     Canvas.Left="270"
-                    Classes="hover"
+                    Classes="hover btn"
                     Command="{CompiledBinding CloseMenuCommand}"
                     CornerRadius="0,8,0,0"
                     Data="{StaticResource CloseGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="45"
                     IconHeight="10"
                     IconWidth="10"
                     ToolTip.Tip="{CompiledBinding Close,
-                                                  Mode=OneWay}"
-                    Width="45" />
+                                                  Mode=OneWay}" />
 
                 <Button
                     Background="{DynamicResource MenuButtonColor}"
@@ -167,13 +144,7 @@
                             Stretch="Fill"
                             VerticalAlignment="Center"
                             Width="21.39" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding Open,
-                                                   Mode=OneWay}"
-                            VerticalAlignment="Center" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding Open, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -196,13 +167,7 @@
                             Stretch="Fill"
                             VerticalAlignment="Center"
                             Width="17" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding OpenWith,
-                                                   Mode=OneWay}"
-                            VerticalAlignment="Center" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding OpenWith, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -225,13 +190,7 @@
                             Margin="11,0,9,0"
                             Stretch="Fill"
                             Width="19" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding ShowInFolder,
-                                                   Mode=OneWay}"
-                            VerticalAlignment="Center" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding ShowInFolder, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -253,13 +212,7 @@
                             Stretch="Fill"
                             VerticalAlignment="Center"
                             Width="19" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding RenameFile,
-                                                   Mode=OneWay}"
-                            VerticalAlignment="Center" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding RenameFile, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -281,13 +234,7 @@
                             Stretch="Fill"
                             VerticalAlignment="Center"
                             Width="19" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding FilePaste,
-                                                   Mode=OneWay}"
-                            VerticalAlignment="Center" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding FilePaste, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -315,13 +262,7 @@
                                 </DrawingGroup>
                             </DrawingImage>
                         </Image>
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding NewWindow,
-                                                   Mode=OneWay}"
-                            VerticalAlignment="Center" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding NewWindow, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
             </Canvas>

@@ -28,7 +28,7 @@
             <DockPanel Height="28" LastChildFill="True">
 
                 <Border
-                    Background="{DynamicResource WindowBackgroundColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     CornerRadius="8,0,0,0"

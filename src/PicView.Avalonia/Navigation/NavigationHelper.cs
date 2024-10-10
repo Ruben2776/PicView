@@ -34,6 +34,7 @@ public static class NavigationHelper
     {
         return vm?.ImageIterator?.ImagePaths is not null &&
                vm.ImageIterator.ImagePaths.Count > 0;
+        // TODO: should probably turn this into CanExecute observable for ReactiveUI
     }
     
     /// <summary>

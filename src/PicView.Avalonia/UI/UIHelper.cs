@@ -192,11 +192,6 @@ namespace PicView.Avalonia.UI
 
         public static async Task Flip(MainViewModel vm)
         {
-            if (!NavigationHelper.CanNavigate(vm))
-            {
-                return;
-            }
-
             if (vm.ScaleX == 1)
             {
                 vm.ScaleX = -1;
@@ -215,7 +210,7 @@ namespace PicView.Avalonia.UI
         {
             var value = !SettingsHelper.Settings.UIProperties.Looping;
             SettingsHelper.Settings.UIProperties.Looping = value;
-            vm.GetLooping = value
+            vm.GetIsLoopingTranslation = value
                 ? TranslationHelper.Translation.LoopingEnabled
                 : TranslationHelper.Translation.LoopingDisabled;
             vm.IsLooping = value;
@@ -231,7 +226,7 @@ namespace PicView.Avalonia.UI
         public static async Task ChangeCtrlZoom(MainViewModel vm)
         {
             SettingsHelper.Settings.Zoom.CtrlZoom = !SettingsHelper.Settings.Zoom.CtrlZoom;
-            vm.GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
+            vm.GetIsCtrlZoomTranslation = SettingsHelper.Settings.Zoom.CtrlZoom
                 ? TranslationHelper.Translation.CtrlToZoom
                 : TranslationHelper.Translation.ScrollToZoom;
             

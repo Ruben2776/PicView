@@ -190,7 +190,7 @@
                         Width="12" />
                 </MenuItem.Icon>
                 <MenuItem
-                    Header="{CompiledBinding GetLooping,
+                    Header="{CompiledBinding GetIsLoopingTranslation,
                                              Mode=OneWay}"
                     IsChecked="{Binding IsLooping}"
                     ToggleType="CheckBox" />
@@ -221,7 +221,7 @@
 
                 <Separator />
 
-                <MenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding GetCtrlZoom, Mode=OneWay}">
+                <MenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding GetIsCtrlZoomTranslation, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
                             Height="12"

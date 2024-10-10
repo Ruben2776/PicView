@@ -84,7 +84,8 @@ public class App : Application, IPlatformSpecificService
 
     public void SetTaskbarProgress(ulong progress, ulong maximum)
     {
-        
+        // TODO: Implement SetTaskbarProgress
+        // https://github.com/carina-studio/AppSuiteBase/blob/master/Core/AppSuiteApplication.MacOS.cs#L365
     }
 
     public void StopTaskbarProgress()

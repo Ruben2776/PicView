@@ -81,8 +81,11 @@ public static class DragAndDropHelper
         var files = e.Data.GetFiles();
         if (files == null)
         {
-            await HandleDragEnterFromUrl(e, vm);
-            return;
+            var handledFromUrl = await HandleDragEnterFromUrl(e, vm);
+            if (!handledFromUrl)
+            {
+                RemoveDragDropView();
+            }
         }
 
         await HandleDragEnter(files, e, vm, control);

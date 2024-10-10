@@ -16,6 +16,15 @@
         <StackPanel.Resources>
             <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="Brush0" />
         </StackPanel.Resources>
+        <StackPanel.Styles>
+            <Styles>
+                <Style Selector="TextBlock.btnTxt">
+                    <Setter Property="MaxWidth" Value="137" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+                </Style>
+            </Styles>
+        </StackPanel.Styles>
 
         <Border
             Background="{DynamicResource MenuBackgroundColor}"
@@ -217,10 +226,8 @@
                             </Image>
                         </Canvas>
                         <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
+                            Classes="txt btnTxt"
                             Margin="-3,0,0,0"
-                            MaxWidth="150"
                             Text="{CompiledBinding Resize,
                                                    Mode=OneWay}" />
                     </StackPanel>
@@ -243,12 +250,7 @@
                             Margin="9,0,9,0"
                             Stretch="Fill"
                             Width="17" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding Crop,
-                                                   Mode=OneWay}" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding Crop, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -271,10 +273,8 @@
                             Source="{StaticResource SlideshowImage}"
                             Width="20" />
                         <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
+                            Classes="txt btnTxt"
                             Margin="0,2,0,0"
-                            MaxWidth="150"
                             Text="{CompiledBinding Slideshow,
                                                    Mode=OneWay}" />
                     </StackPanel>
@@ -385,10 +385,8 @@
                     IsChecked="{CompiledBinding IsShowingSideBySide}"
                     ToolTip.Tip="{CompiledBinding SideBySideTooltip}">
                     <TextBlock
-                        Classes="txt"
-                        Foreground="{DynamicResource MainTextColor}"
+                        Classes="txt btnTxt"
                         Margin="1,0,6,0"
-                        MaxWidth="175"
                         Text="{CompiledBinding SideBySide}" />
                 </ToggleButton>
 
@@ -411,8 +409,7 @@
                             Source="{StaticResource GalleryImage}"
                             Width="20" />
                         <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
+                            Classes="txt btnTxt"
                             Margin="10,0,6,0"
                             MaxWidth="175"
                             Text="{CompiledBinding GetIsShowingBottomGalleryTranslation,

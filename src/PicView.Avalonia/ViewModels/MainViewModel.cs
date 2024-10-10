@@ -826,12 +826,12 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _getIsShowingBottomGalleryTranslation, value);
     }
 
-    private string? _getLooping;
+    private string? _getIsLoopingTranslation;
 
-    public string? GetLooping
+    public string? GetIsLoopingTranslation
     {
-        get => _getLooping;
-        set => this.RaiseAndSetIfChanged(ref _getLooping, value);
+        get => _getIsLoopingTranslation;
+        set => this.RaiseAndSetIfChanged(ref _getIsLoopingTranslation, value);
     }
 
     private string? _getIsScrollingTranslation;
@@ -842,12 +842,12 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _getIsScrollingTranslation, value);
     }
 
-    private string? _getCtrlZoom;
+    private string? _getIsCtrlZoomTranslation;
 
-    public string? GetCtrlZoom
+    public string? GetIsCtrlZoomTranslation
     {
-        get => _getCtrlZoom;
-        set => this.RaiseAndSetIfChanged(ref _getCtrlZoom, value);
+        get => _getIsCtrlZoomTranslation;
+        set => this.RaiseAndSetIfChanged(ref _getIsCtrlZoomTranslation, value);
     }
 
     private string? _getPrintSizeInch;

@@ -30,10 +30,10 @@
                 VerticalAlignment="Top">
 
                 <Border
-                    Background="{DynamicResource WindowBackgroundColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,1"
-                    CornerRadius="8,8,0,0"
+                    CornerRadius="8,0,0,0"
                     DockPanel.Dock="Left"
                     x:Name="TopWindowBorder">
                     <Image

@@ -13,6 +13,15 @@
         <viewModels:MainViewModel />
     </Design.DataContext>
     <StackPanel>
+        <StackPanel.Styles>
+            <Styles>
+                <Style Selector="TextBlock.btnTxt">
+                    <Setter Property="MaxWidth" Value="137" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+                </Style>
+            </Styles>
+        </StackPanel.Styles>
 
         <Border
             Background="{DynamicResource MenuBackgroundColor}"
@@ -129,12 +138,10 @@
                             Stretch="Fill"
                             Width="17" />
                         <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
+                            Classes="txt btnTxt"
                             Margin="10,0,6,0"
                             Text="{CompiledBinding ImageInfo,
-                                                   Mode=OneWay}"
-                            VerticalAlignment="Center" />
+                                                   Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -154,12 +161,7 @@
                             Margin="9,0,10,0"
                             Source="{StaticResource PortalImage}"
                             Width="20" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding OptimizeImage,
-                                                   Mode=OneWay}" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding OptimizeImage, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -181,12 +183,7 @@
                             Margin="9,0,12,0"
                             Stretch="Fill"
                             Width="17" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding ColorPickerTool,
-                                                   Mode=OneWay}" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding ColorPickerTool, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -204,12 +201,7 @@
                             Margin="10,0,10,0"
                             Source="{StaticResource CanvasImage}"
                             Width="20" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding ChangeBackground,
-                                                   Mode=OneWay}" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding ChangeBackground, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -229,12 +221,7 @@
                             Margin="9,0,12,0"
                             Source="{StaticResource ShortcutsImage}"
                             Width="17" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding ApplicationShortcuts,
-                                                   Mode=OneWay}" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding ApplicationShortcuts, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
 
@@ -252,12 +239,7 @@
                             Margin="11,0,12,0"
                             Source="{StaticResource EyeOffImage}"
                             Width="18" />
-                        <TextBlock
-                            Classes="txt"
-                            Foreground="{DynamicResource MainTextColor}"
-                            MaxWidth="150"
-                            Text="{CompiledBinding GetIsShowingUITranslation,
-                                                   Mode=OneWay}" />
+                        <TextBlock Classes="txt btnTxt" Text="{CompiledBinding GetIsShowingUITranslation, Mode=OneWay}" />
                     </StackPanel>
                 </Button>
             </Canvas>

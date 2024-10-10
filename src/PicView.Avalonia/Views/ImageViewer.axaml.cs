@@ -230,6 +230,25 @@ public partial class ImageViewer : UserControl
         }
         var currentZoom = _scaleTransform.ScaleX;
         var zoomSpeed = SettingsHelper.Settings.Zoom.ZoomSpeed;
+        
+        switch (currentZoom)
+        {
+            // Increase speed based on the current zoom level
+            case > 15 when isZoomIn:
+                return;
+
+            case > 4:
+                zoomSpeed += 1;
+                break;
+
+            case > 3.2:
+                zoomSpeed += 0.8;
+                break;
+
+            case > 1.6:
+                zoomSpeed += 0.5;
+                break;
+        }
 
         if (!isZoomIn)
         {

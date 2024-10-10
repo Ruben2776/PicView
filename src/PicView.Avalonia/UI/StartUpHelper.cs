@@ -10,7 +10,6 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
-using PicView.Core.Localization;
 using StartUpMenu = PicView.Avalonia.Views.StartUpMenu;
 
 namespace PicView.Avalonia.UI;
@@ -150,16 +149,6 @@ public static class StartUpHelper
         ColorManager.UpdateAccentColors(SettingsHelper.Settings.Theme.ColorTheme);
         
         Task.Run(KeybindingsHelper.LoadKeybindings);
-        
-        vm.GetLooping = SettingsHelper.Settings.UIProperties.Looping
-            ? TranslationHelper.Translation.LoopingEnabled
-            : TranslationHelper.Translation.LoopingDisabled;
-        vm.GetIsScrollingTranslation = SettingsHelper.Settings.Zoom.ScrollEnabled
-            ? TranslationHelper.Translation.ScrollingEnabled
-            : TranslationHelper.Translation.ScrollingDisabled;
-        vm.GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom
-            ? TranslationHelper.Translation.CtrlToZoom
-            : TranslationHelper.Translation.ScrollToZoom;
         
         UIHelper.AddMenus();
 

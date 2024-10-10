@@ -155,6 +155,9 @@ public static class UpdateImage
         vm.GalleryMargin = new Thickness(0, 0, 0, 0);
 
         vm.PlatformService.StopTaskbarProgress();
+        
+        vm.PixelWidth = width;
+        vm.PixelHeight = height;
     }
 
     public static void LoadingPreview(MainViewModel vm, int index)

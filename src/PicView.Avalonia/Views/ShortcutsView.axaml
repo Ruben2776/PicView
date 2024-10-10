@@ -395,7 +395,7 @@
             <TextBlock
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding GetCtrlZoom}"
+                Text="{CompiledBinding GetIsCtrlZoomTranslation}"
                 Width="170" />
             <customControls:KeybindTextBox
                 Classes="hover TStyle"

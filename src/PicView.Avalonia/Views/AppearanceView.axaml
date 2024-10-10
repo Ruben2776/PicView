@@ -56,8 +56,9 @@
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Foreground="{StaticResource SecondaryTextColor}"
-            Margin="0,20,0,20"
-            Text="{CompiledBinding HighlightColor}" />
+            Margin="0,5,0,20"
+            Text="{CompiledBinding HighlightColor,
+                                   Mode=OneWay}" />
 
         <WrapPanel
             HorizontalAlignment="Center"
@@ -163,8 +164,9 @@
             FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
             FontSize="14"
             Foreground="{StaticResource SecondaryTextColor}"
-            Margin="0,15,0,10"
-            Text="{CompiledBinding MiscSettings}" />
+            Margin="0,20,0,10"
+            Text="{CompiledBinding MiscSettings,
+                                   Mode=OneWay}" />
 
         <ToggleButton
             Background="Transparent"
@@ -180,7 +182,8 @@
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"
-                Text="{CompiledBinding ShowBottomToolbar}" />
+                Text="{CompiledBinding ShowBottomToolbar,
+                                       Mode=OneWay}" />
         </ToggleButton>
 
         <ToggleButton
@@ -198,7 +201,8 @@
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"
-                Text="{CompiledBinding GetIsShowingUITranslation}" />
+                Text="{CompiledBinding GetIsShowingUITranslation,
+                                       Mode=OneWay}" />
         </ToggleButton>
 
     </StackPanel>
