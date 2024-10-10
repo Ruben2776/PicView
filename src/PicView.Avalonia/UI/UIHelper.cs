@@ -175,14 +175,14 @@ namespace PicView.Avalonia.UI
             if (SettingsHelper.Settings.Zoom.ScrollEnabled)
             {
                 vm.ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
-                vm.GetScrolling = TranslationHelper.Translation.ScrollingDisabled;
+                vm.GetIsScrollingTranslation = TranslationHelper.Translation.ScrollingDisabled;
                 vm.IsScrollingEnabled = false;
                 SettingsHelper.Settings.Zoom.ScrollEnabled = false;
             }
             else
             {
                 vm.ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
-                vm.GetScrolling = TranslationHelper.Translation.ScrollingEnabled;
+                vm.GetIsScrollingTranslation = TranslationHelper.Translation.ScrollingEnabled;
                 vm.IsScrollingEnabled = true;
                 SettingsHelper.Settings.Zoom.ScrollEnabled = true;
             }
@@ -200,12 +200,12 @@ namespace PicView.Avalonia.UI
             if (vm.ScaleX == 1)
             {
                 vm.ScaleX = -1;
-                vm.GetFlipped = vm.UnFlip;
+                vm.GetIsFlippedTranslation = vm.UnFlip;
             }
             else
             {
                 vm.ScaleX = 1;
-                vm.GetFlipped = vm.Flip;
+                vm.GetIsFlippedTranslation = vm.Flip;
             }
 
             await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Flip(true); });

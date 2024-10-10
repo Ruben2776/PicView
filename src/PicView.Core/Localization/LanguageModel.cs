@@ -186,7 +186,8 @@ public class LanguageModel
     public string? Scrolling { get; set; }
     public string? Looping { get; set; }
     public string? FitToWindow { get; set; }
-    public string? ShowHideUI { get; set; }
+    public string? ShowUI { get; set; }
+    public string? HideUI { get; set; }
     public string? ChangeBackground { get; set; }
     public string? ChangeBackgroundTooltip { get; set; }
     public string? Copy { get; set; }

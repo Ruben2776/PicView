@@ -13,6 +13,11 @@ public partial class SettingsMenu : AnimatedMenu
         {
             if (SettingsHelper.Settings.Theme.GlassTheme)
             {
+                SettingsButton.Classes.Remove("noBorderHover");
+                SettingsButton.Classes.Add("hover");
+                
+                AboutWindowButton.Classes.Remove("noBorderHover");
+                AboutWindowButton.Classes.Add("hover");
             }
             else if (!SettingsHelper.Settings.Theme.Dark)
             {

@@ -80,7 +80,7 @@
                     Height="45"
                     IconHeight="13"
                     IconWidth="13"
-                    ToolTip.Tip="{CompiledBinding GetFlipped,
+                    ToolTip.Tip="{CompiledBinding GetIsFlippedTranslation,
                                                   Mode=OneWay}"
                     Width="45">
                     <customControls:IconButton.RenderTransform>
@@ -401,7 +401,7 @@
                     Foreground="{DynamicResource MainTextColor}"
                     Height="46"
                     IsChecked="{CompiledBinding IsGalleryShown}"
-                    ToolTip.Tip="{CompiledBinding GetBottomGallery,
+                    ToolTip.Tip="{CompiledBinding GetIsShowingBottomGalleryTranslation,
                                                   Mode=OneWay}"
                     Width="300">
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
@@ -415,7 +415,7 @@
                             Foreground="{DynamicResource MainTextColor}"
                             Margin="10,0,6,0"
                             MaxWidth="175"
-                            Text="{CompiledBinding GetBottomGallery,
+                            Text="{CompiledBinding GetIsShowingBottomGalleryTranslation,
                                                    Mode=OneWay}" />
                     </StackPanel>
                 </ToggleButton>

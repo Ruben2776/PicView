@@ -1,5 +1,5 @@
 <UserControl
-    IsVisible="{Binding IsInterfaceShown}"
+    IsVisible="{Binding IsUIShown}"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.MacOS.Views.MacOSTitlebar"
     x:DataType="viewModels:MainViewModel"
@@ -33,7 +33,7 @@
             IconWidth="12"
             IsTabStop="False"
             Margin="0"
-            ToolTip.Tip="{CompiledBinding GetFlipped,
+            ToolTip.Tip="{CompiledBinding GetIsFlippedTranslation,
                                           Mode=OneWay}"
             Width="30"
             x:Name="FlipButton">

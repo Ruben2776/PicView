@@ -86,7 +86,7 @@
                 IconHeight="16"
                 IconWidth="16"
                 Margin="0"
-                ToolTip.Tip="{CompiledBinding GetFlipped,
+                ToolTip.Tip="{CompiledBinding GetIsFlippedTranslation,
                                               Mode=OneWay}"
                 Width="30"
                 x:Name="FlipButton">

@@ -256,7 +256,7 @@
                             Classes="txt"
                             Foreground="{DynamicResource MainTextColor}"
                             MaxWidth="150"
-                            Text="{CompiledBinding HideShowInterface,
+                            Text="{CompiledBinding GetIsShowingUITranslation,
                                                    Mode=OneWay}" />
                     </StackPanel>
                 </Button>

@@ -515,13 +515,13 @@ public partial class ImageViewer : UserControl
         {
             prevScaleX = 1;
             vm.ScaleX = -1;
-            vm.GetFlipped = vm.UnFlip;
+            vm.GetIsFlippedTranslation = vm.UnFlip;
         }
         else
         {
             prevScaleX = -1;
             vm.ScaleX = 1;
-            vm.GetFlipped = vm.Flip;
+            vm.GetIsFlippedTranslation = vm.Flip;
         }
         
         if (animate)

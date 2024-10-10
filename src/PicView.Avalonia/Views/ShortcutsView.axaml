@@ -637,18 +637,21 @@
             <TextBlock
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding HideShowInterface}"
+                Text="{CompiledBinding GetIsShowingUITranslation,
+                                       Mode=OneWay}"
                 Width="170" />
             <customControls:KeybindTextBox
                 Classes="hover TStyle"
                 MethodName="ToggleInterface"
-                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip,
+                                              Mode=OneWay}"
                 Width="140" />
             <customControls:KeybindTextBox
                 Alt="True"
                 Classes="hover TStyle"
                 MethodName="ToggleInterface"
-                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip,
+                                              Mode=OneWay}"
                 Width="140" />
         </StackPanel>
 
@@ -661,7 +664,8 @@
             <customControls:KeybindTextBox
                 Classes="hover TStyle"
                 MethodName="Fullscreen"
-                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip,
+                                              Mode=OneWay}"
                 Width="140" />
             <TextBox
                 Background="{DynamicResource DisabledBackgroundColor}"
@@ -676,13 +680,15 @@
             <TextBlock
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding ToggleFullscreen}"
+                Text="{CompiledBinding ToggleFullscreen,
+                                       Mode=OneWay}"
                 Width="170" />
             <customControls:KeybindTextBox
                 Alt="True"
                 Classes="hover TStyle"
                 MethodName="Fullscreen"
-                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip}"
+                ToolTip.Tip="{CompiledBinding ChangeKeybindingTooltip,
+                                              Mode=OneWay}"
                 Width="140" />
             <TextBox
                 Background="{DynamicResource DisabledBackgroundColor}"

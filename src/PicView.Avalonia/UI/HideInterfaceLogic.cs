@@ -7,6 +7,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
+using PicView.Core.Localization;
 
 namespace PicView.Avalonia.UI;
 
@@ -21,10 +22,11 @@ public static class HideInterfaceLogic
     {
         if (SettingsHelper.Settings.UIProperties.ShowInterface)
         {
-            vm.IsInterfaceShown = false;
+            vm.IsUIShown = false;
             SettingsHelper.Settings.UIProperties.ShowInterface = false;
             vm.IsTopToolbarShown = false;
             vm.IsBottomToolbarShown = false;
+            vm.GetIsShowingUITranslation = TranslationHelper.Translation.ShowUI;
             if (!GalleryFunctions.IsFullGalleryOpen)
             {
                 if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI)
@@ -47,8 +49,9 @@ public static class HideInterfaceLogic
         }
         else
         {
-            vm.IsInterfaceShown = true;
+            vm.IsUIShown = true;
             vm.IsTopToolbarShown = true;
+            vm.GetIsShowingUITranslation = TranslationHelper.Translation.HideUI;
             if (SettingsHelper.Settings.UIProperties.ShowBottomNavBar)
             {
                 vm.IsBottomToolbarShown = true;

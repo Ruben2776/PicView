@@ -80,7 +80,7 @@ public static class GalleryFunctions
             IsFullGalleryOpen = false;
             IsBottomGalleryOpen = false;
             vm.GalleryMode = GalleryMode.BottomToClosed;
-            vm.GetBottomGallery = TranslationHelper.Translation.ShowBottomGallery;
+            vm.GetIsShowingBottomGalleryTranslation = TranslationHelper.Translation.ShowBottomGallery;
             await SettingsHelper.SaveSettingsAsync();
             return;
         }
@@ -92,7 +92,7 @@ public static class GalleryFunctions
         {
             vm.GalleryMode = GalleryMode.ClosedToBottom;
         }
-        vm.GetBottomGallery = TranslationHelper.Translation.HideBottomGallery;
+        vm.GetIsShowingBottomGalleryTranslation = TranslationHelper.Translation.HideBottomGallery;
         await SettingsHelper.SaveSettingsAsync();
         if (!NavigationHelper.CanNavigate(vm))
         {

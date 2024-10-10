@@ -337,14 +337,14 @@ public static class WindowHelper
                     vm.IsBottomToolbarShown = true;
                     vm.BottombarHeight = SizeDefaults.BottombarHeight;
                 }
-                vm.IsInterfaceShown = true;
+                vm.IsUIShown = true;
             }
         }
         Dispatcher.UIThread.InvokeAsync(() => 
             desktop.MainWindow.WindowState = WindowState.Normal);
         SettingsHelper.Settings.WindowProperties.Maximized = false;
         SettingsHelper.Settings.WindowProperties.Fullscreen = false;
-        vm.IsInterfaceShown = SettingsHelper.Settings.UIProperties.ShowInterface;
+        vm.IsUIShown = SettingsHelper.Settings.UIProperties.ShowInterface;
         InitializeWindowSizeAndPosition(desktop.MainWindow);
         SetSize(vm);
         if (SettingsHelper.Settings.WindowProperties.AutoFit)
@@ -410,7 +410,7 @@ public static class WindowHelper
         {
             vm.IsTopToolbarShown = false; // Hide interface in fullscreen. Remember to turn back when exiting fullscreen
             vm.IsBottomToolbarShown = false;
-            vm.IsInterfaceShown = false;
+            vm.IsUIShown = false;
             Dispatcher.UIThread.Post(() =>
             {
                 // Get the screen that the window is currently on

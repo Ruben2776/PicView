@@ -205,7 +205,7 @@ public class MainViewModel : ViewModelBase
             {
                 return SettingsHelper.Settings.Gallery.IsBottomGalleryShown ? GetBottomGalleryItemHeight + SizeDefaults.ScrollbarSize : 0;
             }
-            if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI && !IsInterfaceShown)
+            if (!SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI && !IsUIShown)
             {
                 return 0;
             }
@@ -560,12 +560,12 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isLoading, value);
     }
 
-    private bool _isInterfaceShown = SettingsHelper.Settings.UIProperties.ShowInterface;
+    private bool _isUIShown = SettingsHelper.Settings.UIProperties.ShowInterface;
 
-    public bool IsInterfaceShown
+    public bool IsUIShown
     {
-        get => _isInterfaceShown;
-        set => this.RaiseAndSetIfChanged(ref _isInterfaceShown, value);
+        get => _isUIShown;
+        set => this.RaiseAndSetIfChanged(ref _isUIShown, value);
     }
 
     private bool _isTopToolbarShown = SettingsHelper.Settings.UIProperties.ShowInterface;
@@ -801,21 +801,29 @@ public class MainViewModel : ViewModelBase
     }
 
     #region strings
-    
-    private string? _getFlipped;
 
-    public string? GetFlipped
+    private string? _getIsShowingUITranslation;
+    
+    public string? GetIsShowingUITranslation
+    {
+        get => _getIsShowingUITranslation;
+        set => this.RaiseAndSetIfChanged(ref _getIsShowingUITranslation, value);
+    }
+    
+    private string? _getIsFlipped;
+
+    public string? GetIsFlippedTranslation
     {
         get => ScaleX == -1 ? UnFlip : Flip;
-        set => this.RaiseAndSetIfChanged(ref _getFlipped, value);
+        set => this.RaiseAndSetIfChanged(ref _getIsFlipped, value);
     }
 
-    private string? _getBottomGallery;
+    private string? _getIsShowingBottomGalleryTranslation;
 
-    public string? GetBottomGallery
+    public string? GetIsShowingBottomGalleryTranslation
     {
-        get => _getBottomGallery;
-        set => this.RaiseAndSetIfChanged(ref _getBottomGallery, value);
+        get => _getIsShowingBottomGalleryTranslation;
+        set => this.RaiseAndSetIfChanged(ref _getIsShowingBottomGalleryTranslation, value);
     }
 
     private string? _getLooping;
@@ -826,12 +834,12 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _getLooping, value);
     }
 
-    private string? _getScrolling;
+    private string? _getIsScrollingTranslation;
 
-    public string? GetScrolling
+    public string? GetIsScrollingTranslation
     {
-        get => _getScrolling;
-        set => this.RaiseAndSetIfChanged(ref _getScrolling, value);
+        get => _getIsScrollingTranslation;
+        set => this.RaiseAndSetIfChanged(ref _getIsScrollingTranslation, value);
     }
 
     private string? _getCtrlZoom;

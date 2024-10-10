@@ -54,7 +54,6 @@ public class ViewModelBase : ReactiveObject
         StayTopMost = TranslationHelper.Translation.StayTopMost;
         SearchSubdirectory = TranslationHelper.Translation.SearchSubdirectory;
         ToggleLooping = TranslationHelper.Translation.ToggleLooping;
-        HideShowInterface = TranslationHelper.Translation.HideShowInterface;
         ApplicationShortcuts = TranslationHelper.Translation.ApplicationShortcuts;
         BatchResize = TranslationHelper.Translation.BatchResize;
         Effects = TranslationHelper.Translation.Effects;
@@ -226,6 +225,9 @@ public class ViewModelBase : ReactiveObject
         AllowZoomOut = TranslationHelper.Translation.AllowZoomOut;
         GlassTheme = TranslationHelper.Translation.GlassTheme;
         ChangingThemeRequiresRestart = TranslationHelper.Translation.ChangingThemeRequiresRestart;
+        ShowUI = TranslationHelper.Translation.ShowUI;
+        HideUI = TranslationHelper.Translation.HideUI;
+        
     }
 
     #region Strings
@@ -1549,6 +1551,22 @@ public class ViewModelBase : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _unFlip, value);
     }
 
+    private string? _showUI;
+    
+    public string? ShowUI
+    {
+        get => _showUI;
+        set => this.RaiseAndSetIfChanged(ref _showUI, value);
+    }
+    
+    private string? _hideUI;
+    
+    public string? HideUI
+    {
+        get => _hideUI;
+        set => this.RaiseAndSetIfChanged(ref _hideUI, value);
+    }
+
     private string? _showBottomGallery;
 
     public string? ShowBottomGallery
@@ -1707,14 +1725,6 @@ public class ViewModelBase : ReactiveObject
     {
         get => _toggleLooping;
         set => this.RaiseAndSetIfChanged(ref _toggleLooping, value);
-    }
-
-    private string? _hideShowInterface;
-
-    public string? HideShowInterface
-    {
-        get => _hideShowInterface;
-        set => this.RaiseAndSetIfChanged(ref _hideShowInterface, value);
     }
 
     private string? _fileName;

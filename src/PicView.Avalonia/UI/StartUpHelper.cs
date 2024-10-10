@@ -5,6 +5,7 @@ using Avalonia.Controls.Primitives;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
@@ -71,25 +72,18 @@ public static class StartUpHelper
             ThemeManager.GlassThemeUpdates();
         }
         UIHelper.SetControls(desktop);
-        vm.UpdateLanguage();
-        vm.GetFlipped = vm.Flip;
+        LanguageUpdater.UpdateLanguage(vm);
         
         if (SettingsHelper.Settings.Zoom.ScrollEnabled)
         {
             vm.ToggleScrollBarVisibility = ScrollBarVisibility.Visible;
-            vm.GetScrolling = TranslationHelper.Translation.ScrollingEnabled;
             vm.IsScrollingEnabled = true;
         }
         else
         {
             vm.ToggleScrollBarVisibility = ScrollBarVisibility.Disabled;
-            vm.GetScrolling = TranslationHelper.Translation.ScrollingDisabled;
             vm.IsScrollingEnabled = false;
         }
-        
-        vm.GetBottomGallery = vm.IsGalleryShown ?
-            TranslationHelper.Translation.HideBottomGallery :
-            TranslationHelper.Translation.ShowBottomGallery;
 
         if (SettingsHelper.Settings.WindowProperties.TopMost)
         {
@@ -160,7 +154,7 @@ public static class StartUpHelper
         vm.GetLooping = SettingsHelper.Settings.UIProperties.Looping
             ? TranslationHelper.Translation.LoopingEnabled
             : TranslationHelper.Translation.LoopingDisabled;
-        vm.GetScrolling = SettingsHelper.Settings.Zoom.ScrollEnabled
+        vm.GetIsScrollingTranslation = SettingsHelper.Settings.Zoom.ScrollEnabled
             ? TranslationHelper.Translation.ScrollingEnabled
             : TranslationHelper.Translation.ScrollingDisabled;
         vm.GetCtrlZoom = SettingsHelper.Settings.Zoom.CtrlZoom

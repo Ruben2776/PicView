@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
@@ -63,7 +64,7 @@ public partial class LanguageView : UserControl
                     {
                         return;
                     }
-                    vm.UpdateLanguage();
+                    LanguageUpdater.UpdateLanguage(vm);
 
                     var topLevel = TopLevel.GetTopLevel(this);
                     if (topLevel is not Window window)

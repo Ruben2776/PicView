@@ -19,7 +19,7 @@
         DockPanel.Dock="Right"
         Height="30"
         HorizontalAlignment="Right"
-        IsVisible="{CompiledBinding !IsInterfaceShown}"
+        IsVisible="{CompiledBinding !IsUIShown}"
         ToolTip.Tip="{Binding Close, Mode=OneWay}"
         VerticalAlignment="Top"
         Width="35"

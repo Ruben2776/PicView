@@ -84,7 +84,7 @@ public static class QuickLoad
 
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
-            if (vm.IsInterfaceShown)
+            if (vm.IsUIShown)
             {
                 vm.GalleryMode = GalleryMode.BottomNoAnimation;
                 tasks.Add(GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName));

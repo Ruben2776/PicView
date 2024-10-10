@@ -195,7 +195,7 @@
                     IsChecked="{Binding IsLooping}"
                     ToggleType="CheckBox" />
                 <MenuItem
-                    Header="{CompiledBinding GetScrolling,
+                    Header="{CompiledBinding GetIsScrollingTranslation,
                                              Mode=OneWay}"
                     IsChecked="{CompiledBinding IsScrollingEnabled}"
                     ToggleType="CheckBox" />
@@ -242,7 +242,7 @@
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding HideShowInterface, Mode=OneWay}">
+                <MenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding GetIsShowingUITranslation, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
                             Height="12"
@@ -252,7 +252,7 @@
                 </MenuItem>
                 <MenuItem
                     Command="{CompiledBinding ToggleBottomGalleryCommand}"
-                    Header="{CompiledBinding GetBottomGallery,
+                    Header="{CompiledBinding GetIsShowingBottomGalleryTranslation,
                                              Mode=OneWay}"
                     IsChecked="{CompiledBinding IsGalleryShown}">
                     <MenuItem.Icon>
@@ -484,7 +484,7 @@
 
                 <MenuItem
                     Command="{CompiledBinding FlipCommand}"
-                    Header="{CompiledBinding GetFlipped}"
+                    Header="{CompiledBinding GetIsFlippedTranslation}"
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Path
@@ -733,7 +733,7 @@
             Background="Transparent"
             Height="150"
             HorizontalAlignment="Right"
-            IsVisible="{CompiledBinding !IsInterfaceShown}"
+            IsVisible="{CompiledBinding !IsUIShown}"
             Opacity="0"
             Orientation="Horizontal"
             VerticalAlignment="Top"

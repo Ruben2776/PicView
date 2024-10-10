@@ -30,7 +30,7 @@
             Command="{CompiledBinding ToggleBottomGalleryCommand}"
             IsChecked="{CompiledBinding IsGalleryShown}"
             Margin="0,0,0,10"
-            ToolTip.Tip="{CompiledBinding GetBottomGallery,
+            ToolTip.Tip="{CompiledBinding GetIsShowingBottomGalleryTranslation,
                                           Mode=OneWay}"
             Width="300">
             <TextBlock
@@ -38,7 +38,7 @@
                 Margin="0"
                 MaxWidth="240"
                 Padding="0,1,5,0"
-                Text="{CompiledBinding GetBottomGallery,
+                Text="{CompiledBinding GetIsShowingBottomGalleryTranslation,
                                        Mode=OneWay}" />
         </ToggleButton>
 
