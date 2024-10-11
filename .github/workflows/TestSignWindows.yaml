@@ -29,24 +29,22 @@ jobs:
           pwsh -File "${{ github.workspace }}\Build\Build Avalonia.Win32.ps1" -Platform "x64" -outputPath "${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-x64"
         shell: pwsh
 
-
       - name: Compile .ISS to .EXE Installer (x64)
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: .\Build\install.iss
-          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-x64\install /DMyFileSource=${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-x64 /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
+          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\unsigned\install /DMyFileSource=${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-x64 /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt /DMyAppOutputName=Setup-PicView-v${{steps.get-version.outputs.file-version}}-win-x64
 
       - name: Publish arm64 version
         run: |
           pwsh -File "${{ github.workspace }}\Build\Build Avalonia.Win32.ps1" -Platform "arm64" -outputPath "${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-arm64"
         shell: pwsh
 
-
       - name: Compile .ISS to .EXE Installer (arm64)
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: .\Build\install.iss
-          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-arm64\install /DMyFileSource=${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-arm64\ /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt
+          options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\unsigned\install /DMyFileSource=${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-arm64 /DAppIcon=${{ github.workspace }}\src\PicView.Avalonia.Win32\icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt /DMyAppOutputName=Setup-PicView-v${{steps.get-version.outputs.file-version}}-win-arm64
 
 
       - name: upload-unsigned-artifact
@@ -56,27 +54,27 @@ jobs:
           name: "PicView-${{steps.get-version.outputs.file-version}}-unsigned" 
           if-no-files-found: error
           path: |
-            ${{ github.workspace }}/Build/unsigned/PicView-v${{steps.get-version.outputs.file-version}}-win-x64/
-            ${{ github.workspace }}/Build/unsigned/PicView-v${{steps.get-version.outputs.file-version}}-win-x64/install/
-            ${{ github.workspace }}/Build/unsigned/PicView-v${{steps.get-version.outputs.file-version}}-win-arm64/
-            ${{ github.workspace }}/Build/unsigned/PicView-v${{steps.get-version.outputs.file-version}}-win-arm64/install/
+            ${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-x64\
+            ${{ github.workspace }}\Build\unsigned\install\Setup-PicView-v${{steps.get-version.outputs.file-version}}-win-x64.exe
+            ${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.file-version}}-win-arm64\
+            ${{ github.workspace }}\Build\unsigned\install\Setup-PicView-v${{steps.get-version.outputs.file-version}}-win-arm64.exe
           retention-days: 1
             
 
-      - name: Sign files
-        uses: signpath/github-action-submit-signing-request@v1
-        with:
-          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
-          organization-id: '${{ vars.SIGNPATH_ORGANIZATION_ID }}'
-          project-slug: 'PicView'
-          signing-policy-slug: 'test-signing'
-          github-artifact-id: ${{ steps.upload-unsigned-artifact.outputs.artifact-id }}
-          wait-for-completion: true
-          output-artifact-directory: 'PicView-${{steps.get-version.outputs.file-version}}-signed'
+      #- name: Sign files
+      #  uses: signpath/github-action-submit-signing-request@v1
+      #  with:
+      #    api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+      #    organization-id: '${{ vars.SIGNPATH_ORGANIZATION_ID }}'
+      #    project-slug: 'PicView'
+      #    signing-policy-slug: 'test-signing'
+      #    github-artifact-id: ${{ steps.upload-unsigned-artifact.outputs.artifact-id }}
+      #    wait-for-completion: true
+      #    output-artifact-directory: 'PicView-${{steps.get-version.outputs.file-version}}-signed'
 
-      - name: upload-signed-artifact
-        uses: actions/upload-artifact@v4
-        with:
-            name: "PicView-${{steps.get-version.outputs.file-version}}-signed" 
-            path: "PicView-${{steps.get-version.outputs.file-version}}-signed"
-            if-no-files-found: error
+      #- name: upload-signed-artifact
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #      name: "PicView-${{steps.get-version.outputs.file-version}}-signed" 
+      #      path: "PicView-${{steps.get-version.outputs.file-version}}-signed"
+      #      if-no-files-found: error
