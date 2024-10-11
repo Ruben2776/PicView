@@ -691,7 +691,11 @@ public class MainViewModel : ViewModelBase
     public bool IsOpeningInSameWindow
     {
         get => _isOpeningInSameWindow;
-        set => this.RaiseAndSetIfChanged(ref _isOpeningInSameWindow, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _isOpeningInSameWindow, value);
+            SettingsHelper.Settings.UIProperties.OpenInSameWindow = value;
+        } 
     }
 
     private bool _isEditableTitlebarOpen;

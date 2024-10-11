@@ -178,51 +178,55 @@ public static class NavigationHelper
         UIHelper.CloseMenus(vm);
         vm.IsLoading = true;
         SetTitleHelper.SetLoadingTitle(vm);
-        
-        var check = ErrorHelper.CheckIfLoadableString(source);
-        
-        switch (check)
+
+        // Starting in new task makes it more responsive and works better
+        await Task.Run(async () =>
         {
-            default:
-                vm.CurrentView = vm.ImageViewer;
-                await LoadPicFromFile(check, vm).ConfigureAwait(false);
-                vm.IsLoading = false;
-                ArchiveExtraction.Cleanup();
-                return;
+            var check = ErrorHelper.CheckIfLoadableString(source);
 
-            case "web":
-                vm.CurrentView = vm.ImageViewer;
-                await LoadPicFromUrlAsync(source, vm).ConfigureAwait(false);
-                vm.IsLoading = false;
-                ArchiveExtraction.Cleanup();
-                return;
+            switch (check)
+            {
+                default:
+                    vm.CurrentView = vm.ImageViewer;
+                    await LoadPicFromFile(check, vm).ConfigureAwait(false);
+                    vm.IsLoading = false;
+                    ArchiveExtraction.Cleanup();
+                    return;
 
-            case "base64":
-                vm.CurrentView = vm.ImageViewer;
-                await LoadPicFromBase64Async(source, vm).ConfigureAwait(false);
-                vm.IsLoading = false;
-                ArchiveExtraction.Cleanup();
-                return;
+                case "web":
+                    vm.CurrentView = vm.ImageViewer;
+                    await LoadPicFromUrlAsync(source, vm).ConfigureAwait(false);
+                    vm.IsLoading = false;
+                    ArchiveExtraction.Cleanup();
+                    return;
 
-            case "directory":
-                vm.CurrentView = vm.ImageViewer;
-                await LoadPicFromDirectoryAsync(source, vm).ConfigureAwait(false);
-                vm.IsLoading = false;
-                ArchiveExtraction.Cleanup();
-                return;
+                case "base64":
+                    vm.CurrentView = vm.ImageViewer;
+                    await LoadPicFromBase64Async(source, vm).ConfigureAwait(false);
+                    vm.IsLoading = false;
+                    ArchiveExtraction.Cleanup();
+                    return;
 
-            case "zip":
-                vm.CurrentView = vm.ImageViewer;
-                await LoadPicFromArchiveAsync(source, vm).ConfigureAwait(false);
-                vm.IsLoading = false;
-                return;
+                case "directory":
+                    vm.CurrentView = vm.ImageViewer;
+                    await LoadPicFromDirectoryAsync(source, vm).ConfigureAwait(false);
+                    vm.IsLoading = false;
+                    ArchiveExtraction.Cleanup();
+                    return;
 
-            case "":
-                await ErrorHandling.ReloadAsync(vm);
-                vm.IsLoading = false;
-                ArchiveExtraction.Cleanup();
-                return;
-        }
+                case "zip":
+                    vm.CurrentView = vm.ImageViewer;
+                    await LoadPicFromArchiveAsync(source, vm).ConfigureAwait(false);
+                    vm.IsLoading = false;
+                    return;
+
+                case "":
+                    await ErrorHandling.ReloadAsync(vm).ConfigureAwait(false);
+                    vm.IsLoading = false;
+                    ArchiveExtraction.Cleanup();
+                    return;
+            }
+        });
     }
     
     /// <summary>
@@ -278,7 +282,7 @@ public static class NavigationHelper
     /// </returns>
     public static async Task LoadPicFromArchiveAsync(string path, MainViewModel vm)
     {
-        var extraction = await ArchiveExtraction.ExtractArchiveAsync(path, vm.PlatformService.ExtractWithLocalSoftwareAsync);
+        var extraction = await ArchiveExtraction.ExtractArchiveAsync(path, vm.PlatformService.ExtractWithLocalSoftwareAsync).ConfigureAwait(false);
         if (!extraction)
         {
             await ErrorHandling.ReloadAsync(vm);
@@ -292,11 +296,11 @@ public static class NavigationHelper
             {
                 var firstDir = dirInfo.EnumerateDirectories().First();
                 var firstFile = firstDir.EnumerateFiles().First();
-                await LoadPicFromFile(firstFile.FullName, vm, firstFile);
+                await LoadPicFromFile(firstFile.FullName, vm, firstFile).ConfigureAwait(false);
             }
             else
             {
-                await LoadPicFromDirectoryAsync(ArchiveExtraction.TempZipDirectory, vm);
+                await LoadPicFromDirectoryAsync(ArchiveExtraction.TempZipDirectory, vm).ConfigureAwait(false);
             }
             MainKeyboardShortcuts.ClearKeyDownModifiers(); // Fix possible modifier key state issue
         }

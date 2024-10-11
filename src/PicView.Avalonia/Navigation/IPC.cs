@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using System.IO.Pipes;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 
 namespace PicView.Avalonia.Navigation;
@@ -24,7 +25,7 @@ internal static class IPC
         await using var pipeClient = new NamedPipeClientStream(pipeName);
         try
         {
-            await pipeClient.ConnectAsync(750).ConfigureAwait(false);
+            await pipeClient.ConnectAsync(2750).ConfigureAwait(false);
 
             await using var writer = new StreamWriter(pipeClient);
             await writer.WriteLineAsync(arg).ConfigureAwait(false);
@@ -68,7 +69,11 @@ internal static class IPC
 #endif
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        UIHelper.GetMainView.Focus();
+                        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+                        {
+                            return;
+                        }
+                        desktop.MainWindow?.Activate();
                     });
                     await NavigationHelper.LoadPicFromStringAsync(line, vm).ConfigureAwait(false);
                 }
