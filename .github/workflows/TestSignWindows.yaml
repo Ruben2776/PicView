@@ -61,20 +61,20 @@ jobs:
           retention-days: 1
             
 
-      #- name: Sign files
-      #  uses: signpath/github-action-submit-signing-request@v1
-      #  with:
-      #    api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
-      #    organization-id: '${{ vars.SIGNPATH_ORGANIZATION_ID }}'
-      #    project-slug: 'PicView'
-      #    signing-policy-slug: 'test-signing'
-      #    github-artifact-id: ${{ steps.upload-unsigned-artifact.outputs.artifact-id }}
-      #    wait-for-completion: true
-      #    output-artifact-directory: 'PicView-${{steps.get-version.outputs.file-version}}-signed'
+      - name: Sign files
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          organization-id: '${{ vars.SIGNPATH_ORGANIZATION_ID }}'
+          project-slug: 'PicView'
+          signing-policy-slug: 'test-signing'
+          github-artifact-id: ${{ steps.upload-unsigned-artifact.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: 'PicView-${{steps.get-version.outputs.file-version}}-signed'
 
-      #- name: upload-signed-artifact
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #      name: "PicView-${{steps.get-version.outputs.file-version}}-signed" 
-      #      path: "PicView-${{steps.get-version.outputs.file-version}}-signed"
-      #      if-no-files-found: error
+      - name: upload-signed-artifact
+        uses: actions/upload-artifact@v4
+        with:
+            name: "PicView-${{steps.get-version.outputs.file-version}}-signed" 
+            path: "PicView-${{steps.get-version.outputs.file-version}}-signed"
+            if-no-files-found: error
