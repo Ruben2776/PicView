@@ -16,6 +16,9 @@ public static class GalleryLoad
 
     public static async Task LoadGallery(MainViewModel vm, string currentDirectory)
     {
+        // TODO: Lazy load this when scrolling instead. Figure out how to support virtualization. 
+        
+        
         if (vm.ImageIterator?.ImagePaths.Count == 0 || IsLoading || vm.ImageIterator is null)
         {
             return;
@@ -174,8 +177,7 @@ public static class GalleryLoad
                     return;
                 }
 
-                var thumbImageModel = await GetImageModel.GetImageModelAsync(fileInfos[i], isThumb: true,
-                    (uint)galleryItemSize);
+                var thumb = await GetThumbnails.GetThumbAsync(fileInfos[i].FullName, (uint)galleryItemSize, fileInfos[i]);
                 var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfos[i]);
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
@@ -189,10 +191,11 @@ public static class GalleryLoad
                         return;
                     }
 
-                    if (thumbImageModel?.Image is not null)
+                    if (thumb is not null)
                     {
-                        ImageFunctions.SetImage(thumbImageModel.Image, galleryItem.GalleryImage,
-                            thumbImageModel.ImageType);
+                        ImageFunctions.SetImage(thumb, galleryItem.GalleryImage,
+                            fileInfos[i].Extension.Equals("svg", StringComparison.OrdinalIgnoreCase) ||
+                            fileInfos[i].Extension.Equals("svgz", StringComparison.OrdinalIgnoreCase) ? ImageType.Svg : ImageType.Bitmap);
                     }
 
                     galleryItem.FileLocation.Text = thumbData.FileLocation;

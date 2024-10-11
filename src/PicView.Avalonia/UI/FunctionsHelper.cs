@@ -973,7 +973,7 @@ public static class FunctionsHelper
         {
             await SetAsWallpaperFilled();
         }
-        // TODO: Add support for macOS
+        // TODO: Add setting wallpaper support for macOS
     }
 
     public static async Task SetAsWallpaperTiled()

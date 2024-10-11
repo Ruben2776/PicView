@@ -37,6 +37,11 @@ public static class GetThumbnails
     public static async Task<Bitmap?> CreateThumbAsync(MagickImage magick, string path, uint height,
         FileInfo? fileInfo = null)
     {
+        // TODO: extract thumbnails from PlatformService and convert to Avalonia image,
+        // I.E. https://boldena.com/article/64006
+        // https://github.com/AvaloniaUI/Avalonia/discussions/16703
+        // https://stackoverflow.com/a/42178963/2923736 convert to DLLImport to LibraryImport, source generation & AOT support
+        
         fileInfo ??= new FileInfo(path);
         await using var fileStream = FileHelper.GetOptimizedFileStream(fileInfo);
         if (fileInfo.Length >= 2147483648)
@@ -59,3 +64,4 @@ public static class GetThumbnails
         return WriteableBitmap.Decode(memoryStream);
     }
 }
+

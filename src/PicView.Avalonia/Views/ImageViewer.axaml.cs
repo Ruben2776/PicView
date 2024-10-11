@@ -419,7 +419,7 @@ public partial class ImageViewer : UserControl
 
         if (SettingsHelper.Settings.WindowProperties.Fullscreen)
         {
-            // TODO: figure out how to pan in fullscreen
+            // TODO: figure out how to pan in fullscreen while keeping it in bounds
             _translateTransform.Transitions = null;
             _translateTransform.X = newXproperty;
             _translateTransform.Y = newYproperty;

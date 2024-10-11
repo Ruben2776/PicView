@@ -6,7 +6,7 @@ namespace PicView.Avalonia.ImageHandling;
 
 public static class GetImageModel
 {
-    public static async Task<ImageModel?> GetImageModelAsync(FileInfo fileInfo, bool isThumb = false, uint height = 0)
+    public static async Task<ImageModel?> GetImageModelAsync(FileInfo fileInfo)
     {
         if (fileInfo is null)
         {
@@ -39,34 +39,18 @@ public static class GetImageModel
             switch (ext)
             {
                 case ".webp":
-                    if (isThumb)
+                    await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
+                    if (ImageFunctions.IsAnimated(fileInfo))
                     {
-                        var thumb = await GetThumbnails.GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
-                        SetModel(thumb, fileInfo, imageModel);
-                    }
-                    else
-                    {
-                        await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
-                        if (ImageFunctions.IsAnimated(fileInfo))
-                        {
-                            imageModel.ImageType = ImageType.AnimatedWebp;
-                        }
+                        imageModel.ImageType = ImageType.AnimatedWebp;
                     }
 
                     break;
                 case ".gif":
-                    if (isThumb)
+                    await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
+                    if (ImageFunctions.IsAnimated(fileInfo))
                     {
-                        var thumb = await GetThumbnails.GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
-                        SetModel(thumb, fileInfo, imageModel);
-                    }
-                    else
-                    {
-                        await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
-                        if (ImageFunctions.IsAnimated(fileInfo))
-                        {
-                            imageModel.ImageType = ImageType.AnimatedGif;
-                        }
+                        imageModel.ImageType = ImageType.AnimatedGif;
                     }
 
                     break;
@@ -78,15 +62,7 @@ public static class GetImageModel
                 case ".jfif":
                 case ".ico":
                 case ".wbmp":
-                    if (isThumb)
-                    {
-                        var thumb = await GetThumbnails.GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
-                        SetModel(thumb, fileInfo, imageModel);
-                    }
-                    else
-                    {
-                        await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
-                    }
+                    await AddImageAsync(fileInfo, imageModel).ConfigureAwait(false);
 
                     break;
 
@@ -96,11 +72,11 @@ public static class GetImageModel
                     break;
 
                 case ".b64":
-                    await AddBase64ImageAsync(fileInfo, imageModel, isThumb, height).ConfigureAwait(false);
+                    await AddBase64ImageAsync(fileInfo, imageModel).ConfigureAwait(false);
                     break;
 
                 default:
-                    await AddDefaultImageAsync(fileInfo, imageModel, isThumb, height).ConfigureAwait(false);
+                    await AddDefaultImageAsync(fileInfo, imageModel).ConfigureAwait(false);
                     break;
             }
         }
@@ -123,18 +99,10 @@ public static class GetImageModel
         return imageModel;
     }
 
-    private static async Task AddDefaultImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, uint height)
+    private static async Task AddDefaultImageAsync(FileInfo fileInfo, ImageModel imageModel)
     {
-        if (isThumb)
-        {
-            var thumb = await GetThumbnails.GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
-            SetModel(thumb, fileInfo, imageModel);
-        }
-        else
-        {
-            var bitmap = await GetImage.GetDefaultBitmapAsync(fileInfo).ConfigureAwait(false);
-            SetModel(bitmap, fileInfo, imageModel);
-        }
+        var bitmap = await GetImage.GetDefaultBitmapAsync(fileInfo).ConfigureAwait(false);
+        SetModel(bitmap, fileInfo, imageModel);
     }
 
 
@@ -173,18 +141,10 @@ public static class GetImageModel
     
     #region Base64
 
-    private static async Task AddBase64ImageAsync(FileInfo fileInfo, ImageModel imageModel, bool isThumb, uint height)
+    private static async Task AddBase64ImageAsync(FileInfo fileInfo, ImageModel imageModel)
     {
-        if (isThumb)
-        {
-            var thumb = await GetThumbnails.GetThumbAsync(fileInfo.FullName, height, fileInfo).ConfigureAwait(false);
-            SetModel(thumb, fileInfo, imageModel);
-        }
-        else
-        {
-            var base64 = await GetImage.GetBase64ImageAsync(fileInfo).ConfigureAwait(false);
-            SetModel(base64, fileInfo, imageModel);
-        }
+        var base64 = await GetImage.GetBase64ImageAsync(fileInfo).ConfigureAwait(false);
+        SetModel(base64, fileInfo, imageModel);
     }
 
     #endregion

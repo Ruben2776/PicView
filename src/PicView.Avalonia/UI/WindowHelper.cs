@@ -109,8 +109,6 @@ public static class WindowHelper
 
     public static void CenterWindowOnScreen(bool horizontal = true)
     {
-        // TODO: Add support for multiple screens
-        
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
@@ -147,14 +145,9 @@ public static class WindowHelper
             var centeredY = screenBounds.Y + (screenHeight - windowSize.Height) / 2;
 
             // Set the window's new position
-            if (horizontal)
-            {
-                window.Position = new PixelPoint((int)centeredX, (int)centeredY);
-            }
-            else
-            {
-                window.Position = new PixelPoint(window.Position.X, (int)centeredY);
-            }
+            window.Position = horizontal ?
+                new PixelPoint((int)centeredX, (int)centeredY) :
+                new PixelPoint(window.Position.X, (int)centeredY);
         });
     }
 
