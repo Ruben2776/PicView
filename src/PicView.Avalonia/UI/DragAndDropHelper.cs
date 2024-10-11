@@ -8,6 +8,7 @@ using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.ProcessHandling;
@@ -143,10 +144,19 @@ public static class DragAndDropHelper
             }
             else if (path.IsSupported())
             {
-                var thumb = await GetThumbnails.GetThumbAsync(path, 340).ConfigureAwait(false);
-
-                if (thumb is not null)
+                var ext = Path.GetExtension(path);
+                if (ext.Equals(".svg", StringComparison.InvariantCultureIgnoreCase) || ext.Equals(".svgz", StringComparison.InvariantCultureIgnoreCase))
                 {
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        _dragDropView?.UpdateSvgThumbnail(path);
+                    });
+                }
+                else
+                {
+                    var thumb = await GetThumbnails.GetThumbAsync(path, SizeDefaults.WindowMinSize - 30)
+                        .ConfigureAwait(false);
+
                     await Dispatcher.UIThread.InvokeAsync(() => { _dragDropView?.UpdateThumbnail(thumb); });
                 }
             }
