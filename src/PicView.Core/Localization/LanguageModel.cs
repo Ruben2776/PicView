@@ -1,6 +1,6 @@
 ﻿namespace PicView.Core.Localization;
 
-public class LanguageModel
+public record LanguageModel
 {
     public string? Loading { get; set; }
     public string? NoImage { get; set; }

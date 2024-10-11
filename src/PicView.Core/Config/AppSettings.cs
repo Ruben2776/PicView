@@ -1,6 +1,6 @@
 ﻿namespace PicView.Core.Config;
 
-public class AppSettings
+public record AppSettings
 {
     public double Version { get; set; } = 1.1;
     public WindowProperties? WindowProperties { get; set; }
@@ -13,7 +13,7 @@ public class AppSettings
     public StartUp? StartUp { get; set; }
 }
 
-public class WindowProperties
+public record WindowProperties
 {
     public double Top { get; set; } = 0;
     public double Left { get; set; } = 0;
@@ -26,7 +26,7 @@ public class WindowProperties
     public bool KeepCentered { get; set; } = false;
 }
 
-public class UIProperties
+public record UIProperties
 {
     public string UserLanguage { get; set; } = "en";
     public bool ShowInterface { get; set; } = true;
@@ -41,7 +41,7 @@ public class UIProperties
     public bool OpenInSameWindow { get; set; } = false;
 }
 
-public class Theme
+public record Theme
 {
     public bool Dark { get; set; } = true;
     public int ColorTheme { get; set; } = 3;
@@ -50,7 +50,7 @@ public class Theme
     public bool GlassTheme { get; set; } = false;
 }
 
-public class Gallery
+public record Gallery
 {
     public bool IsBottomGalleryShown { get; set; } = false;
     public bool ShowBottomGalleryInHiddenUI { get; set; } = false;
@@ -60,7 +60,7 @@ public class Gallery
     public string BottomGalleryStretchMode { get; set; } = "Uniform";
 }
 
-public class ImageScaling
+public record ImageScaling
 {
     public bool StretchImage { get; set; } = false;
     public bool IsScalingSetToNearestNeighbor { get; set; } = false;
@@ -68,7 +68,7 @@ public class ImageScaling
     public bool ShowImageSideBySide { get; set; } = false;
 }
 
-public class Zoom
+public record Zoom
 {
     public double ZoomSpeed { get; set; } = 0.3;
     public bool AvoidZoomingOut { get; set; } = false;
@@ -77,7 +77,7 @@ public class Zoom
     public bool ScrollEnabled { get; set; } = false;
 }
 
-public class Sorting
+public record Sorting
 {
     public bool Name { get; set; } = true;
     public bool Size { get; set; } = false;
@@ -91,7 +91,7 @@ public class Sorting
     public bool IncludeSubDirectories { get; set; } = false;
 }
 
-public class StartUp
+public record StartUp
 {
     public bool OpenLastFile { get; set; } = false;
     public bool OpenSpecificFile { get; set; } = false;
