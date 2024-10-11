@@ -686,7 +686,7 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private bool _isOpeningInSameWindow;
+    private bool _isOpeningInSameWindow = SettingsHelper.Settings.UIProperties.OpenInSameWindow;
 
     public bool IsOpeningInSameWindow
     {

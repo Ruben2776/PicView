@@ -10,6 +10,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
+using PicView.Core.ProcessHandling;
 using StartUpMenu = PicView.Avalonia.Views.StartUpMenu;
 
 namespace PicView.Avalonia.UI;
@@ -18,6 +19,8 @@ public static class StartUpHelper
 {
     public static void Start(MainViewModel vm, bool settingsExists, IClassicDesktopStyleApplicationLifetime desktop, Window w)
     {
+        var args = Environment.GetCommandLineArgs();
+        
         if (!settingsExists)
         {
             // Fixes incorrect window
@@ -30,6 +33,20 @@ public static class StartUpHelper
         }
         else
         {
+            if (SettingsHelper.Settings.UIProperties.OpenInSameWindow)
+            {
+                var pipeName = "PicViewPipe";
+                
+                if (ProcessHelper.CheckIfAnotherInstanceIsRunning())
+                {
+                    if (args.Length > 1)
+                    {
+                        // Another instance is running, send arguments and exit
+                        _ = IPC.SendArgumentToRunningInstance(args[1], pipeName);
+                        Environment.Exit(0);
+                    }
+                }
+            }
             if (SettingsHelper.Settings.WindowProperties.Fullscreen)
             {
                 WindowHelper.Fullscreen(vm, desktop);
@@ -90,7 +107,7 @@ public static class StartUpHelper
         }
 
         vm.ImageViewer = new ImageViewer();
-        var args = Environment.GetCommandLineArgs();
+        
         if (args.Length > 1)
         {
             vm.CurrentView = vm.ImageViewer;
@@ -157,5 +174,11 @@ public static class StartUpHelper
         w.PointerPressed += async (_, e) => await MouseShortcuts.MainWindow_PointerPressed(e).ConfigureAwait(false);
         
         Application.Current.Name = "PicView";
+        
+        if (SettingsHelper.Settings.UIProperties.OpenInSameWindow)
+        {
+            // No other instance is running, create named pipe server
+            _ = IPC.StartListeningForArguments("PicViewPipe", vm);
+        }
     }
 }

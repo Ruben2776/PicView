@@ -227,7 +227,6 @@ public class ViewModelBase : ReactiveObject
         ChangingThemeRequiresRestart = TranslationHelper.Translation.ChangingThemeRequiresRestart;
         ShowUI = TranslationHelper.Translation.ShowUI;
         HideUI = TranslationHelper.Translation.HideUI;
-        
     }
 
     #region Strings
