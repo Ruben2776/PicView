@@ -3,6 +3,7 @@ using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.Config;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
 
@@ -18,6 +19,11 @@ public static class GalleryLoad
     {
         // TODO: Lazy load this when scrolling instead. Figure out how to support virtualization. 
         
+        // Make sure height is set
+        if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown && !GalleryFunctions.IsFullGalleryOpen)
+        {
+            vm.GetGalleryItemHeight = vm.GetBottomGalleryItemHeight;
+        }
         
         if (vm.ImageIterator?.ImagePaths.Count == 0 || IsLoading || vm.ImageIterator is null)
         {
