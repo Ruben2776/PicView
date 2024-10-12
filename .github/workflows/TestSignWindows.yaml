@@ -61,10 +61,10 @@ jobs:
           name: "PicView-${{steps.get-version.outputs.file-version}}-unsigned" 
           if-no-files-found: error
           path: |
-            ${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.version}}-win-x64\
-            ${{ github.workspace }}\Build\unsigned\install\Setup-PicView-v${{steps.get-version.outputs.version}}-win-x64.exe
-            ${{ github.workspace }}\Build\unsigned\PicView-v${{steps.get-version.outputs.version}}-win-arm64\
-            ${{ github.workspace }}\Build\unsigned\install\Setup-PicView-v${{steps.get-version.outputs.version}}-win-arm64.exe
+            ${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64\
+            ${{ github.workspace }}\Build\install\Setup-PicView-v${{steps.get-version.outputs.version}}-win-x64.exe
+            ${{ github.workspace }}\Build\\PicView-v${{steps.get-version.outputs.version}}-win-arm64\
+            ${{ github.workspace }}\Build\install\Setup-PicView-v${{steps.get-version.outputs.version}}-win-arm64.exe
           retention-days: 1
             
       # Step 9: Sign the binaries
