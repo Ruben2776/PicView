@@ -23,11 +23,9 @@
             <ContextMenu Opened="MenuBase_OnOpened">
                 <MenuItem Header="{CompiledBinding Stretch, Mode=OneWay}">
                     <MenuItem.Icon>
-                        <Path
-                            Data="{StaticResource ImageGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
+                        <Image
                             Height="12"
-                            Stretch="Fill"
+                            Source="{StaticResource Image}"
                             Width="12" />
                     </MenuItem.Icon>
                     <MenuItem
@@ -79,11 +77,9 @@
                     PointerPressed="Flyout_OnPointerPressed"
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
-                        <Path
-                            Data="{StaticResource ImageGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
+                        <Image
                             Height="12"
-                            Stretch="Fill"
+                            Source="{StaticResource Image}"
                             Width="12" />
                     </MenuItem.Icon>
                     <FlyoutBase.AttachedFlyout>
@@ -100,7 +96,7 @@
                     </FlyoutBase.AttachedFlyout>
                 </MenuItem>
                 <Separator />
-                <MenuItem Command="{CompiledBinding CloseGalleryCommand}" Header="{CompiledBinding Close, Mode=OneWay}">
+                <MenuItem Command="{CompiledBinding CloseGalleryCommand}" Header="{CompiledBinding HideBottomGallery, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CloseGeometry}"

@@ -18,7 +18,7 @@
         TickFrequency="1"
         TickPlacement="BottomRight"
         Value="{CompiledBinding GetGalleryItemHeight,
-                                Mode=TwoWay}"
+                                Mode=OneWay}"
         ValueChanged="RangeBase_OnValueChanged"
         Width="270"
         x:Name="CustomSlider" />

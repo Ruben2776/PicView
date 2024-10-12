@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Media;
 using Exception = System.Exception;
 
@@ -35,6 +37,17 @@ namespace PicView.Avalonia.Views.UC
             {
                 ImageBorder.BorderBrush = Brushes.Transparent;
             };
+        }
+        
+        private void Flyout_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (sender is not Control ctl)
+            {
+                return;
+            }
+
+            FlyoutBase.ShowAttachedFlyout(ctl);
+            GalleryItemSizeSlider.SetMaxAndMin();
         }
     }
 }

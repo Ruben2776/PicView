@@ -224,22 +224,8 @@ public class MainViewModel : ViewModelBase
     private double _getGalleryItemHeight;
     public double GetGalleryItemHeight
     {
-        get
-        {
-            return GalleryFunctions.IsFullGalleryOpen ? GetFullGalleryItemHeight : GetBottomGalleryItemHeight;
-        }
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _getGalleryItemHeight, value);
-            if (GalleryFunctions.IsBottomGalleryOpen && !GalleryFunctions.IsFullGalleryOpen)
-            {
-                GetBottomGalleryItemHeight = value;
-            }
-            else
-            {
-                GetFullGalleryItemHeight = value;
-            }
-        }
+        get => _getGalleryItemHeight;
+        set => this.RaiseAndSetIfChanged(ref _getGalleryItemHeight, value);
     }
 
     private double _getFullGalleryItemHeight = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;

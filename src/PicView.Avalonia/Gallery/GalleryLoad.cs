@@ -140,10 +140,7 @@ public static class GalleryLoad
         }
         catch (OperationCanceledException)
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                galleryListBox?.Items.Clear();
-            });
+            await Dispatcher.UIThread.InvokeAsync(GalleryFunctions.Clear);
         }
         catch (Exception e)
         {
@@ -206,7 +203,7 @@ public static class GalleryLoad
                     if (vm.ImageIterator is null)
                     {
                         ct.ThrowIfCancellationRequested();
-                        galleryListBox?.Items.Clear();
+                        GalleryFunctions.Clear();
                         if (GalleryFunctions.IsBottomGalleryOpen)
                         {
                             mainView.GalleryView.GalleryMode = GalleryMode.BottomToClosed;
@@ -233,9 +230,7 @@ public static class GalleryLoad
             {
                 try
                 {
-                    var mainView = UIHelper.GetMainView;
-                    var galleryListBox = mainView.GalleryView.GalleryListBox;
-                    galleryListBox?.Items.Clear();
+                    GalleryFunctions.Clear();
                 }
                 catch (Exception e)
                 {
@@ -260,9 +255,7 @@ public static class GalleryLoad
         {
             try
             {
-                var mainView = UIHelper.GetMainView;
-                var galleryListBox = mainView.GalleryView.GalleryListBox;
-                galleryListBox?.Items.Clear();
+                GalleryFunctions.Clear();
             }
             catch (Exception e)
             {

@@ -374,12 +374,31 @@ public static class GalleryFunctions
          return;
          void ClearItems()
          {
-             var mainView = UIHelper.GetMainView;
+             try
+             {
+                 var mainView = UIHelper.GetMainView;
 
-             var galleryListBox = mainView.GalleryView.GalleryListBox;
-             if (galleryListBox == null) 
-                 return;
-             galleryListBox.Items.Clear();
+                 var galleryListBox = mainView.GalleryView.GalleryListBox;
+                 if (galleryListBox == null) 
+                     return;
+                 for (var i = 0; i < galleryListBox.ItemCount; i++)
+                 {
+                     if (galleryListBox.Items[i] is not GalleryItem galleryItem) 
+                         continue;
+                     if (galleryItem.GalleryImage.Source is IDisposable galleryImage)
+                     {
+                         galleryImage.Dispose();
+                     }
+                     galleryListBox.Items.Remove(galleryItem);
+                 }
+                 galleryListBox.Items.Clear();
+             }
+             catch (Exception e)
+             {
+#if DEBUG
+                     Console.WriteLine(e);
+#endif
+             }
          }
      }
 }

@@ -25,14 +25,14 @@ public partial class FullGalleryItemSizeSlider : UserControl
         {
             return;
         }
-        
+        vm.GetFullGalleryItemHeight = e.NewValue;
         if (GalleryFunctions.IsFullGalleryOpen)
         {
             vm.GetGalleryItemHeight = vm.GetFullGalleryItemHeight;
             WindowHelper.SetSize(vm);
         }
         // Binding to height depends on timing of the update. Maybe find a cleaner mvvm solution one day
-
+        
         // Maybe save this on close or some other way
         SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize = e.NewValue;
     }
