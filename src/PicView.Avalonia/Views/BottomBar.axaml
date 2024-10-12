@@ -89,12 +89,14 @@
             <Separator />
 
             <!--  Toggle bottom bar  -->
-            <MenuItem
-                Command="{CompiledBinding ToggleBottomNavBarCommand}"
-                Header="{CompiledBinding ShowBottomToolbar,
-                                         Mode=OneWay}"
-                IsChecked="True"
-                ToggleType="CheckBox" />
+            <MenuItem Command="{CompiledBinding ToggleBottomNavBarCommand}" Header="{CompiledBinding ShowBottomToolbar, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Image
+                        Height="12"
+                        Source="{StaticResource Panel-Bottom}"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
 
         </ContextMenu>
     </UserControl.ContextMenu>

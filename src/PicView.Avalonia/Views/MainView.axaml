@@ -189,22 +189,21 @@
                         Stretch="Fill"
                         Width="12" />
                 </MenuItem.Icon>
+
                 <MenuItem
                     Header="{CompiledBinding GetIsLoopingTranslation,
                                              Mode=OneWay}"
                     IsChecked="{Binding IsLooping}"
                     ToggleType="CheckBox" />
+
+                <Separator />
+
                 <MenuItem
                     Header="{CompiledBinding GetIsScrollingTranslation,
                                              Mode=OneWay}"
                     IsChecked="{CompiledBinding IsScrollingEnabled}"
                     ToggleType="CheckBox" />
-                <MenuItem
-                    Command="{CompiledBinding ChangeTopMostCommand,
-                                              Mode=OneWay}"
-                    Header="{CompiledBinding StayTopMost}"
-                    IsChecked="{CompiledBinding IsTopMost}"
-                    ToggleType="CheckBox" />
+
                 <MenuItem
                     Command="{CompiledBinding StretchCommand}"
                     Header="{CompiledBinding Stretch,
@@ -221,11 +220,38 @@
 
                 <Separator />
 
+                <MenuItem
+                    Command="{CompiledBinding ChangeTopMostCommand}"
+                    Header="{CompiledBinding StayTopMost,
+                                             Mode=OneWay}"
+                    IsChecked="{CompiledBinding IsTopMost}"
+                    ToggleType="CheckBox" />
+
+                <MenuItem
+                    Command="{CompiledBinding ChangeAutoFitCommand}"
+                    Header="{CompiledBinding AutoFitWindow,
+                                             Mode=OneWay}"
+                    IsChecked="{CompiledBinding IsAutoFit}"
+                    ToggleType="CheckBox" />
+
+                <Separator />
+
                 <MenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding GetIsCtrlZoomTranslation, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
                             Height="12"
                             Source="{CompiledBinding ChangeCtrlZoomImage}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <Separator />
+
+                <MenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding GetIsShowingUITranslation, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{StaticResource EyeOffImage}"
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
@@ -242,14 +268,7 @@
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding GetIsShowingUITranslation, Mode=OneWay}">
-                    <MenuItem.Icon>
-                        <Image
-                            Height="12"
-                            Source="{StaticResource EyeOffImage}"
-                            Width="12" />
-                    </MenuItem.Icon>
-                </MenuItem>
+
                 <MenuItem
                     Command="{CompiledBinding ToggleBottomGalleryCommand}"
                     Header="{CompiledBinding GetIsShowingBottomGalleryTranslation,
@@ -276,7 +295,14 @@
                                              Mode=OneWay}"
                     IsChecked="{CompiledBinding IsBottomToolbarShown}"
                     IsVisible="{CompiledBinding !IsBottomToolbarShown}"
-                    ToggleType="CheckBox" />
+                    ToggleType="CheckBox">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{StaticResource Panel-Bottom}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
 
 
                 <Separator />

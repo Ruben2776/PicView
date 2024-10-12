@@ -187,6 +187,16 @@ public static class NavigationHelper
             switch (check)
             {
                 default:
+                    // Navigate to the image if it exists in the image iterator
+                    if (vm.ImageIterator is not null)
+                    {
+                        if (vm.ImageIterator.ImagePaths.Contains(check))
+                        {
+                            await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(check))
+                                .ConfigureAwait(false);
+                            return;
+                        }
+                    }
                     vm.CurrentView = vm.ImageViewer;
                     await LoadPicFromFile(check, vm).ConfigureAwait(false);
                     vm.IsLoading = false;

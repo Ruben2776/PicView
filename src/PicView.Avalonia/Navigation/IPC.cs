@@ -8,18 +8,25 @@ using PicView.Avalonia.ViewModels;
 namespace PicView.Avalonia.Navigation;
 
 /// <summary>
-/// Provides inter-process communication (IPC) helper methods.
+/// Provides Inter-Process Communication (IPC) functionality using named pipes.
 /// </summary>
 internal static class IPC
 {
     /// <summary>
-    /// Sends an argument to a running instance through a named pipe.
+    /// The default name for the named pipe used by the application.
     /// </summary>
-    /// <param name="arg">The argument to be sent.</param>
-    /// <param name="pipeName">The name of the named pipe.</param>
-    /// <returns>
-    /// <c>true</c> if the argument is successfully sent; otherwise, <c>false</c>.
-    /// </returns>
+    internal const string PipeName = "PicViewPipe";
+
+    /// <summary>
+    /// Sends an argument to a running instance of the application through the specified named pipe.
+    /// </summary>
+    /// <param name="arg">The argument to send to the running instance.</param>
+    /// <param name="pipeName">The name of the pipe to connect to.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result is <c>true</c> if the operation completes successfully.</returns>
+    /// <remarks>
+    /// This method attempts to connect to a running instance of the application via the provided pipe and sends an argument. 
+    /// If the connection fails due to a timeout or other exceptions, they are caught and logged in debug mode.
+    /// </remarks>
     internal static async Task<bool> SendArgumentToRunningInstance(string arg, string pipeName)
     {
         await using var pipeClient = new NamedPipeClientStream(pipeName);
@@ -32,7 +39,9 @@ internal static class IPC
         }
         catch (TimeoutException)
         {
-            return false;
+#if DEBUG
+            Trace.WriteLine($"{nameof(SendArgumentToRunningInstance)} timeout");
+#endif
         }
         catch (Exception ex)
         {
@@ -44,10 +53,15 @@ internal static class IPC
     }
 
     /// <summary>
-    /// Starts listening for incoming arguments through a named pipe.
+    /// Starts listening for incoming arguments from other instances of the application through the specified named pipe.
     /// </summary>
-    /// <param name="pipeName">The name of the named pipe.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <param name="pipeName">The name of the pipe to listen on.</param>
+    /// <param name="vm">The main view model to handle the received arguments.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <remarks>
+    /// This method continuously listens for incoming connections on the specified named pipe. 
+    /// Upon receiving a connection, it reads arguments and processes them by loading the specified picture in the application's view model.
+    /// </remarks>
     internal static async Task StartListeningForArguments(string pipeName, MainViewModel vm)
     {
         while (true) // Continue listening for new connections
