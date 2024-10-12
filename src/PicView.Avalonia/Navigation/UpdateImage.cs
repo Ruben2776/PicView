@@ -40,8 +40,6 @@ public static class UpdateImage
             }
         }
 
-        vm.IsLoading = false;
-
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             vm.ImageViewer.SetTransform(preLoadValue.ImageModel.EXIFOrientation);
@@ -65,6 +63,7 @@ public static class UpdateImage
             UIHelper.GetToolTipMessage.IsVisible = false;
         }, DispatcherPriority.Send);
 
+        vm.IsLoading = false;
         SetTitleHelper.SetTitle(vm, preLoadValue.ImageModel);
 
         if (SettingsHelper.Settings.WindowProperties.KeepCentered)
@@ -162,7 +161,6 @@ public static class UpdateImage
 
     public static void LoadingPreview(MainViewModel vm, int index)
     {
-        SetTitleHelper.SetLoadingTitle(vm);
         vm.SelectedGalleryItemIndex = index;
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {

@@ -488,11 +488,14 @@ public sealed class ImageIterator : IDisposable
 
     public async Task IterateToIndex(int index)
     {
+        SetTitleHelper.SetLoadingTitle(_vm);
+        
         if (index < 0 || index >= ImagePaths.Count)
         {
             ErrorHandling.ShowStartUpMenu(_vm);
             return;
         }
+        
         // UI is more responsive when started in new thread
         await Task.Run(async () =>
         {
