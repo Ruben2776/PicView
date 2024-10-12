@@ -85,6 +85,17 @@
                         Width="14" />
                 </MenuItem.Icon>
             </MenuItem>
+
+            <Separator />
+
+            <!--  Toggle bottom bar  -->
+            <MenuItem
+                Command="{CompiledBinding ToggleBottomNavBarCommand}"
+                Header="{CompiledBinding ShowBottomToolbar,
+                                         Mode=OneWay}"
+                IsChecked="True"
+                ToggleType="CheckBox" />
+
         </ContextMenu>
     </UserControl.ContextMenu>
 

@@ -268,6 +268,17 @@
                         </Image>
                     </MenuItem.Icon>
                 </MenuItem>
+
+                <!--  Toggle bottom bar  -->
+                <MenuItem
+                    Command="{CompiledBinding ToggleBottomNavBarCommand}"
+                    Header="{CompiledBinding ShowBottomToolbar,
+                                             Mode=OneWay}"
+                    IsChecked="{CompiledBinding IsBottomToolbarShown}"
+                    IsVisible="{CompiledBinding !IsBottomToolbarShown}"
+                    ToggleType="CheckBox" />
+
+
                 <Separator />
                 <MenuItem Command="{CompiledBinding ShowSettingsWindowCommand}" Header="{CompiledBinding ShowAllSettingsWindow, Mode=OneWay}">
                     <MenuItem.Icon>

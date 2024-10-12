@@ -75,13 +75,6 @@ public partial class BottomBar : UserControl
     {
         if (VisualRoot is null) { return; }
 
-        if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
-        {
-            // Context menu doesn't want to be opened normally
-            MainContextMenu.Open();
-            return;
-        }
-
         WindowHelper.WindowDragBehavior((Window)VisualRoot, e);
     }
 }
