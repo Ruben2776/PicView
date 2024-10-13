@@ -38,14 +38,34 @@ public static class DragAndDropHelper
         if (e.Data.Contains("text/x-moz-url"))
         {
             await HandleDropFromUrl(e, vm);
+            if (vm.CurrentView != vm.ImageViewer)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() => vm.CurrentView = vm.ImageViewer);
+            }
         }
         else if (path.IsSupported())
         {
             await NavigationHelper.LoadPicFromStringAsync(path, vm).ConfigureAwait(false);
+            if (vm.CurrentView != vm.ImageViewer)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() => vm.CurrentView = vm.ImageViewer);
+            }
         }
         else if (Directory.Exists(path))
         {
             await NavigationHelper.LoadPicFromDirectoryAsync(path, vm).ConfigureAwait(false);
+            if (vm.CurrentView != vm.ImageViewer)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() => vm.CurrentView = vm.ImageViewer);
+            }
+        }
+        else if (path.IsArchive())
+        {
+            await NavigationHelper.LoadPicFromArchiveAsync(path, vm).ConfigureAwait(false);
+            if (vm.CurrentView != vm.ImageViewer)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() => vm.CurrentView = vm.ImageViewer);
+            }
         }
 
         if (!SettingsHelper.Settings.UIProperties.OpenInSameWindow)
