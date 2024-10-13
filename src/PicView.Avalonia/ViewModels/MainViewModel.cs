@@ -1600,7 +1600,7 @@ public class MainViewModel : ViewModelBase
             }
         };
         process.Start();
-        await TooltipHelper.ShowTooltipMessageAsync(TranslationHelper.Translation.Applying);
+        await TooltipHelper.ShowTooltipMessageAsync(TranslationHelper.Translation.Applying, true);
         await process.WaitForExitAsync();
     }
 

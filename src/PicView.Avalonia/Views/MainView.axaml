@@ -423,7 +423,8 @@
                 CommandParameter="{CompiledBinding FileInfo.FullName,
                                                    FallbackValue=''}"
                 Header="{CompiledBinding SetAsLockScreenImage,
-                                         Mode=OneWay}">
+                                         Mode=OneWay}"
+                IsEnabled="False">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PanoramaGeometry}"

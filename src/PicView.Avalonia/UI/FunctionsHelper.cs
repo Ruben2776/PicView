@@ -116,6 +116,15 @@ public static class FunctionsHelper
             "Set3Star" => Set3Star,
             "Set4Star" => Set4Star,
             "Set5Star" => Set5Star,
+            
+            // Background and lock screen image
+            "SetAsLockScreen" => SetAsLockScreen,
+            "SetAsLockscreenCentered" => SetAsLockscreenCentered,
+            "SetAsWallpaper" => SetAsWallpaper,
+            "SetAsWallpaperFitted" => SetAsWallpaperFitted,
+            "SetAsWallpaperFilled" => SetAsWallpaperFilled,
+            "SetAsWallpaperCentered" => SetAsWallpaperCentered,
+            "SetAsWallpaperTiled" => SetAsWallpaperTiled,
 
             // Misc
             "ChangeBackground" => ChangeBackground,
