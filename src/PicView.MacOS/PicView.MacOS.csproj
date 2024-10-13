@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.0-rc1" />
     <PackageReference Include="Avalonia.Diagnostics" Version="11.2.0-rc1" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.0-rc1" />
     <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.0-rc1" />
   </ItemGroup>
 
