@@ -721,7 +721,14 @@ public static class WindowHelper
         string lastFile;
         if (NavigationHelper.CanNavigate(vm))
         {
-            lastFile = vm?.FileInfo?.FullName ?? FileHistoryNavigation.GetLastFile();
+            if (!string.IsNullOrEmpty(ArchiveExtraction.LastOpenedArchive))
+            {
+                lastFile = ArchiveExtraction.LastOpenedArchive;
+            }
+            else
+            {
+                lastFile = vm?.FileInfo?.FullName ?? FileHistoryNavigation.GetLastFile();
+            }
         }
         else
         {

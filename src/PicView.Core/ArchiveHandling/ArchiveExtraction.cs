@@ -13,6 +13,8 @@ namespace PicView.Core.ArchiveHandling
         ///     Gets the path of the temporary directory where the archive contents are extracted.
         /// </summary>
         public static string? TempZipDirectory { get; private set; }
+        
+        public static string? LastOpenedArchive { get; private set; }
 
         /// <summary>
         ///     Asynchronously extracts supported files from a given archive to a temporary directory.
@@ -47,7 +49,13 @@ namespace PicView.Core.ArchiveHandling
                 if (ext.Equals(".7z", StringComparison.OrdinalIgnoreCase) ||
                     ext.Equals(".cb7", StringComparison.OrdinalIgnoreCase))
                 {
-                    return await extractWithLocalSoftwareAsync(archivePath, tempDirectory);
+                    if (!await extractWithLocalSoftwareAsync(archivePath, tempDirectory))
+                    {
+                        return false;
+                    }
+
+                    LastOpenedArchive = archivePath;
+                    return true;
                 }
 
                 await using var stream = File.OpenRead(archivePath);
@@ -89,7 +97,14 @@ namespace PicView.Core.ArchiveHandling
                     }
                 });
 
-                return count > 0;
+                if (count <= 0)
+                {
+                    return false;
+                }
+
+                LastOpenedArchive = archivePath;
+                return true;
+
             }
             catch (IOException ioEx)
             {
@@ -137,6 +152,7 @@ namespace PicView.Core.ArchiveHandling
             finally
             {
                 TempZipDirectory = null;
+                LastOpenedArchive = null;
             }
         }
     }

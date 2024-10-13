@@ -42,23 +42,47 @@ public static class StartUpHelper
         vm.CanResize = true;
         vm.IsAutoFit = false;
     }
-
+    
     private static void HandleWindowStartupSettings(MainViewModel vm, IClassicDesktopStyleApplicationLifetime desktop, Window w, string[] args)
     {
         if (SettingsHelper.Settings.UIProperties.OpenInSameWindow && ProcessHelper.CheckIfAnotherInstanceIsRunning())
         {
             HandleMultipleInstances(args);
         }
-
-        ApplyWindowSizeAndPosition(vm, desktop, w);
-
+        
         if (SettingsHelper.Settings.UIProperties.ShowInterface)
         {
             vm.IsTopToolbarShown = true;
             vm.IsBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
         }
-    }
 
+        ApplyWindowSizeAndPosition(vm, desktop, w);
+    }
+    
+    private static void InitializePostWindowStartup(MainViewModel vm, IClassicDesktopStyleApplicationLifetime desktop, Window w, string[] args, bool settingsExists)
+    {
+        vm.IsLoading = true;
+        ScreenHelper.UpdateScreenSize(w);
+        Task.Run(KeybindingsHelper.LoadKeybindings);
+        ApplyThemeAndUISettings(vm, desktop);
+
+        LoadInitialContent(vm, args);
+
+        ValidateGallerySettings(vm, settingsExists);
+
+        BackgroundManager.SetBackground(vm);
+        ColorManager.UpdateAccentColors(SettingsHelper.Settings.Theme.ColorTheme);
+
+        
+        UIHelper.AddMenus();
+        SetWindowEventHandlers(w);
+        Application.Current.Name = "PicView";
+
+        if (SettingsHelper.Settings.UIProperties.OpenInSameWindow)
+        {
+            _ = IPC.StartListeningForArguments(IPC.PipeName, w, vm);
+        }
+    }
     private static void HandleMultipleInstances(string[] args)
     {
         if (args.Length > 1)
@@ -78,7 +102,6 @@ public static class StartUpHelper
             });
         }
     }
-
     private static void ApplyWindowSizeAndPosition(MainViewModel vm, IClassicDesktopStyleApplicationLifetime desktop, Window w)
     {
         if (SettingsHelper.Settings.WindowProperties.Fullscreen)
@@ -101,30 +124,6 @@ public static class StartUpHelper
             vm.CanResize = true;
             vm.IsAutoFit = false;
             WindowHelper.InitializeWindowSizeAndPosition(w);
-        }
-    }
-
-    private static void InitializePostWindowStartup(MainViewModel vm, IClassicDesktopStyleApplicationLifetime desktop, Window w, string[] args, bool settingsExists)
-    {
-        vm.IsLoading = true;
-        ScreenHelper.UpdateScreenSize(w);
-        ApplyThemeAndUISettings(vm, desktop);
-
-        LoadInitialContent(vm, args);
-
-        ValidateGallerySettings(vm, settingsExists);
-
-        BackgroundManager.SetBackground(vm);
-        ColorManager.UpdateAccentColors(SettingsHelper.Settings.Theme.ColorTheme);
-
-        Task.Run(KeybindingsHelper.LoadKeybindings);
-        UIHelper.AddMenus();
-        SetWindowEventHandlers(w);
-        Application.Current.Name = "PicView";
-
-        if (SettingsHelper.Settings.UIProperties.OpenInSameWindow)
-        {
-            _ = IPC.StartListeningForArguments(IPC.PipeName, vm);
         }
     }
 
