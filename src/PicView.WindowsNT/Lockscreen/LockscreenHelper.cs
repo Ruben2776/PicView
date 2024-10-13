@@ -3,10 +3,11 @@ using Microsoft.Win32;
 
 namespace PicView.WindowsNT.Lockscreen;
 
-public static class LockscreenHelper
+public static partial class LockscreenHelper
 {
-    [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern bool Wow64DisableWow64FsRedirection(ref IntPtr ptr); //If on 64 bit, C# will replace "System32" with "SysWOW64". This disables that.
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool Wow64DisableWow64FsRedirection(ref IntPtr ptr);
 
     public static bool SetLockScreenImage(string path)
     {

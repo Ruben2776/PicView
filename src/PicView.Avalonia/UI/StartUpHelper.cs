@@ -160,8 +160,17 @@ public static class StartUpHelper
 
         if (args.Length > 1)
         {
+            var arg = args[1];
+            if (arg.StartsWith("lockscreen"))
+            {
+                var path = arg[(arg.LastIndexOf(',') + 1)..];
+                path = Path.GetFullPath(path);
+                vm.PlatformService.SetAsLockScreen(path);
+                Environment.Exit(0);
+            }
+            
             vm.CurrentView = vm.ImageViewer;
-            Task.Run(() => QuickLoad.QuickLoadAsync(vm, args[1]));
+            Task.Run(() => QuickLoad.QuickLoadAsync(vm, arg));
         }
         else if (SettingsHelper.Settings.StartUp.OpenLastFile)
         {

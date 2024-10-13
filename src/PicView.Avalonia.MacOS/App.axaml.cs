@@ -295,9 +295,10 @@ public void ShowAboutWindow()
         // TODO: Implement SetAsWallpaper
     }
 
-    public void SetAsLockScreen(string path)
+    public bool SetAsLockScreen(string path)
     {
         // TODO: Implement SetAsLockScreen
+        return false;
     }
     
     public bool CopyFile(string path)

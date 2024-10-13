@@ -1,4 +1,5 @@
-﻿using System.Reactive;
+﻿using System.Diagnostics;
+using System.Reactive;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -17,6 +18,7 @@ using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
+using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
 using ReactiveUI;
 using ImageViewer = PicView.Avalonia.Views.ImageViewer;
@@ -1581,10 +1583,25 @@ public class MainViewModel : ViewModelBase
         {
             return;
         }
-        await Task.Run(() =>
+        
+        IsLoading = true;
+
+        var file = await ImageFunctions.ConvertToCommonSupportedFormatAsync(path).ConfigureAwait(false);
+
+        var process = new Process
         {
-            PlatformService?.SetAsLockScreen(path);
-        });
+            StartInfo = new ProcessStartInfo
+            {
+                Verb = "runas",
+                UseShellExecute = true,
+                FileName = "PicView.exe",
+                Arguments = "lockscreen," + file,
+                WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory
+            }
+        };
+        process.Start();
+        await TooltipHelper.ShowTooltipMessageAsync(TranslationHelper.Translation.Applying);
+        await process.WaitForExitAsync();
     }
 
     public async Task GalleryItemStretchTask(string value)

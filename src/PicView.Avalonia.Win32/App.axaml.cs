@@ -321,10 +321,9 @@ public class App : Application, IPlatformSpecificService
         WallpaperHelper.SetDesktopWallpaper(path, style);
     }
     
-    public void SetAsLockScreen(string path)
+    public bool SetAsLockScreen(string path)
     {
-        // TODO: Run a new instance with admin rights and execute SetLockScreenImage
-        LockscreenHelper.SetLockScreenImage(path);
+        return LockscreenHelper.SetLockScreenImage(path);
     }
 
     public bool CopyFile(string path)
