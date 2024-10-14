@@ -303,6 +303,16 @@ If you want to help translate another language or update/improve a current one a
 https://github.com/Ruben2776/PicView/issues/13
 
 
+## Code Signing Policy
+Starting with v3.0.0-rc-preview-4 the builds are deigitally Signed.
+
+Free code signing is provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
+
+## Privacy Policy
+
+PicView does not collect data. No data is sent/recieved and/or collected by PicView.
+
+
 # Donate
 If you wish to thank me for my work, please
 
