@@ -304,7 +304,7 @@ https://github.com/Ruben2776/PicView/issues/13
 
 
 ## Code Signing Policy
-Starting with v3.0.0-rc-preview-4 the builds are deigitally Signed.
+Starting with v3.0.0-rc-preview-4 the builds are digitally signed.
 
 Free code signing is provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
 
