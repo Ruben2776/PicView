@@ -1,5 +1,5 @@
 name: Build and Sign Release on Windows
-run-name: workflow test signing with SignPath
+run-name: workflow release signing with SignPath
 
 on: workflow_dispatch
 
