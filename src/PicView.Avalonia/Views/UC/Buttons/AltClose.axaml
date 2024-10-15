@@ -14,6 +14,7 @@
         Background="{DynamicResource AltBackgroundColor}"
         BorderThickness="1,0,0,1"
         Classes="ButtonBorder noBorderHover"
+        ClickMode="Release"
         Command="{CompiledBinding ExitCommand}"
         CornerRadius="0,0,0,0"
         DockPanel.Dock="Right"

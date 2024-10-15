@@ -15,6 +15,7 @@
         BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="1,0,0,1"
         Classes="ButtonBorder noBorderHover"
+        ClickMode="Release"
         Command="{CompiledBinding ToggleFullscreenCommand}"
         CornerRadius="0,0,0,0"
         DockPanel.Dock="Right"

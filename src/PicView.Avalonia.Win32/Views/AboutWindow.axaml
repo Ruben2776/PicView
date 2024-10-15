@@ -46,6 +46,7 @@
                     BorderThickness="0"
                     Classes="hover"
                     Click="Close"
+                    ClickMode="Release"
                     CornerRadius="0,8,0,0"
                     Data="{StaticResource CloseGeometry}"
                     DockPanel.Dock="Right"

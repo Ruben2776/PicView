@@ -1,6 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ControlTheme TargetType="Button" x:Key="{x:Type Button}">
+        <Setter Property="ClickMode" Value="Press" />
 
         <Setter Property="Button.Template">
             <ControlTemplate TargetType="Button">

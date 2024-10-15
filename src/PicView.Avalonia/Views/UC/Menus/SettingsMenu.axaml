@@ -107,6 +107,7 @@
                     Canvas.Left="315"
                     Canvas.Top="-1"
                     Classes="hover"
+                    ClickMode="Release"
                     Command="{CompiledBinding CloseMenuCommand}"
                     CornerRadius="0,8,0,0"
                     Data="{StaticResource CloseGeometry}"
