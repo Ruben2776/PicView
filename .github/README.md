@@ -49,6 +49,12 @@ cmd $> scoop bucket add extras
 cmd $> scoop install extras/picview
 ```
 
+
+## Code Signing Policy
+Starting with v3.0.0-rc-preview-4 the builds are digitally signed.
+
+Free code signing is provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
+
 # Features and screenshots
 ![configure-ui02 - Copy (2)](https://github.com/Ruben2776/PicView/assets/4200419/2459b663-ca42-415c-8d98-b6f45da0134c)
 
@@ -302,11 +308,6 @@ English and Danish by me<br>
 If you want to help translate another language or update/improve a current one and be listed here, please take a look at
 https://github.com/Ruben2776/PicView/issues/13
 
-
-## Code Signing Policy
-Starting with v3.0.0-rc-preview-4 the builds are digitally signed.
-
-Free code signing is provided by [SignPath.io](https://about.signpath.io/), certificate by [SignPath Foundation](https://signpath.org/).
 
 ## Privacy Policy
 
