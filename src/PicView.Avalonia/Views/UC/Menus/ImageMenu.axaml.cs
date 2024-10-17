@@ -18,7 +18,9 @@ public partial class ImageMenu  : AnimatedMenu
         {
             if (SettingsHelper.Settings.Theme.GlassTheme)
             {
-               GoToPicBox.Background = new SolidColorBrush(Color.Parse("#2CFFFFFF"));
+               GoToPicButton.Classes.Remove("noBorderHover");
+               GoToPicButton.Classes.Add("hover");
+               GoToPicBox.Background = new SolidColorBrush(Color.FromArgb(90, 197, 197, 197));
             }
             else if (!SettingsHelper.Settings.Theme.Dark)
             {
