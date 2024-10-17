@@ -4,6 +4,7 @@ using PicView.Avalonia.Animations;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
@@ -85,7 +86,7 @@ public static class HideInterfaceLogic
             }
         }
         
-        WindowHelper.SetSize(vm);
+        WindowResizing.SetSize(vm);
         UIHelper.CloseMenus(vm);
         await SettingsHelper.SaveSettingsAsync();
     }
@@ -111,7 +112,7 @@ public static class HideInterfaceLogic
         }
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            WindowHelper.SetSize(vm);
+            WindowResizing.SetSize(vm);
         });
         
         await SettingsHelper.SaveSettingsAsync();

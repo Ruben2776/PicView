@@ -10,6 +10,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ImageTransformations;
@@ -504,7 +505,7 @@ public partial class ImageViewer : UserControl
             });
         }
 
-        WindowHelper.SetSize(vm);
+        WindowResizing.SetSize(vm);
         MainImage.InvalidateVisual();
     }
     
@@ -515,7 +516,7 @@ public partial class ImageViewer : UserControl
             var rotateTransform = new RotateTransform(angle);
             ImageLayoutTransformControl.LayoutTransform = rotateTransform;
             
-            WindowHelper.SetSize(DataContext as MainViewModel);
+            WindowResizing.SetSize(DataContext as MainViewModel);
             MainImage.InvalidateVisual();
         });
     }

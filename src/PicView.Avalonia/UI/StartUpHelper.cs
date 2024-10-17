@@ -2,12 +2,14 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
+using Avalonia.Threading;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
 using PicView.Core.ProcessHandling;
@@ -38,7 +40,7 @@ public static class StartUpHelper
     {
         w.Height = w.MinHeight;
         w.Width = w.MinWidth;
-        WindowHelper.CenterWindowOnScreen();
+        WindowFunctions.CenterWindowOnScreen();
         vm.CanResize = true;
         vm.IsAutoFit = false;
     }
@@ -106,11 +108,17 @@ public static class StartUpHelper
     {
         if (SettingsHelper.Settings.WindowProperties.Fullscreen)
         {
-            WindowHelper.Fullscreen(vm, desktop);
+            // Need to delay it or it won't render properly
+            Dispatcher.UIThread.Post(() =>
+            {
+                w.Topmost = true;
+                WindowFunctions.CenterWindowOnScreen();
+                WindowFunctions.Fullscreen(vm, desktop);
+            }, DispatcherPriority.ContextIdle);
         }
         else if (SettingsHelper.Settings.WindowProperties.Maximized)
         {
-            WindowHelper.Maximize();
+            WindowFunctions.Maximize();
         }
         else if (SettingsHelper.Settings.WindowProperties.AutoFit)
         {
@@ -123,7 +131,7 @@ public static class StartUpHelper
         {
             vm.CanResize = true;
             vm.IsAutoFit = false;
-            WindowHelper.InitializeWindowSizeAndPosition(w);
+            WindowFunctions.InitializeWindowSizeAndPosition(w);
         }
     }
 

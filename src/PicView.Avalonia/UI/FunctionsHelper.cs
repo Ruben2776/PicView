@@ -11,6 +11,7 @@ using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
@@ -66,6 +67,7 @@ public static class FunctionsHelper
 
             // Window functions
             "Fullscreen" => Fullscreen,
+            "ToggleFullscreen" => ToggleFullscreen,
             "SetTopMost" => SetTopMost,
             "Close" => Close,
             "ToggleInterface" => ToggleInterface,
@@ -426,7 +428,7 @@ public static class FunctionsHelper
 
         if (SettingsHelper.Settings.WindowProperties.Fullscreen)
         {
-            await WindowHelper.MaximizeRestore();
+            await WindowFunctions.MaximizeRestore();
             return;
         }
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
@@ -457,7 +459,7 @@ public static class FunctionsHelper
         // TODO: scroll to center when the gallery is open
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            WindowHelper.CenterWindowOnScreen();
+            WindowFunctions.CenterWindowOnScreen();
         });
     }
 
@@ -508,36 +510,47 @@ public static class FunctionsHelper
     
     public static async Task Stretch()
     {
-        await WindowHelper.Stretch(Vm);
+        await WindowFunctions.Stretch(Vm);
     }
     public static async Task AutoFitWindow()
     {
-        await WindowHelper.ToggleAutoFit(Vm);
+        await WindowFunctions.ToggleAutoFit(Vm);
     }
 
     public static async Task AutoFitWindowAndStretch()
     {
-        await WindowHelper.AutoFitAndStretch(Vm);
+        await WindowFunctions.AutoFitAndStretch(Vm);
     }
 
     public static async Task NormalWindow()
     {
-        await WindowHelper.NormalWindow(Vm);
+        await WindowFunctions.NormalWindow(Vm);
     }
 
     public static async Task NormalWindowAndStretch()
     {
-        await WindowHelper.NormalWindowStretch(Vm);
+        await WindowFunctions.NormalWindowStretch(Vm);
     }
 
-    public static async Task Fullscreen()
+    public static async Task ToggleFullscreen()
     {
         if (Vm is null)
         {
             return;
         }
 
-        await WindowHelper.ToggleFullscreen(Vm);
+        await WindowFunctions.ToggleFullscreen(Vm);
+    }
+    
+    public static Task Fullscreen()
+    {
+        if (Vm is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        WindowFunctions.Fullscreen(Vm, Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
+        return Task.CompletedTask;
     }
 
     public static async Task SetTopMost()
@@ -547,7 +560,7 @@ public static class FunctionsHelper
             return;
         }
 
-        await WindowHelper.ToggleTopMost(Vm);
+        await WindowFunctions.ToggleTopMost(Vm);
     }
 
     #endregion

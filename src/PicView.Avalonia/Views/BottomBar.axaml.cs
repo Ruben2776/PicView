@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 
 namespace PicView.Avalonia.Views;
@@ -75,6 +76,6 @@ public partial class BottomBar : UserControl
     {
         if (VisualRoot is null) { return; }
 
-        WindowHelper.WindowDragBehavior((Window)VisualRoot, e);
+        WindowFunctions.WindowDragBehavior((Window)VisualRoot, e);
     }
 }

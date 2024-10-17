@@ -6,6 +6,7 @@ using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
 using PicView.Core.Navigation;
@@ -56,7 +57,7 @@ public static class UpdateImage
 
             vm.ImageType = preLoadValue.ImageModel.ImageType;
 
-            WindowHelper.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight,
+            WindowResizing.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight,
                 nextPreloadValue?.ImageModel?.PixelWidth ?? 0, nextPreloadValue?.ImageModel?.PixelHeight ?? 0,
                 preLoadValue.ImageModel.Rotation, vm);
             
@@ -68,7 +69,7 @@ public static class UpdateImage
 
         if (SettingsHelper.Settings.WindowProperties.KeepCentered)
         {
-            await Dispatcher.UIThread.InvokeAsync(() => { WindowHelper.CenterWindowOnScreen(); });
+            await Dispatcher.UIThread.InvokeAsync(() => { WindowFunctions.CenterWindowOnScreen(); });
         }
         
         if (vm.SelectedGalleryItemIndex != index)
@@ -139,7 +140,7 @@ public static class UpdateImage
 
         Dispatcher.UIThread.Invoke(() =>
         {
-            WindowHelper.SetSize(width, height, 0, 0, 0, vm);
+            WindowResizing.SetSize(width, height, 0, 0, 0, vm);
         });
         
         if (vm.RotationAngle != 0)

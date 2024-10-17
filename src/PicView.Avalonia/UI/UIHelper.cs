@@ -11,6 +11,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Views.UC.Menus;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
@@ -149,7 +150,7 @@ namespace PicView.Avalonia.UI
                 SettingsHelper.Settings.ImageScaling.ShowImageSideBySide = false;
                 vm.IsShowingSideBySide = false;
                 vm.SecondaryImageSource = null;
-                WindowHelper.SetSize(vm);
+                WindowResizing.SetSize(vm);
             }
             else
             {
@@ -161,7 +162,7 @@ namespace PicView.Avalonia.UI
                     vm.SecondaryImageSource = preloadValue?.ImageModel.Image;
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        WindowHelper.SetSize(vm.ImageWidth, vm.ImageHeight, preloadValue.ImageModel.PixelWidth,
+                        WindowResizing.SetSize(vm.ImageWidth, vm.ImageHeight, preloadValue.ImageModel.PixelWidth,
                                                 preloadValue.ImageModel.PixelHeight, vm.RotationAngle, vm);
                     });
                 }
@@ -187,7 +188,7 @@ namespace PicView.Avalonia.UI
                 SettingsHelper.Settings.Zoom.ScrollEnabled = true;
             }
 
-            WindowHelper.SetSize(vm);
+            WindowResizing.SetSize(vm);
         }
 
         public static async Task Flip(MainViewModel vm)

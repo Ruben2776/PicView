@@ -14,6 +14,7 @@ using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
@@ -411,7 +412,6 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>? MaximizeCommand { get; }
     
     public ReactiveCommand<Unit, Unit>? ToggleFullscreenCommand { get; }
-
     public ReactiveCommand<Unit, Unit>? NextCommand { get; }
     public ReactiveCommand<Unit, Unit>? NextButtonCommand { get; }
     public ReactiveCommand<Unit, Unit>? NextArrowButtonCommand { get; }
@@ -630,7 +630,7 @@ public class MainViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _isStretched, value);
             SettingsHelper.Settings.ImageScaling.StretchImage = value;
-            WindowHelper.SetSize(this);
+            WindowResizing.SetSize(this);
         }
     }
 
@@ -1666,10 +1666,10 @@ public class MainViewModel : ViewModelBase
 
         #region Window commands
 
-        ExitCommand = ReactiveCommand.CreateFromTask(WindowHelper.Close);
-        MinimizeCommand = ReactiveCommand.CreateFromTask(WindowHelper.Minimize);
-        MaximizeCommand = ReactiveCommand.CreateFromTask(WindowHelper.MaximizeRestore);
-        ToggleFullscreenCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Fullscreen);
+        ExitCommand = ReactiveCommand.CreateFromTask(WindowFunctions.Close);
+        MinimizeCommand = ReactiveCommand.CreateFromTask(WindowFunctions.Minimize);
+        MaximizeCommand = ReactiveCommand.CreateFromTask(WindowFunctions.MaximizeRestore);
+        ToggleFullscreenCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.ToggleFullscreen);
         NewWindowCommand = ReactiveCommand.Create(ProcessHelper.StartNewProcess);
 
         ShowExifWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowExifWindow);

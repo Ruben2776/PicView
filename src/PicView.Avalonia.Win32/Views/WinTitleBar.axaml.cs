@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 
 namespace PicView.Avalonia.Win32.Views;
@@ -98,6 +99,6 @@ public partial class WinTitleBar : UserControl
         {
             return;
         }
-        WindowHelper.WindowDragAndDoubleClickBehavior((Window)VisualRoot, e);
+        WindowFunctions.WindowDragAndDoubleClickBehavior((Window)VisualRoot, e);
     }
 }

@@ -80,6 +80,7 @@
                     Classes="txt"
                     Foreground="{DynamicResource MainTextColor}"
                     LineHeight="28"
+                    Padding="30,0,0,0"
                     Text="{CompiledBinding ApplicationShortcuts}"
                     TextAlignment="Center"
                     x:Name="TitleText" />

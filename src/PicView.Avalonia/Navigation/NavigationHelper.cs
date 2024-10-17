@@ -8,6 +8,7 @@ using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
@@ -507,7 +508,7 @@ public static class NavigationHelper
         vm.ImageType = imageModel.ImageType;
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0,0, imageModel.Rotation, vm);
+            WindowResizing.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0,0, imageModel.Rotation, vm);
         });
         
         if (files is null)

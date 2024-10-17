@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Navigation;
 using Timer = System.Timers.Timer;
@@ -43,10 +44,10 @@ public static class Slideshow
 
         if (!SettingsHelper.Settings.WindowProperties.Fullscreen)
         {
-            WindowHelper.Restore(vm, Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
+            WindowFunctions.Restore(vm, Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
             if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
-                WindowHelper.CenterWindowOnScreen();
+                WindowFunctions.CenterWindowOnScreen();
             }
         }
         
@@ -100,7 +101,7 @@ public static class Slideshow
 
         if (!SettingsHelper.Settings.WindowProperties.Fullscreen)
         {
-            await WindowHelper.ToggleFullscreen(vm, false);
+            await WindowFunctions.ToggleFullscreen(vm, false);
         }
         
         await vm.ImageIterator.NextIteration(NavigateTo.Next);

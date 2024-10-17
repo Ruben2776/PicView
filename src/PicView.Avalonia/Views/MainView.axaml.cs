@@ -8,6 +8,7 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Extensions;
 
@@ -48,7 +49,7 @@ public partial class MainView : UserControl
         if (MainKeyboardShortcuts.ShiftDown)
         {
             var hostWindow = (Window)VisualRoot!;
-            WindowHelper.WindowDragBehavior(hostWindow, e);
+            WindowFunctions.WindowDragBehavior(hostWindow, e);
         }
         
         MainKeyboardShortcuts.ClearKeyDownModifiers();

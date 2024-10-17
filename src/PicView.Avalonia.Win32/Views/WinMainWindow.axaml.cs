@@ -3,8 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
-using ReactiveUI;
 
 namespace PicView.Avalonia.Win32.Views;
 
@@ -23,31 +23,12 @@ public partial class WinMainWindow : Window
             // Keep window position when resizing
             ClientSizeProperty.Changed.Subscribe(size =>
             {
-                WindowHelper.HandleWindowResize(this, size);
-            });
-            
-            this.WhenAnyValue(x => x.WindowState).Subscribe(state =>
-            {
-                switch (state)
-                {
-                    case WindowState.Normal:
-                        SettingsHelper.Settings.WindowProperties.Maximized = false;
-                        SettingsHelper.Settings.WindowProperties.Fullscreen = false;
-                        break;
-                    case WindowState.Minimized:
-                        break;
-                    case WindowState.Maximized:
-                        WindowHelper.Maximize();
-                        break;
-                    case WindowState.FullScreen:
-                        //WindowHelper.Fullscreen(DataContext as MainViewModel, Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
-                        break;
-                }
+                WindowResizing.HandleWindowResize(this, size);
             });
             ScalingChanged += (_, _) =>
             {
                 ScreenHelper.UpdateScreenSize(this);
-                WindowHelper.SetSize(DataContext as MainViewModel);
+                WindowResizing.SetSize(DataContext as MainViewModel);
             };
             PointerExited += (_, _) =>
             {
@@ -61,14 +42,14 @@ public partial class WinMainWindow : Window
 
         desktop.ShutdownRequested += async (_, e) =>
         {
-            await WindowHelper.WindowClosingBehavior(this);
+            await WindowFunctions.WindowClosingBehavior(this);
         };
     }
 
     protected override async void OnClosing(WindowClosingEventArgs e)
     {
         e.Cancel = true;
-        await WindowHelper.WindowClosingBehavior(this);
+        await WindowFunctions.WindowClosingBehavior(this);
         base.OnClosing(e);
     }
 
@@ -89,6 +70,6 @@ public partial class WinMainWindow : Window
             return;
         }
         var wm = (MainViewModel)DataContext;
-        WindowHelper.SetSize(wm);
+        WindowResizing.SetSize(wm);
     }
 }

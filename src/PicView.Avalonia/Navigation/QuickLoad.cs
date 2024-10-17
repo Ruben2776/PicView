@@ -3,6 +3,7 @@ using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
@@ -46,10 +47,10 @@ public static class QuickLoad
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             vm.ImageViewer.SetTransform(imageModel.EXIFOrientation);
-            WindowHelper.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, secondaryPreloadValue?.ImageModel?.PixelWidth ?? 0, secondaryPreloadValue?.ImageModel?.PixelHeight ?? 0, imageModel.Rotation, vm);
+            WindowResizing.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, secondaryPreloadValue?.ImageModel?.PixelWidth ?? 0, secondaryPreloadValue?.ImageModel?.PixelHeight ?? 0, imageModel.Rotation, vm);
             if (SettingsHelper.Settings.WindowProperties.AutoFit)
             {
-                WindowHelper.CenterWindowOnScreen();
+                WindowFunctions.CenterWindowOnScreen();
             }
         }, DispatcherPriority.Send);
 

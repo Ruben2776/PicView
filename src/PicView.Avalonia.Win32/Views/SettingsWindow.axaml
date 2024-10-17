@@ -82,6 +82,7 @@
                     Classes="txt"
                     Foreground="{DynamicResource MainTextColor}"
                     LineHeight="28"
+                    Padding="30,0,0,0"
                     Text="{CompiledBinding Settings,
                                            Mode=OneWay}"
                     TextAlignment="Center"

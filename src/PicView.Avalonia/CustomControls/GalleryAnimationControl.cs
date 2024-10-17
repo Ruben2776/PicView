@@ -9,6 +9,7 @@ using PicView.Avalonia.Animations;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
 using ReactiveUI;
@@ -174,7 +175,7 @@ public class GalleryAnimationControl : UserControl
         {
             IsVisible = true;
             Opacity = 1;
-            WindowHelper.SetSize(vm);
+            WindowResizing.SetSize(vm);
             UIHelper.GetGalleryView.BlurMask.BlurEnabled = false;
             vm.GalleryItemMargin = new Thickness(2,0);
         });
@@ -208,7 +209,7 @@ public class GalleryAnimationControl : UserControl
         }
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            WindowHelper.SetSize(vm);
+            WindowResizing.SetSize(vm);
             UIHelper.GetGalleryView.BlurMask.BlurEnabled = false;
         });
         
@@ -225,7 +226,7 @@ public class GalleryAnimationControl : UserControl
         {
             Height = to;
             IsVisible = false;
-            WindowHelper.SetSize(vm);
+            WindowResizing.SetSize(vm);
         });
         _isAnimating = false;
     }
