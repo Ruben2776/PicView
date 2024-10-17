@@ -802,6 +802,14 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _getIsShowingUITranslation, value);
     }
     
+    private string? _getIsShowingBottomToolbarTranslation;
+    
+    public string? GetIsShowingBottomToolbarTranslation
+    {
+        get => _getIsShowingBottomToolbarTranslation;
+        set => this.RaiseAndSetIfChanged(ref _getIsShowingBottomToolbarTranslation, value);
+    }
+    
     private string? _getIsFlipped;
 
     public string? GetIsFlippedTranslation

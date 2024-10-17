@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Styling;
 using PicView.Core.Localization;
 
 namespace PicView.Avalonia.CustomControls
@@ -10,33 +9,33 @@ namespace PicView.Avalonia.CustomControls
     {
         public FuncTextBox()
         {
-            if (!Application.Current.TryGetResource("MainTextColor", ThemeVariant.Default, out var mainTextColor))
+            if (!Application.Current.TryGetResource("MainTextColor", Application.Current.RequestedThemeVariant, out var mainTextColor))
             {
                 return;
             }
 
             var iconBrush = new SolidColorBrush((Color)(mainTextColor ?? Brushes.White));
-            if (!Application.Current.TryGetResource("CopyGeometry", ThemeVariant.Default, out var copyGeometry))
+            if (!Application.Current.TryGetResource("CopyGeometry", Application.Current.RequestedThemeVariant, out var copyGeometry))
             {
                 return;
             }
 
-            if (!Application.Current.TryGetResource("CutGeometry", ThemeVariant.Default, out var cutGeometry))
+            if (!Application.Current.TryGetResource("CutGeometry", Application.Current.RequestedThemeVariant, out var cutGeometry))
             {
                 return;
             }
 
-            if (!Application.Current.TryGetResource("RecycleGeometry", ThemeVariant.Default, out var recycleGeometry))
+            if (!Application.Current.TryGetResource("RecycleGeometry", Application.Current.RequestedThemeVariant, out var recycleGeometry))
             {
                 return;
             }
 
-            if (!Application.Current.TryGetResource("PasteGeometry", ThemeVariant.Default, out var pasteGeometry))
+            if (!Application.Current.TryGetResource("PasteGeometry", Application.Current.RequestedThemeVariant, out var pasteGeometry))
             {
                 return;
             }
 
-            if (!Application.Current.TryGetResource("CheckboxOutlineImage", ThemeVariant.Default,
+            if (!Application.Current.TryGetResource("CheckboxOutlineImage", Application.Current.RequestedThemeVariant,
                     out var checkboxOutlineImage))
             {
                 return;
@@ -45,7 +44,7 @@ namespace PicView.Avalonia.CustomControls
             var contextMenu = new ContextMenu();
             var selectAllMenuItem = new MenuItem
             {
-                Header = TranslationHelper.GetTranslation("SelectAll"), // TODO: Add localization
+                Header = TranslationHelper.Translation.SelectAll,
                 Icon = new Image
                 {
                     Width = 12,
@@ -58,7 +57,7 @@ namespace PicView.Avalonia.CustomControls
 
             var cutMenuItem = new MenuItem
             {
-                Header = TranslationHelper.GetTranslation("Cut"), // TODO: "Cut file" should be replaced with "Cut"
+                Header = TranslationHelper.Translation.Cut,
                 Icon = new PathIcon
                 {
                     Width = 12,
@@ -87,7 +86,7 @@ namespace PicView.Avalonia.CustomControls
             var pasteMenuItem = new MenuItem
             {
                 Header = TranslationHelper
-                    .GetTranslation("Paste"), // TODO: "Paste file" should be replaced with "Paste"
+                    .GetTranslation("Paste"),
                 Icon = new PathIcon
                 {
                     Width = 12,

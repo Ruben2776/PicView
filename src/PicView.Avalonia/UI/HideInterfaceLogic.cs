@@ -102,6 +102,7 @@ public static class HideInterfaceLogic
             vm.IsBottomToolbarShown = false;
             SettingsHelper.Settings.UIProperties.ShowBottomNavBar = false;
             vm.IsBottomToolbarShownSetting = false;
+            vm.GetIsShowingBottomToolbarTranslation = TranslationHelper.Translation.ShowBottomToolbar;
         }
         else
         {
@@ -109,6 +110,7 @@ public static class HideInterfaceLogic
             SettingsHelper.Settings.UIProperties.ShowBottomNavBar = true;
             vm.IsBottomToolbarShownSetting = true;
             vm.BottombarHeight = SizeDefaults.BottombarHeight;
+            vm.GetIsShowingBottomToolbarTranslation = TranslationHelper.Translation.HideBottomToolbar;
         }
         await Dispatcher.UIThread.InvokeAsync(() =>
         {

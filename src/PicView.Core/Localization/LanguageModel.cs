@@ -6,6 +6,9 @@ public record LanguageModel
     public string? NoImage { get; set; }
     public string? Files { get; set; }
     public string? File { get; set; }
+    
+    public string? Cut { get; set; }
+    public string? SelectAll { get; set; }
     public string? PercentComplete { get; set; }
     public string? CropMessage { get; set; }
     public string? ClipboardImage { get; set; }
@@ -108,6 +111,7 @@ public record LanguageModel
     public string? ToggleTaskbarProgress { get; set; }
     public string? ShowFileSavingDialog { get; set; }
     public string? ShowBottomToolbar { get; set; }
+    public string? HideBottomToolbar { get; set; }
     public string? BottomGalleryItemSize { get; set; }
     public string? ExpandedGalleryItemSize { get; set; }
     public string? ShowBottomGalleryWhenUiIsHidden { get; set; }
@@ -202,7 +206,6 @@ public record LanguageModel
     public string? CopiedImage { get; set; }
     public string? CopyImageTooltip { get; set; }
     public string? FilePaste { get; set; }
-    public string? FileCut { get; set; }
     public string? ImageInfo { get; set; }
     public string? Image { get; set; }
     public string? Width { get; set; }

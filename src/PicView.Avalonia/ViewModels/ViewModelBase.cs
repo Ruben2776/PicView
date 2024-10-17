@@ -136,7 +136,7 @@ public class ViewModelBase : ReactiveObject
         ImageTxt = TranslationHelper.Translation.Image;
         CopyImage = TranslationHelper.Translation.CopyImage;
         FileCopyPath = TranslationHelper.Translation.FileCopyPath;
-        FileCut = TranslationHelper.Translation.FileCut;
+        FileCut = TranslationHelper.Translation.Cut;
         CtrlToZoom = TranslationHelper.Translation.CtrlToZoom;
         ScrollToZoom = TranslationHelper.Translation.ScrollToZoom;
         GeneralSettings = TranslationHelper.Translation.GeneralSettings;
@@ -227,9 +227,18 @@ public class ViewModelBase : ReactiveObject
         ChangingThemeRequiresRestart = TranslationHelper.Translation.ChangingThemeRequiresRestart;
         ShowUI = TranslationHelper.Translation.ShowUI;
         HideUI = TranslationHelper.Translation.HideUI;
+        HideBottomToolbar = TranslationHelper.Translation.HideBottomToolbar;
     }
 
     #region Strings
+    
+    private string? _hideBottomToolbar;
+    
+    public string? HideBottomToolbar
+    {
+        get => _hideBottomToolbar;
+        set => this.RaiseAndSetIfChanged(ref _hideBottomToolbar, value);
+    }
     
     private string? _changingThemeRequiresRestart;
     

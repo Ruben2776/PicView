@@ -28,5 +28,9 @@ public static class LanguageUpdater
         vm.GetIsCtrlZoomTranslation = SettingsHelper.Settings.Zoom.CtrlZoom
             ? TranslationHelper.Translation.CtrlToZoom
             : TranslationHelper.Translation.ScrollToZoom;
+        
+        vm.GetIsShowingBottomToolbarTranslation = SettingsHelper.Settings.UIProperties.ShowBottomNavBar
+            ? TranslationHelper.Translation.HideBottomToolbar
+            : TranslationHelper.Translation.ShowBottomToolbar;
     }
 }

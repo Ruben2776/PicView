@@ -9,6 +9,7 @@
     x:Class="PicView.Avalonia.Views.UC.EditableTitlebar"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
@@ -34,7 +35,7 @@
             BorderBrush="{DynamicResource AccentColor}"
             BorderThickness="1"
             IsVisible="{CompiledBinding IsEditableTitlebarOpen}">
-            <TextBox
+            <customControls:FuncTextBox
                 FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                 FontSize="13"
                 FontWeight="Medium"
