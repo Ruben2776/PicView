@@ -258,6 +258,7 @@ public static class WindowFunctions
         {
             vm.SizeToContent = SizeToContent.WidthAndHeight;
             vm.CanResize = false;
+            CenterWindowOnScreen();
         }
         else
         {

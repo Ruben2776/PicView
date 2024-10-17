@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO.Pipes;
-using Avalonia.Controls;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.ViewModels;
 
@@ -24,16 +25,15 @@ internal static class IPC
     /// If a running instance is detected, the argument (e.g., a file path) is passed to it for processing.
     /// </summary>
     /// <param name="arg">The argument to send to the running instance, such as a file path.</param>
-    /// <param name="pipeName">The name of the named pipe to connect to. Defaults to <see cref="PipeName"/>.</param>
     /// <returns>A task that represents the asynchronous operation. The task result is <c>true</c> if the argument is sent successfully.</returns>
     /// <remarks>
     /// This method tries to connect to an existing instance of the application using a named pipe. If successful, 
     /// it sends the argument. In case of a timeout or other exceptions, these errors are caught and logged in debug mode.
     /// This can be used to pass new command-line arguments to a running instance instead of starting a new instance.
     /// </remarks>
-    internal static async Task<bool> SendArgumentToRunningInstance(string arg, string pipeName)
+    internal static async Task<bool> SendArgumentToRunningInstance(string arg)
     {
-        await using var pipeClient = new NamedPipeClientStream(pipeName);
+        await using var pipeClient = new NamedPipeClientStream(PipeName);
         try
         {
             // Try to connect to the running instance
@@ -66,8 +66,6 @@ internal static class IPC
     /// Starts a named pipe server to listen for incoming arguments from other instances of the application.
     /// Processes incoming arguments (e.g., file paths) by instructing the main view model to open the specified picture.
     /// </summary>
-    /// <param name="pipeName">The name of the pipe to listen on. Defaults to <see cref="PipeName"/>.</param>
-    /// <param name="w">The main window of the application, which will be activated upon receiving an argument.</param>
     /// <param name="vm">The main view model that processes the received argument, typically loading a picture.</param>
     /// <returns>A task that represents the asynchronous operation. The method runs indefinitely to handle multiple connections.</returns>
     /// <remarks>
@@ -75,11 +73,11 @@ internal static class IPC
     /// it reads the incoming arguments and processes them. The arguments can include file paths or commands, 
     /// and they are passed to the main view model to update the UI accordingly.
     /// </remarks>
-    internal static async Task StartListeningForArguments(string pipeName, Window w, MainViewModel vm)
+    internal static async Task StartListeningForArguments(MainViewModel vm)
     {
         while (true) // Continuously listen for incoming connections
         {
-            await using var pipeServer = new NamedPipeServerStream(pipeName);
+            await using var pipeServer = new NamedPipeServerStream(PipeName);
 
             try
             {
@@ -95,9 +93,15 @@ internal static class IPC
 #if DEBUG
                     Trace.WriteLine("Received argument: " + line);
 #endif
-                    // Activate the window and load the picture
-                    await Dispatcher.UIThread.InvokeAsync(w.Activate);
                     await NavigationHelper.LoadPicFromStringAsync(line, vm).ConfigureAwait(false);
+                    await Dispatcher.UIThread.InvokeAsync(() => 
+                    {
+                        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+                        {
+                            return;
+                        }
+                        desktop.MainWindow.Activate();
+                    });
                 }
             }
             catch (Exception ex)

@@ -12,6 +12,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;

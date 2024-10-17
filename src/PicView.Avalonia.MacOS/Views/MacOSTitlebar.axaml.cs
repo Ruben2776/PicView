@@ -3,8 +3,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 
 namespace PicView.Avalonia.MacOS.Views;
@@ -68,6 +68,6 @@ public partial class MacOSTitlebar : UserControl
         if (VisualRoot is null) { return; }
 
         var hostWindow = (Window)VisualRoot;
-        WindowHelper.WindowDragAndDoubleClickBehavior(hostWindow, e);
+        WindowFunctions.WindowDragAndDoubleClickBehavior(hostWindow, e);
     }
 }

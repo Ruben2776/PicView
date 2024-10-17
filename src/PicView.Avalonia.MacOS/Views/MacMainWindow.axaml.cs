@@ -1,7 +1,7 @@
+using System;
 using Avalonia.Controls;
 using PicView.Avalonia.ViewModels;
-using System;
-using PicView.Avalonia.UI;
+using PicView.Avalonia.WindowBehavior;
 
 namespace PicView.Avalonia.MacOS.Views;
 
@@ -16,7 +16,7 @@ public partial class MacMainWindow : Window
             // Keep window position when resizing
             ClientSizeProperty.Changed.Subscribe(size =>
             {
-                WindowHelper.HandleWindowResize(this, size);
+                WindowResizing.HandleWindowResize(this, size);
             });
         };
     }
@@ -33,13 +33,13 @@ public partial class MacMainWindow : Window
             return;
         }
         var vm = (MainViewModel)DataContext;
-        WindowHelper.SetSize(vm);
+        WindowResizing.SetSize(vm);
     }
 
     protected override async void OnClosing(WindowClosingEventArgs e)
     {
         e.Cancel = true;
-        await WindowHelper.WindowClosingBehavior(this);
+        await WindowFunctions.WindowClosingBehavior(this);
         base.OnClosing(e);
     }
 }
