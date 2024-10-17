@@ -93,6 +93,11 @@ public static class ColorManager
         var primaryBrush = new SolidColorBrush(primaryAccentColor);
         var secondaryBrush = new SolidColorBrush(secondaryAccentColor);
         var logoAccentBrush = new SolidColorBrush(logoAccentColor);
+        
+        if (SettingsHelper.Settings.Theme.GlassTheme)
+        {
+            ThemeManager.GlassThemeUpdates();
+        }
 
         // Retrieve existing brushes and replace them
         if (Application.Current.TryGetResource("AccentColor", Application.Current.RequestedThemeVariant, out _))
@@ -109,5 +114,7 @@ public static class ColorManager
         {
             Application.Current.Resources["LogoAccentColor"] = logoAccentBrush;
         }
+        
+        
     }
 }

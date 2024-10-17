@@ -168,42 +168,135 @@
             Text="{CompiledBinding MiscSettings,
                                    Mode=OneWay}" />
 
-        <ToggleButton
+
+        <Button
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
             Command="{CompiledBinding ToggleBottomNavBarCommand}"
-            IsChecked="{CompiledBinding IsBottomToolbarShownSetting}"
+            Foreground="{StaticResource SecondaryTextColor}"
             Margin="0,0,0,10"
+            Padding="0,10,0,10"
             Width="300">
-            <TextBlock
-                Classes="txt"
-                Foreground="{StaticResource SecondaryTextColor}"
-                Margin="0"
-                MaxWidth="240"
-                Padding="0,1,5,0"
-                Text="{CompiledBinding ShowBottomToolbar,
-                                       Mode=OneWay}" />
-        </ToggleButton>
+            <StackPanel Orientation="Horizontal">
+                <Image
+                    Height="18"
+                    Margin="10,0,10,0"
+                    Width="18">
+                    <Image.Source>
+                        <DrawingImage>
+                            <DrawingGroup>
+                                <GeometryDrawing Geometry="F1 M3 19L3 5Q3 4.90175 3.00963 4.80397Q3.01926 4.70618 3.03843 4.60982Q3.0576 4.51345 3.08612 4.41943Q3.11464 4.32541 3.15224 4.23463Q3.18984 4.14386 3.23616 4.05721Q3.28247 3.97055 3.33706 3.88886Q3.39165 3.80716 3.45398 3.73121Q3.51631 3.65526 3.58579 3.58579Q3.65526 3.51631 3.73121 3.45398Q3.80716 3.39165 3.88886 3.33706Q3.97055 3.28247 4.05721 3.23616Q4.14386 3.18984 4.23463 3.15224Q4.32541 3.11464 4.41943 3.08612Q4.51345 3.0576 4.60982 3.03843Q4.70618 3.01926 4.80397 3.00963Q4.90175 3 5 3L19 3Q19.0983 3 19.196 3.00963Q19.2938 3.01926 19.3902 3.03843Q19.4865 3.0576 19.5806 3.08612Q19.6746 3.11464 19.7654 3.15224Q19.8561 3.18984 19.9428 3.23616Q20.0294 3.28247 20.1111 3.33706Q20.1928 3.39165 20.2688 3.45398Q20.3447 3.51631 20.4142 3.58579Q20.4837 3.65526 20.546 3.73121Q20.6084 3.80716 20.6629 3.88886Q20.7175 3.97055 20.7638 4.05721Q20.8102 4.14386 20.8478 4.23463Q20.8854 4.32541 20.9139 4.41943Q20.9424 4.51345 20.9616 4.60982Q20.9807 4.70618 20.9904 4.80397Q21 4.90175 21 5L21 19Q21 19.0983 20.9904 19.196Q20.9807 19.2938 20.9616 19.3902Q20.9424 19.4865 20.9139 19.5806Q20.8854 19.6746 20.8478 19.7654Q20.8102 19.8561 20.7638 19.9428Q20.7175 20.0294 20.6629 20.1111Q20.6084 20.1928 20.546 20.2688Q20.4837 20.3447 20.4142 20.4142Q20.3447 20.4837 20.2688 20.546Q20.1928 20.6084 20.1111 20.6629Q20.0294 20.7175 19.9428 20.7638Q19.8561 20.8102 19.7654 20.8478Q19.6746 20.8854 19.5806 20.9139Q19.4865 20.9424 19.3902 20.9616Q19.2938 20.9807 19.196 20.9904Q19.0983 21 19 21L5 21Q4.90175 21 4.80397 20.9904Q4.70618 20.9807 4.60982 20.9616Q4.51345 20.9424 4.41943 20.9139Q4.32541 20.8854 4.23463 20.8478Q4.14386 20.8102 4.05721 20.7638Q3.97055 20.7175 3.88886 20.6629Q3.80716 20.6084 3.73121 20.546Q3.65526 20.4837 3.58579 20.4142Q3.51631 20.3447 3.45398 20.2688Q3.39165 20.1928 3.33706 20.1111Q3.28247 20.0294 3.23616 19.9428Q3.18984 19.8561 3.15224 19.7654Q3.11464 19.6746 3.08612 19.5806Q3.0576 19.4865 3.03843 19.3902Q3.01926 19.2938 3.00963 19.196Q3 19.0983 3 19Z">
+                                    <GeometryDrawing.Pen>
+                                        <Pen
+                                            Brush="{StaticResource SecondaryTextColor}"
+                                            LineCap="Round"
+                                            LineJoin="Round"
+                                            MiterLimit="4"
+                                            Thickness="2" />
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                                <GeometryDrawing Geometry="F1 M3 15L21 15">
+                                    <GeometryDrawing.Pen>
+                                        <Pen
+                                            Brush="{StaticResource SecondaryTextColor}"
+                                            LineCap="Round"
+                                            LineJoin="Round"
+                                            MiterLimit="4"
+                                            Thickness="2" />
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingImage>
+                    </Image.Source>
+                </Image>
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    Margin="0"
+                    MaxWidth="240"
+                    Padding="0,1,5,0"
+                    Text="{CompiledBinding ShowBottomToolbar,
+                                           Mode=OneWay}" />
+            </StackPanel>
+        </Button>
 
-        <ToggleButton
+
+        <Button
             Background="Transparent"
             BorderThickness="0"
             Classes="altHover"
             Command="{CompiledBinding ToggleUICommand}"
-            IsChecked="{CompiledBinding IsUIShown,
-                                        Mode=OneWay}"
             Margin="0,0,0,10"
+            Padding="0,10,0,10"
             Width="300">
-            <TextBlock
-                Classes="txt"
-                Foreground="{StaticResource SecondaryTextColor}"
-                Margin="0"
-                MaxWidth="240"
-                Padding="0,1,5,0"
-                Text="{CompiledBinding GetIsShowingUITranslation,
-                                       Mode=OneWay}" />
-        </ToggleButton>
+            <StackPanel Orientation="Horizontal">
+                <Image
+                    Height="18"
+                    Margin="10,0,10,0"
+                    Width="18">
+                    <Image.Source>
+                        <DrawingImage>
+                            <DrawingGroup>
+                                <DrawingGroup>
+                                    <DrawingGroup.Transform>
+                                        <MatrixTransform Matrix="1.8333334,0,0,1.8333334,0,0" />
+                                    </DrawingGroup.Transform>
+                                    <GeometryDrawing Geometry="F1 M10.733 5.076Q10.9495 5.0502 11.1668 5.03321Q11.3842 5.01621 11.6021 5.00805Q11.8199 4.99988 12.038 5.00056Q12.256 5.00125 12.4738 5.01077Q12.6916 5.0203 12.9088 5.03865Q13.1261 5.057 13.3424 5.08415Q13.5587 5.11131 13.7738 5.14721Q13.9888 5.18312 14.2022 5.22771Q14.4156 5.27231 14.6271 5.32553Q14.8385 5.37875 15.0476 5.44051Q15.2567 5.50226 15.4631 5.57244Q15.6695 5.64263 15.8729 5.72113Q16.0763 5.79963 16.2763 5.88632Q16.4764 5.97301 16.6727 6.06774Q16.8691 6.16247 17.0615 6.26509Q17.2538 6.36771 17.4419 6.47805Q17.6299 6.58839 17.8133 6.70626Q17.9967 6.82414 18.1752 6.94936Q18.3537 7.07458 18.5269 7.20694Q18.7002 7.33929 18.8679 7.47857Q19.0356 7.61784 19.1976 7.76381Q19.3595 7.90978 19.5154 8.06219Q19.6713 8.21461 19.8209 8.37322Q19.9705 8.53184 20.1135 8.69639Q20.2565 8.86094 20.3927 9.03116Q20.529 9.20138 20.6582 9.37698Q20.7874 9.55259 20.9094 9.73329Q21.0314 9.91399 21.1459 10.0995Q21.2605 10.285 21.3674 10.475Q21.4743 10.665 21.5734 10.8592Q21.6726 11.0533 21.7638 11.2514Q21.8549 11.4494 21.938 11.651Q22.0005 11.8194 22.0005 11.999Q22.0005 12.1786 21.938 12.347Q21.3842 13.6896 20.494 14.837">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M14.084 14.158Q13.9792 14.2593 13.865 14.3499Q13.7509 14.4405 13.6285 14.5196Q13.5061 14.5987 13.3766 14.6656Q13.2471 14.7325 13.1117 14.7865Q12.9763 14.8405 12.8364 14.8812Q12.6964 14.9218 12.5531 14.9487Q12.4099 14.9756 12.2647 14.9884Q12.1195 15.0013 11.9738 15Q11.828 14.9988 11.6831 14.9834Q11.5382 14.968 11.3954 14.9386Q11.2527 14.9093 11.1134 14.8662Q10.9742 14.8231 10.8398 14.7668Q10.7054 14.7104 10.577 14.6413Q10.4487 14.5722 10.3277 14.4909Q10.2067 14.4097 10.0941 14.3171Q9.98158 14.2245 9.87852 14.1215Q9.77546 14.0184 9.68288 13.9059Q9.59029 13.7933 9.50906 13.6723Q9.42782 13.5513 9.3587 13.423Q9.28957 13.2946 9.23321 13.1602Q9.17685 13.0258 9.13379 12.8866Q9.09072 12.7473 9.06136 12.6046Q9.032 12.4618 9.01661 12.3169Q9.00122 12.172 8.99995 12.0262Q8.99869 11.8805 9.01156 11.7353Q9.02443 11.5901 9.05131 11.4469Q9.07819 11.3036 9.11883 11.1636Q9.15947 11.0237 9.21348 10.8883Q9.2675 10.7529 9.33438 10.6234Q9.40127 10.4939 9.48039 10.3715Q9.55951 10.2491 9.65013 10.135Q9.74075 10.0208 9.842 9.916">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M17.479 17.499Q17.2312 17.6458 16.9758 17.7791Q16.7205 17.9124 16.4584 18.0319Q16.1963 18.1514 15.9282 18.2566Q15.66 18.3619 15.3866 18.4526Q15.1133 18.5433 14.8354 18.6193Q14.5576 18.6953 14.2761 18.7563Q13.9945 18.8172 13.7102 18.8631Q13.4258 18.9089 13.1394 18.9394Q12.8529 18.9699 12.5653 18.9851Q12.2776 19.0002 11.9896 18.9999Q11.7015 18.9996 11.4139 18.9839Q11.1263 18.9682 10.84 18.9371Q10.5536 18.906 10.2693 18.8596Q9.98501 18.8133 9.70362 18.7517Q9.42222 18.6902 9.14453 18.6137Q8.86683 18.5372 8.59363 18.4459Q8.32043 18.3546 8.05251 18.2488Q7.78459 18.143 7.52272 18.0231Q7.26085 17.9031 7.00578 17.7693Q6.75071 17.6354 6.50317 17.4882Q6.25563 17.3409 6.01634 17.1805Q5.77704 17.0202 5.54668 16.8473Q5.31631 16.6743 5.09554 16.4893Q4.87476 16.3043 4.66421 16.1077Q4.45366 15.9112 4.25394 15.7036Q4.05422 15.4961 3.8659 15.2781Q3.67758 15.0601 3.5012 14.8324Q3.32482 14.6047 3.16089 14.3678Q2.99697 14.131 2.84596 13.8857Q2.69495 13.6404 2.55729 13.3874Q2.41963 13.1344 2.29572 12.8743Q2.17181 12.6143 2.062 12.348Q1.99949 12.1796 1.99949 12Q1.99949 11.8204 2.062 11.652Q2.39233 10.8509 2.84669 10.1131Q3.30106 9.3753 3.86774 8.71979Q4.43442 8.06427 5.09877 7.50799Q5.76312 6.9517 6.508 6.509">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M2 2L22 22">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingGroup>
+                        </DrawingImage>
+                    </Image.Source>
+                </Image>
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    Margin="0"
+                    MaxWidth="240"
+                    Padding="0,1,5,0"
+                    Text="{CompiledBinding GetIsShowingUITranslation,
+                                           Mode=OneWay}" />
+            </StackPanel>
+        </Button>
 
     </StackPanel>
 </UserControl>
