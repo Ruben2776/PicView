@@ -62,8 +62,6 @@
 
                 <customControls:IconButton
                     Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
                     Canvas.Left="45"
                     Classes="hover"
                     Command="{CompiledBinding RotateRightButtonCommand}"
@@ -80,7 +78,7 @@
                 <customControls:IconButton
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
+                    BorderThickness="1,0,1,0"
                     Canvas.Left="90"
                     Classes="hover"
                     Command="{CompiledBinding FlipCommand}"
@@ -99,8 +97,6 @@
 
                 <Button
                     Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
                     Canvas.Left="135"
                     Classes="hover"
                     Height="45"

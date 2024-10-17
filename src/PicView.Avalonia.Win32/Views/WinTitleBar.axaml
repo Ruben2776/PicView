@@ -58,8 +58,6 @@
 
             <customControls:IconButton
                 Background="{DynamicResource WindowButtonBackgroundColor}"
-                BorderBrush="{DynamicResource MainBorderColor}"
-                BorderThickness="0,0,1,0"
                 Classes="hover"
                 Command="{CompiledBinding RotateRightWindowBorderButtonCommand}"
                 DockPanel.Dock="Left"
@@ -77,7 +75,7 @@
             <customControls:IconButton
                 Background="{DynamicResource WindowButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
-                BorderThickness="0,0,1,0"
+                BorderThickness="1,0,1,0"
                 Classes="hover"
                 Command="{CompiledBinding FlipCommand}"
                 Data="{StaticResource FlipGeometry}"
