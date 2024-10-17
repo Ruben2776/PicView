@@ -247,11 +247,30 @@
 
                 <Separator />
 
-                <MenuItem Command="{CompiledBinding ToggleUICommand}" Header="{CompiledBinding GetIsShowingUITranslation, Mode=OneWay}">
+                <MenuItem
+                    Command="{CompiledBinding ToggleUICommand}"
+                    Header="{CompiledBinding GetIsShowingUITranslation,
+                                             Mode=OneWay}"
+                    IsVisible="{CompiledBinding IsUIShown,
+                                                Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
                             Height="12"
                             Source="{StaticResource EyeOffImage}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem
+                    Command="{CompiledBinding ToggleUICommand}"
+                    Header="{CompiledBinding GetIsShowingUITranslation,
+                                             Mode=OneWay}"
+                    IsVisible="{CompiledBinding !IsUIShown,
+                                                Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{StaticResource EyeImage}"
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
@@ -744,6 +763,8 @@
             </MenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
+
+
     <Panel x:Name="MainGrid">
         <uc:SpinWaiter
             HorizontalAlignment="Center"
