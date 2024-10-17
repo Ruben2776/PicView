@@ -123,12 +123,14 @@ public class PicBox : Control
                 Source = new SvgImage { Source = svgSource };
                 lock (Lock)
                 {
+                    DestroyVisual();
                     _animInstance?.Dispose();
                 }
                 _stream?.Dispose();
                 break;
             case ImageType.AnimatedGif:
             case ImageType.AnimatedWebp:
+                CreateVisual();
                 Source = Source as Bitmap;
                 lock (Lock)
                 {
@@ -140,6 +142,7 @@ public class PicBox : Control
                 Source = Source as Bitmap;
                 lock (Lock)
                 {
+                    DestroyVisual();
                     _animInstance?.Dispose();
                 }
                 _stream?.Dispose();
@@ -520,6 +523,22 @@ public class PicBox : Control
         _customVisual.Offset = new Vector3((float)destRect.Position.X, (float)destRect.Position.Y, 0);
     }
 
+    private void CreateVisual()
+    {
+        var compositor = ElementComposition.GetElementVisual(this)?.Compositor;
+        if (compositor == null || _customVisual?.Compositor == compositor) return;
+
+        _customVisual ??= compositor.CreateCustomVisual(new CustomVisualHandler());
+        ElementComposition.SetElementChildVisual(this, _customVisual);
+        _customVisual.SendHandlerMessage(CustomVisualHandler.StartMessage);
+    }
+    
+    private void DestroyVisual()
+    {
+        _customVisual?.SendHandlerMessage(CustomVisualHandler.StopMessage);
+        _customVisual = null;
+    }
+
     #endregion
     
     #region Visual Tree
@@ -531,18 +550,6 @@ public class PicBox : Control
         _customVisual.SendHandlerMessage(CustomVisualHandler.StopMessage);
         _customVisual = null;
         _imageTypeSubscription.Dispose();
-    }
-
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        var compositor = ElementComposition.GetElementVisual(this)?.Compositor;
-        if (compositor == null || _customVisual?.Compositor == compositor) return;
-
-        _customVisual = compositor.CreateCustomVisual(new CustomVisualHandler());
-        ElementComposition.SetElementChildVisual(this, _customVisual);
-        _customVisual.SendHandlerMessage(CustomVisualHandler.StartMessage);
-
-        base.OnAttachedToVisualTree(e);
     }
 
     protected override AutomationPeer OnCreateAutomationPeer()
