@@ -93,15 +93,20 @@ internal static class IPC
 #if DEBUG
                     Trace.WriteLine("Received argument: " + line);
 #endif
-                    await NavigationHelper.LoadPicFromStringAsync(line, vm).ConfigureAwait(false);
+                    // Need to stop taskbar progress if it's running
+                    // Otherwise the new taskbar progress will not be updated
+                    vm.PlatformService.StopTaskbarProgress();
                     await Dispatcher.UIThread.InvokeAsync(() => 
                     {
                         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
                         {
                             return;
                         }
+                        // Activating the window works fine in debug mode, but not in AOT release mode 
                         desktop.MainWindow.Activate();
                     });
+                    await NavigationHelper.LoadPicFromStringAsync(line, vm).ConfigureAwait(false);
+
                 }
             }
             catch (Exception ex)
