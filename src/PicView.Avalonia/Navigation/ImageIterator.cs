@@ -618,17 +618,10 @@ public sealed class ImageIterator : IDisposable
                     return;
                 }
 
-                if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
-                {
-                    SetTitleHelper.SetLoadingTitle(_vm);
-                    _vm.IsLoading = true;
-                    _vm.ImageSource = null;
-                    _vm.SecondaryImageSource = null;
-                }
-                else
-                {
-                    UpdateImage.LoadingPreview(_vm, index);
-                }
+                SetTitleHelper.SetLoadingTitle(_vm);
+                _vm.IsLoading = true;
+                _vm.ImageSource = null;
+                _vm.SecondaryImageSource = null;
             }
         });
     }
