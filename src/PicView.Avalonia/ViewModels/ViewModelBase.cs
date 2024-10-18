@@ -228,9 +228,36 @@ public class ViewModelBase : ReactiveObject
         ShowUI = TranslationHelper.Translation.ShowUI;
         HideUI = TranslationHelper.Translation.HideUI;
         HideBottomToolbar = TranslationHelper.Translation.HideBottomToolbar;
+        Center = TranslationHelper.Translation.Center;
+        Tile = TranslationHelper.Translation.Tile;
+        Fit = TranslationHelper.Translation.Fit;
     }
 
     #region Strings
+    
+    private string? _fit;
+    
+    public string? Fit
+    {
+        get => _fit;
+        set => this.RaiseAndSetIfChanged(ref _fit, value);
+    }
+    
+    private string? _tile;
+
+    public string? Tile
+    {
+        get => _tile;
+        set => this.RaiseAndSetIfChanged(ref _tile, value);
+    }
+
+    private string? _center;
+    
+    public string? Center
+    {
+        get => _center;
+        set => this.RaiseAndSetIfChanged(ref _center, value);
+    }
     
     private string? _hideBottomToolbar;
     

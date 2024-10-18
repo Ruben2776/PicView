@@ -14,6 +14,7 @@ using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Wallpaper;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Calculations;
 using PicView.Core.Config;
@@ -503,6 +504,10 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<int, Unit>? SlideshowCommand { get; }
     
     public ReactiveCommand<string, Unit>? SetAsWallpaperCommand { get; }
+    public ReactiveCommand<string, Unit>? SetAsWallpaperFilledCommand { get; }
+    public ReactiveCommand<string, Unit>? SetAsWallpaperStretchedCommand { get; }
+    public ReactiveCommand<string, Unit>? SetAsWallpaperTiledCommand { get; }
+    public ReactiveCommand<string, Unit>? SetAsWallpaperCenteredCommand { get; }
     
     public ReactiveCommand<string, Unit>? SetAsLockScreenCommand { get; }
     
@@ -1565,7 +1570,7 @@ public class MainViewModel : ViewModelBase
         });
     }
     
-    private async Task SetAsWallpaperTask(string path)
+    public async Task SetAsWallpaperTask(string path)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -1577,7 +1582,71 @@ public class MainViewModel : ViewModelBase
         }
         await Task.Run(() =>
         {
-            PlatformService?.SetAsWallpaper(path, 4);
+            PlatformService?.SetAsWallpaper(path, WallpaperManager.GetWallpaperStyle(WallpaperStyle.Fit));
+        });
+    }
+    
+    public async Task SetAsWallpaperFilledTask(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+        if (PlatformService is null)
+        {
+            return;
+        }
+        await Task.Run(() =>
+        {
+            PlatformService?.SetAsWallpaper(path, WallpaperManager.GetWallpaperStyle(WallpaperStyle.Fill));
+        });
+    }
+    
+    public async Task SetAsWallpaperTiledTask(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+        if (PlatformService is null)
+        {
+            return;
+        }
+        await Task.Run(() =>
+        {
+            PlatformService?.SetAsWallpaper(path, WallpaperManager.GetWallpaperStyle(WallpaperStyle.Tile));
+        });
+    }
+    
+    public async Task SetAsWallpaperStretchedTask(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+        if (PlatformService is null)
+        {
+            return;
+        }
+        await Task.Run(() =>
+        {
+            PlatformService?.SetAsWallpaper(path, WallpaperManager.GetWallpaperStyle(WallpaperStyle.Stretch));
+        });
+    }
+    
+    public async Task SetAsWallpaperCenteredTask(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+        if (PlatformService is null)
+        {
+            return;
+        }
+        await Task.Run(() =>
+        {
+            PlatformService?.SetAsWallpaper(path, WallpaperManager.GetWallpaperStyle(WallpaperStyle.Center));
         });
     }
     
@@ -1610,6 +1679,7 @@ public class MainViewModel : ViewModelBase
         process.Start();
         await TooltipHelper.ShowTooltipMessageAsync(TranslationHelper.Translation.Applying, true);
         await process.WaitForExitAsync();
+        IsLoading = false;
     }
 
     public async Task GalleryItemStretchTask(string value)
@@ -1834,6 +1904,11 @@ public class MainViewModel : ViewModelBase
         LocateOnDiskCommand = ReactiveCommand.CreateFromTask<string>(LocateOnDiskTask);
         
         SetAsWallpaperCommand = ReactiveCommand.CreateFromTask<string>(SetAsWallpaperTask);
+        SetAsWallpaperTiledCommand = ReactiveCommand.CreateFromTask<string>(SetAsWallpaperTiledTask);
+        SetAsWallpaperStretchedCommand = ReactiveCommand.CreateFromTask<string>(SetAsWallpaperStretchedTask);
+        SetAsWallpaperCenteredCommand = ReactiveCommand.CreateFromTask<string>(SetAsWallpaperCenteredTask);
+        SetAsWallpaperFilledCommand = ReactiveCommand.CreateFromTask<string>(SetAsWallpaperFilledTask);
+        
         SetAsLockScreenCommand = ReactiveCommand.CreateFromTask<string>(SetAsLockScreenTask);
 
         #endregion File commands

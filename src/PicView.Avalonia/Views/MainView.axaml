@@ -422,12 +422,7 @@
 
             <Separator />
 
-            <MenuItem
-                Command="{CompiledBinding SetAsWallpaperCommand}"
-                CommandParameter="{CompiledBinding FileInfo.FullName,
-                                                   FallbackValue=''}"
-                Header="{CompiledBinding SetAsWallpaper,
-                                         Mode=OneWay}">
+            <MenuItem Header="{CompiledBinding SetAsWallpaper, Mode=OneWay}" PointerReleased="SetWallpaperClick">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PanoramaGeometry}"
@@ -436,14 +431,94 @@
                         Stretch="Fill"
                         Width="13" />
                 </MenuItem.Icon>
+
+                <MenuItem
+                    Command="{CompiledBinding SetAsWallpaperCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    Header="{CompiledBinding Fit,
+                                             Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Path
+                            Data="{StaticResource PanoramaGeometry}"
+                            Fill="{StaticResource Brush0}"
+                            Height="10.40"
+                            Stretch="Fill"
+                            Width="13" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem
+                    Command="{CompiledBinding SetAsWallpaperStretchedCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    Header="{CompiledBinding Stretch,
+                                             Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Path
+                            Data="{StaticResource PanoramaGeometry}"
+                            Fill="{StaticResource Brush0}"
+                            Height="10.40"
+                            Stretch="Fill"
+                            Width="13" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem
+                    Command="{CompiledBinding SetAsWallpaperFilledCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    Header="{CompiledBinding Fill,
+                                             Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Path
+                            Data="{StaticResource PanoramaGeometry}"
+                            Fill="{StaticResource Brush0}"
+                            Height="10.40"
+                            Stretch="Fill"
+                            Width="13" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem
+                    Command="{CompiledBinding SetAsWallpaperCenteredCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    Header="{CompiledBinding Center,
+                                             Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Path
+                            Data="{StaticResource PanoramaGeometry}"
+                            Fill="{StaticResource Brush0}"
+                            Height="10.40"
+                            Stretch="Fill"
+                            Width="13" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem
+                    Command="{CompiledBinding SetAsWallpaperTiledCommand}"
+                    CommandParameter="{CompiledBinding FileInfo.FullName,
+                                                       FallbackValue=''}"
+                    Header="{CompiledBinding Tile,
+                                             Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Path
+                            Data="{StaticResource PanoramaGeometry}"
+                            Fill="{StaticResource Brush0}"
+                            Height="10.40"
+                            Stretch="Fill"
+                            Width="13" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
             </MenuItem>
             <MenuItem
                 Command="{CompiledBinding SetAsLockScreenCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
                                                    FallbackValue=''}"
                 Header="{CompiledBinding SetAsLockScreenImage,
-                                         Mode=OneWay}"
-                IsEnabled="False">
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PanoramaGeometry}"
