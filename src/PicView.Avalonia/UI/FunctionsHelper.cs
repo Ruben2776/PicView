@@ -1103,4 +1103,12 @@ public static class FunctionsHelper
     #endregion
     
     #endregion
+
+    #if DEBUG
+    public static async Task Invalidate()
+    {
+        Vm?.ImageViewer?.MainImage?.InvalidateVisual();
+        //Vm?.ImageViewer?.InvalidateVisual();
+    }
+    #endif
 }

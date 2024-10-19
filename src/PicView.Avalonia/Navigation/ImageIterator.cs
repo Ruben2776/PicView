@@ -383,7 +383,7 @@ public sealed class ImageIterator : IDisposable
 
     public PreLoader.PreLoadValue? GetNextPreLoadValue()
     {
-        var nextIndex = GetIteration(CurrentIndex, NavigateTo.Next);
+        var nextIndex = GetIteration(CurrentIndex, IsReversed ? NavigateTo.Previous : NavigateTo.Next);
         return PreLoader.Get(nextIndex, ImagePaths);
     }
 
@@ -545,7 +545,8 @@ public sealed class ImageIterator : IDisposable
 
                 if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
                 {
-                    var nextPreloadValue = await GetNextPreLoadValueAsync().ConfigureAwait(false);
+                    var nextIndex = GetIteration(index, IsReversed ? NavigateTo.Previous : NavigateTo.Next);
+                    var nextPreloadValue = await PreLoader.GetAsync(nextIndex, ImagePaths);
                     lock (_lock)
                     {
                         if (CurrentIndex != index)
@@ -555,7 +556,10 @@ public sealed class ImageIterator : IDisposable
                         }
                     }
 
-                    _vm.SecondaryImageSource = nextPreloadValue.ImageModel.Image;
+                    if (nextPreloadValue is not null)
+                    {
+                        _vm.SecondaryImageSource = nextPreloadValue.ImageModel?.Image;
+                    }
                     await UpdateImage.UpdateSource(_vm, index, ImagePaths, IsReversed, preloadValue, nextPreloadValue)
                         .ConfigureAwait(false);
                 }
@@ -590,7 +594,7 @@ public sealed class ImageIterator : IDisposable
             catch (Exception e)
             {
 #if DEBUG
-                Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}");
+                Console.WriteLine($"{nameof(IterateToIndex)} exception: \n{e.Message}\n{e.StackTrace}");
                 await TooltipHelper.ShowTooltipMessageAsync(e.Message);
 #endif
             }

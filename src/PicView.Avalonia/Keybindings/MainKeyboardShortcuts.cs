@@ -1,7 +1,5 @@
-﻿using Avalonia.Input;
-using System.Diagnostics;
-using Avalonia.Controls.ApplicationLifetimes;
-using PicView.Avalonia.Navigation;
+﻿using System.Diagnostics;
+using Avalonia.Input;
 using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.Keybindings;
@@ -50,6 +48,9 @@ public static class MainKeyboardShortcuts
             case Key.F12:
 
                 // Show Avalonia DevTools in DEBUG mode
+                return;
+            case Key.F8:
+                await FunctionsHelper.Invalidate();
                 return;
             case Key.F9:
                 await FunctionsHelper.ShowStartUpMenu();

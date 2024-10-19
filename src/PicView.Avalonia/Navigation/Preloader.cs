@@ -366,6 +366,8 @@ public sealed class PreLoader : IDisposable
 
         void RemoveLoop()
         {
+            // Iterate through the _preLoadList and remove items outside the preload range
+            
             if (list.Count <= MaxCount + NegativeIterations || _preLoadList.Count <= MaxCount)
             {
                 return;
@@ -388,6 +390,12 @@ public sealed class PreLoader : IDisposable
                 {
                     Remove(removeIndex, list);
                 }
+            }
+
+            if (deleteCount > 1)
+            {
+                // Collect unmanaged memory, prevent memory leak
+                GC.Collect(0, GCCollectionMode.Optimized, false);
             }
         }
     }

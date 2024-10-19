@@ -22,7 +22,7 @@ public static class UpdateImage
         PreLoader.PreLoadValue? nextPreloadValue = null)
     {
         preLoadValue ??= await vm.ImageIterator.GetPreLoadValueAsync(index).ConfigureAwait(false);
-        if (preLoadValue.ImageModel?.Image is null)
+        if (preLoadValue.ImageModel?.Image is null && index == vm.ImageIterator.CurrentIndex)
         {
             var fileInfo = preLoadValue.ImageModel?.FileInfo ?? new FileInfo(imagePaths[index]);
             preLoadValue.ImageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
@@ -31,7 +31,7 @@ public static class UpdateImage
         if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
         {
             nextPreloadValue ??= await vm.ImageIterator.GetNextPreLoadValueAsync().ConfigureAwait(false);
-            if (nextPreloadValue.ImageModel?.Image is null)
+            if (nextPreloadValue.ImageModel?.Image is null && index == vm.ImageIterator.CurrentIndex)
             {
                 var fileInfo = nextPreloadValue.ImageModel?.FileInfo ?? new FileInfo(
                     imagePaths[
@@ -43,6 +43,10 @@ public static class UpdateImage
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
+            if (index != vm.ImageIterator.CurrentIndex)
+            {
+                return;
+            }
             vm.ImageViewer.SetTransform(preLoadValue.ImageModel.EXIFOrientation);
             if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
             {
@@ -87,6 +91,16 @@ public static class UpdateImage
         vm.PixelWidth = preLoadValue.ImageModel.PixelWidth;
         vm.PixelHeight = preLoadValue.ImageModel.PixelHeight;
         ExifHandling.UpdateExifValues(preLoadValue.ImageModel, vm);
+        
+        if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+        {
+            // Fixes incorrect rendering in the side by side view
+            // TODO: Improve and fix side by side and remove this hack 
+            Dispatcher.UIThread.Post(() =>
+            {
+                vm.ImageViewer?.MainImage?.InvalidateVisual();
+            });
+        }
     }
 
     /// <summary>

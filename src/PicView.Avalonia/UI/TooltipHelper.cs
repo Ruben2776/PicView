@@ -22,47 +22,49 @@ public static class TooltipHelper
     {
         try
         {
-            var toolTip = UIHelper.GetToolTipMessage;
-            var startAnimation = AnimationsHelper.OpacityAnimation(0, 1, .6);
-            var endAnimation = AnimationsHelper.OpacityAnimation(1, 0, .5);
-        
-            if (_isRunning)
+            await Dispatcher.UIThread.InvokeAsync(async () =>
             {
-                await Dispatcher.UIThread.InvokeAsync(() =>
+                var toolTip = UIHelper.GetToolTipMessage;
+                var startAnimation = AnimationsHelper.OpacityAnimation(0, 1, .6);
+                var endAnimation = AnimationsHelper.OpacityAnimation(1, 0, .5);
+
+                if (_isRunning)
                 {
                     UIHelper.GetToolTipMessage.Opacity = 1;
                     toolTip.ToolTipMessageText.Text = message.ToString();
                     toolTip.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
                     toolTip.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
+
+                    await Task.Delay(interval);
+                    await endAnimation.RunAsync(UIHelper.GetToolTipMessage);
+                    _isRunning = false;
+                    return;
+                }
+
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _isRunning = true;
+                    UIHelper.GetToolTipMessage.IsVisible = true;
+                    UIHelper.GetToolTipMessage.ToolTipMessageText.Text = message.ToString();
+                    UIHelper.GetToolTipMessage.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
+                    UIHelper.GetToolTipMessage.VerticalAlignment =
+                        center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
+                    UIHelper.GetToolTipMessage.Opacity = 0;
                 });
+                await startAnimation.RunAsync(UIHelper.GetToolTipMessage);
                 await Task.Delay(interval);
                 await endAnimation.RunAsync(UIHelper.GetToolTipMessage);
                 _isRunning = false;
-                return;
-            }
-
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                _isRunning = true;
-                UIHelper.GetToolTipMessage.IsVisible = true;
-                UIHelper.GetToolTipMessage.ToolTipMessageText.Text = message.ToString();
-                UIHelper.GetToolTipMessage.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
-                UIHelper.GetToolTipMessage.VerticalAlignment = center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
-                UIHelper.GetToolTipMessage.Opacity = 0;
             });
-            await startAnimation.RunAsync(UIHelper.GetToolTipMessage);
-            await Task.Delay(interval);
-            await endAnimation.RunAsync(UIHelper.GetToolTipMessage);
-            _isRunning = false;
         }
         catch (Exception e)
         {
 #if DEBUG
-            Console.WriteLine(e);
+            Console.WriteLine(e.Message);
 #endif
         }
     }
-    
+
     /// <summary>
     /// Shows the tooltip message on the UI.
     /// </summary>
@@ -85,11 +87,12 @@ public static class TooltipHelper
                     }
                 });
             }
+
             _isRunning = false;
             timer.Stop();
         };
         timer.Start();
-        
+
         try
         {
             Dispatcher.UIThread.Invoke(() =>
@@ -99,6 +102,7 @@ public static class TooltipHelper
                 {
                     return;
                 }
+
                 _isRunning = true;
                 toolTip.IsVisible = true;
                 toolTip.ToolTipMessageText.Text = message.ToString();
@@ -107,10 +111,10 @@ public static class TooltipHelper
                 toolTip.Opacity = 1;
             });
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
 #if DEBUG
-            Console.WriteLine(e);
+            Console.WriteLine($"{nameof(ShowTooltipMessage)} exception, \n{exception.Message}");
 #endif
         }
     }
@@ -124,7 +128,7 @@ public static class TooltipHelper
     {
         ShowTooltipMessage(message, center, TimeSpan.FromSeconds(2));
     }
-    
+
     /// <summary>
     /// Shows the tooltip message on the UI with a default duration of 2 seconds.
     /// </summary>
