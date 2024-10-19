@@ -186,8 +186,8 @@
                     Canvas.Left="7"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
+                    Command="{CompiledBinding ShowSingleImageResizeWindowCommand}"
                     Height="46"
-                    IsEnabled="False"
                     ToolTip.Tip="{CompiledBinding ResizeImage,
                                                   Mode=OneWay}">
                     <StackPanel Orientation="Horizontal">

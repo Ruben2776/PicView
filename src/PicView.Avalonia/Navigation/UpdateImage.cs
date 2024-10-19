@@ -40,6 +40,11 @@ public static class UpdateImage
                 nextPreloadValue.ImageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
             }
         }
+        
+        if (index != vm.ImageIterator.CurrentIndex)
+        {
+            return;
+        }
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {

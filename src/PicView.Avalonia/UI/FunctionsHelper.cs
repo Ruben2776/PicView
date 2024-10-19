@@ -494,7 +494,7 @@ public static class FunctionsHelper
 
     public static Task ResizeWindow()
     {
-        Vm?.PlatformService?.ShowResizeWindow();
+        Vm?.PlatformService?.ShowSingleImageResizeWindow();
         return Task.CompletedTask;
     }
 

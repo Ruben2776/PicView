@@ -4,11 +4,11 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.Keybindings;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Extensions;
@@ -17,7 +17,6 @@ namespace PicView.Avalonia.Views;
 
 public partial class MainView : UserControl
 {
-    private DragDropView? _dragDropView;
     public MainView()
     {
         InitializeComponent();

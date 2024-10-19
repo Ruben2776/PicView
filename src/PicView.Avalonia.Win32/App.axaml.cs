@@ -30,6 +30,8 @@ public class App : Application, IPlatformSpecificService
     private SettingsWindow? _settingsWindow;
     private KeybindingsWindow? _keybindingsWindow;
     private AboutWindow? _aboutWindow;
+    private SingleImageResizeWindow? _singleImageResizeWindow;
+    private BatchResizeWindow? _batchResizeWindow;
     private MainViewModel? _vm;
     
     private TaskbarProgress? _taskbarProgress;
@@ -306,9 +308,74 @@ public class App : Application, IPlatformSpecificService
         // TODO: Implement ShowEffectsWindow
     }
 
-    public void ShowResizeWindow()
+    public void ShowSingleImageResizeWindow()
     {
-        // TODO: Implement ShowResizeWindow
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(Set);
+        }
+        return;
+        void Set()
+        {
+            if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            if (_singleImageResizeWindow is null)
+            {
+                _singleImageResizeWindow = new SingleImageResizeWindow
+                {
+                    DataContext = _vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                _singleImageResizeWindow.Show(desktop.MainWindow);
+                _singleImageResizeWindow.Closing += (s, e) => _singleImageResizeWindow = null;
+            }
+            else
+            {
+                _singleImageResizeWindow.Activate();                
+            }
+            _= FunctionsHelper.CloseMenus();
+        }
+    }
+    
+    public void ShowBatchResizeWindow()
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(Set);
+        }
+        return;
+        void Set()
+        {
+            if (Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            if (_batchResizeWindow is null)
+            {
+                _batchResizeWindow = new BatchResizeWindow
+                {
+                    DataContext = _vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                };
+                _batchResizeWindow.Show(desktop.MainWindow);
+                _batchResizeWindow.Closing += (s, e) => _batchResizeWindow = null;
+            }
+            else
+            {
+                _batchResizeWindow.Activate();
+            }
+            _= FunctionsHelper.CloseMenus();
+        }   
     }
 
     public void Print(string path)

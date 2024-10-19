@@ -361,9 +361,6 @@ public partial class ImageViewer : UserControl
 
     public void Reset()
     {
-        if (DataContext is not MainViewModel vm)
-            return;
-        
         if (Dispatcher.UIThread.CheckAccess())
         {
             DoReset();

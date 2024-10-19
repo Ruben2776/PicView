@@ -30,7 +30,6 @@ public sealed class ImageIterator : IDisposable
     private static FileSystemWatcher? _watcher;
     private static bool _isRunning;
     private readonly MainViewModel? _vm;
-    private readonly Lock _lock = new();
 
     #endregion
 
@@ -501,10 +500,7 @@ public sealed class ImageIterator : IDisposable
         {
             try
             {
-                lock (_lock)
-                {
-                    CurrentIndex = index;
-                }
+                CurrentIndex = index;
 
                 // ReSharper disable once MethodHasAsyncOverload
                 var preloadValue = PreLoader.Get(index, ImagePaths);
@@ -518,13 +514,10 @@ public sealed class ImageIterator : IDisposable
                     while (preloadValue.IsLoading)
                     {
                         await Task.Delay(20).ConfigureAwait(false);
-                        lock (_lock)
+                        if (CurrentIndex != index)
                         {
-                            if (CurrentIndex != index)
-                            {
-                                // Skip loading if user went to next value
-                                return;
-                            }
+                            // Skip loading if user went to next value
+                            return;
                         }
                     }
                 }
@@ -534,26 +527,20 @@ public sealed class ImageIterator : IDisposable
                     preloadValue = await PreLoader.GetAsync(CurrentIndex, ImagePaths).ConfigureAwait(false);
                 }
 
-                lock (_lock)
+                if (CurrentIndex != index)
                 {
-                    if (CurrentIndex != index)
-                    {
-                        // Skip loading if user went to next value
-                        return;
-                    }
+                    // Skip loading if user went to next value
+                    return;
                 }
 
                 if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
                 {
                     var nextIndex = GetIteration(index, IsReversed ? NavigateTo.Previous : NavigateTo.Next);
                     var nextPreloadValue = await PreLoader.GetAsync(nextIndex, ImagePaths);
-                    lock (_lock)
+                    if (CurrentIndex != index)
                     {
-                        if (CurrentIndex != index)
-                        {
-                            // Skip loading if user went to next value
-                            return;
-                        }
+                        // Skip loading if user went to next value
+                        return;
                     }
 
                     if (nextPreloadValue is not null)

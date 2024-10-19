@@ -6,6 +6,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Calculations;
@@ -13,7 +14,7 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.ProcessHandling;
 
-namespace PicView.Avalonia.UI;
+namespace PicView.Avalonia.DragAndDrop;
 
 public static class DragAndDropHelper
 {

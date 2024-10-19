@@ -31,8 +31,6 @@ public class PicBox : Control
     private IGifInstance? _animInstance;
     public string? InitialAnimatedSource;
     private readonly IDisposable? _imageTypeSubscription;
-
-    private static readonly Lock Lock = new();
     
     /// <summary>
     /// Defines the <see cref="Source"/> property.
@@ -121,30 +119,21 @@ public class PicBox : Control
                 }
                 var svgSource = SvgSource.Load(svg);
                 Source = new SvgImage { Source = svgSource };
-                lock (Lock)
-                {
-                    DestroyVisual();
-                    _animInstance?.Dispose();
-                }
+                DestroyVisual();
+                _animInstance?.Dispose();
                 _stream?.Dispose();
                 break;
             case ImageType.AnimatedGif:
             case ImageType.AnimatedWebp:
                 CreateVisual();
                 Source = Source as Bitmap;
-                lock (Lock)
-                {
-                    _animInstance?.Dispose();
-                }
+                _animInstance?.Dispose();
                 
                 break;
             case ImageType.Bitmap:
                 Source = Source as Bitmap;
-                lock (Lock)
-                {
-                    DestroyVisual();
-                    _animInstance?.Dispose();
-                }
+                DestroyVisual();
+                _animInstance?.Dispose();
                 _stream?.Dispose();
                 break;
             case ImageType.Invalid:
@@ -490,20 +479,17 @@ public class PicBox : Control
 
     private void UpdateAnimationInstance(FileStream fileStream)
     {
-        lock (Lock)
+        _animInstance?.Dispose();
+        if (ImageType == ImageType.AnimatedGif)
         {
-            _animInstance?.Dispose();
-            if (ImageType == ImageType.AnimatedGif)
-            {
-                _animInstance = new GifInstance(fileStream);
-            }
-            else
-            {
-                _animInstance = new WebpInstance(fileStream);
-            }
-            _animInstance.IterationCount = IterationCount.Infinite;
-            _customVisual?.SendHandlerMessage(_animInstance);
+            _animInstance = new GifInstance(fileStream);
         }
+        else
+        {
+            _animInstance = new WebpInstance(fileStream);
+        }
+        _animInstance.IterationCount = IterationCount.Infinite;
+        _customVisual?.SendHandlerMessage(_animInstance);
         AnimationUpdate();
     }
     

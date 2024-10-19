@@ -29,7 +29,9 @@ public interface IPlatformSpecificService
     
     void ShowEffectsWindow();
     
-    void ShowResizeWindow();
+    void ShowSingleImageResizeWindow();
+    
+    void ShowBatchResizeWindow();
     
     void Print(string path);
     

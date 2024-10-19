@@ -45,9 +45,9 @@
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="altHover"
+                    Command="{CompiledBinding ShowBatchResizeWindowCommand}"
                     CornerRadius="8,0,0,0"
                     Height="45"
-                    IsEnabled="False"
                     ToolTip.Tip="{CompiledBinding BatchResize,
                                                   Mode=OneWay}"
                     Width="179">

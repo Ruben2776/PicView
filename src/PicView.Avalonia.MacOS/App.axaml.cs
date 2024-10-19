@@ -281,9 +281,14 @@ public void ShowAboutWindow()
         // TODO: Implement ShowEffectsWindow
     }
 
-    public void ShowResizeWindow()
+    public void ShowSingleImageResizeWindow()
     {
         // TODO: Implement ShowResizeWindow
+    }
+
+    public void ShowBatchResizeWindow()
+    {
+        // TODO: Implement ShowBatchResizeWindow
     }
 
     public void Print(string path)

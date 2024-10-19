@@ -468,7 +468,8 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>? ShowAboutWindowCommand { get; }
     public ReactiveCommand<Unit, Unit>? ShowSettingsWindowCommand { get; }
     public ReactiveCommand<Unit, Unit>? ShowKeybindingsWindowCommand { get; }
-
+    public ReactiveCommand<Unit, Unit>? ShowBatchResizeWindowCommand { get; }
+    public ReactiveCommand<Unit, Unit>? ShowSingleImageResizeWindowCommand { get; }
     public ReactiveCommand<Unit, Unit>? SetExifRating0Command { get; }
     public ReactiveCommand<Unit, Unit>? SetExifRating1Command { get; }
     public ReactiveCommand<Unit, Unit>? SetExifRating2Command { get; }
@@ -1754,7 +1755,8 @@ public class MainViewModel : ViewModelBase
         ShowSettingsWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowSettingsWindow);
         ShowKeybindingsWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowKeybindingsWindow);
         ShowAboutWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowAboutWindow);
-
+        ShowBatchResizeWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowBatchResizeWindow);
+        ShowSingleImageResizeWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowSingleImageResizeWindow);
         #endregion Window commands
 
         #region Navigation Commands

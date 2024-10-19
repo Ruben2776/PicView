@@ -1,0 +1,101 @@
+﻿<Window
+    BorderThickness="1"
+    CanResize="False"
+    CornerRadius="8"
+    SizeToContent="WidthAndHeight"
+    Title="Loading..."
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.Win32.Views.BatchResizeWindow"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
+    <Border
+        BorderBrush="{DynamicResource WindowBorderColor}"
+        BorderThickness="1"
+        CornerRadius="8"
+        PointerPressed="MoveWindow"
+        x:Name="ParentBorder">
+        <StackPanel>
+
+            <DockPanel Height="28" LastChildFill="True">
+
+                <Border
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    CornerRadius="8,0,0,0"
+                    DockPanel.Dock="Left"
+                    x:Name="IconBorder">
+                    <Image
+                        Height="25"
+                        Margin="7,1,7,1"
+                        Source="{StaticResource LogoImage}"
+                        Width="20" />
+                </Border>
+
+                <customControls:IconButton
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderThickness="0"
+                    Classes="hover"
+                    Click="Close"
+                    ClickMode="Release"
+                    CornerRadius="0,8,0,0"
+                    Data="{StaticResource CloseGeometry}"
+                    DockPanel.Dock="Right"
+                    Foreground="{DynamicResource MainTextColor}"
+                    IconHeight="10"
+                    IconWidth="10"
+                    Width="30"
+                    x:Name="CloseButton" />
+
+                <customControls:IconButton
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="1,0,1,0"
+                    Classes="hover"
+                    Click="Minimize"
+                    Data="{StaticResource MinimizeGeometry}"
+                    DockPanel.Dock="Right"
+                    Foreground="{DynamicResource MainTextColor}"
+                    IconHeight="12"
+                    IconWidth="12"
+                    Width="30"
+                    x:Name="MinimizeButton" />
+
+                <TextBlock
+                    Background="{DynamicResource WindowSecondaryBackgroundColor}"
+                    Classes="txt"
+                    Foreground="{DynamicResource MainTextColor}"
+                    Height="28"
+                    LineHeight="28"
+                    Padding="30,0,0,0"
+                    Text="{CompiledBinding BatchResize,
+                                           Mode=OneWay}"
+                    TextAlignment="Center"
+                    x:Name="TitleText" />
+            </DockPanel>
+
+            <Rectangle
+                Fill="{DynamicResource WindowBorderColor}"
+                Height="1"
+                x:Name="BorderRectangle" />
+
+            <views:BatchResizeView
+                Background="{DynamicResource NoisyTexture}"
+                Focusable="True"
+                Margin="0"
+                Padding="10,2,5,10"
+                PointerPressed="MoveWindow" />
+        </StackPanel>
+    </Border>
+</Window>
