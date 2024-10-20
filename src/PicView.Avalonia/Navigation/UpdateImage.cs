@@ -74,8 +74,16 @@ public static class UpdateImage
         }, DispatcherPriority.Send);
 
         vm.IsLoading = false;
-        SetTitleHelper.SetTitle(vm, preLoadValue.ImageModel);
 
+        if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+        {
+            SetTitleHelper.SetSideBySideTitle(vm, preLoadValue.ImageModel, nextPreloadValue?.ImageModel);
+        }
+        else
+        {
+            SetTitleHelper.SetTitle(vm, preLoadValue.ImageModel);
+        }
+        
         if (SettingsHelper.Settings.WindowProperties.KeepCentered)
         {
             await Dispatcher.UIThread.InvokeAsync(() => { WindowFunctions.CenterWindowOnScreen(); });

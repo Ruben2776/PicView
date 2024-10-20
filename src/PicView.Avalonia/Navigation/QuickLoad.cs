@@ -63,8 +63,15 @@ public static class QuickLoad
         ExifHandling.UpdateExifValues(imageModel, vm);
         vm.ImageIterator ??= new ImageIterator(fileInfo, vm);
         vm.GetIndex = vm.ImageIterator.CurrentIndex + 1;
-            
-        SetTitleHelper.SetTitle(vm, imageModel);
+
+        if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
+        {
+            SetTitleHelper.SetSideBySideTitle(vm, imageModel, secondaryPreloadValue?.ImageModel);
+        }
+        else
+        {
+            SetTitleHelper.SetTitle(vm, imageModel);
+        }
         
         if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
         {

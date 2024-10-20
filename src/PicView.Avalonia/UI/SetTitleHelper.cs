@@ -88,6 +88,41 @@ public static class SetTitleHelper
                     vm.TitleTooltip = TranslationHelper.GetTranslation("UnableToRender");
         }
     }
+    
+    public static void SetSideBySideTitle(MainViewModel vm, ImageModel? imageModel1, ImageModel? imageModel2)
+    {
+        if (imageModel1 is null || imageModel2 is null)
+        {
+            ReturnError();
+            return;
+        }
+
+        if (imageModel1.FileInfo is null || imageModel2.FileInfo is null)
+        {
+            ReturnError();
+            return;
+        }
+
+        var firstWindowTitles = ImageTitleFormatter.GenerateTitleStrings(imageModel1.PixelWidth, imageModel1.PixelHeight,  vm.ImageIterator.CurrentIndex,
+            imageModel1.FileInfo,  vm.ZoomValue,  vm.ImageIterator.ImagePaths);
+        var secondWindowTitles = ImageTitleFormatter.GenerateTitleStrings(imageModel2.PixelWidth, imageModel2.PixelHeight,  vm.ImageIterator.NextIndex,
+            imageModel2.FileInfo,  vm.ZoomValue,  vm.ImageIterator.ImagePaths);
+        var windowTitle = $"{firstWindowTitles.BaseTitle} \u21dc || \u21dd {secondWindowTitles.BaseTitle} - PicView";
+        var title = $"{firstWindowTitles.BaseTitle} \u21dc || \u21dd  {secondWindowTitles.BaseTitle}";
+        var titleTooltip = $"{firstWindowTitles.FilePathTitle} \u21dc || \u21dd  {secondWindowTitles.FilePathTitle}";
+        vm.WindowTitle = windowTitle;
+        vm.Title = title;
+        vm.TitleTooltip = titleTooltip;
+
+        return;
+
+        void ReturnError()
+        {
+            vm.WindowTitle =
+                vm.Title =
+                    vm.TitleTooltip = TranslationHelper.GetTranslation("UnableToRender");
+        }
+    }
 
     public static void ResetTitle(MainViewModel vm)
     {

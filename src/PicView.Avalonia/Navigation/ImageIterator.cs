@@ -22,6 +22,8 @@ public sealed class ImageIterator : IDisposable
     public List<string> ImagePaths { get; private set; }
 
     public int CurrentIndex { get; private set; }
+    
+    public int NextIndex => GetIteration(CurrentIndex, NavigateTo.Next);
 
     public FileInfo InitialFileInfo { get; private set; } = null!;
     public bool IsReversed { get; private set; }
