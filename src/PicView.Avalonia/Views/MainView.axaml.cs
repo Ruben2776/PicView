@@ -5,7 +5,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using PicView.Avalonia.DragAndDrop;
-using PicView.Avalonia.Keybindings;
+using PicView.Avalonia.Input;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;

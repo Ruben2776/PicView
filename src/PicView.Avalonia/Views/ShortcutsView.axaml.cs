@@ -2,10 +2,10 @@ using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
-using PicView.Avalonia.Keybindings;
+using PicView.Avalonia.Input;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Localization;
-using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.Views;
 
@@ -38,7 +38,7 @@ public partial class ShortcutsView : UserControl
 
     private async Task SetDefault()
     {
-        await KeybindingsHelper.SetDefaultKeybindings().ConfigureAwait(false);
+        await KeybindingManager.SetDefaultKeybindings().ConfigureAwait(false);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             var topLevel = TopLevel.GetTopLevel(this);

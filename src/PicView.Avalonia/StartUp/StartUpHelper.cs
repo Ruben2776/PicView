@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using PicView.Avalonia.ColorManagement;
-using PicView.Avalonia.Keybindings;
+using PicView.Avalonia.Input;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.UI;
@@ -73,7 +73,7 @@ public static class StartUpHelper
 
         HandleThemeUpdates(vm);
 
-        Task.Run(KeybindingsHelper.LoadKeybindings);
+        Task.Run(KeybindingManager.LoadKeybindings);
         
         SetWindowEventHandlers(window);
 

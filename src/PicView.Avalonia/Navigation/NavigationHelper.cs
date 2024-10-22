@@ -5,7 +5,7 @@ using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
-using PicView.Avalonia.Keybindings;
+using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;

@@ -4,7 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using PicView.Avalonia.UI;
 
-namespace PicView.Avalonia.Keybindings;
+namespace PicView.Avalonia.Input;
 
 public static class MouseShortcuts
 {

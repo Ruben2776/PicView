@@ -1,17 +1,17 @@
-﻿using Avalonia.Input;
-using PicView.Core.Keybindings;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Avalonia.Input;
 using PicView.Avalonia.UI;
+using PicView.Core.Keybindings;
 
-namespace PicView.Avalonia.Keybindings;
+namespace PicView.Avalonia.Input;
 
 [JsonSourceGenerationOptions(AllowTrailingCommas = true, WriteIndented = true)]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 internal partial class SourceGenerationContext : JsonSerializerContext;
 
-public static class KeybindingsHelper
+public static class KeybindingManager
 {
     // TODO move to an interface, use this as default for Windows and make a macOS default
     private const string DefaultKeybindings = """

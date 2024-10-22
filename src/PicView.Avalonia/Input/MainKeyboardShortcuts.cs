@@ -2,7 +2,7 @@
 using Avalonia.Input;
 using PicView.Avalonia.UI;
 
-namespace PicView.Avalonia.Keybindings;
+namespace PicView.Avalonia.Input;
 
 public static class MainKeyboardShortcuts
 {
@@ -34,7 +34,7 @@ public static class MainKeyboardShortcuts
 
     public static async Task MainWindow_KeysDownAsync(KeyEventArgs e)
     {
-        if (KeybindingsHelper.CustomShortcuts is null || !IsKeysEnabled)
+        if (KeybindingManager.CustomShortcuts is null || !IsKeysEnabled)
         {
             return;
         }
@@ -96,15 +96,15 @@ public static class MainKeyboardShortcuts
         _x++;
         IsKeyHeldDown = _x > 1;
 
-        if (KeybindingsHelper.CustomShortcuts.TryGetValue(CurrentKeys, out var func))
+        if (KeybindingManager.CustomShortcuts.TryGetValue(CurrentKeys, out var func))
         {
             // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
             if (func is null)
             {
                 try
                 {
-                    await KeybindingsHelper.SetDefaultKeybindings().ConfigureAwait(false);
-                    if (KeybindingsHelper.CustomShortcuts.TryGetValue(CurrentKeys, out var retryFunc))
+                    await KeybindingManager.SetDefaultKeybindings().ConfigureAwait(false);
+                    if (KeybindingManager.CustomShortcuts.TryGetValue(CurrentKeys, out var retryFunc))
                     {
                         await retryFunc.Invoke().ConfigureAwait(false);
                     }
