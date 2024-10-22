@@ -46,9 +46,9 @@ public static class SaveImageFileHelper
             {
                 if (height is not null)
                 {
-                    if (height >= 0)
+                    if (height > 0)
                     {
-                        magickImage.Resize(0, height.Value);
+                        magickImage.Resize(width > 0 ? width.Value : 0, height.Value);
                     }
                 }
                 else
@@ -60,9 +60,9 @@ public static class SaveImageFileHelper
             {
                 if (width is not null)
                 {
-                    if (width >= 0)
+                    if (width > 0)
                     {
-                        magickImage.Resize(width.Value, 0);
+                        magickImage.Resize(width.Value, height > 0 ? height.Value : 0);
                     }
                 }
                 else

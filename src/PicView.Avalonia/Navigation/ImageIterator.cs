@@ -578,7 +578,7 @@ public sealed class ImageIterator : IDisposable
                         .ConfigureAwait(false);
                 }
 
-                await AddAsync(index, preloadValue.ImageModel).ConfigureAwait(false);
+                await AddAsync(index, preloadValue?.ImageModel).ConfigureAwait(false);
 
                 // Add recent files, except when browsing archive
                 if (string.IsNullOrWhiteSpace(TempFileHelper.TempFilePath) && ImagePaths.Count > index)

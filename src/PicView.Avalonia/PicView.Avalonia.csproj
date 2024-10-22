@@ -149,7 +149,6 @@
 
   <ItemGroup>
     <Folder Include="Assets\" />
-    <Folder Include="Resizing\" />
   </ItemGroup>
 
   <ItemGroup>

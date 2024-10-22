@@ -8,199 +8,205 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <StackPanel>
-        <StackPanel Margin="30">
+    <Panel>
 
-            <StackPanel Orientation="Horizontal">
-                <RadioButton
-                    HorizontalAlignment="Center"
-                    IsChecked="True"
-                    Width="255"
-                    x:Name="PixelsTabItem">
-                    <TextBlock
-                        Classes="txt"
-                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                        FontSize="14"
-                        Text="{CompiledBinding Pixels,
-                                               Mode=OneWay}" />
-                </RadioButton>
-                <RadioButton
-                    HorizontalAlignment="Center"
-                    IsEnabled="False"
-                    x:Name="PercentageTabItem">
-                    <TextBlock
-                        Classes="txt"
-                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                        FontSize="14"
-                        Text="{CompiledBinding Percentage,
-                                               Mode=OneWay}" />
-                </RadioButton>
+        <uc:SpinWaiter IsVisible="False" x:Name="SpinWaiter" />
+
+        <StackPanel x:Name="ParentContainer">
+            <StackPanel Margin="30">
+
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton
+                        HorizontalAlignment="Center"
+                        IsChecked="True"
+                        Width="255"
+                        x:Name="PixelsTabItem">
+                        <TextBlock
+                            Classes="txt"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            FontSize="14"
+                            Text="{CompiledBinding Pixels,
+                                                   Mode=OneWay}" />
+                    </RadioButton>
+                    <RadioButton
+                        HorizontalAlignment="Center"
+                        IsEnabled="False"
+                        x:Name="PercentageTabItem">
+                        <TextBlock
+                            Classes="txt"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            FontSize="14"
+                            Text="{CompiledBinding Percentage,
+                                                   Mode=OneWay}" />
+                    </RadioButton>
+                </StackPanel>
+
+                <StackPanel
+                    IsVisible="{Binding Path=IsChecked, ElementName=PixelsTabItem}"
+                    Margin="0,25,0,30"
+                    Orientation="Horizontal">
+                    <StackPanel>
+                        <TextBlock
+                            Classes="txt"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            FontSize="14"
+                            Margin="4,0,0,5"
+                            Text="{CompiledBinding Width,
+                                                   Mode=OneWay}" />
+                        <customControls:FuncTextBox
+                            Background="{DynamicResource SecondaryBackgroundColor}"
+                            Classes="hover TStyle"
+                            CornerRadius="4"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Height="35"
+                            Margin="0"
+                            Text="{CompiledBinding PixelWidth,
+                                                   Mode=OneWay}"
+                            ToolTip.Tip="{CompiledBinding SizeTooltip,
+                                                          Mode=OneWay}"
+                            Width="195"
+                            x:Name="PixelWidthTextBox" />
+                    </StackPanel>
+
+                    <customControls:IconButton
+                        Foreground="{StaticResource SecondaryTextColor}"
+                        Height="21"
+                        Icon="{StaticResource LinkChainImage}"
+                        IconHeight="21"
+                        IconWidth="21"
+                        IsEnabled="False"
+                        Margin="20,20,20,0"
+                        Width="21" />
+
+
+                    <StackPanel>
+                        <TextBlock
+                            Classes="txt"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            FontSize="14"
+                            Margin="4,0,0,5"
+                            Text="{CompiledBinding Height,
+                                                   Mode=OneWay}" />
+                        <customControls:FuncTextBox
+                            Background="{DynamicResource SecondaryBackgroundColor}"
+                            Classes="hover TStyle"
+                            CornerRadius="4"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Height="35"
+                            Margin="0"
+                            Text="{CompiledBinding PixelHeight,
+                                                   Mode=OneWay}"
+                            ToolTip.Tip="{CompiledBinding SizeTooltip,
+                                                          Mode=OneWay}"
+                            Width="195"
+                            x:Name="PixelHeightTextBox" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <TextBlock
+                            Classes="txt"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            FontSize="14"
+                            Margin="5,0,0,2"
+                            Text="{CompiledBinding Quality,
+                                                   Mode=OneWay}" />
+                        <customControls:CustomSlider
+                            IsSnapToTickEnabled="True"
+                            Margin="5,0,0,2"
+                            Maximum="100"
+                            Minimum="10"
+                            TickFrequency="1"
+                            Value="90"
+                            Width="190"
+                            x:Name="QualitySlider" />
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,3"
+                            Text="{Binding Path=Value, ElementName=QualitySlider}" />
+                    </StackPanel>
+                    <StackPanel Margin="60,0,0,0">
+                        <TextBlock
+                            Classes="txt"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            FontSize="14"
+                            Margin="5,0,0,5"
+                            Text="{CompiledBinding ConvertTo,
+                                                   Mode=OneWay}" />
+                        <ComboBox
+                            Background="{DynamicResource SecondaryBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            Height="30"
+                            HorizontalAlignment="Right"
+                            Margin="2,0,0,0"
+                            Padding="5,7,0,7"
+                            SelectedIndex="0"
+                            Width="195"
+                            x:Name="ConversionComboBox">
+                            <ComboBoxItem Content="{CompiledBinding NoConversion, Mode=OneWay}" x:Name="NoConversion" />
+                            <ComboBoxItem Content=".png" x:Name="PngItem" />
+                            <ComboBoxItem Content=".jpg" x:Name="JpgItem" />
+                            <ComboBoxItem Content=".webp" x:Name="WebpItem" />
+                            <ComboBoxItem Content=".avif" x:Name="AvifItem" />
+                            <ComboBoxItem Content=".heic" x:Name="HeicItem" />
+                            <ComboBoxItem Content=".jxl" x:Name="JxlItem" />
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+
             </StackPanel>
-
             <StackPanel
-                IsVisible="{Binding Path=IsChecked, ElementName=PixelsTabItem}"
-                Margin="0,25,0,30"
+                Background="#277A7A7A"
+                Height="80"
                 Orientation="Horizontal">
-                <StackPanel>
+                <Button
+                    Classes="BorderStyle altHover mainBtn"
+                    CornerRadius="4"
+                    Margin="30,0,60,0"
+                    Width="195">
                     <TextBlock
                         Classes="txt"
-                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                        FontSize="14"
-                        Margin="4,0,0,5"
-                        Text="{CompiledBinding Width,
-                                               Mode=OneWay}" />
-                    <customControls:FuncTextBox
-                        Background="{DynamicResource SecondaryBackgroundColor}"
-                        Classes="hover TStyle"
-                        CornerRadius="4"
-                        Foreground="{StaticResource SecondaryTextColor}"
-                        Height="35"
-                        Margin="0"
-                        Text="{CompiledBinding PixelWidth,
+                        Text="{CompiledBinding ResetButtonText,
                                                Mode=OneWay}"
-                        ToolTip.Tip="{CompiledBinding SizeTooltip,
-                                                      Mode=OneWay}"
-                        Width="195"
-                        x:Name="PixelWidthTextBox" />
-                </StackPanel>
+                        TextAlignment="Center" />
+                </Button>
 
-                <customControls:IconButton
-                    Foreground="{StaticResource SecondaryTextColor}"
-                    Height="16"
-                    Icon="{StaticResource LinkChainImage}"
-                    IconHeight="16"
-                    IconWidth="16"
-                    IsEnabled="False"
-                    Margin="20,20,20,0"
-                    Width="16" />
-
-                <StackPanel Margin="5,0,0,0">
+                <SplitButton
+                    Background="{DynamicResource AccentColor}"
+                    Classes="BorderStyle accentHover mainBtn"
+                    CornerRadius="4"
+                    Width="195"
+                    x:Name="SaveButton">
                     <TextBlock
                         Classes="txt"
-                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                        FontSize="14"
-                        Margin="4,0,0,5"
-                        Text="{CompiledBinding Height,
-                                               Mode=OneWay}" />
-                    <customControls:FuncTextBox
-                        Background="{DynamicResource SecondaryBackgroundColor}"
-                        Classes="hover TStyle"
-                        CornerRadius="4"
-                        Foreground="{StaticResource SecondaryTextColor}"
-                        Height="35"
-                        Margin="0"
-                        Text="{CompiledBinding PixelHeight,
+                        Text="{CompiledBinding Save,
                                                Mode=OneWay}"
-                        ToolTip.Tip="{CompiledBinding SizeTooltip,
-                                                      Mode=OneWay}"
-                        Width="195"
-                        x:Name="PixelHeightTextBox" />
-                </StackPanel>
+                        TextAlignment="Center" />
+                    <SplitButton.Flyout>
+                        <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
+                            <Button
+                                Background="Transparent"
+                                Width="130"
+                                x:Name="SaveAsButton">
+                                <TextBlock
+                                    Classes="txt"
+                                    Foreground="{DynamicResource MainTextColor}"
+                                    Text="{CompiledBinding SaveAs,
+                                                           Mode=OneWay}"
+                                    TextAlignment="Center" />
+                            </Button>
+                        </MenuFlyout>
+                    </SplitButton.Flyout>
+
+                </SplitButton>
             </StackPanel>
-
-            <StackPanel Orientation="Horizontal">
-                <StackPanel>
-                    <TextBlock
-                        Classes="txt"
-                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                        FontSize="14"
-                        Margin="5,0,0,2"
-                        Text="{CompiledBinding Quality,
-                                               Mode=OneWay}" />
-                    <customControls:CustomSlider
-                        IsSnapToTickEnabled="True"
-                        Margin="5,0,0,2"
-                        Maximum="100"
-                        Minimum="10"
-                        TickFrequency="1"
-                        Value="90"
-                        Width="190"
-                        x:Name="QualitySlider" />
-                    <TextBlock
-                        Classes="txt"
-                        Margin="8,0,0,3"
-                        Text="{Binding Path=Value, ElementName=QualitySlider}" />
-                </StackPanel>
-                <StackPanel Margin="60,0,0,0">
-                    <TextBlock
-                        Classes="txt"
-                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                        FontSize="14"
-                        Margin="5,0,0,5"
-                        Text="{CompiledBinding ConvertTo,
-                                               Mode=OneWay}" />
-                    <ComboBox
-                        Background="{DynamicResource SecondaryBackgroundColor}"
-                        BorderBrush="{DynamicResource MainBorderColor}"
-                        BorderThickness="1"
-                        CornerRadius="4"
-                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                        Height="30"
-                        HorizontalAlignment="Right"
-                        Margin="2,0,0,0"
-                        Padding="5,7,0,7"
-                        SelectedIndex="0"
-                        Width="195"
-                        x:Name="ConversionComboBox">
-                        <ComboBoxItem Content="{CompiledBinding NoConversion, Mode=OneWay}" x:Name="NoConversion" />
-                        <ComboBoxItem Content=".png" x:Name="PngItem" />
-                        <ComboBoxItem Content=".jpg" x:Name="JpgItem" />
-                        <ComboBoxItem Content=".webp" x:Name="WebpItem" />
-                        <ComboBoxItem Content=".avif" x:Name="AvifItem" />
-                        <ComboBoxItem Content=".heic" x:Name="HeicItem" />
-                        <ComboBoxItem Content=".jxl" x:Name="JxlItem" />
-                    </ComboBox>
-                </StackPanel>
-            </StackPanel>
-
         </StackPanel>
-        <StackPanel
-            Background="#277A7A7A"
-            Height="80"
-            Orientation="Horizontal">
-            <Button
-                Classes="BorderStyle altHover mainBtn"
-                CornerRadius="4"
-                Margin="30,0,60,0"
-                Width="195">
-                <TextBlock
-                    Classes="txt"
-                    Text="{CompiledBinding ResetButtonText,
-                                           Mode=OneWay}"
-                    TextAlignment="Center" />
-            </Button>
-
-            <SplitButton
-                Background="{DynamicResource AccentColor}"
-                Classes="BorderStyle accentHover mainBtn"
-                CornerRadius="4"
-                Width="195"
-                x:Name="SaveButton">
-                <TextBlock
-                    Classes="txt"
-                    Text="{CompiledBinding Save,
-                                           Mode=OneWay}"
-                    TextAlignment="Center" />
-                <SplitButton.Flyout>
-                    <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
-                        <Button
-                            Background="Transparent"
-                            IsEnabled="False"
-                            Width="130"
-                            x:Name="SaveAsButton">
-                            <TextBlock
-                                Classes="txt"
-                                Foreground="{DynamicResource MainTextColor}"
-                                Text="{CompiledBinding SaveAs,
-                                                       Mode=OneWay}"
-                                TextAlignment="Center" />
-                        </Button>
-                    </MenuFlyout>
-                </SplitButton.Flyout>
-
-            </SplitButton>
-        </StackPanel>
-    </StackPanel>
+    </Panel>
 </UserControl>

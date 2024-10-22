@@ -164,6 +164,18 @@ public static class FilePicker
 
     public static async Task PickAndSaveFileAsAsync(string? fileName, MainViewModel vm)
     {
+        var file = await PickFileForSavingAsync(fileName, vm);
+        if (file is null)
+        {
+            return;
+        }
+
+        var destination = file.Path.LocalPath; // TODO: Handle macOS
+        await FileSaverHelper.SaveFileAsync(fileName, destination, vm);
+    }
+    
+    public static async Task<IStorageFile?> PickFileForSavingAsync(string? fileName, MainViewModel vm)
+    {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
             desktop.MainWindow?.StorageProvider is not { } provider)
             throw new NullReferenceException("Missing StorageProvider instance.");
@@ -188,15 +200,6 @@ public static class FilePicker
             SuggestedStartLocation = await desktop.MainWindow.StorageProvider.TryGetFolderFromPathAsync(fileName)
             
         };
-        var file = await provider.SaveFilePickerAsync(options);
-
-        if (file is null)
-        {
-            // User exited
-            return;
-        }
-
-        var destination = file.Path.LocalPath; // TODO: Handle macOS
-        await FileSaverHelper.SaveFileAsync(fileName, destination, vm);
+        return await provider.SaveFilePickerAsync(options);
     }
 }
