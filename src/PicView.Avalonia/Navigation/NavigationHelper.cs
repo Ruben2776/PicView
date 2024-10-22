@@ -266,6 +266,18 @@ public static class NavigationHelper
         {
             if (fileInfo.DirectoryName == vm.ImageIterator.InitialFileInfo.DirectoryName)
             {
+                // Need to wait for the file watching to add it to the list
+                var retries = 0;
+                while (vm.ImageIterator.IsRunning && retries < 10)
+                {
+                    await Task.Delay(50).ConfigureAwait(false);
+                    retries++;
+                    if (retries > 10)
+                    {
+                        await ErrorHandling.ReloadAsync(vm);
+                        return;
+                    }
+                }
                 var index = vm.ImageIterator.ImagePaths.IndexOf(fileName);
                 if (index != -1)
                 {

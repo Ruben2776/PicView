@@ -1,6 +1,7 @@
 ﻿using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
@@ -8,7 +9,7 @@ using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
 
-namespace PicView.Avalonia.Navigation;
+namespace PicView.Avalonia.StartUp;
 
 public static class QuickLoad
 {
@@ -67,6 +68,13 @@ public static class QuickLoad
         if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
         {
             SetTitleHelper.SetSideBySideTitle(vm, imageModel, secondaryPreloadValue?.ImageModel);
+            
+            // Sometimes the images are not rendered in side by side, this fixes it
+            // TODO: Improve and fix side by side and remove this hack 
+            Dispatcher.UIThread.Post(() =>
+            {
+                vm.ImageViewer?.MainImage?.InvalidateVisual();
+            });
         }
         else
         {

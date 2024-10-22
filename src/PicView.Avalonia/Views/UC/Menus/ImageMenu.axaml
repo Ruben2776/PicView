@@ -256,9 +256,10 @@
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
                     Canvas.Top="104"
-                    Classes="ButtonBorder altHover"
+                    Classes="ButtonBorder altHover up"
                     Command="{CompiledBinding StartSlideShowTask}"
                     CommandParameter="0"
+                    Foreground="{DynamicResource MainTextColor}"
                     Height="46"
                     ToolTip.Tip="{CompiledBinding Slideshow,
                                                   Mode=OneWay}"

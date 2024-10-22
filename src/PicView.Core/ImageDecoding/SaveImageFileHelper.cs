@@ -44,11 +44,31 @@ public static class SaveImageFileHelper
 
             if (width is not null)
             {
-                magickImage.Resize(width.Value, 0);
+                if (height is not null)
+                {
+                    if (height >= 0)
+                    {
+                        magickImage.Resize(0, height.Value);
+                    }
+                }
+                else
+                {
+                    magickImage.Resize(width.Value, 0);
+                }
             }
             else if (height is not null)
             {
-                magickImage.Resize(0, height.Value);
+                if (width is not null)
+                {
+                    if (width >= 0)
+                    {
+                        magickImage.Resize(width.Value, 0);
+                    }
+                }
+                else
+                {
+                    magickImage.Resize(0, height.Value);
+                }
             }
 
             if (rotationAngle is not null)

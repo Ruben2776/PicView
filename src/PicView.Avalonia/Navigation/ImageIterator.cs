@@ -30,7 +30,7 @@ public sealed class ImageIterator : IDisposable
     private PreLoader PreLoader { get; } = new();
 
     private static FileSystemWatcher? _watcher;
-    private static bool _isRunning;
+    public bool IsRunning { get; private set; }
     private readonly MainViewModel? _vm;
 
     #endregion
@@ -100,13 +100,13 @@ public sealed class ImageIterator : IDisposable
         }
 
         var retries = 0;
-        while (_isRunning && retries < 10)
+        while (IsRunning && retries < 10)
         {
             await Task.Delay(200);
             retries++;
         }
 
-        _isRunning = true;
+        IsRunning = true;
 
         var newList = await Task.FromResult(_vm.PlatformService.GetFiles(fileInfo));
         if (newList.Count == 0)
@@ -126,7 +126,7 @@ public sealed class ImageIterator : IDisposable
 
         ImagePaths = newList;
 
-        _isRunning = false;
+        IsRunning = false;
 
         var index = ImagePaths.IndexOf(e.FullPath);
         if (index < 0)
@@ -192,12 +192,12 @@ public sealed class ImageIterator : IDisposable
             return;
         }
 
-        if (_isRunning)
+        if (IsRunning)
         {
             return;
         }
 
-        _isRunning = true;
+        IsRunning = true;
         var index = ImagePaths.IndexOf(e.FullPath);
         if (index < 0)
         {
@@ -268,7 +268,7 @@ public sealed class ImageIterator : IDisposable
 
 
         FileHistoryNavigation.Remove(e.FullPath);
-        _isRunning = false;
+        IsRunning = false;
 
         SetTitleHelper.SetTitle(_vm);
         if (cleared)
@@ -289,12 +289,12 @@ public sealed class ImageIterator : IDisposable
             return;
         }
 
-        if (_isRunning)
+        if (IsRunning)
         {
             return;
         }
 
-        _isRunning = true;
+        IsRunning = true;
 
         var oldIndex = ImagePaths.IndexOf(e.OldFullPath);
         var sameFile = CurrentIndex == oldIndex;
@@ -336,7 +336,7 @@ public sealed class ImageIterator : IDisposable
 
         SetTitleHelper.SetTitle(_vm);
 
-        _isRunning = false;
+        IsRunning = false;
         FileHistoryNavigation.Rename(e.OldFullPath, e.FullPath);
         GalleryFunctions.RemoveGalleryItem(oldIndex, _vm);
         await GalleryFunctions.AddGalleryItem(index, fileInfo, _vm);
@@ -414,6 +414,12 @@ public sealed class ImageIterator : IDisposable
         CurrentIndex = ImagePaths.IndexOf(_vm.FileInfo.FullName);
 
         InitiateFileSystemWatcher(InitialFileInfo);
+    }
+
+    public async Task QuickReload()
+    {
+        RemoveCurrentItemFromPreLoader();
+        await IterateToIndex(CurrentIndex).ConfigureAwait(false);
     }
 
     public int GetIteration(int index, NavigateTo navigateTo, bool skip1 = false)

@@ -307,6 +307,8 @@ public record LanguageModel
     public string? Lossless { get; set; }
     public string? Lossy { get; set; }
     public string? Quality { get; set; }
+    
+    public string? SaveAs { get; set; }
     public string? Percentage { get; set; }
     public string? GenerateThumbnails { get; set; }
     public string? Thumbnail { get; set; }

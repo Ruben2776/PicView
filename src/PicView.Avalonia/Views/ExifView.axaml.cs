@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
 using PicView.Avalonia.Converters;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 
 namespace PicView.Avalonia.Views;
@@ -77,8 +76,10 @@ public partial class ExifView : UserControl
             var success = await ConversionHelper.ResizeByWidth(vm.FileInfo, width).ConfigureAwait(false);
             if (success)
             {
-                vm.ImageIterator?.RemoveCurrentItemFromPreLoader();
-                await vm.ImageIterator?.IterateToIndex(vm.ImageIterator.CurrentIndex);
+                if (vm.ImageIterator is not null)
+                {
+                    await vm.ImageIterator.QuickReload().ConfigureAwait(false);
+                }
             }
         }
     }

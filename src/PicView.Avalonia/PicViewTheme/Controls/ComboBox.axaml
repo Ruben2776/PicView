@@ -36,7 +36,8 @@
                             Focusable="False"
                             IsChecked="{TemplateBinding IsDropDownOpen,
                                                         Mode=TwoWay}"
-                            Name="toggle">
+                            Name="toggle"
+                            Theme="{StaticResource NoneTemplate}">
                             <Panel>
                                 <ContentControl
                                     Content="{TemplateBinding SelectionBoxItem}"

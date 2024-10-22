@@ -20,5 +20,8 @@
                 </Border>
             </ControlTemplate>
         </Setter>
+        <Style Selector="^.noCornerRadius /template/ Border#LayoutRoot">
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
     </ControlTheme>
 </ResourceDictionary>

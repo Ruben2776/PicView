@@ -7,7 +7,7 @@
         <Setter Property="CaretBrush" Value="{DynamicResource MainTextColor}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource AccentColor}" />
         <Setter Property="SelectionForegroundBrush" Value="{DynamicResource MainTextColor}" />
-        <Setter Property="Padding" Value="4" />
+        <Setter Property="Padding" Value="8,4,0,4" />
         <Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
         <Setter Property="Template">
             <ControlTemplate>

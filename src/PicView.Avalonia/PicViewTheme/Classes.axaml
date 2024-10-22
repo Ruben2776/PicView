@@ -65,9 +65,10 @@
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="2" />
-        <Setter Property="CaretBrush" Value="{DynamicResource MainTextColor}" />
         <Setter Property="Margin" Value="5,0,0,0" />
         <Setter Property="Padding" Value="5,9,0,7" />
         <Setter Property="Width" Value="180" />
+        <Setter Property="CaretBrush" Value="{StaticResource SecondaryTextColor}" />
+        <Setter Property="SelectionForegroundBrush" Value="{StaticResource SecondaryTextColor}" />
     </Style>
 </Styles>

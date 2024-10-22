@@ -565,7 +565,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <MenuItem Header="{CompiledBinding ResizeImage, Mode=OneWay}" IsEnabled="False">
+                <MenuItem Command="{CompiledBinding ShowSingleImageResizeWindowCommand}" Header="{CompiledBinding ResizeImage, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
                             Height="12"
@@ -574,7 +574,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <MenuItem Header="{CompiledBinding BatchResize, Mode=OneWay}" IsEnabled="False">
+                <MenuItem Command="{CompiledBinding ShowBatchResizeWindowCommand}" Header="{CompiledBinding BatchResize, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
                             Height="12"

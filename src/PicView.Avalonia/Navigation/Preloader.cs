@@ -407,6 +407,7 @@ public sealed class PreLoader : IDisposable
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+        GC.Collect(GC.MaxGeneration, GCCollectionMode.Optimized, false);
     }
     
     private void Dispose(bool disposing)

@@ -1390,8 +1390,10 @@ public class MainViewModel : ViewModelBase
         var success = await ConversionHelper.ResizeImageByPercentage(FileInfo, percentage);
         if (success)
         {
-            ImageIterator?.RemoveCurrentItemFromPreLoader();
-            await ImageIterator?.IterateToIndex(ImageIterator.CurrentIndex);
+            if (ImageIterator is not null)
+            {
+                await ImageIterator.QuickReload().ConfigureAwait(false);
+            }
         }
         else
         {

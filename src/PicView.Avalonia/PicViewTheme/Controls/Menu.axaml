@@ -161,6 +161,14 @@
             <Setter Property="CornerRadius" Value="0,0,6,6" />
         </Style>
 
+        <Style Selector="^.noCornerRadius:nth-child(1) /template/ Border#root">
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
+
+        <Style Selector="^.noCornerRadius:nth-last-child(1) /template/ Border#root">
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
+
         <Style Selector="^:empty /template/ Path#rightArrow">
             <Setter Property="IsVisible" Value="False" />
         </Style>

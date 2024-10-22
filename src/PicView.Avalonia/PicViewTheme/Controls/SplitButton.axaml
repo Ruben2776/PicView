@@ -131,10 +131,11 @@
                         VerticalContentAlignment="Center"
                         x:Name="PART_SecondaryButton">
                         <PathIcon
-                            Data="{StaticResource ChevronUpGeometry}"
-                            Foreground="{DynamicResource MainTextColor}"
+                            Data="{StaticResource ChevronDownGeometry}"
+                            Foreground="{TemplateBinding Foreground}"
                             Height="12"
-                            Width="12" />
+                            Width="12"
+                            x:Name="PART_ChevronIcon" />
                     </Button>
                 </Grid>
             </ControlTemplate>
@@ -189,6 +190,70 @@
             <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
         </Style>
 
+
+        <Style Selector="^.accentHover:pointerover /template/ Button#PART_PrimaryButton">
+            <Style.Animations>
+                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
+                    <KeyFrame>
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
+                        </Setter>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="#fff" />
+                        </Setter>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Foreground" Value="#fff" />
+            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryAccentColor}" />
+        </Style>
+        <Style Selector="^.accentHover:pointerover /template/ Button#PART_SecondaryButton">
+            <Style.Animations>
+                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
+                    <KeyFrame>
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
+                        </Setter>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="#fff" />
+                        </Setter>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Foreground" Value="#fff" />
+            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryAccentColor}" />
+        </Style>
+
         <Style Selector="^:flyout-open /template/ Button">
             <Setter Property="Tag" Value="flyout-open" />
         </Style>
@@ -203,6 +268,10 @@
 
         <Style Selector="^:disabled">
             <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
+        </Style>
+
+        <Style Selector="^.up /template/ PathIcon#PART_ChevronIcon">
+            <Setter Property="Data" Value="{StaticResource ChevronUpGeometry}" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

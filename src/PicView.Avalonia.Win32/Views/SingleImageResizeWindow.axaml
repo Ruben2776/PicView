@@ -79,7 +79,7 @@
                     Height="28"
                     LineHeight="28"
                     Padding="30,0,0,0"
-                    Text="{CompiledBinding Resize,
+                    Text="{CompiledBinding ResizeImage,
                                            Mode=OneWay}"
                     TextAlignment="Center"
                     x:Name="TitleText" />
@@ -93,8 +93,6 @@
             <views:SingleImageResizeView
                 Background="{DynamicResource NoisyTexture}"
                 Focusable="True"
-                Margin="0"
-                Padding="10,2,5,10"
                 PointerPressed="MoveWindow" />
         </StackPanel>
     </Border>

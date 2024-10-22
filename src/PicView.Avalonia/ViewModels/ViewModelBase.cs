@@ -231,9 +231,45 @@ public class ViewModelBase : ReactiveObject
         Center = TranslationHelper.Translation.Center;
         Tile = TranslationHelper.Translation.Tile;
         Fit = TranslationHelper.Translation.Fit;
+        Pixels = TranslationHelper.Translation.Pixels;
+        Percentage = TranslationHelper.Translation.Percentage;
+        Quality = TranslationHelper.Translation.Quality;
+        SaveAs = TranslationHelper.Translation.SaveAs;
     }
 
     #region Strings
+    
+    private string? _saveAs;
+    
+    public string? SaveAs
+    {
+        get => _saveAs;
+        set => this.RaiseAndSetIfChanged(ref _saveAs, value);
+    }
+    
+    private string? _quality;
+    
+    public string? Quality
+    {
+        get => _quality;
+        set => this.RaiseAndSetIfChanged(ref _quality, value);
+    }
+    
+    private string? _percentage;
+    
+    public string? Percentage
+    {
+        get => _percentage;
+        set => this.RaiseAndSetIfChanged(ref _percentage, value);
+    }
+    
+    private string? _pixels;
+    
+    public string? Pixels
+    {
+        get => _pixels.FirstCharToUpper();
+        set => this.RaiseAndSetIfChanged(ref _pixels, value);
+    }
     
     private string? _fit;
     

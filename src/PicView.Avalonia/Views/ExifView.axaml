@@ -19,9 +19,8 @@
     <UserControl.Styles>
         <Styles>
             <Style Selector="TextBox.x">
-                <Setter Property="CaretBrush" Value="{StaticResource SecondaryTextColor}" />
+                <Setter Property="Background" Value="{DynamicResource DisabledBackgroundColor}" />
                 <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
-                <Setter Property="SelectionForegroundBrush" Value="{StaticResource SecondaryTextColor}" />
             </Style>
         </Styles>
     </UserControl.Styles>
@@ -44,6 +43,7 @@
                                                    Mode=OneWay}"
                             Width="100" />
                         <customControls:FuncTextBox
+                            Background="{DynamicResource SecondaryBackgroundColor}"
                             Classes="hover TStyle x"
                             Foreground="{StaticResource SecondaryTextColor}"
                             Text="{Binding FileInfo.Name, FallbackValue=''}" />
@@ -205,7 +205,7 @@
                                                    Mode=OneWay}"
                             Width="100" />
                         <customControls:FuncTextBox
-                            Classes="TStyle"
+                            Classes="TStyle x"
                             IsReadOnly="True"
                             Text="{CompiledBinding GetBitDepth,
                                                    Mode=OneWay}" />
@@ -424,7 +424,7 @@
                     </StackPanel>
                 </StackPanel>
 
-                <StackPanel Margin="15,10" Width="130">
+                <StackPanel Margin="15,10" Width="140">
                     <TextBlock
                         Classes="txt"
                         FontSize="16"
@@ -439,7 +439,7 @@
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                         Padding="5,7,0,7"
                         SelectedIndex="0"
-                        Width="130"
+                        Width="140"
                         x:Name="ConversionComboBox">
                         <ComboBoxItem Content="{CompiledBinding NoConversion, Mode=OneWay}" />
                         <ComboBoxItem Content=".png" />
@@ -457,7 +457,7 @@
                                                            ElementName=ConversionComboBox}"
                         HorizontalAlignment="Center"
                         Margin="0,12"
-                        Width="130">
+                        Width="140">
                         <TextBlock
                             Classes="txt"
                             FontSize="14"
@@ -483,7 +483,7 @@
                         Foreground="{StaticResource SecondaryTextColor}"
                         Padding="5,7,0,7"
                         SelectedIndex="0"
-                        Width="130"
+                        Width="140"
                         x:Name="PercentageComboBox">
                         <ComboBoxItem Content="{CompiledBinding NoResize, Mode=OneWay}" />
                         <ComboBoxItem Content="95%" />
@@ -514,7 +514,7 @@
                                                            ElementName=PercentageComboBox}"
                         HorizontalAlignment="Center"
                         Margin="0,12"
-                        Width="130">
+                        Width="140">
                         <TextBlock
                             Classes="txt"
                             FontSize="14"
