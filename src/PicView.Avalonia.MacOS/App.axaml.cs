@@ -51,7 +51,7 @@ public class App : Application, IPlatformSpecificService
         try
         {
             settingsExists = await SettingsHelper.LoadSettingsAsync().ConfigureAwait(false);
-            _ = Task.Run(() => TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage));
+            await TranslationHelper.LoadLanguage(SettingsHelper.Settings.UIProperties.UserLanguage).ConfigureAwait(false);
         }
         catch (TaskCanceledException)
         {
