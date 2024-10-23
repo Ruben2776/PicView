@@ -9,8 +9,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <TabControl>
-        <TabItem Header="{CompiledBinding BatchResize}" />
-        <TabItem Header="Single Image" />
-    </TabControl>
+    <TextBlock
+        Classes="txt"
+        Margin="10"
+        Text="Coming soon..."
+        TextAlignment="Center" />
 </UserControl>
