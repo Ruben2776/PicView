@@ -45,5 +45,5 @@ public interface IPlatformSpecificService
     
     Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory);
 
-    string DefaultJsonKeyMap { get; }
+    string DefaultJsonKeyMap();
 }

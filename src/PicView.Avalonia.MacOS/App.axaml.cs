@@ -334,6 +334,9 @@ public void ShowAboutWindow()
     {
         // TODO: Implement EnableScreensaver
     }
-    
-    public string DefaultJsonKeyMap { get; init; } = MacOsKeybindings.DefaultKeybindings;
+
+    public string DefaultJsonKeyMap()
+    {
+     return   MacOsKeybindings.DefaultKeybindings;
+    }
 }

@@ -95,7 +95,7 @@ public static class KeybindingManager
         {
             CustomShortcuts = new Dictionary<KeyGesture, Func<Task>>();
         }
-        var defaultKeybindings = platformSpecificService.DefaultJsonKeyMap;
+        var defaultKeybindings = platformSpecificService.DefaultJsonKeyMap();
         var keyValues = JsonSerializer.Deserialize(
                 defaultKeybindings, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
             as Dictionary<string, string>;
