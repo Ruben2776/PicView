@@ -638,10 +638,12 @@ public static class FunctionsHelper
         {
             return;
         }
-        await Task.Run(() =>
+        var errorMsg = await Task.FromResult(FileDeletionHelper.DeleteFileWithErrorMsg(Vm.FileInfo?.FullName, true));
+
+        if (!string.IsNullOrEmpty(errorMsg))
         {
-            FileDeletionHelper.DeleteFileWithErrorMsg(Vm.FileInfo?.FullName, true);
-        });
+            await TooltipHelper.ShowTooltipMessageAsync(errorMsg, true);
+        }
     }
 
     public static async Task Rename()

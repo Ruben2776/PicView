@@ -191,50 +191,25 @@ public sealed class ImageIterator : IDisposable
         {
             return;
         }
-
-        if (IsRunning)
-        {
-            return;
-        }
-
-        IsRunning = true;
+        
         var index = ImagePaths.IndexOf(e.FullPath);
         if (index < 0)
         {
             return;
         }
-
-        var nextIndex = index + 1;
-        if (index >= ImagePaths.Count)
-        {
-            nextIndex = 0;
-        }
-
-        var prevIndex = index - 1;
-        if (prevIndex < 0)
-        {
-            prevIndex = ImagePaths.Count - 1;
-        }
-
-        var cleared = false;
-        if (PreLoader.Contains(index, ImagePaths) || PreLoader.Contains(nextIndex, ImagePaths) ||
-            PreLoader.Contains(prevIndex, ImagePaths))
-        {
-            PreLoader.Clear();
-            cleared = true;
-        }
-        else
-        {
-            PreLoader.Remove(index, ImagePaths);
-        }
-
-        var sameFile = CurrentIndex == index;
+        var isSameFile = CurrentIndex == index;
+        
+        PreLoader.Remove(index, ImagePaths);
+        
         if (!ImagePaths.Remove(e.FullPath))
         {
+#if DEBUG
+            Console.WriteLine($"Failed to remove {e.FullPath}");
+#endif
             return;
         }
 
-        if (sameFile)
+        if (isSameFile)
         {
             if (ImagePaths.Count <= 0)
             {
@@ -266,15 +241,7 @@ public sealed class ImageIterator : IDisposable
             GalleryNavigation.CenterScrollToSelectedItem(_vm);
         }
 
-
         FileHistoryNavigation.Remove(e.FullPath);
-        IsRunning = false;
-
-        SetTitleHelper.SetTitle(_vm);
-        if (cleared)
-        {
-            await Preload();
-        }
     }
 
     private async Task OnFileRenamed(RenamedEventArgs e)

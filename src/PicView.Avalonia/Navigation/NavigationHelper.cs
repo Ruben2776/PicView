@@ -262,6 +262,7 @@ public static class NavigationHelper
         {
             vm.PlatformService.StopTaskbarProgress();
         }
+
         if (vm.ImageIterator is not null)
         {
             if (fileInfo.DirectoryName == vm.ImageIterator.InitialFileInfo.DirectoryName)
@@ -278,20 +279,26 @@ public static class NavigationHelper
                         return;
                     }
                 }
+
                 var index = vm.ImageIterator.ImagePaths.IndexOf(fileName);
                 if (index != -1)
                 {
-                   await vm.ImageIterator.IterateToIndex(index);
+                    await vm.ImageIterator.IterateToIndex(index);
                 }
                 else
                 {
                     await ErrorHandling.ReloadAsync(vm);
-                    return;
                 }
             }
+            else
+            {
+                await PreviewPicAndLoadGallery(fileInfo, vm);
+            }
         }
-
-        await PreviewPicAndLoadGallery(fileInfo, vm);
+        else
+        {
+            await PreviewPicAndLoadGallery(fileInfo, vm);
+        }
     }
 
     /// <summary>
@@ -544,9 +551,10 @@ public static class NavigationHelper
     /// <returns>A task representing the asynchronous operation.</returns>
     private static async Task CheckAndReloadGallery(FileInfo fileInfo, MainViewModel vm)
     {
-        GalleryFunctions.Clear();
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown || GalleryFunctions.IsFullGalleryOpen)
         {
+            GalleryFunctions.Clear();
+            
             // Check if the bottom gallery should be shown
             if (!GalleryFunctions.IsFullGalleryOpen)
             {
