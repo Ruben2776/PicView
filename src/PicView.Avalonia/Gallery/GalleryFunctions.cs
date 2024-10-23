@@ -1,5 +1,6 @@
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Svg.Skia;
 using Avalonia.Threading;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
@@ -342,9 +343,17 @@ public static class GalleryFunctions
                      await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(fileInfo.FullName)).ConfigureAwait(false);
                  };
                  galleryListBox.Items.Insert(index, galleryItem);
-                 ImageFunctions.SetImage(thumb, galleryItem.GalleryImage,
-                     fileInfo.Extension.Equals("svg", StringComparison.OrdinalIgnoreCase) ||
-                     fileInfo.Extension.Equals("svgz", StringComparison.OrdinalIgnoreCase) ? ImageType.Svg : ImageType.Bitmap);
+                 var isSvg = fileInfo.Extension.Equals(".svg", StringComparison.OrdinalIgnoreCase) ||
+                             fileInfo.Extension.Equals(".svgz", StringComparison.OrdinalIgnoreCase);
+                 if (isSvg)
+                 {
+                     galleryItem.GalleryImage.Source = new SvgImage
+                         { Source = SvgSource.Load(fileInfo.FullName) };
+                 }
+                 else if (thumb is not null)
+                 {
+                     galleryItem.GalleryImage.Source = thumb;
+                 }
              }, DispatcherPriority.Render);
              return true;
          }

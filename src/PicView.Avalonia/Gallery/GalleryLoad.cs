@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia.Svg.Skia;
+using Avalonia.Threading;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -182,6 +183,13 @@ public static class GalleryLoad
 
                 var thumb = await GetThumbnails.GetThumbAsync(fileInfos[i].FullName, (uint)galleryItemSize, fileInfos[i]);
                 var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(fileInfos[i]);
+                var isSvg = fileInfos[i].Extension.Equals(".svg", StringComparison.OrdinalIgnoreCase) ||
+                           fileInfos[i].Extension.Equals(".svgz", StringComparison.OrdinalIgnoreCase);
+
+                if (isSvg)
+                {
+                    Console.WriteLine($"{fileInfos[i].FullName} is svg");
+                }
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
@@ -194,11 +202,14 @@ public static class GalleryLoad
                         return;
                     }
 
-                    if (thumb is not null)
+                    if (isSvg)
                     {
-                        ImageFunctions.SetImage(thumb, galleryItem.GalleryImage,
-                            fileInfos[i].Extension.Equals("svg", StringComparison.OrdinalIgnoreCase) ||
-                            fileInfos[i].Extension.Equals("svgz", StringComparison.OrdinalIgnoreCase) ? ImageType.Svg : ImageType.Bitmap);
+                        galleryItem.GalleryImage.Source = new SvgImage
+                            { Source = SvgSource.Load(fileInfos[i].FullName) };
+                    }
+                    else if (thumb is not null)
+                    {
+                        galleryItem.GalleryImage.Source = thumb;
                     }
 
                     galleryItem.FileLocation.Text = thumbData.FileLocation;

@@ -2,6 +2,7 @@
 using System.Text;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using PicView.Avalonia.ImageHandling;
@@ -178,7 +179,7 @@ public static class DragAndDropHelper
                     var thumb = await GetThumbnails.GetThumbAsync(path, SizeDefaults.WindowMinSize - 30)
                         .ConfigureAwait(false);
 
-                    await Dispatcher.UIThread.InvokeAsync(() => { _dragDropView?.UpdateThumbnail(thumb); });
+                    await Dispatcher.UIThread.InvokeAsync(() => { _dragDropView?.UpdateThumbnail(thumb as Bitmap); });
                 }
             }
             else

@@ -73,7 +73,8 @@ public partial class DragDropView : UserControl
     public void UpdateThumbnail(Bitmap image)
     {
         UpdateViewSize();
-        if (DataContext is not MainViewModel vm) return;
+        if (DataContext is not MainViewModel vm || image is null) 
+            return;
 
         var scale = CalculateScale(image.PixelSize.Width, image.PixelSize.Height, vm);
         UpdateContentHolder(image, scale);
