@@ -64,18 +64,6 @@ public record LanguageModel
     public string? MoveWindow { get; set; }
     public string? CenterWindow { get; set; }
     public string? HighlightColor { get; set; }
-    public string? Blue { get; set; }
-    public string? Cyan { get; set; }
-    public string? Aqua { get; set; }
-    public string? Teal { get; set; }
-    public string? Lime { get; set; }
-    public string? Green { get; set; }
-    public string? Golden { get; set; }
-    public string? Orange { get; set; }
-    public string? Red { get; set; }
-    public string? Pink { get; set; }
-    public string? Magenta { get; set; }
-    public string? Purple { get; set; }
     public string? Theme { get; set; }
     public string? DarkTheme { get; set; }
     public string? LightTheme { get; set; }
@@ -167,7 +155,6 @@ public record LanguageModel
     public string? OpenLastFile { get; set; }
     public string? ShowInFolder { get; set; }
     public string? Save { get; set; }
-    public string? SaveImage { get; set; }
     public string? Print { get; set; }
     public string? RecentFiles { get; set; }
     public string? FileProperties { get; set; }
