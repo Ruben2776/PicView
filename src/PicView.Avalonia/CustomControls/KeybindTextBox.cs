@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -45,8 +46,18 @@ public class KeybindTextBox : TextBox
     public KeybindTextBox()
     {
         this.GetObservable(MethodNameProperty).Subscribe(_ => Text = GetFunctionKey());
-        AddHandler(KeyDownEvent, KeyDownHandler, RoutingStrategies.Tunnel);
-        AddHandler(KeyUpEvent, KeyUpHandler, RoutingStrategies.Tunnel);
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            AddHandler(KeyUpEvent, KeyDownHandler, RoutingStrategies.Tunnel);
+            // On macOS, we only get KeyUp, because the option to select a different character
+            // when a key is held down interferes with the keyboard shortcuts
+        }
+        else
+        {
+            AddHandler(KeyDownEvent, KeyDownHandler, RoutingStrategies.Tunnel);
+            AddHandler(KeyUpEvent, KeyUpHandler, RoutingStrategies.Tunnel);
+        }
+        
         GotFocus += delegate
         {
             if (IsReadOnly)
@@ -99,6 +110,8 @@ public class KeybindTextBox : TextBox
             case Key.RightCtrl:
             case Key.LeftAlt:
             case Key.RightAlt:
+            case Key.LWin:
+            case Key.RWin:
                 return;
         }
 
@@ -149,6 +162,11 @@ public class KeybindTextBox : TextBox
             }
             var keyGesture = new KeyGesture(e.Key, e.KeyModifiers);
             KeybindingManager.CustomShortcuts[keyGesture] = function;
+        }
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            KeyUpHandler(this, e);
         }
 
         await Save();
