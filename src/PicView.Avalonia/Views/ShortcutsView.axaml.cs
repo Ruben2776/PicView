@@ -38,7 +38,12 @@ public partial class ShortcutsView : UserControl
 
     private async Task SetDefault()
     {
-        await KeybindingManager.SetDefaultKeybindings().ConfigureAwait(false);
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+        
+        await KeybindingManager.SetDefaultKeybindings(vm.PlatformService).ConfigureAwait(false);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             var topLevel = TopLevel.GetTopLevel(this);
@@ -48,10 +53,6 @@ public partial class ShortcutsView : UserControl
             }
             window.Close();
         });
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
 
         await FunctionsHelper.KeybindingsWindow();
     }

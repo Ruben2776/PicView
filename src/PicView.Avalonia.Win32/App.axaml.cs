@@ -408,7 +408,9 @@ public class App : Application, IPlatformSpecificService
     {
         return await ArchiveExtractionHelper.ExtractWithLocalSoftwareAsync(path, tempDirectory);
     }
-    
+
+    public string DefaultJsonKeyMap { get; init; } = WindowsKeybindings.DefaultKeybindings;
+
     public void DisableScreensaver()
     {
         NativeMethods.DisableScreensaver();

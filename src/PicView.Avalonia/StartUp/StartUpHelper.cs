@@ -73,7 +73,14 @@ public static class StartUpHelper
 
         HandleThemeUpdates(vm);
 
-        Task.Run(KeybindingManager.LoadKeybindings);
+        if (settingsExists)
+        {
+            Task.Run(() => KeybindingManager.LoadKeybindings(vm.PlatformService));
+        }
+        else
+        {
+            Task.Run(() => KeybindingManager.SetDefaultKeybindings(vm.PlatformService));
+        }
         
         SetWindowEventHandlers(window);
 

@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Avalonia.Input;
+using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
 using PicView.Core.Keybindings;
 
@@ -14,77 +15,11 @@ internal partial class SourceGenerationContext : JsonSerializerContext;
 public static class KeybindingManager
 {
     // TODO move to an interface, use this as default for Windows and make a macOS default
-    private const string DefaultKeybindings = """
-                                              {
-                                                "D": "Next",
-                                                "Right": "Next",
-                                                "Ctrl+Right": "Last",
-                                                "Ctrl+D": "Last",
-                                                "Ctrl+Left": "First",
-                                                "Ctrl+A": "First",
-                                                "Shift+D": "NextFolder",
-                                                "Shift+Right": "NextFolder",
-                                                "Shift+A": "PrevFolder",
-                                                "Shift+Left": "PrevFolder",
-                                                "A": "Prev",
-                                                "Left": "Prev",
-                                                "W": "Up",
-                                                "Up": "Up",
-                                                "S": "Down",
-                                                "Down": "Down",
-                                                "PageUp": "ScrollUp",
-                                                "PageDown": "ScrollDown",
-                                                "Add": "ZoomIn",
-                                                "OemPlus": "ZoomIn",
-                                                "OemMinus": "ZoomOut",
-                                                "Subtract": "ZoomOut",
-                                                "Scroll": "ToggleScroll",
-                                                "Home": "ScrollToTop",
-                                                "End": "ScrollToBottom",
-                                                "G": "ToggleGallery",
-                                                "F": "Flip",
-                                                "J": "ResizeImage",
-                                                "L": "ToggleLooping",
-                                                "C": "Crop",
-                                                "E": "GalleryClick",
-                                                "Enter": "GalleryClick",
-                                                "I": "ImageInfoWindow",
-                                                "F6": "EffectsWindow",
-                                                "F1": "AboutWindow",
-                                                "F3": "OpenInExplorer",
-                                                "F4": "SettingsWindow",
-                                                "F5": "Slideshow",
-                                                "F11": "Fullscreen",
-                                                "F12": "Fullscreen",
-                                                "B": "ChangeBackground",
-                                                "Space": "Center",
-                                                "K": "KeybindingsWindow",
-                                                "D0": "Set0Star",
-                                                "D1": "Set1Star",
-                                                "D2": "Set2Star",
-                                                "D3": "Set3Star",
-                                                "D4": "Set4Star",
-                                                "D5": "Set5Star",
-                                                "Ctrl+O": "Open",
-                                                "Ctrl+E": "OpenWith",
-                                                "Ctrl+R": "Reload",
-                                                "Ctrl+S": "Save",
-                                                "Ctrl+Shift+S": "SaveAs",
-                                                "F2": "Rename",
-                                                "Ctrl+C": "CopyFile",
-                                                "Ctrl+Alt+V": "CopyFilePath",
-                                                "Ctrl+Shift+C": "CopyImage",
-                                                "Ctrl+X": "CutFile",
-                                                "Ctrl+V": "Paste",
-                                                "Ctrl+P": "Print",
-                                                "Alt+Z": "ToggleInterface",
-                                                "Delete": "DeleteFile"
-                                              }
-                                              """;
+    
 
     public static Dictionary<KeyGesture, Func<Task>>? CustomShortcuts { get; private set; }
 
-    public static async Task LoadKeybindings()
+    public static async Task LoadKeybindings(IPlatformSpecificService platformSpecificService)
     {
         try
         {
@@ -93,7 +28,7 @@ public static class KeybindingManager
         }
         catch (Exception)
         {
-            await SetDefaultKeybindings().ConfigureAwait(false);
+            await SetDefaultKeybindings(platformSpecificService).ConfigureAwait(false);
         }
     }
 
@@ -150,7 +85,7 @@ public static class KeybindingManager
         }
     }
 
-    internal static async Task SetDefaultKeybindings()
+    internal static async Task SetDefaultKeybindings(IPlatformSpecificService platformSpecificService)
     {
         if (CustomShortcuts is not null)
         {
@@ -160,8 +95,9 @@ public static class KeybindingManager
         {
             CustomShortcuts = new Dictionary<KeyGesture, Func<Task>>();
         }
+        var defaultKeybindings = platformSpecificService.DefaultJsonKeyMap;
         var keyValues = JsonSerializer.Deserialize(
-                DefaultKeybindings, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
+                defaultKeybindings, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
             as Dictionary<string, string>;
 
         await Loop(keyValues).ConfigureAwait(false);

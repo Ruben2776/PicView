@@ -126,25 +126,10 @@ public static class MainKeyboardShortcuts
         {
             if (func is null)
             {
-                try
-                {
-                    await KeybindingManager.SetDefaultKeybindings().ConfigureAwait(false);
-                    if (KeybindingManager.CustomShortcuts.TryGetValue(CurrentKeys, out var retryFunc))
-                    {
-                        await retryFunc.Invoke().ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-                catch (Exception)
-                {
-                    // TODO: Display error to user
+                // TODO: Display error to user
 #if DEBUG
-                    Trace.WriteLine($"[{nameof(MainWindow_KeysDownAsync)}] error \n{e}");
+                Trace.WriteLine($"[{nameof(MainWindow_KeysDownAsync)}] error \n{e}");
 #endif
-                }
                 return;
             }
             // Execute the associated action
