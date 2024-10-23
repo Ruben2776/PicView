@@ -11,7 +11,18 @@
     <Company>Ruben Hyldgaard Negendahl</Company>
     <Product>PicView</Product>
     <UseAppHost>true</UseAppHost>
+    <PublishAot>true</PublishAot>
+    <Trimming>full</Trimming>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <LangVersion>preview</LangVersion>
+    <AssemblyVersion>3.0</AssemblyVersion>
+    <FileVersion>3.0</FileVersion>
+    <Company>Ruben Hyldgaard Negendahl</Company>
+    <Authors>Ruben Hyldgaard Negendahl</Authors>
+    <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Product>PicView</Product>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>none</DebugType>
