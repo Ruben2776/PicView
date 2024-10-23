@@ -38,10 +38,7 @@ public static class MainKeyboardShortcuts
         {
             return;
         }
-
-        CtrlDown = e.KeyModifiers == KeyModifiers.Control;
-        AltDown = e.KeyModifiers is KeyModifiers.Alt or KeyModifiers.Meta;
-        ShiftDown = e.KeyModifiers == KeyModifiers.Shift;
+        
         switch (e.Key)
         {
 #if DEBUG
@@ -63,10 +60,16 @@ public static class MainKeyboardShortcuts
 
             case Key.LeftShift:
             case Key.RightShift:
+                ShiftDown = true;
+                return;
             case Key.LeftCtrl:
             case Key.RightCtrl:
+                CtrlDown = true;
+                return;
             case Key.LeftAlt:
             case Key.RightAlt:
+                AltDown = true;
+                return;
             case Key.LWin:
             case Key.RWin:
                 return;
@@ -74,20 +77,78 @@ public static class MainKeyboardShortcuts
 
         if (CtrlDown)
         {
-            CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Control);
+            if (ShiftDown)
+            {
+                if (AltDown)
+                {
+                    CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Control | KeyModifiers.Alt | KeyModifiers.Shift);
+                }
+                else
+                {
+                    CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Control | KeyModifiers.Shift);
+                }
+            }
+            if (AltDown)
+            {
+                CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Alt | KeyModifiers.Control);
+            }
+            else
+            {
+                CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Control);
+            }
         }
         else if (AltDown)
         {
-            CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Alt);
+            if (CtrlDown)
+            {
+                if (ShiftDown)
+                {
+                    CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Control | KeyModifiers.Shift | KeyModifiers.Alt);
+                }
+                else
+                {
+                    CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Shift | KeyModifiers.Alt);
+                }
+            }
+
+            if (ShiftDown)
+            {
+                CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Shift | KeyModifiers.Alt);
+            }
+            else
+            {
+                CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Alt);
+            }
         }
         else if (ShiftDown)
         {
-            CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Shift);
+            if (CtrlDown)
+            {
+                if (AltDown)
+                {
+                    CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Control | KeyModifiers.Shift | KeyModifiers.Alt);
+                }
+                else
+                {
+                    CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Control | KeyModifiers.Shift);
+                }
+            }
+
+            if (AltDown)
+            {
+                CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Shift | KeyModifiers.Alt);
+            }
+            else
+            {
+                CurrentKeys = new KeyGesture(e.Key, KeyModifiers.Shift);
+            }
         }
         else
         {
             CurrentKeys = new KeyGesture(e.Key);
         }
+        
+        // Note Ctrl + Alt + key is sometimes not working properly
 
         if (_x >= ushort.MaxValue - 1)
         {

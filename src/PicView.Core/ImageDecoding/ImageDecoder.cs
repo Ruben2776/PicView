@@ -138,7 +138,7 @@ public static class ImageDecoder
         }
     }
 
-    public static MagickImage Base64ToMagickImage(string base64)
+    public static MagickImage? Base64ToMagickImage(string base64)
     {
         try
         {

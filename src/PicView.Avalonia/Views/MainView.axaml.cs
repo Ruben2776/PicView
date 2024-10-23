@@ -52,7 +52,6 @@ public partial class MainView : UserControl
             WindowFunctions.WindowDragBehavior(hostWindow, e);
         }
         
-        MainKeyboardShortcuts.ClearKeyDownModifiers();
         DragAndDropHelper.RemoveDragDropView();
     }
     

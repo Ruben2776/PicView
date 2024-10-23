@@ -25,6 +25,8 @@
     </UserControl.Resources>
     <UserControl.ContextMenu>
         <ContextMenu x:Name="MainContextMenu">
+
+            <!--  Open  -->
             <MenuItem Command="{CompiledBinding OpenFileCommand}" Header="{CompiledBinding Open, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
@@ -35,16 +37,32 @@
                         Width="15" />
                 </MenuItem.Icon>
             </MenuItem>
+
+            <!--  Save  -->
             <MenuItem Command="{CompiledBinding SaveFileCommand}" Header="{CompiledBinding Save, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
-                        Data="M512 1536h768v-384h-768v384zm896 0h128v-896q0-14-10-38.5t-20-34.5l-281-281q-10-10-34-20t-39-10v416q0 40-28 68t-68 28h-576q-40 0-68-28t-28-68v-416h-128v1280h128v-416q0-40 28-68t68-28h832q40 0 68 28t28 68v416zm-384-928v-320q0-13-9.5-22.5t-22.5-9.5h-192q-13 0-22.5 9.5t-9.5 22.5v320q0 13 9.5 22.5t22.5 9.5h192q13 0 22.5-9.5t9.5-22.5zm640 32v928q0 40-28 68t-68 28h-1344q-40 0-68-28t-28-68v-1344q0-40 28-68t68-28h928q40 0 88 20t76 48l280 280q28 28 48 76t20 88z"
+                        Data="{StaticResource SaveGeometry}"
                         Fill="{StaticResource Brush0}"
                         Height="12"
                         Stretch="Fill"
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
+
+            <!--  Save as  -->
+            <MenuItem Command="{CompiledBinding SaveFileAsCommand}" Header="{CompiledBinding SaveAs, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource SaveGeometry}"
+                        Fill="{StaticResource Brush0}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+
+            <!--  Print  -->
             <MenuItem
                 Command="{CompiledBinding PrintCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -60,6 +78,8 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
+
+            <!--  Open with  -->
             <MenuItem
                 Command="{CompiledBinding OpenWithCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -75,6 +95,8 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
+
+            <!--  Locate on disk  -->
             <MenuItem
                 Command="{CompiledBinding LocateOnDiskCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -90,7 +112,10 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
+
             <Separator />
+
+            <!--  Sort files by  -->
             <MenuItem Header="{CompiledBinding SortFilesBy, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
@@ -100,6 +125,8 @@
                         Stretch="Fill"
                         Width="12" />
                 </MenuItem.Icon>
+
+                <!--  Sort files by name  -->
                 <MenuItem
                     Command="{CompiledBinding SortFilesByNameCommand}"
                     GroupName="SortType"
@@ -109,6 +136,8 @@
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=Name}"
                     ToggleType="Radio" />
+
+                <!--  Sort files by size  -->
                 <MenuItem
                     Command="{CompiledBinding SortFilesBySizeCommand}"
                     GroupName="SortType"
@@ -118,6 +147,8 @@
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=FileSize}"
                     ToggleType="Radio" />
+
+                <!--  Sort files by extension  -->
                 <MenuItem
                     Command="{CompiledBinding SortFilesByExtensionCommand}"
                     GroupName="SortType"
@@ -127,6 +158,8 @@
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=FileExtension}"
                     ToggleType="Radio" />
+
+                <!--  Sort files by creation time  -->
                 <MenuItem
                     Command="{CompiledBinding SortFilesByCreationTimeCommand}"
                     GroupName="SortType"
@@ -136,6 +169,8 @@
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=Created}"
                     ToggleType="Radio" />
+
+                <!--  Sort files by last access time  -->
                 <MenuItem
                     Command="{CompiledBinding SortFilesByLastAccessTimeCommand}"
                     GroupName="SortType"
@@ -146,6 +181,7 @@
                                                 ConverterParameter=LastAccessTime}"
                     ToggleType="Radio" />
 
+                <!--  Sort files randomly  -->
                 <MenuItem
                     Command="{CompiledBinding SortFilesRandomlyCommand}"
                     GroupName="SortType"
@@ -155,7 +191,10 @@
                                                 Converter={StaticResource EnumToBoolConverter},
                                                 ConverterParameter=Random}"
                     ToggleType="Radio" />
+
                 <Separator />
+
+                <!--  Sort files ascending  -->
                 <MenuItem
                     Command="{CompiledBinding SortFilesAscendingCommand}"
                     GroupName="SortDirection"
@@ -163,6 +202,8 @@
                                              Mode=OneWay}"
                     IsChecked="{CompiledBinding IsAscending}"
                     ToggleType="Radio" />
+
+                <!--  Sort files descending  -->
                 <MenuItem
                     Command="{CompiledBinding SortFilesDescendingCommand}"
                     GroupName="SortDirection"
@@ -170,6 +211,8 @@
                                              Mode=OneWay}"
                     ToggleType="Radio" />
             </MenuItem>
+
+            <!--  Recent files  -->
             <MenuItem Header="{Binding RecentFiles, Mode=OneWay}" x:Name="RecentFilesCM">
                 <MenuItem.Icon>
                     <Path
@@ -180,6 +223,8 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
+
+            <!--  Settings  -->
             <MenuItem Header="{CompiledBinding Settings, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
@@ -190,6 +235,7 @@
                         Width="12" />
                 </MenuItem.Icon>
 
+                <!--  Toggle looping  -->
                 <MenuItem
                     Header="{CompiledBinding GetIsLoopingTranslation,
                                              Mode=OneWay}"
@@ -198,12 +244,14 @@
 
                 <Separator />
 
+                <!--  Toggle scrolling  -->
                 <MenuItem
                     Header="{CompiledBinding GetIsScrollingTranslation,
                                              Mode=OneWay}"
                     IsChecked="{CompiledBinding IsScrollingEnabled}"
                     ToggleType="CheckBox" />
 
+                <!--  Toggle stretching  -->
                 <MenuItem
                     Command="{CompiledBinding StretchCommand}"
                     Header="{CompiledBinding Stretch,
@@ -211,6 +259,7 @@
                     IsChecked="{CompiledBinding IsStretched}"
                     ToggleType="CheckBox" />
 
+                <!--  Toggle side-by-side  -->
                 <MenuItem
                     Command="{CompiledBinding ShowSideBySideCommand}"
                     Header="{CompiledBinding SideBySide,
@@ -220,6 +269,7 @@
 
                 <Separator />
 
+                <!--  Toggle topmost  -->
                 <MenuItem
                     Command="{CompiledBinding ChangeTopMostCommand}"
                     Header="{CompiledBinding StayTopMost,
@@ -227,6 +277,7 @@
                     IsChecked="{CompiledBinding IsTopMost}"
                     ToggleType="CheckBox" />
 
+                <!--  Toggle auto fit  -->
                 <MenuItem
                     Command="{CompiledBinding ChangeAutoFitCommand}"
                     Header="{CompiledBinding AutoFitWindow,
@@ -236,6 +287,7 @@
 
                 <Separator />
 
+                <!--  Toggle ctrl zoom  -->
                 <MenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding GetIsCtrlZoomTranslation, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
@@ -247,6 +299,7 @@
 
                 <Separator />
 
+                <!--  Toggle UI  -->
                 <MenuItem
                     Command="{CompiledBinding ToggleUICommand}"
                     Header="{CompiledBinding GetIsShowingUITranslation,
@@ -275,6 +328,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  Change background  -->
                 <MenuItem
                     Command="{CompiledBinding ChangeBackgroundCommand}"
                     Header="{CompiledBinding ChangeBackground,
@@ -288,6 +342,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  Toggle bottom gallery  -->
                 <MenuItem
                     Command="{CompiledBinding ToggleBottomGalleryCommand}"
                     Header="{CompiledBinding GetIsShowingBottomGalleryTranslation,
@@ -323,8 +378,9 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-
                 <Separator />
+
+                <!--  Show Settings window  -->
                 <MenuItem Command="{CompiledBinding ShowSettingsWindowCommand}" Header="{CompiledBinding ShowAllSettingsWindow, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
@@ -339,6 +395,7 @@
 
             <Separator />
 
+            <!--  Navigation  -->
             <MenuItem Header="{CompiledBinding Navigation, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
@@ -422,6 +479,7 @@
 
             <Separator />
 
+            <!--  Set as wallpaper  -->
             <MenuItem Header="{CompiledBinding SetAsWallpaper, Mode=OneWay}" PointerReleased="SetWallpaperClick">
                 <MenuItem.Icon>
                     <Path
@@ -432,6 +490,7 @@
                         Width="13" />
                 </MenuItem.Icon>
 
+                <!--  Set as wallpaper fit  -->
                 <MenuItem
                     Command="{CompiledBinding SetAsWallpaperCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -448,6 +507,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  Set as wallpaper stretched  -->
                 <MenuItem
                     Command="{CompiledBinding SetAsWallpaperStretchedCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -464,6 +524,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  Set as wallpaper filled  -->
                 <MenuItem
                     Command="{CompiledBinding SetAsWallpaperFilledCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -480,6 +541,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  Set as wallpaper centered  -->
                 <MenuItem
                     Command="{CompiledBinding SetAsWallpaperCenteredCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -496,6 +558,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  Set as wallpaper tiled  -->
                 <MenuItem
                     Command="{CompiledBinding SetAsWallpaperTiledCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -513,6 +576,8 @@
                 </MenuItem>
 
             </MenuItem>
+
+            <!--  Set as lock screen  -->
             <MenuItem
                 Command="{CompiledBinding SetAsLockScreenCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -530,6 +595,7 @@
             </MenuItem>
             <Separator />
 
+            <!--  Image  -->
             <MenuItem Header="{CompiledBinding ImageTxt, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
@@ -538,6 +604,7 @@
                         Width="12" />
                 </MenuItem.Icon>
 
+                <!--  Exif window  -->
                 <MenuItem Command="{CompiledBinding ShowExifWindowCommand}" Header="{CompiledBinding ImageInfo, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
@@ -549,6 +616,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  File properties  -->
                 <MenuItem
                     Command="{CompiledBinding FilePropertiesCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -565,6 +633,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  Single image resize  -->
                 <MenuItem Command="{CompiledBinding ShowSingleImageResizeWindowCommand}" Header="{CompiledBinding ResizeImage, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
@@ -574,6 +643,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  Batch resize  -->
                 <MenuItem Command="{CompiledBinding ShowBatchResizeWindowCommand}" Header="{CompiledBinding BatchResize, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
@@ -585,6 +655,7 @@
 
                 <Separator />
 
+                <!--  Optimize image  -->
                 <MenuItem Command="{CompiledBinding OptimizeImageCommand}" Header="{CompiledBinding OptimizeImage, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
@@ -596,6 +667,7 @@
 
                 <Separator />
 
+                <!--  Crop  -->
                 <MenuItem
                     Command="{CompiledBinding CropCommand}"
                     Header="{CompiledBinding Crop,
@@ -613,6 +685,7 @@
 
                 <Separator />
 
+                <!--  Flip  -->
                 <MenuItem
                     Command="{CompiledBinding FlipCommand}"
                     Header="{CompiledBinding GetIsFlippedTranslation}"
@@ -631,6 +704,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  Rotate left  -->
                 <MenuItem
                     Command="{CompiledBinding RotateLeftCommand}"
                     Header="{CompiledBinding RotateLeft,
@@ -646,6 +720,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  Rotate right  -->
                 <MenuItem
                     Command="{CompiledBinding RotateRightCommand}"
                     Header="{CompiledBinding RotateRight,
@@ -661,7 +736,10 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+
             <Separator />
+
+            <!--  Delete file  -->
             <MenuItem
                 Command="{CompiledBinding RecycleFileCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -677,7 +755,10 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
+
             <Separator />
+
+            <!--  Paste  -->
             <MenuItem Command="{CompiledBinding PasteCommand}" Header="{CompiledBinding FilePaste, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
@@ -688,6 +769,8 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
+
+            <!--  Copy  -->
             <MenuItem
                 Command="{CompiledBinding CopyFileCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -702,6 +785,8 @@
                         Stretch="Fill"
                         Width="12" />
                 </MenuItem.Icon>
+
+                <!--  Copy file path  -->
                 <MenuItem
                     Command="{CompiledBinding CopyFilePathCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -716,6 +801,8 @@
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
+
+                <!--  Copy base64  -->
                 <MenuItem Command="{CompiledBinding CopyBase64Command}" CommandParameter="{CompiledBinding FileInfo.FullName, FallbackValue=''}">
                     <MenuItem.Header>
                         <TextBlock>
@@ -732,7 +819,10 @@
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
+
                 <Separator />
+
+                <!--  Duplicate file  -->
                 <MenuItem
                     Command="{CompiledBinding DuplicateFileCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -748,6 +838,8 @@
                             Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
+
+                <!--  Cut  -->
                 <MenuItem
                     Command="{CompiledBinding CutCommand}"
                     CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -765,6 +857,8 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+
+            <!--  Copy file  -->
             <MenuItem
                 Command="{CompiledBinding CopyFileCommand}"
                 CommandParameter="{CompiledBinding FileInfo.FullName,
@@ -780,6 +874,8 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
+
+            <!--  Copy image  -->
             <MenuItem
                 Command="{CompiledBinding CopyImageCommand}"
                 Header="{CompiledBinding CopyImage,
@@ -796,6 +892,8 @@
             </MenuItem>
 
             <Separator />
+
+            <!--  Fullscreen  -->
             <MenuItem
                 Command="{CompiledBinding ToggleFullscreenCommand}"
                 Header="{CompiledBinding FullscreenTxt,
@@ -826,6 +924,8 @@
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
+
+            <!--  Close  -->
             <MenuItem Command="{CompiledBinding ExitCommand}" Header="{CompiledBinding Close, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path

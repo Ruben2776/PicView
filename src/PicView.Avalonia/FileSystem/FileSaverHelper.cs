@@ -1,7 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.ViewModels;
-using PicView.Core.Config;
 using PicView.Core.ImageDecoding;
 
 namespace PicView.Avalonia.FileSystem;
@@ -15,28 +14,32 @@ public static class FileSaverHelper
             return;
         }
         
-        if (SettingsHelper.Settings.UIProperties.ShowFileSavingDialog)
+        if (vm.FileInfo is null)
         {
-            if (vm.FileInfo is null)
-            {
-                await SaveFileAsync(null, vm.FileInfo.FullName, vm);
-            }
-            else
-            {
-                await FilePicker.PickAndSaveFileAsAsync(vm.FileInfo.FullName, vm);
-            }
-            
+            await SaveFileAsync(null, vm.FileInfo.FullName, vm);
         }
         else
         {
-            if (vm.FileInfo is null)
-            {
-                await SaveFileAsync(null, vm.FileInfo.FullName, vm);
-            }
-            else
-            {
-                await SaveFileAsync(vm.FileInfo.FullName, vm.FileInfo.FullName, vm);
-            }
+            await SaveFileAsync(vm.FileInfo.FullName, vm.FileInfo.FullName, vm);
+        }
+        
+        //TODO: Add visual design to tell the user that file was saved
+    }
+    
+    public static async Task SaveFileAs(MainViewModel vm)
+    {
+        if (vm is null)
+        {
+            return;
+        }
+        
+        if (vm.FileInfo is null)
+        {
+            await SaveFileAsync(null, vm.FileInfo.FullName, vm);
+        }
+        else
+        {
+            await FilePicker.PickAndSaveFileAsAsync(vm.FileInfo.FullName, vm);
         }
     }
 

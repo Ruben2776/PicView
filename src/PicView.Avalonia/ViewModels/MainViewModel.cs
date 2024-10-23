@@ -425,6 +425,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>? LastCommand { get; }
     public ReactiveCommand<Unit, Unit>? OpenFileCommand { get; }
     public ReactiveCommand<Unit, Unit>? SaveFileCommand { get; }
+    public ReactiveCommand<Unit, Unit>? SaveFileAsCommand { get; }
     public ReactiveCommand<Unit, Unit>? OpenLastFileCommand { get; }
     public ReactiveCommand<Unit, Unit>? PasteCommand { get; }
     public ReactiveCommand<string, Unit>? CopyFileCommand { get; }
@@ -665,18 +666,6 @@ public class MainViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _isStayingCentered, value);
             SettingsHelper.Settings.WindowProperties.KeepCentered = value;
-        }
-    }
-
-    private bool _isFileSavingDialogShown = SettingsHelper.Settings.UIProperties.ShowFileSavingDialog;
-
-    public bool IsFileSavingDialogShown
-    {
-        get => _isFileSavingDialogShown;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _isFileSavingDialogShown, value);
-            SettingsHelper.Settings.UIProperties.ShowFileSavingDialog = value;
         }
     }
 
@@ -1875,6 +1864,8 @@ public class MainViewModel : ViewModelBase
         OpenLastFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.OpenLastFile);
 
         SaveFileCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.Save);
+
+        SaveFileAsCommand = ReactiveCommand.CreateFromTask(FunctionsHelper.SaveAs);
 
         CopyFileCommand = ReactiveCommand.CreateFromTask<string>(CopyFileTask);
 

@@ -87,6 +87,7 @@ public static class FunctionsHelper
             "OpenWith" => OpenWith,
             "OpenInExplorer" => OpenInExplorer,
             "Save" => Save,
+            "SaveAs" => SaveAs,
             "Print" => Print,
             "Reload" => Reload,
 
@@ -624,6 +625,11 @@ public static class FunctionsHelper
     public static async Task Save()
     {
         await FileSaverHelper.SaveCurrentFile(Vm);
+    }
+    
+    public static async Task SaveAs()
+    {
+        await FileSaverHelper.SaveFileAs(Vm);
     }
     
     public static async Task DeleteFile()

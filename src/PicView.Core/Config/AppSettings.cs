@@ -2,7 +2,7 @@
 
 public record AppSettings
 {
-    public double Version { get; set; } = 1.1;
+    public double Version { get; set; } = 1.2;
     public WindowProperties? WindowProperties { get; set; }
     public UIProperties? UIProperties { get; set; }
     public Theme? Theme { get; set; }
@@ -31,7 +31,6 @@ public record UIProperties
     public string UserLanguage { get; set; } = "en";
     public bool ShowInterface { get; set; } = true;
     public bool ShowAltInterfaceButtons { get; set; } = true;
-    public bool ShowFileSavingDialog { get; set; } = true;
     public bool ShowBottomNavBar { get; set; } = true;
     public bool IsTaskbarProgressEnabled { get; set; } = true;
     public double NavSpeed { get; set; } = 0.3;

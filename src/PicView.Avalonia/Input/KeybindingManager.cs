@@ -69,6 +69,7 @@ public static class KeybindingManager
                                                 "Ctrl+E": "OpenWith",
                                                 "Ctrl+R": "Reload",
                                                 "Ctrl+S": "Save",
+                                                "Ctrl+Shift+S": "SaveAs",
                                                 "F2": "Rename",
                                                 "Ctrl+C": "CopyFile",
                                                 "Ctrl+Alt+V": "CopyFilePath",
@@ -114,7 +115,7 @@ public static class KeybindingManager
             var json = JsonSerializer.Serialize(
                 CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(),
                     kvp => GetFunctionNameByFunction(kvp.Value)), typeof(Dictionary<string, string>),
-                SourceGenerationContext.Default).Replace("\\u002B", "+"); // Fix plus sign encoded to unicode
+                SourceGenerationContext.Default).Replace("\\u002B", "+"); // Fix plus sign encoded to Unicode
             await KeybindingFunctions.SaveKeyBindingsFile(json).ConfigureAwait(false);
         }
         catch (Exception exception)
