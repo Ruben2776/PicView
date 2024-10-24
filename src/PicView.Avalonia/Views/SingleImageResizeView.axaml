@@ -170,10 +170,11 @@
                     Classes="BorderStyle altHover mainBtn"
                     CornerRadius="4"
                     Margin="30,0,60,0"
-                    Width="195">
+                    Width="195"
+                    x:Name="ResetButton">
                     <TextBlock
                         Classes="txt"
-                        Text="{CompiledBinding ResetButtonText,
+                        Text="{CompiledBinding Reset,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
                 </Button>

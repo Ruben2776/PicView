@@ -235,9 +235,18 @@ public class ViewModelBase : ReactiveObject
         Percentage = TranslationHelper.Translation.Percentage;
         Quality = TranslationHelper.Translation.Quality;
         SaveAs = TranslationHelper.Translation.SaveAs;
+        Reset = TranslationHelper.Translation.Reset;
     }
 
     #region Strings
+    
+    private string? _reset;
+    
+    public string? Reset
+    {
+        get => _reset;
+        set => this.RaiseAndSetIfChanged(ref _reset, value);
+    }
     
     private string? _saveAs;
     

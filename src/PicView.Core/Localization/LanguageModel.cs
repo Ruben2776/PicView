@@ -381,4 +381,6 @@ public record LanguageModel
     public string? SideBySide { get; set; }
     public string? SideBySideTooltip { get; set; }
     public string? GlassTheme { get; set; }
+    
+    public string? Reset { get; set; }
 }

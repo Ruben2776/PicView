@@ -53,6 +53,14 @@ public partial class SingleImageResizeView : UserControl
             {
                 Dispatcher.UIThread.Post(SetIsQualitySliderEnabled);
             });
+
+            ResetButton.Click += (_, _) =>
+            {
+                PixelWidthTextBox.Text = vm.PixelWidth.ToString();
+                PixelHeightTextBox.Text = vm.PixelHeight.ToString();
+                QualitySlider.Value = 90;
+                ConversionComboBox.SelectedItem = NoConversion;
+            };
         };
     }
 
