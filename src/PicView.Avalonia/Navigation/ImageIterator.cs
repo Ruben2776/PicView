@@ -125,6 +125,8 @@ public sealed class ImageIterator : IDisposable
         }
 
         ImagePaths = newList;
+        
+        SetTitleHelper.RefreshTitle(_vm);
 
         IsRunning = false;
 
@@ -150,11 +152,9 @@ public sealed class ImageIterator : IDisposable
         if (PreLoader.Contains(index, ImagePaths) || PreLoader.Contains(nextIndex, ImagePaths) ||
             PreLoader.Contains(prevIndex, ImagePaths))
         {
-            PreLoader.Clear();
+            PreLoader.RefreshAllFileInfo(ImagePaths);
             cleared = true;
         }
-
-        SetTitleHelper.SetTitle(_vm);
 
         var isGalleryItemAdded = await GalleryFunctions.AddGalleryItem(index, fileInfo, _vm);
         if (isGalleryItemAdded)

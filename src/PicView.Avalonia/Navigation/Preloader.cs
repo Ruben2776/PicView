@@ -127,6 +127,16 @@ public sealed class PreLoader : IDisposable
         
         return removed;
     }
+    
+    public void RefreshAllFileInfo(List<string> list)
+    {
+        foreach (var item in _preLoadList)
+        {
+            if (item.Value is null) continue;
+            var fileInfo = new FileInfo(list[item.Key]);
+            item.Value.ImageModel.FileInfo = fileInfo;
+        }
+    }
 
     /// <summary>
     /// Removes all keys from the cache.
