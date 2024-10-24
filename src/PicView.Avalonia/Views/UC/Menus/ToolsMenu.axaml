@@ -44,7 +44,7 @@
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    Classes="altHover"
+                    Classes="noBorderHover"
                     Command="{CompiledBinding ShowBatchResizeWindowCommand}"
                     CornerRadius="8,0,0,0"
                     Height="45"

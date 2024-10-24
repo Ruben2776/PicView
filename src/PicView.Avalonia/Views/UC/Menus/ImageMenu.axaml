@@ -85,8 +85,8 @@
                     Data="{StaticResource FlipGeometry}"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="45"
-                    IconHeight="13"
-                    IconWidth="13"
+                    IconHeight="15"
+                    IconWidth="15"
                     ToolTip.Tip="{CompiledBinding GetIsFlippedTranslation,
                                                   Mode=OneWay}"
                     Width="45">

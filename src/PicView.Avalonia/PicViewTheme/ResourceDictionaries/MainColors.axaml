@@ -13,7 +13,7 @@
 
             <Color x:Key="MainBackgroundColor">#CC2b2b2b</Color>
             <Color x:Key="SecondaryBackgroundColor">#CC252525</Color>
-            <Color x:Key="TertiaryBackgroundColor">#CC3d3d3d</Color>
+            <Color x:Key="TertiaryBackgroundColor">#CC303030</Color>
 
             <Color x:Key="DisabledBackgroundColor">#4F4F4F</Color>
             <Color x:Key="DisabledTextColor">#d6d4d4</Color>
