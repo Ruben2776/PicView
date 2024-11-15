@@ -385,4 +385,5 @@ public class LanguageModel
     public string? GallerySettings { get; set; }
     public string? GalleryThumbnailStretch { get; set; }
     public string? BottomGalleryThumbnailStretch { get; set; }
+    public string? DeleteFilePermanently { get; set; }
 }
