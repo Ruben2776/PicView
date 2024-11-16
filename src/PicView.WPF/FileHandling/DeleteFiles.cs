@@ -2,7 +2,7 @@
 using PicView.Core.Localization;
 using PicView.WPF.ChangeImage;
 using System.IO;
-using System.Windows.Forms;
+using System.Windows;
 using static PicView.WPF.ChangeImage.Navigation;
 using static PicView.WPF.UILogic.Tooltip;
 
@@ -28,8 +28,8 @@ internal static class DeleteFiles
         {
 			string message = $"{TranslationHelper.GetTranslation("DeleteFilePermanently")} {new FileInfo(fileName).Name}?";
 			string caption = TranslationHelper.GetTranslation("DeleteFile");
-			DialogResult result = MessageBox.Show(message, caption, MessageBoxButtons.YesNo);
-			if (result == DialogResult.No) return;
+			MessageBoxResult result = MessageBox.Show(message, caption, MessageBoxButton.YesNo);
+			if (result == MessageBoxResult.No) return;
 		}
 
 		var deleteFile = FileDeletionHelper.DeleteFileWithErrorMsg(fileName, recycle);
