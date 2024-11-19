@@ -1,7 +1,7 @@
 # Get-VersionInfo.ps1
 
 # Load Directory.Build.props as an XML
-[xml]$xml = Get-Content "$PSScriptRoot/../Directory.Build.props"
+[xml]$xml = Get-Content "$PSScriptRoot/../src/Directory.Build.props"
 
 # Extract VersionPrefix, VersionSuffix, and FileVersion
 $versionPrefix = $xml.Project.PropertyGroup.VersionPrefix
