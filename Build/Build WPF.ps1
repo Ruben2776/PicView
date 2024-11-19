@@ -1,12 +1,12 @@
-﻿param (
-    [Parameter()]
-    [string]$platform = "x64",
+﻿﻿param (
+    [Parameter(Mandatory=$True)]
+    [string]$platform,
+    
+    [Parameter(Mandatory=$True)]
+    [string]$outputPath,
 
-    [Parameter()]
-    [string]$outputPath = $PSScriptRoot,
-
-    [Parameter()]
-    [bool]$selfContained = $True
+    [Parameter(Mandatory=$True)]
+    [string]$selfContained
 )
 
 # Define the core project path relative to the script's location
@@ -37,11 +37,17 @@ $coreCsproj.Save($coreProjectPath)
 # Define the project path for the actual build target
 $projectPath = Join-Path -Path $PSScriptRoot -ChildPath "..\src\PicView.WPF\PicView.WPF.csproj"
 
+# Ensure the output path exists
+if (-not (Test-Path $outputPath)) {
+    New-Item -Path $outputPath -ItemType Directory
+}
+
 # Run dotnet publish for the project
-dotnet publish $projectPath --runtime "win-$platform" --self-contained $selfContained --configuration Release --output $outputPath /p:PublishReadyToRun=true
+dotnet publish $projectPath --runtime win-$platform --self-contained $selfContained --configuration Release --output $outputPath /p:PublishReadyToRun=true
 
-
-#Remove uninstended space
-Rename-Item -path $outputPath -NewName $outputPath.Replace(" ","")
-
-
+#Remove unintended space
+if (-not [string]::IsNullOrEmpty($outputPath)) {
+    Rename-Item -path $outputPath -NewName $outputPath.Replace(" ","")
+} else {
+    Write-Host "Output path is null or empty."
+}
