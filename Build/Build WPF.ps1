@@ -5,7 +5,7 @@ param (
     [string]$outputPath = $PSScriptRoot
 )
 param (
-    [bool]$selfContained = true
+    [bool]$selfContained = $True
 )
 
 # Define the core project path relative to the script's location
