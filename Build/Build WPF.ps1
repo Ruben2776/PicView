@@ -1,10 +1,11 @@
 ﻿param (
-    [string]$platform = "x64"  # Default to x64 if no parameter is passed
-)
-param (
-    [string]$outputPath = $PSScriptRoot
-)
-param (
+    [Parameter()]
+    [string]$platform = "x64",
+
+    [Parameter()]
+    [string]$outputPath = $PSScriptRoot,
+
+    [Parameter()]
     [bool]$selfContained = $True
 )
 
