@@ -22,7 +22,7 @@ jobs:
       - name: Publish x64 version
         run: |
           $projectPath = ".\src\PicView.WPF\PicView.WPF.csproj"
-          $publishPath = ${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64
+          $publishPath = "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64"
           dotnet publish $projectPath --runtime win-x64 --self-contained true --configuration Release --output $publishPath /p:PublishReadyToRun=true
         shell: pwsh
 
@@ -43,7 +43,7 @@ jobs:
       - name: Publish arm64 version
         run: |
           $projectPath = ".\src\PicView.WPF\PicView.WPF.csproj"
-          $publishPath = ${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64
+          $publishPath = "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64"
           dotnet publish $projectPath --runtime win-x64 --self-contained true --configuration Release --output $publishPath /p:PublishReadyToRun=true
         shell: pwsh
 
