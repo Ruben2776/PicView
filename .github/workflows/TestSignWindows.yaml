@@ -38,14 +38,13 @@ jobs:
         with:
           path: .\Build\install.iss
           options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\install /DMyFileSource=${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64 /DAppIcon=${{ github.workspace }}\src\PicView.WPF\Themes\Resources\img\icon__Q6k_icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt /DMyAppOutputName=Setup-PicView-v${{steps.get-version.outputs.version}}-win-x64
-
-      # Step 6 change to arm64 version
-      - name: Publish arm64 version
-        run: |
-          pwsh -File "${{ github.workspace }}\Build\ChangeX64-ARM64.ps1"
+     
+     # Step 6:  Switch to arm64 architecture
+      - name: Switch to arm64 architecture
+        run: pwsh -File "${{ github.workspace }}\Build\ChangeX64-ARM64.ps1"
         shell: pwsh
 
-    # Step 7 (arm64): Publish x64 version
+     # Step 7 (arm64): Publish x64 version
       - name: Publish arm64 version
         run: |
           $projectPath = ".\src\PicView.WPF\PicView.WPF.csproj"
@@ -54,7 +53,7 @@ jobs:
         shell: pwsh
 
 
-      # Step 8 (arm64): Compile .ISS to .EXE Installer for arm64
+     # Step 8 (arm64): Compile .ISS to .EXE Installer for arm64
       - name: Compile .ISS to .EXE Installer (arm64)
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
