@@ -12,6 +12,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+    # Step 2: Setup .NET 9 SDK
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
 
       # Step 3: Get version from Directory.Build.props using PowerShell
       - name: Get version from Directory.Build.props
