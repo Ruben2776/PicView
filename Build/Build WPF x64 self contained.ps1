@@ -1,15 +1,4 @@
-﻿﻿param (
-    [Parameter(Mandatory=$True)]
-    [string]$platform,
-    
-    [Parameter(Mandatory=$True)]
-    [string]$outputPath,
-
-    [Parameter(Mandatory=$True)]
-    [string]$selfContained
-)
-
-# Define the core project path relative to the script's location
+﻿# Define the core project path relative to the script's location
 $coreProjectPath = Join-Path -Path $PSScriptRoot -ChildPath "..\src\PicView.Core\PicView.Core.csproj"
 
 # Load the .csproj file as XML
@@ -23,31 +12,24 @@ $packageRefArm64 = "Magick.NET-Q8-OpenMP-arm64"
 $packageNodes = $coreCsproj.Project.ItemGroup.PackageReference | Where-Object { $_.Include -eq $packageRefX64 -or $_.Include -eq $packageRefArm64 }
 if ($packageNodes) {
     foreach ($packageNode in $packageNodes) {
-        if ($platform -eq "arm64") {
-            $packageNode.Include = $packageRefArm64
-        } else {
+        if ($packageNode.Include -eq $packageRefArm64) {
             $packageNode.Include = $packageRefX64
+
+            # Save the updated .csproj file
+            $coreCsproj.Save($coreProjectPath)
+
+            Write-Output "Switched arm64 -> x64"
         }
     }
 }
 
-# Save the updated .csproj file
-$coreCsproj.Save($coreProjectPath)
-
 # Define the project path for the actual build target
 $projectPath = Join-Path -Path $PSScriptRoot -ChildPath "..\src\PicView.WPF\PicView.WPF.csproj"
 
-# Ensure the output path exists
-if (-not (Test-Path $outputPath)) {
-    New-Item -Path $outputPath -ItemType Directory
-}
-
 # Run dotnet publish for the project
-dotnet publish $projectPath --runtime win-$platform --self-contained $selfContained --configuration Release --output $outputPath /p:PublishReadyToRun=true
+dotnet publish $projectPath --runtime win-x64 --self-contained true --configuration Release --output "$PSScriptRoot/PicView-x64-self-contained" /p:PublishReadyToRun=true
 
 #Remove unintended space
 if (-not [string]::IsNullOrEmpty($outputPath)) {
     Rename-Item -path $outputPath -NewName $outputPath.Replace(" ","")
-} else {
-    Write-Host "Output path is null or empty."
 }
