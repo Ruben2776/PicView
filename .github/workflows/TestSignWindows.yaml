@@ -65,17 +65,28 @@ jobs:
           path: .\Build\install.iss
           options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\install /DMyFileSource=${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64 /DAppIcon=${{ github.workspace }}\src\PicView.WPF\Themes\Resources\img\icon__Q6k_icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt /DMyAppOutputName=Setup-PicView-v${{steps.get-version.outputs.version}}-win-x64
      
-     # Step 6:  Switch to arm64 architecture
+     
+      # Step 6:  Publish x64 .NET reliant
+      - name: Publish x64 .NET reliant
+        run: |
+          $projectPath = ".\src\PicView.WPF\PicView.WPF.csproj"
+          $publishPath = "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64-.NET 9-required"
+          dotnet publish $projectPath --runtime win-x64 --self-contained false --configuration Release --output $publishPath /p:PublishReadyToRun=true
+        shell: pwsh
+
+      
+          
+      # Step 7:  Switch to arm64 architecture
       - name: Switch to arm64 architecture
         run: pwsh -File "${{ github.workspace }}\Build\ChangeX64-ARM64.ps1"
         shell: pwsh
 
-     # Step 7 (arm64): Publish x64 version
+     # Step 8 (arm64): Publish x64 version
       - name: Publish arm64 version
         run: |
           $projectPath = ".\src\PicView.WPF\PicView.WPF.csproj"
           $publishPath = "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64"
-          dotnet publish $projectPath --runtime win-x64 --self-contained true --configuration Release --output $publishPath /p:PublishReadyToRun=true
+          dotnet publish $projectPath --runtime win-arm64 --self-contained true --configuration Release --output $publishPath /p:PublishReadyToRun=true
           rm "$publishPath/Microsoft.VisualBasic.Forms.dll"
           rm "$publishPath/Microsoft.Web.WebView2.WinForms.dll"
           rm "$publishPath/PicView.pdb"
@@ -105,15 +116,22 @@ jobs:
         shell: pwsh
 
 
-     # Step 8 (arm64): Compile .ISS to .EXE Installer for arm64
+     # Step 9 (arm64): Compile .ISS to .EXE Installer for arm64
       - name: Compile .ISS to .EXE Installer (arm64)
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: .\Build\install.iss
           options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\install /DMyFileSource=${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64 /DAppIcon=${{ github.workspace }}\src\PicView.WPF\Themes\Resources\img\icon__Q6k_icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt /DMyAppOutputName=Setup-PicView-v${{steps.get-version.outputs.version}}-win-arm64
 
+      # Step 6:  Publish x64 .NET reliant
+      - name: Publish x64 .NET reliant
+        run: |
+          $projectPath = ".\src\PicView.WPF\PicView.WPF.csproj"
+          $publishPath = "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64-.NET 9-required"
+          dotnet publish $projectPath --runtime win-arm64 --self-contained true --configuration Release --output $publishPath /p:PublishReadyToRun=true
+        shell: pwsh
 
-      # Step 9: Upload unsigned artifact
+      # Step 11: Upload unsigned artifact
       - name: upload-unsigned-artifact
         id: upload-unsigned-artifact
         uses: actions/upload-artifact@v4
