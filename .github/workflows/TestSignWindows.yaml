@@ -123,8 +123,8 @@ jobs:
           path: .\Build\install.iss
           options: /O+ /DMyAppVersion=${{steps.get-version.outputs.file-version}} /DMyAppOutputDir=${{ github.workspace }}\Build\install /DMyFileSource=${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64 /DAppIcon=${{ github.workspace }}\src\PicView.WPF\Themes\Resources\img\icon__Q6k_icon.ico /DLicenseFile=${{ github.workspace }}\src\PicView.Core\Licenses\LICENSE.txt /DMyAppOutputName=Setup-PicView-v${{steps.get-version.outputs.version}}-win-arm64
 
-      # Step 6:  Publish x64 .NET reliant
-      - name: Publish x64 .NET reliant
+      # Step 10:  Publish arm64 .NET reliant
+      - name: Publish arm64 .NET reliant
         run: |
           $projectPath = ".\src\PicView.WPF\PicView.WPF.csproj"
           $publishPath = "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64-.NET 9-required"
@@ -141,8 +141,10 @@ jobs:
           path: |
             ${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64\
             ${{ github.workspace }}\Build\install\Setup-PicView-v${{steps.get-version.outputs.version}}-win-x64.exe
+            ${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64-.NET 9-required
             ${{ github.workspace }}\Build\\PicView-v${{steps.get-version.outputs.version}}-win-arm64\
             ${{ github.workspace }}\Build\install\Setup-PicView-v${{steps.get-version.outputs.version}}-win-arm64.exe
+            ${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64-.NET 9-required\
           retention-days: 1
             
       # Step 10: Sign the binaries
