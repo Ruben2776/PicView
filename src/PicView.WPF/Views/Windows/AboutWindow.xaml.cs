@@ -11,6 +11,7 @@ using PicView.WPF.Shortcuts;
 using PicView.WPF.SystemIntegration;
 using PicView.WPF.UILogic;
 using PicView.WPF.UILogic.Sizing;
+using PicView.WPF.Update;
 
 namespace PicView.WPF.Views.Windows;
 
@@ -131,7 +132,18 @@ public partial class AboutWindow
 
         UpdateButton.MouseLeftButtonDown += delegate
         {
-            Update.UpdateHelper.Update(this);
+            try
+            {
+                UpdateHelper.Update(this);
+            }
+            catch (Exception exception)
+            {
+#if DEBUG
+                Console.WriteLine();
+#endif
+                MessageBox.Show(exception.Message);
+                throw;
+            }
         };
     }
 
