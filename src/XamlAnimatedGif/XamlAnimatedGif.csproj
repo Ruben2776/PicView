@@ -4,6 +4,7 @@
     <SignAssembly>False</SignAssembly>
     <AssemblyOriginatorKeyFile>XamlAnimatedGif.snk</AssemblyOriginatorKeyFile>
 	  <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
+	  <Platforms>arm64;x64</Platforms>
   </PropertyGroup>
   <PropertyGroup Label="Package properties">
     <Title>XAML Animated GIF</Title>
@@ -19,12 +20,14 @@
     <SupportedOSPlatformVersion>10.0.22621.0</SupportedOSPlatformVersion>
     <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
     <ImplicitUsings>enable</ImplicitUsings>
-    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
     <DefineConstants>$(DefineConstants);LACKS_STREAM_MEMORY_OVERLOADS</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
