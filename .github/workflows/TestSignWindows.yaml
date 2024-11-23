@@ -72,6 +72,28 @@ jobs:
           $projectPath = ".\src\PicView.WPF\PicView.WPF.csproj"
           $publishPath = "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64-.NET 9-required"
           dotnet publish $projectPath --runtime win-x64 --self-contained false --configuration Release --output $publishPath /p:PublishReadyToRun=true
+          rm "$publishPath/PicView.pdb"
+          rm "$publishPath/PicView.Core.pdb"
+          rm "$publishPath/XamlAnimatedGif.pdb" 
+          rm -r "$publishPath/ar"
+          rm -r "$publishPath/cs"
+          rm -r "$publishPath/da"
+          rm -r "$publishPath/de"
+          rm -r "$publishPath/es"
+          rm -r "$publishPath/fr"
+          rm -r "$publishPath/it"
+          rm -r "$publishPath/ja*"
+          rm -r "$publishPath/ko"
+          rm -r "$publishPath/lv"
+          rm -r "$publishPath/nl"
+          rm -r "$publishPath/pt*"
+          rm -r "$publishPath/pl"
+          rm -r "$publishPath/ru"
+          rm -r "$publishPath/sk"
+          rm -r "$publishPath/sv"
+          rm -r "$publishPath/th"
+          rm -r "$publishPath/tr"
+          rm -r "$publishPath/zh*"
         shell: pwsh
 
       
@@ -129,6 +151,28 @@ jobs:
           $projectPath = ".\src\PicView.WPF\PicView.WPF.csproj"
           $publishPath = "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64-.NET 9-required"
           dotnet publish $projectPath --runtime win-arm64 --self-contained true --configuration Release --output $publishPath /p:PublishReadyToRun=true
+          rm "$publishPath/PicView.pdb"
+          rm "$publishPath/PicView.Core.pdb"
+          rm "$publishPath/XamlAnimatedGif.pdb" 
+          rm -r "$publishPath/ar"
+          rm -r "$publishPath/cs"
+          rm -r "$publishPath/da"
+          rm -r "$publishPath/de"
+          rm -r "$publishPath/es"
+          rm -r "$publishPath/fr"
+          rm -r "$publishPath/it"
+          rm -r "$publishPath/ja*"
+          rm -r "$publishPath/ko"
+          rm -r "$publishPath/lv"
+          rm -r "$publishPath/nl"
+          rm -r "$publishPath/pt*"
+          rm -r "$publishPath/pl"
+          rm -r "$publishPath/ru"
+          rm -r "$publishPath/sk"
+          rm -r "$publishPath/sv"
+          rm -r "$publishPath/th"
+          rm -r "$publishPath/tr"
+          rm -r "$publishPath/zh*"
         shell: pwsh
 
       # Step 11: Upload unsigned artifact
@@ -147,7 +191,7 @@ jobs:
             ${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64-.NET 9-required\
           retention-days: 1
             
-      # Step 10: Sign the binaries
+      # Step 12: Sign the binaries
       - name: Sign files
         uses: signpath/github-action-submit-signing-request@v1
         with:
@@ -159,7 +203,7 @@ jobs:
           wait-for-completion: true
           output-artifact-directory: 'PicView-${{steps.get-version.outputs.version}}-signed'
 
-      # Step 11: Upload signed binaries
+      # Step 13: Upload signed binaries
       - name: upload-signed-artifact
         uses: actions/upload-artifact@v4
         with:
