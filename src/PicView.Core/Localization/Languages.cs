@@ -6,12 +6,15 @@ public enum Languages
     da,
     de,
     es,
-    zh_CN,
-    zh_TW,
-    ko,
-    pl,
     fr,
     it,
+    ko,
+    pl,
+    pt_BR,
+    ro,
     ru,
-    ro
+    sv,
+    zh_CN,
+    zh_TW,
+
 }
