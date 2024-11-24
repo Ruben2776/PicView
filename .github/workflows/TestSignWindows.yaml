@@ -31,7 +31,6 @@ jobs:
           $publishPath = "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64"
           dotnet publish $projectPath --runtime win-x64 --self-contained true --configuration Release --output $publishPath /p:PublishReadyToRun=true
           rm "$publishPath/Microsoft.VisualBasic.Forms.dll"
-          rm "$publishPath/Microsoft.Web.WebView2.WinForms.dll"
           rm "$publishPath/PicView.pdb"
           rm "$publishPath/PicView.Core.pdb"
           rm "$publishPath/PicView.dll.config"
@@ -110,7 +109,6 @@ jobs:
           $publishPath = "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64"
           dotnet publish $projectPath --runtime win-arm64 --self-contained true --configuration Release --output $publishPath /p:PublishReadyToRun=true
           rm "$publishPath/Microsoft.VisualBasic.Forms.dll"
-          rm "$publishPath/Microsoft.Web.WebView2.WinForms.dll"
           rm "$publishPath/PicView.pdb"
           rm "$publishPath/PicView.Core.pdb"
           rm "$publishPath/PicView.dll.config"
@@ -150,7 +148,7 @@ jobs:
         run: |
           $projectPath = ".\src\PicView.WPF\PicView.WPF.csproj"
           $publishPath = "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64-.NET 9-required"
-          dotnet publish $projectPath --runtime win-arm64 --self-contained true --configuration Release --output $publishPath /p:PublishReadyToRun=true
+          dotnet publish $projectPath --runtime win-arm64 --self-contained false --configuration Release --output $publishPath /p:PublishReadyToRun=true
           rm "$publishPath/PicView.pdb"
           rm "$publishPath/PicView.Core.pdb"
           rm "$publishPath/XamlAnimatedGif.pdb" 

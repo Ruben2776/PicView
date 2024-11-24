@@ -33,7 +33,6 @@ dotnet publish $projectPath --runtime win-x64 --self-contained true --configurat
 
 #rm "$publishPath/System.Windows.Forms*"
 rm "$publishPath/Microsoft.VisualBasic.Forms.dll"
-rm "$publishPath/Microsoft.Web.WebView2.WinForms.dll"
 rm "$publishPath/PicView.pdb"
 rm "$publishPath/PicView.Core.pdb"
 rm "$publishPath/PicView.dll.config"
