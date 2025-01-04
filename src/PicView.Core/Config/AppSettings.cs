@@ -2,7 +2,7 @@
 
 public record AppSettings
 {
-    public double Version { get; set; } = 1.2;
+    public double Version { get; set; } = 1.3;
     public WindowProperties? WindowProperties { get; set; }
     public UIProperties? UIProperties { get; set; }
     public Theme? Theme { get; set; }
@@ -19,7 +19,7 @@ public record WindowProperties
     public double Left { get; set; } = 0;
     public double Width { get; set; } = 750;
     public double Height { get; set; } = 1024;
-    public bool AutoFit { get; set; } = false;
+    public bool AutoFit { get; set; } = true;
     public bool TopMost { get; set; } = false;
     public bool Maximized { get; set; } = false;
     public bool Fullscreen { get; set; } = false;
@@ -38,6 +38,7 @@ public record UIProperties
     public int BgColorChoice { get; set; } = 0;
     public double SlideShowTimer { get; set; } = 5000;
     public bool OpenInSameWindow { get; set; } = false;
+    public bool ShowConfirmationOnEsc { get; set; } = false;
 }
 
 public record Theme

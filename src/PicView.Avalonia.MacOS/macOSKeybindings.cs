@@ -66,7 +66,8 @@ public static class MacOsKeybindings
                                                 "Cmd+V": "Paste",
                                                 "Cmd+P": "Print",
                                                 "Alt+Z": "ToggleInterface",
-                                                "Delete": "DeleteFile"
+                                                "Delete": "DeleteFile",
+                                                "Shift+Delete": "DeleteFilePermanently"
                                               }
                                               """;
 }

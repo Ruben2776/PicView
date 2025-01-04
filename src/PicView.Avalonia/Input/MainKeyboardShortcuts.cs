@@ -1,7 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Avalonia.Input;
+using PicView.Avalonia.Crop;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Views.UC;
 
 namespace PicView.Avalonia.Input;
 
@@ -71,10 +74,6 @@ public static class MainKeyboardShortcuts
                 await FunctionsHelper.ShowStartUpMenu();
                 return;
 #endif
-            
-            case Key.Escape:
-                await FunctionsHelper.Close().ConfigureAwait(false);
-                return;
 
             case Key.LeftShift:
             case Key.RightShift:
@@ -121,6 +120,24 @@ public static class MainKeyboardShortcuts
         }
         _x++;
         IsKeyHeldDown = _x > 1;
+        
+        if (CropFunctions.IsCropping)
+        {
+            await UIHelper.GetMainView.MainGrid.Children.OfType<CropControl>().FirstOrDefault().KeyDownHandler(null,e);
+            return;
+        }
+
+        if (UIHelper.IsDialogOpen)
+        {
+            UIHelper.GetMainView.MainGrid.Children.OfType<AnimatedPopUp>().FirstOrDefault().KeyDownHandler(null,e);
+            return;
+        }
+
+        if (e.Key == Key.Escape)
+        {
+            await FunctionsHelper.Close().ConfigureAwait(false);
+            return;
+        }
 
         if (KeybindingManager.CustomShortcuts.TryGetValue(CurrentKeys, out var func))
         {
@@ -134,7 +151,6 @@ public static class MainKeyboardShortcuts
             }
             // Execute the associated action
             await func.Invoke().ConfigureAwait(false);
-            ClearKeyDownModifiers();
         }
     }
 

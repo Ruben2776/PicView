@@ -1,25 +1,17 @@
 <Window
     SizeToContent="Width"
     Title="KeybindingsWindow"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Win32.Views.KeybindingsWindow"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.DataContext>
-        <viewModels:MainViewModel />
-    </Design.DataContext>
+
     <Border
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
-        CornerRadius="8"
         PointerPressed="MoveWindow"
         x:Name="ParentBorder">
         <Panel>
@@ -32,8 +24,7 @@
                 <Border
                     Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,1"
-                    CornerRadius="8,0,0,0"
+                    BorderThickness="0,0,1,0"
                     DockPanel.Dock="Left"
                     x:Name="TopWindowBorder">
                     <Image
@@ -45,12 +36,9 @@
 
                 <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,1"
                     Classes="hover"
                     Click="Close"
                     ClickMode="Release"
-                    CornerRadius="0,8,0,0"
                     Data="{StaticResource CloseGeometry}"
                     DockPanel.Dock="Right"
                     Foreground="{DynamicResource MainTextColor}"
@@ -64,7 +52,7 @@
                 <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="1,0,1,1"
+                    BorderThickness="1,0,1,0"
                     Classes="hover"
                     Click="Minimize"
                     ClickMode="Release"

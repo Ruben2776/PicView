@@ -921,11 +921,11 @@
             BorderThickness="0,1,1,0"
             Classes="BorderStyle errorHover mainBtn"
             Command="{CompiledBinding ResetSettingsCommand}"
-            CornerRadius="0,0,0,8"
             HorizontalAlignment="Left"
             Margin="0"
             VerticalAlignment="Bottom"
-            Width="211">
+            Width="211"
+            x:Name="ResetSettingsButton">
             <StackPanel Orientation="Horizontal">
                 <Image Margin="5,0,10,0">
                     <DrawingImage>

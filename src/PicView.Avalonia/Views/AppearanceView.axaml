@@ -158,6 +158,113 @@
                 x:Name="PurpleButton" />
         </WrapPanel>
 
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Foreground="{StaticResource SecondaryTextColor}"
+            Margin="0,20,0,10"
+            Text="{CompiledBinding ChangeBackground,
+                                   Mode=OneWay}" />
+
+        <WrapPanel
+            HorizontalAlignment="Center"
+            Margin="0,0,0,10"
+            MaxWidth="300"
+            Orientation="Horizontal">
+            <WrapPanel.Styles>
+                <Styles>
+                    <Style Selector="Button.colorBtn">
+                        <Setter Property="CornerRadius" Value="6" />
+                        <Setter Property="Margin" Value="5" />
+                        <Setter Property="Width" Value="35" />
+                        <Setter Property="Height" Value="35" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+                    </Style>
+                    <Style Selector="Button.colorBtn.active">
+                        <Setter Property="BorderThickness" Value="2" />
+                        <Setter Property="BorderBrush" Value="#FFFFFF" />
+                    </Style>
+                    <Style Selector="Button.colorBtn:pointerover">
+                        <Setter Property="BorderThickness" Value="2" />
+                        <Setter Property="BorderBrush" Value="#FFFFFF" />
+                    </Style>
+                </Styles>
+            </WrapPanel.Styles>
+
+            <!--  Transparent  -->
+            <Button
+                Background="Transparent"
+                Classes="colorBtn"
+                Click="BgButton_OnClick"
+                x:Name="TransparentBgButton" />
+
+            <!--  Noise Texture  -->
+            <Button
+                Background="{DynamicResource NoisyTexture}"
+                Classes="colorBtn"
+                Click="BgButton_OnClick"
+                x:Name="NoiseTextureButton" />
+
+            <!--  Checkerboard  -->
+            <Button
+                Background="Transparent"
+                Classes="colorBtn"
+                Click="BgButton_OnClick"
+                x:Name="CheckerboardButton" />
+
+            <!--  Checkerboard alt  -->
+            <Button
+                Background="Transparent"
+                Classes="colorBtn"
+                Click="BgButton_OnClick"
+                x:Name="CheckerboardAltButton" />
+
+            <!--  White  -->
+            <Button
+                Background="#fff"
+                Classes="colorBtn"
+                Click="BgButton_OnClick"
+                x:Name="WhiteBgButton" />
+
+            <!--  Gray  -->
+            <Button
+                Background="#C8C8C8"
+                Classes="colorBtn"
+                Click="BgButton_OnClick"
+                x:Name="GrayBgButton" />
+
+            <!--  Dark Gray  -->
+            <Button
+                Background="#9B9B9B"
+                Classes="colorBtn"
+                Click="BgButton_OnClick"
+                x:Name="DarkGrayBgButton" />
+
+            <!--  Dark Gray Semi Transparent  -->
+            <Button
+                Background="#C8646464"
+                Classes="colorBtn"
+                Click="BgButton_OnClick"
+                x:Name="DarkGraySemiTransparentBgButton" />
+
+            <!--  Dark Gray Semi Transparent Alt  -->
+            <Button
+                Background="#C8323232"
+                Classes="colorBtn"
+                Click="BgButton_OnClick"
+                x:Name="DarkGraySemiTransparentAltBgButton" />
+
+            <!--  Black  -->
+            <Button
+                Background="#050505"
+                Classes="colorBtn"
+                Click="BgButton_OnClick"
+                x:Name="BlackBgButton" />
+
+        </WrapPanel>
+
 
         <TextBlock
             Classes="txt"

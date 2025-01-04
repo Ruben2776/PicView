@@ -9,24 +9,17 @@
     SizeChanged="Control_OnSizeChanged"
     SizeToContent="{CompiledBinding SizeToContent}"
     Title="{CompiledBinding WindowTitle}"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.MacOS.Views.MacMainWindow"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:converters1="clr-namespace:PicView.Avalonia.Converters;assembly=PicView.Avalonia"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     xmlns:views1="clr-namespace:PicView.Avalonia.MacOS.Views"
-    xmlns:vm="using:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Window.Resources>
         <converters1:SortFilesByToBoolConverter x:Key="EnumToBoolConverter" />
     </Window.Resources>
-    <Design.DataContext>
-        <vm:MainViewModel />
-    </Design.DataContext>
     <NativeMenu.Menu>
         <NativeMenu>
             <NativeMenuItem Header="{CompiledBinding File}">
@@ -39,6 +32,7 @@
                         Header="{CompiledBinding OpenWith,
                                                  Mode=OneWay}" />
                     <NativeMenuItem Command="{CompiledBinding SaveFileCommand}" Header="{CompiledBinding Save, Mode=OneWay}" />
+                    <NativeMenuItem Command="{CompiledBinding SaveFileAsCommand}" Header="{CompiledBinding SaveAs, Mode=OneWay}" />
                     <NativeMenuItem
                         Command="{CompiledBinding PrintCommand}"
                         CommandParameter="{CompiledBinding FileInfo.FullName,

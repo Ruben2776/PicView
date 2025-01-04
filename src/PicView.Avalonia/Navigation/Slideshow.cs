@@ -7,7 +7,6 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Gallery;
-using PicView.Core.Navigation;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation;
@@ -82,7 +81,8 @@ public static class Slideshow
                 // E.g. https://codepen.io/arrive/pen/EOGyzK
                 // https://docs.avaloniaui.net/docs/guides/graphics-and-animation/page-transitions/how-to-create-a-custom-page-transition
                 // https://docs.avaloniaui.net/docs/guides/graphics-and-animation/page-transitions/page-slide-transition
-                await vm.ImageIterator.NextIteration(NavigateTo.Next);
+                // https://docs.avaloniaui.net/docs/reference/controls/transitioningcontentcontrol
+                await NavigationHelper.Navigate(true, vm).ConfigureAwait(false);
             };
         }
         else if (_timer.Enabled)
@@ -116,6 +116,6 @@ public static class Slideshow
             vm.GalleryMode = GalleryMode.BottomToClosed;
         }
         
-        await vm.ImageIterator.NextIteration(NavigateTo.Next);
+        await NavigationHelper.Navigate(true, vm).ConfigureAwait(false);
     }
 }

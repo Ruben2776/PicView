@@ -26,7 +26,7 @@
                             Margin="4,0,0,5"
                             Text="{CompiledBinding Width,
                                                    Mode=OneWay}" />
-                        <customControls:FuncTextBox
+                        <customControls:NumTextBox
                             Background="{DynamicResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             CornerRadius="4"
@@ -42,16 +42,25 @@
                     </StackPanel>
 
                     <Button
-                        x:Name="LinkChainButton"
-                        Foreground="{StaticResource SecondaryTextColor}"
                         Background="Transparent"
                         Classes="altHover"
-                        Height="35" 
+                        Foreground="{StaticResource SecondaryTextColor}"
+                        Height="35"
                         Margin="5,20,5,0"
-                        Width="38">
+                        Width="38"
+                        x:Name="LinkChainButton">
                         <Panel>
-                            <Image x:Name="LinkChainImage" Source="{StaticResource LinkChainImage}" Width="21" Height="21" />
-                            <Image x:Name="UnlinkChainImage" IsVisible="False" Source="{StaticResource UnlinkChainImage}" Width="21" Height="21" />
+                            <Image
+                                Height="21"
+                                Source="{StaticResource LinkChainImage}"
+                                Width="21"
+                                x:Name="LinkChainImage" />
+                            <Image
+                                Height="21"
+                                IsVisible="False"
+                                Source="{StaticResource UnlinkChainImage}"
+                                Width="21"
+                                x:Name="UnlinkChainImage" />
                         </Panel>
                     </Button>
 
@@ -64,7 +73,7 @@
                             Margin="4,0,0,5"
                             Text="{CompiledBinding Height,
                                                    Mode=OneWay}" />
-                        <customControls:FuncTextBox
+                        <customControls:NumTextBox
                             Background="{DynamicResource SecondaryBackgroundColor}"
                             Classes="hover TStyle"
                             CornerRadius="4"

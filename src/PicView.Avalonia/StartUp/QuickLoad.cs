@@ -2,6 +2,7 @@
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.Preloading;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
@@ -37,7 +38,7 @@ public static class QuickLoad
         }
         vm.ImageSource = imageModel.Image;
         vm.ImageType = imageModel.ImageType;
-        PreLoader.PreLoadValue? secondaryPreloadValue = null;
+        PreLoadValue? secondaryPreloadValue = null;
         if (SettingsHelper.Settings.ImageScaling.ShowImageSideBySide)
         {
             vm.ImageIterator = new ImageIterator(fileInfo, vm);

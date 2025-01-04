@@ -1,0 +1,47 @@
+﻿<customControls:AnimatedPopUp
+    ClickingOutSideCloses="False"
+    Padding="20"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.Views.UC.PopUps.CloseDialog"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Panel Background="Transparent">
+        <TextBlock
+            Classes="txt"
+            FontSize="14"
+            Foreground="{DynamicResource MainTextColor}"
+            HorizontalAlignment="Center"
+            Text="{CompiledBinding CloseWindowPrompt}"
+            VerticalAlignment="Top" />
+        <StackPanel
+            HorizontalAlignment="Right"
+            Margin="0,35,0,0"
+            Orientation="Horizontal"
+            VerticalAlignment="Bottom">
+            <Button
+                Classes="BorderStyle altHover mainBtn"
+                Margin="0,0,10,0"
+                Padding="30,0"
+                x:Name="CancelButton">
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{DynamicResource MainTextColor}"
+                    Text="{CompiledBinding Cancel}" />
+            </Button>
+            <Button
+                Background="{DynamicResource AccentColor}"
+                Classes="BorderStyle accentHover mainBtn"
+                Padding="30,0"
+                x:Name="CloseButton">
+                <TextBlock Classes="txt" Text="{CompiledBinding Close}" />
+            </Button>
+        </StackPanel>
+    </Panel>
+</customControls:AnimatedPopUp>

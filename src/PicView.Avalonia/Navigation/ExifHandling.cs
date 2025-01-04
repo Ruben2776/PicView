@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
 using ImageMagick;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Resizing;
@@ -72,9 +71,6 @@ public static class ExifHandling
             };
 
             var meter = TranslationHelper.Translation.Meter;
-            var square = TranslationHelper.Translation.Square;
-            var landscape = TranslationHelper.Translation.Landscape;
-            var portrait = TranslationHelper.Translation.Portrait;
 
             if (string.IsNullOrEmpty(vm.GetBitDepth))
             {
@@ -99,22 +95,7 @@ public static class ExifHandling
             var gcd = ImageTitleFormatter.GCD(vm.PixelWidth, vm.PixelHeight);
             if (gcd != 0) // Check for zero before division
             {
-                var firstRatio = vm.PixelWidth / gcd;
-                var secondRatio = vm.PixelHeight / gcd;
-
-                if (firstRatio == secondRatio)
-                {
-                    vm.GetAspectRatio = $"{firstRatio}:{secondRatio} ({square})";
-                }
-                else if (firstRatio > secondRatio)
-                {
-                    vm.GetAspectRatio =
-                        $"{firstRatio}:{secondRatio} ({landscape})";
-                }
-                else
-                {
-                    vm.GetAspectRatio = $"{firstRatio}:{secondRatio} ({portrait})";
-                }
+                vm.GetAspectRatio = AspectRatioHelper.GetFormattedAspectRatio(gcd, vm.PixelWidth, vm.PixelHeight);
             }
             else
             {

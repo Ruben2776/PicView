@@ -36,7 +36,6 @@
                     PointerMoved="MainImage_OnPointerMoved"
                     PointerPressed="MainImage_OnPointerPressed"
                     PointerReleased="MainImage_OnPointerReleased"
-                    RenderOptions.BitmapInterpolationMode="HighQuality"
                     SecondaryImageWidth="{CompiledBinding SecondaryImageWidth,
                                                           Mode=OneWay}"
                     SecondarySource="{CompiledBinding SecondaryImageSource,

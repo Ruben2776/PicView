@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Threading;
+using ImageMagick;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Navigation;
@@ -29,7 +30,7 @@ public static class StartUpHelper
 
         if (!settingsExists)
         {
-            InitializeWindowForNoSettings(window, vm);
+            InitializeWindowForNoSettings(vm);
         }
         else
         {
@@ -63,6 +64,7 @@ public static class StartUpHelper
         }
         window.Show();
         vm.ImageViewer = new ImageViewer();
+        ResourceLimits.LimitMemory(new Percentage(90));
         HandleStartUpMenuOrImage(vm, args);
         Task.Run(async () =>
         {
@@ -93,17 +95,11 @@ public static class StartUpHelper
                 HandleNormalWindow(vm, window);
             }
         }
-        UIHelper.SetControls(desktop);
         
-
+        UIHelper.SetControls(desktop);
         HandleWindowControlSettings(vm, desktop);
-
         ValidateGallerySettings(vm, settingsExists);
-
-
-
         SetWindowEventHandlers(window);
-
         UIHelper.AddMenus();
 
         Application.Current.Name = "PicView";
@@ -207,15 +203,9 @@ public static class StartUpHelper
         }
     }
 
-    private static void InitializeWindowForNoSettings(Window w, MainViewModel vm)
+    private static void InitializeWindowForNoSettings(MainViewModel vm)
     {
-        // Fixes incorrect window
-        w.Height = SizeDefaults.WindowMinSize;
-        w.Width = SizeDefaults.WindowMinSize;
-
-        WindowFunctions.CenterWindowOnScreen();
-        vm.CanResize = true;
-        vm.IsAutoFit = false;
+        HandleAutoFit(vm);
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {

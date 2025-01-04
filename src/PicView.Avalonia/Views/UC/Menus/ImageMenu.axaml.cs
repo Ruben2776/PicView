@@ -1,6 +1,7 @@
 using System.Reactive.Linq;
 using Avalonia.Input;
 using Avalonia.Media;
+using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
@@ -29,7 +30,18 @@ public partial class ImageMenu  : AnimatedMenu
             GoToPicBox.KeyDown += async (_, e) => await GoToPicBox_OnKeyDown(e);
             this.WhenAnyValue(x => x.IsVisible)
                 .Where(isVisible => !isVisible).Subscribe(_ => SlideShowButton.Flyout.Hide());
+            this.WhenAnyValue(x => x.IsOpen).Subscribe(_ => DetermineIfCropShouldBeEnabled());
         };
+    }
+
+    private void DetermineIfCropShouldBeEnabled()
+    {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        CropButton.IsEnabled = CropFunctions.DetermineIfShouldBeEnabled(vm);
     }
 
     private async Task GoToPicBox_OnKeyDown(KeyEventArgs e)
@@ -64,7 +76,7 @@ public partial class ImageMenu  : AnimatedMenu
                 number--;
             }
 
-            await vm.ImageIterator.IterateToIndex(number).ConfigureAwait(false);
+            await NavigationHelper.Navigate(number, vm).ConfigureAwait(false);
         }
     }
 }

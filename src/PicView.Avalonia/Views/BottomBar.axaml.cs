@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -14,6 +15,12 @@ public partial class BottomBar : UserControl
     {
         InitializeComponent();
 
+        // Set corner radius on macOS
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            MainBottomBorder.CornerRadius = new CornerRadius(0, 0, 8, 8);
+        }
+        
         Loaded += delegate
         {
             PointerPressed += (_, e) => MoveWindow(e);
@@ -80,6 +87,13 @@ public partial class BottomBar : UserControl
     private void MoveWindow(PointerPressedEventArgs e)
     {
         if (VisualRoot is null) { return; }
+        
+        if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
+        {
+            // Context menu doesn't want to be opened normally
+            MainContextMenu.Open();
+            return;
+        }
 
         WindowFunctions.WindowDragBehavior((Window)VisualRoot, e);
     }

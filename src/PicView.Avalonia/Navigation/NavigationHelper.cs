@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
+using PicView.Avalonia.Crop;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Input;
@@ -23,9 +24,10 @@ namespace PicView.Avalonia.Navigation;
 /// </summary>
 public static class NavigationHelper
 {
+    private static CancellationTokenSource? _cancellationTokenSource;
 
     #region Navigation
-    
+
     /// <summary>
     /// Determines whether navigation is possible based on the current state of the <see cref="MainViewModel"/>.
     /// </summary>
@@ -34,10 +36,11 @@ public static class NavigationHelper
     public static bool CanNavigate(MainViewModel vm)
     {
         return vm?.ImageIterator?.ImagePaths is not null &&
-               vm.ImageIterator.ImagePaths.Count > 0;
+               vm.ImageIterator.ImagePaths.Count > 0 && !CropFunctions.IsCropping &&
+               !UIHelper.IsDialogOpen && !vm.IsEditableTitlebarOpen;
         // TODO: should probably turn this into CanExecute observable for ReactiveUI
     }
-    
+
     /// <summary>
     /// Navigates to the next or previous image based on the <paramref name="next"/> parameter.
     /// </summary>
@@ -50,7 +53,7 @@ public static class NavigationHelper
         {
             return;
         }
-        
+
         if (GalleryFunctions.IsFullGalleryOpen)
         {
             await ScrollGallery(next);
@@ -58,8 +61,62 @@ public static class NavigationHelper
         else
         {
             var navigateTo = next ? NavigateTo.Next : NavigateTo.Previous;
-            await vm.ImageIterator.NextIteration(navigateTo).ConfigureAwait(false);
+            await CheckCancellationAndStartNextIteration(navigateTo, vm).ConfigureAwait(false);
         }
+    }
+
+    public static async Task Navigate(int index, MainViewModel vm)
+    {
+        if (!CanNavigate(vm))
+        {
+            return;
+        }
+        
+        await CheckCancellationAndStartIterateToIndex(index, vm).ConfigureAwait(false);
+    }
+
+    public static async Task Next10(MainViewModel vm)
+    {
+        if (!CanNavigate(vm))
+        {
+            return;
+        }
+        var currentIndex = vm.ImageIterator.CurrentIndex;
+        var index = vm.ImageIterator.GetIteration(currentIndex, NavigateTo.Next, false, true);
+        await CheckCancellationAndStartIterateToIndex(index, vm).ConfigureAwait(false);
+    }
+
+    public static async Task Next100(MainViewModel vm)
+    {
+        if (!CanNavigate(vm))
+        {
+            return;
+        }
+        var currentIndex = vm.ImageIterator.CurrentIndex;
+        var index = vm.ImageIterator.GetIteration(currentIndex, NavigateTo.Next, false, false, true);
+        await CheckCancellationAndStartIterateToIndex(index, vm).ConfigureAwait(false);
+    }
+
+    public static async Task Prev10(MainViewModel vm)
+    {
+        if (!CanNavigate(vm))
+        {
+            return;
+        }
+        var currentIndex = vm.ImageIterator.CurrentIndex;
+        var index = vm.ImageIterator.GetIteration(currentIndex, NavigateTo.Previous, false, true);
+        await CheckCancellationAndStartIterateToIndex(index, vm).ConfigureAwait(false);
+    }
+
+    public static async Task Prev100(MainViewModel vm)
+    {
+        if (!CanNavigate(vm))
+        {
+            return;
+        }
+        var currentIndex = vm.ImageIterator.CurrentIndex;
+        var index = vm.ImageIterator.GetIteration(currentIndex, NavigateTo.Previous, false, false, true);
+        await CheckCancellationAndStartIterateToIndex(index, vm).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -74,13 +131,21 @@ public static class NavigationHelper
         {
             return;
         }
+
         if (GalleryFunctions.IsFullGalleryOpen)
         {
             GalleryNavigation.NavigateGallery(last, vm);
         }
         else
         {
-            await vm.ImageIterator.NextIteration(last ? NavigateTo.Last : NavigateTo.First).ConfigureAwait(false);
+            if (_cancellationTokenSource is not null)
+            {
+                await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+            }
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            await vm.ImageIterator.NextIteration(last ? NavigateTo.Last : NavigateTo.First, _cancellationTokenSource)
+                .ConfigureAwait(false);
             await ScrollToEndIfNecessary(last);
         }
     }
@@ -121,7 +186,7 @@ public static class NavigationHelper
         {
             return;
         }
-        
+
         if (GalleryFunctions.IsFullGalleryOpen)
         {
             await ScrollGallery(next);
@@ -132,7 +197,7 @@ public static class NavigationHelper
             await MoveCursorOnButtonClick(next, arrow, vm);
         }
     }
-    
+
     /// <summary>
     /// Navigates to the next or previous folder and loads the first image in that folder.
     /// </summary>
@@ -145,7 +210,13 @@ public static class NavigationHelper
         {
             return;
         }
+
         SetTitleHelper.SetLoadingTitle(vm);
+        if (_cancellationTokenSource is not null)
+        {
+            await _cancellationTokenSource.CancelAsync();
+        }
+
         var fileList = await GetNextFolderFileList(next, vm).ConfigureAwait(false);
 
         if (fileList is null)
@@ -158,11 +229,11 @@ public static class NavigationHelper
             await PreviewPicAndLoadGallery(new FileInfo(fileList[0]), vm, fileList);
         }
     }
-    
+
     #endregion
-    
+
     #region Load pictures from string, file or url
-    
+
     /// <summary>
     /// Loads a picture from a given string source, which can be a file path, directory path, or URL.
     /// </summary>
@@ -175,10 +246,17 @@ public static class NavigationHelper
         {
             return;
         }
-        
+
         UIHelper.CloseMenus(vm);
         vm.IsLoading = true;
         SetTitleHelper.SetLoadingTitle(vm);
+
+        if (_cancellationTokenSource is not null)
+        {
+            await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+        }
+
+        _cancellationTokenSource = new CancellationTokenSource();
 
         // Starting in new task makes it more responsive and works better
         await Task.Run(async () =>
@@ -193,11 +271,13 @@ public static class NavigationHelper
                     {
                         if (vm.ImageIterator.ImagePaths.Contains(check))
                         {
-                            await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(check))
+                            await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(check),
+                                    _cancellationTokenSource)
                                 .ConfigureAwait(false);
                             return;
                         }
                     }
+
                     vm.CurrentView = vm.ImageViewer;
                     await LoadPicFromFile(check, vm).ConfigureAwait(false);
                     vm.IsLoading = false;
@@ -239,7 +319,7 @@ public static class NavigationHelper
             }
         });
     }
-    
+
     /// <summary>
     /// Loads a picture from a given file.
     /// </summary>
@@ -253,15 +333,24 @@ public static class NavigationHelper
         {
             return;
         }
+
         fileInfo ??= new FileInfo(fileName);
         if (!fileInfo.Exists)
         {
             return;
         }
+
         if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
         {
             vm.PlatformService.StopTaskbarProgress();
         }
+
+        if (_cancellationTokenSource is not null)
+        {
+            await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+        }
+
+        _cancellationTokenSource = new CancellationTokenSource();
 
         if (vm.ImageIterator is not null)
         {
@@ -283,7 +372,7 @@ public static class NavigationHelper
                 var index = vm.ImageIterator.ImagePaths.IndexOf(fileName);
                 if (index != -1)
                 {
-                    await vm.ImageIterator.IterateToIndex(index);
+                    await vm.ImageIterator.IterateToIndex(index, _cancellationTokenSource).ConfigureAwait(false);
                 }
                 else
                 {
@@ -312,7 +401,13 @@ public static class NavigationHelper
     /// </returns>
     public static async Task LoadPicFromArchiveAsync(string path, MainViewModel vm)
     {
-        var extraction = await ArchiveExtraction.ExtractArchiveAsync(path, vm.PlatformService.ExtractWithLocalSoftwareAsync).ConfigureAwait(false);
+        if (_cancellationTokenSource is not null)
+        {
+            await _cancellationTokenSource.CancelAsync();
+        }
+
+        var extraction = await ArchiveExtraction
+            .ExtractArchiveAsync(path, vm.PlatformService.ExtractWithLocalSoftwareAsync).ConfigureAwait(false);
         if (!extraction)
         {
             await ErrorHandling.ReloadAsync(vm);
@@ -332,6 +427,7 @@ public static class NavigationHelper
             {
                 await LoadPicFromDirectoryAsync(ArchiveExtraction.TempZipDirectory, vm).ConfigureAwait(false);
             }
+
             MainKeyboardShortcuts.ClearKeyDownModifiers(); // Fix possible modifier key state issue
         }
         else
@@ -339,7 +435,7 @@ public static class NavigationHelper
             await ErrorHandling.ReloadAsync(vm);
         }
     }
-    
+
     /// <summary>
     /// Loads a picture from a given URL.
     /// </summary>
@@ -348,6 +444,11 @@ public static class NavigationHelper
     /// <returns>A task representing the asynchronous operation.</returns>
     public static async Task LoadPicFromUrlAsync(string url, MainViewModel vm)
     {
+        if (_cancellationTokenSource is not null)
+        {
+            await _cancellationTokenSource.CancelAsync();
+        }
+
         string destination;
 
         try
@@ -356,12 +457,13 @@ public static class NavigationHelper
 
             var httpDownload = HttpNavigation.GetDownloadClient(url);
             using var client = httpDownload.Client;
-            client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) => 
+            client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
             {
                 if (totalFileSize is null || totalBytesDownloaded is null || progressPercentage is null)
                 {
                     return;
                 }
+
                 var displayProgress = HttpNavigation.GetProgressDisplay(totalFileSize, totalBytesDownloaded,
                     progressPercentage);
                 vm.Title = displayProgress;
@@ -385,14 +487,14 @@ public static class NavigationHelper
 
             return;
         }
-        
+
         var fileInfo = new FileInfo(destination);
         if (!fileInfo.Exists)
         {
             await ErrorHandling.ReloadAsync(vm);
             return;
         }
-        
+
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         UpdateImage.SetSingleImage(imageModel.Image, imageModel.ImageType, url, vm);
         vm.FileInfo = fileInfo;
@@ -401,7 +503,7 @@ public static class NavigationHelper
 
         vm.IsLoading = false;
     }
-    
+
     /// <summary>
     /// Loads a picture from a Base64-encoded string.
     /// </summary>
@@ -433,13 +535,14 @@ public static class NavigationHelper
                     PixelHeight = bitmap?.PixelSize.Height ?? 0,
                     ImageType = ImageType.Bitmap
                 };
-                UpdateImage.SetSingleImage(imageModel.Image, imageModel.ImageType, TranslationHelper.Translation.Base64Image, vm);
+                UpdateImage.SetSingleImage(imageModel.Image, imageModel.ImageType,
+                    TranslationHelper.Translation.Base64Image, vm);
             }
             catch (Exception e)
             {
-                #if DEBUG
+#if DEBUG
                 Console.WriteLine("LoadPicFromBase64Async exception = \n" + e.Message);
-                #endif
+#endif
                 if (vm.FileInfo is not null && vm.FileInfo.Exists)
                 {
                     await LoadPicFromFile(vm.FileInfo.FullName, vm, vm.FileInfo);
@@ -464,12 +567,19 @@ public static class NavigationHelper
     {
         vm.IsLoading = true;
         SetTitleHelper.SetLoadingTitle(vm);
-        
+
+        if (_cancellationTokenSource is not null)
+        {
+            await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+        }
+
+        _cancellationTokenSource = new CancellationTokenSource();
+
         if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
         {
             vm.PlatformService.StopTaskbarProgress();
         }
-        
+
         fileInfo ??= new FileInfo(file);
         vm.ImageIterator?.Dispose();
         var fileList = await Task.FromResult(vm.PlatformService.GetFiles(fileInfo)).ConfigureAwait(false);
@@ -485,6 +595,7 @@ public static class NavigationHelper
                     await ErrorHandling.ReloadAsync(vm).ConfigureAwait(false);
                     return;
                 }
+
                 SettingsHelper.Settings.Sorting.IncludeSubDirectories = false;
             }
             else
@@ -493,15 +604,46 @@ public static class NavigationHelper
                 return;
             }
         }
+
         vm.ImageIterator = new ImageIterator(fileInfo, fileList, 0, vm);
-        await vm.ImageIterator.IterateToIndex(0);
+        await vm.ImageIterator.IterateToIndex(0, _cancellationTokenSource).ConfigureAwait(false);
         await CheckAndReloadGallery(fileInfo, vm);
     }
-    
+
     #endregion
 
     #region Private helpers
     
+    private static async Task CheckCancellationAndStartNextIteration(NavigateTo navigateTo, MainViewModel vm)
+    {
+        await Task.Run(async () =>
+        {
+            if (_cancellationTokenSource is not null)
+            {
+                await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+            }
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            await vm.ImageIterator.NextIteration(navigateTo, _cancellationTokenSource).ConfigureAwait(false);
+            _cancellationTokenSource.CancelAfter(TimeSpan.FromMinutes(5));
+        }).ConfigureAwait(false);
+    }
+    
+    private static async Task CheckCancellationAndStartIterateToIndex(int index, MainViewModel vm)
+    {
+        await Task.Run(async () =>
+        {
+            if (_cancellationTokenSource is not null)
+            {
+                await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+            }
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            await vm.ImageIterator.IterateToIndex(index, _cancellationTokenSource).ConfigureAwait(false);
+            _cancellationTokenSource.CancelAfter(TimeSpan.FromMinutes(5));
+        }).ConfigureAwait(false);
+    }
+
     /// <summary>
     /// Gets the list of files in the next or previous folder.
     /// </summary>
@@ -518,12 +660,16 @@ public static class NavigationHelper
             var directories = Directory.GetDirectories(parentFolder, "*", SearchOption.TopDirectoryOnly);
             var directoryIndex = Array.IndexOf(directories, currentFolder);
             if (SettingsHelper.Settings.UIProperties.Looping)
+            {
                 directoryIndex = (directoryIndex + indexChange + directories.Length) % directories.Length;
+            }
             else
             {
                 directoryIndex += indexChange;
                 if (directoryIndex < 0 || directoryIndex >= directories.Length)
+                {
                     return null;
+                }
             }
 
             for (var i = directoryIndex; i < directories.Length; i++)
@@ -531,8 +677,11 @@ public static class NavigationHelper
                 var fileInfo = new FileInfo(directories[i]);
                 var fileList = vm.PlatformService.GetFiles(fileInfo);
                 if (fileList is { Count: > 0 })
+                {
                     return fileList;
+                }
             }
+
             return null;
         }).ConfigureAwait(false);
     }
@@ -551,22 +700,24 @@ public static class NavigationHelper
         vm.ImageType = imageModel.ImageType;
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            WindowResizing.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0,0, imageModel.Rotation, vm);
+            WindowResizing.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0, 0, imageModel.Rotation, vm);
         });
-        
+
         if (files is null)
         {
             vm.ImageIterator = new ImageIterator(fileInfo, vm);
-            await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(fileInfo.FullName));
+            await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(fileInfo.FullName),
+                _cancellationTokenSource);
         }
         else
         {
-            vm.ImageIterator = new ImageIterator(fileInfo, files, currentIndex: 0, vm);
-            await vm.ImageIterator.IterateToIndex(0);
+            vm.ImageIterator = new ImageIterator(fileInfo, files, 0, vm);
+            await vm.ImageIterator.IterateToIndex(0, _cancellationTokenSource);
         }
+
         await CheckAndReloadGallery(fileInfo, vm);
     }
-    
+
     /// <summary>
     /// Checks and reloads the gallery if necessary based on the provided file info.
     /// </summary>
@@ -578,7 +729,7 @@ public static class NavigationHelper
         if (SettingsHelper.Settings.Gallery.IsBottomGalleryShown || GalleryFunctions.IsFullGalleryOpen)
         {
             GalleryFunctions.Clear();
-            
+
             // Check if the bottom gallery should be shown
             if (!GalleryFunctions.IsFullGalleryOpen)
             {
@@ -588,10 +739,11 @@ public static class NavigationHelper
                     vm.GalleryMode = GalleryMode.ClosedToBottom;
                 }
             }
+
             await GalleryLoad.ReloadGalleryAsync(vm, fileInfo.DirectoryName);
         }
     }
-    
+
     /// <summary>
     /// Scrolls the gallery to the next or previous page.
     /// </summary>
@@ -602,12 +754,16 @@ public static class NavigationHelper
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             if (next)
+            {
                 UIHelper.GetGalleryView.GalleryListBox.PageRight();
+            }
             else
+            {
                 UIHelper.GetGalleryView.GalleryListBox.PageLeft();
+            }
         });
     }
-    
+
     /// <summary>
     /// Scrolls to the end of the gallery if the <paramref name="last"/> parameter is true.
     /// </summary>
@@ -617,13 +773,10 @@ public static class NavigationHelper
     {
         if (last && SettingsHelper.Settings.Gallery.IsBottomGalleryShown)
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                UIHelper.GetGalleryView.GalleryListBox.ScrollToEnd();
-            });
+            await Dispatcher.UIThread.InvokeAsync(() => { UIHelper.GetGalleryView.GalleryListBox.ScrollToEnd(); });
         }
     }
-    
+
     /// <summary>
     /// Moves the cursor on the navigation button.
     /// </summary>
@@ -653,7 +806,9 @@ public static class NavigationHelper
     {
         return arrow
             ? next ? "ClickArrowRight" : "ClickArrowLeft"
-            : next ? "NextButton" : "PreviousButton";
+            : next
+                ? "NextButton"
+                : "PreviousButton";
     }
 
     /// <summary>
@@ -677,10 +832,10 @@ public static class NavigationHelper
     /// <returns>The point to click on the button.</returns>
     private static Point GetClickPoint(bool next, bool arrow)
     {
-        return arrow ? next ? new Point(65, 95) : new Point(15, 95)
+        return arrow
+            ? next ? new Point(65, 95) : new Point(15, 95)
             : new Point(50, 10);
     }
-
 
     #endregion
 }

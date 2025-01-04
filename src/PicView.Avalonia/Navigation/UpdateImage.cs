@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.Preloading;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
@@ -18,8 +19,8 @@ public static class UpdateImage
     #region Update Source and Preview
 
     public static async Task UpdateSource(MainViewModel vm, int index, List<string> imagePaths, bool isReversed,
-        PreLoader.PreLoadValue? preLoadValue,
-        PreLoader.PreLoadValue? nextPreloadValue = null)
+        PreLoadValue? preLoadValue,
+        PreLoadValue? nextPreloadValue = null)
     {
         preLoadValue ??= await vm.ImageIterator.GetPreLoadValueAsync(index).ConfigureAwait(false);
         if (preLoadValue.ImageModel?.Image is null && index == vm.ImageIterator.CurrentIndex)

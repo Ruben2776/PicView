@@ -46,7 +46,7 @@
 
             <ImageBrush
                 DestinationRect="0,0,200,200"
-                Opacity=".3"
+                Opacity=".6"
                 Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 Stretch="Fill"
                 TileMode="FlipXY"

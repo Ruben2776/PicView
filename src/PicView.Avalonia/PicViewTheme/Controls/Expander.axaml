@@ -1,0 +1,242 @@
+﻿<ResourceDictionary
+    x:ClassModifier="internal"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ControlTheme TargetType="ToggleButton" x:Key="SimpleExpanderToggleButtonTheme">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel Name="PART_toggle">
+                    <ContentPresenter
+                        Background="Transparent"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{Binding $parent[Expander].HeaderTemplate}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        Name="PART_ContentPresenter"
+                        Padding="{TemplateBinding Padding}"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    <Border
+                        Height="20"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="20">
+                        <Image
+                            Height="12"
+                            Source="{StaticResource ChevronDownImage}"
+                            Width="12" />
+                    </Border>
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^:pointerover /template/ Panel#PART_toggle">
+            <Style.Animations>
+                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
+        </Style>
+
+    </ControlTheme>
+    <ControlTheme
+        BasedOn="{StaticResource SimpleExpanderToggleButtonTheme}"
+        TargetType="ToggleButton"
+        x:Key="SimpleExpanderToggleButtonUpTheme">
+        <Style Selector="^ /template/ Path">
+            <Setter Property="RenderTransform">
+                <RotateTransform Angle="-90" />
+            </Setter>
+        </Style>
+    </ControlTheme>
+    <ControlTheme
+        BasedOn="{StaticResource SimpleExpanderToggleButtonTheme}"
+        TargetType="ToggleButton"
+        x:Key="SimpleExpanderToggleButtonDownTheme">
+        <Style Selector="^ /template/ Image">
+            <Setter Property="RenderTransform">
+                <RotateTransform Angle="90" />
+            </Setter>
+        </Style>
+    </ControlTheme>
+    <ControlTheme
+        BasedOn="{StaticResource SimpleExpanderToggleButtonTheme}"
+        TargetType="ToggleButton"
+        x:Key="SimpleExpanderToggleButtonLeftTheme">
+        <Style Selector="^ /template/ Image">
+            <Setter Property="RenderTransform">
+                <RotateTransform Angle="180" />
+            </Setter>
+        </Style>
+    </ControlTheme>
+    <ControlTheme
+        BasedOn="{StaticResource SimpleExpanderToggleButtonTheme}"
+        TargetType="ToggleButton"
+        x:Key="SimpleExpanderToggleButtonRightTheme">
+        <Style Selector="^ /template/ Image">
+            <Setter Property="RenderTransform">
+                <RotateTransform Angle="0" />
+            </Setter>
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme TargetType="Expander" x:Key="{x:Type Expander}">
+        <Setter Property="ContentTransition">
+            <Setter.Value>
+                <CrossFade Duration="00:00:00.25" />
+            </Setter.Value>
+        </Setter>
+        <Style Selector="^[ExpandDirection=Down]">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid RowDefinitions="Auto,*">
+                            <ToggleButton
+                                Content="{TemplateBinding Header}"
+                                Grid.Row="0"
+                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                IsChecked="{TemplateBinding IsExpanded,
+                                                            Mode=TwoWay}"
+                                Name="PART_toggle"
+                                Theme="{StaticResource SimpleExpanderToggleButtonRightTheme}"
+                                VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                            <ContentPresenter
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Grid.Row="1"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                IsVisible="{TemplateBinding IsExpanded}"
+                                Name="PART_ContentPresenter"
+                                Padding="{TemplateBinding Padding}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+            <Style Selector="^:expanded /template/ ToggleButton#PART_toggle">
+                <Setter Property="Theme" Value="{StaticResource SimpleExpanderToggleButtonDownTheme}" />
+            </Style>
+        </Style>
+        <Style Selector="^[ExpandDirection=Up]">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid RowDefinitions="*,Auto">
+                            <ToggleButton
+                                Content="{TemplateBinding Header}"
+                                Grid.Row="1"
+                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                IsChecked="{TemplateBinding IsExpanded,
+                                                            Mode=TwoWay}"
+                                Name="PART_toggle"
+                                Theme="{StaticResource SimpleExpanderToggleButtonRightTheme}"
+                                VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                            <ContentPresenter
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Grid.Row="0"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                IsVisible="{TemplateBinding IsExpanded}"
+                                Name="PART_ContentPresenter"
+                                Padding="{TemplateBinding Padding}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+            <Style Selector="^:expanded /template/ ToggleButton#PART_toggle">
+                <Setter Property="Theme" Value="{StaticResource SimpleExpanderToggleButtonUpTheme}" />
+            </Style>
+        </Style>
+        <Style Selector="^[ExpandDirection=Right]">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <ToggleButton
+                                Content="{TemplateBinding Header}"
+                                Grid.Column="0"
+                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                IsChecked="{TemplateBinding IsExpanded,
+                                                            Mode=TwoWay}"
+                                Name="PART_toggle"
+                                Theme="{StaticResource SimpleExpanderToggleButtonLeftTheme}"
+                                VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                            <ContentPresenter
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Grid.Column="1"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                IsVisible="{TemplateBinding IsExpanded}"
+                                Name="PART_ContentPresenter"
+                                Padding="{TemplateBinding Padding}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+            <Style Selector="^:expanded /template/ ToggleButton#PART_toggle">
+                <Setter Property="Theme" Value="{StaticResource SimpleExpanderToggleButtonRightTheme}" />
+            </Style>
+        </Style>
+        <Style Selector="^[ExpandDirection=Left]">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <ToggleButton
+                                Content="{TemplateBinding Header}"
+                                Grid.Column="1"
+                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                IsChecked="{TemplateBinding IsExpanded,
+                                                            Mode=TwoWay}"
+                                Name="PART_toggle"
+                                Theme="{StaticResource SimpleExpanderToggleButtonRightTheme}"
+                                VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                            <ContentPresenter
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                Grid.Column="0"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                IsVisible="{TemplateBinding IsExpanded}"
+                                Name="PART_ContentPresenter"
+                                Padding="{TemplateBinding Padding}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+            <Style Selector="^:expanded /template/ ToggleButton#PART_toggle">
+                <Setter Property="Theme" Value="{StaticResource SimpleExpanderToggleButtonLeftTheme}" />
+            </Style>
+        </Style>
+    </ControlTheme>
+</ResourceDictionary>

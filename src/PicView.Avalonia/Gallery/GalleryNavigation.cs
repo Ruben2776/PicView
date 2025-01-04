@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Threading;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC;
@@ -178,7 +179,7 @@ public static class GalleryNavigation
         await GalleryFunctions.ToggleGallery(vm);
         if (vm.SelectedGalleryItemIndex != vm.ImageIterator.CurrentIndex) 
         {
-            await vm.ImageIterator.IterateToIndex(vm.SelectedGalleryItemIndex);
+            await NavigationHelper.Navigate(vm.SelectedGalleryItemIndex, vm).ConfigureAwait(false);
         }
     }
 }

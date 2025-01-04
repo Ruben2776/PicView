@@ -227,5 +227,57 @@ public static class AnimationsHelper
             }
         };
     }
+    
+    public static Animation CenteringAnimation(double fromX, double fromY, double toX, double toY, double speed)
+    {
+        return CenteringAnimation(fromX, fromY, toX, toY, TimeSpan.FromSeconds(speed));
+    }
+    
+    public static Animation CenteringAnimation(double fromX, double fromY, double toX, double toY, TimeSpan duration)
+    {
+        return new Animation
+        {
+            Duration = duration,
+            Easing = new SplineEasing(), // Using SplineEasing for smooth motion
+            FillMode = FillMode.Forward,
+            Children =
+            {
+                new KeyFrame
+                {
+                    Setters =
+                    {
+                        new Setter
+                        {
+                            Property = TranslateTransform.XProperty,
+                            Value = fromX
+                        },
+                        new Setter
+                        {
+                            Property = TranslateTransform.YProperty,
+                            Value = fromY
+                        }
+                    },
+                    Cue = new Cue(0d)
+                },
+                new KeyFrame
+                {
+                    Setters =
+                    {
+                        new Setter
+                        {
+                            Property = TranslateTransform.XProperty,
+                            Value = toX
+                        },
+                        new Setter
+                        {
+                            Property = TranslateTransform.YProperty,
+                            Value = toY
+                        }
+                    },
+                    Cue = new Cue(1d)
+                },
+            }
+        };
+    }
 }
         

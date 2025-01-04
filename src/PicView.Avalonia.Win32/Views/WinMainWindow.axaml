@@ -1,6 +1,5 @@
 <Window
     CanResize="{CompiledBinding CanResize}"
-    CornerRadius="0,0,8,8"
     Icon="/icon.ico"
     MinHeight="{CompiledBinding WindowMinSize}"
     MinWidth="{CompiledBinding WindowMinSize}"
@@ -10,26 +9,15 @@
                             Mode=OneWay}"
     TransparencyBackgroundFallback="{StaticResource MenuBackgroundColor}"
     TransparencyLevelHint="AcrylicBlur"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Win32.Views.WinMainWindow"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     xmlns:views1="clr-namespace:PicView.Avalonia.Win32.Views"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.DataContext>
-        <viewModels:MainViewModel />
-    </Design.DataContext>
 
-    <Border
-        BorderBrush="{DynamicResource WindowBorderColor}"
-        BorderThickness="1"
-        CornerRadius="8">
+    <Border BorderBrush="{DynamicResource WindowBorderColor}" BorderThickness="1">
         <DockPanel LastChildFill="True">
             <views1:WinTitleBar DockPanel.Dock="Top" x:Name="Titlebar" />
             <views:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />

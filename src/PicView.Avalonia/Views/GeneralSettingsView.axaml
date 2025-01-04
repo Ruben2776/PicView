@@ -97,6 +97,23 @@
                                            Mode=OneWay}" />
             </ToggleButton>
 
+            <ToggleButton
+                Background="Transparent"
+                BorderThickness="0"
+                Classes="altHover"
+                IsChecked="{CompiledBinding IsShowingConfirmationOnEsc}"
+                Margin="0,0,0,10"
+                Width="300">
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    Margin="0"
+                    MaxWidth="240"
+                    Padding="0,1,5,0"
+                    Text="{CompiledBinding ShowConfirmationOnEsc,
+                                           Mode=OneWay}" />
+            </ToggleButton>
+
         </StackPanel>
     </Panel>
 </UserControl>

@@ -8,24 +8,18 @@
     Title="Loading..."
     Width="901"
     WindowStartupLocation="CenterOwner"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Win32.Views.ExifWindow"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons;assembly=PicView.Avalonia"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.DataContext>
-        <viewModels:MainViewModel />
-    </Design.DataContext>
+
     <Border
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
-        CornerRadius="0,0,8,8"
         PointerPressed="MoveWindow"
         x:Name="ParentBorder">
         <DockPanel Background="Transparent">
@@ -150,8 +144,6 @@
 
                 <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
                     Classes="hover"
                     Click="Close"
                     ClickMode="Release"

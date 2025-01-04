@@ -20,12 +20,12 @@ public static class BackgroundManager
         0 => new SolidColorBrush(Colors.Transparent),
         1 => GetNoiseTextureBrush(),
         2 => CreateCheckerboardBrush(),
-        3 => CreateCheckerboardBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60),
+        3 => CreateCheckerboardBrushAlt(),
         4 => new SolidColorBrush(Colors.White),
         5 => new SolidColorBrush(Color.FromRgb(200, 200, 200)),
         6 => new SolidColorBrush(Color.FromRgb(155, 155, 155)),
-        7 => new SolidColorBrush(Color.FromArgb(90, 35, 35, 35)),
-        8 => new SolidColorBrush(Color.FromArgb(90, 15, 15, 15)),
+        7 => new SolidColorBrush(Color.FromArgb(200, 100, 100, 100)),
+        8 => new SolidColorBrush(Color.FromArgb(200, 50, 50, 50)),
         9 => new SolidColorBrush(Color.FromRgb(5, 5, 5)),
         _ => new SolidColorBrush(Colors.Transparent)
     };
@@ -58,6 +58,17 @@ public static class BackgroundManager
     {
         vm.ImageBackground = BackgroundColorBrush;
     }
+    
+    /// <summary>
+    /// Sets the background of the view model based on the current background choice.
+    /// </summary>
+    /// <param name="vm">The main view model where the background is set.</param>
+    /// <param name="choice">The background choice to set.</param>
+    public static void SetBackground(MainViewModel vm, int choice)
+    {
+        SettingsHelper.Settings.UIProperties.BgColorChoice = choice;
+        vm.ImageBackground = BackgroundColorBrush;
+    }
 
     /// <summary>
     /// Retrieves the noise texture brush from the application resources.
@@ -79,6 +90,16 @@ public static class BackgroundManager
         return new SolidColorBrush(Colors.Transparent);
     }
 
+    public static DrawingBrush CreateCheckerboardBrushAlt()
+    {
+        return CreateCheckerboardBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), 60);
+    }
+    
+    public static DrawingBrush CreateCheckerboardBrushAlt(int size)
+    {
+        return CreateCheckerboardBrush(Color.FromRgb(235, 235, 235), Color.FromRgb(40, 40, 40), size);
+    }
+
     /// <summary>
     /// Creates a checkerboard brush with two alternating colors.
     /// </summary>
@@ -86,7 +107,7 @@ public static class BackgroundManager
     /// <param name="secondaryColor">The secondary color for the checkerboard squares. Defaults to a dark gray.</param>
     /// <param name="size">The size of the checkerboard squares in pixels. Defaults to 30.</param>
     /// <returns>A drawing brush representing the checkerboard pattern.</returns>
-    private static DrawingBrush CreateCheckerboardBrush(Color primaryColor = default, Color secondaryColor = default,
+    public static DrawingBrush CreateCheckerboardBrush(Color primaryColor = default, Color secondaryColor = default,
         int size = 30)
     {
         // Default colors if not provided

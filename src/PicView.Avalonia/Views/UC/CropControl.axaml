@@ -1,0 +1,140 @@
+﻿<UserControl
+    x:Class="PicView.Avalonia.Views.UC.CropControl"
+    x:DataType="viewModels:ImageCropperViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="Brush0" />
+    </UserControl.Resources>
+    <UserControl.Styles>
+        <Styles>
+            <Style Selector="Border.x">
+                <Setter Property="Background" Value="{DynamicResource SecondaryButtonBackgroundColor}" />
+                <Setter Property="BorderBrush" Value="#fff" />
+                <Setter Property="BorderThickness" Value="2" />
+                <Setter Property="Width" Value="20" />
+                <Setter Property="Height" Value="20" />
+                <Setter Property="ZIndex" Value="1" />
+                <Setter Property="CornerRadius" Value="2" />
+            </Style>
+        </Styles>
+    </UserControl.Styles>
+    <UserControl.ContextMenu>
+        <ContextMenu x:Name="CropContextMenu">
+            <MenuItem Command="{CompiledBinding CropImageCommand}" Header="{CompiledBinding Crop, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource CropGeometry}"
+                        Fill="{StaticResource Brush0}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="{CompiledBinding CloseCropCommand}" Header="{CompiledBinding Close, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource CloseGeometry}"
+                        Fill="{StaticResource Brush0}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    <Panel>
+        <!--  Image control to display the bitmap  -->
+        <Image Source="{Binding Bitmap}" x:Name="ImageControl" />
+
+
+
+        <Canvas Background="Transparent" x:Name="RootCanvas">
+
+            <!--  Size Border  -->
+            <Border
+                Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderThickness="1"
+                CornerRadius="4"
+                IsHitTestVisible="False"
+                Padding="8,5"
+                ZIndex="2"
+                x:Name="SizeBorder">
+                <TextBlock Classes="txt" FontSize="14">
+                    <Run Text="{CompiledBinding Width, Mode=OneWay}" />
+                    <Run Text=": " />
+                    <Run Text="{CompiledBinding PixelSelectionWidth, Mode=OneWay}" />
+                    <Run Text=" x " />
+                    <Run Text="{CompiledBinding Height, Mode=OneWay}" />
+                    <Run Text=": " />
+                    <Run Text="{CompiledBinding PixelSelectionHeight, Mode=OneWay}" />
+                </TextBlock>
+            </Border>
+
+            <!--  Main Rectangle  -->
+            <Border
+                Background="Transparent"
+                BorderBrush="#fff"
+                BorderThickness="2"
+                Height="{CompiledBinding SelectionHeight}"
+                Width="{CompiledBinding SelectionWidth}"
+                x:Name="MainRectangle" />
+
+            <!--  Top Left  -->
+            <Border
+                Classes="x"
+                Cursor="TopLeftCorner"
+                x:Name="TopLeftButton" />
+
+            <!--  Top Right  -->
+            <Border
+                Classes="x"
+                Cursor="TopRightCorner"
+                x:Name="TopRightButton" />
+
+            <!--  Top Middle  -->
+            <Border
+                Classes="x"
+                Cursor="SizeNorthSouth"
+                x:Name="TopMiddleButton" />
+
+            <!--  Bottom Right  -->
+            <Border
+                Classes="x"
+                Cursor="BottomRightCorner"
+                x:Name="BottomRightButton" />
+
+            <!--  Bottom Middle  -->
+            <Border
+                Classes="x"
+                Cursor="SizeNorthSouth"
+                x:Name="BottomMiddleButton" />
+
+            <!--  Bottom Left  -->
+            <Border
+                Classes="x"
+                Cursor="BottomLeftCorner"
+                x:Name="BottomLeftButton" />
+
+            <!--  Left Middle  -->
+            <Border
+                Classes="x"
+                Cursor="SizeWestEast"
+                x:Name="LeftMiddleButton" />
+
+            <!--  Right Middle  -->
+            <Border
+                Classes="x"
+                Cursor="SizeWestEast"
+                x:Name="RightMiddleButton" />
+
+            <!--  Surrounding rectangles  -->
+            <Rectangle Fill="#80000000" x:Name="TopRectangle" />
+            <Rectangle Fill="#80000000" x:Name="BottomRectangle" />
+            <Rectangle Fill="#80000000" x:Name="LeftRectangle" />
+            <Rectangle Fill="#80000000" x:Name="RightRectangle" />
+        </Canvas>
+    </Panel>
+</UserControl>

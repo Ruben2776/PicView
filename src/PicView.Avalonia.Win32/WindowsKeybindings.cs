@@ -66,7 +66,8 @@ public static class WindowsKeybindings
                                                 "Ctrl+V": "Paste",
                                                 "Ctrl+P": "Print",
                                                 "Alt+Z": "ToggleInterface",
-                                                "Delete": "DeleteFile"
+                                                "Delete": "DeleteFile",
+                                                "Shift+Delete": "DeleteFilePermanently"
                                               }
                                               """;
 }

@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using Avalonia;
+using Avalonia.Media.Imaging;
 using ImageMagick;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
@@ -115,5 +117,18 @@ public static class ImageHelper
             }
         });
         SetTitleHelper.RefreshTitle(vm);
+    }
+    
+    public static RenderTargetBitmap ConvertCroppedBitmapToBitmap(CroppedBitmap croppedBitmap)
+    {
+        var renderTargetBitmap = new RenderTargetBitmap(new PixelSize(
+            croppedBitmap.SourceRect.Width,
+            croppedBitmap.SourceRect.Height));
+
+        using var context = renderTargetBitmap.CreateDrawingContext();
+        context.DrawImage(croppedBitmap,
+            new Rect(0, 0, croppedBitmap.SourceRect.Width, croppedBitmap.SourceRect.Height));
+
+        return renderTargetBitmap;
     }
 }

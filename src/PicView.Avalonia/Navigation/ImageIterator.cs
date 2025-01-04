@@ -3,6 +3,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Input;
+using PicView.Avalonia.Preloading;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Config;
@@ -107,8 +108,10 @@ public sealed class ImageIterator : IDisposable
         }
 
         IsRunning = true;
+        
+        var sourceFileInfo = SettingsHelper.Settings.Sorting.IncludeSubDirectories ? new FileInfo(_watcher.Path) : fileInfo;
 
-        var newList = await Task.FromResult(_vm.PlatformService.GetFiles(fileInfo));
+        var newList = await Task.FromResult(_vm.PlatformService.GetFiles(sourceFileInfo));
         if (newList.Count == 0)
         {
             return;
@@ -268,7 +271,8 @@ public sealed class ImageIterator : IDisposable
             return;
         }
 
-        var newList = FileListHelper.RetrieveFiles(fileInfo).ToList();
+        var sourceFileInfo = SettingsHelper.Settings.Sorting.IncludeSubDirectories ? new FileInfo(_watcher.Path) : fileInfo;
+        var newList = FileListHelper.RetrieveFiles(sourceFileInfo).ToList();
         if (newList.Count == 0)
         {
             return;
@@ -324,33 +328,33 @@ public sealed class ImageIterator : IDisposable
         await PreLoader.AddAsync(index, ImagePaths, imageModel).ConfigureAwait(false);
     }
 
-    public PreLoader.PreLoadValue? GetPreLoadValue(int index)
+    public PreLoadValue? GetPreLoadValue(int index)
     {
         return PreLoader.Get(index, ImagePaths);
     }
 
-    public async Task<PreLoader.PreLoadValue?> GetPreLoadValueAsync(int index)
+    public async Task<PreLoadValue?> GetPreLoadValueAsync(int index)
     {
         return await PreLoader.GetAsync(index, ImagePaths);
     }
 
-    public PreLoader.PreLoadValue? GetCurrentPreLoadValue()
+    public PreLoadValue? GetCurrentPreLoadValue()
     {
         return PreLoader.Get(CurrentIndex, ImagePaths);
     }
 
-    public async Task<PreLoader.PreLoadValue?> GetCurrentPreLoadValueAsync()
+    public async Task<PreLoadValue?> GetCurrentPreLoadValueAsync()
     {
         return await PreLoader.GetAsync(CurrentIndex, ImagePaths);
     }
 
-    public PreLoader.PreLoadValue? GetNextPreLoadValue()
+    public PreLoadValue? GetNextPreLoadValue()
     {
         var nextIndex = GetIteration(CurrentIndex, IsReversed ? NavigateTo.Previous : NavigateTo.Next);
         return PreLoader.Get(nextIndex, ImagePaths);
     }
 
-    public async Task<PreLoader.PreLoadValue?>? GetNextPreLoadValueAsync()
+    public async Task<PreLoadValue?>? GetNextPreLoadValueAsync()
     {
         var nextIndex = GetIteration(CurrentIndex, NavigateTo.Next);
         return await PreLoader.GetAsync(nextIndex, ImagePaths);
@@ -381,7 +385,7 @@ public sealed class ImageIterator : IDisposable
     public async Task QuickReload()
     {
         RemoveCurrentItemFromPreLoader();
-        await IterateToIndex(CurrentIndex).ConfigureAwait(false);
+        await IterateToIndex(CurrentIndex, new CancellationTokenSource()).ConfigureAwait(false);
     }
 
     public int GetIteration(int index, NavigateTo navigateTo, bool skip1 = false, bool skip10 = false, bool skip100 = false)
@@ -438,7 +442,7 @@ public sealed class ImageIterator : IDisposable
         return next;
     }
 
-    public async Task NextIteration(NavigateTo navigateTo)
+    public async Task NextIteration(NavigateTo navigateTo, CancellationTokenSource cts)
     {
         var index = GetIteration(CurrentIndex, navigateTo, SettingsHelper.Settings.ImageScaling.ShowImageSideBySide);
         if (index < 0)
@@ -448,30 +452,16 @@ public sealed class ImageIterator : IDisposable
 
         if (!MainKeyboardShortcuts.IsKeyHeldDown)
         {
-            await IterateToIndex(index);
+            await IterateToIndex(index, cts).ConfigureAwait(false);
         }
         else
         {
-            await TimerIteration(index);
+            await TimerIteration(index, cts).ConfigureAwait(false);
         }
     }
-    
-    public async Task Next10Iteration(bool forwards)
-    {
-        var index = GetIteration(CurrentIndex, forwards ? NavigateTo.Next : NavigateTo.Previous, false, true);
-        await IterateToIndex(index).ConfigureAwait(false);
-    }
-    
-    public async Task Next100Iteration(bool forwards)
-    {
-        var index = GetIteration(CurrentIndex, forwards ? NavigateTo.Next : NavigateTo.Previous, false, false, true);
-        await IterateToIndex(index).ConfigureAwait(false);
-    }
 
-    public async Task IterateToIndex(int index)
+    public async Task IterateToIndex(int index, CancellationTokenSource cts)
     {
-        SetTitleHelper.SetLoadingTitle(_vm);
-        
         if (index < 0 || index >= ImagePaths.Count)
         {
             ErrorHandling.ShowStartUpMenu(_vm);
@@ -479,7 +469,19 @@ public sealed class ImageIterator : IDisposable
         }
         
         // UI is more responsive when started in new thread
-        await Task.Run(async () =>
+        var isMainThread = Dispatcher.UIThread.CheckAccess();
+        if (isMainThread)
+        {
+            await Task.Run(async () => { await Iterate(); }, cts.Token).ConfigureAwait(false);
+        }
+        else
+        {
+            await Iterate().ConfigureAwait(false);
+        }
+
+        return;
+
+        async Task Iterate()
         {
             try
             {
@@ -496,10 +498,11 @@ public sealed class ImageIterator : IDisposable
 
                     while (preloadValue.IsLoading)
                     {
-                        await Task.Delay(20).ConfigureAwait(false);
+                        await Task.Delay(20, cts.Token).ConfigureAwait(false);
                         if (CurrentIndex != index)
                         {
                             // Skip loading if user went to next value
+                            await cts.CancelAsync();
                             return;
                         }
                     }
@@ -513,6 +516,7 @@ public sealed class ImageIterator : IDisposable
                 if (CurrentIndex != index)
                 {
                     // Skip loading if user went to next value
+                    await cts.CancelAsync();
                     return;
                 }
 
@@ -523,6 +527,7 @@ public sealed class ImageIterator : IDisposable
                     if (CurrentIndex != index)
                     {
                         // Skip loading if user went to next value
+                        await cts.CancelAsync();
                         return;
                     }
 
@@ -530,11 +535,13 @@ public sealed class ImageIterator : IDisposable
                     {
                         _vm.SecondaryImageSource = nextPreloadValue.ImageModel?.Image;
                     }
+                    cts.Token.ThrowIfCancellationRequested();
                     await UpdateImage.UpdateSource(_vm, index, ImagePaths, IsReversed, preloadValue, nextPreloadValue)
                         .ConfigureAwait(false);
                 }
                 else
                 {
+                    cts.Token.ThrowIfCancellationRequested();
                     await UpdateImage.UpdateSource(_vm, index, ImagePaths, IsReversed, preloadValue)
                         .ConfigureAwait(false);
                 }
@@ -561,6 +568,13 @@ public sealed class ImageIterator : IDisposable
                     FileHistoryNavigation.Add(ImagePaths[index]);
                 }
             }
+            catch (OperationCanceledException)
+            {
+                // Ignore
+#if DEBUG
+                Trace.WriteLine($"{nameof(IterateToIndex)} canceled");
+#endif
+            }
             catch (Exception e)
             {
 #if DEBUG
@@ -575,8 +589,10 @@ public sealed class ImageIterator : IDisposable
 
             return;
 
-            void TryShowPreview(PreLoader.PreLoadValue preloadValue)
+            void TryShowPreview(PreLoadValue preloadValue)
             {
+                SetTitleHelper.SetLoadingTitle(_vm);
+                
                 if (preloadValue is null)
                 {
                     return;
@@ -596,12 +612,12 @@ public sealed class ImageIterator : IDisposable
                 _vm.ImageSource = null;
                 _vm.SecondaryImageSource = null;
             }
-        });
+        }
     }
 
     private static Timer? _timer;
 
-    internal async Task TimerIteration(int index)
+    internal async Task TimerIteration(int index, CancellationTokenSource cts)
     {
         if (_timer is null)
         {
@@ -623,7 +639,7 @@ public sealed class ImageIterator : IDisposable
 
         _timer.Interval = TimeSpan.FromSeconds(SettingsHelper.Settings.UIProperties.NavSpeed).TotalMilliseconds;
         _timer.Start();
-        await IterateToIndex(index);
+        await IterateToIndex(index, cts).ConfigureAwait(false);
     }
 
     public void UpdateFileListAndIndex(List<string> fileList, int index)
@@ -654,6 +670,7 @@ public sealed class ImageIterator : IDisposable
             _watcher?.Dispose();
             Clear();
             _timer?.Dispose();
+            PreLoader.Dispose();
         }
 
         _disposed = true;

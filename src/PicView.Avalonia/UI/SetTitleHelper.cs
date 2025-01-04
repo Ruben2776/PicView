@@ -20,21 +20,21 @@ public static class SetTitleHelper
             }
             else if (s.Contains(TranslationHelper.Translation.Base64Image))
             {
-                title = TranslationHelper.Translation.Base64Image ?? "Base64Image";
+                title = TranslationHelper.Translation.Base64Image ?? "Base64 Image";
             }
             else
             {
-                title = TranslationHelper.Translation.ClipboardImage ?? "ClipboardImage";
+                title = TranslationHelper.Translation.ClipboardImage ?? "Clipboard Image";
             }
             
-            var singeImageWindowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(vm.ImageWidth, vm.ImageHeight, title, vm.ZoomValue);
+            var singeImageWindowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(vm.PixelWidth, vm.PixelWidth, title, vm.ZoomValue);
             vm.WindowTitle = singeImageWindowTitles.BaseTitle;
             vm.Title = singeImageWindowTitles.TitleWithAppName;
             vm.TitleTooltip = singeImageWindowTitles.TitleWithAppName;
             return;
         }
 
-        var windowTitles = ImageTitleFormatter.GenerateTitleStrings(vm.ImageWidth, vm.ImageHeight, vm.ImageIterator.CurrentIndex,
+        var windowTitles = ImageTitleFormatter.GenerateTitleStrings(vm.PixelWidth, vm.PixelHeight, vm.ImageIterator.CurrentIndex,
             vm.FileInfo, vm.ZoomValue, vm.ImageIterator.ImagePaths);
         vm.WindowTitle = windowTitles.TitleWithAppName;
         vm.Title = windowTitles.BaseTitle;

@@ -246,7 +246,7 @@
                             Text="{CompiledBinding Width,
                                                    Mode=OneWay}"
                             Width="100" />
-                        <customControls:FuncTextBox
+                        <customControls:NumTextBox
                             Background="{DynamicResource SecondaryBackgroundColor}"
                             Classes="hover TStyle x"
                             Foreground="{StaticResource SecondaryTextColor}"
@@ -278,7 +278,7 @@
                             Text="{CompiledBinding Height,
                                                    Mode=OneWay}"
                             Width="100" />
-                        <customControls:FuncTextBox
+                        <customControls:NumTextBox
                             Background="{DynamicResource SecondaryBackgroundColor}"
                             Classes="hover TStyle x"
                             Foreground="{StaticResource SecondaryTextColor}"
@@ -422,7 +422,7 @@
                         <TextBlock
                             Classes="txt"
                             Margin="0,8,0,0"
-                            Text="{CompiledBinding AspectRatio,
+                            Text="{CompiledBinding ReadAbleAspectRatio,
                                                    Mode=OneWay}"
                             Width="100" />
                         <customControls:FuncTextBox

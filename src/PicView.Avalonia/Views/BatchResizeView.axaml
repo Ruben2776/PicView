@@ -5,13 +5,959 @@
     x:Class="PicView.Avalonia.Views.BatchResizeView"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <TextBlock
-        Classes="txt"
-        Margin="10"
-        Text="Coming soon..."
-        TextAlignment="Center" />
+    <UserControl.Resources>
+        <converters:IndexBiggerThanBooleanConverter x:Key="IndexBiggerThanBooleanConverter" />
+        <converters:IndexToStringSizeConverter x:Key="IndexToStringSizeConverter" />
+        <converters:IndexToPercentageSizeConverter x:Key="IndexToPercentageSizeConverter" />
+    </UserControl.Resources>
+    <StackPanel>
+
+        <StackPanel x:Name="InputStackPanel">
+
+            <StackPanel Margin="0,15,0,5" Orientation="Horizontal">
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding SourceFolder}"
+                    Width="130" />
+                <customControls:FuncTextBox
+                    Classes="hover TStyle"
+                    Margin="10,0"
+                    Width="425"
+                    x:Name="SourceFolderTextBox" />
+                <customControls:IconButton
+                    Classes="altHover"
+                    Data="{StaticResource AltFolderGeometry}"
+                    IconHeight="20"
+                    IconWidth="20"
+                    Margin="5,0,5,0"
+                    Width="30"
+                    x:Name="SourceFolderButton" />
+            </StackPanel>
+
+            <StackPanel Margin="0,10" Orientation="Horizontal">
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding OutputFolder}"
+                    Width="130" />
+                <customControls:FuncTextBox
+                    Classes="hover TStyle"
+                    Margin="10,0"
+                    Width="425"
+                    x:Name="OutputFolderTextBox" />
+                <customControls:IconButton
+                    Classes="altHover"
+                    Data="{StaticResource AltFolderGeometry}"
+                    IconHeight="20"
+                    IconWidth="20"
+                    Margin="5,0,5,0"
+                    Width="30"
+                    x:Name="OutputFolderButton" />
+            </StackPanel>
+
+            <StackPanel Margin="0,10" Orientation="Horizontal">
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding ConvertTo,
+                                           Mode=OneWay}"
+                    Width="130" />
+                <ComboBox
+                    Background="{DynamicResource SecondaryBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                    Height="30"
+                    Margin="11,0,10,0"
+                    Padding="5,7,0,7"
+                    SelectedIndex="0"
+                    SelectedItem="NoConversion"
+                    Width="195"
+                    x:Name="ConversionComboBox">
+                    <ComboBoxItem Content="{CompiledBinding NoConversion, Mode=OneWay}" x:Name="NoConversion" />
+                    <ComboBoxItem Content=".png" x:Name="PngItem" />
+                    <ComboBoxItem Content=".jpg" x:Name="JpgItem" />
+                    <ComboBoxItem Content=".webp" x:Name="WebpItem" />
+                    <ComboBoxItem Content=".avif" x:Name="AvifItem" />
+                    <ComboBoxItem Content=".heic" x:Name="HeicItem" />
+                    <ComboBoxItem Content=".jxl" x:Name="JxlItem" />
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Margin="0,10" Orientation="Horizontal">
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding Compression,
+                                           Mode=OneWay}"
+                    Width="130" />
+                <ComboBox
+                    Background="{DynamicResource SecondaryBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                    Height="30"
+                    Margin="11,0,10,0"
+                    Padding="5,7,0,7"
+                    SelectedIndex="0"
+                    SelectedItem="Lossless"
+                    Width="195"
+                    x:Name="CompressionComboBox">
+                    <ComboBoxItem Content="{CompiledBinding Lossless, Mode=OneWay}" x:Name="Lossless" />
+                    <ComboBoxItem Content="{CompiledBinding Lossy, Mode=OneWay}" x:Name="Lossy" />
+                    <ComboBoxItem Content="{CompiledBinding None, Mode=OneWay}" x:Name="None" />
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Margin="0,10" Orientation="Horizontal">
+
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding Quality,
+                                           Mode=OneWay}"
+                    Width="130" />
+
+                <CheckBox
+                    IsChecked="False"
+                    Margin="11,0,10,0"
+                    x:Name="IsQualityEnabledBox" />
+                <customControls:CustomSlider
+                    IsEnabled="{Binding Path=IsChecked, ElementName=IsQualityEnabledBox}"
+                    IsSnapToTickEnabled="True"
+                    Margin="0,0,10,2"
+                    Maximum="100"
+                    Minimum="1"
+                    TickFrequency="1"
+                    Value="75"
+                    Width="165"
+                    x:Name="QualitySlider" />
+                <TextBlock
+                    Classes="txt"
+                    IsEnabled="{Binding Path=IsChecked, ElementName=IsQualityEnabledBox}"
+                    Margin="10,0,0,3"
+                    Text="{Binding Path=Value, ElementName=QualitySlider}" />
+
+            </StackPanel>
+
+            <StackPanel Margin="0,10" Orientation="Horizontal">
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding Resize,
+                                           Mode=OneWay}"
+                    Width="130"
+                    x:Name="ResizeTextBlock" />
+                <ComboBox
+                    Background="{DynamicResource SecondaryBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                    Height="30"
+                    Margin="11,0,10,0"
+                    Padding="5,7,0,7"
+                    SelectedIndex="0"
+                    SelectedItem="NoResizeBox"
+                    Width="195"
+                    x:Name="ResizeComboBox">
+                    <ComboBoxItem Content="{CompiledBinding NoResize}" x:Name="NoResizeBox" />
+                    <ComboBoxItem Content="{CompiledBinding Width}" x:Name="WidthResizeBox" />
+                    <ComboBoxItem Content="{CompiledBinding Height}" x:Name="HeightResizeBox" />
+                    <ComboBoxItem Content="{CompiledBinding WidthAndHeight}" x:Name="WidthAndHeightResizeBox" />
+                    <ComboBoxItem Content="{CompiledBinding Percentage}" x:Name="PercentageResizeBox" />
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel
+                IsVisible="{Binding Path=IsSelected, ElementName=WidthResizeBox}"
+                Margin="0,10"
+                Orientation="Horizontal">
+
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding Width}"
+                    Width="130"
+                    x:Name="WidthTextBlock" />
+
+                <customControls:NumTextBox
+                    Classes="hover TStyle"
+                    Margin="11,0,10,0"
+                    Text="{CompiledBinding PixelWidth,
+                                           Mode=OneTime}"
+                    Width="195"
+                    x:Name="WidthValueBox" />
+            </StackPanel>
+
+            <StackPanel
+                IsVisible="{Binding Path=IsSelected, ElementName=HeightResizeBox}"
+                Margin="0,10"
+                Orientation="Horizontal">
+
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding Height}"
+                    Width="130"
+                    x:Name="HeightTextBlock" />
+
+                <customControls:NumTextBox
+                    Classes="hover TStyle"
+                    Margin="11,0,10,0"
+                    Text="{CompiledBinding PixelHeight,
+                                           Mode=OneTime}"
+                    Width="195"
+                    x:Name="HeightValueBox" />
+            </StackPanel>
+
+            <StackPanel
+                IsVisible="{Binding Path=IsSelected, ElementName=WidthAndHeightResizeBox}"
+                Margin="0,10"
+                Orientation="Horizontal">
+
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding Width}"
+                    Width="130"
+                    x:Name="WidthAndHeightWidthTextBlock" />
+
+                <customControls:NumTextBox
+                    Classes="hover TStyle"
+                    Margin="11,0,10,0"
+                    Text="{CompiledBinding PixelWidth,
+                                           Mode=OneTime}"
+                    Width="195"
+                    x:Name="WidthAndHeightWidthValueBox" />
+            </StackPanel>
+
+            <Canvas IsVisible="{Binding Path=IsSelected, ElementName=WidthAndHeightResizeBox}">
+                <Button
+                    Background="Transparent"
+                    Canvas.Left="345"
+                    Canvas.Top="-15"
+                    Classes="altHover"
+                    Height="35"
+                    Width="38"
+                    x:Name="LinkChainButton">
+                    <Panel>
+                        <Image
+                            Height="16"
+                            Width="16"
+                            x:Name="LinkChainImage">
+                            <DrawingImage>
+                                <DrawingGroup>
+                                    <GeometryDrawing Geometry="F1 M10 13Q10.0802 13.1073 10.1661 13.2101Q10.252 13.3129 10.3432 13.411Q10.4344 13.509 10.5308 13.6021Q10.6272 13.6951 10.7284 13.7829Q10.8296 13.8706 10.9353 13.9528Q11.0411 14.035 11.1511 14.1114Q11.2611 14.1879 11.3751 14.2583Q11.489 14.3287 11.6065 14.3929Q11.7241 14.4572 11.8449 14.515Q11.9657 14.5728 12.0895 14.6241Q12.2132 14.6754 12.3395 14.72Q12.4658 14.7646 12.5944 14.8023Q12.7229 14.8401 12.8532 14.8709Q12.9836 14.9017 13.1154 14.9255Q13.2472 14.9493 13.3801 14.9661Q13.513 14.9828 13.6466 14.9923Q13.7803 15.0019 13.9142 15.0043Q14.0481 15.0067 14.182 15.0019Q14.3158 14.9972 14.4493 14.9852Q14.5827 14.9733 14.7153 14.9542Q14.8479 14.9352 14.9792 14.909Q15.1106 14.8829 15.2404 14.8498Q15.3702 14.8167 15.498 14.7766Q15.6258 14.7366 15.7513 14.6898Q15.8768 14.643 15.9997 14.5895Q16.1225 14.536 16.2423 14.4761Q16.362 14.4161 16.4784 14.3498Q16.5948 14.2835 16.7075 14.2111Q16.8202 14.1386 16.9288 14.0603Q17.0375 13.9819 17.1417 13.8979Q17.246 13.8138 17.3457 13.7243Q17.4453 13.6347 17.54 13.54L20.54 10.54Q20.6243 10.4527 20.7043 10.3614Q20.7843 10.2701 20.8598 10.175Q20.9352 10.0799 21.006 9.98132Q21.0768 9.8827 21.1427 9.78075Q21.2086 9.67881 21.2694 9.57379Q21.3303 9.46878 21.386 9.36093Q21.4417 9.25308 21.4921 9.14265Q21.5425 9.03223 21.5875 8.91949Q21.6325 8.80675 21.672 8.69196Q21.7114 8.57717 21.7453 8.4606Q21.7791 8.34403 21.8073 8.22595Q21.8354 8.10787 21.8578 7.98857Q21.8802 7.86927 21.8968 7.74902Q21.9133 7.62877 21.924 7.50786Q21.9348 7.38695 21.9396 7.26566Q21.9444 7.14437 21.9434 7.02299Q21.9423 6.90161 21.9354 6.78043Q21.9284 6.65924 21.9156 6.53854Q21.9028 6.41783 21.8841 6.29789Q21.8655 6.17795 21.841 6.05905Q21.8166 5.94016 21.7864 5.82259Q21.7562 5.70502 21.7203 5.58905Q21.6844 5.47309 21.643 5.359Q21.6015 5.24491 21.5546 5.13297Q21.5077 5.02103 21.4554 4.9115Q21.403 4.80196 21.3455 4.6951Q21.2879 4.58824 21.2252 4.48429Q21.1625 4.38034 21.0949 4.27956Q21.0272 4.17878 20.9547 4.0814Q20.8823 3.98402 20.8052 3.89028Q20.7281 3.79653 20.6465 3.70663Q20.5649 3.61674 20.4791 3.53091Q20.3933 3.44507 20.3034 3.36351Q20.2135 3.28194 20.1197 3.20483Q20.026 3.12773 19.9286 3.05526Q19.8312 2.98279 19.7304 2.91514Q19.6297 2.84748 19.5257 2.78479Q19.4218 2.72211 19.3149 2.66454Q19.208 2.60697 19.0985 2.55465Q18.989 2.50234 18.877 2.4554Q18.7651 2.40846 18.651 2.36701Q18.5369 2.32556 18.4209 2.28969Q18.305 2.25382 18.1874 2.22363Q18.0698 2.19343 17.951 2.16897Q17.8321 2.14452 17.7121 2.12586Q17.5922 2.1072 17.4715 2.09439Q17.3508 2.08157 17.2296 2.07463Q17.1084 2.06768 16.987 2.06663Q16.8656 2.06557 16.7443 2.07041Q16.6231 2.07525 16.5021 2.08596Q16.3812 2.09668 16.261 2.11325Q16.1407 2.12982 16.0214 2.15221Q15.9021 2.17459 15.7841 2.20274Q15.666 2.23089 15.5494 2.26474Q15.4328 2.29858 15.318 2.33805Q15.2033 2.37751 15.0905 2.4225Q14.9778 2.46748 14.8674 2.51789Q14.7569 2.56829 14.6491 2.62399Q14.5412 2.6797 14.4362 2.74057Q14.3312 2.80144 14.2292 2.86733Q14.1273 2.93323 14.0287 3.00399Q13.9301 3.07476 13.835 3.15022Q13.7399 3.22569 13.6486 3.30568Q13.5573 3.38567 13.47 3.47L11.75 5.18">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M14 11Q13.9198 10.8927 13.8339 10.7899Q13.748 10.6871 13.6568 10.589Q13.5656 10.491 13.4692 10.3979Q13.3728 10.3049 13.2716 10.2171Q13.1704 10.1294 13.0647 10.0472Q12.9589 9.96498 12.8489 9.88856Q12.7389 9.81213 12.6249 9.74171Q12.511 9.67128 12.3934 9.60706Q12.2759 9.54284 12.1551 9.485Q12.0343 9.42716 11.9105 9.37588Q11.7868 9.32459 11.6605 9.28001Q11.5341 9.23542 11.4056 9.19766Q11.2771 9.1599 11.1468 9.12908Q11.0164 9.09825 10.8846 9.07445Q10.7528 9.05065 10.6199 9.03394Q10.487 9.01723 10.3534 9.00767Q10.2197 8.9981 10.0858 8.9957Q9.95188 8.99329 9.81802 8.99807Q9.68415 9.00284 9.55074 9.01477Q9.41732 9.02671 9.28473 9.04577Q9.15215 9.06483 9.02077 9.09096Q8.88939 9.11709 8.7596 9.15022Q8.62981 9.18334 8.50198 9.22337Q8.37416 9.2634 8.24865 9.31022Q8.12315 9.35703 8.00033 9.4105Q7.87752 9.46397 7.75774 9.52394Q7.63797 9.58391 7.52157 9.6502Q7.40518 9.7165 7.2925 9.78893Q7.17982 9.86136 7.07118 9.93972Q6.96255 10.0181 6.85826 10.1021Q6.75397 10.1862 6.65434 10.2757Q6.5547 10.3653 6.46 10.46L3.46 13.46Q3.37567 13.5473 3.29568 13.6386Q3.21569 13.7299 3.14022 13.825Q3.06475 13.9201 2.99399 14.0187Q2.92322 14.1173 2.85733 14.2192Q2.79143 14.3212 2.73056 14.4262Q2.66969 14.5312 2.61398 14.6391Q2.55828 14.7469 2.50787 14.8573Q2.45747 14.9678 2.41248 15.0805Q2.36749 15.1933 2.32803 15.308Q2.28857 15.4228 2.25472 15.5394Q2.22088 15.656 2.19273 15.7741Q2.16458 15.8921 2.14219 16.0114Q2.1198 16.1307 2.10323 16.251Q2.08666 16.3712 2.07594 16.4921Q2.06522 16.6131 2.06039 16.7343Q2.05555 16.8556 2.05661 16.977Q2.05766 17.0984 2.0646 17.2196Q2.07155 17.3408 2.08436 17.4615Q2.09718 17.5822 2.11583 17.7021Q2.13449 17.8221 2.15895 17.941Q2.1834 18.0599 2.2136 18.1774Q2.2438 18.295 2.27967 18.411Q2.31553 18.5269 2.35698 18.641Q2.39843 18.7551 2.44537 18.867Q2.49231 18.979 2.54463 19.0885Q2.59694 19.1981 2.65451 19.3049Q2.71208 19.4118 2.77477 19.5157Q2.83745 19.6197 2.90511 19.7205Q2.97277 19.8212 3.04524 19.9186Q3.1177 20.016 3.19481 20.1097Q3.27192 20.2035 3.35348 20.2934Q3.43505 20.3833 3.52088 20.4691Q3.60672 20.555 3.69661 20.6365Q3.78651 20.7181 3.88026 20.7952Q3.974 20.8723 4.07138 20.9448Q4.16876 21.0172 4.26954 21.0849Q4.37033 21.1525 4.47427 21.2152Q4.57822 21.2779 4.68508 21.3355Q4.79195 21.3931 4.90148 21.4454Q5.01101 21.4977 5.12296 21.5446Q5.2349 21.5916 5.34899 21.633Q5.46307 21.6745 5.57904 21.7103Q5.695 21.7462 5.81257 21.7764Q5.93014 21.8066 6.04904 21.8311Q6.16793 21.8555 6.28788 21.8742Q6.40782 21.8928 6.52853 21.9056Q6.64923 21.9185 6.77042 21.9254Q6.89161 21.9323 7.01299 21.9334Q7.13437 21.9345 7.25566 21.9296Q7.37695 21.9248 7.49786 21.9141Q7.61877 21.9033 7.73902 21.8868Q7.85926 21.8702 7.97857 21.8478Q8.09787 21.8254 8.21595 21.7973Q8.33402 21.7691 8.45059 21.7353Q8.56716 21.7014 8.68196 21.662Q8.79675 21.6225 8.90949 21.5775Q9.02223 21.5325 9.13265 21.4821Q9.24308 21.4317 9.35093 21.376Q9.45878 21.3203 9.5638 21.2594Q9.66881 21.1986 9.77076 21.1327Q9.8727 21.0668 9.97132 20.996Q10.0699 20.9253 10.165 20.8498Q10.2601 20.7743 10.3514 20.6943Q10.4427 20.6143 10.53 20.53L12.24 18.82">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingImage>
+                        </Image>
+                        <Image
+                            Height="16"
+                            IsVisible="False"
+                            Width="16"
+                            x:Name="UnlinkChainImage">
+                            <DrawingImage>
+                                <DrawingGroup>
+                                    <GeometryDrawing Geometry="F1 M18.84 12.25L20.56 10.54L20.54 10.54Q20.6252 10.4517 20.706 10.3593Q20.7868 10.267 20.8629 10.1707Q20.9391 10.0745 21.0105 9.97467Q21.0818 9.87483 21.1482 9.77162Q21.2146 9.6684 21.2758 9.56205Q21.337 9.45571 21.393 9.34649Q21.4489 9.23727 21.4995 9.12544Q21.55 9.01361 21.595 8.89944Q21.6399 8.78526 21.6793 8.66902Q21.7186 8.55278 21.7522 8.43475Q21.7858 8.31672 21.8136 8.19719Q21.8413 8.07766 21.8632 7.95691Q21.8851 7.83616 21.901 7.71448Q21.9169 7.5928 21.9269 7.47049Q21.9368 7.34818 21.9407 7.22552Q21.9447 7.10287 21.9426 6.98018Q21.9405 6.85748 21.9324 6.73503Q21.9243 6.61258 21.9102 6.49068Q21.8961 6.36877 21.8761 6.24771Q21.856 6.12664 21.8301 6.0067Q21.8041 5.88676 21.7723 5.76824Q21.7405 5.64972 21.7029 5.5329Q21.6654 5.41608 21.6221 5.30124Q21.5789 5.1864 21.53 5.07382Q21.4812 4.96124 21.4269 4.85119Q21.3726 4.74113 21.313 4.63388Q21.2534 4.52662 21.1886 4.42241Q21.1238 4.31821 21.0539 4.2173Q20.9841 4.1164 20.9094 4.01904Q20.8347 3.92168 20.7553 3.82809Q20.6759 3.73451 20.592 3.64494Q20.5082 3.55536 20.42 3.47Q20.3336 3.38666 20.2433 3.30757Q20.153 3.22847 20.059 3.15379Q19.965 3.07911 19.8675 3.00903Q19.77 2.93894 19.6693 2.87361Q19.5686 2.80827 19.4649 2.74784Q19.3611 2.68741 19.2546 2.63203Q19.1481 2.57664 19.0391 2.52642Q18.93 2.4762 18.8187 2.43127Q18.7074 2.38633 18.594 2.34679Q18.4807 2.30724 18.3656 2.27317Q18.2504 2.23911 18.1338 2.2106Q18.0172 2.18209 17.8994 2.1592Q17.7815 2.13631 17.6627 2.1191Q17.5439 2.10189 17.4244 2.09039Q17.3049 2.0789 17.185 2.07314Q17.0651 2.06739 16.945 2.06739Q16.8249 2.06739 16.705 2.07314Q16.5851 2.0789 16.4656 2.09039Q16.3461 2.10189 16.2273 2.1191Q16.1085 2.13631 15.9906 2.1592Q15.8728 2.18209 15.7562 2.2106Q15.6396 2.23911 15.5244 2.27317Q15.4093 2.30724 15.296 2.34679Q15.1826 2.38633 15.0713 2.43127Q14.96 2.4762 14.8509 2.52642Q14.7419 2.57664 14.6354 2.63203Q14.5289 2.68741 14.4251 2.74784Q14.3214 2.80827 14.2207 2.87361Q14.12 2.93894 14.0225 3.00903Q13.925 3.07911 13.831 3.15379Q13.737 3.22847 13.6467 3.30757Q13.5564 3.38666 13.47 3.47L11.75 5.18">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M5.17 11.75L3.46 13.46Q3.37478 13.5483 3.294 13.6407Q3.21321 13.733 3.13705 13.8293Q3.06089 13.9255 2.98954 14.0253Q2.91818 14.1252 2.85181 14.2284Q2.78544 14.3316 2.7242 14.4379Q2.66297 14.5443 2.60702 14.6535Q2.55108 14.7627 2.50055 14.8746Q2.45002 14.9864 2.40504 15.1006Q2.36005 15.2147 2.32072 15.331Q2.28139 15.4472 2.2478 15.5652Q2.21421 15.6833 2.18645 15.8028Q2.15868 15.9223 2.13681 16.0431Q2.11494 16.1638 2.09902 16.2855Q2.08309 16.4072 2.07315 16.5295Q2.06321 16.6518 2.05927 16.7745Q2.05534 16.8971 2.05742 17.0198Q2.05951 17.1425 2.0676 17.265Q2.07569 17.3874 2.08978 17.5093Q2.10387 17.6312 2.12391 17.7523Q2.14396 17.8734 2.16991 17.9933Q2.19587 18.1132 2.22767 18.2318Q2.25948 18.3503 2.29705 18.4671Q2.33463 18.5839 2.37788 18.6988Q2.42114 18.8136 2.46997 18.9262Q2.5188 19.0388 2.5731 19.1488Q2.62739 19.2589 2.68701 19.3661Q2.74663 19.4734 2.81144 19.5776Q2.87625 19.6818 2.94609 19.7827Q3.01592 19.8836 3.09062 19.981Q3.16532 20.0783 3.24471 20.1719Q3.32409 20.2655 3.40796 20.3551Q3.49184 20.4446 3.58 20.53Q3.66641 20.6133 3.75673 20.6924Q3.84704 20.7715 3.94103 20.8462Q4.03503 20.9209 4.1325 20.991Q4.22997 21.0611 4.33069 21.1264Q4.43141 21.1917 4.53514 21.2522Q4.63887 21.3126 4.74538 21.368Q4.85189 21.4234 4.96094 21.4736Q5.06998 21.5238 5.1813 21.5687Q5.29263 21.6137 5.40598 21.6532Q5.51933 21.6928 5.63445 21.7268Q5.74957 21.7609 5.86618 21.7894Q5.9828 21.8179 6.10065 21.8408Q6.2185 21.8637 6.33731 21.8809Q6.45612 21.8981 6.57562 21.9096Q6.69512 21.9211 6.81504 21.9269Q6.93495 21.9326 7.055 21.9326Q7.17505 21.9326 7.29496 21.9269Q7.41488 21.9211 7.53438 21.9096Q7.65388 21.8981 7.77269 21.8809Q7.8915 21.8637 8.00935 21.8408Q8.1272 21.8179 8.24382 21.7894Q8.36043 21.7609 8.47555 21.7268Q8.59067 21.6928 8.70402 21.6532Q8.81737 21.6137 8.9287 21.5687Q9.04002 21.5238 9.14906 21.4736Q9.25811 21.4234 9.36462 21.368Q9.47113 21.3126 9.57486 21.2522Q9.6786 21.1917 9.77931 21.1264Q9.88003 21.0611 9.9775 20.991Q10.075 20.9209 10.169 20.8462Q10.263 20.7715 10.3533 20.6924Q10.4436 20.6133 10.53 20.53L12.24 18.82">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M8 2L8 5">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M2 8L5 8">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M16 19L16 22">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                    <GeometryDrawing Geometry="F1 M19 16L22 16">
+                                        <GeometryDrawing.Pen>
+                                            <Pen
+                                                Brush="{StaticResource SecondaryTextColor}"
+                                                LineCap="Round"
+                                                LineJoin="Round"
+                                                MiterLimit="4"
+                                                Thickness="2" />
+                                        </GeometryDrawing.Pen>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingImage>
+                        </Image>
+                    </Panel>
+                </Button>
+            </Canvas>
+
+            <StackPanel
+                IsVisible="{Binding Path=IsSelected, ElementName=WidthAndHeightResizeBox}"
+                Margin="0,10"
+                Orientation="Horizontal">
+
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding Height}"
+                    Width="130"
+                    x:Name="WidthAndHeightHeightTextBlock" />
+
+                <customControls:NumTextBox
+                    Classes="hover TStyle"
+                    Margin="11,0,10,0"
+                    Text="{CompiledBinding PixelHeight,
+                                           Mode=OneTime}"
+                    Width="195"
+                    x:Name="WidthAndHeightHeightValueBox" />
+            </StackPanel>
+
+            <StackPanel
+                IsVisible="{Binding Path=IsSelected, ElementName=PercentageResizeBox}"
+                Margin="0,10"
+                Orientation="Horizontal">
+
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding Percentage}"
+                    Width="130"
+                    x:Name="PercentageTextBlock" />
+
+                <customControls:FuncTextBox
+                    Classes="hover TStyle"
+                    Margin="11,0,10,0"
+                    Text="100"
+                    Width="195"
+                    x:Name="PercentageValueBox" />
+
+                <Image
+                    Height="12"
+                    Margin="5,0,0,0"
+                    Source="{StaticResource PercentageIcon}"
+                    Width="12" />
+            </StackPanel>
+
+            <StackPanel Margin="0,10" Orientation="Horizontal">
+                <TextBlock
+                    Classes="txt"
+                    Margin="5,0,0,0"
+                    Text="{CompiledBinding GenerateThumbnails,
+                                           Mode=OneWay}"
+                    Width="130"
+                    x:Name="GenerateThumbnailsTextBlock" />
+                <ComboBox
+                    Background="{DynamicResource SecondaryBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                    Height="30"
+                    Margin="11,0,10,0"
+                    Padding="5,7,0,7"
+                    SelectedIndex="0"
+                    SelectedItem="NoThumbnailsItem"
+                    Width="195"
+                    x:Name="ThumbnailsComboBox">
+                    <ComboBoxItem Content="{CompiledBinding None}" x:Name="NoThumbnailsItem" />
+                    <ComboBoxItem Content="1" />
+                    <ComboBoxItem Content="2" />
+                    <ComboBoxItem Content="3" />
+                    <ComboBoxItem Content="4" />
+                    <ComboBoxItem Content="5" />
+                    <ComboBoxItem Content="6" />
+                    <ComboBoxItem Content="7" />
+                </ComboBox>
+            </StackPanel>
+
+            <customControls:AutoScrollViewer
+                Margin="5,2,0,0"
+                MaxHeight="350"
+                x:Name="AutoScrollViewer">
+                <StackPanel>
+
+                    <!--  Thumb 1  -->
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=1, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Width="130">
+                            <Run Text="{CompiledBinding Thumbnail}" />
+                            <Run Text=" 1" />
+                            <LineBreak />
+                            <Run Text="{CompiledBinding OutputFolder}" />
+                        </TextBlock>
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Margin="4,0,10,0"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=1, Converter={StaticResource IndexToStringSizeConverter}}"
+                            Width="410"
+                            x:Name="Thumb1OutputBox" />
+                    </StackPanel>
+
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=1, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="4,10,0,15"
+                        Orientation="Horizontal">
+
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Text="{CompiledBinding Resize}"
+                            Width="125" />
+
+                        <ComboBox
+                            Background="{DynamicResource SecondaryBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            Height="30"
+                            Margin="6,0,10,0"
+                            Padding="5,7,0,7"
+                            SelectedIndex="0"
+                            SelectedItem="Thumb1PercentageItem"
+                            Width="195"
+                            x:Name="Thumb1ComboBox">
+                            <ComboBoxItem Content="{CompiledBinding Percentage}" x:Name="Thumb1PercentageItem" />
+                            <ComboBoxItem Content="{CompiledBinding Width}" x:Name="Thumb1WidthItem" />
+                            <ComboBoxItem Content="{CompiledBinding Height}" x:Name="Thumb1HeightItem" />
+                        </ComboBox>
+
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=1, Converter={StaticResource IndexToPercentageSizeConverter}}"
+                            Width="200"
+                            x:Name="Thumb1ValueBox" />
+
+                        <Image
+                            Height="12"
+                            IsVisible="{Binding Path=IsSelected, ElementName=Thumb1PercentageItem}"
+                            Margin="22,0,0,0"
+                            Source="{StaticResource PercentageIcon}"
+                            Width="12" />
+                    </StackPanel>
+
+
+                    <!--  Thumb 2  -->
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=2, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Width="130">
+                            <Run Text="{CompiledBinding Thumbnail}" />
+                            <Run Text=" 2" />
+                            <LineBreak />
+                            <Run Text="{CompiledBinding OutputFolder}" />
+                        </TextBlock>
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Margin="4,0,10,0"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=2, Converter={StaticResource IndexToStringSizeConverter}}"
+                            Width="410"
+                            x:Name="Thumb2OutputBox" />
+                    </StackPanel>
+
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=2, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="4,10,0,15"
+                        Orientation="Horizontal">
+
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Text="{CompiledBinding Resize}"
+                            Width="125" />
+
+                        <ComboBox
+                            Background="{DynamicResource SecondaryBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            Height="30"
+                            Margin="6,0,10,0"
+                            Padding="5,7,0,7"
+                            SelectedIndex="0"
+                            SelectedItem="Thumb2PercentageItem"
+                            Width="195"
+                            x:Name="Thumb2ComboBox">
+                            <ComboBoxItem Content="{CompiledBinding Percentage}" x:Name="Thumb2PercentageItem" />
+                            <ComboBoxItem Content="{CompiledBinding Width}" x:Name="Thumb2WidthItem" />
+                            <ComboBoxItem Content="{CompiledBinding Height}" x:Name="Thumb2HeightItem" />
+                        </ComboBox>
+
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=2, Converter={StaticResource IndexToPercentageSizeConverter}}"
+                            Width="200"
+                            x:Name="Thumb2ValueBox" />
+
+                        <Image
+                            Height="12"
+                            IsVisible="{Binding Path=IsSelected, ElementName=Thumb2PercentageItem}"
+                            Margin="22,0,0,0"
+                            Source="{StaticResource PercentageIcon}"
+                            Width="12" />
+                    </StackPanel>
+
+
+                    <!--  Thumb 3  -->
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=3, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Width="130">
+                            <Run Text="{CompiledBinding Thumbnail}" />
+                            <Run Text=" 3" />
+                            <LineBreak />
+                            <Run Text="{CompiledBinding OutputFolder}" />
+                        </TextBlock>
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Margin="4,0,10,0"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=3, Converter={StaticResource IndexToStringSizeConverter}}"
+                            Width="410"
+                            x:Name="Thumb3OutputBox" />
+                    </StackPanel>
+
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=3, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="4,10,0,15"
+                        Orientation="Horizontal">
+
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Text="{CompiledBinding Resize}"
+                            Width="125" />
+
+                        <ComboBox
+                            Background="{DynamicResource SecondaryBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            Height="30"
+                            Margin="6,0,10,0"
+                            Padding="5,7,0,7"
+                            SelectedIndex="0"
+                            SelectedItem="Thumb3PercentageItem"
+                            Width="195"
+                            x:Name="Thumb3ComboBox">
+                            <ComboBoxItem Content="{CompiledBinding Percentage}" x:Name="Thumb3PercentageItem" />
+                            <ComboBoxItem Content="{CompiledBinding Width}" x:Name="Thumb3WidthItem" />
+                            <ComboBoxItem Content="{CompiledBinding Height}" x:Name="Thumb3HeightItem" />
+                        </ComboBox>
+
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=3, Converter={StaticResource IndexToPercentageSizeConverter}}"
+                            Width="200"
+                            x:Name="Thumb3ValueBox" />
+
+                        <Image
+                            Height="12"
+                            IsVisible="{Binding Path=IsSelected, ElementName=Thumb3PercentageItem}"
+                            Margin="22,0,0,0"
+                            Source="{StaticResource PercentageIcon}"
+                            Width="12" />
+                    </StackPanel>
+
+
+                    <!--  Thumb 4  -->
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=4, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Width="130">
+                            <Run Text="{CompiledBinding Thumbnail}" />
+                            <Run Text=" 4" />
+                            <LineBreak />
+                            <Run Text="{CompiledBinding OutputFolder}" />
+                        </TextBlock>
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Margin="4,0,10,0"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=4, Converter={StaticResource IndexToStringSizeConverter}}"
+                            Width="410"
+                            x:Name="Thumb4OutputBox" />
+                    </StackPanel>
+
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=4, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="4,10,0,15"
+                        Orientation="Horizontal">
+
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Text="{CompiledBinding Resize}"
+                            Width="125" />
+
+                        <ComboBox
+                            Background="{DynamicResource SecondaryBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            Height="30"
+                            Margin="6,0,10,0"
+                            Padding="5,7,0,7"
+                            SelectedIndex="0"
+                            SelectedItem="Thumb4PercentageItem"
+                            Width="195"
+                            x:Name="Thumb4ComboBox">
+                            <ComboBoxItem Content="{CompiledBinding Percentage}" x:Name="Thumb4PercentageItem" />
+                            <ComboBoxItem Content="{CompiledBinding Width}" x:Name="Thumb4WidthItem" />
+                            <ComboBoxItem Content="{CompiledBinding Height}" x:Name="Thumb4HeightItem" />
+                        </ComboBox>
+
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=4, Converter={StaticResource IndexToPercentageSizeConverter}}"
+                            Width="200"
+                            x:Name="Thumb4ValueBox" />
+
+                        <Image
+                            Height="12"
+                            IsVisible="{Binding Path=IsSelected, ElementName=Thumb4PercentageItem}"
+                            Margin="22,0,0,0"
+                            Source="{StaticResource PercentageIcon}"
+                            Width="12" />
+                    </StackPanel>
+
+                    <!--  Thumb 5  -->
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=5, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Width="130">
+                            <Run Text="{CompiledBinding Thumbnail}" />
+                            <Run Text=" 5" />
+                            <LineBreak />
+                            <Run Text="{CompiledBinding OutputFolder}" />
+                        </TextBlock>
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Margin="4,0,10,0"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=5, Converter={StaticResource IndexToStringSizeConverter}}"
+                            Width="410"
+                            x:Name="Thumb5OutputBox" />
+                    </StackPanel>
+
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=5, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="4,10,0,15"
+                        Orientation="Horizontal">
+
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Text="{CompiledBinding Resize}"
+                            Width="125" />
+
+                        <ComboBox
+                            Background="{DynamicResource SecondaryBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            Height="30"
+                            Margin="6,0,10,0"
+                            Padding="5,7,0,7"
+                            SelectedIndex="0"
+                            SelectedItem="Thumb5PercentageItem"
+                            Width="195"
+                            x:Name="Thumb5ComboBox">
+                            <ComboBoxItem Content="{CompiledBinding Percentage}" x:Name="Thumb5PercentageItem" />
+                            <ComboBoxItem Content="{CompiledBinding Width}" x:Name="Thumb5WidthItem" />
+                            <ComboBoxItem Content="{CompiledBinding Height}" x:Name="Thumb5HeightItem" />
+                        </ComboBox>
+
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=5, Converter={StaticResource IndexToPercentageSizeConverter}}"
+                            Width="200"
+                            x:Name="Thumb5ValueBox" />
+
+                        <Image
+                            Height="12"
+                            IsVisible="{Binding Path=IsSelected, ElementName=Thumb5PercentageItem}"
+                            Margin="22,0,0,0"
+                            Source="{StaticResource PercentageIcon}"
+                            Width="12" />
+                    </StackPanel>
+
+                    <!--  Thumb 6  -->
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=6, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Width="130">
+                            <Run Text="{CompiledBinding Thumbnail}" />
+                            <Run Text=" 6" />
+                            <LineBreak />
+                            <Run Text="{CompiledBinding OutputFolder}" />
+                        </TextBlock>
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Margin="4,0,10,0"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=6, Converter={StaticResource IndexToStringSizeConverter}}"
+                            Width="410"
+                            x:Name="Thumb6OutputBox" />
+                    </StackPanel>
+
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=6, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="4,10,0,15"
+                        Orientation="Horizontal">
+
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Text="{CompiledBinding Resize}"
+                            Width="125" />
+
+                        <ComboBox
+                            Background="{DynamicResource SecondaryBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            Height="30"
+                            Margin="6,0,10,0"
+                            Padding="5,7,0,7"
+                            SelectedIndex="0"
+                            SelectedItem="Thumb6PercentageItem"
+                            Width="195"
+                            x:Name="Thumb6ComboBox">
+                            <ComboBoxItem Content="{CompiledBinding Percentage}" x:Name="Thumb6PercentageItem" />
+                            <ComboBoxItem Content="{CompiledBinding Width}" x:Name="Thumb61WidthItem" />
+                            <ComboBoxItem Content="{CompiledBinding Height}" x:Name="Thumb6HeightItem" />
+                        </ComboBox>
+
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=6, Converter={StaticResource IndexToPercentageSizeConverter}}"
+                            Width="200"
+                            x:Name="Thumb6ValueBox" />
+
+                        <Image
+                            Height="12"
+                            IsVisible="{Binding Path=IsSelected, ElementName=Thumb6PercentageItem}"
+                            Margin="22,0,0,0"
+                            Source="{StaticResource PercentageIcon}"
+                            Width="12" />
+                    </StackPanel>
+
+
+                    <!--  Thumb 7  -->
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=7, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="0,5,0,0"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Width="130">
+                            <Run Text="{CompiledBinding Thumbnail}" />
+                            <Run Text=" 7" />
+                            <LineBreak />
+                            <Run Text="{CompiledBinding OutputFolder}" />
+                        </TextBlock>
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Margin="4,0,10,0"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=7, Converter={StaticResource IndexToStringSizeConverter}}"
+                            Width="410"
+                            x:Name="Thumb7OutputBox" />
+                    </StackPanel>
+
+                    <StackPanel
+                        IsVisible="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=7, Converter={StaticResource IndexBiggerThanBooleanConverter}}"
+                        Margin="4,10,0,15"
+                        Orientation="Horizontal">
+
+                        <TextBlock
+                            Classes="txt"
+                            Margin="8,0,0,0"
+                            Text="{CompiledBinding Resize}"
+                            Width="125" />
+
+                        <ComboBox
+                            Background="{DynamicResource SecondaryBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                            Height="30"
+                            Margin="6,0,10,0"
+                            Padding="5,7,0,7"
+                            SelectedIndex="0"
+                            SelectedItem="Thumb7PercentageItem"
+                            Width="195"
+                            x:Name="Thumb7ComboBox">
+                            <ComboBoxItem Content="{CompiledBinding Percentage}" x:Name="Thumb7PercentageItem" />
+                            <ComboBoxItem Content="{CompiledBinding Width}" x:Name="Thumb7WidthItem" />
+                            <ComboBoxItem Content="{CompiledBinding Height}" x:Name="Thumb7HeightItem" />
+                        </ComboBox>
+
+                        <customControls:FuncTextBox
+                            Classes="hover TStyle"
+                            Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=7, Converter={StaticResource IndexToPercentageSizeConverter}}"
+                            Width="200"
+                            x:Name="Thumb7ValueBox" />
+
+                        <Image
+                            Height="12"
+                            IsVisible="{Binding Path=IsSelected, ElementName=Thumb7PercentageItem}"
+                            Margin="22,0,0,0"
+                            Source="{StaticResource PercentageIcon}"
+                            Width="12" />
+                    </StackPanel>
+
+
+                </StackPanel>
+            </customControls:AutoScrollViewer>
+        </StackPanel>
+
+        <Border
+            Background="{DynamicResource TertiaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderThickness="1"
+            CornerRadius="4"
+            Effect="{StaticResource MenuShadowButtonBorder}"
+            Margin="5,10">
+            <customControls:AutoScrollViewer
+                Height="200"
+                Padding="12,7"
+                Width="608">
+                <StackPanel x:Name="BatchLogContainer" />
+            </customControls:AutoScrollViewer>
+        </Border>
+
+        <ProgressBar
+            Margin="7,0"
+            Maximum="100"
+            Minimum="0"
+            Value="0"
+            x:Name="ProgressBar" />
+
+        <StackPanel
+            HorizontalAlignment="Center"
+            Margin="0,10"
+            Orientation="Horizontal">
+            <Button
+                Classes="BorderStyle altHover mainBtn"
+                CornerRadius="4"
+                x:Name="CancelButton">
+                <TextBlock
+                    Classes="txt"
+                    Padding="15,0"
+                    Text="{CompiledBinding Reset,
+                                           Mode=OneWay}"
+                    TextAlignment="Center"
+                    x:Name="CancelButtonTextBlock" />
+            </Button>
+
+            <Button
+                Background="{DynamicResource AccentColor}"
+                Classes="BorderStyle accentHover mainBtn"
+                CornerRadius="4"
+                IsEnabled="False"
+                x:Name="StartButton">
+                <TextBlock
+                    Classes="txt"
+                    Padding="15,0"
+                    Text="{CompiledBinding Start,
+                                           Mode=OneWay}"
+                    TextAlignment="Center" />
+            </Button>
+        </StackPanel>
+
+    </StackPanel>
+
+
 </UserControl>

@@ -1,0 +1,48 @@
+<Window
+    CanResize="False"
+    ExtendClientAreaChromeHints="SystemChrome"
+    ExtendClientAreaTitleBarHeightHint="-1"
+    SizeToContent="WidthAndHeight"
+    Title="Loading..."
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.MacOS.Views.EffectsWindow"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views;assembly=PicView.Avalonia"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.DataContext>
+        <viewModels:MainViewModel />
+    </Design.DataContext>
+    <Border
+        BorderBrush="{DynamicResource MainBorderColor}"
+        BorderThickness="1"
+        CornerRadius="8">
+        <Panel>
+
+            <DockPanel
+                Background="{DynamicResource SecondaryBackgroundColor}"
+                Height="28"
+                PointerPressed="MoveWindow"
+                VerticalAlignment="Top">
+
+                <TextBlock
+                    Classes="txt"
+                    Text="{CompiledBinding Effects,
+                                           Mode=OneWay}"
+                    TextAlignment="Center" />
+            </DockPanel>
+
+            <views:EffectsView
+                Background="{DynamicResource WindowBackgroundColor}"
+                Margin="0,28,0,0"
+                Padding="10,5,5,10"
+                PointerPressed="MoveWindow"
+                x:Name="XEffectsView" />
+        </Panel>
+    </Border>
+</Window>

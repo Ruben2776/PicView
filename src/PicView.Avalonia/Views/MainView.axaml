@@ -741,7 +741,7 @@
                     Command="{CompiledBinding CropCommand}"
                     Header="{CompiledBinding Crop,
                                              Mode=OneWay}"
-                    IsEnabled="False">
+                    x:Name="CropMenuItem">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource CropGeometry}"

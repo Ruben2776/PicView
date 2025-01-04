@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Localization;
 
@@ -53,6 +54,12 @@ public partial class BatchResizeWindow : Window
         {
             MinWidth = MaxWidth = Width;
             Title = $"{TranslationHelper.Translation.BatchResize}  - PicView";
+            
+            // Keep window position when resizing
+            ClientSizeProperty.Changed.Subscribe(size =>
+            {
+                WindowResizing.HandleWindowResize(this, size);
+            });
         };
         KeyDown += (_, e) =>
         {

@@ -1,12 +1,9 @@
 <customControls:AnimatedMenu
     IsOpen="{CompiledBinding IsImageMenuVisible}"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.UC.Menus.ImageMenu"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
@@ -235,10 +232,12 @@
                     Canvas.Left="160"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
+                    Command="{CompiledBinding CropCommand}"
                     Height="46"
                     IsEnabled="False"
                     ToolTip.Tip="{CompiledBinding Crop,
-                                                  Mode=OneWay}">
+                                                  Mode=OneWay}"
+                    x:Name="CropButton">
                     <StackPanel Orientation="Horizontal">
                         <Path
                             Data="{StaticResource CropGeometry}"
@@ -388,7 +387,7 @@
                         Text="{CompiledBinding SideBySide}" />
                 </ToggleButton>
 
-                <ToggleButton
+                <Button
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
                     Canvas.Top="155"
@@ -396,24 +395,23 @@
                     Command="{CompiledBinding ToggleBottomGalleryCommand}"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="46"
-                    IsChecked="{CompiledBinding IsGalleryShown}"
                     ToolTip.Tip="{CompiledBinding GetIsShowingBottomGalleryTranslation,
                                                   Mode=OneWay}"
                     Width="300">
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
                         <Image
                             Height="20"
-                            Margin="2,0,0,0"
+                            Margin="9,0,9,0"
                             Source="{StaticResource GalleryImage}"
                             Width="20" />
                         <TextBlock
                             Classes="txt btnTxt"
-                            Margin="10,0,6,0"
+                            Margin="0,0,6,0"
                             MaxWidth="175"
                             Text="{CompiledBinding GetIsShowingBottomGalleryTranslation,
                                                    Mode=OneWay}" />
                     </StackPanel>
-                </ToggleButton>
+                </Button>
             </Canvas>
         </Border>
         <Polygon

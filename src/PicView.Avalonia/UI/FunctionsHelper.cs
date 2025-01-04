@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.ColorManagement;
+using PicView.Avalonia.Crop;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
@@ -106,6 +107,7 @@ public static class FunctionsHelper
 
             // File functions
             "DeleteFile" => DeleteFile,
+            "DeleteFilePermanently" => DeleteFilePermanently,
             "Rename" => Rename,
             "ShowFileProperties" => ShowFileProperties,
 
@@ -140,6 +142,7 @@ public static class FunctionsHelper
             "GalleryClick" => GalleryClick,
             "Slideshow" => Slideshow,
             "ColorPicker" => ColorPicker,
+            "Restart" => Restart,
 
             _ => null
         });
@@ -235,22 +238,22 @@ public static class FunctionsHelper
     
     public static async Task Next10()
     {
-        await Vm?.ImageIterator.Next10Iteration(true);
+        await NavigationHelper.Next10(Vm).ConfigureAwait(false);
     }
     
     public static async Task Next100()
     {
-        await Vm?.ImageIterator.Next100Iteration(true);
+        await NavigationHelper.Next100(Vm).ConfigureAwait(false);
     }
     
     public static async Task Prev10()
     {
-        await Vm?.ImageIterator.Next10Iteration(false);
+        await NavigationHelper.Prev10(Vm).ConfigureAwait(false);
     }
     
     public static async Task Prev100()
     {
-        await Vm?.ImageIterator.Next100Iteration(false);
+        await NavigationHelper.Prev100(Vm).ConfigureAwait(false);
     }
     
 
@@ -414,32 +417,11 @@ public static class FunctionsHelper
     
     public static async Task Close()
     {
-        if (UIHelper.IsAnyMenuOpen(Vm))
-        {
-            UIHelper.CloseMenus(Vm);
-            return;
-        }
-
-        if (Navigation.Slideshow.IsRunning)
-        {
-            Navigation.Slideshow.StopSlideshow(Vm);
-            return;
-        }
-
-        if (SettingsHelper.Settings.WindowProperties.Fullscreen)
-        {
-            await WindowFunctions.MaximizeRestore();
-            return;
-        }
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Vm is null)
         {
             return;
         }
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            // TODO: Make it a setting to close the window
-            desktop.MainWindow?.Close();
-        });
+        await UIHelper.Close(Vm);
     }
     
     public static async Task Center()
@@ -625,12 +607,18 @@ public static class FunctionsHelper
         {
             return;
         }
-        var errorMsg = await Task.FromResult(FileDeletionHelper.DeleteFileWithErrorMsg(Vm.FileInfo?.FullName, true));
 
-        if (!string.IsNullOrEmpty(errorMsg))
+        await FileManager.DeleteFile(true, Vm);
+    }
+    
+    public static async Task DeleteFilePermanently()
+    {
+        if (Vm is null)
         {
-            await TooltipHelper.ShowTooltipMessageAsync(errorMsg, true);
+            return;
         }
+
+        await FileManager.DeleteFile(false, Vm);
     }
 
     public static async Task Rename()
@@ -745,9 +733,9 @@ public static class FunctionsHelper
         return Task.CompletedTask;
     }
 
-    public static Task Crop()
+    public static async Task Crop()
     {
-        return Task.CompletedTask;
+        await Dispatcher.UIThread.InvokeAsync(() => CropFunctions.Init(Vm));
     }
 
     public static Task Flip()
@@ -1046,7 +1034,32 @@ public static class FunctionsHelper
     
     public static async Task Restart()
     {
-        ProcessHelper.RestartApp(Environment.GetCommandLineArgs()?.ToString());
+        var openFile = string.Empty;
+        var getFromArgs = false;
+        if (Vm?.FileInfo is not null)
+        {
+            if (Vm.FileInfo.Exists)
+            {
+                openFile = Vm.FileInfo.FullName;
+            }
+            else
+            {
+                getFromArgs = true;
+            }
+        }
+        else
+        {
+            getFromArgs = true;
+        }
+        if (getFromArgs)
+        {
+            var args = Environment.GetCommandLineArgs();
+            if (args is not null && args.Length > 0)
+            {
+                openFile = args[1];
+            }
+        }
+        ProcessHelper.RestartApp(openFile);
 
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {

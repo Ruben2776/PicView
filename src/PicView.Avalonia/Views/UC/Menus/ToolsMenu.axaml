@@ -74,9 +74,9 @@
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Canvas.Left="179"
-                    Classes="altHover"
+                    Classes="noBorderHover"
+                    Command="{CompiledBinding ShowEffectsWindowCommand}"
                     Height="45"
-                    IsEnabled="False"
                     ToolTip.Tip="{CompiledBinding EffectsTooltip,
                                                   Mode=OneWay}"
                     Width="136">

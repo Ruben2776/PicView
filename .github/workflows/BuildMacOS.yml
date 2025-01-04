@@ -1,0 +1,73 @@
+name: Build PicView Avalonia on macOS
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Setup .NET 9 SDK
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
+      # Step 3: Get version from Directory.Build.props using PowerShell
+      - name: Get version from Directory.Build.props
+        id: get-version
+        run: pwsh -File "${{ github.workspace }}/Build/Get-VersionInfo.ps1"
+
+      # Step 4: Build arm64 version
+      - name: Build arm64 version
+        run: |
+          pwsh -File "${{ github.workspace }}/Build/Build Avalonia.MacOS.ps1" `
+            -Platform "arm64" `
+            -outputPath "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-arm64" `
+            -appVersion "${{steps.get-version.outputs.version}}"
+        shell: pwsh
+        
+      # Step 6: Upload arm64 artifacts
+      - name: Upload arm64 artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PicView-v${{steps.get-version.outputs.version}}-macOS-arm64
+          path: |
+            ${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-arm64/PicView.app
+            ${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-arm64.dmg
+          retention-days: 14
+
+      # Step 7: Build and create x64 .app bundle
+      - name: Build x64 version
+        run: |
+          pwsh -File "${{ github.workspace }}/Build/Build Avalonia.MacOS.ps1" `
+            -Platform "x64" `
+            -outputPath "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-x64" `
+            -appVersion "${{steps.get-version.outputs.version}}"
+        shell: pwsh
+        
+      # Step 8: Create DMG for x64
+      - name: Create DMG for x64
+        run: |
+          hdiutil create -volname "PicView" -srcfolder "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-x64/PicView.app" -ov -format UDZO "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-x64.dmg"
+
+
+      # Step 9: Upload x64 artifacts
+      - name: Upload x64 artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PicView-v${{steps.get-version.outputs.version}}-macOS-x64
+          path: |
+            ${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-x64/PicView.app
+            ${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-x64.dmg
+          retention-days: 14

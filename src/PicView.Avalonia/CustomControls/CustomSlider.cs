@@ -19,7 +19,16 @@ public class CustomSlider : Slider
             // Don't scroll unintentionally
             return;
         }
-        var indexChange = e.Delta.Y > 0 ? TickFrequency : -TickFrequency;
+
+        double indexChange;
+        if (SettingsHelper.Settings.Zoom.HorizontalReverseScroll)
+        {
+            indexChange = e.Delta.Y > 0 ? -TickFrequency : TickFrequency;
+        }
+        else
+        {
+            indexChange = e.Delta.Y < 0 ? -TickFrequency : TickFrequency;
+        }
         Value += indexChange;
     }
 }

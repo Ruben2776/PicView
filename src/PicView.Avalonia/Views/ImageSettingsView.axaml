@@ -74,5 +74,26 @@
                                        Mode=OneWay}" />
         </ToggleButton>
 
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Foreground="{StaticResource SecondaryTextColor}"
+            Margin="0,20,0,20"
+            Text="{CompiledBinding ImageAliasing,
+                                   Mode=OneWay}" />
+        <ComboBox
+            Background="{DynamicResource SecondaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderThickness="1"
+            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+            Margin="0,6,0,10"
+            Padding="5,7,0,7"
+            Width="300"
+            x:Name="ImageAliasingBox">
+            <ComboBoxItem Content="{CompiledBinding HighQuality, Mode=OneWay}" />
+            <ComboBoxItem Content="{CompiledBinding None, Mode=OneWay}" />
+        </ComboBox>
+
     </StackPanel>
 </UserControl>

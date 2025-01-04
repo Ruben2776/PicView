@@ -10,8 +10,6 @@ public partial class GeneralSettingsView : UserControl
         InitializeComponent();
         Loaded += delegate
         {
-            
-            
             ApplicationStartupBox.SelectedIndex = SettingsHelper.Settings.StartUp.OpenLastFile ? 1 : 0;
             
             ApplicationStartupBox.SelectionChanged += async delegate
@@ -30,8 +28,6 @@ public partial class GeneralSettingsView : UserControl
                     ApplicationStartupBox.SelectedIndex = SettingsHelper.Settings.StartUp.OpenLastFile ? 0 : 1;
                 }
             };
-            
-
         };
     }
 }

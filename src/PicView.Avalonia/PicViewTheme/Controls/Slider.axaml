@@ -7,7 +7,7 @@
         <Setter Property="Height" Value="12" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{DynamicResource AccentColor}" />
+                <Border Name="DecreaseThemeBorder" Background="{DynamicResource AccentColor}" />
             </ControlTemplate>
         </Setter>
     </ControlTheme>
@@ -16,7 +16,7 @@
         <Setter Property="Height" Value="12" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{DynamicResource AccentColor}" Opacity="0.2" />
+                <Border Name="IncreaseThemeBorder" Background="{DynamicResource AccentColor}" Opacity="0.2" />
             </ControlTemplate>
         </Setter>
     </ControlTheme>

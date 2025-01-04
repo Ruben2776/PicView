@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -9,6 +8,7 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Resizing;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.ImageDecoding;
+using PicView.Core.Navigation;
 using ReactiveUI;
 
 namespace PicView.Avalonia.Views;
@@ -43,8 +43,8 @@ public partial class ExifView : UserControl
                 }
             };
             
-            PixelWidthTextBox.KeyDown += async (s, e) => await OnKeyDownVerifyInput(s,e);
-            PixelHeightTextBox.KeyDown += async (s, e) => await OnKeyDownVerifyInput(s,e);
+            PixelWidthTextBox.KeyDown += async (s, e) => await SaveImageOnEnter(s,e);
+            PixelHeightTextBox.KeyDown += async (s, e) => await SaveImageOnEnter(s,e);
 
             PixelWidthTextBox.KeyUp += delegate { AdjustAspectRatio(PixelWidthTextBox); };
             PixelHeightTextBox.KeyUp += delegate { AdjustAspectRatio(PixelHeightTextBox); };
@@ -123,11 +123,12 @@ public partial class ExifView : UserControl
         {
             return;
         }
-        var aspectRatio = (double)vm.PixelWidth / vm.PixelHeight;
-        AspectRatioHelper.SetAspectRatioForTextBox(PixelWidthTextBox, PixelHeightTextBox, sender == PixelWidthTextBox,
-            aspectRatio, DataContext as MainViewModel);
-        AspectRatioTextBox.Text = aspectRatio.ToString(CultureInfo.CurrentCulture);
         if (!int.TryParse(PixelWidthTextBox.Text, out var width) || !int.TryParse(PixelHeightTextBox.Text, out var height))
+        {
+            return;
+        }
+
+        if (width <=0 || height <= 0)
         {
             return;
         }
@@ -135,6 +136,13 @@ public partial class ExifView : UserControl
         PrintSizeInchTextBox.Text = printSizes.PrintSizeInch;
         PrintSizeCmTextBox.Text = printSizes.PrintSizeCm;
         SizeMpTextBox.Text = printSizes.SizeMp;
+
+        var gcd = ImageTitleFormatter.GCD(width, height);
+        var aspectRatio = (double)vm.PixelWidth / vm.PixelHeight;
+        AspectRatioTextBox.Text = AspectRatioHelper.GetFormattedAspectRatio(gcd, vm.PixelWidth, vm.PixelHeight);
+        
+        AspectRatioHelper.SetAspectRatioForTextBox(PixelWidthTextBox, PixelHeightTextBox, sender == PixelWidthTextBox,
+            aspectRatio, DataContext as MainViewModel);
     }
 
     private static async Task DoResize(MainViewModel vm, bool isWidth, object width, object height)
@@ -169,79 +177,22 @@ public partial class ExifView : UserControl
                 if (success)
                 {
                     vm.ImageIterator?.RemoveCurrentItemFromPreLoader();
-                    await vm.ImageIterator?.IterateToIndex(vm.ImageIterator.CurrentIndex);
+                    await NavigationHelper.Navigate(vm.ImageIterator.CurrentIndex, vm).ConfigureAwait(false);
                 }
             }
         }
     }
     
-    private async Task OnKeyDownVerifyInput(object? sender, KeyEventArgs? e)
+    private async Task SaveImageOnEnter(object? sender, KeyEventArgs e)
     {
-        switch (e.Key)
+        if (e.Key == Key.Enter)
         {
-            case Key.D0:
-            case Key.D1:
-            case Key.D2:
-            case Key.D3:
-            case Key.D4:
-            case Key.D5:
-            case Key.D6:
-            case Key.D7:
-            case Key.D8:
-            case Key.D9:
-            case Key.NumPad0:
-            case Key.NumPad1:
-            case Key.NumPad2:
-            case Key.NumPad3:
-            case Key.NumPad4:
-            case Key.NumPad5:
-            case Key.NumPad6:
-            case Key.NumPad7:
-            case Key.NumPad8:
-            case Key.NumPad9:
-            case Key.Back:
-            case Key.Delete:
-                break; // Allow numbers and basic operations
-    
-            case Key.Left:
-            case Key.Right:
-            case Key.Tab:
-            case Key.OemBackTab:
-                break; // Allow navigation keys
-    
-            case Key.A:
-            case Key.C:
-            case Key.X:
-            case Key.V:
-                if (e.KeyModifiers == KeyModifiers.Control)
-                {
-                    // Allow Ctrl + A, Ctrl + C, Ctrl + X, and Ctrl + V (paste)
-                    break;
-                }
-    
-                e.Handled = true; // Only allow with Ctrl
+            if (DataContext is not MainViewModel vm)
+            {
                 return;
-    
-            case Key.Oem5: // Key for `%` symbol (may vary based on layout)
-                break; // Allow the percentage symbol (%)
-    
-            case Key.Escape: // Handle Escape key
-                Focus();
-                e.Handled = true;
-                return;
-    
-            case Key.Enter: // Handle Enter key for saving
-                if (DataContext is not MainViewModel vm)
-                {
-                    return;
-                }
+            }
 
-                await DoResize(vm, Equals(sender, PixelWidthTextBox), PixelWidthTextBox.Text, PixelHeightTextBox.Text).ConfigureAwait(false);
-                return;
-    
-            default:
-                e.Handled = true; // Block all other inputs
-                return;
+            await DoResize(vm, Equals(sender, PixelWidthTextBox), PixelWidthTextBox.Text, PixelHeightTextBox.Text).ConfigureAwait(false);
         }
     }
 }

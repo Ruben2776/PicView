@@ -4,7 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
-using PicView.Avalonia.Navigation;
+using PicView.Avalonia.Preloading;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Calculations;
@@ -130,12 +130,12 @@ public static class WindowResizing
 
         return;
 
-        double GetWidth(PreLoader.PreLoadValue preloadValue)
+        double GetWidth(PreLoadValue preloadValue)
         {
             return preloadValue?.ImageModel?.PixelWidth ?? vm.ImageWidth;
         }
 
-        double GetHeight(PreLoader.PreLoadValue preloadValue)
+        double GetHeight(PreLoadValue preloadValue)
         {
             return preloadValue?.ImageModel?.PixelHeight ?? vm.ImageHeight;
         }
@@ -159,11 +159,10 @@ public static class WindowResizing
 
         const int padding = 45;
         var screenSize = ScreenHelper.ScreenSize;
-        double desktopMinWidth = 0, desktopMinHeight = 0, containerWidth = 0, containerHeight = 0;
-        desktopMinWidth = desktop.MainWindow.MinWidth;
-        desktopMinHeight = desktop.MainWindow.MinHeight;
-        containerWidth = mainView.Bounds.Width;
-        containerHeight = mainView.Bounds.Height;
+        var desktopMinWidth = desktop.MainWindow.MinWidth;
+        var desktopMinHeight = desktop.MainWindow.MinHeight;
+        var containerWidth = mainView.Bounds.Width;
+        var containerHeight = mainView.Bounds.Height;
 
         if (double.IsNaN(containerWidth) || double.IsNaN(containerHeight) || double.IsNaN(width) ||
             double.IsNaN(height))
@@ -239,8 +238,9 @@ public static class WindowResizing
         else
         {
             vm.GalleryWidth = double.NaN;
-            ;
         }
+        
+        vm.AspectRatio = size.AspectRatio;
     }
 
     public static void SaveSize(Window window)

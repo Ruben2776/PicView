@@ -28,10 +28,6 @@ internal class Program
                 UseOpacitySaveLayer = true
             })
             .UseWin32()
-            .With(new Win32PlatformOptions
-            {
-                WinUICompositionBackdropCornerRadius = 8
-            })
             .UseSkia();
     }
 }

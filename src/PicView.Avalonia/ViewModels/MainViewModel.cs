@@ -31,170 +31,137 @@ public class MainViewModel : ViewModelBase
     public readonly IPlatformSpecificService? PlatformService;
     
     #region Image
-    
-    private object? _imageSource;
-    
+
     public object? ImageSource
     {
-        get => _imageSource;
-        set => this.RaiseAndSetIfChanged(ref _imageSource, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private object? _secondaryImageSource;
-    
+
     public object? SecondaryImageSource
     {
-        get => _secondaryImageSource;
-        set => this.RaiseAndSetIfChanged(ref _secondaryImageSource, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private ImageType _imageType;
-    
+
     public ImageType ImageType
     {
-        get => _imageType;
-        set => this.RaiseAndSetIfChanged(ref _imageType, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private double _imageWidth;
 
     public double ImageWidth
     {
-        get => _imageWidth;
-        set => this.RaiseAndSetIfChanged(ref _imageWidth, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private double _imageHeight;
 
     public double ImageHeight
     {
-        get => _imageHeight;
-        set => this.RaiseAndSetIfChanged(ref _imageHeight, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private double _imageSecondaryWidth;
-    
+
     public double SecondaryImageWidth
     {
-        get => _imageSecondaryWidth;
-        set => this.RaiseAndSetIfChanged(ref _imageSecondaryWidth, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
-    private Brush? _imageBackground;
-    
     public Brush? ImageBackground
     {
-        get => _imageBackground;
-        set => this.RaiseAndSetIfChanged(ref _imageBackground, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
-    private bool _isShowingSideBySide = SettingsHelper.Settings.ImageScaling.ShowImageSideBySide;
-    
     public bool IsShowingSideBySide
     {
-        get => _isShowingSideBySide;
-        set => this.RaiseAndSetIfChanged(ref _isShowingSideBySide, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.ImageScaling.ShowImageSideBySide;
 
-    private double _scrollViewerWidth = double.NaN;
-    
     public double ScrollViewerWidth
     {
-        get => _scrollViewerWidth;
-        set => this.RaiseAndSetIfChanged(ref _scrollViewerWidth, value);
-    }
-    
-    private double _scrollViewerHeight = double.NaN;
-    
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = double.NaN;
+
     public double ScrollViewerHeight
     {
-        get => _scrollViewerHeight;
-        set => this.RaiseAndSetIfChanged(ref _scrollViewerHeight, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = double.NaN;
+    
+    public double AspectRatio
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    
+
     #endregion
 
     #region Gallery
-    
-    private Thickness _galleryMargin;
 
     public Thickness GalleryMargin
     {
-        get => _galleryMargin;
-        set => this.RaiseAndSetIfChanged(ref _galleryMargin, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private bool _isGalleryShown = SettingsHelper.Settings.UIProperties.ShowInterface && SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
 
     public bool IsGalleryShown
     {
-        get => _isGalleryShown;
-        set => this.RaiseAndSetIfChanged(ref _isGalleryShown, value);
-    }
-
-    private bool _isBottomGalleryShownInHiddenUi = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.UIProperties.ShowInterface && SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
 
     public bool IsBottomGalleryShownInHiddenUI
     {
-        get => _isBottomGalleryShownInHiddenUi;
-        set => this.RaiseAndSetIfChanged(ref _isBottomGalleryShownInHiddenUi, value);
-    }
-
-    private GalleryMode _galleryMode = GalleryMode.Closed;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
 
     public GalleryMode GalleryMode
     {
-        get => _galleryMode;
-        set => this.RaiseAndSetIfChanged(ref _galleryMode, value);
-    }
-
-    private Stretch _galleryStretch;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = GalleryMode.Closed;
 
     public Stretch GalleryStretch
     {
-        get => _galleryStretch;
-        set => this.RaiseAndSetIfChanged(ref _galleryStretch, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private int _selectedGalleryItemIndex;
 
     public int SelectedGalleryItemIndex
     {
-        get => _selectedGalleryItemIndex;
-        set => this.RaiseAndSetIfChanged(ref _selectedGalleryItemIndex, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private VerticalAlignment _galleryVerticalAlignment = VerticalAlignment.Bottom;
 
     public VerticalAlignment GalleryVerticalAlignment
     {
-        get => _galleryVerticalAlignment;
-        set => this.RaiseAndSetIfChanged(ref _galleryVerticalAlignment, value);
-    }
-
-    private Orientation _galleryOrientation;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = VerticalAlignment.Bottom;
 
     public Orientation GalleryOrientation
     {
-        set => this.RaiseAndSetIfChanged(ref _galleryOrientation, value);
-        get => _galleryOrientation;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+        get;
     }
-
-    private bool _isGalleryCloseIconVisible;
 
     public bool IsGalleryCloseIconVisible
     {
-        get => _isGalleryCloseIconVisible;
-        set => this.RaiseAndSetIfChanged(ref _isGalleryCloseIconVisible, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private double _galleryWidth;
+
     public double GalleryWidth
     {
-        get => _galleryWidth;
-        set => this.RaiseAndSetIfChanged(ref _galleryWidth, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
+
     public double GalleryHeight
     {
         get
@@ -216,37 +183,30 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private double _getGalleryItemWidth = double.NaN;
-
     public double GetGalleryItemWidth
     {
-        get => _getGalleryItemWidth;
-        set => this.RaiseAndSetIfChanged(ref _getGalleryItemWidth, value);
-    }
-    
-    private double _getGalleryItemHeight;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = double.NaN;
+
     public double GetGalleryItemHeight
     {
-        get => _getGalleryItemHeight;
-        set => this.RaiseAndSetIfChanged(ref _getGalleryItemHeight, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private double _getFullGalleryItemHeight = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
 
     public double GetFullGalleryItemHeight
     {
-        get => _getFullGalleryItemHeight;
-        set => this.RaiseAndSetIfChanged(ref _getFullGalleryItemHeight, value);
-    }
-    
-    private double _getBottomGalleryItemHeight = SettingsHelper.Settings.Gallery.BottomGalleryItemSize;
-    
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
+
     public double GetBottomGalleryItemHeight
     {
-        get => _getBottomGalleryItemHeight;
-        set => this.RaiseAndSetIfChanged(ref _getBottomGalleryItemHeight, value);
-    }
-    
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.Gallery.BottomGalleryItemSize;
+
     public double MaxFullGalleryItemHeight
     {
         get => GalleryDefaults.MaxFullGalleryItemHeight;
@@ -265,142 +225,123 @@ public class MainViewModel : ViewModelBase
     {
         get => GalleryDefaults.MinBottomGalleryItemHeight;
     }
-    
-    private Thickness _galleryItemMargin;
-    
+
     public Thickness GalleryItemMargin
     {
-        get => _galleryItemMargin;
-        set => this.RaiseAndSetIfChanged(ref _galleryItemMargin, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     #region Gallery Stretch IsChecked
-    
-    private bool _isUniformBottomChecked;
+
     public bool IsUniformBottomChecked
     {
-        get => _isUniformBottomChecked;
-        set => this.RaiseAndSetIfChanged(ref _isUniformBottomChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private bool _isUniformFullChecked;
+
     public bool IsUniformFullChecked
     {
-        get => _isUniformFullChecked;
-        set => this.RaiseAndSetIfChanged(ref _isUniformFullChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
-    private bool _isUniformMenuChecked;
     public bool IsUniformMenuChecked
     {
-        get => _isUniformMenuChecked;
-        set => this.RaiseAndSetIfChanged(ref _isUniformMenuChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private bool _isUniformToFillBottomChecked;
+
     public bool IsUniformToFillBottomChecked
     {
-        get => _isUniformToFillBottomChecked;
-        set => this.RaiseAndSetIfChanged(ref _isUniformToFillBottomChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private bool _isUniformToFillFullChecked;
+
     public bool IsUniformToFillFullChecked
     {
-        get => _isUniformToFillFullChecked;
-        set => this.RaiseAndSetIfChanged(ref _isUniformToFillFullChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
-    private bool _isUniformToFillMenuMenuChecked;
     public bool IsUniformToFillMenuChecked
     {
-        get => _isUniformToFillMenuMenuChecked;
-        set => this.RaiseAndSetIfChanged(ref _isUniformToFillMenuMenuChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private bool _isFillBottomChecked;
+
     public bool IsFillBottomChecked
     {
-        get => _isFillBottomChecked;
-        set => this.RaiseAndSetIfChanged(ref _isFillBottomChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private bool _isFillFullChecked;
+
     public bool IsFillFullChecked
     {
-        get => _isFillFullChecked;
-        set => this.RaiseAndSetIfChanged(ref _isFillFullChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
-    private bool _isFillMenuMenuChecked;
     public bool IsFillMenuChecked
     {
-        get => _isFillMenuMenuChecked;
-        set => this.RaiseAndSetIfChanged(ref _isFillMenuMenuChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private bool _isNoneBottomChecked;
+
     public bool IsNoneBottomChecked
     {
-        get => _isNoneBottomChecked;
-        set => this.RaiseAndSetIfChanged(ref _isNoneBottomChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private bool _isNoneFullChecked;
+
     public bool IsNoneFullChecked
     {
-        get => _isNoneFullChecked;
-        set => this.RaiseAndSetIfChanged(ref _isNoneFullChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
-    private bool _isNoneMenuChecked;
     public bool IsNoneMenuChecked
     {
-        get => _isNoneMenuChecked;
-        set => this.RaiseAndSetIfChanged(ref _isNoneMenuChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private bool _isSquareBottomChecked;
+
     public bool IsSquareBottomChecked
     {
-        get => _isSquareBottomChecked;
-        set => this.RaiseAndSetIfChanged(ref _isSquareBottomChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private bool _isSquareFullChecked;
+
     public bool IsSquareFullChecked
     {
-        get => _isSquareFullChecked;
-        set => this.RaiseAndSetIfChanged(ref _isSquareFullChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
-    private bool _isSquareMenuChecked;
     public bool IsSquareMenuChecked
     {
-        get => _isSquareMenuChecked;
-        set => this.RaiseAndSetIfChanged(ref _isSquareMenuChecked, value);
-    }
-    
-    private bool _isFillSquareBottomChecked;
-    public bool IsFillSquareBottomChecked
-    {
-        get => _isFillSquareBottomChecked;
-        set => this.RaiseAndSetIfChanged(ref _isFillSquareBottomChecked, value);
-    }
-    
-    private bool _isFillSquareFullChecked;
-    public bool IsFillSquareFullChecked
-    {
-        get => _isFillSquareFullChecked;
-        set => this.RaiseAndSetIfChanged(ref _isFillSquareFullChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
-    private bool _isFillSquareMenuChecked;
+    public bool IsFillSquareBottomChecked
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+
+    public bool IsFillSquareFullChecked
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+
     public bool IsFillSquareMenuChecked
     {
-        get => _isFillSquareMenuChecked;
-        set => this.RaiseAndSetIfChanged(ref _isFillSquareMenuChecked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
+
     #endregion
 
     #endregion Gallery
@@ -477,6 +418,7 @@ public class MainViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>? ShowKeybindingsWindowCommand { get; }
     public ReactiveCommand<Unit, Unit>? ShowBatchResizeWindowCommand { get; }
     public ReactiveCommand<Unit, Unit>? ShowSingleImageResizeWindowCommand { get; }
+    public ReactiveCommand<Unit, Unit>? ShowEffectsWindowCommand { get; }
     public ReactiveCommand<Unit, Unit>? SetExifRating0Command { get; }
     public ReactiveCommand<Unit, Unit>? SetExifRating1Command { get; }
     public ReactiveCommand<Unit, Unit>? SetExifRating2Command { get; }
@@ -532,180 +474,152 @@ public class MainViewModel : ViewModelBase
     #region Fields
 
     #region Booleans
-    
-    private bool _isAvoidingZoomingOut = SettingsHelper.Settings.Zoom.AvoidZoomingOut;
-    
+
     public bool IsAvoidingZoomingOut
     {
-        get => _isAvoidingZoomingOut;
+        get;
         set
         {
             SettingsHelper.Settings.Zoom.AvoidZoomingOut = value;
-            this.RaiseAndSetIfChanged(ref _isAvoidingZoomingOut, value);
-        } 
-    }
-    
-    private IImage? _changeCtrlZoomImage;
+            this.RaiseAndSetIfChanged(ref field, value);
+        }
+    } = SettingsHelper.Settings.Zoom.AvoidZoomingOut;
 
     public IImage? ChangeCtrlZoomImage
     {
-        get => _changeCtrlZoomImage;
-        set => this.RaiseAndSetIfChanged(ref _changeCtrlZoomImage, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private bool _isLoading;
 
     public bool IsLoading
     {
-        get => _isLoading;
-        set => this.RaiseAndSetIfChanged(ref _isLoading, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private bool _isUIShown = SettingsHelper.Settings.UIProperties.ShowInterface;
 
     public bool IsUIShown
     {
-        get => _isUIShown;
-        set => this.RaiseAndSetIfChanged(ref _isUIShown, value);
-    }
-
-    private bool _isTopToolbarShown = SettingsHelper.Settings.UIProperties.ShowInterface;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.UIProperties.ShowInterface;
 
     public bool IsTopToolbarShown
     {
-        get => _isTopToolbarShown;
-        set => this.RaiseAndSetIfChanged(ref _isTopToolbarShown, value);
-    }
-
-    private bool _isBottomToolbarShown = SettingsHelper.Settings.UIProperties.ShowBottomNavBar &&
-                                         SettingsHelper.Settings.UIProperties.ShowInterface;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.UIProperties.ShowInterface;
 
     public bool IsBottomToolbarShown
     {
-        get => _isBottomToolbarShown;
-        set => this.RaiseAndSetIfChanged(ref _isBottomToolbarShown, value);
-    }
-
-    private bool _isBottomToolbarShownSetting = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.UIProperties.ShowBottomNavBar &&
+        SettingsHelper.Settings.UIProperties.ShowInterface;
 
     public bool IsBottomToolbarShownSetting
     {
-        get => _isBottomToolbarShownSetting;
-        set => this.RaiseAndSetIfChanged(ref _isBottomToolbarShownSetting, value);
-    }
-    
-    private bool _isShowingTaskbarProgress = SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
 
     public bool IsShowingTaskbarProgress
     {
-        get => _isShowingTaskbarProgress;
-        set => this.RaiseAndSetIfChanged(ref _isShowingTaskbarProgress, value);
-    }
-
-    private bool _isFullscreen = SettingsHelper.Settings.WindowProperties.Fullscreen;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled;
 
     public bool IsFullscreen
     {
-        get => _isFullscreen;
-        set => this.RaiseAndSetIfChanged(ref _isFullscreen, value);
-    }
-
-    private bool _isTopMost = SettingsHelper.Settings.WindowProperties.TopMost;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.WindowProperties.Fullscreen;
 
     public bool IsTopMost
     {
-        get => _isTopMost;
-        set => this.RaiseAndSetIfChanged(ref _isTopMost, value);
-    }
-
-    private bool _isIncludingSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.WindowProperties.TopMost;
 
     public bool IsIncludingSubdirectories
     {
-        get => _isIncludingSubdirectories;
-        set => this.RaiseAndSetIfChanged(ref _isIncludingSubdirectories, value);
-    }
-
-    private bool _isScrollingEnabled;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
 
     public bool IsScrollingEnabled
     {
-        get => _isScrollingEnabled;
-        set => this.RaiseAndSetIfChanged(ref _isScrollingEnabled, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private bool _isStretched = SettingsHelper.Settings.ImageScaling.StretchImage;
 
     public bool IsStretched
     {
-        get => _isStretched;
+        get;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isStretched, value);
+            this.RaiseAndSetIfChanged(ref field, value);
             SettingsHelper.Settings.ImageScaling.StretchImage = value;
             WindowResizing.SetSize(this);
         }
-    }
-
-    private bool _isLooping = SettingsHelper.Settings.UIProperties.Looping;
+    } = SettingsHelper.Settings.ImageScaling.StretchImage;
 
     public bool IsLooping
     {
-        get => _isLooping;
-        set => this.RaiseAndSetIfChanged(ref _isLooping, value);
-    }
-
-    private bool _isAutoFit = SettingsHelper.Settings.WindowProperties.AutoFit;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.UIProperties.Looping;
 
     public bool IsAutoFit
     {
-        get => _isAutoFit;
-        set => this.RaiseAndSetIfChanged(ref _isAutoFit, value);
-    }
-
-    private bool _isStayingCentered = SettingsHelper.Settings.WindowProperties.KeepCentered;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.WindowProperties.AutoFit;
 
     public bool IsStayingCentered
     {
-        get => _isStayingCentered;
+        get;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isStayingCentered, value);
+            this.RaiseAndSetIfChanged(ref field, value);
             SettingsHelper.Settings.WindowProperties.KeepCentered = value;
         }
-    }
-
-    private bool _isOpeningInSameWindow = SettingsHelper.Settings.UIProperties.OpenInSameWindow;
+    } = SettingsHelper.Settings.WindowProperties.KeepCentered;
 
     public bool IsOpeningInSameWindow
     {
-        get => _isOpeningInSameWindow;
+        get;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isOpeningInSameWindow, value);
+            this.RaiseAndSetIfChanged(ref field, value);
             SettingsHelper.Settings.UIProperties.OpenInSameWindow = value;
-        } 
-    }
-
-    private bool _isEditableTitlebarOpen;
+        }
+    } = SettingsHelper.Settings.UIProperties.OpenInSameWindow;
     
+    public bool IsShowingConfirmationOnEsc
+    {
+        get;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref field, value);
+            SettingsHelper.Settings.UIProperties.ShowConfirmationOnEsc = value;
+        }
+    } = SettingsHelper.Settings.UIProperties.ShowConfirmationOnEsc;
+
     public bool IsEditableTitlebarOpen
     {
-        get => _isEditableTitlebarOpen;
-        set => this.RaiseAndSetIfChanged(ref _isEditableTitlebarOpen, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private bool _isUsingTouchpad = SettingsHelper.Settings.Zoom.IsUsingTouchPad;
 
     public bool IsUsingTouchpad
     {
-        get => _isUsingTouchpad;
+        get;
         set
         {
-            this.RaiseAndSetIfChanged(ref _isUsingTouchpad, value);
+            this.RaiseAndSetIfChanged(ref field, value);
             SettingsHelper.Settings.Zoom.IsUsingTouchPad = value;
         }
-    }
+    } = SettingsHelper.Settings.Zoom.IsUsingTouchPad;
 
     #endregion Booleans
 
@@ -716,663 +630,514 @@ public class MainViewModel : ViewModelBase
             return SizeDefaults.WindowMinSize;
         }
     }
-    
-    private double _titlebarHeight = SettingsHelper.Settings.WindowProperties.Fullscreen 
-                                     || !SettingsHelper.Settings.UIProperties.ShowInterface ? 0 : SizeDefaults.TitlebarHeight;
+
     public double TitlebarHeight
     {
-        set => this.RaiseAndSetIfChanged(ref _titlebarHeight, value);
-        get => _titlebarHeight;
-    }
-    private double _bottombarHeight = SettingsHelper.Settings.WindowProperties.Fullscreen 
-                                      || !SettingsHelper.Settings.UIProperties.ShowInterface ? 0 : SizeDefaults.BottombarHeight;
-    public double BottombarHeight         
-    {
-        set => this.RaiseAndSetIfChanged(ref _bottombarHeight, value);
-        get => _bottombarHeight;
-    }
+        set => this.RaiseAndSetIfChanged(ref field, value);
+        get;
+    } = SettingsHelper.Settings.WindowProperties.Fullscreen
+        || !SettingsHelper.Settings.UIProperties.ShowInterface
+        ? 0
+        : SizeDefaults.TitlebarHeight;
 
-    private int _scaleX = 1;
+    public double BottombarHeight
+    {
+        set => this.RaiseAndSetIfChanged(ref field, value);
+        get;
+    } = SettingsHelper.Settings.WindowProperties.Fullscreen
+        || !SettingsHelper.Settings.UIProperties.ShowInterface
+        ? 0
+        : SizeDefaults.BottombarHeight;
 
     // Used to flip the flip button
     public int ScaleX
     {
-        get => _scaleX;
-        set => this.RaiseAndSetIfChanged(ref _scaleX, value);
-    }
-
-    private UserControl? _currentView;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = 1;
 
     public UserControl? CurrentView
     {
-        get => _currentView;
-        set => this.RaiseAndSetIfChanged(ref _currentView, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     public ImageViewer? ImageViewer;
 
-    private uint _exifRating;
-
     public uint EXIFRating
     {
-        get => _exifRating;
-        set => this.RaiseAndSetIfChanged(ref _exifRating, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private int _getIndex;
 
     public int GetIndex
     {
-        get => _getIndex;
-        set => this.RaiseAndSetIfChanged(ref _getIndex, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private double _getSlideshowSpeed = SettingsHelper.Settings.UIProperties.SlideShowTimer;
 
     public double GetSlideshowSpeed
     {
-        get => _getSlideshowSpeed;
+        get;
         set
         {
             var roundedValue = Math.Round(value, 2);
-            this.RaiseAndSetIfChanged(ref _getSlideshowSpeed, roundedValue);
+            this.RaiseAndSetIfChanged(ref field, roundedValue);
             SettingsHelper.Settings.UIProperties.SlideShowTimer = roundedValue;
         }
-    }
-
-    private double _getNavSpeed = SettingsHelper.Settings.UIProperties.NavSpeed;
+    } = SettingsHelper.Settings.UIProperties.SlideShowTimer;
 
     public double GetNavSpeed
     {
-        get => Math.Round(_getNavSpeed, 2);
+        get => Math.Round(field, 2);
         set 
         {
-            this.RaiseAndSetIfChanged(ref _getNavSpeed, value);
+            this.RaiseAndSetIfChanged(ref field, value);
             SettingsHelper.Settings.UIProperties.NavSpeed = value;
         }
-    }
-
-    private double _getZoomSpeed = SettingsHelper.Settings.Zoom.ZoomSpeed;
+    } = SettingsHelper.Settings.UIProperties.NavSpeed;
 
     public double GetZoomSpeed
     {
-        get => _getZoomSpeed;
+        get;
         set
         {
             var roundedValue = Math.Round(value, 2);
-            this.RaiseAndSetIfChanged(ref _getZoomSpeed, roundedValue);
+            this.RaiseAndSetIfChanged(ref field, roundedValue);
             SettingsHelper.Settings.Zoom.ZoomSpeed = roundedValue;
         }
-    }
+    } = SettingsHelper.Settings.Zoom.ZoomSpeed;
 
     #region strings
 
-    private string? _getIsShowingUITranslation;
-    
     public string? GetIsShowingUITranslation
     {
-        get => _getIsShowingUITranslation;
-        set => this.RaiseAndSetIfChanged(ref _getIsShowingUITranslation, value);
-    }
-    
-    private string? _getIsShowingBottomToolbarTranslation;
-    
-    public string? GetIsShowingBottomToolbarTranslation
-    {
-        get => _getIsShowingBottomToolbarTranslation;
-        set => this.RaiseAndSetIfChanged(ref _getIsShowingBottomToolbarTranslation, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
-    private string? _getIsShowingFadingUIButtonsTranslation;
-    
+    public string? GetIsShowingBottomToolbarTranslation
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+
     public string? GetIsShowingFadingUIButtonsTranslation
     {
-        get => _getIsShowingFadingUIButtonsTranslation;
-        set => this.RaiseAndSetIfChanged(ref _getIsShowingFadingUIButtonsTranslation, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private string? _getIsUsingTouchpadTranslation;
-    
+
     public string? GetIsUsingTouchpadTranslation
     {
-        get => _getIsUsingTouchpadTranslation;
-        set => this.RaiseAndSetIfChanged(ref _getIsUsingTouchpadTranslation, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
-    private string? _getIsFlipped;
 
     public string? GetIsFlippedTranslation
     {
         get => ScaleX == -1 ? UnFlip : Flip;
-        set => this.RaiseAndSetIfChanged(ref _getIsFlipped, value);
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getIsShowingBottomGalleryTranslation;
 
     public string? GetIsShowingBottomGalleryTranslation
     {
-        get => _getIsShowingBottomGalleryTranslation;
-        set => this.RaiseAndSetIfChanged(ref _getIsShowingBottomGalleryTranslation, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getIsLoopingTranslation;
 
     public string? GetIsLoopingTranslation
     {
-        get => _getIsLoopingTranslation;
-        set => this.RaiseAndSetIfChanged(ref _getIsLoopingTranslation, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getIsScrollingTranslation;
 
     public string? GetIsScrollingTranslation
     {
-        get => _getIsScrollingTranslation;
-        set => this.RaiseAndSetIfChanged(ref _getIsScrollingTranslation, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getIsCtrlZoomTranslation;
 
     public string? GetIsCtrlZoomTranslation
     {
-        get => _getIsCtrlZoomTranslation;
-        set => this.RaiseAndSetIfChanged(ref _getIsCtrlZoomTranslation, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getPrintSizeInch;
 
     public string? GetPrintSizeInch
     {
-        get => _getPrintSizeInch;
-        set => this.RaiseAndSetIfChanged(ref _getPrintSizeInch, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getPrintSizeCm;
 
     public string? GetPrintSizeCm
     {
-        get => _getPrintSizeCm;
-        set => this.RaiseAndSetIfChanged(ref _getPrintSizeCm, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getSizeMp;
 
     public string? GetSizeMp
     {
-        get => _getSizeMp;
-        set => this.RaiseAndSetIfChanged(ref _getSizeMp, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getResolution;
 
     public string? GetResolution
     {
-        get => _getResolution;
-        set => this.RaiseAndSetIfChanged(ref _getResolution, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getBitDepth;
 
     public string? GetBitDepth
     {
-        get => _getBitDepth;
-        set => this.RaiseAndSetIfChanged(ref _getBitDepth, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getAspectRatio;
 
     public string? GetAspectRatio
     {
-        get => _getAspectRatio;
-        set => this.RaiseAndSetIfChanged(ref _getAspectRatio, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getLatitude;
 
     public string? GetLatitude
     {
-        get => _getLatitude;
-        set => this.RaiseAndSetIfChanged(ref _getLatitude, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getLongitude;
 
     public string? GetLongitude
     {
-        get => _getLongitude;
-        set => this.RaiseAndSetIfChanged(ref _getLongitude, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getAltitude;
 
     public string? GetAltitude
     {
-        get => _getAltitude;
-        set => this.RaiseAndSetIfChanged(ref _getAltitude, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _googleLink;
 
     public string? GoogleLink
     {
-        get => _googleLink;
-        set => this.RaiseAndSetIfChanged(ref _googleLink, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _bingLink;
 
     public string? BingLink
     {
-        get => _bingLink;
-        set => this.RaiseAndSetIfChanged(ref _bingLink, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getAuthors;
 
     public string? GetAuthors
     {
-        get => _getAuthors;
-        set => this.RaiseAndSetIfChanged(ref _getAuthors, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getDateTaken;
 
     public string? GetDateTaken
     {
-        get => _getDateTaken;
-        set => this.RaiseAndSetIfChanged(ref _getDateTaken, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getCopyright;
 
     public string? GetCopyright
     {
-        get => _getCopyright;
-        set => this.RaiseAndSetIfChanged(ref _getCopyright, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getTitle;
 
     public string? GetTitle
     {
-        get => _getTitle;
-        set => this.RaiseAndSetIfChanged(ref _getTitle, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getSubject;
 
     public string? GetSubject
     {
-        get => _getSubject;
-        set => this.RaiseAndSetIfChanged(ref _getSubject, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getSoftware;
 
     public string? GetSoftware
     {
-        get => _getSoftware;
-        set => this.RaiseAndSetIfChanged(ref _getSoftware, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getResolutionUnit;
 
     public string? GetResolutionUnit
     {
-        get => _getResolutionUnit;
-        set => this.RaiseAndSetIfChanged(ref _getResolutionUnit, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getColorRepresentation;
 
     public string? GetColorRepresentation
     {
-        get => _getColorRepresentation;
-        set => this.RaiseAndSetIfChanged(ref _getColorRepresentation, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getCompression;
 
     public string? GetCompression
     {
-        get => _getCompression;
-        set => this.RaiseAndSetIfChanged(ref _getCompression, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getCompressedBitsPixel;
 
     public string? GetCompressedBitsPixel
     {
-        get => _getCompressedBitsPixel;
-        set => this.RaiseAndSetIfChanged(ref _getCompressedBitsPixel, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getCameraMaker;
 
     public string? GetCameraMaker
     {
-        get => _getCameraMaker;
-        set => this.RaiseAndSetIfChanged(ref _getCameraMaker, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getCameraModel;
 
     public string? GetCameraModel
     {
-        get => _getCameraModel;
-        set => this.RaiseAndSetIfChanged(ref _getCameraModel, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _GetExposureProgram;
 
     public string? GetExposureProgram
     {
-        get => _GetExposureProgram;
-        set => this.RaiseAndSetIfChanged(ref _GetExposureProgram, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getExposureTime;
 
     public string? GetExposureTime
     {
-        get => _getExposureTime;
-        set => this.RaiseAndSetIfChanged(ref _getExposureTime, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _GetExposureBias;
 
     public string? GetExposureBias
     {
-        get => _GetExposureBias;
-        set => this.RaiseAndSetIfChanged(ref _GetExposureBias, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _GetFNumber;
 
     public string? GetFNumber
     {
-        get => _GetFNumber;
-        set => this.RaiseAndSetIfChanged(ref _GetFNumber, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getMaxAperture;
 
     public string? GetMaxAperture
     {
-        get => _getMaxAperture;
-        set => this.RaiseAndSetIfChanged(ref _getMaxAperture, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getDigitalZoom;
 
     public string? GetDigitalZoom
     {
-        get => _getDigitalZoom;
-        set => this.RaiseAndSetIfChanged(ref _getDigitalZoom, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getFocalLength35Mm;
 
     public string? GetFocalLength35Mm
     {
-        get => _getFocalLength35Mm;
-        set => this.RaiseAndSetIfChanged(ref _getFocalLength35Mm, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getFocalLength;
 
     public string? GetFocalLength
     {
-        get => _getFocalLength;
-        set => this.RaiseAndSetIfChanged(ref _getFocalLength, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getISOSpeed;
 
     public string? GetISOSpeed
     {
-        get => _getISOSpeed;
-        set => this.RaiseAndSetIfChanged(ref _getISOSpeed, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getMeteringMode;
 
     public string? GetMeteringMode
     {
-        get => _getMeteringMode;
-        set => this.RaiseAndSetIfChanged(ref _getMeteringMode, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getContrast;
 
     public string? GetContrast
     {
-        get => _getContrast;
-        set => this.RaiseAndSetIfChanged(ref _getContrast, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getSaturation;
 
     public string? GetSaturation
     {
-        get => _getSaturation;
-        set => this.RaiseAndSetIfChanged(ref _getSaturation, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getSharpness;
 
     public string? GetSharpness
     {
-        get => _getSharpness;
-        set => this.RaiseAndSetIfChanged(ref _getSharpness, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getWhiteBalance;
 
     public string? GetWhiteBalance
     {
-        get => _getWhiteBalance;
-        set => this.RaiseAndSetIfChanged(ref _getWhiteBalance, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getFlashMode;
 
     public string? GetFlashMode
     {
-        get => _getFlashMode;
-        set => this.RaiseAndSetIfChanged(ref _getFlashMode, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getFlashEnergy;
 
     public string? GetFlashEnergy
     {
-        get => _getFlashEnergy;
-        set => this.RaiseAndSetIfChanged(ref _getFlashEnergy, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getLightSource;
 
     public string? GetLightSource
     {
-        get => _getLightSource;
-        set => this.RaiseAndSetIfChanged(ref _getLightSource, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getBrightness;
 
     public string? GetBrightness
     {
-        get => _getBrightness;
-        set => this.RaiseAndSetIfChanged(ref _getBrightness, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getPhotometricInterpretation;
 
     public string? GetPhotometricInterpretation
     {
-        get => _getPhotometricInterpretation;
-        set => this.RaiseAndSetIfChanged(ref _getPhotometricInterpretation, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getOrientation;
 
     public string? GetOrientation
     {
-        get => _getOrientation;
-        set => this.RaiseAndSetIfChanged(ref _getOrientation, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getExifVersion;
 
     public string? GetExifVersion
     {
-        get => _getExifVersion;
-        set => this.RaiseAndSetIfChanged(ref _getExifVersion, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _GetLensModel;
 
     public string? GetLensModel
     {
-        get => _GetLensModel;
-        set => this.RaiseAndSetIfChanged(ref _GetLensModel, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private string? _getLensMaker;
 
     public string? GetLensMaker
     {
-        get => _getLensMaker;
-        set => this.RaiseAndSetIfChanged(ref _getLensMaker, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     #endregion strings
 
     #region Window Properties
 
-    private string? _title = "Loading...";
-
     public string? Title
     {
-        get => _title;
-        set => this.RaiseAndSetIfChanged(ref _title, value);
-    }
-
-    private string? _titleTooltip = "Loading...";
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = "Loading...";
 
     public string? TitleTooltip
     {
-        get => _titleTooltip;
-        set => this.RaiseAndSetIfChanged(ref _titleTooltip, value);
-    }
-
-    private string? _windowTitle = "PicView";
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = "Loading...";
 
     public string? WindowTitle
     {
-        get => _windowTitle;
-        set => this.RaiseAndSetIfChanged(ref _windowTitle, value);
-    }
-
-    private SizeToContent _sizeToContent;
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = "PicView";
 
     public SizeToContent SizeToContent
     {
-        get => _sizeToContent;
-        set => this.RaiseAndSetIfChanged(ref _sizeToContent, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private bool _canResize;
 
     public bool CanResize
     {
-        get => _canResize;
-        set => this.RaiseAndSetIfChanged(ref _canResize, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private bool _isRotationAnimationEnabled;
 
     public bool IsRotationAnimationEnabled
     {
-        get => _isRotationAnimationEnabled;
-        set => this.RaiseAndSetIfChanged(ref _isRotationAnimationEnabled, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     #endregion Window Properties
 
     #region Size
 
-    private double _titleMaxWidth;
-
     public double TitleMaxWidth
     {
-        get => _titleMaxWidth;
-        set => this.RaiseAndSetIfChanged(ref _titleMaxWidth, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-    
+
     #endregion Size
 
     #region Zoom
 
-    private double _rotationAngle;
-
     public double RotationAngle
     {
-        get => _rotationAngle;
-        set => this.RaiseAndSetIfChanged(ref _rotationAngle, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private double _zoomValue;
 
     public double ZoomValue
     {
-        get => _zoomValue;
-        set => this.RaiseAndSetIfChanged(ref _zoomValue, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private ScrollBarVisibility _toggleScrollBarVisibility;
 
     public ScrollBarVisibility ToggleScrollBarVisibility
     {
-        get => _toggleScrollBarVisibility;
-        set => this.RaiseAndSetIfChanged(ref _toggleScrollBarVisibility, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     #endregion Zoom
 
     #region Menus
 
-    private bool _isFileMenuVisible;
-
     public bool IsFileMenuVisible
     {
-        get => _isFileMenuVisible;
-        set => this.RaiseAndSetIfChanged(ref _isFileMenuVisible, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private bool _isImageMenuVisible;
 
     public bool IsImageMenuVisible
     {
-        get => _isImageMenuVisible;
-        set => this.RaiseAndSetIfChanged(ref _isImageMenuVisible, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private bool _isSettingsMenuVisible;
 
     public bool IsSettingsMenuVisible
     {
-        get => _isSettingsMenuVisible;
-        set => this.RaiseAndSetIfChanged(ref _isSettingsMenuVisible, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private bool _isToolsMenuVisible;
 
     public bool IsToolsMenuVisible
     {
-        get => _isToolsMenuVisible;
-        set => this.RaiseAndSetIfChanged(ref _isToolsMenuVisible, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     #endregion Menus
@@ -1389,21 +1154,17 @@ public class MainViewModel : ViewModelBase
 
     #region Sorting Order
 
-    private FileListHelper.SortFilesBy _sortOrder;
-
     public FileListHelper.SortFilesBy SortOrder
     {
-        get => _sortOrder;
-        set => this.RaiseAndSetIfChanged(ref _sortOrder, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    private bool _isAscending = SettingsHelper.Settings.Sorting.Ascending;
 
     public bool IsAscending
     {
-        get => _isAscending;
-        set => this.RaiseAndSetIfChanged(ref _isAscending, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = SettingsHelper.Settings.Sorting.Ascending;
 
     #endregion Sorting Order
 
@@ -1782,6 +1543,7 @@ public class MainViewModel : ViewModelBase
         ShowAboutWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowAboutWindow);
         ShowBatchResizeWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowBatchResizeWindow);
         ShowSingleImageResizeWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowSingleImageResizeWindow);
+        ShowEffectsWindowCommand = ReactiveCommand.Create(platformSpecificService.ShowEffectsWindow);
         #endregion Window commands
 
         #region Navigation Commands

@@ -18,13 +18,6 @@ jobs:
         id: get-version
         run: pwsh -File "${{ github.workspace }}/Build/Get-VersionInfo.ps1"
 
-      # Step 3: Get version from the project file
-      - name: Get version from the project file
-        uses: kzrnm/get-net-sdk-project-versions-action@v2
-        id: get-version
-        with:
-          proj-path: .\src\PicView.Avalonia.Win32\PicView.Avalonia.Win32.csproj
-
       # Step 4 (x64): Publish x64 version
       - name: Publish x64 version
         run: |

@@ -11,6 +11,9 @@
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="LineHeight" Value="18" />
+        <Style Selector="^:disabled">
+            <Setter Property="Opacity" Value="{StaticResource ThemeDisabledOpacity}" />
+        </Style>
     </Style>
 
     <Style Selector="TextBlock.txtShadow">

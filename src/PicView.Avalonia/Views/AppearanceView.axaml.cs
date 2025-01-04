@@ -59,7 +59,7 @@ public partial class AppearanceView : UserControl
             ThemeManager.SetTheme(selectedTheme);
         };
 
-        ClearButtonsActiveState();
+        ClearColorButtonsActiveState();
         switch ((ColorOptions)SettingsHelper.Settings.Theme.ColorTheme)
         {
             case ColorOptions.Aqua:
@@ -99,9 +99,46 @@ public partial class AppearanceView : UserControl
                 CyanButton.Classes.Add("active");
                 break;
         }
+        
+        CheckerboardButton.Background = BackgroundManager.CreateCheckerboardBrush(default, default,10);
+        CheckerboardAltButton.Background = BackgroundManager.CreateCheckerboardBrushAlt(25);
+
+        switch (SettingsHelper.Settings.UIProperties.BgColorChoice)
+        {
+            default:
+                TransparentBgButton.Classes.Add("active");
+                break;
+            case 1:
+                NoiseTextureButton.Classes.Add("active");
+                break;
+            case 2:
+                CheckerboardButton.Classes.Add("active");
+                break;
+            case 3:
+                CheckerboardAltButton.Classes.Add("active");
+                break;
+            case 4:
+                WhiteBgButton.Classes.Add("active");
+                break;
+            case 5:
+                GrayBgButton.Classes.Add("active");
+                break;
+            case 6:
+                DarkGrayBgButton.Classes.Add("active");
+                break;
+            case 7:
+                DarkGraySemiTransparentBgButton.Classes.Add("active");
+                break;
+            case 8:
+                DarkGraySemiTransparentAltBgButton.Classes.Add("active");
+                break;
+            case 9:
+                BlackBgButton.Classes.Add("active");
+                break;
+        }
     }
 
-    private void ClearButtonsActiveState()
+    private void ClearColorButtonsActiveState()
     {
         var buttons = new List<Button>
         {
@@ -117,7 +154,7 @@ public partial class AppearanceView : UserControl
     
     private void SetColorTheme(ColorOptions colorTheme)
     {
-        ClearButtonsActiveState();
+        ClearColorButtonsActiveState();
         switch (colorTheme)
         {
             default:
@@ -188,5 +225,92 @@ public partial class AppearanceView : UserControl
 
         // Set the new active theme
         SetColorTheme(selectedColor);
+    }
+    
+    private void BgButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not Button clickedButton)
+        {
+            return;
+        }
+
+        // Map the button to the corresponding ColorOptions enum
+        var selectedBg = clickedButton.Name switch
+        {
+            nameof(TransparentBgButton) => 0,
+            nameof(NoiseTextureButton) => 1,
+            nameof(CheckerboardButton) => 2,
+            nameof(CheckerboardAltButton) => 3,
+            nameof(WhiteBgButton) => 4,
+            nameof(GrayBgButton) => 5,
+            nameof(DarkGrayBgButton) => 6,
+            nameof(DarkGraySemiTransparentBgButton) => 7,
+            nameof(DarkGraySemiTransparentAltBgButton) => 8,
+            nameof(BlackBgButton) => 9,
+            _ => 0
+        };
+
+        // Set the new active theme
+        SetBackgroundTheme(selectedBg);
+    }
+    
+    private void SetBackgroundTheme(int selectedBg)
+    {
+        ClearBackgroundButtonsActiveState();
+        switch (selectedBg)
+        {
+            default:
+                TransparentBgButton.Classes.Add("active");
+                break;
+            case 1:
+                NoiseTextureButton.Classes.Add("active");
+                break;
+            case 2:
+                CheckerboardButton.Classes.Add("active");
+                break;
+            case 3:
+                CheckerboardAltButton.Classes.Add("active");
+                break;
+            case 4:
+                WhiteBgButton.Classes.Add("active");
+                break;
+            case 5:
+                GrayBgButton.Classes.Add("active");
+                break;
+            case 6:
+                DarkGrayBgButton.Classes.Add("active");
+                break;
+            case 7:
+                DarkGraySemiTransparentBgButton.Classes.Add("active");
+                break;
+            case 8:
+                DarkGraySemiTransparentAltBgButton.Classes.Add("active");
+                break;
+            case 9:
+                BlackBgButton.Classes.Add("active");
+                break;
+        }
+
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+        
+        BackgroundManager.SetBackground(vm, selectedBg);
+    }
+
+    private void ClearBackgroundButtonsActiveState()
+    {
+        var buttons = new List<Button>
+        {
+            TransparentBgButton, NoiseTextureButton, CheckerboardButton, CheckerboardAltButton,
+            WhiteBgButton, GrayBgButton, DarkGrayBgButton, DarkGraySemiTransparentBgButton,
+            DarkGraySemiTransparentAltBgButton, BlackBgButton
+        };
+
+        foreach (var button in buttons)
+        {
+            button.Classes.Remove("active");
+        }
     }
 }

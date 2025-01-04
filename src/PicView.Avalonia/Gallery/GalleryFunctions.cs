@@ -164,8 +164,7 @@ public static class GalleryFunctions
                         await ToggleGallery(vm);
                     }
 
-                    await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(fileInfo.FullName))
-                        .ConfigureAwait(false);
+                    await NavigationHelper.Navigate(vm.ImageIterator.ImagePaths.IndexOf(fileInfo.FullName), vm).ConfigureAwait(false);
                 };
                 galleryListBox.Items.Insert(index, galleryItem);
                 var isSvg = fileInfo.Extension.Equals(".svg", StringComparison.OrdinalIgnoreCase) ||

@@ -3,28 +3,18 @@
                              Mode=OneWay}"
     IsVisible="{CompiledBinding IsTopToolbarShown,
                                 Mode=OneWay}"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Win32.Views.WinTitleBar"
     x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
-    <Design.DataContext>
-        <vm:MainViewModel />
-    </Design.DataContext>
 
     <Border
         Background="{DynamicResource WindowBackgroundColor}"
         BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="0,0,0,1"
-        CornerRadius="8,8,0,0"
         x:Name="TopWindowBorder">
         <DockPanel LastChildFill="True">
 
@@ -96,11 +86,9 @@
             <customControls:IconButton
                 Background="{DynamicResource WindowButtonBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
-                BorderThickness="0,0,1,0"
                 Classes="hover"
                 ClickMode="Release"
                 Command="{CompiledBinding ExitCommand}"
-                CornerRadius="0,8,0,0"
                 Data="{StaticResource CloseGeometry}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"

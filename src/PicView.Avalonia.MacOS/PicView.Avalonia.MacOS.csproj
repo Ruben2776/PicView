@@ -1,9 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
-    One for Windows with net7.0-windows TFM, one for MacOS with net7.0-macos and one with net7.0 TFM for Linux.-->
-    <TargetFramework>net9.0</TargetFramework>
+	<TargetFramework>net9.0</TargetFramework>
     <Platforms>x64;arm64</Platforms>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -12,6 +10,7 @@
     <Product>PicView</Product>
     <UseAppHost>true</UseAppHost>
     <PublishAot>true</PublishAot>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <Trimming>full</Trimming>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <LangVersion>preview</LangVersion>
@@ -20,7 +19,7 @@
     <Copyright>© Ruben Hyldgaard Negendahl</Copyright>
     <ImplicitUsings>enable</ImplicitUsings>
     <Product>PicView</Product>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <AssemblyName>PicView</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>none</DebugType>
@@ -36,8 +35,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.2.1" />
-    <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,6 +61,10 @@
     </Compile>
     <Compile Update="Views\BatchResizeWindow.axaml.cs">
       <DependentUpon>BatchResizeWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\EffectsWindow.axaml.cs">
+      <DependentUpon>EffectsWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

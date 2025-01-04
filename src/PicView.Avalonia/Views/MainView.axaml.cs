@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using PicView.Avalonia.Crop;
 using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Navigation;
@@ -46,13 +47,14 @@ public partial class MainView : UserControl
             }
             HideInterfaceLogic.AddHoverButtonEvents(AltButtonsPanel, vm);
             PointerWheelChanged += async (_, e) => await vm.ImageViewer.PreviewOnPointerWheelChanged(this, e);
+            
         };
     }
 
     private void PointerPressedBehavior(object? sender, PointerPressedEventArgs e)
     {
         CloseTitlebarIfOpen(sender, e);
-        if (MainKeyboardShortcuts.ShiftDown)
+        if (MainKeyboardShortcuts.ShiftDown && !CropFunctions.IsCropping)
         {
             var hostWindow = (Window)VisualRoot!;
             WindowFunctions.WindowDragBehavior(hostWindow, e);
@@ -67,13 +69,18 @@ public partial class MainView : UserControl
         {
             return;
         }
-        if (vm.IsEditableTitlebarOpen)
+
+        if (!vm.IsEditableTitlebarOpen)
         {
-            vm.IsEditableTitlebarOpen = false;
+            return;
         }
+
+        vm.IsEditableTitlebarOpen = false;
+        MainKeyboardShortcuts.IsKeysEnabled = true;
+        Focus();
     }
     
-    private void HandleLostFocus(object? sender, EventArgs e)
+    private static void HandleLostFocus(object? sender, EventArgs e)
     {
         DragAndDropHelper.RemoveDragDropView();
     }
@@ -84,6 +91,8 @@ public partial class MainView : UserControl
         {
             return;
         }
+
+        CropMenuItem.IsEnabled = CropFunctions.DetermineIfShouldBeEnabled(vm);
 
         // Set source for ChangeCtrlZoomImage
         // TODO should probably be refactored inside a command (It doesn't update the UI in the zoom view, so should be made into a command)

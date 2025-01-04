@@ -9,7 +9,6 @@ using PicView.Avalonia.ViewModels;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
-using PicView.Core.Navigation;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -21,6 +20,7 @@ public partial class EditableTitlebar : UserControl
         LostFocus += OnLostFocus;
         PointerEntered += OnPointerEntered;
         PointerPressed += OnPointerPressed;
+        TextBox.LostFocus += OnLostFocus;
     }
 
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
@@ -79,6 +79,20 @@ public partial class EditableTitlebar : UserControl
     
     protected override void OnKeyDown(KeyEventArgs e)
     {
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        if (!vm.IsEditableTitlebarOpen)
+        {
+            return;
+        }
+
+        if (e.Key is Key.Escape)
+        {
+            CloseTitlebar();
+        }
         MainKeyboardShortcuts.IsKeysEnabled = false;
         base.OnKeyDown(e);
     }
@@ -134,7 +148,7 @@ public partial class EditableTitlebar : UserControl
         if (Path.GetDirectoryName(oldPath) != Path.GetDirectoryName(newPath))
         {
             vm.ImageIterator?.RemoveCurrentItemFromPreLoader();
-            await vm.ImageIterator?.NextIteration(NavigateTo.Next);
+            await NavigationHelper.Navigate(true, vm);
             FileHelper.RenameFile(oldPath, newPath);
             return;
         }

@@ -220,7 +220,7 @@ public static class ImageTitleFormatter
     /// <param name="width">The width of the image in pixels.</param>
     /// <param name="height">The height of the image in pixels.</param>
     /// <returns>A string representing the aspect ratio in the format "x:y", or an empty string if the ratio is too large.</returns>
-    private static string FormatAspectRatio(int width, int height)
+    public static string FormatAspectRatio(int width, int height)
     {
         if (width <= 0 || height <= 0)
         {

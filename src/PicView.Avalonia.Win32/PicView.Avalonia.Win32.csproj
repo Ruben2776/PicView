@@ -41,8 +41,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.2.1" />
-    <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,6 +66,10 @@
     </Compile>
     <Compile Update="Views\BatchResizeResizeWindow.axaml.cs">
       <DependentUpon>BatchResizeResizeWindow.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\EffectsWindow.axaml.cs">
+      <DependentUpon>EffectsWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

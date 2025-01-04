@@ -68,7 +68,7 @@ public static class FilePicker
             IReadOnlyList<IStorageFile> files;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                files  = await provider.OpenFilePickerAsync(new FilePickerOpenOptions());
+                files = await provider.OpenFilePickerAsync(new FilePickerOpenOptions());
             }
             else
             {
@@ -204,12 +204,37 @@ public static class FilePicker
                 HeicFileType,
                 HeifFileType,
                 SvgFileType],
-            SuggestedFileName = string.IsNullOrWhiteSpace(fileName) ? Path.GetRandomFileName() : fileName,
+            SuggestedFileName = string.IsNullOrWhiteSpace(fileName) ? Path.GetRandomFileName() : Path.GetFileName(fileName),
             SuggestedStartLocation = await desktop.MainWindow.StorageProvider.TryGetFolderFromPathAsync(fileName)
             
         };
         var file = await provider.SaveFilePickerAsync(options);
         var destination = file?.Path.LocalPath; // TODO: Handle macOS
         return destination;
+    }
+
+    public static async Task<string> SelectDirectory()
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+            desktop.MainWindow?.StorageProvider is not { } provider)
+            throw new NullReferenceException("Missing StorageProvider instance.");
+
+        var options = new FolderPickerOpenOptions
+        {
+            Title = TranslationHelper.Translation.Folder + " - PicView",
+            AllowMultiple = false
+        };
+        
+        var directory = await provider.OpenFolderPickerAsync(options);
+        if (directory is null)
+        {
+            return "";
+        }
+        if (directory.Count <= 0)
+        {
+            return "";
+        }
+        return RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? directory[0].Path.AbsolutePath : directory[0].Path.LocalPath;
+        
     }
 }

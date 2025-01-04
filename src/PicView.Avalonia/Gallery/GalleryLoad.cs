@@ -1,6 +1,7 @@
 ﻿using Avalonia.Svg.Skia;
 using Avalonia.Threading;
 using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC;
@@ -108,7 +109,7 @@ public static class GalleryLoad
                         {
                             await GalleryFunctions.ToggleGallery(vm);
                         }
-                        await vm.ImageIterator.IterateToIndex(vm.ImageIterator.ImagePaths.IndexOf(fileInfos[i1].FullName)).ConfigureAwait(false);
+                        await NavigationHelper.Navigate(vm.ImageIterator.ImagePaths.IndexOf(fileInfos[i1].FullName), vm).ConfigureAwait(false);
                     };
                     galleryListBox.Items.Add(galleryItem);
                     if (i != vm.ImageIterator?.CurrentIndex)

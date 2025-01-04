@@ -5,6 +5,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
@@ -13,7 +14,6 @@ using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ImageTransformations;
-using PicView.Core.Navigation;
 using Point = Avalonia.Point;
 
 namespace PicView.Avalonia.Views;
@@ -33,6 +33,7 @@ public partial class ImageViewer : UserControl
     public ImageViewer()
     {
         InitializeComponent();
+        TriggerScalingModeUpdate(false);
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
         AddHandler(Gestures.PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
 
@@ -44,6 +45,19 @@ public partial class ImageViewer : UserControl
                 _captured = false;
             };
         };
+    }
+    
+    public void TriggerScalingModeUpdate(bool invalidate)
+    {
+        var scalingMode = SettingsHelper.Settings.ImageScaling.IsScalingSetToNearestNeighbor 
+            ? BitmapInterpolationMode.LowQuality 
+            : BitmapInterpolationMode.HighQuality;
+
+        RenderOptions.SetBitmapInterpolationMode(MainImage,scalingMode);
+        if (invalidate)
+        {
+            MainImage.InvalidateVisual();
+        }
     }
 
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e)
@@ -170,13 +184,18 @@ public partial class ImageViewer : UserControl
             {
                 return;
             }
-            var navigateTo = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? NavigateTo.Previous : NavigateTo.Next;
+
+            bool next;
             if (reverse)
             {
-                navigateTo = SettingsHelper.Settings.Zoom.HorizontalReverseScroll ? NavigateTo.Next : NavigateTo.Previous;
+                next = SettingsHelper.Settings.Zoom.HorizontalReverseScroll;
+            }
+            else
+            {
+                next = !SettingsHelper.Settings.Zoom.HorizontalReverseScroll;
             }
 
-            await mainViewModel.ImageIterator.NextIteration(navigateTo).ConfigureAwait(false);
+            await NavigationHelper.Navigate(next, mainViewModel).ConfigureAwait(false);
         }
     }
 
@@ -256,6 +275,7 @@ public partial class ImageViewer : UserControl
 
         currentZoom += zoomSpeed;
         currentZoom = Math.Max(0.09, currentZoom); // Fix for zooming out too much
+        TriggerScalingModeUpdate(false);
         if (SettingsHelper.Settings.Zoom.AvoidZoomingOut && currentZoom < 1.0)
         {
             ResetZoom(true);

@@ -147,7 +147,7 @@ public static class FileHistoryNavigation
                 return;
             }
 
-            await vm.ImageIterator.IterateToIndex(imagePaths.IndexOf(nextEntry)).ConfigureAwait(false);
+            await NavigationHelper.Navigate(imagePaths.IndexOf(nextEntry), vm).ConfigureAwait(false);
             return;
         }
         await NavigationHelper.LoadPicFromStringAsync(nextEntry, vm);

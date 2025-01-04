@@ -24,7 +24,7 @@
     <PlatformTarget>ARM64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="14.2.0" />
+    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="14.3.0" />
     <PackageReference Include="SharpCompress" Version="0.38.0" />
     <PackageReference Include="ZString" Version="2.6.0" />
   </ItemGroup>
@@ -72,6 +72,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Config\Languages\pt-br.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\Languages\tr.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

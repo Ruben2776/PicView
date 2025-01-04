@@ -157,7 +157,7 @@ public static partial class FileHelper
         // Open a FileStream with the selected buffer size and options
         return new FileStream(
             fileInfo.FullName,
-            FileMode.Open,
+            FileMode.OpenOrCreate,
             FileAccess.ReadWrite,
             FileShare.ReadWrite,
             bufferSize,

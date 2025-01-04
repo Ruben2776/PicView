@@ -91,6 +91,6 @@ public static class ErrorHandling
         vm.ImageIterator.Clear();
         await vm.ImageIterator.ReloadFileList().ConfigureAwait(false);
         var index = vm.ImageIterator.ImagePaths.IndexOf(vm.FileInfo.FullName);
-        await vm.ImageIterator.IterateToIndex(index).ConfigureAwait(false);
+        await NavigationHelper.Navigate(index, vm).ConfigureAwait(false);
     }
 }

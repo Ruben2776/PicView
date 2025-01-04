@@ -1,7 +1,5 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.PreviewWith>
-        <Window />
-    </Design.PreviewWith>
+
     <ControlTheme TargetType="Window" x:Key="{x:Type Window}">
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />

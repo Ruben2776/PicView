@@ -7,17 +7,21 @@
                 <ResourceInclude Source="ResourceDictionaries/Variables.axaml" />
                 <ResourceInclude Source="Icons.axaml" />
 
+                <ResourceInclude Source="Controls/AnimatedPopUp.axaml" />
                 <ResourceInclude Source="Controls/AutoScrollViewer.axaml" />
                 <ResourceInclude Source="Controls/Border.axaml" />
                 <ResourceInclude Source="Controls/Button.axaml" />
+                <ResourceInclude Source="Controls/CheckBox.axaml" />
                 <ResourceInclude Source="Controls/ComboBox.axaml" />
                 <ResourceInclude Source="Controls/ComboBoxItem.axaml" />
+                <ResourceInclude Source="Controls/Expander.axaml" />
                 <ResourceInclude Source="Controls/FlyoutPresenter.axaml" />
                 <ResourceInclude Source="Controls/ListBox.axaml" />
                 <ResourceInclude Source="Controls/ListBoxItem.axaml" />
                 <ResourceInclude Source="Controls/Menu.axaml" />
                 <ResourceInclude Source="Controls/MenuFlyoutPresenter.axaml" />
                 <ResourceInclude Source="Controls/PathIcon.axaml" />
+                <ResourceInclude Source="Controls/ProgressBar.axaml" />
                 <ResourceInclude Source="Controls/RadioButton.axaml" />
                 <ResourceInclude Source="Controls/RepeatButton.axaml" />
                 <ResourceInclude Source="Controls/Scrollbar.axaml" />

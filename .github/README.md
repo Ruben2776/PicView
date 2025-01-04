@@ -21,7 +21,7 @@ PicView is currently being rewritten to the Avalonia platform. You can read more
 
 # Downloads
 
-[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.3.2/PicView-v.2.3.2-win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.3.2/PicView-v.2.3.2-win-arm64.zip)
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.3.3/PicView-v2.3.3-win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/2.3.3/PicView-v2.3.3-win-arm64.zip)
 
 Latest releases at https://picview.org/download
 
@@ -296,7 +296,7 @@ Improvements to the current code or bug fixes are also welcome!
 Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a>, <a href="https://github.com/wcxu21">wcxu21</a><br>
 Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a> <i>(needs updates)</i><br>
 Korean by <a href="https://github.com/VenusGirl">VenusGirl</a><br>
-German by <a href="https://github.com/Brotbox">Brotbox</a> <i>(needs updates)</i><br>
+German by <a href="https://github.com/Brotbox">Brotbox</a>, [uDEV2019](https://github.com/uDEV2019)<br>
 Polish by <a href="https://github.com/YourSenseiCreeper">YourSenseiCreeper</a><br>
 French by <a href="https://www.challenger-systems.com/2021/11/picview-156.html">Sylvain LOUIS</a> <br>
 Italian by <a href="https://github.com/franpoli">franpoli</a> <br>

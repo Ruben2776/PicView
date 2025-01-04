@@ -60,9 +60,103 @@ public class LanguageAndSettingsUnitTest
     {
         var exists = await TranslationHelper.LoadLanguage("en");
         Assert.True(exists);
+        
+        // Window titles
+        Assert.Equal("About", TranslationHelper.GetTranslation("About"));
+        Assert.Equal("Settings", TranslationHelper.GetTranslation("Settings"));
+        
+        // Clipboard
+        Assert.Equal("Added to clipboard", TranslationHelper.GetTranslation("AddedToClipboard"));
+        Assert.Equal("Copy", TranslationHelper.GetTranslation("Copy"));
+        Assert.Equal("Paste", TranslationHelper.GetTranslation("Paste"));
+        
+        // EXIF data
+        Assert.Equal("ActionProgram", TranslationHelper.GetTranslation("ActionProgram"));
+        Assert.Equal("Camera maker", TranslationHelper.GetTranslation("CameraMaker"));
+        
+        // Basic UI elements
         Assert.Equal("Image", TranslationHelper.GetTranslation("Image"));
         Assert.Equal("files", TranslationHelper.GetTranslation("Files"));
-        Assert.Equal("Settings", TranslationHelper.GetTranslation("Settings"));
+
+        
+        // Image operations
+        Assert.Equal("Zoom in", TranslationHelper.GetTranslation("ZoomIn"));
+        Assert.Equal("Zoom out", TranslationHelper.GetTranslation("ZoomOut"));
+        Assert.Equal("Rotate left", TranslationHelper.GetTranslation("RotateLeft"));
+        Assert.Equal("Rotate right", TranslationHelper.GetTranslation("RotateRight"));
+        
+        // Slideshow
+        Assert.Equal("Start slideshow", TranslationHelper.GetTranslation("StartSlideshow"));
+        Assert.Equal("Adjust timing for slideshow", TranslationHelper.GetTranslation("AdjustTimingForSlideshow"));
+        Assert.Equal("Slideshow", TranslationHelper.GetTranslation("Slideshow"));
+        
+        // Zoom
+        Assert.Equal("Adjust zooming speed", TranslationHelper.GetTranslation("AdjustTimingForZoom"));
+        Assert.Equal("Avoid zooming out the image when it is already at the maximum size", TranslationHelper.GetTranslation("AllowZoomOut"));
+        Assert.Equal("Reset zoom", TranslationHelper.GetTranslation("ResetZoom"));
+        Assert.Equal("Zoom", TranslationHelper.GetTranslation("Zoom"));
+        Assert.Equal("Zoom in", TranslationHelper.GetTranslation("ZoomIn"));
+        Assert.Equal("Zoom out", TranslationHelper.GetTranslation("ZoomOut"));
+        Assert.Equal("Ctrl to zoom, scroll to navigate", TranslationHelper.GetTranslation("CtrlToZoom"));
+        Assert.Equal("Zoom with mousewheel, navigate with Ctrl", TranslationHelper.GetTranslation("ScrollToZoom"));
+        
+        // File operations
+        Assert.Equal("Save", TranslationHelper.GetTranslation("Save"));
+        Assert.Equal("Save as", TranslationHelper.GetTranslation("SaveAs"));
+        Assert.Equal("Open", TranslationHelper.GetTranslation("Open"));
+        Assert.Equal("Delete file", TranslationHelper.GetTranslation("DeleteFile"));
+        
+        // Navigation
+        Assert.Equal("Next image", TranslationHelper.GetTranslation("NextImage"));
+        Assert.Equal("Previous image", TranslationHelper.GetTranslation("PrevImage"));
+        Assert.Equal("First image", TranslationHelper.GetTranslation("FirstImage"));
+        Assert.Equal("Last image", TranslationHelper.GetTranslation("LastImage"));
+        Assert.Equal("Adjust speed when key is held down", TranslationHelper.GetTranslation("AdjustNavSpeed"));
+        
+        // Window controls
+        Assert.Equal("Fullscreen", TranslationHelper.GetTranslation("Fullscreen"));
+        Assert.Equal("Minimize", TranslationHelper.GetTranslation("Minimize"));
+        Assert.Equal("Maximize", TranslationHelper.GetTranslation("Maximize"));
+        Assert.Equal("Close", TranslationHelper.GetTranslation("Close"));
+        
+        // Ratings
+        Assert.Equal("1 star rating", TranslationHelper.GetTranslation("_1Star"));
+        Assert.Equal("2 star rating", TranslationHelper.GetTranslation("_2Star"));
+        Assert.Equal("3 star rating", TranslationHelper.GetTranslation("_3Star"));
+        Assert.Equal("4 star rating", TranslationHelper.GetTranslation("_4Star"));
+        Assert.Equal("5 star rating", TranslationHelper.GetTranslation("_5Star"));
+        
+        // Error messages
+        Assert.Equal("Loading...", TranslationHelper.GetTranslation("Loading"));
+        Assert.Equal("No image loaded", TranslationHelper.GetTranslation("NoImage"));
+        Assert.Equal("Unsupported file", TranslationHelper.GetTranslation("UnsupportedFile"));
+        
+        // Theme settings
+        Assert.Equal("Dark theme", TranslationHelper.GetTranslation("DarkTheme"));
+        Assert.Equal("Light theme", TranslationHelper.GetTranslation("LightTheme"));
+        Assert.Equal("Glass Theme", TranslationHelper.GetTranslation("GlassTheme"));
+        
+        // Gallery settings
+        Assert.Equal("Show bottom gallery", TranslationHelper.GetTranslation("ShowBottomGallery"));
+        Assert.Equal("Hide bottom gallery", TranslationHelper.GetTranslation("HideBottomGallery"));
+        Assert.Equal("Gallery settings", TranslationHelper.GetTranslation("GallerySettings"));
+        
+        // Image effects
+        Assert.Equal("Effects", TranslationHelper.GetTranslation("Effects"));
+        Assert.Equal("Black & White", TranslationHelper.GetTranslation("BlackAndWhite"));
+        Assert.Equal("Blur", TranslationHelper.GetTranslation("Blur"));
+        Assert.Equal("Brightness", TranslationHelper.GetTranslation("Brightness"));
+        Assert.Equal("Contrast", TranslationHelper.GetTranslation("Contrast"));
+        
+        // Image info
+        Assert.Equal("Width", TranslationHelper.GetTranslation("Width"));
+        Assert.Equal("Height", TranslationHelper.GetTranslation("Height"));
+        Assert.Equal("Resolution", TranslationHelper.GetTranslation("Resolution"));
+        Assert.Equal("Aspect ratio", TranslationHelper.GetTranslation("AspectRatio"));
+        Assert.Equal("File size", TranslationHelper.GetTranslation("FileSize"));
+        
+        // Misc
+        Assert.Equal("Additional functions", TranslationHelper.GetTranslation("AdditionalFunctions"));
     }
 
     [Fact]

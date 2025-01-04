@@ -1,0 +1,102 @@
+<UserControl
+    x:Class="PicView.Avalonia.Views.EffectsView"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Width="500">
+        <Expander Margin="0,15,0,10">
+            <Expander.Header>
+                <TextBlock
+                    Classes="txt"
+                    FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                    FontSize="14"
+                    Padding="10,5"
+                    Text="{CompiledBinding Lighting}" />
+            </Expander.Header>
+            <StackPanel Margin="15,20">
+
+                <!--  Brightness  -->
+                <Panel>
+                    <TextBlock
+                        Classes="txt"
+                        HorizontalAlignment="Left"
+                        Text="{CompiledBinding Brightness}"
+                        VerticalAlignment="Center" />
+                    <TextBlock
+                        Classes="txt"
+                        HorizontalAlignment="Right"
+                        Text="{Binding Path=Value, ElementName=BrightnessSlider}"
+                        VerticalAlignment="Center" />
+                </Panel>
+
+                <customControls:CustomSlider
+                    Height="30"
+                    IsSnapToTickEnabled="True"
+                    LargeChange="5"
+                    Margin="0,1,0,1"
+                    Maximum="100"
+                    Minimum="0"
+                    SmallChange="1"
+                    TickFrequency="1"
+                    x:Name="BrightnessSlider" />
+
+                <!--  Contrast  -->
+                <Panel Margin="0,10">
+                    <TextBlock
+                        Classes="txt"
+                        HorizontalAlignment="Left"
+                        Text="{CompiledBinding Contrast}"
+                        VerticalAlignment="Center" />
+                    <TextBlock
+                        Classes="txt"
+                        HorizontalAlignment="Right"
+                        Text="{Binding Path=Value, ElementName=ContrastSlider}"
+                        VerticalAlignment="Center" />
+                </Panel>
+
+                <customControls:CustomSlider
+                    Height="30"
+                    IsSnapToTickEnabled="True"
+                    LargeChange="5"
+                    Margin="0,1,0,1"
+                    Maximum="100"
+                    Minimum="0"
+                    SmallChange="1"
+                    TickFrequency="1"
+                    x:Name="ContrastSlider" />
+
+
+                <!--  Gamma  -->
+                <Panel Margin="0,10">
+                    <TextBlock
+                        Classes="txt"
+                        HorizontalAlignment="Left"
+                        Text="{CompiledBinding Gamma}"
+                        VerticalAlignment="Center" />
+                    <TextBlock
+                        Classes="txt"
+                        HorizontalAlignment="Right"
+                        Text="{Binding Path=Value, ElementName=GammaSlider}"
+                        VerticalAlignment="Center" />
+                </Panel>
+
+                <customControls:CustomSlider
+                    Height="30"
+                    IsSnapToTickEnabled="True"
+                    LargeChange="5"
+                    Margin="0,1,0,1"
+                    Maximum="100"
+                    Minimum="0"
+                    SmallChange="1"
+                    TickFrequency="1"
+                    x:Name="GammaSlider" />
+
+
+            </StackPanel>
+
+        </Expander>
+    </StackPanel>
+</UserControl>

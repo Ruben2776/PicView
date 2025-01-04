@@ -89,6 +89,24 @@ public static class AspectRatioHelper
         return new PrintSizes(printSizeCm, printSizeInch, sizeMp);
         
     }
+
+    public static string GetFormattedAspectRatio(int gcd, int width, int height)
+    {
+        var square = TranslationHelper.Translation.Square;
+        var landscape = TranslationHelper.Translation.Landscape;
+        var portrait = TranslationHelper.Translation.Portrait;
+        
+        var firstRatio = width / gcd;
+        var secondRatio = height / gcd;
+
+        if (firstRatio == secondRatio)
+        {
+            return $"{firstRatio}:{secondRatio} ({square})";
+        }
+        return firstRatio > secondRatio ?
+            $"{firstRatio}:{secondRatio} ({landscape})" :
+            $"{firstRatio}:{secondRatio} ({portrait})";
+    }
     
     public readonly struct PrintSizes(string printSizeCm, string printSizeInch, string sizeMp)
     {
