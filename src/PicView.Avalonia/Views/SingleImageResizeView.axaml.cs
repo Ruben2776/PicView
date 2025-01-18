@@ -1,11 +1,10 @@
 ﻿using System.Reactive.Linq;
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
-using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Resizing;
 using PicView.Avalonia.UI;
@@ -125,22 +124,12 @@ public partial class SingleImageResizeView : UserControl
         var fileInfoFullName = vm.FileInfo.FullName;
         var ext = DetermineFileExtension(vm, ref fileInfoFullName);
         
-        var suggestedFileName = Path.ChangeExtension(vm.FileInfo.Name, ext);
-
-        var options = new FilePickerSaveOptions
+        var file = await FilePicker.PickFileForSavingAsync(vm.FileInfo?.FullName, ext);
+        if (file is null)
         {
-            Title = $"{TranslationHelper.Translation.OpenFileDialog} - PicView",
-            SuggestedFileName = suggestedFileName,
-            SuggestedStartLocation =
-                await desktop.MainWindow.StorageProvider.TryGetFolderFromPathAsync(fileInfoFullName),
-        };
-        var file = await provider.SaveFilePickerAsync(options);
-        if (file is null) return;
-
-        var destination = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
-            ? file.Path.AbsolutePath
-            : file.Path.LocalPath;
-        await DoSaveImage(vm, destination).ConfigureAwait(false);
+            return;
+        }
+        await DoSaveImage(vm, file).ConfigureAwait(false);
     }
 
     private async Task SaveImage(MainViewModel vm)

@@ -1,4 +1,6 @@
-﻿namespace PicView.Avalonia.Interfaces;
+﻿using Avalonia.Media.Imaging;
+
+namespace PicView.Avalonia.Interfaces;
 
 public interface IPlatformSpecificService
 {
@@ -43,7 +45,9 @@ public interface IPlatformSpecificService
     
     bool CutFile(string path);
     
-    Task CopyImageToClipboard();
+    Task CopyImageToClipboard(Bitmap bitmap);
+    
+    Task<Bitmap?> GetImageFromClipboard();
     
     Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory);
 

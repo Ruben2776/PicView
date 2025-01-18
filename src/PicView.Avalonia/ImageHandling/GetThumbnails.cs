@@ -77,11 +77,7 @@ public static class GetThumbnails
 
         var geometry = new MagickGeometry(0, height);
         magick.Thumbnail(geometry);
-        magick.Format = MagickFormat.Png;
-        await using var memoryStream = new MemoryStream();
-        await magick.WriteAsync(memoryStream);
-        memoryStream.Position = 0;
-        return WriteableBitmap.Decode(memoryStream);
+        return magick.ToWriteableBitmap();
     }
 }
 

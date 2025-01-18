@@ -80,12 +80,14 @@ public partial class ExifView : UserControl
 
             SaveAsButton.Click += async (_, _) =>
             {
-                var file = await FilePicker.PickFileForSavingAsync(vm.FileInfo?.FullName);
+                var fileInfoFullName = vm.FileInfo.FullName;
+                var ext = DetermineFileExtension(vm, ref fileInfoFullName);
+        
+                var file = await FilePicker.PickFileForSavingAsync(vm.FileInfo?.FullName, ext);
                 if (file is null)
                 {
                     return;
                 }
-                var ext = GetExtension();
                 await SendToImageSaver( vm.FileInfo?.FullName, file, PixelWidthTextBox.Text, PixelHeightTextBox.Text, ext).ConfigureAwait(false);
             };
         };
@@ -194,5 +196,41 @@ public partial class ExifView : UserControl
 
             await DoResize(vm, Equals(sender, PixelWidthTextBox), PixelWidthTextBox.Text, PixelHeightTextBox.Text).ConfigureAwait(false);
         }
+    }
+    
+    private string DetermineFileExtension(MainViewModel vm, ref string destination)
+    {
+        var ext = vm.FileInfo.Extension;
+        if (NoConversion.IsSelected)
+        {
+            return ext;
+        }
+
+        if (PngItem.IsSelected)
+        {
+            ext = ".png";
+        }
+        else if (JpgItem.IsSelected)
+        {
+            ext = ".jpg";
+        }
+        else if (WebpItem.IsSelected)
+        {
+            ext = ".webp";
+        }
+        else if (AvifItem.IsSelected)
+        {
+            ext = ".avif";
+        }
+        else if (HeicItem.IsSelected)
+        {
+            ext = ".heic";
+        }
+        else if (JxlItem.IsSelected)
+        {
+            ext = ".jxl";
+        }
+        destination = Path.ChangeExtension(destination, ext);
+        return ext;
     }
 }

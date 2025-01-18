@@ -465,13 +465,13 @@
                         SelectedIndex="0"
                         Width="140"
                         x:Name="ConversionComboBox">
-                        <ComboBoxItem Content="{CompiledBinding NoConversion, Mode=OneWay}" />
-                        <ComboBoxItem Content=".png" />
-                        <ComboBoxItem Content=".jpg" />
-                        <ComboBoxItem Content=".webp" />
-                        <ComboBoxItem Content=".avif" />
-                        <ComboBoxItem Content=".heic" />
-                        <ComboBoxItem Content=".jxl" />
+                        <ComboBoxItem Content="{CompiledBinding NoConversion, Mode=OneWay}" x:Name="NoConversion" />
+                        <ComboBoxItem Content=".png" x:Name="PngItem" />
+                        <ComboBoxItem Content=".jpg" x:Name="JpgItem" />
+                        <ComboBoxItem Content=".webp" x:Name="WebpItem" />
+                        <ComboBoxItem Content=".avif" x:Name="AvifItem" />
+                        <ComboBoxItem Content=".heic" x:Name="HeicItem" />
+                        <ComboBoxItem Content=".jxl" x:Name="JxlItem" />
                     </ComboBox>
 
                     <!--  Save, save as  -->

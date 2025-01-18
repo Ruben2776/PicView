@@ -12,6 +12,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.Config;
+using PicView.Core.FileHandling;
 using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
@@ -230,6 +231,17 @@ public static class NavigationHelper
         }
     }
 
+    public static async Task DuplicateAndNavigate(MainViewModel vm)
+    {
+        if (!CanNavigate(vm))
+        {
+            return;
+        }
+        vm.IsLoading = true;
+        var oldPath = vm.FileInfo.FullName;
+        await Task.FromResult(FileHelper.DuplicateAndReturnFileName(oldPath)).ConfigureAwait(false);
+    }
+
     #endregion
 
     #region Load pictures from string, file or url
@@ -340,11 +352,6 @@ public static class NavigationHelper
             return;
         }
 
-        if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
-        {
-            vm.PlatformService.StopTaskbarProgress();
-        }
-
         if (_cancellationTokenSource is not null)
         {
             await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
@@ -356,20 +363,7 @@ public static class NavigationHelper
         {
             if (fileInfo.DirectoryName == vm.ImageIterator.InitialFileInfo.DirectoryName)
             {
-                // Need to wait for the file watching to add it to the list
-                var retries = 0;
-                while (vm.ImageIterator.IsRunning && retries < 10)
-                {
-                    await Task.Delay(50).ConfigureAwait(false);
-                    retries++;
-                    if (retries > 10)
-                    {
-                        await ErrorHandling.ReloadAsync(vm);
-                        return;
-                    }
-                }
-
-                var index = vm.ImageIterator.ImagePaths.IndexOf(fileName);
+                var index = vm.ImageIterator.ImagePaths.IndexOf(fileInfo.FullName);
                 if (index != -1)
                 {
                     await vm.ImageIterator.IterateToIndex(index, _cancellationTokenSource).ConfigureAwait(false);
@@ -386,6 +380,10 @@ public static class NavigationHelper
         }
         else
         {
+            if (SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled)
+            {
+                vm.PlatformService.StopTaskbarProgress();
+            }
             await PreviewPicAndLoadGallery(fileInfo, vm);
         }
     }

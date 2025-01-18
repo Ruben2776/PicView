@@ -66,7 +66,15 @@ public static class WindowFunctions
         Environment.Exit(0);
     }
 
-    #region Window State Management
+    #region Window State
+
+    public static void ShowMinimizedWindow(Window window)
+    {
+        window.BringIntoView();
+        window.WindowState = WindowState.Normal;
+        window.Activate();
+        window.Focus();
+    }
 
     public static async Task ToggleTopMost(MainViewModel vm)
     {

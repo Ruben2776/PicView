@@ -177,9 +177,9 @@ public static class UpdateImage
         }
 
         var singeImageWindowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, 1);
-        vm.WindowTitle = singeImageWindowTitles.BaseTitle;
-        vm.Title = singeImageWindowTitles.TitleWithAppName;
-        vm.TitleTooltip = singeImageWindowTitles.TitleWithAppName;
+        vm.WindowTitle = singeImageWindowTitles.TitleWithAppName;
+        vm.Title = singeImageWindowTitles.BaseTitle; 
+        vm.TitleTooltip = singeImageWindowTitles.BaseTitle;
         vm.GalleryMargin = new Thickness(0, 0, 0, 0);
 
         vm.PlatformService.StopTaskbarProgress();

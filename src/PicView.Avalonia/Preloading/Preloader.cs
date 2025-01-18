@@ -7,6 +7,9 @@ using static System.GC;
 
 namespace PicView.Avalonia.Preloading;
 
+/// <summary>
+/// The PreLoader class is responsible for preloading images asynchronously and caching them.
+/// </summary>
 public sealed class PreLoader : IAsyncDisposable
 {
     
@@ -19,9 +22,23 @@ public sealed class PreLoader : IAsyncDisposable
     private readonly PreLoaderConfig _config = new();
 
     private readonly ConcurrentDictionary<int, PreLoadValue> _preLoadList = new();
+    /// <summary>
+    /// Indicates whether the preloader is currently running.
+    /// </summary>
     public static bool IsRunning { get; private set; }
+
+    /// <summary>
+    /// Gets the maximum count of preloaded images.
+    /// </summary>
     public static int MaxCount => PreLoaderConfig.MaxCount;
 
+    /// <summary>
+    /// Adds an image to the preload list asynchronously.
+    /// </summary>
+    /// <param name="index">The index of the image in the list.</param>
+    /// <param name="list">The list of image paths.</param>
+    /// <param name="imageModel">Optional image model to be added.</param>
+    /// <returns>True if the image was added successfully; otherwise, false.</returns>
     public async Task<bool> AddAsync(int index, List<string> list, ImageModel? imageModel = null)
     {
         if (list == null)
@@ -98,6 +115,12 @@ public sealed class PreLoader : IAsyncDisposable
         return false;
     }
 
+    /// <summary>
+    /// Refreshes the file information for a specific image in the preload list asynchronously.
+    /// </summary>
+    /// <param name="index">The index of the image in the list.</param>
+    /// <param name="list">The list of image paths.</param>
+    /// <returns>True if the image was refreshed successfully; otherwise, false.</returns>
     public async Task<bool> RefreshFileInfo(int index, List<string> list)
     {
         if (list == null)
@@ -131,7 +154,7 @@ public sealed class PreLoader : IAsyncDisposable
         return removed;
     }
 
-    public void RefreshAllFileInfo(List<string> list)
+    public bool RefreshAllFileInfo(List<string> list)
     {
         try
         {
@@ -143,9 +166,16 @@ public sealed class PreLoader : IAsyncDisposable
                 }
 
                 var fileInfo = new FileInfo(list[item.Key]);
-                if (item.Value.ImageModel != null)
+                if (item.Value.ImageModel == null)
                 {
-                    item.Value.ImageModel.FileInfo = fileInfo;
+                    continue;
+                }
+
+                item.Value.ImageModel.FileInfo = fileInfo;
+                var removed = _preLoadList.TryRemove(item.Key, out var newItem);
+                if (removed)
+                {
+                    return _preLoadList.TryAdd(list.IndexOf(newItem.ImageModel.FileInfo.FullName), newItem);
                 }
             }
         }
@@ -155,10 +185,12 @@ public sealed class PreLoader : IAsyncDisposable
             Trace.WriteLine($"{nameof(PreLoader)}.{nameof(RefreshAllFileInfo)} \n{e.Message}");
 #endif
         }
+
+        return false;
     }
 
     /// <summary>
-    /// Removes all keys from the cache.
+    /// Clears all preloaded images from the cache.
     /// </summary>
     public void Clear()
     {
@@ -173,6 +205,12 @@ public sealed class PreLoader : IAsyncDisposable
         _preLoadList.Clear();
     }
 
+    /// <summary>
+    /// Gets the preloaded value for a specific key.
+    /// </summary>
+    /// <param name="key">The key of the preloaded value.</param>
+    /// <param name="list">The list of image paths.</param>
+    /// <returns>The preloaded value if it exists; otherwise, null.</returns>
     public PreLoadValue? Get(int key, List<string> list)
     {
         if (list == null)
@@ -194,6 +232,13 @@ public sealed class PreLoader : IAsyncDisposable
         return !Contains(key, list) ? null : _preLoadList[key];
     }
 
+
+    /// <summary>
+    /// Gets the preloaded value for a specific key asynchronously.
+    /// </summary>
+    /// <param name="key">The key of the preloaded value.</param>
+    /// <param name="list">The list of image paths.</param>
+    /// <returns>The preloaded value if it exists; otherwise, null.</returns>
     public async Task<PreLoadValue?> GetAsync(int key, List<string> list)
     {
         if (list == null)
@@ -221,6 +266,12 @@ public sealed class PreLoader : IAsyncDisposable
         return Get(key, list);
     }
 
+    /// <summary>
+    /// Checks if a specific key exists in the preload list.
+    /// </summary>
+    /// <param name="key">The key to check.</param>
+    /// <param name="list">The list of image paths.</param>
+    /// <returns>True if the key exists; otherwise, false.</returns>
     public bool Contains(int key, List<string> list)
     {
         if (list == null)
@@ -242,6 +293,13 @@ public sealed class PreLoader : IAsyncDisposable
         return _preLoadList.ContainsKey(key);
     }
 
+    
+    /// <summary>
+    /// Removes a specific key from the preload list.
+    /// </summary>
+    /// <param name="key">The key to remove.</param>
+    /// <param name="list">The list of image paths.</param>
+    /// <returns>True if the key was removed; otherwise, false.</returns>
     public bool Remove(int key, List<string> list)
     {
         if (list == null)
@@ -297,14 +355,20 @@ public sealed class PreLoader : IAsyncDisposable
         }
     }
 
-    public async Task PreLoadAsync(int currentIndex, int count, bool reverse, List<string> list)
+    /// <summary>
+    /// Preloads images asynchronously.
+    /// </summary>
+    /// <param name="currentIndex">The current index of the image.</param>
+    /// <param name="reverse">Indicates whether to preload in reverse order.</param>
+    /// <param name="list">The list of image paths.</param>
+    public async Task PreLoadAsync(int currentIndex, bool reverse, List<string> list)
     {
         using var cts = new CancellationTokenSource();
         cts.CancelAfter(TimeSpan.FromMinutes(5));
 
         try
         {
-            await PreLoadInternalAsync(currentIndex, count, reverse, list, cts.Token);
+            await PreLoadInternalAsync(currentIndex, reverse, list, cts.Token);
         }
         catch (OperationCanceledException)
         {
@@ -318,7 +382,7 @@ public sealed class PreLoader : IAsyncDisposable
         }
     }
 
-    private async Task PreLoadInternalAsync(int currentIndex, int count, bool reverse, List<string> list, CancellationToken token)
+    private async Task PreLoadInternalAsync(int currentIndex, bool reverse, List<string> list, CancellationToken token)
     {
         if (list == null)
         {
@@ -334,6 +398,8 @@ public sealed class PreLoader : IAsyncDisposable
         }
 
         IsRunning = true;
+        
+        var count = list.Count;
 
         int nextStartingIndex, prevStartingIndex;
         if (reverse)
@@ -388,13 +454,7 @@ public sealed class PreLoader : IAsyncDisposable
         {
             await Parallel.ForAsync(0, PreLoaderConfig.PositiveIterations, parallelOptions, async (i, _) =>
             {
-                if (list.Count == 0 || count != list.Count)
-                {
-                    Clear();
-                    return;
-                }
-
-                var index = (nextStartingIndex + i) % list.Count;
+                var index = (nextStartingIndex + i) % count;
                 var isAdded = await AddAsync(index, list);
                 if (isAdded)
                 {
@@ -407,13 +467,7 @@ public sealed class PreLoader : IAsyncDisposable
         {
             await Parallel.ForAsync(0, PreLoaderConfig.NegativeIterations, parallelOptions, async (i, _) =>
             {
-                if (list.Count == 0 || count != list.Count)
-                {
-                    Clear();
-                    return;
-                }
-
-                var index = (prevStartingIndex - i + list.Count) % list.Count;
+                var index = (prevStartingIndex - i + count) % count;
                 var isAdded = await AddAsync(index, list);
                 if (isAdded)
                 {

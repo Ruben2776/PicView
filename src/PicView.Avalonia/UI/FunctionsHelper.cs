@@ -668,16 +668,7 @@ public static class FunctionsHelper
 
     public static async Task DuplicateFile()
     {
-        if (!NavigationHelper.CanNavigate(Vm))
-        {
-            return;
-        }
-        var oldPath = Vm.FileInfo.FullName;
-        var newPath = FileHelper.DuplicateAndReturnFileName(oldPath);
-        if (File.Exists(newPath))
-        {
-            await NavigationHelper.LoadPicFromFile(newPath, Vm);
-        }
+        await NavigationHelper.DuplicateAndNavigate(Vm).ConfigureAwait(false);
     }
 
     public static async Task CutFile()

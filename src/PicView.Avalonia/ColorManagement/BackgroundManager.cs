@@ -48,6 +48,7 @@ public static class BackgroundManager
 
         // Update the background in the view model
         vm.ImageBackground = BackgroundColorBrush;
+        vm.BackgroundChoice = SettingsHelper.Settings.UIProperties.BgColorChoice;
     }
 
     /// <summary>

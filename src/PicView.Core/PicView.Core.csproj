@@ -24,7 +24,7 @@
     <PlatformTarget>ARM64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="14.3.0" />
+    <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="14.4.0" />
     <PackageReference Include="SharpCompress" Version="0.38.0" />
     <PackageReference Include="ZString" Version="2.6.0" />
   </ItemGroup>

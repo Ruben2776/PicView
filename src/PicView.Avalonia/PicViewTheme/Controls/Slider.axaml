@@ -7,7 +7,7 @@
         <Setter Property="Height" Value="12" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Name="DecreaseThemeBorder" Background="{DynamicResource AccentColor}" />
+                <Border Background="{DynamicResource AccentColor}" Name="DecreaseThemeBorder" />
             </ControlTemplate>
         </Setter>
     </ControlTheme>
@@ -16,7 +16,10 @@
         <Setter Property="Height" Value="12" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Name="IncreaseThemeBorder" Background="{DynamicResource AccentColor}" Opacity="0.2" />
+                <Border
+                    Background="{DynamicResource AccentColor}"
+                    Name="IncreaseThemeBorder"
+                    Opacity="0.2" />
             </ControlTemplate>
         </Setter>
     </ControlTheme>
@@ -49,6 +52,75 @@
                                     <ControlTemplate>
                                         <Rectangle
                                             Fill="{DynamicResource MainButtonBackgroundColor}"
+                                            Name="thumb"
+                                            Stroke="{DynamicResource MainBorderColor}"
+                                            StrokeThickness="1.5" />
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                                <Thumb.Styles>
+                                    <Style Selector="Rectangle:pointerover">
+                                        <Setter Property="Fill" Value="{DynamicResource AccentColor}" />
+                                    </Style>
+                                </Thumb.Styles>
+                            </Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="^ /template/ Track#PART_Track">
+            <Setter Property="Minimum" Value="{TemplateBinding Minimum}" />
+            <Setter Property="Maximum" Value="{TemplateBinding Maximum}" />
+            <Setter Property="Value" Value="{TemplateBinding Value, Mode=TwoWay}" />
+        </Style>
+        <Style Selector="^:disabled /template/ Grid#grid">
+            <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme TargetType="Slider" x:Key="SetBg">
+        <Style Selector="^:horizontal">
+            <Setter Property="MinWidth" Value="40" />
+            <Setter Property="MinHeight" Value="20" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Grid Name="grid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" MinHeight="20" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Grid.Row="1"
+                            Height="14"
+                            VerticalAlignment="Center" />
+                        <Track
+                            Grid.Row="1"
+                            IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+                            Name="PART_Track"
+                            Orientation="Horizontal">
+                            <Track.DecreaseButton>
+                                <RepeatButton
+                                    Background="Transparent"
+                                    Height="12"
+                                    Name="PART_DecreaseButton" />
+                            </Track.DecreaseButton>
+                            <Track.IncreaseButton>
+                                <RepeatButton
+                                    Background="Transparent"
+                                    Height="12"
+                                    Name="PART_IncreaseButton" />
+                            </Track.IncreaseButton>
+                            <Thumb Height="22" Width="22">
+                                <Thumb.Template>
+                                    <ControlTemplate>
+                                        <Rectangle
+                                            Fill="{DynamicResource SecondaryButtonBackgroundColor}"
                                             Name="thumb"
                                             Stroke="{DynamicResource MainBorderColor}"
                                             StrokeThickness="1.5" />

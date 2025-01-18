@@ -183,34 +183,48 @@ public static class FilePicker
         await FileSaverHelper.SaveFileAsync(fileName, file, vm);
     }
     
-    public static async Task<string?> PickFileForSavingAsync(string? fileName)
+    public static async Task<string?> PickFileForSavingAsync(string? fileName, string? ext = null)
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-            desktop.MainWindow?.StorageProvider is not { } provider)
-            throw new NullReferenceException("Missing StorageProvider instance.");
-
-        var options = new FilePickerSaveOptions
+        try
         {
-            Title = $"{TranslationHelper.Translation.OpenFileDialog} - PicView",
-            FileTypeChoices  = [
-                FilePickerFileTypes.ImageAll,
-                JpegFileType,
-                PngFileType,
-                GifFileType,
-                BmpFileType,
-                WebpFileType,
-                TiffFileType,
-                AvifFileType,
-                HeicFileType,
-                HeifFileType,
-                SvgFileType],
-            SuggestedFileName = string.IsNullOrWhiteSpace(fileName) ? Path.GetRandomFileName() : Path.GetFileName(fileName),
-            SuggestedStartLocation = await desktop.MainWindow.StorageProvider.TryGetFolderFromPathAsync(fileName)
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+                desktop.MainWindow?.StorageProvider is not { } provider)
+                throw new NullReferenceException("Missing StorageProvider instance.");
+        
+            var suggestedFileName = string.IsNullOrWhiteSpace(ext) ? Path.GetFileName(fileName) : Path.GetFileName(Path.ChangeExtension(fileName, ext));
+
+            var options = new FilePickerSaveOptions
+            {
+                Title = $"{TranslationHelper.Translation.OpenFileDialog} - PicView",
+                FileTypeChoices  = [
+                    FilePickerFileTypes.ImageAll,
+                    JpegFileType,
+                    PngFileType,
+                    GifFileType,
+                    BmpFileType,
+                    WebpFileType,
+                    TiffFileType,
+                    AvifFileType,
+                    HeicFileType,
+                    HeifFileType,
+                    SvgFileType],
+                SuggestedFileName = string.IsNullOrWhiteSpace(fileName) ? Path.GetRandomFileName() : suggestedFileName,
+                SuggestedStartLocation = await desktop.MainWindow.StorageProvider.TryGetFolderFromPathAsync(fileName)
             
-        };
-        var file = await provider.SaveFilePickerAsync(options);
-        var destination = file?.Path.LocalPath; // TODO: Handle macOS
-        return destination;
+            };
+            var file = await provider.SaveFilePickerAsync(options);
+            var destination = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+                ? file.Path.AbsolutePath
+                : file.Path.LocalPath;
+            return destination;
+        }
+        catch (Exception e)
+        {
+            #if DEBUG
+            Console.WriteLine(e);
+            #endif
+            return null;
+        }
     }
 
     public static async Task<string> SelectDirectory()

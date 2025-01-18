@@ -43,6 +43,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
     <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.3" />
+    <PackageReference Include="Clowd.Clipboard.Avalonia" Version="1.1.4" />
   </ItemGroup>
 
   <ItemGroup>

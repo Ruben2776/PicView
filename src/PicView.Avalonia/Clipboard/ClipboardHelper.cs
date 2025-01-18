@@ -66,7 +66,31 @@ public static class ClipboardHelper
 
     public static async Task CopyImageToClipboard(MainViewModel vm)
     {
-        // TODO: Implement CopyImageToClipboard
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        var clipboard = desktop.MainWindow.Clipboard;
+        
+        if (vm.ImageSource is not Bitmap bitmap)
+        {
+            return;
+        }
+        await clipboard.ClearAsync();
+        
+        // Handle for Windows
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            await Task.WhenAll(vm.PlatformService.CopyImageToClipboard(bitmap), CopyAnimation());
+            return;
+        }
+        
+        using var ms = new MemoryStream();
+        bitmap.Save(ms);
+                        
+        var dataObject = new DataObject();
+        dataObject.Set("image/png", ms.ToArray());
+        await Task.WhenAll(clipboard.SetDataObjectAsync(dataObject), CopyAnimation());
     }
 
     public static async Task CopyBase64ToClipboard(string path, MainViewModel vm)
@@ -129,13 +153,6 @@ public static class ClipboardHelper
             return;
         }
         var clipboard = desktop.MainWindow.Clipboard;
-        var text = await clipboard.GetTextAsync();
-        if (text is not null)
-        {   
-            await NavigationHelper.LoadPicFromStringAsync(text, vm).ConfigureAwait(false);
-            return;
-        }
-
         var files = await clipboard.GetDataAsync(DataFormats.Files);
         if (files is not null)
         {
@@ -226,6 +243,20 @@ public static class ClipboardHelper
         bitmap = await GetBitmapFromBytes("image/gif");
         if (bitmap is not null)
         {
+            UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
+            return;
+        }
+        
+        var text = await clipboard.GetTextAsync();
+        if (!string.IsNullOrWhiteSpace(text))
+        {   
+            await NavigationHelper.LoadPicFromStringAsync(text, vm).ConfigureAwait(false);
+            return;
+        }
+        // Handle for Windows
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            bitmap = await vm.PlatformService.GetImageFromClipboard();
             UpdateImage.SetSingleImage(bitmap, imageType, name, vm);
             return;
         }

@@ -1,3 +1,4 @@
+using System.Reactive.Disposables;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using PicView.Avalonia.ColorManagement;
@@ -5,11 +6,13 @@ using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.ColorHandling;
 using PicView.Core.Config;
+using ReactiveUI;
 
 namespace PicView.Avalonia.Views;
 
 public partial class AppearanceView : UserControl
 {
+    private readonly CompositeDisposable _disposables = new();
     public AppearanceView()
     {
         InitializeComponent();
@@ -102,40 +105,11 @@ public partial class AppearanceView : UserControl
         
         CheckerboardButton.Background = BackgroundManager.CreateCheckerboardBrush(default, default,10);
         CheckerboardAltButton.Background = BackgroundManager.CreateCheckerboardBrushAlt(25);
-
-        switch (SettingsHelper.Settings.UIProperties.BgColorChoice)
-        {
-            default:
-                TransparentBgButton.Classes.Add("active");
-                break;
-            case 1:
-                NoiseTextureButton.Classes.Add("active");
-                break;
-            case 2:
-                CheckerboardButton.Classes.Add("active");
-                break;
-            case 3:
-                CheckerboardAltButton.Classes.Add("active");
-                break;
-            case 4:
-                WhiteBgButton.Classes.Add("active");
-                break;
-            case 5:
-                GrayBgButton.Classes.Add("active");
-                break;
-            case 6:
-                DarkGrayBgButton.Classes.Add("active");
-                break;
-            case 7:
-                DarkGraySemiTransparentBgButton.Classes.Add("active");
-                break;
-            case 8:
-                DarkGraySemiTransparentAltBgButton.Classes.Add("active");
-                break;
-            case 9:
-                BlackBgButton.Classes.Add("active");
-                break;
-        }
+        
+        // Subscribe to background color changes with ReactiveUI
+        vm.WhenAnyValue(x => x.BackgroundChoice)
+            .Subscribe(_ => SetBackgroundTheme(SettingsHelper.Settings.UIProperties.BgColorChoice))
+            .DisposeWith(_disposables);
     }
 
     private void ClearColorButtonsActiveState()

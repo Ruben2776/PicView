@@ -78,7 +78,7 @@ public class MainViewModel : ViewModelBase
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.ImageScaling.ShowImageSideBySide;
+    }
 
     public double ScrollViewerWidth
     {
@@ -112,13 +112,13 @@ public class MainViewModel : ViewModelBase
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.UIProperties.ShowInterface && SettingsHelper.Settings.Gallery.IsBottomGalleryShown;
+    }
 
     public bool IsBottomGalleryShownInHiddenUI
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+    }
 
     public GalleryMode GalleryMode
     {
@@ -199,13 +199,13 @@ public class MainViewModel : ViewModelBase
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
+    }
 
     public double GetBottomGalleryItemHeight
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.Gallery.BottomGalleryItemSize;
+    }
 
     public double MaxFullGalleryItemHeight
     {
@@ -483,7 +483,7 @@ public class MainViewModel : ViewModelBase
             SettingsHelper.Settings.Zoom.AvoidZoomingOut = value;
             this.RaiseAndSetIfChanged(ref field, value);
         }
-    } = SettingsHelper.Settings.Zoom.AvoidZoomingOut;
+    }
 
     public IImage? ChangeCtrlZoomImage
     {
@@ -501,50 +501,49 @@ public class MainViewModel : ViewModelBase
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.UIProperties.ShowInterface;
+    }
 
     public bool IsTopToolbarShown
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.UIProperties.ShowInterface;
+    }
 
     public bool IsBottomToolbarShown
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.UIProperties.ShowBottomNavBar &&
-        SettingsHelper.Settings.UIProperties.ShowInterface;
+    }
 
     public bool IsBottomToolbarShownSetting
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
+    } 
 
     public bool IsShowingTaskbarProgress
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled;
+    }
 
     public bool IsFullscreen
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.WindowProperties.Fullscreen;
+    }
 
     public bool IsTopMost
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.WindowProperties.TopMost;
+    }
 
     public bool IsIncludingSubdirectories
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
+    } 
 
     public bool IsScrollingEnabled
     {
@@ -561,19 +560,19 @@ public class MainViewModel : ViewModelBase
             SettingsHelper.Settings.ImageScaling.StretchImage = value;
             WindowResizing.SetSize(this);
         }
-    } = SettingsHelper.Settings.ImageScaling.StretchImage;
+    } 
 
     public bool IsLooping
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.UIProperties.Looping;
+    }
 
     public bool IsAutoFit
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.WindowProperties.AutoFit;
+    }
 
     public bool IsStayingCentered
     {
@@ -583,7 +582,7 @@ public class MainViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref field, value);
             SettingsHelper.Settings.WindowProperties.KeepCentered = value;
         }
-    } = SettingsHelper.Settings.WindowProperties.KeepCentered;
+    }
 
     public bool IsOpeningInSameWindow
     {
@@ -593,7 +592,7 @@ public class MainViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref field, value);
             SettingsHelper.Settings.UIProperties.OpenInSameWindow = value;
         }
-    } = SettingsHelper.Settings.UIProperties.OpenInSameWindow;
+    }
     
     public bool IsShowingConfirmationOnEsc
     {
@@ -603,7 +602,7 @@ public class MainViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref field, value);
             SettingsHelper.Settings.UIProperties.ShowConfirmationOnEsc = value;
         }
-    } = SettingsHelper.Settings.UIProperties.ShowConfirmationOnEsc;
+    }
 
     public bool IsEditableTitlebarOpen
     {
@@ -619,9 +618,15 @@ public class MainViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref field, value);
             SettingsHelper.Settings.Zoom.IsUsingTouchPad = value;
         }
-    } = SettingsHelper.Settings.Zoom.IsUsingTouchPad;
+    }
 
     #endregion Booleans
+    
+    public int BackgroundChoice
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
 
     public double WindowMinSize
     {
@@ -633,21 +638,16 @@ public class MainViewModel : ViewModelBase
 
     public double TitlebarHeight
     {
-        set => this.RaiseAndSetIfChanged(ref field, value);
         get;
-    } = SettingsHelper.Settings.WindowProperties.Fullscreen
-        || !SettingsHelper.Settings.UIProperties.ShowInterface
-        ? 0
-        : SizeDefaults.TitlebarHeight;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } 
 
     public double BottombarHeight
     {
-        set => this.RaiseAndSetIfChanged(ref field, value);
         get;
-    } = SettingsHelper.Settings.WindowProperties.Fullscreen
-        || !SettingsHelper.Settings.UIProperties.ShowInterface
-        ? 0
-        : SizeDefaults.BottombarHeight;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+        
+    }
 
     // Used to flip the flip button
     public int ScaleX
@@ -685,7 +685,7 @@ public class MainViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref field, roundedValue);
             SettingsHelper.Settings.UIProperties.SlideShowTimer = roundedValue;
         }
-    } = SettingsHelper.Settings.UIProperties.SlideShowTimer;
+    } 
 
     public double GetNavSpeed
     {
@@ -695,7 +695,7 @@ public class MainViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref field, value);
             SettingsHelper.Settings.UIProperties.NavSpeed = value;
         }
-    } = SettingsHelper.Settings.UIProperties.NavSpeed;
+    }
 
     public double GetZoomSpeed
     {
@@ -706,7 +706,7 @@ public class MainViewModel : ViewModelBase
             this.RaiseAndSetIfChanged(ref field, roundedValue);
             SettingsHelper.Settings.Zoom.ZoomSpeed = roundedValue;
         }
-    } = SettingsHelper.Settings.Zoom.ZoomSpeed;
+    } 
 
     #region strings
 
@@ -1074,12 +1074,6 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
-    public bool IsRotationAnimationEnabled
-    {
-        get;
-        set => this.RaiseAndSetIfChanged(ref field, value);
-    }
-
     #endregion Window Properties
 
     #region Size
@@ -1164,7 +1158,7 @@ public class MainViewModel : ViewModelBase
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);
-    } = SettingsHelper.Settings.Sorting.Ascending;
+    }
 
     #endregion Sorting Order
 

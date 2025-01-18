@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.Localization;
 
@@ -47,6 +48,11 @@ public partial class EffectsWindow : Window
         {
             MinWidth = MaxWidth = Width;
             Title = $"{TranslationHelper.Translation.Effects}  - PicView";
+            
+            ClientSizeProperty.Changed.Subscribe(size =>
+            {
+                WindowResizing.HandleWindowResize(this, size);
+            });
         };
         KeyDown += (_, e) =>
         {

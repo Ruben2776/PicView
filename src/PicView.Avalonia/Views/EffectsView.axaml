@@ -3,100 +3,440 @@
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Styles>
+        <Styles>
+            <Style Selector="NumericUpDown">
+                <Setter Property="Width" Value="56" />
+                <Setter Property="FormatString" Value="N0" />
+                <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+            </Style>
+        </Styles>
+    </UserControl.Styles>
+    <UserControl.ContextMenu>
+        <ContextMenu x:Name="ContextMenu">
+            <MenuItem Command="{CompiledBinding SaveFileCommand}" Header="{CompiledBinding Save, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource SaveGeometry}"
+                        Fill="{DynamicResource MainTextColor}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="{CompiledBinding SaveFileAsCommand}" Header="{CompiledBinding SaveAs}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource SaveGeometry}"
+                        Fill="{DynamicResource MainTextColor}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="{CompiledBinding CopyImageCommand}" Header="{CompiledBinding CopyImage, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource CopyGeometry}"
+                        Fill="{DynamicResource MainTextColor}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="{CompiledBinding ClearEffects}" x:Name="ClearEffectsItem">
+                <MenuItem.Icon>
+                    <Image
+                        Height="12"
+                        Source="{StaticResource CloseImage}"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
 
-    <StackPanel Width="500">
-        <Expander Margin="0,15,0,10">
-            <Expander.Header>
-                <TextBlock
-                    Classes="txt"
-                    FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                    FontSize="14"
-                    Padding="10,5"
-                    Text="{CompiledBinding Lighting}" />
-            </Expander.Header>
-            <StackPanel Margin="15,20">
+    <Panel>
+        <uc:SpinWaiter
+            HorizontalAlignment="Center"
+            IsVisible="False"
+            VerticalAlignment="Center"
+            x:Name="SpinWaiter" />
 
-                <!--  Brightness  -->
-                <Panel>
+        <StackPanel Width="500" x:Name="ParentContainer">
+            <Expander IsExpanded="True" Margin="0,15,0,10">
+                <Expander.Header>
                     <TextBlock
                         Classes="txt"
-                        HorizontalAlignment="Left"
-                        Text="{CompiledBinding Brightness}"
-                        VerticalAlignment="Center" />
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Padding="10,5"
+                        Text="{CompiledBinding Lighting}" />
+                </Expander.Header>
+                <StackPanel Margin="15,20">
+
+                    <!--  Brightness  -->
+                    <Panel>
+                        <TextBlock
+                            Classes="txt"
+                            HorizontalAlignment="Left"
+                            Text="{CompiledBinding Brightness}"
+                            VerticalAlignment="Center" />
+
+                        <Rectangle
+                            Fill="{DynamicResource MainBorderColor}"
+                            Height="20"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,122,-10"
+                            Stroke="{DynamicResource MainBorderColor}"
+                            StrokeThickness="1"
+                            Width="2" />
+                    </Panel>
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <customControls:CustomSlider
+                            Height="30"
+                            IsSnapToTickEnabled="True"
+                            LargeChange="5"
+                            Margin="0,1,10,1"
+                            Maximum="100"
+                            Minimum="-85"
+                            SmallChange="1"
+                            Theme="{StaticResource SetBg}"
+                            TickFrequency="1"
+                            Value="0"
+                            Width="376"
+                            x:Name="BrightnessSlider">
+                            <customControls:CustomSlider.Background>
+                                <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
+                                    <GradientStop Color="#111111" Offset="0" />
+                                    <GradientStop Color="White" Offset="1" />
+                                </LinearGradientBrush>
+                            </customControls:CustomSlider.Background>
+                        </customControls:CustomSlider>
+                        <NumericUpDown
+                            Maximum="{Binding Path=Maximum, ElementName=BrightnessSlider}"
+                            Minimum="{Binding Path=Minimum, ElementName=BrightnessSlider}"
+                            Value="{Binding Path=Value, ElementName=BrightnessSlider}" />
+                        <customControls:IconButton
+                            Background="{DynamicResource MainButtonBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            Classes="hover"
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource UndoImage}"
+                            IconHeight="12"
+                            IconWidth="12"
+                            Margin="5,0,0,0"
+                            Width="30"
+                            x:Name="ResetBrightnessBtn" />
+                    </StackPanel>
+
+                    <!--  Contrast  -->
+                    <Panel>
+                        <TextBlock
+                            Classes="txt"
+                            HorizontalAlignment="Left"
+                            Text="{CompiledBinding Contrast}"
+                            VerticalAlignment="Center" />
+
+                        <Rectangle
+                            Fill="{DynamicResource MainBorderColor}"
+                            Height="20"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,122,-10"
+                            Stroke="{DynamicResource MainBorderColor}"
+                            StrokeThickness="1"
+                            Width="2" />
+                    </Panel>
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <customControls:CustomSlider
+                            Height="30"
+                            IsSnapToTickEnabled="True"
+                            LargeChange="5"
+                            Margin="0,1,10,1"
+                            Maximum="100"
+                            Minimum="-85"
+                            SmallChange="1"
+                            Theme="{StaticResource SetBg}"
+                            TickFrequency="1"
+                            Value="0"
+                            Width="376"
+                            x:Name="ContrastSlider">
+                            <customControls:CustomSlider.Background>
+                                <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
+                                    <GradientStop Color="#06FF0000" Offset="0" />
+                                    <GradientStop Color="#40FF7F00" Offset="0.17" />
+                                    <GradientStop Color="#60FFFF00" Offset="0.33" />
+                                    <GradientStop Color="#8000FF00" Offset="0.5" />
+                                    <GradientStop Color="#A00000FF" Offset="0.67" />
+                                    <GradientStop Color="#C04B0082" Offset="0.83" />
+                                    <GradientStop Color="#FF8F00FF" Offset="1" />
+                                </LinearGradientBrush>
+                            </customControls:CustomSlider.Background>
+                        </customControls:CustomSlider>
+                        <NumericUpDown
+                            Maximum="{Binding Path=Maximum, ElementName=ContrastSlider}"
+                            Minimum="{Binding Path=Minimum, ElementName=ContrastSlider}"
+                            Value="{Binding Path=Value, ElementName=ContrastSlider}" />
+                        <customControls:IconButton
+                            Background="{DynamicResource MainButtonBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            Classes="hover"
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource UndoImage}"
+                            IconHeight="12"
+                            IconWidth="12"
+                            Margin="5,0,0,0"
+                            Width="30"
+                            x:Name="ResetContrastBtn" />
+                    </StackPanel>
+
+
+                </StackPanel>
+
+            </Expander>
+
+            <Expander IsExpanded="True" Margin="0,0,0,10">
+                <Expander.Header>
                     <TextBlock
                         Classes="txt"
-                        HorizontalAlignment="Right"
-                        Text="{Binding Path=Value, ElementName=BrightnessSlider}"
-                        VerticalAlignment="Center" />
-                </Panel>
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Padding="10,5"
+                        Text="{CompiledBinding Effects}" />
+                </Expander.Header>
+                <StackPanel Margin="15,0">
 
-                <customControls:CustomSlider
-                    Height="30"
-                    IsSnapToTickEnabled="True"
-                    LargeChange="5"
-                    Margin="0,1,0,1"
-                    Maximum="100"
-                    Minimum="0"
-                    SmallChange="1"
-                    TickFrequency="1"
-                    x:Name="BrightnessSlider" />
+                    <!--  Blur  -->
+                    <Panel Margin="0,10,0,5">
+                        <TextBlock
+                            Classes="txt"
+                            HorizontalAlignment="Left"
+                            Text="{CompiledBinding Blur}"
+                            VerticalAlignment="Center" />
+                    </Panel>
 
-                <!--  Contrast  -->
-                <Panel Margin="0,10">
-                    <TextBlock
-                        Classes="txt"
-                        HorizontalAlignment="Left"
-                        Text="{CompiledBinding Contrast}"
-                        VerticalAlignment="Center" />
-                    <TextBlock
-                        Classes="txt"
-                        HorizontalAlignment="Right"
-                        Text="{Binding Path=Value, ElementName=ContrastSlider}"
-                        VerticalAlignment="Center" />
-                </Panel>
+                    <StackPanel Orientation="Horizontal">
 
-                <customControls:CustomSlider
-                    Height="30"
-                    IsSnapToTickEnabled="True"
-                    LargeChange="5"
-                    Margin="0,1,0,1"
-                    Maximum="100"
-                    Minimum="0"
-                    SmallChange="1"
-                    TickFrequency="1"
-                    x:Name="ContrastSlider" />
+                        <customControls:CustomSlider
+                            Background="{DynamicResource MainButtonBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            Height="30"
+                            IsSnapToTickEnabled="True"
+                            Margin="0,1,10,1"
+                            Maximum="100"
+                            Minimum="0"
+                            SmallChange="1"
+                            Theme="{StaticResource SetBg}"
+                            TickFrequency="1"
+                            Value="0"
+                            Width="376"
+                            x:Name="BlurSlider" />
+                        <NumericUpDown
+                            Maximum="{Binding Path=Maximum, ElementName=BlurSlider}"
+                            Minimum="{Binding Path=Minimum, ElementName=BlurSlider}"
+                            Value="{Binding Path=Value, ElementName=BlurSlider}" />
+                        <customControls:IconButton
+                            Background="{DynamicResource MainButtonBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            Classes="hover"
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource UndoImage}"
+                            IconHeight="12"
+                            IconWidth="12"
+                            Margin="5,0,0,0"
+                            Width="30"
+                            x:Name="ResetBlurBtn" />
+                    </StackPanel>
+
+                    <!--  Pencil Sketch  -->
+                    <Panel Margin="0,10,0,5">
+                        <TextBlock
+                            Classes="txt"
+                            HorizontalAlignment="Left"
+                            Text="{CompiledBinding PencilSketch}"
+                            VerticalAlignment="Center" />
+                    </Panel>
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <customControls:CustomSlider
+                            Background="{DynamicResource MainButtonBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            Height="30"
+                            IsSnapToTickEnabled="True"
+                            LargeChange="1"
+                            Margin="0,1,10,1"
+                            Maximum="6"
+                            Minimum="0"
+                            SmallChange="1"
+                            Theme="{StaticResource SetBg}"
+                            TickFrequency="1"
+                            Value="0"
+                            Width="376"
+                            x:Name="PencilSketchSlider" />
+                        <NumericUpDown
+                            Maximum="{Binding Path=Maximum, ElementName=PencilSketchSlider}"
+                            Minimum="{Binding Path=Minimum, ElementName=PencilSketchSlider}"
+                            Value="{Binding Path=Value, ElementName=PencilSketchSlider}" />
+                        <customControls:IconButton
+                            Background="{DynamicResource MainButtonBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            Classes="hover"
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource UndoImage}"
+                            IconHeight="12"
+                            IconWidth="12"
+                            Margin="5,0,0,0"
+                            Width="30"
+                            x:Name="ResetPencilSketchBtn" />
+                    </StackPanel>
+
+                    <!--  Posterize  -->
+                    <Panel Margin="0,10,0,5">
+                        <TextBlock
+                            Classes="txt"
+                            HorizontalAlignment="Left"
+                            Text="{CompiledBinding Posterize}"
+                            VerticalAlignment="Center" />
+                    </Panel>
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <customControls:CustomSlider
+                            Background="{DynamicResource MainButtonBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            Height="30"
+                            IsSnapToTickEnabled="True"
+                            LargeChange="1"
+                            Margin="0,1,10,1"
+                            Maximum="8"
+                            Minimum="0"
+                            SmallChange="1"
+                            Theme="{StaticResource SetBg}"
+                            TickFrequency="1"
+                            Value="0"
+                            Width="376"
+                            x:Name="PosterizeSlider" />
+                        <NumericUpDown
+                            Maximum="{Binding Path=Maximum, ElementName=PosterizeSlider}"
+                            Minimum="{Binding Path=Minimum, ElementName=PosterizeSlider}"
+                            Value="{Binding Path=Value, ElementName=PosterizeSlider}" />
+                        <customControls:IconButton
+                            Background="{DynamicResource MainButtonBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            Classes="hover"
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource UndoImage}"
+                            IconHeight="12"
+                            IconWidth="12"
+                            Margin="5,0,0,0"
+                            Width="30"
+                            x:Name="ResetPosterizeBtn" />
+                    </StackPanel>
+
+                    <!--  Solarize  -->
+                    <Panel Margin="0,10,0,5">
+                        <TextBlock
+                            Classes="txt"
+                            HorizontalAlignment="Left"
+                            Text="{CompiledBinding Solarize}"
+                            VerticalAlignment="Center" />
+                    </Panel>
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <customControls:CustomSlider
+                            Background="{DynamicResource MainButtonBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            Height="30"
+                            IsSnapToTickEnabled="True"
+                            LargeChange="10"
+                            Margin="0,1,10,1"
+                            Maximum="95"
+                            Minimum="0"
+                            SmallChange="5"
+                            Theme="{StaticResource SetBg}"
+                            TickFrequency="10"
+                            Value="0"
+                            Width="376"
+                            x:Name="SolarizeSlider" />
+                        <NumericUpDown
+                            Maximum="{Binding Path=Maximum, ElementName=SolarizeSlider}"
+                            Minimum="{Binding Path=Minimum, ElementName=SolarizeSlider}"
+                            Value="{Binding Path=Value, ElementName=SolarizeSlider}" />
+                        <customControls:IconButton
+                            Background="{DynamicResource MainButtonBackgroundColor}"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="1"
+                            Classes="hover"
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource UndoImage}"
+                            IconHeight="12"
+                            IconWidth="12"
+                            Margin="5,0,0,0"
+                            Width="30"
+                            x:Name="ResetSolarizeBtn" />
+                    </StackPanel>
 
 
-                <!--  Gamma  -->
-                <Panel Margin="0,10">
-                    <TextBlock
-                        Classes="txt"
-                        HorizontalAlignment="Left"
-                        Text="{CompiledBinding Gamma}"
-                        VerticalAlignment="Center" />
-                    <TextBlock
-                        Classes="txt"
-                        HorizontalAlignment="Right"
-                        Text="{Binding Path=Value, ElementName=GammaSlider}"
-                        VerticalAlignment="Center" />
-                </Panel>
+                    <!--  Black/White  -->
+                    <ToggleButton
+                        Background="Transparent"
+                        Classes="altHover"
+                        Margin="0,5,0,0"
+                        x:Name="BlackAndWhiteToggleButton">
+                        <TextBlock
+                            Classes="txt"
+                            HorizontalAlignment="Left"
+                            Text="{CompiledBinding BlackAndWhite}"
+                            VerticalAlignment="Center" />
+                    </ToggleButton>
 
-                <customControls:CustomSlider
-                    Height="30"
-                    IsSnapToTickEnabled="True"
-                    LargeChange="5"
-                    Margin="0,1,0,1"
-                    Maximum="100"
-                    Minimum="0"
-                    SmallChange="1"
-                    TickFrequency="1"
-                    x:Name="GammaSlider" />
+                    <!--  Negative Colors  -->
+                    <ToggleButton
+                        Background="Transparent"
+                        Classes="altHover"
+                        x:Name="NegativeToggleButton">
+                        <TextBlock
+                            Classes="txt"
+                            HorizontalAlignment="Left"
+                            Text="{CompiledBinding NegativeColors}"
+                            VerticalAlignment="Center" />
+                    </ToggleButton>
+
+                    <!--  Old  Movie  -->
+                    <ToggleButton
+                        Background="Transparent"
+                        Classes="altHover"
+                        x:Name="OldMovieToggleButton">
+                        <TextBlock
+                            Classes="txt"
+                            HorizontalAlignment="Left"
+                            Text="{CompiledBinding OldMovie}"
+                            VerticalAlignment="Center" />
+                    </ToggleButton>
 
 
-            </StackPanel>
+                </StackPanel>
 
-        </Expander>
-    </StackPanel>
+            </Expander>
+
+        </StackPanel>
+    </Panel>
 </UserControl>

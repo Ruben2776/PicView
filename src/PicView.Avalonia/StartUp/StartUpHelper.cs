@@ -45,8 +45,8 @@ public static class StartUpHelper
                 return;
             }
         }
-
-        vm.IsLoading = true;
+        
+        InitializeSettings(vm);
 
         if (SettingsHelper.Settings.WindowProperties.Fullscreen)
         {
@@ -236,6 +236,8 @@ public static class StartUpHelper
 
     private static void ValidateGallerySettings(MainViewModel vm, bool settingsExists)
     {
+        vm.GetFullGalleryItemHeight = SettingsHelper.Settings.Gallery.ExpandedGalleryItemSize;
+        vm.GetBottomGalleryItemHeight = SettingsHelper.Settings.Gallery.BottomGalleryItemSize;
         if (!settingsExists)
         {
             vm.GetBottomGalleryItemHeight = GalleryDefaults.DefaultBottomGalleryHeight;
@@ -269,6 +271,43 @@ public static class StartUpHelper
         {
             SettingsHelper.Settings.Gallery.FullGalleryStretchMode = "UniformToFill";
         }
+    }
+    
+    private static void InitializeSettings(MainViewModel vm)
+    {
+        vm.IsLoading = true;
+        vm.TitlebarHeight = SettingsHelper.Settings.WindowProperties.Fullscreen
+            || !SettingsHelper.Settings.UIProperties.ShowInterface
+            ? 0
+            : SizeDefaults.TitlebarHeight;
+        vm.BottombarHeight = SettingsHelper.Settings.WindowProperties.Fullscreen
+                             || !SettingsHelper.Settings.UIProperties.ShowInterface
+            ? 0
+            : SizeDefaults.BottombarHeight;
+        vm.GetNavSpeed = SettingsHelper.Settings.UIProperties.NavSpeed;
+        vm.GetSlideshowSpeed = SettingsHelper.Settings.UIProperties.SlideShowTimer;
+        vm.GetZoomSpeed = SettingsHelper.Settings.Zoom.ZoomSpeed;
+        vm.IsShowingSideBySide = SettingsHelper.Settings.ImageScaling.ShowImageSideBySide;
+        vm.IsGalleryShown = SettingsHelper.Settings.Gallery.ShowBottomGalleryInHiddenUI;
+        vm.IsAvoidingZoomingOut  = SettingsHelper.Settings.Zoom.AvoidZoomingOut;
+        vm.IsUIShown  = SettingsHelper.Settings.UIProperties.ShowInterface;
+        vm.IsTopToolbarShown  = SettingsHelper.Settings.UIProperties.ShowInterface;
+        vm.IsBottomToolbarShown   = SettingsHelper.Settings.UIProperties.ShowBottomNavBar &&
+                                    SettingsHelper.Settings.UIProperties.ShowInterface;
+        vm.IsBottomToolbarShownSetting = SettingsHelper.Settings.UIProperties.ShowBottomNavBar;
+        vm.IsShowingTaskbarProgress  = SettingsHelper.Settings.UIProperties.IsTaskbarProgressEnabled;
+        vm.IsFullscreen  = SettingsHelper.Settings.WindowProperties.Fullscreen;
+        vm.IsTopMost  = SettingsHelper.Settings.WindowProperties.TopMost;
+        vm.IsIncludingSubdirectories = SettingsHelper.Settings.Sorting.IncludeSubDirectories;
+        vm.IsStretched = SettingsHelper.Settings.ImageScaling.StretchImage;
+        vm.IsLooping  = SettingsHelper.Settings.UIProperties.Looping;
+        vm.IsAutoFit  = SettingsHelper.Settings.WindowProperties.AutoFit;
+        vm.IsStayingCentered  = SettingsHelper.Settings.WindowProperties.KeepCentered;
+        vm.IsOpeningInSameWindow  = SettingsHelper.Settings.UIProperties.OpenInSameWindow;
+        vm.IsShowingConfirmationOnEsc  = SettingsHelper.Settings.UIProperties.ShowConfirmationOnEsc;
+        vm.IsUsingTouchpad  = SettingsHelper.Settings.Zoom.IsUsingTouchPad;
+        vm.IsAscending  = SettingsHelper.Settings.Sorting.Ascending;
+        vm.BackgroundChoice = SettingsHelper.Settings.UIProperties.BgColorChoice;
     }
 
     private static void SetWindowEventHandlers(Window w)

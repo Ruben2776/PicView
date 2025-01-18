@@ -259,12 +259,68 @@ public class ViewModelBase : ReactiveObject
         ImageAliasing = TranslationHelper.Translation.ImageAliasing;
         HighQuality = TranslationHelper.Translation.HighQuality;
         Lighting = TranslationHelper.Translation.Lighting;
-        Gamma = TranslationHelper.Translation.Gamma;
+        BlackAndWhite = TranslationHelper.Translation.BlackAndWhite;
+        NegativeColors = TranslationHelper.Translation.NegativeColors;
+        Blur = TranslationHelper.Translation.Blur;
+        DirectionalBlur = TranslationHelper.Translation.DirectionalBlur;
+        PencilSketch = TranslationHelper.Translation.PencilSketch;
+        OldMovie = TranslationHelper.Translation.OldMovie;
+        Posterize = TranslationHelper.Translation.Posterize;
+        ClearEffects = TranslationHelper.Translation.ClearEffects;
+        Solarize = TranslationHelper.Translation.Solarize;
     }
 
     #region Strings
     
-    public string? Gamma
+    public string? Solarize
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+    
+    public string? ClearEffects
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+    
+    public string? Posterize
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+    
+    public string? OldMovie
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+    
+    public string? PencilSketch
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+    
+    public string? DirectionalBlur
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+    
+    public string? Blur
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+    
+    public string? NegativeColors
+    {
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    }
+    
+    public string? BlackAndWhite
     {
         get;
         set => this.RaiseAndSetIfChanged(ref field, value);

@@ -113,6 +113,7 @@ public record LanguageModel
     public string? BlackAndWhite { get; set; }
     public string? ColorTone { get; set; }
     public string? OldMovie { get; set; }
+    public string? Posterize { get; set; }
     public string? Bloom { get; set; }
     public string? Gloom { get; set; }
     public string? Monochrome { get; set; }
@@ -401,5 +402,11 @@ public record LanguageModel
     public string? PermanentlyDelete { get; set; }
     
     public string? Lighting { get; set; }
-    public string? Gamma { get; set; }
+    
+    public string? ActionProgram { get; set; }
+    
+    public string? SaveImage { get; set; }
+    
+    public string? ClearEffects { get; set; }
+    public string? Solarize { get; set; }
 }

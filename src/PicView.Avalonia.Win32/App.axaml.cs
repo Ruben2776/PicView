@@ -3,6 +3,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using Clowd.Clipboard;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
@@ -10,6 +13,7 @@ using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Win32.Views;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
@@ -74,7 +78,7 @@ public partial class App : Application, IPlatformSpecificService
 
                 _mainWindow = new WinMainWindow();
                 desktop.MainWindow = _mainWindow;
-            });
+            },DispatcherPriority.Send);
         
             _vm = new MainViewModel(this);
         
@@ -82,7 +86,7 @@ public partial class App : Application, IPlatformSpecificService
             {
                 _mainWindow.DataContext = _vm;
                 StartUpHelper.Start(_vm, settingsExists, desktop, _mainWindow);
-            });
+            },DispatcherPriority.Send);
         }
         catch (Exception e)
         {
@@ -188,7 +192,14 @@ public partial class App : Application, IPlatformSpecificService
             }
             else
             {
-                _aboutWindow.Activate();
+                if (_aboutWindow.WindowState == WindowState.Minimized)
+                {
+                    WindowFunctions.ShowMinimizedWindow(_aboutWindow);
+                }
+                else
+                {
+                    _aboutWindow.Show();
+                }       
             }
 
             _ = FunctionsHelper.CloseMenus();
@@ -226,7 +237,14 @@ public partial class App : Application, IPlatformSpecificService
             }
             else
             {
-                _exifWindow.Activate();
+                if (_exifWindow.WindowState == WindowState.Minimized)
+                {
+                    WindowFunctions.ShowMinimizedWindow(_exifWindow);
+                }
+                else
+                {
+                    _exifWindow.Show();
+                }       
             }
 
             _ = FunctionsHelper.CloseMenus();
@@ -264,7 +282,14 @@ public partial class App : Application, IPlatformSpecificService
             }
             else
             {
-                _keybindingsWindow.Activate();
+                if (_keybindingsWindow.WindowState == WindowState.Minimized)
+                {
+                    WindowFunctions.ShowMinimizedWindow(_keybindingsWindow);
+                }
+                else
+                {
+                    _keybindingsWindow.Show();
+                }       
             }
 
             _ = FunctionsHelper.CloseMenus();
@@ -300,7 +325,14 @@ public partial class App : Application, IPlatformSpecificService
             }
             else
             {
-                _settingsWindow.Activate();
+                if (_settingsWindow.WindowState == WindowState.Minimized)
+                {
+                    WindowFunctions.ShowMinimizedWindow(_settingsWindow);
+                }
+                else
+                {
+                    _settingsWindow.Show();
+                }         
             }
             _= FunctionsHelper.CloseMenus();
             
@@ -336,7 +368,14 @@ public partial class App : Application, IPlatformSpecificService
             }
             else
             {
-                _singleImageResizeWindow.Activate();                
+                if (_singleImageResizeWindow.WindowState == WindowState.Minimized)
+                {
+                    WindowFunctions.ShowMinimizedWindow(_singleImageResizeWindow);
+                }
+                else
+                {
+                    _singleImageResizeWindow.Show();
+                }         
             }
             _= FunctionsHelper.CloseMenus();
         }
@@ -371,7 +410,14 @@ public partial class App : Application, IPlatformSpecificService
             }
             else
             {
-                _batchResizeWindow.Show();
+                if (_batchResizeWindow.WindowState == WindowState.Minimized)
+                {
+                    WindowFunctions.ShowMinimizedWindow(_batchResizeWindow);
+                }
+                else
+                {
+                    _batchResizeWindow.Show();
+                }
             }
             _= FunctionsHelper.CloseMenus();
         }   
@@ -406,7 +452,14 @@ public partial class App : Application, IPlatformSpecificService
             }
             else
             {
-                _effectsWindow.Show();
+                if (_effectsWindow.WindowState == WindowState.Minimized)
+                {
+                    WindowFunctions.ShowMinimizedWindow(_effectsWindow);
+                }
+                else
+                {
+                    _effectsWindow.Show();
+                }
             }
             _= FunctionsHelper.CloseMenus();
         }
@@ -438,9 +491,14 @@ public partial class App : Application, IPlatformSpecificService
         return Win32Clipboard.CopyFileToClipboard(true, path);
     }
 
-    public Task CopyImageToClipboard()
+    public async Task CopyImageToClipboard(Bitmap bitmap)
     {
-        return Task.CompletedTask;
+        await ClipboardAvalonia.SetImageAsync(bitmap).ConfigureAwait(false);
+    }
+
+    public async Task<Bitmap?> GetImageFromClipboard()
+    {
+        return await ClipboardAvalonia.GetImageAsync().ConfigureAwait(false);
     }
     
     public async Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory)
