@@ -108,7 +108,7 @@ public static class ChineseSimplifiedUnitTest
         Assert.Equal(TranslationManager.Translation.DragFileTo, "将文件拖拽至 Windows 资源管理器或者其他应用程序/浏览器");
         Assert.Equal(TranslationManager.Translation.DragImage, "拖拽图片");
         Assert.Equal(TranslationManager.Translation.DropToLoad, "拖放以打开图像");
-        Assert.Equal(TranslationManager.Translation.DuplicateFile, "复制文件");
+        Assert.Equal(TranslationManager.Translation.DuplicateFile, "创建副本");
         Assert.Equal(TranslationManager.Translation.Effects, "特效");
         Assert.Equal(TranslationManager.Translation.EffectsTooltip, "显示图像特效窗口");
         Assert.Equal(TranslationManager.Translation.Enter, "Enter");

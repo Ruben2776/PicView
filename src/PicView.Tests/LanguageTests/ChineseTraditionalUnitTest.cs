@@ -108,7 +108,7 @@ public static class ChineseTraditionalUnitTest
         Assert.Equal(TranslationManager.Translation.DragFileTo, "將檔案拖曳至 Windows 檔案總管或者其他應用程式/瀏覽器");
         Assert.Equal(TranslationManager.Translation.DragImage, "拖曳圖片");
         Assert.Equal(TranslationManager.Translation.DropToLoad, "拖放以開啟影像");
-        Assert.Equal(TranslationManager.Translation.DuplicateFile, "複製檔案");
+        Assert.Equal(TranslationManager.Translation.DuplicateFile, "創建副本");
         Assert.Equal(TranslationManager.Translation.Effects, "特效");
         Assert.Equal(TranslationManager.Translation.EffectsTooltip, "顯示影像特效視窗");
         Assert.Equal(TranslationManager.Translation.Enter, "Enter");
