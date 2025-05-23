@@ -101,7 +101,7 @@
   "DragFileTo": "将文件拖拽至 Windows 资源管理器或者其他应用程序/浏览器",
   "DragImage": "拖拽图片",
   "DropToLoad": "拖放以打开图像",
-  "DuplicateFile": "复制文件",
+  "DuplicateFile": "创建副本",
   "Effects": "特效",
   "EffectsTooltip": "显示图像特效窗口",
   "Enter": "Enter",
