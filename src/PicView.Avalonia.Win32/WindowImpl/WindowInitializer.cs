@@ -3,8 +3,10 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Printing;
 using PicView.Avalonia.Update;
 using PicView.Avalonia.ViewModels;
@@ -290,7 +292,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
         }
     }
 
-    public async Task ShowBatchResizeWindow(MainViewModel vm)
+ public async Task ShowBatchResizeWindow(MainViewModel vm)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -305,6 +307,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 await vm.Window.BatchResizeWindowConfig.LoadAsync();
             }
 
+            vm.BatchResizeViewModel = new BatchResizeViewModel(NavigationManager.CanNavigate(vm), FilePicker.SelectDirectory, vm.PicViewer.FileInfo.CurrentValue, vm.PlatformService.GetFiles);
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _batchResizeWindow = new BatchResizeWindow(vm.Window.BatchResizeWindowConfig)
@@ -313,7 +316,12 @@ public class WindowInitializer : IPlatformSpecificUpdate
                     WindowStartupLocation = WindowStartupLocation.CenterOwner
                 };
                 Show();
-                _batchResizeWindow.Closing += (_, _) => _batchResizeWindow = null;
+                _batchResizeWindow.Closing += (_, _) =>
+                {
+                    _batchResizeWindow = null;
+                    vm.BatchResizeViewModel.Dispose();
+                    vm.BatchResizeViewModel = null;
+                };
             });
         }
         else
@@ -333,7 +341,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
         }
 
         await FunctionsMapper.CloseMenus();
-
+        
         return;
 
         void Show()

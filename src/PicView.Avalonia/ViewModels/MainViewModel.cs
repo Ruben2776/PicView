@@ -28,6 +28,7 @@ public class MainViewModel
     public FileAssociationsViewModel? AssociationsViewModel { get; set; }
     public AboutViewModel? AboutView { get; set; }
     public PrintPreviewViewModel? PrintPreview { get; set; }
+    public BatchResizeViewModel? BatchResizeViewModel { get; set; }
 
     public MainViewModel(IPlatformSpecificService? platformSpecificService, IPlatformWindowService? platformWindowService)
     {
