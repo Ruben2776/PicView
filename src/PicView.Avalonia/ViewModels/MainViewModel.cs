@@ -24,6 +24,8 @@ public class MainViewModel
     public ExifViewModel? Exif { get; set; }
     public ImageInfoWindowViewModel? InfoWindow { get; set; }
     public FileAssociationsViewModel? AssociationsViewModel { get; set; }
+    
+    public BatchResizeViewModel? BatchResizeViewModel { get; set; }
 
     public MainViewModel(IPlatformSpecificService? platformSpecificService, IPlatformWindowService? platformWindowService)
     {

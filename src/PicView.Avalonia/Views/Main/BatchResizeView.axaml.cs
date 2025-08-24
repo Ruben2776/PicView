@@ -15,6 +15,7 @@ using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Titles;
+using PicView.Core.ViewModels;
 using R3;
 
 namespace PicView.Avalonia.Views.Main;

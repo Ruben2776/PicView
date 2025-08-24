@@ -2,8 +2,10 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Update;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Win32.PlatformUpdate;
@@ -299,6 +301,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 await vm.Window.BatchResizeWindowConfig.LoadAsync();
             }
 
+            vm.BatchResizeViewModel = new BatchResizeViewModel(NavigationManager.CanNavigate(vm), FilePicker.SelectDirectory, vm.PicViewer.FileInfo.CurrentValue, vm.PlatformService.GetFiles);
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _batchResizeWindow = new BatchResizeWindow(vm.Window.BatchResizeWindowConfig)
@@ -307,7 +310,12 @@ public class WindowInitializer : IPlatformSpecificUpdate
                     WindowStartupLocation = WindowStartupLocation.CenterOwner
                 };
                 Show();
-                _batchResizeWindow.Closing += (_, _) => _batchResizeWindow = null;
+                _batchResizeWindow.Closing += (_, _) =>
+                {
+                    _batchResizeWindow = null;
+                    vm.BatchResizeViewModel.Dispose();
+                    vm.BatchResizeViewModel = null;
+                };
             });
         }
         else
