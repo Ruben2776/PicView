@@ -31,7 +31,6 @@ public partial class EditableTitlebar : UserControl
             return;
         }
 
-        vm.MainWindow.IsEditableTitlebarOpen.Value = true;
         SelectFileName();
     }
 
@@ -172,6 +171,11 @@ public partial class EditableTitlebar : UserControl
     public void SelectFileName()
     {
         if (UIHelper.GetMainView.DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        if (vm.PicViewer.FileInfo.CurrentValue is null)
         {
             return;
         }
