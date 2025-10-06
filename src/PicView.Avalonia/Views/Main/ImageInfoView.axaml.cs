@@ -3,8 +3,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
-using PicView.Avalonia.FileSystem;
-using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Resizing;
 using PicView.Avalonia.UI;
@@ -88,40 +86,7 @@ public partial class ImageInfoView : UserControl
 
             RemoveImageDataMenuItem.Click += async (_, _) => { await RemoveImageDataAsync(); };
 
-            ResetButton.Click += (_, _) =>
-            {
-                PixelWidthTextBox.Text = vm.PicViewer.PixelWidth.ToString();
-                PixelHeightTextBox.Text = vm.PicViewer.PixelHeight.ToString();
-                AdjustAspectRatio(PixelWidthTextBox);
-                FullPathTextBox.Text = vm.PicViewer.FileInfo?.CurrentValue.FullName ?? "";
-                DirectoryNameTextBox.Text = vm.PicViewer.FileInfo?.CurrentValue.DirectoryName ?? "";
-                FileNameTextBox.Text = vm.PicViewer.FileInfo?.CurrentValue.Name ?? "";
-            };
-
-            SaveButton.Click += async (_, _) =>
-            {
-                var ext = GetExtension();
-                var location = FullPathTextBox.Text; // TODO check if this is a valid path
-                // and sync with file name/directory text boxes
-                await SendToImageSaver(vm.PicViewer.FileInfo?.CurrentValue.FullName, location,
-                    PixelWidthTextBox.Text,
-                    PixelHeightTextBox.Text, ext).ConfigureAwait(false);
-            };
-
-            SaveAsButton.Click += async (_, _) =>
-            {
-                var fileInfoFullName = vm.PicViewer.FileInfo.CurrentValue.FullName;
-                var ext = DetermineFileExtension(vm, ref fileInfoFullName);
-
-                var file = await FilePicker.PickFileForSavingAsync(vm.PicViewer.FileInfo?.CurrentValue.FullName, ext);
-                if (file is null)
-                {
-                    return;
-                }
-
-                await SendToImageSaver(vm.PicViewer.FileInfo?.CurrentValue.FullName, file, PixelWidthTextBox.Text,
-                    PixelHeightTextBox.Text, ext).ConfigureAwait(false);
-            };
+            ;
             FileNameTextBox.KeyDown += async (_, e) =>
                 await HandleRenameOnEnterAsync(e, () =>
                     Path.Combine(vm.PicViewer.FileInfo.CurrentValue.DirectoryName!, FileNameTextBox.Text));
@@ -230,10 +195,7 @@ public partial class ImageInfoView : UserControl
         var panelWidth = double.IsNaN(ParentPanel.Width) ? ParentPanel.Bounds.Width : ParentPanel.Width;
         panelWidth = panelWidth is 0 ? MinWidth : panelWidth;
 
-        var convertWidth = double.IsNaN(ConvertToPanel.Width) ? ConvertToPanel.Bounds.Width : ConvertToPanel.Width;
-        convertWidth = convertWidth is 0 ? MinWidth : convertWidth;
-
-        vm.InfoWindow.ResponsiveResizeUpdate(panelWidth, scrollBarThickness, convertWidth);
+        vm.InfoWindow.ResponsiveResizeUpdate(panelWidth, scrollBarThickness);
     }
 
     private async ValueTask UpdateValuesAsync(FileInfo? fileInfo, CancellationToken cancellationToken)
@@ -262,29 +224,7 @@ public partial class ImageInfoView : UserControl
         vm.Exif.IsExifAvailable.Value = vm.PicViewer.Format.CurrentValue.IsExifImage();
     }
 
-    private async Task SendToImageSaver(string? location, string destination, string? width,
-        string? height,
-        string ext)
-    {
-        if (!uint.TryParse(width, out var widthValue) || !uint.TryParse(height, out var heightValue))
-        {
-            return;
-        }
 
-        try
-        {
-            await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(true));
-
-            var sameFile = destination.Equals(location, StringComparison.OrdinalIgnoreCase);
-            await SaveImageHandler.SaveImageWithPossibleNavigation(DataContext as MainViewModel, location, destination,
-                sameFile, ext, widthValue, heightValue,
-                null, null, true);
-        }
-        finally
-        {
-            await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(false));
-        }
-    }
 
     private void SetLoadingState(bool isLoading)
     {
@@ -293,16 +233,7 @@ public partial class ImageInfoView : UserControl
         SpinWaiter.IsVisible = isLoading;
     }
 
-    private string GetExtension() => ConversionComboBox.SelectedIndex switch
-    {
-        1 => ".png",
-        2 => ".jpg",
-        3 => ".webp",
-        4 => ".avif",
-        5 => ".heic",
-        6 => ".jxl",
-        _ => ""
-    };
+
 
     private void AdjustAspectRatio(TextBox sender)
     {
@@ -396,43 +327,6 @@ public partial class ImageInfoView : UserControl
                 await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(false));
             }
         }
-    }
-
-    private string DetermineFileExtension(MainViewModel vm, ref string destination)
-    {
-        var ext = vm.PicViewer.FileInfo.CurrentValue.Extension;
-        if (NoConversion.IsSelected)
-        {
-            return ext;
-        }
-
-        if (PngItem.IsSelected)
-        {
-            ext = ".png";
-        }
-        else if (JpgItem.IsSelected)
-        {
-            ext = ".jpg";
-        }
-        else if (WebpItem.IsSelected)
-        {
-            ext = ".webp";
-        }
-        else if (AvifItem.IsSelected)
-        {
-            ext = ".avif";
-        }
-        else if (HeicItem.IsSelected)
-        {
-            ext = ".heic";
-        }
-        else if (JxlItem.IsSelected)
-        {
-            ext = ".jxl";
-        }
-
-        destination = Path.ChangeExtension(destination, ext);
-        return ext;
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)

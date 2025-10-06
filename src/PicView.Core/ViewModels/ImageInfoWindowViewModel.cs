@@ -18,7 +18,6 @@ public class ImageInfoWindowViewModel : IDisposable
 
     public BindableReactiveProperty<bool> IsCopyButtonEnabled { get; } = new();
     public BindableReactiveProperty<bool> IsExtraButtonsEnabled { get; } = new();
-    public BindableReactiveProperty<bool> IsConvertBoxEnabled { get; } = new();
     
     public BindableReactiveProperty<bool> IsLoading { get; } = new(true);
 
@@ -30,14 +29,13 @@ public class ImageInfoWindowViewModel : IDisposable
             TextBoxXxlWidth,
             IsCopyButtonEnabled,
             IsExtraButtonsEnabled,
-            IsConvertBoxEnabled,
             IsLoading);
     }
 
-    public void ResponsiveResizeUpdate(double width, double scrollBarThickness, double panelWidth)
+    public void ResponsiveResizeUpdate(double width, double scrollBarThickness)
     {
-        const int firstBreakPoint = 500;
-        const int secondBreakPoint = 800;
+        const int firstBreakPoint = 600;
+        const int secondBreakPoint = 900;
         const int thirdBreakPoint = 1100;
 
         const int textBreakpoint = 920;
@@ -47,7 +45,6 @@ public class ImageInfoWindowViewModel : IDisposable
 
         IsCopyButtonEnabled.Value = width >= firstBreakPoint;
         IsExtraButtonsEnabled.Value = width >= secondBreakPoint;
-        IsConvertBoxEnabled.Value = width >= thirdBreakPoint;
 
         const int smallPadding = 10;
         const int largePadding = 40;
@@ -73,7 +70,7 @@ public class ImageInfoWindowViewModel : IDisposable
                 TextBoxXxlWidth.Value = newWidthBreakL - smallPadding;
                 break;
             case >= thirdBreakPoint:
-                var aboveThirdWidth = width / 2 - panelWidth - (textWidth * 2 + scrollBarThickness) +
+                var aboveThirdWidth = width / 2 - (textWidth * 2 + scrollBarThickness) +
                                       copyBtnWidth;
                 TextBoxWidth.Value = aboveThirdWidth;
                 var aboveThirdWidthL = aboveThirdWidth * 2 + textWidth * 2 - smallPadding * 2;
@@ -84,7 +81,7 @@ public class ImageInfoWindowViewModel : IDisposable
 
         if (width >= thirdBreakPoint)
         {
-            HalfLineWidth.Value = width / 2 - (scrollBarThickness + largePadding + panelWidth + 15);
+            HalfLineWidth.Value = width / 2 - (scrollBarThickness + largePadding + 15);
         }
         else
         {

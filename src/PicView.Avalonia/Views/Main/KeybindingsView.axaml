@@ -1555,6 +1555,28 @@
             <TextBlock
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                Text="{CompiledBinding Translation.FileConversion.Value,
+                                       Mode=OneWay}"
+                Width="170" />
+            <customControls:KeybindTextBox
+                Classes="hover TStyle"
+                MethodName="ConvertWindow"
+                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
+                                              Mode=OneWay}"
+                Width="140" />
+            <customControls:KeybindTextBox
+                Alt="True"
+                Classes="hover TStyle"
+                MethodName="ConvertWindow"
+                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
+                                              Mode=OneWay}"
+                Width="140" />
+        </StackPanel>
+
+        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
+            <TextBlock
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                 Text="{CompiledBinding Translation.ApplicationShortcuts.Value,
                                        Mode=OneWay}"
                 Width="170" />

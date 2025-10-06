@@ -1,0 +1,119 @@
+﻿<UserControl
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    x:Class="PicView.Avalonia.Views.Main.ConvertView"
+    x:DataType="vm:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
+    xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="CancelBrush" />
+    </UserControl.Resources>
+    <Panel Background="{DynamicResource TertiaryBackgroundColor}" x:Name="BgPanel">
+        <uc:SpinWaiter IsVisible="False" x:Name="SpinWaiter" />
+
+        <StackPanel
+            IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+            x:Name="ParentContainer">
+            <Border Margin="0,40" x:Name="MainBorder">
+                <!--  Convert To  -->
+                <StackPanel>
+                    <TextBlock
+                        Classes="txt"
+                        FontSize="16"
+                        Margin="0,0,0,10"
+                        Text="{CompiledBinding Translation.ConvertTo.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ComboBox
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="1"
+                        CornerRadius="2"
+                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Padding="5,7,0,7"
+                        SelectedIndex="0"
+                        Width="140"
+                        x:Name="ConversionComboBox">
+                        <ComboBoxItem Content="{CompiledBinding Translation.NoConversion.Value, Mode=OneWay}"
+                                      x:Name="NoConversion" />
+                        <ComboBoxItem Content=".png" x:Name="PngItem" />
+                        <ComboBoxItem Content=".jpg" x:Name="JpgItem" />
+                        <ComboBoxItem Content=".webp" x:Name="WebpItem" />
+                        <ComboBoxItem Content=".avif" x:Name="AvifItem" />
+                        <ComboBoxItem Content=".heic" x:Name="HeicItem" />
+                        <ComboBoxItem Content=".jxl" x:Name="JxlItem" />
+                    </ComboBox>
+                </StackPanel>
+            </Border>
+
+            <StackPanel
+                Background="#46252525"
+                Height="80"
+                Orientation="Horizontal"
+                x:Name="BottomBorder">
+                <Button
+                    Classes="BorderStyle altHover mainBtn"
+                    CornerRadius="4"
+                    IsVisible="False"
+                    Margin="30,0,60,0"
+                    Width="195"
+                    x:Name="ResetButton">
+                    <TextBlock
+                        Classes="txt"
+                        Text="{CompiledBinding Translation.Reset.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                </Button>
+
+                <Button
+                    Classes="BorderStyle altHover mainBtn"
+                    CornerRadius="4"
+                    Margin="30,0,60,0"
+                    Width="195"
+                    x:Name="CancelButton">
+                    <TextBlock
+                        Classes="txt"
+                        Foreground="{StaticResource CancelBrush}"
+                        Text="{CompiledBinding Translation.Cancel.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                </Button>
+
+                <SplitButton
+                    Background="{DynamicResource AccentColor}"
+                    Classes="BorderStyle accentHover mainBtn"
+                    CornerRadius="4"
+                    Margin="00,0,60,0"
+                    Padding="8"
+                    Width="195"
+                    x:Name="SaveButton">
+                    <TextBlock
+                        Classes="txt"
+                        Foreground="{StaticResource SecondaryTextColor}"
+                        Text="{CompiledBinding Translation.Save.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <SplitButton.Flyout>
+                        <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
+                            <MenuItem
+                                Background="Transparent"
+                                Header="{CompiledBinding Translation.SaveAs.Value,
+                                                         Mode=OneWay}"
+                                HorizontalAlignment="Center"
+                                Padding="0,6,24,6"
+                                Width="195"
+                                x:Name="SaveAsButton" />
+                        </MenuFlyout>
+                    </SplitButton.Flyout>
+                </SplitButton>
+
+            </StackPanel>
+        </StackPanel>
+    </Panel>
+</UserControl>

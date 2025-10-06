@@ -42,8 +42,8 @@ public partial class KeybindingsView : UserControl
         {
             return;
         }
-        
-        await KeybindingManager.SetDefaultKeybindings(vm.PlatformService).ConfigureAwait(false);
+
+        KeybindingManager.SetDefaultKeybindings(vm.PlatformService);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             var topLevel = TopLevel.GetTopLevel(this);

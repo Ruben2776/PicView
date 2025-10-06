@@ -243,10 +243,10 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
     }
     
     #endregion
-
-    public int CombinedTitleButtonsWidth { get; set; } = 165;
     
     #region Window interface implementations
+
+    public int CombinedTitleButtonsWidth { get; set; } = 165;
     
     public void ShowAboutWindow() =>
         _windowInitializer?.ShowAboutWindow(_vm);
@@ -268,6 +268,9 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
 
     public void ShowEffectsWindow() =>
         _windowInitializer?.ShowEffectsWindow(_vm);
+
+    public void ShowConvertWindow() =>
+        _windowInitializer?.ShowConvertWindow(_vm);
 
     /// <inheritdoc />
     public async Task Maximize(bool saveSetting = true) =>

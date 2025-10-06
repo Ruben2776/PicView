@@ -45,4 +45,6 @@ public interface IPlatformWindowService
     void ShowSingleImageResizeWindow();
     
     Task ShowBatchResizeWindow();
+
+    void ShowConvertWindow();
 }

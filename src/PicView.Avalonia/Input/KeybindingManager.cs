@@ -21,15 +21,15 @@ public static class KeybindingManager
         var keybindings = await KeybindingFunctions.LoadKeyBindingsFile().ConfigureAwait(false);
         if (string.IsNullOrWhiteSpace(keybindings))
         {
-            await SetDefaultKeybindings(platformSpecificService).ConfigureAwait(false);
+            SetDefaultKeybindings(platformSpecificService);
         }
         else
         {
-            await UpdateKeybindings(keybindings).ConfigureAwait(false);
+            UpdateKeybindings(keybindings);
         }
     }
 
-    public static async ValueTask UpdateKeybindings(string json)
+    private static void UpdateKeybindings(string json)
     {
         // Deserialize JSON into a dictionary of string keys and string values
         var keyValues = JsonSerializer.Deserialize(
@@ -37,7 +37,7 @@ public static class KeybindingManager
             as Dictionary<string, string>;
 
         CustomShortcuts ??= new Dictionary<KeyGesture, Func<ValueTask>>();
-        await PopulateCustomShortcutsAsync(keyValues).ConfigureAwait(false);
+        PopulateCustomShortcuts(keyValues);
     }
 
     public static async ValueTask UpdateKeyBindingsFile()
@@ -56,7 +56,7 @@ public static class KeybindingManager
         }
     }
 
-    private static async ValueTask PopulateCustomShortcutsAsync(Dictionary<string, string> keyValues)
+    private static void PopulateCustomShortcuts(Dictionary<string, string> keyValues)
     {
         foreach (var kvp in keyValues)
         {
@@ -67,18 +67,22 @@ public static class KeybindingManager
                 {
                     continue;
                 }
-                var function = await FunctionsMapper.GetFunctionByName(kvp.Value).ConfigureAwait(false);
+
+                var function = FunctionsMapper.GetFunctionByName(kvp.Value);
                 // Add to the dictionary
-                CustomShortcuts[gesture] = function;
+                if (function != null)
+                {
+                    CustomShortcuts[gesture] = function;
+                }
             }
             catch (Exception exception)
             {
-                DebugHelper.LogDebug(nameof(KeybindingManager), nameof(PopulateCustomShortcutsAsync), exception);
+                DebugHelper.LogDebug(nameof(KeybindingManager), nameof(PopulateCustomShortcuts), exception);
             }
         }
     }
 
-    internal static async ValueTask SetDefaultKeybindings(IPlatformSpecificService platformSpecificService)
+    internal static void SetDefaultKeybindings(IPlatformSpecificService platformSpecificService)
     {
         if (CustomShortcuts is not null)
         {
@@ -93,7 +97,7 @@ public static class KeybindingManager
                 defaultKeybindings, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
             as Dictionary<string, string>;
 
-        await PopulateCustomShortcutsAsync(keyValues).ConfigureAwait(false);
+        PopulateCustomShortcuts(keyValues);
     }
     
     private static string GetFunctionNameByFunction(Func<ValueTask> function) =>

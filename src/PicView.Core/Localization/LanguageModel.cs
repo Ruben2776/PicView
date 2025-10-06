@@ -126,6 +126,7 @@ public class LanguageModel
     public string? ExposureTime { get; set; }
     public string? File { get; set; }
     public string? FileAssociations { get; set; }
+    public string? FileConversion { get; set; }
     public string? FileCopy { get; set; }
     public string? FileCopyPath { get; set; }
     public string? FileCopyPathMessage { get; set; }

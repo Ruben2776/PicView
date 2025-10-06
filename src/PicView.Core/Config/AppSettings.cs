@@ -275,7 +275,7 @@ public class Zoom
     /// <summary>
     /// A value indicating whether the application prevents zooming out beyond the original size of the image.
     /// </summary>
-    public bool AvoidZoomingOut { get; set; } = false;
+    public bool AvoidZoomingOut { get; set; } = true;
 
     /// <summary>
     /// Indicates whether the zoom operation is animated when performed.

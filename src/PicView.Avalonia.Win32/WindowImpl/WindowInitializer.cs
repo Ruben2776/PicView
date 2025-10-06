@@ -18,6 +18,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
 {
     private AboutWindow? _aboutWindow;
     private BatchResizeWindow? _batchResizeWindow;
+    private ConvertWindow? _convertWindow;
     private EffectsWindow? _effectsWindow;
     private ImageInfoWindow? _imageInfoWindow;
     private KeybindingsWindow? _keybindingsWindow;
@@ -57,7 +58,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
                     WindowStartupLocation = WindowStartupLocation.CenterOwner
                 };
                 _aboutWindow.Show(desktop.MainWindow);
-                _aboutWindow.Closing += (s, e) => _aboutWindow = null;
+                _aboutWindow.Closing += (_, _) => _aboutWindow = null;
             }
             else
             {
@@ -164,7 +165,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
                     WindowStartupLocation = WindowStartupLocation.CenterOwner
                 };
                 _keybindingsWindow.Show(desktop.MainWindow);
-                _keybindingsWindow.Closing += (s, e) => _keybindingsWindow = null;
+                _keybindingsWindow.Closing += (_, _) => _keybindingsWindow = null;
             }
             else
             {
@@ -266,7 +267,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
                     WindowStartupLocation = WindowStartupLocation.CenterOwner
                 };
                 _singleImageResizeWindow.Show(desktop.MainWindow);
-                _singleImageResizeWindow.Closing += (s, e) => _singleImageResizeWindow = null;
+                _singleImageResizeWindow.Closing += (_, _) => _singleImageResizeWindow = null;
             }
             else
             {
@@ -365,7 +366,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
                     WindowStartupLocation = WindowStartupLocation.CenterOwner
                 };
                 _effectsWindow.Show(desktop.MainWindow);
-                _effectsWindow.Closing += (s, e) => _effectsWindow = null;
+                _effectsWindow.Closing += (_, _) => _effectsWindow = null;
             }
             else
             {
@@ -376,6 +377,52 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 else
                 {
                     _effectsWindow.Show();
+                }
+            }
+
+            _ = FunctionsMapper.CloseMenus();
+        }
+    }
+
+    public void ShowConvertWindow(MainViewModel vm)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(Set);
+        }
+
+        return;
+
+        void Set()
+        {
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+
+            if (_convertWindow is null)
+            {
+                _convertWindow = new ConvertWindow
+                {
+                    DataContext = vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+                _convertWindow.Show(desktop.MainWindow);
+                _convertWindow.Closing += (_, _) => _convertWindow = null;
+            }
+            else
+            {
+                if (_convertWindow.WindowState == WindowState.Minimized)
+                {
+                    WindowFunctions.ShowMinimizedWindow(_convertWindow);
+                }
+                else
+                {
+                    _convertWindow.Show();
                 }
             }
 

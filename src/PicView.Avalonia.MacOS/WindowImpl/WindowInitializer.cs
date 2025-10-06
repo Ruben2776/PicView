@@ -18,6 +18,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
 {
     private AboutWindow? _aboutWindow;
     private BatchResizeWindow? _batchResizeWindow;
+    private ConvertWindow? _convertWindow;
     private EffectsWindow? _effectsWindow;
     private ImageInfoWindow? _imageInfoWindow;
     private KeybindingsWindow? _keybindingsWindow;
@@ -332,6 +333,47 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 else
                 {
                     _effectsWindow.Activate();
+                }
+            }
+
+            _ = FunctionsMapper.CloseMenus();
+        }
+    }
+
+    public void ShowConvertWindow(MainViewModel vm)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(Set);
+        }
+
+        return;
+
+        void Set()
+        {
+            if (_convertWindow is null)
+            {
+                _convertWindow = new ConvertWindow
+                {
+                    DataContext = vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+                _convertWindow.Show();
+                _convertWindow.Closing += (_, _) => _convertWindow = null;
+            }
+            else
+            {
+                if (_convertWindow.WindowState == WindowState.Minimized)
+                {
+                    WindowFunctions.ShowMinimizedWindow(_convertWindow);
+                }
+                else
+                {
+                    _convertWindow.Activate();
                 }
             }
 

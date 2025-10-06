@@ -62,7 +62,7 @@ public class CropKeyboardManager(CropControl control)
 
         if (KeybindingManager.CustomShortcuts.TryGetValue(currentKeys, out var func))
         {
-            var function = await FunctionsMapper.GetFunctionByName(func.Method.Name);
+            var function = FunctionsMapper.GetFunctionByName(func.Method.Name);
             switch (function.Method.Name)
             {
                 case "Up":

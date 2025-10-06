@@ -1,7 +1,6 @@
 ﻿using PicView.Avalonia.UI;
 using PicView.Core.Config;
 using PicView.Core.ProcessHandling;
-using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.ViewModels;
 
@@ -43,6 +42,14 @@ public class WindowViewModel
         if (UIHelper.GetMainView.DataContext is MainViewModel vm)
         {
             vm.PlatformWindowService.ShowAboutWindow();
+        }
+    }
+
+    public void ShowConvertWindow()
+    {
+        if (UIHelper.GetMainView.DataContext is MainViewModel vm)
+        {
+            vm.PlatformWindowService.ShowConvertWindow();
         }
     }
 

@@ -1,17 +1,14 @@
-<Window
-    BorderThickness="1"
+﻿<Window
     CanResize="False"
-    CornerRadius="8"
     SizeToContent="WidthAndHeight"
-    Title="Loading..."
-    x:Class="PicView.Avalonia.Win32.Views.AboutWindow"
+    Title="ConvertWindow"
+    x:Class="PicView.Avalonia.Win32.Views.ConvertWindow"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
     <Border
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
@@ -71,7 +68,7 @@
                     Height="28"
                     LineHeight="28"
                     Padding="30,0,0,0"
-                    Text="{CompiledBinding Translation.About.Value,
+                    Text="{CompiledBinding Translation.FileConversion.Value,
                                            Mode=OneWay}"
                     TextAlignment="Center"
                     x:Name="TitleText" />
@@ -82,13 +79,12 @@
                 Height="1"
                 x:Name="BorderRectangle" />
 
-            <main:AboutView
+            <main:ConvertView
                 Background="{DynamicResource NoisyTexture}"
                 Focusable="True"
                 Margin="0"
-                Padding="10,2,5,10"
                 PointerPressed="MoveWindow"
-                x:Name="AboutView" />
+                x:Name="ConvertView" />
         </StackPanel>
     </Border>
 </Window>

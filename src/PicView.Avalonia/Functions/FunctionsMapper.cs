@@ -27,10 +27,10 @@ public static class FunctionsMapper
 {
     public static MainViewModel? Vm;
 
-    public static Task<Func<ValueTask>> GetFunctionByName(string functionName)
+    public static Func<ValueTask>? GetFunctionByName(string functionName)
     {
         // Remember to have exact matching names, or it will be null
-        return Task.FromResult<Func<ValueTask>>(functionName switch
+        return functionName switch
         {
             // Navigation values
             "Next" => Next,
@@ -97,6 +97,7 @@ public static class FunctionsMapper
             "SettingsWindow" => SettingsWindow,
             "KeybindingsWindow" => KeybindingsWindow,
             "BatchResizeWindow" => BatchResizeWindow,
+            "ConvertWindow" => ConvertWindow,
 
             // Open functions
             "Open" => Open,
@@ -170,7 +171,7 @@ public static class FunctionsMapper
             "Restart" => Restart,
 
             _ => null
-        });
+        };
     }
 
     #region Functions
@@ -449,6 +450,9 @@ public static class FunctionsMapper
 
     public static async ValueTask AboutWindow() =>
         await Dispatcher.UIThread.InvokeAsync(() => Vm?.PlatformWindowService?.ShowAboutWindow());
+
+    public static async ValueTask ConvertWindow() =>
+        await Dispatcher.UIThread.InvokeAsync(() => Vm?.PlatformWindowService?.ShowConvertWindow());
 
     public static async ValueTask KeybindingsWindow() =>
         await Dispatcher.UIThread.InvokeAsync(() => Vm?.PlatformWindowService?.ShowKeybindingsWindow());

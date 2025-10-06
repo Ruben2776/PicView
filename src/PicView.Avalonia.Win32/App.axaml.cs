@@ -249,6 +249,9 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
     public void ShowEffectsWindow() =>
         _windowInitializer?.ShowEffectsWindow(_vm);
 
+    public void ShowConvertWindow() =>
+        _windowInitializer?.ShowConvertWindow(_vm);
+
     /// <inheritdoc />
     public async Task Maximize(bool saveSetting = true) =>
         await Win32Window.Maximize(_mainWindow, _vm, saveSetting);

@@ -181,7 +181,7 @@ public class KeybindTextBox : TextBox
 
         KeybindingManager.CustomShortcuts.Remove(new KeyGesture(e.Key, e.KeyModifiers));
 
-        var function = await FunctionsMapper.GetFunctionByName(MethodName);
+        var function = FunctionsMapper.GetFunctionByName(MethodName);
 
         if (function == null)
         {

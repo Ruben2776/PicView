@@ -258,6 +258,21 @@
                 </MenuItem.Icon>
             </MenuItem>
 
+            <!--  Convert image  -->
+            <MenuItem
+                Command="{CompiledBinding Window.ShowConvertWindow}"
+                Header="{CompiledBinding Translation.ConvertTo.Value,
+                                         Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.ShouldOptimizeImageBeEnabled.Value,
+                                            Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Image
+                        Height="12"
+                        Source="{StaticResource PortalImage}"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+
             <Separator />
 
             <!--  Delete file  -->
@@ -430,539 +445,464 @@
 
                 <StackPanel x:Name="MainContainer">
 
-                    <StackPanel Orientation="Horizontal">
 
-                        <WrapPanel HorizontalAlignment="Center" MaxWidth="{Binding Path=Bounds.Width, ElementName=ParentPanel}">
+                    <WrapPanel>
 
-                            <!--  File name  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.FileName.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth,
-                                                            FallbackValue=0}" />
-                                <customControls:FuncTextBox
-                                    Classes="hover TStyle x"
-                                    Text="{Binding PicViewer.FileInfo.Value.Name, FallbackValue=''}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value,
-                                                            FallbackValue=0}"
-                                    x:Name="FileNameTextBox" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding PicViewer.FileInfo.Value.Name,
-                                                               FallbackValue=''}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
-                                                                FallbackValue=False}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Folder path  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.Folder.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth,
-                                                            FallbackValue=0}" />
-                                <customControls:FuncTextBox
-                                    Classes="hover TStyle x"
-                                    Text="{CompiledBinding PicViewer.FileInfo.Value.DirectoryName,
-                                                           FallbackValue=''}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value,
-                                                            FallbackValue=0}"
-                                    x:Name="DirectoryNameTextBox" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding PicViewer.FileInfo.Value.DirectoryName,
-                                                               FallbackValue=''}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
-                                                                FallbackValue=False}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Full path  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.FullPath.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth,
-                                                            FallbackValue='0'}" />
-                                <customControls:FuncTextBox
-                                    Classes="hover TStyle x"
-                                    Text="{CompiledBinding PicViewer.FileInfo.Value.FullName,
-                                                           FallbackValue=''}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value}"
-                                    x:Name="FullPathTextBox" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding PicViewer.FileInfo.Value.FullName,
-                                                               FallbackValue=''}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Width  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.Width.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <customControls:NumTextBox
-                                    Classes="hover TStyle x"
-                                    Text="{CompiledBinding PicViewer.PixelWidth.Value,
-                                                           Mode=OneWay}"
-                                    ToolTip.Tip="{CompiledBinding Translation.SizeTooltip.Value,
-                                                                  Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    x:Name="PixelWidthTextBox" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding PicViewer.PixelWidth.Value,
-                                                               Mode=OneWay}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Height  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.Height.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <customControls:NumTextBox
-                                    Classes="hover TStyle x"
-                                    Text="{CompiledBinding PicViewer.PixelHeight.Value,
-                                                           Mode=OneWay}"
-                                    ToolTip.Tip="{CompiledBinding Translation.SizeTooltip.Value,
-                                                                  Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    x:Name="PixelHeightTextBox" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding PicViewer.PixelHeight.Value,
-                                                               Mode=OneWay}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Size Mp  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.SizeMp.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth,
-                                                            FallbackValue=''}" />
-                                <customControls:FuncTextBox
-                                    Background="{DynamicResource DisabledBackgroundColor}"
-                                    Classes=" TStyle x"
-                                    IsReadOnly="True"
-                                    Text="{CompiledBinding Exif.SizeMp.Value,
-                                                           Mode=OneWay,
-                                                           FallbackValue=''}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    x:Name="SizeMpTextBox" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding Exif.SizeMp.Value,
-                                                               Mode=OneWay}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Resolution  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.Resolution.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}"
-                                    x:Name="ResolutionTextBlock" />
-                                <customControls:FuncTextBox
-                                    Background="{DynamicResource DisabledBackgroundColor}"
-                                    Classes=" TStyle x"
-                                    IsReadOnly="True"
-                                    Text="{CompiledBinding Exif.Resolution.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding Exif.Resolution.Value,
-                                                               Mode=OneWay}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Print Size Centimeters  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.PrintSizeCm.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <customControls:FuncTextBox
-                                    Background="{DynamicResource DisabledBackgroundColor}"
-                                    Classes=" TStyle x"
-                                    IsReadOnly="True"
-                                    Text="{CompiledBinding Exif.PrintSizeCm.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    x:Name="PrintSizeCmTextBox" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding Exif.PrintSizeCm.Value,
-                                                               Mode=OneWay}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Print Size Inches  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.PrintSizeIn.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <customControls:FuncTextBox
-                                    Background="{DynamicResource DisabledBackgroundColor}"
-                                    Classes=" TStyle x"
-                                    IsReadOnly="True"
-                                    Text="{CompiledBinding Exif.PrintSizeInch.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    x:Name="PrintSizeInchTextBox" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding Exif.PrintSizeInch.Value,
-                                                               Mode=OneWay}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Aspect Ratio  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.ReadAbleAspectRatio.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <customControls:FuncTextBox
-                                    Background="{DynamicResource DisabledBackgroundColor}"
-                                    Classes=" TStyle x"
-                                    IsReadOnly="True"
-                                    Text="{CompiledBinding Exif.AspectRatio.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    x:Name="AspectRatioTextBox" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding Exif.AspectRatio.Value,
-                                                               Mode=OneWay}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Bit Depth  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.BitDepth.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <customControls:FuncTextBox
-                                    Background="{DynamicResource DisabledBackgroundColor}"
-                                    Classes="TStyle x"
-                                    IsReadOnly="True"
-                                    Text="{CompiledBinding Exif.BitDepth.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding Exif.BitDepth.Value,
-                                                               Mode=OneWay}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Orientation  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.Orientation.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <ComboBox
-                                    Background="{DynamicResource DisabledBackgroundColor}"
-                                    Classes="CStyle x"
-                                    ItemsSource="{CompiledBinding Exif.Orientations.Value,
-                                                                  Mode=OneWay}"
-                                    Margin="5,0,0,0"
-                                    MinWidth="180"
-                                    SelectedIndex="{CompiledBinding Exif.Orientation.Value,
-                                                                    Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    x:Name="OrientationBox" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding Exif.Orientation.Value,
-                                                               Mode=OneWay}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Image Format  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.ImageFormat.Value}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <customControls:FuncTextBox
-                                    Background="{DynamicResource DisabledBackgroundColor}"
-                                    Classes="TStyle x"
-                                    IsReadOnly="True"
-                                    Text="{CompiledBinding PicViewer.Format.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding PicViewer.Format.Value,
-                                                               Mode=OneWay}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  File Size  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.FileSize.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <customControls:FuncTextBox
-                                    Background="{DynamicResource DisabledBackgroundColor}"
-                                    Classes="TStyle x"
-                                    IsReadOnly="True"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                    x:Name="FileSizeBox" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{Binding Path=Text, ElementName=FileSizeBox}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Created  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.Created.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <customControls:DateTimePickerButtons
-                                    Margin="5,0,0,0"
-                                    SelectedDateTime="{CompiledBinding PicViewer.FileInfo.Value.CreationTime,
-                                                                       Mode=TwoWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
-
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding PicViewer.FileInfo.Value.CreationTime,
-                                                               FallbackValue=''}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Modified  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.Modified.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <customControls:DateTimePickerButtons
-                                    Margin="5,0,0,0"
-                                    SelectedDateTime="{CompiledBinding PicViewer.FileInfo.Value.LastWriteTime,
-                                                                       Mode=TwoWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding PicViewer.FileInfo.Value.LastWriteTime,
-                                                               FallbackValue=''}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                            <!--  Last Accessed  -->
-                            <StackPanel Margin="15,10" Orientation="Horizontal">
-                                <TextBlock
-                                    Classes="txt"
-                                    Margin="0,8,0,0"
-                                    Text="{CompiledBinding Translation.LastAccessTime.Value,
-                                                           Mode=OneWay}"
-                                    Width="{CompiledBinding InfoWindow.TextWidth}" />
-                                <customControls:DateTimePickerButtons
-                                    Margin="5,0,0,0"
-                                    SelectedDateTime="{CompiledBinding PicViewer.FileInfo.Value.LastAccessTime,
-                                                                       Mode=TwoWay}"
-                                    Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
-
-                                <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
-                                    CopyText="{CompiledBinding PicViewer.FileInfo.Value.LastAccessTime,
-                                                               FallbackValue=''}"
-                                    IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
-                                    ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
-                                                                  Mode=OneWay}">
-                                    <Path Classes="CopyPath" />
-                                </customControls:CopyButton>
-                            </StackPanel>
-
-                        </WrapPanel>
-
-                        <!--  Convert To  -->
-                        <StackPanel
-                            HorizontalAlignment="Right"
-                            IsVisible="{CompiledBinding InfoWindow.IsConvertBoxEnabled.Value}"
-                            Margin="45,15,10,0"
-                            Width="140"
-                            x:Name="ConvertToPanel">
+                        <!--  File name  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
                             <TextBlock
                                 Classes="txt"
-                                FontSize="16"
-                                Margin="0,25,0,10"
-                                Text="{CompiledBinding Translation.ConvertTo.Value,
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.FileName.Value,
                                                        Mode=OneWay}"
-                                TextAlignment="Center" />
-                            <ComboBox
-                                BorderBrush="{DynamicResource MainBorderColor}"
-                                BorderThickness="1"
-                                CornerRadius="2"
-                                FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                Foreground="{DynamicResource MainTextColor}"
-                                Padding="5,7,0,7"
-                                SelectedIndex="0"
-                                Width="140"
-                                x:Name="ConversionComboBox">
-                                <ComboBoxItem Content="{CompiledBinding Translation.NoConversion.Value, Mode=OneWay}" x:Name="NoConversion" />
-                                <ComboBoxItem Content=".png" x:Name="PngItem" />
-                                <ComboBoxItem Content=".jpg" x:Name="JpgItem" />
-                                <ComboBoxItem Content=".webp" x:Name="WebpItem" />
-                                <ComboBoxItem Content=".avif" x:Name="AvifItem" />
-                                <ComboBoxItem Content=".heic" x:Name="HeicItem" />
-                                <ComboBoxItem Content=".jxl" x:Name="JxlItem" />
-                            </ComboBox>
-
-                            <!--  Save, save as  -->
-                            <SplitButton
-                                Background="{DynamicResource AccentColor}"
-                                Classes="BorderStyle accentHover mainBtn"
-                                CornerRadius="2"
-                                Foreground="{StaticResource SecondaryTextColor}"
-                                Margin="0,40,0,0"
-                                Width="140"
-                                x:Name="SaveButton">
-                                <TextBlock
-                                    Classes="txt"
-                                    Foreground="{StaticResource SecondaryTextColor}"
-                                    Text="{CompiledBinding Translation.Save.Value,
-                                                           Mode=OneWay}"
-                                    TextAlignment="Center" />
-                                <SplitButton.Flyout>
-                                    <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
-                                        <MenuItem
-                                            Background="Transparent"
-                                            Header="{CompiledBinding Translation.SaveAs.Value,
-                                                                     Mode=OneWay}"
-                                            Width="140"
-                                            x:Name="SaveAsButton" />
-                                    </MenuFlyout>
-                                </SplitButton.Flyout>
-                            </SplitButton>
-
-                            <!--  Reset  -->
-                            <Button
-                                Classes="BorderStyle altHover mainBtn"
-                                CornerRadius="2"
-                                Margin="0,20,0,0"
-                                Width="140"
-                                x:Name="ResetButton">
-                                <TextBlock
-                                    Classes="txt"
-                                    Text="{CompiledBinding Translation.Reset.Value,
-                                                           Mode=OneWay}"
-                                    TextAlignment="Center" />
-                            </Button>
+                                Width="{CompiledBinding InfoWindow.TextWidth,
+                                                        FallbackValue=0}" />
+                            <customControls:FuncTextBox
+                                Classes="hover TStyle x"
+                                Text="{Binding PicViewer.FileInfo.Value.Name, FallbackValue=''}"
+                                Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value,
+                                                        FallbackValue=0}"
+                                x:Name="FileNameTextBox" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding PicViewer.FileInfo.Value.Name,
+                                                           FallbackValue=''}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
+                                                            FallbackValue=False}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
                         </StackPanel>
 
-                    </StackPanel>
+                        <!--  Folder path  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.Folder.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth,
+                                                        FallbackValue=0}" />
+                            <customControls:FuncTextBox
+                                Classes="hover TStyle x"
+                                Text="{CompiledBinding PicViewer.FileInfo.Value.DirectoryName,
+                                                       FallbackValue=''}"
+                                Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value,
+                                                        FallbackValue=0}"
+                                x:Name="DirectoryNameTextBox" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding PicViewer.FileInfo.Value.DirectoryName,
+                                                           FallbackValue=''}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
+                                                            FallbackValue=False}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Full path  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.FullPath.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth,
+                                                        FallbackValue='0'}" />
+                            <customControls:FuncTextBox
+                                Classes="hover TStyle x"
+                                Text="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                                                       FallbackValue=''}"
+                                Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value}"
+                                x:Name="FullPathTextBox" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                                                           FallbackValue=''}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Width  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.Width.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <customControls:NumTextBox
+                                Classes="hover TStyle x"
+                                Text="{CompiledBinding PicViewer.PixelWidth.Value,
+                                                       Mode=OneWay}"
+                                ToolTip.Tip="{CompiledBinding Translation.SizeTooltip.Value,
+                                                              Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
+                                x:Name="PixelWidthTextBox" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding PicViewer.PixelWidth.Value,
+                                                           Mode=OneWay}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Height  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.Height.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <customControls:NumTextBox
+                                Classes="hover TStyle x"
+                                Text="{CompiledBinding PicViewer.PixelHeight.Value,
+                                                       Mode=OneWay}"
+                                ToolTip.Tip="{CompiledBinding Translation.SizeTooltip.Value,
+                                                              Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
+                                x:Name="PixelHeightTextBox" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding PicViewer.PixelHeight.Value,
+                                                           Mode=OneWay}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Size Mp  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.SizeMp.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth,
+                                                        FallbackValue=''}" />
+                            <customControls:FuncTextBox
+                                Background="{DynamicResource DisabledBackgroundColor}"
+                                Classes=" TStyle x"
+                                IsReadOnly="True"
+                                Text="{CompiledBinding Exif.SizeMp.Value,
+                                                       Mode=OneWay,
+                                                       FallbackValue=''}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
+                                x:Name="SizeMpTextBox" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding Exif.SizeMp.Value,
+                                                           Mode=OneWay}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Resolution  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.Resolution.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}"
+                                x:Name="ResolutionTextBlock" />
+                            <customControls:FuncTextBox
+                                Background="{DynamicResource DisabledBackgroundColor}"
+                                Classes=" TStyle x"
+                                IsReadOnly="True"
+                                Text="{CompiledBinding Exif.Resolution.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding Exif.Resolution.Value,
+                                                           Mode=OneWay}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Print Size Centimeters  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.PrintSizeCm.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <customControls:FuncTextBox
+                                Background="{DynamicResource DisabledBackgroundColor}"
+                                Classes=" TStyle x"
+                                IsReadOnly="True"
+                                Text="{CompiledBinding Exif.PrintSizeCm.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
+                                x:Name="PrintSizeCmTextBox" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding Exif.PrintSizeCm.Value,
+                                                           Mode=OneWay}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Print Size Inches  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.PrintSizeIn.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <customControls:FuncTextBox
+                                Background="{DynamicResource DisabledBackgroundColor}"
+                                Classes=" TStyle x"
+                                IsReadOnly="True"
+                                Text="{CompiledBinding Exif.PrintSizeInch.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
+                                x:Name="PrintSizeInchTextBox" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding Exif.PrintSizeInch.Value,
+                                                           Mode=OneWay}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Aspect Ratio  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.ReadAbleAspectRatio.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <customControls:FuncTextBox
+                                Background="{DynamicResource DisabledBackgroundColor}"
+                                Classes=" TStyle x"
+                                IsReadOnly="True"
+                                Text="{CompiledBinding Exif.AspectRatio.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
+                                x:Name="AspectRatioTextBox" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding Exif.AspectRatio.Value,
+                                                           Mode=OneWay}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Bit Depth  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.BitDepth.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <customControls:FuncTextBox
+                                Background="{DynamicResource DisabledBackgroundColor}"
+                                Classes="TStyle x"
+                                IsReadOnly="True"
+                                Text="{CompiledBinding Exif.BitDepth.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding Exif.BitDepth.Value,
+                                                           Mode=OneWay}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Orientation  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.Orientation.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <ComboBox
+                                Background="{DynamicResource DisabledBackgroundColor}"
+                                Classes="CStyle x"
+                                ItemsSource="{CompiledBinding Exif.Orientations.Value,
+                                                              Mode=OneWay}"
+                                Margin="5,0,0,0"
+                                MinWidth="180"
+                                SelectedIndex="{CompiledBinding Exif.Orientation.Value,
+                                                                Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
+                                x:Name="OrientationBox" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding Exif.Orientation.Value,
+                                                           Mode=OneWay}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Image Format  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.ImageFormat.Value}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <customControls:FuncTextBox
+                                Background="{DynamicResource DisabledBackgroundColor}"
+                                Classes="TStyle x"
+                                IsReadOnly="True"
+                                Text="{CompiledBinding PicViewer.Format.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding PicViewer.Format.Value,
+                                                           Mode=OneWay}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  File Size  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.FileSize.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <customControls:FuncTextBox
+                                Background="{DynamicResource DisabledBackgroundColor}"
+                                Classes="TStyle x"
+                                IsReadOnly="True"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
+                                x:Name="FileSizeBox" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{Binding Path=Text, ElementName=FileSizeBox}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Created  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.Created.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <customControls:DateTimePickerButtons
+                                Margin="5,0,0,0"
+                                SelectedDateTime="{CompiledBinding PicViewer.FileInfo.Value.CreationTime,
+                                                                   Mode=TwoWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
+
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding PicViewer.FileInfo.Value.CreationTime,
+                                                           FallbackValue=''}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Modified  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.Modified.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <customControls:DateTimePickerButtons
+                                Margin="5,0,0,0"
+                                SelectedDateTime="{CompiledBinding PicViewer.FileInfo.Value.LastWriteTime,
+                                                                   Mode=TwoWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding PicViewer.FileInfo.Value.LastWriteTime,
+                                                           FallbackValue=''}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                        <!--  Last Accessed  -->
+                        <StackPanel Margin="15,10" Orientation="Horizontal">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,8,0,0"
+                                Text="{CompiledBinding Translation.LastAccessTime.Value,
+                                                       Mode=OneWay}"
+                                Width="{CompiledBinding InfoWindow.TextWidth}" />
+                            <customControls:DateTimePickerButtons
+                                Margin="5,0,0,0"
+                                SelectedDateTime="{CompiledBinding PicViewer.FileInfo.Value.LastAccessTime,
+                                                                   Mode=TwoWay}"
+                                Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}" />
+
+                            <customControls:CopyButton
+                                Classes="altHover BorderStyle"
+                                CopyText="{CompiledBinding PicViewer.FileInfo.Value.LastAccessTime,
+                                                           FallbackValue=''}"
+                                IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
+                                ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
+                                                              Mode=OneWay}">
+                                <Path Classes="CopyPath" />
+                            </customControls:CopyButton>
+                        </StackPanel>
+
+                    </WrapPanel>
+
+
+
 
                     <!--  Copyright, comment, etc.  -->
                     <StackPanel IsEnabled="{CompiledBinding Exif.IsExifAvailable.Value}">

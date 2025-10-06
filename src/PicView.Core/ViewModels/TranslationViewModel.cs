@@ -277,6 +277,7 @@ public class TranslationViewModel : IDisposable
         SelectAll.Value = t.SelectAll;
         Normal.Value = t.Normal;
         FileAssociations.Value = t.FileAssociations;
+        FileConversion.Value = t.FileConversion;
         SelectFileTypesToAssociate.Value = t.SelectFileTypesToAssociate;
         Filter.Value = t.Filter;
         UnselectAll.Value = t.UnselectAll;
@@ -392,6 +393,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> ExposureTime { get; } = new();
     public BindableReactiveProperty<string?> File { get; } = new();
     public BindableReactiveProperty<string?> FileAssociations { get; } = new();
+    public BindableReactiveProperty<string?> FileConversion { get; } = new();
     public BindableReactiveProperty<string?> FileCopyPath { get; } = new();
     public BindableReactiveProperty<string?> FileCut { get; } = new();
     public BindableReactiveProperty<string?> FileExtension { get; } = new();
