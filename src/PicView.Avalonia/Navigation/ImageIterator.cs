@@ -294,7 +294,9 @@ public class ImageIterator : IAsyncDisposable
 
                 RemoveCurrentItemFromPreLoader();
                 PreLoader.Resynchronize(ImagePaths);
-                var newIndex = GetIteration(index, NavigateTo.Previous);
+                var newIndex = Settings.Navigation.IsNavigatingBackwardsWhenDeleting
+                    ? GetIteration(index, NavigateTo.Previous)
+                    : GetIteration(index, NavigateTo.Next);
                 CurrentIndex = newIndex;
                 _vm.PicViewer.FileInfo.Value = ImagePaths[CurrentIndex];
                 await IterateToIndex(CurrentIndex, new CancellationTokenSource());

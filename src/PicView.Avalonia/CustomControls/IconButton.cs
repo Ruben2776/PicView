@@ -1,10 +1,10 @@
-﻿using System.Diagnostics;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Metadata;
 using Avalonia.Threading;
+using PicView.Avalonia.UI;
 
 namespace PicView.Avalonia.CustomControls;
 
@@ -103,7 +103,7 @@ public class IconButton : Button
             Content = BuildIcon();
         }
 
-        if (change.Property == IsPressedProperty && change.GetNewValue<bool>() == false)
+        if (change.Property == IsPressedProperty && !change.GetNewValue<bool>())
         {
             StopTimer();
         }
@@ -128,20 +128,11 @@ public class IconButton : Button
 
                 if (Settings.Theme.GlassTheme)
                 {
-                    if (!Application.Current.TryGetResource("SecondaryTextColor",
-                            Application.Current.RequestedThemeVariant, out var secondaryAccentColor))
-                    {
-                        continue;
-                    }
-
-                    if (secondaryAccentColor is Color color)
-                    {
-                        pen.Brush = new SolidColorBrush(color);
-                    }
+                    pen.Brush = UIHelper.GetBrush("SecondaryTextColor");
                 }
                 else
                 {
-                    pen.Brush = Foreground;
+                    pen.Brush = UIHelper.GetBrush("MainTextColor");
                 }
             }
 
@@ -155,21 +146,14 @@ public class IconButton : Button
             // Change brush to secondary accent color on pointer enter
             PointerEntered += delegate
             {
-                Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.Invoke(() =>
                 {
-                    if (!Application.Current.TryGetResource("SecondaryTextColor",
-                            Application.Current.RequestedThemeVariant, out var secondaryAccentColor))
-                    {
-                        return;
-                    }
-#if DEBUG
-                    Debug.Assert(secondaryAccentColor != null, nameof(secondaryAccentColor) + " != null");
-#endif
+                    var brush = UIHelper.GetBrush("SecondaryTextColor");
                     foreach (var drawing in drawingGroup.Children)
                     {
                         if (drawing is GeometryDrawing { Pen: Pen pen })
                         {
-                            pen.Brush = new SolidColorBrush((Color)secondaryAccentColor);
+                            pen.Brush = brush;
                         }
                     }
                 });
@@ -183,21 +167,14 @@ public class IconButton : Button
                     return;
                 }
 
-                Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.Invoke(() =>
                 {
-                    if (!Application.Current.TryGetResource("MainTextColor", Application.Current.RequestedThemeVariant,
-                            out var mainTextColor))
-                    {
-                        return;
-                    }
-#if DEBUG
-                    Debug.Assert(mainTextColor != null, nameof(mainTextColor) + " != null");
-#endif
+                    var brush = UIHelper.GetBrush("MainTextColor");
                     foreach (var drawing in drawingGroup.Children)
                     {
                         if (drawing is GeometryDrawing { Pen: Pen pen })
                         {
-                            pen.Brush = new SolidColorBrush((Color)mainTextColor);
+                            pen.Brush = brush;
                         }
                     }
                 });

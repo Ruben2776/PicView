@@ -50,15 +50,6 @@ public partial class MacOSTitlebar : UserControl
             RotateRightButton.PointerPressed += (_, e) => { OpenContextMenu(e); };
 
             RotateRightButton.PointerPressed += (_, e) => { OpenContextMenu(e); };
-            RotateRightButton.Click += (_, _) =>
-            {
-                if (DataContext is not MainViewModel vm)
-                {
-                    return;
-                }
-
-                vm.MainWindow.IsTopToolbarRotationClicked = Settings.WindowProperties.AutoFit;
-            };
             FlipButton.PointerPressed += (_, e) => { OpenContextMenu(e); };
         };
         PointerPressed += (_, e) => MoveWindow(e);

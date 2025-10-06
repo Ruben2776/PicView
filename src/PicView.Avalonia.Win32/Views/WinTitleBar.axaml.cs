@@ -15,6 +15,7 @@ public partial class WinTitleBar : UserControl
     public WinTitleBar()
     {
         InitializeComponent();
+
         Loaded += (_, _) =>
         {
             if (Settings.Theme.GlassTheme)
@@ -88,7 +89,7 @@ public partial class WinTitleBar : UserControl
 
                     // Overflow buttons if the window is too small
                     if (vm.MainWindow.TitleMaxWidth.CurrentValue <
-                        vm.PlatformWindowService.CombinedTitleButtonsWidth * 2)
+                        vm.PlatformWindowService.CombinedTitleButtonsWidth)
                     {
                         vm.MainWindow.TopTitlebarViewModel.IsBtnPanelVisible.Value = false;
                     }

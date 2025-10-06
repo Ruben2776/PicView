@@ -119,6 +119,30 @@
                                            Mode=OneWay}" />
             </ToggleButton>
 
+            <TextBlock
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                FontSize="14"
+                Foreground="{StaticResource SecondaryTextColor}"
+                Margin="0,20,0,20"
+                Text="{CompiledBinding Translation.WhenDeletingAFile.Value,
+                                       Mode=OneWay}" />
+            <ComboBox
+                Background="{DynamicResource SecondaryBackgroundColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderThickness="1"
+                FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                Foreground="{DynamicResource MainTextColor}"
+                Margin="0,6,0,10"
+                Padding="5,7,0,7"
+                Width="300"
+                x:Name="DeletingFileBox">
+                <ComboBoxItem Content="{CompiledBinding Translation.NavigateForwards.Value, Mode=OneWay}"
+                              Foreground="{DynamicResource MainTextColor}" />
+                <ComboBoxItem Content="{CompiledBinding Translation.NavigateBackwards.Value, Mode=OneWay}"
+                              Foreground="{DynamicResource MainTextColor}" />
+            </ComboBox>
+
         </StackPanel>
     </Panel>
 </UserControl>

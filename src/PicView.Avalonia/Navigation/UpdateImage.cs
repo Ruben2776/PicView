@@ -331,7 +331,7 @@ public static class UpdateImage
         vm.PicViewer.GetIndex.Value = NavigationManager.GetNonZeroIndex;
         vm.PicViewer.ExifOrientation.Value = imageModel.Orientation;
         vm.PicViewer.FileInfo.Value = imageModel.FileInfo;
-        vm.GlobalSettings.ZoomValue.Value = 1;
+        vm.PicViewer.ZoomValue.Value = 100;
 
         if (Settings.ImageScaling.ShowImageSideBySide)
         {

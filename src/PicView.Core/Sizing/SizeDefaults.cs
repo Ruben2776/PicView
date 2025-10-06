@@ -11,4 +11,5 @@ public static class SizeDefaults
     public const int TopBorderHeight = 28;
     
     public const int WindowMinSize = 450;
+    public const int SecondaryWindowMinWidth = 410;
 }

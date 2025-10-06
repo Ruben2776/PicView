@@ -278,6 +278,12 @@ public class Zoom
     public bool AvoidZoomingOut { get; set; } = false;
 
     /// <summary>
+    /// Indicates whether the zoom operation is animated when performed.
+    /// If set to true, zooming will include an animation effect; otherwise, it will occur instantly.
+    /// </summary>
+    public bool IsZoomAnimated { get; set; } = false;
+
+    /// <summary>
     /// Determines whether the Ctrl key must be held while using the mouse wheel to zoom.
     /// If set to true, holding the Ctrl key enables zoom functionality with the mouse wheel.
     /// Otherwise, the mouse wheel will be used for navigation.
@@ -433,5 +439,10 @@ public class Navigation
     /// When set to true, navigation will cycle through the directories, next to the current file order.
     /// </summary>
     public bool IsNavigatingBetweenDirectories { get; set; } = false;
+
+    /// <summary>
+    /// Indicates whether navigation should move backward in the sequence when an image file is deleted.
+    /// </summary>
+    public bool IsNavigatingBackwardsWhenDeleting { get; set; } = true;
 
 }

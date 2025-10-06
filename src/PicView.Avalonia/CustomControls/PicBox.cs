@@ -60,7 +60,6 @@ public class PicBox : Control, IDisposable
     /// <summary>
     ///     Gets or sets the image that will be displayed.
     /// </summary>
-    [Content]
     public object? Source
     {
         get => GetValue(SourceProperty);
@@ -73,7 +72,6 @@ public class PicBox : Control, IDisposable
     /// <summary>
     ///     Gets or sets the second image that will be displayed, when side by side view is enabled
     /// </summary>
-    [Content]
     public object? SecondarySource
     {
         get => GetValue(SecondarySourceProperty);

@@ -43,20 +43,31 @@
                         x:Name="CloseButton" />
                 </Grid>
             </Border>
-            <Panel>
-                <customControls:ThumbImage
-                    Height="150"
-                    Source="{CompiledBinding PicViewer.ImageSource.Value}"
-                    Stretch="Uniform"
-                    x:Name="OverlayImage" />
-                <Canvas x:Name="OverlayCanvas">
-                    <Rectangle
-                        Fill="Transparent"
-                        Stroke="{DynamicResource AccentColor}"
-                        StrokeThickness="2"
-                        x:Name="ViewportBorder" />
-                </Canvas>
-            </Panel>
+            <LayoutTransformControl>
+                <LayoutTransformControl.LayoutTransform>
+                    <RotateTransform Angle="{CompiledBinding PicViewer.RotationAngle.Value}" />
+                </LayoutTransformControl.LayoutTransform>
+                <Panel>
+                    <customControls:PicBox
+                        ImageType="{CompiledBinding PicViewer.ImageType.Value,
+                                                    Mode=OneWay}"
+                        SecondarySource="{CompiledBinding PicViewer.SecondaryImageSource.Value,
+                                                          Mode=OneWay}"
+                        Source="{CompiledBinding PicViewer.ImageSource.Value}"
+                        x:Name="OverlayImage">
+                        <customControls:PicBox.RenderTransform>
+                            <ScaleTransform ScaleX="{CompiledBinding PicViewer.ScaleX.Value}" />
+                        </customControls:PicBox.RenderTransform>
+                    </customControls:PicBox>
+                    <Canvas x:Name="OverlayCanvas">
+                        <Rectangle
+                            Fill="Transparent"
+                            Stroke="{DynamicResource AccentColor}"
+                            StrokeThickness="2"
+                            x:Name="ViewportBorder" />
+                    </Canvas>
+                </Panel>
+            </LayoutTransformControl>
         </StackPanel>
     </Border>
 </UserControl>

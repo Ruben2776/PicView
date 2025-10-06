@@ -13,7 +13,6 @@
     <UserControl.Resources>
         <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="ImageMenuBrush" />
         <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="ToolsMenuBrush" />
-        <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="SettingsMenuBrush" />
     </UserControl.Resources>
 
     <UserControl.ContextMenu>
@@ -270,7 +269,6 @@
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
                     Command="{CompiledBinding Tools.ZoomOutCommand}"
-                    Foreground="{DynamicResource MainTextColor}"
                     Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
                     Icon="{StaticResource ZoomOutImage}"
                     IconHeight="16"
@@ -284,7 +282,6 @@
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
                     Command="{CompiledBinding Tools.ZoomInCommand}"
-                    Foreground="{DynamicResource MainTextColor}"
                     Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
                     Icon="{StaticResource ZoomAltImage}"
                     IconHeight="16"

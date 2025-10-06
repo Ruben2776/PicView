@@ -18,8 +18,6 @@ public class GlobalSettingsViewModel
     public BindableReactiveProperty<bool> IsAutoFit { get; } = new(Settings.WindowProperties.AutoFit);
     
     public BindableReactiveProperty<bool> IsFileHistoryEnabled { get; } = new(Settings.Navigation.IsFileHistoryEnabled);
-
-    public BindableReactiveProperty<double> ZoomValue { get; } = new();
     
     public BindableReactiveProperty<bool> IsShowingTaskbarProgress { get; } = new(Settings.UIProperties.IsTaskbarProgressEnabled);
 }

@@ -29,7 +29,11 @@ public class SettingsViewModel : IDisposable
         new(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
 
     public BindableReactiveProperty<bool> IsAvoidingZoomingOut { get; } = new(Settings.Zoom.AvoidZoomingOut);
-    public BindableReactiveProperty<bool> IsShowingZoomPercentagePopup { get; } = new(Settings.Zoom.AvoidZoomingOut);
+
+    public BindableReactiveProperty<bool> IsZoomAnimated { get; } = new(Settings.Zoom.IsZoomAnimated);
+
+    public BindableReactiveProperty<bool> IsShowingZoomPercentagePopup { get; } =
+        new(Settings.Zoom.IsShowingZoomPercentagePopup);
 
     public BindableReactiveProperty<double> WindowMargin { get; } = new(Settings.WindowProperties.Margin);
 
@@ -111,6 +115,9 @@ public class SettingsViewModel : IDisposable
 
         Observable.EveryValueChanged(this, x => x.IsAvoidingZoomingOut.CurrentValue)
             .Subscribe(x => Settings.Zoom.AvoidZoomingOut = x).AddTo(_disposables);
+
+        Observable.EveryValueChanged(this, x => x.IsZoomAnimated.CurrentValue)
+            .Subscribe(x => Settings.Zoom.IsZoomAnimated = x).AddTo(_disposables);
 
         Observable.EveryValueChanged(this, x => x.IsShowingZoomPercentagePopup.CurrentValue)
             .Subscribe(x => Settings.Zoom.IsShowingZoomPercentagePopup = x).AddTo(_disposables);

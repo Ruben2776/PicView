@@ -27,7 +27,7 @@
         <ToggleButton
             Background="Transparent"
             BorderThickness="0"
-            Classes="altHover alt changeColor"
+            Classes="altHover changeColor"
             IsChecked="{CompiledBinding SettingsViewModel.IsAvoidingZoomingOut.Value}"
             Margin="0,0,0,10"
             Width="300">
@@ -44,7 +44,24 @@
         <ToggleButton
             Background="Transparent"
             BorderThickness="0"
-            Classes="altHover alt changeColor"
+            Classes="altHover changeColor"
+            IsChecked="{CompiledBinding SettingsViewModel.IsZoomAnimated.Value}"
+            Margin="0,0,0,10"
+            Width="300">
+            <TextBlock
+                Classes="txt"
+                Foreground="{StaticResource SecondaryTextColor}"
+                Margin="0"
+                MaxWidth="240"
+                Padding="0,1,5,0"
+                Text="{CompiledBinding Translation.UseAnimatedZoom.Value,
+                                       Mode=OneWay}" />
+        </ToggleButton>
+
+        <ToggleButton
+            Background="Transparent"
+            BorderThickness="0"
+            Classes="altHover changeColor"
             IsChecked="{CompiledBinding SettingsViewModel.IsShowingZoomPercentagePopup.Value}"
             Margin="0,0,0,10"
             Width="300">

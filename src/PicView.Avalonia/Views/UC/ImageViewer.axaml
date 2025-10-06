@@ -1,18 +1,13 @@
 <UserControl
     Background="{CompiledBinding MainWindow.ImageBackground.Value,
                                  Mode=OneWay}"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.UC.ImageViewer"
     x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.DataContext>
-        <vm:MainViewModel />
-    </Design.DataContext>
     <LayoutTransformControl x:Name="ImageLayoutTransformControl">
         <customControls:ZoomPanControl
             Height="{CompiledBinding PicViewer.ImageHeight.Value,
@@ -29,8 +24,7 @@
                 Width="{CompiledBinding PicViewer.ScrollViewerWidth.Value,
                                         Mode=OneWay}"
                 x:Name="ImageScrollViewer">
-                <Border Background="{CompiledBinding MainWindow.ConstrainedImageBackground.Value, Mode=OneWay}"
-                        x:Name="MainBorder">
+                <Border Background="{CompiledBinding MainWindow.ConstrainedImageBackground.Value, Mode=OneWay}" x:Name="MainBorder">
                     <customControls:PicBox
                         ImageType="{CompiledBinding PicViewer.ImageType.Value,
                                                     Mode=OneWay}"
@@ -39,7 +33,6 @@
                         SecondarySource="{CompiledBinding PicViewer.SecondaryImageSource.Value,
                                                           Mode=OneWay}"
                         Source="{CompiledBinding PicViewer.ImageSource.Value}"
-                        UseLayoutRounding="True"
                         x:Name="MainImage" />
                 </Border>
             </customControls:AutoScrollViewer>

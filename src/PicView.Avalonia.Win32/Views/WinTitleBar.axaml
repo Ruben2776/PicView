@@ -18,7 +18,7 @@
     </UserControl.Resources>
 
     <Border
-        Background="{DynamicResource WindowBackgroundColor}"
+        Background="{DynamicResource WindowSecondaryBackgroundColor}"
         BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="0,0,0,1"
         x:Name="TopWindowBorder">
@@ -156,6 +156,7 @@
                 Height="{CompiledBinding MainWindow.TitlebarHeight.Value,
                                          Mode=OneWay}"
                 IsVisible="{CompiledBinding MainWindow.TopTitlebarViewModel.IsMainMenuVisible.Value}"
+                MinWidth="{CompiledBinding MainWindow.SecondaryWindowMinWidth.Value}"
                 ZIndex="9"
                 x:Name="MainMenu">
                 <MenuItem

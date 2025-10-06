@@ -1062,6 +1062,7 @@
             HorizontalAlignment="Right"
             Opacity="0"
             VerticalAlignment="Bottom"
+            ZIndex="9"
             x:Name="GalleryShortcut" />
         <gallery:GalleryAnimationControlView
             GalleryMode="{CompiledBinding Gallery.GalleryMode.Value,

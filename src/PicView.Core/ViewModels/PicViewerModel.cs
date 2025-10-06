@@ -38,6 +38,8 @@ public class PicViewerModel : IDisposable
 
     public BindableReactiveProperty<double> RotationAngle { get; } = new(0);
 
+    public BindableReactiveProperty<double> ZoomValue { get; } = new();
+
     /// <summary>
     /// The width to scale the image to
     /// </summary>

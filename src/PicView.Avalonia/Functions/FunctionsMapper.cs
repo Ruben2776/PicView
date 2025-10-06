@@ -13,10 +13,8 @@ using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
-using PicView.Core.Exif;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
-using PicView.Core.ImageDecoding;
 using PicView.Core.Keybindings;
 using PicView.Core.ProcessHandling;
 
@@ -353,7 +351,8 @@ public static class FunctionsMapper
         {
             return;
         }
-        await Dispatcher.UIThread.InvokeAsync(() => Vm.ImageViewer.ResetZoom(true));
+
+        await Dispatcher.UIThread.InvokeAsync(() => Vm.ImageViewer.ResetZoom(Settings.Zoom.IsZoomAnimated));
     }
     
     #endregion

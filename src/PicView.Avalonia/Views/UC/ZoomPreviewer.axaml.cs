@@ -4,7 +4,9 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Threading;
+using PicView.Avalonia.Animations;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.ViewModels;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -21,7 +23,7 @@ public partial class ZoomPreviewer : UserControl
     {
         InitializeComponent();
 
-        CloseButton.Click += delegate { IsVisible = false; };
+        CloseButton.Click += delegate { SetInvisible(); };
 
         // Add pointer event handlers for dragging
         AddHandler(PointerPressedEvent, OnPointerPressed, RoutingStrategies.Tunnel);
@@ -160,17 +162,39 @@ public partial class ZoomPreviewer : UserControl
     {
         if (_zoomPanControl == null)
         {
-            IsVisible = false;
+            SetInvisible();
             return;
+        }
+
+        if (DataContext is MainViewModel vm)
+        {
+            if (vm.HoverbarViewModel.IsHoverbarVisible.CurrentValue)
+            {
+                Margin = new Thickness(0, 0, 70, 115);
+            }
+            else if (Settings.Gallery.IsBottomGalleryShown)
+            {
+                Margin = new Thickness(0, 0, 25, vm.Gallery.GalleryMargin.CurrentValue.Bottom + 7);
+            }
+            else
+            {
+                Margin = new Thickness(0, 0, 25, 25);
+            }
+
+            UpdateSize(vm);
         }
 
         // Show when zoomed in or out (not at 1.0 scale)
         var shouldShow = _zoomPanControl.Scale > 1;
-        IsVisible = shouldShow;
 
         if (shouldShow)
         {
+            SetVisible();
             UpdateViewportRect();
+        }
+        else
+        {
+            SetInvisible();
         }
 
         // Don't start hide timer if we're currently dragging
@@ -180,20 +204,61 @@ public partial class ZoomPreviewer : UserControl
         }
     }
 
+    private void UpdateSize(MainViewModel vm)
+    {
+        const int defaultHeight = 150;
+        OverlayImage.Height = defaultHeight;
+        if (vm.PicViewer.PixelWidth.CurrentValue is 0 || vm.PicViewer.PixelHeight.CurrentValue is 0)
+        {
+            return;
+        }
+
+        // ReSharper disable once PossibleLossOfFraction
+
+        if (Settings.ImageScaling.ShowImageSideBySide)
+        {
+            var secondaryWidth = vm.PicViewer.SecondaryImageWidth.CurrentValue * defaultHeight /
+                                 vm.PicViewer.ImageHeight.CurrentValue;
+            var width = vm.PicViewer.ImageWidth.CurrentValue * defaultHeight / vm.PicViewer.ImageHeight.Value;
+            OverlayImage.Width = width;
+            OverlayImage.SecondaryImageWidth = secondaryWidth;
+        }
+        else
+        {
+            OverlayImage.Width = vm.PicViewer.PixelWidth.CurrentValue * defaultHeight /
+                                 vm.PicViewer.PixelHeight.CurrentValue;
+            OverlayImage.SecondaryImageWidth = 0;
+        }
+    }
+
     private void RestartHideTimer()
     {
         _hideTimer?.Dispose();
         _hideTimer = new Timer(_ =>
         {
-            Dispatcher.UIThread.Post(() =>
+            Dispatcher.UIThread.Invoke(async () =>
             {
                 // Only hide if we're not dragging
                 if (!_isDragging && !IsPointerOver)
                 {
+                    var opacityAnim = AnimationsHelper.OpacityAnimation(1, 0, TimeSpan.FromSeconds(0.5));
+                    await opacityAnim.RunAsync(this);
                     IsVisible = false;
                 }
             });
         }, null, TimeSpan.FromSeconds(2.5), Timeout.InfiniteTimeSpan);
+    }
+
+    public void SetVisible()
+    {
+        Opacity = 1;
+        IsVisible = true;
+    }
+
+    public void SetInvisible()
+    {
+        Opacity = 1;
+        IsVisible = false;
     }
 
     internal void UpdateViewportRect()

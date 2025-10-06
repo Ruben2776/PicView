@@ -38,6 +38,9 @@ public class MainWindowViewModel : IDisposable
     public BindableReactiveProperty<int> BackgroundChoice { get; } = new();
 
     public BindableReactiveProperty<double> WindowMinWidth { get; } = new(SizeDefaults.WindowMinSize);
+
+    public BindableReactiveProperty<double> SecondaryWindowMinWidth { get; } =
+        new(SizeDefaults.SecondaryWindowMinWidth);
     public BindableReactiveProperty<double> WindowMinHeight { get; } = new(SizeDefaults.WindowMinSize);
 
     public BindableReactiveProperty<double> TitlebarHeight { get; } = new();
