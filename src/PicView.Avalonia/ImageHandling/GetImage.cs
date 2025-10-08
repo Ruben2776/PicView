@@ -28,40 +28,36 @@ public static class GetImage
             }
 
             // Process the image based on type
-            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
-            switch (magickImage.Format)
+            return magickImage.Format switch
             {
-                case MagickFormat.WebP: 
-                case MagickFormat.WebM:
-                case MagickFormat.Png:
-                case MagickFormat.Png00:
-                case MagickFormat.Png8:
-                case MagickFormat.Png24:
-                case MagickFormat.Png32:
-                case MagickFormat.Png48:
-                case MagickFormat.Png64:
-                case MagickFormat.APng:
-                case MagickFormat.Jpe:
-                case MagickFormat.Jpeg:
-                case MagickFormat.Pjpeg:
-                case MagickFormat.Bmp:
-                case MagickFormat.Tif:
-                case MagickFormat.Tiff:
-                case MagickFormat.Ico:
-                case MagickFormat.Icon:
-                case MagickFormat.Wbmp:
-                    return await GetSkBitmapAsync(fileInfo).ConfigureAwait(false);
-                
-                case MagickFormat.Arw:
-                case MagickFormat.Nef:
-                case MagickFormat.Dng:
-                case MagickFormat.Cr2:
-                case MagickFormat.Rw2:
-                    return await GetRawBitmapAsync(fileInfo, magickImage).ConfigureAwait(false);
+                MagickFormat.WebP or
+                    MagickFormat.WebM or
+                    MagickFormat.Png or
+                    MagickFormat.Png00 or
+                    MagickFormat.Png8 or
+                    MagickFormat.Png24 or
+                    MagickFormat.Png32 or
+                    MagickFormat.Png48 or
+                    MagickFormat.Png64 or
+                    MagickFormat.APng or
+                    MagickFormat.Jpe or
+                    MagickFormat.Jpeg or
+                    MagickFormat.Pjpeg or
+                    MagickFormat.Bmp or
+                    MagickFormat.Tif or
+                    MagickFormat.Tiff or
+                    MagickFormat.Ico or
+                    MagickFormat.Icon or
+                    MagickFormat.Wbmp => await GetSkBitmapAsync(fileInfo).ConfigureAwait(false),
 
-                default:
-                    return await GetNonStandardBitmapAsync(fileInfo, magickImage).ConfigureAwait(false);
-            }
+                MagickFormat.Arw or
+                    MagickFormat.Nef or
+                    MagickFormat.Dng or
+                    MagickFormat.Cr2 or
+                    MagickFormat.Rw2 => await GetRawBitmapAsync(fileInfo, magickImage).ConfigureAwait(false),
+
+                _ => await GetNonStandardBitmapAsync(fileInfo, magickImage).ConfigureAwait(false)
+            };
         }
         catch (Exception e)
         {

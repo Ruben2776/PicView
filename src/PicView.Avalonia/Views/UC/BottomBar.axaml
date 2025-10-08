@@ -273,8 +273,11 @@
                     Icon="{StaticResource ZoomOutImage}"
                     IconHeight="16"
                     IconWidth="18"
+                    IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsTabStop="False"
-                    Width="35" />
+                    Width="35"
+                    x:Name="ZoomOutButton" />
 
                 <customControls:IconButton
                     Background="{DynamicResource AltBackgroundColor}"
@@ -286,8 +289,11 @@
                     Icon="{StaticResource ZoomAltImage}"
                     IconHeight="16"
                     IconWidth="18"
+                    IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsTabStop="False"
-                    Width="35" />
+                    Width="35"
+                    x:Name="ZoomInButton" />
 
                 <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"
@@ -362,7 +368,8 @@
                     Margin="0"
                     ToolTip.Tip="{CompiledBinding Translation.IsFlipped.Value,
                                                   Mode=OneWay}"
-                    Width="35">
+                    Width="35"
+                    x:Name="FlipButton">
                     <Button.RenderTransform>
                         <ScaleTransform ScaleX="{CompiledBinding PicViewer.ScaleX.Value}" />
                     </Button.RenderTransform>

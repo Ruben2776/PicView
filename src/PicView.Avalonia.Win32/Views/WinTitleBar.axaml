@@ -497,6 +497,47 @@
                                 Width="12" />
                         </MenuItem.Icon>
                     </MenuItem>
+
+                    <Separator Margin="0" Opacity="1" />
+
+                    <!--  Fullscreen  -->
+                    <MenuItem
+                        Command="{CompiledBinding MainWindow.ToggleFullscreenCommand}"
+                        Header="{CompiledBinding Translation.Fullscreen.Value,
+                                                 Mode=OneWay}"
+                        Theme="{StaticResource MainBg}">
+                        <MenuItem.Icon>
+                            <Path Classes="FullscreenPath" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <!--  Maximize  -->
+                    <MenuItem
+                        Command="{CompiledBinding MainWindow.MaximizeCommand}"
+                        Header="{CompiledBinding Translation.Maximize.Value,
+                                                 Mode=OneWay}"
+                        IsVisible="{CompiledBinding MainWindow.ShouldMaximizeBeShown.Value,
+                                                    Mode=OneWay}"
+                        Theme="{StaticResource MainBg}"
+                        x:Name="MaximizeMenuItem">
+                        <MenuItem.Icon>
+                            <Image Classes="MaximizeImage" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <!--  Restore  -->
+                    <MenuItem
+                        Command="{CompiledBinding MainWindow.RestoreCommand}"
+                        Header="{CompiledBinding Translation.RestoreDown.Value,
+                                                 Mode=OneWay}"
+                        IsVisible="{CompiledBinding MainWindow.ShouldRestore.Value,
+                                                    Mode=OneWay}"
+                        Theme="{StaticResource MainBg}">
+                        <MenuItem.Icon>
+                            <Path Classes="RestorePath" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
                 </MenuItem>
 
                 <!--  Image  -->

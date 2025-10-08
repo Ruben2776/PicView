@@ -29,6 +29,16 @@ public partial class ZoomPreviewer : UserControl
         AddHandler(PointerPressedEvent, OnPointerPressed, RoutingStrategies.Tunnel);
         AddHandler(PointerMovedEvent, OnPointerMoved, RoutingStrategies.Tunnel);
         AddHandler(PointerReleasedEvent, OnPointerReleased, RoutingStrategies.Tunnel);
+
+        if (Settings.Theme.Dark && !Settings.Theme.GlassTheme)
+        {
+            return;
+        }
+
+        ResetZoomButton.Classes.Remove("altHover");
+        CloseButton.Classes.Remove("altHover");
+        ResetZoomButton.Classes.Add("hover");
+        CloseButton.Classes.Add("hover");
     }
 
     protected override void OnGotFocus(GotFocusEventArgs e)

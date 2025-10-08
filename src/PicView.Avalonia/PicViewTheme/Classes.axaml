@@ -254,4 +254,26 @@
         <Setter Property="Stretch" Value="Fill" />
     </Style>
 
+    <Style Selector="Path.RestorePath">
+        <Setter Property="Data" Value="{StaticResource RestoreGeometry}" />
+        <Setter Property="Fill" Value="{DynamicResource MainTextColor}" />
+        <Setter Property="Height" Value="12" />
+        <Setter Property="Width" Value="12" />
+        <Setter Property="Stretch" Value="Fill" />
+    </Style>
+
+    <Style Selector="Path.FullscreenPath">
+        <Setter Property="Data" Value="{StaticResource FullscreenGeometry}" />
+        <Setter Property="Fill" Value="{DynamicResource MainTextColor}" />
+        <Setter Property="Height" Value="12" />
+        <Setter Property="Width" Value="12" />
+        <Setter Property="Stretch" Value="Fill" />
+    </Style>
+
+    <Style Selector="Image.MaximizeImage">
+        <Setter Property="Source" Value="{StaticResource SquareImage}" />
+        <Setter Property="Height" Value="12" />
+        <Setter Property="Width" Value="12" />
+    </Style>
+
 </Styles>

@@ -112,6 +112,16 @@ public partial class BottomBar : UserControl
 
                 SettingsMenuButton.Classes.Remove("noBorderHover");
                 SettingsMenuButton.Classes.Add("noBorderHoverAlt");
+
+                ZoomOutButton.Classes.Remove("noBorderHover");
+                ZoomInButton.Classes.Remove("noBorderHover");
+                ZoomOutButton.Classes.Add("noBorderHoverAlt");
+                ZoomInButton.Classes.Add("noBorderHoverAlt");
+
+                RotateRightButton.Classes.Remove("noBorderHover");
+                FlipButton.Classes.Remove("noBorderHover");
+                RotateRightButton.Classes.Add("noBorderHoverAlt");
+                FlipButton.Classes.Add("noBorderHoverAlt");
             }
         };
     }

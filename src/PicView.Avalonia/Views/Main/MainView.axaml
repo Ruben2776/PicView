@@ -963,12 +963,7 @@
                 IsVisible="{CompiledBinding !MainWindow.IsFullscreen.Value,
                                             Mode=OneWay}">
                 <MenuItem.Icon>
-                    <Path
-                        Data="{StaticResource FullscreenGeometry}"
-                        Fill="{StaticResource Brush0}"
-                        Height="12"
-                        Stretch="Fill"
-                        Width="12" />
+                    <Path Classes="FullscreenPath" />
                 </MenuItem.Icon>
             </MenuItem>
 
@@ -981,11 +976,7 @@
                                             Mode=OneWay}"
                 x:Name="MaximizeMenuItem">
                 <MenuItem.Icon>
-                    <Image
-                        Height="12"
-                        Source="{StaticResource SquareImage}"
-                        Stretch="Fill"
-                        Width="12" />
+                    <Image Classes="MaximizeImage" />
                 </MenuItem.Icon>
             </MenuItem>
 
@@ -997,12 +988,7 @@
                 IsVisible="{CompiledBinding MainWindow.ShouldRestore.Value,
                                             Mode=OneWay}">
                 <MenuItem.Icon>
-                    <Path
-                        Data="{StaticResource RestoreGeometry}"
-                        Fill="{StaticResource Brush0}"
-                        Height="12"
-                        Stretch="Fill"
-                        Width="12" />
+                    <Path Classes="RestorePath" />
                 </MenuItem.Icon>
             </MenuItem>
 
