@@ -41,8 +41,17 @@ public static class SettingsManager
     /// <see cref="SettingsManager.SaveSettingsAsync"/>.
     /// </remarks>
     public static AppSettings? Settings { get; private set; }
-    
+
     public static SettingsConfiguration? Configuration { get; private set; }
+
+    /// <summary>
+    /// Global Configuration Support
+    /// </summary>
+    /// <remarks>
+    /// Overrides any UserSettings with GlobalSettings if they are set
+    /// </remarks>
+    public static GlobalSettingsConfiguration? GlobalConfig { get; private set; }
+    public static AppSettings? GlobalSettings { get; private set; }
 
     /// <summary>
     /// Loads application settings asynchronously from a file or initializes them to default if loading fails.
@@ -55,26 +64,42 @@ public static class SettingsManager
     {
         try
         {
-            Configuration ??= new SettingsConfiguration();
-            var path = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
-            if (!string.IsNullOrEmpty(path))
+            // Load global config (read-only, Program Path)
+            GlobalConfig ??= new GlobalSettingsConfiguration();
+            string globalPath = GlobalConfig.LocalConfigPath;
+            if (File.Exists(globalPath))
             {
-                Configuration.CorrectPath = path;
-                var jsonString = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-
-                if (JsonSerializer.Deserialize(
-                        jsonString, typeof(AppSettings), SettingsGenerationContext.Default) is not AppSettings settings)
+                await using var globalStream = File.OpenRead(globalPath);
+                if (globalStream.Length > 0)
                 {
-                    SetDefaults();
-                    return false;
+                    GlobalSettings = await JsonSerializer.DeserializeAsync<AppSettings>(
+                        globalStream, SettingsGenerationContext.Default.AppSettings).ConfigureAwait(false);
                 }
-
-                Settings = EnsureSettingsIfNeeded(settings);
-                return true;
             }
 
-            SetDefaults();
-            return false;
+            // Load user config (User Profile or Program Path)
+            Configuration ??= new SettingsConfiguration();
+            var userPath = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
+            Configuration.CorrectPath = userPath;
+
+            if (File.Exists(userPath))
+            {
+                await using var userStream = File.OpenRead(userPath);
+                if (userStream.Length > 0)
+                {
+                    Settings = await JsonSerializer.DeserializeAsync<AppSettings>(
+                        userStream, SettingsGenerationContext.Default.AppSettings).ConfigureAwait(false);
+                }
+            }
+
+            // Fallback to defaults if no user config found
+            Settings ??= GetDefaults();
+
+            // Apply Global Overrides
+            if (GlobalSettings != null)
+                ApplyOverrides(Settings, GlobalSettings);
+
+            return true;
         }
         catch (Exception ex)
         {
@@ -132,7 +157,7 @@ public static class SettingsManager
         {
             return EnsureSettings(settings);
         }
-        
+
         // If navigation settings is null, it is an upgrade from an old version or the config is otherwise invalid
         if (settings.Navigation is null)
         {
@@ -240,6 +265,58 @@ public static class SettingsManager
             if (File.Exists(path))
             {
                 File.Delete(path);
+            }
+        }
+    }
+    
+    private static void ApplyOverrides(AppSettings target, AppSettings global)
+    {
+        MergeObjects(target, global);
+    }
+
+    /// <summary>
+    /// Recursively merges all non-null properties from source into target.
+    /// Complex nested types (like UIProperties, Theme, etc.) are merged recursively.
+    /// Value types and simple properties are directly overwritten.
+    /// </summary>
+    private static void MergeObjects(object? target, object? source)
+    {
+        if (target == null || source == null)
+            return;
+
+        var targetType = target.GetType();
+        var sourceType = source.GetType();
+
+        foreach (var prop in sourceType.GetProperties())
+        {
+            var sourceValue = prop.GetValue(source);
+            if (sourceValue == null)
+                continue;
+
+            var targetProp = targetType.GetProperty(prop.Name);
+            if (targetProp == null || !targetProp.CanWrite)
+                continue;
+
+            var targetValue = targetProp.GetValue(target);
+
+            // If this is a nested object (class) and not a string, merge recursively
+            if (prop.PropertyType.IsClass && prop.PropertyType != typeof(string))
+            {
+                if (targetValue == null)
+                {
+                    // If user doesn't have that object at all, copy it fully
+                    targetProp.SetValue(target, sourceValue);
+                }
+                else
+                {
+                    // Recursively merge individual properties
+                    MergeObjects(targetValue, sourceValue);
+                }
+            }
+            else
+            {
+                // Simple value type or string – overwrite directly
+                targetProp.SetValue(target, sourceValue);
             }
         }
     }
