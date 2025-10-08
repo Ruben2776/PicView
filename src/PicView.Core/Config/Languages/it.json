@@ -408,5 +408,14 @@
   "_2Star": "Rating a 2 stella",
   "_3Star": "Rating a 3 stella",
   "_4Star": "Rating a 4 stella",
-  "_5Star": "Rating a 5 stella"
+  "_5Star": "Rating a 5 stella",
+
+  "Printer": "Stampante",
+  "PaperSize": "Formato carta",
+  "Scale": "Scala",
+  "Color": "Colore",
+  "Copies": "Copie",
+  "Margins": "Margini (mm)",
+  "Top": "Superiore",
+  "Bottom": "Inferiore"
 }

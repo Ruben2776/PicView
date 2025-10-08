@@ -193,6 +193,16 @@ public class UIProperties
     /// Indicates whether the application limits the background color to just behind the picture.
     /// </summary>
     public bool IsConstrainBackgroundColorEnabled { get; set; } = false;
+
+    /// <summary>
+    /// Indicates whether the application uses the inbuilt print preview window for printing
+    /// </summary>
+    public bool ShowPrintPreview { get; set; } = true;
+
+    /// <summary>
+    /// Shows the "Set as Wallpaper" option int the menus.
+    /// </summary>
+    public bool ShowSetAsWallpaper { get; set; } = true;
 }
 
 public class Theme

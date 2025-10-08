@@ -408,5 +408,14 @@
   "_2Star": "Evaluare cu 2 stele",
   "_3Star": "Evaluare cu 3 stele",
   "_4Star": "Evaluare cu 4 stele",
-  "_5Star": "Evaluare cu 5 stele"
+  "_5Star": "Evaluare cu 5 stele",
+
+  "Printer": "Imprimantă",
+  "PaperSize": "Dimensiune hârtie",
+  "Scale": "Scară",
+  "Color": "Culoare",
+  "Copies": "Copii",
+  "Margins": "Margini (mm)",
+  "Top": "Sus",
+  "Bottom": "Jos"
 }

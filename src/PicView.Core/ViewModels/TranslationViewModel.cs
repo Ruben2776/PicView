@@ -13,7 +13,7 @@ public class TranslationViewModel : IDisposable
     public void UpdateLanguage()
     {
         var t = TranslationManager.Translation;
-        
+
         File.Value = string.Concat(t.File[0].ToString().ToUpper(), t.File.AsSpan(1));
         SelectFile.Value = t.OpenFileDialog;
         OpenLastFile.Value = t.OpenLastFile;
@@ -308,6 +308,17 @@ public class TranslationViewModel : IDisposable
         ShowZoomPercentagePopup.Value = t.ShowZoomPercentagePopup;
         UseAnimatedZoom.Value = t.UseAnimatedZoom;
         WhenDeletingAFile.Value = t.WhenDeletingAFile;
+
+        Printer.Value = t.Printer;
+        PaperSize.Value = t.PaperSize;
+        Scale.Value = t.Scale;
+        Color.Value = t.Color;
+        Copies.Value = t.Copies;
+        Margins.Value = t.Margins;
+        Top.Value = t.Top;
+        Bottom.Value = t.Bottom;
+        Left.Value = t.Left;
+        Right.Value = t.Right;
     }
 
     #region Static Translation Strings
@@ -635,6 +646,18 @@ public class TranslationViewModel : IDisposable
 
     public BindableReactiveProperty<string?> IsShowingUI { get; } = new();
     public BindableReactiveProperty<string?> IsUsingTouchpad { get; } = new();
+
+
+    public BindableReactiveProperty<string?> Printer { get; } = new();
+    public BindableReactiveProperty<string?> PaperSize { get; } = new();
+    public BindableReactiveProperty<string?> Scale { get; } = new();
+    public BindableReactiveProperty<string?> Color { get; } = new();
+    public BindableReactiveProperty<string?> Copies { get; } = new();
+    public BindableReactiveProperty<string?> Margins { get; } = new();
+    public BindableReactiveProperty<string?> Top { get; } = new();
+    public BindableReactiveProperty<string?> Bottom { get; } = new();
+    public BindableReactiveProperty<string?> Left { get; } = new();
+    public BindableReactiveProperty<string?> Right { get; } = new();
 
     #endregion
 }

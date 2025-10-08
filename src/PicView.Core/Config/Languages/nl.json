@@ -408,5 +408,14 @@
   "_2Star": "2 sterren",
   "_3Star": "3 sterren",
   "_4Star": "4 sterren",
-  "_5Star": "5 sterren"
+  "_5Star": "5 sterren",
+
+  "Printer": "Printer",
+  "PaperSize": "Papiere formaat",
+  "Scale": "Schaal",
+  "Color": "Kleur",
+  "Copies": "Kopieën",
+  "Margins": "Marges (mm)",
+  "Top": "Bovenkant",
+  "Bottom": "Onderkant"
 }

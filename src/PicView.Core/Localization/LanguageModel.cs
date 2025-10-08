@@ -40,6 +40,7 @@ public class LanguageModel
     public string? BitDepth { get; set; }
     public string? BlackAndWhite { get; set; }
     public string? Blur { get; set; }
+    public string? Bottom { get; set; }
     public string? BottomGalleryItemSize { get; set; }
     public string? BottomGalleryThumbnailStretch { get; set; }
     public string? Brightness { get; set; }
@@ -63,6 +64,7 @@ public class LanguageModel
     public string? CloseGallery { get; set; }
     public string? CloseWindowPrompt { get; set; }
     public string? CloudyWeather { get; set; }
+    public string? Color { get; set; }
     public string? ColorPickerTool { get; set; }
     public string? ColorPickerToolTooltip { get; set; }
     public string? ColorRepresentation { get; set; }
@@ -75,6 +77,7 @@ public class LanguageModel
     public string? ConvertedToBase64 { get; set; }
     public string? ConvertTo { get; set; }
     public string? CoolWhiteFluorescent { get; set; }
+    public string? Copies { get; set; }
     public string? CopiedImage { get; set; }
     public string? Copy { get; set; }
     public string? CopyFile { get; set; }
@@ -214,6 +217,7 @@ public class LanguageModel
     public string? Lossy { get; set; }
     public string? Low { get; set; }
     public string? Manual { get; set; }
+    public string? Margins { get; set; }
     public string? MaxAperture { get; set; }
     public string? Maximize { get; set; }
     public string? MegaPixels { get; set; }
@@ -264,6 +268,7 @@ public class LanguageModel
     public string? Orientation { get; set; }
     public string? OutputFolder { get; set; }
     public string? Pan { get; set; }
+    public string? PaperSize { get; set; }
     public string? PasswordArchive { get; set; }
     public string? PasteImageFromClipholder { get; set; }
     public string? PencilSketch { get; set; }
@@ -280,6 +285,7 @@ public class LanguageModel
     public string? PrevFolder { get; set; }
     public string? PrevImage { get; set; }
     public string? Print { get; set; }
+    public string? Printer { get; set; }
     public string? PrintSizeCm { get; set; }
     public string? PrintSizeIn { get; set; }
     public string? Quality { get; set; }
@@ -309,6 +315,7 @@ public class LanguageModel
     public string? Save { get; set; }
     public string? SaveAs { get; set; }
     public string? SavingFileFailed { get; set; }
+    public string? Scale { get; set; }
     public string? ScrollAndRotate { get; set; }
     public string? ScrollDirection { get; set; }
     public string? ScrollDown { get; set; }
@@ -383,6 +390,7 @@ public class LanguageModel
     public string? ToggleLooping { get; set; }
     public string? ToggleScroll { get; set; }
     public string? ToggleTaskbarProgress { get; set; }
+    public string? Top { get; set; }
     public string? UnableToRender { get; set; }
     public string? Unassociate { get; set; }
     public string? Uncalibrated { get; set; }

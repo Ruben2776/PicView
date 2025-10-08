@@ -408,5 +408,14 @@
   "_2Star": "Note de 2 étoiles",
   "_3Star": "Note de 3 étoiles",
   "_4Star": "Note de 4 étoiles",
-  "_5Star": "Note de 5 étoiles"
+  "_5Star": "Note de 5 étoiles",
+
+  "Printer": "Imprimante",
+  "PaperSize": "Taille du papier",
+  "Scale": "Échelle",
+  "Color": "Couleur",
+  "Copies": "Copies",
+  "Margins": "Marges (mm)",
+  "Top": "Haut",
+  "Bottom": "Bas"
 }

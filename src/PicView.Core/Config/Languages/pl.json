@@ -408,5 +408,14 @@
   "_2Star": "Ocena 2 gwiazdek",
   "_3Star": "Ocena 3 gwiazdek",
   "_4Star": "Ocena 4 gwiazdek",
-  "_5Star": "Ocena 5 gwiazdek"
+  "_5Star": "Ocena 5 gwiazdek",
+
+  "Printer": "Drukarka",
+  "PaperSize": "Rozmiar papieru",
+  "Scale": "Skala",
+  "Color": "Kolor",
+  "Copies": "Kopie",
+  "Margins": "Marginesy (mm)",
+  "Top": "Góra",
+  "Bottom": "Dół"
 }

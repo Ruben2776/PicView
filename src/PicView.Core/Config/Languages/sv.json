@@ -408,5 +408,14 @@
   "_2Star": "2 stjärnor",
   "_3Star": "3 stjärnor",
   "_4Star": "4 stjärnor",
-  "_5Star": "5 stjärnor"
+  "_5Star": "5 stjärnor",
+
+  "Printer": "Skrivare",
+  "PaperSize": "Pappersstorlek",
+  "Scale": "Skala",
+  "Color": "Färg",
+  "Copies": "Kopior",
+  "Margins": "Marginaler (mm)",
+  "Top": "Topp",
+  "Bottom": "Botten"
 }

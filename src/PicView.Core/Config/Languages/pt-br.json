@@ -408,5 +408,14 @@
   "_2Star": "2 classificação por estrela",
   "_3Star": "3 classificação por estrela",
   "_4Star": "4 classificação por estrela",
-  "_5Star": "5 classificação por estrela"
+  "_5Star": "5 classificação por estrela",
+
+  "Printer": "Impressora",
+  "PaperSize": "Tamanho de papel",
+  "Scale": "Escala",
+  "Color": "Cor",
+  "Copies": "Cópias",
+  "Margins": "Margens (mm)",
+  "Top": "Superior",
+  "Bottom": "Inferior"
 }

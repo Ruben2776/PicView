@@ -408,5 +408,14 @@
   "_2Star": "별 2 등급",
   "_3Star": "별 3 등급",
   "_4Star": "별 4 등급",
-  "_5Star": "별 5 등급"
+  "_5Star": "별 5 등급",
+
+  "Printer": "프린터",
+  "PaperSize": "용지 크기",
+  "Scale": "배율",
+  "Color": "색",
+  "Copies": "부수",
+  "Margins": "여백 (mm)",
+  "Top": "상단",
+  "Bottom": "하단"
 }

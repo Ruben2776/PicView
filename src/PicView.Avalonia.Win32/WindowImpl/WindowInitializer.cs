@@ -4,13 +4,16 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Printing;
 using PicView.Avalonia.Update;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Win32.PlatformUpdate;
+using PicView.Avalonia.Win32.Printing;
 using PicView.Avalonia.Win32.Views;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.Win32.WindowImpl;
 
@@ -24,6 +27,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
     private KeybindingsWindow? _keybindingsWindow;
     private SettingsWindow? _settingsWindow;
     private SingleImageResizeWindow? _singleImageResizeWindow;
+    private PrintPreviewWindow? _printPreviewWindow;
 
     public async Task HandlePlatofrmUpdate(UpdateInfo updateInfo, string tempPath)
     {
@@ -328,7 +332,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
         }
 
         await FunctionsMapper.CloseMenus();
-        
+
         return;
 
         void Show()
@@ -423,6 +427,97 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 else
                 {
                     _convertWindow.Show();
+                }
+            }
+
+            _ = FunctionsMapper.CloseMenus();
+        }
+    }
+    
+    public void ShowPrintPreviewWindow(MainViewModel vm)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(Set);
+        }
+
+        return;
+
+        void Set()
+        {
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+
+            if (_printPreviewWindow is null)
+            {
+                vm.PrintPreview = new();
+
+                var printerSettings = new System.Drawing.Printing.PrinterSettings();
+
+                // Load installed printers
+                vm.PrintPreview.Printers.Value = new List<string>(System.Drawing.Printing.PrinterSettings.InstalledPrinters.Cast<string>());
+                vm.PrintPreview.PaperSizes.Value = new List<string>(PrintEngine.GetPaperSizes(printerSettings.PrinterName));
+
+
+                // Pre-select default printer settings
+                var pageSettings = printerSettings.DefaultPageSettings;
+
+                var currentPrintSettings = new PrintSettings
+                {
+                    ImagePath = { Value = vm.PicViewer.FileInfo?.Value?.FullName },
+                    PrinterName = { Value = printerSettings.PrinterName },
+                    PaperSize = { Value = pageSettings.PaperSize.PaperName },
+                    ColorMode = { Value = printerSettings.SupportsColor ? (int)ColorModes.Auto : (int)ColorModes.BlackAndWhite },
+                    Orientation = { Value = pageSettings.Landscape ? (int)Orientations.Landscape : (int)Orientations.Portrait },
+                    MarginTop = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Top) },
+                    MarginBottom = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Bottom) },
+                    MarginLeft = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Left) },
+                    MarginRight = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Right) }
+                };
+
+                vm.PrintPreview.PrintSettings.Value = currentPrintSettings;
+
+                if (vm.PicViewer.FileInfo.Value != null && File.Exists(vm.PicViewer.FileInfo.Value.FullName))
+                {
+                    using var fs = File.OpenRead(vm.PicViewer.FileInfo.Value.FullName);
+                    vm.PrintPreview.PreviewImage.Value = new System.Drawing.Bitmap(fs);
+                }
+
+                _printPreviewWindow = new PrintPreviewWindow
+                {
+                    DataContext = vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+
+                vm.PrintPreview.PrintCommand.SubscribeAwait(async (_, ct) =>
+                {
+                    await _printPreviewWindow?.RunPrintAsync(vm);
+                })
+                .AddTo(vm.PrintPreview._disposables);
+
+                vm.PrintPreview.CancelCommand.SubscribeAwait(async (_, ct) =>
+                {
+                    await Dispatcher.UIThread.InvokeAsync(() => _printPreviewWindow?.Close());
+                }).AddTo(vm.PrintPreview._disposables);
+
+                _printPreviewWindow.Show(desktop.MainWindow);
+                _printPreviewWindow.Closing += (s, e) => _printPreviewWindow = null;
+            }
+            else
+            {
+                if (_printPreviewWindow.WindowState == WindowState.Minimized)
+                {
+                    WindowFunctions.ShowMinimizedWindow(_printPreviewWindow);
+                }
+                else
+                {
+                    _printPreviewWindow.Show();
                 }
             }
 

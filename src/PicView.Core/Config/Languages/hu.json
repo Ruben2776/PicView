@@ -408,5 +408,14 @@
   "_2Star": "2 csillagos értékelés",
   "_3Star": "3 csillagos értékelés",
   "_4Star": "4 csillagos értékelés",
-  "_5Star": "5 csillagos értékelés"
+  "_5Star": "5 csillagos értékelés",
+
+  "Printer": "Nyomtató",
+  "PaperSize": "Papírméret",
+  "Scale": "Méretarány",
+  "Color": "Szín",
+  "Copies": "Másolatok",
+  "Margins": "Margók (mm)",
+  "Top": "Felső",
+  "Bottom": "Alsó"
 }

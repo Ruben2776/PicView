@@ -408,5 +408,14 @@
   "_2Star": "2 stjerner",
   "_3Star": "3 stjerner",
   "_4Star": "4 stjerner",
-  "_5Star": "5 stjerner"
+  "_5Star": "5 stjerner",
+  
+  "Printer": "Printer",
+  "PaperSize": "Papirstørrelse",
+  "Scale": "Skala",
+  "Color": "Farve",
+  "Copies": "Kopier",
+  "Margins": "Margener (mm)",
+  "Top": "Top",
+  "Bottom": "Bund"
 }

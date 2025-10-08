@@ -408,5 +408,14 @@
   "_2Star": "2 Sterne",
   "_3Star": "3 Sterne",
   "_4Star": "4 Sterne",
-  "_5Star": "5 Sterne"
+  "_5Star": "5 Sterne",
+
+  "Printer": "Drucker",
+  "PaperSize": "Papiergröße",
+  "Scale": "Maßstab",
+  "Color": "Farbe",
+  "Copies": "Kopien",
+  "Margins": "Ränder (mm)",
+  "Top": "Oben",
+  "Bottom": "Unten"
 }

@@ -27,6 +27,7 @@ public class MainViewModel
     public ImageInfoWindowViewModel? InfoWindow { get; set; }
     public FileAssociationsViewModel? AssociationsViewModel { get; set; }
     public AboutViewModel? AboutView { get; set; }
+    public PrintPreviewViewModel? PrintPreview { get; set; }
 
     public MainViewModel(IPlatformSpecificService? platformSpecificService, IPlatformWindowService? platformWindowService)
     {

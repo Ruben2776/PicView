@@ -408,5 +408,14 @@
   "_2Star": "2 звездице",
   "_3Star": "3 звездице",
   "_4Star": "4 звездице",
-  "_5Star": "5 звездица"
+  "_5Star": "5 звездица",
+
+  "Printer": "Принтер",
+  "PaperSize": "Veličina papira",
+  "Scale": "Skala",
+  "Color": "Boja",
+  "Copies": "Kopije",
+  "Margins": "Margine (мм)",
+  "Top": "Gornji",
+  "Bottom": "Donji"
 }

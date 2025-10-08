@@ -408,5 +408,14 @@
   "_2Star": "2 yıldızlı derecelendirme",
   "_3Star": "3 yıldızlı derecelendirme",
   "_4Star": "4 yıldızlı derecelendirme",
-  "_5Star": "5 yıldızlı derecelendirme"
+  "_5Star": "5 yıldızlı derecelendirme",
+
+  "Printer": "Yazıcı",
+  "PaperSize": "Kağıt Boyutu",
+  "Scale": "Ölçek",
+  "Color": "Renk",
+  "Copies": "Kopya",
+  "Margins": "Kenar boşlukları (mm)",
+  "Top": "Üst",
+  "Bottom": "Alt"
 }

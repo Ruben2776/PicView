@@ -408,5 +408,14 @@
   "_2Star": "2 star rating",
   "_3Star": "3 star rating",
   "_4Star": "4 star rating",
-  "_5Star": "5 star rating"
+  "_5Star": "5 star rating",
+
+  "Printer": "Printer",
+  "PaperSize": "Paper Size",
+  "Scale": "Scale",
+  "Color": "Color",
+  "Copies": "Copies",
+  "Margins": "Margins (mm)",
+  "Top": "Top",
+  "Bottom": "Bottom"
 }
