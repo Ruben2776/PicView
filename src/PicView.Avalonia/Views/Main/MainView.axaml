@@ -681,7 +681,8 @@
                 Header="{CompiledBinding Translation.SetAsWallpaper.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}">
+                                            Converter={x:Static ObjectConverters.IsNotNull}}"
+                IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource PanoramaGeometry}"
@@ -692,7 +693,7 @@
                 </MenuItem.Icon>
             </MenuItem>
 
-            <Separator />
+            <Separator IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}" />
 
             <!--  Image  -->
             <MenuItem Header="{CompiledBinding Translation.Image.Value, Mode=OneWay}">

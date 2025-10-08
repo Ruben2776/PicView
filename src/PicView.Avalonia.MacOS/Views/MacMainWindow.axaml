@@ -212,7 +212,8 @@
                         Header="{CompiledBinding Translation.SetAsWallpaper.Value,
                                                  Mode=OneWay}"
                         IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
-                                                    Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}" />
 
                     <NativeMenuItemSeparator />
 

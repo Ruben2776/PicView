@@ -15,6 +15,9 @@ public static class WallpaperManager
             return;
         }
         
+        if (!vm.GlobalSettings.ShowSetAsWallpaper.Value)
+            return;
+        
         vm.MainWindow.IsLoadingIndicatorShown.Value = true;
         try
         {

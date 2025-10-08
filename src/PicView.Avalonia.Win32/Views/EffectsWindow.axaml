@@ -118,7 +118,8 @@
                                 CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                                    FallbackValue=''}"
                                 Header="{CompiledBinding Translation.SetAsWallpaper.Value,
-                                                         Mode=OneWay}">
+                                                         Mode=OneWay}"
+                                IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                                 <MenuItem.Icon>
                                     <Path
                                         Data="{StaticResource PanoramaGeometry}"
@@ -128,7 +129,7 @@
                                         Width="13" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <Separator />
+                            <Separator IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}" />
                             <MenuItem Header="{CompiledBinding Translation.ClearEffects.Value, Mode=OneWay}" x:Name="ClearEffectsItem">
                                 <MenuItem.Icon>
                                     <Image

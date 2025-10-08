@@ -6,6 +6,7 @@
     x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
@@ -118,6 +119,7 @@
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull}}"
+                IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}"
                 x:Name="WallpaperMenuItem">
                 <MenuItem.Icon>
                     <Path
@@ -136,7 +138,8 @@
                     Header="{CompiledBinding Translation.Fill.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
-                                                Converter={x:Static ObjectConverters.IsNotNull}}">
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
+                    IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"
@@ -155,7 +158,8 @@
                     Header="{CompiledBinding Translation.Fit.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
-                                                Converter={x:Static ObjectConverters.IsNotNull}}">
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
+                    IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"
@@ -174,7 +178,8 @@
                     Header="{CompiledBinding Translation.Stretch.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
-                                                Converter={x:Static ObjectConverters.IsNotNull}}">
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
+                    IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"
@@ -194,7 +199,8 @@
                     Header="{CompiledBinding Translation.Center.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
-                                                Converter={x:Static ObjectConverters.IsNotNull}}">
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
+                    IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"
@@ -213,7 +219,8 @@
                     Header="{CompiledBinding Translation.Tile.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
-                                                Converter={x:Static ObjectConverters.IsNotNull}}">
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
+                    IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
                         <Path
                             Data="{StaticResource PanoramaGeometry}"
