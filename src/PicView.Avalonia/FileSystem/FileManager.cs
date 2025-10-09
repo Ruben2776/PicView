@@ -88,11 +88,6 @@ public static class FileManager
     /// </summary>
     public static async Task Print(string? path, MainViewModel vm)
     {
-        if (!ValidateParameters(path, vm.PlatformService))
-        {
-            return;
-        }
-
         try
         {
             vm.MainWindow.IsLoadingIndicatorShown.Value = true;

@@ -527,7 +527,7 @@ public static class FunctionsMapper
     
     /// <inheritdoc cref="FileManager.Print(string, MainViewModel)" />
     public static async ValueTask Print() =>
-        await FileManager.Print(null, Vm).ConfigureAwait(false);
+        await FileManager.Print(Vm.PicViewer.FileInfo?.CurrentValue?.FullName, Vm).ConfigureAwait(false);
 
     /// <inheritdoc cref="FilePicker.SelectAndLoadFile(MainViewModel)" />
     public static async ValueTask Open() =>
@@ -535,11 +535,13 @@ public static class FunctionsMapper
 
     /// <inheritdoc cref="FileManager.OpenWith(string, MainViewModel)" />
     public static async ValueTask OpenWith() =>
-        await Task.Run(() => Vm?.PlatformService?.OpenWith(Vm.PicViewer.FileInfo?.CurrentValue.FullName)).ConfigureAwait(false);
+        await Task.Run(() => Vm?.PlatformService?.OpenWith(Vm.PicViewer.FileInfo?.CurrentValue?.FullName))
+            .ConfigureAwait(false);
     
     /// <inheritdoc cref="FileManager.LocateOnDisk(string, MainViewModel)" />
     public static async ValueTask OpenInExplorer()=>
-        await Task.Run(() => Vm?.PlatformService?.LocateOnDisk(Vm.PicViewer.FileInfo?.CurrentValue.FullName)).ConfigureAwait(false);
+        await Task.Run(() => Vm?.PlatformService?.LocateOnDisk(Vm.PicViewer.FileInfo?.CurrentValue?.FullName))
+            .ConfigureAwait(false);
 
     /// <inheritdoc cref="FileSaverHelper.SaveCurrentFile(MainViewModel)" />
     public static async ValueTask Save() =>
@@ -551,11 +553,15 @@ public static class FunctionsMapper
     
     /// <inheritdoc cref="FileManager.DeleteFileWithOptionalDialog" />
     public static async ValueTask DeleteFile() =>
-        await FileManager.DeleteFileWithOptionalDialog(true, Vm.PicViewer?.FileInfo?.CurrentValue.FullName, Vm.PlatformService).ConfigureAwait(false);
+        await FileManager
+            .DeleteFileWithOptionalDialog(true, Vm.PicViewer?.FileInfo?.CurrentValue?.FullName, Vm.PlatformService)
+            .ConfigureAwait(false);
     
     /// <inheritdoc cref="FileManager.DeleteFileWithOptionalDialog" />
     public static async ValueTask DeleteFilePermanently() =>
-        await FileManager.DeleteFileWithOptionalDialog(false, Vm.PicViewer?.FileInfo?.CurrentValue.FullName, Vm.PlatformService).ConfigureAwait(false);
+        await FileManager
+            .DeleteFileWithOptionalDialog(false, Vm.PicViewer?.FileInfo?.CurrentValue?.FullName, Vm.PlatformService)
+            .ConfigureAwait(false);
 
     public static async ValueTask Rename()
     {
