@@ -75,7 +75,6 @@ public static class Win32Window
             window.WindowState = WindowState.Maximized;
             Settings.WindowProperties.Maximized = true;
             WindowResizing.SetSize(vm);
-            SetMargin(vm, window);
         });
 
         vm.MainWindow.IsMaximized.Value = true;
@@ -99,7 +98,6 @@ public static class Win32Window
         Settings.WindowProperties.Fullscreen = false;
 
         // Update UI state
-        SetMargin(vm, window);
         vm.MainWindow.IsMaximized.Value = false;
         vm.MainWindow.IsFullscreen.Value = false;
 
@@ -211,29 +209,6 @@ public static class Win32Window
         vm.MainWindow.IsTopToolbarShown.Value = false;
         vm.MainWindow.IsBottomToolbarShown.Value = false;
         vm.MainWindow.IsUIShown.Value = false;
-    }
-
-    /// <summary>
-    /// Sets margin based on window state
-    /// </summary>
-    private static void SetMargin(MainViewModel vm, Window window)
-    {
-        if (Settings.WindowProperties.Maximized)
-        {
-            // Sometimes margin is 0 when it's not supposed to be, so replace with 7. Not sure why.
-            var left = window.OffScreenMargin.Left is 0 ? 7 : window.OffScreenMargin.Left;
-            var top = window.OffScreenMargin.Top is 0 ? 7 : window.OffScreenMargin.Top;
-            var right = window.OffScreenMargin.Right is 0 ? 7 : window.OffScreenMargin.Right;
-            var bottom = window.OffScreenMargin.Bottom is 0 ? 7 : window.OffScreenMargin.Bottom;
-            vm.MainWindow.TopScreenMargin.Value = new Thickness(left, top, right, 0);
-            vm.MainWindow.BottomScreenMargin.Value = new Thickness(left, 0, right, bottom);
-        }
-        else
-        {
-            var noThickness = new Thickness(0);
-            vm.MainWindow.TopScreenMargin.Value = noThickness;
-            vm.MainWindow.BottomScreenMargin.Value = noThickness;
-        }
     }
 
     #endregion Helpers

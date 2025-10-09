@@ -1,7 +1,6 @@
 <UserControl
     Background="{DynamicResource SecondaryBackgroundColor}"
-    MaxWidth="{CompiledBinding MainWindow.TitleMaxWidth.Value,
-                               Mode=OneWay}"
+    HorizontalAlignment="Stretch"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"

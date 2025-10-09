@@ -8,11 +8,13 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <UserControl.Resources>
         <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="ImageMenuBrush" />
         <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="ToolsMenuBrush" />
+        <converters:BoolToThicknessConverter x:Key="AllowResizeMarginConverter" TrueThickness="0,0,10,0" FalseThickness="0" />
     </UserControl.Resources>
 
     <UserControl.ContextMenu>
@@ -205,7 +207,7 @@
                                  Mode=OneWay}"
         x:Name="MainBottomBorder">
         <Panel>
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="{CompiledBinding MainWindow.CanResize.Value, Mode=OneWay, Converter={StaticResource AllowResizeMarginConverter}}">
 
                 <customControls:IconButton
                     Background="{DynamicResource SecondaryButtonBackgroundColor}"
@@ -310,7 +312,7 @@
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsTabStop="False"
-                    Width="90"
+                    Width="80"
                     x:Name="PreviousButton" />
 
                 <customControls:IconButton
@@ -328,7 +330,7 @@
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsTabStop="False"
-                    Width="90"
+                    Width="80"
                     x:Name="NextButton" />
 
                 <customControls:IconButton
@@ -440,7 +442,7 @@
                 HorizontalAlignment="Right"
                 IsVisible="{CompiledBinding MainWindow.CanResize.Value,
                                             Mode=OneWay}"
-                Margin="0,0,5,5"
+                Margin="0,0,2,2"
                 Stretch="Fill"
                 Stroke="{DynamicResource MainBackgroundColor}"
                 StrokeThickness="1"

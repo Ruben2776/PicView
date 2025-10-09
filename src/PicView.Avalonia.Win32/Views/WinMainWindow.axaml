@@ -17,6 +17,13 @@
     xmlns:views1="clr-namespace:PicView.Avalonia.Win32.Views"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+	<Window.Styles>
+        <Style Selector="Window[WindowState=Maximized]">
+            <Setter Property="SystemDecorations" Value="None" />
+            <Setter Property="ExtendClientAreaToDecorationsHint" Value="False" />
+        </Style>
+    </Window.Styles>
+    
     <Border BorderBrush="{DynamicResource WindowBorderColor}" BorderThickness="1">
         <DockPanel LastChildFill="True">
             <views1:WinTitleBar DockPanel.Dock="Top" x:Name="Titlebar" />
