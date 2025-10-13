@@ -59,11 +59,14 @@ public class PreLoader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader) :
         var fileInfo = list[index];
         var preLoadValue = new PreLoadValue(new ImageModel { FileInfo = fileInfo }, isLoading: true);
         ct.ThrowIfCancellationRequested();
-        _preLoadList.TryAdd(index, preLoadValue, list.Count, isReverse, out var evictedValue);
+        var evicted = _preLoadList.TryAdd(index, preLoadValue, list.Count, isReverse, out var evictedValue);
 
         try
         {
-            ImageDisposalHelper(evictedValue);
+            if (evicted)
+            {
+                ImageDisposalHelper(evictedValue);
+            }
 
             var imageModel = await imageModelLoader(fileInfo).ConfigureAwait(false);
             

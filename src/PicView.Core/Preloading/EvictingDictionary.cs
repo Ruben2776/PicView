@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using PicView.Core.DebugTools;
 
@@ -94,7 +93,8 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
                 evictedValue = default;
                 return false;
             }
-            if (_dictionary.Count >= _maxSize)
+
+            if (_dictionary.Count > _maxSize)
             {
                 // Looping Eviction Logic: Find the key farthest away from the current index.
                 var keyToEvict = -1;
