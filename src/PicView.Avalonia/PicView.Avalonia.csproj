@@ -119,6 +119,9 @@
           <DependentUpon>DateTimePickerButtons.axaml</DependentUpon>
           <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\Main\PrintPreviewView.axaml.cs">
+          <DependentUpon>PrintPreviewView.axaml</DependentUpon>
+      </Compile>
   </ItemGroup>
 
 
