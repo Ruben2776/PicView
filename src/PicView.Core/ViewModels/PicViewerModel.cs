@@ -1,5 +1,7 @@
-﻿using ImageMagick;
+﻿using System.Collections.ObjectModel;
+using ImageMagick;
 using PicView.Core.Exif;
+using PicView.Core.FileSearch;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ImageEffects;
 using R3;
@@ -17,6 +19,8 @@ public class PicViewerModel : IDisposable
     }
     
     public BindableReactiveProperty<FileInfo?> FileInfo { get; } = new();
+
+    public BindableReactiveProperty<ObservableCollection<FileSearchResult>> FilteredFileInfos { get; } = new();
 
     /// <summary>
     /// The image's pixel width

@@ -1,0 +1,68 @@
+﻿<customControls:AnimatedPopUp
+    ClickingOutsideCloses="True"
+    Padding="10"
+    x:Class="PicView.Avalonia.Views.UC.PopUps.FileSearchDialog"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel Background="Transparent" Width="425">
+
+        <TextBox
+            Background="{DynamicResource AltBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderThickness="1"
+            CornerRadius="3"
+            FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
+            Foreground="{DynamicResource MainTextColor}"
+            Margin="0,0,0,5"
+            Padding="5,6,0,6"
+            VerticalAlignment="Center"
+            Watermark="{CompiledBinding PicViewer.FileInfo.Value,
+                                        Mode=OneWay}"
+            Width="425"
+            x:Name="SearchBox" />
+
+        <Border
+            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderThickness="0,1,1,1"
+            CornerRadius="6"
+            IsVisible="{Binding !!PicViewer.FilteredFileInfos.Value.Count}">
+            <customControls:AutoScrollViewer MaxHeight="400">
+                <Border
+                    Background="#10000000"
+                    Classes="borderStyle"
+                    CornerRadius="6">
+                    <ItemsControl ItemsSource="{CompiledBinding PicViewer.FilteredFileInfos.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Background="Transparent"
+                                    BorderBrush="{DynamicResource MainBorderColor}"
+                                    BorderThickness="0,0,0,1"
+                                    Classes="noBorderHover focus"
+                                    Command="{Binding #SearchBox.((viewModels:MainViewModel)DataContext).Navigation.LoadFileFromStringCommand}"
+                                    CommandParameter="{Binding File.FullName}"
+                                    Focusable="True"
+                                    IsTabStop="True"
+                                    Padding="5,10">
+                                    <customControls:HighlightableTextBlock
+                                        Classes="txt"
+                                        HighlightBrush="{DynamicResource AccentColor}"
+                                        HighlightEnd="{Binding MatchEndIndex}"
+                                        HighlightStart="{Binding MatchStartIndex}"
+                                        IsHitTestVisible="False"
+                                        Margin="2,0,0,0"
+                                        Text="{Binding File.Name}"
+                                        TextWrapping="Wrap" />
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </customControls:AutoScrollViewer>
+        </Border>
+
+    </StackPanel>
+</customControls:AnimatedPopUp>

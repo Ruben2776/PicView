@@ -241,6 +241,12 @@
             <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
         </Style>
+
+        <Style Selector="^.focus:focus-within /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
         <Style Selector="^:disabled">
             <Setter Property="Opacity" Value="{StaticResource ThemeDisabledOpacity}" />
         </Style>

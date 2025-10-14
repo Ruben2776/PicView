@@ -122,6 +122,13 @@
       <Compile Update="Views\Main\PrintPreviewView.axaml.cs">
           <DependentUpon>PrintPreviewView.axaml</DependentUpon>
       </Compile>
+      <Compile Update="Views\UC\PopUps\FileSearchDialog.axaml.cs">
+          <DependentUpon>FileSearchDialog.axaml</DependentUpon>
+          <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="CustomControls\AnimatedPopUp.cs">
+          <DependentUpon>AnimatedMenu.cs</DependentUpon>
+      </Compile>
   </ItemGroup>
 
 
@@ -138,10 +145,10 @@
   </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="12.0.999-cibuild0059182-alpha"/>
-        <PackageReference Include="Avalonia.Desktop" Version="12.0.999-cibuild0059182-alpha"/>
+        <PackageReference Include="Avalonia" Version="12.0.999-cibuild0059320-alpha"/>
+        <PackageReference Include="Avalonia.Desktop" Version="12.0.999-cibuild0059320-alpha"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="12.0.999-cibuild0059182-alpha"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="12.0.999-cibuild0059320-alpha"/>
         <PackageReference Include="Magick.NET.AvaloniaMediaImaging" Version="1.1.5"/>
         <PackageReference Include="R3Extensions.Avalonia" Version="1.3.0" />
         <PackageReference Include="Svg.Controls.Skia.Avalonia" Version="11.3.6.2"/>

@@ -491,7 +491,7 @@ public class PreLoader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader) :
     /// <summary>
     /// Asynchronously clears the entire cache, disposing all cached images and canceling any ongoing preload operations.
     /// </summary>
-    public async Task ClearAsync()
+    public async ValueTask ClearAsync()
     {
         try
         {
@@ -541,7 +541,7 @@ public class PreLoader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader) :
     /// <param name="currentIndex">The index of the currently viewed image, which serves as the center point for preloading.</param>
     /// <param name="reverse">The direction of preloading. <c>false</c> prioritizes loading subsequent images; <c>true</c> prioritizes previous images.</param>
     /// <param name="list">The complete list of image file paths.</param>
-    public async ValueTask PreLoadAsync(int currentIndex, bool reverse, List<FileInfo> list)
+    public async Task PreLoadAsync(int currentIndex, bool reverse, List<FileInfo> list)
     {
         if (list == null)
         {
@@ -597,7 +597,7 @@ public class PreLoader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader) :
     /// <param name="reverse">Whether to preload in reverse order.</param>
     /// <param name="list">The list of image file paths.</param>
     /// <param name="token">A <see cref="CancellationToken"/> to observe while waiting for tasks to complete.</param>
-    private async ValueTask PreLoadInternalAsync(int currentIndex, bool reverse, List<FileInfo> list,
+    private async Task PreLoadInternalAsync(int currentIndex, bool reverse, List<FileInfo> list,
         CancellationToken token)
     {
         var count = list.Count;

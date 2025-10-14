@@ -222,7 +222,7 @@
         </Border>
         <Polygon
             Fill="{DynamicResource MenuBackgroundColor}"
-            Margin="302,-1,0,0"
+            Margin="285,-1,0,0"
             Points="0,0 15,30, 30,0"
             Stroke="{DynamicResource MainBorderColor}"
             StrokeThickness="1" />

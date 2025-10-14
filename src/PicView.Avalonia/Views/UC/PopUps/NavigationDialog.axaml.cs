@@ -2,6 +2,7 @@
 using Avalonia.LogicalTree;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Functions;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using R3;
@@ -25,19 +26,19 @@ public partial class NavigationDialog : AnimatedPopUp
 
         Observable.FromEventHandler<RoutedEventArgs>(h => NextButton.Click += h,
                 h => NextButton.Click -= h)
-            .SubscribeAwait(async (_, _) =>
+            .SubscribeAwait(async (s, c) =>
             {
                 _ = AnimatedClosing();
-                await FunctionsMapper.Next();
+                await NavigationManager.Navigate(true, UIHelper.GetMainView.DataContext as MainViewModel, c);
             })
             .AddTo(_subscriptions);
         
         Observable.FromEventHandler<RoutedEventArgs>(h => PrevButton.Click += h,
                 h => PrevButton.Click -= h)
-            .SubscribeAwait(async (_, _) =>
+            .SubscribeAwait(async (s, c) =>
             {
                 _ = AnimatedClosing();
-                await FunctionsMapper.Prev();
+                await NavigationManager.Navigate(false, UIHelper.GetMainView.DataContext as MainViewModel, c);
             })
             .AddTo(_subscriptions);
         

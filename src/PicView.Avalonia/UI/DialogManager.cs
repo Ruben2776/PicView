@@ -68,4 +68,15 @@ public static class DialogManager
             desktop.MainWindow?.Close();
         }
     }
+
+    public static void AddFileSearchDialog()
+    {
+        if (UIHelper.GetMainView.MainGrid.Children.OfType<FileSearchDialog>().Any())
+        {
+            return;
+        }
+
+        MenuManager.CloseMenus(UIHelper.GetMainView.DataContext as MainViewModel);
+        UIHelper.GetMainView.MainGrid.Children.Add(new FileSearchDialog());
+    }
 }

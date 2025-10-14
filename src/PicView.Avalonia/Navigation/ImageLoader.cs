@@ -454,12 +454,8 @@ public static class ImageLoader
             .NextIteration(NavigateTo.First, _cancellationTokenSource)
             .ConfigureAwait(false);
 
-    /// <summary>
-    ///     Checks if the previous iteration has been canceled and starts the iteration at the given index
-    /// </summary>
-    /// <param name="index">The index to iterate to.</param>
-    /// <param name="imageIterator">The ImageIterator instance.</param>
-    public static async ValueTask CheckCancellationAndStartIterateToIndex(int index, ImageIterator imageIterator)
+    public static async ValueTask CheckCancellationAndStartIterateToIndex(int index, ImageIterator imageIterator,
+        CancellationToken? cancellationToken)
     {
         if (_cancellationTokenSource is not null)
         {
@@ -467,6 +463,10 @@ public static class ImageLoader
         }
 
         _cancellationTokenSource = new CancellationTokenSource();
+        if (cancellationToken is not null)
+        {
+            CancellationTokenSource.CreateLinkedTokenSource(cancellationToken.Value, _cancellationTokenSource.Token);
+        }
         await imageIterator.NextIteration(index, _cancellationTokenSource).ConfigureAwait(false);
     }
 

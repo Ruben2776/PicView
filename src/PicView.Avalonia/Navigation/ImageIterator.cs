@@ -693,7 +693,7 @@ public class ImageIterator : IAsyncDisposable
         await UpdateImage.UpdateSourceSlim(_vm, index, imageSource, width, height, ImagePaths, token);
     }
 
-    public async Task SlimUpdate(int index, object? imageSource)
+    public async ValueTask SlimUpdate(int index, object? imageSource)
     {
         var magickImage = GetImage.CreateAndPingMagickImage(ImagePaths[index]);
         var imageModel = new ImageModel

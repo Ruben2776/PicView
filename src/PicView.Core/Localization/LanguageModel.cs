@@ -322,6 +322,7 @@ public class LanguageModel
     public string? Scrolling { get; set; }
     public string? ScrollingDisabled { get; set; }
     public string? ScrollingEnabled { get; set; }
+    public string? Search { get; set; }
     public string? ScrollToBottom { get; set; }
     public string? ScrollToTop { get; set; }
     public string? ScrollToZoom { get; set; }

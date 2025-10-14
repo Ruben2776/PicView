@@ -122,9 +122,12 @@ public class AnimatedPopUp : ContentControl
         }
     }
 
-    // ReSharper disable once UnusedParameter.Global
+    // ReSharper disable once UnusedMember.Global
     public void KeyDownHandler(object? sender, KeyEventArgs e)
     {
-        RaiseEvent(e);
+        if (e.Key is Key.Escape)
+        {
+            _ = AnimatedClosing();
+        }
     }
 }

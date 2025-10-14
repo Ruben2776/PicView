@@ -238,6 +238,7 @@
                 Width="140" />
         </StackPanel>
 
+        <!--  Next folder  -->
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
             <TextBlock
                 Classes="txt"
@@ -261,6 +262,7 @@
                 Width="140" />
         </StackPanel>
 
+        <!--  Previous folder  -->
         <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
             <TextBlock
                 Classes="txt"
@@ -283,6 +285,30 @@
                 Width="140" />
         </StackPanel>
 
+        <!--  Search  -->
+        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
+            <TextBlock
+                Classes="txt"
+                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                Text="{CompiledBinding Translation.Search.Value,
+                                       Mode=OneWay}"
+                Width="170" />
+            <customControls:KeybindTextBox
+                Classes="hover TStyle"
+                MethodName="Search"
+                ToolTip.Tip="{CompiledBinding Translation.Search.Value,
+                                              Mode=OneWay}"
+                Width="140" />
+            <customControls:KeybindTextBox
+                Alt="True"
+                Classes="hover TStyle"
+                MethodName="Search"
+                ToolTip.Tip="{CompiledBinding Translation.Search.Value,
+                                              Mode=OneWay}"
+                Width="140" />
+        </StackPanel>
+
+        <!--  Select gallery thumb  -->
         <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
             <TextBlock
                 Classes="txt"

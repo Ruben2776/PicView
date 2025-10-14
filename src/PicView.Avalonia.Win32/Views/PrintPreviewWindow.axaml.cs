@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
+using System.Drawing.Printing;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -8,14 +7,13 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using PicView.Avalonia.Printing;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Win32.Printing;
+using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
-using System.Drawing.Printing;
-using System.Runtime.InteropServices;
-using Avalonia.Platform;
-using PicView.Avalonia.Printing;
-using PicView.Avalonia.Win32.Printing;
 
 namespace PicView.Avalonia.Win32.Views;
 
@@ -27,33 +25,40 @@ public partial class PrintPreviewWindow : Window
     {
         InitializeComponent();
 
-        // Glass/Transparent theme support
-        if (Settings.Theme.GlassTheme)
+        GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.Print + " - PicView");
+
+        if (!Settings.Theme.Dark)
         {
-            IconBorder.Background = Brushes.Transparent;
-            IconBorder.BorderThickness = new Thickness(0);
-            MinimizeButton.Background = Brushes.Transparent;
-            MinimizeButton.BorderThickness = new Thickness(0);
-            CloseButton.Background = Brushes.Transparent;
-            CloseButton.BorderThickness = new Thickness(0);
-            BorderRectangle.Height = 0;
-            TitleText.Background = Brushes.Transparent;
-
-            if (!Application.Current.TryGetResource("SecondaryTextColor",
-                    Application.Current.RequestedThemeVariant, out var textColor)) return;
-            if (textColor is not Color color) return;
-
-            var brush = new SolidColorBrush(color);
-            TitleText.Foreground = brush;
-            MinimizeButton.Foreground = brush;
-            CloseButton.Foreground = brush;
+            PrintPreviewView.Background = UIHelper.GetMenuBackgroundColor();
         }
+
+        // Glass/Transparent theme support
+        if (!Settings.Theme.GlassTheme)
+        {
+            return;
+        }
+
+        PrintPreviewView.Background = Brushes.Transparent;
+        IconBorder.Background = Brushes.Transparent;
+        IconBorder.BorderThickness = new Thickness(0);
+        MinimizeButton.Background = Brushes.Transparent;
+        MinimizeButton.BorderThickness = new Thickness(0);
+        CloseButton.Background = Brushes.Transparent;
+        CloseButton.BorderThickness = new Thickness(0);
+        BorderRectangle.Height = 0;
+        TitleText.Background = Brushes.Transparent;
+        var brush = UIHelper.GetBrush("SecondaryTextColor");
+        TitleText.Foreground = brush;
+        MinimizeButton.Foreground = brush;
+        CloseButton.Foreground = brush;
     }
 
     private void MoveWindow(object? sender, PointerPressedEventArgs e)
     {
         if (VisualRoot is Window hostWindow)
+        {
             hostWindow.BeginMoveDrag(e);
+        }
     }
 
     private void Close(object? sender, RoutedEventArgs e) => Close();
@@ -63,8 +68,15 @@ public partial class PrintPreviewWindow : Window
     {
         base.OnLoaded(e);
 
-        if (DataContext is not MainViewModel vm) return;
-        if (vm.PrintPreview == null) return;
+        if (DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        if (vm.PrintPreview == null)
+        {
+            return;
+        }
 
         var ps = vm.PrintPreview.PrintSettings.Value;
 
@@ -76,6 +88,7 @@ public partial class PrintPreviewWindow : Window
             .AddTo(vm.PrintPreview._disposables);
 
         // Any setting change triggers preview update
+        // ReSharper disable once InvokeAsExtensionMethod
         Observable.CombineLatest(
                 ps.Orientation.AsObservable(),
                 ps.MarginTop.AsObservable(),
@@ -104,8 +117,15 @@ public partial class PrintPreviewWindow : Window
     public void UpdatePrinter(PrintPreviewViewModel vm)
     {
         var settings = vm.PrintSettings.Value;
-        if (settings == null) return;
-        if (string.IsNullOrWhiteSpace(settings.PrinterName.Value)) return;
+        if (settings == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(settings.PrinterName.Value))
+        {
+            return;
+        }
 
         try
         {
@@ -142,9 +162,20 @@ public partial class PrintPreviewWindow : Window
         try
         {
             var settings = vm.PrintSettings.Value;
-            if (settings == null) return;
-            if (DataContext is not MainViewModel mainVm) return;
-            if (mainVm.PicViewer?.ImageSource.Value is not Bitmap avaloniaBmp) return;
+            if (settings == null)
+            {
+                return;
+            }
+
+            if (DataContext is not MainViewModel mainVm)
+            {
+                return;
+            }
+
+            if (mainVm.PicViewer?.ImageSource.Value is not Bitmap avaloniaBmp)
+            {
+                return;
+            }
 
             // Grayscale if needed
             if (settings.ColorMode.Value == (int)ColorModes.BlackAndWhite)
@@ -152,11 +183,18 @@ public partial class PrintPreviewWindow : Window
                 vm.GrayCache ??= PrintEngine.ToGrayScale(avaloniaBmp, PreviewDpi);
                 avaloniaBmp = (Bitmap)vm.GrayCache;
             }
-            else vm.GrayCache = null;
+            else
+            {
+                vm.GrayCache = null;
+            }
 
             // Resolve paper
-            var paperInfo = PrintEngine.ResolvePaper(settings.PrinterName.Value, settings.PaperSize.Value, (settings.Orientation.Value == (int)Orientations.Landscape));
-            if (paperInfo is null) return;
+            var paperInfo = PrintEngine.ResolvePaper(settings.PrinterName.Value, settings.PaperSize.Value,
+                settings.Orientation.Value == (int)Orientations.Landscape);
+            if (paperInfo is null)
+            {
+                return;
+            }
 
             // Compute layout once
             var layout = PrintEngine.ComputeLayout(
@@ -171,14 +209,14 @@ public partial class PrintPreviewWindow : Window
             using (var ctx = rtb.CreateDrawingContext())
             {
                 ctx.FillRectangle(Brushes.White, new Rect(0, 0, layout.PageWidthPx, layout.PageHeightPx));
-                ctx.DrawRectangle(null, new Pen(Brushes.LightGray, 1),
+                ctx.DrawRectangle(null, new Pen(Brushes.LightGray),
                     new Rect(0.5, 0.5, layout.PageWidthPx - 1, layout.PageHeightPx - 1));
 
                 var destRect = new Rect(layout.DrawX, layout.DrawY, layout.DrawWidth, layout.DrawHeight);
 
                 var dashPen = new Pen(Brushes.Gray, 2)
                 {
-                    DashStyle = new DashStyle(new double[] { 4, 2 }, 0)
+                    DashStyle = new DashStyle([4, 2], 0)
                 };
                 ctx.DrawRectangle(null, dashPen,
                     new Rect(layout.ContentX, layout.ContentY, layout.ContentWidth, layout.ContentHeight));
@@ -189,7 +227,9 @@ public partial class PrintPreviewWindow : Window
             }
 
             if (vm.PreviewImage.Value is Bitmap old)
+            {
                 old.Dispose();
+            }
 
             vm.PreviewImage.Value = rtb;
             vm.PageWidth.Value = layout.PageWidthPx;
@@ -208,11 +248,22 @@ public partial class PrintPreviewWindow : Window
 
     public async Task RunPrintAsync(MainViewModel vm)
     {
-        if (vm.PrintPreview == null) return;
+        if (vm.PrintPreview == null)
+        {
+            return;
+        }
+
         var preview = vm.PrintPreview;
         var settings = preview.PrintSettings.Value!;
-        if (DataContext is not MainViewModel mainVm) return;
-        if (mainVm.PicViewer?.ImageSource.Value is not Bitmap avaloniaBmp) return;
+        if (DataContext is not MainViewModel mainVm)
+        {
+            return;
+        }
+
+        if (mainVm.PicViewer?.ImageSource.Value is not Bitmap avaloniaBmp)
+        {
+            return;
+        }
 
         preview.IsProcessing.Value = true;
 

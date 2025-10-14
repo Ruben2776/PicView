@@ -30,27 +30,12 @@ public class ZoomPanControl : Decorator
     }
 
     // Transform Properties
-    private double _scale = 1.0;
-    private double _translateX;
-    private double _translateY;
 
-    public double Scale
-    {
-        get => _scale;
-        set => _scale = value;
-    }
+    public double Scale { get; private set; } = 1.0;
 
-    public double TranslateX
-    {
-        get => _translateX;
-        set => _translateX = value;
-    }
+    public double TranslateX { get; private set; }
 
-    public double TranslateY
-    {
-        get => _translateY;
-        set => _translateY = value;
-    }
+    public double TranslateY { get; private set; }
 
     /// <summary>
     /// Represents the current zoom level as a percentage.
@@ -508,6 +493,7 @@ public class ZoomPanControl : Decorator
             return;
         }
 
+
         // We need the child's size in local coordinates
         var childSize = Child.Bounds.Size;
         if (childSize.Width <= 0 || childSize.Height <= 0 || double.IsNaN(childSize.Width) ||
@@ -525,7 +511,7 @@ public class ZoomPanControl : Decorator
         // Without rotation, the scaled content bounds are straightforward
         var scaledWidth = childSize.Width * Scale;
         var scaledHeight = childSize.Height * Scale;
-        
+
         var controlWidth = Bounds.Width;
         var controlHeight = Bounds.Height;
 

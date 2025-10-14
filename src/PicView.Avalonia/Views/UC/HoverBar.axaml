@@ -47,7 +47,7 @@
                     Command="{CompiledBinding Tools.ZoomInCommand}"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="35"
-                    Icon="{StaticResource ZoomAltImage}"
+                    Icon="{StaticResource ZoomInImage}"
                     IconHeight="18"
                     IconWidth="21"
                     IsTabStop="False"

@@ -173,7 +173,7 @@ public static class MouseShortcuts
         }
 
         var next = reverse ? Settings.Zoom.HorizontalReverseScroll : !Settings.Zoom.HorizontalReverseScroll;
-        await NavigationManager.Navigate(next, mainViewModel).ConfigureAwait(false);
+        await NavigationManager.Navigate(next, mainViewModel, CancellationToken.None).ConfigureAwait(false);
     }
     
     public static async Task MainWindow_PointerPressed(PointerPressedEventArgs e)

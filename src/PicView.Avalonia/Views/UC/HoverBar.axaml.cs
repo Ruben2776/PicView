@@ -3,10 +3,13 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
+using Avalonia.Threading;
 using PicView.Avalonia.Functions;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC.PopUps;
+using PicView.Core.Sizing;
 using R3;
 
 namespace PicView.Avalonia.Views.UC;
@@ -32,17 +35,17 @@ public partial class HoverBar : UserControl
 
         Observable.FromEventHandler<RoutedEventArgs>(h => NextButton.Click += h,
                 h => NextButton.Click -= h)
-            .SubscribeAwait(async (_, _) =>
+            .SubscribeAwait(async (_, c) =>
             {
                 vm.HoverbarViewModel.IsHoverNavigationButtonNextClicked = true;
-                await FunctionsMapper.Next();
+                await NavigationManager.Navigate(true, vm, c);
             });
         Observable.FromEventHandler<RoutedEventArgs>(h => PreviousButton.Click += h,
                 h => PreviousButton.Click -= h)
-            .SubscribeAwait(async (_, _) =>
+            .SubscribeAwait(async (_, c) =>
             {
                 vm.HoverbarViewModel.IsHoverNavigationButtonPreviousClicked = true;
-                await FunctionsMapper.Prev();
+                await NavigationManager.Navigate(false, vm, c);
             });
     }
 
@@ -54,6 +57,10 @@ public partial class HoverBar : UserControl
 
         switch (width)
         {
+            case < SizeDefaults.WindowMinSize:
+                // Too small to fit
+                IsVisible = false;
+                break;
             case <= firstBreakpoint:
                 ApplyLayout(
                     70,
@@ -103,6 +110,8 @@ public partial class HoverBar : UserControl
                 ZoomInMenuButton.IsVisible =
                     ZoomOutMenuButton.IsVisible = showAdvancedButtons;
         TopPanel.Margin = topPanelMargin;
+
+        IsVisible = true;
     }
 
 
@@ -173,7 +182,13 @@ public partial class HoverBar : UserControl
         {
             if (props.IsRightButtonPressed)
             {
-                //TODO: Create popup window to navigate to index
+                ShowSearchDialog();
+
+                // Wait for animation to finish to properly close tooltip
+                await Task.Delay(TimeSpan.FromSeconds(0.3));
+                Dispatcher.UIThread.Post(() => { ToolTip.SetIsOpen(ProgressBar, false); },
+                    DispatcherPriority.Background);
+                
             }
         }
         else
@@ -193,6 +208,9 @@ public partial class HoverBar : UserControl
     
     private static void ShowQuickEditingDialog() =>
         UIHelper.GetMainView.MainGrid.Children.Add(new QuickEditingDialog());
+
+    private static void ShowSearchDialog() =>
+        UIHelper.GetMainView.MainGrid.Children.Add(new FileSearchDialog());
 
     private static void ShowMainContextMenu()
     {

@@ -14,16 +14,20 @@ public class NavigationViewModel : IDisposable
     });
     
     // Next
-    public ReactiveCommand NextCommand { get; } = new(Next); // Don't want to await, since it can make it feel slow
-    private static void Next(Unit unit) => _ = NavigationManager.Iterate(next: true);
+    public ReactiveCommand NextCommand { get; } = new(Next);
+
+    private static async ValueTask Next(Unit unit, CancellationToken token) =>
+        await NavigationManager.Iterate(true, token);
     public ReactiveCommand NextFolderCommand { get; } = new(async (_, _) =>
     {
         await NavigationManager.NavigateBetweenDirectories(next: true).ConfigureAwait(false);
     });
     
     // Prev
-    public ReactiveCommand PreviousCommand { get; } = new(Prev); // Don't want to await, since it can make it feel slow
-    private static void Prev(Unit unit) => _ = NavigationManager.Iterate(next: false);
+    public ReactiveCommand PreviousCommand { get; } = new(Prev);
+
+    private static async ValueTask Prev(Unit unit, CancellationToken token) =>
+        await NavigationManager.Iterate(false, token);
 
     public ReactiveCommand PreviousFolderCommand { get; } = new(async (_, _) =>
     {
@@ -55,6 +59,12 @@ public class NavigationViewModel : IDisposable
     public ReactiveCommand Prev100Command { get; } = new(async (_, _) =>
     {
         await NavigationManager.NavigateIncrements(next: false, false, true).ConfigureAwait(false);
+    });
+
+    public ReactiveCommand<string> LoadFileFromStringCommand { get; } = new(async (value, _) =>
+    {
+        await NavigationManager.LoadPicFromFile(value, UIHelper.GetMainView.DataContext as MainViewModel)
+            .ConfigureAwait(false);
     });
     
     public void Dispose()

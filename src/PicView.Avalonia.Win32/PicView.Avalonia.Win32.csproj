@@ -84,6 +84,9 @@
       <DependentUpon>EffectsWindow.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+      <Compile Update="Views\PrintPreviewWindow.axaml.cs">
+          <DependentUpon>PrintPreviewWindow.axaml</DependentUpon>
+      </Compile>
   </ItemGroup>
 
 	<ItemGroup>

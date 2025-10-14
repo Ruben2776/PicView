@@ -31,12 +31,24 @@
                         PlacementTarget="{TemplateBinding}">
                         <ListBox
                             Background="{TemplateBinding Background}"
-                            BorderThickness="0"
+                            BorderThickness="1"
                             Foreground="{TemplateBinding Foreground}"
                             ItemTemplate="{TemplateBinding ItemTemplate}"
                             Name="PART_SelectingItemsControl"
                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                            ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                            Width="{TemplateBinding Width}">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.Styles>
+                                <Style Selector="ListBoxItem">
+                                    <Setter Property="Padding" Value="7" />
+                                </Style>
+                            </ListBox.Styles>
+                        </ListBox>
                     </Popup>
                 </Panel>
             </ControlTemplate>

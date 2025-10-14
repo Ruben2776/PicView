@@ -73,7 +73,8 @@ public static class WindowsKeybindings
                                                "OemMinus": "ZoomOut",
                                                "Delete": "DeleteFile",
                                                "Shift+Delete": "DeleteFilePermanently",
-                                               "Alt+Enter": "Fullscreen"
+                                               "Alt+Enter": "Fullscreen",
+                                               "Ctrl+F": "Search",
                                              }
                                              """;
 }

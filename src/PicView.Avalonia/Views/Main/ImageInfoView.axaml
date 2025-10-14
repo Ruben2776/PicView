@@ -5,6 +5,7 @@
     x:Class="PicView.Avalonia.Views.Main.ImageInfoView"
     x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -275,7 +276,8 @@
                 <MenuItem.Icon>
                     <Image
                         Height="12"
-                        Source="{StaticResource PortalImage}"
+                        Source="{StaticResource FileImage}"
+                        Stretch="Fill"
                         Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
@@ -292,12 +294,7 @@
                 IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull}}">
                 <MenuItem.Icon>
-                    <Path
-                        Data="{StaticResource RecycleGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="12"
-                        Stretch="Fill"
-                        Width="12" />
+                    <Path Classes="RecyclePath" />
                 </MenuItem.Icon>
             </MenuItem>
 
@@ -311,12 +308,7 @@
                 Header="{CompiledBinding Translation.Copy.Value,
                                          Mode=OneWay}">
                 <MenuItem.Icon>
-                    <Path
-                        Data="{StaticResource CopyGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="12"
-                        Stretch="Fill"
-                        Width="12" />
+                    <Path Classes="CopyPath" />
                 </MenuItem.Icon>
 
                 <!--  Copy file  -->
@@ -329,12 +321,7 @@
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}">
                     <MenuItem.Icon>
-                        <Path
-                            Data="{StaticResource CopyGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Height="12"
-                            Stretch="Fill"
-                            Width="12" />
+                        <Path Classes="CopyPath" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -346,12 +333,7 @@
                     IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}">
                     <MenuItem.Icon>
-                        <Path
-                            Data="{StaticResource CopyImageGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Height="12"
-                            Stretch="Fill"
-                            Width="12" />
+                        <Path Classes="CopyPath" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -364,12 +346,7 @@
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}">
                     <MenuItem.Icon>
-                        <Path
-                            Data="{StaticResource CopyGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Height="12"
-                            Stretch="Fill"
-                            Width="12" />
+                        <Path Classes="CopyPath" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -387,12 +364,7 @@
                         </TextBlock>
                     </MenuItem.Header>
                     <MenuItem.Icon>
-                        <Path
-                            Data="{StaticResource CopyGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Height="12"
-                            Stretch="Fill"
-                            Width="12" />
+                        <Path Classes="CopyPath" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -408,12 +380,7 @@
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}">
                     <MenuItem.Icon>
-                        <Path
-                            Data="{StaticResource DuplicateGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Height="12"
-                            Stretch="Fill"
-                            Width="12" />
+                        <Path Classes="DuplicatePath" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -424,12 +391,7 @@
             <!--  Close  -->
             <MenuItem Header="{CompiledBinding Translation.Close.Value, Mode=OneWay}" x:Name="CloseItem">
                 <MenuItem.Icon>
-                    <Path
-                        Data="{StaticResource CloseGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Height="12"
-                        Stretch="Fill"
-                        Width="12" />
+                    <Path Classes="ClosePath" />
                 </MenuItem.Icon>
             </MenuItem>
 

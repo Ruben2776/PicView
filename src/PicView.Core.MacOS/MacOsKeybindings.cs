@@ -66,6 +66,7 @@ public static class MacOsKeybindings
                                                 "Cmd+N": "NewWindow",
                                                 "J": "ResizeWindow",
                                                 "Alt+Cmd+I": "ResizeWindow",
+                                                "Cmd+F": "Search",
                                               }
                                               """;
 }

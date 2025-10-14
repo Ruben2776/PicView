@@ -7,6 +7,7 @@
         <ResourceDictionary x:Key="Default">
             <Color x:Key="MainTextColor">#E2E0E0</Color>
             <Color x:Key="MainTextColorFaded">#d6d4d4</Color>
+            <SolidColorBrush Color="{StaticResource MainTextColorFaded}" x:Key="MainTextColorFadedBrush" />
 
             <!--  Used for icons that should stay white in both themes  -->
             <Color x:Key="SecondaryTextColor">#fff</Color>

@@ -68,12 +68,16 @@
                     Canvas.Top="-1"
                     Classes="hover"
                     ClickMode="Release"
+                    Command="{CompiledBinding Tools.ShowSearchCommand}"
                     Data="{StaticResource SearchGeometry}"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="47"
                     IconHeight="16"
                     IconWidth="16"
-                    IsEnabled="False"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
+                    ToolTip.Tip="{CompiledBinding Translation.Search.Value,
+                                                  Mode=OneWay}"
                     Width="45" />
 
                 <customControls:IconButton
@@ -353,7 +357,7 @@
         </Border>
         <Polygon
             Fill="{DynamicResource MenuBackgroundColor}"
-            Margin="33,-1,0,0"
+            Margin="37,-1,0,0"
             Points="0,0 15,30, 30,0"
             Stroke="{DynamicResource MainBorderColor}"
             StrokeThickness="1" />

@@ -254,6 +254,8 @@ public class ToolsViewModel : IDisposable
         await FunctionsMapper.ChangeBackground();
     });
 
+    public ReactiveCommand ShowSearchCommand { get; } = new(async (_, _) => { await FunctionsMapper.Search(); });
+
     public ReactiveCommand ShowSideBySideCommand { get; } =
         new(async (_, _) => { await FunctionsMapper.SideBySide(); });
 

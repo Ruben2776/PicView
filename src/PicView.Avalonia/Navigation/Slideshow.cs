@@ -86,7 +86,7 @@ public static class Slideshow
                 // https://docs.avaloniaui.net/docs/guides/graphics-and-animation/page-transitions/how-to-create-a-custom-page-transition
                 // https://docs.avaloniaui.net/docs/guides/graphics-and-animation/page-transitions/page-slide-transition
                 // https://docs.avaloniaui.net/docs/reference/controls/transitioningcontentcontrol
-                await NavigationManager.Navigate(true, vm).ConfigureAwait(false);
+                await NavigationManager.Navigate(true, vm, CancellationToken.None).ConfigureAwait(false);
             };
         }
         else if (_timer.Enabled)

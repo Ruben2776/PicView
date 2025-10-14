@@ -28,6 +28,7 @@
                 <ResourceInclude Source="Controls/Expander.axaml" />
                 <ResourceInclude Source="Controls/FlyoutPresenter.axaml" />
                 <ResourceInclude Source="Controls/HyperlinkButton.axaml" />
+                <ResourceInclude Source="Controls/ItemsControl.axaml" />
                 <ResourceInclude Source="Controls/ListBox.axaml" />
                 <ResourceInclude Source="Controls/ListBoxItem.axaml" />
                 <ResourceInclude Source="Controls/MainScrollbar.axaml" />

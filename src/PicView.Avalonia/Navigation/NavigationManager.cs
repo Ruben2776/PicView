@@ -150,12 +150,13 @@ public static class NavigationManager
         !DialogManager.IsDialogOpen && vm is { MainWindow.IsEditableTitlebarOpen.CurrentValue: false, PicViewer.FileInfo.CurrentValue: not null };
 
     /// <summary>
-    ///     Navigates to the next or previous image based on the <paramref name="next" /> parameter.
+    /// Navigates to the next or previous image based on the specified direction, ensuring all conditions for navigation are met.
     /// </summary>
-    /// <param name="next">True to navigate to the next image, false for the previous image.</param>
-    /// <param name="vm">The main view model instance.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    public static async ValueTask Navigate(bool next, MainViewModel vm)
+    /// <param name="next">Indicates the navigation direction. True for next image and false for previous image.</param>
+    /// <param name="vm">The main view model instance used for managing the application's state and data.</param>
+    /// <param name="cancellationToken">Optional: A cancellation token to handle task cancellation during navigation operations.</param>
+    /// <returns>A ValueTask representing the asynchronous navigation operation.</returns>
+    public static async ValueTask Navigate(bool next, MainViewModel vm, CancellationToken? cancellationToken)
     {
         if (!CanNavigate(vm))
         {
@@ -211,7 +212,7 @@ public static class NavigationManager
         }
         else
         {
-            await ImageLoader.CheckCancellationAndStartIterateToIndex(nextIteration, ImageIterator)
+            await ImageLoader.CheckCancellationAndStartIterateToIndex(nextIteration, ImageIterator, cancellationToken)
                 .ConfigureAwait(false);
         }
     }
@@ -223,7 +224,8 @@ public static class NavigationManager
             var tiffPages = await Task.FromResult(TiffManager.LoadTiffPages(currentFileName)).ConfigureAwait(false);
             if (tiffPages.Count < 1)
             {
-                await ImageLoader.CheckCancellationAndStartIterateToIndex(nextIteration, ImageIterator)
+                await ImageLoader
+                    .CheckCancellationAndStartIterateToIndex(nextIteration, ImageIterator, CancellationToken.None)
                     .ConfigureAwait(false);
                 return;
             }
@@ -238,7 +240,8 @@ public static class NavigationManager
 
         if (TiffNavigationInfo is null)
         {
-            await ImageLoader.CheckCancellationAndStartIterateToIndex(nextIteration, ImageIterator)
+            await ImageLoader
+                .CheckCancellationAndStartIterateToIndex(nextIteration, ImageIterator, CancellationToken.None)
                 .ConfigureAwait(false);
         }
         else
@@ -273,7 +276,8 @@ public static class NavigationManager
 
         async ValueTask ExitTiffNavigationAndNavigate()
         {
-            await ImageLoader.CheckCancellationAndStartIterateToIndex(nextIteration, ImageIterator)
+            await ImageLoader
+                .CheckCancellationAndStartIterateToIndex(nextIteration, ImageIterator, CancellationToken.None)
                 .ConfigureAwait(false);
             TiffNavigationInfo?.Dispose();
             TiffNavigationInfo = null;
@@ -310,7 +314,8 @@ public static class NavigationManager
             return;
         }
 
-        await ImageLoader.CheckCancellationAndStartIterateToIndex(index, ImageIterator).ConfigureAwait(false);
+        await ImageLoader.CheckCancellationAndStartIterateToIndex(index, ImageIterator, CancellationToken.None)
+            .ConfigureAwait(false);
     }
 
     public static async ValueTask Navigate(FileInfo fileInfo, MainViewModel vm)
@@ -326,7 +331,8 @@ public static class NavigationManager
             return;
         }
 
-        await ImageLoader.CheckCancellationAndStartIterateToIndex(index, ImageIterator).ConfigureAwait(false);
+        await ImageLoader.CheckCancellationAndStartIterateToIndex(index, ImageIterator, CancellationToken.None)
+            .ConfigureAwait(false);
     }
     
     public static async ValueTask NavigateIncrements(bool next, bool is10, bool is100) =>
@@ -343,7 +349,8 @@ public static class NavigationManager
         var direction = next ? NavigateTo.Next : NavigateTo.Previous;
         var index = ImageIterator.GetIteration(currentIndex, direction, false, is10, is100);
 
-        await ImageLoader.CheckCancellationAndStartIterateToIndex(index, ImageIterator).ConfigureAwait(false);
+        await ImageLoader.CheckCancellationAndStartIterateToIndex(index, ImageIterator, CancellationToken.None)
+            .ConfigureAwait(false);
     }
 
     public static async ValueTask LoadLastFileAsync(MainViewModel vm)
@@ -405,12 +412,14 @@ public static class NavigationManager
         await NavigateFirstOrLast(last, UIHelper.GetMainView.DataContext as MainViewModel);
 
     /// <summary>
-    ///     Iterates to the next or previous image based on the <paramref name="next" /> parameter.
+    /// Iterates through the gallery or navigates between images depending on the current state.
+    /// If the full gallery is open, it navigates through the gallery. Otherwise, it navigates between images.
     /// </summary>
-    /// <param name="next">True to iterate to the next image, false for the previous image.</param>
+    /// <param name="next">Indicates the direction of iteration. If true, iterates to the next item; otherwise, iterates to the previous item.</param>
     /// <param name="vm">The main view model instance.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
-    public static async ValueTask Iterate(bool next, MainViewModel vm)
+    /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public static async ValueTask Iterate(bool next, MainViewModel vm, CancellationToken? cancellationToken)
     {
         if (GalleryFunctions.IsFullGalleryOpen)
         {
@@ -418,10 +427,12 @@ public static class NavigationManager
         }
         else
         {
-            await Navigate(next, vm);
+            await Navigate(next, vm, cancellationToken);
         }
     }
-    public static async ValueTask Iterate(bool next) => await Iterate(next, UIHelper.GetMainView.DataContext as MainViewModel).ConfigureAwait(false);
+
+    public static async ValueTask Iterate(bool next, CancellationToken cancellationToken) =>
+        await Iterate(next, UIHelper.GetMainView.DataContext as MainViewModel, cancellationToken).ConfigureAwait(false);
 
     /// <summary>
     ///     Navigates to the next or previous folder and loads the first image in that folder.
