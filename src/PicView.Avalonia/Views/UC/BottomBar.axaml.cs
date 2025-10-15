@@ -18,9 +18,6 @@ public partial class BottomBar : UserControl
 
         Loaded += delegate
         {
-            PointerPressed += (_, e) => MoveWindow(e);
-            PointerExited += (_, _) => { DragAndDropHelper.RemoveDragDropView(); };
-
             if (DataContext is not MainViewModel vm)
             {
                 return;
@@ -126,20 +123,7 @@ public partial class BottomBar : UserControl
         };
     }
 
-    private void MoveWindow(PointerPressedEventArgs e)
-    {
-        if (VisualRoot is null)
-        {
-            return;
-        }
+    private void ResizeGripRight_OnPointerPressed(object? sender, PointerPressedEventArgs e) 
+        => WindowFunctions.WindowResizeBehavior((Window)VisualRoot!, e, WindowEdge.SouthEast);
 
-        if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
-        {
-            // Context menu doesn't want to be opened normally
-            MainContextMenu.Open();
-            return;
-        }
-
-        WindowFunctions.WindowDragBehavior((Window)VisualRoot, e);
-    }
 }

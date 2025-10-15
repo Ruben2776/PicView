@@ -538,5 +538,21 @@ public static class WindowFunctions
         WindowResizing.SetSize(window.DataContext as MainViewModel);
     }
 
+    public static void WindowResizeBehavior(Window window, PointerPressedEventArgs e, WindowEdge edge)
+    {
+        if (window is null || !e.GetCurrentPoint(window).Properties.IsLeftButtonPressed)
+            return;
+
+        try
+        {
+            window.BeginResizeDrag(edge, e);
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(WindowFunctions), nameof(WindowResizeBehavior), ex.Message);
+        }
+    }
+
+
     #endregion
 }
