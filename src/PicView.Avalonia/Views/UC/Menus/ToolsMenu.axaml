@@ -82,6 +82,7 @@
                     IconHeight="20"
                     IconMargin="11,0,0,0"
                     IconWidth="20"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, Mode=OneWay}"
                     Text="{CompiledBinding Translation.Effects.Value,
                                            Mode=OneWay}"
                     TextMargin="10,0,6,0"
@@ -119,6 +120,7 @@
                     IconHeight="17"
                     IconMargin="9,0,2,0"
                     IconWidth="17"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, Mode=OneWay}"
                     Text="{CompiledBinding Translation.ImageInfo.Value,
                                            Mode=OneWay}"
                     TextMargin="10,0,6,0"

@@ -200,9 +200,19 @@ public class UIProperties
     public bool ShowPrintPreview { get; set; } = true;
 
     /// <summary>
-    /// Shows the "Set as Wallpaper" option int the menus.
+    /// Shows the "Set as Wallpaper" option in the menus.
     /// </summary>
     public bool ShowSetAsWallpaper { get; set; } = true;
+
+    /// <summary>
+    /// Show Print In Bottom Toolbar instead of Flip.
+    /// </summary>
+    public bool ShowPrintInBottomToolbar { get; set; } = false;
+
+    /// <summary>
+    /// Enable Check For Updates
+    /// </summary>
+    public bool EnableCheckForUpdates { get; set; } = true;
 }
 
 public class Theme

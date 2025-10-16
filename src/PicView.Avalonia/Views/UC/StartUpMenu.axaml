@@ -83,7 +83,7 @@
                 </StackPanel>
             </Button>
 
-            <Button Command="{CompiledBinding Tools.OpenLastFileCommand}" x:Name="OpenLastFileButton">
+            <Button Command="{CompiledBinding Tools.OpenLastFileCommand}" x:Name="OpenLastFileButton" IsEnabled="{CompiledBinding GlobalSettings.HasLastFile.Value, Mode=OneWay}">
                 <StackPanel Height="30" Orientation="Horizontal">
                     <Image Height="20.091">
                         <Image.Source>

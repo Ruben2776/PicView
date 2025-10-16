@@ -547,7 +547,8 @@
                         Command="{CompiledBinding Window.ShowImageInfoWindow}"
                         Header="{CompiledBinding Translation.ImageInfo.Value,
                                                  Mode=OneWay}"
-                        Theme="{StaticResource MainBg}">
+                        Theme="{StaticResource MainBg}"
+                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, Mode=OneWay}">
                         <MenuItem.Icon>
                             <Path Classes="ImageInfoPath" />
                         </MenuItem.Icon>
@@ -615,6 +616,23 @@
                             <Image
                                 Height="12"
                                 Source="{StaticResource PortalImage}"
+                                Width="12" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+
+                    <MenuItem
+                        Command="{CompiledBinding Window.ShowEffectsWindow}"
+                        Header="{CompiledBinding Translation.Effects.Value,
+                                                 Mode=OneWay}"
+                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, Mode=OneWay}"
+                        ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
+                                                  Mode=OneWay}"
+                        Theme="{StaticResource MainBg}">
+                        <MenuItem.Icon>
+                            <Image
+                                Height="12"
+                                Source="{StaticResource FlaskImage}"
                                 Width="12" />
                         </MenuItem.Icon>
                     </MenuItem>
@@ -1077,7 +1095,8 @@
                         Command="{CompiledBinding Tools.CheckForUpdatesCommand}"
                         Header="{CompiledBinding Translation.CheckForUpdates.Value,
                                                  Mode=OneWay}"
-                        Theme="{StaticResource MainBg}">
+                        Theme="{StaticResource MainBg}"
+                        IsEnabled="{CompiledBinding GlobalSettings.EnableCheckForUpdates.Value}">
                         <MenuItem.Icon>
                             <Image
                                 Height="12"
