@@ -14,8 +14,8 @@ public class AboutViewModel : IDisposable
     public BindableReactiveProperty<bool> IsHitTestVisible { get; } = new(true);
     public BindableReactiveProperty<double> WindowOpacity { get; } = new(1);
     public BindableReactiveProperty<string?> UpdateStatusText { get; } = new();
-    
-    public BindableReactiveProperty<bool> IsUpdateAvailable { get; } = new();
+
+    public BindableReactiveProperty<bool> IsUpdateAvailable { get; } = new(true);
     public BindableReactiveProperty<string?> UpdateVersionNumber { get; } = new (VersionHelper.GetCurrentVersion());
 
     private readonly IPlatformSpecificUpdate _update;

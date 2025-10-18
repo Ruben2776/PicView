@@ -85,8 +85,7 @@ public partial class ImageInfoView : UserControl
             SizeChanged += (_, _) => ResponsiveResizeUpdate(vm);
 
             RemoveImageDataMenuItem.Click += async (_, _) => { await RemoveImageDataAsync(); };
-
-            ;
+            
             FileNameTextBox.KeyDown += async (_, e) =>
                 await HandleRenameOnEnterAsync(e, () =>
                     Path.Combine(vm.PicViewer.FileInfo.CurrentValue.DirectoryName!, FileNameTextBox.Text));

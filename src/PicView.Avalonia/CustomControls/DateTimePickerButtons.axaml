@@ -23,6 +23,8 @@
                 Icon="{StaticResource CalendarImage}"
                 IconHeight="16"
                 IconWidth="16"
+                IsVisible="{CompiledBinding PicViewer.FileInfo.Value,
+                                            Converter={x:Static ObjectConverters.IsNotNull}}"
                 Width="35"
                 ZIndex="1"
                 x:Name="CalendarButton" />
@@ -33,6 +35,8 @@
                 Icon="{StaticResource ClockImage}"
                 IconHeight="18"
                 IconWidth="18"
+                IsVisible="{CompiledBinding PicViewer.FileInfo.Value,
+                                            Converter={x:Static ObjectConverters.IsNotNull}}"
                 Width="35"
                 ZIndex="1"
                 x:Name="TimePickerButton" />

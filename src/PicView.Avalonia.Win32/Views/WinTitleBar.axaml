@@ -286,7 +286,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource MainBorderColor}"
+                        Margin="0"
+                        Opacity=".3" />
 
                     <!--  Close  -->
                     <MenuItem
@@ -364,7 +367,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Duplicate file  -->
                     <MenuItem
@@ -392,7 +398,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Delete file  -->
                     <MenuItem
@@ -497,7 +506,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Fullscreen  -->
                     <MenuItem
@@ -602,7 +614,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Optimize image  -->
                     <MenuItem
@@ -616,23 +631,6 @@
                             <Image
                                 Height="12"
                                 Source="{StaticResource PortalImage}"
-                                Width="12" />
-                        </MenuItem.Icon>
-                    </MenuItem>
-
-
-                    <MenuItem
-                        Command="{CompiledBinding Window.ShowEffectsWindow}"
-                        Header="{CompiledBinding Translation.Effects.Value,
-                                                 Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, Mode=OneWay}"
-                        ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
-                                                  Mode=OneWay}"
-                        Theme="{StaticResource MainBg}">
-                        <MenuItem.Icon>
-                            <Image
-                                Height="12"
-                                Source="{StaticResource FlaskImage}"
                                 Width="12" />
                         </MenuItem.Icon>
                     </MenuItem>
@@ -653,7 +651,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Flip  -->
                     <MenuItem
@@ -739,7 +740,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
 
                     <!--  Next 10  -->
@@ -810,7 +814,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  First Image  -->
                     <MenuItem
@@ -844,7 +851,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Next folder  -->
                     <MenuItem
@@ -957,7 +967,10 @@
                         Theme="{StaticResource MainBg}"
                         ToggleType="Radio" />
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Sort files ascending  -->
                     <MenuItem
@@ -993,7 +1006,10 @@
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Toggle looping  -->
                     <MenuItem
@@ -1004,7 +1020,10 @@
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Toggle scrolling  -->
                     <MenuItem
@@ -1023,7 +1042,10 @@
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Toggle topmost  -->
                     <MenuItem
@@ -1043,7 +1065,10 @@
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Toggle ctrl zoom  -->
                     <MenuItem
@@ -1059,7 +1084,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
 
                     <!--  Show Settings window  -->
                     <MenuItem

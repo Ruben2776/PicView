@@ -211,6 +211,7 @@
                 IconHeight="14"
                 IconMargin="0,0,10,4"
                 IconWidth="14"
+                IsVisible="{CompiledBinding AboutView.IsUpdateAvailable.Value}"
                 Margin="0,10,0,15"
                 Text="{CompiledBinding Translation.CheckForUpdates.Value,
                                        Mode=OneWay}"
@@ -221,7 +222,7 @@
                 Classes="txt"
                 Foreground="{Binding Path=Foreground, ElementName=UpdateButton}"
                 HorizontalAlignment="Center"
-                IsVisible="{CompiledBinding AboutView.IsUpdateAvailable.Value}"
+                IsVisible="{CompiledBinding !AboutView.IsUpdateAvailable.Value}"
                 Margin="0,10,0,15"
                 Text="{CompiledBinding AboutView.UpdateStatusText.Value}"
                 x:Name="UpdateStatus" />

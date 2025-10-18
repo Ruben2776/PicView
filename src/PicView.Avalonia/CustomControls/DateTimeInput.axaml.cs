@@ -9,6 +9,7 @@ using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.ViewModels;
 using R3;
 
 namespace PicView.Avalonia.CustomControls;
@@ -46,6 +47,7 @@ public class DateTimeInput : TemplatedControl
     private CompositeDisposable _disposables = new();
 
     private const string PARTContainer = "PART_Container";
+    private StackPanel? _partStackPanel;
 
     /// <summary>
     /// Static constructor to register the default style for this control.
@@ -76,11 +78,10 @@ public class DateTimeInput : TemplatedControl
         base.OnApplyTemplate(e);
 
         // Find the container that will hold our dynamic controls.
-        var container = e.NameScope.Find<Panel>(PARTContainer);
-        if (container == null)
-        {
-            throw new InvalidOperationException("Could not find PART_Container in the control template.");
-        }
+        var container = e.NameScope.Find<StackPanel>(PARTContainer);
+
+        _partStackPanel = container ??
+                          throw new InvalidOperationException("Could not find PART_Container in the control template.");
 
         // Generate and add the date/time input controls based on current culture.
         BuildInputControls(container);
@@ -94,6 +95,17 @@ public class DateTimeInput : TemplatedControl
     /// </summary>
     private void OnSelectedDateTimeChanged(AvaloniaPropertyChangedEventArgs e)
     {
+        if (DataContext is MainViewModel vm)
+        {
+            if (vm.PicViewer?.FileInfo.Value?.Exists == true)
+            {
+                _partStackPanel?.IsVisible = true;
+            }
+            else
+            {
+                _partStackPanel?.IsVisible = false;
+            }
+        }
         // Set a flag to indicate that the update is coming from the property,
         // not from user input in the TextBoxes.
         _isUpdatingFromProperty = true;
@@ -106,7 +118,7 @@ public class DateTimeInput : TemplatedControl
     /// in an order determined by the current culture.
     /// </summary>
     /// <param name="container">The panel to add controls to.</param>
-    private void BuildInputControls(Panel container)
+    private void BuildInputControls(StackPanel container)
     {
         // Detach handlers from previously created controls and clear subscriptions.
         DetachHandlersAndClearState();

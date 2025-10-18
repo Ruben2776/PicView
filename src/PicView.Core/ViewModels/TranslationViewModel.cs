@@ -135,6 +135,7 @@ public class TranslationViewModel : IDisposable
         Help.Value = t.Help;
         HideBottomGallery.Value = t.HideBottomGallery;
         HideBottomToolbar.Value = t.HideBottomToolbar;
+        HideHoverNavigationBar.Value = t.HideHoverNavigationBar;
         HideUI.Value = t.HideUI;
         HighlightColor.Value = t.HighlightColor;
         HighQuality.Value = t.HighQuality;
@@ -267,6 +268,7 @@ public class TranslationViewModel : IDisposable
         ShowConfirmationOnEsc.Value = t.ShowConfirmationOnEsc;
         ShowFadeInButtonsOnHover.Value = t.ShowFadeInButtonsOnHover;
         ShowFileSavingDialog.Value = t.ShowFileSavingDialog;
+        ShowHoverNavigationBar.Value = t.ShowHoverNavigationBar;
         ShowImageGallery.Value = t.ShowImageGallery;
         ShowInFolder.Value = t.ShowInFolder;
         ShowUI.Value = t.ShowUI;
@@ -440,6 +442,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> Help { get; } = new();
     public BindableReactiveProperty<string?> HideBottomGallery { get; } = new();
     public BindableReactiveProperty<string?> HideBottomToolbar { get; } = new();
+    public BindableReactiveProperty<string?> HideHoverNavigationBar { get; } = new();
     public BindableReactiveProperty<string?> HideUI { get; } = new();
     public BindableReactiveProperty<string?> HighlightColor { get; } = new();
     public BindableReactiveProperty<string?> HighQuality { get; } = new();
@@ -566,6 +569,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> ShowConfirmationOnEsc { get; } = new();
     public BindableReactiveProperty<string?> ShowFadeInButtonsOnHover { get; } = new();
     public BindableReactiveProperty<string?> ShowFileSavingDialog { get; } = new();
+    public BindableReactiveProperty<string?> ShowHoverNavigationBar { get; } = new();
     public BindableReactiveProperty<string?> ShowImageGallery { get; } = new();
     public BindableReactiveProperty<string?> ShowInFolder { get; } = new();
     public BindableReactiveProperty<string?> ShowUI { get; } = new();
@@ -643,6 +647,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> IsShowingBottomToolbar { get; } = new();
 
     public BindableReactiveProperty<string?> IsShowingFadingUIButtons { get; } = new();
+    public BindableReactiveProperty<string?> IsShowingHoverNavigationBar { get; } = new();
 
     public BindableReactiveProperty<string?> IsShowingUI { get; } = new();
     public BindableReactiveProperty<string?> IsUsingTouchpad { get; } = new();

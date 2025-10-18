@@ -25,6 +25,7 @@ public static class HideInterfaceLogic
             vm.MainWindow.IsTopToolbarShown.Value = false;
             vm.MainWindow.IsBottomToolbarShown.Value = false;
             vm.Translation.IsShowingUI.Value = TranslationManager.Translation.ShowUI;
+            vm.HoverbarViewModel.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
             if (!GalleryFunctions.IsFullGalleryOpen)
             {
                 if (!Settings.Gallery.ShowBottomGalleryInHiddenUI)
@@ -54,6 +55,11 @@ public static class HideInterfaceLogic
             {
                 vm.MainWindow.IsBottomToolbarShown.Value = true;
                 vm.MainWindow.BottombarHeight.Value = SizeDefaults.BottombarHeight;
+                vm.HoverbarViewModel.IsHoverbarVisible.Value = false;
+            }
+            else
+            {
+                vm.HoverbarViewModel.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
             }
             Settings.UIProperties.ShowInterface = true;
             vm.MainWindow.TitlebarHeight.Value = SizeDefaults.MainTitlebarHeight;
@@ -100,7 +106,7 @@ public static class HideInterfaceLogic
             vm.MainWindow.IsBottomToolbarShown.Value = false;
             Settings.UIProperties.ShowBottomNavBar = false;
             vm.Translation.IsShowingBottomToolbar.Value = TranslationManager.Translation.ShowBottomToolbar;
-            vm.HoverbarViewModel.IsHoverbarVisible.Value = Settings.UIProperties.ShowAltInterfaceButtons;
+            vm.HoverbarViewModel.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
         }
         else
         {
@@ -158,6 +164,20 @@ public static class HideInterfaceLogic
             ? TranslationManager.Translation.DisableFadeInButtonsOnHover
             : TranslationManager.Translation.ShowFadeInButtonsOnHover;
         
+        await SaveSettingsAsync();
+    }
+
+    public static async Task ToggleHoverNavigationBar(MainViewModel vm)
+    {
+        Settings.UIProperties.ShowHoverNavigationBar = !Settings
+            .UIProperties.ShowHoverNavigationBar;
+
+        vm.Translation.IsShowingHoverNavigationBar.Value = Settings.UIProperties.ShowHoverNavigationBar
+            ? TranslationManager.Translation.HideHoverNavigationBar
+            : TranslationManager.Translation.ShowHoverNavigationBar;
+
+        vm.HoverbarViewModel.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
+
         await SaveSettingsAsync();
     }
 }

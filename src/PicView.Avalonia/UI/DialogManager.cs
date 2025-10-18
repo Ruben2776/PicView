@@ -79,4 +79,15 @@ public static class DialogManager
         MenuManager.CloseMenus(UIHelper.GetMainView.DataContext as MainViewModel);
         UIHelper.GetMainView.MainGrid.Children.Add(new FileSearchDialog());
     }
+
+    public static void AddNavigationDialog()
+    {
+        if (UIHelper.GetMainView.MainGrid.Children.OfType<NavigationDialog>().Any())
+        {
+            return;
+        }
+
+        MenuManager.CloseMenus(UIHelper.GetMainView.DataContext as MainViewModel);
+        UIHelper.GetMainView.MainGrid.Children.Add(new NavigationDialog());
+    }
 }

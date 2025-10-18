@@ -211,7 +211,7 @@
     </ControlTheme>
 
     <ControlTheme TargetType="MenuItem" x:Key="MainBg">
-        <Setter Property="Background" Value="{DynamicResource MainBackgroundColor}" />
+        <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
         <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="0" />
@@ -229,6 +229,7 @@
                         </Grid.ColumnDefinitions>
                         <ContentControl
                             Content="{TemplateBinding Icon}"
+                            Foreground="{TemplateBinding Foreground}"
                             Height="16"
                             HorizontalAlignment="Center"
                             Margin="5,0,0,0"
@@ -332,6 +333,10 @@
             <Setter Property="Effect" Value="{StaticResource TextShadow}" />
         </Style>
 
+        <Style Selector="^:not(.noHover):selected /template/ ContentPresenter#icon">
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+        </Style>
+
         <Style Selector="^:empty /template/ Path#rightArrow">
             <Setter Property="IsVisible" Value="False" />
         </Style>
@@ -348,6 +353,10 @@
         <Style Selector="^.active /template/ ContentPresenter#PART_HeaderPresenter">
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
             <Setter Property="Effect" Value="{StaticResource TextShadow}" />
+        </Style>
+
+        <Style Selector="^.active /template/ ContentPresenter#icon">
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
         </Style>
 
     </ControlTheme>

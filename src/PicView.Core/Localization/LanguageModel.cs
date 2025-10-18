@@ -182,6 +182,7 @@ public class LanguageModel
     public string? Help { get; set; }
     public string? HideBottomGallery { get; set; }
     public string? HideBottomToolbar { get; set; }
+    public string? HideHoverNavigationBar { get; set; }
     public string? HideUI { get; set; }
     public string? High { get; set; }
     public string? HighlightColor { get; set; }
@@ -352,6 +353,7 @@ public class LanguageModel
     public string? ShowConfirmationOnEsc { get; set; }
     public string? ShowFadeInButtonsOnHover { get; set; }
     public string? ShowFileSavingDialog { get; set; }
+    public string? ShowHoverNavigationBar { get; set; }
     public string? ShowImageGallery { get; set; }
     public string? ShowImageInfo { get; set; }
     public string? ShowInFolder { get; set; }

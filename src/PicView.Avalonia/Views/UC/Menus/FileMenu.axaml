@@ -37,7 +37,10 @@
             BorderThickness="1"
             CornerRadius="8"
             Effect="{DynamicResource MenuShadowButtonBorder}">
-            <Canvas Height="208" Width="315">
+            <Canvas
+                Height="208"
+                Width="315"
+                x:Name="MainCanvas">
 
                 <Border
                     Background="{DynamicResource SecondaryBackgroundColor}"
@@ -264,7 +267,7 @@
         </Border>
         <Polygon
             Fill="{DynamicResource MenuBackgroundColor}"
-            Margin="10,-1,0,0"
+            Margin="7,-1,0,0"
             Points="0,0 15,30, 30,0"
             Stroke="{DynamicResource MainBorderColor}"
             StrokeThickness="1"

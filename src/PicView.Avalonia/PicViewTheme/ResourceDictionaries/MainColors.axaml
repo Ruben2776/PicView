@@ -29,7 +29,7 @@
 
             <Color x:Key="MainBorderColor">#FF3A3A3A</Color>
             <Color x:Key="SecondaryBorderColor">#777</Color>
-            <Color x:Key="TertiaryBorderColor">#4B4B4B</Color>
+            <Color x:Key="TertiaryBorderColor">#A4646464</Color>
 
             <Color x:Key="OuterBorderColor">#FF3A3A3A</Color>
 
@@ -93,11 +93,11 @@
             <Color x:Key="AltBackgroundColor">#A7FFFFFF</Color>
 
             <Color x:Key="MainButtonBackgroundColor">#fff</Color>
-            <Color x:Key="SecondaryButtonBackgroundColor">#F1E1E1E1</Color>
+            <Color x:Key="SecondaryButtonBackgroundColor">WhiteSmoke</Color>
 
             <Color x:Key="MainBorderColor">#DEDEDE</Color>
             <Color x:Key="SecondaryBorderColor">#95B5B5B5</Color>
-            <Color x:Key="TertiaryBorderColor">#77D8D8D8</Color>
+            <Color x:Key="TertiaryBorderColor">#CFABABAB</Color>
 
             <Color x:Key="OuterBorderColor">#78B5B5B5</Color>
 

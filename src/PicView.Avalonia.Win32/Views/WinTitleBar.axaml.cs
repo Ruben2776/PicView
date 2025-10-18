@@ -1,7 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Media;
+using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -30,15 +29,16 @@ public partial class WinTitleBar : UserControl
     // Extract method: centralize glass theme styling to remove duplication
     private void ApplyGlassThemeStyles()
     {
-        ApplyTransparentStyle(TopWindowBorder);
-        ApplyTransparentStyle(LogoBorder);
-        ApplyTransparentStyle(EditableTitlebar);
-        ApplyTransparentStyle(CloseButton);
-        ApplyTransparentStyle(MinimizeButton);
-        ApplyTransparentStyle(RestoreButton);
-        ApplyTransparentStyle(FullscreenButton);
-        ApplyTransparentStyle(GalleryButton);
-        ApplyTransparentStyle(MenuButton);
+        GlassThemeHelper.ApplyTransparentStyle(TopWindowBorder);
+        GlassThemeHelper.ApplyTransparentStyle(LogoBorder);
+        GlassThemeHelper.ApplyTransparentStyle(EditableTitlebar);
+        GlassThemeHelper.ApplyTransparentStyle(CloseButton);
+        GlassThemeHelper.ApplyTransparentStyle(MinimizeButton);
+        GlassThemeHelper.ApplyTransparentStyle(RestoreButton);
+        GlassThemeHelper.ApplyTransparentStyle(FullscreenButton);
+        GlassThemeHelper.ApplyTransparentStyle(GalleryButton);
+        GlassThemeHelper.ApplyTransparentStyle(MenuButton);
+        GlassThemeHelper.ApplyTransparentStyle(MainMenu);
 
         var glassForeground = UIHelper.GetBrush("SecondaryTextColor");
         EditableTitlebar.Foreground = glassForeground;
@@ -48,25 +48,7 @@ public partial class WinTitleBar : UserControl
         GalleryButton.Foreground = glassForeground;
         MenuButton.Foreground = glassForeground;
     }
-
-    private void ApplyTransparentStyle(UserControl control)
-    {
-        control.Background = Brushes.Transparent;
-        control.BorderThickness = new Thickness(0);
-    }
-
-    private void ApplyTransparentStyle(Button button)
-    {
-        button.Background = Brushes.Transparent;
-        button.BorderThickness = new Thickness(0);
-    }
-
-    private static void ApplyTransparentStyle(Border borderLike)
-    {
-        borderLike.Background = Brushes.Transparent;
-        borderLike.BorderThickness = new Thickness(0);
-    }
-
+    
     private void InitializeEventHandlers()
     {
         if (DataContext is not MainViewModel vm)

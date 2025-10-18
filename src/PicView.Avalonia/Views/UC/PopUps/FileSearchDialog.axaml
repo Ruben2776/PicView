@@ -9,20 +9,29 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel Background="Transparent" Width="425">
 
-        <TextBox
-            Background="{DynamicResource AltBackgroundColor}"
-            BorderBrush="{DynamicResource MainBorderColor}"
-            BorderThickness="1"
-            CornerRadius="3"
-            FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
-            Foreground="{DynamicResource MainTextColor}"
-            Margin="0,0,0,5"
-            Padding="5,6,0,6"
-            VerticalAlignment="Center"
-            Watermark="{CompiledBinding PicViewer.FileInfo.Value,
-                                        Mode=OneWay}"
-            Width="425"
-            x:Name="SearchBox" />
+        <Panel>
+            <Image
+                Height="16"
+                HorizontalAlignment="Left"
+                Margin="7,0,0,5"
+                Source="{StaticResource SearchImage}"
+                Width="16" />
+
+            <TextBox
+                Background="{DynamicResource AltBackgroundColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderThickness="1"
+                CornerRadius="3"
+                FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
+                Foreground="{DynamicResource MainTextColor}"
+                Margin="0,0,0,5"
+                Padding="27,7,4,7"
+                VerticalAlignment="Center"
+                Watermark="{CompiledBinding Translation.Search.Value,
+                                            Mode=OneWay}"
+                Width="425"
+                x:Name="SearchBox" />
+        </Panel>
 
         <Border
             BorderBrush="{DynamicResource MainBorderColor}"

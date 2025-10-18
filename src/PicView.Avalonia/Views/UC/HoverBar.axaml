@@ -305,6 +305,7 @@
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}"
                     Maximum="{CompiledBinding PicViewer.Maximum.Value}"
+                    ThumbFill="{DynamicResource SecondaryBorderColor}"
                     x:Name="ProgressBar" />
             </DockPanel>
         </Border>

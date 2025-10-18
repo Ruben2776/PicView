@@ -29,6 +29,7 @@ public partial class ImageInfoWindow : Window, IDisposable
             TopWindowBorder.Background = Brushes.Transparent;
             StarOutlineButtons.Background = Brushes.Transparent;
             RemoveRatingButton.Background = Brushes.Transparent;
+            ExifView.Background = Brushes.Transparent;
             
             CloseButton.Background = Brushes.Transparent;
             CloseButton.BorderThickness = new Thickness(0);
@@ -83,8 +84,10 @@ public partial class ImageInfoWindow : Window, IDisposable
         }
         if (!Settings.Theme.Dark)
         {
-
-            ExifView.Background = UIHelper.GetMenuBackgroundColor();
+            if (!Settings.Theme.GlassTheme)
+            {
+                ExifView.Background = UIHelper.GetMenuBackgroundColor();
+            }
             var copyButtons =  ExifView.GetVisualChildren().OfType<CopyButton>();
             foreach (var btn in copyButtons)
             {

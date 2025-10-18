@@ -20,6 +20,34 @@ public partial class HoverBar : UserControl
     {
         InitializeComponent();
         Loaded += OnLoaded;
+        if (Settings.Theme.Dark)
+        {
+            return;
+        }
+
+        FileMenuButton.Classes.Remove("noBorderHover");
+        FileMenuButton.Classes.Add("hover");
+
+        ZoomOutMenuButton.Classes.Remove("noBorderHover");
+        ZoomOutMenuButton.Classes.Add("hover");
+
+        ZoomInMenuButton.Classes.Remove("noBorderHover");
+        ZoomInMenuButton.Classes.Add("hover");
+
+        RotateLeftButton.Classes.Remove("noBorderHover");
+        RotateLeftButton.Classes.Add("hover");
+
+        RotateRightButton.Classes.Remove("noBorderHover");
+        RotateRightButton.Classes.Add("hover");
+
+        FlipButton.Classes.Remove("noBorderHover");
+        FlipButton.Classes.Add("hover");
+
+        ImageMenuButton.Classes.Remove("noBorderHover");
+        ImageMenuButton.Classes.Add("hover");
+
+        SettingsMenuButton.Classes.Remove("noBorderHover");
+        SettingsMenuButton.Classes.Add("hover");
     }
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
@@ -188,14 +216,13 @@ public partial class HoverBar : UserControl
                 await Task.Delay(TimeSpan.FromSeconds(0.3));
                 Dispatcher.UIThread.Post(() => { ToolTip.SetIsOpen(ProgressBar, false); },
                     DispatcherPriority.Background);
-                
             }
         }
         else
         {
             if (props.IsRightButtonPressed)
             {
-                ShowMainContextMenu();
+                UIHelper.ShowMainContextMenu();
             }
         }
     }
@@ -211,15 +238,6 @@ public partial class HoverBar : UserControl
 
     private static void ShowSearchDialog() =>
         UIHelper.GetMainView.MainGrid.Children.Add(new FileSearchDialog());
-
-    private static void ShowMainContextMenu()
-    {
-        if (UIHelper.GetMainView.Resources.TryGetResource("MainContextMenu", Application.Current.ActualThemeVariant, out var value)
-            && value is ContextMenu mainContextMenu)
-        {
-            mainContextMenu.Open();
-        }
-    }
 
     protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
     {

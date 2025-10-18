@@ -71,6 +71,16 @@ public static class UIHelper
     private const string MediumFontLocation = "avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto";
     public static FontFamily MediumFontFamily => new(MediumFontLocation);
 
+    public static void ShowMainContextMenu()
+    {
+        if (GetMainView.Resources.TryGetResource("MainContextMenu", Application.Current.ActualThemeVariant,
+                out var value)
+            && value is ContextMenu mainContextMenu)
+        {
+            mainContextMenu.Open();
+        }
+    }
+
     /// <summary>
     /// Centers the window or gallery based on current state
     /// </summary>

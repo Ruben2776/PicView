@@ -57,6 +57,10 @@
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
         </Style>
 
+        <Style Selector="^:selected /template/ ContentPresenter#PART_HeaderPresenter">
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+        </Style>
+
         <Style Selector="^:empty /template/ Path#rightArrow">
             <Setter Property="IsVisible" Value="False" />
         </Style>

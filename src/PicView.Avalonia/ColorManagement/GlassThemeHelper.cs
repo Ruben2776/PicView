@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Styling;
 
@@ -45,6 +46,33 @@ public static class GlassThemeHelper
         Application.Current.Resources["MenuButtonColor"] = Color.Parse("#50797979");
         
         Application.Current.Resources["WindowBorderColor"] = Color.Parse("#15FFFFFF");
-        
+
+        Application.Current.Resources["DropDownBgColor"] = Color.Parse("#CC464646");
+
+        Application.Current.Resources["WindowButtonBackgroundColor"] = Color.Parse("#CC464646");
+    }
+
+    public static void ApplyTransparentStyle(Menu borderLike)
+    {
+        borderLike.Background = Brushes.Transparent;
+        borderLike.BorderThickness = new Thickness(0);
+    }
+
+    public static void ApplyTransparentStyle(UserControl control)
+    {
+        control.Background = Brushes.Transparent;
+        control.BorderThickness = new Thickness(0);
+    }
+
+    public static void ApplyTransparentStyle(Button button)
+    {
+        button.Background = Brushes.Transparent;
+        button.BorderThickness = new Thickness(0);
+    }
+
+    public static void ApplyTransparentStyle(Border borderLike)
+    {
+        borderLike.Background = Brushes.Transparent;
+        borderLike.BorderThickness = new Thickness(0);
     }
 }

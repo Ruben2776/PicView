@@ -22,7 +22,7 @@
             <DockPanel Height="28" LastChildFill="True">
 
                 <Border
-                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    Background="{DynamicResource WindowBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     DockPanel.Dock="Left"
@@ -35,7 +35,7 @@
                 </Border>
 
                 <customControls:IconButton
-                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderThickness="0"
                     Classes="hover"
                     Click="Close"
@@ -50,7 +50,7 @@
                     x:Name="CloseButton" />
 
                 <customControls:IconButton
-                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
@@ -83,10 +83,8 @@
                 x:Name="BorderRectangle" />
 
             <main:PrintPreviewView
-                Background="{DynamicResource WindowBackgroundColor}"
+                Background="{DynamicResource NoisyTexture}"
                 Focusable="True"
-                Margin="0"
-                Padding="10,2,5,10"
                 PointerPressed="MoveWindow"
                 x:Name="PrintPreviewView" />
         </StackPanel>

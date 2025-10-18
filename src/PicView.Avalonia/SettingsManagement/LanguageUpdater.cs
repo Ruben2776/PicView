@@ -45,6 +45,10 @@ public static class LanguageUpdater
         translationViewModel.IsShowingFadingUIButtons.Value = Settings.UIProperties.ShowAltInterfaceButtons
             ? TranslationManager.Translation.DisableFadeInButtonsOnHover
             : TranslationManager.Translation.ShowFadeInButtonsOnHover;
+
+        translationViewModel.IsShowingHoverNavigationBar.Value = Settings.UIProperties.ShowHoverNavigationBar
+            ? TranslationManager.Translation.HideHoverNavigationBar
+            : TranslationManager.Translation.ShowHoverNavigationBar;
         
         translationViewModel.IsUsingTouchpad.Value = Settings.Zoom.IsUsingTouchPad
             ? TranslationManager.Translation.UsingTouchpad

@@ -35,7 +35,5 @@
                 </Border>
             </ControlTemplate>
         </Setter>
-        <!--  Set a default color for the thumb, can be overridden  -->
-        <Setter Property="ThumbFill" Value="{DynamicResource SecondaryBorderColor}" />
     </Style>
 </Styles>

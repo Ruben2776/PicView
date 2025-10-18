@@ -276,4 +276,10 @@
         <Setter Property="Width" Value="12" />
     </Style>
 
+
+    <Style Selector="Path.Xl">
+        <Setter Property="Height" Value="15" />
+        <Setter Property="Width" Value="15" />
+        <Setter Property="Stretch" Value="Fill" />
+    </Style>
 </Styles>

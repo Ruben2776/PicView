@@ -82,8 +82,6 @@ public partial class WinMainWindow : Window
                 }
             });
         };
-
-        desktop.ShutdownRequested += async (_, e) => { await WindowFunctions.WindowClosingBehavior(this); };
     }
 
     protected override async void OnClosing(WindowClosingEventArgs e)

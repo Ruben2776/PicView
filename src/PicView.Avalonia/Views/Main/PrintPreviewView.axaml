@@ -1,11 +1,8 @@
 <UserControl
-    Height="700"
-    Width="850"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.Main.PrintPreviewView"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
@@ -21,329 +18,323 @@
             VerticalAlignment="Center"
             ZIndex="100" />
 
-        <!--  Root grid with two columns  -->
-        <Grid
-            ColumnDefinitions="2*,3*"
-            IsHitTestVisible="{CompiledBinding !PrintPreview.IsProcessing.Value,
-                                               Mode=OneWay}"
-            Margin="10"
-            Opacity="{CompiledBinding PrintPreview.Opacity.Value,
-                                      Mode=OneWay}"
-            RowDefinitions="*,Auto">
+        <StackPanel>
+            <!--  Root grid with two columns  -->
+            <Grid
+                ColumnDefinitions="2*,3*"
+                Height="640"
+                IsHitTestVisible="{CompiledBinding !PrintPreview.IsProcessing.Value,
+                                                   Mode=OneWay}"
+                Margin="20,10,10,20"
+                Opacity="{CompiledBinding PrintPreview.Opacity.Value,
+                                          Mode=OneWay}"
+                RowDefinitions="*,Auto"
+                VerticalAlignment="Top">
 
-            <!--  Settings Panel (Left)  -->
-            <StackPanel
-                Grid.Column="0"
-                Grid.Row="0"
-                Spacing="12">
+                <!--  Settings Panel (Left)  -->
+                <StackPanel
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    Margin="10,0,30,0"
+                    Spacing="12"
+                    Width="370">
 
-                <!--  Printer  -->
-                <TextBlock
-                    Classes="txt"
-                    FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                    FontSize="14"
-                    Margin="0,6,0,0"
-                    Text="{CompiledBinding Translation.Printer.Value,
-                                           Mode=OneWay}" />
+                    <!--  Printer  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="0,6,0,0"
+                        Text="{CompiledBinding Translation.Printer.Value,
+                                               Mode=OneWay}" />
 
-                <ComboBox
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="1"
-                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                    Foreground="{DynamicResource MainTextColor}"
-                    ItemsSource="{CompiledBinding PrintPreview.Printers.Value}"
-                    Margin="0,0,0,4"
-                    Padding="5,7,0,7"
-                    SelectedItem="{CompiledBinding PrintPreview.PrintSettings.Value.PrinterName.Value,
-                                                   Mode=TwoWay}" />
-
-                <!--  Paper Size  -->
-                <TextBlock
-                    Classes="txt"
-                    FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                    FontSize="14"
-                    Margin="0,6,0,0"
-                    Text="{CompiledBinding Translation.PaperSize.Value,
-                                           Mode=OneWay}" />
-
-                <ComboBox
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="1"
-                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                    Foreground="{DynamicResource MainTextColor}"
-                    ItemsSource="{CompiledBinding PrintPreview.PaperSizes.Value}"
-                    Margin="0,0,0,4"
-                    Padding="5,7,0,7"
-                    SelectedItem="{CompiledBinding PrintPreview.PrintSettings.Value.PaperSize.Value,
-                                                   Mode=TwoWay}" />
-
-                <!--  Orientation  -->
-                <TextBlock
-                    Classes="txt"
-                    FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                    FontSize="14"
-                    Margin="0,6,0,0"
-                    Text="{CompiledBinding Translation.Orientation.Value,
-                                           Mode=OneWay}" />
-
-                <ComboBox
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="1"
-                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                    Foreground="{DynamicResource MainTextColor}"
-                    ItemsSource="{CompiledBinding PrintPreview.Orientations.Value}"
-                    Margin="0,0,0,4"
-                    Padding="5,7,0,7"
-                    SelectedIndex="{CompiledBinding PrintPreview.PrintSettings.Value.Orientation.Value,
-                                                    Mode=TwoWay}" />
-
-                <!--  Scale Mode  -->
-                <TextBlock
-                    Classes="txt"
-                    FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                    FontSize="14"
-                    Margin="0,6,0,0"
-                    Text="{CompiledBinding Translation.Scale.Value,
-                                           Mode=OneWay}" />
-
-                <ComboBox
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="1"
-                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                    Foreground="{DynamicResource MainTextColor}"
-                    ItemsSource="{CompiledBinding PrintPreview.ScaleModes.Value}"
-                    Margin="0,0,0,4"
-                    Padding="5,7,0,7"
-                    SelectedIndex="{CompiledBinding PrintPreview.PrintSettings.Value.ScaleMode.Value,
-                                                    Mode=TwoWay}" />
-
-                <!--  Color Mode  -->
-                <TextBlock
-                    Classes="txt"
-                    FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                    FontSize="14"
-                    Margin="0,6,0,0"
-                    Text="{CompiledBinding Translation.Color.Value,
-                                           Mode=OneWay}" />
-
-                <ComboBox
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="1"
-                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                    Foreground="{DynamicResource MainTextColor}"
-                    ItemsSource="{CompiledBinding PrintPreview.ColorModes.Value}"
-                    Margin="0,0,0,4"
-                    Padding="5,7,0,7"
-                    SelectedIndex="{CompiledBinding PrintPreview.PrintSettings.Value.ColorMode.Value,
-                                                    Mode=TwoWay}" />
-
-                <!--  Copies  -->
-
-                <TextBlock
-                    Classes="txt"
-                    FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                    FontSize="14"
-                    Margin="0,6,0,0"
-                    Text="{CompiledBinding Translation.Copies.Value,
-                                           Mode=OneWay}" />
-
-                <NumericUpDown
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="1"
-                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Increment="1"
-                    Margin="0,0,0,4"
-                    Maximum="200"
-                    Minimum="1"
-                    Padding="5,7,0,7"
-                    Value="{CompiledBinding PrintPreview.PrintSettings.Value.Copies.Value,
-                                            Mode=TwoWay}" />
-
-                <!--  Margins  -->
-                <TextBlock
-                    Classes="txt"
-                    FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                    FontSize="14"
-                    Margin="0,6,0,0"
-                    Text="{CompiledBinding Translation.Margins.Value,
-                                           Mode=OneWay}" />
-
-                <Grid
-                    ColumnDefinitions="*,*,*,*"
-                    ColumnSpacing="6"
-                    Margin="0,0,0,0">
-
-                    <!--  Top  -->
-                    <StackPanel Grid.Column="0">
-                        <TextBlock
-                            Classes="txt"
-                            Margin="0,0,0,2"
-                            Text="{CompiledBinding Translation.Top.Value,
-                                                   Mode=OneWay}" />
-                        <NumericUpDown
-                            FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
-                            Foreground="{DynamicResource MainTextColor}"
-                            HorizontalAlignment="Stretch"
-                            Increment="1"
-                            Maximum="100"
-                            Minimum="0"
-                            Value="{CompiledBinding PrintPreview.PrintSettings.Value.MarginTop.Value,
-                                                    Mode=TwoWay}" />
-                    </StackPanel>
-
-                    <!--  Bottom  -->
-                    <StackPanel Grid.Column="1">
-                        <TextBlock
-                            Classes="txt"
-                            Margin="0,0,0,2"
-                            Text="{CompiledBinding Translation.Bottom.Value,
-                                                   Mode=OneWay}" />
-                        <NumericUpDown
-                            FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
-                            Foreground="{DynamicResource MainTextColor}"
-                            HorizontalAlignment="Stretch"
-                            Increment="1"
-                            Maximum="100"
-                            Minimum="0"
-                            Value="{CompiledBinding PrintPreview.PrintSettings.Value.MarginBottom.Value,
-                                                    Mode=TwoWay}" />
-                    </StackPanel>
-
-                    <!--  Left  -->
-                    <StackPanel Grid.Column="2">
-                        <TextBlock
-                            Classes="txt"
-                            Margin="0,0,0,2"
-                            Text="{CompiledBinding Translation.Left.Value,
-                                                   Mode=OneWay}" />
-                        <NumericUpDown
-                            FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
-                            Foreground="{DynamicResource MainTextColor}"
-                            HorizontalAlignment="Stretch"
-                            Increment="1"
-                            Maximum="100"
-                            Minimum="0"
-                            Value="{CompiledBinding PrintPreview.PrintSettings.Value.MarginLeft.Value,
-                                                    Mode=TwoWay}" />
-                    </StackPanel>
-
-                    <!--  Right  -->
-                    <StackPanel Grid.Column="3">
-                        <TextBlock
-                            Classes="txt"
-                            Margin="0,0,0,2"
-                            Text="{CompiledBinding Translation.Right.Value,
-                                                   Mode=OneWay}" />
-                        <NumericUpDown
-                            FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
-                            Foreground="{DynamicResource MainTextColor}"
-                            HorizontalAlignment="Stretch"
-                            Increment="1"
-                            Maximum="100"
-                            Minimum="0"
-                            Value="{CompiledBinding PrintPreview.PrintSettings.Value.MarginRight.Value,
-                                                    Mode=TwoWay}" />
-                    </StackPanel>
-                </Grid>
-
-
-            </StackPanel>
-
-            <!--  Preview Panel (Right)  -->
-            <Border
-                Background="{DynamicResource DisabledBackgroundColor}"
-                CornerRadius="6"
-                Grid.Column="1"
-                Grid.Row="0"
-                Margin="20,20,20,20">
-                <Viewbox
-                    Margin="10"
-                    Stretch="Uniform"
-                    StretchDirection="Both">
-                    <Border
-                        Background="White"
-                        BorderBrush="LightGray"
+                    <ComboBox
+                        Background="{DynamicResource SecondaryBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
                         BorderThickness="1"
-                        CornerRadius="2"
-                        Height="{CompiledBinding PrintPreview.PageHeight.Value}"
-                        Margin="20"
-                        Width="{CompiledBinding PrintPreview.PageWidth.Value}">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                BlurRadius="15"
-                                Color="Black"
-                                OffsetX="4"
-                                OffsetY="4"
-                                Opacity="0.3" />
-                        </Border.Effect>
+                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                        Foreground="{DynamicResource MainTextColor}"
+                        ItemsSource="{CompiledBinding PrintPreview.Printers.Value}"
+                        Margin="0,0,0,4"
+                        Padding="5,7,0,7"
+                        SelectedItem="{CompiledBinding PrintPreview.PrintSettings.Value.PrinterName.Value,
+                                                       Mode=TwoWay}" />
 
-                        <Image Source="{CompiledBinding PrintPreview.PreviewImage.Value}" Stretch="Fill" />
-                    </Border>
-                </Viewbox>
-            </Border>
+                    <!--  Paper Size  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="0,6,0,0"
+                        Text="{CompiledBinding Translation.PaperSize.Value,
+                                               Mode=OneWay}" />
+
+                    <ComboBox
+                        Background="{DynamicResource SecondaryBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="1"
+                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                        Foreground="{DynamicResource MainTextColor}"
+                        ItemsSource="{CompiledBinding PrintPreview.PaperSizes.Value}"
+                        Margin="0,0,0,4"
+                        Padding="5,7,0,7"
+                        SelectedItem="{CompiledBinding PrintPreview.PrintSettings.Value.PaperSize.Value,
+                                                       Mode=TwoWay}" />
+
+                    <!--  Orientation  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="0,6,0,0"
+                        Text="{CompiledBinding Translation.Orientation.Value,
+                                               Mode=OneWay}" />
+
+                    <ComboBox
+                        Background="{DynamicResource SecondaryBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="1"
+                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                        Foreground="{DynamicResource MainTextColor}"
+                        ItemsSource="{CompiledBinding PrintPreview.Orientations.Value}"
+                        Margin="0,0,0,4"
+                        Padding="5,7,0,7"
+                        SelectedIndex="{CompiledBinding PrintPreview.PrintSettings.Value.Orientation.Value,
+                                                        Mode=TwoWay}" />
+
+                    <!--  Scale Mode  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="0,6,0,0"
+                        Text="{CompiledBinding Translation.Scale.Value,
+                                               Mode=OneWay}" />
+
+                    <ComboBox
+                        Background="{DynamicResource SecondaryBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="1"
+                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                        Foreground="{DynamicResource MainTextColor}"
+                        ItemsSource="{CompiledBinding PrintPreview.ScaleModes.Value}"
+                        Margin="0,0,0,4"
+                        Padding="5,7,0,7"
+                        SelectedIndex="{CompiledBinding PrintPreview.PrintSettings.Value.ScaleMode.Value,
+                                                        Mode=TwoWay}" />
+
+                    <!--  Color Mode  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="0,6,0,0"
+                        Text="{CompiledBinding Translation.Color.Value,
+                                               Mode=OneWay}" />
+
+                    <ComboBox
+                        Background="{DynamicResource SecondaryBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="1"
+                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                        Foreground="{DynamicResource MainTextColor}"
+                        ItemsSource="{CompiledBinding PrintPreview.ColorModes.Value}"
+                        Margin="0,0,0,4"
+                        Padding="5,7,0,7"
+                        SelectedIndex="{CompiledBinding PrintPreview.PrintSettings.Value.ColorMode.Value,
+                                                        Mode=TwoWay}" />
+
+                    <!--  Copies  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="0,6,0,0"
+                        Text="{CompiledBinding Translation.Copies.Value,
+                                               Mode=OneWay}" />
+
+                    <NumericUpDown
+                        Background="{DynamicResource SecondaryBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="1"
+                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Increment="1"
+                        Margin="0,0,0,4"
+                        Maximum="200"
+                        Minimum="1"
+                        Padding="5,7,0,7"
+                        Value="{CompiledBinding PrintPreview.PrintSettings.Value.Copies.Value,
+                                                Mode=TwoWay}" />
+
+                    <!--  Margins  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="0,6,0,0"
+                        Text="{CompiledBinding Translation.Margins.Value,
+                                               Mode=OneWay}" />
+
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="6">
+
+                        <!--  Top  -->
+                        <StackPanel Grid.Column="0">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,0,0,5"
+                                Text="{CompiledBinding Translation.Top.Value,
+                                                       Mode=OneWay}" />
+                            <NumericUpDown
+                                FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
+                                Foreground="{DynamicResource MainTextColor}"
+                                HorizontalAlignment="Stretch"
+                                Increment="1"
+                                Maximum="100"
+                                Minimum="0"
+                                Value="{CompiledBinding PrintPreview.PrintSettings.Value.MarginTop.Value,
+                                                        Mode=TwoWay}" />
+                        </StackPanel>
+
+                        <!--  Bottom  -->
+                        <StackPanel Grid.Column="1">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,0,0,5"
+                                Text="{CompiledBinding Translation.Bottom.Value,
+                                                       Mode=OneWay}" />
+                            <NumericUpDown
+                                FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
+                                Foreground="{DynamicResource MainTextColor}"
+                                HorizontalAlignment="Stretch"
+                                Increment="1"
+                                Maximum="100"
+                                Minimum="0"
+                                Value="{CompiledBinding PrintPreview.PrintSettings.Value.MarginBottom.Value,
+                                                        Mode=TwoWay}" />
+                        </StackPanel>
+
+                        <!--  Left  -->
+                        <StackPanel Grid.Column="2">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,0,0,5"
+                                Text="{CompiledBinding Translation.Left.Value,
+                                                       Mode=OneWay}" />
+                            <NumericUpDown
+                                FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
+                                Foreground="{DynamicResource MainTextColor}"
+                                HorizontalAlignment="Stretch"
+                                Increment="1"
+                                Maximum="100"
+                                Minimum="0"
+                                Value="{CompiledBinding PrintPreview.PrintSettings.Value.MarginLeft.Value,
+                                                        Mode=TwoWay}" />
+                        </StackPanel>
+
+                        <!--  Right  -->
+                        <StackPanel Grid.Column="3">
+                            <TextBlock
+                                Classes="txt"
+                                Margin="0,0,0,5"
+                                Text="{CompiledBinding Translation.Right.Value,
+                                                       Mode=OneWay}" />
+                            <NumericUpDown
+                                FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
+                                Foreground="{DynamicResource MainTextColor}"
+                                HorizontalAlignment="Stretch"
+                                Increment="1"
+                                Maximum="100"
+                                Minimum="0"
+                                Value="{CompiledBinding PrintPreview.PrintSettings.Value.MarginRight.Value,
+                                                        Mode=TwoWay}" />
+                        </StackPanel>
+                    </Grid>
 
 
-            <Rectangle
-                Fill="{DynamicResource MainBorderColor}"
-                Grid.ColumnSpan="2"
-                Grid.Row="1"
-                Height="1"
-                VerticalAlignment="Top" />
+                </StackPanel>
+
+                <!--  Preview Panel (Right)  -->
+                <Border
+                    Background="#198B8B8B"
+                    CornerRadius="6"
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Margin="10">
+                    <Viewbox
+                        Margin="10"
+                        Stretch="Uniform"
+                        StretchDirection="Both">
+                        <Border
+                            Background="White"
+                            BorderBrush="LightGray"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            Height="{CompiledBinding PrintPreview.PageHeight.Value}"
+                            Margin="20"
+                            Width="{CompiledBinding PrintPreview.PageWidth.Value}">
+                            <Border.Effect>
+                                <DropShadowEffect
+                                    BlurRadius="15"
+                                    Color="Black"
+                                    OffsetX="4"
+                                    OffsetY="4"
+                                    Opacity="0.3" />
+                            </Border.Effect>
+
+                            <Image Source="{CompiledBinding PrintPreview.PreviewImage.Value}" Stretch="Fill" />
+                        </Border>
+                    </Viewbox>
+                </Border>
+            </Grid>
 
             <!--  Footer Buttons  -->
             <StackPanel
-                Grid.ColumnSpan="2"
-                Grid.Row="2"
                 HorizontalAlignment="Right"
-                Margin="0,10,0,0"
+                Margin="0,2,25,20"
                 Orientation="Horizontal"
-                Spacing="8">
+                Spacing="15"
+                VerticalAlignment="Bottom"
+                x:Name="BottomBorder">
 
-                <customControls:TextIconButton
+                <Button
                     Background="{DynamicResource MenuButtonColor}"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding PrintPreview.CancelCommand}"
-                    Data="{StaticResource CloseGeometry}"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="46"
-                    IconHeight="14"
-                    IconMargin="15,0,2,0"
-                    IconWidth="14"
-                    Text="{CompiledBinding Translation.Cancel.Value,
-                                           Mode=OneWay}"
-                    TextMargin="16,0,16,0"
+                    Height="42"
                     ToolTip.Tip="{CompiledBinding Translation.Cancel.Value,
                                                   Mode=OneWay}"
                     Width="140"
-                    x:Name="CancelButton" />
+                    x:Name="CancelButton">
+                    <TextBlock
+                        Classes="txt"
+                        Text="{CompiledBinding Translation.Cancel.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                </Button>
 
-                <customControls:TextIconButton
+                <Button
                     Background="{DynamicResource AccentColor}"
                     Classes="ButtonBorder accentHover"
                     Command="{CompiledBinding PrintPreview.PrintCommand}"
-                    Data="{StaticResource PrintGeometry}"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="46"
-                    IconHeight="16"
-                    IconMargin="15,0,2,0"
-                    IconWidth="16"
-                    Text="{CompiledBinding Translation.Print.Value,
-                                           Mode=OneWay}"
-                    TextMargin="16,0,16,0"
+                    Height="42"
                     ToolTip.Tip="{CompiledBinding Translation.Print.Value,
                                                   Mode=OneWay}"
                     Width="140"
-                    x:Name="PrintButton" />
+                    x:Name="PrintButton">
+                    <TextBlock
+                        Classes="txt"
+                        Foreground="{StaticResource SecondaryTextColor}"
+                        Text="{CompiledBinding Translation.Print.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                </Button>
 
 
             </StackPanel>
-        </Grid>
+
+        </StackPanel>
     </Panel>
 </UserControl>

@@ -110,6 +110,8 @@
                     Height="28"
                     IconHeight="17"
                     IconWidth="17"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
                     ToolTip.Tip="{CompiledBinding Translation.DeleteFile.Value,
                                                   Mode=OneWay}"
@@ -178,6 +180,8 @@
                     IconHeight="17"
                     IconMargin="10,0,5,0"
                     IconWidth="17"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
                     Text="{CompiledBinding Translation.OpenWith.Value,
                                            Mode=OneWay}"
@@ -200,6 +204,8 @@
                     Height="28"
                     IconHeight="17"
                     IconWidth="17"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
                     ToolTip.Tip="{CompiledBinding Translation.DuplicateFile.Value,
                                                   Mode=OneWay}"
@@ -219,6 +225,8 @@
                     Height="28"
                     IconHeight="17"
                     IconWidth="17"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
                     ToolTip.Tip="{CompiledBinding Translation.ShowInFolder.Value,
                                                   Mode=OneWay}"

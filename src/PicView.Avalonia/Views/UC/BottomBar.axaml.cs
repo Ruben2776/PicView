@@ -49,6 +49,8 @@ public partial class BottomBar : UserControl
 
             if (Settings.Theme.GlassTheme)
             {
+                var alphaBrush = new SolidColorBrush(Color.FromArgb(15, 100, 100, 100));
+                
                 MainBottomBorder.Background = Brushes.Transparent;
                 MainBottomBorder.BorderThickness = new Thickness(0);
 
@@ -68,9 +70,25 @@ public partial class BottomBar : UserControl
                 SettingsMenuButton.Classes.Remove("noBorderHover");
                 SettingsMenuButton.Classes.Add("hover");
 
-                NextButton.Background = new SolidColorBrush(Color.FromArgb(15, 255, 255, 255));
+                ZoomInButton.Background = alphaBrush;
+                ZoomInButton.Classes.Remove("noBorderHover");
+                ZoomInButton.Classes.Add("hover");
 
-                PreviousButton.Background = new SolidColorBrush(Color.FromArgb(15, 255, 255, 255));
+                ZoomOutButton.Background = alphaBrush;
+                ZoomOutButton.Classes.Remove("noBorderHover");
+                ZoomOutButton.Classes.Add("hover");
+
+                NextButton.Background = alphaBrush;
+
+                PreviousButton.Background = alphaBrush;
+
+                RotateRightButton.Background = alphaBrush;
+                RotateRightButton.Classes.Remove("noBorderHover");
+                RotateRightButton.Classes.Add("hover");
+
+                FlipButton.Background = alphaBrush;
+                FlipButton.Classes.Remove("noBorderHover");
+                FlipButton.Classes.Add("hover");
 
                 FileMenuButton.Foreground = new SolidColorBrush(color);
                 ImageMenuButton.Foreground = new SolidColorBrush(color);
@@ -119,6 +137,8 @@ public partial class BottomBar : UserControl
                 FlipButton.Classes.Remove("noBorderHover");
                 RotateRightButton.Classes.Add("noBorderHoverAlt");
                 FlipButton.Classes.Add("noBorderHoverAlt");
+
+
             }
         };
     }

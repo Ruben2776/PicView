@@ -210,6 +210,11 @@ public class ToolsViewModel : IDisposable
         await HideInterfaceLogic.ToggleFadeInButtonsOnHover(UIHelper.GetMainView.DataContext as MainViewModel);
     });
 
+    public ReactiveCommand ToggleHoverbarCommand { get; } = new(async (_, _) =>
+    {
+        await HideInterfaceLogic.ToggleHoverNavigationBar(UIHelper.GetMainView.DataContext as MainViewModel);
+    });
+
     public ReactiveCommand ChangeCtrlZoomCommand { get; } = new(async (_, _) =>
     {
         await FunctionsMapper.ChangeCtrlZoom();

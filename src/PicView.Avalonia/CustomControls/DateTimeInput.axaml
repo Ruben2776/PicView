@@ -14,6 +14,7 @@
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="{TemplateBinding CornerRadius}"
+                    MinHeight="35"
                     Name="border"
                     Padding="{TemplateBinding Padding}">
                     <!--  This is the panel where the text boxes will be dynamically added  -->

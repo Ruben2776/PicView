@@ -19,10 +19,10 @@ public static class MenuManager
             return;
         }
 
-        mainView.MainGrid.Children.Add(CreateMenu<FileMenu>(new Thickness(0, 0, 145, 0)));
+        mainView.MainGrid.Children.Add(CreateMenu<FileMenu>(new Thickness(0, 0, 147, 0)));
         mainView.MainGrid.Children.Add(CreateMenu<ImageMenu>(new Thickness(0, 0, 140, 0)));
-        mainView.MainGrid.Children.Add(CreateMenu<SettingsMenu>(new Thickness(0, 0, -99, 0)));
-        mainView.MainGrid.Children.Add(CreateMenu<ToolsMenu>(new Thickness(80, 0, 0, 0)));
+        mainView.MainGrid.Children.Add(CreateMenu<SettingsMenu>(new Thickness(0, 0, -102, 0)));
+        mainView.MainGrid.Children.Add(CreateMenu<ToolsMenu>(new Thickness(95, 0, 0, 0)));
     }
 
     private static T CreateMenu<T>(Thickness margin) where T : Control, new()

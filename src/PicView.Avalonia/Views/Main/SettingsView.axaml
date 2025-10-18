@@ -129,6 +129,26 @@
                 </customControls:AutoScrollViewer>
             </TabItem>
 
+            <!--  UI Settings  -->
+            <TabItem Classes="headerStyle" x:Name="InterfaceConfigurationTabItem">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Classes="imageStyle" Source="{StaticResource ColumnsSettingsAltImage}" />
+                        <TextBlock
+                            Classes="txt txtShadow"
+                            Foreground="{StaticResource SecondaryTextColor}"
+                            Text="{Binding Translation.InterfaceConfiguration.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </TabItem.Header>
+                <customControls:AutoScrollViewer Background="Transparent"
+                                                 Height="{Binding Path=Bounds.Height, ElementName=MainTabControl}">
+                    <config:InterfaceConfigurationView
+                        Background="Transparent"
+                        Margin="{StaticResource TabMargin}"
+                        Padding="{StaticResource TabPadding}" />
+                </customControls:AutoScrollViewer>
+            </TabItem>
+
             <!--  Image Settings  -->
             <TabItem Classes="headerStyle" x:Name="ImageTabItem">
                 <TabItem.Header>

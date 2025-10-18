@@ -9,6 +9,7 @@ using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
 using R3;
@@ -126,6 +127,12 @@ public class DraggableProgressBar : TemplatedControl
         base.OnApplyTemplate(e);
         _track = e.NameScope.Find<Border>("PART_Track");
         _thumb = e.NameScope.Find<Ellipse>("PART_Thumb");
+
+        if (!Settings.Theme.Dark)
+        {
+            _track.Background = UIHelper.GetBrush("SecondaryBackgroundColor");
+            _thumb.Fill = UIHelper.GetBrush("TertiaryBackgroundColor");
+        }
     }
 
     // Recalculate thumb position when CurrentIndex or Maximum changes
