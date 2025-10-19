@@ -266,7 +266,7 @@ public static class UpdateImage
         string name,
         MainViewModel vm)
     {
-        
+
         int width, height;
         if (imageType is ImageType.Svg)
         {
@@ -320,6 +320,40 @@ public static class UpdateImage
     }
 
     #endregion
+    
+    public static async ValueTask SetCroppedImageAsync(
+        object source,
+        ImageType imageType,
+        string name,
+        MainViewModel vm)
+    {
+        
+        int width, height;
+        var bitmap = source as Bitmap;
+        vm.PicViewer.ImageSource.Value = source;
+        vm.PicViewer.ImageType.Value = imageType == ImageType.Invalid ? ImageType.Bitmap : imageType;
+        width = bitmap?.PixelSize.Width ?? 0;
+        height = bitmap?.PixelSize.Height ?? 0;
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (vm.MainWindow.CurrentView.CurrentValue != vm.ImageViewer)
+            {
+                vm.MainWindow.CurrentView.Value = vm.ImageViewer;
+            }
+            WindowResizing.SetSize(width, height, 0, 0, 0, vm);
+        }, DispatcherPriority.Send);
+
+        var singeImageWindowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, 1);
+        vm.PicViewer.WindowTitle.Value = singeImageWindowTitles.TitleWithAppName;
+        vm.PicViewer.Title.Value = singeImageWindowTitles.BaseTitle;
+        vm.PicViewer.TitleTooltip.Value = singeImageWindowTitles.BaseTitle;
+
+        vm.PlatformService.StopTaskbarProgress();
+
+        vm.PicViewer.PixelWidth.Value = width;
+        vm.PicViewer.PixelHeight.Value = height;
+    }
 
     #region Set stats
 

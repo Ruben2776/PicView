@@ -106,9 +106,7 @@ public partial class EffectsView : UserControl
             LowerPanel.Background = new SolidColorBrush(Color.Parse("#5DA2A2A2"));
         }
         
-        CloseItem.Click += (_, _) => (VisualRoot as Window)?.Close();
         PointerPressed += OnPointerPressed;
-        ClearEffectsItem.Click += async (_, _) => await RemoveEffects();
 
         ResetContrastBtn.Click += (_, _) => ContrastSlider.Value = 0;
         ResetBrightnessBtn.Click += (_, _) => BrightnessSlider.Value = 0;
@@ -119,6 +117,11 @@ public partial class EffectsView : UserControl
 
         ResetButton.Click += async (_, _) => await RemoveEffects();
         CancelButton.Click += (_, _) => (VisualRoot as Window)?.Close();
+        ApplyButton.Click += async delegate
+        {
+            vm.PicViewer.HasChanges.Value = true;
+            (VisualRoot as Window)?.Close();
+        };
 
         BlackAndWhiteToggleButton.Click += async delegate
         {

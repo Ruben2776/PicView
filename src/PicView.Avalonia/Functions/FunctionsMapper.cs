@@ -384,10 +384,14 @@ public static class FunctionsMapper
     /// <inheritdoc cref="SettingsUpdater.ToggleSubdirectories(MainViewModel)" />
     public static async ValueTask ToggleSubdirectories() =>
         await SettingsUpdater.ToggleSubdirectories(vm: Vm).ConfigureAwait(false);
-    
+
     /// <inheritdoc cref="HideInterfaceLogic.ToggleBottomToolbar(MainViewModel)" />
     public static async ValueTask ToggleBottomToolbar() =>
         await HideInterfaceLogic.ToggleBottomToolbar(Vm).ConfigureAwait(false);
+        
+    /// <inheritdoc cref="OverlayHost.ToggleHistoryWindow(MainViewModel)" />
+    public static async ValueTask ToggleHistoryWindow() =>
+        await OverlayHost.ToggleHistoryWindow(Vm).ConfigureAwait(false);
     
     /// <inheritdoc cref="SettingsUpdater.ToggleValueTaskbarProgress(MainViewModel)" />
     public static async ValueTask ToggleTaskbarProgress() =>

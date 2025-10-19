@@ -1,43 +1,38 @@
 <UserControl
-    MinHeight="{CompiledBinding MainWindow.WindowMinHeight.Value}"
-    MinWidth="{CompiledBinding MainWindow.WindowMinWidth.Value}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.UC.StartUpMenu"
     x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:ia="using:Avalonia.Xaml.Interactivity"
+    xmlns:core="using:Avalonia.Xaml.Interactions.Core"
+    xmlns:animation="using:Avalonia.Animation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters;assembly=PicView.Avalonia"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
     <UserControl.Resources>
+        <converters:ComparisonConverter x:Key="WidthGreaterThan400Converter" CompareTo="400" Operator="GreaterThan" />
         <SolidColorBrush Color="{StaticResource SecondaryTextColor}" x:Key="SelectFileBrush" />
         <SolidColorBrush Color="{StaticResource SecondaryTextColor}" x:Key="OpenLastFileBrush" />
         <SolidColorBrush Color="{StaticResource SecondaryTextColor}" x:Key="PasteBrush" />
     </UserControl.Resources>
-    <Panel>
-        <Viewbox
-            Height="400"
-            HorizontalAlignment="Center"
-            Margin="15,20"
-            VerticalAlignment="Center"
-            Width="435"
-            x:Name="LogoViewbox">
-            <Image
-                HorizontalAlignment="Center"
-                Source="{StaticResource LogoImage}"
-                Stretch="Fill"
-                VerticalAlignment="Center"
-                x:Name="Logo" />
-        </Viewbox>
+
+    <DockPanel
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        LastChildFill="True">
+
         <StackPanel
+            DockPanel.Dock="Bottom"
             Height="30"
             HorizontalAlignment="Center"
-            Margin="0,220,25,16"
+            Margin="0,45,0,20"
             Orientation="Horizontal"
             VerticalAlignment="Center"
             x:Name="Buttons">
@@ -74,7 +69,7 @@
                     </Image>
                     <Label
                         Content="{CompiledBinding Translation.SelectFile.Value,
-                                                  Mode=OneWay}"
+                                                Mode=OneWay}"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         FontSize="14"
                         Foreground="{StaticResource SelectFileBrush}"
@@ -115,7 +110,7 @@
                     </Image>
                     <Label
                         Content="{CompiledBinding Translation.OpenLastFile.Value,
-                                                  Mode=OneWay}"
+                                                Mode=OneWay}"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         FontSize="14"
                         Foreground="{StaticResource OpenLastFileBrush}"
@@ -134,7 +129,7 @@
                         Width="20" />
                     <Label
                         Content="{CompiledBinding Translation.Paste.Value,
-                                                  Mode=OneWay}"
+                                                Mode=OneWay}"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         FontSize="14"
                         Foreground="{StaticResource PasteBrush}"
@@ -143,5 +138,25 @@
                 </StackPanel>
             </Button>
         </StackPanel>
-    </Panel>
+
+        <Image
+            DockPanel.Dock="Top"
+            HorizontalAlignment="Center"
+            Stretch="Uniform"
+            MaxHeight="350"
+            Margin="45,45,45,0"
+            VerticalAlignment="Center"
+            Source="{StaticResource LogoImage}">
+
+            <ia:Interaction.Behaviors>
+                <core:DataTriggerBehavior Binding="{Binding $parent[Window].Bounds.Width}" ComparisonCondition="GreaterThan" Value="900">
+                    <core:ChangePropertyAction PropertyName="Source" Value="{StaticResource LogoFullImage}" />
+                </core:DataTriggerBehavior>
+
+                <core:DataTriggerBehavior Binding="{Binding $parent[Window].Bounds.Width}" ComparisonCondition="LessThanOrEqual" Value="900">
+                    <core:ChangePropertyAction PropertyName="Source" Value="{StaticResource LogoImage}" />
+                </core:DataTriggerBehavior>
+            </ia:Interaction.Behaviors>
+        </Image>
+    </DockPanel>
 </UserControl>

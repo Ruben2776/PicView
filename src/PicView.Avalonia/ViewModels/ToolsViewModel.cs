@@ -199,6 +199,11 @@ public class ToolsViewModel : IDisposable
         await FunctionsMapper.ToggleBottomToolbar();
     });
 
+       public ReactiveCommand ToggleHistoryWindowCommand { get; } = new(async (_, _) =>
+    {
+        await FunctionsMapper.ToggleHistoryWindow();
+    });
+
     public ReactiveCommand ToggleBottomGalleryShownInHiddenUICommand { get; } = new(async (_, _) =>
     {
         await HideInterfaceLogic.ToggleBottomGalleryShownInHiddenUI(

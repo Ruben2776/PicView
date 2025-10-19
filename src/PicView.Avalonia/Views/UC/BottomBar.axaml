@@ -1,14 +1,14 @@
 <UserControl
     Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
     IsVisible="{CompiledBinding MainWindow.IsBottomToolbarShown.Value}"
-    Margin="{CompiledBinding MainWindow.BottomScreenMargin.Value,
-                             Mode=OneWay}"
+    Margin="{CompiledBinding MainWindow.BottomScreenMargin.Value, Mode=OneWay}"
     x:Class="PicView.Avalonia.Views.UC.BottomBar"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:converters="clr-namespace:PicView.Avalonia.Converters;assembly=PicView.Avalonia"
+    xmlns:views="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <UserControl.Resources>
@@ -205,11 +205,30 @@
         Height="{CompiledBinding MainWindow.BottombarHeight.Value,
                                  Mode=OneWay}"
         x:Name="MainBottomBorder">
-        <Panel>
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+        <DockPanel LastChildFill="True">
+            <!-- Resize Grip -->
+            <Path
+                DockPanel.Dock="Right"
+                x:Name="ResizeGripRight"
+                Cursor="SizeWestEast"                
+                Data="M330.664 296 v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"
+                Fill="{DynamicResource MainTextColor}"
+                Height="12"
+                HorizontalAlignment="Right"
+                IsVisible="{CompiledBinding MainWindow.CanResize.Value, Mode=OneWay}"
+                Margin="0,0,2,2"
+                Stretch="Fill"
+                Stroke="{DynamicResource MainBackgroundColor}"
+                StrokeThickness="1"
+                VerticalAlignment="Bottom"
+                Width="12" />
+
+            
+            <Grid DockPanel.Dock="Left" ColumnDefinitions="Auto,Auto,Auto,Auto,*,*,Auto,Auto,Auto,Auto,Auto" MaxWidth="440" HorizontalAlignment="Stretch" >
 
                 <!-- File Menu-->
                 <customControls:IconButton
+                    Grid.Column="0"
                     Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
@@ -221,11 +240,12 @@
                     IconHeight="17"
                     IconWidth="20"
                     IsTabStop="False"
-                    Width="38"
+                    Width="35"
                     x:Name="FileMenuButton" />
 
                 <!-- Image Menu-->
                 <Button
+                    Grid.Column="1"
                     Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -234,7 +254,7 @@
                     Foreground="{StaticResource ImageMenuBrush}"
                     Height="25"
                     IsTabStop="False"
-                    Width="38"
+                    Width="35"
                     x:Name="ImageMenuButton">
                     <Canvas
                         Height="25"
@@ -268,6 +288,7 @@
 
                 <!-- Zoom Out -->
                 <customControls:IconButton
+                    Grid.Column="2"
                     Background="{DynamicResource AltBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -280,11 +301,12 @@
                     IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsTabStop="False"
-                    Width="38"
+                    Width="35"
                     x:Name="ZoomOutButton" />
 
                 <!-- Zoom In -->
                 <customControls:IconButton
+                    Grid.Column="3"
                     Background="{DynamicResource AltBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -297,11 +319,12 @@
                     IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsTabStop="False"
-                    Width="38"
+                    Width="35"
                     x:Name="ZoomInButton" />
 
                 <!-- Previous -->
                 <customControls:IconButton
+                    Grid.Column="4"
                     Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -311,16 +334,17 @@
                     Focusable="False"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                    IconHeight="20"
-                    IconWidth="17"
+                    IconHeight="16"
+                    IconWidth="16"
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsTabStop="False"
-                    Width="80"
+                    HorizontalAlignment="Stretch"
                     x:Name="PreviousButton" />
 
                 <!-- Next -->
                 <customControls:IconButton
+                    Grid.Column="5"
                     Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -330,16 +354,17 @@
                     Focusable="False"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                    IconHeight="20"
-                    IconWidth="17"
+                    IconHeight="16"
+                    IconWidth="16"
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsTabStop="False"
-                    Width="80"
+                    HorizontalAlignment="Stretch"
                     x:Name="NextButton" />
 
                 <!-- Rotate -->
                 <customControls:IconButton
+                    Grid.Column="6"
                     Background="{DynamicResource AltBackgroundColor}"
                     Classes="noBorderHover"
                     Command="{CompiledBinding Tools.RotateRightCommand}"
@@ -356,9 +381,15 @@
                     ToolTip.Tip="{CompiledBinding Translation.RotateRight.Value,
                                                   Mode=OneWay}"
                     Width="35"
-                    x:Name="RotateRightButton" />
+                    x:Name="RotateRightButton">
+                    <customControls:IconButton.ContextMenu>
+                        <views:RotationContextMenu x:Name="RotationMenu" />
+                    </customControls:IconButton.ContextMenu>
+                </customControls:IconButton>
 
+                <!-- Flip -->
                 <customControls:IconButton
+                    Grid.Column="7"
                     Background="{DynamicResource AltBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
@@ -377,6 +408,7 @@
                     ToolTip.Tip="{CompiledBinding Translation.IsFlipped.Value,
                                                   Mode=OneWay}"
                     Width="35"
+                    IsVisible="{CompiledBinding !GlobalSettings.ShowPrintInBottomToolbar.Value}"
                     x:Name="FlipButton">
                     <Button.RenderTransform>
                         <ScaleTransform ScaleX="{CompiledBinding PicViewer.ScaleX.Value}" />
@@ -385,6 +417,7 @@
 
                 <!-- Print -->
                 <customControls:IconButton
+                    Grid.Column="8"
                     Background="{DynamicResource AltBackgroundColor}"
                     Classes="noBorderHover"
                     Command="{CompiledBinding Tools.PrintCommand}"
@@ -406,6 +439,7 @@
 
                 <!-- Tools Menu-->
                 <Button
+                    Grid.Column="9"
                     Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -414,7 +448,7 @@
                     Foreground="{StaticResource ToolsMenuBrush}"
                     Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
                     IsTabStop="False"
-                    Width="38"
+                    Width="35"
                     x:Name="ToolsMenuButton">
                     <Image Height="19" Width="19">
                         <Image.Resources>
@@ -448,6 +482,7 @@
 
                 <!-- Settings Menu-->
                 <customControls:IconButton
+                    Grid.Column="10"
                     Background="{DynamicResource SecondaryButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -459,29 +494,10 @@
                     IconHeight="16"
                     IconWidth="16"
                     IsTabStop="False"
-                    Width="38"
-                    ZIndex="1"
+                    Width="35"
                     x:Name="SettingsMenuButton" />
-
-            </StackPanel>
-
-            <!-- Resize Grip -->
-            <Path
-                x:Name="ResizeGripRight"
-                Cursor="SizeWestEast"
-                PointerPressed="ResizeGripRight_OnPointerPressed"
-                Data="M330.664 296 v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"
-                Fill="{DynamicResource MainTextColor}"
-                Height="12"
-                HorizontalAlignment="Right"
-                IsVisible="{CompiledBinding MainWindow.CanResize.Value,
-                                            Mode=OneWay}"
-                Margin="0,0,2,2"
-                Stretch="Fill"
-                Stroke="{DynamicResource MainBackgroundColor}"
-                StrokeThickness="1"
-                VerticalAlignment="Bottom"
-                Width="12" />
-        </Panel>
+            <!-- </StackPanel> -->
+            </Grid>
+        </DockPanel>
     </Border>
 </UserControl>

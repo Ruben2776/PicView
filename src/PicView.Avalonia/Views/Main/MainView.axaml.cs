@@ -115,6 +115,8 @@ public partial class MainView : UserControl
                 await FunctionsMapper.ShowRecentHistoryFile();
             };
 
+            OverlayHost.Initialize(MainGrid);
+
             // Setup hover fade buttons
             _ = new HoverFadeButtonHandler(ClickArrowRight, vm, ClickArrowRight.PolyButton);
             _ = new HoverFadeButtonHandler(ClickArrowLeft, vm, ClickArrowLeft.PolyButton);

@@ -42,7 +42,7 @@ public static class FileSaverHelper
 
     public static async Task SaveFileAsync(string? filename, string destination, MainViewModel vm)
     {
-        if (vm.PicViewer.EffectConfig.Value is not null)
+        if (vm.PicViewer.HasChanges.Value)
         {
             await SaveImageFromBitmap();
         }

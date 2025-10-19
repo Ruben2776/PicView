@@ -1,12 +1,12 @@
 <Window
     CanResize="{CompiledBinding MainWindow.CanResize.Value}"
     Icon="/icon.ico"
-    MinHeight="{CompiledBinding MainWindow.WindowMinHeight.Value}"
-    MinWidth="{CompiledBinding MainWindow.WindowMinWidth.Value}"
+    MinHeight="370"
+    MinWidth="370"
     SizeChanged="Control_OnSizeChanged"
     SizeToContent="{CompiledBinding MainWindow.SizeToContent.Value}"
-    Title="{CompiledBinding PicViewer.WindowTitle.Value,
-                            Mode=OneWay}"
+    Title="{CompiledBinding PicViewer.WindowTitle.Value, Mode=OneWay}"
+    SystemDecorations="BorderOnly"
     TransparencyLevelHint="AcrylicBlur"
     x:Class="PicView.Avalonia.Win32.Views.WinMainWindow"
     x:DataType="viewModels:MainViewModel"
@@ -16,13 +16,6 @@
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:views1="clr-namespace:PicView.Avalonia.Win32.Views"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
-	<Window.Styles>
-        <Style Selector="Window[WindowState=Maximized]">
-            <Setter Property="SystemDecorations" Value="None" />
-            <Setter Property="ExtendClientAreaToDecorationsHint" Value="False" />
-        </Style>
-    </Window.Styles>
     
     <Border BorderBrush="{DynamicResource WindowBorderColor}" BorderThickness="1">
         <DockPanel LastChildFill="True">

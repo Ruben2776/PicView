@@ -73,11 +73,13 @@ public class TranslationViewModel : IDisposable
         Copy.Value = t.Copy;
         CopyFile.Value = t.CopyFile;
         CopyImage.Value = t.CopyImage;
+        CopyImageTooltip.Value = t.CopyImageTooltip;
         Copyright.Value = t.Copyright;
         Created.Value = t.Created;
         CreationTime.Value = t.CreationTime;
         Credits.Value = t.Credits;
         Crop.Value = t.Crop;
+        CropPicture.Value = t.CropPicture;
         CtrlToZoom.Value = t.CtrlToZoom;
         DarkTheme.Value = t.DarkTheme;
         DateTaken.Value = t.DateTaken;
@@ -136,6 +138,7 @@ public class TranslationViewModel : IDisposable
         HideBottomGallery.Value = t.HideBottomGallery;
         HideBottomToolbar.Value = t.HideBottomToolbar;
         HideHoverNavigationBar.Value = t.HideHoverNavigationBar;
+        HideHistoryWindow.Value = t.HideHistoryWindow;
         HideUI.Value = t.HideUI;
         HighlightColor.Value = t.HighlightColor;
         HighQuality.Value = t.HighQuality;
@@ -268,6 +271,7 @@ public class TranslationViewModel : IDisposable
         ShowConfirmationOnEsc.Value = t.ShowConfirmationOnEsc;
         ShowFadeInButtonsOnHover.Value = t.ShowFadeInButtonsOnHover;
         ShowFileSavingDialog.Value = t.ShowFileSavingDialog;
+        ShowHistoryWindow.Value = t.ShowHistoryWindow;
         ShowHoverNavigationBar.Value = t.ShowHoverNavigationBar;
         ShowImageGallery.Value = t.ShowImageGallery;
         ShowInFolder.Value = t.ShowInFolder;
@@ -380,11 +384,13 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> Copy { get; } = new();
     public BindableReactiveProperty<string?> CopyFile { get; } = new();
     public BindableReactiveProperty<string?> CopyImage { get; } = new();
+    public BindableReactiveProperty<string?> CopyImageTooltip { get; } = new();    
     public BindableReactiveProperty<string?> Copyright { get; } = new();
     public BindableReactiveProperty<string?> Created { get; } = new();
     public BindableReactiveProperty<string?> CreationTime { get; } = new();
     public BindableReactiveProperty<string?> Credits { get; } = new();
     public BindableReactiveProperty<string?> Crop { get; } = new();
+    public BindableReactiveProperty<string?> CropPicture { get; } = new();
     public BindableReactiveProperty<string?> CtrlToZoom { get; } = new();
     public BindableReactiveProperty<string?> DarkTheme { get; } = new();
     public BindableReactiveProperty<string?> DateTaken { get; } = new();
@@ -442,6 +448,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> Help { get; } = new();
     public BindableReactiveProperty<string?> HideBottomGallery { get; } = new();
     public BindableReactiveProperty<string?> HideBottomToolbar { get; } = new();
+    public BindableReactiveProperty<string?> HideHistoryWindow { get; } = new();
     public BindableReactiveProperty<string?> HideHoverNavigationBar { get; } = new();
     public BindableReactiveProperty<string?> HideUI { get; } = new();
     public BindableReactiveProperty<string?> HighlightColor { get; } = new();
@@ -569,6 +576,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> ShowConfirmationOnEsc { get; } = new();
     public BindableReactiveProperty<string?> ShowFadeInButtonsOnHover { get; } = new();
     public BindableReactiveProperty<string?> ShowFileSavingDialog { get; } = new();
+    public BindableReactiveProperty<string?> ShowHistoryWindow { get; } = new();
     public BindableReactiveProperty<string?> ShowHoverNavigationBar { get; } = new();
     public BindableReactiveProperty<string?> ShowImageGallery { get; } = new();
     public BindableReactiveProperty<string?> ShowInFolder { get; } = new();

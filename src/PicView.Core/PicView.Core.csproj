@@ -25,12 +25,12 @@
         <PlatformTarget>ARM64</PlatformTarget>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="14.9.0"/>
-        <PackageReference Include="R3" Version="1.3.0"/>
-        <PackageReference Include="SharpCompress" Version="0.40.0"/>
-        <PackageReference Include="ZLinq" Version="1.5.3"/>
-        <PackageReference Include="ZLinq.FileSystem" Version="1.5.3"/>
-        <PackageReference Include="ZString" Version="2.6.0"/>
+        <PackageReference Include="Magick.NET-Q8-OpenMP-x64" Version="14.9.0" />
+        <PackageReference Include="R3" Version="1.3.0" />
+        <PackageReference Include="SharpCompress" Version="0.40.0" />
+        <PackageReference Include="ZLinq" Version="1.5.3" />
+        <PackageReference Include="ZLinq.FileSystem" Version="1.5.3" />
+        <PackageReference Include="ZString" Version="2.6.0" />
     </ItemGroup>
     <ItemGroup>
         <None Update="Config\Languages\*.json">
@@ -41,6 +41,6 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-        <InternalsVisibleTo Include="PicView.Tests"/>
+        <InternalsVisibleTo Include="PicView.Tests" />
     </ItemGroup>
 </Project>

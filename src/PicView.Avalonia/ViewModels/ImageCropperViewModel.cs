@@ -1,15 +1,22 @@
 ﻿using Avalonia;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.Crop;
+using PicView.Avalonia.Extensions;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Core.Localization;
+using PicView.Core.ImageDecoding;
+using PicView.Core.Models;
 using R3;
+using R3.Avalonia;
 using Unit = R3.Unit;
+using ABI.Windows.AI.MachineLearning.Preview;
+using PicView.Core.History;
 
 namespace PicView.Avalonia.ViewModels;
 
@@ -17,13 +24,15 @@ public class ImageCropperViewModel : IDisposable
 {
     public ImageCropperViewModel(Bitmap bitmap)
     {
-        CropImageCommand = new ReactiveCommand(SaveCroppedImageAsync);
+        CropImageCommand = new ReactiveCommand(CropImageAsync);
+        SaveCropImageCommand = new ReactiveCommand(SaveCroppedImageAsync);
         CopyCropImageCommand = new ReactiveCommand(CopyCroppedImageAsync);
         CloseCropCommand = new ReactiveCommand(HandleCloseCrop);
         Bitmap.Value = bitmap;
     }
 
     public ReactiveCommand CropImageCommand { get; private set; }
+    public ReactiveCommand SaveCropImageCommand { get; private set; }
     public ReactiveCommand CopyCropImageCommand { get; private set; }
     public ReactiveCommand CloseCropCommand { get; private set; }
 
@@ -70,6 +79,83 @@ public class ImageCropperViewModel : IDisposable
             CropFunctions.CloseCropControl(vm);
         }
     }
+
+    public async ValueTask CropImageAsync(Unit unit, CancellationToken cancellationToken)
+    {
+        if (UIHelper.GetMainView.DataContext is not MainViewModel vm)
+            return; 
+
+        if (vm.PicViewer.ImageSource.CurrentValue is not Bitmap sourceBitmap)
+            return;
+
+        vm.MainWindow.IsLoadingIndicatorShown.Value = true;
+
+        try
+        {
+            var currentFileInfo = vm.PicViewer.FileInfo.Value;
+
+            // History: capture pre-change state
+            using (var pre = sourceBitmap.ToMagickImage())
+            {
+                vm.History.AddStep(new HistoryEntry
+                {
+                    Kind = EditKind.Crop,
+                    Description = $"Before Crop",
+                    Snapshot = (MagickImage)pre.Clone()
+                });
+            }
+            
+            var croppedBitmap = await Task.Run(() =>
+            {
+                int x = Convert.ToInt32(SelectionX.CurrentValue / AspectRatio.CurrentValue);
+                int y = Convert.ToInt32(SelectionY.CurrentValue / AspectRatio.CurrentValue);
+                int width  = (int)PixelSelectionWidth.CurrentValue;
+                int height = (int)PixelSelectionHeight.CurrentValue;
+                
+
+                using var magick = sourceBitmap.ToMagickImage();
+                var cropRect = new MagickGeometry(x, y, (uint)width, (uint)height);
+                magick.Crop(cropRect);
+                magick.Page = new MagickGeometry(0, 0, (uint)magick.Width, (uint)magick.Height);
+
+                return magick.ToAvaloniaBitmap();
+            });
+
+            if (croppedBitmap is Bitmap newBitmap)
+            {
+                // History: capture the new state
+                using (var post = croppedBitmap.ToMagickImage())
+                {
+                    vm.History.AddStep(new HistoryEntry
+                    {
+                        Kind = EditKind.Crop,
+                        Description = $"Crop {croppedBitmap.PixelSize.Width}×{croppedBitmap.PixelSize.Height}",
+                        Snapshot = (MagickImage)post.Clone()
+                    });
+                }
+
+                var imageModel = new ImageModel
+                {
+                    Image = croppedBitmap,
+                    PixelWidth = croppedBitmap?.PixelSize.Width ?? 0,
+                    PixelHeight = croppedBitmap?.PixelSize.Height ?? 0,
+                    ImageType = ImageType.Bitmap
+
+                };
+                await UpdateImage.SetCroppedImageAsync(imageModel.Image, imageModel.ImageType, String.Concat(currentFileInfo?.Name ?? TranslationManager.Translation.ClipboardImage, "*"), vm);
+                vm.PicViewer.HasChanges.Value = true;
+            }
+
+            CropFunctions.CloseCropControl(vm);
+        }
+        finally
+        {
+            vm.MainWindow.IsLoadingIndicatorShown.Value = false;
+        }
+
+    }
+
+    public async ValueTask CropImageAsync() => await CropImageAsync(Unit.Default, CancellationToken.None);
 
     private async ValueTask SaveCroppedImageAsync(Unit unit, CancellationToken cancellationToken)
     {

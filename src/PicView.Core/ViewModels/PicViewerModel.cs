@@ -86,6 +86,8 @@ public class PicViewerModel : IDisposable
     public BindableReactiveProperty<bool> IsSingleImage { get; } = new();
     
     public BindableReactiveProperty<bool> ShouldCropBeEnabled { get; } = new();
-    
+
     public BindableReactiveProperty<bool> ShouldOptimizeImageBeEnabled { get; } = new();
+    
+    public BindableReactiveProperty<bool> HasChanges { get; } = new();
 }

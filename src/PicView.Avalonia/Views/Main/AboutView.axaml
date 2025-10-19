@@ -231,7 +231,8 @@
                 HorizontalAlignment="Center"
                 Margin="0,20,0,20"
                 NavigateUri="https://ko-fi.com/W7W46BJFV"
-                Width="200">
+                Width="200"
+                IsVisible="False">
                 <Image Source="{StaticResource kofi_button_strokeDrawingImage}" x:Name="KofiImage" />
             </HyperlinkButton>
 

@@ -287,7 +287,7 @@
                     </MenuItem>
 
                     <Separator
-                        Background="{DynamicResource MainBorderColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
                         Opacity=".3" />
 
@@ -368,9 +368,9 @@
                     </MenuItem>
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
                     <!--  Duplicate file  -->
                     <MenuItem
@@ -399,9 +399,9 @@
                     </MenuItem>
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
                     <!--  Delete file  -->
                     <MenuItem
@@ -507,9 +507,43 @@
                     </MenuItem>
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
+
+                    <!--  Toggle History Window  -->
+                    <MenuItem
+                        Command="{CompiledBinding Tools.ToggleHistoryWindowCommand}"
+                        Header="{CompiledBinding Translation.ShowHistoryWindow.Value,
+                                                 Mode=OneWay}"
+                        IsVisible="{CompiledBinding !MainWindow.IsHistoryWindowShown.Value}"
+                        Theme="{StaticResource MainBg}">
+                        <MenuItem.Icon>
+                            <Image
+                                Height="12"
+                                Source="{StaticResource Panel-Bottom}"
+                                Width="12" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem
+                        Command="{CompiledBinding Tools.ToggleHistoryWindowCommand}"
+                        Header="{CompiledBinding Translation.HideHistoryWindow.Value,
+                                                 Mode=OneWay}"
+                        IsVisible="{CompiledBinding MainWindow.IsHistoryWindowShown.Value}"
+                        Theme="{StaticResource MainBg}">
+                        <MenuItem.Icon>
+                            <Image
+                                Height="12"
+                                Source="{StaticResource Panel-Bottom}"
+                                Width="12" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+
+                    <Separator
+                        Background="{DynamicResource ContextMenuTextColor}"
+                        Margin="0"
+                        Opacity=".3" />
 
                     <!--  Fullscreen  -->
                     <MenuItem
@@ -615,9 +649,9 @@
                     </MenuItem>
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
                     <!--  Optimize image  -->
                     <MenuItem
@@ -635,7 +669,10 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Opacity="1" />
+                    <Separator
+                        Background="{DynamicResource ContextMenuTextColor}"
+                        Margin="0"
+                        Opacity=".3" />
 
                     <!--  Crop  -->
                     <MenuItem
@@ -652,9 +689,9 @@
                     </MenuItem>
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
                     <!--  Flip  -->
                     <MenuItem
@@ -741,9 +778,9 @@
                     </MenuItem>
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
 
                     <!--  Next 10  -->
@@ -815,9 +852,9 @@
                     </MenuItem>
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
                     <!--  First Image  -->
                     <MenuItem
@@ -852,9 +889,9 @@
                     </MenuItem>
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
                     <!--  Next folder  -->
                     <MenuItem
@@ -968,9 +1005,9 @@
                         ToggleType="Radio" />
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
                     <!--  Sort files ascending  -->
                     <MenuItem
@@ -1007,9 +1044,9 @@
                         ToggleType="CheckBox" />
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
                     <!--  Toggle looping  -->
                     <MenuItem
@@ -1021,9 +1058,9 @@
                         ToggleType="CheckBox" />
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
                     <!--  Toggle scrolling  -->
                     <MenuItem
@@ -1043,9 +1080,9 @@
                         ToggleType="CheckBox" />
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
                     <!--  Toggle topmost  -->
                     <MenuItem
@@ -1066,9 +1103,9 @@
                         ToggleType="CheckBox" />
 
                     <Separator
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Background="{DynamicResource ContextMenuTextColor}"
                         Margin="0"
-                        Opacity=".9" />
+                        Opacity=".3" />
 
                     <!--  Toggle ctrl zoom  -->
                     <MenuItem
