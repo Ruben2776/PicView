@@ -140,8 +140,7 @@
                             Text="{Binding Translation.InterfaceConfiguration.Value, Mode=OneWay}" />
                     </StackPanel>
                 </TabItem.Header>
-                <customControls:AutoScrollViewer Background="Transparent"
-                                                 Height="{Binding Path=Bounds.Height, ElementName=MainTabControl}">
+                <customControls:AutoScrollViewer Background="Transparent" Height="{Binding Path=Bounds.Height, ElementName=MainTabControl}">
                     <config:InterfaceConfigurationView
                         Background="Transparent"
                         Margin="{StaticResource TabMargin}"

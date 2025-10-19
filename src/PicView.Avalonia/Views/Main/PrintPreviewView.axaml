@@ -186,6 +186,7 @@
                                 Text="{CompiledBinding Translation.Top.Value,
                                                        Mode=OneWay}" />
                             <NumericUpDown
+                                Background="{DynamicResource SecondaryBackgroundColor}"
                                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                                 Foreground="{DynamicResource MainTextColor}"
                                 HorizontalAlignment="Stretch"
@@ -204,6 +205,7 @@
                                 Text="{CompiledBinding Translation.Bottom.Value,
                                                        Mode=OneWay}" />
                             <NumericUpDown
+                                Background="{DynamicResource SecondaryBackgroundColor}"
                                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                                 Foreground="{DynamicResource MainTextColor}"
                                 HorizontalAlignment="Stretch"
@@ -222,6 +224,7 @@
                                 Text="{CompiledBinding Translation.Left.Value,
                                                        Mode=OneWay}" />
                             <NumericUpDown
+                                Background="{DynamicResource SecondaryBackgroundColor}"
                                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                                 Foreground="{DynamicResource MainTextColor}"
                                 HorizontalAlignment="Stretch"
@@ -240,6 +243,7 @@
                                 Text="{CompiledBinding Translation.Right.Value,
                                                        Mode=OneWay}" />
                             <NumericUpDown
+                                Background="{DynamicResource SecondaryBackgroundColor}"
                                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                                 Foreground="{DynamicResource MainTextColor}"
                                 HorizontalAlignment="Stretch"

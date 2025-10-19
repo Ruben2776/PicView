@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Drawing.Printing;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -456,38 +457,9 @@ public class WindowInitializer : IPlatformSpecificUpdate
 
             if (_printPreviewWindow is null)
             {
-                vm.PrintPreview = new();
+                vm.PrintPreview = new PrintPreviewViewModel();
 
-                var printerSettings = new System.Drawing.Printing.PrinterSettings();
-
-                // Load installed printers
-                vm.PrintPreview.Printers.Value = new List<string>(System.Drawing.Printing.PrinterSettings.InstalledPrinters.Cast<string>());
-                vm.PrintPreview.PaperSizes.Value = new List<string>(PrintEngine.GetPaperSizes(printerSettings.PrinterName));
-
-
-                // Pre-select default printer settings
-                var pageSettings = printerSettings.DefaultPageSettings;
-
-                var currentPrintSettings = new PrintSettings
-                {
-                    ImagePath = { Value = vm.PicViewer.FileInfo?.Value?.FullName },
-                    PrinterName = { Value = printerSettings.PrinterName },
-                    PaperSize = { Value = pageSettings.PaperSize.PaperName },
-                    ColorMode = { Value = printerSettings.SupportsColor ? (int)ColorModes.Auto : (int)ColorModes.BlackAndWhite },
-                    Orientation = { Value = pageSettings.Landscape ? (int)Orientations.Landscape : (int)Orientations.Portrait },
-                    MarginTop = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Top) },
-                    MarginBottom = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Bottom) },
-                    MarginLeft = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Left) },
-                    MarginRight = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Right) }
-                };
-
-                vm.PrintPreview.PrintSettings.Value = currentPrintSettings;
-
-                if (vm.PicViewer.FileInfo.Value != null && File.Exists(vm.PicViewer.FileInfo.Value.FullName))
-                {
-                    using var fs = File.OpenRead(vm.PicViewer.FileInfo.Value.FullName);
-                    vm.PrintPreview.PreviewImage.Value = new System.Drawing.Bitmap(fs);
-                }
+                // TODO: Move this initialization to its own dedicated class
 
                 _printPreviewWindow = new PrintPreviewWindow
                 {
@@ -495,19 +467,57 @@ public class WindowInitializer : IPlatformSpecificUpdate
                     WindowStartupLocation = WindowStartupLocation.CenterOwner
                 };
 
-                vm.PrintPreview.PrintCommand.SubscribeAwait(async (_, ct) =>
+                vm.PrintPreview.PrintCommand.SubscribeAwait(async (_, _) =>
                 {
                     await _printPreviewWindow?.RunPrintAsync(vm);
                 })
-                .AddTo(vm.PrintPreview._disposables);
+                .AddTo(vm.PrintPreview.Disposables);
 
-                vm.PrintPreview.CancelCommand.SubscribeAwait(async (_, ct) =>
+                vm.PrintPreview.CancelCommand.SubscribeAwait(async (_, _) =>
                 {
                     await Dispatcher.UIThread.InvokeAsync(() => _printPreviewWindow?.Close());
-                }).AddTo(vm.PrintPreview._disposables);
+                }).AddTo(vm.PrintPreview.Disposables);
 
                 _printPreviewWindow.Show(desktop.MainWindow);
-                _printPreviewWindow.Closing += (s, e) => _printPreviewWindow = null;
+                _printPreviewWindow.Closing += (_, _) => _printPreviewWindow = null;
+
+                Task.Run(() =>
+                {
+                    var printerSettings = new PrinterSettings();
+
+                    // Load installed printers
+                    vm.PrintPreview.Printers.Value = new List<string>(PrinterSettings.InstalledPrinters);
+                    vm.PrintPreview.PaperSizes.Value = new List<string>(PrintEngine.GetPaperSizes(printerSettings.PrinterName));
+
+
+                    // Pre-select default printer settings
+                    var pageSettings = printerSettings.DefaultPageSettings;
+
+                    var currentPrintSettings =
+                        new PrintSettings // TODO: Add print settings to its own config class to remember user preference
+                    {
+                        ImagePath = { Value = vm.PicViewer.FileInfo?.Value?.FullName },
+                        PrinterName = { Value = printerSettings.PrinterName },
+                        PaperSize = { Value = pageSettings.PaperSize.PaperName },
+                        ColorMode = { Value = printerSettings.SupportsColor ? (int)ColorModes.Auto : (int)ColorModes.BlackAndWhite },
+                        Orientation = { Value = pageSettings.Landscape ? (int)Orientations.Landscape : (int)Orientations.Portrait },
+                        MarginTop = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Top) },
+                        MarginBottom = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Bottom) },
+                        MarginLeft = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Left) },
+                        MarginRight = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Right) }
+                    };
+
+                    vm.PrintPreview.PrintSettings.Value = currentPrintSettings;
+                    
+                    // TODO: set a blank image at correct size first, and then update it with real image, to avoid resizing
+                    if (vm.PicViewer.FileInfo.Value != null && File.Exists(vm.PicViewer.FileInfo.Value.FullName))
+                    {
+                        using var fs = File.OpenRead(vm.PicViewer.FileInfo.Value.FullName);
+                        vm.PrintPreview.PreviewImage.Value = new System.Drawing.Bitmap(fs);
+                    }
+                    
+                    _printPreviewWindow.Initialize();
+                });
             }
             else
             {

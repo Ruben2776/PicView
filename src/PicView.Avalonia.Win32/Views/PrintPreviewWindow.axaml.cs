@@ -11,6 +11,7 @@ using PicView.Avalonia.Printing;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Win32.Printing;
+using PicView.Core.DebugTools;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
@@ -26,7 +27,11 @@ public partial class PrintPreviewWindow : Window
         InitializeComponent();
 
         GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.Print + " - PicView");
+        ThemeUpdates();
+    }
 
+    private void ThemeUpdates()
+    {
         if (!Settings.Theme.Dark)
         {
             PrintPreviewView.Background = UIHelper.GetMenuBackgroundColor();
@@ -64,15 +69,10 @@ public partial class PrintPreviewWindow : Window
     private void Close(object? sender, RoutedEventArgs e) => Close();
     private void Minimize(object? sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
-    protected override void OnLoaded(RoutedEventArgs e)
+    public void Initialize()
     {
-        base.OnLoaded(e);
-
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
+        var vm = Dispatcher.UIThread.Invoke(() => DataContext as MainViewModel);
+        
         if (vm.PrintPreview == null)
         {
             return;
@@ -85,7 +85,7 @@ public partial class PrintPreviewWindow : Window
             .AsObservable()
             .DistinctUntilChanged()
             .Subscribe(_ => UpdatePrinter(vm.PrintPreview))
-            .AddTo(vm.PrintPreview._disposables);
+            .AddTo(vm.PrintPreview.Disposables);
 
         // Any setting change triggers preview update
         // ReSharper disable once InvokeAsExtensionMethod
@@ -102,7 +102,7 @@ public partial class PrintPreviewWindow : Window
                     => (orientation, top, bottom, left, right, scale, color, paper))
             .ThrottleLast(TimeSpan.FromMilliseconds(100))
             .Subscribe(_ => UpdatePreview(vm.PrintPreview))
-            .AddTo(vm.PrintPreview._disposables);
+            .AddTo(vm.PrintPreview.Disposables);
 
         // Initial render
         UpdatePrinter(vm.PrintPreview);
@@ -148,7 +148,9 @@ public partial class PrintPreviewWindow : Window
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[PrintPreview] Failed to reload paper sizes: {ex}");
+            DebugHelper.LogDebug(nameof(PrintPreviewView), nameof(UpdatePrinter),
+                "[PrintPreview] Failed to reload paper sizes");
+            DebugHelper.LogDebug(nameof(PrintPreviewView), nameof(UpdatePrinter), ex);
         }
     }
 
@@ -237,7 +239,7 @@ public partial class PrintPreviewWindow : Window
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[PrintPreview] UpdatePreview failed: {ex}");
+            DebugHelper.LogDebug(nameof(PrintPreviewView), nameof(UpdatePreview), ex);
         }
     }
 
@@ -274,7 +276,7 @@ public partial class PrintPreviewWindow : Window
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[PrintPreview] RunPrintAsync error: {ex}");
+            DebugHelper.LogDebug(nameof(PrintPreviewView), nameof(RunPrintAsync), ex);
         }
         finally
         {

@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Styling;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 
@@ -18,16 +19,33 @@ public partial class SettingsMenu : AnimatedMenu
                 UIHelper.SwitchHoverBorderClass(AboutWindowButton);
             }
 
-            if (!Settings.Theme.Dark && !Settings.Theme.GlassTheme)
+            if (Settings.Theme.Dark && !Settings.Theme.GlassTheme)
+            {
+                return;
+            }
+
+            if (!Settings.Theme.GlassTheme)
             {
                 TopBorder.Background = Brushes.White;
-                UIHelper.SwitchHoverClass(StretchButton);
-                UIHelper.SwitchHoverClass(ScrollButton);
-                UIHelper.SwitchHoverClass(LoopingButton);
-                UIHelper.SwitchHoverClass(AutofitButton);
-                UIHelper.SwitchHoverClass(TopMostButton);
-                UIHelper.SwitchHoverClass(SubDirButton);
             }
+            else
+            {
+                if (Application.Current.TryGetResource("NoisyTexture",
+                        ThemeVariant.Dark, out var texture))
+                {
+                    var brush = texture as ImageBrush;
+                    MainBorder.Background = brush;
+                    DownArrow.Fill = brush;
+                    DownArrow.StrokeThickness = 0;
+                }
+            }
+
+            UIHelper.SwitchHoverClass(StretchButton);
+            UIHelper.SwitchHoverClass(ScrollButton);
+            UIHelper.SwitchHoverClass(LoopingButton);
+            UIHelper.SwitchHoverClass(AutofitButton);
+            UIHelper.SwitchHoverClass(TopMostButton);
+            UIHelper.SwitchHoverClass(SubDirButton);
         };
 
         if (TryGetResource("ScrollingBrush", Application.Current.RequestedThemeVariant,

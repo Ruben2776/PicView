@@ -44,6 +44,8 @@ public partial class SettingsWindow : Window
         ParentBorder.Height = ScreenHelper.GetWindowMaxHeight();
         if (Settings.Theme.GlassTheme)
         {
+            SettingsView.Background = Brushes.Transparent;
+            
             LogoBorder.Background = Brushes.Transparent;
             LogoBorder.BorderThickness = new Thickness(0);
 

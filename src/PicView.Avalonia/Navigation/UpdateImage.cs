@@ -298,7 +298,7 @@ public static class UpdateImage
             WindowResizing.SetSize(width, height, 0, 0, 0, vm);
         }, DispatcherPriority.Send);
 
-        var singeImageWindowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, 1);
+        var singeImageWindowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, 100);
         vm.PicViewer.WindowTitle.Value = singeImageWindowTitles.TitleWithAppName;
         vm.PicViewer.Title.Value = singeImageWindowTitles.BaseTitle;
         vm.PicViewer.TitleTooltip.Value = singeImageWindowTitles.BaseTitle;

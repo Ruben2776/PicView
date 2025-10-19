@@ -1,5 +1,7 @@
 using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Media;
+using Avalonia.Styling;
 using PicView.Avalonia.CustomControls;
 
 namespace PicView.Avalonia.Views.UC.Menus;
@@ -13,10 +15,22 @@ public partial class FileMenu : AnimatedMenu
         {
             if (Settings.Theme.GlassTheme)
             {
+                if (Application.Current.TryGetResource("NoisyTexture",
+                        ThemeVariant.Dark, out var texture))
+                {
+                    var brush = texture as ImageBrush;
+                    MainBorder.Background = brush;
+                    DownArrow.Fill = brush;
+                    DownArrow.StrokeThickness = 0;
+                }
             }
-            else if (!Settings.Theme.Dark)
+
+            if (!Settings.Theme.Dark || Settings.Theme.GlassTheme)
             {
-                TopBorder.Background = Brushes.White;
+                if (!Settings.Theme.GlassTheme)
+                {
+                    TopBorder.Background = Brushes.White;
+                }
 
                 NewWindowButton.Classes.Remove("altHover");
                 NewWindowButton.Classes.Add("hover");

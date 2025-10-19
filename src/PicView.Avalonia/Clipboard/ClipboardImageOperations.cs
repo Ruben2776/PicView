@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Media.Imaging;
+using ImageMagick;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.DebugTools;
@@ -31,7 +32,7 @@ public static class ClipboardImageOperations
         return await ClipboardService.ExecuteClipboardOperation(async () =>
         {
             await clipboard.ClearAsync();
-
+            
             // Handle for Windows
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -40,12 +41,55 @@ public static class ClipboardImageOperations
             }
 
             // Handle for other platforms
+            const string pngIdentifier = "image/png";
+            const string jpegIdentifier = "image/jpeg";
+            const string gifIdentifier = "image/gif";
+            const string tiffIdentifier = "image/tiff";
+            string identifier;
+            switch (vm.PicViewer.Format.Value)
+            {
+                case MagickFormat.Tif:
+                case MagickFormat.Tiff:
+                case MagickFormat.Tiff64:
+                    identifier = tiffIdentifier;
+                    break;
+                case MagickFormat.Gif:
+                case MagickFormat.Gif87:
+                    identifier = gifIdentifier;
+                    break;
+                case MagickFormat.Hdr:
+                case MagickFormat.Heic:
+                case MagickFormat.Heif:
+                case MagickFormat.J2c:
+                case MagickFormat.J2k:
+                case MagickFormat.Jng:
+                case MagickFormat.Jnx:
+                case MagickFormat.Jp2:
+                case MagickFormat.Jpc:
+                case MagickFormat.Jpe:
+                case MagickFormat.Jpeg:
+                case MagickFormat.Jpg:
+                case MagickFormat.Jpm:
+                case MagickFormat.Jps:
+                    identifier = jpegIdentifier;
+                    break;
+                case MagickFormat.Svg:
+                case MagickFormat.Svgz:
+                case MagickFormat.Text:
+                case null:
+                    return false;
+                default:
+                    identifier = pngIdentifier;
+                    break;
+            }
+
             using var ms = new MemoryStream();
             bitmap.Save(ms);
+            var dataItem = DataTransferItem.Create(DataFormat.CreateBytesPlatformFormat(identifier), ms.ToArray());
+            var dataTransfer = new DataTransfer();
+            dataTransfer.Add(dataItem);
+            await clipboard.SetDataAsync(dataTransfer);
 
-            var dataObject = new DataObject();
-            dataObject.Set("image/png", ms.ToArray());
-            await clipboard.SetDataObjectAsync(dataObject);
             return true;
         });
     }
@@ -113,7 +157,8 @@ public static class ClipboardImageOperations
                 return string.Empty;
 
             default:
-                throw new ArgumentOutOfRangeException(nameof(vm.PicViewer.ImageType), $"Unsupported image type: {vm.PicViewer.ImageType}");
+                throw new ArgumentOutOfRangeException(nameof(vm.PicViewer.ImageType),
+                    $"Unsupported image type: {vm.PicViewer.ImageType}");
         }
     }
 

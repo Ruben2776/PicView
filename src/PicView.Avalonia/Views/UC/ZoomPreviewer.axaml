@@ -10,7 +10,8 @@
         Background="{DynamicResource MainBackgroundColor}"
         BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="1"
-        CornerRadius="6,6,1,1">
+        CornerRadius="6,6,1,1"
+        x:Name="MainBorder">
         <StackPanel>
             <Border
                 Background="{DynamicResource MainBackgroundColor}"

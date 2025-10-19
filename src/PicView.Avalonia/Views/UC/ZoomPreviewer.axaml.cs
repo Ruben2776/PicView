@@ -35,6 +35,11 @@ public partial class ZoomPreviewer : UserControl
             return;
         }
 
+        if (Settings.Theme.GlassTheme)
+        {
+            MainBorder.BorderThickness = new Thickness(0);
+        }
+
         ResetZoomButton.Classes.Remove("altHover");
         CloseButton.Classes.Remove("altHover");
         ResetZoomButton.Classes.Add("hover");

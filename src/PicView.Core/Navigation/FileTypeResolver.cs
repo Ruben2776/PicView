@@ -79,6 +79,7 @@ public static class FileTypeResolver
         if (Uri.TryCreate(s, UriKind.Absolute, out var uri) && uri.IsFile)
         {
             path = uri.LocalPath; // Decodes the path correctly (e.g., "%5B%5D" -> "[]")
+            path = path.Replace("%20", " ");
         }
 
         // Use the decoded 'path' variable for file system checks

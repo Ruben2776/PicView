@@ -36,11 +36,9 @@
             BorderBrush="{DynamicResource OuterBorderColor}"
             BorderThickness="1"
             CornerRadius="8"
-            Effect="{DynamicResource MenuShadowButtonBorder}">
-            <Canvas
-                Height="208"
-                Width="315"
-                x:Name="MainCanvas">
+            Effect="{DynamicResource MenuShadowButtonBorder}"
+            x:Name="MainBorder">
+            <Canvas Height="208" Width="315">
 
                 <Border
                     Background="{DynamicResource SecondaryBackgroundColor}"

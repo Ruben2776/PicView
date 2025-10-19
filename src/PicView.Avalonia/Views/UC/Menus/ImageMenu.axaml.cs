@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Styling;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
@@ -35,13 +36,27 @@ public partial class ImageMenu : AnimatedMenu
             Item90.Header = $"90 {TranslationManager.Translation.SecAbbreviation}";
             Item120.Header = $"120 {TranslationManager.Translation.SecAbbreviation}";
 
-            if (Settings.Theme.Dark)
+            if (Settings.Theme.Dark && !Settings.Theme.GlassTheme)
             {
                 return;
             }
 
 
-            TopBorder.Background = Brushes.White;
+            if (!Settings.Theme.GlassTheme)
+            {
+                TopBorder.Background = Brushes.White;
+            }
+            else
+            {
+                if (Application.Current.TryGetResource("NoisyTexture",
+                        ThemeVariant.Dark, out var texture))
+                {
+                    var brush = texture as ImageBrush;
+                    MainBorder.Background = brush;
+                    DownArrow.Fill = brush;
+                    DownArrow.StrokeThickness = 0;
+                }
+            }
 
             CropButton.Classes.Remove("altHover");
             CropButton.Classes.Add("hover");

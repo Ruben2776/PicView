@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
+using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Navigation;
@@ -55,6 +56,26 @@ public partial class HoverBar : UserControl
         AddHandler(PointerPressedEvent, ManagePointerPressed, RoutingStrategies.Tunnel);
         SizeChanged += (_, args) => ApplyResponsiveResize(args.NewSize.Width);
         ApplyResponsiveResize(Bounds.Width);
+
+
+        if (Settings.Theme.GlassTheme)
+        {
+            var brush = new SolidColorBrush(Color.Parse("#D1333333"));
+            NextButton.Background = brush;
+            PreviousButton.Background = brush;
+
+            var noThickness = new Thickness(0);
+            FileMenuButton.BorderThickness = noThickness;
+            ZoomOutMenuButton.BorderThickness = noThickness;
+            ZoomInMenuButton.BorderThickness = noThickness;
+            RotateLeftButton.BorderThickness = noThickness;
+            RotateRightButton.BorderThickness = noThickness;
+            FlipButton.BorderThickness = noThickness;
+            ImageMenuButton.BorderThickness = noThickness;
+            SettingsMenuButton.BorderThickness = noThickness;
+            NextButton.BorderThickness = noThickness;
+            PreviousButton.BorderThickness = noThickness;
+        }
 
         if (DataContext is not MainViewModel vm)
         {

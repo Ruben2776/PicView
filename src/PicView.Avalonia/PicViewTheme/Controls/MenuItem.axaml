@@ -85,12 +85,10 @@
             </ControlTemplate>
         </Setter>
 
-        <Style
-            Selector="^:toggle /template/ Viewbox#PART_ToggleIconPresenter, ^:radio /template/ Viewbox#PART_ToggleIconPresenter">
+        <Style Selector="^:toggle /template/ Viewbox#PART_ToggleIconPresenter, ^:radio /template/ Viewbox#PART_ToggleIconPresenter">
             <Setter Property="IsVisible" Value="True" />
         </Style>
-        <Style
-            Selector="^:toggle /template/ ContentPresenter#PART_IconPresenter, ^:radio /template/ ContentPresenter#PART_IconPresenter">
+        <Style Selector="^:toggle /template/ ContentPresenter#PART_IconPresenter, ^:radio /template/ ContentPresenter#PART_IconPresenter">
             <Setter Property="IsVisible" Value="False" />
         </Style>
         <Style Selector="^:checked:toggle /template/ ContentControl#PART_ToggleIconPresenter">
@@ -293,12 +291,10 @@
             </ControlTemplate>
         </Setter>
 
-        <Style
-            Selector="^:toggle /template/ Viewbox#PART_ToggleIconPresenter, ^:radio /template/ Viewbox#PART_ToggleIconPresenter">
+        <Style Selector="^:toggle /template/ Viewbox#PART_ToggleIconPresenter, ^:radio /template/ Viewbox#PART_ToggleIconPresenter">
             <Setter Property="IsVisible" Value="True" />
         </Style>
-        <Style
-            Selector="^:toggle /template/ ContentPresenter#PART_IconPresenter, ^:radio /template/ ContentPresenter#PART_IconPresenter">
+        <Style Selector="^:toggle /template/ ContentPresenter#PART_IconPresenter, ^:radio /template/ ContentPresenter#PART_IconPresenter">
             <Setter Property="IsVisible" Value="False" />
         </Style>
         <Style Selector="^:checked:toggle /template/ ContentControl#PART_ToggleIconPresenter">

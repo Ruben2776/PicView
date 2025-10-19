@@ -1,39 +1,35 @@
-﻿using System.Collections;
-using System.Collections.ObjectModel;
-using PicView.Avalonia.Printing;
+﻿using PicView.Avalonia.Printing;
 using PicView.Core.Localization;
 using R3;
-
-// ReSharper disable CompareOfFloatsByEqualityOperator
 
 namespace PicView.Core.ViewModels;
 
 public class PrintPreviewViewModel : IDisposable
 {
-    public readonly CompositeDisposable _disposables = new();
+    public readonly CompositeDisposable Disposables = new();
 
     public PrintPreviewViewModel()
     {
-        ScaleModes.Value = new [] 
-        { 
+        ScaleModes.Value =
+        [
             TranslationManager.Translation.Fit, 
             TranslationManager.Translation.Fill, 
-            TranslationManager.Translation.Stretch, 
-            TranslationManager.Translation.Center 
-        };
+            TranslationManager.Translation.Stretch,
+            TranslationManager.Translation.Center
+        ];
 
-        Orientations.Value = new [] 
-        { 
-            TranslationManager.Translation.Portrait, 
-            TranslationManager.Translation.Landscape 
-        };
+        Orientations.Value =
+        [
+            TranslationManager.Translation.Portrait,
+            TranslationManager.Translation.Landscape
+        ];
 
-        ColorModes.Value = new [] 
-        { 
+        ColorModes.Value =
+        [
             TranslationManager.Translation.Auto, 
-            TranslationManager.Translation.Color, 
-            TranslationManager.Translation.BlackAndWhite 
-        };
+            TranslationManager.Translation.Color,
+            TranslationManager.Translation.BlackAndWhite
+        ];
 
     }
 
@@ -72,7 +68,7 @@ public class PrintPreviewViewModel : IDisposable
 
     public void Dispose()
     {
-        Disposable.Dispose(_disposables,
+        Disposable.Dispose(Disposables,
             Printers,
             PaperSizes,
             ScaleModes,

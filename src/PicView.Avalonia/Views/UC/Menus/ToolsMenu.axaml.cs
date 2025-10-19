@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Styling;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -15,17 +16,23 @@ public partial class ToolsMenu : AnimatedMenu
         InitializeComponent();
         Loaded += (_, _) =>
         {
-            if (Settings.Theme.GlassTheme)
+            if (!Settings.Theme.Dark || Settings.Theme.GlassTheme)
             {
-                BatchResizeButton.Classes.Remove("noBorderHover");
-                BatchResizeButton.Classes.Add("hover");
-
-                EffectsButton.Classes.Remove("noBorderHover");
-                EffectsButton.Classes.Add("hover");
-            }
-            else if (!Settings.Theme.Dark)
-            {
-                TopBorder.Background = Brushes.White;
+                if (!Settings.Theme.GlassTheme)
+                {
+                    TopBorder.Background = Brushes.White;
+                }
+                else
+                {
+                    if (Application.Current.TryGetResource("NoisyTexture",
+                            ThemeVariant.Dark, out var texture))
+                    {
+                        var brush = texture as ImageBrush;
+                        MainBorder.Background = brush;
+                        DownArrow.Fill = brush;
+                        DownArrow.StrokeThickness = 0;
+                    }
+                }
 
                 // Batch
                 BatchResizeButton.Classes.Remove("noBorderHover");

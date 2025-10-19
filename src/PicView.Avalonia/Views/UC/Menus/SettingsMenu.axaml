@@ -38,7 +38,8 @@
             BorderBrush="{DynamicResource OuterBorderColor}"
             BorderThickness="1"
             CornerRadius="8"
-            Effect="{DynamicResource MenuShadowButtonBorder}">
+            Effect="{DynamicResource MenuShadowButtonBorder}"
+            x:Name="MainBorder">
             <Canvas Height="208" Width="359">
 
                 <Border
@@ -241,6 +242,7 @@
             Margin="325,-1,0,0"
             Points="0,0 15,30, 30,0"
             Stroke="{DynamicResource MainBorderColor}"
-            StrokeThickness="1" />
+            StrokeThickness="1"
+            x:Name="DownArrow" />
     </StackPanel>
 </customControls:AnimatedMenu>
