@@ -87,8 +87,8 @@
       <DependentUpon>SlideshowSettingsView.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\UC\HistoryOverlay.axaml.cs">
-      <DependentUpon>HistoryOverlay.axaml</DependentUpon>
+    <Compile Update="Views\UC\HistoryWindow.axaml.cs">
+      <DependentUpon>HistoryWindow.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\ZoomSettingsView.axaml.cs">
       <DependentUpon>ZoomSettingsView.axaml</DependentUpon>

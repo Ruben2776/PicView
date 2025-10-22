@@ -104,7 +104,7 @@ public partial class CropControl : UserControl
         LostFocus += OnControlLostFocus;
 
         Dispatcher.UIThread.InvokeAsync(() =>
-{
+        {
             if (RootCanvas.Bounds.Height > 0)
             {
                 Canvas.SetLeft(HoverMenu, (RootCanvas.Bounds.Width - HoverMenu.Bounds.Width) / 2);

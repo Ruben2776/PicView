@@ -10,10 +10,10 @@ using PicView.Core.Sizing;
 
 namespace PicView.Avalonia.UI;
 
-public static class OverlayHost
+public static class HistoryWindowHost
 {
     private static Panel? _mainPanel;
-    private static HistoryOverlay? _history;
+    private static HistoryWindow? _history;
 
     public static void Initialize(Panel mainPanel)
     {
@@ -22,7 +22,7 @@ public static class OverlayHost
 
     public static bool IsHistoryVisible => _history is not null;
 
-    public static void ShowHistory(HistoryOverlayViewModel vm)
+    public static void ShowHistory(MainViewModel vm)
     {
         if (_mainPanel is null)
             return;
@@ -30,10 +30,10 @@ public static class OverlayHost
         if (_history is not null)
             return; // already visible
 
-        _history = new HistoryOverlay
+        _history = new HistoryWindow
         {
-            Width = 460,
-            Height = 320,
+            Width = 300,
+            Height = 340,
             HorizontalAlignment = HorizontalAlignment.Right,
             VerticalAlignment = VerticalAlignment.Top,
             Margin = new Thickness(12),
@@ -56,13 +56,13 @@ public static class OverlayHost
         if (vm.MainWindow.IsHistoryWindowShown.Value)
         {
             vm.MainWindow.IsHistoryWindowShown.Value = false;
-            OverlayHost.HideHistory(); // ensure overlay is visible
+            HistoryWindowHost.HideHistory();
         }
         else
         {
             vm.MainWindow.IsHistoryWindowShown.Value = true;
-            var hovm = new HistoryOverlayViewModel(vm, vm.History);
-            OverlayHost.ShowHistory(hovm); // ensure overlay is visible
+            vm.HistoryWin = new HistoryWindowViewModel(vm, vm.History);
+            HistoryWindowHost.ShowHistory(vm);
         }
     }
 }

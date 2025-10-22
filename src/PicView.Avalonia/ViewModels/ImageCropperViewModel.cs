@@ -16,7 +16,7 @@ using R3;
 using R3.Avalonia;
 using Unit = R3.Unit;
 using ABI.Windows.AI.MachineLearning.Preview;
-using PicView.Core.History;
+using PicView.Avalonia.History;
 
 namespace PicView.Avalonia.ViewModels;
 
@@ -83,9 +83,10 @@ public class ImageCropperViewModel : IDisposable
     public async ValueTask CropImageAsync(Unit unit, CancellationToken cancellationToken)
     {
         if (UIHelper.GetMainView.DataContext is not MainViewModel vm)
-            return; 
+            return;
 
-        if (vm.PicViewer.ImageSource.CurrentValue is not Bitmap sourceBitmap)
+        var sourceMagick = HistoryHelpers.EnsureMagickFrame(vm.PicViewer);
+        if (sourceMagick is null)
             return;
 
         vm.MainWindow.IsLoadingIndicatorShown.Value = true;
@@ -94,57 +95,42 @@ public class ImageCropperViewModel : IDisposable
         {
             var currentFileInfo = vm.PicViewer.FileInfo.Value;
 
-            // History: capture pre-change state
-            using (var pre = sourceBitmap.ToMagickImage())
-            {
-                vm.History.AddStep(new HistoryEntry
-                {
-                    Kind = EditKind.Crop,
-                    Description = $"Before Crop",
-                    Snapshot = (MagickImage)pre.Clone()
-                });
-            }
-            
-            var croppedBitmap = await Task.Run(() =>
-            {
-                int x = Convert.ToInt32(SelectionX.CurrentValue / AspectRatio.CurrentValue);
-                int y = Convert.ToInt32(SelectionY.CurrentValue / AspectRatio.CurrentValue);
-                int width  = (int)PixelSelectionWidth.CurrentValue;
-                int height = (int)PixelSelectionHeight.CurrentValue;
-                
+            // Capture crop coordinates
+            int x = (int)(SelectionX.CurrentValue / AspectRatio.CurrentValue);
+            int y = (int)(SelectionY.CurrentValue / AspectRatio.CurrentValue);
+            int width = (int)PixelSelectionWidth.CurrentValue;
+            int height = (int)PixelSelectionHeight.CurrentValue;
 
-                using var magick = sourceBitmap.ToMagickImage();
-                var cropRect = new MagickGeometry(x, y, (uint)width, (uint)height);
-                magick.Crop(cropRect);
+            // Perform crop on a background thread
+            var result = await Task.Run(() =>
+            {
+                // Clone the existing Magick frame so we don’t mutate the original
+                using var magick = (MagickImage)sourceMagick.Clone();
+
+                // Perform the crop
+                magick.Crop(new MagickGeometry(x, y, (uint)width, (uint)height));
                 magick.Page = new MagickGeometry(0, 0, (uint)magick.Width, (uint)magick.Height);
 
-                return magick.ToAvaloniaBitmap();
-            });
+                // Add to history (collection handles compression)
+                vm.History.AddStep(EditKind.Crop, $"Crop {width}×{height}", (MagickImage)magick.Clone());
 
-            if (croppedBitmap is Bitmap newBitmap)
-            {
-                // History: capture the new state
-                using (var post = croppedBitmap.ToMagickImage())
-                {
-                    vm.History.AddStep(new HistoryEntry
-                    {
-                        Kind = EditKind.Crop,
-                        Description = $"Crop {croppedBitmap.PixelSize.Width}×{croppedBitmap.PixelSize.Height}",
-                        Snapshot = (MagickImage)post.Clone()
-                    });
-                }
+                // Return the cropped MagickImage
+                return (MagickImage)magick.Clone();
+            }, cancellationToken).ConfigureAwait(false);
 
-                var imageModel = new ImageModel
-                {
-                    Image = croppedBitmap,
-                    PixelWidth = croppedBitmap?.PixelSize.Width ?? 0,
-                    PixelHeight = croppedBitmap?.PixelSize.Height ?? 0,
-                    ImageType = ImageType.Bitmap
+            // Cache the new cropped frame and its bitmap
+            vm.PicViewer.MagickFrame.Value = result;
+            var newBitmap = result.ToAvaloniaBitmap();
+            vm.PicViewer.CachedImage.Value = newBitmap;
+            vm.PicViewer.ImageSource.Value = newBitmap;
+            vm.PicViewer.HasChanges.Value = true;
 
-                };
-                await UpdateImage.SetCroppedImageAsync(imageModel.Image, imageModel.ImageType, String.Concat(currentFileInfo?.Name ?? TranslationManager.Translation.ClipboardImage, "*"), vm);
-                vm.PicViewer.HasChanges.Value = true;
-            }
+            // Update image model (keeps all other systems synced)
+            await UpdateImage.SetCroppedImageAsync(
+                newBitmap,
+                ImageType.Bitmap,
+                $"{currentFileInfo?.Name ?? TranslationManager.Translation.ClipboardImage}*",
+                vm);
 
             CropFunctions.CloseCropControl(vm);
         }
@@ -152,8 +138,8 @@ public class ImageCropperViewModel : IDisposable
         {
             vm.MainWindow.IsLoadingIndicatorShown.Value = false;
         }
-
     }
+
 
     public async ValueTask CropImageAsync() => await CropImageAsync(Unit.Default, CancellationToken.None);
 

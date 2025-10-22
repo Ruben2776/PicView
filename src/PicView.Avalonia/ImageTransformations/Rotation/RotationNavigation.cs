@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using System.Threading.Tasks;
+using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
@@ -8,47 +9,65 @@ namespace PicView.Avalonia.ImageTransformations.Rotation;
 
 public static class RotationNavigation
 {
-    public static async Task RotateRight(MainViewModel? vm)
-    {
-        if (vm is null)
-        {
-            return;
-        }
+    // public static async Task RotateRight(MainViewModel? vm)
+    // {
+    //     if (vm is null)
+    //     {
+    //         return;
+    //     }
 
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            return;
-        }
+    //     if (GalleryFunctions.IsFullGalleryOpen)
+    //     {
+    //         return;
+    //     }
 
-        await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(false); });
-    }
+    //     await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(false); });
+    // }
 
     public static async Task RotateTo(MainViewModel? vm, int angle)
     {
-        await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(angle); });
+        await vm.ImageViewer.RotateAsync(angle);
         vm.PicViewer.RotationAngle.Value = angle;
         await WindowResizing.SetSizeAsync(vm);
     }
 
 
-    public static async Task RotateLeft(MainViewModel? vm)
+    // public static async Task RotateLeft(MainViewModel? vm)
+    // {
+    //     if (vm is null)
+    //     {
+    //         return;
+    //     }
+
+    //     if (GalleryFunctions.IsFullGalleryOpen)
+    //     {
+    //         return;
+    //     }
+
+    //     await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(true); });
+    // }
+
+    public static async Task RotateRight(MainViewModel? vm)
     {
-        if (vm is null)
-        {
+        if (vm is null || GalleryFunctions.IsFullGalleryOpen)
             return;
-        }
 
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            return;
-        }
-
-        await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(true); });
+        await vm.ImageViewer.RotateAsync(true);
     }
 
-    public static void Flip(MainViewModel vm)
+    public static async Task RotateLeft(MainViewModel? vm)
     {
-        Dispatcher.UIThread.Invoke(() => { vm.ImageViewer.Flip(true); });
+        if (vm is null || GalleryFunctions.IsFullGalleryOpen)
+            return;
+
+        await vm.ImageViewer.RotateAsync(false);
+    }
+
+
+
+    public static async Task Flip(MainViewModel vm)
+    {
+        await vm.ImageViewer.FlipAsync(true);
 
         if (vm.PicViewer.ScaleX.CurrentValue == 1)
         {
@@ -78,7 +97,7 @@ public static class RotationNavigation
             return;
         }
 
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             if (vm.GlobalSettings.IsScrollingEnabled.CurrentValue)
             {
@@ -86,7 +105,7 @@ public static class RotationNavigation
             }
             else
             {
-                vm.ImageViewer.Rotate(true);
+                await vm.ImageViewer.RotateAsync(true);
             }
         });
     }
@@ -107,7 +126,7 @@ public static class RotationNavigation
             return;
         }
 
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             if (vm.GlobalSettings.IsScrollingEnabled.CurrentValue)
             {
@@ -115,7 +134,7 @@ public static class RotationNavigation
             }
             else
             {
-                vm.ImageViewer.Rotate(false);
+                await vm.ImageViewer.RotateAsync(false);
             }
         });
     }

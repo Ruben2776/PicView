@@ -6,10 +6,10 @@ using Avalonia.VisualTree;
 
 namespace PicView.Avalonia.Views.UC;
 
-public partial class HistoryOverlay : UserControl
+public partial class HistoryWindow : UserControl
 {
     private Point? _dragStart;
-    public HistoryOverlay()
+    public HistoryWindow()
     {
         InitializeComponent();
         PointerPressed += OnPointerPressed;

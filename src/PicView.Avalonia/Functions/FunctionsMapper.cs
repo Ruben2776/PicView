@@ -35,24 +35,24 @@ public static class FunctionsMapper
             // Navigation values
             "Next" => Next,
             "Prev" => Prev,
-            
+
             "NextFolder" => NextFolder,
             "PrevFolder" => PrevFolder,
-            
+
             "Up" => Up,
             "Down" => Down,
-            
+
             "Last" => Last,
             "First" => First,
-            
+
             "Next10" => Next10,
             "Prev10" => Prev10,
-            
+
             "Next100" => Next100,
             "Prev100" => Prev100,
 
             "Search" => Search,
-            
+
             // Rotate
             "RotateLeft" => RotateLeft,
             "RotateRight" => RotateRight,
@@ -90,6 +90,7 @@ public static class FunctionsMapper
             "Center" => Center,
             "Maximize" => Maximize,
             "Restore" => Restore,
+            
 
             // Windows
             "AboutWindow" => AboutWindow,
@@ -126,7 +127,7 @@ public static class FunctionsMapper
             "ShowFileProperties" => ShowFileProperties,
             "ShowSettingsFile" => ShowSettingsFile,
             "ShowKeybindingsFile" => ShowKeybindingsFile,
-            
+
             // Sorting functions
             "SortFilesByName" => SortFilesByName,
             "SortFilesByCreationTime" => SortFilesByCreationTime,
@@ -135,10 +136,10 @@ public static class FunctionsMapper
             "SortFilesBySize" => SortFilesBySize,
             "SortFilesByExtension" => SortFilesByExtension,
             "SortFilesRandomly" => SortFilesRandomly,
-            
+
             "SortFilesAscending" => SortFilesAscending,
             "SortFilesDescending" => SortFilesDescending,
-            
+
             // Image functions
             "ResizeImage" => ResizeImage,
             "Crop" => Crop,
@@ -153,7 +154,7 @@ public static class FunctionsMapper
             "Set3Star" => Set3Star,
             "Set4Star" => Set4Star,
             "Set5Star" => Set5Star,
-            
+
             // Background and lock screen image
             "SetAsLockScreen" => SetAsLockScreen,
             "SetAsLockscreenCentered" => SetAsLockscreenCentered,
@@ -389,9 +390,9 @@ public static class FunctionsMapper
     public static async ValueTask ToggleBottomToolbar() =>
         await HideInterfaceLogic.ToggleBottomToolbar(Vm).ConfigureAwait(false);
         
-    /// <inheritdoc cref="OverlayHost.ToggleHistoryWindow(MainViewModel)" />
+    /// <inheritdoc cref="HistoryWindowHost.ToggleHistoryWindow(MainViewModel)" />
     public static async ValueTask ToggleHistoryWindow() =>
-        await OverlayHost.ToggleHistoryWindow(Vm).ConfigureAwait(false);
+        await HistoryWindowHost.ToggleHistoryWindow(Vm).ConfigureAwait(false);
     
     /// <inheritdoc cref="SettingsUpdater.ToggleValueTaskbarProgress(MainViewModel)" />
     public static async ValueTask ToggleTaskbarProgress() =>
@@ -478,6 +479,9 @@ public static class FunctionsMapper
 
     public static async ValueTask ResizeWindow() =>
         await Dispatcher.UIThread.InvokeAsync(() => Vm?.PlatformWindowService?.ShowSingleImageResizeWindow());
+
+    public static async ValueTask HistoryWindow() =>
+        await Dispatcher.UIThread.InvokeAsync(() => Vm?.MainWindow.ToggleFileMenuCommand);
 
     public static async ValueTask BatchResizeWindow() =>
         await Vm?.PlatformWindowService?.ShowBatchResizeWindow();

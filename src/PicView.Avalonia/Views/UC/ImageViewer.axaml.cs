@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -88,9 +89,9 @@ public partial class ImageViewer : UserControl
     #endregion
 
     #region Image Transformation
-    public void Rotate(bool clockWise) => _imageTransformer?.Rotate(clockWise);
-    public void Rotate(double angle) => _imageTransformer?.Rotate(angle);
-    public void Flip(bool animate) => _imageTransformer?.Flip(animate);
+    public async Task RotateAsync(bool clockWise) => await _imageTransformer?.RotateAsync(clockWise);
+    public async Task RotateAsync(double angle) => await _imageTransformer?.RotateAsync(angle);
+    public async Task FlipAsync(bool animate) => await _imageTransformer?.FlipAsync(animate);
     public void SetTransform(ExifOrientation? orientation, MagickFormat? format, bool reset = true) =>
         _imageTransformer?.SetTransform(orientation, format, reset);
     #endregion

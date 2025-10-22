@@ -1,6 +1,6 @@
 ﻿using PicView.Avalonia.Functions;
+using PicView.Avalonia.History;
 using PicView.Avalonia.Interfaces;
-using PicView.Core.History;
 using PicView.Core.ViewModels;
 using ImageViewer = PicView.Avalonia.Views.UC.ImageViewer;
 
@@ -30,6 +30,7 @@ public class MainViewModel
     public AboutViewModel? AboutView { get; set; }
     public PrintPreviewViewModel? PrintPreview { get; set; }
     public HistoryManager History { get; } = new(50);
+    public HistoryWindowViewModel? HistoryWin { get; set; }
 
     public MainViewModel(IPlatformSpecificService? platformSpecificService, IPlatformWindowService? platformWindowService)
     {

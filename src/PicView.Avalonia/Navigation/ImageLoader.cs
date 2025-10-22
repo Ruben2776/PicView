@@ -1,4 +1,5 @@
 ﻿using ImageMagick;
+using PicView.Avalonia.History;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
@@ -145,6 +146,12 @@ public static class ImageLoader
             }
 
             await NavigationManager.LoadWithoutImageIterator(fileInfo, vm).ConfigureAwait(false);
+
+            var magickFrame = HistoryHelpers.EnsureMagickFrame(vm.PicViewer);
+            vm.History.AddStep(
+                EditKind.Open,
+                "Opened",
+                (MagickImage)magickFrame.Clone());
         }
     }
 
@@ -363,6 +370,12 @@ public static class ImageLoader
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         await UpdateImage.SetSingleImageAsync(imageModel.Image, imageModel.ImageType, url, vm);
 
+        var magickFrame = HistoryHelpers.EnsureMagickFrame(vm.PicViewer);
+        vm.History.AddStep(
+            EditKind.Open,
+            "Opened",
+            (MagickImage)magickFrame.Clone());
+
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
         vm.PicViewer.FileInfo.Value = fileInfo;
         vm.PicViewer.ExifOrientation.Value = imageModel.Orientation;
@@ -417,6 +430,13 @@ public static class ImageLoader
             await imageIterator.DisposeAsync();
             await ErrorHandling.ReloadAsync(vm);
         }
+
+        var magickFrame = HistoryHelpers.EnsureMagickFrame(vm.PicViewer);
+        vm.History.AddStep(
+            EditKind.Open,
+            "Opened",
+            (MagickImage)magickFrame.Clone());
+
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
     }
 

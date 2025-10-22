@@ -2,6 +2,7 @@
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
+using PicView.Avalonia.Extensions;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
@@ -219,7 +220,7 @@ public static class UpdateImage
         var width = source?.PixelSize.Width ?? 0;
         var height = source?.PixelSize.Height ?? 0;
         
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             if (vm.MainWindow.CurrentView.CurrentValue != vm.ImageViewer)
             {
@@ -230,7 +231,7 @@ public static class UpdateImage
 
             if (vm.PicViewer.RotationAngle.CurrentValue != 0)
             {
-                vm.ImageViewer.Rotate(vm.PicViewer.RotationAngle.CurrentValue);
+                await vm.ImageViewer.RotateAsync(vm.PicViewer.RotationAngle.CurrentValue);
             }
         }, DispatcherPriority.Render);
         
