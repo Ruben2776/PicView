@@ -45,5 +45,12 @@
         <Style Selector="^[TabStripPlacement=Right]">
             <Setter Property="HorizontalContentAlignment" Value="Right" />
         </Style>
+
+        <Style Selector="^.alt:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{StaticResource SoftenColorBrush}" />
+            <Setter Property="Opacity" Value="1" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+        </Style>
     </ControlTheme>
 </ResourceDictionary>

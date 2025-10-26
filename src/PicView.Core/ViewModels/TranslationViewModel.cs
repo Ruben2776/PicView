@@ -20,6 +20,8 @@ public class TranslationViewModel : IDisposable
         _4Star.Value = t._4Star;
         _5Star.Value = t._5Star;
         About.Value = t.About;
+        AddFiles.Value = t.AddFiles;
+        AddFolder.Value = t.AddFolder;
         AboutWindow.Value = t.InfoWindow;
         AdjustNavSpeed.Value = t.AdjustNavSpeed;
         AdjustTimingForSlideshow.Value = t.AdjustTimingForSlideshow;
@@ -97,6 +99,7 @@ public class TranslationViewModel : IDisposable
         ExposureProgram.Value = t.ExposureProgram;
         ExposureTime.Value = t.ExposureTime;
         File.Value = string.Concat(t.File[0].ToString().ToUpper(), t.File.AsSpan(1));
+        Files.Value = t.Files;
         FileAssociations.Value = t.FileAssociations;
         FileConversion.Value = t.FileConversion;
         FileCopyPath.Value = t.FileCopyPath;
@@ -197,6 +200,7 @@ public class TranslationViewModel : IDisposable
         OptimizeImage.Value = t.OptimizeImage;
         Orientation.Value = t.Orientation;
         OutputFolder.Value = t.OutputFolder;
+        OutputSettings.Value = t.OutputSettings;
         Pan.Value = t.Pan;
         PaperSize.Value = t.PaperSize;
         Paste.Value = t.FilePaste;
@@ -219,6 +223,7 @@ public class TranslationViewModel : IDisposable
         ReadAbleAspectRatio.Value = t.AspectRatio;
         RecentFiles.Value = t.RecentFiles;
         Reload.Value = t.Reload;
+        RemoveAll.Value = t.RemoveAll;
         RemoveImageData.Value = t.RemoveImageData;
         RemoveStarRating.Value = t.RemoveStarRating;
         RenameFile.Value = t.RenameFile;
@@ -227,6 +232,7 @@ public class TranslationViewModel : IDisposable
         ResetZoom.Value = t.ResetZoom;
         Resize.Value = t.Resize;
         ResizeImage.Value = t.ResizeImage;
+        ResizeSettings.Value = t.ResizeSettings;
         Resolution.Value = t.Resolution;
         ResolutionUnit.Value = t.ResolutionUnit;
         RestoreDown.Value = t.RestoreDown;
@@ -252,6 +258,7 @@ public class TranslationViewModel : IDisposable
         SecAbbreviation.Value = t.SecAbbreviation;
         SelectAll.Value = t.SelectAll;
         SelectFile.Value = t.OpenFileDialog;
+        SelectFiles.Value = t.SelectFiles;
         SelectFileTypesToAssociate.Value = t.SelectFileTypesToAssociate;
         SelectGalleryThumb.Value = t.SelectGalleryThumb;
         SetAsLockScreenImage.Value = t.SetAsLockScreenImage;
@@ -281,7 +288,6 @@ public class TranslationViewModel : IDisposable
         Software.Value = t.Software;
         Solarize.Value = t.Solarize;
         SortFilesBy.Value = t.SortFilesBy;
-        SourceFolder.Value = t.SourceFolder;
         Square.Value = t.Square;
         Start.Value = t.Start;
         StayCentered.Value = t.StayCentered;
@@ -330,6 +336,8 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> _4Star { get; } = new();
     public BindableReactiveProperty<string?> _5Star { get; } = new();
     public BindableReactiveProperty<string?> About { get; } = new();
+    public BindableReactiveProperty<string?> AddFiles { get; } = new();
+    public BindableReactiveProperty<string?> AddFolder { get; } = new();
     public BindableReactiveProperty<string?> AboutWindow { get; } = new();
     public BindableReactiveProperty<string?> AdjustNavSpeed { get; } = new();
     public BindableReactiveProperty<string?> AdjustTimingForSlideshow { get; } = new();
@@ -404,6 +412,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> ExposureProgram { get; } = new();
     public BindableReactiveProperty<string?> ExposureTime { get; } = new();
     public BindableReactiveProperty<string?> File { get; } = new();
+    public BindableReactiveProperty<string?> Files { get; } = new();
     public BindableReactiveProperty<string?> FileAssociations { get; } = new();
     public BindableReactiveProperty<string?> FileConversion { get; } = new();
     public BindableReactiveProperty<string?> FileCopyPath { get; } = new();
@@ -502,6 +511,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> OptimizeImage { get; } = new();
     public BindableReactiveProperty<string?> Orientation { get; } = new();
     public BindableReactiveProperty<string?> OutputFolder { get; } = new();
+    public BindableReactiveProperty<string?> OutputSettings { get; } = new();
     public BindableReactiveProperty<string?> Pan { get; } = new();
     public BindableReactiveProperty<string?> Paste { get; } = new();
     public BindableReactiveProperty<string?> PencilSketch { get; } = new();
@@ -522,6 +532,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> ReadAbleAspectRatio { get; } = new();
     public BindableReactiveProperty<string?> RecentFiles { get; } = new();
     public BindableReactiveProperty<string?> Reload { get; } = new();
+    public BindableReactiveProperty<string?> RemoveAll { get; } = new();
     public BindableReactiveProperty<string?> RemoveImageData { get; } = new();
     public BindableReactiveProperty<string?> RemoveStarRating { get; } = new();
     public BindableReactiveProperty<string?> RenameFile { get; } = new();
@@ -530,6 +541,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> ResetZoom { get; } = new();
     public BindableReactiveProperty<string?> Resize { get; } = new();
     public BindableReactiveProperty<string?> ResizeImage { get; } = new();
+    public BindableReactiveProperty<string?> ResizeSettings { get; } = new();
     public BindableReactiveProperty<string?> Resolution { get; } = new();
     public BindableReactiveProperty<string?> ResolutionUnit { get; } = new();
     public BindableReactiveProperty<string?> RestoreDown { get; } = new();
@@ -554,6 +566,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> SelectAll { get; } = new();
     public BindableReactiveProperty<string?> SelectFile { get; } = new();
     public BindableReactiveProperty<string?> SelectFileTypesToAssociate { get; } = new();
+    public BindableReactiveProperty<string?> SelectFiles { get; } = new();
     public BindableReactiveProperty<string?> SelectGalleryThumb { get; } = new();
     public BindableReactiveProperty<string?> SetAsLockScreenImage { get; } = new();
     public BindableReactiveProperty<string?> SetAsWallpaper { get; } = new();
@@ -582,7 +595,6 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> Software { get; } = new();
     public BindableReactiveProperty<string?> Solarize { get; } = new();
     public BindableReactiveProperty<string?> SortFilesBy { get; } = new();
-    public BindableReactiveProperty<string?> SourceFolder { get; } = new();
     public BindableReactiveProperty<string?> Square { get; } = new();
     public BindableReactiveProperty<string?> Start { get; } = new();
     public BindableReactiveProperty<string?> StayCentered { get; } = new();

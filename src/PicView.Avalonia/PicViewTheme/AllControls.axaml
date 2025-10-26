@@ -27,6 +27,7 @@
                 <ResourceInclude Source="Controls/ContextMenu.axaml" />
                 <ResourceInclude Source="Controls/Expander.axaml" />
                 <ResourceInclude Source="Controls/FlyoutPresenter.axaml" />
+                <ResourceInclude Source="Controls/GridSplitter.axaml" />
                 <ResourceInclude Source="Controls/HyperlinkButton.axaml" />
                 <ResourceInclude Source="Controls/ItemsControl.axaml" />
                 <ResourceInclude Source="Controls/ListBox.axaml" />

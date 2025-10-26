@@ -307,7 +307,9 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 await vm.Window.BatchResizeWindowConfig.LoadAsync();
             }
 
-            vm.BatchResizeViewModel = new BatchResizeViewModel(NavigationManager.CanNavigate(vm), FilePicker.SelectDirectory, vm.PicViewer.FileInfo.CurrentValue, vm.PlatformService.GetFiles);
+            vm.BatchResizeViewModel = new BatchResizeViewModel(NavigationManager.CanNavigate(vm),
+                FilePicker.SelectDirectory, FilePicker.SelectFile, vm.PicViewer.FileInfo.CurrentValue,
+                vm.PlatformService.GetFiles);
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _batchResizeWindow = new BatchResizeWindow(vm.Window.BatchResizeWindowConfig)
@@ -346,7 +348,8 @@ public class WindowInitializer : IPlatformSpecificUpdate
 
         void Show()
         {
-            WindowFunctions.InitializeWindowPosition(_batchResizeWindow, vm.Window.BatchResizeWindowConfig.WindowProperties);
+            WindowFunctions.InitializeWindowSizeAndPosition(_batchResizeWindow,
+                vm.Window.BatchResizeWindowConfig.WindowProperties);
             _batchResizeWindow.Show(desktop.MainWindow);
         }
     }

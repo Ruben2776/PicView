@@ -11,6 +11,8 @@ public class LanguageModel
     public string? _5Star { get; set; }
     public string? About { get; set; }
     public string? ActionProgram { get; set; }
+    public string? AddFiles { get; set; }
+    public string? AddFolder { get; set; }
     public string? AddedToClipboard { get; set; }
     public string? AdditionalFunctions { get; set; }
     public string? AdjustNavSpeed { get; set; }
@@ -268,6 +270,7 @@ public class LanguageModel
     public string? OptimizeImage { get; set; }
     public string? Orientation { get; set; }
     public string? OutputFolder { get; set; }
+    public string? OutputSettings { get; set; }
     public string? Pan { get; set; }
     public string? PaperSize { get; set; }
     public string? PasswordArchive { get; set; }
@@ -295,6 +298,7 @@ public class LanguageModel
     public string? RecentFiles { get; set; }
     public string? RedEyeReduction { get; set; }
     public string? Reload { get; set; }
+    public string? RemoveAll { get; set; }
     public string? RemoveImageData { get; set; }
     public string? RemoveStarRating { get; set; }
     public string? RenameFile { get; set; }
@@ -303,6 +307,7 @@ public class LanguageModel
     public string? ResetZoom { get; set; }
     public string? Resize { get; set; }
     public string? ResizeImage { get; set; }
+    public string? ResizeSettings { get; set; }
     public string? Resolution { get; set; }
     public string? ResolutionUnit { get; set; }
     public string? RestartApp { get; set; }
@@ -332,6 +337,7 @@ public class LanguageModel
     public string? SecAbbreviation { get; set; }
     public string? SelectAll { get; set; }
     public string? SelectFileTypesToAssociate { get; set; }
+    public string? SelectFiles { get; set; }
     public string? SelectGalleryThumb { get; set; }
     public string? SendCurrentImageToRecycleBin { get; set; }
     public string? SentFileToRecycleBin { get; set; }
@@ -372,7 +378,6 @@ public class LanguageModel
     public string? Software { get; set; }
     public string? Solarize { get; set; }
     public string? SortFilesBy { get; set; }
-    public string? SourceFolder { get; set; }
     public string? Space { get; set; }
     public string? Square { get; set; }
     public string? Start { get; set; }

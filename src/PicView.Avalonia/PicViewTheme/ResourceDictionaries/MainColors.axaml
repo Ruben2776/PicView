@@ -50,6 +50,8 @@
 
             <Color x:Key="DarkenBgColor">#14000000</Color>
 
+            <Color x:Key="SoftenColor">#491A1A1A</Color>
+            <SolidColorBrush Color="{StaticResource SoftenColor}" x:Key="SoftenColorBrush" />
 
             <ImageBrush
                 DestinationRect="0,0,200,200"

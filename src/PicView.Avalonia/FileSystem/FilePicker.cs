@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
@@ -30,7 +29,7 @@ public static class FilePicker
         await NavigationManager.LoadPicFromStringAsync(file, vm).ConfigureAwait(false);
     }
 
-    private static async Task<string?> SelectFile()
+    public static async Task<string?> SelectFile()
     {
         var file = await SelectIStorageFile().ConfigureAwait(false);
         return file?.Path.LocalPath;
