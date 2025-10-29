@@ -2,12 +2,14 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.ImageTransformations.Rotation;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Exif;
 
 namespace PicView.Avalonia.Views.UC;
@@ -67,6 +69,34 @@ public partial class ImageViewer : UserControl
             ImageScrollViewer,
             async e => { await Dispatcher.UIThread.InvokeAsync(() => { ZoomIn(e); }); },
             async e => { await Dispatcher.UIThread.InvokeAsync(() => { ZoomOut(e); }); });
+
+
+    public void ApplyBitmapAndRefresh(Bitmap bmp, MainViewModel vm)
+    {
+        if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
+            oldBmp.Dispose();
+
+        vm.PicViewer.ImageSource.Value = bmp;
+        vm.PicViewer.HasChanges.Value = true;
+
+        var ps = bmp.PixelSize;
+        vm.PicViewer.PixelWidth.Value  = ps.Width;
+        vm.PicViewer.PixelHeight.Value = ps.Height;
+
+        ImageLayoutTransformControl.LayoutTransform = null;
+        MainImage.RenderTransform = null;
+
+        MainImage.Width = double.NaN;
+        MainImage.Height = double.NaN;
+        MainImage.InvalidateMeasure();
+        MainImage.InvalidateArrange();
+        MainImage.InvalidateVisual();
+
+        WindowResizing.SetSize(ps.Width, ps.Height, 0, 0, 0, vm);
+        ZoomPanControl.NotifyContentResized();
+    }
+
+
 
     #region Zoom
     /// <inheritdoc cref="Zoom.ZoomIn(MainViewModel)"/>

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Drawing;
 using ImageMagick;
 using PicView.Core.Exif;
 using PicView.Core.FileSearch;
@@ -92,4 +93,5 @@ public class PicViewerModel : IDisposable
     public BindableReactiveProperty<bool> ShouldOptimizeImageBeEnabled { get; } = new();
     
     public BindableReactiveProperty<bool> HasChanges { get; } = new();
+    public readonly BindableReactiveProperty<Size> NaturalSize = new(new Size(0, 0));
 }

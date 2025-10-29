@@ -382,6 +382,5 @@ public static class DragAndDropHelper
             await Dispatcher.UIThread.InvokeAsync(() => vm.MainWindow.CurrentView.Value = vm.ImageViewer);
         }
     }
-
     #endregion
 }

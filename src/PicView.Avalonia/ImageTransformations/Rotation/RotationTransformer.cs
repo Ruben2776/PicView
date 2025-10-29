@@ -43,32 +43,7 @@ public class RotationTransformer(
             //await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
 
             // Apply to the PicViewer on the UI thread
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
-                    oldBmp.Dispose();
-
-                // Store both versions for future operations
-                vm.PicViewer.ImageSource.Value = rotated;
-                vm.PicViewer.HasChanges.Value = true;
-
-                var ps = rotated.PixelSize;
-                
-
-                imageLayoutTransformControl.LayoutTransform = new MatrixTransform(Matrix.Identity); // no rotate here anymore
-                mainImage.RenderTransform = new MatrixTransform(Matrix.Identity);
-
-                // Reset transform & zoom (rotation is baked in)
-                //imageLayoutTransformControl.LayoutTransform = new RotateTransform(0);
-                resetZoom?.Invoke();
-
-                //WindowResizing.SetSize(vm);
-                mainImage.Width = double.NaN;
-                mainImage.Height = double.NaN;
-                mainImage.InvalidateMeasure();
-                mainImage.InvalidateArrange();
-                mainImage.InvalidateVisual();
-            });
+            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(rotated, vm));
         }
         finally
         {
@@ -97,22 +72,7 @@ public class RotationTransformer(
             //await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
 
             // Apply updates on UI thread
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                // Dispose previous image if it's a Bitmap
-                if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
-                    oldBmp.Dispose();
-
-                vm.PicViewer.ImageSource.Value = rotated;
-                vm.PicViewer.HasChanges.Value = true;
-
-                // Reset any layout transform — rotation now baked into pixels
-                imageLayoutTransformControl.LayoutTransform = new RotateTransform(0);
-                resetZoom?.Invoke();
-
-                WindowResizing.SetSize(vm);
-                mainImage.InvalidateVisual();
-            });
+            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(rotated, vm));
         }
         finally
         {
@@ -176,51 +136,49 @@ public class RotationTransformer(
 
         try
         {
-            // Flip off the UI thread using Magick.NET
-            var flipped = await Task.Run(() =>
-            {
-                using var magick = bmp.ToMagickImage();
-
-                if (horizontal)
-                    magick.Flop(); // Mirror horizontally
-                else
-                    magick.Flip(); // Mirror vertically
-
-                magick.Orientation = OrientationType.TopLeft;
-                return (MagickImage)magick.Clone();
-            });
-
-            // Convert to Avalonia Bitmap
-            var bitmap = await Task.Run(() => flipped.ToAvaloniaBitmap());
-        
+            var flipped = await Task.Run(() => FlipBitmap(bmp, horizontal));
 
             // Create a new history snapshot using the Bitmap
-            await vm.HistoryManager.AddSnapshot(EditKind.Flip, desc, bitmap).ConfigureAwait(false);
+            //await vm.HistoryManager.AddSnapshot(EditKind.Flip, desc, flipped).ConfigureAwait(false);
 
             // Update the viewer
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                // Dispose previous image if necessary
-                if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
-                    oldBmp.Dispose();
-
-                vm.PicViewer.ImageSource.Value = bitmap;
-                vm.PicViewer.HasChanges.Value = true;
-
-                // Reset transforms — no need for ScaleX hacks now
-                imageLayoutTransformControl.RenderTransform = null;
-                imageLayoutTransformControl.LayoutTransform = new RotateTransform(0);
-
-                resetZoom?.Invoke();
-                WindowResizing.SetSize(vm);
-                mainImage.InvalidateVisual();
-            });
+            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(flipped, vm));
         }
         finally
         {
             vm.MainWindow.IsLoadingIndicatorShown.Value = false;
         }
     }
+    
+    public static Bitmap FlipBitmap(Bitmap source, bool horizontal)
+{
+    var size   = source.PixelSize;
+    var target = new RenderTargetBitmap(size);
+
+    using (var ctx = target.CreateDrawingContext())
+    {
+        var m = Matrix.Identity;
+        if (horizontal)
+        {
+            m *= Matrix.CreateScale(-1, 1);
+            m *= Matrix.CreateTranslation(size.Width, 0);
+        }
+        else
+        {
+            m *= Matrix.CreateScale(1, -1);
+            m *= Matrix.CreateTranslation(0, size.Height);
+        }
+
+        using (ctx.PushTransform(m))
+        {
+            ctx.DrawImage(source,
+                new Rect(0, 0, size.Width, size.Height),
+                new Rect(0, 0, size.Width, size.Height));
+        }
+    }
+
+    return target;
+}
 
     public void SetTransform(int scaleX, int rotationAngle)
     {

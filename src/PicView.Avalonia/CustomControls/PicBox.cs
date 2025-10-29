@@ -9,6 +9,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Metadata;
 using Avalonia.Rendering.Composition;
 using Avalonia.Svg.Skia;
+using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.AnimatedImage;
 using PicView.Avalonia.Navigation;
@@ -110,7 +111,10 @@ public class PicBox : Control, IDisposable
     static PicBox()
     {
         // Registers the SourceProperty to render when the source changes
-        AffectsRender<PicBox>(SourceProperty);
+        //AffectsRender<PicBox>(SourceProperty);
+        AffectsRender<PicBox>(SourceProperty, SecondarySourceProperty, SecondaryImageWidthProperty);
+        AffectsMeasure<PicBox>(SourceProperty, SecondarySourceProperty, SecondaryImageWidthProperty);
+        AffectsArrange<PicBox>(SourceProperty, SecondarySourceProperty, SecondaryImageWidthProperty);
     }
 
     public PicBox() =>
@@ -156,17 +160,68 @@ public class PicBox : Control, IDisposable
 
         var svgSource = SvgSource.LoadFromSvg(svg);
         Source = new SvgImage { Source = svgSource };
+
+        // Ensure layout refresh happens on UI thread
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            InvalidateMeasure();
+            InvalidateArrange();
+            InvalidateVisual();
+        }
+        else
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                InvalidateMeasure();
+                InvalidateArrange();
+                InvalidateVisual();
+            });
+        }
     }
 
     private void UpdateAnimatedSource()
     {
         CreateVisual();
         Source = Source as Bitmap;
+
+        // Ensure layout refresh happens on UI thread
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            InvalidateMeasure();
+            InvalidateArrange();
+            InvalidateVisual();
+        }
+        else
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                InvalidateMeasure();
+                InvalidateArrange();
+                InvalidateVisual();
+            });
+        }
     }
 
     private void UpdateBitmapSource()
     {
         Source = Source as Bitmap;
+
+        // Ensure layout refresh happens on UI thread
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            InvalidateMeasure();
+            InvalidateArrange();
+            InvalidateVisual();
+        }
+        else
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                InvalidateMeasure();
+                InvalidateArrange();
+                InvalidateVisual();
+            });
+        }
     }
 
     private void CleanupResources()
