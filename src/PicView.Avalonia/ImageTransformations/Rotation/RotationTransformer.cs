@@ -1,8 +1,10 @@
+using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Avalonia.Utilities;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Extensions;
@@ -25,54 +27,46 @@ public class RotationTransformer(
         if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
             return;
 
-        var magick = vm.PicViewer.MagickFrame.Value;
-        if (magick is null)
+        if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
             return;
 
         var angle = clockWise ? 90 : -90;
         var desc = clockWise ? "Rotated right 90°" : "Rotated left 90°";
 
-        // Show loading indicator while rotating
         vm.MainWindow.IsLoadingIndicatorShown.Value = true;
-
-        // Do the heavy Magick rotation in a background thread
-        var rotated = await Task.Run(() =>
-        {
-            var clone = magick.Clone();
-            clone.Rotate(angle);
-            clone.Orientation = OrientationType.TopLeft;
-            return clone;
-        });
 
         try
         {
-            // Create a new history step (and generate thumbnail) in background
-            await Task.Run(() =>
-            {
-                vm.History?.AddStep(EditKind.Rotate, desc, (MagickImage)rotated);
-            });
+            var rotated = await Task.Run(() => RotateBitmap((Bitmap)vm.PicViewer.ImageSource.Value, 90));
 
-            // Convert to Avalonia Bitmap off-thread
-            var bitmap = await Task.Run(() => rotated.ToAvaloniaBitmap());
+            // Create a new history snapshot using the Bitmap
+            //await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
 
-            // Apply the rotated image on the UI thread
+            // Apply to the PicViewer on the UI thread
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                // Replace viewer bitmap safely
                 if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
                     oldBmp.Dispose();
 
-                vm.PicViewer.MagickFrame.Value = (MagickImage)rotated.Clone();
-                vm.PicViewer.ImageSource.Value = bitmap;
-
-
+                // Store both versions for future operations
+                vm.PicViewer.ImageSource.Value = rotated;
                 vm.PicViewer.HasChanges.Value = true;
 
-                // Reset transform & zoom (rotation now baked into pixels)
-                imageLayoutTransformControl.LayoutTransform = new RotateTransform(0);
+                var ps = rotated.PixelSize;
+                
+
+                imageLayoutTransformControl.LayoutTransform = new MatrixTransform(Matrix.Identity); // no rotate here anymore
+                mainImage.RenderTransform = new MatrixTransform(Matrix.Identity);
+
+                // Reset transform & zoom (rotation is baked in)
+                //imageLayoutTransformControl.LayoutTransform = new RotateTransform(0);
                 resetZoom?.Invoke();
 
-                WindowResizing.SetSize(vm);
+                //WindowResizing.SetSize(vm);
+                mainImage.Width = double.NaN;
+                mainImage.Height = double.NaN;
+                mainImage.InvalidateMeasure();
+                mainImage.InvalidateArrange();
                 mainImage.InvalidateVisual();
             });
         }
@@ -87,8 +81,7 @@ public class RotationTransformer(
         if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
             return;
 
-        var magick = vm.PicViewer.MagickFrame.Value;
-        if (magick is null)
+        if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
             return;
 
         var desc = $"Rotated {angle}°";
@@ -98,23 +91,10 @@ public class RotationTransformer(
 
         try
         {
-            // Perform heavy rotation off the UI thread
-            var rotated = await Task.Run(() =>
-            {
-                var clone = magick.Clone();
-                clone.Rotate(angle);
-                clone.Orientation = OrientationType.TopLeft;
-                return clone;
-            });
+            var rotated = await Task.Run(() => RotateBitmap((Bitmap)vm.PicViewer.ImageSource.Value, angle));
 
-            // Commit to history (off-thread)
-            await Task.Run(() =>
-            {
-                vm.History?.AddStep(EditKind.Rotate, desc, (MagickImage)rotated);
-            });
-
-            // Convert to Avalonia bitmap (off-thread)
-            var bitmap = await Task.Run(() => rotated.ToAvaloniaBitmap());
+            // Create a new history snapshot using the Bitmap
+            //await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
 
             // Apply updates on UI thread
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -123,8 +103,7 @@ public class RotationTransformer(
                 if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
                     oldBmp.Dispose();
 
-                vm.PicViewer.MagickFrame.Value = (MagickImage)rotated.Clone();
-                vm.PicViewer.ImageSource.Value = bitmap;
+                vm.PicViewer.ImageSource.Value = rotated;
                 vm.PicViewer.HasChanges.Value = true;
 
                 // Reset any layout transform — rotation now baked into pixels
@@ -141,6 +120,34 @@ public class RotationTransformer(
         }
     }
 
+    public static Bitmap RotateBitmap(Bitmap source, double angle)
+    {
+        var isRightAngle = (Math.Abs(angle) % 180) == 90;
+
+        var size = isRightAngle
+            ? new PixelSize(source.PixelSize.Height, source.PixelSize.Width)
+            : new PixelSize(source.PixelSize.Width, source.PixelSize.Height);
+
+        var target = new RenderTargetBitmap(size);
+
+        using (var ctx = target.CreateDrawingContext())
+        {
+            // Translate to center → rotate → translate back
+            var transform = Matrix.CreateTranslation(-source.PixelSize.Width / 2, -source.PixelSize.Height / 2)
+                            * Matrix.CreateRotation(MathUtilities.Deg2Rad(angle))
+                            * Matrix.CreateTranslation(size.Width / 2, size.Height / 2);
+
+            using (ctx.PushTransform(transform))
+            {
+                ctx.DrawImage(
+                    source,
+                    new Rect(0, 0, source.PixelSize.Width, source.PixelSize.Height),
+                    new Rect(0, 0, source.PixelSize.Width, source.PixelSize.Height));
+            }
+        }
+
+        return target;
+    }
 
 
     private void SetImageLayoutTransform(RotateTransform rotateTransform)
@@ -156,70 +163,64 @@ public class RotationTransformer(
         }
     }
 
-    private ScaleTransform? _scaleTransform;
     public async Task FlipAsync(bool horizontal)
-{
-    if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
-        return;
-
-    var magick = vm.PicViewer.MagickFrame.Value;
-    if (magick is null)
-        return;
-
-    var desc = horizontal ? "Flipped horizontally" : "Flipped vertically";
-    vm.MainWindow.IsLoadingIndicatorShown.Value = true;
-
-    try
     {
-        // Flip off the UI thread using Magick.NET
-        var flipped = await Task.Run(() =>
+        if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
+            return;
+
+        if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
+            return;
+
+        var desc = horizontal ? "Flipped horizontally" : "Flipped vertically";
+        vm.MainWindow.IsLoadingIndicatorShown.Value = true;
+
+        try
         {
-            var clone = magick.Clone();
+            // Flip off the UI thread using Magick.NET
+            var flipped = await Task.Run(() =>
+            {
+                using var magick = bmp.ToMagickImage();
 
-            if (horizontal)
-                clone.Flop(); // Mirror horizontally
-            else
-                clone.Flip(); // Mirror vertically
+                if (horizontal)
+                    magick.Flop(); // Mirror horizontally
+                else
+                    magick.Flip(); // Mirror vertically
 
-            clone.Orientation = OrientationType.TopLeft;
-            return clone;
-        });
+                magick.Orientation = OrientationType.TopLeft;
+                return (MagickImage)magick.Clone();
+            });
 
-        // Add as a history step
-        await Task.Run(() =>
+            // Convert to Avalonia Bitmap
+            var bitmap = await Task.Run(() => flipped.ToAvaloniaBitmap());
+        
+
+            // Create a new history snapshot using the Bitmap
+            await vm.HistoryManager.AddSnapshot(EditKind.Flip, desc, bitmap).ConfigureAwait(false);
+
+            // Update the viewer
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                // Dispose previous image if necessary
+                if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
+                    oldBmp.Dispose();
+
+                vm.PicViewer.ImageSource.Value = bitmap;
+                vm.PicViewer.HasChanges.Value = true;
+
+                // Reset transforms — no need for ScaleX hacks now
+                imageLayoutTransformControl.RenderTransform = null;
+                imageLayoutTransformControl.LayoutTransform = new RotateTransform(0);
+
+                resetZoom?.Invoke();
+                WindowResizing.SetSize(vm);
+                mainImage.InvalidateVisual();
+            });
+        }
+        finally
         {
-            vm.History?.AddStep(EditKind.Flip, desc, (MagickImage)flipped);
-        });
-
-        // Convert to Avalonia Bitmap off-thread
-        var bitmap = await Task.Run(() => flipped.ToAvaloniaBitmap());
-
-        // Update the viewer
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            // Dispose previous image if necessary
-            if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
-                oldBmp.Dispose();
-
-            vm.PicViewer.MagickFrame.Value = (MagickImage)flipped.Clone();
-            vm.PicViewer.ImageSource.Value = bitmap;
-            vm.PicViewer.HasChanges.Value = true;
-
-            // Reset transforms — no need for ScaleX hacks now
-            imageLayoutTransformControl.RenderTransform = null;
-            imageLayoutTransformControl.LayoutTransform = new RotateTransform(0);
-
-            resetZoom?.Invoke();
-            WindowResizing.SetSize(vm);
-            mainImage.InvalidateVisual();
-        });
+            vm.MainWindow.IsLoadingIndicatorShown.Value = false;
+        }
     }
-    finally
-    {
-        vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-    }
-}
-
 
     public void SetTransform(int scaleX, int rotationAngle)
     {

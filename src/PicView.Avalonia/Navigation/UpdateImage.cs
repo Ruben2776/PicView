@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Extensions;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.History;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -74,7 +75,7 @@ public static class UpdateImage
             return;
         }
 
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             if (index != NavigationManager.GetCurrentIndex)
             {
@@ -86,20 +87,20 @@ public static class UpdateImage
             if (Settings.ImageScaling.ShowImageSideBySide && nextPreloadValue is { ImageModel: not null })
             {
                 vm.PicViewer.SecondaryImageSource.Value = nextPreloadValue.ImageModel.Image;
-                if (preLoadValue is { ImageModel: not null})
+                if (preLoadValue is { ImageModel: not null })
                 {
                     vm.PicViewer.ImageSource.Value = preLoadValue.ImageModel.Image;
                     vm.PicViewer.ImageType.Value = preLoadValue.ImageModel.ImageType;
                     vm.PicViewer.Format.Value = preLoadValue.ImageModel.Format;
                 }
             }
-            else if (preLoadValue is { ImageModel: not null})
+            else if (preLoadValue is { ImageModel: not null })
             {
                 if (preLoadValue.ImageModel.ImageType is ImageType.AnimatedGif or ImageType.AnimatedWebp)
                 {
                     vm.ImageViewer.MainImage.InitialAnimatedSource = preLoadValue.ImageModel.FileInfo.FullName;
                 }
-                
+
                 vm.PicViewer.ImageSource.Value = preLoadValue.ImageModel.Image;
                 vm.PicViewer.SecondaryImageSource.Value = null;
                 vm.PicViewer.ImageType.Value = preLoadValue.ImageModel.ImageType;
@@ -117,6 +118,8 @@ public static class UpdateImage
 
             UIHelper.GetToolTipMessage.IsVisible = false;
         }, DispatcherPriority.Send);
+        
+        _ = vm.HistoryManager.AddSnapshot(EditKind.Open, "Opened", (Bitmap?)preLoadValue.ImageModel.Image);
 
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
 

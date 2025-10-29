@@ -6,6 +6,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Core.DebugTools;
 using PicView.Core.Localization;
+using Windows.Networking.Vpn;
 
 namespace PicView.Avalonia.FileSystem;
 

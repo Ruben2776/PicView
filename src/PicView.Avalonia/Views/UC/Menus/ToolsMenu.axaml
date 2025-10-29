@@ -155,13 +155,15 @@
                     Canvas.Left="7"
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
+                    Command="{CompiledBinding Tools.ColorPickerToolCommand}"
                     Data="{StaticResource BrushGeometry}"
                     Foreground="{DynamicResource DisabledTextColor}"
                     Height="46"
                     IconHeight="17"
                     IconMargin="9,0,12,0"
                     IconWidth="17"
-                    IsEnabled="False"
+                    IsEnabled="{CompiledBinding PicViewer.ShouldOptimizeImageBeEnabled.Value,
+                                                Mode=OneWay}"
                     Text="{CompiledBinding Translation.ColorPickerTool.Value,
                                            Mode=OneWay}"
                     ToolTip.Tip="{CompiledBinding Translation.ColorPickerToolTooltip.Value,

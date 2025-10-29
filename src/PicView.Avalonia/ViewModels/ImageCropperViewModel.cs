@@ -85,8 +85,7 @@ public class ImageCropperViewModel : IDisposable
         if (UIHelper.GetMainView.DataContext is not MainViewModel vm)
             return;
 
-        var sourceMagick = HistoryHelpers.EnsureMagickFrame(vm.PicViewer);
-        if (sourceMagick is null)
+        if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
             return;
 
         vm.MainWindow.IsLoadingIndicatorShown.Value = true;
@@ -101,33 +100,43 @@ public class ImageCropperViewModel : IDisposable
             int width = (int)PixelSelectionWidth.CurrentValue;
             int height = (int)PixelSelectionHeight.CurrentValue;
 
-            // Perform crop on a background thread
-            var result = await Task.Run(() =>
+            // Perform crop + convert to Bitmap off the UI thread
+            var (croppedMagick, croppedBitmap) = await Task.Run(() =>
             {
-                // Clone the existing Magick frame so we don’t mutate the original
-                using var magick = (MagickImage)sourceMagick.Clone();
+                // Clone to avoid mutating original
+                using var magick = bmp.ToMagickImage();
 
-                // Perform the crop
+                // Crop operation
                 magick.Crop(new MagickGeometry(x, y, (uint)width, (uint)height));
                 magick.Page = new MagickGeometry(0, 0, (uint)magick.Width, (uint)magick.Height);
 
-                // Add to history (collection handles compression)
-                vm.History.AddStep(EditKind.Crop, $"Crop {width}×{height}", (MagickImage)magick.Clone());
+                // Convert to Avalonia Bitmap
+                var bitmap = magick.ToAvaloniaBitmap();
 
-                // Return the cropped MagickImage
-                return (MagickImage)magick.Clone();
+                // Return both for reuse
+                return ((MagickImage)magick.Clone(), bitmap);
             }, cancellationToken).ConfigureAwait(false);
 
-            // Cache the new cropped frame and its bitmap
-            vm.PicViewer.MagickFrame.Value = result;
-            var newBitmap = result.ToAvaloniaBitmap();
-            vm.PicViewer.CachedImage.Value = newBitmap;
-            vm.PicViewer.ImageSource.Value = newBitmap;
-            vm.PicViewer.HasChanges.Value = true;
+            // Add to history (Bitmap version)
+            await vm.HistoryManager
+                .AddSnapshot(EditKind.Crop, $"Crop {width}×{height}", croppedBitmap)
+                .ConfigureAwait(false);
 
-            // Update image model (keeps all other systems synced)
+            // Apply new image state on UI thread
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                // Dispose any previous bitmap
+                if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
+                    oldBmp.Dispose();
+
+                vm.PicViewer.CachedImage.Value = croppedBitmap;
+                vm.PicViewer.ImageSource.Value = croppedBitmap;
+                vm.PicViewer.HasChanges.Value = true;
+            });
+
+            // Update image model (other systems)
             await UpdateImage.SetCroppedImageAsync(
-                newBitmap,
+                croppedBitmap,
                 ImageType.Bitmap,
                 $"{currentFileInfo?.Name ?? TranslationManager.Translation.ClipboardImage}*",
                 vm);

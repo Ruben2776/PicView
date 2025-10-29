@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Collections;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
@@ -84,7 +85,7 @@ public static class FilePicker
         
         await FileSaverHelper.SaveFileAsync(fileName, file, vm).ConfigureAwait(false);
     }
-    
+
     public static async Task<string?> PickFileForSavingAsync(string? fileName, string? ext = null)
     {
         try
@@ -94,13 +95,13 @@ public static class FilePicker
             {
                 return null;
             }
-        
-            var suggestedFileName = GetSuggestedFileName(fileName, ext);
 
-            var options = new FilePickerSaveOptions
+            var suggestedFileName = GetSuggestedFileName(fileName, ext);
+            var fileTypeChoices = new List<FilePickerFileType>();
+
+            if (ext is null)
             {
-                Title = $"{TranslationManager.Translation.SaveAs} - PicView",
-                FileTypeChoices = [
+                fileTypeChoices.AddRange(
                     FilePickerFileTypes.ImageAll,
                     GetFilePickerFileTypes.JpegFileType,
                     GetFilePickerFileTypes.PngFileType,
@@ -111,21 +112,42 @@ public static class FilePicker
                     GetFilePickerFileTypes.AvifFileType,
                     GetFilePickerFileTypes.HeicFileType,
                     GetFilePickerFileTypes.HeifFileType,
-                    GetFilePickerFileTypes.SvgFileType],
+                    GetFilePickerFileTypes.SvgFileType
+                );
+            }
+            else
+                fileTypeChoices.Add(GetFilePickerFileTypes.GetByExtension(ext));
+
+
+            var options = new FilePickerSaveOptions
+            {
+                Title = $"{TranslationManager.Translation.SaveAs} - PicView",
+                FileTypeChoices = fileTypeChoices,
                 SuggestedFileName = suggestedFileName,
                 SuggestedStartLocation = await desktop.MainWindow.StorageProvider.TryGetFolderFromPathAsync(fileName).ConfigureAwait(false)
             };
-            
+
             var file = await ExecuteOnUIThread(() => provider.SaveFilePickerAsync(options)).ConfigureAwait(false);
             return file?.Path.LocalPath;
         }
         catch (Exception e)
         {
-            #if DEBUG
+#if DEBUG
             Console.WriteLine(e);
-            #endif
+#endif
             return null;
         }
+    }
+    
+    public static async Task PickAndExportToPdfAsync(string? fileName, MainViewModel vm)
+    {
+        var file = await PickFileForSavingAsync(fileName, ".pdf").ConfigureAwait(false);
+        if (file is null)
+            return;
+
+        vm.MainWindow.IsLoadingIndicatorShown.Value = true;
+        await FileSaverHelper.ExportToPdfAsync(fileName, file, vm).ConfigureAwait(false);
+        vm.MainWindow.IsLoadingIndicatorShown.Value = false;
     }
 
     public static async Task<string> SelectDirectory()

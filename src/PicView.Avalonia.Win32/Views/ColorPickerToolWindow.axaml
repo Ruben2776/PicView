@@ -1,0 +1,28 @@
+<Window
+    x:Class="PicView.Avalonia.Win32.Views.ColorPickerToolWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Width="420" Height="360"
+    Background="#1E1E1E"
+    CanResize="False"
+    WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Margin="16">
+        <Border x:Name="ColorPreview" Height="80" CornerRadius="8"/>
+
+        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,10,0,0">
+            <TextBox x:Name="HexBox" Width="100" Background="#333" Foreground="White"/>
+            <ComboBox Width="80" SelectedIndex="0">
+                <ComboBoxItem>RGB</ComboBoxItem>
+                <ComboBoxItem>HSB</ComboBoxItem>
+            </ComboBox>
+            <Button Content="Copy" Click="CopyHex"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Spacing="6" Margin="0,10,0,0">
+            <Slider x:Name="HueSlider" Minimum="0" Maximum="360" ValueChanged="SliderChanged"/>
+            <Slider x:Name="SatSlider" Minimum="0" Maximum="100" ValueChanged="SliderChanged"/>
+            <Slider x:Name="BriSlider" Minimum="0" Maximum="100" ValueChanged="SliderChanged"/>
+        </StackPanel>
+    </Grid>
+</Window>

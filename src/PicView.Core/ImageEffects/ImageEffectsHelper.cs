@@ -15,7 +15,7 @@ public static class ImageEffectsHelper
             {
                 var magick = await LoadImage(fileInfo, cancellationToken);
                 ApplyImageEffects(magick, config, cancellationToken);
-                return magick;
+                return (MagickImage)magick.Clone();
             }, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)

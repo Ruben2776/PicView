@@ -15,11 +15,13 @@ public enum EditKind
     Other
 }
 
-public sealed class HistoryEntry
-{    
+public class HistoryEntry
+{
     public int Index { get; set; }
     public EditKind Kind { get; set; }
     public string Description { get; set; } = string.Empty;
-    public MagickImage Snapshot { get; set; } = null!;
+    public byte[]? EncodedPng { get; set; }
     public Bitmap? CachedThumbnail { get; set; }
+    public bool IsLoading { get; set; }
 }
+

@@ -147,11 +147,7 @@ public static class ImageLoader
 
             await NavigationManager.LoadWithoutImageIterator(fileInfo, vm).ConfigureAwait(false);
 
-            var magickFrame = HistoryHelpers.EnsureMagickFrame(vm.PicViewer);
-            vm.History.AddStep(
-                EditKind.Open,
-                "Opened",
-                (MagickImage)magickFrame.Clone());
+            await vm.HistoryManager.AddSnapshot(EditKind.Open, "Opened").ConfigureAwait(false);
         }
     }
 
@@ -370,11 +366,7 @@ public static class ImageLoader
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         await UpdateImage.SetSingleImageAsync(imageModel.Image, imageModel.ImageType, url, vm);
 
-        var magickFrame = HistoryHelpers.EnsureMagickFrame(vm.PicViewer);
-        vm.History.AddStep(
-            EditKind.Open,
-            "Opened",
-            (MagickImage)magickFrame.Clone());
+        await vm.HistoryManager.AddSnapshot(EditKind.Open, "Opened").ConfigureAwait(false);
 
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
         vm.PicViewer.FileInfo.Value = fileInfo;
@@ -431,11 +423,7 @@ public static class ImageLoader
             await ErrorHandling.ReloadAsync(vm);
         }
 
-        var magickFrame = HistoryHelpers.EnsureMagickFrame(vm.PicViewer);
-        vm.History.AddStep(
-            EditKind.Open,
-            "Opened",
-            (MagickImage)magickFrame.Clone());
+        await vm.HistoryManager.AddSnapshot(EditKind.Open, "Opened").ConfigureAwait(false);;
 
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
     }

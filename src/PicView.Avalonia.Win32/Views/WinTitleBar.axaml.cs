@@ -35,7 +35,7 @@ public partial class WinTitleBar : UserControl
         GlassThemeHelper.ApplyTransparentStyle(CloseButton);
         GlassThemeHelper.ApplyTransparentStyle(MinimizeButton);
         GlassThemeHelper.ApplyTransparentStyle(RestoreButton);
-        GlassThemeHelper.ApplyTransparentStyle(FullscreenButton);
+        GlassThemeHelper.ApplyTransparentStyle(MaximizeButton);
         GlassThemeHelper.ApplyTransparentStyle(GalleryButton);
         GlassThemeHelper.ApplyTransparentStyle(MenuButton);
         GlassThemeHelper.ApplyTransparentStyle(MainMenu);
@@ -114,4 +114,15 @@ public partial class WinTitleBar : UserControl
 
         WindowFunctions.WindowDragAndDoubleClickBehavior((Window)VisualRoot, e, vm.PlatformWindowService);
     }
+
+    private void EditMenu_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (sender is MenuItem mi)
+        {
+            // Keep submenu open even if clicked again
+            mi.IsSubMenuOpen = true;
+            e.Handled = true;
+        }
+    }
+
 }

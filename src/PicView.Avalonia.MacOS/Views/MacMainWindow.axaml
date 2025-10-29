@@ -34,7 +34,7 @@
                     <!--  Open with  -->
                     <NativeMenuItem
                         Command="{CompiledBinding Tools.OpenWithCommand}"
-                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                            FallbackValue=''}"
                         Header="{CompiledBinding Translation.OpenWith.Value,
                                                  Mode=OneWay}"
@@ -69,7 +69,7 @@
                     <!--  Locate on disk  -->
                     <NativeMenuItem
                         Command="{CompiledBinding Tools.LocateOnDiskCommand}"
-                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                            FallbackValue=''}"
                         Header="{CompiledBinding Translation.ShowInFolder.Value,
                                                  Mode=OneWay}"
@@ -81,7 +81,7 @@
                     <!--  Delete file  -->
                     <NativeMenuItem
                         Command="{CompiledBinding Tools.DeleteFilePermanentlyCommand}"
-                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                            FallbackValue=''}"
                         Header="{CompiledBinding Translation.DeleteFile.Value,
                                                  Mode=OneWay}"
@@ -93,7 +93,7 @@
                     <!--  Reload  -->
                     <NativeMenuItem
                         Command="{CompiledBinding Navigation.ReloadCommand}"
-                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                            FallbackValue=''}"
                         Header="{CompiledBinding Translation.Reload.Value,
                                                  Mode=OneWay}"
@@ -108,7 +108,7 @@
                     <!--  Rename  -->
                     <NativeMenuItem
                         Command="{CompiledBinding Tools.RenameCommand}"
-                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                            FallbackValue=''}"
                         Header="{CompiledBinding Translation.RenameFile.Value,
                                                  Mode=OneWay}"
@@ -124,7 +124,7 @@
                     <!--  Copy image  -->
                     <NativeMenuItem
                         Command="{CompiledBinding Tools.CopyImageCommand}"
-                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                            FallbackValue=''}"
                         Header="{CompiledBinding Translation.CopyImage.Value,
                                                  Mode=OneWay}"
@@ -133,7 +133,7 @@
                     <!--  Copy file path  -->
                     <NativeMenuItem
                         Command="{CompiledBinding Tools.CopyFilePathCommand}"
-                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                            FallbackValue=''}"
                         Header="{CompiledBinding Translation.FileCopyPath.Value,
                                                  Mode=OneWay}"
@@ -146,7 +146,7 @@
                 <!--  Duplicate file  -->
                 <NativeMenuItem
                     Command="{CompiledBinding Tools.DuplicateFileCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                        FallbackValue=''}"
                     Header="{CompiledBinding Translation.DuplicateFile.Value,
                                              Mode=OneWay}"
@@ -163,7 +163,7 @@
                 <!--  Delete file  -->
                 <NativeMenuItem
                     Command="{CompiledBinding Tools.RecycleFileCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                        FallbackValue=''}"
                     Header="{CompiledBinding Translation.DeleteFile.Value,
                                              Mode=OneWay}"
@@ -277,7 +277,7 @@
                     <!--  Crop  -->
                     <NativeMenuItem
                         Command="{CompiledBinding Tools.CropCommand}"
-                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                            FallbackValue=''}"
                         Header="{CompiledBinding Translation.Crop.Value,
                                                  Mode=OneWay}"
@@ -289,7 +289,7 @@
                     <!--  Wallpaper  -->
                     <NativeMenuItem
                         Command="{CompiledBinding Tools.SetAsWallpaperCommand}"
-                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                            FallbackValue=''}"
                         Header="{CompiledBinding Translation.SetAsWallpaper.Value,
                                                  Mode=OneWay}"
@@ -305,7 +305,7 @@
                     <!--  File properties  -->
                     <NativeMenuItem
                         Command="{CompiledBinding Tools.FilePropertiesCommand}"
-                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                            FallbackValue=''}"
                         Header="{CompiledBinding Translation.FileProperties.Value,
                                                  Mode=OneWay}"
@@ -325,7 +325,7 @@
                     <!--  Optimize image  -->
                     <NativeMenuItem
                         Command="{CompiledBinding Tools.OptimizeImageCommand}"
-                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
                                                            FallbackValue=''}"
                         Header="{CompiledBinding Translation.OptimizeImage.Value,
                                                  Mode=OneWay}"

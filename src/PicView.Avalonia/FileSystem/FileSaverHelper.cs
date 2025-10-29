@@ -1,4 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
+using ImageMagick;
+using PicView.Avalonia.Extensions;
+using PicView.Avalonia.History;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
@@ -54,7 +57,7 @@ public static class FileSaverHelper
         {
             await SaveImageFromBitmap();
         }
-        
+
         return;
 
         async Task SaveImageFromFile()
@@ -73,10 +76,10 @@ public static class FileSaverHelper
                 true,
                 vm.PicViewer.ScaleX.Value == -1);
         }
-        
+
         async Task SaveImageFromBitmap()
         {
-            
+
             try
             {
                 switch (vm.PicViewer.ImageType.CurrentValue)
@@ -84,32 +87,32 @@ public static class FileSaverHelper
                     case ImageType.AnimatedGif: // TODO: Add animated GIF support
                     case ImageType.AnimatedWebp: // TODO: Add animated WebP support
                     case ImageType.Bitmap:
-                    {
-                        if (vm.PicViewer.ImageSource.CurrentValue is not Bitmap bitmap)
                         {
-                            throw new InvalidOperationException("No bitmap available for saving.");
+                            if (vm.PicViewer.ImageSource.CurrentValue is not Bitmap bitmap)
+                            {
+                                throw new InvalidOperationException("No bitmap available for saving.");
+                            }
+                            const uint quality = 100; // TODO: Add quality slider to user settings
+                            var stream = new FileStream(destination, FileMode.Create);
+                            bitmap.Save(stream, (int)quality);
+                            await stream.DisposeAsync().ConfigureAwait(false);
+                            var ext = Path.GetExtension(destination);
+                            // Add rotation, apply image conversion
+                            if (ext.IsSupported())
+                            {
+                                await SaveImageFileHelper.SaveImageAsync(
+                                    null,
+                                    destination,
+                                    destination,
+                                    width: null,
+                                    height: null,
+                                    quality,
+                                    ext,
+                                    vm.PicViewer.RotationAngle.CurrentValue);
+                            }
+
+                            break;
                         }
-                        const uint quality = 100; // TODO: Add quality slider to user settings
-                        var stream = new FileStream(destination, FileMode.Create);
-                        bitmap.Save(stream, (int)quality);
-                        await stream.DisposeAsync().ConfigureAwait(false);
-                        var ext = Path.GetExtension(destination);
-                        // Add rotation, apply image conversion
-                        if (ext.IsSupported())
-                        {
-                            await SaveImageFileHelper.SaveImageAsync(
-                                null,
-                                destination,
-                                destination,
-                                width: null,
-                                height: null,
-                                quality,
-                                ext,
-                                vm.PicViewer.RotationAngle.CurrentValue);
-                        }
-                    
-                        break;
-                    }
                     case ImageType.Svg:
                         // TODO convert svg to bitmap and save
                         throw new InvalidOperationException("No bitmap available for saving.");
@@ -121,6 +124,45 @@ public static class FileSaverHelper
             {
                 DebugHelper.LogDebug(nameof(FileSaverHelper), nameof(SaveFileAsync), e);
             }
+        }
+    }
+
+    public static async Task ExportToPdf(MainViewModel vm)
+    {
+        if (vm is null)
+        {
+            return;
+        }
+
+        // Suggest random filename for saving, if it is not an existing file
+        var fileName = vm.PicViewer?.FileInfo?.CurrentValue is null ? Path.GetRandomFileName() : vm.PicViewer.FileInfo.CurrentValue.Name;
+
+        await FilePicker.PickAndExportToPdfAsync(fileName, vm);
+    }
+    
+    public static async Task ExportToPdfAsync(string? filename, string destination, MainViewModel vm)
+    {
+        try
+        {
+            if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
+                return;
+            
+            var sourceMagick = (MagickImage)bmp.ToMagickImage();            
+
+            // Ensure borderless export
+            sourceMagick.Page = new MagickGeometry(sourceMagick.Width, sourceMagick.Height);
+            sourceMagick.BackgroundColor = MagickColors.Transparent;
+            sourceMagick.Density = new Density(300, 300);
+
+            // Optional: flatten transparency for PDF rendering consistency
+            if (sourceMagick.HasAlpha)
+                sourceMagick.Alpha(AlphaOption.Remove);
+
+            sourceMagick.Write(destination, MagickFormat.Pdf);
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(FileSaverHelper), nameof(SaveFileAsync), ex);
         }
     }
 }

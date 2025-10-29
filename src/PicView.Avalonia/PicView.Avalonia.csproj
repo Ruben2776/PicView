@@ -152,10 +152,10 @@
   </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="12.0.999-cibuild0059320-alpha" />
-        <PackageReference Include="Avalonia.Desktop" Version="12.0.999-cibuild0059320-alpha" />
+        <PackageReference Include="Avalonia" Version="11.3.8" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="12.0.999-cibuild0059320-alpha" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.8" />
         <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.3.0.6" />
         <PackageReference Include="Avalonia.Xaml.Interactivity" Version="11.3.0.6" />
         <PackageReference Include="Magick.NET.AvaloniaMediaImaging" Version="1.1.5" />
@@ -199,6 +199,9 @@
     </Compile>
     <Compile Update="Views\UC\TitleTextbox.axaml.cs">
       <DependentUpon>TitleTextBox.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\UC\ColorPickerTool.axaml.cs">
+      <DependentUpon>ColorPickerTool.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Config\AppearanceView.axaml.cs">
       <DependentUpon>AppearanceView.axaml</DependentUpon>

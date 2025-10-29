@@ -1,152 +1,222 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
-using ImageMagick;
-using R3;
+using System.Threading;
+using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Layout;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using PicView.Avalonia.UI;
+using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Views.UC;
+using R3;
 
 namespace PicView.Avalonia.History;
 
 public sealed class HistoryManager : IDisposable
 {
-    private readonly int _capacity;
-    private readonly MagickImageCollection _collection = new();
+private readonly int _capacity;
+    private readonly List<HistoryEntry> _collection = new();
     private int _cursor = -1;
-    private readonly BindableReactiveProperty<IReadOnlyList<HistoryEntry>> _timelineObservable = new(new List<HistoryEntry>());
+    private readonly SemaphoreSlim _snapshotLock = new(1, 1);
 
-    public HistoryManager(int capacity = 50)
+    public ObservableCollection<HistoryEntry> Timeline { get; } = new();
+
+    private readonly MainViewModel _vm;
+
+    public HistoryWindowViewModel? WindowVm { get; private set; }
+    public HistoryWindow? Window { get; private set; }
+
+    public ReactiveCommand CloseCommand { get; } 
+
+    public HistoryManager(MainViewModel vm, int capacity = 50)
     {
+        _vm = vm ?? throw new ArgumentNullException(nameof(vm));
         _capacity = Math.Max(2, capacity);
+
+        CloseCommand = new ReactiveCommand(_ => Hide());
     }
 
-    public BindableReactiveProperty<IReadOnlyList<HistoryEntry>> TimelineObservable => _timelineObservable;
-    public int Cursor => _cursor;
-
-    public MagickImage? Current => _cursor >= 0 && _cursor < _collection.Count
-        ? (MagickImage)_collection[_cursor]
-        : null;
-
-    // Adds a new edit snapshot as a new layer in the collection
-    public void AddStep(EditKind kind, string description, MagickImage snapshot)
+    public async Task AddSnapshot(EditKind kind, string description, Bitmap? bitmap = null)
     {
         if (kind == EditKind.Open)
-            Clear();
-
-        // Trim any “future” frames (if we undid and then made a new edit)
-        for (int i = _collection.Count - 1; i > _cursor; i--)
-            _collection.RemoveAt(i);
-
-        // Trim to capacity
-        while (_collection.Count >= _capacity)
-            _collection.RemoveAt(0);
-
-        // Clone snapshot for storage
-        var clone = snapshot.Clone();
-        _collection.Add(clone);
-        _cursor = _collection.Count - 1;
-
-        // Build new timeline entries
-        var newList = new List<HistoryEntry>(_collection.Count);
-        for (int i = 0; i < _collection.Count; i++)
         {
-            var entry = new HistoryEntry
-            {
-                Index = i,
-                Kind = i == _cursor ? kind : _timelineObservable.Value.ElementAtOrDefault(i)?.Kind ?? EditKind.Other,
-                Description = i == _cursor ? description : _timelineObservable.Value.ElementAtOrDefault(i)?.Description ?? "",
-                Snapshot = (MagickImage)_collection[i],
-            };
-
-            // Build cached thumbnail for the latest entry only (others keep existing)
-            if (i == _cursor)
-            {
-                try
-                {
-                    // Create small 100px thumbnail off-thread
-                    using var thumbClone = clone.Clone();
-                    var max = 100;
-                    if (thumbClone.Width > thumbClone.Height)
-                        thumbClone.Resize((uint)max, 0);
-                    else
-                        thumbClone.Resize(0, (uint)max);
-
-                    using var ms = new MemoryStream();
-                    thumbClone.Format = MagickFormat.Png;
-                    thumbClone.Write(ms);
-                    ms.Position = 0;
-
-                    entry.CachedThumbnail = new Bitmap(ms);
-                }
-                catch
-                {
-                    entry.CachedThumbnail = null;
-                }
-            }
+            if (Dispatcher.UIThread.CheckAccess())
+                Clear();
             else
-            {
-                entry.CachedThumbnail = _timelineObservable.Value.ElementAtOrDefault(i)?.CachedThumbnail;
-            }
-
-            newList.Add(entry);
+                await Dispatcher.UIThread.InvokeAsync(Clear);
         }
 
-        _timelineObservable.Value = newList;
+        bitmap ??= (Bitmap?)_vm.PicViewer.ImageSource.Value;
+        if (bitmap is null)
+            return;
+
+        foreach (var e in _collection)
+            e.Index++;
+
+        var placeholder = new HistoryEntry
+        {
+            Index = 0,
+            Kind = kind,
+            Description = description
+        };
+
+        _collection.Insert(0, placeholder);
+        _cursor = 0;
+
+        Dispatcher.UIThread.Post(() => Timeline.Insert(0, placeholder));
+
+        _ = Task.Run(async () =>
+        {
+            await _snapshotLock.WaitAsync();
+            try
+            {
+                var encoded = await EncodeBitmapAsync(bitmap);
+                var thumb = BuildThumbnail(bitmap);
+
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    placeholder.EncodedPng = encoded;
+                    placeholder.CachedThumbnail = thumb;
+                    placeholder.IsLoading = false;
+
+                    var i = Timeline.IndexOf(placeholder);
+                    if (i >= 0)
+                        Timeline[i] = placeholder;
+                });
+            }
+            finally
+            {
+                _snapshotLock.Release();
+            }
+        });
     }
 
-    public MagickImage? Undo()
-    {
-        if (_cursor <= 0)
-            return null;
 
-        _cursor--;
-        _timelineObservable.Value = UpdateTimelineDescriptions();
-        return (MagickImage)_collection[_cursor];
+    private static async Task<byte[]> EncodeBitmapAsync(Bitmap bmp)
+    {
+        using var ms = new MemoryStream();
+        await Task.Run(() => bmp.Save(ms));
+        return ms.ToArray();
     }
 
-    public MagickImage? Redo()
+    private static Bitmap? BuildThumbnail(Bitmap bmp)
     {
-        if (_cursor >= _collection.Count - 1)
+        try
+        {
+            var scale = 100.0 / Math.Max(bmp.PixelSize.Width, bmp.PixelSize.Height);
+            var width = Math.Max(1, (int)(bmp.PixelSize.Width * scale));
+            var height = Math.Max(1, (int)(bmp.PixelSize.Height * scale));
+            return bmp.CreateScaledBitmap(new PixelSize(width, height));
+        }
+        catch
+        {
             return null;
+        }
+    }
 
+    public async Task<Bitmap?> Undo()
+    {
+        if (_cursor >= _collection.Count - 1) return null;
         _cursor++;
-        _timelineObservable.Value = UpdateTimelineDescriptions();
-        return (MagickImage)_collection[_cursor];
+        return await RestoreSnapshot(_cursor);
     }
 
-    public MagickImage? JumpTo(int index)
+    public async Task<Bitmap?> Redo()
+    {
+        if (_cursor <= 0) return null;
+        _cursor--;
+        return await RestoreSnapshot(_cursor);
+    }
+
+    public async Task<Bitmap?> JumpTo(int index)
+    {
+        if (index < 0 || index >= _collection.Count) return null;
+        _cursor = index;
+        return await RestoreSnapshot(_cursor);
+    }
+
+    private async Task<Bitmap?> RestoreSnapshot(int index)
     {
         if (index < 0 || index >= _collection.Count)
             return null;
 
-        _cursor = index;
-        _timelineObservable.Value = UpdateTimelineDescriptions();
-        return (MagickImage)_collection[_cursor];
-    }
+        var entry = _collection[index];
+        if (entry.EncodedPng is null)
+            return null;
 
-    private List<HistoryEntry> UpdateTimelineDescriptions()
-    {
-        return _collection
-            .Select((img, idx) => new HistoryEntry
+        var bmp = await Task.Run(() =>
+        {
+            try
             {
-                Index = idx,
-                Kind = EditKind.Other,
-                Description = idx == _cursor ? "Active" : "",
-                Snapshot = (MagickImage)img,
-            })
-            .ToList();
+                using var ms = new MemoryStream(entry.EncodedPng);
+                return new Bitmap(ms);
+            }
+            catch
+            {
+                return null;
+            }
+        });
+
+        if (bmp is null)
+            return null;
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            ((Bitmap?)_vm.PicViewer.ImageSource.Value)?.Dispose();
+            _vm.PicViewer.ImageSource.Value = bmp;
+            _vm.PicViewer.HasChanges.Value = true;
+        });
+
+        return bmp;
     }
 
     public void Clear()
     {
+        foreach (var e in _collection)
+            e.CachedThumbnail?.Dispose();
+
         _collection.Clear();
         _cursor = -1;
-        _timelineObservable.Value = new List<HistoryEntry>();
+        Timeline.Clear();
     }
 
-    public int Count() => _collection.Count();
-    
+    public async Task Show()
+    {
+        if (Window is not null)
+            return;
+
+        WindowVm ??= new HistoryWindowViewModel(_vm, this);
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            Window = new HistoryWindow
+            {
+                Width = 300,
+                Height = 340,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(12),
+                DataContext = _vm
+            };
+
+            UIHelper.GetMainView.MainGrid.Children.Add(Window);
+        });
+    }
+
     public void Dispose()
     {
-        _collection.Dispose();
+        Clear();
+        _snapshotLock.Dispose();
     }
+
+    public void Hide()
+    {
+        UIHelper.GetMainView.MainGrid.Children.Remove(Window);
+    }
+
 }

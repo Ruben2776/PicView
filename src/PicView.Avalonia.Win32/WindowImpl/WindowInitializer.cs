@@ -1,4 +1,6 @@
-﻿using System.Drawing.Printing;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Drawing.Printing;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -534,5 +536,15 @@ public class WindowInitializer : IPlatformSpecificUpdate
 
             _ = FunctionsMapper.CloseMenus();
         }
+    }
+
+    public async Task ShowHistoryWindow(MainViewModel _vm)
+    {
+        if (_vm.HistoryManager is null)
+            _vm.HistoryManager = new History.HistoryManager(_vm);
+            
+        await _vm.HistoryManager.Show();
+
+        _ = FunctionsMapper.CloseMenus();
     }
 }

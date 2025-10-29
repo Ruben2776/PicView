@@ -371,7 +371,7 @@
                     DockPanel.Dock="Left"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                    Icon="{StaticResource RefreshCcwDot}"
+                    Icon="{StaticResource RefreshCwDot}"
                     IconHeight="16"
                     IconWidth="16"
                     IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
@@ -421,7 +421,7 @@
                     Background="{DynamicResource AltBackgroundColor}"
                     Classes="noBorderHover"
                     Command="{CompiledBinding Tools.PrintCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName, FallbackValue=''}"
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName, FallbackValue=''}"
                     DockPanel.Dock="Left"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="{CompiledBinding MainWindow.BottombarHeight.Value}"

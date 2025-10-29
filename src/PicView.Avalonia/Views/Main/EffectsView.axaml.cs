@@ -143,10 +143,7 @@ public partial class EffectsView : UserControl
                     var desc = BuildEffectDescription(config);
 
                     // Create a single History step for this Apply
-                    await Task.Run(() =>
-                    {
-                        vm.History?.AddStep(EditKind.Effect, desc, magickImage);
-                    });
+                    //await vm.HistoryManager.AddSnapshot(EditKind.Effect, desc, magickImage).ConfigureAwait(false);
 
                     // Convert to Avalonia bitmap off-thread
                     var bitmap = await Task.Run(() => magickImage.ToAvaloniaBitmap());
@@ -157,7 +154,6 @@ public partial class EffectsView : UserControl
                         if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
                             oldBmp.Dispose();
 
-                        vm.PicViewer.MagickFrame.Value = (MagickImage)magickImage.Clone();
                         vm.PicViewer.ImageSource.Value = bitmap;
                         vm.PicViewer.HasChanges.Value = true;
                     });

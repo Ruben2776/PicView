@@ -81,8 +81,6 @@ public class MainWindowViewModel : IDisposable
 
     public BindableReactiveProperty<bool> IsBottomToolbarShown { get; } = new();
 
-    public BindableReactiveProperty<bool> IsHistoryWindowShown { get; } = new();    
-
     public BindableReactiveProperty<bool> IsEditableTitlebarOpen { get; } = new();
 
     public BindableReactiveProperty<IImage?> ChangeCtrlZoomImage { get; } = new();

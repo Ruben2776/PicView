@@ -7,10 +7,11 @@
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:converters="using:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     x:DataType="vm:MainViewModel"
     mc:Ignorable="d">
 
-    <UserControl.Resources>
+<UserControl.Resources>
         <converters:BoolToBrushConverter x:Key="BoolToBrushConverter" />
         <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
     </UserControl.Resources>
@@ -20,9 +21,9 @@
         BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="1"
         CornerRadius="6"
-        Classes="shadow-lg"
-        >
-        <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*">
+        Classes="shadow-lg">
+
+        <Grid RowDefinitions="Auto,*" Margin="4">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Grid.Column="0" Text="History" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                 <customControls:IconButton
@@ -31,7 +32,7 @@
                     CornerRadius="0,6,0,0"
                     Data="{StaticResource CloseGeometry}"
                     Foreground="{DynamicResource MainTextColor}"
-                    Command="{CompiledBinding HistoryWin.CloseCommand}"
+                    Command="{CompiledBinding HistoryManager.CloseCommand}"
                     Height="22"
                     Width="36"
                     IconHeight="18"
@@ -41,66 +42,55 @@
                     x:Name="CloseButton" />                
             </Grid>
 
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <ListBox
-                    ItemsSource="{CompiledBinding HistoryWin.Items}"
-                    SelectedIndex="{CompiledBinding HistoryWin.SelectedIndex.Value, Mode=TwoWay}"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Padding="0"
-                    ClipToBounds="True"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    SelectionMode="Single">
+            <ListBox
+                Grid.Row="1"
+                ItemsSource="{CompiledBinding HistoryManager.WindowVm.Items}"
+                SelectedIndex="{CompiledBinding HistoryManager.WindowVm.SelectedIndex.Value, Mode=TwoWay}"
+                Background="Transparent"
+                BorderThickness="0"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                SelectionMode="Single">
 
-                    <ListBox.Styles>
-                        <!-- Hover effect -->
-                        <Style Selector="ListBoxItem:pointerover /template/ Border#Bd">
-                            <Setter Property="Background" Value="{DynamicResource HoverColor}" />
-                        </Style>
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:HistoryItemViewModel">
+                        <Border
+                            Padding="4"
+                            Margin="2"
+                            CornerRadius="6"
+                            BorderThickness="1"
+                            BorderBrush="{DynamicResource BorderColor}">
+                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <Border CornerRadius="4" ClipToBounds="True">
+                                    <Grid>
+                                        <Image Source="{CompiledBinding Thumbnail.Value}"
+                                            Stretch="UniformToFill"
+                                            Width="72" Height="48"
+                                            Opacity="{CompiledBinding IsLoading.Value, Converter={StaticResource BoolToOpacityConverter}, ConverterParameter=0.6}" />
 
-                        <!-- Smooth background transitions -->
-                        <Style Selector="ListBoxItem">
-                            <Setter Property="Transitions">
-                                <Transitions>
-                                    <BrushTransition Property="Background" Duration="0:0:0.15" />
-                                </Transitions>
-                            </Setter>
-                        </Style>
-                    </ListBox.Styles>
+                                        <Viewbox Grid.Column="0" Width="20" Height="20"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            IsVisible="{CompiledBinding IsLoading.Value}">
+                                            <uc:SpinWaiter />
+                                        </Viewbox>
+                                    </Grid>
+                                </Border>                                
 
-                    <ListBox.ItemTemplate>
-                        <DataTemplate x:DataType="vm:HistoryItemViewModel">
-                            <Border
-                                Padding="6"
-                                Margin="2,2"
-                                CornerRadius="6"
-                                Background="{Binding IsActive, Converter={StaticResource BoolToBrushConverter}}"
-                                BorderThickness="1"
-                                BorderBrush="{DynamicResource BorderColor}">
-                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                    <Border Width="72" Height="48" CornerRadius="4" ClipToBounds="True">
-                                        <Image
-                                            Source="{Binding Thumbnail.Value}"
-                                            Stretch="UniformToFill" />
-                                    </Border>
-
-                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                         <TextBlock
-                                            Text="{Binding Title}"
+                                            Text="{CompiledBinding Title}"
                                             FontWeight="Bold"
                                             Foreground="{DynamicResource SecondaryTextColor}" />
                                         <TextBlock
-                                            Text="{Binding Subtitle}"
+                                            Text="{CompiledBinding Subtitle}"
                                             FontSize="12"
                                             Foreground="{DynamicResource SecondaryTextColor}" />
                                     </StackPanel>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </ScrollViewer>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
     </Border>
 </UserControl>

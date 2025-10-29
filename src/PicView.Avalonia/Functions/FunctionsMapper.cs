@@ -12,6 +12,7 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Views.Main;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
@@ -389,10 +390,13 @@ public static class FunctionsMapper
     /// <inheritdoc cref="HideInterfaceLogic.ToggleBottomToolbar(MainViewModel)" />
     public static async ValueTask ToggleBottomToolbar() =>
         await HideInterfaceLogic.ToggleBottomToolbar(Vm).ConfigureAwait(false);
-        
+
     /// <inheritdoc cref="HistoryWindowHost.ToggleHistoryWindow(MainViewModel)" />
     public static async ValueTask ToggleHistoryWindow() =>
-        await HistoryWindowHost.ToggleHistoryWindow(Vm).ConfigureAwait(false);
+        Vm.HistoryManager?.Show();
+        
+    public static async ValueTask ExportToPdf() =>
+        await FileSaverHelper.ExportToPdf(Vm).ConfigureAwait(false);
     
     /// <inheritdoc cref="SettingsUpdater.ToggleValueTaskbarProgress(MainViewModel)" />
     public static async ValueTask ToggleTaskbarProgress() =>
@@ -658,9 +662,12 @@ public static class FunctionsMapper
     public static async ValueTask Slideshow() =>
         await Navigation.Slideshow.StartSlideshow(Vm).ConfigureAwait(false);
 
-    public static ValueTask ColorPicker()
+    public static async ValueTask ColorPicker()
     {
-        throw new NotImplementedException();
+        await ColorPickerToolHost.ToggleColorPickerToolWindow(Vm).ConfigureAwait(false);
+        
+        //throw new NotImplementedException();
+
     }
     
     #endregion

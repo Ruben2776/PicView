@@ -92,4 +92,39 @@ public static class GetFilePickerFileTypes
         AppleUniformTypeIdentifiers = ["public.heif"],
         MimeTypes = ["image/heif"]
     };
+
+    public static FilePickerFileType PdfFileType { get; } = new(".pdf")
+    {
+        Patterns = ["*.pdf"],
+        AppleUniformTypeIdentifiers = ["public.pdf"],
+        MimeTypes = ["application/pdf"]
+    };
+
+    public static FilePickerFileType GetByExtension(string extension)
+    {
+        if (string.IsNullOrWhiteSpace(extension))
+            return AllFileType;
+
+        extension = extension.Trim().ToLowerInvariant();
+        if (!extension.StartsWith('.'))
+            extension = "." + extension;
+
+        return extension switch
+        {
+            ".avif" => AvifFileType,
+            ".tiff" or ".tif" => TiffFileType,
+            ".webp" => WebpFileType,
+            ".png" => PngFileType,
+            ".jpg" or ".jpeg" or ".jfif" => JpegFileType,
+            ".gif" => GifFileType,
+            ".bmp" => BmpFileType,
+            ".svg" => SvgFileType,
+            ".heic" => HeicFileType,
+            ".heif" => HeifFileType,
+            ".zip" or ".rar" or ".7z" or ".tar" => ArchiveFileType,
+            ".pdf" => PdfFileType,
+            _ => AllFileType
+        };
+    }
+
 }
