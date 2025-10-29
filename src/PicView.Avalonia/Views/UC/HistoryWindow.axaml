@@ -59,14 +59,9 @@
                             CornerRadius="6"
                             BorderThickness="1"
                             BorderBrush="{DynamicResource BorderColor}">
-                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Grid>
                                 <Border CornerRadius="4" ClipToBounds="True">
                                     <Grid>
-                                        <Image Source="{CompiledBinding Thumbnail.Value}"
-                                            Stretch="UniformToFill"
-                                            Width="72" Height="48"
-                                            Opacity="{CompiledBinding IsLoading.Value, Converter={StaticResource BoolToOpacityConverter}, ConverterParameter=0.6}" />
-
                                         <Viewbox Grid.Column="0" Width="20" Height="20"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
@@ -86,7 +81,7 @@
                                             FontSize="12"
                                             Foreground="{DynamicResource SecondaryTextColor}" />
                                     </StackPanel>
-                            </StackPanel>
+                            </Grid>
                         </Border>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

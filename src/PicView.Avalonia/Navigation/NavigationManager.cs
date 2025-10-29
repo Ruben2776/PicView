@@ -1,7 +1,9 @@
 ﻿using System.Runtime.InteropServices;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.History;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -39,43 +41,41 @@ public static class NavigationManager
     /// directory.
     /// </param>
     /// <param name="index">Optional: The index at which to start the navigation. Defaults to 0.</param>
-    public static async ValueTask LoadWithoutImageIterator(FileInfo fileInfo, MainViewModel vm, List<FileInfo>? files = null,
-        int index = 0)
+    public static async ValueTask LoadWithoutImageIterator(
+    FileInfo fileInfo,
+    MainViewModel vm,
+    List<FileInfo>? files = null,
+    int index = 0)
     {
         _ = Task.Run(GalleryLoad.CancelGalleryLoadAsync);
-        
+
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         ImageModel? nextImageModel = null;
-        vm.PicViewer.ImageSource.Value = imageModel.Image;
-        vm.PicViewer.ImageType.Value = imageModel.ImageType;
-        if (!Settings.ImageScaling.ShowImageSideBySide)
+
+        // Apply via the viewer pipeline so the control re-measures & zoom/fit recompute
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            var size = WindowResizing.GetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0, 0, imageModel.Rotation, vm );
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                vm.ImageViewer.SetTransform(imageModel.Orientation, imageModel.Format);
-                if (size.HasValue)
-                {
-                    WindowResizing.SetSize(size.Value,
-                        vm);
-                }
-                else
-                {
-                    WindowResizing.GetSize(vm);
-                }
-            });
-        }
+            vm.PicViewer.ImageType.Value = imageModel.ImageType;
+            vm.ImageViewer.ApplyBitmapAndRefresh((Bitmap?)imageModel.Image, vm);
+        });
 
-        await DisposeImageIteratorAsync();
+        await DisposeImageIteratorAsync().ConfigureAwait(false);
 
+        // Initialize iterator
         if (files is null)
         {
             ImageIterator = new ImageIterator(fileInfo, vm);
             index = ImageIterator.CurrentIndex;
+
             if (index == -1)
             {
-                await UpdateImage.SetSingleImageAsync(imageModel.Image, imageModel.ImageType,
-                    TranslationManager.Translation.ClipboardImage, vm);
+                // Clipboard/single image case
+                await UpdateImage.SetSingleImageAsync(
+                    imageModel.Image,
+                    imageModel.ImageType,
+                    TranslationManager.Translation.ClipboardImage,
+                    vm).ConfigureAwait(false);
+
                 return;
             }
         }
@@ -86,56 +86,57 @@ public static class NavigationManager
 
         if (Settings.ImageScaling.ShowImageSideBySide)
         {
-            nextImageModel = (await ImageIterator.GetNextPreLoadValueAsync()).ImageModel;
+            // Preload the neighbour and set secondary source
+            nextImageModel = (await ImageIterator.GetNextPreLoadValueAsync().ConfigureAwait(false)).ImageModel;
             vm.PicViewer.SecondaryImageSource.Value = nextImageModel.Image;
+
+            // Compute size once with both images
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                WindowResizing.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, nextImageModel.PixelWidth,
-                    nextImageModel.PixelHeight, imageModel.Rotation, vm);
+                WindowResizing.SetSize(
+                    imageModel.PixelWidth, imageModel.PixelHeight,
+                    nextImageModel.PixelWidth, nextImageModel.PixelHeight,
+                    imageModel.Rotation,
+                    vm);
             });
 
             TitleManager.SetSideBySideTitle(vm, imageModel, nextImageModel);
             UpdateImage.SetStats(vm, imageModel);
 
-            // Fixes incorrect rendering in the side by side view
-            // TODO: Improve and fix side by side and remove this hack 
-            Dispatcher.UIThread.Post(() => { vm.ImageViewer?.MainImage?.InvalidateVisual(); });
+            // Small nudge for first paint in side-by-side
+            Dispatcher.UIThread.Post(() => vm.ImageViewer?.MainImage?.InvalidateVisual());
         }
         else
         {
-            var isTiffUpdated = await CheckIfTiffAndUpdate(vm, fileInfo, index);
+            // Multipage TIFF handling may replace content/title; if it doesn't, set title/stats here
+            var isTiffUpdated = await CheckIfTiffAndUpdate(vm, fileInfo, index).ConfigureAwait(false);
             if (!isTiffUpdated)
             {
-                if (Settings.ImageScaling.ShowImageSideBySide)
-                {
-                    TitleManager.SetSideBySideTitle(vm, imageModel, nextImageModel);
-                }
-                else
-                {
-                    TitleManager.SetTitle(vm, imageModel);
-                }
-
+                TitleManager.SetTitle(vm, imageModel);
                 UpdateImage.SetStats(vm, imageModel);
             }
         }
 
+        // Platform-specific render correction (kept from original)
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            await WindowFunctions.ResizeAndFixRenderingError(vm);
+            await WindowFunctions.ResizeAndFixRenderingError(vm).ConfigureAwait(false);
         }
 
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-        if (ImageIterator.ImagePaths.Count > 0 && index > ImageIterator.ImagePaths.Count)
+
+        if (ImageIterator.ImagePaths.Count > 0 && index >= 0 && index < ImageIterator.ImagePaths.Count)
         {
             FileHistoryManager.Add(ImageIterator.ImagePaths[index].FullName);
             if (Settings.ImageScaling.ShowImageSideBySide)
             {
-                FileHistoryManager.Add(
-                    ImageIterator.ImagePaths[ImageIterator.GetIteration(index, NavigateTo.Next)].FullName);
+                var nextIdx = ImageIterator.GetIteration(index, NavigateTo.Next);
+                if (nextIdx >= 0 && nextIdx < ImageIterator.ImagePaths.Count)
+                    FileHistoryManager.Add(ImageIterator.ImagePaths[nextIdx].FullName);
             }
         }
 
-        await GalleryLoad.CheckAndReloadGallery(fileInfo, vm);
+        await GalleryLoad.CheckAndReloadGallery(fileInfo, vm).ConfigureAwait(false);
     }
 
 

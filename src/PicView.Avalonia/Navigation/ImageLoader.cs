@@ -1,4 +1,5 @@
-﻿using ImageMagick;
+﻿using Avalonia.Threading;
+using ImageMagick;
 using PicView.Avalonia.History;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Input;
@@ -116,6 +117,7 @@ public static class ImageLoader
                     _cancellationTokenSource ??= new CancellationTokenSource();
                     await imageIterator.IterateToIndex(index, _cancellationTokenSource).ConfigureAwait(false);
                     await NavigationManager.CheckIfTiffAndUpdate(vm, fileInfo, index);
+
                     if (Settings.Gallery.IsBottomGalleryShown && NavigationManager.GetCount > 0)
                     {
                         vm.Gallery.GalleryMode.Value = GalleryMode.ClosedToBottom;

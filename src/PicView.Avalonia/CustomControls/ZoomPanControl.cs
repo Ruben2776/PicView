@@ -100,11 +100,12 @@ public class ZoomPanControl : Decorator
 
     protected override Size ArrangeOverride(Size finalSize)
     {
-        // After layout, ensure transforms are constrained
-        ConstrainTranslationToBounds();
+        var result = base.ArrangeOverride(finalSize);
+        ConstrainTranslationToBounds(finalSize);
         UpdateChildTransform();
-        return base.ArrangeOverride(finalSize);
+        return result;
     }
+
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
@@ -492,86 +493,58 @@ public class ZoomPanControl : Decorator
 
     /// <summary>
     /// Ensures the transformed child covers the control area (i.e. prevents panning away until whitespace appears).
+    /// Uses provided control size when available (e.g., during Arrange), otherwise falls back to current Bounds.
     /// </summary>
-    private void ConstrainTranslationToBounds()
+    private void ConstrainTranslationToBounds(Size? controlSize = null)
     {
         if (Child == null)
-        {
             return;
-        }
 
-
-        // We need the child's size in local coordinates
+        // Child size after this arrange; if zero, fall back to desired size
         var childSize = Child.Bounds.Size;
-        if (childSize.Width <= 0 || childSize.Height <= 0 || double.IsNaN(childSize.Width) ||
-            double.IsNaN(childSize.Height))
-        {
-            // Fallback to desired size
+        if (childSize.Width <= 0 || childSize.Height <= 0 || double.IsNaN(childSize.Width) || double.IsNaN(childSize.Height))
             childSize = Child.DesiredSize;
-        }
-
         if (childSize.Width <= 0 || childSize.Height <= 0)
-        {
             return;
-        }
 
-        // Without rotation, the scaled content bounds are straightforward
-        var scaledWidth = childSize.Width * Scale;
+        // Use the size we're arranging to if provided; otherwise current Bounds
+        var controlWidth  = controlSize?.Width  ?? Bounds.Width;
+        var controlHeight = controlSize?.Height ?? Bounds.Height;
+
+        var scaledWidth  = childSize.Width  * Scale;
         var scaledHeight = childSize.Height * Scale;
-
-        var controlWidth = Bounds.Width;
-        var controlHeight = Bounds.Height;
 
         var desiredTx = TranslateX;
         var desiredTy = TranslateY;
 
-        // Horizontal
+        // Horizontal centering/constraints
         if (scaledWidth <= controlWidth)
         {
-            // Center horizontally if content is smaller than control
             desiredTx = (controlWidth - scaledWidth) / 2.0;
         }
         else
         {
-            // Constrain to prevent showing whitespace
-            // Left edge: TranslateX should be <= 0
-            if (desiredTx > 0)
-            {
-                desiredTx = 0;
-            }
-
-            // Right edge: TranslateX + scaledWidth should be >= controlWidth
+            if (desiredTx > 0) desiredTx = 0;
             if (desiredTx + scaledWidth < controlWidth)
-            {
                 desiredTx = controlWidth - scaledWidth;
-            }
         }
 
-        // Vertical
+        // Vertical centering/constraints
         if (scaledHeight <= controlHeight)
         {
-            // Center vertically if content is smaller than control
             desiredTy = (controlHeight - scaledHeight) / 2.0;
         }
         else
         {
-            // Constrain to prevent showing whitespace
-            // Top edge: TranslateY should be <= 0
-            if (desiredTy > 0)
-            {
-                desiredTy = 0;
-            }
-
-            // Bottom edge: TranslateY + scaledHeight should be >= controlHeight
+            if (desiredTy > 0) desiredTy = 0;
             if (desiredTy + scaledHeight < controlHeight)
-            {
                 desiredTy = controlHeight - scaledHeight;
-            }
         }
 
         TranslateX = desiredTx;
         TranslateY = desiredTy;
     }
+
 
     #endregion
 

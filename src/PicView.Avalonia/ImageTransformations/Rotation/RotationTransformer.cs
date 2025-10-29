@@ -40,7 +40,7 @@ public class RotationTransformer(
             var rotated = await Task.Run(() => RotateBitmap((Bitmap)vm.PicViewer.ImageSource.Value, 90));
 
             // Create a new history snapshot using the Bitmap
-            //await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
+            await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
 
             // Apply to the PicViewer on the UI thread
             await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(rotated, vm));
@@ -69,7 +69,7 @@ public class RotationTransformer(
             var rotated = await Task.Run(() => RotateBitmap((Bitmap)vm.PicViewer.ImageSource.Value, angle));
 
             // Create a new history snapshot using the Bitmap
-            //await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
+            await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
 
             // Apply updates on UI thread
             await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(rotated, vm));
@@ -139,7 +139,7 @@ public class RotationTransformer(
             var flipped = await Task.Run(() => FlipBitmap(bmp, horizontal));
 
             // Create a new history snapshot using the Bitmap
-            //await vm.HistoryManager.AddSnapshot(EditKind.Flip, desc, flipped).ConfigureAwait(false);
+            await vm.HistoryManager.AddSnapshot(EditKind.Flip, desc, flipped).ConfigureAwait(false);
 
             // Update the viewer
             await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(flipped, vm));
