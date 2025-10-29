@@ -142,22 +142,24 @@ public partial class DateTimePickerButtons : UserControl
 
     private void ShowPopUpControl(bool calendar)
     {
-        if (!SelectedDateTime.HasValue)
-        {
-            return;
-        }
         if (calendar)
         {
             _calendarContainer.IsVisible = true;
             _calendarContainer.Opacity = 1;
-            _calendarContainer.PartCalendar.SelectedDate = SelectedDateTime.Value;
-            _calendarContainer.PartCalendar.DisplayDate = SelectedDateTime.Value;
+            if (SelectedDateTime.HasValue)
+            {
+                _calendarContainer.PartCalendar.SelectedDate = SelectedDateTime.Value;
+                _calendarContainer.PartCalendar.DisplayDate = SelectedDateTime.Value;
+            }
         }
         else
         {
             _clock.IsVisible = true;
             _clock.Opacity = 1;
-            _clock.SelectedTime = SelectedDateTime.Value;
+            if (SelectedDateTime.HasValue)
+            {
+                _clock.SelectedTime = SelectedDateTime.Value;
+            }
         }
 
         FlyoutBase.ShowAttachedFlyout(calendar ? CalendarButton : TimePickerButton);
@@ -169,13 +171,13 @@ public partial class DateTimePickerButtons : UserControl
     /// </summary>
     private void OnCalendarAccepted(object? sender, EventArgs e)
     {
-        if (!_calendarContainer.SelectedDate.HasValue || !SelectedDateTime.HasValue)
+        if (!_calendarContainer.SelectedDate.HasValue)
         {
             return;
         }
-
+        
         var newDate = _calendarContainer.PartCalendar.DisplayDate.Date;
-        var oldTime = SelectedDateTime.Value.TimeOfDay;
+        var oldTime = SelectedDateTime?.TimeOfDay ?? DateTime.Now.TimeOfDay;
         SelectedDateTime = newDate + oldTime;
 
         ExecuteCommand();

@@ -31,28 +31,48 @@ public partial class BatchResizeView : UserControl
 
         SubscribeToEvents(vm);
         InitializeNavigationData(vm);
-        if (!Settings.Theme.Dark)
+        if (!Settings.Theme.Dark || Settings.Theme.GlassTheme)
         {
-            LightThemeAdjustments();
+            ColorThemeAdjustments();
         }
     }
 
-    private void LightThemeAdjustments()
+    private void ColorThemeAdjustments()
     {
-        if (!Application.Current.TryGetResource("MenuBackgroundColor",
-                Application.Current.RequestedThemeVariant, out var menuBackgroundColor))
+        if (!Settings.Theme.Dark && !Settings.Theme.GlassTheme)
         {
-            return;
-        }
+            if (!Application.Current.TryGetResource("MenuBackgroundColor",
+                    Application.Current.RequestedThemeVariant, out var menuBackgroundColor))
+            {
+                return;
+            }
 
-        if (menuBackgroundColor is not Color color)
+            if (menuBackgroundColor is not Color color)
+            {
+                return;
+            }
+
+            Background = new SolidColorBrush(color);
+            var lightColor = new SolidColorBrush(Color.Parse("#F0FFFFFF"));
+            FileLogHeaderBorder.Background = FilePanelLogBorder.Background = lightColor;
+        }
+        else
         {
-            return;
-        }
+            AddFileButton.BorderThickness = AddFolderButton.BorderThickness = new Thickness(0);
 
-        Background = new SolidColorBrush(color);
-        var lightColor = new SolidColorBrush(Color.Parse("#F0FFFFFF"));
-        FolderHeaderBorder.Background = FilePanelLogBorder.Background = lightColor;
+            if (!Application.Current.TryGetResource("SoftenColorBrush",
+                    Application.Current.RequestedThemeVariant, out var menuBackgroundColor))
+            {
+                return;
+            }
+
+            if (menuBackgroundColor is not SolidColorBrush color)
+            {
+                return;
+            }
+
+            FileLogHeaderBorder.Background = FilePanelLogBorder.Background = color;
+        }
 
         AddFileButton.Classes.Remove("altHover");
         AddFileButton.Classes.Add("hover");
@@ -127,22 +147,24 @@ public partial class BatchResizeView : UserControl
         var saveDestination = outputBox.Text;
 
         // Parse the value from the TextBox
-        if (uint.TryParse(valueBox?.Text, out var thumbValue))
+        if (!uint.TryParse(valueBox?.Text, out var thumbValue))
         {
-            if (thumbIsPercentageResized)
-            {
-                vm.BatchResizeViewModel.Thumbs[x] = new BatchThumb(saveDestination, new Percentage(thumbValue));
-            }
+            return;
+        }
 
-            if (thumbIsWidthResized)
-            {
-                vm.BatchResizeViewModel.Thumbs[x] = new BatchThumb(saveDestination, width: thumbValue);
-            }
+        if (thumbIsPercentageResized)
+        {
+            vm.BatchResizeViewModel.Thumbs[x] = new BatchThumb(saveDestination, new Percentage(thumbValue));
+        }
 
-            if (thumbIsHeightResized)
-            {
-                vm.BatchResizeViewModel.Thumbs[x] = new BatchThumb(saveDestination, height: thumbValue);
-            }
+        if (thumbIsWidthResized)
+        {
+            vm.BatchResizeViewModel.Thumbs[x] = new BatchThumb(saveDestination, width: thumbValue);
+        }
+
+        if (thumbIsHeightResized)
+        {
+            vm.BatchResizeViewModel.Thumbs[x] = new BatchThumb(saveDestination, height: thumbValue);
         }
     }
 

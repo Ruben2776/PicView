@@ -18,10 +18,9 @@
                     Name="border"
                     Padding="{TemplateBinding Padding}">
                     <!--  This is the panel where the text boxes will be dynamically added  -->
-                    <StackPanel
+                    <DockPanel
                         HorizontalAlignment="Left"
                         Name="PART_Container"
-                        Orientation="Horizontal"
                         VerticalAlignment="Center" />
                 </Border>
             </ControlTemplate>

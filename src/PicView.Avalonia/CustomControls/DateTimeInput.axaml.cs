@@ -47,7 +47,7 @@ public class DateTimeInput : TemplatedControl
     private CompositeDisposable _disposables = new();
 
     private const string PARTContainer = "PART_Container";
-    private StackPanel? _partStackPanel;
+    private DockPanel? _controlsContainer;
 
     /// <summary>
     /// Static constructor to register the default style for this control.
@@ -78,10 +78,10 @@ public class DateTimeInput : TemplatedControl
         base.OnApplyTemplate(e);
 
         // Find the container that will hold our dynamic controls.
-        var container = e.NameScope.Find<StackPanel>(PARTContainer);
+        var container = e.NameScope.Find<DockPanel>(PARTContainer);
 
-        _partStackPanel = container ??
-                          throw new InvalidOperationException("Could not find PART_Container in the control template.");
+        _controlsContainer = container ??
+                             throw new InvalidOperationException("Could not find PART_Container in the control template.");
 
         // Generate and add the date/time input controls based on current culture.
         BuildInputControls(container);
@@ -99,11 +99,11 @@ public class DateTimeInput : TemplatedControl
         {
             if (vm.PicViewer?.FileInfo.Value?.Exists == true)
             {
-                _partStackPanel?.IsVisible = true;
+                _controlsContainer?.IsVisible = true;
             }
             else
             {
-                _partStackPanel?.IsVisible = false;
+                _controlsContainer?.IsVisible = false;
             }
         }
         // Set a flag to indicate that the update is coming from the property,
@@ -118,7 +118,7 @@ public class DateTimeInput : TemplatedControl
     /// in an order determined by the current culture.
     /// </summary>
     /// <param name="container">The panel to add controls to.</param>
-    private void BuildInputControls(StackPanel container)
+    private void BuildInputControls(DockPanel container)
     {
         // Detach handlers from previously created controls and clear subscriptions.
         DetachHandlersAndClearState();
@@ -247,8 +247,10 @@ public class DateTimeInput : TemplatedControl
         {
             Classes = { "txt" },
             Text = CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator,
-            VerticalAlignment = VerticalAlignment.Center
+            VerticalAlignment = VerticalAlignment.Center,
+            LineHeight = 22
         };
+        DockPanel.SetDock(textBlock, Dock.Left);
         HideTextBlockWhenNotEnabledSubscription(textBlock);
         return textBlock;
     }
@@ -266,7 +268,8 @@ public class DateTimeInput : TemplatedControl
             Text = $" {separatorChar} ",
             VerticalAlignment = VerticalAlignment.Center,
             FontSize = 18,
-            Opacity = .6
+            Opacity = .6,
+            LineHeight = 22
         };
         HideTextBlockWhenNotEnabledSubscription(textBlock);
         return textBlock;

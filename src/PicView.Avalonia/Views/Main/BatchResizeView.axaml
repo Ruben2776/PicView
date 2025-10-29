@@ -242,7 +242,7 @@
                 DockPanel.Dock="Top"
                 IsVisible="{Binding Path=IsSelected, ElementName=SelectFilesTabItem}"
                 Margin="10,0"
-                x:Name="FolderHeaderBorder">
+                x:Name="FileLogHeaderBorder">
 
                 <!--  Files panel header  -->
                 <DockPanel LastChildFill="True" VerticalAlignment="Top">
