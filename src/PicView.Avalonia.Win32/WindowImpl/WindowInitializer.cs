@@ -1,13 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Drawing.Printing;
-using System.Threading.Tasks;
+﻿using System.Drawing.Printing;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Interfaces;
-using PicView.Avalonia.Printing;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Update;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC;
@@ -111,7 +110,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 _imageInfoWindow.Closing += (_, _) =>
                 {
                     _imageInfoWindow = null;
-                    vm.Exif.Dispose();
+                    vm.Exif?.Dispose();
                     vm.Exif = null;
                     vm.InfoWindow.Dispose();
                     vm.InfoWindow = null;
@@ -308,6 +307,9 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 await vm.Window.BatchResizeWindowConfig.LoadAsync();
             }
 
+            vm.BatchResizeViewModel = new BatchResizeViewModel(NavigationManager.CanNavigate(vm),
+                FilePicker.SelectDirectory, FilePicker.SelectFile, vm.PicViewer.FileInfo.CurrentValue,
+                vm.PlatformService.GetFiles);
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _batchResizeWindow = new BatchResizeWindow(vm.Window.BatchResizeWindowConfig)
@@ -316,7 +318,13 @@ public class WindowInitializer : IPlatformSpecificUpdate
                     WindowStartupLocation = WindowStartupLocation.CenterOwner
                 };
                 Show();
-                _batchResizeWindow.Closing += (_, _) => _batchResizeWindow = null;
+                _batchResizeWindow.Closing += (_, _) =>
+                {
+                    _batchResizeWindow.Dispose();
+                    _batchResizeWindow = null;
+                    vm.BatchResizeViewModel.Dispose();
+                    vm.BatchResizeViewModel = null;
+                };
             });
         }
         else
@@ -336,12 +344,13 @@ public class WindowInitializer : IPlatformSpecificUpdate
         }
 
         await FunctionsMapper.CloseMenus();
-
+        
         return;
 
         void Show()
         {
-            WindowFunctions.InitializeWindowPosition(_batchResizeWindow, vm.Window.BatchResizeWindowConfig.WindowProperties);
+            WindowFunctions.InitializeWindowSizeAndPosition(_batchResizeWindow,
+                vm.Window.BatchResizeWindowConfig.WindowProperties);
             _batchResizeWindow.Show(desktop.MainWindow);
         }
     }
@@ -437,7 +446,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
             _ = FunctionsMapper.CloseMenus();
         }
     }
-
+    
     public void ShowPrintPreviewWindow(MainViewModel vm)
     {
         if (Dispatcher.UIThread.CheckAccess())
@@ -498,27 +507,27 @@ public class WindowInitializer : IPlatformSpecificUpdate
 
                     var currentPrintSettings =
                         new PrintSettings // TODO: Add print settings to its own config class to remember user preference
-                        {
-                            ImagePath = { Value = vm.PicViewer.FileInfo?.Value?.FullName },
-                            PrinterName = { Value = printerSettings.PrinterName },
-                            PaperSize = { Value = pageSettings.PaperSize.PaperName },
-                            ColorMode = { Value = printerSettings.SupportsColor ? (int)ColorModes.Auto : (int)ColorModes.BlackAndWhite },
-                            Orientation = { Value = pageSettings.Landscape ? (int)Orientations.Landscape : (int)Orientations.Portrait },
-                            MarginTop = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Top) },
-                            MarginBottom = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Bottom) },
-                            MarginLeft = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Left) },
-                            MarginRight = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Right) }
-                        };
+                    {
+                        ImagePath = { Value = vm.PicViewer.FileInfo?.Value?.FullName },
+                        PrinterName = { Value = printerSettings.PrinterName },
+                        PaperSize = { Value = pageSettings.PaperSize.PaperName },
+                        ColorMode = { Value = printerSettings.SupportsColor ? (int)ColorModes.Auto : (int)ColorModes.BlackAndWhite },
+                        Orientation = { Value = pageSettings.Landscape ? (int)Orientations.Landscape : (int)Orientations.Portrait },
+                        MarginTop = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Top) },
+                        MarginBottom = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Bottom) },
+                        MarginLeft = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Left) },
+                        MarginRight = { Value = PrintSettings.HundredthsInchToMm(pageSettings.Margins.Right) }
+                    };
 
                     vm.PrintPreview.PrintSettings.Value = currentPrintSettings;
-
+                    
                     // TODO: set a blank image at correct size first, and then update it with real image, to avoid resizing
                     if (vm.PicViewer.FileInfo.Value != null && File.Exists(vm.PicViewer.FileInfo.Value.FullName))
                     {
                         using var fs = File.OpenRead(vm.PicViewer.FileInfo.Value.FullName);
                         vm.PrintPreview.PreviewImage.Value = new System.Drawing.Bitmap(fs);
                     }
-
+                    
                     _printPreviewWindow.Initialize();
                 });
             }

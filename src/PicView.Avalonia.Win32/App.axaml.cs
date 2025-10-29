@@ -161,9 +161,13 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
     public void Print(string path)
     {
         if (Settings.UIProperties.ShowPrintPreview)
-            _windowInitializer?.ShowPrintPreviewWindow(_vm);
+        {
+            _windowInitializer?.ShowPrintPreviewWindow(_vm, path);
+        }
         else
+        {
             ProcessHelper.Print(path);
+        }
     }
 
     public async Task SetAsWallpaper(string path, int wallpaperStyle)

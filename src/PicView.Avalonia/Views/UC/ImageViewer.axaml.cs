@@ -25,11 +25,13 @@ public partial class ImageViewer : UserControl
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
+        InitializeImageTransformer();
+        ZoomPanControl.ResetZoomSlim();
+        
         // Start in dispatcher with low priority,
         // because it is more important to schedule it after more important things.
         Dispatcher.UIThread.Invoke(() =>
         {
-            InitializeImageTransformer();
             AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
             AddHandler(Gestures.PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
             AddHandler(Gestures.PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);

@@ -1024,6 +1024,7 @@ public class ImageIterator : IAsyncDisposable
             }
 
             _timer?.Dispose();
+            _timer = null;
             PreLoader.Dispose();
         }
 

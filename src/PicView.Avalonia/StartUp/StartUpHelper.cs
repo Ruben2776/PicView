@@ -5,6 +5,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.ColorManagement;
@@ -115,9 +117,13 @@ public static class StartUpHelper
         }
         else
         {
-            Task.Run(() => KeybindingManager.SetDefaultKeybindings(vm.PlatformService));
+            Task.Run(() =>
+            {
+                KeybindingManager.SetDefaultKeybindings(vm.PlatformService);
+            });
         }
 
+        SetWindowEventHandlers(window);
         HandleThemeUpdates(vm);
 
         UIHelper.SetControls(desktop);
@@ -154,7 +160,6 @@ public static class StartUpHelper
 
         MenuManager.AddMenus();
         UIHelper.AddHoverBar(vm);
-        SetWindowEventHandlers(window);
         TooltipHelper.StartTooltipSubscription(vm);
         
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
@@ -309,8 +314,11 @@ public static class StartUpHelper
 
     private static void SetWindowEventHandlers(Window w)
     {
-        w.KeyDown += async (_, e) => await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
-        w.KeyUp += (_, e) => MainKeyboardShortcuts.MainWindow_KeysUp(e);
+        // Using AddHandler fixes the first keydown event not firing properly
+        w.AddHandler(InputElement.KeyDownEvent, MainWindow_KeysDownAsync,
+            RoutingStrategies.Tunnel | RoutingStrategies.Bubble | RoutingStrategies.Direct);
+        w.AddHandler(InputElement.KeyUpEvent, MainWindow_KeyUp,
+            RoutingStrategies.Tunnel | RoutingStrategies.Bubble | RoutingStrategies.Direct);
         w.PointerPressed += async (_, e) => await MouseShortcuts.MainWindow_PointerPressed(e).ConfigureAwait(false);
 
         w.Deactivated += delegate
@@ -318,5 +326,17 @@ public static class StartUpHelper
             MainKeyboardShortcuts.Reset();
             MainKeyboardShortcuts.ClearKeyDownModifiers();
         };
+    }
+
+    private static async Task MainWindow_KeysDownAsync(object? sender, KeyEventArgs e)
+    {
+        e.Handled = true;
+        await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
+    }
+
+    private static void MainWindow_KeyUp(object? sender, KeyEventArgs e)
+    {
+        e.Handled = true;
+        MainKeyboardShortcuts.MainWindow_KeysUp(e);
     }
 }

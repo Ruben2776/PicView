@@ -1,6 +1,7 @@
 <ResourceDictionary
     x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ControlTheme TargetType="TextBox" x:Key="{x:Type TextBox}">
@@ -34,7 +35,6 @@
                                     HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
                                     IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
                                     Name="PART_ScrollViewer"
-                                    Theme="{StaticResource Inline}"
                                     VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
                                     <Panel>
                                         <TextBlock
@@ -81,6 +81,7 @@
 
         <Style Selector="^:pointerover /template/ Border#border">
             <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+            <Setter Property="Cursor" Value="IBeam" />
         </Style>
         <Style Selector="^.disabled:pointerover /template/ Border#border">
             <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />

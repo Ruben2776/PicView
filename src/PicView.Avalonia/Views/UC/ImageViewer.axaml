@@ -8,12 +8,7 @@
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <LayoutTransformControl x:Name="ImageLayoutTransformControl">
-        <customControls:ZoomPanControl
-            Height="{CompiledBinding PicViewer.ImageHeight.Value,
-                                     Mode=OneWay}"
-            Width="{CompiledBinding PicViewer.ImageWidth.Value,
-                                    Mode=OneWay}"
-            x:Name="ZoomPanControl">
+        <customControls:ZoomPanControl x:Name="ZoomPanControl">
             <customControls:AutoScrollViewer
                 Focusable="False"
                 Height="{CompiledBinding PicViewer.ScrollViewerHeight.Value,
@@ -23,7 +18,14 @@
                 Width="{CompiledBinding PicViewer.ScrollViewerWidth.Value,
                                         Mode=OneWay}"
                 x:Name="ImageScrollViewer">
-                <Border Background="{CompiledBinding MainWindow.ConstrainedImageBackground.Value, Mode=OneWay}" x:Name="MainBorder">
+                <Border
+                    Background="{CompiledBinding MainWindow.ConstrainedImageBackground.Value,
+                                                 Mode=OneWay}"
+                    Height="{CompiledBinding PicViewer.ImageHeight.Value,
+                                             Mode=OneWay}"
+                    Width="{CompiledBinding PicViewer.ImageWidth.Value,
+                                            Mode=OneWay}"
+                    x:Name="MainBorder">
                     <customControls:PicBox
                         ImageType="{CompiledBinding PicViewer.ImageType.Value,
                                                     Mode=OneWay}"

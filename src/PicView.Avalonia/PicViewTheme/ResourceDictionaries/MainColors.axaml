@@ -50,6 +50,8 @@
 
             <Color x:Key="DarkenBgColor">#14000000</Color>
 
+            <Color x:Key="SoftenColor">#491A1A1A</Color>
+            <SolidColorBrush Color="{DynamicResource SoftenColor}" x:Key="SoftenColorBrush" />
 
             <ImageBrush
                 DestinationRect="0,0,200,200"
@@ -114,9 +116,13 @@
             <Color x:Key="WindowBorderColor">#39FFFFFF</Color>
             <Color x:Key="WindowButtonBackgroundColor">#fff</Color>
 
+            <Color x:Key="SoftenColor">#fff</Color>
+
             <Color x:Key="DropDownBgColor">#F3F8F8F8</Color>
 
             <Color x:Key="NoisyTexture">#17FFFFFF</Color>
+
+
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

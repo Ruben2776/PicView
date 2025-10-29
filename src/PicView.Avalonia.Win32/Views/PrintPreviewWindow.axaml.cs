@@ -78,6 +78,10 @@ public partial class PrintPreviewWindow : Window
             return;
         }
 
+        // Initial render
+        UpdatePreview(vm.PrintPreview);
+        UpdatePrinter(vm.PrintPreview);
+
         var ps = vm.PrintPreview.PrintSettings.Value;
 
         // Printer change
@@ -103,10 +107,6 @@ public partial class PrintPreviewWindow : Window
             .ThrottleLast(TimeSpan.FromMilliseconds(100))
             .Subscribe(_ => UpdatePreview(vm.PrintPreview))
             .AddTo(vm.PrintPreview.Disposables);
-
-        // Initial render
-        UpdatePrinter(vm.PrintPreview);
-        UpdatePreview(vm.PrintPreview);
     }
 
 
@@ -169,10 +169,7 @@ public partial class PrintPreviewWindow : Window
                 return;
             }
 
-            if (DataContext is not MainViewModel mainVm)
-            {
-                return;
-            }
+            var mainVm = Dispatcher.UIThread.Invoke(() => DataContext as MainViewModel);
 
             if (mainVm.PicViewer?.ImageSource.Value is not Bitmap avaloniaBmp)
             {
@@ -208,8 +205,9 @@ public partial class PrintPreviewWindow : Window
             var rtb = new RenderTargetBitmap(
                 new PixelSize((int)layout.PageWidthPx, (int)layout.PageHeightPx));
 
-            using (var ctx = rtb.CreateDrawingContext())
+            Dispatcher.UIThread.Invoke(() =>
             {
+                using var ctx = rtb.CreateDrawingContext();
                 ctx.FillRectangle(Brushes.White, new Rect(0, 0, layout.PageWidthPx, layout.PageHeightPx));
                 ctx.DrawRectangle(null, new Pen(Brushes.LightGray),
                     new Rect(0.5, 0.5, layout.PageWidthPx - 1, layout.PageHeightPx - 1));
@@ -226,7 +224,7 @@ public partial class PrintPreviewWindow : Window
                 ctx.DrawImage(avaloniaBmp,
                     new Rect(0, 0, avaloniaBmp.PixelSize.Width, avaloniaBmp.PixelSize.Height),
                     destRect);
-            }
+            });
 
             if (vm.PreviewImage.Value is Bitmap old)
             {

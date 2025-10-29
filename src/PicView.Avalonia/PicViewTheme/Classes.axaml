@@ -21,6 +21,11 @@
         </Style>
     </Style>
 
+    <Style Selector="TextBlock.bold">
+        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Bold.ttf#Roboto" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
     <Style Selector="TextBlock.txtShadow">
         <Setter Property="Effect" Value="{StaticResource TextShadow}" />
     </Style>

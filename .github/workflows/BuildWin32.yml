@@ -61,7 +61,7 @@ jobs:
           
           & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' `
             /O+ `
-            /DMyAppVersion="${{steps.get-version.outputs.version}}" `
+            /DMyAppVersion="${{steps.get-version.outputs.clean-version}}" `
             /DMyAppOutputDir="${{ github.workspace }}\Build\install" `
             /DMyFileSource="${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64" `
             /DMyAppOutputName="PicView-v${{steps.get-version.outputs.version}}-win-x64" `
@@ -105,7 +105,7 @@ jobs:
           
           & 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe' `
             /O+ `
-            /DMyAppVersion="${{steps.get-version.outputs.version}}" `
+            /DMyAppVersion="${{steps.get-version.outputs.clean-version}}" `
             /DMyAppOutputDir="${{ github.workspace }}\Build\install" `
             /DMyFileSource="${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64" `
             /DMyAppOutputName="PicView-v${{steps.get-version.outputs.version}}-win-arm64" `
