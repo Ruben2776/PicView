@@ -1,9 +1,11 @@
 ﻿using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.Crop;
+using PicView.Avalonia.Extensions;
 using PicView.Avalonia.Extensions;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.ImageHandling;
@@ -13,6 +15,7 @@ using PicView.Core.Localization;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using R3;
+using R3.Avalonia;
 using R3.Avalonia;
 using Unit = R3.Unit;
 using ABI.Windows.AI.MachineLearning.Preview;
@@ -26,12 +29,15 @@ public class ImageCropperViewModel : IDisposable
     {
         CropImageCommand = new ReactiveCommand(CropImageAsync);
         SaveCropImageCommand = new ReactiveCommand(SaveCroppedImageAsync);
+        CropImageCommand = new ReactiveCommand(CropImageAsync);
+        SaveCropImageCommand = new ReactiveCommand(SaveCroppedImageAsync);
         CopyCropImageCommand = new ReactiveCommand(CopyCroppedImageAsync);
         CloseCropCommand = new ReactiveCommand(HandleCloseCrop);
         Bitmap.Value = bitmap;
     }
 
     public ReactiveCommand CropImageCommand { get; private set; }
+    public ReactiveCommand SaveCropImageCommand { get; private set; }
     public ReactiveCommand SaveCropImageCommand { get; private set; }
     public ReactiveCommand CopyCropImageCommand { get; private set; }
     public ReactiveCommand CloseCropCommand { get; private set; }
