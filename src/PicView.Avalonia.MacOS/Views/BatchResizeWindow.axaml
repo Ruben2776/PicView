@@ -2,18 +2,12 @@
     BorderThickness="1"
     ExtendClientAreaChromeHints="SystemChrome"
     ExtendClientAreaTitleBarHeightHint="-1"
-    SizeToContent="WidthAndHeight"
-    WindowStartupLocation="CenterOwner"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
+    MinHeight="500"
+    MinWidth="500"
     x:Class="PicView.Avalonia.MacOS.Views.BatchResizeWindow"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.DataContext>
@@ -23,9 +17,10 @@
         BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="1"
         CornerRadius="8">
-        <StackPanel>
+        <DockPanel LastChildFill="True">
             <DockPanel
                 Background="{DynamicResource WindowBackgroundColor}"
+                DockPanel.Dock="Top"
                 Height="28"
                 PointerPressed="MoveWindow"
                 VerticalAlignment="Top">
@@ -35,9 +30,7 @@
                                            Mode=OneWay}"
                     TextAlignment="Center" />
             </DockPanel>
-            <customControls:AutoScrollViewer Background="{DynamicResource WindowBackgroundColor}" PointerPressed="MoveWindow">
-                <main:BatchResizeView Padding="5,0" />
-            </customControls:AutoScrollViewer>
-        </StackPanel>
+            <main:BatchResizeView Background="{DynamicResource NoisyTexture}" />
+        </DockPanel>
     </Border>
 </Window>

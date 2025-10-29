@@ -18,31 +18,31 @@ public partial class BatchResizeWindow : Window, IDisposable
         _config = config;
         InitializeComponent();
         GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.BatchResize + " - PicView");
+
         Loaded += delegate
         {
             ClientSizeProperty.Changed.ToObservable()
                 .ObserveOn(UIHelper.GetFrameProvider)
                 .Subscribe(size =>
                 {
-                    Height = 500;
                     WindowResizing.HandleWindowResize(this, size);
                     UpdateWindowSize(size);
                 })
                 .AddTo(_disposables);
             PositionChanged += (_, _) => UpdateWindowPosition();
-        };
-        
-        Closing += async delegate
-        {
-            Hide();
-            if (VisualRoot is null)
-            {
-                return;
-            }
 
-            var hostWindow = (Window)VisualRoot;
-            hostWindow?.Focus();
-            await _config.SaveAsync();
+            Closing += async delegate
+            {
+                Hide();
+                if (VisualRoot is null)
+                {
+                    return;
+                }
+
+                var hostWindow = (Window)VisualRoot;
+                hostWindow?.Focus();
+                await _config.SaveAsync();
+            };
         };
     }
     
