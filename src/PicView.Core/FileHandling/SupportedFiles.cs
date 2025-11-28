@@ -86,21 +86,26 @@ public static class SupportedFiles
         ".zip", ".7zip", ".7z", ".rar", ".cbr", ".cb7", ".cbt", ".cbz",
         ".xz", ".bzip2", ".gzip", ".tar", ".wim", ".iso", ".cab"
     ];
-    
+
     private static readonly FrozenSet<string> SupportedExtensionsSet =
         FileExtensions.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+
+    private static readonly FrozenSet<string>.AlternateLookup<ReadOnlySpan<char>> SupportedExtensionsSetLookup =
+        SupportedExtensionsSet.GetAlternateLookup<ReadOnlySpan<char>>();
 
     private static readonly FrozenSet<string> ArchiveExtensionsSet =
         FileExtensionsArchives.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
+    private static readonly FrozenSet<string>.AlternateLookup<ReadOnlySpan<char>> ArchiveExtensionsSetLookup =
+        ArchiveExtensionsSet.GetAlternateLookup<ReadOnlySpan<char>>();
 
     public static List<string> ConvertFilesToGlobFormat() =>
         FileExtensions.Select(ext => $"*{ext}").ToList();
 
-    public static List<string> ConvertArchivesToGlobFormat() => 
+    public static List<string> ConvertArchivesToGlobFormat() =>
         FileExtensionsArchives.Select(ext => $"*{ext}").ToList();
 
-    public static bool IsCommon(this string file) 
+    public static bool IsCommon(this string file)
         => Path.GetExtension(file).ToLower() switch
         {
             ".jpg" or ".jpeg" or ".png" or ".bmp" or ".gif" or ".jfif" => true,
@@ -113,7 +118,7 @@ public static class SupportedFiles
     /// <param name="file">File to check</param>
     /// <returns>True if file is supported, False otherwise</returns>
     public static bool IsSupported(this string file) =>
-        SupportedExtensionsSet.Contains(Path.GetExtension(file));
+        SupportedExtensionsSetLookup.Contains(Path.GetExtension(file.AsSpan()));
 
     /// <summary>
     /// Extension method to check if a `FileInfo` is supported.
@@ -121,7 +126,7 @@ public static class SupportedFiles
     /// <param name="fileInfo">FileInfo to check</param>
     /// <returns>True if `FileInfo` is supported, False otherwise</returns>
     public static bool IsSupported(this FileInfo fileInfo) =>
-        SupportedExtensionsSet.Contains(fileInfo.Extension);
+        SupportedExtensionsSetLookup.Contains(Path.GetExtension(fileInfo.FullName.AsSpan()));
 
     /// <summary>
     /// Extension method to check if a file is a supported archive.
@@ -129,7 +134,7 @@ public static class SupportedFiles
     /// <param name="file">File to check</param>
     /// <returns>True if file is a supported archive, False otherwise</returns>
     public static bool IsArchive(this string file) =>
-        ArchiveExtensionsSet.Contains(Path.GetExtension(file));
+        ArchiveExtensionsSetLookup.Contains(Path.GetExtension(file.AsSpan()));
 
     /// <summary>
     /// Extension method to check if a `FileInfo` is a supported archive.
@@ -137,5 +142,5 @@ public static class SupportedFiles
     /// <param name="fileInfo">FileInfo to check</param>
     /// <returns>True if `FileInfo` is a supported archive, False otherwise</returns>
     public static bool IsArchive(this FileInfo fileInfo) =>
-        ArchiveExtensionsSet.Contains(fileInfo.Extension);
+        ArchiveExtensionsSetLookup.Contains(Path.GetExtension(fileInfo.FullName.AsSpan()));
 }
