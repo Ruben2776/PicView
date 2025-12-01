@@ -1,6 +1,4 @@
-﻿#if DEBUG
-using System.Diagnostics;
-#endif
+﻿using System.Diagnostics;
 using System.Globalization;
 
 namespace PicView.Core.DebugTools;
@@ -30,21 +28,19 @@ public static class DebugHelper
     /// }
     /// </code>
     /// </example>
+    [Conditional("DEBUG")]
     public static void LogDebug(string className, string methodName, Exception exception)
     {
-#if DEBUG
         Debug.WriteLine(
             $"\n[{DateTime.Now.ToString("T", CultureInfo.CurrentCulture)}] {className}.{methodName} exception: {exception.Message}");
         Debug.WriteLine(exception.StackTrace + Environment.NewLine);
-#endif
     }
 
     /// <inheritdoc cref="LogDebug(string,string,System.Exception)"/>
+    [Conditional("DEBUG")]
     public static void LogDebug(string className, string methodName, string exceptionMessage)
     {
-#if DEBUG
         Debug.WriteLine(
             $"\n[{DateTime.Now.ToString("T", CultureInfo.CurrentCulture)}] {className}.{methodName} exception: {exceptionMessage}");
-#endif
     }
 }
