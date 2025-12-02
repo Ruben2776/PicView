@@ -1,7 +1,6 @@
 <ResourceDictionary
     x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ControlTheme TargetType="TextBox" x:Key="{x:Type TextBox}">
@@ -79,14 +78,14 @@
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^:pointerover /template/ Border#border">
+        <Style Selector="^:pointerover:not(:readonly) /template/ Border#border">
             <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
             <Setter Property="Cursor" Value="IBeam" />
         </Style>
         <Style Selector="^.disabled:pointerover /template/ Border#border">
             <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
         </Style>
-        <Style Selector="^:focus /template/ Border#border">
+        <Style Selector="^:focus:not(:readonly) /template/ Border#border">
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
         </Style>
         <Style Selector="^.active /template/ Border#border">
@@ -112,6 +111,10 @@
 
         <Style Selector="^.txtShadow /template/ TextPresenter#PART_TextPresenter">
             <Setter Property="Effect" Value="{StaticResource TextShadow}" />
+        </Style>
+
+        <Style Selector="^:readonly /template/ Border#border">
+            <Setter Property="Background" Value="{DynamicResource DisabledBackgroundColor}" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

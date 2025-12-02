@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Functions;
+using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Update;
@@ -156,6 +157,26 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 vm.Window.KeybindingWindowConfig = new KeybindingWindowConfig();
                 await vm.Window.KeybindingWindowConfig.LoadAsync();
             }
+            
+            if (vm.Keybindings is null)
+            {
+                vm.Keybindings = new KeybindingsViewModel();
+                vm.Keybindings.ResetKeybindingsCommand = new ReactiveCommand(async (_, _) =>
+                {
+                    _keybindingsWindow.Close();
+                    await Task.Run(() =>
+                    {
+                        KeybindingManager.SetDefaultKeybindings(vm.PlatformService);
+                        FunctionsKeyHelper.ResetKeybindings(vm.Keybindings);
+                    }, CancellationToken.None);
+                    await ShowKeybindingsWindow(vm);
+                });
+            }
+            
+            _ = Task.Run(() =>
+            {
+                FunctionsKeyHelper.LoadKeybindingsViewModel(vm.Keybindings);
+            });
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {

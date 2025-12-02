@@ -29,6 +29,7 @@ public class MainViewModel
     public AboutViewModel? AboutView { get; set; }
     public PrintPreviewViewModel? PrintPreview { get; set; }
     public BatchResizeViewModel? BatchResizeViewModel { get; set; }
+    public KeybindingsViewModel? Keybindings { get; set; }
 
     public MainViewModel(IPlatformSpecificService? platformSpecificService, IPlatformWindowService? platformWindowService)
     {

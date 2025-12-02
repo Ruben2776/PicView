@@ -8,7 +8,6 @@
     x:Class="PicView.Avalonia.MacOS.Views.KeybindingsWindow"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -41,9 +40,7 @@
                 Background="{DynamicResource WindowBackgroundColor}"
                 Focusable="True"
                 Margin="0,28,0,0">
-                <customControls:AutoScrollViewer Padding="5,2,5,10">
-                    <main:KeybindingsView x:Name="XKeybindingsView" />
-                </customControls:AutoScrollViewer>
+                <main:KeybindingsView Padding="0,2,0,10" x:Name="XKeybindingsView" />
             </Border>
         </Panel>
     </Border>

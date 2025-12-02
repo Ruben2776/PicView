@@ -14,2093 +14,662 @@
         <viewModels:MainViewModel />
     </Design.DataContext>
 
-    <StackPanel Margin="5,0,2,25">
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="16"
-            Margin="10,20,10,15"
-            Text="{CompiledBinding Translation.ApplicationShortcuts.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center"
-            x:Name="ApplicationShortcutsTextBlock" />
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            Text="{CompiledBinding Translation.ChangeKeybindingText.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center"
-            x:Name="ChangeKeybindingTextBlock" />
-        <Button
-            Classes="BorderStyle altHover mainBtn"
-            HorizontalAlignment="Center"
-            Margin="0,15,0,25"
-            x:Name="DefaultButton">
-            <TextBlock Classes="txt" Text="{CompiledBinding Translation.ResetButtonText.Value, Mode=OneWay}" />
-        </Button>
+    <!--  Filter  -->
+    <DockPanel>
 
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="10,10,10,15"
-            Text="{CompiledBinding Translation.Navigation.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center"
-            x:Name="NavigationTextBlock" />
+        <Panel DockPanel.Dock="Top" Margin="7,0">
+            <Image
+                Height="14"
+                HorizontalAlignment="Left"
+                Margin="15,0,0,0"
+                Source="{StaticResource SearchImage}"
+                Width="14" />
 
-        <!--  Next image  -->
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.NextImage.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Alt="False"
-                Classes="hover TStyle"
-                MethodName="Next"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Next"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Next 10 images  -->
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.AdvanceBy10Images.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Alt="False"
-                Classes="hover TStyle"
-                MethodName="Next10"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Next10"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Next 100 images  -->
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.AdvanceBy100Images}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Alt="False"
-                Classes="hover TStyle"
-                MethodName="Next100"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Next100"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Previous image  -->
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.PrevImage.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Prev"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Prev"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Previous 10 images  -->
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.GoBackBy10Images.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Alt="False"
-                Classes="hover TStyle"
-                MethodName="Prev10"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Prev10"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Previous 100 images  -->
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.GoBackBy100Images.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Alt="False"
-                Classes="hover TStyle"
-                MethodName="Prev100"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Prev100"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Last image  -->
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.LastImage.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Alt="False"
-                Classes="hover TStyle"
-                MethodName="Last"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Last"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  First image  -->
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.FirstImage.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="First"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="First"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Next folder  -->
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.NextFolder.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Alt="False"
-                Classes="hover TStyle"
-                MethodName="NextFolder"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="NextFolder"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Previous folder  -->
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.PrevFolder.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="PrevFolder"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="PrevFolder"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Search  -->
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Search.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Search"
-                ToolTip.Tip="{CompiledBinding Translation.Search.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Search"
-                ToolTip.Tip="{CompiledBinding Translation.Search.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Select gallery thumb  -->
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.SelectGalleryThumb.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="GalleryClick"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="GalleryClick"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ToggleLooping.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ToggleLooping"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ToggleLooping"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="10,10,10,15"
-            Text="{CompiledBinding Translation.ScrollAndRotate.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center" />
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.RotateRight.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Up"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Up"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ScrollUp.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="hover TStyle disabled"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                MethodName="ScrollUpInternal"
-                ToolTip.ServiceEnabled="False"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="hover TStyle disabled"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                MethodName="ScrollUpInternal"
-                ToolTip.ServiceEnabled="False"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ScrollUp.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ScrollUp"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ScrollUp"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.RotateLeft.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Down"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Down"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ScrollDown.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="hover TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                MethodName="ScrollDownInternal"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="hover TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                MethodName="ScrollDownInternal"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ScrollDown.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ScrollDown"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ScrollDown"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ScrollToTop.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ScrollToTop"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ScrollToTop"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ScrollToBottom.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ScrollToBottom"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ScrollToBottom"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ToggleScroll.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ToggleScroll"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ToggleScroll"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.IsCtrlToZoom.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ChangeCtrlZoom"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ChangeCtrlZoom"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="10,10,10,15"
-            Text="{CompiledBinding Translation.Zoom.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center" />
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ZoomIn.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ZoomIn"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ZoomIn"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ZoomOut.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ZoomOut"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ZoomOut"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Pan.Value,
-                                       Mode=OneWay}"
-                Width="170" />
             <TextBox
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="hover TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                Text="{CompiledBinding Translation.MouseDrag.Value,
-                                       Mode=OneWay}"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <TextBox
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="hover TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ResetZoom.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ResetZoom"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <TextBox
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="hover TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                Text="{CompiledBinding Translation.DoubleClick.Value,
-                                       Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-
-        <!--  Image control  -->
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="10,10,10,15"
-            Text="{CompiledBinding Translation.ImageControl.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center" />
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.SideBySide.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SideBySide"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SideBySide"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Stretch.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Stretch"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Stretch"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Flip.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Flip"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Flip"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Crop.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Crop"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Crop"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ChangeBackground.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ChangeBackground"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ChangeBackground"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.OptimizeImage.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="OptimizeImage"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="OptimizeImage"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="10,10,10,15"
-            Text="{CompiledBinding Translation.InterfaceConfiguration.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center" />
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.IsShowingUI,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ToggleInterface"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ToggleInterface"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Slideshow.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Slideshow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Slideshow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ShowImageGallery.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ToggleGallery"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ToggleGallery"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="10,10,10,15"
-            Text="{CompiledBinding Translation.FileManagement.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center" />
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Open.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Open"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Open"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.OpenWith.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="OpenWith"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="OpenWith"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Reload.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Reload"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Reload"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Save.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Save"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Save"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.SaveAs.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SaveAs"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SaveAs"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Print.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Print"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Print"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.DeleteFile.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="DeleteFile"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="DeleteFile"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.PermanentlyDelete.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="DeleteFilePermanently"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="DeleteFilePermanently"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.RenameFile.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Rename"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Rename"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.FileProperties.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ShowFileProperties"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ShowFileProperties"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Sort files  -->
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="10,10,10,15"
-            Text="{CompiledBinding Translation.SortFilesBy.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center" />
-
-        <!--  File name  -->
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.FileName.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SortFilesByName"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SortFilesByName"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  File size  -->
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.FileSize.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SortFilesBySize"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SortFilesBySize"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  File extension  -->
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.FileExtension.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SortFilesByExtension"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SortFilesByExtension"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Created  -->
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Created.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SortFilesByCreationTime"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SortFilesByCreationTime"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Last access time  -->
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.LastAccessTime.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SortFilesByLastAccessTime"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SortFilesByLastAccessTime"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Random  -->
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Random.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SortFilesRandomly"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SortFilesRandomly"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Ascending  -->
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Ascending.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SortFilesAscending"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SortFilesAscending"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Descending  -->
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Descending.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SortFilesDescending"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SortFilesDescending"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <!--  Copy  -->
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="10,10,10,15"
-            Text="{CompiledBinding Translation.Copy.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center" />
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.CopyFile.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="CopyFile"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="CopyFile"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.FileCopyPath.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="CopyFilePath"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="CopyFilePath"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.CopyImage.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="CopyImage"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="CopyImage"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Width="170">
-                <Run Text="{CompiledBinding Translation.Copy.Value, Mode=OneWay}" />
-                <Run Text=" base64" />
-            </TextBlock>
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="CopyBase64"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="CopyBase64"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel
-            IsEnabled="False"
-            Margin="15,5,10,10"
-            Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.FileCut.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                MethodName="CutFile"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                MethodName="CutFile"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Paste.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Paste"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Paste"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.DuplicateFile.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="DuplicateFile"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="DuplicateFile"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="10,10,10,15"
-            Text="{CompiledBinding Translation.WindowManagement.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center" />
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.About.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="AboutWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="AboutWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Settings.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SettingsWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SettingsWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ImageInfo.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ImageInfoWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ImageInfoWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.FileConversion.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ConvertWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ConvertWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ApplicationShortcuts.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="KeybindingsWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="KeybindingsWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.BatchResize.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="BatchResizeWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="BatchResizeWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Resize.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="ResizeWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="ResizeWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Close.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <TextBox
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="hover TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                Width="140"
-                x:Name="CloseBox" />
-            <TextBox
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="hover TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Close.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Close"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Close"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.NewWindow.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="NewWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="NewWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.CenterWindow.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Center"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Center"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.StayTopMost.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="SetTopMost"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="SetTopMost"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.MoveWindow.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <TextBox
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                Width="140"
-                x:Name="DragWindowBox" />
-            <TextBox
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ToggleFullscreen.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Fullscreen"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip,
-                                              Mode=OneWay}"
-                Width="140" />
-            <TextBox
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="hover TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                Width="140"
-                x:Name="FullscreenBox" />
-        </StackPanel>
-
-        <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.ToggleFullscreen.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Fullscreen"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <TextBox
-                Background="{DynamicResource DisabledBackgroundColor}"
-                Classes="hover TStyle"
-                Foreground="{DynamicResource DisabledTextColor}"
-                IsReadOnly="True"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.Maximize.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Maximize"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Maximize"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="10,10,10,15"
-            Text="{CompiledBinding Translation.WindowScaling.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center" />
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.AutoFitWindow.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="AutoFitWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="AutoFitWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Width="170">
-                <Run Text="⇔ " />
-                <Run Text="{CompiledBinding Translation.Stretch.Value, Mode=OneWay}" />
-            </TextBlock>
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="AutoFitWindowAndStretch"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="AutoFitWindowAndStretch"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.NormalWindow.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="NormalWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="NormalWindow"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Width="170">
-                <Run Text="⇔ " />
-                <Run Text="{CompiledBinding Translation.Stretch.Value, Mode=OneWay}" />
-            </TextBlock>
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="NormalWindowAndStretch"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="NormalWindowAndStretch"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <TextBlock
-            Classes="txt"
-            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-            FontSize="14"
-            Margin="10,10,10,15"
-            Text="{CompiledBinding Translation.SetStarRating.Value,
-                                   Mode=OneWay}"
-            TextAlignment="Center" />
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation._1Star.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Set1Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Set1Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation._2Star.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Set2Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Set2Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation._3Star.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Set3Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Set3Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation._4Star.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Set4Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Set4Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation._5Star.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Set5Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Set2Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-
-        <StackPanel Margin="15,5,10,10" Orientation="Horizontal">
-            <TextBlock
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                Text="{CompiledBinding Translation.RemoveStarRating.Value,
-                                       Mode=OneWay}"
-                Width="170" />
-            <customControls:KeybindTextBox
-                Classes="hover TStyle"
-                MethodName="Set0Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-            <customControls:KeybindTextBox
-                Alt="True"
-                Classes="hover TStyle"
-                MethodName="Set0Star"
-                ToolTip.Tip="{CompiledBinding Translation.ChangeKeybindingTooltip.Value,
-                                              Mode=OneWay}"
-                Width="140" />
-        </StackPanel>
-    </StackPanel>
+                Background="Transparent"
+                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderThickness="1"
+                CornerRadius="4"
+                FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
+                Foreground="{DynamicResource MainTextColor}"
+                Padding="50,7,4,7"
+                Text="{CompiledBinding Keybindings.FilterText.Value,
+                                       FallbackValue='',
+                                       Mode=TwoWay}"
+                VerticalAlignment="Center"
+                Watermark="{CompiledBinding Translation.Filter.Value,
+                                            Mode=OneWay}"
+                x:Name="FilterBox" />
+
+            <!--  clear  -->
+            <customControls:IconButton
+                Classes="altHover"
+                Command="{CompiledBinding Keybindings.ClearFilteringCommand}"
+                Data="{StaticResource CloseGeometry}"
+                Foreground="{DynamicResource MainTextColorFaded}"
+                HorizontalAlignment="Right"
+                IconHeight="12"
+                IconWidth="12"
+                IsVisible="{CompiledBinding Keybindings.FilterText.Value,
+                                            Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                Padding="10,3,10,3"
+                x:Name="ClearButton" />
+        </Panel>
+
+        <customControls:AutoScrollViewer>
+
+            <StackPanel>
+
+                <!--  Search  -->
+                <ItemsControl IsVisible="{CompiledBinding Keybindings.IsFiltering.Value}" ItemsSource="{CompiledBinding Keybindings.FilteredKeys.Value}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="15,10,10,10" Orientation="Horizontal">
+                                <TextBlock
+                                    Classes="txt"
+                                    FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                    Text="{CompiledBinding FriendlyMethodName}"
+                                    Width="170" />
+                                <customControls:KeybindTextBox
+                                    Alt="False"
+                                    Classes="hover TStyle"
+                                    IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                 Mode=OneTime}"
+                                    MethodName="{CompiledBinding MethodName}"
+                                    Text="{CompiledBinding Key,
+                                                           Mode=OneTime}"
+                                    ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                  Mode=OneWay}"
+                                    Width="140" />
+                                <customControls:KeybindTextBox
+                                    Alt="True"
+                                    Classes="hover TStyle"
+                                    IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                 Mode=OneTime}"
+                                    MethodName="{CompiledBinding MethodName}"
+                                    Text="{CompiledBinding AltKey,
+                                                           Mode=OneTime}"
+                                    ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                  Mode=OneWay}"
+                                    Width="140" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!--  Description  -->
+                <StackPanel
+                    IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}"
+                    Margin="5,0,2,25"
+                    x:Name="MainPanel">
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="16"
+                        Margin="10,20,10,15"
+                        Text="{CompiledBinding Translation.ApplicationShortcuts.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center"
+                        x:Name="ApplicationShortcutsTextBlock" />
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        Text="{CompiledBinding Translation.ChangeKeybindingText.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center"
+                        x:Name="ChangeKeybindingTextBlock" />
+                    <Button
+                        Classes="BorderStyle altHover mainBtn"
+                        Command="{CompiledBinding Keybindings.ResetKeybindingsCommand}"
+                        HorizontalAlignment="Center"
+                        Margin="0,15,0,25"
+                        x:Name="DefaultButton">
+                        <TextBlock Classes="txt" Text="{CompiledBinding Translation.ResetButtonText.Value, Mode=OneWay}" />
+                    </Button>
+
+                    <!--  Navigation  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.Navigation.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.NavigationKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--  Scroll and rotate  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.ScrollAndRotate.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.ScrollAndRotateKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--  Zoom  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.Zoom.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.ZoomKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--  Image control  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.ImageControl.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.ImageControlKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--  Interface configuration  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.InterfaceConfiguration.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.InterfaceConfigurationKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--  File management  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.FileManagement.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.FileManagementKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--  Sort files by  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.SortFilesBy.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.SortFilesKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+
+                    <!--  Copy  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.Copy.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.CopyKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--  Tool Windows  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.ToolWindows.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.ToolWindowsKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--  Window management  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.WindowManagement.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.WindowManagementKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--  Window scaling  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.WindowScaling.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.WindowScalingKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--  Set star rating  -->
+                    <TextBlock
+                        Classes="txt"
+                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                        FontSize="14"
+                        Margin="10,10,10,15"
+                        Text="{CompiledBinding Translation.SetStarRating.Value,
+                                               Mode=OneWay}"
+                        TextAlignment="Center" />
+                    <ItemsControl ItemsSource="{CompiledBinding Keybindings.StarRatingKeys.Value}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
+                                    <TextBlock
+                                        Classes="txt"
+                                        FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
+                                    <customControls:KeybindTextBox
+                                        Alt="False"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding Key,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                    <customControls:KeybindTextBox
+                                        Alt="True"
+                                        Classes="hover TStyle"
+                                        IsReadOnly="{CompiledBinding IsReadOnly,
+                                                                     Mode=OneTime}"
+                                        MethodName="{CompiledBinding MethodName}"
+                                        Text="{CompiledBinding AltKey,
+                                                               Mode=OneTime}"
+                                        ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:MainViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
+                                                                      Mode=OneWay}"
+                                        Width="140" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+            </StackPanel>
+        </customControls:AutoScrollViewer>
+    </DockPanel>
 </UserControl>

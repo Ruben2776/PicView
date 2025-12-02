@@ -76,9 +76,7 @@ public static class FunctionsMapper
 
             // Scale Window
             "AutoFitWindow" => AutoFitWindow,
-            "AutoFitWindowAndStretch" => AutoFitWindowAndStretch,
             "NormalWindow" => NormalWindow,
-            "NormalWindowAndStretch" => NormalWindowAndStretch,
 
             // Window functions
             "Fullscreen" => Fullscreen,
@@ -493,17 +491,9 @@ public static class FunctionsMapper
     public static async ValueTask AutoFitWindow() =>
         await WindowFunctions.ToggleAutoFit(Vm).ConfigureAwait(false);
 
-    /// <inheritdoc cref="WindowFunctions.AutoFitAndStretch(MainViewModel)" />
-    public static async ValueTask AutoFitWindowAndStretch() =>
-        await WindowFunctions.AutoFitAndStretch(Vm).ConfigureAwait(false);
-
     /// <inheritdoc cref="WindowFunctions.NormalWindow(MainViewModel)" />
     public static async ValueTask NormalWindow() =>
         await WindowFunctions.NormalWindow(Vm).ConfigureAwait(false);
-
-    /// <inheritdoc cref="WindowFunctions.NormalWindowStretch(MainViewModel)" />
-    public static async ValueTask NormalWindowAndStretch() =>
-        await WindowFunctions.NormalWindowStretch(Vm).ConfigureAwait(false);
 
     /// <inheritdoc cref="Interfaces.IPlatformWindowService.ToggleFullscreen" />
     public static async ValueTask ToggleFullscreen() =>
