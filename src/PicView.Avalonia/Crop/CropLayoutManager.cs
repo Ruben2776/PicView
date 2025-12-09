@@ -8,7 +8,7 @@ namespace PicView.Avalonia.Crop;
 public class CropLayoutManager(CropControl control)
 {
     private const int DefaultSelectionSize = 200;
-    
+
     public void InitializeLayout()
     {
         if (control.DataContext is not MainViewModel vm)
@@ -23,19 +23,15 @@ public class CropLayoutManager(CropControl control)
         }
 
         // Set initial width and height for the crop rectangle
-        var pixelWidth = vm.PicViewer.ImageWidth.CurrentValue / vm.PicViewer.AspectRatio.CurrentValue;
-        var pixelHeight = vm.PicViewer.ImageHeight.CurrentValue / vm.PicViewer.AspectRatio.CurrentValue;
+        var origionalWidth = vm.PicViewer.ImageWidth.CurrentValue >= DefaultSelectionSize * 2
+            ? DefaultSelectionSize
+            : (uint)(vm.PicViewer.ImageWidth.CurrentValue / 2);
+        var origionalHeight = vm.PicViewer.ImageHeight.CurrentValue >= DefaultSelectionSize * 2
+            ? DefaultSelectionSize
+            : (uint)(vm.PicViewer.ImageHeight.CurrentValue / 2);
 
-        if (pixelWidth >= DefaultSelectionSize * 2 || pixelHeight >= DefaultSelectionSize * 2)
-        {
-            vm.Crop.SetSelectionWidth(DefaultSelectionSize);
-            vm.Crop.SetSelectionHeight(DefaultSelectionSize);
-        }
-        else if (pixelWidth <= DefaultSelectionSize || pixelHeight <= DefaultSelectionSize)
-        {
-            vm.Crop.SetSelectionWidth((uint)(pixelWidth / 2));
-            vm.Crop.SetSelectionHeight((uint)(pixelHeight / 2));
-        }
+        vm.Crop.SetSelectionWidth(origionalWidth);
+        vm.Crop.SetSelectionHeight(origionalHeight);
 
         // Calculate centered position
         vm.Crop.SelectionX.Value = Convert.ToInt32((vm.PicViewer.ImageWidth.CurrentValue - vm.Crop.SelectionWidth.CurrentValue) / 2);
@@ -202,14 +198,6 @@ public class CropLayoutManager(CropControl control)
         Canvas.SetTop(control.RightMiddleButton, rightMiddleY);
 
         Canvas.SetLeft(control.SizeBorder, topLeftX + control.TopLeftButton.Bounds.Width + 2);
-
-        if (topLeftY != 0)
-        {
-            Canvas.SetTop(control.SizeBorder, topLeftY - control.TopLeftButton.Bounds.Height);
-        }
-        else
-        {
-            Canvas.SetTop(control.SizeBorder, topLeftY);
-        }
+        Canvas.SetTop(control.SizeBorder, Math.Max(0, topLeftY - control.TopLeftButton.Bounds.Height));
     }
 }
