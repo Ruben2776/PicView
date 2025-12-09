@@ -23,15 +23,15 @@ public class CropLayoutManager(CropControl control)
         }
 
         // Set initial width and height for the crop rectangle
-        var origionalWidth = vm.PicViewer.ImageWidth.CurrentValue >= DefaultSelectionSize * 2
+        var originalWidth = vm.PicViewer.ImageWidth.CurrentValue >= DefaultSelectionSize * 2
             ? DefaultSelectionSize
             : (uint)(vm.PicViewer.ImageWidth.CurrentValue / 2);
-        var origionalHeight = vm.PicViewer.ImageHeight.CurrentValue >= DefaultSelectionSize * 2
+        var originalHeight = vm.PicViewer.ImageHeight.CurrentValue >= DefaultSelectionSize * 2
             ? DefaultSelectionSize
             : (uint)(vm.PicViewer.ImageHeight.CurrentValue / 2);
 
-        vm.Crop.SetSelectionWidth(origionalWidth);
-        vm.Crop.SetSelectionHeight(origionalHeight);
+        vm.Crop.SetSelectionWidth(originalWidth);
+        vm.Crop.SetSelectionHeight(originalHeight);
 
         // Calculate centered position
         vm.Crop.SelectionX.Value = Convert.ToInt32((vm.PicViewer.ImageWidth.CurrentValue - vm.Crop.SelectionWidth.CurrentValue) / 2);
