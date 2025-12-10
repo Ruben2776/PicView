@@ -205,7 +205,7 @@
             <customControls:TextIconButton
                 Classes="BorderStyle altHover mainBtn"
                 Command="{CompiledBinding AboutView.UpdateCommand}"
-                Foreground="{StaticResource SecondaryTextColor}"
+                Foreground="{DynamicResource MainTextColor}"
                 HorizontalAlignment="Center"
                 Icon="{StaticResource DownloadImage}"
                 IconHeight="14"

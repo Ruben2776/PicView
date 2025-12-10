@@ -170,7 +170,6 @@ public static class DutchUnitTest
         Assert.Equal(TranslationManager.Translation.GlassTheme, "Glas thema");
         Assert.Equal(TranslationManager.Translation.GoBackBy100Images, "Ga terug met 100 afbeeldingen");
         Assert.Equal(TranslationManager.Translation.GoBackBy10Images, "Ga terug met 10 afbeeldingen");
-        Assert.Equal(TranslationManager.Translation.GoToImageAtSpecifiedIndex, "Ga naar afbeelding op opgegeven index");
         Assert.Equal(TranslationManager.Translation.Hard, "Hard");
         Assert.Equal(TranslationManager.Translation.Height, "Hoogte");
         Assert.Equal(TranslationManager.Translation.HideBottomGallery, "Verberg onderste galerij");
@@ -344,7 +343,6 @@ public static class DutchUnitTest
         Assert.Equal(TranslationManager.Translation.Software, "Software");
         Assert.Equal(TranslationManager.Translation.Solarize, "Solariseren");
         Assert.Equal(TranslationManager.Translation.SortFilesBy, "Bestanden sorteren op");
-        Assert.Equal(TranslationManager.Translation.SourceFolder, "Bronmap");
         Assert.Equal(TranslationManager.Translation.Space, "Spatie");
         Assert.Equal(TranslationManager.Translation.Square, "Vierkant");
         Assert.Equal(TranslationManager.Translation.Start, "Start");

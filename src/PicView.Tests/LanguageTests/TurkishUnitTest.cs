@@ -169,7 +169,6 @@ public static class TurkishUnitTest
         Assert.Equal(TranslationManager.Translation.GlassTheme, "Cam Teması");
         Assert.Equal(TranslationManager.Translation.GoBackBy100Images, "100 Resim geri git");
         Assert.Equal(TranslationManager.Translation.GoBackBy10Images, "10 Resim geri git");
-        Assert.Equal(TranslationManager.Translation.GoToImageAtSpecifiedIndex, "Belirtilen dizindeki görüntüye git");
         Assert.Equal(TranslationManager.Translation.Hard, "Zor");
         Assert.Equal(TranslationManager.Translation.Height, "Yükseklik");
         Assert.Equal(TranslationManager.Translation.HideBottomGallery, "Alt galeriyi gizle");
@@ -340,7 +339,6 @@ public static class TurkishUnitTest
         Assert.Equal(TranslationManager.Translation.Soft, "Yumuşak");
         Assert.Equal(TranslationManager.Translation.Software, "Yazılım");
         Assert.Equal(TranslationManager.Translation.SortFilesBy, "Dosyaları şuna göre sırala");
-        Assert.Equal(TranslationManager.Translation.SourceFolder, "Kaynak klasör");
         Assert.Equal(TranslationManager.Translation.Space, "Boşluk");
         Assert.Equal(TranslationManager.Translation.Square, "Kare");
         Assert.Equal(TranslationManager.Translation.Start, "Başla");

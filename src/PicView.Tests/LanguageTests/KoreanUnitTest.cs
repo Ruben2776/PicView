@@ -163,7 +163,6 @@ public static class KoreanUnitTest
         Assert.Equal(TranslationManager.Translation.GlassTheme, "유리 테마");
         Assert.Equal(TranslationManager.Translation.GoBackBy100Images, "이미지 100개 뒤로 이동");
         Assert.Equal(TranslationManager.Translation.GoBackBy10Images, "이미지 10개 뒤로 이동");
-        Assert.Equal(TranslationManager.Translation.GoToImageAtSpecifiedIndex, "지정된 인덱스에서 이미지로 이동");
         Assert.Equal(TranslationManager.Translation.Hard, "단단함");
         Assert.Equal(TranslationManager.Translation.Height, "높이");
         Assert.Equal(TranslationManager.Translation.HideBottomGallery, "하단 갤러리 숨기기");
@@ -330,7 +329,6 @@ public static class KoreanUnitTest
         Assert.Equal(TranslationManager.Translation.Soft, "부드럽게");
         Assert.Equal(TranslationManager.Translation.Software, "소프트웨어");
         Assert.Equal(TranslationManager.Translation.SortFilesBy, "파일 정렬");
-        Assert.Equal(TranslationManager.Translation.SourceFolder, "원본 폴더");
         Assert.Equal(TranslationManager.Translation.Space, "공간");
         Assert.Equal(TranslationManager.Translation.Square, "정사각형");
         Assert.Equal(TranslationManager.Translation.Start, "시작");

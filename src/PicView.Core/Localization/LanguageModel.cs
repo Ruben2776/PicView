@@ -178,7 +178,6 @@ public class LanguageModel
     public string? GlassTheme { get; set; }
     public string? GoBackBy100Images { get; set; }
     public string? GoBackBy10Images { get; set; }
-    public string? GoToImageAtSpecifiedIndex { get; set; }
     public string? Graphics { get; set; }
     public string? Hard { get; set; }
     public string? Height { get; set; }
@@ -322,6 +321,7 @@ public class LanguageModel
     public string? Saturation { get; set; }
     public string? Save { get; set; }
     public string? SaveAs { get; set; }
+    public string? SaveAsPdf { get; set; }
     public string? SavingFileFailed { get; set; }
     public string? Scale { get; set; }
     public string? ScrollAndRotate { get; set; }
@@ -401,6 +401,7 @@ public class LanguageModel
     public string? ToggleLooping { get; set; }
     public string? ToggleScroll { get; set; }
     public string? ToggleTaskbarProgress { get; set; }
+    public string? ToolWindows { get; set; }
     public string? Top { get; set; }
     public string? UnableToRender { get; set; }
     public string? Unassociate { get; set; }

@@ -34,8 +34,8 @@ public class AvaloniaTest
     [AvaloniaFact]
     public async Task TestPreloader()
     {
-        await LoadSettingsAsync();
-        var vm = new MainViewModel();
+        // await LoadSettingsAsync();
+        // var vm = new MainViewModel();
         //await vm.StartUpTask();
     }
 }

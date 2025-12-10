@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
@@ -47,12 +48,24 @@ public partial class MacOSTitlebar : UserControl
             RotateRightButton.ContextMenu = _rotationContextMenu;
             
             FlipButton.PointerPressed += (_, e) => { OpenContextMenu(e); };
-            RotateRightButton.PointerPressed += (_, e) => { OpenContextMenu(e); };
-
-            RotateRightButton.PointerPressed += (_, e) => { OpenContextMenu(e); };
-            FlipButton.PointerPressed += (_, e) => { OpenContextMenu(e); };
+            RotateRightButton.AddHandler(PointerPressedEvent, RotateRightButtonHandler, RoutingStrategies.Bubble | RoutingStrategies.Tunnel);
         };
         PointerPressed += (_, e) => MoveWindow(e);
+    }
+
+    private void RotateRightButtonHandler(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.Properties.IsLeftButtonPressed)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                vm.MainWindow.IsTitlebarRotationClicked = true;
+            }
+        }
+        else if (e.Properties.IsRightButtonPressed)
+        {
+            OpenContextMenu(e);
+        }
     }
 
 

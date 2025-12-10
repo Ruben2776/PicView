@@ -172,7 +172,6 @@ public static class RomanianUnitTest
         Assert.Equal(TranslationManager.Translation.GlassTheme, "Temă de sticlă");
         Assert.Equal(TranslationManager.Translation.GoBackBy100Images, "Mergi înapoi cu 100 imagini");
         Assert.Equal(TranslationManager.Translation.GoBackBy10Images, "Mergi înapoi cu 10 imagini");
-        Assert.Equal(TranslationManager.Translation.GoToImageAtSpecifiedIndex, "Mergi la imagine la indexul specificat");
         Assert.Equal(TranslationManager.Translation.Hard, "Tare");
         Assert.Equal(TranslationManager.Translation.Height, "Înălțime");
         Assert.Equal(TranslationManager.Translation.HideBottomGallery, "Ascunde galeria de jos");
@@ -343,7 +342,6 @@ public static class RomanianUnitTest
         Assert.Equal(TranslationManager.Translation.Soft, "Moale");
         Assert.Equal(TranslationManager.Translation.Software, "Software");
         Assert.Equal(TranslationManager.Translation.SortFilesBy, "Sortare fișiere după");
-        Assert.Equal(TranslationManager.Translation.SourceFolder, "Dosar sursă");
         Assert.Equal(TranslationManager.Translation.Space, "Spațiu");
         Assert.Equal(TranslationManager.Translation.Square, "Pătrat");
         Assert.Equal(TranslationManager.Translation.Start, "Pornire");

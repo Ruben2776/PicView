@@ -1,0 +1,40 @@
+<Window
+    CanResize="False"
+    ExtendClientAreaChromeHints="SystemChrome"
+    ExtendClientAreaTitleBarHeightHint="-1"
+    SizeToContent="WidthAndHeight"
+    Title="PrintPreviewWindow"
+    x:Class="PicView.Avalonia.MacOS.Views.PrintPreviewWindow"
+    x:DataType="viewModels:MainViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border
+        BorderBrush="{DynamicResource MainBorderColor}"
+        BorderThickness="1"
+        CornerRadius="8">
+        <Panel>
+
+            <DockPanel
+                Background="{DynamicResource SecondaryBackgroundColor}"
+                Height="28"
+                PointerPressed="MoveWindow"
+                VerticalAlignment="Top">
+
+                <TextBlock
+                    Classes="txt"
+                    Text="{CompiledBinding Translation.Print.Value,
+                                           Mode=OneWay}"
+                    TextAlignment="Center" />
+            </DockPanel>
+
+            <main:PrintPreviewView
+                Background="{DynamicResource WindowBackgroundColor}"
+                Margin="0,28,0,0"
+                Padding="10,5,5,10"
+                PointerPressed="MoveWindow"
+                x:Name="XPrintView" />
+        </Panel>
+    </Border>
+</Window>

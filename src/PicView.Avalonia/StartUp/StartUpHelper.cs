@@ -85,6 +85,24 @@ public static class StartUpHelper
 
         HandlePostWindowUpdates(vm, settingsExists, desktop, window);
     }
+    
+    public static void StartUpBlank(MainViewModel vm, bool settingsExists,
+        IClassicDesktopStyleApplicationLifetime desktop,
+        Window window)
+    {
+        SettingsUpdater.InitializeSettings(vm);
+        
+        HandleWindowScalingMode(vm, window);
+
+        window.Show();
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            HandlePostWindowUpdates(vm, settingsExists, desktop, window);
+        }, DispatcherPriority.Background);
+    }
+    
+    
 
     private static void HandleWindowScalingMode(MainViewModel vm, Window window)
     {
@@ -132,12 +150,10 @@ public static class StartUpHelper
             _ = FileHistoryManager.InitializeAsync();
             HandleWindowControlSettings(vm, desktop);
             SettingsUpdater.ValidateGallerySettings(vm, settingsExists);
+
+            vm.MainWindow.LayoutButtonSubscription(vm);
+            vm.Gallery.GalleryItemSizeUpdateSubscription(vm);
         });
-
-       
-        vm.MainWindow.LayoutButtonSubscription();
-        vm.Gallery.GalleryItemSizeUpdateSubscription(vm);
-
 
         if (!Settings.WindowProperties.AutoFit)
         {
@@ -159,7 +175,11 @@ public static class StartUpHelper
         }
 
         MenuManager.AddMenus();
-        UIHelper.AddHoverBar(vm);
+        if (Settings.UIProperties.ShowHoverNavigationBar)
+        {
+            UIHelper.AddHoverBar(vm);
+        }
+        
         TooltipHelper.StartTooltipSubscription(vm);
         
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
@@ -205,7 +225,7 @@ public static class StartUpHelper
 
         if (Settings.WindowProperties.TopMost)
         {
-            desktop.MainWindow.Topmost = true;
+            Dispatcher.UIThread.Invoke(() => { desktop.MainWindow.Topmost = true; });
         }
     }
 
@@ -315,10 +335,8 @@ public static class StartUpHelper
     private static void SetWindowEventHandlers(Window w)
     {
         // Using AddHandler fixes the first keydown event not firing properly
-        w.AddHandler(InputElement.KeyDownEvent, MainWindow_KeysDownAsync,
-            RoutingStrategies.Tunnel | RoutingStrategies.Bubble | RoutingStrategies.Direct);
-        w.AddHandler(InputElement.KeyUpEvent, MainWindow_KeyUp,
-            RoutingStrategies.Tunnel | RoutingStrategies.Bubble | RoutingStrategies.Direct);
+        w.AddHandler(InputElement.KeyDownEvent, MainWindow_KeysDownAsync, RoutingStrategies.Tunnel);
+        w.AddHandler(InputElement.KeyUpEvent, MainWindow_KeyUp, RoutingStrategies.Tunnel);
         w.PointerPressed += async (_, e) => await MouseShortcuts.MainWindow_PointerPressed(e).ConfigureAwait(false);
 
         w.Deactivated += delegate
@@ -330,13 +348,11 @@ public static class StartUpHelper
 
     private static async Task MainWindow_KeysDownAsync(object? sender, KeyEventArgs e)
     {
-        e.Handled = true;
         await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e).ConfigureAwait(false);
     }
 
     private static void MainWindow_KeyUp(object? sender, KeyEventArgs e)
     {
-        e.Handled = true;
         MainKeyboardShortcuts.MainWindow_KeysUp(e);
     }
 }

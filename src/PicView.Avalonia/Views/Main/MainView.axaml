@@ -738,6 +738,21 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!--  Image effects  -->
+                <MenuItem
+                    Command="{CompiledBinding Window.ShowEffectsWindow}"
+                    Header="{CompiledBinding Translation.Effects.Value,
+                                             Mode=OneWay}"
+                    ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
+                                                  Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="12"
+                            Source="{StaticResource FlaskImage}"
+                            Width="12" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
                 <!--  Single image resize  -->
                 <MenuItem
                     Command="{CompiledBinding Window.ShowSingleImageResizeWindow}"

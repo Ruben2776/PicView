@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Threading;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
@@ -108,6 +108,8 @@ public partial class EditableTitlebar : UserControl
 
         if (e.Key == Key.Enter)
         {
+            vm.MainWindow.IsLoadingIndicatorShown.Value = true;
+            
             var oldPath = vm.PicViewer.FileInfo.CurrentValue.FullName;
             var newPath = Path.Combine(vm.PicViewer.FileInfo.CurrentValue.DirectoryName, TextBox.Text);
             Task.Run(async () =>
@@ -118,47 +120,38 @@ public partial class EditableTitlebar : UserControl
                     return;
                 }
 
-                try
+                var currentExtension = Path.GetExtension(oldPath);
+                var newExtension = Path.GetExtension(newPath);
+                if (currentExtension.Equals(newExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    vm.MainWindow.IsLoadingIndicatorShown.Value = true;
-                    NavigationManager.DisableWatcher();
-                    
-                    var renamed = await FileRenamer.AttemptRenameAsync(
-                            oldPath, 
-                            newPath, 
-                            ErrorHandling.ReloadAsync(vm),
-                            vm.PlatformService.DeleteFile(oldPath, true))
-                        .ConfigureAwait(false);
+                    // Same file, handle simple rename
 
-                
-                    MainKeyboardShortcuts.IsKeysEnabled = true;
-                    if (renamed)
-                    {
-                        vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-                        vm.MainWindow.IsEditableTitlebarOpen.Value = false;
-                        await Dispatcher.UIThread.InvokeAsync(() =>
-                        {
-                            TextBox.ClearSelection();
-                            Cursor = new Cursor(StandardCursorType.Arrow);
-                            UIHelper.GetMainView.Focus();
-                        });
-                    }
+                    // Make sure the old file is discarded from being cached
+                    NavigationManager.RemoveFromPreloader(oldPath);
+
+                    FileHelper.RenameFile(oldPath, newPath);
                 }
-                finally
+                else
                 {
-                    vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-                    if (Settings.Navigation.IsFileWatcherEnabled)
-                    {
-                        NavigationManager.EnableWatcher();
-                    }
+                    // Convert and reload
+                    await SaveImageHandler.SaveImageWithPossibleNavigation(vm,
+                        vm.PicViewer.FileInfo.CurrentValue.FullName,
+                        newPath, true, newExtension);
+
+                    await NavigationManager.QuickReload();
                 }
+
+                vm.MainWindow.IsLoadingIndicatorShown.Value = false;
             });
         }
-        else if (e.Key == Key.Escape)
+
+        if (e.Key is not (Key.Escape or Key.Enter))
         {
-            UIHelper.GetMainView.Focus();
-            MainKeyboardShortcuts.IsKeysEnabled = true;
+            return;
         }
+
+        UIHelper.GetMainView.Focus();
+        MainKeyboardShortcuts.IsKeysEnabled = true;
     }
     
     private void ShowFileExistsError(MainViewModel vm)

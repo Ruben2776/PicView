@@ -12,16 +12,15 @@ public static class SaveImageHandler
         string path,
         string destination,
         bool sameFile,
-        string ext,
-        uint? width,
-        uint? height,
-        uint? quality,
-        uint? rotationAngle,
-        bool isKeepingAspectRatio)
+        string? ext = null,
+        uint? width = null,
+        uint? height = null,
+        uint? quality = null,
+        uint? rotationAngle = null,
+        bool isKeepingAspectRatio = true)
     {
-
         var success = await SaveImageFileHelper.SaveImageAsync(
-            null, path, sameFile ? null : destination, width, height, quality,
+            null, path, destination, width, height, quality,
             ext, rotationAngle, null, isKeepingAspectRatio).ConfigureAwait(false);
 
         if (!success)
@@ -36,13 +35,12 @@ public static class SaveImageHandler
             await vm.PlatformService.DeleteFile(path, true); 
         }
 
-        if (destination == path)
+        // Clear possible cache to show updated values correctly
+        NavigationManager.RemoveFromPreloader(path);
+        NavigationManager.RemoveFromPreloader(destination);
+
+        if (sameFile)
         {
-            await NavigationManager.QuickReload().ConfigureAwait(false);
-        }
-        else if (Path.GetDirectoryName(path) == Path.GetDirectoryName(destination))
-        {
-            // Load the file if saved within same directory
             await NavigationManager.LoadPicFromFile(destination, vm).ConfigureAwait(false);
         }
     }

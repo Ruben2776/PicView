@@ -3,6 +3,7 @@
     x:Class="PicView.Avalonia.Views.Main.PrintPreviewView"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
@@ -273,7 +274,6 @@
                             BorderThickness="1"
                             CornerRadius="2"
                             Height="{CompiledBinding PrintPreview.PageHeight.Value}"
-                            Margin="20"
                             Width="{CompiledBinding PrintPreview.PageWidth.Value}">
                             <Border.Effect>
                                 <DropShadowEffect
@@ -284,7 +284,7 @@
                                     Opacity="0.3" />
                             </Border.Effect>
 
-                            <Image Source="{CompiledBinding PrintPreview.PreviewImage.Value}" Stretch="Fill" />
+                            <customControls:ThumbImage Source="{CompiledBinding PrintPreview.PreviewImage.Value}" Stretch="None" />
                         </Border>
                     </Viewbox>
                 </Border>

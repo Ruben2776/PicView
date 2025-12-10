@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
@@ -17,17 +18,15 @@ public static class WindowResizing
 {
     #region Window Resize Handling
 
-    public static void HandleWindowResize(Window window, AvaloniaPropertyChangedEventArgs<Size> size)
+    public static bool KeepWindowSize(Window window, AvaloniaPropertyChangedEventArgs<Size> size)
     {
-        if (!Settings.WindowProperties.AutoFit ||
-            !size.OldValue.HasValue || !size.NewValue.HasValue ||
+        if (!size.OldValue.HasValue || !size.NewValue.HasValue ||
             size.Sender != window || size.OldValue.Value.Width == 0 || size.OldValue.Value.Height == 0 ||
-            size.NewValue.Value.Width == 0 || size.NewValue.Value.Height == 0 ||
-            window.DataContext is not MainViewModel vm)
+            size.NewValue.Value.Width == 0 || size.NewValue.Value.Height == 0)
         {
-            return;
+            return false;
         }
-
+        
         var oldSize = size.OldValue.Value;
         var newSize = size.NewValue.Value;
 
@@ -35,6 +34,22 @@ public static class WindowResizing
         var y = (oldSize.Height - newSize.Height) / 2;
 
         window.Position = new PixelPoint(window.Position.X + (int)x, window.Position.Y + (int)y);
+        
+        return true;
+    }
+
+    public static void HandleWindowResize(Window window, AvaloniaPropertyChangedEventArgs<Size> size)
+    {
+        if (!Settings.WindowProperties.AutoFit || window.DataContext is not MainViewModel vm)
+        {
+            return;
+        }
+
+        var isWindowResized = KeepWindowSize(window, size);
+        if (!isWindowResized)
+        {
+            return;
+        }
 
         RepositionCursorIfTriggered(vm, vm.MainWindow.IsNavigationButtonLeftClicked,
             clicked => vm.MainWindow.IsNavigationButtonLeftClicked = clicked,
@@ -80,6 +95,11 @@ public static class WindowResizing
             clicked => vm.HoverbarViewModel.IsHoverRotateLeftClicked = clicked,
             () => UIHelper.GetHoverBar.GetControl<IconButton>("RotateLeftButton"),
             new Point(11, 7));
+        
+        RepositionCursorIfTriggered(vm, vm.MainWindow.IsTitlebarRotationClicked,
+            clicked => vm.MainWindow.IsTitlebarRotationClicked = clicked,
+            () => UIHelper.GetTitlebar.GetControl<IconButton>("RotateRightButton"),
+            new Point(11, 7));
     }
 
     private static void RepositionCursorIfTriggered(
@@ -97,8 +117,20 @@ public static class WindowResizing
         var control = controlProvider();
         if (control is not null)
         {
-            var screenPoint = control.PointToScreen(offset);
-            vm.PlatformService?.SetCursorPos(screenPoint.X, screenPoint.Y);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    var screenPoint = control.PointToScreen(offset);
+                    vm.PlatformService?.SetCursorPos(screenPoint.X, screenPoint.Y);
+                }, DispatcherPriority.Render);
+
+            }
+            else
+            {
+                var screenPoint = control.PointToScreen(offset);
+                vm.PlatformService?.SetCursorPos(screenPoint.X, screenPoint.Y);
+            }
         }
 
         setTrigger(false);

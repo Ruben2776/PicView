@@ -170,8 +170,6 @@ public static class DanishUnitTest
         Assert.Equal(TranslationManager.Translation.GlassTheme, "Glas tema");
         Assert.Equal(TranslationManager.Translation.GoBackBy100Images, "Gå 100 billeder tilbage");
         Assert.Equal(TranslationManager.Translation.GoBackBy10Images, "Gå 10 billeder tilbage");
-        Assert.Equal(TranslationManager.Translation.GoToImageAtSpecifiedIndex,
-            "Indlæs billede ved at indtaste numerisk placering");
         Assert.Equal(TranslationManager.Translation.Hard, "Hård");
         Assert.Equal(TranslationManager.Translation.Height, "Højde");
         Assert.Equal(TranslationManager.Translation.HideBottomGallery, "Skjul nederste galleri");
@@ -341,7 +339,6 @@ public static class DanishUnitTest
         Assert.Equal(TranslationManager.Translation.Soft, "Blød");
         Assert.Equal(TranslationManager.Translation.Software, "Program");
         Assert.Equal(TranslationManager.Translation.SortFilesBy, "Sorter efter");
-        Assert.Equal(TranslationManager.Translation.SourceFolder, "Kilde");
         Assert.Equal(TranslationManager.Translation.Space, "Mellemrum");
         Assert.Equal(TranslationManager.Translation.Square, "Firkant");
         Assert.Equal(TranslationManager.Translation.Start, "Start");

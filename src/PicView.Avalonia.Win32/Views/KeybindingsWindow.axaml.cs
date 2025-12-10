@@ -4,13 +4,20 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Config;
+using R3;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class KeybindingsWindow : Window
+public partial class KeybindingsWindow : Window, IDisposable
 {
-    public KeybindingsWindow()
+    private readonly CompositeDisposable _disposables = new();
+    private readonly KeybindingWindowConfig _config;
+
+    public KeybindingsWindow(KeybindingWindowConfig config)
     {
+        _config = config;
         InitializeComponent();
         if (Settings.Theme.GlassTheme)
         {
@@ -43,6 +50,21 @@ public partial class KeybindingsWindow : Window
             KeybindingsView.Background = UIHelper.GetMenuBackgroundColor();
         }
         GenericWindowHelper.KeybindingsWindowInitialize(this);
+
+        ClientSizeProperty.Changed.ToObservable()
+            .ObserveOn(UIHelper.GetFrameProvider)
+            .Subscribe(UpdateWindowSize)
+            .AddTo(_disposables);
+        PositionChanged += (_, _) => UpdateWindowPosition();
+    }
+
+    private void UpdateWindowSize(AvaloniaPropertyChangedEventArgs<Size> size)
+        => WindowFunctions.SetWindowSize(this, size, _config.WindowProperties);
+
+    private void UpdateWindowPosition()
+    {
+        _config.WindowProperties.Left = Position.X;
+        _config.WindowProperties.Top = Position.Y;
     }
 
     private void MoveWindow(object? sender, PointerPressedEventArgs e)
@@ -56,4 +78,9 @@ public partial class KeybindingsWindow : Window
     private void Close(object? sender, RoutedEventArgs e) => Close();
 
     private void Minimize(object? sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+
+    public void Dispose()
+    {
+        _disposables.Dispose();
+    }
 }

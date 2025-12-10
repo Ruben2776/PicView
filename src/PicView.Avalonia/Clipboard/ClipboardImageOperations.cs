@@ -1,9 +1,11 @@
 using System.Runtime.InteropServices;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Media.Imaging;
 using ImageMagick;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.DebugTools;
 using PicView.Core.ImageDecoding;
@@ -34,62 +36,14 @@ public static class ClipboardImageOperations
             await clipboard.ClearAsync();
             
             // Handle for Windows
+            // TODO: Check if this is still needed
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 await vm.PlatformService.CopyImageToClipboard(bitmap);
                 return true;
             }
-
-            // Handle for other platforms
-            const string pngIdentifier = "image/png";
-            const string jpegIdentifier = "image/jpeg";
-            const string gifIdentifier = "image/gif";
-            const string tiffIdentifier = "image/tiff";
-            string identifier;
-            switch (vm.PicViewer.Format.Value)
-            {
-                case MagickFormat.Tif:
-                case MagickFormat.Tiff:
-                case MagickFormat.Tiff64:
-                    identifier = tiffIdentifier;
-                    break;
-                case MagickFormat.Gif:
-                case MagickFormat.Gif87:
-                    identifier = gifIdentifier;
-                    break;
-                case MagickFormat.Hdr:
-                case MagickFormat.Heic:
-                case MagickFormat.Heif:
-                case MagickFormat.J2c:
-                case MagickFormat.J2k:
-                case MagickFormat.Jng:
-                case MagickFormat.Jnx:
-                case MagickFormat.Jp2:
-                case MagickFormat.Jpc:
-                case MagickFormat.Jpe:
-                case MagickFormat.Jpeg:
-                case MagickFormat.Jpg:
-                case MagickFormat.Jpm:
-                case MagickFormat.Jps:
-                    identifier = jpegIdentifier;
-                    break;
-                case MagickFormat.Svg:
-                case MagickFormat.Svgz:
-                case MagickFormat.Text:
-                case null:
-                    return false;
-                default:
-                    identifier = pngIdentifier;
-                    break;
-            }
-
-            using var ms = new MemoryStream();
-            bitmap.Save(ms);
-            var dataItem = DataTransferItem.Create(DataFormat.CreateBytesPlatformFormat(identifier), ms.ToArray());
-            var dataTransfer = new DataTransfer();
-            dataTransfer.Add(dataItem);
-            await clipboard.SetDataAsync(dataTransfer);
-
+            
+            await clipboard.SetValueAsync(DataFormat.Bitmap, bitmap);
             return true;
         });
     }
@@ -202,6 +156,11 @@ public static class ClipboardImageOperations
 
     private static async Task<Bitmap?> TryGetBitmapFromClipboard(IClipboard clipboard)
     {
+        var clipboardImage = await clipboard.TryGetBitmapAsync();
+        if (clipboardImage != null)
+        {
+            return clipboardImage;
+        }
         // List of formats to try
         var formats = new[]
         {

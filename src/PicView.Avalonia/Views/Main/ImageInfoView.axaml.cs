@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Resizing;
 using PicView.Avalonia.UI;
@@ -154,26 +155,34 @@ public partial class ImageInfoView : UserControl
                 return;
             }
 
-            var renamed = await FileRenamer.AttemptRenameAsync(
-                    oldPath,
-                    newPath,
-                    ErrorHandling.ReloadAsync(vm),
-                    vm.PlatformService.DeleteFile(oldPath, true))
-                .ConfigureAwait(false);
-
-            if (renamed)
+            var currentExtension = Path.GetExtension(oldPath);
+            var newExtension = Path.GetExtension(newPath);
+            if (currentExtension.Equals(newExtension, StringComparison.OrdinalIgnoreCase))
             {
-                await NavigationManager.LoadPicFromFile(newPath, vm).ConfigureAwait(false);
+                // Same file, handle simple rename
+
+                // Make sure the old file is discarded from being cached
+                NavigationManager.RemoveFromPreloader(oldPath);
+
+                FileHelper.RenameFile(oldPath, newPath);
+
+                vm.PicViewer.FileInfo.Value = new FileInfo(newPath);
             }
+            else
+            {
+                // Convert and reload
+                await SaveImageHandler.SaveImageWithPossibleNavigation(vm, vm.PicViewer.FileInfo.CurrentValue.FullName,
+                    newPath, true, newExtension);
+            }
+
+            await NavigationManager.QuickReload();
+
+            await UpdateValuesAsync(vm.PicViewer.FileInfo.CurrentValue, CancellationToken.None);
         }
         finally
         {
             await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(false));
             vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-            if (Settings.Navigation.IsFileWatcherEnabled)
-            {
-                NavigationManager.EnableWatcher();
-            }
         }
     }
 

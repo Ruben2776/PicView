@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PicView.Core.Localization;
-using R3;
+﻿using R3;
 
-namespace PicView.Avalonia.Printing
+namespace PicView.Core.Printing
 {
     public class PrintSettings
     {
+        /// <summary>
+        /// Path to the image to print.
+        /// <remarks>Should point to a temporary file of a common format</remarks>
+        /// </summary>
         public BindableReactiveProperty<string?> ImagePath { get; } = new();
         public BindableReactiveProperty<string?> PrinterName { get; } = new();
         public BindableReactiveProperty<string?> PaperSize { get; } = new();

@@ -89,6 +89,7 @@ public partial class StartUpMenu : UserControl
             return;
 
         TitleManager.SetNoImageTitle(vm);
+        UIHelper.GetHoverBar?.IsVisible = false;
     }
 
     public void ResponsiveSize(double width, double height)

@@ -5,6 +5,7 @@ using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Sizing;
 using R3;
 
 namespace PicView.Avalonia.Win32.Views;
@@ -66,12 +67,8 @@ public partial class WinTitleBar : UserControl
             {
                 if (isVisible)
                 {
-                    MainMenu.Open();
-                    FileMenuItem.Open();
-
                     // Overflow buttons if the window is too small
-                    if (vm.MainWindow.TitleMaxWidth.CurrentValue <
-                        vm.PlatformWindowService.CombinedTitleButtonsWidth)
+                    if (vm.MainWindow.TitleMaxWidth.CurrentValue < SizeDefaults.WindowMinSize)
                     {
                         vm.MainWindow.TopTitlebarViewModel.IsBtnPanelVisible.Value = false;
                     }
@@ -79,6 +76,9 @@ public partial class WinTitleBar : UserControl
                     {
                         vm.MainWindow.TopTitlebarViewModel.IsBtnPanelVisible.Value = true;
                     }
+                    
+                    MainMenu.Open();
+                    FileMenuItem.Open();
                 }
                 else
                 {

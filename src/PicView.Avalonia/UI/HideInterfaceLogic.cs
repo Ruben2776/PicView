@@ -169,6 +169,14 @@ public static class HideInterfaceLogic
 
     public static async Task ToggleHoverNavigationBar(MainViewModel vm)
     {
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (!UIHelper.GetMainView.MainGrid.Children.Contains(UIHelper.GetHoverBar))
+            {
+                UIHelper.AddHoverBar(vm);
+            }
+        });
+        
         Settings.UIProperties.ShowHoverNavigationBar = !Settings
             .UIProperties.ShowHoverNavigationBar;
 

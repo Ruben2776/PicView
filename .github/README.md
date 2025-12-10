@@ -68,25 +68,13 @@ If you enjoy PicView, please consider supporting its development:
 
 # Features and screenshots
 
-- 🖼️ Supports almost every image format (JPEG, PNG, WEBP, GIF, HEIC, PSD, RAW, etc.)  
-- 🎞️ Animated image support (GIF, WEBP)  
-- 🌗 Light, dark, and glass themes  
-- 📂 Portable by default (no registry / system changes)  
-- 📊 EXIF info window with editing tools  
-- ✂️ Crop, resize, convert, compress, batch process  
-- 📑 Rename or convert directly from title bar  
-- 🎮 Image gallery with keyboard navigation  
-- ⚡ Built with .NET NativeAOT for speed & small size
-
-<br>
-
-![UI-Dark-Theme-Magenta 3 0 0](https://github.com/user-attachments/assets/ede687f6-523e-49dd-b2fa-3509929434e1)
+![UI-Dark-Theme-Magenta 4 0 0](https://picview.org/assets/screenshots/main/PicView-4.0-dark-theme-UI-overview.webp)
 
 _UI overview with bottom gallery._
 
 <br>
 
-![3x3 0 0](https://github.com/user-attachments/assets/1839c2bb-aff3-4d31-8093-ba3814952ce7)
+![3x3 0 0](https://picview.org/assets/screenshots/uix3/500/Dark-Theme-Gallery-Zoom-0.4.webp)
 
 Switch between a dark and a light theme and toggle between hiding the UI.
 
@@ -97,7 +85,7 @@ Switch between a dark and a light theme and toggle between hiding the UI.
 </h3>
 
 <h4 align="center">
-    <img src="https://picview.org/assets/screenshots/exifwindow/Image%20Info%20Window%203.0.0%20.webp" />
+    <img src="https://picview.org/assets/screenshots/exifwindow/450/Image-Info-exif-dark-theme-4.0.webp" />
 </h4>
 
 Perform operations such as _renaming_, _file conversion_, _copying_, _compressing_, _resizing_, adding it to the _recycle bin_ and editing the _EXIF image rating_.
@@ -105,7 +93,7 @@ Perform operations such as _renaming_, _file conversion_, _copying_, _compressin
 You can change the image size by editing the `width` and/or `height` textboxes. To resize by a percentage, simply add the `%` symbol after the value.
 
 <h1 align="center">
-    <img src="https://picview.org/assets/screenshots/exifwindow/gps3.0.webp" />
+    <img src="https://picview.org/assets/screenshots/exifwindow/450/Image-Info-exif-GPS-dark-theme-4.0.webp" />
 </h1>
 
 If the GPS coordinates are saved on the image, you can click the Google or Bing buttons to open the respective maps at the GPS coordinates
@@ -130,22 +118,11 @@ The bottom gallery can be turned on or off
 <br>
 
 <h3 align="center">
-    Scroll Image
-</h3>
-
-![SideBySideScroll3 0 0](https://github.com/user-attachments/assets/59ab9368-eb6c-4964-8134-44cf134ea753)
-
-
-You can toggle the interface to show images `Side by side` and you can also turn scrolling on/off. Click the mousewheel for auto scroll.
-
-<br>
-
-<h3 align="center">
     Crop Image
 </h3>
 
 <h1 align="center">
-    <img src="https://picview.org/assets/screenshots/PicView-Crop/Cropping3.0.webp" />
+    <img src="https://picview.org/assets/screenshots/crop/670/PicView-crop-4.0-dark-theme.webp" />
 </h1>
 
 Quickly crop image by pressing `C`. Hold `Shift` for square selection.
@@ -156,22 +133,29 @@ Quickly crop image by pressing `C`. Hold `Shift` for square selection.
     Batch Resizing
 </h3>
 
-### Convert/Optimize all your pictures
-All files from the `Source folder` will be selected for processing and will be sent to the `Output folder`. The default name for the output folder will be **Processed Pictures**.
-
-If the *Output folder* is the same as the *Source folder*, or left blank, the original files will be overwritten. 
-
-The `Convert to` dropdown option allows you to convert all the files to a popular format.
-
-The `Compression` dropdown option allows you to compress the files, either without losing quality or sacrificing some quality for greater reduced file size.
-
-The `Quality` dropdown option allows you to change quality of supported file types. The higher the Quality setting, the more detail is preserved in the image, but the larger the file size.
-
-The `Resize` dropdown option allows you to resize the picture by **height**, **width** and **percentage** while keeping the aspect ratio of the image.
-
 <h1 align="center">
-    <img src="https://picview.org/assets/screenshots/batch%20resize/batch-resize-3.0v2.webp" height="600" />
+    <img src="https://picview.org/assets/screenshots/batch%20resize/PicView-Batch-Resize-window-4.0-dark-theme.webp"/>
 </h1>
+
+### Convert/Optimize all your pictures
+
+All selected files will be sent to Output folder. The default name for the output folder will be the localized translation for _Batch resize_.
+
+The `Convert to dropdown option allows you to convert all the files to a popular format.
+
+The Compression dropdown option allows you to compress the files, either without losing quality or sacrifing some quality for greater reduced file size.
+
+The Quality dropdown option allows you to change quality of supported file types. The higher the Quality setting, the more detail is preserved in the image, but the larger the file size.
+
+The Resize dropdown option allows you to resize the picture by **height**, **width** and **percentage** while keeping the aspect ratio of the image.
+
+### Generate thumbnails
+
+The thumb tab item allows you to generate up to 7 thumbnails.
+
+They can be resized by **height**, **width** and **percentage** while keeping the aspect ratio.
+
+Each thumbnail will be sent to its own folder. Each folder will have a suggested folder name from small to medium, large etc., in an ascending order
 
 
 
@@ -180,7 +164,7 @@ The `Resize` dropdown option allows you to resize the picture by **height**, **w
 ### Renaming
 
 
-![Screenshot 2025-01-26 141624](https://github.com/user-attachments/assets/5ff7834a-3461-4b39-9784-7cf386c8d429)
+![PicView-File-Renaming](https://picview.org/assets/screenshots/rename-titlebar/PicView-rename-titlebar-4.0-dark-theme.webp)
 
 Rename or move files in the title bar by pressing `F2` or right-clicking it.
 Changing the file extension will convert the image to the respective format.

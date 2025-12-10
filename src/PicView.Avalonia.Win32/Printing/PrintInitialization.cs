@@ -3,6 +3,7 @@ using System.Drawing.Printing;
 using PicView.Avalonia.Printing;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Win32.Views;
+using PicView.Core.Printing;
 
 namespace PicView.Avalonia.Win32.Printing;
 

@@ -3,7 +3,6 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Gallery;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Gallery;
 using R3;
@@ -83,7 +82,7 @@ public class GalleryViewModel : IDisposable
 
     public void GalleryItemSizeUpdateSubscription(MainViewModel vm)
     {
-        Observable.EveryValueChanged(GalleryItem.ItemHeight, x => x.Value, UIHelper.GetFrameProvider)
+        Observable.EveryValueChanged(GalleryItem.ItemHeight, x => x.Value)
             .Skip(1)
             .SubscribeAwait(async (x,_) =>
             {

@@ -8,7 +8,7 @@ public class WindowViewModel
 {
     public SettingsWindowConfig? SettingsWindowConfig { get; set; }
     public ImageInfoWindowConfig? ImageInfoWindowConfig { get; set; }
-    
+    public KeybindingWindowConfig? KeybindingWindowConfig { get; set; }
     public BatchResizeWindowConfig? BatchResizeWindowConfig { get; set; }
     
     public void NewWindow() => ProcessHelper.StartNewProcess();

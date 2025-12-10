@@ -3,7 +3,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
-using Avalonia.Threading;
 using Clowd.Clipboard;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Interfaces;
@@ -11,7 +10,6 @@ using PicView.Avalonia.StartUp;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Win32.Views;
 using PicView.Avalonia.Win32.WindowImpl;
-using PicView.Core.DebugTools;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileSorting;
 using PicView.Core.Localization;
@@ -21,7 +19,6 @@ using PicView.Core.WindowsNT.FileAssociation;
 using PicView.Core.WindowsNT.FileHandling;
 using PicView.Core.WindowsNT.Taskbar;
 using PicView.Core.WindowsNT.Wallpaper;
-using Dispatcher = Avalonia.Threading.Dispatcher;
 using Win32Clipboard = PicView.Core.WindowsNT.Copy.Win32Clipboard;
 
 namespace PicView.Avalonia.Win32;
@@ -40,45 +37,38 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
         ProfileOptimization.StartProfile("ProfileOptimization");
 #endif
         AvaloniaXamlLoader.Load(this);
+#if DEBUG
+        this.AttachDeveloperTools();
+#endif
     }
 
-    public override async void OnFrameworkInitializationCompleted()
+    public override void OnFrameworkInitializationCompleted()
     {
-        try
-        {
-            base.OnFrameworkInitializationCompleted();
+        base.OnFrameworkInitializationCompleted();
 
-            if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        var settingsExists = LoadSettings();
+
+        TranslationManager.Init();
+        _vm = new MainViewModel(this, this)
+        {
+            MainWindow =
             {
-                return;
+                TopTitlebarViewModel = new TopTitlebarViewModel()
             }
+        };
 
-            var settingsExists= await LoadSettingsAsync().ConfigureAwait(false);
+        ThemeManager.DetermineTheme(Current, settingsExists);
 
-            TranslationManager.Init();
-            _vm = new MainViewModel(this, this)
-            {
-                MainWindow =
-                {
-                    TopTitlebarViewModel = new TopTitlebarViewModel()
-                }
-            };
-
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                ThemeManager.DetermineTheme(Current, settingsExists);
-                
-                _mainWindow = new WinMainWindow();
-                desktop.MainWindow = _mainWindow;
-                _mainWindow.DataContext = _vm;
-                StartUpHelper.StartWithArguments(_vm, settingsExists, desktop, _mainWindow);
-                _windowInitializer = new WindowInitializer();
-            }, DispatcherPriority.Send);
-        }
-        catch (Exception e)
-        {
-            DebugHelper.LogDebug(nameof(App), nameof(OnFrameworkInitializationCompleted), e);
-        }
+        _mainWindow = new WinMainWindow();
+        desktop.MainWindow = _mainWindow;
+        _mainWindow.DataContext = _vm;
+        StartUpHelper.StartWithArguments(_vm, settingsExists, desktop, _mainWindow);
+        _windowInitializer = new WindowInitializer();
     }
 
     public int CombinedTitleButtonsWidth
@@ -241,8 +231,8 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
     public async Task ShowImageInfoWindow() =>
         await _windowInitializer?.ShowImageInfoWindow(_vm);
 
-    public void ShowKeybindingsWindow() =>
-        _windowInitializer?.ShowKeybindingsWindow(_vm);
+    public async Task ShowKeybindingsWindow() =>
+        await _windowInitializer?.ShowKeybindingsWindow(_vm);
 
     public async Task ShowSettingsWindow() =>
         await _windowInitializer?.ShowSettingsWindow(_vm);

@@ -53,7 +53,6 @@
                     Width="29"
                     x:Name="CloseButton" />
 
-
                 <customControls:IconButton
                     Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
@@ -96,7 +95,14 @@
                     Width="35"
                     x:Name="RemoveRatingButton" />
 
-                <customControls:IconButton
+                <Rectangle
+                    DockPanel.Dock="Right"
+                    Fill="{DynamicResource MainBorderColor}"
+                    Height="28"
+                    IsVisible="{CompiledBinding !InfoWindow.IsExtraButtonsEnabled.Value}"
+                    Width="1" />
+
+                <customControls:TextIconButton
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="errorHover"
@@ -109,13 +115,17 @@
                     Foreground="{DynamicResource MainTextColor}"
                     Height="28"
                     IconHeight="17"
+                    IconMargin="10,0,5,0"
                     IconWidth="17"
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
+                    Text="{CompiledBinding Translation.DeleteFile.Value,
+                                           Mode=OneWay}"
+                    TextMargin="5,0,5,0"
+                    TextMaxWidth="{CompiledBinding InfoWindow.ExtraTextBoxMaxWidth.Value}"
                     ToolTip.Tip="{CompiledBinding Translation.DeleteFile.Value,
                                                   Mode=OneWay}"
-                    Width="35"
                     x:Name="RecycleButton" />
 
                 <customControls:TextIconButton
@@ -191,7 +201,7 @@
                                                   Mode=OneWay}"
                     x:Name="OpenWithButton" />
 
-                <customControls:IconButton
+                <customControls:TextIconButton
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
@@ -203,16 +213,20 @@
                     Foreground="{DynamicResource MainTextColor}"
                     Height="28"
                     IconHeight="17"
+                    IconMargin="10,0,5,0"
                     IconWidth="17"
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
+                    Text="{CompiledBinding Translation.DuplicateFile.Value,
+                                           Mode=OneWay}"
+                    TextMargin="5,0,5,0"
+                    TextMaxWidth="{CompiledBinding InfoWindow.ExtraTextBoxMaxWidth.Value}"
                     ToolTip.Tip="{CompiledBinding Translation.DuplicateFile.Value,
                                                   Mode=OneWay}"
-                    Width="45"
                     x:Name="DuplicateButton" />
 
-                <customControls:IconButton
+                <customControls:TextIconButton
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
                     Classes="noBorderHover"
@@ -224,13 +238,17 @@
                     Foreground="{DynamicResource MainTextColor}"
                     Height="28"
                     IconHeight="17"
+                    IconMargin="10,0,5,0"
                     IconWidth="17"
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}"
                     IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
+                    Text="{CompiledBinding Translation.DuplicateFile.Value,
+                                           Mode=OneWay}"
+                    TextMargin="5,0,5,0"
+                    TextMaxWidth="{CompiledBinding InfoWindow.ExtraTextBoxMaxWidth.Value}"
                     ToolTip.Tip="{CompiledBinding Translation.ShowInFolder.Value,
                                                   Mode=OneWay}"
-                    Width="45"
                     x:Name="LocateOnDiskButton" />
 
                 <TextBlock

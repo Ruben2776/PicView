@@ -36,10 +36,10 @@ public partial class FileSearchDialog : AnimatedPopUp
 
         SearchBox.Focus();
 
-        KeyDown += OnKeyDown;
+        AddHandler(KeyDownEvent, KeysDownAsync, RoutingStrategies.Tunnel);
     }
 
-    private void OnKeyDown(object? sender, KeyEventArgs e)
+    private async ValueTask KeysDownAsync(object? sender, KeyEventArgs e)
     {
         switch (e.Key)
         {
@@ -50,6 +50,22 @@ public partial class FileSearchDialog : AnimatedPopUp
             case Key.Up:
                 MoveFocus(NavigationDirection.Previous);
                 e.Handled = true;
+                break;
+            case Key.Enter:
+                if (string.IsNullOrWhiteSpace(SearchBox.Text))
+                {
+                    return;
+                }
+
+                if (uint.TryParse(SearchBox.Text, out var result))
+                {
+                    e.Handled = true;
+                    var desiredIndex = result <= 0 ? 0 : Math.Min(NavigationManager.GetCount - 1, result - 1);
+                    await ImageLoader.CheckCancellationAndStartIterateToIndex((int)desiredIndex,
+                            NavigationManager.ImageIterator, CancellationToken.None)
+                        .ConfigureAwait(false);
+                }
+
                 break;
         }
     }
@@ -113,14 +129,15 @@ public partial class FileSearchDialog : AnimatedPopUp
                     return;
                 }
 
-                await Task.Delay(100, ct);
+                // Need to delay to make it feel smooth
+                await Task.Delay(10, ct);
 
                 for (var i = batchSize; i < fileSearchResults.Length; i += batchSize)
                 {
                     var batch = fileSearchResults.Skip(i).Take(batchSize);
                     foreach (var item in batch)
                     {
-                        await Task.Delay(100, ct);
+                        await Task.Delay(10, ct);
                         ct.ThrowIfCancellationRequested();
                         if (!ct.IsCancellationRequested)
                         {
@@ -142,8 +159,8 @@ public partial class FileSearchDialog : AnimatedPopUp
     public void Dispose()
     {
         _disposables.Dispose();
-        KeyDown -= OnKeyDown;
-
+        RemoveHandler(KeyDownEvent, KeysDownAsync);
+        
         if (DataContext is MainViewModel vm)
         {
             vm.PicViewer.FilteredFileInfos.Value.Clear();

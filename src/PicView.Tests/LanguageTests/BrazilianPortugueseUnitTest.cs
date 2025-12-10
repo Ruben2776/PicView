@@ -174,8 +174,6 @@ public static class BrazilianPortugueseUnitTest
         Assert.Equal(TranslationManager.Translation.GlassTheme, "Tema de vidro");
         Assert.Equal(TranslationManager.Translation.GoBackBy100Images, "Retroceder em 100 imagens");
         Assert.Equal(TranslationManager.Translation.GoBackBy10Images, "Retroceder em 10 imagens");
-        Assert.Equal(TranslationManager.Translation.GoToImageAtSpecifiedIndex,
-            "Ir para a imagem no índice especificado");
         Assert.Equal(TranslationManager.Translation.Hard, "Forte");
         Assert.Equal(TranslationManager.Translation.Height, "Altura");
         Assert.Equal(TranslationManager.Translation.HideBottomGallery, "Ocultar galeria inferior");
@@ -346,7 +344,6 @@ public static class BrazilianPortugueseUnitTest
         Assert.Equal(TranslationManager.Translation.Soft, "Suave");
         Assert.Equal(TranslationManager.Translation.Software, "Software");
         Assert.Equal(TranslationManager.Translation.SortFilesBy, "Ordenar arquivos por");
-        Assert.Equal(TranslationManager.Translation.SourceFolder, "Pasta de origem");
         Assert.Equal(TranslationManager.Translation.Space, "Espaço");
         Assert.Equal(TranslationManager.Translation.Square, "Quadrado");
         Assert.Equal(TranslationManager.Translation.Start, "Iniciar");

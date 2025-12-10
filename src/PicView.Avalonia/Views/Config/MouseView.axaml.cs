@@ -8,6 +8,25 @@ namespace PicView.Avalonia.Views.Config;
             InitializeComponent();
             Loaded += delegate
             {
+                DoubleClickBox.SelectedIndex = Settings.UIProperties.DoubleClickBehavior switch
+                {
+                    1 => 0,
+                    2 => 1,
+                    _ => DoubleClickBox.Items.Count - 1
+                };
+
+                DoubleClickBox.SelectionChanged += async delegate
+                {
+                    Settings.UIProperties.DoubleClickBehavior = DoubleClickBox.SelectedIndex switch
+                    {
+                        0 => 1,
+                        2 => 2,
+                        _ => 0
+                    };
+
+                    await SaveSettingsAsync();
+                };
+
                 if (Settings.Navigation.IsNavigatingFileHistory)
                 {
                     MouseSideButtonBox.SelectedIndex = 0;

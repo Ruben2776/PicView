@@ -22,7 +22,8 @@
     <Panel
         Background="#4D000000"
         Height="400"
-        Width="300">
+        Width="300"
+        x:Name="MainPanel">
         <uc:SpinWaiter x:Name="SpinWaiter" />
         <TextBlock
             Classes="txt"

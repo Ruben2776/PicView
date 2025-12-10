@@ -60,7 +60,7 @@ public static class WindowFunctions
         }
         else
         {
-            var url = vm?.PicViewer.Title.CurrentValue.GetURL();
+            var url = vm?.PicViewer.Title?.CurrentValue?.GetURL();
             lastFile = !string.IsNullOrWhiteSpace(url) ? url : FileHistoryManager.GetLastEntry();
         }
 
@@ -228,6 +228,9 @@ public static class WindowFunctions
             vm.MainWindow.CanResize.Value = false;
             Settings.WindowProperties.AutoFit = true;
             vm.GlobalSettings.IsAutoFit.Value = true;
+
+            // Fix unpleasant window placement
+            Dispatcher.UIThread.Post(() => { CenterWindowOnScreen(); }, DispatcherPriority.Background);
         }
 
         await ResizeAndFixRenderingError(vm);
@@ -325,7 +328,12 @@ public static class WindowFunctions
 
     #region Window Size and Position
 
-    public static void CenterWindowOnScreen(bool horizontal = true, bool top = false)
+    public static void CenterWindowOnScreen(Window window)
+    {
+        CenterWindowOnScreen(horizontal: true, top: false, window: window);
+    }
+
+    public static void CenterWindowOnScreen(bool horizontal = true, bool top = false, Window? window = null)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -334,7 +342,7 @@ public static class WindowFunctions
 
         Dispatcher.UIThread.Post(() =>
         {
-            var window = desktop.MainWindow;
+            window ??= desktop.MainWindow;
             if (window.WindowState is WindowState.Maximized or WindowState.FullScreen)
             {
                 return;
@@ -357,7 +365,7 @@ public static class WindowFunctions
             window.Position = horizontal
                 ? new PixelPoint((int)centeredX, (int)centeredY)
                 : new PixelPoint(window.Position.X, (int)centeredY);
-        }, DispatcherPriority.Background);
+        });
     }
 
     public static void InitializeWindowSizeAndPosition(Window window)

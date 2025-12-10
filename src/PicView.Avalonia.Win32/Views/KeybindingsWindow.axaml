@@ -1,4 +1,6 @@
 <Window
+    CanResize="True"
+    MinHeight="200"
     SizeToContent="Width"
     Title="KeybindingsWindow"
     x:Class="PicView.Avalonia.Win32.Views.KeybindingsWindow"

@@ -128,10 +128,7 @@ public class ToolsViewModel : IDisposable
 
     public ReactiveCommand<string> CopyFileCommand { get; } = new(async (path, _) =>
     {
-        if (UIHelper.GetMainView.DataContext is MainViewModel vm)
-        {
-            await ClipboardFileOperations.CopyFileToClipboard(path, vm).ConfigureAwait(false);
-        }
+        await ClipboardFileOperations.CopyFileToClipboard(path).ConfigureAwait(false);
     });
 
     public ReactiveCommand<string> CopyFilePathCommand { get; } = new(async (path, _) =>

@@ -170,7 +170,6 @@ public static class GermanUnitTest
         Assert.Equal(TranslationManager.Translation.GlassTheme, "Glas");
         Assert.Equal(TranslationManager.Translation.GoBackBy100Images, "100 Bilder zurück gehen");
         Assert.Equal(TranslationManager.Translation.GoBackBy10Images, "10 Bilder zurück gehen");
-        Assert.Equal(TranslationManager.Translation.GoToImageAtSpecifiedIndex, "Zu Bild mit angegebenen Index gehen");
         Assert.Equal(TranslationManager.Translation.Hard, "Hart");
         Assert.Equal(TranslationManager.Translation.Height, "Höhe");
         Assert.Equal(TranslationManager.Translation.HideBottomGallery, "Untere Galerie ausblenden");
@@ -343,7 +342,6 @@ public static class GermanUnitTest
         Assert.Equal(TranslationManager.Translation.Soft, "Weich");
         Assert.Equal(TranslationManager.Translation.Software, "Software");
         Assert.Equal(TranslationManager.Translation.SortFilesBy, "Dateien sortieren nach");
-        Assert.Equal(TranslationManager.Translation.SourceFolder, "Quellordner");
         Assert.Equal(TranslationManager.Translation.Space, "Platz");
         Assert.Equal(TranslationManager.Translation.Square, "Quadrat");
         Assert.Equal(TranslationManager.Translation.Start, "Start");

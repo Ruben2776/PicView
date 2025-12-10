@@ -22,6 +22,8 @@ public class MainWindowViewModel : IDisposable
     public bool IsClickArrowRightClicked { get; set; }
 
     public bool IsBottomToolbarRotationClicked { get; set; }
+    
+    public bool IsTitlebarRotationClicked { get; set; }
 
     public BindableReactiveProperty<Brush?> ImageBackground { get; } = new();
 
@@ -122,15 +124,20 @@ public class MainWindowViewModel : IDisposable
             IsEditableTitlebarOpen);
     }
 
-    public void LayoutButtonSubscription()
+    public void LayoutButtonSubscription(MainViewModel vm)
     {
-        Observable.EveryValueChanged(this, x => x.IsMaximized.CurrentValue, UIHelper.GetFrameProvider)
+        Observable.EveryValueChanged(this, x => x.IsMaximized.CurrentValue)
             .Subscribe(_ => SetButtonValues());
-        Observable.EveryValueChanged(this, x => x.IsFullscreen.CurrentValue, UIHelper.GetFrameProvider)
+        Observable.EveryValueChanged(this, x => x.IsFullscreen.CurrentValue)
             .Subscribe(isFullscreen =>
             {
                 SetButtonValues();
-                if (UIHelper.GetMainView.DataContext is MainViewModel vm)
+                if (!isFullscreen)
+                {
+                    return;
+                }
+
+                if (vm.MainWindow.CurrentView.Value == vm.ImageViewer)
                 {
                     vm.HoverbarViewModel.IsHoverbarVisible.Value = isFullscreen && Settings.WindowProperties.Fullscreen;
                 }
@@ -147,13 +154,15 @@ public class MainWindowViewModel : IDisposable
         Observable.EveryValueChanged(vm.MainWindow.CurrentView, control => control.Value)
             .Subscribe(control =>
             {
-                if (control is ImageViewer)
+                if (control is ImageViewer && Settings.UIProperties.ShowHoverNavigationBar)
                 {
                     if (Settings.WindowProperties.Fullscreen)
                     {
                         vm.HoverbarViewModel.IsHoverbarVisible.Value = Settings.UIProperties.ShowAltInterfaceButtons;
                     }
-                    else if (!Settings.UIProperties.ShowBottomNavBar && Settings.UIProperties.ShowAltInterfaceButtons)
+                    else if ((!Settings.UIProperties.ShowBottomNavBar &&
+                              Settings.UIProperties.ShowAltInterfaceButtons) ||
+                             !Settings.UIProperties.ShowInterface)
                     {
                         vm.HoverbarViewModel.IsHoverbarVisible.Value = true;
                     }

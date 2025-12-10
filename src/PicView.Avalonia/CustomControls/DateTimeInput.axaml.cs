@@ -155,7 +155,11 @@ public class DateTimeInput : TemplatedControl
             }
             else if (part.Contains('d') && _dayBox != null)
             {
-                dateControls.Add(_dayBox);
+                // Make sure not to select day of week (dddd)
+                if (part is "d" or "dd")
+                {
+                    dateControls.Add(_dayBox);
+                }
             }
         }
 

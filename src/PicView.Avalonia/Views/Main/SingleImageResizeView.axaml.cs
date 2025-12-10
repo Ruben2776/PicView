@@ -212,15 +212,21 @@ public partial class SingleImageResizeView : UserControl
 
         await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(true));
         
-        var path = vm.PicViewer.FileInfo.CurrentValue.FullName;
         var ext = GetSelectedFileExtension(vm, ref destination);
         destination = Path.ChangeExtension(destination, ext);
-        var sameFile = path.Equals(destination, StringComparison.OrdinalIgnoreCase);
-
+        var sameFile = destination.Equals(vm.PicViewer.FileInfo.CurrentValue.FullName,
+            StringComparison.OrdinalIgnoreCase);
         var quality = GetQualityValue(ext, destination);
 
-        await SaveImageHandler.SaveImageWithPossibleNavigation(vm, path, destination, sameFile, ext, width, height,
-            quality, null, _isKeepingAspectRatio);
+        await SaveImageHandler.SaveImageWithPossibleNavigation(vm,
+            vm.PicViewer.FileInfo.CurrentValue.FullName,
+            destination,
+            sameFile,
+            width: width,
+            height: height,
+            quality: quality,
+            ext: ext,
+            isKeepingAspectRatio: _isKeepingAspectRatio);
 
         await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(false));
         

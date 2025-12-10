@@ -6,7 +6,10 @@ using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Gallery;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
+using PicView.Core.Sizing;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -181,11 +184,35 @@ public partial class ZoomPreviewer : UserControl
             return;
         }
 
+        if (_isDragging)
+        {
+            // Don't change position when dragging the zoom preview window
+            return;
+        }
+
         if (DataContext is MainViewModel vm)
         {
-            if (vm.HoverbarViewModel.IsHoverbarVisible.CurrentValue)
+            if (vm.HoverbarViewModel.IsHoverbarVisible.CurrentValue && UIHelper.GetHoverBar?.Opacity > 0)
             {
-                Margin = new Thickness(0, 0, 70, 115);
+                // Fit zoom preview window on top of gallery and/or hoverbar
+                // TODO: refactor
+                if (UIHelper.GetMainView.Bounds.Width > vm.HoverbarViewModel.MaxWidth + 300)
+                {
+                    var newBottomMargin = Settings.Gallery.IsBottomGalleryShown
+                        ? GalleryFunctions.GetGalleryHeight(vm) + UIHelper.GetHoverBar.BottomBorder.Bounds.Height + 5
+                        : 25;
+                    Margin = new Thickness(0, 0, 25,
+                        UIHelper.GetMainView.Bounds.Height > SizeDefaults.WindowMinSize ? newBottomMargin : 0);
+                }
+                else
+                {
+                    var newBottomMargin = Settings.Gallery.IsBottomGalleryShown
+                        ? GalleryFunctions.GetGalleryHeight(vm) + UIHelper.GetHoverBar.BottomBorder.Bounds.Height + 10
+                        : 115;
+                    Margin = new Thickness(0, 0, 70,
+                        UIHelper.GetMainView.Bounds.Height > SizeDefaults.WindowMinSize ? newBottomMargin : 0);
+                }
+                
             }
             else if (Settings.Gallery.IsBottomGalleryShown)
             {

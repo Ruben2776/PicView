@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.MacOS.AppLauncher;
 using PicView.Core.MacOS.FileAssociation;
@@ -30,6 +31,10 @@ public partial class OpenWithView : Window
     public void Start()
     {
         InitializeComponent();
+        if (!Settings.Theme.Dark && !Settings.Theme.GlassTheme)
+        {
+            MainPanel.Background = UIHelper.GetMenuBackgroundColor();
+        }
         Loaded += OnLoaded;
         
         // Close when window loses focus (more standard behavior)
@@ -76,7 +81,7 @@ public partial class OpenWithView : Window
                             {
                                 Text = app.Name,
                                 VerticalAlignment = VerticalAlignment.Center,
-                                Classes = { "txt", "txtShadow" },
+                                Classes = { "txt" },
                                 MaxWidth = 250,
                             }
                     };

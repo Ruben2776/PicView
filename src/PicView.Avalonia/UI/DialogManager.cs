@@ -37,13 +37,6 @@ public static class DialogManager
             Slideshow.StopSlideshow(vm);
             return;
         }
-
-        // Handle fullscreen
-        if (Settings.WindowProperties.Fullscreen)
-        {
-            await vm.PlatformWindowService.MaximizeRestore(false);
-            return;
-        }
         
         // Handle window close
         await Dispatcher.UIThread.InvokeAsync(CloseWithOptionalDialog);
@@ -71,6 +64,10 @@ public static class DialogManager
 
     public static void AddFileSearchDialog()
     {
+        if (!NavigationManager.CanNavigate(UIHelper.GetMainView.DataContext as MainViewModel))
+        {
+            return;
+        }
         if (UIHelper.GetMainView.MainGrid.Children.OfType<FileSearchDialog>().Any())
         {
             return;

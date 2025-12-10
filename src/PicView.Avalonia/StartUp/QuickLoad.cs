@@ -8,6 +8,7 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.DebugTools;
 using PicView.Core.Exif;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
@@ -50,7 +51,16 @@ public static class QuickLoad
         }
 
         var magickImage = new MagickImage();
-        magickImage.Ping(fileInfo);
+        try
+        {
+            magickImage.Ping(fileInfo);
+        }
+        catch (Exception e)
+        {
+            // Pinging can lead to crashes when the file cannot be read. 
+            // Just catching the exception here means it will still load correctly regardless
+            DebugHelper.LogDebug(nameof(QuickLoad), nameof(QuickLoadAsync), e);
+        }
         vm.PicViewer.FileInfo.Value = fileInfo;
         var isLargeImage = magickImage.Width * magickImage.Height > 5000000; // ~5 megapixels threshold
         if (isLargeImage || Settings.ImageScaling.ShowImageSideBySide)
@@ -67,7 +77,7 @@ public static class QuickLoad
         {
             await SingeImageLoadingAsync(vm, fileInfo, magickImage, window, continueFromLeftOff).ConfigureAwait(false);
         }
-        
+
         vm.PicViewer.GetIndex.Value = NavigationManager.GetNonZeroIndex;
         vm.PicViewer.Index.Value = NavigationManager.GetCurrentIndex;
     }
@@ -85,23 +95,51 @@ public static class QuickLoad
     {
         var cancellationTokenSource = new CancellationTokenSource();
         ImageModel? imageModel = null;
-        await Task.WhenAll(
-                Task.Run(() => { NavigationManager.InitializeImageIterator(vm, continueFromLeftOff); },
-                    cancellationTokenSource.Token),
-                Task.Run(async () => imageModel = await SetSingleImageAsync(vm, fileInfo, magickImage, window),
-                    cancellationTokenSource.Token))
-            .ConfigureAwait(false);
-        if (TiffManager.IsTiff(imageModel.FileInfo.FullName))
+        if (TiffManager.IsTiff(fileInfo.FullName))
         {
-            TitleManager.TrySetTiffTitle(imageModel, vm);
+            NavigationManager.InitializeImageIterator(vm, continueFromLeftOff);
+            var isMultiPagedTiff =
+                await NavigationManager.CheckIfTiffAndUpdate(vm, fileInfo, NavigationManager.GetCurrentIndex);
+            if (isMultiPagedTiff)
+            {
+                imageModel = new ImageModel
+                {
+                    Format = magickImage.Format,
+                    DpiX = (ushort)magickImage.Density.X,
+                    DpiY = (ushort)magickImage.Density.Y,
+                    FileInfo = fileInfo,
+                    Image = vm.PicViewer.ImageSource.CurrentValue,
+                    ImageType = ImageType.Bitmap,
+                    Orientation = ExifOrientationHelper.GetImageOrientation(magickImage),
+                    PixelWidth = (int)magickImage.Width,
+                    PixelHeight = (int)magickImage.Height
+                };
+                TitleManager.TrySetTiffTitle(imageModel, vm);
+            }
+            else
+            {
+                await NormalLoading(cancellationTokenSource.Token).ConfigureAwait(false);
+            }
         }
         else
         {
-            TitleManager.SetTitle(vm, imageModel);
+            await NormalLoading(cancellationTokenSource.Token).ConfigureAwait(false);
         }
 
         await StartPreloaderAndGalleryAsync(vm, imageModel, fileInfo);
         cancellationTokenSource.Dispose();
+        return;
+
+        async ValueTask NormalLoading(CancellationToken token)
+        {
+            await Task.WhenAll(
+                    Task.Run(() => { NavigationManager.InitializeImageIterator(vm, continueFromLeftOff); },
+                        token),
+                    Task.Run(async () => imageModel = await SetSingleImageAsync(vm, fileInfo, magickImage, window),
+                        token))
+                .ConfigureAwait(false);
+            TitleManager.SetTitle(vm, imageModel);
+        }
     }
 
     /// <summary>
@@ -123,19 +161,21 @@ public static class QuickLoad
                 vm.ImageViewer.SetTransform(vm.PicViewer.ExifOrientation.CurrentValue, magickImage.Format);
                 WindowResizing.SetSize(magickImage.Width, magickImage.Height, vm);
                 window.Show();
+                WindowFunctions.CenterWindowOnScreen();
             }, DispatcherPriority.Send);
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                Dispatcher.UIThread.Post(() => WindowFunctions.CenterWindowOnScreen(), DispatcherPriority.Send);
-            }
         }
         else
         {
-            await Dispatcher.UIThread.InvokeAsync(window.Show, DispatcherPriority.Send);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                vm.ImageViewer.SetTransform(vm.PicViewer.ExifOrientation.CurrentValue, magickImage.Format);
+                window.Show();
+            }, DispatcherPriority.Send);
         }
-
+        
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo, magickImage).ConfigureAwait(false);
         SetPicViewerValues(vm, imageModel, fileInfo);
+
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
         if (!Settings.WindowProperties.AutoFit)
         {
@@ -143,6 +183,7 @@ public static class QuickLoad
                 () => { WindowResizing.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, vm); },
                 DispatcherPriority.Send);
         }
+
         return imageModel;
     }
 
@@ -154,7 +195,8 @@ public static class QuickLoad
     /// <param name="magickImage">The MagickImage to not consecutively ping it.</param>
     /// <param name="window">The main window used to optimize when it is shown, to avoid flickering from quick resizing.</param>
     /// <param name="continueFromLeftOff">Continue from last session's directory structure</param>
-    private static async ValueTask SideBySideLoadingAsync(MainViewModel vm, FileInfo fileInfo, MagickImage magickImage, Window window, bool continueFromLeftOff)
+    private static async ValueTask SideBySideLoadingAsync(MainViewModel vm, FileInfo fileInfo, MagickImage magickImage,
+        Window window, bool continueFromLeftOff)
     {
         Dispatcher.UIThread.Invoke(window.Show, DispatcherPriority.Send);
         NavigationManager.InitializeImageIterator(vm, continueFromLeftOff);
@@ -170,10 +212,11 @@ public static class QuickLoad
         }, DispatcherPriority.Send);
         if (Settings.WindowProperties.AutoFit && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            Dispatcher.UIThread.Post(() => WindowFunctions.CenterWindowOnScreen(), DispatcherPriority.Render);
+            Dispatcher.UIThread.Post(() => { WindowFunctions.CenterWindowOnScreen(); }, DispatcherPriority.Render);
         }
+
         SetPicViewerValues(vm, imageModel, fileInfo);
-        
+
         TitleManager.SetSideBySideTitle(vm, imageModel, secondaryPreloadValue?.ImageModel);
         await StartPreloaderAndGalleryAsync(vm, imageModel, fileInfo);
     }
@@ -191,7 +234,7 @@ public static class QuickLoad
         {
             vm.ImageViewer.MainImage.InitialAnimatedSource = fileInfo.FullName;
         }
-        
+
         vm.PicViewer.ImageSource.Value = imageModel.Image;
         vm.PicViewer.ImageType.Value = imageModel.ImageType;
         vm.PicViewer.RotationAngle.Value = 0;
@@ -211,7 +254,7 @@ public static class QuickLoad
         FileInfo fileInfo)
     {
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-        
+
         // Add recent files, except when browsing archive
         if (string.IsNullOrWhiteSpace(TempFileHelper.TempFilePath))
         {
@@ -249,7 +292,7 @@ public static class QuickLoad
             if (loadGallery)
             {
                 vm.Gallery.GalleryMode.Value = GalleryMode.BottomNoAnimation;
-                
+
                 await GalleryLoad.LoadGallery(vm, fileInfo.DirectoryName);
             }
         }

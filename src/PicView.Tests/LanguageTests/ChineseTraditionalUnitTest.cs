@@ -162,7 +162,6 @@ public static class ChineseTraditionalUnitTest
         Assert.Equal(TranslationManager.Translation.GlassTheme, "玻璃主題");
         Assert.Equal(TranslationManager.Translation.GoBackBy100Images, "後退 100 張圖片");
         Assert.Equal(TranslationManager.Translation.GoBackBy10Images, "後退 10 張圖片");
-        Assert.Equal(TranslationManager.Translation.GoToImageAtSpecifiedIndex, "跳轉至指定圖片");
         Assert.Equal(TranslationManager.Translation.Hard, "硬");
         Assert.Equal(TranslationManager.Translation.Height, "高度");
         Assert.Equal(TranslationManager.Translation.HideBottomGallery, "收起底部圖");
@@ -329,7 +328,6 @@ public static class ChineseTraditionalUnitTest
         Assert.Equal(TranslationManager.Translation.Soft, "柔和");
         Assert.Equal(TranslationManager.Translation.Software, "軟體");
         Assert.Equal(TranslationManager.Translation.SortFilesBy, "排序方式");
-        Assert.Equal(TranslationManager.Translation.SourceFolder, "原始資料夾");
         Assert.Equal(TranslationManager.Translation.Space, "空格鍵");
         Assert.Equal(TranslationManager.Translation.Square, "正方形");
         Assert.Equal(TranslationManager.Translation.Start, "啟動");

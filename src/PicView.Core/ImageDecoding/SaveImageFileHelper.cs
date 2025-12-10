@@ -27,7 +27,7 @@ public static class SaveImageFileHelper
     /// If the percentage is specified, it takes precedence over width and height for resizing.
     /// If both lossy and lossless compression are enabled, only one will be applied based on supported formats.
     /// </remarks>
-    public static async Task<bool> SaveImageAsync(Stream? stream, string? path, string? destination = null,
+    public static async ValueTask<bool> SaveImageAsync(Stream? stream, string? path, string? destination = null,
         uint? width = null, uint? height = null, uint? quality = null, string? ext = null, double? rotationAngle = null,
         Percentage? percentage = null, bool losslessCompress = false, bool lossyCompress = false,
         bool respectAspectRatio = true, bool flipImage = false)

@@ -1,8 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
-using ImageMagick;
 using PicView.Avalonia.ImageHandling;
 using PicView.Core.FileHandling;
-using PicView.Core.ImageReading;
 using PicView.Core.Preloading;
 using ZLinq;
 
@@ -17,9 +15,9 @@ public class PreloadingBenchmark
     private PreLoader? _preLoader;
     
     [GlobalSetup]
-    public async ValueTask Setup()
+    public void Setup()
     {
-        await LoadSettingsAsync();
+        LoadSettings();
         
         var picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
         _fileInfos = new DirectoryInfo(picturesPath)

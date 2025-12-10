@@ -74,15 +74,15 @@ public static class FilePicker
         return null;
     }
 
-    public static async Task PickAndSaveFileAsAsync(string? fileName, MainViewModel vm)
+    public static async ValueTask<bool> PickAndSaveFileAsAsync(string? fileName, MainViewModel vm)
     {
         var file = await PickFileForSavingAsync(fileName).ConfigureAwait(false);
         if (file is null)
         {
-            return;
+            return false;
         }
-        
-        await FileSaverHelper.SaveFileAsync(fileName, file, vm).ConfigureAwait(false);
+
+        return await FileSaverHelper.SaveFileAsync(fileName, file, vm).ConfigureAwait(false);
     }
 
     public static async Task<string?> PickFileForSavingAsync(string? fileName, string? ext = null)

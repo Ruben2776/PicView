@@ -169,7 +169,6 @@ public static class SwedishUnitTest
         Assert.Equal(TranslationManager.Translation.GlassTheme, "Glastema");
         Assert.Equal(TranslationManager.Translation.GoBackBy100Images, "Bakåt 100 bilder");
         Assert.Equal(TranslationManager.Translation.GoBackBy10Images, "Bakåt 10 bilder");
-        Assert.Equal(TranslationManager.Translation.GoToImageAtSpecifiedIndex, "Gå till bildnummer");
         Assert.Equal(TranslationManager.Translation.Hard, "Hård");
         Assert.Equal(TranslationManager.Translation.Height, "Höjd");
         Assert.Equal(TranslationManager.Translation.HideBottomGallery, "Dölj nedre galleriet");
@@ -339,7 +338,6 @@ public static class SwedishUnitTest
         Assert.Equal(TranslationManager.Translation.Soft, "Mjuk");
         Assert.Equal(TranslationManager.Translation.Software, "Program");
         Assert.Equal(TranslationManager.Translation.SortFilesBy, "Sortera filer efter");
-        Assert.Equal(TranslationManager.Translation.SourceFolder, "Källmapp");
         Assert.Equal(TranslationManager.Translation.Space, "Mellanslag");
         Assert.Equal(TranslationManager.Translation.Square, "Kvadrat");
         Assert.Equal(TranslationManager.Translation.Start, "Start");

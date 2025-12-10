@@ -42,7 +42,7 @@ public static class DirectoryNavigator
     private static async ValueTask NavigateToNextDirectory(bool next, ImageIterator iterator,
         Func<FileInfo, MainViewModel, List<FileInfo>?, int, ValueTask> loadWithoutImageIterator, MainViewModel vm)
     {
-        var fileList = await GetNextFolderFileList(next, iterator, vm).ConfigureAwait(false);
+        var fileList = GetNextFolderFileList(next, iterator, vm);
 
         if (fileList is null)
         {
@@ -108,51 +108,41 @@ public static class DirectoryNavigator
     /// <param name="iterator">The image iterator.</param>
     /// <param name="vm">The main view model instance.</param>
     /// <returns>A task representing the asynchronous operation that returns a list of file paths.</returns>
-    private static async ValueTask<List<FileInfo>?> GetNextFolderFileList(bool next, ImageIterator iterator,
+    private static List<FileInfo>? GetNextFolderFileList(bool next, ImageIterator iterator,
         MainViewModel vm)
     {
-        return await Task.Run(() =>
+        var currentFolder = iterator?.ImagePaths[iterator.CurrentIndex].DirectoryName;
+        if (string.IsNullOrEmpty(currentFolder))
         {
-            var currentFolder = iterator?.ImagePaths[iterator.CurrentIndex].DirectoryName;
-            if (string.IsNullOrEmpty(currentFolder))
-            {
-                return null;
-            }
-
-            var currentDirectories = Directory.GetDirectories(currentFolder, "*", SearchOption.AllDirectories);
-            if (currentDirectories.Length > 1)
-            {
-                return NextDirectoryInCurrentDirectories(currentDirectories, currentFolder, true, next, vm);
-            }
-
-            
-            string? parentFolder;
-            var initialDirectory = Settings.StartUp.StartUpDirectory;
-            if (!string.IsNullOrWhiteSpace(initialDirectory) && currentFolder.StartsWith(initialDirectory) && currentFolder != initialDirectory)
-            {
-                parentFolder = initialDirectory;
-            }
-            else
-            {
-                parentFolder= Path.GetDirectoryName(currentFolder);
-            }
-                
-            if (string.IsNullOrEmpty(parentFolder))
-            {
-                return null;
-            }
-
-            var parentDirectories = Directory.GetDirectories(parentFolder, "*", SearchOption.AllDirectories);
-            // ReSharper disable once ConvertIfStatementToReturnStatement
-            if (parentDirectories.Length > 1)
-            {
-                return NextDirectoryInCurrentDirectories(parentDirectories, currentFolder,  false, next, vm);
-            }
-
             return null;
-        }).ConfigureAwait(false);
-    }
+        }
 
+        string? parentFolder;
+        var initialDirectory = Settings.StartUp.StartUpDirectory;
+        if (!string.IsNullOrWhiteSpace(initialDirectory))
+        {
+            parentFolder = Path.GetDirectoryName(initialDirectory);
+        }
+        else
+        {
+            parentFolder = Path.GetDirectoryName(currentFolder);
+        }
+
+        if (string.IsNullOrEmpty(parentFolder))
+        {
+            return null;
+        }
+
+        var parentDirectories = Directory.GetDirectories(parentFolder, "*", SearchOption.AllDirectories);
+        // ReSharper disable once ConvertIfStatementToReturnStatement
+        if (parentDirectories.Length > 1)
+        {
+            return NextDirectoryInCurrentDirectories(parentDirectories, currentFolder, false, next, vm);
+        }
+
+        return null;
+    }
+    
     private static List<FileInfo>? NextDirectoryInCurrentDirectories(string[] directories, string currentFolder,
         bool isCurrentDirectory, bool next, MainViewModel vm)
     {

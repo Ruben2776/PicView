@@ -8,7 +8,6 @@
                 <ResourceInclude Source="Icons.axaml" />
 
                 <ResourceInclude Source="Controls/AnimatedPopUp.axaml" />
-                <ResourceInclude Source="Controls/AutoCompleteBox.axaml" />
                 <ResourceInclude Source="Controls/AutoScrollViewer.axaml" />
                 <ResourceInclude Source="Controls/Border.axaml" />
                 <ResourceInclude Source="Controls/Button.axaml" />
@@ -46,7 +45,6 @@
                 <ResourceInclude Source="Controls/Separator.axaml" />
                 <ResourceInclude Source="Controls/Slider.axaml" />
                 <ResourceInclude Source="Controls/SplitButton.axaml" />
-                <ResourceInclude Source="Controls/SplitView.axaml" />
                 <ResourceInclude Source="Controls/TabControl.axaml" />
                 <ResourceInclude Source="Controls/TabItem.axaml" />
                 <ResourceInclude Source="Controls/TextBlock.axaml" />

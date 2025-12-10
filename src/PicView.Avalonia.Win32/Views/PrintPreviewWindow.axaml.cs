@@ -13,6 +13,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Win32.Printing;
 using PicView.Core.DebugTools;
 using PicView.Core.Localization;
+using PicView.Core.Printing;
 using PicView.Core.ViewModels;
 using R3;
 

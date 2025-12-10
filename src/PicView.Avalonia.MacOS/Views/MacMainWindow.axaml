@@ -57,14 +57,14 @@
                                                     Converter={x:Static ObjectConverters.IsNotNull}}" />
 
                     <!--  Print  -->
-                    <!--  <NativeMenuItem  -->
-                    <!--  Command="{CompiledBinding Tools.PrintCommand}"  -->
-                    <!--  CommandParameter="{CompiledBinding PicViewer.FileInfo.Value,  -->
-                    <!--  FallbackValue=''}"  -->
-                    <!--  Header="{CompiledBinding Translation.Print.Value,  -->
-                    <!--  Mode=OneWay}"  -->
-                    <!--  IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,  -->
-                    <!--  Converter={x:Static ObjectConverters.IsNotNull}}" />  -->
+                    <NativeMenuItem
+                        Command="{CompiledBinding Tools.PrintCommand}"
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
+                                                           FallbackValue=''}"
+                        Header="{CompiledBinding Translation.Print.Value,
+                                                 Mode=OneWay}"
+                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
+                                                    Converter={x:Static ObjectConverters.IsNotNull}}" />
 
                     <!--  Locate on disk  -->
                     <NativeMenuItem

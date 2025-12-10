@@ -801,6 +801,7 @@
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
@@ -818,13 +819,6 @@
                                 Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=1, Converter={StaticResource IndexToPercentageSizeConverter}}"
                                 Width="200"
                                 x:Name="Thumb1ValueBox" />
-
-                            <Image
-                                Height="12"
-                                IsVisible="{Binding Path=IsSelected, ElementName=Thumb1PercentageItem}"
-                                Margin="22,0,0,0"
-                                Source="{StaticResource PercentageIcon}"
-                                Width="12" />
                         </StackPanel>
 
 
@@ -868,6 +862,7 @@
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
@@ -885,13 +880,6 @@
                                 Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=2, Converter={StaticResource IndexToPercentageSizeConverter}}"
                                 Width="200"
                                 x:Name="Thumb2ValueBox" />
-
-                            <Image
-                                Height="12"
-                                IsVisible="{Binding Path=IsSelected, ElementName=Thumb2PercentageItem}"
-                                Margin="22,0,0,0"
-                                Source="{StaticResource PercentageIcon}"
-                                Width="12" />
                         </StackPanel>
 
 
@@ -935,6 +923,7 @@
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
@@ -952,13 +941,6 @@
                                 Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=3, Converter={StaticResource IndexToPercentageSizeConverter}}"
                                 Width="200"
                                 x:Name="Thumb3ValueBox" />
-
-                            <Image
-                                Height="12"
-                                IsVisible="{Binding Path=IsSelected, ElementName=Thumb3PercentageItem}"
-                                Margin="22,0,0,0"
-                                Source="{StaticResource PercentageIcon}"
-                                Width="12" />
                         </StackPanel>
 
 
@@ -1002,6 +984,7 @@
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
@@ -1019,13 +1002,6 @@
                                 Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=4, Converter={StaticResource IndexToPercentageSizeConverter}}"
                                 Width="200"
                                 x:Name="Thumb4ValueBox" />
-
-                            <Image
-                                Height="12"
-                                IsVisible="{Binding Path=IsSelected, ElementName=Thumb4PercentageItem}"
-                                Margin="22,0,0,0"
-                                Source="{StaticResource PercentageIcon}"
-                                Width="12" />
                         </StackPanel>
 
                         <!--  Thumb 5  -->
@@ -1068,6 +1044,7 @@
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
@@ -1085,13 +1062,6 @@
                                 Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=5, Converter={StaticResource IndexToPercentageSizeConverter}}"
                                 Width="200"
                                 x:Name="Thumb5ValueBox" />
-
-                            <Image
-                                Height="12"
-                                IsVisible="{Binding Path=IsSelected, ElementName=Thumb5PercentageItem}"
-                                Margin="22,0,0,0"
-                                Source="{StaticResource PercentageIcon}"
-                                Width="12" />
                         </StackPanel>
 
                         <!--  Thumb 6  -->
@@ -1134,6 +1104,7 @@
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
@@ -1151,13 +1122,6 @@
                                 Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=6, Converter={StaticResource IndexToPercentageSizeConverter}}"
                                 Width="200"
                                 x:Name="Thumb6ValueBox" />
-
-                            <Image
-                                Height="12"
-                                IsVisible="{Binding Path=IsSelected, ElementName=Thumb6PercentageItem}"
-                                Margin="22,0,0,0"
-                                Source="{StaticResource PercentageIcon}"
-                                Width="12" />
                         </StackPanel>
 
 
@@ -1201,6 +1165,7 @@
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
@@ -1218,13 +1183,6 @@
                                 Text="{Binding SelectedIndex, ElementName=ThumbnailsComboBox, ConverterParameter=7, Converter={StaticResource IndexToPercentageSizeConverter}}"
                                 Width="200"
                                 x:Name="Thumb7ValueBox" />
-
-                            <Image
-                                Height="12"
-                                IsVisible="{Binding Path=IsSelected, ElementName=Thumb7PercentageItem}"
-                                Margin="22,0,0,0"
-                                Source="{StaticResource PercentageIcon}"
-                                Width="12" />
                         </StackPanel>
                     </StackPanel>
 

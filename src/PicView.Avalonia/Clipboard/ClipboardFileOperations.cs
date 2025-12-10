@@ -1,4 +1,7 @@
 using System.Runtime.InteropServices;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.Navigation;
@@ -115,27 +118,22 @@ public static class ClipboardFileOperations
     /// Copies a file to the clipboard
     /// </summary>
     /// <param name="filePath">Path to the file</param>
-    /// <param name="vm">The main view model</param>
     /// <returns>A task representing the asynchronous operation</returns>
-    public static async Task CopyFileToClipboard(string? filePath, MainViewModel vm)
+    public static async Task CopyFileToClipboard(string? filePath)
     {
-        if (string.IsNullOrWhiteSpace(filePath))
+        if (string.IsNullOrWhiteSpace(filePath) ||
+            Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+            desktop.MainWindow?.Clipboard is not { } clipboard ||
+            desktop.MainWindow?.StorageProvider is not { } storageProvider)
         {
             return;
         }
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            // TODO add clipboard file copy on macOS 
-            return;
-        }
-
-        var tasks = new[]
-        {
-            AnimationsHelper.CopyAnimation(),
-            Task.Run(() => vm.PlatformService.CopyFile(filePath))
-        };
-        await Task.WhenAll(tasks);
+        
+        var animTask = AnimationsHelper.CopyAnimation();
+        var storageFile = await storageProvider.TryGetFileFromPathAsync(filePath);
+        var fileTask = clipboard.SetFileAsync(storageFile);
+        
+        await Task.WhenAll(animTask, fileTask);
     }
 
     /// <summary>

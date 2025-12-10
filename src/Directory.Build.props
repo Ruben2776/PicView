@@ -3,8 +3,8 @@
         <Nullable>enable</Nullable>
         <AvaloniaVersion>11.3.8</AvaloniaVersion>
         <VersionPrefix>4.0.0</VersionPrefix>
-        <VersionSuffix>Beta</VersionSuffix>
-        <AssemblyVersion>3.9.0.0</AssemblyVersion>
+        <VersionSuffix></VersionSuffix>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
         <FileVersion>4.0.0</FileVersion>
     </PropertyGroup>
 </Project>

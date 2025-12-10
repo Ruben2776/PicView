@@ -17,7 +17,7 @@ public static class ProcessHelper
         var getAppPath = Environment.ProcessPath;
 
         if (getAppPath is not null &&
-            Path.GetExtension(getAppPath).Equals(".dll", StringComparison.InvariantCultureIgnoreCase))
+            Path.GetExtension(getAppPath.AsSpan()).Equals(".dll", StringComparison.InvariantCultureIgnoreCase))
         {
             getAppPath = getAppPath.Replace(".dll", ".exe", StringComparison.InvariantCultureIgnoreCase);
         }

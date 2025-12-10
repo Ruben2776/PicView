@@ -26,7 +26,7 @@ public static class ImageFormatConverter
         Bitmap? source = null;
 
         // Primary case: Handle effect applied or empty path by saving current ImageSource
-        if (vm.PicViewer.EffectConfig is not null || string.IsNullOrWhiteSpace(path))
+        if (vm.PicViewer.EffectConfig?.Value is not null || string.IsNullOrWhiteSpace(path))
         {
             if (vm.PicViewer.ImageSource.CurrentValue is Bitmap bmp)
             {
@@ -36,7 +36,7 @@ public static class ImageFormatConverter
         else if (NavigationManager.CanNavigate(vm) && !string.IsNullOrEmpty(path))
         {
             // Handle effects for the current file
-            if (vm.PicViewer.EffectConfig is not null && vm.PicViewer.FileInfo?.CurrentValue.FullName == path)
+            if (vm.PicViewer.EffectConfig?.Value is not null && vm.PicViewer.FileInfo?.CurrentValue.FullName == path)
             {
                 if (vm.PicViewer.ImageSource.CurrentValue is Bitmap bmp)
                 {

@@ -17,8 +17,18 @@ public static partial class FileHelper
     {
         try
         {
-            new FileInfo(newPath).Directory.Create(); // create directory if not exists
+            // 1. Get the directory part of the new file path
+            var directoryPath = Path.GetDirectoryName(newPath);
 
+            // 2. Check if a directory path was actually extracted
+            if (!string.IsNullOrEmpty(directoryPath))
+            {
+                // 3. This method creates all directories in the path if they don't
+                //    already exist. If they do, it does nothing.
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            // 4. Move the file (the 'true' allows overwriting if newPath already exists)
             File.Move(path, newPath, true);
         }
         catch (Exception e)
@@ -29,7 +39,6 @@ public static partial class FileHelper
 
         return true;
     }
-
 
     [GeneratedRegex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
     private static partial Regex URLregex();

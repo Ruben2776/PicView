@@ -22,6 +22,7 @@ public class TranslationViewModel : IDisposable
         About.Value = t.About;
         AddFiles.Value = t.AddFiles;
         AddFolder.Value = t.AddFolder;
+        AdditionalFunctions.Value = t.AdditionalFunctions;
         AboutWindow.Value = t.InfoWindow;
         AdjustNavSpeed.Value = t.AdjustNavSpeed;
         AdjustTimingForSlideshow.Value = t.AdjustTimingForSlideshow;
@@ -136,7 +137,6 @@ public class TranslationViewModel : IDisposable
         GlassTheme.Value = t.GlassTheme;
         GoBackBy10Images.Value = t.GoBackBy10Images;
         GoBackBy100Images.Value = t.GoBackBy100Images;
-        GoToImageAtSpecifiedIndex.Value = t.GoToImageAtSpecifiedIndex;
         Height.Value = t.Height;
         Help.Value = t.Help;
         HideBottomGallery.Value = t.HideBottomGallery;
@@ -307,6 +307,7 @@ public class TranslationViewModel : IDisposable
         ToggleLooping.Value = t.ToggleLooping;
         ToggleScroll.Value = t.ToggleScroll;
         ToggleTaskbarProgress.Value = t.ToggleTaskbarProgress;
+        ToolWindows.Value = t.ToolWindows;
         Top.Value = t.Top;
         Unassociate.Value = t.Unassociate;
         UnFlip.Value = t.Unflip;
@@ -344,6 +345,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> About { get; } = new();
     public BindableReactiveProperty<string?> AddFiles { get; } = new();
     public BindableReactiveProperty<string?> AddFolder { get; } = new();
+    public BindableReactiveProperty<string?> AdditionalFunctions { get; } = new();
     public BindableReactiveProperty<string?> AboutWindow { get; } = new();
     public BindableReactiveProperty<string?> AdjustNavSpeed { get; } = new();
     public BindableReactiveProperty<string?> AdjustTimingForSlideshow { get; } = new();
@@ -455,7 +457,6 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> GlassTheme { get; } = new();
     public BindableReactiveProperty<string?> GoBackBy100Images { get; } = new();
     public BindableReactiveProperty<string?> GoBackBy10Images { get; } = new();
-    public BindableReactiveProperty<string?> GoToImageAtSpecifiedIndex { get; } = new();
     public BindableReactiveProperty<string?> Height { get; } = new();
     public BindableReactiveProperty<string?> Help { get; } = new();
     public BindableReactiveProperty<string?> HideBottomGallery { get; } = new();
@@ -621,6 +622,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> ToggleLooping { get; } = new();
     public BindableReactiveProperty<string?> ToggleScroll { get; } = new();
     public BindableReactiveProperty<string?> ToggleTaskbarProgress { get; } = new();
+    public BindableReactiveProperty<string?> ToolWindows { get; } = new();
     public BindableReactiveProperty<string?> Unassociate { get; } = new();
     public BindableReactiveProperty<string?> UnFlip { get; } = new();
     public BindableReactiveProperty<string?> Uniform { get; } = new();

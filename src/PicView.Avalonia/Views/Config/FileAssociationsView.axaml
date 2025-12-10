@@ -66,7 +66,7 @@
                         Source="{StaticResource SearchImage}"
                         Width="14" />
 
-                    <AutoCompleteBox
+                    <TextBox
                         Background="Transparent"
                         BorderBrush="Transparent"
                         BorderThickness="1"

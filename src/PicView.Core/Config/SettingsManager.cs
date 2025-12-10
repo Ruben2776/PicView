@@ -22,7 +22,7 @@ public static class SettingsManager
     /// </summary>
     /// <remarks>
     /// This property reflects the full path to the settings file currently in use by the application.
-    /// It is updated when settings are loaded via <see cref="SettingsManager.LoadSettingsAsync"/>
+    /// It is updated when settings are loaded via <see cref="SettingsManager.LoadSettings"/>
     /// or saved using <see cref="SettingsManager.SaveSettingsAsync"/>. If no settings file is loaded,
     /// the value will be null. This path can be used to reference the specific configuration file
     /// being utilized or modified.
@@ -36,77 +36,50 @@ public static class SettingsManager
     /// <remarks>
     /// This property can be used to retrieve or assign settings related to application preferences,
     /// such as UI, theme, sorting, scaling, and startup configurations. The associated settings
-    /// are loaded via <see cref="SettingsManager.LoadSettingsAsync"/> or set to defaults using
+    /// are loaded via <see cref="SettingsManager.LoadSettings"/> or set to defaults using
     /// <see cref="SettingsManager.SetDefaults"/>. Changes to the settings can be saved using
     /// <see cref="SettingsManager.SaveSettingsAsync"/>.
     /// </remarks>
     public static AppSettings? Settings { get; private set; }
 
-    public static SettingsConfiguration? Configuration { get; private set; }
+    private static SettingsConfiguration? Configuration { get; set; }
 
     /// <summary>
-    /// Global Configuration Support
-    /// </summary>
-    /// <remarks>
-    /// Overrides any UserSettings with GlobalSettings if they are set
-    /// </remarks>
-    public static GlobalSettingsConfiguration? GlobalConfig { get; private set; }
-    public static AppSettings? GlobalSettings { get; private set; }
-
-    /// <summary>
-    /// Loads application settings asynchronously from a file or initializes them to default if loading fails.
+    /// Loads application settings synchronously from a file or initializes them to default if loading fails.
     /// </summary>
     /// <returns>
-    /// A boolean indicating whether the settings were successfully loaded.
+    /// True if a config file was present and loaded. False if not and reverted to default settings. 
     /// </returns>
     /// <exception cref="JsonException">Thrown if deserialization of the settings file fails.</exception>
-    public static async ValueTask<bool> LoadSettingsAsync()
+    public static bool LoadSettings()
     {
         try
         {
-            // Load global config (read-only, Program Path)
-            GlobalConfig ??= new GlobalSettingsConfiguration();
-            string globalPath = GlobalConfig.LocalConfigPath;
-            if (File.Exists(globalPath))
-            {
-                await using var globalStream = File.OpenRead(globalPath);
-                if (globalStream.Length > 0)
-                {
-                    GlobalSettings = await JsonSerializer.DeserializeAsync<AppSettings>(
-                        globalStream, SettingsGenerationContext.Default.AppSettings).ConfigureAwait(false);
-                }
-            }
-
-            // Load user config (User Profile or Program Path)
             Configuration ??= new SettingsConfiguration();
-            var userPath = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
-            Configuration.CorrectPath = userPath;
-
-            if (File.Exists(userPath))
+            var path = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
+            
+            if (File.Exists(path))
             {
-                await using var userStream = File.OpenRead(userPath);
-                if (userStream.Length > 0)
-                {
-                    Settings = await JsonSerializer.DeserializeAsync<AppSettings>(
-                        userStream, SettingsGenerationContext.Default.AppSettings).ConfigureAwait(false);
-                }
+                var bytes = File.ReadAllBytes(path);
+                var settings = JsonSerializer.Deserialize<AppSettings>(
+                    bytes, SettingsGenerationContext.Default.AppSettings);
+                Settings = EnsureSettings(settings);
             }
-
-            // Fallback to defaults if no user config found
-            Settings ??= GetDefaults();
-
-            // Apply Global Overrides
-            if (GlobalSettings != null)
-                ApplyOverrides(Settings, GlobalSettings);
-
-            return true;
+            else
+            {
+                // Fallback to defaults if no user config found
+                Settings = GetDefaults();
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            DebugHelper.LogDebug(nameof(SettingsManager), nameof(LoadSettingsAsync), ex);
+            DebugHelper.LogDebug(nameof(SettingsManager), nameof(LoadSettings), ex);
             SetDefaults();
             return false;
         }
+
+        return true;
     }
 
     /// <summary>
@@ -145,47 +118,6 @@ public static class SettingsManager
         return true;
     }
 
-    private static AppSettings EnsureSettingsIfNeeded(AppSettings settings)
-    {
-        if (settings?.WindowProperties is null)
-        {
-            return GetDefaults();
-        }
-
-        // ReSharper disable once CompareOfFloatsByEqualityOperator
-        if (settings.Version != SettingsConfiguration.CurrentSettingsVersion)
-        {
-            return EnsureSettings(settings);
-        }
-
-        // If navigation settings is null, it is an upgrade from an old version or the config is otherwise invalid
-        if (settings.Navigation is null)
-        {
-            return EnsureSettings(settings);
-        }
-
-        settings.Version = SettingsConfiguration.CurrentSettingsVersion;
-        return settings;
-    }
-
-    private static AppSettings EnsureSettings(AppSettings existingSettings)
-    {
-        var newSettings = GetDefaults();
-
-        existingSettings.UIProperties ??= newSettings.UIProperties;
-        existingSettings.Gallery ??= newSettings.Gallery;
-        existingSettings.Theme ??= newSettings.Theme;
-        existingSettings.Sorting ??= newSettings.Sorting;
-        existingSettings.ImageScaling ??= newSettings.ImageScaling;
-        existingSettings.WindowProperties ??= newSettings.WindowProperties;
-        existingSettings.Zoom ??= newSettings.Zoom;
-        existingSettings.StartUp ??= newSettings.StartUp;
-        existingSettings.Navigation ??= newSettings.Navigation;
-
-        existingSettings.Version = SettingsConfiguration.CurrentSettingsVersion;
-        return existingSettings;
-    }
-
     /// <summary>
     /// Sets the application's settings to their default values.
     /// </summary>
@@ -198,6 +130,28 @@ public static class SettingsManager
     /// An <see cref="AppSettings"/> object populated with default values.
     /// </returns>
     public static AppSettings GetDefaults()
+    {
+        var settings = new AppSettings
+        {
+            UIProperties = GetDefaultUIProperties(),
+            Gallery = new Gallery(),
+            ImageScaling = new ImageScaling(),
+            Sorting = new Sorting(),
+            Theme = new Theme(),
+            WindowProperties = new WindowProperties(),
+            Zoom = GetDefaultZoom(),
+            StartUp = new StartUp(),
+            Navigation = new Navigation(),
+            Version = SettingsConfiguration.CurrentSettingsVersion
+        };
+
+        // Get the default culture from the OS
+        settings.UIProperties.UserLanguage = CultureInfo.CurrentCulture.Name;
+
+        return settings;
+    }
+
+    public static UIProperties GetDefaultUIProperties()
     {
         UIProperties uiProperties;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
@@ -213,24 +167,25 @@ public static class SettingsManager
             uiProperties = new UIProperties();
         }
 
-        var settings = new AppSettings
+        return uiProperties;
+    }
+
+    public static Zoom GetDefaultZoom()
+    {
+        Zoom zoom;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            UIProperties = uiProperties,
-            Gallery = new Gallery(),
-            ImageScaling = new ImageScaling(),
-            Sorting = new Sorting(),
-            Theme = new Theme(),
-            WindowProperties = new WindowProperties(),
-            Zoom = new Zoom(),
-            StartUp = new StartUp(),
-            Navigation = new Navigation(),
-            Version = SettingsConfiguration.CurrentSettingsVersion
-        };
+            zoom = new Zoom
+            {
+                ZoomSpeed = 0.15
+            };
+        }
+        else
+        {
+            zoom = new Zoom();
+        }
 
-        // Get the default culture from the OS
-        settings.UIProperties.UserLanguage = CultureInfo.CurrentCulture.Name;
-
-        return settings;
+        return zoom;
     }
 
     /// <summary>
@@ -268,56 +223,20 @@ public static class SettingsManager
             }
         }
     }
-    
-    private static void ApplyOverrides(AppSettings target, AppSettings global)
+
+    public static AppSettings EnsureSettings(AppSettings existingSettings)
     {
-        MergeObjects(target, global);
-    }
+        existingSettings.UIProperties ??= GetDefaultUIProperties();
+        existingSettings.Gallery ??= new Gallery();
+        existingSettings.Theme ??= new Theme();
+        existingSettings.Sorting ??= new Sorting();
+        existingSettings.ImageScaling ??= new ImageScaling();
+        existingSettings.WindowProperties ??= new WindowProperties();
+        existingSettings.Zoom ??= GetDefaultZoom();
+        existingSettings.StartUp ??= new StartUp();
+        existingSettings.Navigation ??= new Navigation();
 
-    /// <summary>
-    /// Recursively merges all non-null properties from source into target.
-    /// Complex nested types (like UIProperties, Theme, etc.) are merged recursively.
-    /// Value types and simple properties are directly overwritten.
-    /// </summary>
-    private static void MergeObjects(object? target, object? source)
-    {
-        if (target == null || source == null)
-            return;
-
-        var targetType = target.GetType();
-        var sourceType = source.GetType();
-
-        foreach (var prop in sourceType.GetProperties())
-        {
-            var sourceValue = prop.GetValue(source);
-            if (sourceValue == null)
-                continue;
-
-            var targetProp = targetType.GetProperty(prop.Name);
-            if (targetProp == null || !targetProp.CanWrite)
-                continue;
-
-            var targetValue = targetProp.GetValue(target);
-
-            // If this is a nested object (class) and not a string, merge recursively
-            if (prop.PropertyType.IsClass && prop.PropertyType != typeof(string))
-            {
-                if (targetValue == null)
-                {
-                    // If user doesn't have that object at all, copy it fully
-                    targetProp.SetValue(target, sourceValue);
-                }
-                else
-                {
-                    // Recursively merge individual properties
-                    MergeObjects(targetValue, sourceValue);
-                }
-            }
-            else
-            {
-                // Simple value type or string – overwrite directly
-                targetProp.SetValue(target, sourceValue);
-            }
-        }
+        existingSettings.Version = SettingsConfiguration.CurrentSettingsVersion;
+        return existingSettings;
     }
 }

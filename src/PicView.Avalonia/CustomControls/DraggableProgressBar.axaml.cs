@@ -7,11 +7,9 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
-using Avalonia.Threading;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.WindowBehavior;
 using R3;
 
 namespace PicView.Avalonia.CustomControls;
@@ -22,7 +20,8 @@ public class DraggableProgressBar : TemplatedControl
     public static readonly StyledProperty<int> MaximumProperty =
         AvaloniaProperty.Register<DraggableProgressBar, int>(nameof(Maximum), 100);
 
-    // Define the CurrentIndex property with two-way binding
+    // Define the CurrentIndex property with two-way binding.
+    // This property is 1-based (i.e., from 1 to Maximum).
     public static readonly StyledProperty<int> CurrentIndexProperty =
         AvaloniaProperty.Register<DraggableProgressBar, int>(nameof(CurrentIndex),
             defaultBindingMode: BindingMode.TwoWay);
@@ -43,7 +42,8 @@ public class DraggableProgressBar : TemplatedControl
 
     private readonly CompositeDisposable _disposables = new();
 
-    private bool _shouldUpdate;
+    // Flag to signal that a full, non-slim update is needed after dragging ends
+    private bool _needsFullUpdateOnDragEnd;
 
     static DraggableProgressBar()
     {
@@ -60,6 +60,7 @@ public class DraggableProgressBar : TemplatedControl
 
     private void OnLostFocus(object? sender, RoutedEventArgs e)
     {
+        // Stop dragging if the control loses focus
         IsDragging = false;
     }
 
@@ -67,7 +68,7 @@ public class DraggableProgressBar : TemplatedControl
     {
         ToolTip.SetPlacement(this, PlacementMode.Top);
         ToolTip.SetVerticalOffset(this, -3);
-        
+
         // Observe the CurrentIndexProperty for changes,
         // wait for a 25ms pause in changes (debounce), and then emit the last value.
         CurrentIndexProperty.Changed.ToObservable()
@@ -75,24 +76,26 @@ public class DraggableProgressBar : TemplatedControl
             .Skip(1) // Skip first loading, when it is just setup
             .SubscribeAwait(async (x, cancel) =>
             {
-                // Check if the new value exists and is different from the old one.
-                if (x.NewValue.HasValue && x.OldValue.HasValue && x.NewValue.Value != x.OldValue.Value)
+                if (IsDragging)
                 {
-                    if (IsDragging)
-                    {
-                        var isReverse = x.NewValue.Value < x.OldValue.Value;
-                        // Use lightweight image changing (without changing size) while dragging:
-                        await NavigationManager.ImageIterator.IterateToIndexSlim(x.NewValue.Value, isReverse, cancel);
-                        _shouldUpdate = true;
-                    }
-                    else
-                    {
-                        await NavigationManager.ImageIterator.IterateToIndex(x.NewValue.Value, cancel);
-                        _shouldUpdate = false;
-                    }
+                    var isReverse = x.NewValue.Value < x.OldValue.Value;
+                    // Use lightweight image changing (without changing size) while dragging:
+                    await NavigationManager.ImageIterator.IterateToIndexSlim(x.NewValue.Value, isReverse, cancel);
+                    _needsFullUpdateOnDragEnd = true;
                 }
-            })
+                else
+                {
+                    await NavigationManager.ImageIterator.IterateToIndex(x.NewValue.Value, cancel);
+                    _needsFullUpdateOnDragEnd = false;
+                }
+            }, AwaitOperation.Switch)
             .AddTo(_disposables);
+
+        this.GetObservable(PointerReleasedEvent)
+            .ToObservable()
+            .SubscribeAwait(async (x, _) => { await HandlePointerReleased(x); })
+            .AddTo(_disposables);
+
         UpdateThumbPosition();
     }
 
@@ -128,18 +131,28 @@ public class DraggableProgressBar : TemplatedControl
         _track = e.NameScope.Find<Border>("PART_Track");
         _thumb = e.NameScope.Find<Ellipse>("PART_Thumb");
 
-        if (!Settings.Theme.Dark)
+        if (Settings.Theme.Dark)
         {
-            _track.Background = UIHelper.GetBrush("SecondaryBackgroundColor");
-            _thumb.Fill = UIHelper.GetBrush("TertiaryBackgroundColor");
+            return;
         }
+
+        _track.Background = UIHelper.GetBrush("SecondaryBackgroundColor");
+        _thumb.Fill = UIHelper.GetBrush("TertiaryBackgroundColor");
     }
 
     // Recalculate thumb position when CurrentIndex or Maximum changes
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
     {
         base.OnPropertyChanged(change);
-        if ((change.Property != CurrentIndexProperty && change.Property != MaximumProperty) || IsDragging)
+
+        // If we are dragging, OnPointerMoved is responsible for updating the thumb.
+        // This prevents OnPropertyChanged from conflicting with the drag logic.
+        if (IsDragging)
+        {
+            return;
+        }
+
+        if (change.Property != CurrentIndexProperty && change.Property != MaximumProperty)
         {
             return;
         }
@@ -150,7 +163,7 @@ public class DraggableProgressBar : TemplatedControl
         }
     }
 
-    public void UpdateThumbPosition()
+    private void UpdateThumbPosition()
     {
         if (_thumb == null)
         {
@@ -192,28 +205,21 @@ public class DraggableProgressBar : TemplatedControl
             thumbBounds = thumbBounds.WithX(transform.X);
         }
 
-        // Expand bounds horizontally by 2x
+        // Expand bounds horizontally by 2x for easier grabbing
         var expandedBounds = new Rect(
-            thumbBounds.X - thumbBounds.Width / 2, 
+            thumbBounds.X - thumbBounds.Width / 2,
             thumbBounds.Y,
-            thumbBounds.Width * 2,                  
-            thumbBounds.Height                    
+            thumbBounds.Width * 2,
+            thumbBounds.Height
         );
 
         // Check if the click was inside the expanded thumb area
         if (!expandedBounds.Contains(clickPosition))
         {
             // Click was on the track (outside expanded thumb), so jump to position
-            IsDragging = false; 
-            Task.Run(async () =>
-            {
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    UpdateIndexFromPosition(clickPosition.X);
-                }, DispatcherPriority.Send);
-                await WindowResizing.SetSizeAsync(DataContext as MainViewModel);
-            });
-
+            IsDragging = false;
+            CurrentIndex = Math.Max(PositionToIndex(clickPosition.X) - 1, 0);
+            return; 
         }
 
         // Click was on (or near) the thumb, so start dragging
@@ -237,12 +243,9 @@ public class DraggableProgressBar : TemplatedControl
             return;
         }
 
-        var trackWidth = GetTrackWidth();
-
         if (!IsDragging)
         {
             // Show index position on hover
-            
             var pos = e.GetPosition(_track);
             if (GetThumbBounds().Contains(pos))
             {
@@ -250,13 +253,19 @@ public class DraggableProgressBar : TemplatedControl
                 return;
             }
 
-            var pointerOverIndex = Math.Max(PositionToIndex(pos.X) + 1, 1);
+            var pointerOverIndex = PositionToIndex(pos.X);
             ToolTip.SetTip(this, $"{pointerOverIndex}/{Maximum}");
             ToolTip.SetIsOpen(this, true);
             return;
         }
 
-        // Dragging
+        // --- Dragging ---
+        var trackWidth = GetTrackWidth();
+        if (trackWidth <= 0)
+        {
+            return;
+        }
+
         var currentPosition = e.GetPosition(this);
         var deltaX = currentPosition.X - _dragStartPoint.X;
 
@@ -270,47 +279,48 @@ public class DraggableProgressBar : TemplatedControl
         var indexChange = deltaX / sensitiveDragPerIndex;
         var newIndex = _dragStartIndex + indexChange;
 
-        UpdateIndexFromPosition(IndexToPosition((int)Math.Round(newIndex)));
+        var clampedIndex = (int)Math.Clamp(Math.Round(newIndex), 1, Maximum);
+
+        if (CurrentIndex == clampedIndex)
+        {
+            return;
+        }
+
+        // Set the property. This will trigger the Debounced subscription.
+        CurrentIndex = clampedIndex;
+
+        // Manually update the thumb's visual position for smooth dragging.
+        // OnPropertyChanged is skipped because IsDragging is true.
+        UpdateThumbPosition();
     }
 
-    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    private async ValueTask HandlePointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
-        if (_shouldUpdate)
+
+        // Check if we were the one who captured the pointer
+        if (!ReferenceEquals(e.Pointer.Captured, _thumb) && !IsDragging)
+        {
+            return; // Not dragging, or capture was lost/handled elsewhere
+        }
+
+        if (_needsFullUpdateOnDragEnd)
         {
             var vm = DataContext as MainViewModel;
             // Update from lightweight image loading to properly instantiate everything and update size
-            _ = NavigationManager.ImageIterator.SlimUpdate(CurrentIndex, vm.PicViewer.ImageSource.CurrentValue);
-
-            IsDragging = false;
-            e.Pointer.Capture(null);
-            return;
-        }
-        if (!IsDragging)
-        {
-            return;
+            await NavigationManager.ImageIterator.SlimUpdate(CurrentIndex, vm?.PicViewer.ImageSource.CurrentValue);
+            _needsFullUpdateOnDragEnd = false; // Reset flag
         }
 
         IsDragging = false;
         e.Pointer.Capture(null);
     }
 
-    private void UpdateIndexFromPosition(double x)
-    {
-        var newIndex = PositionToIndex(x);
-        if (CurrentIndex == newIndex)
-        {
-            return;
-        }
-
-        CurrentIndex = newIndex;
-        UpdateThumbPosition();
-    }
-
     // Ensure the thumb is in the correct position when the control is resized
     protected override Size ArrangeOverride(Size finalSize)
     {
         var arrangedSize = base.ArrangeOverride(finalSize);
+        // Update position on resize, as track width may have changed
         UpdateThumbPosition();
         return arrangedSize;
     }
@@ -345,19 +355,27 @@ public class DraggableProgressBar : TemplatedControl
         return bounds;
     }
 
+    /// <summary>
+    /// Converts a pixel position on the track to a 1-based index.
+    /// </summary>
     private int PositionToIndex(double x)
     {
         var trackWidth = GetTrackWidth();
-        if (trackWidth <= 0 || Maximum <= 1)
+        if (_thumb is null || trackWidth <= 0 || Maximum <= 1)
         {
-            return 0;
+            return 1; // Return 1-based minimum
         }
 
-        var clampedX = Math.Clamp(x - _thumb!.Width / 2, 0, trackWidth);
+        var clampedX = Math.Clamp(x - _thumb.Width / 2, 0, trackWidth);
         var percentage = clampedX / trackWidth;
-        return (int)Math.Round(percentage * (Maximum - 1));
+        var zeroBasedIndex = (int)Math.Round(percentage * (Maximum - 1));
+
+        return zeroBasedIndex + 1;
     }
 
+    /// <summary>
+    /// Converts a 1-based index to a pixel position on the track.
+    /// </summary>
     private double IndexToPosition(int index)
     {
         var trackWidth = GetTrackWidth();
@@ -366,8 +384,13 @@ public class DraggableProgressBar : TemplatedControl
             return 0;
         }
 
-        var clampedIndex = Math.Clamp(index, 0, Maximum - 1);
-        return (double)clampedIndex / (Maximum - 1) * trackWidth;
+        // Convert 1-based index to 0-based for calculation
+        var zeroBasedIndex = Math.Clamp(index - 1, 0, Maximum - 1);
+
+        // Avoid division by zero if Maximum is 1
+        var denominator = (double)Math.Max(1, Maximum - 1);
+
+        return zeroBasedIndex / denominator * trackWidth;
     }
 
     #endregion

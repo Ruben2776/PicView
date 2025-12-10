@@ -34,10 +34,11 @@ public static class ConversionHelper
 
         try
         {
-            return fileInfo.Extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
-                   || fileInfo.Extension.Equals(".jpeg", StringComparison.InvariantCultureIgnoreCase)
-                   || fileInfo.Extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase)
-                   || fileInfo.Extension.Equals(".gif", StringComparison.InvariantCultureIgnoreCase);
+            var extension = Path.GetExtension(fileInfo.FullName.AsSpan());
+            return extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
+                   || extension.Equals(".jpeg", StringComparison.InvariantCultureIgnoreCase)
+                   || extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase)
+                   || extension.Equals(".gif", StringComparison.InvariantCultureIgnoreCase);
         }
         catch (Exception e)
         {

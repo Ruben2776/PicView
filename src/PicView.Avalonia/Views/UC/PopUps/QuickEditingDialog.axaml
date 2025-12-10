@@ -14,6 +14,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel Background="Transparent">
 
+        <!--  Tool Windows  -->
+        <TextBlock
+            Classes="txt bold"
+            FontSize="14"
+            HorizontalAlignment="Center"
+            Margin="0,0,0,20"
+            Text="{CompiledBinding Translation.ToolWindows}" />
+
         <Border
             Background="{DynamicResource MainBackgroundColor}"
             BorderBrush="{DynamicResource MainBorderColor}"
@@ -148,10 +156,15 @@
 
 
         </Border>
-        <WrapPanel
-            Margin="0,15,0,0"
-            MaxWidth="375"
-            Orientation="Horizontal">
+
+        <TextBlock
+            Classes="txt bold"
+            FontSize="14"
+            HorizontalAlignment="Center"
+            Margin="0,15,0,20"
+            Text="{CompiledBinding Translation.AdditionalFunctions}" />
+
+        <WrapPanel MaxWidth="375" Orientation="Horizontal">
 
             <!--  Crop  -->
             <customControls:TextIconButton

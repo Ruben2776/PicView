@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 
@@ -83,7 +84,7 @@ public class HoverFadeButtonHandler
     private bool ShouldShowButton()
     {
         // You may want to extend this with more checks
-        if (!Settings.UIProperties.ShowAltInterfaceButtons)
+        if (!Settings.UIProperties.ShowAltInterfaceButtons || GalleryFunctions.IsFullGalleryOpen)
         {
             return false;
         }
@@ -127,9 +128,19 @@ public class HoverFadeButtonHandler
         }
     }
 
-    private static async Task AnimateOpacityAsync(Control control, double targetOpacity, double durationSeconds,
+    private async Task AnimateOpacityAsync(Control control, double targetOpacity, double durationSeconds,
         CancellationToken token)
     {
+        if (control == UIHelper.GetHoverBar)
+        {
+            // Fix instances where hover bar is visible, but shouldn't be
+            // TODO: find a cleaner solution
+            if (!_vm.HoverbarViewModel.IsHoverbarVisible.Value)
+            {
+                control.IsVisible = false;
+                return;
+            }
+        }
         var from = control.Opacity;
         if (Math.Abs(from - targetOpacity) < 0.01)
         {

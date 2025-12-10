@@ -58,7 +58,7 @@ public static class UIHelper
         }
         GetHoverBar = new HoverBar();
         GetMainView.MainGrid.Children.Add(GetHoverBar);
-        _ = new HoverFadeButtonHandler(GetHoverBar, vm, GetHoverBar.TopBorder);
+        _ = new HoverFadeButtonHandler(GetHoverBar, vm, GetHoverBar.BottomBorder);
         MainWindowViewModel.HoverBarSubscription();
     }
 

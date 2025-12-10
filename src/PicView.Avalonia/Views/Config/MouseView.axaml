@@ -20,6 +20,30 @@
             FontSize="14"
             Foreground="{StaticResource SecondaryTextColor}"
             Margin="0,20,0,20"
+            Text="{CompiledBinding Translation.DoubleClick.Value,
+                                   Mode=OneWay}" />
+
+        <ComboBox
+            Background="{DynamicResource SecondaryBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderThickness="1"
+            FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+            Foreground="{DynamicResource MainTextColor}"
+            Margin="0,6,0,15"
+            Padding="5,7,0,7"
+            Width="300"
+            x:Name="DoubleClickBox">
+            <ComboBoxItem Content="{CompiledBinding Translation.ResetZoom.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+            <ComboBoxItem Content="{CompiledBinding Translation.ToggleFullscreen.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+            <ComboBoxItem Content="{CompiledBinding Translation.None.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+        </ComboBox>
+
+        <TextBlock
+            Classes="txt"
+            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
+            FontSize="14"
+            Foreground="{StaticResource SecondaryTextColor}"
+            Margin="0,20,0,20"
             Text="{CompiledBinding Translation.MouseSideButtons.Value,
                                    Mode=OneWay}" />
 

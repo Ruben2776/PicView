@@ -6,6 +6,7 @@ using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.MacOS.PlatformUpdate;
+using PicView.Avalonia.MacOS.Printing;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Update;
@@ -13,6 +14,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.MacOS.WindowImpl;
 
@@ -26,6 +28,8 @@ public class WindowInitializer : IPlatformSpecificUpdate
     private KeybindingsWindow? _keybindingsWindow;
     private SettingsWindow? _settingsWindow;
     private SingleImageResizeWindow? _singleImageResizeWindow;
+    private PrintPreviewWindow? _printPreviewWindow;
+
 
     public async Task HandlePlatofrmUpdate(UpdateInfo updateInfo, string tempPath)
     {
@@ -122,32 +126,38 @@ public class WindowInitializer : IPlatformSpecificUpdate
         await FunctionsMapper.CloseMenus();
     }
 
-    public void ShowKeybindingsWindow(MainViewModel vm)
+    public async Task ShowKeybindingsWindow(MainViewModel vm)
     {
-        if (Dispatcher.UIThread.CheckAccess())
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
-            Set();
+            return;
+        }
+
+        if (_keybindingsWindow is null)
+        {
+            if (vm.Window.KeybindingWindowConfig?.WindowProperties is null)
+            {
+                vm.Window.KeybindingWindowConfig = new KeybindingWindowConfig();
+                await vm.Window.KeybindingWindowConfig.LoadAsync();
+            }
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                _keybindingsWindow = new KeybindingsWindow(vm.Window.KeybindingWindowConfig)
+                {
+                    DataContext = vm
+                };
+                Show();
+                _keybindingsWindow.Closing += (_, _) =>
+                {
+                    _keybindingsWindow?.Dispose();
+                    _keybindingsWindow = null;
+                };
+            });
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(Set);
-        }
-
-        return;
-
-        void Set()
-        {
-            if (_keybindingsWindow is null)
-            {
-                _keybindingsWindow = new KeybindingsWindow
-                {
-                    DataContext = vm,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner
-                };
-                _keybindingsWindow.Show();
-                _keybindingsWindow.Closing += (_, _) => _keybindingsWindow = null;
-            }
-            else
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 if (_keybindingsWindow.WindowState == WindowState.Minimized)
                 {
@@ -155,11 +165,20 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 }
                 else
                 {
-                    _keybindingsWindow.Activate();
+                    Show();
                 }
-            }
+            });
+        }
 
-            _ = FunctionsMapper.CloseMenus();
+        await FunctionsMapper.CloseMenus();
+
+        return;
+
+        void Show()
+        {
+            WindowFunctions.InitializeWindowSizeAndPosition(_keybindingsWindow,
+                vm.Window.KeybindingWindowConfig.WindowProperties);
+            _keybindingsWindow.Show(desktop.MainWindow);
         }
     }
 
@@ -187,7 +206,6 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 _settingsWindow.Show();
                 _settingsWindow.Closing += (_, _) =>
                     _settingsWindow = null;
-                ;
             });
         }
         else
@@ -384,6 +402,68 @@ public class WindowInitializer : IPlatformSpecificUpdate
                 else
                 {
                     _convertWindow.Activate();
+                }
+            }
+
+            _ = FunctionsMapper.CloseMenus();
+        }
+    }
+    
+    public void ShowPrintPreviewWindow(MainViewModel vm, string path)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(Set);
+        }
+
+        return;
+
+        void Set()
+        {
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+
+            if (_printPreviewWindow is null)
+            {
+                vm.PrintPreview = new PrintPreviewViewModel();
+
+                _printPreviewWindow = new PrintPreviewWindow
+                {
+                    DataContext = vm,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+
+                vm.PrintPreview.PrintCommand.SubscribeAwait(async (_, _) =>
+                    {
+                        await _printPreviewWindow.RunPrintAsync(vm);
+                    })
+                    .AddTo(vm.PrintPreview.Disposables);
+
+                vm.PrintPreview.CancelCommand.SubscribeAwait(async (_, _) =>
+                {
+                    await Dispatcher.UIThread.InvokeAsync(() => _printPreviewWindow?.Close());
+                }).AddTo(vm.PrintPreview.Disposables);
+
+                _printPreviewWindow.Show(desktop.MainWindow);
+                _printPreviewWindow.Closing += (_, _) => _printPreviewWindow = null;
+
+                Task.Run(() => MacPrintInitialization.Initialize(vm, path, _printPreviewWindow));
+            }
+            else
+            {
+                if (_printPreviewWindow.WindowState == WindowState.Minimized)
+                {
+                    WindowFunctions.ShowMinimizedWindow(_printPreviewWindow);
+                }
+                else
+                {
+                    _printPreviewWindow.Show();
                 }
             }
 

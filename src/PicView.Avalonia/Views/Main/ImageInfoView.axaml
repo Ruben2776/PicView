@@ -269,8 +269,8 @@
                 Command="{CompiledBinding Window.ShowConvertWindow}"
                 Header="{CompiledBinding Translation.ConvertTo.Value,
                                          Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.ShouldOptimizeImageBeEnabled.Value,
-                                            Mode=OneWay}">
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                            Converter={x:Static ObjectConverters.IsNotNull}}">
                 <MenuItem.Icon>
                     <Image
                         Height="12"

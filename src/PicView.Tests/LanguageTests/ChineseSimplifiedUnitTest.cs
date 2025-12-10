@@ -162,7 +162,6 @@ public static class ChineseSimplifiedUnitTest
         Assert.Equal(TranslationManager.Translation.GlassTheme, "玻璃主题");
         Assert.Equal(TranslationManager.Translation.GoBackBy100Images, "后退 100 张图片");
         Assert.Equal(TranslationManager.Translation.GoBackBy10Images, "后退 10 张图片");
-        Assert.Equal(TranslationManager.Translation.GoToImageAtSpecifiedIndex, "跳转至指定图片");
         Assert.Equal(TranslationManager.Translation.Hard, "硬");
         Assert.Equal(TranslationManager.Translation.Height, "高度");
         Assert.Equal(TranslationManager.Translation.HideBottomGallery, "收起底部图");
@@ -329,7 +328,6 @@ public static class ChineseSimplifiedUnitTest
         Assert.Equal(TranslationManager.Translation.Soft, "柔和");
         Assert.Equal(TranslationManager.Translation.Software, "软件");
         Assert.Equal(TranslationManager.Translation.SortFilesBy, "排序方式");
-        Assert.Equal(TranslationManager.Translation.SourceFolder, "源文件夹");
         Assert.Equal(TranslationManager.Translation.Space, "Space");
         Assert.Equal(TranslationManager.Translation.Square, "正方形");
         Assert.Equal(TranslationManager.Translation.Start, "启动");

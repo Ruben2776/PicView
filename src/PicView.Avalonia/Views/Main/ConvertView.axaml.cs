@@ -20,19 +20,16 @@ public partial class ConvertView : UserControl
 
             SaveButton.Click += async (_, _) =>
             {
-                var ext = GetExtension();
-                var fileInfoFullName = vm.PicViewer.FileInfo.CurrentValue.FullName;
-                await SaveImageHandler.SaveImageWithPossibleNavigation(vm, fileInfoFullName, fileInfoFullName,
-                    true, ext, (uint?)vm.PicViewer.PixelWidth.CurrentValue,
-                    (uint?)vm.PicViewer.PixelHeight.CurrentValue,
-                    null, null, true);
+                var destination = vm.PicViewer.FileInfo.CurrentValue.FullName;
+                var ext = DetermineFileExtension(vm, ref destination);
+
+                await SaveImageHandler.SaveImageWithPossibleNavigation(vm, vm.PicViewer.FileInfo.CurrentValue.FullName,
+                    destination, true, ext);
             };
 
             SaveAsButton.Click += async (_, _) =>
             {
-                var fileInfoFullName = vm.PicViewer.FileInfo.CurrentValue.FullName;
-                var ext = DetermineFileExtension(vm, ref fileInfoFullName);
-
+                var ext = GetExtension();
                 var destination =
                     await FilePicker.PickFileForSavingAsync(vm.PicViewer.FileInfo?.CurrentValue.FullName, ext);
                 if (destination is null)
@@ -40,13 +37,12 @@ public partial class ConvertView : UserControl
                     return;
                 }
 
-                var sameFile = destination.Equals(fileInfoFullName, StringComparison.OrdinalIgnoreCase);
-                await SaveImageHandler.SaveImageWithPossibleNavigation(vm, fileInfoFullName, destination,
-                    sameFile, ext, (uint?)vm.PicViewer.PixelWidth.CurrentValue,
-                    (uint?)vm.PicViewer.PixelHeight.CurrentValue,
-                    null, null, true);
-            };
+                var sameFile = destination.Equals(vm.PicViewer.FileInfo.CurrentValue.FullName,
+                    StringComparison.OrdinalIgnoreCase);
 
+                await SaveImageHandler.SaveImageWithPossibleNavigation(vm, vm.PicViewer.FileInfo.CurrentValue.FullName,
+                    destination, sameFile, ext);
+            };
 
             CancelButton.Click += (_, _) => (VisualRoot as Window)?.Close();
         };

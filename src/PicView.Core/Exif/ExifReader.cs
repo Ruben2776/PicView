@@ -346,8 +346,13 @@ public static class ExifReader
     public static string GetTitle(IExifProfile? profile)
     {
         var xPTitle = profile?.GetValue(ExifTag.XPTitle)?.Value;
-        var title = xPTitle is null ? string.Empty : Encoding.Unicode.GetString(xPTitle).TrimEnd('\0');
-        if (!string.IsNullOrEmpty(title))
+        if (xPTitle is null)
+        {
+            return string.Empty;
+        }
+
+        var title = Encoding.Unicode.GetString(xPTitle).TrimEnd('\0');
+        if (string.IsNullOrWhiteSpace(title))
         {
             return title;
         }
@@ -360,7 +365,7 @@ public static class ExifReader
     {
         var xPSubject = profile?.GetValue(ExifTag.XPSubject)?.Value;
         var subject = xPSubject is null ? string.Empty : Encoding.ASCII.GetString(xPSubject);
-        if (!string.IsNullOrEmpty(subject))
+        if (!string.IsNullOrWhiteSpace(subject))
         {
             return subject;
         }
@@ -385,13 +390,13 @@ public static class ExifReader
         try
         {
             var decodedComment = Encoding.ASCII.GetString(commentBytes);
-            if (string.IsNullOrEmpty(decodedComment))
+            if (string.IsNullOrWhiteSpace(decodedComment))
             {
                 return string.Empty;
             }
 
             var result = decodedComment.StartsWith("UNICODE") ? decodedComment.Replace("UNICODE", "") : decodedComment;
-            return result == "ASCII" ? string.Empty : result;
+            return result.StartsWith("ASCII") ? string.Empty : result;
         }
         catch (Exception)
         {

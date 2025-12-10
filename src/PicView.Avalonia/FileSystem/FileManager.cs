@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using System.Runtime.InteropServices;
+using Avalonia.Threading;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.UI;
@@ -92,16 +93,24 @@ public static class FileManager
         try
         {
             vm.MainWindow.IsLoadingIndicatorShown.Value = true;
-            var file = await ImageFormatConverter.ConvertToCommonSupportedFormatAsync(path, vm)
-                .ConfigureAwait(false);
-
-            if (string.IsNullOrWhiteSpace(file))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                TooltipHelper.ShowTooltipMessage(TranslationManager.Translation.UnexpectedError);
-                return;
+                await Task.Run(() => vm.PlatformService.Print(path));
             }
+            else
+            {
+                // TODO: Refactor this for Windows
+                var file = await ImageFormatConverter.ConvertToCommonSupportedFormatAsync(path, vm)
+                    .ConfigureAwait(false);
 
-            await Task.Run(() => vm.PlatformService.Print(file));
+                if (string.IsNullOrWhiteSpace(file))
+                {
+                    TooltipHelper.ShowTooltipMessage(TranslationManager.Translation.UnexpectedError);
+                    return;
+                }
+
+                await Task.Run(() => vm.PlatformService.Print(file));
+            }
         }
         catch (Exception ex)
         {

@@ -49,10 +49,28 @@ public static class GalleryNavigation
 
     public static void CenterScrollToSelectedItem(MainViewModel vm)
     {
+        if (vm.PicViewer?.Index?.CurrentValue < 0)
+        {
+            return;
+        }
+
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            if (vm.PicViewer?.Index?.CurrentValue >= UIHelper.GetGalleryView.GalleryListBox.Items.Count)
+            {
+                return;
+            }
+
+            CenterScrollToItem(vm.PicViewer.Index.Value);
+        });
+    }
+
+    public static void CenterScrollToItem(int itemIndex)
+    {
         if (Settings.WindowProperties.AutoFit)
         {
             // Use post to ensure the UI update takes place after resize
-            Dispatcher.UIThread.Post(ScrollToSelected);;
+            Dispatcher.UIThread.Post(ScrollToSelected);
         }
         else
         {
@@ -60,18 +78,14 @@ public static class GalleryNavigation
         }
 
         return;
+
         void ScrollToSelected()
         {
             var listbox = UIHelper.GetGalleryView.GalleryListBox;
 
-            if (listbox is null || vm.PicViewer.Index.CurrentValue < 0 || vm.PicViewer.Index.CurrentValue >= listbox.Items.Count)
-            {
-                return;
-            }
-
             try
             {
-                listbox.ScrollToCenterOfItem(listbox.Items[vm.PicViewer.Index.CurrentValue] as GalleryItem);
+                listbox.ScrollToCenterOfItem(listbox.Items[itemIndex] as GalleryItem);
             }
             catch (Exception e)
             {
@@ -79,7 +93,7 @@ public static class GalleryNavigation
             }
         }
     }
-    
+
     public static void NavigateGallery(Direction direction, MainViewModel vm)
     {
         var highlightedGalleryItem = vm.PicViewer.Index.CurrentValue;

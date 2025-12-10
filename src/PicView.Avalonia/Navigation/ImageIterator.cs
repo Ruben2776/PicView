@@ -86,7 +86,11 @@ public class ImageIterator : IAsyncDisposable
         ImagePaths = vm.PlatformService.GetFiles(initialDirectory);
         CurrentIndex = ImagePaths.FindIndex(x => x.FullName.Equals(fileInfo.FullName));
         InitiateFileSystemWatcher(fileInfo);
-        Settings.StartUp.StartUpDirectory = initialDirectory.FullName;
+        if (setInitial)
+        {
+            Settings.StartUp.StartUpDirectory = initialDirectory.FullName;
+        }
+        
         vm.PicViewer.Maximum.Value = ImagePaths.Count;
     }
 
@@ -109,10 +113,6 @@ public class ImageIterator : IAsyncDisposable
     private void InitiateFileSystemWatcher(FileInfo fileInfo)
     {
         InitialFileInfo = fileInfo;
-        if (!fileInfo.FullName.Contains(Settings.StartUp.StartUpDirectory))
-        {
-            Settings.StartUp.StartUpDirectory = fileInfo.DirectoryName;
-        }
         
         if (_watcher is not null)
         {
@@ -279,34 +279,35 @@ public class ImageIterator : IAsyncDisposable
                 return;
             }
 
+            ImagePaths.RemoveAt(index);
+            if (ImagePaths.Count <= 0)
+            {
+                ErrorHandling.ShowStartUpMenu(_vm);
+                return;
+            }
+
             var currentIndex = CurrentIndex;
             var isSameFile = currentIndex == index;
 
-            ImagePaths.RemoveAt(index);
-
+            RemoveItemFromPreLoader(index);
+            PreLoader.Resynchronize(ImagePaths);
+            
             if (isSameFile)
             {
-                if (ImagePaths.Count <= 0)
+                if (Settings.Navigation.IsNavigatingBackwardsWhenDeleting)
                 {
-                    ErrorHandling.ShowStartUpMenu(_vm);
-                    return;
+                    await IterateToIndex(GetIteration(index, NavigateTo.Previous), new CancellationTokenSource());
                 }
-
-                RemoveCurrentItemFromPreLoader();
-                PreLoader.Resynchronize(ImagePaths);
-                var newIndex = Settings.Navigation.IsNavigatingBackwardsWhenDeleting
-                    ? GetIteration(index, NavigateTo.Previous)
-                    : GetIteration(index, NavigateTo.Next);
-                CurrentIndex = newIndex;
-                _vm.PicViewer.FileInfo.Value = ImagePaths[CurrentIndex];
-                await IterateToIndex(CurrentIndex, new CancellationTokenSource());
+                else
+                {
+                    await IterateToIndex(index, new CancellationTokenSource());
+                }
             }
             else
             {
-                RemoveItemFromPreLoader(index);
                 TitleManager.SetTitle(_vm);
             }
-
+            
             var removed = GalleryFunctions.RemoveGalleryItem(index, _vm);
             if (removed)
             {
@@ -315,22 +316,20 @@ public class ImageIterator : IAsyncDisposable
                     if (ImagePaths.Count == 1)
                     {
                         _vm.Gallery.GalleryMode.Value = GalleryMode.BottomToClosed;
+                        _vm.PicViewer.Index.Value = 0;
+                    }
+                    else
+                    {
+                        var indexOf = ImagePaths.FindIndex(x =>
+                            x.FullName.Equals(_vm.PicViewer.FileInfo.CurrentValue.FullName));
+                        _vm.PicViewer.Index.Value = indexOf; // Fixes deselection bug 
+                        CurrentIndex = indexOf;
+
+                        GalleryNavigation.CenterScrollToItem(indexOf);
                     }
                 }
-
-                var indexOf = ImagePaths.FindIndex(x => x.FullName.Equals(_vm.PicViewer.FileInfo.CurrentValue.FullName));
-                _vm.PicViewer.Index.Value = indexOf; // Fixes deselection bug 
-                CurrentIndex = indexOf;
-                if (isSameFile)
-                {
-                    GalleryNavigation.CenterScrollToSelectedItem(_vm);
-                }
             }
 
-            if (!isSameFile)
-            {
-                PreLoader.Resynchronize(ImagePaths);
-            }
 
             FileHistoryManager.Remove(e.FullPath);
         }

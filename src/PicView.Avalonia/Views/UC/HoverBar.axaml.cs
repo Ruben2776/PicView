@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Diagnostics;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -54,7 +55,7 @@ public partial class HoverBar : UserControl
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
         AddHandler(PointerPressedEvent, ManagePointerPressed, RoutingStrategies.Tunnel);
-        SizeChanged += (_, args) => ApplyResponsiveResize(args.NewSize.Width);
+        UIHelper.GetMainView.SizeChanged += (_, args) => ApplyResponsiveResize(args.NewSize.Width);
         ApplyResponsiveResize(Bounds.Width);
 
 
@@ -96,6 +97,11 @@ public partial class HoverBar : UserControl
                 vm.HoverbarViewModel.IsHoverNavigationButtonPreviousClicked = true;
                 await NavigationManager.Navigate(false, vm, c);
             });
+
+        Debug.Assert(Settings.Gallery is not null);
+        Observable.EveryValueChanged(Settings.Gallery, x => x.IsBottomGalleryShown)
+            .Skip(1)
+            .Subscribe(_ => { ApplyResponsiveResize(Bounds.Width); });
     }
 
     private void ApplyResponsiveResize(double width)
@@ -106,7 +112,7 @@ public partial class HoverBar : UserControl
 
         switch (width)
         {
-            case < SizeDefaults.WindowMinSize:
+            case < SizeDefaults.SecondaryWindowMinWidth:
                 // Too small to fit
                 IsVisible = false;
                 break;
@@ -114,53 +120,46 @@ public partial class HoverBar : UserControl
                 ApplyLayout(
                     70,
                     false,
-                    true,
-                    false,
-                    new Thickness(5, 45, 5, 0));
+                    false);
                 break;
 
             case <= secondBreakpoint:
                 ApplyLayout(
                     75,
                     false,
-                    true,
-                    false,
-                    new Thickness(5, 45, 5, 0));
+                    false);
                 break;
 
             case < thirdBreakpoint:
                 ApplyLayout(
                     72,
                     false,
-                    false,
-                    true,
-                    new Thickness(5, 65, 5, 0));
+                    true);
                 break;
 
             default:
                 ApplyLayout(
                     75,
                     true,
-                    false,
-                    true,
-                    new Thickness(5, 65, 5, 0));
+                    true);
                 break;
         }
     }
 
-    private void ApplyLayout(double buttonWidth, bool showRotateLeft, bool showTopBorder, bool showAdvancedButtons,
-        Thickness topPanelMargin)
+    private void ApplyLayout(double buttonWidth, bool showRotateLeft, bool showAdvancedButtons)
     {
         NextButton.Width = PreviousButton.Width = buttonWidth;
         RotateLeftButton.IsVisible = showRotateLeft;
-        TopBorder.IsVisible = showTopBorder;
         RotateRightButton.IsVisible =
             FlipButton.IsVisible =
                 ZoomInMenuButton.IsVisible =
                     ZoomOutMenuButton.IsVisible = showAdvancedButtons;
-        TopPanel.Margin = topPanelMargin;
 
         IsVisible = true;
+
+        // Make sure hover bar is above the bottom gallery if needed
+        var newHeight = Settings.Gallery.IsBottomGalleryShown ? 50 : 160;
+        Height = UIHelper.GetMainView.Bounds.Height > SizeDefaults.WindowMinSize ? newHeight : double.NaN;
     }
 
 
@@ -249,7 +248,7 @@ public partial class HoverBar : UserControl
     }
 
     private static void ShowNavigationDialog() =>
-        UIHelper.GetMainView.MainGrid.Children.Add(new NavigationDialog());
+        DialogManager.AddNavigationDialog();
 
     private static void ShowQuickSettingsDialog() =>
         UIHelper.GetMainView.MainGrid.Children.Add(new QuickSettingsDialog());
@@ -258,7 +257,7 @@ public partial class HoverBar : UserControl
         UIHelper.GetMainView.MainGrid.Children.Add(new QuickEditingDialog());
 
     private static void ShowSearchDialog() =>
-        UIHelper.GetMainView.MainGrid.Children.Add(new FileSearchDialog());
+        DialogManager.AddFileSearchDialog();
 
     protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
     {

@@ -25,6 +25,8 @@ public class AnimatedPopUp : ContentControl
         Loaded += async delegate { await AnimatedOpening(); };
     }
 
+    public event EventHandler<KeyEventArgs> KeyChanged;
+
     public bool ClickingOutsideCloses
     {
         get => (bool)GetValue(ClickingOutsideClosesProperty)!;
@@ -128,6 +130,10 @@ public class AnimatedPopUp : ContentControl
         if (e.Key is Key.Escape)
         {
             _ = AnimatedClosing();
+        }
+        else
+        {
+            KeyChanged(this, e);
         }
     }
 }

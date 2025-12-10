@@ -10,7 +10,7 @@ public class LanguageAndSettingsUnitTest
     [Fact]
     public async Task CheckIfSettingsWorks()
     {
-        await LoadSettingsAsync();
+        LoadSettings();
         Assert.NotNull(Settings);
         var testSave = await SaveSettingsAsync();
         Assert.True(testSave);
@@ -78,9 +78,9 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task ChangeLanguage()
+    public void ChangeLanguage()
     {
-        await LoadSettingsAsync();
+        LoadSettings();
         Assert.NotNull(Settings);
         
         // TODO: rewrite
