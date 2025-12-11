@@ -41,6 +41,6 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-        <InternalsVisibleTo Include="PicView.Tests" />
+        <InternalsVisibleTo Include="PicView.Tests"/>
     </ItemGroup>
 </Project>

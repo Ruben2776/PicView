@@ -56,7 +56,7 @@
             <!--  Print  -->
             <MenuItem
                 Command="{CompiledBinding Tools.PrintCommand}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 Header="{CompiledBinding Translation.Print.Value,
                                          Mode=OneWay}"
@@ -71,7 +71,7 @@
             <!--  Open with  -->
             <MenuItem
                 Command="{CompiledBinding Tools.OpenWithCommand}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 Header="{CompiledBinding Translation.OpenWith.Value,
                                          Mode=OneWay}"
@@ -86,7 +86,7 @@
             <!--  Locate on disk  -->
             <MenuItem
                 Command="{CompiledBinding Tools.LocateOnDiskCommand}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 Header="{CompiledBinding Translation.ShowInFolder.Value,
                                          Mode=OneWay}"
@@ -132,7 +132,7 @@
                 <!--  Set as wallpaper filled  -->
                 <MenuItem
                     Command="{CompiledBinding Tools.SetAsWallpaperFilledCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                        FallbackValue=''}"
                     Header="{CompiledBinding Translation.Fill.Value,
                                              Mode=OneWay}"
@@ -152,7 +152,7 @@
                 <!--  Set as wallpaper fit  -->
                 <MenuItem
                     Command="{CompiledBinding Tools.SetAsWallpaperFittedCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                        FallbackValue=''}"
                     Header="{CompiledBinding Translation.Fit.Value,
                                              Mode=OneWay}"
@@ -172,7 +172,7 @@
                 <!--  Set as wallpaper stretched  -->
                 <MenuItem
                     Command="{CompiledBinding Tools.SetAsWallpaperStretchedCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                        FallbackValue=''}"
                     Header="{CompiledBinding Translation.Stretch.Value,
                                              Mode=OneWay}"
@@ -193,7 +193,7 @@
                 <!--  Set as wallpaper centered  -->
                 <MenuItem
                     Command="{CompiledBinding Tools.SetAsWallpaperCenteredCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                        FallbackValue=''}"
                     Header="{CompiledBinding Translation.Center.Value,
                                              Mode=OneWay}"
@@ -213,7 +213,7 @@
                 <!--  Set as wallpaper tiled  -->
                 <MenuItem
                     Command="{CompiledBinding Tools.SetAsWallpaperTiledCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                        FallbackValue=''}"
                     Header="{CompiledBinding Translation.Tile.Value,
                                              Mode=OneWay}"
@@ -234,7 +234,7 @@
             <!--  File properties  -->
             <MenuItem
                 Command="{CompiledBinding Tools.FilePropertiesCommand}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 Header="{CompiledBinding Translation.FileProperties.Value,
                                          Mode=OneWay}"
@@ -285,7 +285,7 @@
             <!--  Delete file  -->
             <MenuItem
                 Command="{CompiledBinding Tools.RecycleFileCommand}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 Header="{CompiledBinding Translation.DeleteFile.Value,
                                          Mode=OneWay}"
@@ -301,7 +301,7 @@
             <!--  Copy  -->
             <MenuItem
                 Command="{CompiledBinding Tools.CopyFileCommand}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 Header="{CompiledBinding Translation.Copy.Value,
                                          Mode=OneWay}">
@@ -312,7 +312,7 @@
                 <!--  Copy file  -->
                 <MenuItem
                     Command="{CompiledBinding Tools.CopyFileCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                        FallbackValue=''}"
                     Header="{CompiledBinding Translation.CopyFile.Value,
                                              Mode=OneWay}"
@@ -338,7 +338,7 @@
                 <!--  Copy file path  -->
                 <MenuItem
                     Command="{CompiledBinding Tools.CopyFilePathCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                        FallbackValue=''}"
                     Header="{Binding Translation.FileCopyPath, Mode=OneWay}"
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
@@ -351,7 +351,7 @@
                 <!--  Copy base64  -->
                 <MenuItem
                     Command="{CompiledBinding Tools.CopyBase64Command}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                        FallbackValue=''}"
                     IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull}}">
@@ -371,7 +371,7 @@
                 <!--  Duplicate file  -->
                 <MenuItem
                     Command="{CompiledBinding Tools.DuplicateFileCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                    CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                        FallbackValue=''}"
                     Header="{CompiledBinding Translation.DuplicateFile,
                                              Mode=OneWay}"

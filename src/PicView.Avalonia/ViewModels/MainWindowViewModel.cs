@@ -78,7 +78,6 @@ public class MainWindowViewModel : IDisposable
     public BindableReactiveProperty<bool> IsLoadingIndicatorShown { get; } = new();
 
     public BindableReactiveProperty<bool> IsUIShown { get; } = new();
-    
     public BindableReactiveProperty<bool> IsTopToolbarShown { get; } = new();
 
     public BindableReactiveProperty<bool> IsBottomToolbarShown { get; } = new();

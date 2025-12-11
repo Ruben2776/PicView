@@ -6,7 +6,8 @@ public class GlobalSettingsViewModel
 {
     public BindableReactiveProperty<bool> IsTopMost { get; } = new(Settings.WindowProperties.TopMost);
 
-    public BindableReactiveProperty<bool> IsIncludingSubdirectories { get; } = new(Settings.Sorting.IncludeSubDirectories);
+    public BindableReactiveProperty<bool> IsIncludingSubdirectories { get; } =
+        new(Settings.Sorting.IncludeSubDirectories);
 
     public BindableReactiveProperty<bool> IsScrollingEnabled { get; } = new();
 
@@ -19,13 +20,6 @@ public class GlobalSettingsViewModel
     public BindableReactiveProperty<bool> IsFileHistoryEnabled { get; } = new(Settings.Navigation.IsFileHistoryEnabled);
 
     public BindableReactiveProperty<bool> IsShowingTaskbarProgress { get; } = new(Settings.UIProperties.IsTaskbarProgressEnabled);
-
-    public BindableReactiveProperty<bool> ShowSetAsWallpaper { get; } = new(Settings.UIProperties.ShowSetAsWallpaper);
-
-    public BindableReactiveProperty<bool> ShowPrintInBottomToolbar { get; } = new(Settings.UIProperties.ShowPrintInBottomToolbar);
-
-    public BindableReactiveProperty<bool> EnableCheckForUpdates { get; } = new(Settings.UIProperties.EnableCheckForUpdates);
-
-    public BindableReactiveProperty<bool> HasLastFile { get; } = new(!String.IsNullOrWhiteSpace(Settings.StartUp.LastFile));
     
+    public BindableReactiveProperty<bool> ShowSetAsWallpaper { get; } = new(Settings.UIProperties.ShowSetAsWallpaper);
 }

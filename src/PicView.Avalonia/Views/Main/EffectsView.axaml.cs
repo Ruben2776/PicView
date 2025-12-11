@@ -4,11 +4,8 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
-using PicView.Avalonia.Extensions;
-using PicView.Avalonia.History;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
@@ -109,7 +106,9 @@ public partial class EffectsView : UserControl
             LowerPanel.Background = new SolidColorBrush(Color.Parse("#5DA2A2A2"));
         }
         
+        CloseItem.Click += (_, _) => (VisualRoot as Window)?.Close();
         PointerPressed += OnPointerPressed;
+        ClearEffectsItem.Click += async (_, _) => await RemoveEffects();
 
         ResetContrastBtn.Click += (_, _) => ContrastSlider.Value = 0;
         ResetBrightnessBtn.Click += (_, _) => BrightnessSlider.Value = 0;
@@ -120,54 +119,6 @@ public partial class EffectsView : UserControl
 
         ResetButton.Click += async (_, _) => await RemoveEffects();
         CancelButton.Click += (_, _) => (VisualRoot as Window)?.Close();
-        ApplyButton.Click += async delegate
-        {
-            if (vm.PicViewer.EffectConfig.Value is null)
-                return;
-
-            vm.MainWindow.IsLoadingIndicatorShown.Value = true;
-
-            try
-            {
-                // Apply the current effect configuration to the Magick image
-                var magick = await ImageEffectsHelper
-                    .ApplyEffects(vm.PicViewer.FileInfo.CurrentValue, vm.PicViewer.EffectConfig.CurrentValue, CancellationToken.None)
-                    .ConfigureAwait(false);
-
-                if (magick is not null)
-                {
-                    var magickImage = magick is MagickImage m ? m : new MagickImage(magick);
-
-                    // Build descriptive text for the history entry
-                    var config = vm.PicViewer.EffectConfig.CurrentValue;
-                    var desc = BuildEffectDescription(config);
-
-                    // Create a single History step for this Apply
-                    //await vm.HistoryManager.AddSnapshot(EditKind.Effect, desc, magickImage).ConfigureAwait(false);
-
-                    // Convert to Avalonia bitmap off-thread
-                    var bitmap = await Task.Run(() => magickImage.ToAvaloniaBitmap());
-
-                    // Apply on UI thread
-                    await Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
-                            oldBmp.Dispose();
-
-                        vm.PicViewer.ImageSource.Value = bitmap;
-                        vm.PicViewer.HasChanges.Value = true;
-                    });
-                }
-
-                // Close window after commit
-                await Dispatcher.UIThread.InvokeAsync(() => (VisualRoot as Window)?.Close());
-            }
-            finally
-            {
-                vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-            }
-        };
-
 
         BlackAndWhiteToggleButton.Click += async delegate
         {
@@ -430,33 +381,6 @@ public partial class EffectsView : UserControl
 
         _disposables.Dispose();
     }
-
-    private static string BuildEffectDescription(ImageEffectConfig config)
-    {
-        var parts = new List<string>();
-
-        if (config.Brightness.ToInt32() != 0)
-            parts.Add($"Brightness {config.Brightness.ToInt32()}%");
-        if (config.Contrast.ToInt32() != 0)
-            parts.Add($"Contrast {config.Contrast.ToInt32()}%");
-        if (config.BlurLevel > 0)
-            parts.Add($"Blur {config.BlurLevel}");
-        if (config.PosterizeLevel > 0 && config.PosterizeLevel != 1)
-            parts.Add($"Posterize {config.PosterizeLevel}");
-        if (config.SketchStrokeWidth > 0)
-            parts.Add($"Sketch {config.SketchStrokeWidth}");
-        if (config.Solarize.ToInt32() > 0)
-            parts.Add($"Solarize {config.Solarize.ToInt32()}%");
-        if (config.BlackAndWhite)
-            parts.Add("Black & White");
-        if (config.Negative)
-            parts.Add("Negative");
-        if (config.OldMovie)
-            parts.Add("Old Movie");
-
-        return parts.Count == 0 ? "Applied effect (no change)" : "Effect: " + string.Join(", ", parts);
-    }
-
 
     /// <summary>
     /// Determines if an effect configuration matches the default configuration.

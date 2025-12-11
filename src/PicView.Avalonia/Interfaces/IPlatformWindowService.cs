@@ -47,6 +47,4 @@ public interface IPlatformWindowService
     Task ShowBatchResizeWindow();
 
     void ShowConvertWindow();
-    
-    void ShowHistoryWindow();
 }

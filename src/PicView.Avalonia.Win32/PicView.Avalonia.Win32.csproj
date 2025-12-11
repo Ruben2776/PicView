@@ -76,9 +76,6 @@
     <Compile Update="Views\WinTitleBar.axaml.cs">
       <DependentUpon>WinTitleBar.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\ColorPickerToolWindow.axaml.cs">
-      <DependentUpon>ColorPickerToolWindow.axaml</DependentUpon>
-    </Compile>
     <Compile Update="Views\BatchResizeResizeWindow.axaml.cs">
       <DependentUpon>BatchResizeResizeWindow.axaml</DependentUpon>
       <SubType>Code</SubType>

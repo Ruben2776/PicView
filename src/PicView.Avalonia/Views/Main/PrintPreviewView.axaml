@@ -241,7 +241,8 @@
                             <TextBlock
                                 Classes="txt"
                                 Margin="0,0,0,5"
-                                Text="{CompiledBinding Translation.Right.Value, Mode=OneWay}" />
+                                Text="{CompiledBinding Translation.Right.Value,
+                                                       Mode=OneWay}" />
                             <NumericUpDown
                                 Background="{DynamicResource SecondaryBackgroundColor}"
                                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
@@ -250,7 +251,8 @@
                                 Increment="1"
                                 Maximum="100"
                                 Minimum="0"
-                                Value="{CompiledBinding PrintPreview.PrintSettings.Value.MarginRight.Value, Mode=TwoWay}" />
+                                Value="{CompiledBinding PrintPreview.PrintSettings.Value.MarginRight.Value,
+                                                        Mode=TwoWay}" />
                         </StackPanel>
                     </Grid>
 
@@ -305,12 +307,14 @@
                     Command="{CompiledBinding PrintPreview.CancelCommand}"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="42"
-                    ToolTip.Tip="{CompiledBinding Translation.Cancel.Value, Mode=OneWay}"
+                    ToolTip.Tip="{CompiledBinding Translation.Cancel.Value,
+                                                  Mode=OneWay}"
                     Width="140"
                     x:Name="CancelButton">
                     <TextBlock
                         Classes="txt"
-                        Text="{CompiledBinding Translation.Cancel.Value, Mode=OneWay}"
+                        Text="{CompiledBinding Translation.Cancel.Value,
+                                               Mode=OneWay}"
                         TextAlignment="Center" />
                 </Button>
 
@@ -320,13 +324,15 @@
                     Command="{CompiledBinding PrintPreview.PrintCommand}"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="42"
-                    ToolTip.Tip="{CompiledBinding Translation.Print.Value, Mode=OneWay}"
+                    ToolTip.Tip="{CompiledBinding Translation.Print.Value,
+                                                  Mode=OneWay}"
                     Width="140"
                     x:Name="PrintButton">
                     <TextBlock
                         Classes="txt"
                         Foreground="{StaticResource SecondaryTextColor}"
-                        Text="{CompiledBinding Translation.Print.Value, Mode=OneWay}"
+                        Text="{CompiledBinding Translation.Print.Value,
+                                               Mode=OneWay}"
                         TextAlignment="Center" />
                 </Button>
 

@@ -1,14 +1,9 @@
-using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using Avalonia.Utilities;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Extensions;
-using PicView.Avalonia.History;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Exif;
@@ -22,93 +17,40 @@ public class RotationTransformer(
     Func<object?> getDataContext,
     Action resetZoom)
 {
-    public async Task RotateAsync(bool clockWise)
+    public void Rotate(bool clockWise)
     {
         if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
+        {
             return;
-
-        if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
-            return;
-
-        var angle = clockWise ? 90 : -90;
-        var desc = clockWise ? "Rotated right 90°" : "Rotated left 90°";
-
-        vm.MainWindow.IsLoadingIndicatorShown.Value = true;
-
-        try
-        {
-            var rotated = await Task.Run(() => RotateBitmap((Bitmap)vm.PicViewer.ImageSource.Value, 90));
-
-            // Create a new history snapshot using the Bitmap
-            await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
-
-            // Apply to the PicViewer on the UI thread
-            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(rotated, vm));
         }
-        finally
+
+        if (RotationHelper.IsValidRotation(vm.PicViewer.RotationAngle.CurrentValue))
         {
-            vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-        }
-    }
-
-    public async Task RotateAsync(double angle)
-    {
-        if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
-            return;
-
-        if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
-            return;
-
-        var desc = $"Rotated {angle}°";
-
-        // Show loading indicator
-        vm.MainWindow.IsLoadingIndicatorShown.Value = true;
-
-        try
-        {
-            var rotated = await Task.Run(() => RotateBitmap((Bitmap)vm.PicViewer.ImageSource.Value, angle));
-
-            // Create a new history snapshot using the Bitmap
-            await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
-
-            // Apply updates on UI thread
-            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(rotated, vm));
-        }
-        finally
-        {
-            vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-        }
-    }
-
-    public static Bitmap RotateBitmap(Bitmap source, double angle)
-    {
-        var isRightAngle = (Math.Abs(angle) % 180) == 90;
-
-        var size = isRightAngle
-            ? new PixelSize(source.PixelSize.Height, source.PixelSize.Width)
-            : new PixelSize(source.PixelSize.Width, source.PixelSize.Height);
-
-        var target = new RenderTargetBitmap(size);
-
-        using (var ctx = target.CreateDrawingContext())
-        {
-            // Translate to center → rotate → translate back
-            var transform = Matrix.CreateTranslation(-source.PixelSize.Width / 2, -source.PixelSize.Height / 2)
-                            * Matrix.CreateRotation(MathUtilities.Deg2Rad(angle))
-                            * Matrix.CreateTranslation(size.Width / 2, size.Height / 2);
-
-            using (ctx.PushTransform(transform))
+            var nextAngle = RotationHelper.Rotate(vm.PicViewer.RotationAngle.CurrentValue, clockWise);
+            vm.PicViewer.RotationAngle.Value = nextAngle switch
             {
-                ctx.DrawImage(
-                    source,
-                    new Rect(0, 0, source.PixelSize.Width, source.PixelSize.Height),
-                    new Rect(0, 0, source.PixelSize.Width, source.PixelSize.Height));
-            }
+                360 => 0,
+                -90 => 270,
+                _ => nextAngle
+            };
+        }
+        else
+        {
+            vm.PicViewer.RotationAngle.Value =
+                RotationHelper.NextRotationAngle(vm.PicViewer.RotationAngle.CurrentValue, true);
         }
 
-        return target;
+        SetImageLayoutTransform(new RotateTransform(vm.PicViewer.RotationAngle.CurrentValue));
+        WindowResizing.SetSize(vm);
+        mainImage.InvalidateVisual();
     }
 
+    public void Rotate(double angle)
+    {
+        SetImageLayoutTransform(new RotateTransform(angle));
+        WindowResizing.SetSize(getDataContext() as MainViewModel);
+        mainImage.InvalidateVisual();
+    }
 
     private void SetImageLayoutTransform(RotateTransform rotateTransform)
     {
@@ -123,62 +65,37 @@ public class RotationTransformer(
         }
     }
 
-    public async Task FlipAsync(bool horizontal)
+    private ScaleTransform? _scaleTransform;
+    public void Flip(bool animate)
     {
         if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
+        {
             return;
-
-        if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
-            return;
-
-        var desc = horizontal ? "Flipped horizontally" : "Flipped vertically";
-        vm.MainWindow.IsLoadingIndicatorShown.Value = true;
-
-        try
-        {
-            var flipped = await Task.Run(() => FlipBitmap(bmp, horizontal));
-
-            // Create a new history snapshot using the Bitmap
-            await vm.HistoryManager.AddSnapshot(EditKind.Flip, desc, flipped).ConfigureAwait(false);
-
-            // Update the viewer
-            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(flipped, vm));
         }
-        finally
-        {
-            vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-        }
-    }
-    
-    public static Bitmap FlipBitmap(Bitmap source, bool horizontal)
-{
-    var size   = source.PixelSize;
-    var target = new RenderTargetBitmap(size);
+        
+        _scaleTransform ??= new ScaleTransform();
 
-    using (var ctx = target.CreateDrawingContext())
-    {
-        var m = Matrix.Identity;
-        if (horizontal)
+        var prevScaleX = vm.PicViewer.ScaleX.CurrentValue;
+        var newScaleX = prevScaleX == -1 ? 1 : -1;
+
+        if (animate)
         {
-            m *= Matrix.CreateScale(-1, 1);
-            m *= Matrix.CreateTranslation(size.Width, 0);
+            _scaleTransform.Transitions ??=
+            [
+                new DoubleTransition
+                {
+                    Property = ScaleTransform.ScaleXProperty,
+                    Duration = TimeSpan.FromSeconds(.2)
+                }
+            ];
         }
         else
         {
-            m *= Matrix.CreateScale(1, -1);
-            m *= Matrix.CreateTranslation(0, size.Height);
+            _scaleTransform.Transitions = null;
         }
-
-        using (ctx.PushTransform(m))
-        {
-            ctx.DrawImage(source,
-                new Rect(0, 0, size.Width, size.Height),
-                new Rect(0, 0, size.Width, size.Height));
-        }
+        imageLayoutTransformControl.RenderTransform = _scaleTransform;
+        _scaleTransform.ScaleX = newScaleX;
     }
-
-    return target;
-}
 
     public void SetTransform(int scaleX, int rotationAngle)
     {

@@ -165,16 +165,6 @@
         <Setter Property="Stretch" Value="Fill" />
     </Style>
 
-    <Style Selector="Path.ExportToPdfPath">
-        <Setter Property="Data" Value="{StaticResource ExportToPdfGeometry}" />
-        <Setter Property="Fill" Value="Transparent" />
-        <Setter Property="Height" Value="12" />
-        <Setter Property="Width" Value="12" />
-        <Setter Property="Stretch" Value="Fill" />
-        <Setter Property="Stroke" Value="{DynamicResource MainTextColor}" />
-        <Setter Property="StrokeThickness" Value="1" />
-    </Style>
-
     <Style Selector="Path.ShowInFolderPath">
         <Setter Property="Data" Value="{StaticResource ShowInFolderGeometry}" />
         <Setter Property="Fill" Value="{DynamicResource MainTextColor}" />

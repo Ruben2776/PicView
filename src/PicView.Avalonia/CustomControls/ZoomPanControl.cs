@@ -100,12 +100,15 @@ public class ZoomPanControl : Decorator
 
     protected override Size ArrangeOverride(Size finalSize)
     {
-        var result = base.ArrangeOverride(finalSize);
-        ConstrainTranslationToBounds(finalSize);
-        UpdateChildTransform();
-        return result;
-    }
+        if (_isPanning)
+        {
+            // After layout, ensure transforms are constrained
+            ConstrainTranslationToBounds();
+            UpdateChildTransform();
+        }
 
+        return base.ArrangeOverride(finalSize);
+    }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
@@ -116,13 +119,6 @@ public class ZoomPanControl : Decorator
         UIHelper.GetMainView.MainGrid.Children.Remove(_zoomPreviewer);
         _zoomPreviewer = null;
         base.OnDetachedFromVisualTree(e);
-    }
-
-    public void NotifyContentResized()
-    {
-        ConstrainTranslationToBounds();
-        UpdateChildTransform();
-        InvalidateArrange();
     }
 
     #endregion
@@ -178,7 +174,7 @@ public class ZoomPanControl : Decorator
             return;
         }
 
-        _zoomPreviewer.IsVisible = false;
+        _zoomPreviewer?.IsVisible = false;
 
         ApplyZoomAndTitle(1.0, CenterPoint(), animated);
         SetZoomValue(100);
@@ -248,7 +244,7 @@ public class ZoomPanControl : Decorator
             return;
         }
 
-        if (e.ClickCount == 2)
+        if (e.ClickCount is 2 && Settings.UIProperties.DoubleClickBehavior is 1)
         {
             ResetZoom(Settings.Zoom.IsZoomAnimated);
             return;
@@ -315,7 +311,7 @@ public class ZoomPanControl : Decorator
 
     #region Internal Zoom Logic
 
-    private void ZoomWithPointerWheelCore(bool isZoomIn, Point pos)
+    public void ZoomWithPointerWheelCore(bool isZoomIn, Point pos)
     {
         var step = isZoomIn ? Settings.Zoom.ZoomSpeed : -Math.Abs(Settings.Zoom.ZoomSpeed);
         ZoomBy(Math.Max(0.09, Scale + step), Settings.Zoom.IsZoomAnimated, pos);
@@ -493,58 +489,86 @@ public class ZoomPanControl : Decorator
 
     /// <summary>
     /// Ensures the transformed child covers the control area (i.e. prevents panning away until whitespace appears).
-    /// Uses provided control size when available (e.g., during Arrange), otherwise falls back to current Bounds.
     /// </summary>
-    private void ConstrainTranslationToBounds(Size? controlSize = null)
+    private void ConstrainTranslationToBounds()
     {
         if (Child == null)
+        {
             return;
+        }
 
-        // Child size after this arrange; if zero, fall back to desired size
+
+        // We need the child's size in local coordinates
         var childSize = Child.Bounds.Size;
-        if (childSize.Width <= 0 || childSize.Height <= 0 || double.IsNaN(childSize.Width) || double.IsNaN(childSize.Height))
+        if (childSize.Width <= 0 || childSize.Height <= 0 || double.IsNaN(childSize.Width) ||
+            double.IsNaN(childSize.Height))
+        {
+            // Fallback to desired size
             childSize = Child.DesiredSize;
+        }
+
         if (childSize.Width <= 0 || childSize.Height <= 0)
+        {
             return;
+        }
 
-        // Use the size we're arranging to if provided; otherwise current Bounds
-        var controlWidth  = controlSize?.Width  ?? Bounds.Width;
-        var controlHeight = controlSize?.Height ?? Bounds.Height;
-
-        var scaledWidth  = childSize.Width  * Scale;
+        // Without rotation, the scaled content bounds are straightforward
+        var scaledWidth = childSize.Width * Scale;
         var scaledHeight = childSize.Height * Scale;
+
+        var controlWidth = Bounds.Width;
+        var controlHeight = Bounds.Height;
 
         var desiredTx = TranslateX;
         var desiredTy = TranslateY;
 
-        // Horizontal centering/constraints
+        // Horizontal
         if (scaledWidth <= controlWidth)
         {
+            // Center horizontally if content is smaller than control
             desiredTx = (controlWidth - scaledWidth) / 2.0;
         }
         else
         {
-            if (desiredTx > 0) desiredTx = 0;
+            // Constrain to prevent showing whitespace
+            // Left edge: TranslateX should be <= 0
+            if (desiredTx > 0)
+            {
+                desiredTx = 0;
+            }
+
+            // Right edge: TranslateX + scaledWidth should be >= controlWidth
             if (desiredTx + scaledWidth < controlWidth)
+            {
                 desiredTx = controlWidth - scaledWidth;
+            }
         }
 
-        // Vertical centering/constraints
+        // Vertical
         if (scaledHeight <= controlHeight)
         {
+            // Center vertically if content is smaller than control
             desiredTy = (controlHeight - scaledHeight) / 2.0;
         }
         else
         {
-            if (desiredTy > 0) desiredTy = 0;
+            // Constrain to prevent showing whitespace
+            // Top edge: TranslateY should be <= 0
+            if (desiredTy > 0)
+            {
+                desiredTy = 0;
+            }
+
+            // Bottom edge: TranslateY + scaledHeight should be >= controlHeight
             if (desiredTy + scaledHeight < controlHeight)
+            {
                 desiredTy = controlHeight - scaledHeight;
+            }
         }
 
         TranslateX = desiredTx;
         TranslateY = desiredTy;
     }
-
 
     #endregion
 

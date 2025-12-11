@@ -215,7 +215,6 @@
                 Margin="0,10,0,15"
                 Text="{CompiledBinding Translation.CheckForUpdates.Value,
                                        Mode=OneWay}"
-                IsEnabled="{CompiledBinding GlobalSettings.EnableCheckForUpdates.Value}"
                 x:Name="UpdateButton" />
 
             <TextBlock
@@ -231,8 +230,7 @@
                 HorizontalAlignment="Center"
                 Margin="0,20,0,20"
                 NavigateUri="https://ko-fi.com/W7W46BJFV"
-                Width="200"
-                IsVisible="False">
+                Width="200">
                 <Image Source="{StaticResource kofi_button_strokeDrawingImage}" x:Name="KofiImage" />
             </HyperlinkButton>
 

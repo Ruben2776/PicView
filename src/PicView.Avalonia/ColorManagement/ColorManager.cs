@@ -55,10 +55,10 @@ public static class ColorManager
             Color.FromArgb(242, 201, 100, 156)
         ),
         [(int)ColorOptions.Golden] = new ThemeColors(
-            Color.FromRgb(184, 172, 17),
-            Color.FromRgb(224, 140, 56),
-            Color.FromRgb(242, 169, 0),
-            Color.FromArgb(242, 249, 164, 45)
+            Color.FromRgb(226, 180, 224),
+            Color.FromRgb(255, 253, 42),
+            Color.FromRgb(254, 169, 85),
+            Color.FromArgb(242, 249, 187, 125)
         ),
         [(int)ColorOptions.Purple] = new ThemeColors(
             Color.FromRgb(226, 141, 223),

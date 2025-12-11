@@ -33,9 +33,6 @@ public class CropLayoutManager(CropControl control)
         vm.Crop.SetSelectionWidth(originalWidth);
         vm.Crop.SetSelectionHeight(originalHeight);
 
-        // vm.Crop.SetSelectionWidth((uint)(pixelWidth * 0.8));
-        // vm.Crop.SetSelectionHeight((uint)(pixelHeight * 0.8));
-
         // Calculate centered position
         vm.Crop.SelectionX.Value = Convert.ToInt32((vm.PicViewer.ImageWidth.CurrentValue - vm.Crop.SelectionWidth.CurrentValue) / 2);
         vm.Crop.SelectionY.Value = Convert.ToInt32((vm.PicViewer.ImageHeight.CurrentValue - vm.Crop.SelectionHeight.CurrentValue) / 2);

@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Drawing;
 using ImageMagick;
 using PicView.Core.Exif;
 using PicView.Core.FileSearch;
@@ -13,8 +12,8 @@ public class PicViewerModel : IDisposable
 {
     public void Dispose()
     {
-        Disposable.Dispose(FileInfo, PixelWidth, PixelHeight, ImageSource, SecondaryImageSource, ImageType, CachedImage);
-        Disposable.Dispose(ImageType, ImageWidth, ImageHeight, SecondaryImageWidth, IsShowingSideBySide, ScrollViewerHeight, HasChanges);
+        Disposable.Dispose(FileInfo, PixelWidth, PixelHeight, ImageSource, SecondaryImageSource, ImageType);
+        Disposable.Dispose(ImageType, ImageWidth, ImageHeight, SecondaryImageWidth, IsShowingSideBySide, ScrollViewerHeight);
         Disposable.Dispose(ScrollViewerHeight, AspectRatio, EffectConfig, ExifOrientation, ScaleX, Title);
         Disposable.Dispose(TitleTooltip, WindowTitle, Index);
     }
@@ -32,10 +31,8 @@ public class PicViewerModel : IDisposable
     /// The image's pixel height
     /// </summary>
     public BindableReactiveProperty<int> PixelHeight { get; } = new(0);
-
-    public BindableReactiveProperty<object?> ImageSource { get; } = new();
-
-    public BindableReactiveProperty<object?> CachedImage { get; } = new();
+    
+    public BindableReactiveProperty<object?> ImageSource  { get; } = new();
 
     public BindableReactiveProperty<object?> SecondaryImageSource { get; } = new();
 
@@ -89,9 +86,6 @@ public class PicViewerModel : IDisposable
     public BindableReactiveProperty<bool> IsSingleImage { get; } = new();
     
     public BindableReactiveProperty<bool> ShouldCropBeEnabled { get; } = new();
-
-    public BindableReactiveProperty<bool> ShouldOptimizeImageBeEnabled { get; } = new();
     
-    public BindableReactiveProperty<bool> HasChanges { get; } = new();
-    public readonly BindableReactiveProperty<Size> NaturalSize = new(new Size(0, 0));
+    public BindableReactiveProperty<bool> ShouldOptimizeImageBeEnabled { get; } = new();
 }

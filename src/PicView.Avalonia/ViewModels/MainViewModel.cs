@@ -1,5 +1,4 @@
 ﻿using PicView.Avalonia.Functions;
-using PicView.Avalonia.History;
 using PicView.Avalonia.Interfaces;
 using PicView.Core.ViewModels;
 using ImageViewer = PicView.Avalonia.Views.UC.ImageViewer;
@@ -10,7 +9,7 @@ public class MainViewModel
 {
     public readonly IPlatformSpecificService? PlatformService;
     public readonly IPlatformWindowService? PlatformWindowService;
-
+    
     public TranslationViewModel Translation { get; } = new();
     public MainWindowViewModel MainWindow { get; } = new();
     public ToolTipViewModel? ToolTip { get; set; }
@@ -30,12 +29,10 @@ public class MainViewModel
     public AboutViewModel? AboutView { get; set; }
     public PrintPreviewViewModel? PrintPreview { get; set; }
     public BatchResizeViewModel? BatchResizeViewModel { get; set; }
-    public HistoryManager? HistoryManager { get; set; }
 
     public MainViewModel(IPlatformSpecificService? platformSpecificService, IPlatformWindowService? platformWindowService)
     {
         FunctionsMapper.Vm = this;
-        HistoryManager = new HistoryManager(this);
         PlatformService = platformSpecificService;
         PlatformWindowService = platformWindowService;
     }
@@ -44,8 +41,8 @@ public class MainViewModel
     {
         // Only use for unit test
     }
-
+    
     // TODO should remove this and work towards moving MainViewModel to Core project
     public ImageViewer? ImageViewer;
-
+    
 }

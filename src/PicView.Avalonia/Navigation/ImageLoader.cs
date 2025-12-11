@@ -1,6 +1,4 @@
-﻿using Avalonia.Threading;
-using ImageMagick;
-using PicView.Avalonia.History;
+﻿using ImageMagick;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
@@ -117,7 +115,6 @@ public static class ImageLoader
                     _cancellationTokenSource ??= new CancellationTokenSource();
                     await imageIterator.IterateToIndex(index, _cancellationTokenSource).ConfigureAwait(false);
                     await NavigationManager.CheckIfTiffAndUpdate(vm, fileInfo, index);
-
                     if (Settings.Gallery.IsBottomGalleryShown && NavigationManager.GetCount > 0)
                     {
                         vm.Gallery.GalleryMode.Value = GalleryMode.ClosedToBottom;
@@ -148,8 +145,6 @@ public static class ImageLoader
             }
 
             await NavigationManager.LoadWithoutImageIterator(fileInfo, vm).ConfigureAwait(false);
-
-            await vm.HistoryManager.AddSnapshot(EditKind.Open, "Opened").ConfigureAwait(false);
         }
     }
 
@@ -368,8 +363,6 @@ public static class ImageLoader
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         await UpdateImage.SetSingleImageAsync(imageModel.Image, imageModel.ImageType, url, vm);
 
-        await vm.HistoryManager.AddSnapshot(EditKind.Open, "Opened").ConfigureAwait(false);
-
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
         vm.PicViewer.FileInfo.Value = fileInfo;
         vm.PicViewer.ExifOrientation.Value = imageModel.Orientation;
@@ -424,9 +417,6 @@ public static class ImageLoader
             await imageIterator.DisposeAsync();
             await ErrorHandling.ReloadAsync(vm);
         }
-
-        await vm.HistoryManager.AddSnapshot(EditKind.Open, "Opened").ConfigureAwait(false);;
-
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
     }
 

@@ -1,5 +1,4 @@
-﻿using System.Drawing.Printing;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -9,7 +8,6 @@ using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Update;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Win32.PlatformUpdate;
 using PicView.Avalonia.Win32.Printing;
 using PicView.Avalonia.Win32.Views;
@@ -456,7 +454,7 @@ public class WindowInitializer : IPlatformSpecificUpdate
             _ = FunctionsMapper.CloseMenus();
         }
     }
-    
+
     public void ShowPrintPreviewWindow(MainViewModel vm, string path)
     {
         if (Dispatcher.UIThread.CheckAccess())
@@ -522,15 +520,5 @@ public class WindowInitializer : IPlatformSpecificUpdate
 
             _ = FunctionsMapper.CloseMenus();
         }
-    }
-
-    public async Task ShowHistoryWindow(MainViewModel _vm)
-    {
-        if (_vm.HistoryManager is null)
-            _vm.HistoryManager = new History.HistoryManager(_vm);
-            
-        await _vm.HistoryManager.Show();
-
-        _ = FunctionsMapper.CloseMenus();
     }
 }

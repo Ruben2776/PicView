@@ -251,9 +251,8 @@ public partial class ImageInfoView : UserControl
         }
 
         var aspectRatio = (double)vm.PicViewer.PixelWidth.CurrentValue / vm.PicViewer.PixelHeight.CurrentValue;
-
-        AspectRatioHelper.SetAspectRatioForTextBox(PixelWidthTextBox, PixelHeightTextBox, sender == PixelWidthTextBox, aspectRatio, DataContext as MainViewModel);
-
+        AspectRatioHelper.SetAspectRatioForTextBox(PixelWidthTextBox, PixelHeightTextBox, sender == PixelWidthTextBox,
+            aspectRatio, DataContext as MainViewModel);
 
         if (!int.TryParse(PixelWidthTextBox.Text, out var width) ||
             !int.TryParse(PixelHeightTextBox.Text, out var height))

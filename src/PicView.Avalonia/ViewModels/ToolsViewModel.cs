@@ -196,11 +196,6 @@ public class ToolsViewModel : IDisposable
         await FunctionsMapper.ToggleBottomToolbar();
     });
 
-    public ReactiveCommand ExportToPdfCommand { get; } = new(async (_, _) =>
-    {
-        await FunctionsMapper.ExportToPdf();
-    });
-
     public ReactiveCommand ToggleBottomGalleryShownInHiddenUICommand { get; } = new(async (_, _) =>
     {
         await HideInterfaceLogic.ToggleBottomGalleryShownInHiddenUI(
@@ -259,11 +254,6 @@ public class ToolsViewModel : IDisposable
     public ReactiveCommand ChangeBackgroundCommand { get; } = new(async (_, _) =>
     {
         await FunctionsMapper.ChangeBackground();
-    });
-
-    public ReactiveCommand ColorPickerToolCommand { get; } = new(async (_, _) =>
-    {
-        await FunctionsMapper.ColorPicker();
     });
 
     public ReactiveCommand ShowSearchCommand { get; } = new(async (_, _) => { await FunctionsMapper.Search(); });

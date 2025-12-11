@@ -15,6 +15,77 @@
             </Style>
         </Styles>
     </UserControl.Styles>
+    <UserControl.ContextMenu>
+        <ContextMenu x:Name="EffectsContextMenu">
+            <MenuItem Command="{CompiledBinding Tools.SaveFileCommand}" Header="{CompiledBinding Translation.Save.Value, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource SaveGeometry}"
+                        Fill="{DynamicResource MainTextColor}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="{CompiledBinding Tools.SaveFileAsCommand}" Header="{CompiledBinding Translation.SaveAs.Value}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource SaveGeometry}"
+                        Fill="{DynamicResource MainTextColor}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="{CompiledBinding Tools.CopyImageCommand}" Header="{CompiledBinding Translation.CopyImage.Value, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource CopyGeometry}"
+                        Fill="{DynamicResource MainTextColor}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem
+                Command="{CompiledBinding Tools.SetAsWallpaperFilledCommand}"
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.CurrentValue.FullName,
+                                                   FallbackValue=''}"
+                Header="{CompiledBinding Translation.SetAsWallpaper.Value,
+                                         Mode=OneWay}"
+                IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource PanoramaGeometry}"
+                        Fill="{DynamicResource MainTextColor}"
+                        Height="10.40"
+                        Stretch="Fill"
+                        Width="13" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}" />
+            <MenuItem Header="{CompiledBinding Translation.ClearEffects.Value, Mode=OneWay}" x:Name="ClearEffectsItem">
+                <MenuItem.Icon>
+                    <Image
+                        Height="12"
+                        Source="{StaticResource ClearImage}"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="{CompiledBinding Translation.Close.Value, Mode=OneWay}" x:Name="CloseItem">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource CloseGeometry}"
+                        Fill="{DynamicResource MainTextColor}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <UserControl.Resources>
         <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="CancelBrush" />
     </UserControl.Resources>
@@ -438,19 +509,31 @@
                         TextAlignment="Center" />
                 </Button>
 
-                <Button
+                <SplitButton
                     Background="{DynamicResource AccentColor}"
                     Classes="BorderStyle accentHover mainBtn"
                     CornerRadius="4"
                     Width="195"
-                    x:Name="ApplyButton">
+                    x:Name="SaveButton">
                     <TextBlock
                         Classes="txt"
                         Foreground="{StaticResource SecondaryTextColor}"
-                        Text="{CompiledBinding Translation.Apply.Value, Mode=OneWay}"
+                        Text="{CompiledBinding Translation.Save.Value,
+                                               Mode=OneWay}"
                         TextAlignment="Center" />
-                </Button>
+                    <SplitButton.Flyout>
+                        <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
+                            <MenuItem
+                                Header="{CompiledBinding Translation.SaveAs.Value,
+                                                         Mode=OneWay}"
+                                HorizontalAlignment="Center"
+                                Width="195" />
+                        </MenuFlyout>
+                    </SplitButton.Flyout>
+                </SplitButton>
+
             </StackPanel>
+
         </StackPanel>
     </Panel>
 </UserControl>

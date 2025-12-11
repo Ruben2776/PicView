@@ -115,7 +115,7 @@
                             <Separator />
                             <MenuItem
                                 Command="{CompiledBinding Tools.SetAsWallpaperFilledCommand}"
-                                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                                    FallbackValue=''}"
                                 Header="{CompiledBinding Translation.SetAsWallpaper.Value,
                                                          Mode=OneWay}"

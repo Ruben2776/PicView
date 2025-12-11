@@ -27,15 +27,15 @@ public partial class RotationContextMenu : ContextMenu
             return;
         }
 
-        //Rotation0Item.IsChecked = false;
+        Rotation0Item.IsChecked = false;
         Rotation90Item.IsChecked = false;
         Rotation180Item.IsChecked = false;
         Rotation270Item.IsChecked = false;
         switch (vm.PicViewer.RotationAngle.CurrentValue)
         {
-            // case 0:
-            //     Rotation0Item.IsChecked = true;
-            //     break;
+            case 0:
+                Rotation0Item.IsChecked = true;
+                break;
             case 90:
                 Rotation90Item.IsChecked = true;
                 break;

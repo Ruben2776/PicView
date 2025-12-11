@@ -83,7 +83,6 @@
                     IconHeight="20"
                     IconMargin="11,0,0,0"
                     IconWidth="20"
-                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, Mode=OneWay}"
                     Text="{CompiledBinding Translation.Effects.Value,
                                            Mode=OneWay}"
                     TextMargin="10,0,6,0"
@@ -121,7 +120,6 @@
                     IconHeight="17"
                     IconMargin="9,0,2,0"
                     IconWidth="17"
-                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, Mode=OneWay}"
                     Text="{CompiledBinding Translation.ImageInfo.Value,
                                            Mode=OneWay}"
                     TextMargin="10,0,6,0"
@@ -155,15 +153,13 @@
                     Canvas.Left="7"
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.ColorPickerToolCommand}"
                     Data="{StaticResource BrushGeometry}"
                     Foreground="{DynamicResource DisabledTextColor}"
                     Height="46"
                     IconHeight="17"
                     IconMargin="9,0,12,0"
                     IconWidth="17"
-                    IsEnabled="{CompiledBinding PicViewer.ShouldOptimizeImageBeEnabled.Value,
-                                                Mode=OneWay}"
+                    IsEnabled="False"
                     Text="{CompiledBinding Translation.ColorPickerTool.Value,
                                            Mode=OneWay}"
                     ToolTip.Tip="{CompiledBinding Translation.ColorPickerToolTooltip.Value,

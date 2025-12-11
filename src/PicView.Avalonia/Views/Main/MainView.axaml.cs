@@ -2,32 +2,25 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.DragAndDrop;
-using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.UI.FileHistory;
 using PicView.Avalonia.ViewModels;
-using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Conversion;
 using PicView.Core.FileHistory;
-using Windows.Networking.Vpn;
 
 namespace PicView.Avalonia.Views.Main;
 
 public partial class MainView : UserControl
 {
     public FileHistoryMenuController? FileHistoryMenuController;
-    private ColorPickerToolManager? _colorPickerManager;
-    private ColorPickerTool? _colorTool;
     
     public MainView()
     {
@@ -36,7 +29,6 @@ public partial class MainView : UserControl
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             // TODO: Add macOS support
-            PrintMenuItem.IsVisible = false;
             CopyFileMenuItem.IsVisible = false;
             
             // Move alt hover to left side on macOS and switch button order
@@ -121,20 +113,25 @@ public partial class MainView : UserControl
                 await FunctionsMapper.ShowRecentHistoryFile();
             };
 
-            //vm.HistoryManager.Initialize(MainGrid);
-            ColorPickerToolHost.Initialize(MainGrid);
-
             // Setup hover fade buttons
             _ = new HoverFadeButtonHandler(ClickArrowRight, vm, ClickArrowRight.PolyButton);
             _ = new HoverFadeButtonHandler(ClickArrowLeft, vm, ClickArrowLeft.PolyButton);
             _ = new HoverFadeButtonHandler(AltButtonsPanel, vm);
 
-            PointerWheelChanged += async (_, e) => await ImageViewer.PreviewOnPointerWheelChanged(this, e);
+            PointerWheelChanged += async (_, e) =>
+                await MouseShortcuts.HandlePointerWheelChanged(e).ConfigureAwait(false);
         };
     }
 
     private void PointerPressedBehavior(object? sender, PointerPressedEventArgs e)
     {
+        if (e.ClickCount is 2 && Settings.UIProperties.DoubleClickBehavior is 2)
+        {
+            if (DataContext is MainViewModel vm)
+            {
+                vm.PlatformWindowService.ToggleFullscreen();
+            }
+        }
         CloseTitlebarIfOpen(sender, e);
         if (MainKeyboardShortcuts.ShiftDown && !CropFunctions.IsCropping)
         {
@@ -213,40 +210,9 @@ public partial class MainView : UserControl
 
         await DragAndDropHelper.DragEnter(e, vm, this);
     }
-
+    
     private void DragLeave(object? sender, DragEventArgs e)
     {
         DragAndDropHelper.DragLeave(e, this);
     }
-
-    private void InitializeColorPicker()
-    {
-        // 1️⃣ Get a reference to your displayed image control
-        var imageHost = this.FindControl<Image>("MainImage"); // or whatever your control name is
-
-        // 2️⃣ Get the bitmap currently shown
-        var bmp = imageHost.Source as RenderTargetBitmap;
-        if (bmp == null)
-            return;
-
-        // 3️⃣ Create the tool overlay
-        _colorTool = new ColorPickerTool
-        {
-            Width = 160,
-            Height = 160,
-            IsVisible = false
-        };
-
-        // Add it to your layout (top-level Canvas, Grid, etc.)
-        var overlay = this.FindControl<Canvas>("OverlayCanvas"); // must exist in XAML
-        overlay.Children.Add(_colorTool);
-
-        // 4️⃣ Initialize manager
-        _colorPickerManager = new ColorPickerToolManager(imageHost, bmp);
-
-        // Optional: connect pointer events
-        imageHost.PointerMoved += _colorPickerManager.OnPointerMoved;
-        imageHost.PointerPressed += _colorPickerManager.OnPointerPressed;
-    }
-    
 }

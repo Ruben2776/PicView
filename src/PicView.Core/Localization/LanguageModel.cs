@@ -126,7 +126,6 @@ public class LanguageModel
     public string? EscCloseTooltip { get; set; }
     public string? ExifVersion { get; set; }
     public string? ExpandedGalleryItemSize { get; set; }
-    public string? ExportToPdf { get; set; }
     public string? ExposureBias { get; set; }
     public string? ExposureProgram { get; set; }
     public string? ExposureTime { get; set; }
@@ -184,13 +183,11 @@ public class LanguageModel
     public string? Help { get; set; }
     public string? HideBottomGallery { get; set; }
     public string? HideBottomToolbar { get; set; }
-    public string? HideHistoryWindow { get; set; }
     public string? HideHoverNavigationBar { get; set; }
     public string? HideUI { get; set; }
     public string? High { get; set; }
     public string? HighlightColor { get; set; }
     public string? HighQuality { get; set; }
-    public string? Horizontal { get; set; }
     public string? Image { get; set; }
     public string? ImageAliasing { get; set; }
     public string? ImageControl { get; set; }
@@ -361,7 +358,6 @@ public class LanguageModel
     public string? ShowConfirmationOnEsc { get; set; }
     public string? ShowFadeInButtonsOnHover { get; set; }
     public string? ShowFileSavingDialog { get; set; }
-    public string? ShowHistoryWindow { get; set; }
     public string? ShowHoverNavigationBar { get; set; }
     public string? ShowImageGallery { get; set; }
     public string? ShowImageInfo { get; set; }
@@ -420,7 +416,6 @@ public class LanguageModel
     public string? UsingMouse { get; set; }
     public string? UsingTouchpad { get; set; }
     public string? Version { get; set; }
-    public string? Vertical { get; set; }
     public string? View { get; set; }
     public string? ViewLicenseFile { get; set; }
     public string? WhenDeletingAFile { get; set; }

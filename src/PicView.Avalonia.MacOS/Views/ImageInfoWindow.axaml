@@ -37,7 +37,7 @@
                 Classes="errorHover"
                 ClickMode="Release"
                 Command="{CompiledBinding Tools.RecycleFileCommand}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 Data="{StaticResource RecycleGeometry}"
                 DockPanel.Dock="Right"
@@ -76,7 +76,7 @@
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
                 Command="{Binding Tools.OptimizeImageCommand}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"
@@ -101,7 +101,7 @@
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
                 Command="{CompiledBinding Tools.OpenWithCommand}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"
@@ -125,7 +125,7 @@
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
                 Command="{CompiledBinding Tools.DuplicateFileCommand}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 Data="{StaticResource DuplicateGeometry}"
                 DockPanel.Dock="Right"
@@ -144,7 +144,7 @@
                 BorderThickness="1,0,1,0"
                 Classes="noBorderHover"
                 Command="{CompiledBinding Tools.LocateOnDiskCommand}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 Data="{StaticResource ShowInFolderGeometry}"
                 DockPanel.Dock="Right"
@@ -169,7 +169,7 @@
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
                 Command="{CompiledBinding Exif.SetExifRating0Command}"
-                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName,
+                CommandParameter="{CompiledBinding PicViewer.FileInfo.Value.FullName,
                                                    FallbackValue=''}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"

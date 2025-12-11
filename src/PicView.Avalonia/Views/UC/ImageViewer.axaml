@@ -1,5 +1,6 @@
 <UserControl
-    Background="{CompiledBinding MainWindow.ImageBackground.Value, Mode=OneWay}"
+    Background="{CompiledBinding MainWindow.ImageBackground.Value,
+                                 Mode=OneWay}"
     x:Class="PicView.Avalonia.Views.UC.ImageViewer"
     x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"
@@ -10,20 +11,28 @@
         <customControls:ZoomPanControl x:Name="ZoomPanControl">
             <customControls:AutoScrollViewer
                 Focusable="False"
-                Height="{CompiledBinding PicViewer.ScrollViewerHeight.Value, Mode=OneWay}"
+                Height="{CompiledBinding PicViewer.ScrollViewerHeight.Value,
+                                         Mode=OneWay}"
                 Theme="{StaticResource Main}"
                 VerticalScrollBarVisibility="{CompiledBinding MainWindow.ToggleScrollBarVisibility.Value}"
-                Width="{CompiledBinding PicViewer.ScrollViewerWidth.Value, Mode=OneWay}"
+                Width="{CompiledBinding PicViewer.ScrollViewerWidth.Value,
+                                        Mode=OneWay}"
                 x:Name="ImageScrollViewer">
                 <Border
-                    Background="{CompiledBinding MainWindow.ConstrainedImageBackground.Value, Mode=OneWay}"
-                    Height="{CompiledBinding PicViewer.ImageHeight.Value, Mode=OneWay}"
-                    Width="{CompiledBinding PicViewer.ImageWidth.Value, Mode=OneWay}"
+                    Background="{CompiledBinding MainWindow.ConstrainedImageBackground.Value,
+                                                 Mode=OneWay}"
+                    Height="{CompiledBinding PicViewer.ImageHeight.Value,
+                                             Mode=OneWay}"
+                    Width="{CompiledBinding PicViewer.ImageWidth.Value,
+                                            Mode=OneWay}"
                     x:Name="MainBorder">
                     <customControls:PicBox
-                        ImageType="{CompiledBinding PicViewer.ImageType.Value, Mode=OneWay}"
-                        SecondaryImageWidth="{CompiledBinding PicViewer.SecondaryImageWidth.Value, Mode=OneWay}"
-                        SecondarySource="{CompiledBinding PicViewer.SecondaryImageSource.Value, Mode=OneWay}"
+                        ImageType="{CompiledBinding PicViewer.ImageType.Value,
+                                                    Mode=OneWay}"
+                        SecondaryImageWidth="{CompiledBinding PicViewer.SecondaryImageWidth.Value,
+                                                              Mode=OneWay}"
+                        SecondarySource="{CompiledBinding PicViewer.SecondaryImageSource.Value,
+                                                          Mode=OneWay}"
                         Source="{CompiledBinding PicViewer.ImageSource.Value}"
                         x:Name="MainImage" />
                 </Border>

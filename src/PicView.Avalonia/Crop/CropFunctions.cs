@@ -67,8 +67,8 @@ public static class CropFunctions
         });
 
         IsCropping = true;
-        vm.PicViewer.Title.Value = TranslationManager.Translation.CropPicture!;
-        vm.PicViewer.TitleTooltip.Value = TranslationManager.Translation.CropPicture!;
+        vm.PicViewer.Title.Value = TranslationManager.Translation.CropMessage!;
+        vm.PicViewer.TitleTooltip.Value = TranslationManager.Translation.CropMessage!;
 
         await FunctionsMapper.CloseMenus();
 
@@ -92,7 +92,7 @@ public static class CropFunctions
 
         vm.MainWindow.CurrentView.Value = vm.ImageViewer;
         IsCropping = false;
-        //TitleManager.SetTitle(vm);
+        TitleManager.SetTitle(vm);
 
         // Reset image type to fix issue with animated images
         switch (vm.PicViewer.ImageType.CurrentValue)

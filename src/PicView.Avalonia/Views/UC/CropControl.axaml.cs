@@ -5,8 +5,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using PicView.Avalonia.Crop;
-using Avalonia.Threading;
-
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -102,15 +100,6 @@ public partial class CropControl : UserControl
         BottomMiddleButton.PointerReleased += _resizeHandler.OnResizeEnd;
 
         LostFocus += OnControlLostFocus;
-
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            if (RootCanvas.Bounds.Height > 0)
-            {
-                Canvas.SetLeft(HoverMenu, (RootCanvas.Bounds.Width - HoverMenu.Bounds.Width) / 2);
-                Canvas.SetTop(HoverMenu, RootCanvas.Bounds.Height - HoverMenu.Bounds.Height - 15);
-            }
-        });
     }
 
     private void OnControlLostFocus(object? sender, RoutedEventArgs e)
