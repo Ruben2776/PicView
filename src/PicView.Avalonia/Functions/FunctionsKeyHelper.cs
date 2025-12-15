@@ -107,9 +107,9 @@ public static class FunctionsKeyHelper
         
         // Scroll and rotate keys
         var scrollKeys = keybindings.ScrollAndRotateKeys.Value;
-        AddBinding(scrollKeys, "Up", TranslationManager.Translation.RotateRight);
 
         // Special case: ScrollUpInternal is read-only and derived from 'Up' keys
+        AddBinding(scrollKeys, "Up", TranslationManager.Translation.RotateRight);
         var upInternalCheck = KeybindingManager.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Up")
             ?.Select(x => x.Key).ToList() ?? null;
         var scrollUpInternal = new KeyBindingsModel
@@ -121,11 +121,10 @@ public static class FunctionsKeyHelper
             IsReadOnly = true
         };
         keybindings.ScrollAndRotateKeys.Value.Add(scrollUpInternal);
-        
-        AddBinding(scrollKeys, "ScrollUp", TranslationManager.Translation.RotateRight);
-        AddBinding(scrollKeys, "RotateLeft", TranslationManager.Translation.RotateRight);
+        AddBinding(scrollKeys, "ScrollUp", TranslationManager.Translation.ScrollUp);
         
         // Special case: ScrollDownInternal is read-only and derived from 'Down' keys
+        AddBinding(scrollKeys, "Down", TranslationManager.Translation.RotateLeft);
         var downInternalCheck = KeybindingManager.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Down")
             ?.Select(x => x.Key).ToList() ?? null;
         var scrollDownInternal = new KeyBindingsModel
@@ -137,6 +136,9 @@ public static class FunctionsKeyHelper
             IsReadOnly = true
         };
         keybindings.ScrollAndRotateKeys.Value.Add(scrollDownInternal);
+        
+        AddBinding(scrollKeys, "ScrollDown", TranslationManager.Translation.ScrollDown);
+
         
         AddBinding(scrollKeys, "ScrollDown", TranslationManager.Translation.ScrollDown);
         AddBinding(scrollKeys, "ScrollToTop", TranslationManager.Translation.ScrollToTop);
