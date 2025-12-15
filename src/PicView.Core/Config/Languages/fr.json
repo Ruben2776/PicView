@@ -424,5 +424,18 @@
   "_2Star": "Note de 2 étoiles",
   "_3Star": "Note de 3 étoiles",
   "_4Star": "Note de 4 étoiles",
-  "_5Star": "Note de 5 étoiles"
+  "_5Star": "Note de 5 étoiles",
+
+  "AccessDenied": "Accès refusé",
+  "Disgard": "Abandonner",
+  "ExportToPdf": "Exporter en PDF",
+  "HideHistoryWindow": "Masquer la fenêtre d’historique",
+  "History": "Historique",
+  "Horizontal": "Horizontal",
+  "SaveChanges": "Enregistrer les modifications",
+  "ShowHistoryWindow": "Afficher la fenêtre d’historique",
+  "Tools": "Outils",
+  "Menu": "Menu",
+  "Vertical": "Vertical"
+
 }

@@ -48,9 +48,6 @@
                 </Grid>
             </Border>
             <LayoutTransformControl>
-                <LayoutTransformControl.LayoutTransform>
-                    <RotateTransform Angle="{CompiledBinding PicViewer.RotationAngle.Value}" />
-                </LayoutTransformControl.LayoutTransform>
                 <Panel>
                     <customControls:PicBox
                         ImageType="{CompiledBinding PicViewer.ImageType.Value,

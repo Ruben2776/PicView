@@ -424,5 +424,17 @@
   "_2Star": "2 sterren",
   "_3Star": "3 sterren",
   "_4Star": "4 sterren",
-  "_5Star": "5 sterren"
+  "_5Star": "5 sterren",
+
+  "AccessDenied": "Toegang geweigerd",
+  "Disgard": "Weggooien",
+  "ExportToPdf": "Exporteren naar PDF",
+  "HideHistoryWindow": "Geschiedenisvenster verbergen",
+  "History": "Geschiedenis",
+  "Horizontal": "Horizontaal",
+  "SaveChanges": "Wijzigingen opslaan",
+  "ShowHistoryWindow": "Geschiedenisvenster tonen",
+  "Tools": "Hulpmiddelen",
+  "Menu": "Menu",
+  "Vertical": "Verticaal"
 }

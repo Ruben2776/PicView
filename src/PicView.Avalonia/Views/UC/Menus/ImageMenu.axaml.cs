@@ -22,11 +22,6 @@ public partial class ImageMenu : AnimatedMenu
                 .Where(isVisible => !isVisible)
                 .Subscribe(_ => { SlideShowButton.Flyout.Hide(); });
 
-            // Determine if crop should be enabled every time it opens
-            this.GetObservable(IsOpenProperty).ToObservable()
-                .Where(x => x)
-                .Subscribe(_ => { DetermineIfCropShouldBeEnabled(); });
-
             Item2.Header = $"2 {TranslationManager.Translation.SecAbbreviation}";
             Item5.Header = $"5 {TranslationManager.Translation.SecAbbreviation}";
             Item10.Header = $"10 {TranslationManager.Translation.SecAbbreviation}";
@@ -107,15 +102,5 @@ public partial class ImageMenu : AnimatedMenu
             ImageInfoButton.Classes.Remove("altHover");
             ImageInfoButton.Classes.Add("hover");
         };
-    }
-
-    private void DetermineIfCropShouldBeEnabled()
-    {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
-
-        CropFunctions.DetermineIfShouldBeEnabled(vm);
     }
 }

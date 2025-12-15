@@ -7,6 +7,7 @@ using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
+using VT = Avalonia.VisualTree;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -144,19 +145,17 @@ public partial class BottomBar : UserControl
         };
     }
 
+
     private void MoveWindow(PointerPressedEventArgs e)
     {
         if (VisualRoot is null)
-        {
             return;
-        }
 
-        if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
-        {
-            // Context menu doesn't want to be opened normally
-            MainContextMenu.Open();
+        var pt = e.GetCurrentPoint(this);
+
+        // Let right-click go through so ContextMenus can fire.
+        if (pt.Properties.IsRightButtonPressed)
             return;
-        }
 
         WindowFunctions.WindowDragBehavior((Window)VisualRoot, e);
     }

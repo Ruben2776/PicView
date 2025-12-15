@@ -94,8 +94,7 @@ public partial class SettingsView : UserControl
             .Subscribe(x =>
             {
                 Settings.WindowProperties.Margin = x;
-                WindowResizing.SetSize(vm.PicViewer.PixelWidth.CurrentValue, vm.PicViewer.PixelHeight.CurrentValue, 0,
-                    0, vm.PicViewer.RotationAngle.CurrentValue, vm);
+                WindowResizing.SetSize(vm.PicViewer.PixelWidth.CurrentValue, vm.PicViewer.PixelHeight.CurrentValue, 0, 0, vm);
                 WindowFunctions.CenterWindowOnScreen();
             }).AddTo(_marginSubscription);
     }

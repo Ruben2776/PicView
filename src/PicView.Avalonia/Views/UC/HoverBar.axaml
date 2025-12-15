@@ -119,6 +119,7 @@
                 Height="35"
                 IconHeight="17"
                 IconWidth="17"
+                IsVisible="{CompiledBinding !GlobalSettings.ShowPrintInBottomToolbar.Value}"
                 IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull}}"
                 IsRepeatEnabled="False"
@@ -130,6 +131,29 @@
                 <Button.RenderTransform>
                     <ScaleTransform ScaleX="{CompiledBinding PicViewer.ScaleX.Value}" />
                 </Button.RenderTransform>
+            </customControls:IconButton>
+
+            <!-- Print -->
+            <customControls:IconButton
+                Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderThickness="1,0,1,0"
+                Classes="noBorderHover"
+                Command="{CompiledBinding Tools.PrintCommand}"
+                CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName, FallbackValue=''}"
+                Foreground="{DynamicResource MainTextColor}"
+                Height="35"
+                Data="{StaticResource PrintGeometry}"
+                IconHeight="18"
+                IconWidth="18"
+                IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                IsRepeatEnabled="False"
+                Margin="0"
+                ToolTip.Tip="{CompiledBinding Translation.Print.Value, Mode=OneWay}"
+                IsTabStop="False"
+                Width="38"
+                IsVisible="{CompiledBinding GlobalSettings.ShowPrintInBottomToolbar.Value}"
+                x:Name="PrintButton">
             </customControls:IconButton>
 
             <customControls:IconButton

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using Avalonia.Threading;
 using PicView.Avalonia.Crop;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
@@ -51,14 +52,12 @@ public static class NavigationManager
 
         if (!Settings.ImageScaling.ShowImageSideBySide)
         {
-            var size = WindowResizing.GetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0, 0, imageModel.Rotation, vm );
+            var size = WindowResizing.GetSize(imageModel.PixelWidth, imageModel.PixelHeight, 0, 0, vm );
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                vm.ImageViewer.SetTransform(imageModel.Orientation, imageModel.Format);
                 if (size.HasValue)
                 {
-                    WindowResizing.SetSize(size.Value,
-                        vm);
+                    WindowResizing.SetSize(size.Value, vm);
                 }
                 else
                 {
@@ -91,8 +90,7 @@ public static class NavigationManager
             vm.PicViewer.SecondaryImageSource.Value = nextImageModel.Image;
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                WindowResizing.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, nextImageModel.PixelWidth,
-                    nextImageModel.PixelHeight, imageModel.Rotation, vm);
+                WindowResizing.SetSize(imageModel.PixelWidth, imageModel.PixelHeight, nextImageModel.PixelWidth, nextImageModel.PixelHeight, vm);
             });
 
             TitleManager.SetSideBySideTitle(vm, imageModel, nextImageModel);
@@ -159,6 +157,12 @@ public static class NavigationManager
     /// <returns>A ValueTask representing the asynchronous navigation operation.</returns>
     public static async ValueTask Navigate(bool next, MainViewModel vm, CancellationToken? cancellationToken)
     {
+        if (vm.PicViewer.HasChanges.Value)
+        {
+            await FileSaverHelper.PromptSaveChangesAsync().ConfigureAwait(false);
+        }
+
+
         if (!CanNavigate(vm))
         {
             if (vm.PicViewer.FileInfo is null && ImageIterator is not null)

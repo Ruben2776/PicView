@@ -521,4 +521,14 @@ public class WindowInitializer : IPlatformSpecificUpdate
             _ = FunctionsMapper.CloseMenus();
         }
     }
+
+    public async Task ShowHistoryWindow(MainViewModel _vm)
+    {
+        if (_vm.HistoryManager is null)
+            _vm.HistoryManager = new History.HistoryManager(_vm);
+            
+        await _vm.HistoryManager.Show();
+
+        _ = FunctionsMapper.CloseMenus();
+    }
 }

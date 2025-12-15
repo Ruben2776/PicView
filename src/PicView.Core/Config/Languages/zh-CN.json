@@ -424,5 +424,17 @@
   "_2Star": "2星评分",
   "_3Star": "3星评分",
   "_4Star": "4星评分",
-  "_5Star": "5星评分"
+  "_5Star": "5星评分",
+
+  "AccessDenied": "拒绝访问",
+  "Disgard": "丢弃",
+  "ExportToPdf": "导出为 PDF",
+  "HideHistoryWindow": "隐藏历史窗口",
+  "History": "历史",
+  "Horizontal": "水平",
+  "SaveChanges": "保存更改",
+  "ShowHistoryWindow": "显示历史窗口",
+  "Tools": "工具",
+  "Menu": "菜单",
+  "Vertical": "垂直"
 }

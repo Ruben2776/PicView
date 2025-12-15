@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using ImageMagick;
 using Avalonia.Media.Imaging;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace PicView.Avalonia.History;
 
@@ -9,7 +11,8 @@ public enum EditKind
     Open,
     Crop,
     Rotate,
-    Flip,
+    [Display(Name = "Flip")] FlipH,
+    [Display(Name = "Flip")] FlipV,
     Effect,
     Resize,
     Other

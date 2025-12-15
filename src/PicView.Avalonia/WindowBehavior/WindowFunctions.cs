@@ -127,7 +127,7 @@ public static class WindowFunctions
                     vm.ImageViewer.MainBorder.Height = double.NaN;
                     vm.ImageViewer.MainBorder.Width = double.NaN;
 
-                    WindowResizing.SetSize(1, 1, 0, 0, 0, vm);
+                    WindowResizing.SetSize(1, 1, 0, 0, vm);
                 }
                 else
                 {

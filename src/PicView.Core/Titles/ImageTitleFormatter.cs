@@ -34,7 +34,7 @@ public static class ImageTitleFormatter
     /// <param name="zoomValue">The current zoom level of the image.</param>
     /// <param name="filesList">The list of image file paths.</param>
     /// <returns>A <see cref="WindowTitles"/> struct containing the generated titles.</returns>
-    public static WindowTitles GenerateTitleStrings(int width, int height, int index, FileInfo? fileInfo, double zoomValue, IReadOnlyList<FileInfo> filesList)
+    public static WindowTitles GenerateTitleStrings(int width, int height, int index, FileInfo? fileInfo, double zoomValue, bool hasChanges, IReadOnlyList<FileInfo> filesList)
     {
         if (!TryValidateAndGetFileInfo(index, filesList, fileInfo, out var validatedFileInfo, out var errorTitle))
         {
@@ -42,7 +42,7 @@ public static class ImageTitleFormatter
         }
 
         var namePart = validatedFileInfo.Name;
-        return GenerateTitleStringsCore(width, height, validatedFileInfo, zoomValue, filesList, index, namePart);
+        return GenerateTitleStringsCore(width, height, validatedFileInfo, zoomValue, hasChanges, filesList, index, namePart);
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ public static class ImageTitleFormatter
     /// <param name="zoomValue">The current zoom level of the image.</param>
     /// <param name="filesList">The list of image file paths.</param>
     /// <returns>A <see cref="WindowTitles"/> struct containing the generated titles.</returns>
-    public static WindowTitles GenerateTiffTitleStrings(int width, int height, int index, FileInfo fileInfo, TiffManager.TiffNavigationInfo tiffNavigationInfo, double zoomValue, List<FileInfo> filesList)
+    public static WindowTitles GenerateTiffTitleStrings(int width, int height, int index, FileInfo fileInfo, TiffManager.TiffNavigationInfo tiffNavigationInfo, double zoomValue, bool hasChanges, List<FileInfo> filesList)
     {
         if (tiffNavigationInfo == null)
         {
@@ -69,14 +69,16 @@ public static class ImageTitleFormatter
         }
 
         var namePart = $"{validatedFileInfo.Name} [{tiffNavigationInfo.CurrentPage + 1}/{tiffNavigationInfo.PageCount}]";
-        return GenerateTitleStringsCore(width, height, validatedFileInfo, zoomValue, filesList, index, namePart);
+        return GenerateTitleStringsCore(width, height, validatedFileInfo, zoomValue, hasChanges, filesList, index, namePart);
     }
 
-    private static WindowTitles GenerateTitleStringsCore(int width, int height, FileInfo fileInfo, double zoomValue, IReadOnlyList<FileInfo> filesList, int index, string namePart)
+    private static WindowTitles GenerateTitleStringsCore(int width, int height, FileInfo fileInfo, double zoomValue, bool hasChanges, IReadOnlyList<FileInfo> filesList, int index, string namePart)
     {
         using var sb = ZString.CreateStringBuilder(true);
 
         sb.Append(namePart);
+        if (hasChanges)
+            sb.Append("*");
         sb.Append(' ');
         sb.Append(index + 1);
         sb.Append('/');
@@ -186,12 +188,14 @@ public static class ImageTitleFormatter
     /// <param name="name">Display name of the image.</param>
     /// <param name="zoomValue">The current zoom level of the image.</param>
     /// <returns>A <see cref="WindowTitles"/> struct containing the generated titles for the single image.</returns>
-    public static WindowTitles GenerateTitleForSingleImage(int width, int height, string name, double zoomValue)
+    public static WindowTitles GenerateTitleForSingleImage(int width, int height, string name, double zoomValue, bool hasChanges)
     {
         using var sb = ZString.CreateStringBuilder(true);
 
         // Build the base title (common parts)
         sb.Append(name);
+        if (hasChanges)
+            sb.Append("*");
         sb.Append(" (");
         sb.Append(width);
         sb.Append(" x ");

@@ -16,7 +16,6 @@ public static class SaveImageFileHelper
     /// <param name="height">The target height of the image. If null, the image will not be resized based on height.</param>
     /// <param name="quality">The quality level of the saved image, as a percentage (0-100). If null, the default quality is used.</param>
     /// <param name="ext">The file extension of the output image (e.g., ".jpg", ".png"). If null, the original extension is kept.</param>
-    /// <param name="rotationAngle">The angle to rotate the image, in degrees. If null, no rotation is applied.</param>
     /// <param name="percentage">The percentage by which to resize the image. If specified, both width and height are ignored.</param>
     /// <param name="losslessCompress">Indicates whether to apply lossless compression to the image.</param>
     /// <param name="lossyCompress">Indicates whether to apply lossy compression to the image.</param>
@@ -28,9 +27,9 @@ public static class SaveImageFileHelper
     /// If both lossy and lossless compression are enabled, only one will be applied based on supported formats.
     /// </remarks>
     public static async ValueTask<bool> SaveImageAsync(Stream? stream, string? path, string? destination = null,
-        uint? width = null, uint? height = null, uint? quality = null, string? ext = null, double? rotationAngle = null,
+        uint? width = null, uint? height = null, uint? quality = null, string? ext = null,
         Percentage? percentage = null, bool losslessCompress = false, bool lossyCompress = false,
-        bool respectAspectRatio = true, bool flipImage = false)
+        bool respectAspectRatio = true)
     {
         string? tempDestination = null;
         try
@@ -54,11 +53,6 @@ public static class SaveImageFileHelper
             if (quality is not null)
             {
                 magickImage.Quality = quality.Value;
-            }
-
-            if (flipImage)
-            {
-                magickImage.Flop();
             }
 
             if (percentage.HasValue)
@@ -114,11 +108,6 @@ public static class SaveImageFileHelper
                 {
                     magickImage.Resize(0, height.Value);
                 }
-            }
-
-            if (rotationAngle is not null)
-            {
-                magickImage.Rotate(rotationAngle.Value);
             }
 
             var keepExt = string.IsNullOrEmpty(ext);

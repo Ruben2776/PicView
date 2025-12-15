@@ -424,5 +424,17 @@
   "_2Star": "Evaluare cu 2 stele",
   "_3Star": "Evaluare cu 3 stele",
   "_4Star": "Evaluare cu 4 stele",
-  "_5Star": "Evaluare cu 5 stele"
+  "_5Star": "Evaluare cu 5 stele",
+
+  "AccessDenied": "Acces interzis",
+  "Disgard": "Renunță",
+  "ExportToPdf": "Exportă în PDF",
+  "HideHistoryWindow": "Ascunde fereastra istoric",
+  "History": "Istoric",
+  "Horizontal": "Orizontal",
+  "SaveChanges": "Salvează modificările",
+  "ShowHistoryWindow": "Afișează fereastra istoric",
+  "Tools": "Instrumente",
+  "Menu": "Meniu",
+  "Vertical": "Vertical"
 }

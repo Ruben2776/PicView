@@ -188,7 +188,7 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
 
     public Task<Bitmap?> GetImageFromClipboard()
     {
-        return null;
+        return Task.FromResult<Bitmap?>(null);
     }
 
     public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory)
@@ -227,6 +227,12 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
         await Task.Run(() => File.Delete(path));
         return !File.Exists(path); 
     }
+
+    public async Task<bool> SaveFile(string path)
+    {
+        // TODO: Implement saving file
+        return false;
+    }
     
     #endregion
     
@@ -241,7 +247,7 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
         await _windowInitializer?.ShowImageInfoWindow(_vm);
 
     public async Task ShowKeybindingsWindow() =>
-        _windowInitializer?.ShowKeybindingsWindow(_vm);
+        await _windowInitializer?.ShowKeybindingsWindow(_vm);
 
     public async Task ShowSettingsWindow() =>
         await _windowInitializer?.ShowSettingsWindow(_vm);
@@ -277,6 +283,9 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
     /// <inheritdoc />
     public async Task Restore() =>
         await MacOSWindow.Restore(_mainWindow, _vm);
+
+    public void ShowHistoryWindow() =>
+        _windowInitializer?.ShowHistoryWindow(_vm);
     
     #endregion
 }

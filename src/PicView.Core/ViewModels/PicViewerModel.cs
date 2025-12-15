@@ -13,7 +13,7 @@ public class PicViewerModel : IDisposable
     public void Dispose()
     {
         Disposable.Dispose(FileInfo, PixelWidth, PixelHeight, ImageSource, SecondaryImageSource, ImageType);
-        Disposable.Dispose(ImageType, ImageWidth, ImageHeight, SecondaryImageWidth, IsShowingSideBySide, ScrollViewerHeight);
+        Disposable.Dispose(ImageType, ImageWidth, ImageHeight, SecondaryImageWidth, IsShowingSideBySide, ScrollViewerHeight, HasChanges);
         Disposable.Dispose(ScrollViewerHeight, AspectRatio, EffectConfig, ExifOrientation, ScaleX, Title);
         Disposable.Dispose(TitleTooltip, WindowTitle, Index);
     }
@@ -39,8 +39,6 @@ public class PicViewerModel : IDisposable
     public BindableReactiveProperty<ImageType> ImageType { get; } = new();
     
     public BindableReactiveProperty<MagickFormat?> Format { get; } = new();
-
-    public BindableReactiveProperty<double> RotationAngle { get; } = new(0);
 
     public BindableReactiveProperty<double> ZoomValue { get; } = new();
 
@@ -85,7 +83,8 @@ public class PicViewerModel : IDisposable
     
     public BindableReactiveProperty<bool> IsSingleImage { get; } = new();
     
-    public BindableReactiveProperty<bool> ShouldCropBeEnabled { get; } = new();
-    
+   
     public BindableReactiveProperty<bool> ShouldOptimizeImageBeEnabled { get; } = new();
+
+    public BindableReactiveProperty<bool> HasChanges { get; } = new();
 }

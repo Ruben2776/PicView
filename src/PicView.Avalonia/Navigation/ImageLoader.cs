@@ -1,4 +1,5 @@
 ﻿using ImageMagick;
+using PicView.Avalonia.History;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
@@ -43,43 +44,37 @@ public static class ImageLoader
             return;
         }
 
+        vm.MainWindow.CurrentView.Value = vm.ImageViewer;
+
         switch (check.Value.Type)
         {
             case FileTypeResolver.LoadAbleFileType.File:
-                vm.MainWindow.CurrentView.Value = vm.ImageViewer;
                 await LoadPicFromFile(check.Value.Data, vm, imageIterator).ConfigureAwait(false);
-                vm.MainWindow.IsLoadingIndicatorShown.Value = false;
                 ArchiveExtraction.Cleanup();
-                return;
+                break;
             case FileTypeResolver.LoadAbleFileType.Directory:
-                vm.MainWindow.CurrentView.Value = vm.ImageViewer;
                 await LoadPicFromDirectoryAsync(check.Value.Data, vm).ConfigureAwait(false);
-                vm.MainWindow.IsLoadingIndicatorShown.Value = false;
                 ArchiveExtraction.Cleanup();
-                return;
+                break;
             case FileTypeResolver.LoadAbleFileType.Web:
-                vm.MainWindow.CurrentView.Value = vm.ImageViewer;
                 await LoadPicFromUrlAsync(check.Value.Data, vm, imageIterator).ConfigureAwait(false);
-                vm.MainWindow.IsLoadingIndicatorShown.Value = false;
                 ArchiveExtraction.Cleanup();
-                return;
+                break;
             case FileTypeResolver.LoadAbleFileType.Base64:
-                vm.MainWindow.CurrentView.Value = vm.ImageViewer;
                 await LoadPicFromBase64Async(check.Value.Data, vm, imageIterator).ConfigureAwait(false);
-                vm.MainWindow.IsLoadingIndicatorShown.Value = false;
                 ArchiveExtraction.Cleanup();
-                return;
+                break;
             case FileTypeResolver.LoadAbleFileType.Zip:
-                vm.MainWindow.CurrentView.Value = vm.ImageViewer;
                 await LoadPicFromArchiveAsync(check.Value.Data, vm, imageIterator).ConfigureAwait(false);
-                vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-                return;
+                break;
             default:
-                await ErrorHandling.ReloadAsync(vm).ConfigureAwait(false);
-                vm.MainWindow.IsLoadingIndicatorShown.Value = false;
+                await ErrorHandling.ReloadAsync(vm).ConfigureAwait(false);                
                 ArchiveExtraction.Cleanup();
-                return;
+                break;                
         }
+
+        await vm.HistoryManager.SetHasChanges(false);
+        vm.MainWindow.IsLoadingIndicatorShown.Value = false;
     }
 
     #endregion
@@ -145,6 +140,8 @@ public static class ImageLoader
             }
 
             await NavigationManager.LoadWithoutImageIterator(fileInfo, vm).ConfigureAwait(false);
+
+            await vm.HistoryManager.AddSnapshot(EditKind.Open).ConfigureAwait(false);
         }
     }
 
@@ -363,6 +360,8 @@ public static class ImageLoader
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         await UpdateImage.SetSingleImageAsync(imageModel.Image, imageModel.ImageType, url, vm);
 
+        await vm.HistoryManager.AddSnapshot(EditKind.Open).ConfigureAwait(false);
+
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
         vm.PicViewer.FileInfo.Value = fileInfo;
         vm.PicViewer.ExifOrientation.Value = imageModel.Orientation;
@@ -417,6 +416,9 @@ public static class ImageLoader
             await imageIterator.DisposeAsync();
             await ErrorHandling.ReloadAsync(vm);
         }
+
+        await vm.HistoryManager.AddSnapshot(EditKind.Open).ConfigureAwait(false);
+
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
     }
 

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using PicView.Avalonia.Extensions;
 using PicView.Avalonia.History;
 using R3;
 
@@ -12,8 +13,10 @@ public sealed class HistoryItemViewModel
     public int Index { get; set; }
     public string Title { get; set; } = string.Empty;
     public string? Subtitle { get; set; }
+    public EditKind Kind { get; set; }
     public BindableReactiveProperty<bool> IsLoading { get; set; } = new(true);
     public BindableReactiveProperty<bool> IsActive { get; set; } = new(false);
+    public BindableReactiveProperty<bool> IsRedoBranch { get; set; } = new(false);
 }
 
 public sealed class HistoryWindowViewModel : IDisposable
@@ -33,7 +36,7 @@ public sealed class HistoryWindowViewModel : IDisposable
 
         _history.Timeline.CollectionChanged += OnTimelineChanged;
 
-        // populate immediately so history shows even if window opens late
+        // Populate immediately so history shows even if window opens late
         Dispatcher.UIThread.Post(UpdateTimeline);
 
         // Restore snapshot when user selects a history row
@@ -43,12 +46,12 @@ public sealed class HistoryWindowViewModel : IDisposable
                 if (_selectionChangedGuard) return;
                 if (i < 0 || i >= _history.Timeline.Count) return;
 
-                // Use HistoryManager to produce/apply the snapshot via the viewer pipeline
-                var bmp = await _history.JumpTo(i);
-                if (bmp is null) return;
+                await _history.JumpTo(i);
 
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                    _vm.ImageViewer.ApplyBitmapAndRefresh(bmp, _vm));
+                // Recompute redo-branch after restore
+                var cursor = _history.Timeline[i].Index;
+                foreach (var it in Items)
+                    it.IsRedoBranch.Value = it.Index < cursor;
             })
             .AddTo(_disposables);
     }
@@ -65,8 +68,9 @@ public sealed class HistoryWindowViewModel : IDisposable
             var itemVm = new HistoryItemViewModel
             {
                 Index = entry.Index,
-                Title = entry.Kind.ToString(),
-                Subtitle = entry.Description
+                Title = entry.Kind.GetDisplayName(),
+                Subtitle = entry.Description,
+                Kind = entry.Kind
             };
             itemVm.IsLoading.Value = entry.IsLoading;
             itemVm.IsActive.Value  = entry.Index == 0;
@@ -78,12 +82,21 @@ public sealed class HistoryWindowViewModel : IDisposable
             .Select((e, pos) => new { e, pos })
             .FirstOrDefault(x => x.e.Index == 0)?.pos ?? -1;
 
-        _selectionChangedGuard = true;             // ← prevent Restore on init
+        _selectionChangedGuard = true;
+
         if (activeIdxInList >= 0)
             SelectedIndex.Value = activeIdxInList;
         else if (Items.Count > 0 && SelectedIndex.Value < 0)
             SelectedIndex.Value = 0;
-        _selectionChangedGuard = false;            // ← re-enable for user changes
+
+        _selectionChangedGuard = false;
+
+        // Compute redo branch (entries "newer" than currently active)
+        // Newest has Index==0. If user undoes to entry with Index=N,
+        // items with Index < N are redo-able and should be greyed.
+        var cursor = (_history.Timeline.Count > 0) ? _history.Timeline[SelectedIndex.Value].Index : 0;
+        foreach (var it in Items)
+            it.IsRedoBranch.Value = it.Index < cursor;
     }
 
 
@@ -93,73 +106,3 @@ public sealed class HistoryWindowViewModel : IDisposable
         _history.Timeline.CollectionChanged -= OnTimelineChanged;
     }
 }
-
-
-
-// public sealed class HistoryWindowViewModel : IDisposable
-// {
-//     private readonly MainViewModel _vm;
-//     private readonly HistoryManager _history;
-//     private readonly CompositeDisposable _disposables = new();
-
-//     public ObservableCollection<HistoryItemViewModel> Items { get; } = new();
-//     public BindableReactiveProperty<int> SelectedIndex { get; } = new(-1);
-
-//     public HistoryWindowViewModel(MainViewModel vm, HistoryManager history)
-//     {
-//         _vm = vm;
-//         _history = history;
-
-//         _history.Timeline.CollectionChanged += (_, __) =>
-//             Dispatcher.UIThread.Post(UpdateTimeline);
-
-//         SelectedIndex
-//             .Subscribe(async i =>
-//             {
-//                 if (i < 0 || i >= _history.Timeline.Count) return;
-//                 var bmp = await _history.JumpTo(i);
-//                 if (bmp is null) return;
-//                 _vm.PicViewer.ImageSource.Value = bmp;
-//                 _vm.PicViewer.HasChanges.Value = true;
-//             })
-//             .AddTo(_disposables);
-//     }
-
-//     private void UpdateTimeline()
-//     {
-//         if (_history.Timeline.Count < Items.Count)
-//             Items.Clear();
-        
-//         foreach (var entry in _history.Timeline)
-//         {
-//             var existing = Items.FirstOrDefault(x => x.Index == entry.Index);
-//             if (existing is null)
-//             {
-//                 var itemVm = new HistoryItemViewModel
-//                 {
-//                     Index = entry.Index,
-//                     Title = entry.Kind.ToString(),
-//                     Subtitle = entry.Description
-//                 };
-
-//                 itemVm.IsLoading.Value = entry.IsLoading;
-//                 itemVm.IsActive.Value = entry.Index == 0;
-
-//                 Items.Add(itemVm);
-//             }
-//             else
-//             {
-//                 existing.IsLoading.Value = entry.IsLoading;
-//                 existing.IsActive.Value = entry.Index == 0;
-//             }
-//         }
-
-//         SelectedIndex.Value = 0;
-//     }
-
-
-//     public void Dispose()
-//     {
-//         _disposables.Dispose();
-//     }
-// }

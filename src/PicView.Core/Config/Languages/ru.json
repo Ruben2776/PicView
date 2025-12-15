@@ -424,5 +424,17 @@
   "_2Star": "2звезды",
   "_3Star": "3звезды",
   "_4Star": "4звезды",
-  "_5Star": "5звезды"
+  "_5Star": "5звезды",
+
+  "AccessDenied": "Доступ запрещён",
+  "Disgard": "Отменить",
+  "ExportToPdf": "Экспорт в PDF",
+  "HideHistoryWindow": "Скрыть окно истории",
+  "History": "История",
+  "Horizontal": "Горизонтальный",
+  "SaveChanges": "Сохранить изменения",
+  "ShowHistoryWindow": "Показать окно истории",
+  "Tools": "Инструменты",
+  "Menu": "Меню",
+  "Vertical": "Вертикальный"
 }

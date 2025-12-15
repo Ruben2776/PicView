@@ -3,8 +3,6 @@
 public static class ImageSizeCalculationHelper
 {
     private const int MinTitleWidth = 250;
-    private const int MaxRotationAngle = 360;
-    private const int MinRotationAngle = 0;
 
     /// <summary>
     /// Calculates the dimensions of how the image should fit within the window, based on current settings and parameters
@@ -15,7 +13,6 @@ public static class ImageSizeCalculationHelper
     /// <param name="minWidth">The minimum allowable width of the window.</param>
     /// <param name="minHeight">The minimum allowable height of the window.</param>
     /// <param name="interfaceSize">The combined width of the buttons in the titlebar</param>
-    /// <param name="rotationAngle">The angle of rotation applied to the image.</param>
     /// <param name="dpiScaling">The scaling factor accounting for DPI.</param>
     /// <param name="uiTopSize">The height of the user interface at the top of the display.</param>
     /// <param name="uiBottomSize">The height of the user interface at the bottom of the display.</param>
@@ -30,7 +27,6 @@ public static class ImageSizeCalculationHelper
         double minWidth,
         double minHeight,
         double interfaceSize,
-        double rotationAngle,
         double dpiScaling,
         double uiTopSize,
         double uiBottomSize,
@@ -38,7 +34,7 @@ public static class ImageSizeCalculationHelper
         double containerWidth,
         double containerHeight)
     {
-        if (imageWidth <= 0 || imageHeight <= 0 || rotationAngle > MaxRotationAngle || rotationAngle < MinRotationAngle)
+        if (imageWidth <= 0 || imageHeight <= 0)
         {
             return ErrorImageSize(minWidth, minHeight, interfaceSize, containerWidth);
         }
@@ -64,7 +60,6 @@ public static class ImageSizeCalculationHelper
 
         var (maxAvailableWidth, maxAvailableHeight, adjustedContainerWidth, adjustedContainerHeight) =
             CalculateMaxImageSize(scrollEnabled, stretchImage, autoFit,
-                rotationAngle,
                 workArea.width, workArea.height, screenMargin, imageWidth, imageHeight, dpiScaling, galleryHeight,
                 containerWidth, containerHeight);
 
@@ -72,7 +67,7 @@ public static class ImageSizeCalculationHelper
             showInterface, showGalleryInHiddenUI, galleryHeight);
 
         var aspectRatio =
-            CalculateAspectRatio(rotationAngle, maxAvailableWidth, maxAvailableHeight, imageWidth, imageHeight);
+            CalculateAspectRatio(maxAvailableWidth, maxAvailableHeight, imageWidth, imageHeight);
 
         double displayedWidth, displayedHeight, scrollWidth, scrollHeight;
         if (scrollEnabled)
@@ -90,7 +85,7 @@ public static class ImageSizeCalculationHelper
             scrollHeight = double.NaN;
         }
 
-        var titleMaxWidth = GetTitleMaxWidth(rotationAngle, displayedWidth, displayedHeight, minWidth, minHeight,
+        var titleMaxWidth = GetTitleMaxWidth(displayedWidth, displayedHeight, minWidth, minHeight,
             interfaceSize, containerWidth);
         return new ImageSize(displayedWidth, displayedHeight, 0, scrollWidth, scrollHeight, titleMaxWidth, margin,
             aspectRatio);
@@ -114,18 +109,11 @@ public static class ImageSizeCalculationHelper
 
     private static (double maxWidth, double maxHeight, double containerWidth, double containerHeight)
         CalculateMaxImageSize(
-            bool scrollEnabled, bool stretchImage, bool autoFit, double rotationAngle,
+            bool scrollEnabled, bool stretchImage, bool autoFit,
             double workAreaWidth, double workAreaHeight, double margin,
             double width, double height, double dpiScaling, double galleryHeight, double containerWidth,
             double containerHeight)
     {
-        // Swap width and height for 90/270 degree rotations to correctly cap the size
-        // against the image's effective native resolution after rotation.
-        if (rotationAngle is 90 or 270)
-        {
-            (width, height) = (height, width);
-        }
-        
         if (scrollEnabled)
         {
             workAreaWidth -= SizeDefaults.ScrollbarSize * dpiScaling;
@@ -149,23 +137,14 @@ public static class ImageSizeCalculationHelper
         );
     }
 
-    private static double CalculateAspectRatio(double rotationAngle, double maxWidth, double maxHeight, double width,
-        double height)
+    private static double CalculateAspectRatio(double maxWidth, double maxHeight, double width, double height)
     {
-        switch (rotationAngle)
-        {
-            case 0:
-            case 180:
-                return Math.Min(maxWidth / width, maxHeight / height);
-            case 90:
-            case 270:
-                return Math.Min(maxWidth / height, maxHeight / width);
-            default:
-                var radians = rotationAngle * Math.PI / 180;
-                var rotatedWidth = Math.Abs(width * Math.Cos(radians)) + Math.Abs(height * Math.Sin(radians));
-                var rotatedHeight = Math.Abs(width * Math.Sin(radians)) + Math.Abs(height * Math.Cos(radians));
-                return Math.Min(maxWidth / rotatedWidth, maxHeight / rotatedHeight);
-        }
+        var rotationAngle = 0;
+        var radians = rotationAngle * Math.PI / 180;
+        var rotatedWidth = Math.Abs(width * Math.Cos(radians)) + Math.Abs(height * Math.Sin(radians));
+        var rotatedHeight = Math.Abs(width * Math.Sin(radians)) + Math.Abs(height * Math.Cos(radians));
+        return Math.Min(maxWidth / rotatedWidth, maxHeight / rotatedHeight);
+        
     }
 
     private static double CalculateGalleryMargin(bool isBottomGalleryShown, bool showInterface,
@@ -223,7 +202,6 @@ public static class ImageSizeCalculationHelper
     /// <param name="minWidth">The minimum allowable width of the window.</param>
     /// <param name="minHeight">The minimum allowable height of the window.</param>
     /// <param name="interfaceSize">The combined width of the buttons in the title bar.</param>
-    /// <param name="rotationAngle">The angle of rotation applied to both images.</param>
     /// <param name="dpiScaling">The scaling factor for DPI adjustments.</param>
     /// <param name="uiTopSize">The height of the top user interface elements.</param>
     /// <param name="uiBottomSize">The height of the bottom user interface elements.</param>
@@ -240,7 +218,6 @@ public static class ImageSizeCalculationHelper
         double minWidth,
         double minHeight,
         double interfaceSize,
-        double rotationAngle,
         double dpiScaling,
         double uiTopSize,
         double uiBottomSize,
@@ -248,20 +225,18 @@ public static class ImageSizeCalculationHelper
         double containerWidth,
         double containerHeight)
     {
-        if (width <= 0 || height <= 0 || secondaryWidth <= 0 || secondaryHeight <= 0 ||
-            rotationAngle > MaxRotationAngle ||
-            rotationAngle < MinRotationAngle)
+        if (width <= 0 || height <= 0 || secondaryWidth <= 0 || secondaryHeight <= 0)
         {
             return ErrorImageSize(minWidth, minHeight, interfaceSize, containerWidth);
         }
 
         // Get sizes for both images
         var firstSize = GetImageSize(width, height, screenSize, minWidth, minHeight,
-            interfaceSize, rotationAngle, dpiScaling, uiTopSize, uiBottomSize, galleryHeight,
+            interfaceSize, dpiScaling, uiTopSize, uiBottomSize, galleryHeight,
             containerWidth,
             containerHeight);
         var secondSize = GetImageSize(secondaryWidth, secondaryHeight, screenSize, minWidth,
-            minHeight, interfaceSize, rotationAngle, dpiScaling, uiTopSize, uiBottomSize,
+            minHeight, interfaceSize, dpiScaling, uiTopSize, uiBottomSize,
             galleryHeight,
             containerWidth, containerHeight);
 
@@ -280,57 +255,29 @@ public static class ImageSizeCalculationHelper
             var widthPadding = Settings.ImageScaling.StretchImage ? 4 : screenSize.Margin;
             var availableWidth = screenSize.WorkingAreaWidth - widthPadding;
             var availableHeight = screenSize.WorkingAreaHeight - (widthPadding + uiBottomSize + uiTopSize);
-            if (rotationAngle is 0 or 180)
+            
+            // If combined width exceeds available width, scale both images down proportionally
+            if (combinedWidth > availableWidth)
             {
-                // If combined width exceeds available width, scale both images down proportionally
-                if (combinedWidth > availableWidth)
-                {
-                    var scaleFactor = availableWidth / combinedWidth;
-                    xWidth1 *= scaleFactor;
-                    xWidth2 *= scaleFactor;
-                    xHeight *= scaleFactor;
+                var scaleFactor = availableWidth / combinedWidth;
+                xWidth1 *= scaleFactor;
+                xWidth2 *= scaleFactor;
+                xHeight *= scaleFactor;
 
-                    combinedWidth = xWidth1 + xWidth2;
-                }
+                combinedWidth = xWidth1 + xWidth2;
             }
-            else
-            {
-                if (combinedWidth > availableHeight)
-                {
-                    var scaleFactor = availableHeight / combinedWidth;
-                    xWidth1 *= scaleFactor;
-                    xWidth2 *= scaleFactor;
-                    xHeight *= scaleFactor;
-
-                    combinedWidth = xWidth1 + xWidth2;
-                }
-            }
+            
         }
         else
         {
-            if (rotationAngle is 0 or 180)
+            if (combinedWidth > containerWidth)
             {
-                if (combinedWidth > containerWidth)
-                {
-                    var scaleFactor = containerWidth / combinedWidth;
-                    xWidth1 *= scaleFactor;
-                    xWidth2 *= scaleFactor;
-                    xHeight *= scaleFactor;
+                var scaleFactor = containerWidth / combinedWidth;
+                xWidth1 *= scaleFactor;
+                xWidth2 *= scaleFactor;
+                xHeight *= scaleFactor;
 
-                    combinedWidth = xWidth1 + xWidth2;
-                }
-            }
-            else
-            {
-                if (combinedWidth > containerHeight)
-                {
-                    var scaleFactor = containerHeight / combinedWidth;
-                    xWidth1 *= scaleFactor;
-                    xWidth2 *= scaleFactor;
-                    xHeight *= scaleFactor;
-
-                    combinedWidth = xWidth1 + xWidth2;
-                }
+                combinedWidth = xWidth1 + xWidth2;
             }
         }
 
@@ -362,8 +309,7 @@ public static class ImageSizeCalculationHelper
             scrollHeight = double.NaN;
         }
 
-        var titleMaxWidth = GetTitleMaxWidth(rotationAngle, combinedWidth, xHeight, minWidth,
-            minHeight, interfaceSize, containerWidth);
+        var titleMaxWidth = GetTitleMaxWidth(combinedWidth, xHeight, minWidth, minHeight, interfaceSize, containerWidth);
 
         var margin = firstSize.Height > secondSize.Height ? firstSize.Margin : secondSize.Margin;
         return new ImageSize(combinedWidth, xHeight, xWidth2, scrollWidth, scrollHeight, titleMaxWidth, margin,
@@ -372,31 +318,14 @@ public static class ImageSizeCalculationHelper
 
 
     // Calculate the window's title max width between the interfaceSize (the combined width of the buttons) and the images' own size
-    public static double GetTitleMaxWidth(double rotationAngle, double width, double height, double monitorMinWidth,
+    public static double GetTitleMaxWidth(double width, double height, double monitorMinWidth,
         double monitorMinHeight, double interfaceSize, double containerWidth)
     {
         double titleMaxWidth;
 
         if (Settings.WindowProperties.AutoFit && !Settings.WindowProperties.Maximized)
         {
-            switch (rotationAngle)
-            {
-                case 0 or 180:
-                    titleMaxWidth = Math.Max(width, monitorMinWidth);
-                    break;
-                case 90 or 270:
-                    titleMaxWidth = Math.Max(height, monitorMinHeight);
-                    break;
-                default:
-                {
-                    var rotationRadians = rotationAngle * Math.PI / 180;
-                    var newWidth = Math.Abs(width * Math.Cos(rotationRadians)) +
-                                   Math.Abs(height * Math.Sin(rotationRadians));
-
-                    titleMaxWidth = Math.Max(newWidth, monitorMinWidth);
-                    break;
-                }
-            }
+            titleMaxWidth = Math.Max(width, monitorMinWidth);
 
             titleMaxWidth = titleMaxWidth - interfaceSize < MinTitleWidth
                 ? MinTitleWidth
@@ -421,8 +350,6 @@ public static class ImageSizeCalculationHelper
         return titleMaxWidth + SizeDefaults.ScrollbarSize;
     }
 
-    private static ImageSize ErrorImageSize(double monitorMinWidth, double monitorMinHeight, double interfaceSize,
-        double containerWidth)
-        => new(0, 0, 0, 0, 0, GetTitleMaxWidth(0, 0, 0, monitorMinWidth,
-            monitorMinHeight, interfaceSize, containerWidth), 0, 0);
+    private static ImageSize ErrorImageSize(double monitorMinWidth, double monitorMinHeight, double interfaceSize, double containerWidth)
+        => new(0, 0, 0, 0, 0, GetTitleMaxWidth(0, 0, monitorMinWidth, monitorMinHeight, interfaceSize, containerWidth), 0, 0);
 }

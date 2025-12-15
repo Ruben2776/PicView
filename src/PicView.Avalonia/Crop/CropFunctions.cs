@@ -28,11 +28,6 @@ public static class CropFunctions
     /// </remarks>
     public static async Task StartCropControlAsync(MainViewModel vm)
     {
-        if (!DetermineIfShouldBeEnabled(vm))
-        {
-            return;
-        }
-
         if (vm?.PicViewer.ImageSource.CurrentValue is not Bitmap bitmap)
         {
             return;
@@ -67,8 +62,8 @@ public static class CropFunctions
         });
 
         IsCropping = true;
-        vm.PicViewer.Title.Value = TranslationManager.Translation.CropMessage!;
-        vm.PicViewer.TitleTooltip.Value = TranslationManager.Translation.CropMessage!;
+        vm.PicViewer.Title.Value = TranslationManager.Translation.CropPicture!;
+        vm.PicViewer.TitleTooltip.Value = TranslationManager.Translation.CropPicture!;
 
         await FunctionsMapper.CloseMenus();
 
@@ -108,38 +103,5 @@ public static class CropFunctions
         }
 
         vm.Crop = null;
-    }
-
-    public static bool DetermineIfShouldBeEnabled(MainViewModel vm)
-    {
-        if (IsCropping)
-        {
-            return false;
-        }
-
-        if (vm?.PicViewer.ImageSource.CurrentValue is not Bitmap || Settings.ImageScaling.ShowImageSideBySide)
-        {
-            vm.PicViewer.ShouldCropBeEnabled.Value = false;
-            return false;
-        }
-
-        if (DialogManager.IsDialogOpen)
-        {
-            return false;
-        }
-
-        if (vm.MainWindow.IsEditableTitlebarOpen.CurrentValue)
-        {
-            return false;
-        }
-
-        if (vm.PicViewer.RotationAngle.CurrentValue is 0 && vm.PicViewer.ScaleX.CurrentValue is 1)
-        {
-            vm.PicViewer.ShouldCropBeEnabled.Value = true;
-            return true;
-        }
-
-        vm.PicViewer.ShouldCropBeEnabled.Value = false;
-        return false;
     }
 }

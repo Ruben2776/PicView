@@ -32,7 +32,7 @@
             CornerRadius="8"
             Effect="{DynamicResource MenuShadowButtonBorder}"
             x:Name="MainBorder">
-            <Canvas Height="208" Width="315">
+            <Canvas Height="208" Width="359">
 
                 <Border
                     Background="{DynamicResource SecondaryBackgroundColor}"
@@ -40,7 +40,7 @@
                     BorderThickness="0,0,0,1"
                     CornerRadius="8,8,0,0"
                     Height="47"
-                    Width="315"
+                    Width="359"
                     x:Name="TopBorder" />
 
                 <customControls:TextIconButton
@@ -54,18 +54,19 @@
                     IconHeight="17"
                     IconMargin="15,0,2,0"
                     IconWidth="17"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                     Text="{CompiledBinding Translation.ImageInfo.Value,
                                            Mode=OneWay}"
                     TextMargin="10,0,6,0"
                     TextMaxWidth="200"
-                    Width="225"
+                    Width="270"
                     x:Name="ImageInfoButton" />
 
                 <customControls:IconButton
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
-                    Canvas.Left="225"
+                    Canvas.Left="270"
                     Canvas.Top="-1"
                     Classes="hover"
                     ClickMode="Release"
@@ -83,7 +84,7 @@
 
                 <customControls:IconButton
                     Background="Transparent"
-                    Canvas.Left="270"
+                    Canvas.Left="315"
                     Canvas.Top="-1"
                     Classes="hover"
                     ClickMode="Release"
@@ -105,10 +106,10 @@
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding Window.ShowSingleImageResizeWindow}"
                     Height="46"
-                    IsEnabled="{CompiledBinding PicViewer.ShouldCropBeEnabled.Value,
-                                                Mode=OneWay}"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                     ToolTip.Tip="{CompiledBinding Translation.ResizeImage.Value,
                                                   Mode=OneWay}"
+                    Width="169"
                     x:Name="ResizeImageButton">
                     <StackPanel Orientation="Horizontal">
                         <Canvas Height="54" Width="45">
@@ -153,7 +154,7 @@
 
                 <customControls:TextIconButton
                     Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="160"
+                    Canvas.Left="182"
                     Canvas.Top="53"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding Tools.CropCommand}"
@@ -163,12 +164,12 @@
                     IconHeight="17"
                     IconMargin="9,0,9,0"
                     IconWidth="17"
-                    IsEnabled="{CompiledBinding PicViewer.ShouldCropBeEnabled.Value,
-                                                Mode=OneWay}"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                     Text="{CompiledBinding Translation.Crop.Value,
                                            Mode=OneWay}"
                     ToolTip.Tip="{CompiledBinding Translation.Crop,
                                                   Mode=OneWay}"
+                    Width="169"
                     x:Name="CropButton" />
 
                 <SplitButton
@@ -182,6 +183,7 @@
                     Height="46"
                     ToolTip.Tip="{CompiledBinding Translation.Slideshow.Value,
                                                   Mode=OneWay}"
+                    Width="169"
                     x:Name="SlideShowButton">
                     <StackPanel Orientation="Horizontal">
                         <Image
@@ -316,7 +318,7 @@
 
                 <ToggleButton
                     Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="160"
+                    Canvas.Left="182"
                     Canvas.Top="104"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding Tools.ShowSideBySideCommand}"
@@ -325,6 +327,7 @@
                     IsChecked="{CompiledBinding PicViewer.IsShowingSideBySide.Value}"
                     IsEnabled="{CompiledBinding !PicViewer.IsSingleImage.Value}"
                     ToolTip.Tip="{CompiledBinding Translation.SideBySideTooltip.Value}"
+                    Width="169"
                     x:Name="SideBySideButton">
                     <TextBlock
                         Classes="txt btnTxt"
@@ -336,6 +339,25 @@
                 <customControls:TextIconButton
                     Background="{DynamicResource MenuButtonColor}"
                     Canvas.Left="7"
+                    Canvas.Top="155"
+                    Classes="ButtonBorder altHover"
+                    Command="{CompiledBinding Tools.ToggleHistoryWindowCommand}"
+                    Foreground="{DynamicResource MainTextColor}"
+                    Height="46"
+                    Icon="{StaticResource HistoryWindowIcon}"
+                    IconHeight="20"
+                    IconMargin="9,0,9,0"
+                    IconWidth="20"
+                    Text="{CompiledBinding Translation.IsShowingHistoryWindow.Value,
+                                           Mode=OneWay}"
+                    TextMargin="0,0,6,0"
+                    TextMaxWidth="175"
+                    Width="169"
+                    x:Name="HistoryButton" />
+
+                    <customControls:TextIconButton
+                    Background="{DynamicResource MenuButtonColor}"
+                    Canvas.Left="182"
                     Canvas.Top="155"
                     Classes="ButtonBorder altHover"
                     Command="{CompiledBinding Gallery.ToggleBottomGalleryCommand}"
@@ -352,7 +374,7 @@
                     TextMaxWidth="175"
                     ToolTip.Tip="{CompiledBinding Translation.IsShowingBottomGallery.Value,
                                                   Mode=OneWay}"
-                    Width="300"
+                    Width="169"
                     x:Name="GalleryButton" />
             </Canvas>
         </Border>

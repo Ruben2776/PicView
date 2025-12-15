@@ -1,5 +1,7 @@
 using System.IO;
+using Avalonia;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using ImageMagick;
 using R3;
 
@@ -46,6 +48,30 @@ public static class MagickExtensions
             clone.Resize((uint)(w * scale), (uint)(h * scale));
 
         return clone.ToAvaloniaBitmap();
+    }
+
+    public static WriteableBitmap ToAvaloniaWriteableBitmap(this IMagickImage<byte> img)
+    {
+        int w = (int)img.Width;
+        int h = (int)img.Height;
+
+        using var px = img.GetPixels();
+        byte[]? data = px.ToByteArray(0, 0, (uint)w, (uint)h, PixelMapping.BGRA);
+
+        var wb = new WriteableBitmap(
+            new PixelSize(w, h),
+            new Vector(96, 96),
+            PixelFormat.Bgra8888,
+            AlphaFormat.Premul);
+
+        using var fb = wb.Lock();
+        int srcStride = w * 4;
+        for (int row = 0; row < h; row++)
+        {
+            var dstRow = fb.Address + row * fb.RowBytes;
+            System.Runtime.InteropServices.Marshal.Copy(data, row * srcStride, dstRow, srcStride);
+        }
+        return wb;
     }
 
 }

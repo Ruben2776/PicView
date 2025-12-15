@@ -2,6 +2,7 @@
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
+using PicView.Avalonia.History;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.UI;
@@ -80,7 +81,6 @@ public static class UpdateImage
                 return;
             }
 
-            vm.ImageViewer.SetTransform(preLoadValue.ImageModel.Orientation, preLoadValue.ImageModel.Format);
             vm.ImageViewer.ZoomPanControl.ResetZoomSlim();
 
             if (Settings.ImageScaling.ShowImageSideBySide && nextPreloadValue is { ImageModel: not null })
@@ -117,6 +117,8 @@ public static class UpdateImage
 
             UIHelper.GetToolTipMessage.IsVisible = false;
         }, DispatcherPriority.Send);
+
+        _ = vm.HistoryManager.AddSnapshot(EditKind.Open, bitmap: (Bitmap?)preLoadValue.ImageModel.Image);
 
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
 
@@ -171,8 +173,7 @@ public static class UpdateImage
         void SetSize()
         {
             WindowResizing.SetSize(preLoadValue.ImageModel.PixelWidth, preLoadValue.ImageModel.PixelHeight,
-                    nextPreloadValue?.ImageModel?.PixelWidth ?? 0, nextPreloadValue?.ImageModel?.PixelHeight ?? 0,
-                    vm.PicViewer.RotationAngle.CurrentValue, vm);
+                    nextPreloadValue?.ImageModel?.PixelWidth ?? 0, nextPreloadValue?.ImageModel?.PixelHeight ?? 0, vm);
         }
 
     }
@@ -220,19 +221,14 @@ public static class UpdateImage
         var width = source?.PixelSize.Width ?? 0;
         var height = source?.PixelSize.Height ?? 0;
         
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
             if (vm.MainWindow.CurrentView.CurrentValue != vm.ImageViewer)
             {
                 vm.MainWindow.CurrentView.Value = vm.ImageViewer;
             }
             
-            WindowResizing.SetSize(width, height, 0, 0, 0, vm);
-
-            if (vm.PicViewer.RotationAngle.CurrentValue != 0)
-            {
-                vm.ImageViewer.Rotate(vm.PicViewer.RotationAngle.CurrentValue);
-            }
+            WindowResizing.SetSize(width, height, 0, 0, vm);
         }, DispatcherPriority.Render);
         
         TitleManager.SetTiffTitle(tiffNavigationInfo, width, height, index, fileInfo, vm);
@@ -296,11 +292,11 @@ public static class UpdateImage
             {
                 vm.MainWindow.CurrentView.Value = vm.ImageViewer;
             }
-            WindowResizing.SetSize(width, height, 0, 0, 0, vm);
+            WindowResizing.SetSize(width, height, 0, 0, vm);
             vm.ImageViewer.ZoomPanControl.ResetZoomSlim();
         }, DispatcherPriority.Send);
 
-        var singeImageWindowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, 100);
+        var singeImageWindowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, 100, vm.PicViewer.HasChanges.CurrentValue);
         vm.PicViewer.WindowTitle.Value = singeImageWindowTitles.TitleWithAppName;
         vm.PicViewer.Title.Value = singeImageWindowTitles.BaseTitle;
         vm.PicViewer.TitleTooltip.Value = singeImageWindowTitles.BaseTitle;

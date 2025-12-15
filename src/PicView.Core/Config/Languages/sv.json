@@ -424,5 +424,17 @@
   "_2Star": "2 stjärnor",
   "_3Star": "3 stjärnor",
   "_4Star": "4 stjärnor",
-  "_5Star": "5 stjärnor"
+  "_5Star": "5 stjärnor",
+
+  "AccessDenied": "Åtkomst nekad",
+  "Disgard": "Kassera",
+  "ExportToPdf": "Exportera till PDF",
+  "HideHistoryWindow": "Dölj historikfönster",
+  "History": "Historik",
+  "Horizontal": "Horisontell",
+  "SaveChanges": "Spara ändringar",
+  "ShowHistoryWindow": "Visa historikfönster",
+  "Tools": "Verktyg",
+  "Menu": "Meny",
+  "Vertical": "Vertikal"
 }

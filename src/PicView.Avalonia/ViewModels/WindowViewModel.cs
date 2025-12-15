@@ -53,6 +53,14 @@ public class WindowViewModel
         }
     }
 
+    public void ShowHistoryWindow()
+    {
+        if (UIHelper.GetMainView.DataContext is MainViewModel vm)
+        {
+            vm.PlatformWindowService.ShowHistoryWindow();
+        }
+    }
+
     public void ShowBatchResizeWindow()
     {
         if (UIHelper.GetMainView.DataContext is MainViewModel vm)

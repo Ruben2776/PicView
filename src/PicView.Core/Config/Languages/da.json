@@ -424,5 +424,17 @@
   "_2Star": "2 stjerner",
   "_3Star": "3 stjerner",
   "_4Star": "4 stjerner",
-  "_5Star": "5 stjerner"
+  "_5Star": "5 stjerner",
+
+  "AccessDenied": "Adgang nægtet",
+  "Disgard": "Kassér",
+  "ExportToPdf": "Eksporter til PDF",
+  "HideHistoryWindow": "Skjul historikvindue",
+  "History": "Historik",
+  "Horizontal": "Vandret",
+  "SaveChanges": "Gem ændringer",
+  "ShowHistoryWindow": "Vis historikvindue",
+  "Tools": "Værktøjer",
+  "Menu": "Menu",
+  "Vertical": "Lodret"
 }

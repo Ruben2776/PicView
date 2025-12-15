@@ -84,7 +84,7 @@ public static class FilePicker
         return await FileSaverHelper.SaveFileAsync(fileName, file, vm).ConfigureAwait(false);
     }
     
-    public static async Task<string?> PickFileForSavingAsync(string? fileName, string? ext = null)
+    public static async Task<string?> PickFileForSavingAsync(string? fileName, string? ext = null, FilePickerFileType[]? fileTypeChoices = null)
     {
         try
         {
@@ -99,7 +99,7 @@ public static class FilePicker
             var options = new FilePickerSaveOptions
             {
                 Title = $"{TranslationManager.Translation.SaveAs} - PicView",
-                FileTypeChoices = [
+                FileTypeChoices = fileTypeChoices ?? [
                     FilePickerFileTypes.ImageAll,
                     GetFilePickerFileTypes.JpegFileType,
                     GetFilePickerFileTypes.PngFileType,
@@ -125,6 +125,17 @@ public static class FilePicker
             #endif
             return null;
         }
+    }
+
+    public static async Task PickAndExportToPdfAsync(string? fileName, MainViewModel vm)
+    {
+        var file = await PickFileForSavingAsync(fileName, ".pdf", [FilePickerFileTypes.Pdf]).ConfigureAwait(false);
+        if (file is null)
+            return;
+
+        vm.MainWindow.IsLoadingIndicatorShown.Value = true;
+        await FileSaverHelper.ExportToPdfAsync(fileName, file, vm).ConfigureAwait(false);
+        vm.MainWindow.IsLoadingIndicatorShown.Value = false;
     }
 
     public static async Task<string> SelectDirectory()

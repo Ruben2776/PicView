@@ -9,13 +9,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <MenuItem
+    <!-- <MenuItem
         Command="{CompiledBinding Tools.RotateTask}"
         CommandParameter="0"
         GroupName="RotationGroup"
         Header="0°"
         ToggleType="Radio"
-        x:Name="Rotation0Item" />
+        x:Name="Rotation0Item" /> -->
     <MenuItem
         Command="{CompiledBinding Tools.RotateTask}"
         CommandParameter="90"
@@ -38,18 +38,57 @@
         ToggleType="Radio"
         x:Name="Rotation270Item" />
     <Separator />
-    <MenuItem Command="{CompiledBinding Tools.FlipCommand}" Header="{CompiledBinding Translation.IsFlipped.Value}">
+    <MenuItem
+        Command="{CompiledBinding Tools.RotateLeftCommand}"
+        Header="{CompiledBinding Translation.RotateLeft.Value, Mode=OneWay}"
+        StaysOpenOnClick="True">
+        <MenuItem.Icon>
+            <Path Classes="RotateLeftPath" />
+        </MenuItem.Icon>
+    </MenuItem>
+    <MenuItem
+        Command="{CompiledBinding Tools.RotateRightCommand}"
+        Header="{CompiledBinding Translation.RotateRight.Value, Mode=OneWay}"
+        StaysOpenOnClick="True">
+        <MenuItem.Icon>
+            <Path Classes="RotateRightPath" />
+        </MenuItem.Icon>
+    </MenuItem>
+    <Separator />
+    <MenuItem Command="{CompiledBinding Tools.FlipCommand}">
+        <MenuItem.Header>
+            <MultiBinding StringFormat="{}{0} {1}">
+                <CompiledBinding Path="Translation.Flip.Value"/>
+                <CompiledBinding Path="Translation.Horizontal.Value"/>
+            </MultiBinding>
+        </MenuItem.Header>
         <MenuItem.Icon>
             <Path
-                Data="{StaticResource FlipGeometry}"
-                Fill="{DynamicResource MainTextColor}"
+                Data="{StaticResource FlipHorizontalGeometry}"
+                Stroke="{DynamicResource MainTextColor}"
+                StrokeThickness="1"
+                StrokeLineCap="Round"
+                Width="12"
                 Height="12"
-                Stretch="Fill"
-                Width="12">
-                <Path.RenderTransform>
-                    <ScaleTransform ScaleX="{CompiledBinding PicViewer.ScaleX.Value}" />
-                </Path.RenderTransform>
-            </Path>
+                Stretch="Uniform" />
+        </MenuItem.Icon>
+    </MenuItem>
+    <MenuItem Command="{CompiledBinding Tools.FlipVerticalCommand}">
+        <MenuItem.Header>
+            <MultiBinding StringFormat="{}{0} {1}">
+                <CompiledBinding Path="Translation.Flip.Value"/>
+                <CompiledBinding Path="Translation.Vertical.Value"/>
+            </MultiBinding>
+        </MenuItem.Header>
+        <MenuItem.Icon>
+            <Path
+                Data="{StaticResource FlipVerticalGeometry}"
+                Stroke="{DynamicResource MainTextColor}"
+                StrokeThickness="1"
+                StrokeLineCap="Round"
+                Width="12"
+                Height="12"
+                Stretch="Uniform" />
         </MenuItem.Icon>
     </MenuItem>
 </ContextMenu>

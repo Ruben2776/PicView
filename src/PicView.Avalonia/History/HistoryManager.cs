@@ -10,9 +10,13 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using PicView.Avalonia.Extensions;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.Extensions;
+using PicView.Core.Localization;
 using R3;
 
 namespace PicView.Avalonia.History;
@@ -37,7 +41,13 @@ public sealed class HistoryManager : IDisposable
         CloseCommand = new ReactiveCommand(async _ => await Hide());
     }
 
-    public async Task AddSnapshot(EditKind kind, string description, Bitmap? bitmap = null)
+    public async Task SetHasChanges(bool hasChanges)
+    {
+        _vm.PicViewer.HasChanges.Value = hasChanges;
+        TitleManager.SetTitle(_vm);
+    }
+
+    public async Task AddSnapshot(EditKind kind, string? description = null, Bitmap? bitmap = null)
     {
         if(kind == EditKind.Open)
             Clear();
@@ -46,12 +56,15 @@ public sealed class HistoryManager : IDisposable
         bitmap ??= _vm.PicViewer.ImageSource.Value as Bitmap;
         if (bitmap is null) return;
 
-        // Standard behavior: if user had undone, clear the redo branch
+        // If user had undone, clear the redo branch
         if (_cursor > 0)
             await Dispatcher.UIThread.InvokeAsync(DiscardRedoBranch);
 
         // Reindex existing entries
         foreach (var e in _collection) e.Index++;
+
+        if (description is null)
+            description = $"{_vm.PicViewer.PixelWidth.Value}×{_vm.PicViewer.PixelHeight.Value} {_vm.PicViewer.FileInfo?.Value?.Length.GetReadableFileSize()}";
 
         // Insert a lightweight placeholder (spinner on)
         var entry = new HistoryEntry
@@ -62,7 +75,7 @@ public sealed class HistoryManager : IDisposable
             IsLoading = true
         };
 
-        // UI: add to collections and enforce capacity
+        // Add to collections and enforce capacity
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             _collection.Insert(0, entry);
@@ -71,22 +84,18 @@ public sealed class HistoryManager : IDisposable
             EnforceCapacity();
         });
 
-        // UI thread clone is safest/fastest for RenderTargetBitmap on all platforms
-        var snapshot = await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            return CloneBitmap(bitmap);
-        });
-
-        // Populate entry and flip loading off
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            entry.Snapshot = snapshot;
+            entry.Snapshot = CloneBitmap(bitmap);
             entry.IsLoading = false;
 
-            // Notify list about updated item (if your UI needs it)
+            // Notify list about updated item
             var i = Timeline.IndexOf(entry);
             if (i >= 0) Timeline[i] = entry;
         });
+
+        if (kind != EditKind.Open)
+            await _vm.HistoryManager.SetHasChanges(true);    
     }
 
 
@@ -106,7 +115,6 @@ public sealed class HistoryManager : IDisposable
             victim.Snapshot = null;
         }
 
-        // Reset cursor to 0 (we are on the newest entry)
         _cursor = 0;
 
         // Re-index remaining entries to keep UI consistent
@@ -130,55 +138,52 @@ public sealed class HistoryManager : IDisposable
         }
     }
 
-    public async Task<Bitmap?> Undo()
+    public async Task Undo()
     {
-        if (_cursor >= _collection.Count - 1) return null;
+        if (_cursor >= _collection.Count - 1) return;
         _cursor++;
-        return await RestoreSnapshot(_cursor);
+        await RestoreSnapshot(_cursor);
     }
 
-    public async Task<Bitmap?> Redo()
+    public async Task Redo()
     {
-        if (_cursor <= 0) return null;
+        if (_cursor <= 0) return;
         _cursor--;
-        return await RestoreSnapshot(_cursor);
+        await RestoreSnapshot(_cursor);
     }
 
-    public async Task<Bitmap?> JumpTo(int index)
+    public async Task JumpTo(int index)
     {
-        if (index < 0 || index >= _collection.Count) return null;
+        if (index < 0 || index >= _collection.Count) return;
         _cursor = index;
-        return await RestoreSnapshot(_cursor);
+        await RestoreSnapshot(_cursor);
     }
 
-    private async Task<Bitmap?> RestoreSnapshot(int index)
+    private async Task RestoreSnapshot(int index)
     {
         if (index < 0 || index >= _collection.Count)
-            return null;
+            return;
 
-        var entry = _collection[index];
-        var source = entry.Snapshot;
-        if (source is null) return null;
+        var source = _collection[index].Snapshot;
+        if (source is null)
+            return;
 
-        var bmp = await Dispatcher.UIThread.InvokeAsync(() => CloneBitmap(source));
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
+        await Dispatcher.UIThread.InvokeAsync(async () =>
         {
-            _vm.ImageViewer.ApplyBitmapAndRefresh(bmp, _vm);
-        });
-        return bmp;
+            var cloned = CloneBitmap(source);
+            await _vm.ImageViewer.ApplySnapshotBitmap(cloned, _vm);
+                   
+        }, DispatcherPriority.Render);
+
+        await _vm.HistoryManager.SetHasChanges((_collection[index].Kind != EditKind.Open));
     }
+
+
 
     public void Clear()
     {
         void Core()
         {
-            foreach (var e in _collection)
-            {
-                e.Snapshot?.Dispose();
-                e.Snapshot = null;
-            }
-        
              _collection.Clear();
             _cursor = -1;
             Timeline.Clear();
@@ -202,8 +207,8 @@ public sealed class HistoryManager : IDisposable
         {
             Window = new HistoryWindow
             {
-                Width = 300,
-                Height = 340,
+                Width = 200,
+                Height = 320,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Top,
                 Margin = new Thickness(12),
@@ -212,11 +217,6 @@ public sealed class HistoryManager : IDisposable
 
             UIHelper.GetMainView.MainGrid.Children.Add(Window);
         });        
-    }
-
-    public void Dispose()
-    {
-        Clear();
     }
 
     public async Task Hide()
@@ -230,9 +230,27 @@ public sealed class HistoryManager : IDisposable
         Window = null;
     }
 
-
-    public static Bitmap CloneBitmap(Bitmap source)
+    public async Task ToggleHistoryWindow()
     {
+        if (Window is null)
+        {
+            await Show();
+            _vm.Translation.IsShowingHistoryWindow.Value = TranslationManager.Translation.HideHistoryWindow;
+        }
+        else
+        {
+            await Hide();
+            _vm.Translation.IsShowingHistoryWindow.Value = TranslationManager.Translation.ShowHistoryWindow;
+        }
+
+        MenuManager.CloseMenus(_vm);
+    }
+
+    public static Bitmap? CloneBitmap(Bitmap source)
+    {
+        if(source is null)
+            return null;
+            
         var size = source.PixelSize;
         var target = new RenderTargetBitmap(size);
         using (var ctx = target.CreateDrawingContext())
@@ -242,5 +260,10 @@ public sealed class HistoryManager : IDisposable
                 new Rect(0, 0, size.Width, size.Height));
         }
         return target;
+    }
+
+    public void Dispose()
+    {
+        Clear();
     }
 }

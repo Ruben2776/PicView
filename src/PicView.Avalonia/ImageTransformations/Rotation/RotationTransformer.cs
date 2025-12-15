@@ -1,13 +1,19 @@
+using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using Avalonia.Utilities;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Extensions;
+using PicView.Avalonia.History;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Exif;
-using PicView.Core.ImageTransformations;
+using PicView.Core.Localization;
 
 namespace PicView.Avalonia.ImageTransformations.Rotation;
 
@@ -17,40 +23,59 @@ public class RotationTransformer(
     Func<object?> getDataContext,
     Action resetZoom)
 {
-    public void Rotate(bool clockWise)
+    public async Task RotateAsync(double angle)
     {
         if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
-        {
             return;
-        }
 
-        if (RotationHelper.IsValidRotation(vm.PicViewer.RotationAngle.CurrentValue))
-        {
-            var nextAngle = RotationHelper.Rotate(vm.PicViewer.RotationAngle.CurrentValue, clockWise);
-            vm.PicViewer.RotationAngle.Value = nextAngle switch
-            {
-                360 => 0,
-                -90 => 270,
-                _ => nextAngle
-            };
-        }
-        else
-        {
-            vm.PicViewer.RotationAngle.Value =
-                RotationHelper.NextRotationAngle(vm.PicViewer.RotationAngle.CurrentValue, true);
-        }
+        if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
+            return;
 
-        SetImageLayoutTransform(new RotateTransform(vm.PicViewer.RotationAngle.CurrentValue));
-        WindowResizing.SetSize(vm);
-        mainImage.InvalidateVisual();
+        
+        bool clockWise = angle > 0;
+        var desc = $"{TranslationManager.Translation.Rotated} {(clockWise ? TranslationManager.Translation.Right : TranslationManager.Translation.Left)} {angle.ToString().Replace("-", "")}°";
+
+        await using (DebouncedLoadingScope.Start(vm.MainWindow.IsLoadingIndicatorShown, 150))
+        {
+            var rotated = await Task.Run(() => RotateBitmap((Bitmap)vm.PicViewer.ImageSource.Value, angle));
+
+            // Add to History
+            await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
+
+            // Apply to the PicViewer
+            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(rotated, vm));
+        }
     }
 
-    public void Rotate(double angle)
+    private static Bitmap RotateBitmap(Bitmap source, double angle)
     {
-        SetImageLayoutTransform(new RotateTransform(angle));
-        WindowResizing.SetSize(getDataContext() as MainViewModel);
-        mainImage.InvalidateVisual();
+        var isRightAngle = (Math.Abs(angle) % 180) == 90;
+
+        var size = isRightAngle
+            ? new PixelSize(source.PixelSize.Height, source.PixelSize.Width)
+            : new PixelSize(source.PixelSize.Width, source.PixelSize.Height);
+
+        var target = new RenderTargetBitmap(size);
+
+        using (var ctx = target.CreateDrawingContext())
+        {
+            // Translate to center → rotate → translate back
+            var transform = Matrix.CreateTranslation(-source.PixelSize.Width / 2, -source.PixelSize.Height / 2)
+                            * Matrix.CreateRotation(MathUtilities.Deg2Rad(angle))
+                            * Matrix.CreateTranslation(size.Width / 2, size.Height / 2);
+
+            using (ctx.PushTransform(transform))
+            {
+                ctx.DrawImage(
+                    source,
+                    new Rect(0, 0, source.PixelSize.Width, source.PixelSize.Height),
+                    new Rect(0, 0, source.PixelSize.Width, source.PixelSize.Height));
+            }
+        }
+
+        return target;
     }
+
 
     private void SetImageLayoutTransform(RotateTransform rotateTransform)
     {
@@ -65,115 +90,55 @@ public class RotationTransformer(
         }
     }
 
-    private ScaleTransform? _scaleTransform;
-    public void Flip(bool animate)
+    public async Task FlipAsync(bool horizontal)
     {
         if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
-        {
             return;
-        }
-        
-        _scaleTransform ??= new ScaleTransform();
 
-        var prevScaleX = vm.PicViewer.ScaleX.CurrentValue;
-        var newScaleX = prevScaleX == -1 ? 1 : -1;
-
-        if (animate)
-        {
-            _scaleTransform.Transitions ??=
-            [
-                new DoubleTransition
-                {
-                    Property = ScaleTransform.ScaleXProperty,
-                    Duration = TimeSpan.FromSeconds(.2)
-                }
-            ];
-        }
-        else
-        {
-            _scaleTransform.Transitions = null;
-        }
-        imageLayoutTransformControl.RenderTransform = _scaleTransform;
-        _scaleTransform.ScaleX = newScaleX;
-    }
-
-    public void SetTransform(int scaleX, int rotationAngle)
-    {
-        if (getDataContext() is not MainViewModel vm)
-        {
+        if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
             return;
-        }
 
-        vm.PicViewer.ScaleX.Value = scaleX;
-        vm.PicViewer.RotationAngle.Value = rotationAngle;
-        imageLayoutTransformControl.RenderTransform = new ScaleTransform(vm.PicViewer.ScaleX.CurrentValue, 1);
-        imageLayoutTransformControl.LayoutTransform = new RotateTransform(rotationAngle);
+        var desc = $"{TranslationManager.Translation.Flipped} {(horizontal ? TranslationManager.Translation.Horizontal : TranslationManager.Translation.Vertical)}";
 
-        resetZoom?.Invoke();
-    }
-
-    public void SetTransform(ExifOrientation? orientation, MagickFormat? format, bool reset = true)
-    {
-        if (Dispatcher.UIThread.CheckAccess())
+        await using (DebouncedLoadingScope.Start(vm.MainWindow.IsLoadingIndicatorShown, 150))
         {
-            ApplyOrientationTransform(orientation, format, reset);
-        }
-        else
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-                ApplyOrientationTransform(orientation, format, reset), DispatcherPriority.Send);
+            var flipped = await Task.Run(() => FlipBitmap(bmp, horizontal));
+
+            // Add to History
+            await vm.HistoryManager.AddSnapshot(horizontal ? EditKind.FlipH : EditKind.FlipV, desc, flipped).ConfigureAwait(false);
+
+            // Apply to the PicViewer
+            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(flipped, vm));
         }
     }
-
-    private void ApplyOrientationTransform(ExifOrientation? orientation, MagickFormat? format, bool reset)
+    
+    private static Bitmap FlipBitmap(Bitmap source, bool horizontal)
     {
-        if (Settings.Zoom.ScrollEnabled && imageLayoutTransformControl.Parent is ScrollViewer scrollViewer)
-        {
-            scrollViewer.ScrollToHome();
-        }
+        var size   = source.PixelSize;
+        var target = new RenderTargetBitmap(size);
 
-        if (format is MagickFormat.Heic or MagickFormat.Heif)
+        using (var ctx = target.CreateDrawingContext())
         {
-            if (reset)
+            var m = Matrix.Identity;
+            if (horizontal)
             {
-                SetTransform(1, 0);
+                m *= Matrix.CreateScale(-1, 1);
+                m *= Matrix.CreateTranslation(size.Width, 0);
+            }
+            else
+            {
+                m *= Matrix.CreateScale(1, -1);
+                m *= Matrix.CreateTranslation(0, size.Height);
             }
 
-            return;
+            using (ctx.PushTransform(m))
+            {
+                ctx.DrawImage(source,
+                    new Rect(0, 0, size.Width, size.Height),
+                    new Rect(0, 0, size.Width, size.Height));
+            }
         }
 
-        switch (orientation)
-        {
-            case null:
-            case ExifOrientation.None:
-            case ExifOrientation.Horizontal:
-                if (reset)
-                {
-                    SetTransform(1, 0);
-                }
-
-                break;
-            case ExifOrientation.MirrorHorizontal:
-                SetTransform(-1, 0);
-                break;
-            case ExifOrientation.Rotate180:
-                SetTransform(1, 180);
-                break;
-            case ExifOrientation.MirrorVertical:
-                SetTransform(-1, 180);
-                break;
-            case ExifOrientation.MirrorHorizontalRotate270Cw:
-                SetTransform(-1, 90);
-                break;
-            case ExifOrientation.Rotate90Cw:
-                SetTransform(1, 90);
-                break;
-            case ExifOrientation.MirrorHorizontalRotate90Cw:
-                SetTransform(-1, 270);
-                break;
-            case ExifOrientation.Rotated270Cw:
-                SetTransform(1, 270);
-                break;
-        }
+        return target;
     }
 }

@@ -424,5 +424,17 @@
   "_2Star": "Ocena 2 gwiazdek",
   "_3Star": "Ocena 3 gwiazdek",
   "_4Star": "Ocena 4 gwiazdek",
-  "_5Star": "Ocena 5 gwiazdek"
+  "_5Star": "Ocena 5 gwiazdek",
+
+  "AccessDenied": "Odmowa dostępu",
+  "Disgard": "Odrzuć",
+  "ExportToPdf": "Eksportuj do PDF",
+  "HideHistoryWindow": "Ukryj okno historii",
+  "History": "Historia",
+  "Horizontal": "Poziomy",
+  "SaveChanges": "Zapisz zmiany",
+  "ShowHistoryWindow": "Pokaż okno historii",
+  "Tools": "Narzędzia",
+  "Menu": "Menu",
+  "Vertical": "Pionowy"
 }

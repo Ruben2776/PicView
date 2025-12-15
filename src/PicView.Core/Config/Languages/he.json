@@ -424,5 +424,18 @@
   "_2Star": "דירוג 2 כוכבים",
   "_3Star": "דירוג 3 כוכבים",
   "_4Star": "דירוג 4 כוכבים",
-  "_5Star": "דירוג 5 כוכבים"
+  "_5Star": "דירוג 5 כוכבים",
+
+  "AccessDenied": "הגישה נדחתה",
+  "Disgard": "בטל",
+  "ExportToPdf": "ייצוא ל-PDF",
+  "HideHistoryWindow": "הסתר חלון היסטוריה",
+  "History": "היסטוריה",
+  "Horizontal": "אופקי",
+  "SaveChanges": "שמור שינויים",
+  "ShowHistoryWindow": "הצג חלון היסטוריה",
+  "Tools": "כלים",
+  "Menu": "תפריט",
+  "Vertical": "אנכי"
+
 }

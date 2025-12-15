@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using Clowd.Clipboard;
 using PicView.Avalonia.ColorManagement;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.ViewModels;
@@ -83,6 +84,8 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
     
     public Task<bool> DeleteFile(string path, bool recycle) =>
         Task.Run(() => WinFileHelper.DeleteFile(path, recycle));
+
+    public async Task<bool> SaveFile(string path) => await FileSaverHelper.SaveCurrentFile(_vm);
 
     public void SetTaskbarProgress(ulong progress, ulong maximum)
     {
@@ -241,7 +244,7 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
         _windowInitializer?.ShowSingleImageResizeWindow(_vm);
 
     public async Task ShowBatchResizeWindow() =>
-       await _windowInitializer?.ShowBatchResizeWindow(_vm);
+        await _windowInitializer?.ShowBatchResizeWindow(_vm);
 
     public void ShowEffectsWindow() =>
         _windowInitializer?.ShowEffectsWindow(_vm);
@@ -269,6 +272,8 @@ public class App : Application, IPlatformSpecificService, IPlatformWindowService
     public async Task Restore() =>
         await Win32Window.Restore(_mainWindow, _vm);
 
+    public void ShowHistoryWindow() =>
+        _windowInitializer?.ShowHistoryWindow(_vm);
     #endregion
 
 }

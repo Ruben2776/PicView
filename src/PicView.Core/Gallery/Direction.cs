@@ -6,3 +6,10 @@ public enum Direction
     Left,
     Right
 }
+
+
+public enum NavigationDirection
+{
+    Prev,
+    Next
+}

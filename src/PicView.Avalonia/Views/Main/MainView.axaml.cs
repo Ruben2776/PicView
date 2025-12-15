@@ -173,7 +173,6 @@ public partial class MainView : UserControl
         
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            CropMenuItem.IsEnabled = CropFunctions.DetermineIfShouldBeEnabled(vm);
             vm.PicViewer.ShouldOptimizeImageBeEnabled.Value = ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(vm.PicViewer.FileInfo?.CurrentValue);
 
             // Set source for ChangeCtrlZoomImage

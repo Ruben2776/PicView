@@ -2,6 +2,7 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.Crop;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.Views.UC.PopUps;
@@ -36,6 +37,11 @@ public static class DialogManager
         {
             Slideshow.StopSlideshow(vm);
             return;
+        }
+
+        if (vm.PicViewer.HasChanges.Value)
+        {
+            await FileSaverHelper.PromptSaveChangesAsync().ConfigureAwait(false);
         }
         
         // Handle window close
@@ -87,4 +93,34 @@ public static class DialogManager
         MenuManager.CloseMenus(UIHelper.GetMainView.DataContext as MainViewModel);
         UIHelper.GetMainView.MainGrid.Children.Add(new NavigationDialog());
     }
+
+    public static void AddMessageDialog(string title, string message)
+    {
+        if (UIHelper.GetMainView.MainGrid.Children.OfType<MessageDialog>().Any())
+        {
+            return;
+        }
+
+        MenuManager.CloseMenus(UIHelper.GetMainView.DataContext as MainViewModel);
+        UIHelper.GetMainView.MainGrid.Children.Add(new MessageDialog(title, message));
+    }
+
+    public static Task<bool> AddSaveDialog(string title, string message)
+    {
+        // If a SaveDialog is already open, just return its task
+        var existing = UIHelper.GetMainView.MainGrid.Children
+            .OfType<SaveDialog>()
+            .FirstOrDefault();
+
+        if (existing != null)
+        {
+            return existing.CloseTask;
+        }
+
+        var dialog = new SaveDialog(title, message);
+        UIHelper.GetMainView.MainGrid.Children.Add(dialog);
+
+        return dialog.CloseTask;
+    }
+
 }

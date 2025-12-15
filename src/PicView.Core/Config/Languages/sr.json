@@ -424,5 +424,17 @@
   "_2Star": "2 звездице",
   "_3Star": "3 звездице",
   "_4Star": "4 звездице",
-  "_5Star": "5 звездица"
+  "_5Star": "5 звездица",
+
+  "AccessDenied": "Pristup odbijen",
+  "Disgard": "Odbaci",
+  "ExportToPdf": "Izvezi u PDF",
+  "HideHistoryWindow": "Sakrij prozor istorije",
+  "History": "Istorija",
+  "Horizontal": "Horizontalni",
+  "SaveChanges": "Sačuvaj promene",
+  "ShowHistoryWindow": "Prikaži prozor istorije",
+  "Tools": "Alati",
+  "Menu": "Meni",
+  "Vertical": "Vertikalni"
 }

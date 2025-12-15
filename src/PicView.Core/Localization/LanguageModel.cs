@@ -11,6 +11,7 @@ public class LanguageModel
     public string? _5Star { get; set; }
     public string? About { get; set; }
     public string? ActionProgram { get; set; }
+    public string? AccessDenied { get; set; }
     public string? AddFiles { get; set; }
     public string? AddFolder { get; set; }
     public string? AddedToClipboard { get; set; }
@@ -110,6 +111,7 @@ public class LanguageModel
     public string? DigitalZoom { get; set; }
     public string? DisableFadeInButtonsOnHover { get; set; }
     public string? DiskSize { get; set; }
+    public string? Discard { get; set; }
     public string? DoubleClick { get; set; }
     public string? Down { get; set; }
     public string? Downloading { get; set; }
@@ -126,6 +128,7 @@ public class LanguageModel
     public string? EscCloseTooltip { get; set; }
     public string? ExifVersion { get; set; }
     public string? ExpandedGalleryItemSize { get; set; }
+    public string? ExportToPdf { get; set; }
     public string? ExposureBias { get; set; }
     public string? ExposureProgram { get; set; }
     public string? ExposureTime { get; set; }
@@ -183,11 +186,14 @@ public class LanguageModel
     public string? Help { get; set; }
     public string? HideBottomGallery { get; set; }
     public string? HideBottomToolbar { get; set; }
+    public string? HideHistoryWindow { get; set; }
     public string? HideHoverNavigationBar { get; set; }
     public string? HideUI { get; set; }
     public string? High { get; set; }
     public string? HighlightColor { get; set; }
     public string? HighQuality { get; set; }
+    public string? History { get; set; }
+    public string? Horizontal { get; set; }
     public string? Image { get; set; }
     public string? ImageAliasing { get; set; }
     public string? ImageControl { get; set; }
@@ -223,6 +229,7 @@ public class LanguageModel
     public string? MaxAperture { get; set; }
     public string? Maximize { get; set; }
     public string? MegaPixels { get; set; }
+    public string? Menu { get; set; }
     public string? Meter { get; set; }
     public string? MeteringMode { get; set; }
     public string? Minimize { get; set; }
@@ -319,6 +326,7 @@ public class LanguageModel
     public string? Save { get; set; }
     public string? SaveAs { get; set; }
     public string? SaveAsPdf { get; set; }
+    public string? SaveChanges { get; set; }
     public string? SavingFileFailed { get; set; }
     public string? Scale { get; set; }
     public string? ScrollAndRotate { get; set; }
@@ -358,6 +366,7 @@ public class LanguageModel
     public string? ShowConfirmationOnEsc { get; set; }
     public string? ShowFadeInButtonsOnHover { get; set; }
     public string? ShowFileSavingDialog { get; set; }
+    public string? ShowHistoryWindow { get; set; }
     public string? ShowHoverNavigationBar { get; set; }
     public string? ShowImageGallery { get; set; }
     public string? ShowImageInfo { get; set; }
@@ -397,7 +406,8 @@ public class LanguageModel
     public string? ToggleLooping { get; set; }
     public string? ToggleScroll { get; set; }
     public string? ToggleTaskbarProgress { get; set; }
-    public string? ToolWindows { get; set; }
+    public string? Tools { get; set; }
+        public string? ToolWindows { get; set; }
     public string? Top { get; set; }
     public string? UnableToRender { get; set; }
     public string? Unassociate { get; set; }
@@ -415,6 +425,7 @@ public class LanguageModel
     public string? UseAnimatedZoom { get; set; }
     public string? UsingMouse { get; set; }
     public string? UsingTouchpad { get; set; }
+    public string? Vertical { get; set; }
     public string? Version { get; set; }
     public string? View { get; set; }
     public string? ViewLicenseFile { get; set; }

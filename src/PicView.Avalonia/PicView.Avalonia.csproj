@@ -99,6 +99,14 @@
       <DependentUpon>DeleteDialog.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\UC\PopUps\SaveDialog.axaml.cs">
+      <DependentUpon>SaveDialog.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UC\PopUps\MessageDialog.axaml.cs">
+      <DependentUpon>MessageDialog.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\EffectsView.axaml.cs">
       <DependentUpon>EffectsView.axaml</DependentUpon>
       <SubType>Code</SubType>

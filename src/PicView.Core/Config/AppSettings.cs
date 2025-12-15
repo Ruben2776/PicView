@@ -210,6 +210,16 @@ public class UIProperties
     /// 0 => None, 1 => Reset zoom, 2 => Toggle fullscreen
     /// </summary>
     public int DoubleClickBehavior { get; set; } = 1;
+
+    /// <summary>
+    /// Show Print In Bottom Toolbar instead of Flip.
+    /// </summary>
+    public bool ShowPrintInBottomToolbar { get; set; } = false;
+
+    /// <summary>
+    /// Enable Check For Updates
+    /// </summary>
+    public bool EnableCheckForUpdates { get; set; } = true;
 }
 
 public class Theme

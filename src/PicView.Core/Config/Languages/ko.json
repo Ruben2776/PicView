@@ -424,5 +424,18 @@
   "_2Star": "별 2 등급",
   "_3Star": "별 3 등급",
   "_4Star": "별 4 등급",
-  "_5Star": "별 5 등급"
+  "_5Star": "별 5 등급",
+
+  "AccessDenied": "액세스 거부됨",
+  "Disgard": "버리기",
+  "ExportToPdf": "PDF로 내보내기",
+  "HideHistoryWindow": "기록 창 숨기기",
+  "History": "기록",
+  "Horizontal": "수평",
+  "SaveChanges": "변경 사항 저장",
+  "ShowHistoryWindow": "기록 창 표시",
+  "Tools": "도구",
+  "Menu": "메뉴",
+  "Vertical": "수직"
+
 }

@@ -172,12 +172,11 @@ public static class WindowResizing
     }
 
     public static void SetSize(double width, double height, MainViewModel vm)
-        => SetSize(width, height, 0, 0, vm.PicViewer.RotationAngle.CurrentValue, vm);
+        => SetSize(width, height, 0, 0, vm);
 
-    public static void SetSize(double width, double height, double secondWidth, double secondHeight, double rotation,
-        MainViewModel vm)
+    public static void SetSize(double width, double height, double secondWidth, double secondHeight, MainViewModel vm)
     {
-        var size = GetSize(width, height, secondWidth, secondHeight, rotation, vm);
+        var size = GetSize(width, height, secondWidth, secondHeight, vm);
 
         if (size is null)
         {
@@ -215,9 +214,7 @@ public static class WindowResizing
             else
             {
                 var scrollbarSize = Settings.Zoom.ScrollEnabled ? SizeDefaults.ScrollbarSize : 0;
-                vm.PicViewer.GalleryWidth.Value = vm.PicViewer.RotationAngle.CurrentValue is 90 or 270
-                    ? Math.Max(size.Height + scrollbarSize, SizeDefaults.WindowMinSize + scrollbarSize)
-                    : Math.Max(size.Width + scrollbarSize, SizeDefaults.WindowMinSize + scrollbarSize);
+                vm.PicViewer.GalleryWidth.Value = Math.Max(size.Width + scrollbarSize, SizeDefaults.WindowMinSize + scrollbarSize);
             }
         }
         else
@@ -272,7 +269,7 @@ public static class WindowResizing
 
         if (!Settings.ImageScaling.ShowImageSideBySide)
         {
-            return GetSize(firstWidth, firstHeight, 0, 0, vm.PicViewer.RotationAngle.CurrentValue, vm);
+            return GetSize(firstWidth, firstHeight, 0, 0, vm);
         }
 
         var secondaryPreloadValue = NavigationManager.GetNextPreLoadValue();
@@ -296,13 +293,10 @@ public static class WindowResizing
             secondHeight = 0;
         }
 
-        return GetSize(firstWidth, firstHeight, secondWidth, secondHeight, vm.PicViewer.RotationAngle.CurrentValue,
-            vm);
+        return GetSize(firstWidth, firstHeight, secondWidth, secondHeight, vm);
     }
 
-    public static ImageSize? GetSize(double width, double height, double secondWidth, double secondHeight,
-        double rotation,
-        MainViewModel vm)
+    public static ImageSize? GetSize(double width, double height, double secondWidth, double secondHeight, MainViewModel vm)
     {
         width = width == 0 ? vm.PicViewer.ImageWidth.CurrentValue : width;
         height = height == 0 ? vm.PicViewer.ImageHeight.CurrentValue : height;
@@ -329,7 +323,6 @@ public static class WindowResizing
                 minWidth,
                 minHeight,
                 vm.PlatformWindowService.CombinedTitleButtonsWidth,
-                rotation,
                 screenSize.Scaling,
                 vm.MainWindow.TitlebarHeight.CurrentValue,
                 vm.MainWindow.BottombarHeight.CurrentValue,
@@ -346,7 +339,6 @@ public static class WindowResizing
                 minWidth,
                 minHeight,
                 vm.PlatformWindowService.CombinedTitleButtonsWidth,
-                rotation,
                 screenSize.Scaling,
                 vm.MainWindow.TitlebarHeight.CurrentValue,
                 vm.MainWindow.BottombarHeight.CurrentValue,

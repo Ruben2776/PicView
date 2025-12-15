@@ -97,16 +97,15 @@
                     BorderThickness="0,0,1,0"
                     Classes="hover"
                     ClickMode="Release"
-                    Command="{CompiledBinding MainWindow.ToggleFullscreenCommand}"
-                    Data="{StaticResource FullscreenGeometry}"
+                    Command="{CompiledBinding MainWindow.MaximizeCommand}"
+                    Data="{StaticResource MaximizeGeometry}"
                     Foreground="{DynamicResource MainTextColor}"
                     IconHeight="12"
                     IconWidth="12"
                     IsRepeatEnabled="False"
-                    IsVisible="{CompiledBinding MainWindow.ShouldMaximizeBeShown.Value,
-                                                Mode=OneWay}"
+                    IsVisible="{CompiledBinding MainWindow.ShouldMaximizeBeShown.Value, Mode=OneWay}"
                     Width="30"
-                    x:Name="FullscreenButton" />
+                    x:Name="MaximizeButton" />
 
                 <customControls:IconButton
                     Background="{DynamicResource WindowButtonBackgroundColor}"
@@ -216,6 +215,18 @@
                         x:Name="PrintMenuItem">
                         <MenuItem.Icon>
                             <Path Classes="PrintPath" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <!-- Export to PDF -->
+                    <MenuItem
+                        Command="{CompiledBinding Tools.ExportToPdfCommand}"
+                        Header="{Binding Translation.ExportToPdf.Value, Mode=OneWay}"
+                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
+                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Theme="{StaticResource MainBg}">
+                        <MenuItem.Icon>
+                            <Path Classes="ExportToPdfPath" />
                         </MenuItem.Icon>
                     </MenuItem>
 
@@ -493,6 +504,24 @@
                         Margin="0"
                         Opacity=".9" />
 
+                    <!--  Toggle History Window  -->
+                    <MenuItem
+                        Command="{CompiledBinding Tools.ToggleHistoryWindowCommand}"
+                        Header="{CompiledBinding Translation.IsShowingHistoryWindow.Value, Mode=OneWay}"                        
+                        Theme="{StaticResource MainBg}">
+                        <MenuItem.Icon>
+                            <Image
+                                Height="12"
+                                Source="{StaticResource HistoryWindowIcon}"
+                                Width="12" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <Separator
+                        Background="{DynamicResource ContextMenuBackgroundColor}"
+                        Margin="0"
+                        Opacity=".9" />
+
                     <!--  Toggle side-by-side  -->
                     <MenuItem
                         Command="{CompiledBinding Tools.ShowSideBySideCommand}"
@@ -500,7 +529,12 @@
                                                  Mode=OneWay}"
                         IsChecked="{CompiledBinding PicViewer.IsShowingSideBySide.Value}"
                         Theme="{StaticResource MainBg}"
-                        ToggleType="CheckBox" />
+                        ToggleType="CheckBox">
+                        <MenuItem.Icon>
+                            <Image Width="12" Height="12"
+                                Source="{StaticResource SideBySideViewIcon}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
 
 
                     <Separator
@@ -613,7 +647,8 @@
                                                  Mode=OneWay}"
                         Theme="{StaticResource MainBg}"
                         ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
-                                                      Mode=OneWay}">
+                                                      Mode=OneWay}"
+                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
                         <MenuItem.Icon>
                             <Image
                                 Height="12"
@@ -627,8 +662,7 @@
                         Command="{CompiledBinding Window.ShowSingleImageResizeWindow}"
                         Header="{CompiledBinding Translation.ResizeImage.Value,
                                                  Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
-                                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image
@@ -683,8 +717,7 @@
                         Command="{CompiledBinding Tools.CropCommand}"
                         Header="{CompiledBinding Translation.Crop.Value,
                                                  Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.ShouldCropBeEnabled.Value,
-                                                    Mode=OneWay}"
+                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                         Theme="{StaticResource MainBg}"
                         x:Name="CropMenuItem">
                         <MenuItem.Icon>
@@ -700,18 +733,50 @@
                     <!--  Flip  -->
                     <MenuItem
                         Command="{CompiledBinding Tools.FlipCommand}"
-                        Header="{CompiledBinding Translation.IsFlipped.Value,
-                                                 Mode=OneWay}"
                         IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
                                                     Converter={x:Static ObjectConverters.IsNotNull}}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">
+                        <MenuItem.Header>
+                            <MultiBinding StringFormat="{}{0} {1}">
+                                <CompiledBinding Path="Translation.Flip.Value"/>
+                                <CompiledBinding Path="Translation.Horizontal.Value"/>
+                            </MultiBinding>
+                        </MenuItem.Header>
                         <MenuItem.Icon>
-                            <Path Classes="FlipPath">
-                                <Path.RenderTransform>
-                                    <ScaleTransform ScaleX="{CompiledBinding PicViewer.ScaleX.Value}" />
-                                </Path.RenderTransform>
-                            </Path>
+                            <Path
+                                Data="{StaticResource FlipHorizontalGeometry}"
+                                Stroke="{DynamicResource MainTextColor}"
+                                StrokeThickness="1"
+                                StrokeLineCap="Round"
+                                Width="12"
+                                Height="12"
+                                Stretch="Uniform" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <!--  Flip Vertical -->
+                    <MenuItem
+                        Command="{CompiledBinding Tools.FlipVerticalCommand}"
+                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
+                                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        StaysOpenOnClick="True"
+                        Theme="{StaticResource MainBg}">
+                        <MenuItem.Header>
+                            <MultiBinding StringFormat="{}{0} {1}">
+                                <CompiledBinding Path="Translation.Flip.Value"/>
+                                <CompiledBinding Path="Translation.Vertical.Value"/>
+                            </MultiBinding>
+                        </MenuItem.Header>
+                        <MenuItem.Icon>
+                            <Path
+                                Data="{StaticResource FlipVerticalGeometry}"
+                                Stroke="{DynamicResource MainTextColor}"
+                                StrokeThickness="1"
+                                StrokeLineCap="Round"
+                                Width="12"
+                                Height="12"
+                                Stretch="Uniform" />
                         </MenuItem.Icon>
                     </MenuItem>
 
@@ -750,12 +815,19 @@
                     <!--  Next  -->
                     <MenuItem
                         Command="{CompiledBinding Navigation.NextCommand}"
-                        Header="{CompiledBinding Translation.NextImage,
-                                                 Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Header="{CompiledBinding Translation.NextImage, Mode=OneWay}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding>
+                                <MultiBinding.Converter>
+                                    <converters:NavigationConverter Direction="Next" />
+                                </MultiBinding.Converter>
+                                <Binding Path="PicViewer.ImageSource.Value" />
+                                <Binding Path="GlobalSettings.IsLooping.Value" />
+                                <Binding Path="PicViewer.GetIndex.Value" />
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image
                                 Height="12"
@@ -767,12 +839,19 @@
                     <!--  Prev  -->
                     <MenuItem
                         Command="{CompiledBinding Navigation.PreviousCommand}"
-                        Header="{CompiledBinding Translation.PrevImage,
-                                                 Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Header="{CompiledBinding Translation.PrevImage, Mode=OneWay}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding>
+                                <MultiBinding.Converter>
+                                    <converters:NavigationConverter Direction="Prev" />
+                                </MultiBinding.Converter>
+                                <Binding Path="PicViewer.ImageSource.Value" />
+                                <Binding Path="GlobalSettings.IsLooping.Value" />
+                                <Binding Path="PicViewer.GetIndex.Value" />
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image
                                 Height="12"
@@ -790,12 +869,19 @@
                     <!--  Next 10  -->
                     <MenuItem
                         Command="{CompiledBinding Navigation.Skip10Command}"
-                        Header="{CompiledBinding Translation.AdvanceBy10Images,
-                                                 Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Header="{CompiledBinding Translation.AdvanceBy10Images, Mode=OneWay}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding>
+                                <MultiBinding.Converter>
+                                    <converters:NavigationConverter Direction="Next" />
+                                </MultiBinding.Converter>
+                                <Binding Path="PicViewer.ImageSource.Value" />
+                                <Binding Path="GlobalSettings.IsLooping.Value" />
+                                <Binding Path="PicViewer.GetIndex.Value" />
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image
                                 Height="12"
@@ -807,12 +893,19 @@
                     <!--  Next 100  -->
                     <MenuItem
                         Command="{CompiledBinding Navigation.Skip100Command}"
-                        Header="{CompiledBinding Translation.AdvanceBy100Images.Value,
-                                                 Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Header="{CompiledBinding Translation.AdvanceBy100Images.Value, Mode=OneWay}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding>
+                                <MultiBinding.Converter>
+                                    <converters:NavigationConverter Direction="Next" />
+                                </MultiBinding.Converter>
+                                <Binding Path="PicViewer.ImageSource.Value" />
+                                <Binding Path="GlobalSettings.IsLooping.Value" />
+                                <Binding Path="PicViewer.GetIndex.Value" />
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image
                                 Height="12"
@@ -824,12 +917,19 @@
                     <!--  Prev 10  -->
                     <MenuItem
                         Command="{CompiledBinding Navigation.Prev10Command}"
-                        Header="{CompiledBinding Translation.GoBackBy10Images.Value,
-                                                 Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Header="{CompiledBinding Translation.GoBackBy10Images.Value, Mode=OneWay}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding>
+                                <MultiBinding.Converter>
+                                    <converters:NavigationConverter Direction="Prev" />
+                                </MultiBinding.Converter>
+                                <Binding Path="PicViewer.ImageSource.Value" />
+                                <Binding Path="GlobalSettings.IsLooping.Value" />
+                                <Binding Path="PicViewer.GetIndex.Value" />
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image
                                 Height="12"
@@ -841,12 +941,19 @@
                     <!--  Prev 100  -->
                     <MenuItem
                         Command="{CompiledBinding Navigation.Prev100Command}"
-                        Header="{CompiledBinding Translation.GoBackBy100Images.Value,
-                                                 Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Header="{CompiledBinding Translation.GoBackBy100Images.Value, Mode=OneWay}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding>
+                                <MultiBinding.Converter>
+                                    <converters:NavigationConverter Direction="Prev" />
+                                </MultiBinding.Converter>
+                                <Binding Path="PicViewer.ImageSource.Value" />
+                                <Binding Path="GlobalSettings.IsLooping.Value" />
+                                <Binding Path="PicViewer.GetIndex.Value" />
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image
                                 Height="12"
@@ -863,11 +970,18 @@
                     <!--  First Image  -->
                     <MenuItem
                         Command="{CompiledBinding Navigation.FirstCommand}"
-                        Header="{CompiledBinding Translation.FirstImage.Value,
-                                                 Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Header="{CompiledBinding Translation.FirstImage.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding>
+                                <MultiBinding.Converter>
+                                    <converters:NavigationConverter Direction="Prev" />
+                                </MultiBinding.Converter>
+                                <Binding Path="PicViewer.ImageSource.Value" />
+                                <Binding Path="GlobalSettings.IsLooping.Value" />
+                                <Binding Path="PicViewer.GetIndex.Value" />
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image
                                 Height="12"
@@ -879,11 +993,18 @@
                     <!--  Last Image  -->
                     <MenuItem
                         Command="{CompiledBinding Navigation.LastCommand}"
-                        Header="{CompiledBinding Translation.LastImage.Value,
-                                                 Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                                    Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Header="{CompiledBinding Translation.LastImage.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
+                        <MenuItem.IsEnabled>
+                            <MultiBinding>
+                                <MultiBinding.Converter>
+                                    <converters:NavigationConverter Direction="Next" />
+                                </MultiBinding.Converter>
+                                <Binding Path="PicViewer.ImageSource.Value" />
+                                <Binding Path="GlobalSettings.IsLooping.Value" />
+                                <Binding Path="PicViewer.GetIndex.Value" />
+                            </MultiBinding>
+                        </MenuItem.IsEnabled>
                         <MenuItem.Icon>
                             <Image
                                 Height="12"
@@ -1164,7 +1285,8 @@
                         Command="{CompiledBinding Tools.CheckForUpdatesCommand}"
                         Header="{CompiledBinding Translation.CheckForUpdates.Value,
                                                  Mode=OneWay}"
-                        Theme="{StaticResource MainBg}">
+                        Theme="{StaticResource MainBg}"
+                        IsEnabled="{CompiledBinding GlobalSettings.EnableCheckForUpdates.Value}">
                         <MenuItem.Icon>
                             <Image
                                 Height="12"

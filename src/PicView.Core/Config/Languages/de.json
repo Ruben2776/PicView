@@ -424,5 +424,18 @@
   "_2Star": "2 Sterne",
   "_3Star": "3 Sterne",
   "_4Star": "4 Sterne",
-  "_5Star": "5 Sterne"
+  "_5Star": "5 Sterne",
+
+  "AccessDenied": "Zugriff verweigert",
+  "Disgard": "Verwerfen",
+  "ExportToPdf": "In PDF exportieren",
+  "HideHistoryWindow": "Verlaufsfenster ausblenden",
+  "History": "Verlauf",
+  "Horizontal": "Horizontal",
+  "SaveChanges": "Änderungen speichern",
+  "ShowHistoryWindow": "Verlaufsfenster anzeigen",
+  "Tools": "Werkzeuge",
+  "Menu": "Menü",
+  "Vertical": "Vertikal"
+
 }

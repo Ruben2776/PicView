@@ -1,9 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.Crop;
+using PicView.Avalonia.Extensions;
 using PicView.Avalonia.FileSystem;
+using PicView.Avalonia.History;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
@@ -17,13 +20,16 @@ public class ImageCropperViewModel : IDisposable
 {
     public ImageCropperViewModel(Bitmap bitmap)
     {
-        CropImageCommand = new ReactiveCommand(SaveCroppedImageAsync);
+        CropImageCommand = new ReactiveCommand(CropImageAsync);
+        SaveCropImageCommand = new ReactiveCommand(SaveCroppedImageAsync);
+        CropImageCommand = new ReactiveCommand(CropImageAsync);
         CopyCropImageCommand = new ReactiveCommand(CopyCroppedImageAsync);
         CloseCropCommand = new ReactiveCommand(HandleCloseCrop);
         Bitmap.Value = bitmap;
     }
 
     public ReactiveCommand CropImageCommand { get; private set; }
+    public ReactiveCommand SaveCropImageCommand { get; private set; }
     public ReactiveCommand CopyCropImageCommand { get; private set; }
     public ReactiveCommand CloseCropCommand { get; private set; }
 
@@ -66,45 +72,115 @@ public class ImageCropperViewModel : IDisposable
     private static void HandleCloseCrop(Unit unit)
     {
         if (UIHelper.GetMainView.DataContext is MainViewModel vm)
+            CropFunctions.CloseCropControl(vm);
+    }
+
+    public async ValueTask CropImageAsync(Unit unit, CancellationToken cancellationToken)
+    {
+        if (UIHelper.GetMainView.DataContext is not MainViewModel vm)
+            return;
+        if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
+            return;
+
+        int x      = (int)(SelectionX.CurrentValue / AspectRatio.CurrentValue);
+        int y      = (int)(SelectionY.CurrentValue / AspectRatio.CurrentValue);
+        int width  = (int)PixelSelectionWidth.CurrentValue;
+        int height = (int)PixelSelectionHeight.CurrentValue;
+
+        var imgW = bmp.PixelSize.Width;
+        var imgH = bmp.PixelSize.Height;
+        if (width <= 0 || height <= 0) return;
+
+        if (x < 0) { width += x; x = 0; }
+        if (y < 0) { height += y; y = 0; }
+        if (x + width  > imgW) width  = imgW - x;
+        if (y + height > imgH) height = imgH - y;
+        if (width <= 0 || height <= 0) return;
+
+        if (x == 0 && y == 0 && width == imgW && height == imgH)
+            return;
+
+        var cropRect = new PixelRect(x, y, width, height);
+
+        await using (DebouncedLoadingScope.Start(vm.MainWindow.IsLoadingIndicatorShown, 150))
         {
+            var croppedBitmap = await MaterializeCropAsync(bmp, cropRect, cancellationToken)
+                .ConfigureAwait(false);
+
+            // Add to History
+            await vm.HistoryManager
+                .AddSnapshot(EditKind.Crop, $"Crop {width}×{height}", croppedBitmap)
+                .ConfigureAwait(false);
+
+            // Apply to the PicViewer
+            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(croppedBitmap, vm));
+
             CropFunctions.CloseCropControl(vm);
         }
     }
 
+    private static async Task<Bitmap> MaterializeCropAsync(Bitmap source, PixelRect rect, CancellationToken ct)
+    {
+        var rtb = await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            ct.ThrowIfCancellationRequested();
+
+            var w = rect.Width;
+            var h = rect.Height;
+            var r = new RenderTargetBitmap(new PixelSize(w, h));
+
+            using (var dc = r.CreateDrawingContext())
+            {
+                var view = new CroppedBitmap(source, rect);
+                var src = new Rect(0, 0, w, h);
+                var dst = new Rect(0, 0, w, h);
+                dc.DrawImage(view, src, dst);
+            }
+
+            return r;
+        }, DispatcherPriority.Render);
+
+        var bmp = await Task.Run(() =>
+        {
+            ct.ThrowIfCancellationRequested();
+            using var ms = new MemoryStream();
+            rtb.Save(ms);
+            ms.Position = 0;
+            var b = new Bitmap(ms);
+            rtb.Dispose();
+            return b;
+        }, ct);
+
+        return bmp;
+    }
+
+    public async ValueTask CropImageAsync() => await CropImageAsync(Unit.Default, CancellationToken.None);
+
     private async ValueTask SaveCroppedImageAsync(Unit unit, CancellationToken cancellationToken)
     {
         if (UIHelper.GetMainView.DataContext is not MainViewModel vm)
-        {
             return;
-        }
 
         var (fileName, fileInfo, bitmap) = PrepareCropData(vm);
 
         var saveFileDialog = await FilePicker.PickFileForSavingAsync(fileName);
         if (saveFileDialog == null)
-        {
             return;
-        }
 
         await SaveImage(saveFileDialog, fileInfo, bitmap);
 
         CropFunctions.CloseCropControl(vm);
 
         if (vm.PicViewer.FileInfo.CurrentValue.FullName == saveFileDialog)
-        {
             await ErrorHandling.ReloadAsync(vm);
-        }
     }
 
     public async ValueTask SaveCroppedImageAsync() => await SaveCroppedImageAsync(Unit.Default, CancellationToken.None);
 
     private async ValueTask CopyCroppedImageAsync(Unit unit, CancellationToken cancellationToken)
     {
-        if (UIHelper.GetMainView.DataContext is not MainViewModel vm ||
-            vm.PicViewer.ImageSource.CurrentValue is not Bitmap sourceBitmap)
-        {
+        if (UIHelper.GetMainView.DataContext is not MainViewModel vm || vm.PicViewer.ImageSource.CurrentValue is not Bitmap sourceBitmap)
             return;
-        }
 
         var x = Convert.ToInt32(SelectionX.CurrentValue / AspectRatio.CurrentValue);
         var y = Convert.ToInt32(SelectionY.CurrentValue / AspectRatio.CurrentValue);
@@ -114,9 +190,7 @@ public class ImageCropperViewModel : IDisposable
         var bitmap = BitmapHelper.ConvertCroppedBitmapToBitmap(croppedBitmap);
 
         if (bitmap is not null)
-        {
             await Task.WhenAll(vm.PlatformService.CopyImageToClipboard(bitmap), AnimationsHelper.CopyAnimation());
-        }
     }
 
     public async ValueTask CopyCroppedImageAsync() => await CopyCroppedImageAsync(Unit.Default, CancellationToken.None);

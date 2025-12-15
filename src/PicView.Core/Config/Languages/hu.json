@@ -424,5 +424,18 @@
   "_2Star": "2 csillagos értékelés",
   "_3Star": "3 csillagos értékelés",
   "_4Star": "4 csillagos értékelés",
-  "_5Star": "5 csillagos értékelés"
+  "_5Star": "5 csillagos értékelés",
+
+  "AccessDenied": "Hozzáférés megtagadva",
+  "Disgard": "Eldobás",
+  "ExportToPdf": "Exportálás PDF-be",
+  "HideHistoryWindow": "Elrejtés előzmények ablak",
+  "History": "Előzmények",
+  "Horizontal": "Vízszintes",
+  "SaveChanges": "Változtatások mentése",
+  "ShowHistoryWindow": "Előzmények ablak megjelenítése",
+  "Tools": "Eszközök",
+  "Menu": "Menü",
+  "Vertical": "Függőleges"
+
 }
