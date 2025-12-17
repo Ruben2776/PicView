@@ -145,7 +145,7 @@ public static class FileSaverHelper
                         default:
                             throw new InvalidOperationException("No bitmap available for saving.");
                     }   
-                };
+                }
             }
             catch (Exception ex)
             {

@@ -14,7 +14,7 @@ public partial class HistoryWindow : UserControl
         InitializeComponent();
         PointerPressed += OnPointerPressed;
         PointerMoved   += OnPointerMoved;
-        PointerReleased+= (_, __) => _dragStart = null;
+        PointerReleased+= (_, _) => _dragStart = null;
     }
 
     private void OnPointerPressed(object? s, PointerPressedEventArgs e)
@@ -35,7 +35,7 @@ public partial class HistoryWindow : UserControl
         var dy = p.Y - _dragStart.Value.Y;
 
         // Move within a Canvas host
-        if (Parent is Canvas canvas)
+        if (Parent is Canvas)
         {
             Canvas.SetLeft(this, dx);
             Canvas.SetTop(this,  dy);

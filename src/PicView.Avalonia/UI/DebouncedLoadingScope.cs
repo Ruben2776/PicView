@@ -40,8 +40,8 @@ public sealed class DebouncedLoadingScope : IAsyncDisposable
         });
     }
 
-    public static DebouncedLoadingScope Start(BindableReactiveProperty<bool> target, int delayMs = 150)
-        => new(target, delayMs);
+    public static DebouncedLoadingScope Start(BindableReactiveProperty<bool> target) => new(target, 150);
+    public static DebouncedLoadingScope Start(BindableReactiveProperty<bool> target, int delayMs) => new(target, delayMs);
 
     public async ValueTask DisposeAsync()
     {

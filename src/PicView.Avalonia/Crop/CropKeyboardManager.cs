@@ -20,7 +20,6 @@ public class CropKeyboardManager(CropControl control)
         switch (e.Key)
         {
             case Key.Enter:
-                //await vm.Crop.SaveCroppedImageAsync();
                 await vm.Crop.CropImageAsync();
                 return;
             case Key.Escape:

@@ -118,7 +118,7 @@ public static class UpdateImage
             UIHelper.GetToolTipMessage.IsVisible = false;
         }, DispatcherPriority.Send);
 
-        _ = vm.HistoryManager.AddSnapshot(EditKind.Open, bitmap: (Bitmap?)preLoadValue.ImageModel.Image);
+        _ = vm.HistoryManager.AddSnapshot(EditKind.Open, null, (Bitmap?)preLoadValue.ImageModel.Image);
 
         vm.MainWindow.IsLoadingIndicatorShown.Value = false;
 

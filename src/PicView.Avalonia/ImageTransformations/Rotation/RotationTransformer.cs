@@ -14,6 +14,7 @@ using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Exif;
 using PicView.Core.Localization;
+using System.Globalization;
 
 namespace PicView.Avalonia.ImageTransformations.Rotation;
 
@@ -28,12 +29,15 @@ public class RotationTransformer(
         if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
             return;
 
-        if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
+        if (vm.PicViewer.ImageSource.Value is not Bitmap)
             return;
 
-        
-        bool clockWise = angle > 0;
-        var desc = $"{TranslationManager.Translation.Rotated} {(clockWise ? TranslationManager.Translation.Right : TranslationManager.Translation.Left)} {angle.ToString().Replace("-", "")}°";
+        var angleText = Math.Abs(angle).ToString(CultureInfo.InvariantCulture);
+
+        var desc =
+            $"{TranslationManager.Translation.Rotated} " +
+            $"{(angle > 0 ? TranslationManager.Translation.Right : TranslationManager.Translation.Left)} " +
+            $"{angleText}°";
 
         await using (DebouncedLoadingScope.Start(vm.MainWindow.IsLoadingIndicatorShown, 150))
         {
@@ -49,7 +53,10 @@ public class RotationTransformer(
 
     private static Bitmap RotateBitmap(Bitmap source, double angle)
     {
-        var isRightAngle = (Math.Abs(angle) % 180) == 90;
+        static double Mod(double x, double m) => ((x % m) + m) % m;
+
+        var r = Mod(angle, 180.0);
+        var isRightAngle = Math.Abs(r - 90.0) < 1e-6;        
 
         var size = isRightAngle
             ? new PixelSize(source.PixelSize.Height, source.PixelSize.Width)

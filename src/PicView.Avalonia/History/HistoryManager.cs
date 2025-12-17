@@ -23,7 +23,7 @@ namespace PicView.Avalonia.History;
 
 public sealed class HistoryManager : IDisposable
 {
-    private readonly int _capacity;
+    private readonly int _capacity = 20;
     private readonly List<HistoryEntry> _collection = new();
     private int _cursor = -1;
     public ObservableCollection<HistoryEntry> Timeline { get; } = new();
@@ -33,11 +33,10 @@ public sealed class HistoryManager : IDisposable
     public ReactiveCommand CloseCommand { get; }
 
     // Constructor
-    public HistoryManager(MainViewModel vm, int capacity = 20)
+    
+    public HistoryManager(MainViewModel vm)
     {
         _vm = vm ?? throw new ArgumentNullException(nameof(vm));
-        _capacity = Math.Max(2, capacity);
-
         CloseCommand = new ReactiveCommand(async _ => await Hide());
     }
 
@@ -47,7 +46,9 @@ public sealed class HistoryManager : IDisposable
         TitleManager.SetTitle(_vm);
     }
 
-    public async Task AddSnapshot(EditKind kind, string? description = null, Bitmap? bitmap = null)
+    public async Task AddSnapshot(EditKind kind) => await AddSnapshot(kind, null, null);
+
+    public async Task AddSnapshot(EditKind kind, string? description, Bitmap? bitmap)
     {
         if(kind == EditKind.Open)
             Clear();
