@@ -43,7 +43,7 @@ public partial class MacOSTitlebar : UserControl
             }
 
             _rotationContextMenu = new RotationContextMenu();
-            _rotationContextMenu.UpdateSubscription();
+            //_rotationContextMenu.UpdateSubscription();
             FlipButton.ContextMenu = _rotationContextMenu;
             RotateRightButton.ContextMenu = _rotationContextMenu;
             
