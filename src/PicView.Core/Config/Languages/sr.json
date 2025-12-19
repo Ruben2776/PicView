@@ -426,6 +426,9 @@
   "_4Star": "4 звездице",
   "_5Star": "5 звездица",
 
+  "MaximizeWindowMode": "Režim maksimalnog prozora",
+  "ShowPromptToSaveChanges": "Prikaži upit za čuvanje izmena",
+  "ShowExportToPDFInMenu": "Prikaži izvoz u PDF u meniju",
   "AccessDenied": "Pristup odbijen",
   "Disgard": "Odbaci",
   "ExportToPdf": "Izvezi u PDF",

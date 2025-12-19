@@ -1,6 +1,4 @@
 <UserControl
-    MinHeight="{CompiledBinding MainWindow.WindowMinHeight.Value}"
-    MinWidth="{CompiledBinding MainWindow.WindowMinWidth.Value}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
@@ -9,40 +7,35 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters;assembly=PicView.Avalonia"
     xmlns:vm="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
+
     <UserControl.Resources>
         <SolidColorBrush Color="{StaticResource SecondaryTextColor}" x:Key="SelectFileBrush" />
         <SolidColorBrush Color="{StaticResource SecondaryTextColor}" x:Key="OpenLastFileBrush" />
         <SolidColorBrush Color="{StaticResource SecondaryTextColor}" x:Key="PasteBrush" />
     </UserControl.Resources>
-    <Panel>
-        <Viewbox
-            Height="400"
-            HorizontalAlignment="Center"
-            Margin="15,20"
-            VerticalAlignment="Center"
-            Width="435"
-            x:Name="LogoViewbox">
-            <Image
-                HorizontalAlignment="Center"
-                Source="{StaticResource LogoImage}"
-                Stretch="Fill"
-                VerticalAlignment="Center"
-                x:Name="Logo" />
-        </Viewbox>
+
+    <DockPanel
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Center"
+        LastChildFill="True">
+
         <StackPanel
+            DockPanel.Dock="Bottom"
             Height="30"
             HorizontalAlignment="Center"
-            Margin="0,220,25,16"
+            Margin="0,45,0,20"
             Orientation="Horizontal"
             VerticalAlignment="Center"
             x:Name="Buttons">
 
-            <Button Command="{CompiledBinding Tools.OpenFileCommand}" x:Name="SelectFileButton" Background="Transparent">
+            <Button Command="{CompiledBinding Tools.OpenFileCommand}" x:Name="SelectFileButton">
                 <StackPanel Orientation="Horizontal">
                     <Image Height="20.091">
                         <Image.Source>
@@ -51,20 +44,12 @@
                                     <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
                                         <GeometryDrawing Geometry="F1 M512,512z M0,0z M64,192L64,120A40,40,0,0,1,104,80L179.89,80A40,40,0,0,1,202.08,86.72L229.92,105.28A40,40,0,0,0,252.11,112L408,112A40,40,0,0,1,448,152L448,192">
                                             <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource SelectFileBrush}"
-                                                    LineJoin="Round"
-                                                    MiterLimit="1"
-                                                    Thickness="32" />
+                                                <Pen Brush="{StaticResource SelectFileBrush}" LineJoin="Round" MiterLimit="1" Thickness="32" />
                                             </GeometryDrawing.Pen>
                                         </GeometryDrawing>
                                         <GeometryDrawing Geometry="F1 M512,512z M0,0z M479.9,226.55L463.68,392A40,40,0,0,1,423.75,432L88.25,432A40,40,0,0,1,48.32,392L32.1,226.55A32,32,0,0,1,64,192L448.1,192A32,32,0,0,1,479.9,226.55z">
                                             <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource SelectFileBrush}"
-                                                    LineJoin="Round"
-                                                    MiterLimit="1"
-                                                    Thickness="32" />
+                                                <Pen Brush="{StaticResource SelectFileBrush}" LineJoin="Round" MiterLimit="1" Thickness="32" />
                                             </GeometryDrawing.Pen>
                                         </GeometryDrawing>
                                     </DrawingGroup>
@@ -72,9 +57,9 @@
                             </DrawingImage>
                         </Image.Source>
                     </Image>
+
                     <Label
-                        Content="{CompiledBinding Translation.SelectFile.Value,
-                                                  Mode=OneWay}"
+                        Content="{CompiledBinding Translation.SelectFile.Value, Mode=OneWay}"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         FontSize="14"
                         Foreground="{StaticResource SelectFileBrush}"
@@ -83,7 +68,9 @@
                 </StackPanel>
             </Button>
 
-            <Button Command="{CompiledBinding Tools.OpenLastFileCommand}" x:Name="OpenLastFileButton" IsEnabled="{CompiledBinding GlobalSettings.HasLastFile.Value, Mode=OneWay}" Background="Transparent">
+            <Button Command="{CompiledBinding Tools.OpenLastFileCommand}"
+                    x:Name="OpenLastFileButton"
+                    IsEnabled="{CompiledBinding GlobalSettings.HasLastFile.Value, Mode=OneWay}">
                 <StackPanel Height="30" Orientation="Horizontal">
                     <Image Height="20.091">
                         <Image.Source>
@@ -92,20 +79,12 @@
                                     <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
                                         <GeometryDrawing Geometry="F1 M512,512z M0,0z M112,111L112,401C112,418.44,129,429.52,143,421.16L390.9,272.79C403.02,265.54,403.02,246.46,390.9,239.21L143,90.84C129,82.48,112,93.56,112,111z">
                                             <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource OpenLastFileBrush}"
-                                                    LineJoin="Miter"
-                                                    MiterLimit="1"
-                                                    Thickness="32" />
+                                                <Pen Brush="{StaticResource OpenLastFileBrush}" LineJoin="Miter" MiterLimit="1" Thickness="32" />
                                             </GeometryDrawing.Pen>
                                         </GeometryDrawing>
                                         <GeometryDrawing Geometry="F1 M512,512z M0,0z M400,80L400,432">
                                             <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource OpenLastFileBrush}"
-                                                    LineJoin="Miter"
-                                                    MiterLimit="1"
-                                                    Thickness="32" />
+                                                <Pen Brush="{StaticResource OpenLastFileBrush}" LineJoin="Miter" MiterLimit="1" Thickness="32" />
                                             </GeometryDrawing.Pen>
                                         </GeometryDrawing>
                                     </DrawingGroup>
@@ -113,9 +92,9 @@
                             </DrawingImage>
                         </Image.Source>
                     </Image>
+
                     <Label
-                        Content="{CompiledBinding Translation.OpenLastFile.Value,
-                                                  Mode=OneWay}"
+                        Content="{CompiledBinding Translation.OpenLastFile.Value, Mode=OneWay}"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         FontSize="14"
                         Foreground="{StaticResource OpenLastFileBrush}"
@@ -124,17 +103,15 @@
                 </StackPanel>
             </Button>
 
-            <Button Command="{CompiledBinding Tools.PasteCommand}" x:Name="PasteButton" Background="Transparent">
+            <Button Command="{CompiledBinding Tools.PasteCommand}" x:Name="PasteButton">
                 <StackPanel Height="30" Orientation="Horizontal">
-                    <Path
-                        Data="{StaticResource PasteGeometry}"
-                        Fill="{StaticResource PasteBrush}"
-                        Height="20"
-                        Stretch="Fill"
-                        Width="20" />
+                    <Path Data="{StaticResource PasteGeometry}"
+                          Fill="{StaticResource PasteBrush}"
+                          Height="20"
+                          Stretch="Fill"
+                          Width="20" />
                     <Label
-                        Content="{CompiledBinding Translation.Paste.Value,
-                                                  Mode=OneWay}"
+                        Content="{CompiledBinding Translation.Paste.Value, Mode=OneWay}"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         FontSize="14"
                         Foreground="{StaticResource PasteBrush}"
@@ -142,6 +119,51 @@
                         x:Name="FilePasteLabel" />
                 </StackPanel>
             </Button>
+
         </StackPanel>
-    </Panel>
+
+        <!-- Logo area -->
+        <Panel
+            DockPanel.Dock="Top"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            ClipToBounds="True"
+            Margin="45,45,45,0"
+            MaxWidth="{Binding $parent[Window].Bounds.Width}">
+
+            <!-- Full Logo -->
+            <Image
+                Stretch="Uniform"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                IsHitTestVisible="False"
+                Source="{StaticResource LogoFullImage}"
+                MaxWidth="{Binding $parent[Panel].Bounds.Width, Converter={converters:LimitConverter Operator=LessThanOrEqual}, ConverterParameter=1000}}"
+                MaxHeight="{Binding $parent[Window].Bounds.Height, Converter={converters:ClampMultiplyConverter}, ConverterParameter=0.5}"
+                Opacity="{Binding $parent[Window].Bounds.Width, Converter={converters:WidthToOpacityConverter Breakpoint=800, WidthMode=Wide}, ConverterParameter=wide}">
+                <Image.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.18" />
+                    </Transitions>
+                </Image.Transitions>
+            </Image>
+
+            <!-- Small Logo -->
+            <Image
+                Stretch="Uniform"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                IsHitTestVisible="False"
+                Source="{StaticResource LogoImage}"
+                MaxWidth="{Binding $parent[Panel].Bounds.Width}"
+                MaxHeight="{Binding $parent[Window].Bounds.Height, Converter={converters:ClampMultiplyConverter}, ConverterParameter=0.5}"
+                Opacity="{Binding $parent[Window].Bounds.Width, Converter={converters:WidthToOpacityConverter Breakpoint=800, WidthMode=Narrow}}">
+                <Image.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.18" />
+                    </Transitions>
+                </Image.Transitions>
+            </Image>
+        </Panel>
+    </DockPanel>
 </UserControl>

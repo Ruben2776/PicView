@@ -99,6 +99,23 @@ public class MainWindowViewModel : IDisposable
         await FunctionsMapper.ToggleFullscreen();
     });
 
+    public ReactiveCommand<int> ToggleFullscreenOrMaximizeCommand { get; } = new(async (mode, _) =>
+    {
+        switch (mode)
+        {
+            case 1:
+                await FunctionsMapper.Maximize();
+                break;
+
+            default:
+                await FunctionsMapper.ToggleFullscreen();
+                break;
+        }
+    });
+
+
+    
+
     public void Dispose()
     {
         Disposable.Dispose(ImageBackground,

@@ -426,6 +426,9 @@
   "_4Star": "Evaluare cu 4 stele",
   "_5Star": "Evaluare cu 5 stele",
 
+  "MaximizeWindowMode": "Mod fereastră maximizată",
+  "ShowPromptToSaveChanges": "Afișează solicitarea de salvare a modificărilor",
+  "ShowExportToPDFInMenu": "Afișează Exportă în PDF în meniu",
   "AccessDenied": "Acces interzis",
   "Disgard": "Renunță",
   "ExportToPdf": "Exportă în PDF",

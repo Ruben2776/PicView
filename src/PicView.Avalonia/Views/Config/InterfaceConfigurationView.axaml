@@ -242,5 +242,37 @@
             </StackPanel>
         </Button>
 
+        <ToggleButton
+            Background="Transparent"
+            BorderThickness="0"
+            Classes="altHover changeColor"
+            IsChecked="{CompiledBinding GlobalSettings.ShowPromptToSaveChanges.Value, Mode=TwoWay}"
+            Margin="0,0,0,10"
+            Width="300">
+            <TextBlock
+                Classes="txt"
+                Foreground="{StaticResource SecondaryTextColor}"
+                Margin="0"
+                MaxWidth="240"
+                Padding="0,1,5,0"
+                Text="{CompiledBinding Translation.ShowPromptToSaveChanges.Value, Mode=OneWay}" />
+        </ToggleButton>
+
+        <ToggleButton
+            Background="Transparent"
+            BorderThickness="0"
+            Classes="altHover changeColor"
+            IsChecked="{CompiledBinding GlobalSettings.ShowExportToPDFInMenu.Value, Mode=TwoWay}"
+            Margin="0,0,0,10"
+            Width="300">
+            <TextBlock
+                Classes="txt"
+                Foreground="{StaticResource SecondaryTextColor}"
+                Margin="0"
+                MaxWidth="240"
+                Padding="0,1,5,0"
+                Text="{CompiledBinding Translation.ShowExportToPDFInMenu.Value, Mode=OneWay}" />
+        </ToggleButton>
+
     </StackPanel>
 </UserControl>

@@ -426,6 +426,9 @@
   "_4Star": "דירוג 4 כוכבים",
   "_5Star": "דירוג 5 כוכבים",
 
+  "MaximizeWindowMode": "מצב חלון ממוזער",
+  "ShowPromptToSaveChanges": "הצג בקשה לשמירת שינויים",
+  "ShowExportToPDFInMenu": "הצג ייצוא ל-PDF בתפריט",
   "AccessDenied": "הגישה נדחתה",
   "Disgard": "בטל",
   "ExportToPdf": "ייצוא ל-PDF",

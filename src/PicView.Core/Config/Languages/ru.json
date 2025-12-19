@@ -426,6 +426,9 @@
   "_4Star": "4звезды",
   "_5Star": "5звезды",
 
+  "MaximizeWindowMode": "Режим развёрнутого окна",
+  "ShowPromptToSaveChanges": "Показывать запрос на сохранение изменений",
+  "ShowExportToPDFInMenu": "Показывать экспорт в PDF в меню",
   "AccessDenied": "Доступ запрещён",
   "Disgard": "Отменить",
   "ExportToPdf": "Экспорт в PDF",

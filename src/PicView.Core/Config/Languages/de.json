@@ -426,6 +426,9 @@
   "_4Star": "4 Sterne",
   "_5Star": "5 Sterne",
 
+  "MaximizeWindowMode": "Fenstermodus maximieren",
+  "ShowPromptToSaveChanges": "Aufforderung zum Speichern von Änderungen anzeigen",
+  "ShowExportToPDFInMenu": "Export zu PDF im Menü anzeigen",
   "AccessDenied": "Zugriff verweigert",
   "Disgard": "Verwerfen",
   "ExportToPdf": "In PDF exportieren",

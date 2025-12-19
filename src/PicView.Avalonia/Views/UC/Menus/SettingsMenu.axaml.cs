@@ -36,7 +36,7 @@ public partial class SettingsMenu : AnimatedMenu
                     var brush = texture as ImageBrush;
                     MainBorder.Background = brush;
                     DownArrow.Fill = brush;
-                    DownArrow.StrokeThickness = 0;
+                    DownArrowBorder.StrokeThickness = 0;
                 }
             }
 
@@ -46,6 +46,8 @@ public partial class SettingsMenu : AnimatedMenu
             UIHelper.SwitchHoverClass(AutofitButton);
             UIHelper.SwitchHoverClass(TopMostButton);
             UIHelper.SwitchHoverClass(SubDirButton);
+
+            PointerPressed += (_, e) => e.Handled = true;
         };
 
         if (TryGetResource("ScrollingBrush", Application.Current.RequestedThemeVariant,

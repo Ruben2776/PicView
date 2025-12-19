@@ -283,12 +283,14 @@ public class TranslationViewModel : IDisposable
         ShowConfirmationDialogWhenMovingFileToRecycleBin.Value = t.ShowConfirmationDialogWhenMovingFileToRecycleBin;
         ShowConfirmationDialogWhenPermanentlyDeletingFile.Value = t.ShowConfirmationDialogWhenPermanentlyDeletingFile;
         ShowConfirmationOnEsc.Value = t.ShowConfirmationOnEsc;
+        ShowExportToPDFInMenu.Value = t.ShowExportToPDFInMenu;
         ShowFadeInButtonsOnHover.Value = t.ShowFadeInButtonsOnHover;
         ShowFileSavingDialog.Value = t.ShowFileSavingDialog;
         ShowHistoryWindow.Value = t.ShowHistoryWindow;
         ShowHoverNavigationBar.Value = t.ShowHoverNavigationBar;
         ShowImageGallery.Value = t.ShowImageGallery;
         ShowInFolder.Value = t.ShowInFolder;
+        ShowPromptToSaveChanges.Value = t.ShowPromptToSaveChanges;
         ShowUI.Value = t.ShowUI;
         ShowZoomPercentagePopup.Value = t.ShowZoomPercentagePopup;
         SideBySide.Value = t.SideBySide;
@@ -336,6 +338,7 @@ public class TranslationViewModel : IDisposable
         Window.Value = t.Window;
         WindowManagement.Value = t.WindowManagement;
         WindowMargin.Value = t.WindowMargin;
+        MaximizeWindowMode.Value = t.MaximizeWindowMode;
         WindowScaling.Value = t.WindowScaling;
         Zoom.Value = t.Zoom;
         ZoomIn.Value = t.ZoomIn;
@@ -604,6 +607,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> ShowConfirmationDialogWhenMovingFileToRecycleBin { get; } = new();
     public BindableReactiveProperty<string?> ShowConfirmationDialogWhenPermanentlyDeletingFile { get; } = new();
     public BindableReactiveProperty<string?> ShowConfirmationOnEsc { get; } = new();
+    public BindableReactiveProperty<string?> ShowExportToPDFInMenu { get; } = new();
     public BindableReactiveProperty<string?> ShowFadeInButtonsOnHover { get; } = new();
     public BindableReactiveProperty<string?> ShowFileSavingDialog { get; } = new();
     public BindableReactiveProperty<string?> ShowHistoryWindow { get; } = new();
@@ -611,6 +615,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> ShowImageGallery { get; } = new();
     public BindableReactiveProperty<string?> ShowInFolder { get; } = new();
     public BindableReactiveProperty<string?> ShowUI { get; } = new();
+    public BindableReactiveProperty<string?> ShowPromptToSaveChanges { get; } = new();
     public BindableReactiveProperty<string?> ShowZoomPercentagePopup { get; } = new();
     public BindableReactiveProperty<string?> SideBySide { get; } = new();
     public BindableReactiveProperty<string?> SideBySideTooltip { get; } = new();
@@ -662,6 +667,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> WindowManagement { get; } = new();
 
     public BindableReactiveProperty<string?> WindowMargin { get; } = new();
+    public BindableReactiveProperty<string?> MaximizeWindowMode { get; } = new();
 
     public BindableReactiveProperty<string?> WindowScaling { get; } = new();
     public BindableReactiveProperty<string?> Zoom { get; } = new();

@@ -157,7 +157,7 @@ public static class NavigationManager
     /// <returns>A ValueTask representing the asynchronous navigation operation.</returns>
     public static async ValueTask Navigate(bool next, MainViewModel vm, CancellationToken? cancellationToken)
     {
-        if (vm.PicViewer.HasChanges.Value)
+        if (vm.PicViewer.HasChanges.Value && vm.GlobalSettings.ShowPromptToSaveChanges.Value)
         {
             await FileSaverHelper.PromptSaveChangesAsync().ConfigureAwait(false);
         }

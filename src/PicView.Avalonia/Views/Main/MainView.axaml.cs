@@ -125,12 +125,14 @@ public partial class MainView : UserControl
 
     private void PointerPressedBehavior(object? sender, PointerPressedEventArgs e)
     {
+        if (DataContext is not MainViewModel vm) return;
+
+        MenuManager.CloseMenus(vm);
+
+
         if (e.ClickCount is 2 && Settings.UIProperties.DoubleClickBehavior is 2)
         {
-            if (DataContext is MainViewModel vm)
-            {
-                vm.PlatformWindowService.ToggleFullscreen();
-            }
+            vm.PlatformWindowService.ToggleFullscreen();
         }
         CloseTitlebarIfOpen(sender, e);
         if (MainKeyboardShortcuts.ShiftDown && !CropFunctions.IsCropping)

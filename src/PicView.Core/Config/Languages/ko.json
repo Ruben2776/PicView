@@ -426,6 +426,9 @@
   "_4Star": "별 4 등급",
   "_5Star": "별 5 등급",
 
+  "MaximizeWindowMode": "창 최대화 모드",
+  "ShowPromptToSaveChanges": "변경 사항 저장 확인 표시",
+  "ShowExportToPDFInMenu": "메뉴에 PDF 내보내기 표시",
   "AccessDenied": "액세스 거부됨",
   "Disgard": "버리기",
   "ExportToPdf": "PDF로 내보내기",

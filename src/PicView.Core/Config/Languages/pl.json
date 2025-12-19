@@ -426,6 +426,9 @@
   "_4Star": "Ocena 4 gwiazdek",
   "_5Star": "Ocena 5 gwiazdek",
 
+  "MaximizeWindowMode": "Modo de janela maximizada",
+  "ShowPromptToSaveChanges": "Mostrar aviso para salvar alterações",
+  "ShowExportToPDFInMenu": "Mostrar Exportar para PDF no menu",
   "AccessDenied": "Odmowa dostępu",
   "Disgard": "Odrzuć",
   "ExportToPdf": "Eksportuj do PDF",

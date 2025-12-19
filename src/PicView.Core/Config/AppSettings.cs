@@ -101,6 +101,11 @@ public class WindowProperties
     /// Only applies when <see cref="AutoFit"/> is <c>true</c>.
     /// </remarks>
     public double Margin { get; set; } = 15;
+
+    /// <summary>
+    /// 0 => Fullscreen, 1 => Maximized
+    /// </summary>
+    public int WindowMaximizeMode { get; set; } = 0;
 }
 
 public class UIProperties
@@ -220,6 +225,16 @@ public class UIProperties
     /// Enable Check For Updates
     /// </summary>
     public bool EnableCheckForUpdates { get; set; } = true;
+
+    /// <summary>
+    /// Determines whether a save changes confirmation dialog is displayed when navigating away from an image with changes.
+    /// </summary>
+    public bool ShowPromptToSaveChanges { get; set; } = false;
+
+    /// <summary>
+    /// Indicates whether the Export to PDF button is shown in the file menu
+    /// </summary>
+    public bool ShowExportToPDFInMenu { get; set; } = false;
 }
 
 public class Theme

@@ -426,6 +426,9 @@
   "_4Star": "4 つ星評価",
   "_5Star": "5 つ星評価",
 
+  "MaximizeWindowMode": "ウィンドウ最大化モード",
+  "ShowPromptToSaveChanges": "変更を保存する確認を表示",
+  "ShowExportToPDFInMenu": "メニューに PDF へのエクスポートを表示",
   "AccessDenied": "アクセスが拒否されました",
   "Disgard": "破棄",
   "ExportToPdf": "PDFにエクスポート",

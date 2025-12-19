@@ -439,8 +439,7 @@ public static class WindowFunctions
             else if (properties is { Left: not null, Top: not null })
             {
                 window.WindowStartupLocation = WindowStartupLocation.Manual;
-                window.Position = new PixelPoint(properties.Left.GetValueOrDefault(),
-                    properties.Top.GetValueOrDefault());
+                window.Position = new PixelPoint(properties.Left.GetValueOrDefault(), properties.Top.GetValueOrDefault());
             }
             else
             {
@@ -547,4 +546,131 @@ public static class WindowFunctions
     }
 
     #endregion
+
+
+
+    /// <summary>
+    /// Opens a window on the same screen as the owner window.
+    /// Priority: screen-relative position -> offset -> center.
+    ///
+    /// If the requested screen-relative position would place the window outside the owner's screen WorkingArea,
+    /// it will open centered on the owner's screen instead.
+    /// </summary>
+    public static void OpenOnSameScreen(
+        Window window,
+        Window owner,
+        bool center = true,
+        bool maximized = false,
+        PixelPoint? offset = null,
+        PixelPoint? position = null)
+    {
+        if(maximized)
+        {
+            window.WindowState = WindowState.Maximized;
+            window.Show();
+            return;
+        }
+
+        window.WindowStartupLocation = WindowStartupLocation.Manual;
+
+        // No owner: best-effort fallback (position treated as absolute)
+        if (owner is null)
+        {
+            if (position.HasValue)
+                window.Position = position.Value;
+
+            window.Show();
+            return;
+        }
+
+        var screen = owner.Screens.ScreenFromVisual(owner);
+
+        // Helper: center on owner's screen
+        void CenterOnOwnerScreen()
+        {
+            if (screen is null)
+                return;
+
+            var bounds = screen.WorkingArea;
+
+            var w = GetDesiredPixelWidth(window);
+            var h = GetDesiredPixelHeight(window);
+
+            window.Position = new PixelPoint(
+                bounds.X + (bounds.Width - w) / 2,
+                bounds.Y + (bounds.Height - h) / 2
+            );
+        }
+
+        // Screen-relative absolute position (relative to owner's screen WorkingArea)
+        if (position.HasValue)
+        {
+            if (screen != null)
+            {
+                var bounds = screen.WorkingArea;
+
+                var w = GetDesiredPixelWidth(window);
+                var h = GetDesiredPixelHeight(window);
+
+                var proposed = new PixelPoint(bounds.X + position.Value.X, bounds.Y + position.Value.Y);
+
+                // Must fully fit inside working area or we center instead
+                var fits =
+                    proposed.X >= bounds.X &&
+                    proposed.Y >= bounds.Y &&
+                    proposed.X + w <= bounds.X + bounds.Width &&
+                    proposed.Y + h <= bounds.Y + bounds.Height;
+
+                if (fits)
+                    window.Position = proposed;
+                else
+                    CenterOnOwnerScreen();
+            }
+            else
+            {
+                // If we can't resolve screen, fall back to owner-relative offset
+                window.Position = new PixelPoint(owner.Position.X + position.Value.X, owner.Position.Y + position.Value.Y);
+            }
+
+            window.Show(owner);
+            return;
+        }
+
+        // Offset from owner window
+        if (offset.HasValue)
+        {
+            window.Position = new PixelPoint(
+                owner.Position.X + offset.Value.X,
+                owner.Position.Y + offset.Value.Y
+            );
+
+            window.Show(owner);
+            return;
+        }
+
+        // Center on owner's screen (default)
+        if (center)
+            CenterOnOwnerScreen();
+
+        window.Show(owner);
+    }
+
+    // Avalonia window Width/Height may be NaN/0 before layout; use a safe "desired" size.
+    private static int GetDesiredPixelWidth(Window window)
+    {
+        var w = window.Width;
+        if (!double.IsFinite(w) || w <= 0)
+            w = window.MinWidth > 0 ? window.MinWidth : 600;
+
+        return (int)Math.Ceiling(w);
+    }
+
+    private static int GetDesiredPixelHeight(Window window)
+    {
+        var h = window.Height;
+        if (!double.IsFinite(h) || h <= 0)
+            h = window.MinHeight > 0 ? window.MinHeight : 400;
+
+        return (int)Math.Ceiling(h);
+    }
 }
