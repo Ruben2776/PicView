@@ -157,8 +157,8 @@
   </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.3.9"/>
-        <PackageReference Include="Avalonia.Desktop" Version="11.3.9"/>
+        <PackageReference Include="Avalonia" Version="11.3.10" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.10" />
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="AvaloniaUI.DiagnosticsSupport" Version="2.1.1" />
         <PackageReference Include="Magick.NET.AvaloniaMediaImaging" Version="1.1.8" />
         <PackageReference Include="R3Extensions.Avalonia" Version="1.3.0" />
