@@ -23,213 +23,233 @@
         <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="InterfaceBrush" />
     </UserControl.Resources>
 
-    <StackPanel>
+    <Border
+        Background="Transparent"
+        Effect="{DynamicResource MenuShadowButtonBorder}">
 
-        <Border
-            Background="{DynamicResource MenuBackgroundColor}"
-            BorderBrush="{DynamicResource OuterBorderColor}"
-            BorderThickness="1"
-            CornerRadius="8"
-            Effect="{DynamicResource MenuShadowButtonBorder}"
-            x:Name="MainBorder">
-            <Canvas Height="208" Width="359">
+        <Grid Width="359" RowDefinitions="Auto,Auto" UseLayoutRounding="True">
 
-                <Border
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource OuterBorderColor}"
-                    BorderThickness="0,0,0,1"
-                    CornerRadius="8,8,0,0"
-                    Height="47"
-                    Width="359"
-                    x:Name="TopBorder" />
+            <Border
+                Grid.Row="0"
+                Background="{DynamicResource MenuBackgroundColor}"
+                BorderBrush="{DynamicResource OuterBorderColor}"
+                BorderThickness="1"
+                CornerRadius="8"
+                x:Name="MainBorder">
 
-                <customControls:TextIconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Canvas.Left="-1"
+                <Canvas Height="208" Width="359">
+
+                    <Border
+                        Background="{DynamicResource SecondaryBackgroundColor}"
+                        BorderBrush="{DynamicResource OuterBorderColor}"
+                        BorderThickness="0,0,0,1"
+                        CornerRadius="8,8,0,0"
+                        Height="47"
+                        Width="359"
+                        x:Name="TopBorder" />
+
+                    <!-- Show Batch Resize -->
+                    <customControls:TextIconButton
+                        Background="Transparent"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="0,0,1,0"
+                        Canvas.Left="-1"
+                        Canvas.Top="-1"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding Window.ShowBatchResizeWindow}"
+                        CornerRadius="8,0,0,0"
+                        FontSize="14"
+                        Foreground="{StaticResource BatchBrush}"
+                        Height="46"
+                        Icon="{StaticResource BatchResizeImage}"
+                        IconHeight="22"
+                        IconMargin="17,0,0,0"
+                        IconWidth="22"
+                        Text="{CompiledBinding Translation.BatchResize.Value, Mode=OneWay}"
+                        TextMargin="10,0,7,0"
+                        TextMaxWidth="130"
+                        ToolTip.Tip="{CompiledBinding Translation.BatchResize.Value, Mode=OneWay}"
+                        Width="180"
+                        x:Name="BatchResizeButton" />
+
+                    <!-- Show Effects -->
+                    <customControls:TextIconButton
+                        Background="Transparent"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="0,0,1,0"
+                        Canvas.Left="179"
+                        Canvas.Top="-1"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding Window.ShowEffectsWindow}"
+                        FontSize="14"
+                        Foreground="{StaticResource EffectsBrush}"
+                        Height="46"
+                        Icon="{StaticResource FlaskImage}"
+                        IconHeight="20"
+                        IconMargin="11,0,0,0"
+                        IconWidth="20"
+                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Text="{CompiledBinding Translation.Effects.Value, Mode=OneWay}"
+                        TextMargin="10,0,6,0"
+                        ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value, Mode=OneWay}"
+                        Width="136"
+                        x:Name="EffectsButton" />
+
+                    <!-- Close Menu -->
+                    <customControls:IconButton
+                        Background="Transparent"
+                        Canvas.Left="315"
+                        Canvas.Top="-1"
+                        Classes="hover"
+                        ClickMode="Release"
+                        Command="{CompiledBinding MainWindow.CloseMenuCommand}"
+                        CornerRadius="0,8,0,0"
+                        Data="{StaticResource CloseGeometry}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
+                        IconHeight="10"
+                        IconWidth="10"
+                        ToolTip.Tip="{CompiledBinding Translation.Close.Value, Mode=OneWay}"
+                        Width="45" />
+
+                    <!-- Show Image Info Window -->
+                    <customControls:TextIconButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="7"
+                        Canvas.Top="53"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Window.ShowImageInfoWindow}"
+                        Data="{StaticResource ImageInfoGeometry}"
+                        Foreground="{StaticResource ImageInfoBrush}"
+                        Height="46"
+                        IconHeight="17"
+                        IconMargin="9,0,2,0"
+                        IconWidth="17"
+                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Text="{CompiledBinding Translation.ImageInfo.Value, Mode=OneWay}"
+                        TextMargin="10,0,6,0"
+                        TextMaxWidth="132"
+                        Width="169"
+                        x:Name="ImageInfoButton" />
+
+                    <!-- Optimize Image -->
+                    <customControls:TextIconButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="182"
+                        Canvas.Top="53"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Tools.OptimizeImageCommand}"
+                        Foreground="{StaticResource OptimizeBrush}"
+                        Height="46"
+                        Icon="{StaticResource PortalImage}"
+                        IconHeight="20"
+                        IconMargin="9,0,10,0"
+                        IconWidth="20"
+                        IsEnabled="{CompiledBinding PicViewer.ShouldOptimizeImageBeEnabled.Value, Mode=OneWay}"
+                        Text="{CompiledBinding Translation.OptimizeImage.Value, Mode=OneWay}"
+                        ToolTip.Tip="{CompiledBinding Translation.OptimizeImage.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="OptimizeImageButton" />
+
+                    <!-- Color Picker -->
+                    <customControls:TextIconButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="7"
+                        Canvas.Top="104"
+                        Classes="ButtonBorder altHover"
+                        Data="{StaticResource BrushGeometry}"
+                        Foreground="{DynamicResource DisabledTextColor}"
+                        Height="46"
+                        IconHeight="17"
+                        IconMargin="9,0,12,0"
+                        IconWidth="17"
+                        IsEnabled="False"
+                        Text="{CompiledBinding Translation.ColorPickerTool.Value, Mode=OneWay}"
+                        ToolTip.Tip="{CompiledBinding Translation.ColorPickerToolTooltip.Value, Mode=OneWay}"
+                        Width="169" />
+
+                    <!-- Change Background -->
+                    <customControls:TextIconButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="182"
+                        Canvas.Top="104"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Tools.ChangeBackgroundCommand}"
+                        Foreground="{StaticResource ChangeBgBrush}"
+                        Height="46"
+                        Icon="{StaticResource PaletteImage}"
+                        IconHeight="17"
+                        IconMargin="10,0,10,0"
+                        IconWidth="17"
+                        Text="{CompiledBinding Translation.ChangeBackground.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="ChangeBgButton" />
+
+                    <!-- Show Keybindings Window -->
+                    <customControls:TextIconButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="7"
+                        Canvas.Top="155"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Window.ShowKeybindingsWindow}"
+                        Foreground="{StaticResource KeybindingBrush}"
+                        Height="46"
+                        Icon="{StaticResource ShortcutsImage}"
+                        IconHeight="18"
+                        IconMargin="9,0,12,0"
+                        IconWidth="18"
+                        Text="{CompiledBinding Translation.ApplicationShortcuts.Value, Mode=OneWay}"
+                        ToolTip.Tip="{CompiledBinding Translation.ApplicationShortcuts.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="KeybindingsButton" />
+
+                    <!-- Toggle UI -->
+                    <customControls:TextIconButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="182"
+                        Canvas.Top="155"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Tools.ToggleUICommand}"
+                        Foreground="{StaticResource InterfaceBrush}"
+                        Height="46"
+                        Icon="{StaticResource EyeOffImage}"
+                        IconHeight="20"
+                        IconMargin="11,0,12,0"
+                        IconWidth="20"
+                        Text="{CompiledBinding Translation.IsShowingUI.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="InterfaceButton" />
+
+                </Canvas>
+            </Border>
+
+            <!-- Arrow (refined, no seam, no rectangle) -->
+            <!-- Arrow -->
+            <Canvas
+                Grid.Row="1"
+                Width="359"
+                Height="16"
+                Margin="0,-1,0,0"
+                ClipToBounds="False">
+
+                <!-- Filled triangle -->
+                <Path
+                    x:Name="DownArrow"
+                    Canvas.Left="303"
                     Canvas.Top="-1"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding Window.ShowBatchResizeWindow}"
-                    CornerRadius="8,0,0,0"
-                    FontSize="14"
-                    Foreground="{StaticResource BatchBrush}"
-                    Height="46"
-                    Icon="{StaticResource BatchResizeImage}"
-                    IconHeight="22"
-                    IconMargin="17,0,0,0"
-                    IconWidth="22"
-                    Text="{CompiledBinding Translation.BatchResize.Value,
-                                           Mode=OneWay}"
-                    TextMargin="10,0,7,0"
-                    TextMaxWidth="130"
-                    ToolTip.Tip="{CompiledBinding Translation.BatchResize.Value,
-                                                  Mode=OneWay}"
-                    Width="180"
-                    x:Name="BatchResizeButton" />
+                    Fill="{DynamicResource MenuBackgroundColor}"
+                    Data="M 0,0 L 15,16 L 30,0 Z" />
 
-                <customControls:TextIconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Canvas.Left="179"
+                <!-- Outline only on the two sides (no top edge) -->
+                <Path
+                    x:Name="DownArrowBorder"
+                    Canvas.Left="303"
                     Canvas.Top="-1"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding Window.ShowEffectsWindow}"
-                    FontSize="14"
-                    Foreground="{StaticResource EffectsBrush}"
-                    Height="46"
-                    Icon="{StaticResource FlaskImage}"
-                    IconHeight="20"
-                    IconMargin="11,0,0,0"
-                    IconWidth="20"
-                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
-                    Text="{CompiledBinding Translation.Effects.Value,
-                                           Mode=OneWay}"
-                    TextMargin="10,0,6,0"
-                    ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
-                                                  Mode=OneWay}"
-                    Width="136"
-                    x:Name="EffectsButton" />
-
-                <customControls:IconButton
-                    Background="Transparent"
-                    Canvas.Left="315"
-                    Canvas.Top="-1"
-                    Classes="hover"
-                    ClickMode="Release"
-                    Command="{CompiledBinding MainWindow.CloseMenuCommand}"
-                    CornerRadius="0,8,0,0"
-                    Data="{StaticResource CloseGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="46"
-                    IconHeight="10"
-                    IconWidth="10"
-                    ToolTip.Tip="{CompiledBinding Translation.Close.Value,
-                                                  Mode=OneWay}"
-                    Width="45" />
-
-                <customControls:TextIconButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="7"
-                    Canvas.Top="53"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Window.ShowImageInfoWindow}"
-                    Data="{StaticResource ImageInfoGeometry}"
-                    Foreground="{StaticResource ImageInfoBrush}"
-                    Height="46"
-                    IconHeight="17"
-                    IconMargin="9,0,2,0"
-                    IconWidth="17"
-                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                                Converter={x:Static ObjectConverters.IsNotNull}}"
-                    Text="{CompiledBinding Translation.ImageInfo.Value,
-                                           Mode=OneWay}"
-                    TextMargin="10,0,6,0"
-                    TextMaxWidth="132"
-                    Width="169"
-                    x:Name="ImageInfoButton" />
-
-                <customControls:TextIconButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="182"
-                    Canvas.Top="53"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.OptimizeImageCommand}"
-                    Foreground="{StaticResource OptimizeBrush}"
-                    Height="46"
-                    Icon="{StaticResource PortalImage}"
-                    IconHeight="20"
-                    IconMargin="9,0,10,0"
-                    IconWidth="20"
-                    IsEnabled="{CompiledBinding PicViewer.ShouldOptimizeImageBeEnabled.Value,
-                                                Mode=OneWay}"
-                    Text="{CompiledBinding Translation.OptimizeImage.Value,
-                                           Mode=OneWay}"
-                    ToolTip.Tip="{CompiledBinding Translation.OptimizeImage.Value,
-                                                  Mode=OneWay}"
-                    Width="169"
-                    x:Name="OptimizeImageButton" />
-
-                <customControls:TextIconButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="7"
-                    Canvas.Top="104"
-                    Classes="ButtonBorder altHover"
-                    Data="{StaticResource BrushGeometry}"
-                    Foreground="{DynamicResource DisabledTextColor}"
-                    Height="46"
-                    IconHeight="17"
-                    IconMargin="9,0,12,0"
-                    IconWidth="17"
-                    IsEnabled="False"
-                    Text="{CompiledBinding Translation.ColorPickerTool.Value,
-                                           Mode=OneWay}"
-                    ToolTip.Tip="{CompiledBinding Translation.ColorPickerToolTooltip.Value,
-                                                  Mode=OneWay}"
-                    Width="169" />
-
-                <customControls:TextIconButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="182"
-                    Canvas.Top="104"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.ChangeBackgroundCommand}"
-                    Foreground="{StaticResource ChangeBgBrush}"
-                    Height="46"
-                    Icon="{StaticResource PaletteImage}"
-                    IconHeight="17"
-                    IconMargin="10,0,10,0"
-                    IconWidth="17"
-                    Text="{CompiledBinding Translation.ChangeBackground.Value,
-                                           Mode=OneWay}"
-                    Width="169"
-                    x:Name="ChangeBgButton" />
-
-                <customControls:TextIconButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="7"
-                    Canvas.Top="155"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Window.ShowKeybindingsWindow}"
-                    Foreground="{StaticResource KeybindingBrush}"
-                    Height="46"
-                    Icon="{StaticResource ShortcutsImage}"
-                    IconHeight="18"
-                    IconMargin="9,0,12,0"
-                    IconWidth="18"
-                    Text="{CompiledBinding Translation.ApplicationShortcuts.Value,
-                                           Mode=OneWay}"
-                    ToolTip.Tip="{CompiledBinding Translation.ApplicationShortcuts.Value,
-                                                  Mode=OneWay}"
-                    Width="169"
-                    x:Name="KeybindingsButton" />
-
-                <customControls:TextIconButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="182"
-                    Canvas.Top="155"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.ToggleUICommand}"
-                    Foreground="{StaticResource InterfaceBrush}"
-                    Height="46"
-                    Icon="{StaticResource EyeOffImage}"
-                    IconHeight="20"
-                    IconMargin="11,0,12,0"
-                    IconWidth="20"
-                    Text="{CompiledBinding Translation.IsShowingUI.Value,
-                                           Mode=OneWay}"
-                    Width="169"
-                    x:Name="InterfaceButton" />
-
+                    Stroke="{DynamicResource OuterBorderColor}"
+                    StrokeThickness="1"
+                    StrokeJoin="Round"
+                    Data="M 0,0 L 15,16 L 30,0" />
             </Canvas>
-        </Border>
-        <Polygon
-            Fill="{DynamicResource MenuBackgroundColor}"
-            Margin="290,-1,0,0"
-            Points="0,0 15,30, 30,0"
-            Stroke="{DynamicResource MainBorderColor}"
-            StrokeThickness="1"
-            x:Name="DownArrow" />
-    </StackPanel>
+        </Grid>
+    </Border>
 </customControls:AnimatedMenu>

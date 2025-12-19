@@ -40,8 +40,8 @@ public static class ErrorHandling
                 var startUpMenu = new StartUpMenu();
                 if (Settings.WindowProperties.AutoFit)
                 {
-                    startUpMenu.Width = SizeDefaults.WindowMinSize;
-                    startUpMenu.Height = SizeDefaults.WindowMinSize;
+                    startUpMenu.MinWidth = SizeDefaults.WindowMinSize;
+                    startUpMenu.MinHeight = SizeDefaults.WindowMinSize;
                     vm.PicViewer.GalleryWidth.Value = SizeDefaults.WindowMinSize;
                 }
 

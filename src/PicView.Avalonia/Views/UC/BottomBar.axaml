@@ -1,8 +1,7 @@
 <UserControl
     Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
     IsVisible="{CompiledBinding MainWindow.IsBottomToolbarShown.Value}"
-    Margin="{CompiledBinding MainWindow.BottomScreenMargin.Value,
-                             Mode=OneWay}"
+    Margin="{CompiledBinding MainWindow.BottomScreenMargin.Value, Mode=OneWay}"
     x:Class="PicView.Avalonia.Views.UC.BottomBar"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
@@ -22,10 +21,8 @@
             <!--  Next  -->
             <MenuItem
                 Command="{CompiledBinding Navigation.NextCommand}"
-                Header="{CompiledBinding Translation.NextImage,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}"
+                Header="{CompiledBinding Translation.NextImage, Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                 StaysOpenOnClick="True">
                 <MenuItem.Icon>
                     <Image
@@ -38,10 +35,8 @@
             <!--  Prev  -->
             <MenuItem
                 Command="{CompiledBinding Navigation.PreviousCommand}"
-                Header="{CompiledBinding Translation.PrevImage,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}"
+                Header="{CompiledBinding Translation.PrevImage, Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                 StaysOpenOnClick="True">
                 <MenuItem.Icon>
                     <Image
@@ -57,10 +52,8 @@
             <!--  Next 10  -->
             <MenuItem
                 Command="{CompiledBinding Navigation.Skip10Command}"
-                Header="{CompiledBinding Translation.AdvanceBy10Images,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}"
+                Header="{CompiledBinding Translation.AdvanceBy10Images, Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                 StaysOpenOnClick="True">
                 <MenuItem.Icon>
                     <Image
@@ -73,10 +66,8 @@
             <!--  Next 100  -->
             <MenuItem
                 Command="{CompiledBinding Navigation.Skip100Command}"
-                Header="{CompiledBinding Translation.AdvanceBy100Images.Value,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}"
+                Header="{CompiledBinding Translation.AdvanceBy100Images.Value, Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                 StaysOpenOnClick="True">
                 <MenuItem.Icon>
                     <Image
@@ -89,10 +80,8 @@
             <!--  Prev 10  -->
             <MenuItem
                 Command="{CompiledBinding Navigation.Prev10Command}"
-                Header="{CompiledBinding Translation.GoBackBy10Images.Value,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}"
+                Header="{CompiledBinding Translation.GoBackBy10Images.Value, Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                 StaysOpenOnClick="True">
                 <MenuItem.Icon>
                     <Image
@@ -105,10 +94,8 @@
             <!--  Prev 100  -->
             <MenuItem
                 Command="{CompiledBinding Navigation.Prev100Command}"
-                Header="{CompiledBinding Translation.GoBackBy100Images.Value,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}"
+                Header="{CompiledBinding Translation.GoBackBy100Images.Value, Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                 StaysOpenOnClick="True">
                 <MenuItem.Icon>
                     <Image
@@ -123,10 +110,8 @@
             <!--  First Image  -->
             <MenuItem
                 Command="{CompiledBinding Navigation.FirstCommand}"
-                Header="{CompiledBinding Translation.FirstImage.Value,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}">
+                Header="{CompiledBinding Translation.FirstImage.Value, Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <MenuItem.Icon>
                     <Image
                         Height="12"
@@ -138,10 +123,8 @@
             <!--  Last Image  -->
             <MenuItem
                 Command="{CompiledBinding Navigation.LastCommand}"
-                Header="{CompiledBinding Translation.LastImage.Value,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}">
+                Header="{CompiledBinding Translation.LastImage.Value, Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <MenuItem.Icon>
                     <Image
                         Height="12"
@@ -155,10 +138,8 @@
             <!--  Next folder  -->
             <MenuItem
                 Command="{CompiledBinding Navigation.NextFolderCommand}"
-                Header="{CompiledBinding Translation.NextFolder.Value,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}">
+                Header="{CompiledBinding Translation.NextFolder.Value, Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <MenuItem.Icon>
                     <Image
                         Height="14"
@@ -170,10 +151,8 @@
             <!--  Prev folder  -->
             <MenuItem
                 Command="{CompiledBinding Navigation.PreviousFolderCommand}"
-                Header="{CompiledBinding Translation.PrevFolder.Value,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}">
+                Header="{CompiledBinding Translation.PrevFolder.Value, Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
                 <MenuItem.Icon>
                     <Image
                         Height="14"
@@ -201,87 +180,112 @@
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="0,1,0,0"
         CornerRadius="{CompiledBinding MainWindow.BottomCornerRadius.Value}"
-        Height="{CompiledBinding MainWindow.BottombarHeight.Value,
-                                 Mode=OneWay}"
+        Height="{CompiledBinding MainWindow.BottombarHeight.Value, Mode=OneWay}"
         x:Name="MainBottomBorder">
-        <Panel>
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
 
-                <customControls:IconButton
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="1,0,1,0"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding MainWindow.ToggleFileMenuCommand}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                    Icon="{StaticResource FileMenuIcon}"
-                    IconHeight="17"
-                    IconWidth="17"
-                    IsTabStop="False"
-                    Width="38"
-                    x:Name="FileMenuButton">
-                    <ToolTip.Tip>
-                        <MultiBinding StringFormat="{}{0} {1}">
-                            <CompiledBinding Path="Translation.File.Value" />
-                            <CompiledBinding Path="Translation.Menu.Value" />
-                        </MultiBinding>
-                    </ToolTip.Tip>
-                </customControls:IconButton>
+        <DockPanel LastChildFill="True">
+            <!-- Resize Grip -->
+            <Path
+                DockPanel.Dock="Right"
+                x:Name="ResizeGripRight"
+                Cursor="SizeWestEast"                
+                Data="M330.664 296 v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"
+                Fill="{DynamicResource MainTextColor}"
+                Height="12"
+                HorizontalAlignment="Right"
+                IsVisible="{CompiledBinding MainWindow.CanResize.Value, Mode=OneWay}"
+                Margin="2"
+                Stretch="Fill"
+                Stroke="{DynamicResource MainBackgroundColor}"
+                StrokeThickness="1"
+                VerticalAlignment="Bottom"
+                Width="12" />
 
-                <customControls:IconButton
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding MainWindow.ToggleImageMenuCommand}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="35"
-                    Icon="{StaticResource UpImage}"
-                    IconHeight="17"
-                    IconWidth="17"
-                    IsTabStop="False"
-                    Width="38"
-                    x:Name="ImageMenuButton">
-                    <ToolTip.Tip>
-                        <MultiBinding StringFormat="{}{0} {1}">
-                            <CompiledBinding Path="Translation.Image.Value" />
-                            <CompiledBinding Path="Translation.Menu.Value" />
-                        </MultiBinding>
-                    </ToolTip.Tip>
-                </customControls:IconButton>
 
-                <customControls:IconButton
-                    Background="{DynamicResource AltBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding Tools.ZoomOutCommand}"
-                    Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                    Icon="{StaticResource ZoomOutImage}"
-                    IconHeight="16"
-                    IconWidth="18"
-                    IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
-                    IsTabStop="False"
-                    Width="38"
-                    x:Name="ZoomOutButton" />
+            <Grid DockPanel.Dock="Left" ColumnDefinitions="Auto,*,*,Auto" MaxWidth="440" HorizontalAlignment="Stretch" >
+                <StackPanel Grid.Column="0" HorizontalAlignment="Center" Orientation="Horizontal">
+                    <!-- File Menu-->
+                    <customControls:IconButton
+                        Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="1,0,1,0"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding MainWindow.ToggleFileMenuCommand}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
+                        Icon="{StaticResource FileMenuIcon}"
+                        IconHeight="17"
+                        IconWidth="17"
+                        IsTabStop="False"
+                        Width="38"
+                        x:Name="FileMenuButton">
+                        <ToolTip.Tip>
+                            <MultiBinding StringFormat="{}{0} {1}">
+                                <CompiledBinding Path="Translation.File.Value" />
+                                <CompiledBinding Path="Translation.Menu.Value" />
+                            </MultiBinding>
+                        </ToolTip.Tip>
+                    </customControls:IconButton>
 
-                <customControls:IconButton
-                    Background="{DynamicResource AltBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding Tools.ZoomInCommand}"
-                    Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                    Icon="{StaticResource ZoomAltImage}"
-                    IconHeight="16"
-                    IconWidth="18"
-                    IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
-                    IsTabStop="False"
-                    Width="38"
-                    x:Name="ZoomInButton" />
+                    <!-- Image Menu-->
+                    <customControls:IconButton
+                        Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="0,0,1,0"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding MainWindow.ToggleImageMenuCommand}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="35"
+                        Icon="{StaticResource UpImage}"
+                        IconHeight="17"
+                        IconWidth="17"
+                        IsTabStop="False"
+                        Width="38"
+                        x:Name="ImageMenuButton">
+                        <ToolTip.Tip>
+                            <MultiBinding StringFormat="{}{0} {1}">
+                                <CompiledBinding Path="Translation.Image.Value" />
+                                <CompiledBinding Path="Translation.Menu.Value" />
+                            </MultiBinding>
+                        </ToolTip.Tip>
+                    </customControls:IconButton>
 
+                    <!-- Zoom Out -->
+                    <customControls:IconButton
+                        Background="{DynamicResource AltBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="0,0,1,0"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding Tools.ZoomOutCommand}"
+                        Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
+                        Icon="{StaticResource ZoomOutImage}"
+                        IconHeight="16"
+                        IconWidth="18"
+                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        IsTabStop="False"
+                        Width="38"
+                        x:Name="ZoomOutButton" />
+
+                    <!-- Zoom In -->
+                    <customControls:IconButton
+                        Background="{DynamicResource AltBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="0,0,1,0"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding Tools.ZoomInCommand}"
+                        Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
+                        Icon="{StaticResource ZoomAltImage}"
+                        IconHeight="16"
+                        IconWidth="18"
+                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        IsTabStop="False"
+                        Width="38"
+                        x:Name="ZoomInButton" />
+                </StackPanel>
+
+                <!-- Previous -->
                 <customControls:IconButton
+                    Grid.Column="1"
                     Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -291,10 +295,11 @@
                     Focusable="False"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
+                    HorizontalAlignment="Stretch"
                     IconHeight="20"
                     IconWidth="17"                    
                     IsTabStop="False"
-                    Width="80"
+                    MinWidth="38"
                     ToolTip.Tip="{CompiledBinding Translation.NavigateBackwards.Value, Mode=OneWay}"
                     x:Name="PreviousButton">
                     <customControls:IconButton.IsEnabled>
@@ -309,7 +314,9 @@
                     </customControls:IconButton.IsEnabled>    
                 </customControls:IconButton>
 
+                <!-- Next -->
                 <customControls:IconButton
+                    Grid.Column="2"
                     Background="{DynamicResource MainButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
@@ -319,10 +326,11 @@
                     Focusable="False"
                     Foreground="{DynamicResource MainTextColor}"
                     Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
+                    HorizontalAlignment="Stretch"
                     IconHeight="20"
                     IconWidth="17"
                     IsTabStop="False"
-                    Width="80"
+                    MinWidth="38"
                     ToolTip.Tip="{CompiledBinding Translation.NavigateForwards.Value, Mode=OneWay}"
                     x:Name="NextButton">
                     
@@ -338,160 +346,148 @@
                     </customControls:IconButton.IsEnabled>    
                 </customControls:IconButton>
 
-                <customControls:IconButton
-                    Background="{DynamicResource AltBackgroundColor}"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding Tools.RotateRightCommand}"
-                    DockPanel.Dock="Left"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                    Icon="{StaticResource RefreshCcwDot}"
-                    IconHeight="16"
-                    IconWidth="16"
-                    IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
-                    IsRepeatEnabled="False"
-                    Margin="0"
-                    ToolTip.Tip="{CompiledBinding Translation.RotateRight.Value, Mode=OneWay}"
-                    Width="38"
-                    x:Name="RotateRightButton">
-                    <customControls:IconButton.ContextMenu>
-                        <views:RotationContextMenu />
-                    </customControls:IconButton.ContextMenu>
+                <StackPanel Grid.Column="3" HorizontalAlignment="Center" Orientation="Horizontal">
+                    <!-- Rotate -->
+                    <customControls:IconButton
+                        Background="{DynamicResource AltBackgroundColor}"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding Tools.RotateRightCommand}"
+                        DockPanel.Dock="Left"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
+                        Icon="{StaticResource RefreshCcwDot}"
+                        IconHeight="16"
+                        IconWidth="16"
+                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        IsRepeatEnabled="False"
+                        Margin="0"
+                        ToolTip.Tip="{CompiledBinding Translation.RotateRight.Value, Mode=OneWay}"
+                        Width="38"
+                        x:Name="RotateRightButton">
+                        <customControls:IconButton.ContextMenu>
+                            <views:RotationContextMenu />
+                        </customControls:IconButton.ContextMenu>
+                        </customControls:IconButton>
+                        
+                    <!-- Flip -->
+                    <customControls:IconButton
+                        Background="{DynamicResource AltBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="1,0,1,0"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding Tools.FlipCommand}"
+                        Data="{StaticResource FlipGeometry}"
+                        DockPanel.Dock="Left"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
+                        IconHeight="16"
+                        IconWidth="16"
+                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        IsRepeatEnabled="False"
+                        Margin="0"
+                        ToolTip.Tip="{CompiledBinding Translation.IsFlipped.Value, Mode=OneWay}"
+                        Width="38"
+                        IsVisible="{CompiledBinding !GlobalSettings.ShowPrintInBottomToolbar.Value}"
+                        x:Name="FlipButton">
+                        <Button.RenderTransform>
+                            <ScaleTransform ScaleX="{CompiledBinding PicViewer.ScaleX.Value}" />
+                        </Button.RenderTransform>
                     </customControls:IconButton>
-                    
 
-                <customControls:IconButton
-                    Background="{DynamicResource AltBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="1,0,1,0"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding Tools.FlipCommand}"
-                    Data="{StaticResource FlipGeometry}"
-                    DockPanel.Dock="Left"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                    IconHeight="16"
-                    IconWidth="16"
-                    IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
-                    IsRepeatEnabled="False"
-                    Margin="0"
-                    ToolTip.Tip="{CompiledBinding Translation.IsFlipped.Value,
-                                                  Mode=OneWay}"
-                    Width="38"
-                    IsVisible="{CompiledBinding !GlobalSettings.ShowPrintInBottomToolbar.Value}"
-                    x:Name="FlipButton">
-                    <Button.RenderTransform>
-                        <ScaleTransform ScaleX="{CompiledBinding PicViewer.ScaleX.Value}" />
-                    </Button.RenderTransform>
-                </customControls:IconButton>
+                    <!-- Print -->
+                    <customControls:IconButton
+                        Background="{DynamicResource AltBackgroundColor}"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding Tools.PrintCommand}"
+                        CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName, FallbackValue=''}"
+                        DockPanel.Dock="Left"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
+                        Data="{StaticResource PrintGeometry}"
+                        IconHeight="16"
+                        IconWidth="16"
+                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        IsRepeatEnabled="False"
+                        Margin="0"
+                        ToolTip.Tip="{CompiledBinding Translation.Print.Value, Mode=OneWay}"
+                        Width="38"
+                        IsVisible="{CompiledBinding GlobalSettings.ShowPrintInBottomToolbar.Value}"
+                        x:Name="PrintButton">
+                    </customControls:IconButton>
 
-                <!-- Print -->
-                <customControls:IconButton
-                    Grid.Column="8"
-                    Background="{DynamicResource AltBackgroundColor}"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding Tools.PrintCommand}"
-                    CommandParameter="{CompiledBinding PicViewer.FileInfo?.Value?.FullName, FallbackValue=''}"
-                    DockPanel.Dock="Left"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                    Data="{StaticResource PrintGeometry}"
-                    IconHeight="16"
-                    IconWidth="16"
-                    IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
-                    IsRepeatEnabled="False"
-                    Margin="0"
-                    ToolTip.Tip="{CompiledBinding Translation.Print.Value, Mode=OneWay}"
-                    Width="35"
-                    IsVisible="{CompiledBinding GlobalSettings.ShowPrintInBottomToolbar.Value}"
-                    x:Name="PrintButton">
-                </customControls:IconButton>
-
-                <Button
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding MainWindow.ToggleToolsMenuCommand}"
-                    Foreground="{StaticResource ToolsMenuBrush}"
-                    Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                    IsTabStop="False"
-                    Width="38"
-                    x:Name="ToolsMenuButton">
-                    <ToolTip.Tip>
-                        <MultiBinding StringFormat="{}{0} {1}">
-                            <CompiledBinding Path="Translation.Tools.Value" />
-                            <CompiledBinding Path="Translation.Menu.Value" />
-                        </MultiBinding>
-                    </ToolTip.Tip>
-                    <Image Height="19" Width="19">
-                        <Image.Resources>
-                            <Pen
-                                Brush="{StaticResource ToolsMenuBrush}"
-                                LineJoin="Miter"
-                                Thickness="32"
-                                x:Key="Pen0" />
-                            <Pen
-                                Brush="{StaticResource ToolsMenuBrush}"
-                                LineCap="Round"
-                                LineJoin="Miter"
-                                Thickness="32"
-                                x:Key="Pen1" />
-                        </Image.Resources>
-                        <DrawingImage>
-                            <DrawingGroup>
+                    <!-- Tools Menu-->
+                    <Button
+                        Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="0,0,1,0"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding MainWindow.ToggleToolsMenuCommand}"
+                        Foreground="{StaticResource ToolsMenuBrush}"
+                        Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
+                        IsTabStop="False"
+                        Width="38"
+                        x:Name="ToolsMenuButton">
+                        <ToolTip.Tip>
+                            <MultiBinding StringFormat="{}{0} {1}">
+                                <CompiledBinding Path="Translation.Tools.Value" />
+                                <CompiledBinding Path="Translation.Menu.Value" />
+                            </MultiBinding>
+                        </ToolTip.Tip>
+                        <Image Height="19" Width="19">
+                            <Image.Resources>
+                                <Pen
+                                    Brush="{StaticResource ToolsMenuBrush}"
+                                    LineJoin="Miter"
+                                    Thickness="32"
+                                    x:Key="Pen0" />
+                                <Pen
+                                    Brush="{StaticResource ToolsMenuBrush}"
+                                    LineCap="Round"
+                                    LineJoin="Miter"
+                                    Thickness="32"
+                                    x:Key="Pen1" />
+                            </Image.Resources>
+                            <DrawingImage>
                                 <DrawingGroup>
-                                    <DrawingGroup.Transform>
-                                        <MatrixTransform Matrix="0.70710677,-0.70710677,0.70710677,0.70710677,-129.2298,311.99966" />
-                                    </DrawingGroup.Transform>
-                                    <GeometryDrawing Geometry="F1 M280.48 469.58L280.48 154.42Q280.48 153.646 280.518 152.873Q280.556 152.101 280.632 151.331Q280.708 150.56 280.821 149.795Q280.935 149.03 281.086 148.271Q281.236 147.512 281.424 146.761Q281.612 146.011 281.837 145.27Q282.062 144.53 282.322 143.801Q282.583 143.073 282.879 142.358Q283.175 141.643 283.506 140.943Q283.837 140.244 284.201 139.562Q284.566 138.879 284.964 138.215Q285.361 137.552 285.791 136.908Q286.221 136.265 286.682 135.644Q287.143 135.022 287.634 134.424Q288.124 133.826 288.644 133.252Q289.163 132.679 289.711 132.132Q290.258 131.585 290.831 131.065Q291.404 130.546 292.002 130.055Q292.6 129.564 293.222 129.103Q293.843 128.642 294.486 128.212Q295.129 127.782 295.793 127.384Q296.457 126.987 297.139 126.622Q297.821 126.257 298.521 125.926Q299.22 125.595 299.935 125.299Q300.649 125.003 301.378 124.743Q302.106 124.482 302.847 124.257Q303.587 124.033 304.337 123.845Q305.088 123.657 305.847 123.506Q306.605 123.355 307.371 123.241Q308.136 123.128 308.906 123.052Q309.676 122.976 310.449 122.938Q311.221 122.9 311.995 122.9L311.995 122.9Q312.769 122.9 313.541 122.938Q314.314 122.976 315.084 123.052Q315.854 123.128 316.619 123.241Q317.384 123.355 318.143 123.506Q318.902 123.657 319.652 123.845Q320.403 124.033 321.143 124.257Q321.884 124.482 322.612 124.743Q323.34 125.003 324.055 125.299Q324.77 125.595 325.469 125.926Q326.169 126.257 326.851 126.622Q327.533 126.987 328.197 127.384Q328.86 127.782 329.504 128.212Q330.147 128.642 330.768 129.103Q331.39 129.564 331.988 130.055Q332.586 130.546 333.159 131.065Q333.732 131.585 334.279 132.132Q334.827 132.679 335.346 133.252Q335.866 133.826 336.356 134.424Q336.847 135.022 337.308 135.644Q337.769 136.265 338.199 136.908Q338.629 137.552 339.026 138.215Q339.424 138.879 339.789 139.562Q340.153 140.244 340.484 140.943Q340.815 141.643 341.111 142.358Q341.407 143.073 341.668 143.801Q341.928 144.53 342.153 145.27Q342.378 146.011 342.565 146.761Q342.753 147.512 342.904 148.271Q343.055 149.03 343.169 149.795Q343.282 150.56 343.358 151.331Q343.434 152.101 343.472 152.873Q343.51 153.646 343.51 154.42L343.51 469.58Q343.51 470.354 343.472 471.127Q343.434 471.899 343.358 472.669Q343.282 473.44 343.169 474.205Q343.055 474.97 342.904 475.729Q342.753 476.488 342.565 477.239Q342.378 477.989 342.153 478.73Q341.928 479.47 341.668 480.199Q341.407 480.927 341.111 481.642Q340.815 482.357 340.484 483.056Q340.153 483.756 339.789 484.438Q339.424 485.121 339.026 485.785Q338.629 486.448 338.199 487.092Q337.769 487.735 337.308 488.356Q336.847 488.978 336.356 489.576Q335.866 490.174 335.346 490.748Q334.827 491.321 334.279 491.868Q333.732 492.415 333.159 492.935Q332.586 493.454 331.988 493.945Q331.39 494.436 330.768 494.897Q330.147 495.358 329.504 495.788Q328.861 496.218 328.197 496.616Q327.533 497.013 326.851 497.378Q326.169 497.743 325.469 498.074Q324.77 498.405 324.055 498.701Q323.34 498.997 322.612 499.257Q321.884 499.518 321.143 499.743Q320.403 499.967 319.653 500.155Q318.902 500.343 318.143 500.494Q317.384 500.645 316.619 500.759Q315.854 500.872 315.084 500.948Q314.314 501.024 313.541 501.062Q312.769 501.1 311.995 501.1L311.995 501.1Q311.221 501.1 310.449 501.062Q309.676 501.024 308.906 500.948Q308.136 500.872 307.371 500.759Q306.605 500.645 305.847 500.494Q305.088 500.343 304.337 500.155Q303.587 499.967 302.847 499.743Q302.106 499.518 301.378 499.257Q300.649 498.997 299.935 498.701Q299.22 498.405 298.521 498.074Q297.821 497.743 297.139 497.378Q296.457 497.013 295.793 496.616Q295.129 496.218 294.486 495.788Q293.843 495.358 293.221 494.897Q292.6 494.436 292.002 493.945Q291.404 493.454 290.831 492.935Q290.258 492.415 289.711 491.868Q289.163 491.321 288.644 490.748Q288.124 490.174 287.634 489.576Q287.143 488.978 286.682 488.356Q286.221 487.735 285.791 487.092Q285.361 486.448 284.964 485.785Q284.566 485.121 284.201 484.438Q283.837 483.756 283.506 483.056Q283.175 482.357 282.879 481.642Q282.583 480.927 282.322 480.199Q282.062 479.47 281.837 478.73Q281.612 477.989 281.424 477.239Q281.236 476.488 281.086 475.729Q280.935 474.97 280.821 474.205Q280.708 473.44 280.632 472.67Q280.556 471.899 280.518 471.127Q280.48 470.354 280.48 469.58Z" Pen="{DynamicResource Pen0}" />
+                                    <DrawingGroup>
+                                        <DrawingGroup.Transform>
+                                            <MatrixTransform Matrix="0.70710677,-0.70710677,0.70710677,0.70710677,-129.2298,311.99966" />
+                                        </DrawingGroup.Transform>
+                                        <GeometryDrawing Geometry="F1 M280.48 469.58L280.48 154.42Q280.48 153.646 280.518 152.873Q280.556 152.101 280.632 151.331Q280.708 150.56 280.821 149.795Q280.935 149.03 281.086 148.271Q281.236 147.512 281.424 146.761Q281.612 146.011 281.837 145.27Q282.062 144.53 282.322 143.801Q282.583 143.073 282.879 142.358Q283.175 141.643 283.506 140.943Q283.837 140.244 284.201 139.562Q284.566 138.879 284.964 138.215Q285.361 137.552 285.791 136.908Q286.221 136.265 286.682 135.644Q287.143 135.022 287.634 134.424Q288.124 133.826 288.644 133.252Q289.163 132.679 289.711 132.132Q290.258 131.585 290.831 131.065Q291.404 130.546 292.002 130.055Q292.6 129.564 293.222 129.103Q293.843 128.642 294.486 128.212Q295.129 127.782 295.793 127.384Q296.457 126.987 297.139 126.622Q297.821 126.257 298.521 125.926Q299.22 125.595 299.935 125.299Q300.649 125.003 301.378 124.743Q302.106 124.482 302.847 124.257Q303.587 124.033 304.337 123.845Q305.088 123.657 305.847 123.506Q306.605 123.355 307.371 123.241Q308.136 123.128 308.906 123.052Q309.676 122.976 310.449 122.938Q311.221 122.9 311.995 122.9L311.995 122.9Q312.769 122.9 313.541 122.938Q314.314 122.976 315.084 123.052Q315.854 123.128 316.619 123.241Q317.384 123.355 318.143 123.506Q318.902 123.657 319.652 123.845Q320.403 124.033 321.143 124.257Q321.884 124.482 322.612 124.743Q323.34 125.003 324.055 125.299Q324.77 125.595 325.469 125.926Q326.169 126.257 326.851 126.622Q327.533 126.987 328.197 127.384Q328.86 127.782 329.504 128.212Q330.147 128.642 330.768 129.103Q331.39 129.564 331.988 130.055Q332.586 130.546 333.159 131.065Q333.732 131.585 334.279 132.132Q334.827 132.679 335.346 133.252Q335.866 133.826 336.356 134.424Q336.847 135.022 337.308 135.644Q337.769 136.265 338.199 136.908Q338.629 137.552 339.026 138.215Q339.424 138.879 339.789 139.562Q340.153 140.244 340.484 140.943Q340.815 141.643 341.111 142.358Q341.407 143.073 341.668 143.801Q341.928 144.53 342.153 145.27Q342.378 146.011 342.565 146.761Q342.753 147.512 342.904 148.271Q343.055 149.03 343.169 149.795Q343.282 150.56 343.358 151.331Q343.434 152.101 343.472 152.873Q343.51 153.646 343.51 154.42L343.51 469.58Q343.51 470.354 343.472 471.127Q343.434 471.899 343.358 472.669Q343.282 473.44 343.169 474.205Q343.055 474.97 342.904 475.729Q342.753 476.488 342.565 477.239Q342.378 477.989 342.153 478.73Q341.928 479.47 341.668 480.199Q341.407 480.927 341.111 481.642Q340.815 482.357 340.484 483.056Q340.153 483.756 339.789 484.438Q339.424 485.121 339.026 485.785Q338.629 486.448 338.199 487.092Q337.769 487.735 337.308 488.356Q336.847 488.978 336.356 489.576Q335.866 490.174 335.346 490.748Q334.827 491.321 334.279 491.868Q333.732 492.415 333.159 492.935Q332.586 493.454 331.988 493.945Q331.39 494.436 330.768 494.897Q330.147 495.358 329.504 495.788Q328.861 496.218 328.197 496.616Q327.533 497.013 326.851 497.378Q326.169 497.743 325.469 498.074Q324.77 498.405 324.055 498.701Q323.34 498.997 322.612 499.257Q321.884 499.518 321.143 499.743Q320.403 499.967 319.653 500.155Q318.902 500.343 318.143 500.494Q317.384 500.645 316.619 500.759Q315.854 500.872 315.084 500.948Q314.314 501.024 313.541 501.062Q312.769 501.1 311.995 501.1L311.995 501.1Q311.221 501.1 310.449 501.062Q309.676 501.024 308.906 500.948Q308.136 500.872 307.371 500.759Q306.605 500.645 305.847 500.494Q305.088 500.343 304.337 500.155Q303.587 499.967 302.847 499.743Q302.106 499.518 301.378 499.257Q300.649 498.997 299.935 498.701Q299.22 498.405 298.521 498.074Q297.821 497.743 297.139 497.378Q296.457 497.013 295.793 496.616Q295.129 496.218 294.486 495.788Q293.843 495.358 293.221 494.897Q292.6 494.436 292.002 493.945Q291.404 493.454 290.831 492.935Q290.258 492.415 289.711 491.868Q289.163 491.321 288.644 490.748Q288.124 490.174 287.634 489.576Q287.143 488.978 286.682 488.356Q286.221 487.735 285.791 487.092Q285.361 486.448 284.964 485.785Q284.566 485.121 284.201 484.438Q283.837 483.756 283.506 483.056Q283.175 482.357 282.879 481.642Q282.583 480.927 282.322 480.199Q282.062 479.47 281.837 478.73Q281.612 477.989 281.424 477.239Q281.236 476.488 281.086 475.729Q280.935 474.97 280.821 474.205Q280.708 473.44 280.632 472.67Q280.556 471.899 280.518 471.127Q280.48 470.354 280.48 469.58Z" Pen="{DynamicResource Pen0}" />
+                                    </DrawingGroup>
+                                    <GeometryDrawing Brush="{StaticResource ToolsMenuBrush}" Geometry="F1 M178.38 178.38Q177.831 178.929 177.309 179.505Q176.787 180.08 176.294 180.681Q175.802 181.281 175.339 181.905Q174.876 182.529 174.444 183.175Q174.013 183.821 173.613 184.487Q173.214 185.153 172.848 185.838Q172.481 186.523 172.149 187.226Q171.817 187.928 171.52 188.646Q171.222 189.363 170.961 190.095Q170.699 190.826 170.473 191.569Q170.248 192.313 170.059 193.066Q169.87 193.82 169.719 194.582Q169.567 195.343 169.453 196.112Q169.339 196.88 169.263 197.653Q169.187 198.426 169.149 199.202Q169.111 199.978 169.111 200.755Q169.111 201.532 169.149 202.308Q169.187 203.084 169.263 203.857Q169.339 204.63 169.453 205.398Q169.567 206.167 169.719 206.928Q169.87 207.69 170.059 208.444Q170.248 209.197 170.473 209.941Q170.699 210.684 170.961 211.415Q171.222 212.147 171.52 212.865Q171.817 213.582 172.149 214.284Q172.481 214.987 172.848 215.672Q173.214 216.357 173.613 217.023Q174.013 217.689 174.444 218.335Q174.876 218.981 175.339 219.605Q175.802 220.229 176.294 220.829Q176.787 221.43 177.309 222.005Q177.831 222.581 178.38 223.13L223.25 268L268 223.25L223.13 178.38Q222.581 177.831 222.005 177.309Q221.43 176.787 220.829 176.294Q220.229 175.802 219.605 175.339Q218.981 174.876 218.335 174.444Q217.689 174.013 217.023 173.613Q216.357 173.214 215.672 172.848Q214.987 172.481 214.284 172.149Q213.582 171.817 212.865 171.52Q212.147 171.222 211.415 170.961Q210.684 170.699 209.941 170.473Q209.197 170.248 208.444 170.059Q207.69 169.87 206.928 169.719Q206.167 169.567 205.398 169.453Q204.63 169.339 203.857 169.263Q203.084 169.187 202.308 169.149Q201.532 169.111 200.755 169.111Q199.978 169.111 199.202 169.149Q198.426 169.187 197.653 169.263Q196.88 169.339 196.112 169.453Q195.344 169.567 194.582 169.719Q193.82 169.87 193.066 170.059Q192.313 170.248 191.569 170.473Q190.826 170.699 190.095 170.961Q189.363 171.222 188.646 171.52Q187.928 171.817 187.226 172.149Q186.523 172.481 185.838 172.848Q185.153 173.214 184.487 173.613Q183.821 174.013 183.175 174.444Q182.529 174.876 181.905 175.339Q181.281 175.802 180.681 176.294Q180.08 176.787 179.505 177.309Q178.929 177.831 178.38 178.38Z" />
+                                    <GeometryDrawing Brush="{StaticResource ToolsMenuBrush}" Geometry="F1 M48 192L96 192M90.18 90.18L124.12 124.12M192 48L192 96M293.82 90.18L259.88 124.12M124.12 259.88L90.18 293.82" />
+                                    <GeometryDrawing Geometry="F1 M48 192L96 192M90.18 90.18L124.12 124.12M192 48L192 96M293.82 90.18L259.88 124.12M124.12 259.88L90.18 293.82" Pen="{DynamicResource Pen1}" />
                                 </DrawingGroup>
-                                <GeometryDrawing Brush="{StaticResource ToolsMenuBrush}" Geometry="F1 M178.38 178.38Q177.831 178.929 177.309 179.505Q176.787 180.08 176.294 180.681Q175.802 181.281 175.339 181.905Q174.876 182.529 174.444 183.175Q174.013 183.821 173.613 184.487Q173.214 185.153 172.848 185.838Q172.481 186.523 172.149 187.226Q171.817 187.928 171.52 188.646Q171.222 189.363 170.961 190.095Q170.699 190.826 170.473 191.569Q170.248 192.313 170.059 193.066Q169.87 193.82 169.719 194.582Q169.567 195.343 169.453 196.112Q169.339 196.88 169.263 197.653Q169.187 198.426 169.149 199.202Q169.111 199.978 169.111 200.755Q169.111 201.532 169.149 202.308Q169.187 203.084 169.263 203.857Q169.339 204.63 169.453 205.398Q169.567 206.167 169.719 206.928Q169.87 207.69 170.059 208.444Q170.248 209.197 170.473 209.941Q170.699 210.684 170.961 211.415Q171.222 212.147 171.52 212.865Q171.817 213.582 172.149 214.284Q172.481 214.987 172.848 215.672Q173.214 216.357 173.613 217.023Q174.013 217.689 174.444 218.335Q174.876 218.981 175.339 219.605Q175.802 220.229 176.294 220.829Q176.787 221.43 177.309 222.005Q177.831 222.581 178.38 223.13L223.25 268L268 223.25L223.13 178.38Q222.581 177.831 222.005 177.309Q221.43 176.787 220.829 176.294Q220.229 175.802 219.605 175.339Q218.981 174.876 218.335 174.444Q217.689 174.013 217.023 173.613Q216.357 173.214 215.672 172.848Q214.987 172.481 214.284 172.149Q213.582 171.817 212.865 171.52Q212.147 171.222 211.415 170.961Q210.684 170.699 209.941 170.473Q209.197 170.248 208.444 170.059Q207.69 169.87 206.928 169.719Q206.167 169.567 205.398 169.453Q204.63 169.339 203.857 169.263Q203.084 169.187 202.308 169.149Q201.532 169.111 200.755 169.111Q199.978 169.111 199.202 169.149Q198.426 169.187 197.653 169.263Q196.88 169.339 196.112 169.453Q195.344 169.567 194.582 169.719Q193.82 169.87 193.066 170.059Q192.313 170.248 191.569 170.473Q190.826 170.699 190.095 170.961Q189.363 171.222 188.646 171.52Q187.928 171.817 187.226 172.149Q186.523 172.481 185.838 172.848Q185.153 173.214 184.487 173.613Q183.821 174.013 183.175 174.444Q182.529 174.876 181.905 175.339Q181.281 175.802 180.681 176.294Q180.08 176.787 179.505 177.309Q178.929 177.831 178.38 178.38Z" />
-                                <GeometryDrawing Brush="{StaticResource ToolsMenuBrush}" Geometry="F1 M48 192L96 192M90.18 90.18L124.12 124.12M192 48L192 96M293.82 90.18L259.88 124.12M124.12 259.88L90.18 293.82" />
-                                <GeometryDrawing Geometry="F1 M48 192L96 192M90.18 90.18L124.12 124.12M192 48L192 96M293.82 90.18L259.88 124.12M124.12 259.88L90.18 293.82" Pen="{DynamicResource Pen1}" />
-                            </DrawingGroup>
-                        </DrawingImage>
-                    </Image>
-                </Button>
+                            </DrawingImage>
+                        </Image>
+                    </Button>
 
-                <customControls:IconButton
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding MainWindow.ToggleSettingsMenuCommand}"
-                    Data="{StaticResource CogGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                    IconHeight="16"
-                    IconWidth="16"
-                    IsTabStop="False"
-                    Width="38"
-                    ZIndex="1"
-                    x:Name="SettingsMenuButton">
-                    <ToolTip.Tip>
-                        <MultiBinding StringFormat="{}{0} {1}">
-                            <CompiledBinding Path="Translation.Settings.Value" />
-                            <CompiledBinding Path="Translation.Menu.Value" />
-                        </MultiBinding>
-                    </ToolTip.Tip>
-                </customControls:IconButton>
-
-            </StackPanel>
-
-            <Path
-                Data="M330.664 296 v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"
-                Fill="{DynamicResource MainTextColor}"
-                Height="12"
-                HorizontalAlignment="Right"
-                IsVisible="{CompiledBinding MainWindow.CanResize.Value,
-                                            Mode=OneWay}"
-                Margin="0,0,2,2"
-                Stretch="Fill"
-                Stroke="{DynamicResource MainBackgroundColor}"
-                StrokeThickness="1"
-                VerticalAlignment="Bottom"
-                Width="12" />
-        </Panel>
+                    <!-- Settings Menu-->
+                    <customControls:IconButton
+                        Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="0,0,1,0"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding MainWindow.ToggleSettingsMenuCommand}"
+                        Data="{StaticResource CogGeometry}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
+                        IconHeight="16"
+                        IconWidth="16"
+                        IsTabStop="False"
+                        Width="38"
+                        ZIndex="1"
+                        x:Name="SettingsMenuButton">
+                        <ToolTip.Tip>
+                            <MultiBinding StringFormat="{}{0} {1}">
+                                <CompiledBinding Path="Translation.Settings.Value" />
+                                <CompiledBinding Path="Translation.Menu.Value" />
+                            </MultiBinding>
+                        </ToolTip.Tip>
+                    </customControls:IconButton>
+                </StackPanel>
+            </Grid>
+        </DockPanel>
     </Border>
 </UserControl>

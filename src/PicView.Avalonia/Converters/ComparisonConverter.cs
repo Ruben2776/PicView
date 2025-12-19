@@ -5,47 +5,151 @@ using Avalonia.Data.Converters;
 namespace PicView.Avalonia.Converters;
 
 public enum ComparisonOperator
+{
+    LessThan,
+    LessThanOrEqual,
+    Equal,
+    GreaterThanOrEqual,
+    GreaterThan,
+    NotEqual
+}
+
+public class ComparisonConverter : IValueConverter
+{
+    public double CompareTo { get; set; }
+    public ComparisonOperator Operator { get; set; } = ComparisonOperator.Equal;
+
+    public object ProvideValue(IServiceProvider serviceProvider) => this;
+
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        LessThan,
-        LessThanOrEqual,
-        Equal,
-        GreaterThanOrEqual,
-        GreaterThan,
-        NotEqual
+        if (value == null)
+            return false;
+
+        try
+        {
+            var numericValue = System.Convert.ToDouble(value, culture);
+            var compareValue = CompareTo;
+
+            return Operator switch
+            {
+                ComparisonOperator.LessThan => numericValue < compareValue,
+                ComparisonOperator.LessThanOrEqual => numericValue <= compareValue,
+                ComparisonOperator.Equal => Math.Abs(numericValue - compareValue) < double.Epsilon,
+                ComparisonOperator.GreaterThanOrEqual => numericValue >= compareValue,
+                ComparisonOperator.GreaterThan => numericValue > compareValue,
+                ComparisonOperator.NotEqual => Math.Abs(numericValue - compareValue) > double.Epsilon,
+                _ => false
+            };
+        }
+        catch
+        {
+            return false;
+        }
     }
 
-    public class ComparisonConverter : IValueConverter
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+
+
+/// <summary>
+/// Returns a double "limited" by a comparison threshold.
+/// Threshold is taken from ConverterParameter if provided, otherwise CompareTo.
+///
+/// - GreaterThan / GreaterThanOrEqual => enforce MIN:  result = (value >= t) ? value : t
+/// - LessThan / LessThanOrEqual       => enforce MAX:  result = (value <= t) ? value : t
+/// - Equal                           => result = t
+/// - NotEqual                        => result = (value != t) ? value : t
+/// </summary>
+public sealed class LimitConverter : IValueConverter
+{
+    public double CompareTo { get; set; }
+    public ComparisonOperator Operator { get; set; } = ComparisonOperator.GreaterThanOrEqual;
+
+    public object ProvideValue(IServiceProvider serviceProvider) => this;
+    
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        public double CompareTo { get; set; }
-        public ComparisonOperator Operator { get; set; } = ComparisonOperator.Equal;
+        if (!TryToDouble(value, culture, out var v))
+            return GetThresholdOrZero(parameter, culture);
 
-        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        var t = GetThreshold(parameter, culture);
+
+        return Operator switch
         {
-            if (value == null)
-                return false;
+            ComparisonOperator.GreaterThan =>
+                v > t ? v : t,
 
-            try
-            {
-                var numericValue = System.Convert.ToDouble(value, culture);
-                var compareValue = CompareTo;
+            ComparisonOperator.GreaterThanOrEqual =>
+                v >= t ? v : t,
 
-                return Operator switch
-                {
-                    ComparisonOperator.LessThan => numericValue < compareValue,
-                    ComparisonOperator.LessThanOrEqual => numericValue <= compareValue,
-                    ComparisonOperator.Equal => Math.Abs(numericValue - compareValue) < double.Epsilon,
-                    ComparisonOperator.GreaterThanOrEqual => numericValue >= compareValue,
-                    ComparisonOperator.GreaterThan => numericValue > compareValue,
-                    ComparisonOperator.NotEqual => Math.Abs(numericValue - compareValue) > double.Epsilon,
-                    _ => false
-                };
-            }
-            catch
+            ComparisonOperator.LessThan =>
+                v < t ? v : t,
+
+            ComparisonOperator.LessThanOrEqual =>
+                v <= t ? v : t,
+
+            ComparisonOperator.Equal =>
+                t,
+
+            ComparisonOperator.NotEqual =>
+                Math.Abs(v - t) > double.Epsilon ? v : t,
+
+            _ => v
+        };
+    }
+
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+
+    private double GetThreshold(object? parameter, CultureInfo culture)
+    {
+        if (parameter is not null && TryToDouble(parameter, culture, out var p))
+            return p;
+
+        return CompareTo;
+    }
+
+    private static double GetThresholdOrZero(object? parameter, CultureInfo culture)
+        => parameter is not null && TryToDouble(parameter, culture, out var p) ? p : 0d;
+
+    private static bool TryToDouble(object? input, CultureInfo culture, out double result)
+    {
+        try
+        {
+            switch (input)
             {
-                return false;
+                case null:
+                    result = 0;
+                    return false;
+                case double d:
+                    result = d;
+                    return true;
+                case float f:
+                    result = f;
+                    return true;
+                case int i:
+                    result = i;
+                    return true;
+                case long l:
+                    result = l;
+                    return true;
+                case decimal m:
+                    result = (double)m;
+                    return true;
+                case string s:
+                    return double.TryParse(s, NumberStyles.Float, culture, out result);
+                default:
+                    result = System.Convert.ToDouble(input, culture);
+                    return true;
             }
         }
-
-        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-            => throw new NotSupportedException();
+        catch
+        {
+            result = 0;
+            return false;
+        }
     }
+}

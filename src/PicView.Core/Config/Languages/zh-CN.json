@@ -426,6 +426,9 @@
   "_4Star": "4星评分",
   "_5Star": "5星评分",
 
+  "MaximizeWindowMode": "最大化窗口模式",
+  "ShowPromptToSaveChanges": "显示保存更改提示",
+  "ShowExportToPDFInMenu": "在菜单中显示导出为 PDF",
   "AccessDenied": "拒绝访问",
   "Disgard": "丢弃",
   "ExportToPdf": "导出为 PDF",

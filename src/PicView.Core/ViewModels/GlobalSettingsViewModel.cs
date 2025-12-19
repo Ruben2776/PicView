@@ -27,4 +27,7 @@ public class GlobalSettingsViewModel
     public BindableReactiveProperty<bool> EnableCheckForUpdates { get; } = new(Settings.UIProperties.EnableCheckForUpdates);
 
     public BindableReactiveProperty<bool> HasLastFile { get; } = new(!String.IsNullOrWhiteSpace(Settings.StartUp.LastFile));
+    public BindableReactiveProperty<int> WindowMaximizeMode { get; } = new(Settings.WindowProperties.WindowMaximizeMode);
+    public BindableReactiveProperty<bool> ShowExportToPDFInMenu { get; } = new(Settings.UIProperties.ShowExportToPDFInMenu);
+    public BindableReactiveProperty<bool> ShowPromptToSaveChanges { get; } = new(Settings.UIProperties.ShowPromptToSaveChanges);
 }

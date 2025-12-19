@@ -94,78 +94,15 @@ public partial class StartUpMenu : UserControl
 
     public void ResponsiveSize(double width, double height)
     {
-        const int breakPoint = 900;
-        const int bottomMargin = 16;
-        const int logoWidth = 350;
-        
-        LogoViewbox.Height = double.NaN;
-        
         if (DataContext is not MainViewModel vm)
             return;
         
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
             return;
         
-        if (Settings.WindowProperties.Fullscreen || Settings.WindowProperties.Maximized)
-        {
-            ShowFullLogo();
-        }
-        else if (Settings.WindowProperties.AutoFit)
-        {
-            ShowIcon();
-            vm.MainWindow.TitleMaxWidth.Value = logoWidth;
-            return;
-        }
+        var titleMaxWidth = ImageSizeCalculationHelper.GetTitleMaxWidth(width, height, desktop.MainWindow.MinWidth, desktop.MainWindow.MinHeight, vm.PlatformWindowService.CombinedTitleButtonsWidth, desktop.MainWindow.Width);
+        var scrollOffset = Settings.Zoom.ScrollEnabled ? SizeDefaults.ScrollbarSize : 0;
 
-        switch (width)
-        {
-            case < breakPoint:
-                ShowIcon();
-                break;
-            case > breakPoint:
-                ShowFullLogo();
-                break;
-        }
-
-        var titleMaxWidth = ImageSizeCalculationHelper.GetTitleMaxWidth(width, height,
-            desktop.MainWindow.MinWidth, desktop.MainWindow.MinHeight, vm.PlatformWindowService.CombinedTitleButtonsWidth,
-            desktop.MainWindow.Width);
-
-        if (Settings.Zoom.ScrollEnabled)
-        {
-            vm.MainWindow.TitleMaxWidth.Value = titleMaxWidth - SizeDefaults.ScrollbarSize;
-        }
-        else
-        {
-            vm.MainWindow.TitleMaxWidth.Value = titleMaxWidth;
-        }
-        
-        return;
-
-        void ShowIcon()
-        {
-            if (this.TryFindResource("LogoImage", Application.Current.RequestedThemeVariant, out var icon))
-                Logo.Source = icon as DrawingImage;
-            LogoViewbox.Width = logoWidth;
-            Buttons.Margin = new Thickness(0, 0, 0, bottomMargin);
-            Buttons.VerticalAlignment = VerticalAlignment.Bottom;
-        }
-
-        void ShowFullLogo()
-        {
-            if (this.TryFindResource("LogoFullImage", Application.Current.RequestedThemeVariant, out var logo))
-                Logo.Source = logo as DrawingImage;
-            LogoViewbox.Width = double.NaN;
-            if (Settings.WindowProperties.Fullscreen || Settings.WindowProperties.Maximized)
-            {
-                Buttons.Margin = new Thickness(0, 0, 0, bottomMargin + SizeDefaults.WindowMinSize / 2);
-                Buttons.VerticalAlignment = VerticalAlignment.Bottom;
-            }
-            else
-            {
-                Buttons.Margin = new Thickness(0, 220, 25, bottomMargin - 100);
-                Buttons.VerticalAlignment = VerticalAlignment.Center;
-            }
-        }
+        vm.MainWindow.TitleMaxWidth.Value = titleMaxWidth - scrollOffset;
     }
 }

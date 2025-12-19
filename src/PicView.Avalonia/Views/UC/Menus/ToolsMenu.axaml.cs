@@ -30,7 +30,7 @@ public partial class ToolsMenu : AnimatedMenu
                         var brush = texture as ImageBrush;
                         MainBorder.Background = brush;
                         DownArrow.Fill = brush;
-                        DownArrow.StrokeThickness = 0;
+                        DownArrowBorder.StrokeThickness = 0;
                     }
                 }
 
@@ -128,6 +128,8 @@ public partial class ToolsMenu : AnimatedMenu
             this.GetObservable(IsOpenProperty).ToObservable()
                 .Where(x => x)
                 .Subscribe(_ => { DetermineIfOptimizeImageShouldBeEnabled(); });
+
+            PointerPressed += (_, e) => e.Handled = true;
         };
     }
 

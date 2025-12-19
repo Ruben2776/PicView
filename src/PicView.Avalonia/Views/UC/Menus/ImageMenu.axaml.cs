@@ -49,7 +49,7 @@ public partial class ImageMenu : AnimatedMenu
                     var brush = texture as ImageBrush;
                     MainBorder.Background = brush;
                     DownArrow.Fill = brush;
-                    DownArrow.StrokeThickness = 0;
+                    DownArrowBorder.StrokeThickness = 0;
                 }
             }
 
@@ -101,6 +101,8 @@ public partial class ImageMenu : AnimatedMenu
 
             ImageInfoButton.Classes.Remove("altHover");
             ImageInfoButton.Classes.Add("hover");
+
+            PointerPressed += (_, e) => e.Handled = true;
         };
     }
 }

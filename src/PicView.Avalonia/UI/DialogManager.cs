@@ -39,7 +39,7 @@ public static class DialogManager
             return;
         }
 
-        if (vm.PicViewer.HasChanges.Value)
+        if (vm.PicViewer.HasChanges.Value && vm.GlobalSettings.ShowPromptToSaveChanges.Value)
         {
             await FileSaverHelper.PromptSaveChangesAsync().ConfigureAwait(false);
         }

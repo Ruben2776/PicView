@@ -14,376 +14,407 @@
         <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="SideBrush" />
         <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="SlideShowBrush" />
     </customControls:AnimatedMenu.Resources>
-    <StackPanel>
-        <StackPanel.Styles>
-            <Styles>
-                <Style Selector="TextBlock.btnTxt">
-                    <Setter Property="MaxWidth" Value="137" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
-                    <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-                </Style>
-            </Styles>
-        </StackPanel.Styles>
+    <customControls:AnimatedMenu.Styles>
+        <Styles>
+            <Style Selector="TextBlock.btnTxt">
+                <Setter Property="MaxWidth" Value="137" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+            </Style>
+        </Styles>
+    </customControls:AnimatedMenu.Styles>
 
-        <Border
-            Background="{DynamicResource MenuBackgroundColor}"
-            BorderBrush="{DynamicResource OuterBorderColor}"
-            BorderThickness="1"
-            CornerRadius="8"
-            Effect="{DynamicResource MenuShadowButtonBorder}"
-            x:Name="MainBorder">
-            <Canvas Height="208" Width="359">
+    <Border
+        Background="Transparent"
+        Effect="{DynamicResource MenuShadowButtonBorder}">
 
-                <Border
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource OuterBorderColor}"
-                    BorderThickness="0,0,0,1"
-                    CornerRadius="8,8,0,0"
-                    Height="47"
-                    Width="359"
-                    x:Name="TopBorder" />
+        <Grid Width="359" RowDefinitions="Auto,Auto" UseLayoutRounding="True">
 
-                <customControls:TextIconButton
-                    Background="Transparent"
-                    Classes="altHover"
-                    Command="{CompiledBinding Window.ShowImageInfoWindow}"
-                    CornerRadius="8,0,0,0"
-                    Data="{StaticResource ImageInfoGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="46"
-                    IconHeight="17"
-                    IconMargin="15,0,2,0"
-                    IconWidth="17"
-                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
-                    Text="{CompiledBinding Translation.ImageInfo.Value,
-                                           Mode=OneWay}"
-                    TextMargin="10,0,6,0"
-                    TextMaxWidth="200"
-                    Width="270"
-                    x:Name="ImageInfoButton" />
+            <Border
+                Grid.Row="0"
+                Background="{DynamicResource MenuBackgroundColor}"
+                BorderBrush="{DynamicResource OuterBorderColor}"
+                BorderThickness="1"
+                CornerRadius="8"
+                x:Name="MainBorder">
 
-                <customControls:IconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="1,0,1,0"
-                    Canvas.Left="270"
-                    Canvas.Top="-1"
-                    Classes="hover"
-                    ClickMode="Release"
-                    Command="{CompiledBinding Tools.ShowSearchCommand}"
-                    Data="{StaticResource SearchGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="47"
-                    IconHeight="16"
-                    IconWidth="16"
-                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                                Converter={x:Static ObjectConverters.IsNotNull}}"
-                    ToolTip.Tip="{CompiledBinding Translation.Search.Value,
-                                                  Mode=OneWay}"
-                    Width="45" />
+                <Canvas Height="208" Width="359">
 
-                <customControls:IconButton
-                    Background="Transparent"
-                    Canvas.Left="315"
-                    Canvas.Top="-1"
-                    Classes="hover"
-                    ClickMode="Release"
-                    Command="{CompiledBinding MainWindow.CloseMenuCommand}"
-                    CornerRadius="0,8,0,0"
-                    Data="{StaticResource CloseGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="47"
-                    IconHeight="10"
-                    IconWidth="10"
-                    ToolTip.Tip="{CompiledBinding Translation.Close.Value,
-                                                  Mode=OneWay}"
-                    Width="45" />
+                    <Border
+                        Background="{DynamicResource SecondaryBackgroundColor}"
+                        BorderBrush="{DynamicResource OuterBorderColor}"
+                        BorderThickness="0,0,0,1"
+                        CornerRadius="8,8,0,0"
+                        Height="47"
+                        Width="359"
+                        x:Name="TopBorder" />
 
-                <Button
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="7"
-                    Canvas.Top="53"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Window.ShowSingleImageResizeWindow}"
-                    Height="46"
-                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
-                    ToolTip.Tip="{CompiledBinding Translation.ResizeImage.Value,
-                                                  Mode=OneWay}"
-                    Width="169"
-                    x:Name="ResizeImageButton">
-                    <StackPanel Orientation="Horizontal">
-                        <Canvas Height="54" Width="45">
-                            <Image
-                                Canvas.Left="5"
-                                Canvas.Top="16"
-                                Height="19">
-                                <Image.Source>
-                                    <DrawingImage>
-                                        <DrawingImage.Drawing>
-                                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                                <GeometryDrawing Brush="{StaticResource ResizeBrush}" Geometry="F1 M512,512z M0,0z M464,448L48,448C21.49,448,0,426.51,0,400L0,112C0,85.49,21.49,64,48,64L464,64C490.51,64,512,85.49,512,112L512,400C512,426.51,490.51,448,464,448z M112,120C81.072,120 56,145.072 56,176 56,206.928 81.072,232 112,232 142.928,232 168,206.928 168,176 168,145.072 142.928,120 112,120z M64,384L448,384 448,272 360.485,184.485C355.799,179.799,348.201,179.799,343.514,184.485L208,320 152.485,264.485C147.799,259.799,140.201,259.799,135.514,264.485L64,336 64,384z" />
-                                            </DrawingGroup>
-                                        </DrawingImage.Drawing>
-                                    </DrawingImage>
-                                </Image.Source>
-                            </Image>
-                            <Image
-                                Canvas.Left="20"
-                                Canvas.Top="20.5"
-                                Height="14"
-                                Opacity=".8">
-                                <Image.Source>
-                                    <DrawingImage>
-                                        <DrawingImage.Drawing>
-                                            <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                                <GeometryDrawing Brush="{StaticResource ResizeBrush}" Geometry="F1 M512,512z M0,0z M464,448L48,448C21.49,448,0,426.51,0,400L0,112C0,85.49,21.49,64,48,64L464,64C490.51,64,512,85.49,512,112L512,400C512,426.51,490.51,448,464,448z M112,120C81.072,120 56,145.072 56,176 56,206.928 81.072,232 112,232 142.928,232 168,206.928 168,176 168,145.072 142.928,120 112,120z M64,384L448,384 448,272 360.485,184.485C355.799,179.799,348.201,179.799,343.514,184.485L208,320 152.485,264.485C147.799,259.799,140.201,259.799,135.514,264.485L64,336 64,384z" />
-                                            </DrawingGroup>
-                                        </DrawingImage.Drawing>
-                                    </DrawingImage>
-                                </Image.Source>
-                            </Image>
-                        </Canvas>
-                        <TextBlock
-                            Classes="txt btnTxt"
-                            Foreground="{StaticResource ResizeBrush}"
-                            Margin="-3,0,0,0"
-                            Text="{CompiledBinding Translation.Resize.Value,
-                                                   Mode=OneWay}" />
-                    </StackPanel>
-                </Button>
-
-                <customControls:TextIconButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="182"
-                    Canvas.Top="53"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.CropCommand}"
-                    Data="{StaticResource CropGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="46"
-                    IconHeight="17"
-                    IconMargin="9,0,9,0"
-                    IconWidth="17"
-                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
-                    Text="{CompiledBinding Translation.Crop.Value,
-                                           Mode=OneWay}"
-                    ToolTip.Tip="{CompiledBinding Translation.Crop,
-                                                  Mode=OneWay}"
-                    Width="169"
-                    x:Name="CropButton" />
-
-                <SplitButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="7"
-                    Canvas.Top="104"
-                    Classes="ButtonBorder altHover up"
-                    Command="{CompiledBinding Tools.StartSlideShowTask}"
-                    CommandParameter="0"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="46"
-                    ToolTip.Tip="{CompiledBinding Translation.Slideshow.Value,
-                                                  Mode=OneWay}"
-                    Width="169"
-                    x:Name="SlideShowButton">
-                    <StackPanel Orientation="Horizontal">
-                        <Image
-                            Height="20"
-                            Margin="5,0,10,0"
-                            Source="{StaticResource SlideshowImage}"
-                            Width="20"
-                            x:Name="SlideShowImage" />
-                        <TextBlock
-                            Classes="txt btnTxt"
-                            Foreground="{StaticResource SlideShowBrush}"
-                            Margin="0,2,0,0"
-                            Text="{CompiledBinding Translation.Slideshow.Value,
-                                                   Mode=OneWay}" />
-                    </StackPanel>
-                    <SplitButton.Flyout>
-                        <MenuFlyout Placement="Top" ShowMode="Transient">
-                            <MenuItem
-                                Background="Transparent"
-                                Command="{CompiledBinding Tools.StartSlideShowTask}"
-                                CommandParameter="2000"
-                                Width="140"
-                                x:Name="Item2">
-                                <MenuItem.Icon>
-                                    <Image
-                                        Height="12"
-                                        Source="{StaticResource TimerImage}"
-                                        Width="12" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-
-                            <MenuItem
-                                Background="Transparent"
-                                Command="{CompiledBinding Tools.StartSlideShowTask}"
-                                CommandParameter="5000"
-                                Width="140"
-                                x:Name="Item5">
-                                <MenuItem.Icon>
-                                    <Image
-                                        Height="12"
-                                        Source="{StaticResource TimerImage}"
-                                        Width="12" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-
-                            <MenuItem
-                                Background="Transparent"
-                                Command="{CompiledBinding Tools.StartSlideShowTask}"
-                                CommandParameter="10000"
-                                Width="140"
-                                x:Name="Item10">
-                                <MenuItem.Icon>
-                                    <Image
-                                        Height="12"
-                                        Source="{StaticResource TimerImage}"
-                                        Width="12" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-
-                            <MenuItem
-                                Background="Transparent"
-                                Command="{CompiledBinding Tools.StartSlideShowTask}"
-                                CommandParameter="20000"
-                                Width="140"
-                                x:Name="Item20">
-                                <MenuItem.Icon>
-                                    <Image
-                                        Height="12"
-                                        Source="{StaticResource TimerImage}"
-                                        Width="12" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-
-                            <MenuItem
-                                Background="Transparent"
-                                Command="{CompiledBinding Tools.StartSlideShowTask}"
-                                CommandParameter="30000"
-                                Width="140"
-                                x:Name="Item30">
-                                <MenuItem.Icon>
-                                    <Image
-                                        Height="12"
-                                        Source="{StaticResource TimerImage}"
-                                        Width="12" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-
-                            <MenuItem
-                                Background="Transparent"
-                                Command="{CompiledBinding Tools.StartSlideShowTask}"
-                                CommandParameter="60000"
-                                Width="140"
-                                x:Name="Item60">
-                                <MenuItem.Icon>
-                                    <Image
-                                        Height="12"
-                                        Source="{StaticResource TimerImage}"
-                                        Width="12" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-
-                            <MenuItem
-                                Background="Transparent"
-                                Command="{CompiledBinding Tools.StartSlideShowTask}"
-                                CommandParameter="90000"
-                                Width="140"
-                                x:Name="Item90">
-                                <MenuItem.Icon>
-                                    <Image
-                                        Height="12"
-                                        Source="{StaticResource TimerImage}"
-                                        Width="12" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-
-                            <MenuItem
-                                Background="Transparent"
-                                Command="{CompiledBinding Tools.StartSlideShowTask}"
-                                CommandParameter="120000"
-                                Width="140"
-                                x:Name="Item120">
-                                <MenuItem.Icon>
-                                    <Image
-                                        Height="12"
-                                        Source="{StaticResource TimerImage}"
-                                        Width="12" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-                        </MenuFlyout>
-                    </SplitButton.Flyout>
-                </SplitButton>
-
-                <ToggleButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="182"
-                    Canvas.Top="104"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.ShowSideBySideCommand}"
-                    Foreground="{StaticResource SideBrush}"
-                    Height="46"
-                    IsChecked="{CompiledBinding PicViewer.IsShowingSideBySide.Value}"
-                    IsEnabled="{CompiledBinding !PicViewer.IsSingleImage.Value}"
-                    ToolTip.Tip="{CompiledBinding Translation.SideBySideTooltip.Value}"
-                    Width="169"
-                    x:Name="SideBySideButton">
-                    <TextBlock
-                        Classes="txt btnTxt"
-                        Foreground="{StaticResource SideBrush}"
-                        Margin="1,0,6,0"
-                        Text="{CompiledBinding Translation.SideBySide.Value}" />
-                </ToggleButton>
-
-                <customControls:TextIconButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="7"
-                    Canvas.Top="155"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.ToggleHistoryWindowCommand}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="46"
-                    Icon="{StaticResource HistoryWindowIcon}"
-                    IconHeight="20"
-                    IconMargin="9,0,9,0"
-                    IconWidth="20"
-                    Text="{CompiledBinding Translation.IsShowingHistoryWindow.Value,
-                                           Mode=OneWay}"
-                    TextMargin="0,0,6,0"
-                    TextMaxWidth="175"
-                    Width="169"
-                    x:Name="HistoryButton" />
-
+                    <!-- Show Inmage Info Window -->
                     <customControls:TextIconButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="182"
-                    Canvas.Top="155"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Gallery.ToggleBottomGalleryCommand}"
-                    Data="{StaticResource GalleryGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="46"
-                    IconHeight="20"
-                    IconMargin="9,0,9,0"
-                    IconWidth="20"
-                    IsEnabled="{CompiledBinding !PicViewer.IsSingleImage.Value}"
-                    Text="{CompiledBinding Translation.IsShowingBottomGallery.Value,
-                                           Mode=OneWay}"
-                    TextMargin="0,0,6,0"
-                    TextMaxWidth="175"
-                    ToolTip.Tip="{CompiledBinding Translation.IsShowingBottomGallery.Value,
-                                                  Mode=OneWay}"
-                    Width="169"
-                    x:Name="GalleryButton" />
+                        Background="Transparent"
+                        Classes="altHover"
+                        Command="{CompiledBinding Window.ShowImageInfoWindow}"
+                        CornerRadius="8,0,0,0"
+                        Data="{StaticResource ImageInfoGeometry}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
+                        IconHeight="17"
+                        IconMargin="15,0,2,0"
+                        IconWidth="17"
+                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Text="{CompiledBinding Translation.ImageInfo.Value, Mode=OneWay}"
+                        TextMargin="10,0,6,0"
+                        TextMaxWidth="200"
+                        Width="270"
+                        x:Name="ImageInfoButton" />
+
+                    <!-- Show Search -->
+                    <customControls:IconButton
+                        Background="Transparent"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="1,0,1,0"
+                        Canvas.Left="270"
+                        Canvas.Top="-1"
+                        Classes="hover"
+                        ClickMode="Release"
+                        Command="{CompiledBinding Tools.ShowSearchCommand}"
+                        Data="{StaticResource SearchGeometry}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="47"
+                        IconHeight="16"
+                        IconWidth="16"
+                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        ToolTip.Tip="{CompiledBinding Translation.Search.Value, Mode=OneWay}"
+                        Width="45" />
+
+                    <!-- Close Menu -->
+                    <customControls:IconButton
+                        Background="Transparent"
+                        Canvas.Left="315"
+                        Canvas.Top="-1"
+                        Classes="hover"
+                        ClickMode="Release"
+                        Command="{CompiledBinding MainWindow.CloseMenuCommand}"
+                        CornerRadius="0,8,0,0"
+                        Data="{StaticResource CloseGeometry}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="47"
+                        IconHeight="10"
+                        IconWidth="10"
+                        ToolTip.Tip="{CompiledBinding Translation.Close.Value, Mode=OneWay}"
+                        Width="45" />
+
+                    <!-- Show Single Image Resize -->
+                    <Button
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="7"
+                        Canvas.Top="53"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Window.ShowSingleImageResizeWindow}"
+                        Height="46"
+                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        ToolTip.Tip="{CompiledBinding Translation.ResizeImage.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="ResizeImageButton">
+                        <StackPanel Orientation="Horizontal">
+                            <Canvas Height="54" Width="45">
+                                <Image
+                                    Canvas.Left="5"
+                                    Canvas.Top="16"
+                                    Height="19">
+                                    <Image.Source>
+                                        <DrawingImage>
+                                            <DrawingImage.Drawing>
+                                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                    <GeometryDrawing Brush="{StaticResource ResizeBrush}" Geometry="F1 M512,512z M0,0z M464,448L48,448C21.49,448,0,426.51,0,400L0,112C0,85.49,21.49,64,48,64L464,64C490.51,64,512,85.49,512,112L512,400C512,426.51,490.51,448,464,448z M112,120C81.072,120 56,145.072 56,176 56,206.928 81.072,232 112,232 142.928,232 168,206.928 168,176 168,145.072 142.928,120 112,120z M64,384L448,384 448,272 360.485,184.485C355.799,179.799,348.201,179.799,343.514,184.485L208,320 152.485,264.485C147.799,259.799,140.201,259.799,135.514,264.485L64,336 64,384z" />
+                                                </DrawingGroup>
+                                            </DrawingImage.Drawing>
+                                        </DrawingImage>
+                                    </Image.Source>
+                                </Image>
+                                <Image
+                                    Canvas.Left="20"
+                                    Canvas.Top="20.5"
+                                    Height="14"
+                                    Opacity=".8">
+                                    <Image.Source>
+                                        <DrawingImage>
+                                            <DrawingImage.Drawing>
+                                                <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
+                                                    <GeometryDrawing Brush="{StaticResource ResizeBrush}" Geometry="F1 M512,512z M0,0z M464,448L48,448C21.49,448,0,426.51,0,400L0,112C0,85.49,21.49,64,48,64L464,64C490.51,64,512,85.49,512,112L512,400C512,426.51,490.51,448,464,448z M112,120C81.072,120 56,145.072 56,176 56,206.928 81.072,232 112,232 142.928,232 168,206.928 168,176 168,145.072 142.928,120 112,120z M64,384L448,384 448,272 360.485,184.485C355.799,179.799,348.201,179.799,343.514,184.485L208,320 152.485,264.485C147.799,259.799,140.201,259.799,135.514,264.485L64,336 64,384z" />
+                                                </DrawingGroup>
+                                            </DrawingImage.Drawing>
+                                        </DrawingImage>
+                                    </Image.Source>
+                                </Image>
+                            </Canvas>
+                            <TextBlock
+                                Classes="txt btnTxt"
+                                Foreground="{StaticResource ResizeBrush}"
+                                Margin="-3,0,0,0"
+                                Text="{CompiledBinding Translation.Resize.Value, Mode=OneWay}" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Crop -->
+                    <customControls:TextIconButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="182"
+                        Canvas.Top="53"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Tools.CropCommand}"
+                        Data="{StaticResource CropGeometry}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
+                        IconHeight="17"
+                        IconMargin="9,0,9,0"
+                        IconWidth="17"
+                        IsEnabled="{CompiledBinding PicViewer.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Text="{CompiledBinding Translation.Crop.Value, Mode=OneWay}"
+                        ToolTip.Tip="{CompiledBinding Translation.Crop, Mode=OneWay}"
+                        Width="169"
+                        x:Name="CropButton" />
+
+                    <!-- Start Slide Show -->
+                    <SplitButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="7"
+                        Canvas.Top="104"
+                        Classes="ButtonBorder altHover up"
+                        Command="{CompiledBinding Tools.StartSlideShowTask}"
+                        CommandParameter="0"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
+                        ToolTip.Tip="{CompiledBinding Translation.Slideshow.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="SlideShowButton">
+                        <StackPanel Orientation="Horizontal">
+                            <Image
+                                Height="20"
+                                Margin="5,0,10,0"
+                                Source="{StaticResource SlideshowImage}"
+                                Width="20"
+                                x:Name="SlideShowImage" />
+                            <TextBlock
+                                Classes="txt btnTxt"
+                                Foreground="{StaticResource SlideShowBrush}"
+                                Margin="0,2,0,0"
+                                Text="{CompiledBinding Translation.Slideshow.Value, Mode=OneWay}" />
+                        </StackPanel>
+                        <SplitButton.Flyout>
+                            <MenuFlyout Placement="Top" ShowMode="Transient">
+                                <!-- Start Slide Show - 2sec -->
+                                <MenuItem
+                                    Background="Transparent"
+                                    Command="{CompiledBinding Tools.StartSlideShowTask}"
+                                    CommandParameter="2000"
+                                    Width="140"
+                                    x:Name="Item2">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Height="12"
+                                            Source="{StaticResource TimerImage}"
+                                            Width="12" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <!-- Start Slide Show - 5sec -->
+                                <MenuItem
+                                    Background="Transparent"
+                                    Command="{CompiledBinding Tools.StartSlideShowTask}"
+                                    CommandParameter="5000"
+                                    Width="140"
+                                    x:Name="Item5">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Height="12"
+                                            Source="{StaticResource TimerImage}"
+                                            Width="12" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <!-- Start Slide Show - 10sec -->
+                                <MenuItem
+                                    Background="Transparent"
+                                    Command="{CompiledBinding Tools.StartSlideShowTask}"
+                                    CommandParameter="10000"
+                                    Width="140"
+                                    x:Name="Item10">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Height="12"
+                                            Source="{StaticResource TimerImage}"
+                                            Width="12" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <!-- Start Slide Show - 20sec -->
+                                <MenuItem
+                                    Background="Transparent"
+                                    Command="{CompiledBinding Tools.StartSlideShowTask}"
+                                    CommandParameter="20000"
+                                    Width="140"
+                                    x:Name="Item20">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Height="12"
+                                            Source="{StaticResource TimerImage}"
+                                            Width="12" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <!-- Start Slide Show - 30sec -->
+                                <MenuItem
+                                    Background="Transparent"
+                                    Command="{CompiledBinding Tools.StartSlideShowTask}"
+                                    CommandParameter="30000"
+                                    Width="140"
+                                    x:Name="Item30">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Height="12"
+                                            Source="{StaticResource TimerImage}"
+                                            Width="12" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <!-- Start Slide Show - 60sec -->
+                                <MenuItem
+                                    Background="Transparent"
+                                    Command="{CompiledBinding Tools.StartSlideShowTask}"
+                                    CommandParameter="60000"
+                                    Width="140"
+                                    x:Name="Item60">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Height="12"
+                                            Source="{StaticResource TimerImage}"
+                                            Width="12" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <!-- Start Slide Show - 90sec -->
+                                <MenuItem
+                                    Background="Transparent"
+                                    Command="{CompiledBinding Tools.StartSlideShowTask}"
+                                    CommandParameter="90000"
+                                    Width="140"
+                                    x:Name="Item90">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Height="12"
+                                            Source="{StaticResource TimerImage}"
+                                            Width="12" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <!-- Start Slide Show - 120sec -->
+                                <MenuItem
+                                    Background="Transparent"
+                                    Command="{CompiledBinding Tools.StartSlideShowTask}"
+                                    CommandParameter="120000"
+                                    Width="140"
+                                    x:Name="Item120">
+                                    <MenuItem.Icon>
+                                        <Image
+                                            Height="12"
+                                            Source="{StaticResource TimerImage}"
+                                            Width="12" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </MenuFlyout>
+                        </SplitButton.Flyout>
+                    </SplitButton>
+
+                    <!-- Show Side-By-Side -->
+                    <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="182"
+                        Canvas.Top="104"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Tools.ShowSideBySideCommand}"
+                        Foreground="{StaticResource SideBrush}"
+                        Height="46"
+                        IsChecked="{CompiledBinding PicViewer.IsShowingSideBySide.Value}"
+                        IsEnabled="{CompiledBinding !PicViewer.IsSingleImage.Value}"
+                        ToolTip.Tip="{CompiledBinding Translation.SideBySideTooltip.Value}"
+                        Width="169"
+                        x:Name="SideBySideButton">
+                        <TextBlock
+                            Classes="txt btnTxt"
+                            Foreground="{StaticResource SideBrush}"
+                            Margin="1,0,6,0"
+                            Text="{CompiledBinding Translation.SideBySide.Value}" />
+                    </ToggleButton>
+
+                    <!-- Toggle History Window -->
+                    <customControls:TextIconButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="7"
+                        Canvas.Top="155"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Tools.ToggleHistoryWindowCommand}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
+                        Icon="{StaticResource HistoryWindowIcon}"
+                        IconHeight="20"
+                        IconMargin="9,0,9,0"
+                        IconWidth="20"
+                        Text="{CompiledBinding Translation.IsShowingHistoryWindow.Value, Mode=OneWay}"
+                        TextMargin="0,0,6,0"
+                        TextMaxWidth="175"
+                        Width="169"
+                        x:Name="HistoryButton" />
+
+                    <!-- Toggle Bottom Gallery -->
+                    <customControls:TextIconButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="182"
+                        Canvas.Top="155"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Gallery.ToggleBottomGalleryCommand}"
+                        Data="{StaticResource GalleryGeometry}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
+                        IconHeight="20"
+                        IconMargin="9,0,9,0"
+                        IconWidth="20"
+                        IsEnabled="{CompiledBinding !PicViewer.IsSingleImage.Value}"
+                        Text="{CompiledBinding Translation.IsShowingBottomGallery.Value, Mode=OneWay}"
+                        TextMargin="0,0,6,0"
+                        TextMaxWidth="175"
+                        ToolTip.Tip="{CompiledBinding Translation.IsShowingBottomGallery.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="GalleryButton" />
+                </Canvas>
+            </Border>
+
+            <!-- Arrow -->
+            <Canvas
+                Grid.Row="1"
+                Width="359"
+                Height="16"
+                Margin="0,-1,0,0"
+                ClipToBounds="False">
+
+                <!-- Filled triangle -->
+                <Path
+                    x:Name="DownArrow"
+                    Canvas.Left="18"
+                    Canvas.Top="-1"
+                    Fill="{DynamicResource MenuBackgroundColor}"
+                    Data="M 0,0 L 15,16 L 30,0 Z" />
+
+                <!-- Outline only on the two sides (no top edge) -->
+                <Path
+                    x:Name="DownArrowBorder"
+                    Canvas.Left="18"
+                    Canvas.Top="-1"
+                    Stroke="{DynamicResource OuterBorderColor}"
+                    StrokeThickness="1"
+                    StrokeJoin="Round"
+                    Data="M 0,0 L 15,16 L 30,0" />
             </Canvas>
-        </Border>
-        <Polygon
-            Fill="{DynamicResource MenuBackgroundColor}"
-            Margin="37,-1,0,0"
-            Points="0,0 15,30, 30,0"
-            Stroke="{DynamicResource MainBorderColor}"
-            StrokeThickness="1"
-            x:Name="DownArrow" />
-    </StackPanel>
+        </Grid>
+    </Border>
 </customControls:AnimatedMenu>

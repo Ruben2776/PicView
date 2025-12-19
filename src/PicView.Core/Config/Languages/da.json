@@ -426,6 +426,9 @@
   "_4Star": "4 stjerner",
   "_5Star": "5 stjerner",
 
+  "MaximizeWindowMode": "Maksimer vinduestilstand",
+  "ShowPromptToSaveChanges": "Vis prompt til at gemme ændringer",
+  "ShowExportToPDFInMenu": "Vis Eksporter til PDF i menuen",
   "AccessDenied": "Adgang nægtet",
   "Disgard": "Kassér",
   "ExportToPdf": "Eksporter til PDF",

@@ -80,7 +80,8 @@
 			<MenuItem
 			Command="{CompiledBinding Tools.ExportToPdfCommand}"
 			Header="{CompiledBinding Translation.ExportToPdf.Value, Mode=OneWay}"
-			IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
+			IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+			IsVisible="{CompiledBinding GlobalSettings.ShowExportToPDFInMenu.Value}">
 				<MenuItem.Icon>
 					<Path Classes="ExportToPdfPath" />
 				</MenuItem.Icon>

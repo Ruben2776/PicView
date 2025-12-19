@@ -426,6 +426,9 @@
   "_4Star": "4 yıldızlı derecelendirme",
   "_5Star": "5 yıldızlı derecelendirme",
 
+  "MaximizeWindowMode": "Pencere Maksimize Modu",
+  "ShowPromptToSaveChanges": "Değişiklikleri Kaydet Uyarısını Göster",
+  "ShowExportToPDFInMenu": "Menüde PDF’ye Aktar’ı Göster",
   "AccessDenied": "Erişim reddedildi",
   "Disgard": "At",
   "ExportToPdf": "PDF’ye Aktar",

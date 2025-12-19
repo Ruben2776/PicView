@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using PicView.Avalonia.Extensions;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Interfaces;
@@ -249,8 +250,11 @@ public class WindowInitializer : IPlatformSpecificUpdate
         void Show()
         {
             WindowFunctions.InitializeWindowSizeAndPosition(_settingsWindow,
-                vm.Window.SettingsWindowConfig.WindowProperties);
-            _settingsWindow.Show(desktop.MainWindow);
+                 vm.Window.SettingsWindowConfig.WindowProperties);
+             _settingsWindow.Show(desktop.MainWindow);
+
+            var pos = new PixelPoint(vm.Window.SettingsWindowConfig.WindowProperties.Left.GetValueOrDefault(), vm.Window.SettingsWindowConfig.WindowProperties.Top.GetValueOrDefault());
+           WindowFunctions.OpenOnSameScreen(_settingsWindow, desktop.MainWindow, position: pos);
         }
     }
 

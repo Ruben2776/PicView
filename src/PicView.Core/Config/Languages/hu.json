@@ -426,6 +426,9 @@
   "_4Star": "4 csillagos értékelés",
   "_5Star": "5 csillagos értékelés",
 
+  "MaximizeWindowMode": "Ablak maximalizálási mód",
+  "ShowPromptToSaveChanges": "Mentési kérdés megjelenítése",
+  "ShowExportToPDFInMenu": "PDF export megjelenítése a menüben",
   "AccessDenied": "Hozzáférés megtagadva",
   "Disgard": "Eldobás",
   "ExportToPdf": "Exportálás PDF-be",

@@ -364,6 +364,7 @@ public class LanguageModel
     public string? ShowConfirmationDialogWhenMovingFileToRecycleBin { get; set; }
     public string? ShowConfirmationDialogWhenPermanentlyDeletingFile { get; set; }
     public string? ShowConfirmationOnEsc { get; set; }
+    public string? ShowExportToPDFInMenu { get; set; }
     public string? ShowFadeInButtonsOnHover { get; set; }
     public string? ShowFileSavingDialog { get; set; }
     public string? ShowHistoryWindow { get; set; }
@@ -372,6 +373,7 @@ public class LanguageModel
     public string? ShowImageInfo { get; set; }
     public string? ShowInFolder { get; set; }
     public string? ShowInfoWindow { get; set; }
+    public string? ShowPromptToSaveChanges { get; set; }
     public string? ShowResizeWindow { get; set; }
     public string? ShowUI { get; set; }
     public string? ShowZoomPercentagePopup { get; set; }
@@ -437,6 +439,7 @@ public class LanguageModel
     public string? Window { get; set; }
     public string? WindowManagement { get; set; }
     public string? WindowMargin { get; set; }
+    public string? MaximizeWindowMode { get; set; }
     public string? WindowScaling { get; set; }
     public string? Zoom { get; set; }
     public string? ZoomIn { get; set; }
