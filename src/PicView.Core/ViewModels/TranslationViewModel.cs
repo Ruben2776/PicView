@@ -99,6 +99,7 @@ public class TranslationViewModel : IDisposable
         Edit.Value = t.Edit;
         Effects.Value = t.Effects;
         EffectsTooltip.Value = t.EffectsTooltip;
+        EnableFileChangeHistory.Value = t.EnableFileChangeHistory;
         ExifVersion.Value = t.ExifVersion;
         ExpandedGalleryItemSize.Value = t.ExpandedGalleryItemSize;
         ExportToPdf.Value = t.ExportToPdf;
@@ -429,6 +430,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> Edit { get; } = new();
     public BindableReactiveProperty<string?> Effects { get; } = new();
     public BindableReactiveProperty<string?> EffectsTooltip { get; } = new();
+    public BindableReactiveProperty<string?> EnableFileChangeHistory { get; } = new();
     public BindableReactiveProperty<string?> ExifVersion { get; } = new();
     public BindableReactiveProperty<string?> ExpandedGalleryItemSize { get; } = new();
     public BindableReactiveProperty<string?> ExportToPdf { get; } = new();

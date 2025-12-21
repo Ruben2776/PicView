@@ -427,6 +427,7 @@
   "_5Star": "Evaluare cu 5 stele",
 
   "MaximizeWindowMode": "Mod fereastră maximizată",
+  "EnableFileChangeHistory": "Activează istoricul modificărilor fișierului",
   "ShowPromptToSaveChanges": "Afișează solicitarea de salvare a modificărilor",
   "ShowExportToPDFInMenu": "Afișează Exportă în PDF în meniu",
   "AccessDenied": "Acces interzis",

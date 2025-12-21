@@ -427,6 +427,7 @@
   "_5Star": "5 csillagos értékelés",
 
   "MaximizeWindowMode": "Ablak maximalizálási mód",
+  "EnableFileChangeHistory": "Fájlmódosítási előzmények engedélyezése",
   "ShowPromptToSaveChanges": "Mentési kérdés megjelenítése",
   "ShowExportToPDFInMenu": "PDF export megjelenítése a menüben",
   "AccessDenied": "Hozzáférés megtagadva",

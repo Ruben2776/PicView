@@ -427,6 +427,7 @@
   "_5Star": "5星评分",
 
   "MaximizeWindowMode": "最大化窗口模式",
+  "EnableFileChangeHistory": "启用文件更改历史",
   "ShowPromptToSaveChanges": "显示保存更改提示",
   "ShowExportToPDFInMenu": "在菜单中显示导出为 PDF",
   "AccessDenied": "拒绝访问",

@@ -347,7 +347,7 @@
                             Text="{CompiledBinding Translation.SideBySide.Value}" />
                     </ToggleButton>
 
-                    <!-- Toggle History Window -->
+                    <!-- Toggle History Window --> 
                     <customControls:TextIconButton
                         Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="7"
@@ -360,6 +360,7 @@
                         IconHeight="20"
                         IconMargin="9,0,9,0"
                         IconWidth="20"
+                        IsEnabled="{CompiledBinding HistoryManager.FileChangeHistoryEnabled.Value, Mode=OneWay}"
                         Text="{CompiledBinding Translation.IsShowingHistoryWindow.Value, Mode=OneWay}"
                         TextMargin="0,0,6,0"
                         TextMaxWidth="175"

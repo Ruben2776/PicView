@@ -427,6 +427,7 @@
   "_5Star": "5 つ星評価",
 
   "MaximizeWindowMode": "ウィンドウ最大化モード",
+  "EnableFileChangeHistory": "ファイル変更履歴を有効にする",
   "ShowPromptToSaveChanges": "変更を保存する確認を表示",
   "ShowExportToPDFInMenu": "メニューに PDF へのエクスポートを表示",
   "AccessDenied": "アクセスが拒否されました",

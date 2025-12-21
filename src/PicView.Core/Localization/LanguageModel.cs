@@ -123,6 +123,7 @@ public class LanguageModel
     public string? Edit { get; set; }
     public string? Effects { get; set; }
     public string? EffectsTooltip { get; set; }
+    public string? EnableFileChangeHistory { get; set; }
     public string? Enter { get; set; }
     public string? Esc { get; set; }
     public string? EscCloseTooltip { get; set; }

@@ -500,6 +500,8 @@
                                     Width="12" />
                             </MenuItem.Icon>
                         </MenuItem>
+
+                        <!-- Toggle Bottom NavBar -->
                         <MenuItem
                             Command="{CompiledBinding Tools.ToggleBottomNavBarCommand}"
                             Header="{CompiledBinding Translation.HideBottomToolbar.Value,
@@ -516,6 +518,7 @@
 
                         <Separator
                             Background="{DynamicResource ContextMenuBackgroundColor}"
+                            IsVisible="{CompiledBinding HistoryManager.FileChangeHistoryEnabled.Value, Mode=OneWay}"  
                             Margin="0"
                             Opacity=".9" />
 
@@ -523,6 +526,7 @@
                         <MenuItem
                             Command="{CompiledBinding Tools.ToggleHistoryWindowCommand}"
                             Header="{CompiledBinding Translation.IsShowingHistoryWindow.Value, Mode=OneWay}"                        
+                            IsVisible="{CompiledBinding HistoryManager.FileChangeHistoryEnabled.Value, Mode=OneWay}"                        
                             Theme="{StaticResource MainBg}">
                             <MenuItem.Icon>
                                 <Image

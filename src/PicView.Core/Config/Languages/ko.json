@@ -427,6 +427,7 @@
   "_5Star": "별 5 등급",
 
   "MaximizeWindowMode": "창 최대화 모드",
+  "EnableFileChangeHistory": "파일 변경 기록 활성화",
   "ShowPromptToSaveChanges": "변경 사항 저장 확인 표시",
   "ShowExportToPDFInMenu": "메뉴에 PDF 내보내기 표시",
   "AccessDenied": "액세스 거부됨",

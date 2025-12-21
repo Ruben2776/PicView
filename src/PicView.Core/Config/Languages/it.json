@@ -427,6 +427,7 @@
   "_5Star": "Rating a 5 stella",
 
   "MaximizeWindowMode": "Modalità finestra massimizzata",
+  "EnableFileChangeHistory": "Abilita cronologia delle modifiche ai file",
   "ShowPromptToSaveChanges": "Mostra richiesta di salvataggio modifiche",
   "ShowExportToPDFInMenu": "Mostra Esporta in PDF nel menu",
   "AccessDenied": "アクセスが拒否されました",

@@ -427,6 +427,7 @@
   "_5Star": "5 classificação por estrela",
 
   "MaximizeWindowMode": "Modo de janela maximizada",
+  "EnableFileChangeHistory": "Ativar histórico de alterações de arquivo",
   "ShowPromptToSaveChanges": "Mostrar aviso para salvar alterações",
   "ShowExportToPDFInMenu": "Mostrar Exportar para PDF no menu",
   "AccessDenied": "Acesso negado",

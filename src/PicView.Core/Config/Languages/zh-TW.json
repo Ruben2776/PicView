@@ -427,6 +427,7 @@
   "_5Star": "5星評分",
 
   "MaximizeWindowMode": "最大化視窗模式",
+  "EnableFileChangeHistory": "啟用檔案變更歷史",
   "ShowPromptToSaveChanges": "顯示儲存變更提示",
   "ShowExportToPDFInMenu": "在選單中顯示匯出為 PDF",
   "AccessDenied": "拒絕訪問",

@@ -427,6 +427,7 @@
   "_5Star": "5 stjärnor",
 
   "MaximizeWindowMode": "Maximerat fönsterläge",
+  "EnableFileChangeHistory": "Aktivera filändringshistorik",
   "ShowPromptToSaveChanges": "Visa prompt för att spara ändringar",
   "ShowExportToPDFInMenu": "Visa Exportera till PDF i menyn",
   "AccessDenied": "Åtkomst nekad",

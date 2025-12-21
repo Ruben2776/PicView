@@ -427,6 +427,7 @@
   "_5Star": "5звезды",
 
   "MaximizeWindowMode": "Режим развёрнутого окна",
+  "EnableFileChangeHistory": "Включить историю изменений файла",
   "ShowPromptToSaveChanges": "Показывать запрос на сохранение изменений",
   "ShowExportToPDFInMenu": "Показывать экспорт в PDF в меню",
   "AccessDenied": "Доступ запрещён",

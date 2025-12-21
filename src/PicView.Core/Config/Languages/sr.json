@@ -427,6 +427,7 @@
   "_5Star": "5 звездица",
 
   "MaximizeWindowMode": "Režim maksimalnog prozora",
+  "EnableFileChangeHistory": "Omogući istoriju promena fajla",
   "ShowPromptToSaveChanges": "Prikaži upit za čuvanje izmena",
   "ShowExportToPDFInMenu": "Prikaži izvoz u PDF u meniju",
   "AccessDenied": "Pristup odbijen",

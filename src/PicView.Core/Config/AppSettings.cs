@@ -235,6 +235,11 @@ public class UIProperties
     /// Indicates whether the Export to PDF button is shown in the file menu
     /// </summary>
     public bool ShowExportToPDFInMenu { get; set; } = false;
+
+    /// <summary>
+    /// Enables file change snapshot history
+    /// </summary>
+    public bool EnableFileChangeHistory { get; set; } = false;
 }
 
 public class Theme

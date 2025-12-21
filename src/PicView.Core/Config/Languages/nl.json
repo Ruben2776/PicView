@@ -427,6 +427,7 @@
   "_5Star": "5 sterren",
 
   "MaximizeWindowMode": "Venster maximalisatiemodus",
+  "EnableFileChangeHistory": "Bestandswijzigingsgeschiedenis inschakelen",
   "ShowPromptToSaveChanges": "Prompt voor het opslaan van wijzigingen tonen",
   "ShowExportToPDFInMenu": "Exporteren naar PDF in menu tonen",
   "AccessDenied": "Toegang geweigerd",

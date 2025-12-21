@@ -7,43 +7,41 @@ namespace PicView.Core.ViewModels;
 public class SettingsViewModel : IDisposable
 {
     private readonly CompositeDisposable _disposables = new();
-    public BindableReactiveProperty<bool> IsShowingRecycleDialog { get; } =
-        new(Settings.UIProperties.ShowRecycleConfirmation);
+    
+    public BindableReactiveProperty<bool> IsShowingRecycleDialog { get; } = new(Settings.UIProperties.ShowRecycleConfirmation);
 
-    public BindableReactiveProperty<bool> IsShowingPermanentDeletionDialog { get; } =
-        new(Settings.UIProperties.ShowPermanentDeletionConfirmation);
+    public BindableReactiveProperty<bool> IsShowingPermanentDeletionDialog { get; } = new(Settings.UIProperties.ShowPermanentDeletionConfirmation);
 
-    public BindableReactiveProperty<bool> IsBottomGalleryShownInHiddenUI { get; } =
-        new(Settings.Gallery.ShowBottomGalleryInHiddenUI);
+    public BindableReactiveProperty<bool> IsBottomGalleryShownInHiddenUI { get; } = new(Settings.Gallery.ShowBottomGalleryInHiddenUI);
 
     public BindableReactiveProperty<bool> IsOpeningInSameWindow { get; } = new(Settings.UIProperties.OpenInSameWindow);
 
-    public BindableReactiveProperty<bool> IsShowingConfirmationOnEsc { get; } =
-        new(Settings.UIProperties.ShowConfirmationOnEsc);
+    public BindableReactiveProperty<bool> IsShowingConfirmationOnEsc { get; } = new(Settings.UIProperties.ShowConfirmationOnEsc);
 
     public BindableReactiveProperty<bool> IsStayingCentered { get; } = new(Settings.WindowProperties.KeepCentered);
 
     public BindableReactiveProperty<bool> IsUsingTouchpad { get; } = new(Settings.Zoom.IsUsingTouchPad);
 
-    public BindableReactiveProperty<bool> IsConstrainingBackgroundColor { get; } =
-        new(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
+    public BindableReactiveProperty<bool> IsConstrainingBackgroundColor { get; } = new(Settings.UIProperties.IsConstrainBackgroundColorEnabled);
 
     public BindableReactiveProperty<bool> IsAvoidingZoomingOut { get; } = new(Settings.Zoom.AvoidZoomingOut);
 
     public BindableReactiveProperty<bool> IsZoomAnimated { get; } = new(Settings.Zoom.IsZoomAnimated);
 
-    public BindableReactiveProperty<bool> IsShowingZoomPercentagePopup { get; } =
-        new(Settings.Zoom.IsShowingZoomPercentagePopup);
+    public BindableReactiveProperty<bool> IsShowingZoomPercentagePopup { get; } = new(Settings.Zoom.IsShowingZoomPercentagePopup);
 
     public BindableReactiveProperty<double> WindowMargin { get; } = new(Settings.WindowProperties.Margin);
 
     public BindableReactiveProperty<double> NavSpeed { get; } = new(Settings.UIProperties.NavSpeed);
+
     public BindableReactiveProperty<double> GetNavSpeed { get; } = new();
 
     public BindableReactiveProperty<double> ZoomSpeed { get; } = new(Settings.Zoom.ZoomSpeed);
+
     public BindableReactiveProperty<double> GetZoomSpeed { get; } = new();
 
     public BindableReactiveProperty<double> SlideshowSpeed { get; } = new(Settings.UIProperties.SlideShowTimer);
+
     public BindableReactiveProperty<double> GetSlideshowSpeed { get; } = new();
 
     public void Dispose()
@@ -84,12 +82,14 @@ public class SettingsViewModel : IDisposable
                 Settings.UIProperties.NavSpeed = x;
                 GetNavSpeed.Value = Math.Round(Settings.UIProperties.NavSpeed, 2);
             }).AddTo(_disposables);
+
         Observable.EveryValueChanged(this, x => x.ZoomSpeed.CurrentValue)
             .Subscribe(x =>
             {
                 Settings.Zoom.ZoomSpeed = x;
                 GetZoomSpeed.Value = Math.Round(Settings.Zoom.ZoomSpeed, 2);
             }).AddTo(_disposables);
+
         Observable.EveryValueChanged(this, x => x.SlideshowSpeed.CurrentValue)
             .Subscribe(x =>
             {
@@ -143,6 +143,7 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<bool> IsBackButtonEnabled { get; } = new();
 
     public BindableReactiveProperty<bool> IsForwardButtonEnabled { get; } = new();
+
     public ReactiveCommand? GoForwardCommand { get; set; }
 
     public ReactiveCommand? GoBackCommand { get; set; }

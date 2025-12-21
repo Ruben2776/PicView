@@ -427,6 +427,7 @@
   "_5Star": "Note de 5 étoiles",
 
   "MaximizeWindowMode": "Mode fenêtre maximisée",
+  "EnableFileChangeHistory": "Activer l’historique des modifications de fichier",
   "ShowPromptToSaveChanges": "Afficher l’invite pour enregistrer les modifications",
   "ShowExportToPDFInMenu": "Afficher Exporter en PDF dans le menu",
   "AccessDenied": "Accès refusé",

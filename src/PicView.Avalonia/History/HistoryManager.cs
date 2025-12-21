@@ -31,6 +31,7 @@ public sealed class HistoryManager : IDisposable
     public HistoryWindowViewModel? WindowVm { get; private set; }
     public HistoryWindow? Window { get; private set; }
     public ReactiveCommand CloseCommand { get; }
+    public BindableReactiveProperty<bool> FileChangeHistoryEnabled { get; } = new(Settings.UIProperties.EnableFileChangeHistory);
 
     // Constructor
     
@@ -50,6 +51,14 @@ public sealed class HistoryManager : IDisposable
 
     public async Task AddSnapshot(EditKind kind, string? description, Bitmap? bitmap)
     {
+        if(!FileChangeHistoryEnabled.Value)
+        {
+            if (kind != EditKind.Open)
+                await _vm.HistoryManager.SetHasChanges(true);
+            return;
+        }
+
+        
         if(kind == EditKind.Open)
             Clear();
 
@@ -96,7 +105,7 @@ public sealed class HistoryManager : IDisposable
         });
 
         if (kind != EditKind.Open)
-            await _vm.HistoryManager.SetHasChanges(true);    
+            await _vm.HistoryManager.SetHasChanges(true);
     }
 
 
@@ -162,6 +171,9 @@ public sealed class HistoryManager : IDisposable
 
     private async Task RestoreSnapshot(int index)
     {
+        if(!FileChangeHistoryEnabled.Value)
+            return;
+
         if (index < 0 || index >= _collection.Count)
             return;
 
@@ -233,6 +245,9 @@ public sealed class HistoryManager : IDisposable
 
     public async Task ToggleHistoryWindow()
     {
+        if(!FileChangeHistoryEnabled.Value)
+            return;
+
         if (Window is null)
         {
             await Show();

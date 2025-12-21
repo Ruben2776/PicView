@@ -427,6 +427,7 @@
   "_5Star": "דירוג 5 כוכבים",
 
   "MaximizeWindowMode": "מצב חלון ממוזער",
+  "EnableFileChangeHistory": "הפעל היסטוריית שינויי קובץ",
   "ShowPromptToSaveChanges": "הצג בקשה לשמירת שינויים",
   "ShowExportToPDFInMenu": "הצג ייצוא ל-PDF בתפריט",
   "AccessDenied": "הגישה נדחתה",

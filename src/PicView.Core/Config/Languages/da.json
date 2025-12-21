@@ -427,6 +427,7 @@
   "_5Star": "5 stjerner",
 
   "MaximizeWindowMode": "Maksimer vinduestilstand",
+  "EnableFileChangeHistory": "Aktivér filændringshistorik",
   "ShowPromptToSaveChanges": "Vis prompt til at gemme ændringer",
   "ShowExportToPDFInMenu": "Vis Eksporter til PDF i menuen",
   "AccessDenied": "Adgang nægtet",
