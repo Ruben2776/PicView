@@ -46,4 +46,55 @@ public static class RotationNavigation
             vm.Translation.IsFlipped.Value = vm.Translation.Flip.CurrentValue;
         }
     }
+
+
+    /// <summary>
+    /// Navigates up
+    /// </summary>
+    public static async Task NavigateUp(MainViewModel? vm)
+    {
+        if (vm is null)
+        {
+            return;
+        }
+
+        if (GalleryFunctions.IsFullGalleryOpen)
+        {
+            GalleryNavigation.NavigateGallery(Direction.Up, vm);
+            return;
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (vm.GlobalSettings.IsScrollingEnabled.CurrentValue)
+            {
+                vm.ImageViewer.ImageScrollViewer.LineUp();
+            }
+        });
+    }
+
+    /// <summary>
+    /// Navigates down
+    /// </summary>
+    public static async Task NavigateDown(MainViewModel? vm)
+    {
+        if (vm is null)
+        {
+            return;
+        }
+
+        if (GalleryFunctions.IsFullGalleryOpen)
+        {
+            GalleryNavigation.NavigateGallery(Direction.Down, vm);
+            return;
+        }
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (vm.GlobalSettings.IsScrollingEnabled.CurrentValue)
+            {
+                vm.ImageViewer.ImageScrollViewer.LineDown();
+            }
+        });
+    }
 }

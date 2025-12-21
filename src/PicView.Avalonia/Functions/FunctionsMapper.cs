@@ -38,6 +38,9 @@ public static class FunctionsMapper
             
             "NextFolder" => NextFolder,
             "PrevFolder" => PrevFolder,
+
+            "Up" => Up,
+            "Down" => Down,
             
             "Last" => Last,
             "First" => First,
@@ -277,6 +280,9 @@ public static class FunctionsMapper
     public static async ValueTask Search() =>
         await Dispatcher.UIThread.InvokeAsync(DialogManager.AddFileSearchDialog);
     
+    /// <inheritdoc cref="RotationNaRotationNavigationp(MainViewModel)" />
+    public static async ValueTask Up() =>
+        await RotationNavigation.NavigateUp(Vm).ConfigureAwait(false);
 
     /// <inheritdoc cref="RotationNavigation.RotateRight(MainViewModel)" />
     public static async ValueTask RotateRight() =>
@@ -286,6 +292,9 @@ public static class FunctionsMapper
     public static async ValueTask RotateLeft() =>
         await RotationNavigation.RotateLeft(Vm).ConfigureAwait(false);
 
+    /// <inheritdoc cref="RotationNavigation.NavigateDown(MainViewModel)" />
+    public static async ValueTask Down() =>
+        await RotationNavigation.NavigateDown(Vm).ConfigureAwait(false);
     
     public static async ValueTask ScrollDown()
     {

@@ -860,7 +860,7 @@
                             <MenuItem.IsEnabled>
                                 <MultiBinding>
                                     <MultiBinding.Converter>
-                                        <converters:NavigationConverter Direction="Prev" />
+                                        <converters:NavigationConverter Direction="Previous" />
                                     </MultiBinding.Converter>
                                     <Binding Path="PicViewer.ImageSource.Value" />
                                     <Binding Path="GlobalSettings.IsLooping.Value" />
@@ -938,7 +938,7 @@
                             <MenuItem.IsEnabled>
                                 <MultiBinding>
                                     <MultiBinding.Converter>
-                                        <converters:NavigationConverter Direction="Prev" />
+                                        <converters:NavigationConverter Direction="Previous" />
                                     </MultiBinding.Converter>
                                     <Binding Path="PicViewer.ImageSource.Value" />
                                     <Binding Path="GlobalSettings.IsLooping.Value" />
@@ -962,7 +962,7 @@
                             <MenuItem.IsEnabled>
                                 <MultiBinding>
                                     <MultiBinding.Converter>
-                                        <converters:NavigationConverter Direction="Prev" />
+                                        <converters:NavigationConverter Direction="Previous" />
                                     </MultiBinding.Converter>
                                     <Binding Path="PicViewer.ImageSource.Value" />
                                     <Binding Path="GlobalSettings.IsLooping.Value" />
@@ -990,7 +990,7 @@
                             <MenuItem.IsEnabled>
                                 <MultiBinding>
                                     <MultiBinding.Converter>
-                                        <converters:NavigationConverter Direction="Prev" />
+                                        <converters:NavigationConverter Direction="Previous" />
                                     </MultiBinding.Converter>
                                     <Binding Path="PicViewer.ImageSource.Value" />
                                     <Binding Path="GlobalSettings.IsLooping.Value" />

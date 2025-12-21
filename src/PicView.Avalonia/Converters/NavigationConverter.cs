@@ -1,6 +1,7 @@
 using System.Globalization;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
+using Avalonia.Input;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Navigation;
 using PicView.Core.Config;
@@ -26,7 +27,7 @@ public class NavigationConverter : IMultiValueConverter
         if(isLooping)
             return true;
 
-        if(NavigationManager.GetCurrentIndex == 0 && Direction == NavigationDirection.Prev)
+        if(NavigationManager.GetCurrentIndex == 0 && Direction == NavigationDirection.Previous)
             return false;
 
         if(NavigationManager.GetCurrentIndex == NavigationManager.GetCount - 1 && Direction == NavigationDirection.Next) 

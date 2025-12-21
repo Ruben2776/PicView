@@ -7,9 +7,3 @@ public enum Direction
     Right
 }
 
-
-public enum NavigationDirection
-{
-    Prev,
-    Next
-}
