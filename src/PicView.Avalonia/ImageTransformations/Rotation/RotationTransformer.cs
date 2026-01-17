@@ -97,27 +97,54 @@ public class RotationTransformer(
         }
     }
 
+    // public async Task FlipAsync(bool horizontal)
+    // {
+    //     if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
+    //         return;
+
+    //     if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
+    //         return;
+
+    //     var desc = $"{TranslationManager.Translation.Flipped} {(horizontal ? TranslationManager.Translation.Horizontal : TranslationManager.Translation.Vertical)}";
+
+    //     await using (DebouncedLoadingScope.Start(vm.MainWindow.IsLoadingIndicatorShown, 150))
+    //     {
+    //         var flipped = await Task.Run(() => FlipBitmap(bmp, horizontal));
+
+    //         // Add to History
+    //         await vm.HistoryManager.AddSnapshot(horizontal ? EditKind.FlipH : EditKind.FlipV, desc, flipped).ConfigureAwait(false);
+
+    //         // Apply to the PicViewer
+    //         await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(flipped, vm));
+    //     }
+    // }
+
     public async Task FlipAsync(bool horizontal)
     {
-        if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
+        if (getDataContext() is not MainViewModel vm)
             return;
 
         if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
             return;
+            
 
         var desc = $"{TranslationManager.Translation.Flipped} {(horizontal ? TranslationManager.Translation.Horizontal : TranslationManager.Translation.Vertical)}";
 
-        await using (DebouncedLoadingScope.Start(vm.MainWindow.IsLoadingIndicatorShown, 150))
-        {
+        //await using (DebouncedLoadingScope.Start(vm.MainWindow.IsLoadingIndicatorShown, 150))
+        //{
             var flipped = await Task.Run(() => FlipBitmap(bmp, horizontal));
 
-            // Add to History
-            await vm.HistoryManager.AddSnapshot(horizontal ? EditKind.FlipH : EditKind.FlipV, desc, flipped).ConfigureAwait(false);
+            await ImageTransitionService.AnimateFlipAndCommitAsync(
+                vm,
+                flipped,
+                horizontal: true,  // or false for vertical
+                duration: TimeSpan.FromMilliseconds(2000),
+                ct: CancellationToken.None);
 
-            // Apply to the PicViewer
-            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(flipped, vm));
-        }
+            await vm.HistoryManager.AddSnapshot(horizontal ? EditKind.FlipH : EditKind.FlipV, desc, flipped).ConfigureAwait(false);
+        //}
     }
+
     
     private static Bitmap FlipBitmap(Bitmap source, bool horizontal)
     {

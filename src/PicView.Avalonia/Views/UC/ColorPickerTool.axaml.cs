@@ -21,7 +21,6 @@ public partial class ColorPickerTool : UserControl
         public void UpdateColor(Color color)
         {
             HexLabel.Text = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
-            // Optional: keep label readable by not setting its background to the color.
-            // If you want a swatch, add a small rectangle next to the text and fill it.
+            
         }
     }

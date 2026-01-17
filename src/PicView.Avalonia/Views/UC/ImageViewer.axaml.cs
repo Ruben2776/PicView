@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
@@ -80,8 +81,8 @@ public partial class ImageViewer : UserControl
         if (bmp is null || vm is null)
             return;
 
-        if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
-            oldBmp.Dispose();
+        // if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
+        //     oldBmp.Dispose();
 
         vm.PicViewer.ImageSource.Value = bmp;
 

@@ -202,9 +202,12 @@
     <Compile Update="Views\UC\TitleTextbox.axaml.cs">
       <DependentUpon>TitleTextBox.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\UC\ImageTransitionOverlay.axaml.cs">
+      <DependentUpon>ImageTransitionOverlay.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Config\AppearanceView.axaml.cs">
       <DependentUpon>AppearanceView.axaml</DependentUpon>
-    </Compile>
+    </Compile>    
   </ItemGroup>
 
   <ItemGroup>
