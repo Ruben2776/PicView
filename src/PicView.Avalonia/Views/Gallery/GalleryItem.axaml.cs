@@ -12,10 +12,6 @@ public partial class GalleryItem : UserControl
     public GalleryItem()
     {
         InitializeComponent();
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            CopyFileMenuItem.IsVisible = false;
-        }
         GalleryContextMenu.Opened += delegate
         {
             ImageBorder.BorderBrush = UIHelper.GetBrush("SecondaryAccentColor");

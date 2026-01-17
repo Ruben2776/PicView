@@ -9,7 +9,7 @@ public static class ImageControlHelper
     public static void TriggerScalingModeUpdate(Control image, bool invalidate)
     {
         var scalingMode = Settings.ImageScaling.IsScalingSetToNearestNeighbor
-            ? BitmapInterpolationMode.LowQuality
+            ? BitmapInterpolationMode.None
             : BitmapInterpolationMode.HighQuality;
 
         RenderOptions.SetBitmapInterpolationMode(image, scalingMode);

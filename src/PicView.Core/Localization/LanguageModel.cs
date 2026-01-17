@@ -253,6 +253,7 @@ public class LanguageModel
     public string? NearestNeighbor { get; set; }
     public string? NegativeColors { get; set; }
     public string? NewWindow { get; set; }
+    public string? NextArchive { get; set; }
     public string? NextFolder { get; set; }
     public string? NextImage { get; set; }
     public string? NoChange { get; set; }
@@ -292,6 +293,7 @@ public class LanguageModel
     public string? Portrait { get; set; }
     public string? Posterize { get; set; }
     public string? PressKey { get; set; }
+    public string? PrevArchive { get; set; }
     public string? PrevFolder { get; set; }
     public string? PrevImage { get; set; }
     public string? Print { get; set; }
@@ -311,6 +313,7 @@ public class LanguageModel
     public string? Reset { get; set; }
     public string? ResetButtonText { get; set; }
     public string? ResetZoom { get; set; }
+    public string? ResetZoomOnChange { get; set; }
     public string? Resize { get; set; }
     public string? ResizeImage { get; set; }
     public string? ResizeSettings { get; set; }

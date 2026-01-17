@@ -2,7 +2,6 @@
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Markup.Xaml.Styling;
-using Avalonia.Themes.Simple;
 using PicView.Avalonia.MacOS;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.ViewModels;
@@ -24,7 +23,7 @@ public class AvaloniaTest
 
         var window = new MacMainWindow
         {
-            Styles = { new SimpleTheme(), new StyleInclude(new Uri("avares://PicView.Avalonia/DarkTheme/Main.axaml")) },
+            Styles = { new StyleInclude(new Uri("avares://PicView.Avalonia/PicViewTheme/AllControls.axaml")) },
             DataContext = new MainViewModel()
         };
 

@@ -6,7 +6,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Automation.Peers;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Metadata;
 using Avalonia.Rendering.Composition;
 using Avalonia.Svg.Skia;
 using ImageMagick;
@@ -232,7 +231,7 @@ public class PicBox : Control, IDisposable
         {
             return;
         }
-
+        
         context.Dispose(); // Fixes transparent images
         _stream = new FileStream(InitialAnimatedSource, FileMode.Open, FileAccess.Read);
         UpdateAnimationInstance(_stream);
@@ -510,9 +509,16 @@ public class PicBox : Control, IDisposable
     private void UpdateAnimationInstance(FileStream fileStream)
     {
         _animInstance?.Dispose();
-        _animInstance = ImageType == ImageType.AnimatedGif
-            ? new GifInstance(fileStream)
-            : new WebpInstance(fileStream);
+        try
+        {
+            _animInstance = ImageType == ImageType.AnimatedGif
+                ? new GifInstance(fileStream)
+                : new WebpInstance(fileStream);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(PicBox), nameof(UpdateAnimatedSource), e);
+        }
 
         _animInstance.IterationCount = IterationCount.Infinite;
         if (_customVisual is null)

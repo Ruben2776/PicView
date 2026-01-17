@@ -52,6 +52,9 @@ public static class FunctionsMapper
             "Prev100" => Prev100,
 
             "Search" => Search,
+
+            "NextArchive" => NextArchive,
+            "PrevArchive" => PrevArchive,
             
             // Rotate
             "RotateLeft" => RotateLeft,
@@ -76,9 +79,7 @@ public static class FunctionsMapper
 
             // Scale Window
             "AutoFitWindow" => AutoFitWindow,
-            "AutoFitWindowAndStretch" => AutoFitWindowAndStretch,
             "NormalWindow" => NormalWindow,
-            "NormalWindowAndStretch" => NormalWindowAndStretch,
 
             // Window functions
             "Fullscreen" => Fullscreen,
@@ -244,6 +245,9 @@ public static class FunctionsMapper
     /// <inheritdoc cref="NavigationManager.NavigateBetweenDirectories(bool, MainViewModel)" />
     public static async ValueTask NextFolder() =>
         await NavigationManager.NavigateBetweenDirectories(true, Vm).ConfigureAwait(false);
+
+    public static async ValueTask NextArchive() =>
+        await NavigationManager.NavigateBetweenArchives(true, Vm).ConfigureAwait(false);
     
     /// <inheritdoc cref="NavigationManager.NavigateFirstOrLast(bool, MainViewModel)" />
     public static async ValueTask Last() =>
@@ -256,6 +260,9 @@ public static class FunctionsMapper
     /// <inheritdoc cref="NavigationManager.NavigateBetweenDirectories(bool, MainViewModel)" />
     public static async ValueTask PrevFolder() =>
         await NavigationManager.NavigateBetweenDirectories(false, Vm).ConfigureAwait(false);
+
+    public static async ValueTask PrevArchive() =>
+        await NavigationManager.NavigateBetweenArchives(false, Vm).ConfigureAwait(false);
 
     /// <inheritdoc cref="NavigationManager.NavigateFirstOrLast(bool, MainViewModel)" />
     public static async ValueTask First() =>
@@ -501,17 +508,9 @@ public static class FunctionsMapper
     public static async ValueTask AutoFitWindow() =>
         await WindowFunctions.ToggleAutoFit(Vm).ConfigureAwait(false);
 
-    /// <inheritdoc cref="WindowFunctions.AutoFitAndStretch(MainViewModel)" />
-    public static async ValueTask AutoFitWindowAndStretch() =>
-        await WindowFunctions.AutoFitAndStretch(Vm).ConfigureAwait(false);
-
     /// <inheritdoc cref="WindowFunctions.NormalWindow(MainViewModel)" />
     public static async ValueTask NormalWindow() =>
         await WindowFunctions.NormalWindow(Vm).ConfigureAwait(false);
-
-    /// <inheritdoc cref="WindowFunctions.NormalWindowStretch(MainViewModel)" />
-    public static async ValueTask NormalWindowAndStretch() =>
-        await WindowFunctions.NormalWindowStretch(Vm).ConfigureAwait(false);
 
     /// <inheritdoc cref="Interfaces.IPlatformWindowService.ToggleFullscreen" />
     public static async ValueTask ToggleFullscreen() =>

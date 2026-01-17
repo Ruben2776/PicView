@@ -6,7 +6,6 @@ using Avalonia.Threading;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Resizing;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.ViewModels;
 using PicView.Core.Conversion;
 using PicView.Core.Exif;
@@ -80,7 +79,7 @@ public partial class ImageInfoView : UserControl
             PixelWidthTextBox.KeyUp += delegate { AdjustAspectRatio(PixelWidthTextBox); };
             PixelHeightTextBox.KeyUp += delegate { AdjustAspectRatio(PixelHeightTextBox); };
 
-            Observable.EveryValueChanged(vm.PicViewer.FileInfo, x => x.Value, UIHelper.GetFrameProvider)
+            Observable.EveryValueChanged(vm.PicViewer.FileInfo, x => x.Value)
                 .SubscribeAwait(UpdateValuesAsync).AddTo(_disposables);
 
             SizeChanged += (_, _) => ResponsiveResizeUpdate(vm);

@@ -460,6 +460,19 @@ public static class NavigationManager
     /// <inheritdoc cref="NavigateBetweenDirectories(bool next, MainViewModel vm)"/>
     public static async ValueTask NavigateBetweenDirectories(bool next) =>
         await NavigateBetweenDirectories(next, UIHelper.GetMainView.DataContext as MainViewModel);
+
+    /// <summary>
+    ///     Navigates to the next or previous archive.
+    /// </summary>
+    /// <param name="next">True to navigate to the next archive, false for the previous archive.</param>
+    /// <param name="vm">The main view model instance.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public static async ValueTask NavigateBetweenArchives(bool next, MainViewModel vm)
+        => await ArchiveNavigator.NavigateBetweenArchives(next, vm);
+
+    /// <inheritdoc cref="NavigateBetweenArchives(bool next, MainViewModel vm)"/>
+    public static async ValueTask NavigateBetweenArchives(bool next) =>
+        await NavigateBetweenArchives(next, UIHelper.GetMainView.DataContext as MainViewModel);
     
     #endregion
 

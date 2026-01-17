@@ -68,6 +68,8 @@ public static class MacOsKeybindings
                                                 "J": "ResizeWindow",
                                                 "Alt+Cmd+I": "ResizeWindow",
                                                 "Cmd+F": "Search",
+                                                "Cmd+PageUp": "NextArchive",
+                                                "Cmd+PageDown": "PrevArchive"
                                               }
                                               """;
 }

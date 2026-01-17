@@ -57,6 +57,22 @@ public class FuncTextBox : TextBox
     }
 
     protected override Type StyleKeyOverride => typeof(TextBox);
+    
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        if (change.Property == IsReadOnlyProperty)
+        {
+            if (IsReadOnly)
+            {
+                PseudoClasses.Add(":readonly");
+            }
+            else
+            {
+                PseudoClasses.Remove(":readonly");
+            }
+        }
+        base.OnPropertyChanged(change);
+    }
 
     private void LoadContextMenu()
     {

@@ -31,7 +31,8 @@ public class MainViewModel
     public PrintPreviewViewModel? PrintPreview { get; set; }
     public BatchResizeViewModel? BatchResizeViewModel { get; set; }
     public HistoryManager? HistoryManager { get; set; }
-
+    public KeybindingsViewModel? Keybindings { get; set; }
+    
     public MainViewModel(IPlatformSpecificService? platformSpecificService, IPlatformWindowService? platformWindowService)
     {
         FunctionsMapper.Vm = this;

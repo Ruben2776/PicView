@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
@@ -32,11 +33,15 @@ public class KeybindTextBox : TextBox
 
     public KeybindTextBox()
     {
-        SubscribeToMethodNameChanges();
         SetupKeyEventHandlers();
-
+        Loaded += OnLoaded;
         GotFocus += OnGotFocus;
         LostFocus += OnLostFocus;
+    }
+
+    private void OnLoaded(object? sender, RoutedEventArgs e)
+    {
+        SubscribeToMethodNameChanges();
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -68,9 +73,29 @@ public class KeybindTextBox : TextBox
 
     private void SubscribeToMethodNameChanges()
     {
+        if (string.IsNullOrEmpty(MethodName))
+        {
+            return;
+        }
         this.GetObservable(MethodNameProperty).ToObservable()
-            .Subscribe(_ => Text = GetFunctionKey())
+            .Subscribe(_ => Text = FunctionsKeyHelper.GetFunctionKeyName(MethodName, IsReadOnly, Alt))
             .AddTo(_disposables);
+    }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        if (change.Property == IsReadOnlyProperty)
+        {
+            if (IsReadOnly)
+            {
+                PseudoClasses.Add(":readonly");
+            }
+            else
+            {
+                PseudoClasses.Remove(":readonly");
+            }
+        }
+        base.OnPropertyChanged(change);
     }
 
     private void SetupKeyEventHandlers()
@@ -129,14 +154,14 @@ public class KeybindTextBox : TextBox
     private void OnLostFocus(object? sender, RoutedEventArgs e)
     {
         ApplyDefaultForegroundColor();
-        Text = GetFunctionKey();
+        Text = FunctionsKeyHelper.GetFunctionKeyName(MethodName, IsReadOnly, Alt);
         MainKeyboardShortcuts.IsEscKeyEnabled = true;
     }
 
     private void KeyUpHandler()
     {
         ApplyDefaultForegroundColor();
-        Text = GetFunctionKey();
+        Text = FunctionsKeyHelper.GetFunctionKeyName(MethodName, IsReadOnly, Alt);
     }
 
     private void ApplyReadOnlyBorderColor()
@@ -254,50 +279,12 @@ public class KeybindTextBox : TextBox
         }
     }
 
-    private string GetFunctionKey()
+    protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
     {
-        if (string.IsNullOrEmpty(MethodName))
-        {
-            return string.Empty;
-        }
-
-        if (IsReadOnly)
-        {
-            switch (MethodName)
-            {
-                case "ScrollUpInternal":
-                    var rotateRightKey = KeybindingManager.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Up")
-                        ?.Select(x => x.Key).ToList() ?? null;
-                    return rotateRightKey is not { Count: > 0 } ? string.Empty :
-                        Alt ? rotateRightKey.LastOrDefault().ToString() : rotateRightKey.FirstOrDefault().ToString();
-
-                case "ScrollDownInternal":
-                    var rotateLeftKey = KeybindingManager.CustomShortcuts.Where(x => x.Value?.Method?.Name == "Down")
-                        ?.Select(x => x.Key).ToList() ?? null;
-                    return rotateLeftKey is not { Count: > 0 } ? string.Empty :
-                        Alt ? rotateLeftKey.LastOrDefault().ToString() : rotateLeftKey.FirstOrDefault().ToString();
-            }
-        }
-
-        // Find the key associated with the specified function
-        var keys = KeybindingManager.CustomShortcuts.Where(x => x.Value?.Method?.Name == MethodName)?.Select(x => x.Key)
-            .ToList() ?? null;
-
-        if (keys is null)
-        {
-            return string.Empty;
-        }
-
-        return keys.Count switch
-        {
-            <= 0 => string.Empty,
-            1 => Alt ? string.Empty : FormatPlus(keys.FirstOrDefault().ToString()),
-            _ => Alt ? FormatPlus(keys.LastOrDefault().ToString()) : FormatPlus(keys.FirstOrDefault().ToString())
-        };
-
-        string FormatPlus(string value)
-        {
-            return string.IsNullOrEmpty(value) ? string.Empty : value.Replace("+", " + ");
-        }
+        base.OnDetachedFromLogicalTree(e);
+        _disposables.Dispose();
+        Loaded -= OnLoaded;
+        GotFocus -= OnGotFocus;
+        LostFocus -= OnLostFocus;
     }
 }

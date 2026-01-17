@@ -81,7 +81,10 @@ public static class UpdateImage
                 return;
             }
 
-            vm.ImageViewer.ZoomPanControl.ResetZoomSlim();
+            if (Settings.Zoom.ResetZoomOnChange)
+            {
+                vm.ImageViewer.ZoomPanControl.ResetZoomSlim();
+            }
 
             if (Settings.ImageScaling.ShowImageSideBySide && nextPreloadValue is { ImageModel: not null })
             {

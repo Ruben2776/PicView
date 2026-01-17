@@ -163,6 +163,38 @@
 
             <Separator />
 
+            <!--  Next archive  -->
+            <MenuItem
+                Command="{CompiledBinding Navigation.NextArchiveCommand}"
+                Header="{CompiledBinding Translation.NextArchive.Value,
+                                         Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                            Converter={x:Static ObjectConverters.IsNotNull}}">
+                <MenuItem.Icon>
+                    <Image
+                        Height="14"
+                        Source="{StaticResource ArchiveFile}"
+                        Width="14" />
+                </MenuItem.Icon>
+            </MenuItem>
+
+            <!--  Prev archive  -->
+            <MenuItem
+                Command="{CompiledBinding Navigation.PreviousArchiveCommand}"
+                Header="{CompiledBinding Translation.PrevArchive.Value,
+                                         Mode=OneWay}"
+                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                            Converter={x:Static ObjectConverters.IsNotNull}}">
+                <MenuItem.Icon>
+                    <Image
+                        Height="14"
+                        Source="{StaticResource ArchiveFile}"
+                        Width="14" />
+                </MenuItem.Icon>
+            </MenuItem>
+
+            <Separator />
+
             <!--  Hide bottom bar  -->
             <MenuItem Command="{CompiledBinding Tools.ToggleBottomNavBarCommand}" Header="{CompiledBinding Translation.HideBottomToolbar.Value, Mode=OneWay}">
                 <MenuItem.Icon>
@@ -266,22 +298,22 @@
                         Width="38"
                         x:Name="ZoomOutButton" />
 
-                    <!-- Zoom In -->
-                    <customControls:IconButton
-                        Background="{DynamicResource AltBackgroundColor}"
-                        BorderBrush="{DynamicResource MainBorderColor}"
-                        BorderThickness="0,0,1,0"
-                        Classes="noBorderHover"
-                        Command="{CompiledBinding Tools.ZoomInCommand}"
-                        Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
-                        Icon="{StaticResource ZoomAltImage}"
-                        IconHeight="16"
-                        IconWidth="18"
-                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
-                        IsTabStop="False"
-                        Width="38"
-                        x:Name="ZoomInButton" />
-                </StackPanel>
+                <customControls:IconButton
+                    Background="{DynamicResource AltBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Classes="noBorderHover"
+                    Command="{CompiledBinding Tools.ZoomInCommand}"
+                    Foreground="{DynamicResource MainTextColor}"
+                    Height="{CompiledBinding MainWindow.BottombarHeight.Value}"
+                    Icon="{StaticResource ZoomAltImage}"
+                    IconHeight="16"
+                    IconWidth="18"
+                    IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull}}"
+                    IsTabStop="False"
+                    Width="38"
+                    x:Name="ZoomInButton" />
 
                 <!-- Previous -->
                 <customControls:IconButton

@@ -38,16 +38,7 @@ public class WebpInstance : IGifInstance
 
         var pixSize = new PixelSize(_codec.Info.Width, _codec.Info.Height);
 
-        // Different on os: https://github.com/mono/SkiaSharp/issues/1492#issuecomment-689015409
-        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-        var format = SKImageInfo.PlatformColorType switch
-        {
-            SKColorType.Bgra8888 => PixelFormat.Bgra8888,
-            SKColorType.Rgba8888 => PixelFormat.Rgba8888,
-            _ => throw new NotSupportedException($"Unsupported color type: {SKImageInfo.PlatformColorType}")
-        };
-
-        _targetBitmap = new WriteableBitmap(pixSize, new Vector(96, 96), format, AlphaFormat.Opaque);
+        _targetBitmap = new WriteableBitmap(pixSize, new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Opaque);
         GifPixelSize = pixSize;
 
         _totalTime = TimeSpan.Zero;

@@ -107,7 +107,7 @@ public class TranslationViewModel : IDisposable
         ExposureProgram.Value = t.ExposureProgram;
         ExposureTime.Value = t.ExposureTime;
         File.Value = string.Concat(t.File[0].ToString().ToUpper(), t.File.AsSpan(1));
-        Files.Value = t.Files;
+        Files.Value = string.Concat(t.File[0].ToString().ToLower(), t.File.AsSpan(1));
         FileAssociations.Value = t.FileAssociations;
         FileConversion.Value = t.FileConversion;
         FileCopyPath.Value = t.FileCopyPath;
@@ -194,6 +194,7 @@ public class TranslationViewModel : IDisposable
         Navigation.Value = t.Navigation;
         NegativeColors.Value = t.NegativeColors;
         NewWindow.Value = t.NewWindow;
+        NextArchive.Value = t.NextArchive;
         NextFolder.Value = t.NextFolder;
         NextImage.Value = t.NextImage;
         NoConversion.Value = t.NoConversion;
@@ -222,6 +223,7 @@ public class TranslationViewModel : IDisposable
         Pinned.Value = t.Pinned;
         Pixels.Value = t.Pixels;
         Posterize.Value = t.Posterize;
+        PrevArchive.Value = t.PrevArchive;
         PrevFolder.Value = t.PrevFolder;
         PrevImage.Value = t.PrevImage;
         Print.Value = t.Print;
@@ -240,6 +242,7 @@ public class TranslationViewModel : IDisposable
         Reset.Value = t.Reset;
         ResetButtonText.Value = t.ResetButtonText;
         ResetZoom.Value = t.ResetZoom;
+        ResetZoomOnChange.Value = t.ResetZoomOnChange;
         Resize.Value = t.Resize;
         ResizeImage.Value = t.ResizeImage;
         ResizeSettings.Value = t.ResizeSettings;
@@ -523,6 +526,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> Navigation { get; } = new();
     public BindableReactiveProperty<string?> NegativeColors { get; } = new();
     public BindableReactiveProperty<string?> NewWindow { get; } = new();
+    public BindableReactiveProperty<string?> NextArchive { get; } = new();
     public BindableReactiveProperty<string?> NextFolder { get; } = new();
     public BindableReactiveProperty<string?> NextImage { get; } = new();
     public BindableReactiveProperty<string?> NoConversion { get; } = new();
@@ -550,6 +554,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> Pinned { get; } = new();
     public BindableReactiveProperty<string?> Pixels { get; } = new();
     public BindableReactiveProperty<string?> Posterize { get; } = new();
+    public BindableReactiveProperty<string?> PrevArchive { get; } = new();
     public BindableReactiveProperty<string?> PrevFolder { get; } = new();
     public BindableReactiveProperty<string?> PrevImage { get; } = new();
     public BindableReactiveProperty<string?> Print { get; } = new();
@@ -567,6 +572,7 @@ public class TranslationViewModel : IDisposable
     public BindableReactiveProperty<string?> Reset { get; } = new();
     public BindableReactiveProperty<string?> ResetButtonText { get; } = new();
     public BindableReactiveProperty<string?> ResetZoom { get; } = new();
+    public BindableReactiveProperty<string?> ResetZoomOnChange { get; } = new();
     public BindableReactiveProperty<string?> Resize { get; } = new();
     public BindableReactiveProperty<string?> ResizeImage { get; } = new();
     public BindableReactiveProperty<string?> ResizeSettings { get; } = new();

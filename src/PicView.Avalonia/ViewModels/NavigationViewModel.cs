@@ -22,6 +22,11 @@ public class NavigationViewModel : IDisposable
     {
         await NavigationManager.NavigateBetweenDirectories(next: true).ConfigureAwait(false);
     });
+
+    public ReactiveCommand NextArchiveCommand { get; } = new(async (_, _) =>
+    {
+        await NavigationManager.NavigateBetweenArchives(true).ConfigureAwait(false);
+    });
     
     // Prev
     public ReactiveCommand PreviousCommand { get; } = new(Prev);
@@ -32,6 +37,11 @@ public class NavigationViewModel : IDisposable
     public ReactiveCommand PreviousFolderCommand { get; } = new(async (_, _) =>
     {
         await NavigationManager.NavigateBetweenDirectories(next: false).ConfigureAwait(false);
+    });
+
+    public ReactiveCommand PreviousArchiveCommand { get; } = new(async (_, _) =>
+    {
+        await NavigationManager.NavigateBetweenArchives(false).ConfigureAwait(false);
     });
     
     // Skip

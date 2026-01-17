@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
+using System.Text;
 using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.Exif;
@@ -25,7 +26,7 @@ public class ExifViewModel : IDisposable
         SetExifRating3Command = new ReactiveCommand<string>(async (s, _) => await SetRating(s, 3));
         SetExifRating4Command = new ReactiveCommand<string>(async (s, _) => await SetRating(s, 4));
         SetExifRating5Command = new ReactiveCommand<string>(async (s, _) => await SetRating(s, 5));
-        
+
         SetDateTakenCommand = new ReactiveCommand<FileInfo>(async (f, _) => await SetDateTaken(f));
 
         ResolutionUnits = new BindableReactiveProperty<string[]>([
@@ -114,175 +115,6 @@ public class ExifViewModel : IDisposable
         ]);
     }
 
-    public void UpdateExifValues(ImageModel model, MagickImage? magick = null)
-    {
-        var shouldDispose = magick != null;
-
-        var fileInfo = model.FileInfo;
-        var orientation = model.Orientation;
-        var pixelWidth = model.PixelWidth;
-        var pixelHeight = model.PixelHeight;
-        try
-        {
-            if (fileInfo is null || !fileInfo.Exists)
-            {
-                return;
-            }
-
-            if (magick is null)
-            {
-                magick = new MagickImage();
-                magick.Ping(fileInfo);
-            }
-
-            var profile = magick.GetExifProfile();
-
-            if (profile != null)
-            {
-                DpiY.Value = profile.GetValue(ExifTag.YResolution)?.Value.ToDouble() ?? model.DpiX;
-                DpiX.Value = profile.GetValue(ExifTag.XResolution)?.Value.ToDouble() ?? model.DpiY;
-                var depth = profile.GetValue(ExifTag.BitsPerSample)?.Value;
-                if (depth is not null)
-                {
-                    var x = depth.Aggregate(0, (current, value) => current + value);
-                    BitDepth.Value = x.ToString();
-                }
-                else
-                {
-                    BitDepth.Value = (magick.Depth * 3).ToString();
-                }
-            }
-            else
-            {
-                DpiY.Value = model.DpiX;
-                DpiX.Value = model.DpiY;
-                BitDepth.Value = (magick.Depth * 3).ToString();
-            }
-
-            Orientation.Value = orientation switch
-            {
-                ExifOrientation.Horizontal => 1,
-                ExifOrientation.MirrorHorizontal => 2,
-                ExifOrientation.Rotate180 => 3,
-                ExifOrientation.MirrorVertical => 4,
-                ExifOrientation.MirrorHorizontalRotate270Cw => 5,
-                ExifOrientation.Rotate90Cw => 6,
-                ExifOrientation.MirrorHorizontalRotate90Cw => 7,
-                ExifOrientation.Rotated270Cw => 8,
-                _ => 0
-            };
-
-            var meter = TranslationManager.Translation.Meter;
-
-            if (string.IsNullOrEmpty(BitDepth.CurrentValue))
-            {
-                BitDepth.Value = (magick.Depth * 3).ToString();
-            }
-
-            if (DpiX.CurrentValue == 0 || DpiY.CurrentValue == 0) // Check for zero before division
-            {
-                PrintSizeCm.Value =
-                    PrintSizeInch.Value =
-                        SizeMp.Value =
-                            Resolution.Value = string.Empty;
-            }
-            else
-            {
-                var printSizes =
-                    PrintSizing.GetPrintSizes(pixelWidth, pixelHeight, DpiX.CurrentValue, DpiY.CurrentValue);
-
-                PrintSizeCm.Value = printSizes.PrintSizeCm;
-                PrintSizeInch.Value = printSizes.PrintSizeInch;
-                SizeMp.Value = printSizes.SizeMp;
-
-                Resolution.Value = $"{DpiX} x {DpiY} {TranslationManager.Translation.Dpi}";
-            }
-
-            var gcd = AspectRatioFormatter.GCD(pixelWidth, pixelHeight);
-            if (gcd != 0) // Check for zero before division
-            {
-                AspectRatio.Value = AspectRatioFormatter.GetFormattedAspectRatio(gcd, pixelWidth, pixelHeight);
-            }
-            else
-            {
-                AspectRatio.Value = string.Empty; // Handle cases where gcd is 0
-            }
-
-            ExifRating.Value = profile?.GetValue(ExifTag.Rating)?.Value ?? 0;
-
-            var gpsValues = GpsHelper.GetGpsValues(profile);
-
-            if (gpsValues is not null)
-            {
-                Latitude.Value = gpsValues[0];
-                Longitude.Value = gpsValues[1];
-
-                GoogleLink.Value = gpsValues[2];
-                BingLink.Value = gpsValues[3];
-            }
-            else
-            {
-                Latitude.Value =
-                    Longitude.Value =
-                        GoogleLink.Value =
-                            BingLink.Value = string.Empty;
-            }
-
-            var altitude = profile?.GetValue(ExifTag.GPSAltitude)?.Value;
-            Altitude.Value = altitude.HasValue
-                ? $"{altitude.Value.ToDouble()} {meter}"
-                : string.Empty;
-            var getAuthors = profile?.GetValue(ExifTag.Artist)?.Value;
-            Authors.Value = getAuthors ?? string.Empty;
-            DateTaken.Value = ExifReader.GetDateTaken(profile);
-            Copyright.Value = profile?.GetValue(ExifTag.Copyright)?.Value ?? string.Empty;
-            Title.Value = ExifReader.GetTitle(profile);
-            Subject.Value = ExifReader.GetSubject(profile);
-            Software.Value = profile?.GetValue(ExifTag.Software)?.Value ?? string.Empty;
-            ResolutionUnit.Value = ExifReader.GetResolutionUnit(profile);
-            ColorRepresentation.Value = profile?.GetValue(ExifTag.ColorSpace)?.Value ?? 0;
-            Compression.Value = profile?.GetValue(ExifTag.Compression)?.Value ?? 0;
-            CompressedBitsPixel.Value =
-                profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString() ?? string.Empty;
-            CameraMaker.Value = profile?.GetValue(ExifTag.Make)?.Value ?? string.Empty;
-            CameraModel.Value = profile?.GetValue(ExifTag.Model)?.Value ?? string.Empty;
-            ExposureProgram.Value = ExifReader.GetExposureProgram(profile);
-            ExposureTime.Value = profile?.GetValue(ExifTag.ExposureTime)?.Value.ToString() ?? string.Empty;
-            FNumber.Value = profile?.GetValue(ExifTag.FNumber)?.Value.ToString() ?? string.Empty;
-            MaxAperture.Value = profile?.GetValue(ExifTag.MaxApertureValue)?.Value.ToString() ?? string.Empty;
-            ExposureBias.Value = profile?.GetValue(ExifTag.ExposureBiasValue)?.Value.ToString() ?? string.Empty;
-            DigitalZoom.Value = profile?.GetValue(ExifTag.DigitalZoomRatio)?.Value.ToString() ?? string.Empty;
-            FocalLength35Mm.Value = profile?.GetValue(ExifTag.FocalLengthIn35mmFilm)?.Value.ToString() ?? string.Empty;
-            FocalLength.Value = profile?.GetValue(ExifTag.FocalLength)?.Value.ToString() ?? string.Empty;
-            ISOSpeed.Value = ExifReader.GetISOSpeed(profile);
-            MeteringMode.Value = profile?.GetValue(ExifTag.MeteringMode)?.Value.ToString() ?? string.Empty;
-            Contrast.Value = ExifReader.GetContrast(profile);
-            Saturation.Value = ExifReader.GetSaturation(profile);
-            Sharpness.Value = ExifReader.GetSharpness(profile);
-            WhiteBalance.Value = ExifReader.GetWhiteBalance(profile);
-            FlashMode.Value = ExifReader.GetFlashMode(profile);
-            FlashEnergy.Value = profile?.GetValue(ExifTag.FlashEnergy)?.Value.ToString() ?? string.Empty;
-            LightSource.Value = ExifReader.GetLightSource(profile);
-            Brightness.Value = profile?.GetValue(ExifTag.BrightnessValue)?.Value.ToString(CultureInfo.CurrentCulture) ?? null;
-            PhotometricInterpretation.Value = ExifReader.GetPhotometricInterpretation(profile);
-            ExifVersion.Value = ExifReader.GetExifVersion(profile);
-            LensModel.Value = profile?.GetValue(ExifTag.LensModel)?.Value ?? string.Empty;
-            LensMaker.Value = profile?.GetValue(ExifTag.LensMake)?.Value ?? string.Empty;
-            Comment.Value = ExifReader.GetUserComment(profile);
-        }
-        catch (Exception e)
-        {
-            DebugHelper.LogDebug(nameof(ExifViewModel), nameof(UpdateExifValues), e);
-        }
-        finally
-        {
-            if (shouldDispose)
-            {
-                magick.Dispose();
-            }
-        }
-    }
-
     public ReactiveCommand? OpenGoogleLinkCommand { get; }
     public ReactiveCommand? OpenBingLinkCommand { get; }
 
@@ -292,7 +124,7 @@ public class ExifViewModel : IDisposable
     public ReactiveCommand<string>? SetExifRating3Command { get; set; }
     public ReactiveCommand<string>? SetExifRating4Command { get; set; }
     public ReactiveCommand<string>? SetExifRating5Command { get; set; }
-    
+
     public ReactiveCommand<FileInfo> SetDateTakenCommand { get; set; }
 
     public BindableReactiveProperty<uint> ExifRating { get; } = new();
@@ -462,6 +294,367 @@ public class ExifViewModel : IDisposable
             WhiteBalance);
     }
 
+    public void UpdateExifValues(ImageModel model, MagickImage? magick = null)
+    {
+        var shouldDispose = magick != null;
+
+        var fileInfo = model.FileInfo;
+        var orientation = model.Orientation;
+        var pixelWidth = model.PixelWidth;
+        var pixelHeight = model.PixelHeight;
+        try
+        {
+            if (fileInfo is null || !fileInfo.Exists)
+            {
+                return;
+            }
+
+            if (magick is null)
+            {
+                magick = new MagickImage();
+                magick.Ping(fileInfo);
+            }
+
+            var profile = magick.GetExifProfile();
+
+            if (profile is null)
+            {
+                // Check both Attributes and Artifacts as RAW metadata can reside in either
+                var metadataNames = magick.AttributeNames.Concat(magick.ArtifactNames).Distinct();
+
+                var enumerable = metadataNames as string[] ?? metadataNames.ToArray();
+                if (enumerable.Length != 0)
+                {
+                    profile = new ExifProfile();
+                    foreach (var name in enumerable)
+                    {
+                        var val = magick.GetAttribute(name) ?? magick.GetArtifact(name);
+                        if (string.IsNullOrWhiteSpace(val))
+                        {
+                            continue;
+                        }
+
+                        // Normalize name to lowercase for easier matching
+                        var key = name.ToLowerInvariant();
+
+                        // --- Date and Time ---
+                        if (key.Contains("date") && (key.Contains("create") || key.Contains("original")))
+                        {
+                            if (DateTime.TryParse(val, out var date))
+                            {
+                                profile.SetValue(ExifTag.DateTimeOriginal, date.ToString("yyyy:MM:dd HH:mm:ss"));
+                            }
+                        }
+                        // --- Camera Details ---
+                        else if (key.Contains("camera.model.name") || key.Contains("exif:model"))
+                        {
+                            profile.SetValue(ExifTag.Model, val);
+                        }
+                        else if (key.Contains("camera.make.name") || key.Contains("exif:make"))
+                        {
+                            profile.SetValue(ExifTag.Make, val);
+                        }
+                        // --- Exposure Settings ---
+                        else if (key.Contains("exposure.time") || key.Contains("exif:exposuretime"))
+                        {
+                            if (ExifFunctions.TryParseRational(val, out var rational))
+                            {
+                                profile.SetValue(ExifTag.ExposureTime, rational);
+                            }
+                        }
+                        else if (key.Contains("f.number") || key.Contains("exif:fnumber"))
+                        {
+                            if (ExifFunctions.TryParseRational(val, out var rational))
+                            {
+                                profile.SetValue(ExifTag.FNumber, rational);
+                            }
+                        }
+                        else if (key.Contains("iso") || key.Contains("exif:isospeedratings"))
+                        {
+                            if (ushort.TryParse(val, out var iso))
+                            {
+                                profile.SetValue(ExifTag.ISOSpeedRatings, [iso]);
+                            }
+                        }
+                        else if (key.Contains("exposure.bias") || key.Contains("exif:exposurebiasvalue"))
+                        {
+                            if (ExifFunctions.TryParseSignedRational(val, out var rational))
+                            {
+                                profile.SetValue(ExifTag.ExposureBiasValue, rational);
+                            }
+                        }
+                        // --- Optics ---
+                        else if (key.Contains("focal.length") && !key.Contains("35mm"))
+                        {
+                            if (ExifFunctions.TryParseRational(val, out var rational))
+                            {
+                                profile.SetValue(ExifTag.FocalLength, rational);
+                            }
+                        }
+                        else if (key.Contains("focal.length.in.35mm") || key.Contains("exif:focallengthin35mmfilm"))
+                        {
+                            if (ushort.TryParse(val, out var num))
+                            {
+                                profile.SetValue(ExifTag.FocalLengthIn35mmFilm, num);
+                            }
+                        }
+                        else if (key.Contains("lens.model") || key.Contains("exif:lensmodel"))
+                        {
+                            profile.SetValue(ExifTag.LensModel, val);
+                        }
+
+                        // --- GPS Coordinates (Lat/Long are Rational Arrays) ---
+                        else if (key.Contains("gps.latitude") && !key.Contains("ref"))
+                        {
+                            var parts = val.Split([' ', ','], StringSplitOptions.RemoveEmptyEntries);
+                            var rationals = parts
+                                .Select(p => ExifFunctions.TryParseRational(p, out var r) ? r : default).ToArray();
+                            if (rationals.Length > 0)
+                            {
+                                profile.SetValue(ExifTag.GPSLatitude, rationals);
+                            }
+                        }
+                        else if (key.Contains("gps.longitude") && !key.Contains("ref"))
+                        {
+                            var parts = val.Split([' ', ','], StringSplitOptions.RemoveEmptyEntries);
+                            var rationals = parts
+                                .Select(p => ExifFunctions.TryParseRational(p, out var r) ? r : default).ToArray();
+                            if (rationals.Length > 0)
+                            {
+                                profile.SetValue(ExifTag.GPSLongitude, rationals);
+                            }
+                        }
+                        else if (key.Contains("gps.latituderef") || key.Contains("exif:gpslatituderef"))
+                        {
+                            profile.SetValue(ExifTag.GPSLatitudeRef, val.Trim());
+                        }
+                        else if (key.Contains("gps.longituderef") || key.Contains("exif:gpslongituderef"))
+                        {
+                            profile.SetValue(ExifTag.GPSLongitudeRef, val.Trim());
+                        }
+
+                        // --- Shooting Info ---
+                        else if (key.Contains("white.balance") || key.Contains("exif:whitebalance"))
+                        {
+                            // Typically 0 = Auto, 1 = Manual in EXIF
+                            if (val.Contains("auto", StringComparison.OrdinalIgnoreCase))
+                            {
+                                profile.SetValue(ExifTag.WhiteBalance, (ushort)0);
+                            }
+                            else if (val.Contains("manual", StringComparison.OrdinalIgnoreCase))
+                            {
+                                profile.SetValue(ExifTag.WhiteBalance, (ushort)1);
+                            }
+                        }
+
+                        // --- Identification & Rights ---
+                        if (key.Contains("artist") || key.Contains("author") || key.Contains("exif:artist"))
+                        {
+                            profile.SetValue(ExifTag.Artist, val);
+                        }
+                        else if (key.Contains("copyright") || key.Contains("exif:copyright"))
+                        {
+                            profile.SetValue(ExifTag.Copyright, val);
+                        }
+                        else if (key.Contains("software") || key.Contains("exif:software"))
+                        {
+                            profile.SetValue(ExifTag.Software, val);
+                        }
+
+                        // --- Titles & Comments ---
+                        else if (key.Contains("comment") || key.Contains("exif:usercomment"))
+                        {
+                            // ExifReader expects ASCII/UNICODE prefixing for UserComment
+                            var bytes = Encoding.ASCII.GetBytes("ASCII\0\0\0" + val);
+                            profile.SetValue(ExifTag.UserComment, bytes);
+                        }
+                        else if (key.Contains("description") || key.Contains("exif:imagedescription"))
+                        {
+                            profile.SetValue(ExifTag.ImageDescription, val);
+                        }
+
+                        // --- Rating ---
+                        else if (key.Contains("rating") || key.Contains("exif:rating"))
+                        {
+                            if (ushort.TryParse(val, out var rating))
+                            {
+                                profile.SetValue(ExifTag.Rating, rating);
+                            }
+                        }
+
+                        // --- Color Representation ---
+                        else if (key.Contains("colorspace") || key.Contains("exif:colorspace"))
+                        {
+                            if (val.Contains("srgb", StringComparison.OrdinalIgnoreCase))
+                            {
+                                profile.SetValue(ExifTag.ColorSpace, (ushort)1);
+                            }
+                            else if (val.Contains("adobe", StringComparison.OrdinalIgnoreCase))
+                            {
+                                profile.SetValue(ExifTag.ColorSpace, (ushort)2);
+                            }
+                            else if (ushort.TryParse(val, out var space))
+                            {
+                                profile.SetValue(ExifTag.ColorSpace, space);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (profile != null)
+            {
+                DpiY.Value = profile.GetValue(ExifTag.YResolution)?.Value.ToDouble() ?? model.DpiX;
+                DpiX.Value = profile.GetValue(ExifTag.XResolution)?.Value.ToDouble() ?? model.DpiY;
+                var depth = profile.GetValue(ExifTag.BitsPerSample)?.Value;
+                if (depth is not null)
+                {
+                    var x = depth.Aggregate(0, (current, value) => current + value);
+                    BitDepth.Value = x.ToString();
+                }
+                else
+                {
+                    BitDepth.Value = (magick.Depth * 3).ToString();
+                }
+            }
+            else
+            {
+                foreach (var artifactName in magick.ArtifactNames)
+                {
+                    DebugHelper.LogDebug(nameof(ExifViewModel), nameof(UpdateExifValues), artifactName);
+                }
+
+
+                DpiY.Value = model.DpiX;
+                DpiX.Value = model.DpiY;
+                BitDepth.Value = (magick.Depth * 3).ToString();
+            }
+
+            Orientation.Value = orientation switch
+            {
+                ExifOrientation.Horizontal => 1,
+                ExifOrientation.MirrorHorizontal => 2,
+                ExifOrientation.Rotate180 => 3,
+                ExifOrientation.MirrorVertical => 4,
+                ExifOrientation.MirrorHorizontalRotate270Cw => 5,
+                ExifOrientation.Rotate90Cw => 6,
+                ExifOrientation.MirrorHorizontalRotate90Cw => 7,
+                ExifOrientation.Rotated270Cw => 8,
+                _ => 0
+            };
+
+            var meter = TranslationManager.Translation.Meter;
+
+            if (string.IsNullOrEmpty(BitDepth.CurrentValue))
+            {
+                BitDepth.Value = (magick.Depth * 3).ToString();
+            }
+
+            if (DpiX.CurrentValue == 0 || DpiY.CurrentValue == 0) // Check for zero before division
+            {
+                PrintSizeCm.Value =
+                    PrintSizeInch.Value =
+                        SizeMp.Value =
+                            Resolution.Value = string.Empty;
+            }
+            else
+            {
+                var printSizes =
+                    PrintSizing.GetPrintSizes(pixelWidth, pixelHeight, DpiX.CurrentValue, DpiY.CurrentValue);
+
+                PrintSizeCm.Value = printSizes.PrintSizeCm;
+                PrintSizeInch.Value = printSizes.PrintSizeInch;
+                SizeMp.Value = printSizes.SizeMp;
+
+                Resolution.Value = $"{DpiX} x {DpiY} {TranslationManager.Translation.Dpi}";
+            }
+
+            var gcd = AspectRatioFormatter.GCD(pixelWidth, pixelHeight);
+            if (gcd != 0) // Check for zero before division
+            {
+                AspectRatio.Value = AspectRatioFormatter.GetFormattedAspectRatio(gcd, pixelWidth, pixelHeight);
+            }
+            else
+            {
+                AspectRatio.Value = string.Empty; // Handle cases where gcd is 0
+            }
+
+            ExifRating.Value = profile?.GetValue(ExifTag.Rating)?.Value ?? 0;
+
+            var gpsValues = GpsHelper.GetGpsValues(profile);
+
+            if (gpsValues is not null)
+            {
+                Latitude.Value = gpsValues[0];
+                Longitude.Value = gpsValues[1];
+
+                GoogleLink.Value = gpsValues[2];
+                BingLink.Value = gpsValues[3];
+            }
+            else
+            {
+                Latitude.Value =
+                    Longitude.Value =
+                        GoogleLink.Value =
+                            BingLink.Value = string.Empty;
+            }
+
+            var altitude = profile?.GetValue(ExifTag.GPSAltitude)?.Value;
+            Altitude.Value = altitude.HasValue
+                ? $"{altitude.Value.ToDouble()} {meter}"
+                : string.Empty;
+            var getAuthors = profile?.GetValue(ExifTag.Artist)?.Value;
+            Authors.Value = getAuthors ?? string.Empty;
+            DateTaken.Value = ExifReader.GetDateTaken(profile);
+            Copyright.Value = profile?.GetValue(ExifTag.Copyright)?.Value ?? string.Empty;
+            Title.Value = ExifReader.GetTitle(profile);
+            Subject.Value = ExifReader.GetSubject(profile);
+            Software.Value = profile?.GetValue(ExifTag.Software)?.Value ?? string.Empty;
+            ResolutionUnit.Value = ExifReader.GetResolutionUnit(profile);
+            ColorRepresentation.Value = profile?.GetValue(ExifTag.ColorSpace)?.Value ?? 0;
+            Compression.Value = profile?.GetValue(ExifTag.Compression)?.Value ?? 0;
+            CompressedBitsPixel.Value =
+                profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString() ?? string.Empty;
+            CameraMaker.Value = profile?.GetValue(ExifTag.Make)?.Value ?? string.Empty;
+            CameraModel.Value = profile?.GetValue(ExifTag.Model)?.Value ?? string.Empty;
+            ExposureProgram.Value = ExifReader.GetExposureProgram(profile);
+            ExposureTime.Value = profile?.GetValue(ExifTag.ExposureTime)?.Value.ToString() ?? string.Empty;
+            FNumber.Value = profile?.GetValue(ExifTag.FNumber)?.Value.ToString() ?? string.Empty;
+            MaxAperture.Value = profile?.GetValue(ExifTag.MaxApertureValue)?.Value.ToString() ?? string.Empty;
+            ExposureBias.Value = profile?.GetValue(ExifTag.ExposureBiasValue)?.Value.ToString() ?? string.Empty;
+            DigitalZoom.Value = profile?.GetValue(ExifTag.DigitalZoomRatio)?.Value.ToString() ?? string.Empty;
+            FocalLength35Mm.Value = profile?.GetValue(ExifTag.FocalLengthIn35mmFilm)?.Value.ToString() ?? string.Empty;
+            FocalLength.Value = profile?.GetValue(ExifTag.FocalLength)?.Value.ToString() ?? string.Empty;
+            ISOSpeed.Value = ExifReader.GetISOSpeed(profile);
+            MeteringMode.Value = profile?.GetValue(ExifTag.MeteringMode)?.Value.ToString() ?? string.Empty;
+            Contrast.Value = ExifReader.GetContrast(profile);
+            Saturation.Value = ExifReader.GetSaturation(profile);
+            Sharpness.Value = ExifReader.GetSharpness(profile);
+            WhiteBalance.Value = ExifReader.GetWhiteBalance(profile);
+            FlashMode.Value = ExifReader.GetFlashMode(profile);
+            FlashEnergy.Value = profile?.GetValue(ExifTag.FlashEnergy)?.Value.ToString() ?? string.Empty;
+            LightSource.Value = ExifReader.GetLightSource(profile);
+            Brightness.Value = profile?.GetValue(ExifTag.BrightnessValue)?.Value.ToString(CultureInfo.CurrentCulture) ??
+                               null;
+            PhotometricInterpretation.Value = ExifReader.GetPhotometricInterpretation(profile);
+            ExifVersion.Value = ExifReader.GetExifVersion(profile);
+            LensModel.Value = profile?.GetValue(ExifTag.LensModel)?.Value ?? string.Empty;
+            LensMaker.Value = profile?.GetValue(ExifTag.LensMake)?.Value ?? string.Empty;
+            Comment.Value = ExifReader.GetUserComment(profile);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(ExifViewModel), nameof(UpdateExifValues), e);
+        }
+        finally
+        {
+            if (shouldDispose)
+            {
+                magick.Dispose();
+            }
+        }
+    }
+
     public void OpenGoogleMaps(Unit unit) => ProcessHelper.OpenLink(GoogleLink.CurrentValue);
     public void OpenBingMaps(Unit unit) => ProcessHelper.OpenLink(BingLink.CurrentValue);
 
@@ -472,10 +665,11 @@ public class ExifViewModel : IDisposable
         {
             return false;
         }
+
         ExifRating.Value = rating;
         return true;
     }
-    
+
     private async Task<bool> SetDateTaken(FileInfo fileInfo)
     {
         return await ExifWriter.SetDateTaken(fileInfo, DateTaken.Value.Value);

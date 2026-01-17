@@ -82,7 +82,7 @@ public static class KeybindingManager
         }
     }
 
-    internal static void SetDefaultKeybindings(IPlatformSpecificService platformSpecificService)
+    public static void SetDefaultKeybindings(IPlatformSpecificService platformSpecificService)
     {
         if (CustomShortcuts is not null)
         {

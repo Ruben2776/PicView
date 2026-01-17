@@ -113,6 +113,25 @@ public partial class NavigationDialog : AnimatedPopUp
                 await FunctionsMapper.PrevFolder();
             })
             .AddTo(_subscriptions);
+
+
+        Observable.FromEventHandler<RoutedEventArgs>(h => NextArchiveButton.Click += h,
+                h => NextFolderButton.Click -= h)
+            .SubscribeAwait(async (_, _) =>
+            {
+                _ = AnimatedClosing();
+                await FunctionsMapper.NextArchive();
+            })
+            .AddTo(_subscriptions);
+
+        Observable.FromEventHandler<RoutedEventArgs>(h => PrevArchiveButton.Click += h,
+                h => PrevFolderButton.Click -= h)
+            .SubscribeAwait(async (_, _) =>
+            {
+                _ = AnimatedClosing();
+                await FunctionsMapper.PrevArchive();
+            })
+            .AddTo(_subscriptions);
     }
 
     protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)

@@ -159,5 +159,35 @@
             Text="{CompiledBinding Translation.PrevFolder,
                                    Mode=OneWay}"
             x:Name="PrevFolderButton" />
+
+        <Separator />
+
+        <!--  Next archive  -->
+        <customControls:TextIconButton
+            Classes="altHover"
+            Icon="{StaticResource ArchiveFile}"
+            IconHeight="14"
+            IconMargin="5,0,10,0"
+            IconWidth="14"
+            IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                        Converter={x:Static ObjectConverters.IsNotNull}}"
+            Padding="6"
+            Text="{CompiledBinding Translation.NextArchive,
+                                   Mode=OneWay}"
+            x:Name="NextArchiveButton" />
+
+        <!--  Prev folder  -->
+        <customControls:TextIconButton
+            Classes="altHover"
+            Icon="{StaticResource ArchiveFile}"
+            IconHeight="14"
+            IconMargin="5,0,10,0"
+            IconWidth="14"
+            IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                        Converter={x:Static ObjectConverters.IsNotNull}}"
+            Padding="6"
+            Text="{CompiledBinding Translation.PrevArchive,
+                                   Mode=OneWay}"
+            x:Name="PrevArchiveButton" />
     </StackPanel>
 </customControls:AnimatedPopUp>

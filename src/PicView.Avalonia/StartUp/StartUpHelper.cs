@@ -95,14 +95,8 @@ public static class StartUpHelper
         HandleWindowScalingMode(vm, window);
 
         window.Show();
-
-        Dispatcher.UIThread.Post(() =>
-        {
-            HandlePostWindowUpdates(vm, settingsExists, desktop, window);
-        }, DispatcherPriority.Background);
+        HandlePostWindowUpdates(vm, settingsExists, desktop, window);
     }
-    
-    
 
     private static void HandleWindowScalingMode(MainViewModel vm, Window window)
     {
@@ -244,7 +238,7 @@ public static class StartUpHelper
         }
     }
 
-    private static void HandleStartUpMenuOrImage(MainViewModel vm, Window window, string? arg = null)
+    public static void HandleStartUpMenuOrImage(MainViewModel vm, Window window, string? arg = null)
     {
         vm.ImageViewer = new ImageViewer();
 

@@ -32,6 +32,22 @@ public static class ScreenHelper
         lock (Lock)
         {
             var screen = window.Screens.ScreenFromVisual(window);
+
+            if (screen is null)
+            {
+                // Create dummy screen
+                ScreenSize = new ScreenSize
+                {
+                    WorkingAreaWidth = 1920,
+                    WorkingAreaHeight = 1050,
+                    Width = 1920,
+                    Height = 1080,
+                    Scaling = 1,
+                    X = 0,
+                    Y = 0
+                };
+                return;
+            }
         
             var monitorWidth = screen.WorkingArea.Width / screen.Scaling;
             var monitorHeight = screen.WorkingArea.Height / screen.Scaling;

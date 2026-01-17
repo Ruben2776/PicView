@@ -13,6 +13,7 @@ using PicView.Avalonia.ImageTransformations.Rotation;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Config;
 using PicView.Core.Exif;
 
 namespace PicView.Avalonia.Views.UC;
@@ -145,4 +146,15 @@ public partial class ImageViewer : UserControl
     public async Task RotateAsync(double angle) => await _imageTransformer?.RotateAsync(angle);
     public async Task FlipAsync(bool horizontal) => await _imageTransformer?.FlipAsync(horizontal);
     #endregion
+
+       
+
+    private void MainImage_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (!Settings.UIProperties.ShowInterface && ZoomPanControl.ZoomLevel is 100)
+        {
+            WindowFunctions.WindowDragBehavior((Window)VisualRoot!, e);
+        }
+    }
+
 }

@@ -324,6 +324,8 @@ public class Zoom
     /// </summary>
     public bool AvoidZoomingOut { get; set; } = true;
 
+    public bool ResetZoomOnChange { get; set; } = true;
+
     /// <summary>
     /// Indicates whether the zoom operation is animated when performed.
     /// If set to true, zooming will include an animation effect; otherwise, it will occur instantly.

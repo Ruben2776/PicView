@@ -23,6 +23,7 @@
                                                  Mode=OneWay}"
                     Height="{CompiledBinding PicViewer.ImageHeight.Value,
                                              Mode=OneWay}"
+                    PointerPressed="MainImage_OnPointerPressed"
                     Width="{CompiledBinding PicViewer.ImageWidth.Value,
                                             Mode=OneWay}"
                     x:Name="MainBorder">

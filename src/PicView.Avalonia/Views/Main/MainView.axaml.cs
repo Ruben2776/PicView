@@ -28,9 +28,6 @@ public partial class MainView : UserControl
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            // TODO: Add macOS support
-            CopyFileMenuItem.IsVisible = false;
-            
             // Move alt hover to left side on macOS and switch button order
             AltButtonsPanel.HorizontalAlignment = HorizontalAlignment.Left; 
             AltButtonsPanel.Children.Move(AltButtonsPanel.Children.IndexOf(AltClose),0);
@@ -135,7 +132,8 @@ public partial class MainView : UserControl
             vm.PlatformWindowService.ToggleFullscreen();
         }
         CloseTitlebarIfOpen(sender, e);
-        if (MainKeyboardShortcuts.ShiftDown && !CropFunctions.IsCropping)
+        if ((!Settings.UIProperties.ShowInterface && !vm.ImageViewer.MainBorder.IsPointerOver) ||
+            (MainKeyboardShortcuts.ShiftDown && !CropFunctions.IsCropping))
         {
             var hostWindow = (Window)VisualRoot!;
             WindowFunctions.WindowDragBehavior(hostWindow, e);

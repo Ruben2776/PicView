@@ -76,6 +76,8 @@ public static class WindowsKeybindings
                                                "Shift+Delete": "DeleteFilePermanently",
                                                "Alt+Enter": "Fullscreen",
                                                "Ctrl+F": "Search",
+                                               "Ctrl+PageUp": "NextArchive",
+                                               "Ctrl+PageDown": "PrevArchive",
                                              }
                                              """;
 }

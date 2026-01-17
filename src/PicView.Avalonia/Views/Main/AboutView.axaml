@@ -178,7 +178,7 @@
                 Foreground="{StaticResource SecondaryTextColor}"
                 HorizontalAlignment="Center"
                 Margin="0,7,0,7"
-                Text="2017 - 2025 © Ruben Hyldgaard Negendahl" />
+                Text="2017 - 2026 © Ruben Hyldgaard Negendahl" />
 
             <HyperlinkButton
                 HorizontalAlignment="Center"

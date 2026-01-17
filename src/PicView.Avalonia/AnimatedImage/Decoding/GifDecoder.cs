@@ -574,7 +574,7 @@ public sealed class GifDecoder : IDisposable
             }
 
             // Break the loop when the stream is not valid anymore.
-            if (_fileStream.Position >= _fileStream.Length & terminate == false)
+            if ((_fileStream.Position >= _fileStream.Length) & !terminate)
                 throw new InvalidProgramException("Reach the end of the filestream without trailer block.");
         } while (!terminate);
 
