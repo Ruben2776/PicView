@@ -1,6 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="PicView.Avalonia.Views.UC.ImageTransitionOverlay">
+             x:Class="PicView.Avalonia.Views.UC.ImageTransitionOverlay"
+             xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+             x:DataType="viewModels:MainViewModel">
   <Grid>
     <ContentControl x:Name="Host" />
 

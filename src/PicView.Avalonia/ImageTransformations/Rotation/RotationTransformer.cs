@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
+using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
@@ -39,16 +40,20 @@ public class RotationTransformer(
             $"{(angle > 0 ? TranslationManager.Translation.Right : TranslationManager.Translation.Left)} " +
             $"{angleText}°";
 
-        await using (DebouncedLoadingScope.Start(vm.MainWindow.IsLoadingIndicatorShown, 150))
-        {
-            var rotated = await Task.Run(() => RotateBitmap((Bitmap)vm.PicViewer.ImageSource.Value, angle));
+        //await using (DebouncedLoadingScope.Start(vm.MainWindow.IsLoadingIndicatorShown, 150))
+        //{
+            var newBitmap = await Task.Run(() => RotateBitmap((Bitmap)vm.PicViewer.ImageSource.Value, angle));
 
-            // Add to History
-            await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, rotated).ConfigureAwait(false);
+            // await ImageTransitionService.AnimateRotateAndCommitAsync(
+            //     vm,
+            //     newBitmap,
+            //     angle,
+            //     CancellationToken.None);
 
-            // Apply to the PicViewer
-            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(rotated, vm));
-        }
+            await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(newBitmap, vm));
+
+            await vm.HistoryManager.AddSnapshot(EditKind.Rotate, desc, newBitmap).ConfigureAwait(false);
+        //}
     }
 
     private static Bitmap RotateBitmap(Bitmap source, double angle)
@@ -83,42 +88,6 @@ public class RotationTransformer(
         return target;
     }
 
-
-    private void SetImageLayoutTransform(RotateTransform rotateTransform)
-    {
-        if (Dispatcher.UIThread.CheckAccess())
-        {
-            imageLayoutTransformControl.LayoutTransform = rotateTransform;
-        }
-        else
-        {
-            Dispatcher.UIThread.Invoke(() =>
-                imageLayoutTransformControl.LayoutTransform = rotateTransform);
-        }
-    }
-
-    // public async Task FlipAsync(bool horizontal)
-    // {
-    //     if (getDataContext() is not MainViewModel vm || mainImage.Source is null)
-    //         return;
-
-    //     if (vm.PicViewer.ImageSource.Value is not Bitmap bmp)
-    //         return;
-
-    //     var desc = $"{TranslationManager.Translation.Flipped} {(horizontal ? TranslationManager.Translation.Horizontal : TranslationManager.Translation.Vertical)}";
-
-    //     await using (DebouncedLoadingScope.Start(vm.MainWindow.IsLoadingIndicatorShown, 150))
-    //     {
-    //         var flipped = await Task.Run(() => FlipBitmap(bmp, horizontal));
-
-    //         // Add to History
-    //         await vm.HistoryManager.AddSnapshot(horizontal ? EditKind.FlipH : EditKind.FlipV, desc, flipped).ConfigureAwait(false);
-
-    //         // Apply to the PicViewer
-    //         await Dispatcher.UIThread.InvokeAsync(() => vm.ImageViewer.ApplyBitmapAndRefresh(flipped, vm));
-    //     }
-    // }
-
     public async Task FlipAsync(bool horizontal)
     {
         if (getDataContext() is not MainViewModel vm)
@@ -132,16 +101,16 @@ public class RotationTransformer(
 
         //await using (DebouncedLoadingScope.Start(vm.MainWindow.IsLoadingIndicatorShown, 150))
         //{
-            var flipped = await Task.Run(() => FlipBitmap(bmp, horizontal));
+            var newBitmap = await Task.Run(() => FlipBitmap(bmp, horizontal));
 
             await ImageTransitionService.AnimateFlipAndCommitAsync(
                 vm,
-                flipped,
-                horizontal: true,  // or false for vertical
-                duration: TimeSpan.FromMilliseconds(2000),
-                ct: CancellationToken.None);
+                newBitmap,
+                horizontal ? Orientation.Horizontal : Orientation.Vertical,
+                CancellationToken.None);
 
-            await vm.HistoryManager.AddSnapshot(horizontal ? EditKind.FlipH : EditKind.FlipV, desc, flipped).ConfigureAwait(false);
+            await vm.HistoryManager.AddSnapshot(horizontal ? EditKind.FlipH : EditKind.FlipV, desc, newBitmap).ConfigureAwait(false);
+
         //}
     }
 

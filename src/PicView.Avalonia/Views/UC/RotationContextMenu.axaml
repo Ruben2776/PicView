@@ -16,7 +16,7 @@
         Header="0°"
         ToggleType="Radio"
         x:Name="Rotation0Item" /> -->
-    <MenuItem
+    <!-- <MenuItem
         Command="{CompiledBinding Tools.RotateTask}"
         CommandParameter="90"
         GroupName="RotationGroup"
@@ -37,7 +37,7 @@
         Header="270°"
         ToggleType="Radio"
         x:Name="Rotation270Item" />
-    <Separator />
+    <Separator /> -->
     <MenuItem
         Command="{CompiledBinding Tools.RotateLeftCommand}"
         Header="{CompiledBinding Translation.RotateLeft.Value, Mode=OneWay}"
