@@ -2,9 +2,9 @@
     <PropertyGroup>
         <Nullable>enable</Nullable>
         <AvaloniaVersion>11.3.8</AvaloniaVersion>
-        <VersionPrefix>4.1.1</VersionPrefix>
+        <VersionPrefix>4.1.2</VersionPrefix>
         <VersionSuffix></VersionSuffix>
-        <AssemblyVersion>4.1.1.0</AssemblyVersion>
-        <FileVersion>4.1.1</FileVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+        <FileVersion>4.1.2</FileVersion>
     </PropertyGroup>
 </Project>

@@ -39,6 +39,11 @@ public static class QuickLoad
             vm.MainWindow.IsLoadingIndicatorShown.Value = true;
             Dispatcher.UIThread.Invoke(window.Show, DispatcherPriority.Send);
             await NavigationManager.LoadPicFromStringAsync(file, vm).ConfigureAwait(false);
+            if (Settings.WindowProperties.AutoFit)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() => { WindowFunctions.CenterWindowOnScreen(); },
+                    DispatcherPriority.Send);
+            }
             return;
         }
 
@@ -47,6 +52,11 @@ public static class QuickLoad
             vm.MainWindow.IsLoadingIndicatorShown.Value = true;
             Dispatcher.UIThread.Invoke(window.Show, DispatcherPriority.Send);
             await NavigationManager.LoadPicFromArchiveAsync(file, vm).ConfigureAwait(false);
+            if (Settings.WindowProperties.AutoFit)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() => { WindowFunctions.CenterWindowOnScreen(); },
+                    DispatcherPriority.Send);
+            }
             return;
         }
 

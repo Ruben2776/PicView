@@ -285,13 +285,17 @@ public partial class ZoomPreviewer : UserControl
 
     private void RestartHideTimer()
     {
+        if (Opacity is 0)
+        {
+            return;
+        }
         _hideTimer?.Dispose();
         _hideTimer = new Timer(_ =>
         {
             Dispatcher.UIThread.Invoke(async () =>
             {
                 // Only hide if we're not dragging
-                if (!_isDragging && !IsPointerOver)
+                if (!_isDragging && !IsPointerOver && _zoomPanControl.Scale is not 1.0)
                 {
                     var opacityAnim = AnimationsHelper.OpacityAnimation(1, 0, TimeSpan.FromSeconds(0.5));
                     await opacityAnim.RunAsync(this);
