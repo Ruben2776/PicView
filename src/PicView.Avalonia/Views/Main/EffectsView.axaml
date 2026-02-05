@@ -438,7 +438,7 @@
                         TextAlignment="Center" />
                 </Button>
 
-                <Button
+                <!-- <SplitButton
                     Background="{DynamicResource AccentColor}"
                     Classes="BorderStyle accentHover mainBtn"
                     Command="{CompiledBinding Tools.SaveFileCommand}"
@@ -460,8 +460,20 @@
                                 Width="195" />
                         </MenuFlyout>
                     </SplitButton.Flyout>
-                </SplitButton>
+                </SplitButton> -->
 
+                <Button
+                    Background="{DynamicResource AccentColor}"
+                    Classes="BorderStyle accentHover mainBtn"
+                    CornerRadius="4"
+                    Width="195"
+                    x:Name="ApplyButton">
+                    <TextBlock
+                        Classes="txt"
+                        Foreground="{StaticResource SecondaryTextColor}"
+                        Text="{CompiledBinding Translation.Apply.Value, Mode=OneWay}"
+                        TextAlignment="Center" />
+                </Button>
             </StackPanel>
         </StackPanel>
     </Panel>
