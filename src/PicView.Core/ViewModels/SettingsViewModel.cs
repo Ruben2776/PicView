@@ -32,6 +32,9 @@ public class SettingsViewModel : IDisposable
 
     public BindableReactiveProperty<bool> IsShowingZoomPercentagePopup { get; } = new(Settings.Zoom.IsShowingZoomPercentagePopup);
 
+    public BindableReactiveProperty<bool> IsShowingZoomPreviewer { get; } =
+        new(Settings.Zoom.IsShowingZoomPreviewer);
+
     public BindableReactiveProperty<double> WindowMargin { get; } = new(Settings.WindowProperties.Margin);
 
     public BindableReactiveProperty<double> NavSpeed { get; } = new(Settings.UIProperties.NavSpeed);
@@ -141,6 +144,9 @@ public class SettingsViewModel : IDisposable
 
         Observable.EveryValueChanged(this, x => x.IsShowingZoomPercentagePopup.CurrentValue)
             .Subscribe(x => Settings.Zoom.IsShowingZoomPercentagePopup = x).AddTo(_disposables);
+
+        Observable.EveryValueChanged(this, x => x.IsShowingZoomPreviewer.CurrentValue)
+            .Subscribe(x => Settings.Zoom.IsShowingZoomPreviewer = x).AddTo(_disposables);
 
         Observable.EveryValueChanged(this, x => x.IsUsingTouchpad.CurrentValue)
             .Subscribe(x => Settings.Zoom.IsUsingTouchPad = x).AddTo(_disposables);

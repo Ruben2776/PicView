@@ -76,7 +76,7 @@ public class ZoomPanControl : Decorator
             VerticalAlignment = VerticalAlignment.Bottom,
             Margin = new Thickness(0, 0, 25, 25),
             ZIndex = 90,
-            IsVisible = false
+            Opacity = 0
         };
         _zoomPreviewer.SetZoomPanControl(this);
 
@@ -181,7 +181,7 @@ public class ZoomPanControl : Decorator
             return;
         }
 
-        _zoomPreviewer?.IsVisible = false;
+        _zoomPreviewer?.Opacity = 0;
 
         ApplyZoomAndTitle(1.0, CenterPoint(), animated);
         SetZoomValue(100);

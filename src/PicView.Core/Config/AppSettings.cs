@@ -345,6 +345,8 @@ public class Zoom
     /// </summary>
     public bool IsShowingZoomPercentagePopup { get; set; } = false;
 
+    public bool IsShowingZoomPreviewer { get; set; } = true;
+
     /// <summary>
     /// Determines whether to reverse the horizontal scrolling direction for navigation.
     /// When set to true, the horizontal scroll behavior is reversed, I.E, enable "Natural scroll".

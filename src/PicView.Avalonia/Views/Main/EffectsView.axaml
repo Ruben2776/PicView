@@ -441,6 +441,7 @@
                 <Button
                     Background="{DynamicResource AccentColor}"
                     Classes="BorderStyle accentHover mainBtn"
+                    Command="{CompiledBinding Tools.SaveFileCommand}"
                     CornerRadius="4"
                     Width="195"
                     x:Name="ApplyButton">
@@ -449,7 +450,18 @@
                         Foreground="{StaticResource SecondaryTextColor}"
                         Text="{CompiledBinding Translation.Apply.Value, Mode=OneWay}"
                         TextAlignment="Center" />
-                </Button>
+                    <SplitButton.Flyout>
+                        <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
+                            <MenuItem
+                                Command="{CompiledBinding Tools.SaveFileAsCommand}"
+                                Header="{CompiledBinding Translation.SaveAs.Value,
+                                                         Mode=OneWay}"
+                                HorizontalAlignment="Center"
+                                Width="195" />
+                        </MenuFlyout>
+                    </SplitButton.Flyout>
+                </SplitButton>
+
             </StackPanel>
         </StackPanel>
     </Panel>

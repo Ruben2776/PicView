@@ -92,6 +92,24 @@
                                        Mode=OneWay}" />
         </ToggleButton>
 
+        <ToggleButton
+            Background="Transparent"
+            BorderThickness="0"
+            Classes="altHover changeColor"
+            IsChecked="{CompiledBinding SettingsViewModel.IsShowingZoomPreviewer.Value}"
+            Margin="0,0,0,10"
+            Width="300"
+            x:Name="IsShowingZoomPreviewerToggleButton">
+            <TextBlock
+                Classes="txt"
+                Foreground="{StaticResource SecondaryTextColor}"
+                Margin="0"
+                MaxWidth="240"
+                Padding="0,1,5,0"
+                Text="{CompiledBinding Translation.ShowZoomPreviewer.Value,
+                                       Mode=OneWay}" />
+        </ToggleButton>
+
         <ComboBox
             Background="{DynamicResource SecondaryBackgroundColor}"
             BorderBrush="{DynamicResource MainBorderColor}"

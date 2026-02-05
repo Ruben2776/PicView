@@ -212,7 +212,7 @@
   "Margins": "Robovi (mm)",
   "MaxAperture": "Maksimalna zaslonka",
   "Maximize": "Maksimiziraj",
-  "MegaPixels": "megapiksli"
+  "MegaPixels": "megapiksli",
   "Meter": "Meter",
   "MeteringMode": "Način merjenja",
   "Minimize": "Minimiziraj",
@@ -359,6 +359,7 @@
   "ShowResizeWindow": "Pokaži okno za spreminjanje velikosti",
   "ShowUI": "Pokaži UI",
   "ShowZoomPercentagePopup": "Pokaži pojavno okno odstotka povečave",
+  "ShowZoomPreviewer": "Prikaži predogled povečave",
   "ShutterPriority": "Prioriteta zaklopa",
   "SideBySide": "Stransko",
   "SideBySideTooltip": "Pokaži slike stran ob strani",

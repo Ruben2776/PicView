@@ -64,6 +64,7 @@ public class MainWindowViewModel : IDisposable
     public BindableReactiveProperty<bool> IsSettingsMenuVisible { get; } = new();
 
     public BindableReactiveProperty<bool> IsToolsMenuVisible { get; } = new();
+    public BindableReactiveProperty<bool> IsZoomPreviewerVisible { get; } = new(Settings.Zoom.IsShowingZoomPreviewer);
 
     public BindableReactiveProperty<double> TitleMaxWidth { get; } = new();
 

@@ -749,38 +749,38 @@
                             Width="14" />
                     </MenuItem.Icon>
                 </MenuItem>
-            </MenuItem>
 
-            <Separator />
+                <Separator />
 
-            <!--  Next archive  -->
-            <MenuItem
-                Command="{CompiledBinding Navigation.NextArchiveCommand}"
-                Header="{CompiledBinding Translation.NextArchive.Value,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}">
-                <MenuItem.Icon>
-                    <Image
-                        Height="14"
-                        Source="{StaticResource ArchiveFile}"
-                        Width="14" />
-                </MenuItem.Icon>
-            </MenuItem>
+                <!--  Next archive  -->
+                <MenuItem
+                    Command="{CompiledBinding Navigation.NextArchiveCommand}"
+                    Header="{CompiledBinding Translation.NextArchive.Value,
+                                             Mode=OneWay}"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="14"
+                            Source="{StaticResource ArchiveFile}"
+                            Width="14" />
+                    </MenuItem.Icon>
+                </MenuItem>
 
-            <!--  Prev archive  -->
-            <MenuItem
-                Command="{CompiledBinding Navigation.PreviousArchiveCommand}"
-                Header="{CompiledBinding Translation.PrevArchive.Value,
-                                         Mode=OneWay}"
-                IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull}}">
-                <MenuItem.Icon>
-                    <Image
-                        Height="14"
-                        Source="{StaticResource ArchiveFile}"
-                        Width="14" />
-                </MenuItem.Icon>
+                <!--  Prev archive  -->
+                <MenuItem
+                    Command="{CompiledBinding Navigation.PreviousArchiveCommand}"
+                    Header="{CompiledBinding Translation.PrevArchive.Value,
+                                             Mode=OneWay}"
+                    IsEnabled="{CompiledBinding PicViewer.FileInfo.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <MenuItem.Icon>
+                        <Image
+                            Height="14"
+                            Source="{StaticResource ArchiveFile}"
+                            Width="14" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
 
             <Separator />

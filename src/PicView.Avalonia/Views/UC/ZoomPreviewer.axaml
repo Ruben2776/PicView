@@ -1,5 +1,6 @@
 ﻿<UserControl
     Focusable="False"
+    IsVisible="{CompiledBinding MainWindow.IsZoomPreviewerVisible.Value}"
     x:Class="PicView.Avalonia.Views.UC.ZoomPreviewer"
     x:DataType="vm:MainViewModel"
     xmlns="https://github.com/avaloniaui"

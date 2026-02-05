@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using PicView.Avalonia.ViewModels;
 
 namespace PicView.Avalonia.Views.Config;
 
@@ -27,6 +28,20 @@ public partial class ZoomSettingsView : UserControl
                 {
                     MouseWheelBox.SelectedIndex = Settings.Zoom.CtrlZoom ? 0 : 1;
                 }
+            };
+            IsShowingZoomPreviewerToggleButton.IsCheckedChanged += delegate
+            {
+                if (DataContext is not MainViewModel vm)
+                {
+                    return;
+                }
+
+                if (!IsShowingZoomPreviewerToggleButton.IsChecked.HasValue)
+                {
+                    return;
+                }
+
+                vm.MainWindow.IsZoomPreviewerVisible.Value = IsShowingZoomPreviewerToggleButton.IsChecked.Value;
             };
         };
     }
