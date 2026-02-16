@@ -175,10 +175,7 @@ public static class QuickLoad
         }
         else
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                window.Show();
-            }, DispatcherPriority.Send);
+            await Dispatcher.UIThread.InvokeAsync(window.Show, DispatcherPriority.Send);
         }
         
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo, magickImage).ConfigureAwait(false);

@@ -1,6 +1,5 @@
 ﻿using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
-using SharpCompress.Common;
 using SharpCompress.Readers;
 
 namespace PicView.Core.ArchiveHandling;
@@ -62,43 +61,36 @@ public static class ArchiveExtraction
             }
 
             await using var stream = File.OpenRead(archivePath);
-            using var reader = ReaderFactory.Open(stream);
+            await using var reader = await ReaderFactory.OpenAsyncReader(stream);
 
             var count = 0;
-                
-            await Task.Run(() =>
+
+            // Process each entry asynchronously to avoid blocking the thread
+            while (await reader.MoveToNextEntryAsync())
             {
-                // Process each entry asynchronously to avoid blocking the thread
-                while (reader.MoveToNextEntry())
+                if (reader.Entry.IsDirectory)
                 {
-                    if (reader.Entry.IsDirectory)
-                    {
-                        continue;
-                    }
-
-                    // Extract only if the file is supported
-                    var entryFileName = reader.Entry.Key;
-                    if (entryFileName.IsSupported())
-                    {
-                        reader.WriteEntryToDirectory(tempDirectory, new ExtractionOptions
-                        {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
-#if DEBUG
-                        Console.WriteLine($"Extracted: {entryFileName}");
-#endif
-
-                        count++;
-                    }
-                    else
-                    {
-#if DEBUG
-                        Console.WriteLine($"Skipped unsupported file: {entryFileName}");
-#endif
-                    }
+                    continue;
                 }
-            });
+
+                // Extract only if the file is supported
+                var entryFileName = reader.Entry.Key;
+                if (entryFileName.IsSupported())
+                {
+                    await reader.WriteEntryToDirectoryAsync(tempDirectory);
+#if DEBUG
+                    Console.WriteLine($"Extracted: {entryFileName}");
+#endif
+
+                    count++;
+                }
+                else
+                {
+#if DEBUG
+                    Console.WriteLine($"Skipped unsupported file: {entryFileName}");
+#endif
+                }
+            }
 
             if (count <= 0)
             {

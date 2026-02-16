@@ -37,7 +37,10 @@ public static class GetImageModel
             magickImage ??= GetImage.CreateAndPingMagickImage(fileInfo);
 
             // Extract metadata
-            imageModel.Orientation = ExifOrientationHelper.GetImageOrientation(magickImage);
+            // Check if rotation is needed
+            var orientation = ExifOrientationHelper.GetImageOrientation(magickImage);
+            var shouldAutoOrient = orientation is not (ExifOrientation.None or ExifOrientation.Horizontal);
+            
             imageModel.Format = magickImage.Format;
             
             if (fileInfo.Extension.Equals(".b64", StringComparison.InvariantCultureIgnoreCase))
@@ -52,20 +55,40 @@ public static class GetImageModel
             {
                 case MagickFormat.WebP: 
                 case MagickFormat.WebM:
-                    await ProcessSkBitmapAsync(fileInfo, magickImage.Format, imageModel).ConfigureAwait(false);
+                    // If rotation is needed, we use the Magick path (NonStandard) to apply AutoOrient.
+                    // Otherwise we use the faster SkBitmap (Avalonia native) path.
+                    if (shouldAutoOrient)
+                    {
+                        await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await ProcessSkBitmapAsync(fileInfo, magickImage.Format, imageModel).ConfigureAwait(false);
+                    }
+
                     if (ImageAnalyzer.IsAnimated(fileInfo))
                     {
                         imageModel.ImageType = ImageType.AnimatedWebp;
                     }
                     break;
+
                 case MagickFormat.Gif:
                 case MagickFormat.Gif87:
-                    await ProcessSkBitmapAsync(fileInfo, magickImage.Format, imageModel).ConfigureAwait(false);
+                    if (shouldAutoOrient)
+                    {
+                        await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await ProcessSkBitmapAsync(fileInfo, magickImage.Format, imageModel).ConfigureAwait(false);
+                    }
+
                     if (ImageAnalyzer.IsAnimated(fileInfo))
                     {
                         imageModel.ImageType = ImageType.AnimatedGif;
                     }
                     break;
+
                 case MagickFormat.Png:
                 case MagickFormat.Png00:
                 case MagickFormat.Png8:
@@ -83,7 +106,14 @@ public static class GetImageModel
                 case MagickFormat.Ico:
                 case MagickFormat.Icon:
                 case MagickFormat.Wbmp:
-                    await ProcessSkBitmapAsync(fileInfo, magickImage.Format, imageModel).ConfigureAwait(false);
+                    if (shouldAutoOrient)
+                    {
+                        await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await ProcessSkBitmapAsync(fileInfo, magickImage.Format, imageModel).ConfigureAwait(false);
+                    }
                     break;
 
                 case MagickFormat.Svg:

@@ -1,20 +1,14 @@
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using ImageMagick;
-using PicView.Avalonia.History;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.ImageTransformations.Rotation;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
-using PicView.Core.Exif;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -77,6 +71,52 @@ public partial class ImageViewer : UserControl
             async e => { await Dispatcher.UIThread.InvokeAsync(() => { ZoomIn(e); }); },
             async e => { await Dispatcher.UIThread.InvokeAsync(() => { ZoomOut(e); }); });
 
+    #region Zoom
+
+    /// <inheritdoc cref="Zoom.ZoomIn(MainViewModel)" />
+    private void ZoomIn(PointerWheelEventArgs e)
+    {
+        ZoomPanControl.ZoomWithPointerWheel(e);
+    }
+
+    /// <inheritdoc cref="Zoom.ZoomOut(MainViewModel)" />
+    private void ZoomOut(PointerWheelEventArgs e)
+    {
+        ZoomPanControl.ZoomWithPointerWheel(e);
+    }
+
+    /// <inheritdoc cref="Zoom.ZoomIn(MainViewModel)" />
+    public void ZoomIn()
+    {
+        ZoomPanControl.ZoomIn();
+    }
+
+    /// <inheritdoc cref="Zoom.ZoomOut(MainViewModel)" />
+    public void ZoomOut()
+    {
+        ZoomPanControl.ZoomOut();
+    }
+
+    /// <inheritdoc cref="Zoom.ResetZoom(bool, MainViewModel)" />
+    public void ResetZoom(bool enableAnimations = true)
+    {
+        ZoomPanControl.ResetZoom(enableAnimations);
+    }
+
+    #endregion
+
+    #region Image Transformation
+
+    public async Task RotateAsync(double angle)
+    {
+        await _imageTransformer?.RotateAsync(angle);
+    }
+
+    public async Task FlipAsync(bool horizontal)
+    {
+        await _imageTransformer?.FlipAsync(horizontal);
+    }
+
     public async Task ApplyBitmapAndRefresh(Bitmap bmp, MainViewModel vm)
     {
         if (bmp is null || vm is null)
@@ -118,37 +158,8 @@ public partial class ImageViewer : UserControl
         WindowResizing.SetSize(ps.Width, ps.Height, 0, 0, vm);
         ZoomPanControl.NotifyContentResized();
     }
-
-    #region Zoom
-    /// <inheritdoc cref="Zoom.ZoomIn(MainViewModel)"/>
-    private void ZoomIn(PointerWheelEventArgs e) =>
-        ZoomPanControl.ZoomWithPointerWheel(e);
-
-    /// <inheritdoc cref="Zoom.ZoomOut(MainViewModel)"/>
-    private void ZoomOut(PointerWheelEventArgs e) =>
-        ZoomPanControl.ZoomWithPointerWheel(e);
-
-    /// <inheritdoc cref="Zoom.ZoomIn(MainViewModel)"/>
-    public void ZoomIn() =>
-        ZoomPanControl.ZoomIn();
-
-    /// <inheritdoc cref="Zoom.ZoomOut(MainViewModel)"/>
-    public void ZoomOut() =>
-        ZoomPanControl.ZoomOut();
-
-    /// <inheritdoc cref="Zoom.ResetZoom(bool, MainViewModel)"/>
-    public void ResetZoom(bool enableAnimations = true) =>
-        ZoomPanControl.ResetZoom(enableAnimations);
     
     #endregion
-
-    #region Image Transformation
-    public async Task RotateAsync(double angle) => await _imageTransformer?.RotateAsync(angle);
-    public async Task FlipAsync(bool horizontal) => await _imageTransformer?.FlipAsync(horizontal);
-    #endregion
-
-       
-
     private void MainImage_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (!Settings.UIProperties.ShowInterface && ZoomPanControl.ZoomLevel is 100)
@@ -156,5 +167,4 @@ public partial class ImageViewer : UserControl
             WindowFunctions.WindowDragBehavior((Window)VisualRoot!, e);
         }
     }
-
 }

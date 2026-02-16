@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using ImageMagick;
 using PicView.Core.DebugTools;
+using PicView.Core.Exif;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageReading;
 
@@ -21,6 +22,10 @@ public static class GetImage
         {
             // Initialize MagickImage if not provided
             magickImage ??= CreateAndPingMagickImage(fileInfo);
+
+            // Check if the image needs rotation based on EXIF
+            var orientation = ExifOrientationHelper.GetImageOrientation(magickImage);
+            var shouldAutoOrient = orientation is not (ExifOrientation.None or ExifOrientation.Horizontal);
             
             if (fileInfo.Extension.Equals(".b64", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -28,6 +33,7 @@ public static class GetImage
             }
 
             // Process the image based on type
+            // If the image requires rotation, we bypass GetSkBitmapAsync to use Magick's AutoOrient
             return magickImage.Format switch
             {
                 MagickFormat.WebP or
@@ -48,7 +54,7 @@ public static class GetImage
                     MagickFormat.Tiff or
                     MagickFormat.Ico or
                     MagickFormat.Icon or
-                    MagickFormat.Wbmp => await GetSkBitmapAsync(fileInfo).ConfigureAwait(false),
+                    MagickFormat.Wbmp when !shouldAutoOrient => await GetSkBitmapAsync(fileInfo).ConfigureAwait(false),
 
                 MagickFormat.Arw or
                     MagickFormat.Nef or
@@ -97,6 +103,9 @@ public static class GetImage
         }
         magickImage = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magickImage);
 
+        // Rotate image according to EXIF orientation
+        magickImage.AutoOrient();
+
         var bitmap = magickImage.ToWriteableBitmap();
         if (shouldDisposeMagickImage)
         {
@@ -114,7 +123,11 @@ public static class GetImage
         }
         // Raw images needs to be loaded by file path, else it just loads thumbnail 
         // https://github.com/Ruben2776/PicView/issues/221
-        await magickImage.ReadAsync(fileInfo).ConfigureAwait(false); 
+        await magickImage.ReadAsync(fileInfo).ConfigureAwait(false);
+
+        // Rotate image according to EXIF orientation
+        magickImage.AutoOrient();
+
         var bitmap = magickImage.ToWriteableBitmap();
         if (shouldDisposeMagickImage)
         {
@@ -140,6 +153,10 @@ public static class GetImage
         };
         
         await magickImage.ReadAsync(new MemoryStream(base64Data), readSettings).ConfigureAwait(false);
+
+        // Rotate image according to EXIF orientation
+        magickImage.AutoOrient();
+
         var bitmap = magickImage.ToWriteableBitmap();
         magickImage.Dispose();
         return bitmap;

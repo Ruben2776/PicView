@@ -6,10 +6,12 @@ PicView is a fast, free and fully customizable picture viewer for macOS and Wind
 
 Enjoy a clean, free, and fast experience with no annoying pop-ups, and zero tracking. It works out of the box — or you can customize it to your needs.
 
-
 <p align=center>
     <a href="https://github.com/Ruben2776/PicView/releases">
-        <img alt="Downloads shield" src="https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=downloads&style=flat-square">
+        <img alt="Downloads shield" src="https://img.shields.io/github/downloads/Ruben2776/PicView/total?color=%23007ACC&label=Total%20downloads&style=flat-square">
+    </a>
+        <a href="https://github.com/Ruben2776/PicView/releases">
+        <img alt="Downloads shield" src="https://img.shields.io/github/downloads/Ruben2776/PicView/latest/total?color=%23007ACC&label=Latest%20downloads&style=flat-square">
     </a>
     <a href="https://github.com/Ruben2776/PicView/blob/master/LICENSE.txt">
         <img alt="GPL v3 License" src="https://img.shields.io/badge/license-GPLv3-green.svg?maxAge=3600&style=flat-square">
@@ -225,6 +227,7 @@ Japanese by <a href="https://github.com/coolvitto">coolvitto</a> <br>
 Hebrew by <a href="https://github.com/Y-PLONI">Y-PLONI</a> <br>
 Hungarian by <a href="https://github.com/JohnFowler58">JohnFowler58</a> <br>
 Turkish by <a href="https://github.com/odest">Dest</a><br>
+Slovenian by <a href="https://github.com/anderlli0053">Andrew Poženel</a><br>
 English and Danish by <a href="https://github.com/Ruben2776">Ruben2776</a><br>
 
 **Looking for translators!**
