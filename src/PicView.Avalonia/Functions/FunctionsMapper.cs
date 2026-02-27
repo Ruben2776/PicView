@@ -38,7 +38,7 @@ public static class FunctionsMapper
             
             "NextFolder" => NextFolder,
             "PrevFolder" => PrevFolder,
-            
+
             "Up" => Up,
             "Down" => Down,
             
@@ -101,6 +101,7 @@ public static class FunctionsMapper
             "KeybindingsWindow" => KeybindingsWindow,
             "BatchResizeWindow" => BatchResizeWindow,
             "ConvertWindow" => ConvertWindow,
+            "History" => ToggleHistoryWindow,
 
             // Open functions
             "Open" => Open,
@@ -110,6 +111,7 @@ public static class FunctionsMapper
             "SaveAs" => SaveAs,
             "Print" => Print,
             "Reload" => Reload,
+            "ExportPDF" => ExportToPdf,
 
             // Copy functions
             "CopyFile" => CopyFile,
@@ -144,6 +146,7 @@ public static class FunctionsMapper
             "ResizeImage" => ResizeImage,
             "Crop" => Crop,
             "Flip" => Flip,
+            "FlipVertical" => FlipVertical,
             "OptimizeImage" => OptimizeImage,
             "Stretch" => Stretch,
 
@@ -284,7 +287,6 @@ public static class FunctionsMapper
     public static async ValueTask Search() =>
         await Dispatcher.UIThread.InvokeAsync(DialogManager.AddFileSearchDialog);
     
-
     /// <inheritdoc cref="RotationNaRotationNavigationp(MainViewModel)" />
     public static async ValueTask Up() =>
         await RotationNavigation.NavigateUp(Vm).ConfigureAwait(false);
@@ -404,6 +406,12 @@ public static class FunctionsMapper
     public static async ValueTask ToggleConstrainBackgroundColor() =>
         await SettingsUpdater.ToggleConstrainBackgroundColor(Vm).ConfigureAwait(false);
     
+    public static async ValueTask ToggleHistoryWindow() =>
+        await Vm.HistoryManager?.ToggleHistoryWindow();
+
+    public static async ValueTask ExportToPdf() =>
+        await FileSaverHelper.ExportToPdf(Vm).ConfigureAwait(false);
+
     #endregion
 
     #region Gallery functions
@@ -639,7 +647,10 @@ public static class FunctionsMapper
         await CropFunctions.StartCropControlAsync(Vm).ConfigureAwait(false);
 
     public static async ValueTask Flip() =>
-        await Dispatcher.UIThread.InvokeAsync(() => RotationNavigation.Flip(Vm));
+        await Dispatcher.UIThread.InvokeAsync(() => RotationNavigation.Flip(Vm, true));
+
+    public static async ValueTask FlipVertical() =>
+        await Dispatcher.UIThread.InvokeAsync(() => RotationNavigation.Flip(Vm, false));
 
     /// <inheritdoc cref="ImageOptimizer.OptimizeImageAsync(MainViewModel)" />
     public static async ValueTask OptimizeImage() =>

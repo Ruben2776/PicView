@@ -22,227 +22,247 @@
         <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="TopMostBrush" />
     </UserControl.Resources>
 
-    <StackPanel>
-        <StackPanel.Styles>
-            <Styles>
-                <Style Selector="TextBlock.btnTxt">
-                    <Setter Property="MaxWidth" Value="137" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
-                    <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-                </Style>
-            </Styles>
-        </StackPanel.Styles>
+    <customControls:AnimatedMenu.Styles>
+        <Styles>
+            <Style Selector="TextBlock.btnTxt">
+                <Setter Property="MaxWidth" Value="137" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+            </Style>
+        </Styles>
+    </customControls:AnimatedMenu.Styles>
 
-        <Border
-            Background="{DynamicResource MenuBackgroundColor}"
-            BorderBrush="{DynamicResource OuterBorderColor}"
-            BorderThickness="1"
-            CornerRadius="8"
-            Effect="{DynamicResource MenuShadowButtonBorder}"
-            x:Name="MainBorder">
-            <Canvas Height="208" Width="359">
+    <Border
+        Background="Transparent"
+        Effect="{DynamicResource MenuShadowButtonBorder}">
 
-                <Border
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource OuterBorderColor}"
-                    BorderThickness="0,0,0,1"
-                    CornerRadius="8,8,0,0"
-                    Height="47"
-                    Width="359"
-                    x:Name="TopBorder" />
+        <Grid Width="359" RowDefinitions="Auto,Auto" UseLayoutRounding="True">
 
-                <customControls:TextIconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Canvas.Left="-1"
-                    Canvas.Top="-1"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding Window.ShowAboutWindow}"
-                    CornerRadius="8,0,0,0"
-                    FontSize="14"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="46"
-                    Icon="{StaticResource AboutImage}"
-                    IconHeight="19"
-                    IconMargin="15,0, 0,0"
-                    IconWidth="19"
-                    Text="{CompiledBinding Translation.About.Value,
-                                           Mode=OneWay}"
-                    TextMargin="15,0,6,0"
-                    TextMaxWidth="150"
-                    ToolTip.Tip="{CompiledBinding Translation.AboutWindow.Value,
-                                                  Mode=OneWay}"
-                    Width="180"
-                    x:Name="AboutWindowButton" />
+            <Border
+                Grid.Row="0"
+                Background="{DynamicResource MenuBackgroundColor}"
+                BorderBrush="{DynamicResource OuterBorderColor}"
+                BorderThickness="1"
+                CornerRadius="8"
+                x:Name="MainBorder">
 
-                <customControls:TextIconButton
-                    Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
-                    BorderThickness="0,0,1,0"
-                    Canvas.Left="179"
-                    Canvas.Top="-1"
-                    Classes="noBorderHover"
-                    Command="{Binding Window.ShowSettingsWindow}"
-                    Data="{StaticResource HammerGeometry}"
-                    FontSize="14"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="46"
-                    IconHeight="17"
-                    IconMargin="14,0,3,0"
-                    IconWidth="17"
-                    Text="{CompiledBinding Translation.Settings.Value,
-                                           Mode=OneWay}"
-                    TextMargin="10,0,6,0"
-                    TextMaxWidth="150"
-                    ToolTip.Tip="{CompiledBinding Translation.ShowAllSettingsWindow.Value,
-                                                  Mode=OneWay}"
-                    Width="137"
-                    x:Name="SettingsButton" />
+                <Canvas Height="208" Width="359">
 
-                <customControls:IconButton
-                    Background="Transparent"
-                    Canvas.Left="315"
-                    Canvas.Top="-1"
-                    Classes="hover"
-                    ClickMode="Release"
-                    Command="{CompiledBinding MainWindow.CloseMenuCommand}"
-                    CornerRadius="0,8,0,0"
-                    Data="{StaticResource CloseGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
-                    Height="46"
-                    IconHeight="10"
-                    IconWidth="10"
-                    ToolTip.Tip="{CompiledBinding Translation.Close.Value,
-                                                  Mode=OneWay}"
-                    Width="45" />
+                    <Border
+                        Background="{DynamicResource SecondaryBackgroundColor}"
+                        BorderBrush="{DynamicResource OuterBorderColor}"
+                        BorderThickness="0,0,0,1"
+                        CornerRadius="8,8,0,0"
+                        Height="47"
+                        Width="359"
+                        x:Name="TopBorder" />
 
-                <ToggleButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="7"
-                    Canvas.Top="53"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.ToggleScrollCommand}"
-                    Foreground="{StaticResource ScrollingBrush}"
-                    Height="46"
-                    IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value}"
-                    ToolTip.Tip="{CompiledBinding Translation.ToggleScroll.Value,
-                                                  Mode=OneWay}"
-                    Width="169"
-                    x:Name="ScrollButton">
-                    <TextBlock
-                        Classes="txt btnTxt"
+                    <!--Show About -->
+                    <customControls:TextIconButton
+                        Background="Transparent"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="0,0,1,0"
+                        Canvas.Left="-1"
+                        Canvas.Top="-1"
+                        Classes="noBorderHover"
+                        Command="{CompiledBinding Window.ShowAboutWindow}"
+                        CornerRadius="8,0,0,0"
+                        FontSize="14"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
+                        Icon="{StaticResource AboutImage}"
+                        IconHeight="19"
+                        IconMargin="15,0, 0,0"
+                        IconWidth="19"
+                        Text="{CompiledBinding Translation.About.Value, Mode=OneWay}"
+                        TextMargin="15,0,6,0"
+                        TextMaxWidth="150"
+                        ToolTip.Tip="{CompiledBinding Translation.AboutWindow.Value, Mode=OneWay}"
+                        Width="180"
+                        x:Name="AboutWindowButton" />
+
+                    <!-- Show Settings -->
+                    <customControls:TextIconButton
+                        Background="Transparent"
+                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderThickness="0,0,1,0"
+                        Canvas.Left="179"
+                        Canvas.Top="-1"
+                        Classes="noBorderHover"
+                        Command="{Binding Window.ShowSettingsWindow}"
+                        Data="{StaticResource HammerGeometry}"
+                        FontSize="14"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
+                        IconHeight="17"
+                        IconMargin="14,0,3,0"
+                        IconWidth="17"
+                        Text="{CompiledBinding Translation.Settings.Value, Mode=OneWay}"
+                        TextMargin="10,0,6,0"
+                        TextMaxWidth="150"
+                        ToolTip.Tip="{CompiledBinding Translation.ShowAllSettingsWindow.Value, Mode=OneWay}"
+                        Width="137"
+                        x:Name="SettingsButton" />
+
+                    <!-- Close Menu -->
+                    <customControls:IconButton
+                        Background="Transparent"
+                        Canvas.Left="315"
+                        Canvas.Top="-1"
+                        Classes="hover"
+                        ClickMode="Release"
+                        Command="{CompiledBinding MainWindow.CloseMenuCommand}"
+                        CornerRadius="0,8,0,0"
+                        Data="{StaticResource CloseGeometry}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
+                        IconHeight="10"
+                        IconWidth="10"
+                        ToolTip.Tip="{CompiledBinding Translation.Close.Value, Mode=OneWay}"
+                        Width="45" />
+
+                    <!-- Toggle Scroll -->
+                    <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="7"
+                        Canvas.Top="53"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Tools.ToggleScrollCommand}"
                         Foreground="{StaticResource ScrollingBrush}"
-                        Text="{CompiledBinding Translation.IsScrolling.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                        Height="46"
+                        IsChecked="{CompiledBinding GlobalSettings.IsScrollingEnabled.Value}"
+                        ToolTip.Tip="{CompiledBinding Translation.ToggleScroll.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="ScrollButton">
+                        <TextBlock
+                            Classes="txt btnTxt"
+                            Foreground="{StaticResource ScrollingBrush}"
+                            Text="{CompiledBinding Translation.IsScrolling.Value, Mode=OneWay}" />
+                    </ToggleButton>
 
-                <ToggleButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="182"
-                    Canvas.Top="53"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.StretchedCommand}"
-                    Foreground="{StaticResource StretchBrush}"
-                    Height="46"
-                    IsChecked="{CompiledBinding GlobalSettings.IsStretched.Value,
-                                                Mode=TwoWay}"
-                    ToolTip.Tip="{CompiledBinding Translation.Stretch.Value,
-                                                  Mode=OneWay}"
-                    Width="169"
-                    x:Name="StretchButton">
-                    <TextBlock
-                        Classes="txt btnTxt"
+                    <!-- Stretched -->
+                    <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="182"
+                        Canvas.Top="53"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Tools.StretchedCommand}"
                         Foreground="{StaticResource StretchBrush}"
-                        Text="{CompiledBinding Translation.Stretch.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                        Height="46"
+                        IsChecked="{CompiledBinding GlobalSettings.IsStretched.Value, Mode=TwoWay}"
+                        ToolTip.Tip="{CompiledBinding Translation.Stretch.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="StretchButton">
+                        <TextBlock
+                            Classes="txt btnTxt"
+                            Foreground="{StaticResource StretchBrush}"
+                            Text="{CompiledBinding Translation.Stretch.Value, Mode=OneWay}" />
+                    </ToggleButton>
 
-                <ToggleButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="7"
-                    Canvas.Top="104"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.ToggleLoopingCommand}"
-                    Foreground="{StaticResource LoopingBrush}"
-                    Height="46"
-                    IsChecked="{CompiledBinding GlobalSettings.IsLooping.Value}"
-                    ToolTip.Tip="{CompiledBinding Translation.ToggleLooping.Value,
-                                                  Mode=OneWay}"
-                    Width="169"
-                    x:Name="LoopingButton">
-                    <TextBlock
-                        Classes="txt btnTxt"
+                    <!-- Toggle Looping -->
+                    <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="7"
+                        Canvas.Top="104"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Tools.ToggleLoopingCommand}"
                         Foreground="{StaticResource LoopingBrush}"
-                        Text="{CompiledBinding Translation.IsLooping.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                        Height="46"
+                        IsChecked="{CompiledBinding GlobalSettings.IsLooping.Value}"
+                        ToolTip.Tip="{CompiledBinding Translation.ToggleLooping.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="LoopingButton">
+                        <TextBlock
+                            Classes="txt btnTxt"
+                            Foreground="{StaticResource LoopingBrush}"
+                            Text="{CompiledBinding Translation.IsLooping.Value, Mode=OneWay}" />
+                    </ToggleButton>
 
-                <ToggleButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="182"
-                    Canvas.Top="104"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.ChangeAutoFitCommand}"
-                    Foreground="{StaticResource AutofitBrush}"
-                    Height="46"
-                    IsChecked="{CompiledBinding GlobalSettings.IsAutoFit.Value}"
-                    ToolTip.Tip="{CompiledBinding Translation.AutoFitWindow.Value,
-                                                  Mode=OneWay}"
-                    Width="169"
-                    x:Name="AutofitButton">
-                    <TextBlock
-                        Classes="txt btnTxt"
+                    <!-- Change Auto Fit -->
+                    <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="182"
+                        Canvas.Top="104"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Tools.ChangeAutoFitCommand}"
                         Foreground="{StaticResource AutofitBrush}"
-                        Text="{CompiledBinding Translation.AutoFitWindow.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                        Height="46"
+                        IsChecked="{CompiledBinding GlobalSettings.IsAutoFit.Value}"
+                        ToolTip.Tip="{CompiledBinding Translation.AutoFitWindow.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="AutofitButton">
+                        <TextBlock
+                            Classes="txt btnTxt"
+                            Foreground="{StaticResource AutofitBrush}"
+                            Text="{CompiledBinding Translation.AutoFitWindow.Value, Mode=OneWay}" />
+                    </ToggleButton>
 
-                <ToggleButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="7"
-                    Canvas.Top="155"
-                    Classes="ButtonBorder altHover"
-                    Command="{Binding Tools.ChangeTopMostCommand}"
-                    Foreground="{StaticResource TopMostBrush}"
-                    Height="46"
-                    IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value}"
-                    ToolTip.Tip="{CompiledBinding Translation.StayTopMost.Value,
-                                                  Mode=OneWay}"
-                    Width="169"
-                    x:Name="TopMostButton">
-                    <TextBlock
-                        Classes="txt btnTxt"
+                    <!-- Change Top Most -->
+                    <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="7"
+                        Canvas.Top="155"
+                        Classes="ButtonBorder altHover"
+                        Command="{Binding Tools.ChangeTopMostCommand}"
                         Foreground="{StaticResource TopMostBrush}"
-                        Text="{CompiledBinding Translation.StayTopMost.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                        Height="46"
+                        IsChecked="{CompiledBinding GlobalSettings.IsTopMost.Value}"
+                        ToolTip.Tip="{CompiledBinding Translation.StayTopMost.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="TopMostButton">
+                        <TextBlock
+                            Classes="txt btnTxt"
+                            Foreground="{StaticResource TopMostBrush}"
+                            Text="{CompiledBinding Translation.StayTopMost.Value, Mode=OneWay}" />
+                    </ToggleButton>
 
-                <ToggleButton
-                    Background="{DynamicResource MenuButtonColor}"
-                    Canvas.Left="182"
-                    Canvas.Top="155"
-                    Classes="ButtonBorder altHover"
-                    Command="{CompiledBinding Tools.ToggleSubdirectoriesCommand}"
-                    Foreground="{StaticResource SubDirBrush}"
-                    Height="46"
-                    IsChecked="{CompiledBinding GlobalSettings.IsIncludingSubdirectories.Value}"
-                    Width="169"
-                    x:Name="SubDirButton">
-                    <TextBlock
-                        Classes="txt btnTxt"
+                    <!-- Toggle Sub-Directories -->
+                    <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
+                        Canvas.Left="182"
+                        Canvas.Top="155"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding Tools.ToggleSubdirectoriesCommand}"
                         Foreground="{StaticResource SubDirBrush}"
-                        Text="{CompiledBinding Translation.SearchSubdirectory.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                        Height="46"
+                        IsChecked="{CompiledBinding GlobalSettings.IsIncludingSubdirectories.Value}"
+                        Width="169"
+                        x:Name="SubDirButton">
+                        <TextBlock
+                            Classes="txt btnTxt"
+                            Foreground="{StaticResource SubDirBrush}"
+                            Text="{CompiledBinding Translation.SearchSubdirectory.Value, Mode=OneWay}" />
+                    </ToggleButton>
+                </Canvas>
+            </Border>
+
+            <!-- Arrow -->
+            <Canvas
+                Grid.Row="1"
+                Width="359"
+                Height="16"
+                Margin="0,-1,0,0"
+                ClipToBounds="False">
+
+                <!-- Filled triangle -->
+                <Path
+                    x:Name="DownArrow"
+                    Canvas.Left="322"
+                    Canvas.Top="-1"
+                    Fill="{DynamicResource MenuBackgroundColor}"
+                    Data="M 0,0 L 15,16 L 30,0 Z" />
+
+                <!-- Outline only on the two sides (no top edge) -->
+                <Path
+                    x:Name="DownArrowBorder"
+                    Canvas.Left="322"
+                    Canvas.Top="-1"
+                    Stroke="{DynamicResource OuterBorderColor}"
+                    StrokeThickness="1"
+                    StrokeJoin="Round"
+                    Data="M 0,0 L 15,16 L 30,0" />
             </Canvas>
-        </Border>
-        <Polygon
-            Fill="{DynamicResource MenuBackgroundColor}"
-            Margin="325,-1,0,0"
-            Points="0,0 15,30, 30,0"
-            Stroke="{DynamicResource MainBorderColor}"
-            StrokeThickness="1"
-            x:Name="DownArrow" />
-    </StackPanel>
+
+        </Grid>
+    </Border>
 </customControls:AnimatedMenu>

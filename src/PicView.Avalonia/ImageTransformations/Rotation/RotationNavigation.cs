@@ -1,4 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using System.Threading.Tasks;
+using Avalonia.Threading;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
@@ -8,47 +9,31 @@ namespace PicView.Avalonia.ImageTransformations.Rotation;
 
 public static class RotationNavigation
 {
-    public static async Task RotateRight(MainViewModel? vm)
-    {
-        if (vm is null)
-        {
-            return;
-        }
-
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            return;
-        }
-
-        await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(false); });
-    }
-
     public static async Task RotateTo(MainViewModel? vm, int angle)
     {
-        await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(angle); });
-        vm.PicViewer.RotationAngle.Value = angle;
+        await vm.ImageViewer.RotateAsync(angle);
         await WindowResizing.SetSizeAsync(vm);
     }
 
+    public static async Task RotateRight(MainViewModel? vm)
+    {
+        if (vm is null || GalleryFunctions.IsFullGalleryOpen)
+            return;
+
+        await vm.ImageViewer.RotateAsync(90);
+    }
 
     public static async Task RotateLeft(MainViewModel? vm)
     {
-        if (vm is null)
-        {
+        if (vm is null || GalleryFunctions.IsFullGalleryOpen)
             return;
-        }
 
-        if (GalleryFunctions.IsFullGalleryOpen)
-        {
-            return;
-        }
-
-        await Dispatcher.UIThread.InvokeAsync(() => { vm.ImageViewer.Rotate(true); });
+        await vm.ImageViewer.RotateAsync(-90);
     }
 
-    public static void Flip(MainViewModel vm)
+    public static async Task Flip(MainViewModel vm, bool isHorizontal)
     {
-        Dispatcher.UIThread.Invoke(() => { vm.ImageViewer.Flip(true); });
+        await vm.ImageViewer.FlipAsync(isHorizontal);
 
         if (vm.PicViewer.ScaleX.CurrentValue == 1)
         {
@@ -62,8 +47,9 @@ public static class RotationNavigation
         }
     }
 
+
     /// <summary>
-    /// Navigates up or rotates the image based on current state
+    /// Navigates up
     /// </summary>
     public static async Task NavigateUp(MainViewModel? vm)
     {
@@ -84,15 +70,11 @@ public static class RotationNavigation
             {
                 vm.ImageViewer.ImageScrollViewer.LineUp();
             }
-            else
-            {
-                vm.ImageViewer.Rotate(true);
-            }
         });
     }
 
     /// <summary>
-    /// Navigates down or rotates the image based on current state
+    /// Navigates down
     /// </summary>
     public static async Task NavigateDown(MainViewModel? vm)
     {
@@ -112,10 +94,6 @@ public static class RotationNavigation
             if (vm.GlobalSettings.IsScrollingEnabled.CurrentValue)
             {
                 vm.ImageViewer.ImageScrollViewer.LineDown();
-            }
-            else
-            {
-                vm.ImageViewer.Rotate(false);
             }
         });
     }

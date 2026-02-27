@@ -16,12 +16,11 @@ public static class SaveImageHandler
         uint? width = null,
         uint? height = null,
         uint? quality = null,
-        uint? rotationAngle = null,
         bool isKeepingAspectRatio = true)
     {
         var success = await SaveImageFileHelper.SaveImageAsync(
             null, path, destination, width, height, quality,
-            ext, rotationAngle, null, isKeepingAspectRatio).ConfigureAwait(false);
+            ext, null, isKeepingAspectRatio).ConfigureAwait(false);
 
         if (!success)
         {

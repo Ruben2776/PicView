@@ -428,5 +428,21 @@
   "_2Star": "2 yıldızlı derecelendirme",
   "_3Star": "3 yıldızlı derecelendirme",
   "_4Star": "4 yıldızlı derecelendirme",
-  "_5Star": "5 yıldızlı derecelendirme"
+  "_5Star": "5 yıldızlı derecelendirme",
+
+  "MaximizeWindowMode": "Pencere Maksimize Modu",
+  "EnableFileChangeHistory": "Dosya değişiklik geçmişini etkinleştir",
+  "ShowPromptToSaveChanges": "Değişiklikleri Kaydet Uyarısını Göster",
+  "ShowExportToPDFInMenu": "Menüde PDF’ye Aktar’ı Göster",
+  "AccessDenied": "Erişim reddedildi",
+  "Disgard": "At",
+  "ExportToPdf": "PDF’ye Aktar",
+  "HideHistoryWindow": "Geçmiş penceresini gizle",
+  "History": "Geçmiş",
+  "Horizontal": "Yatay",
+  "SaveChanges": "Değişiklikleri kaydet",
+  "ShowHistoryWindow": "Geçmiş penceresini göster",
+  "Tools": "Araçlar",
+  "Menu": "Menü",
+  "Vertical": "Dikey"
 }

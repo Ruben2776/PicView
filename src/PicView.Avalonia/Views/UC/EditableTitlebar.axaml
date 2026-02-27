@@ -1,9 +1,8 @@
 ﻿<UserControl
-    Height="{CompiledBinding MainWindow.TitlebarHeight.Value,
-                             Mode=OneWay}"
+    Height="{CompiledBinding MainWindow.TitlebarHeight.Value, Mode=OneWay}"
     ToolTip.Tip="{Binding PicViewer.TitleTooltip.Value, Mode=OneWay}"
-    Width="{CompiledBinding MainWindow.TitleMaxWidth.Value,
-                            Mode=OneWay}"
+    HorizontalAlignment="Stretch" 
+    MaxWidth="{CompiledBinding MainWindow.TitleMaxWidth.Value, Mode=OneWay}"   
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d"
@@ -15,18 +14,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
     <Panel>
         <TextBlock
             FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             FontSize="13"
             FontWeight="Medium"
-            Height="{CompiledBinding MainWindow.TitlebarHeight.Value,
-                                     Mode=OneWay}"
+            Height="{CompiledBinding MainWindow.TitlebarHeight.Value, Mode=OneWay}"
             IsTabStop="False"
             IsVisible="{CompiledBinding !MainWindow.IsEditableTitlebarOpen.Value}"
             Padding="0,7,0,5"
-            Text="{CompiledBinding PicViewer.Title.Value,
-                                   Mode=OneWay}"
+            Text="{CompiledBinding PicViewer.Title.Value, Mode=OneWay}"
             TextAlignment="Center"
             TextTrimming="CharacterEllipsis"
             VerticalAlignment="Center"
@@ -39,8 +37,7 @@
                 FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                 FontSize="13"
                 FontWeight="Medium"
-                Height="{CompiledBinding MainWindow.TitlebarHeight.Value,
-                                         Mode=OneWay}"
+                Height="{CompiledBinding MainWindow.TitlebarHeight.Value, Mode=OneWay}"
                 IsTabStop="False"
                 Padding="0,7,0,5"
                 SelectionForegroundBrush="{DynamicResource SecondaryTextColor}"

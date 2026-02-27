@@ -99,6 +99,14 @@
       <DependentUpon>DeleteDialog.axaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\UC\PopUps\SaveDialog.axaml.cs">
+      <DependentUpon>SaveDialog.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\UC\PopUps\MessageDialog.axaml.cs">
+      <DependentUpon>MessageDialog.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\EffectsView.axaml.cs">
       <DependentUpon>EffectsView.axaml</DependentUpon>
       <SubType>Code</SubType>
@@ -194,9 +202,12 @@
     <Compile Update="Views\UC\TitleTextbox.axaml.cs">
       <DependentUpon>TitleTextBox.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\UC\ImageTransitionOverlay.axaml.cs">
+      <DependentUpon>ImageTransitionOverlay.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\Config\AppearanceView.axaml.cs">
       <DependentUpon>AppearanceView.axaml</DependentUpon>
-    </Compile>
+    </Compile>    
   </ItemGroup>
 
   <ItemGroup>

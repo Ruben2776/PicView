@@ -1,15 +1,14 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using ImageMagick;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.ImageTransformations.Rotation;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.ViewModels;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
-using PicView.Core.Exif;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -73,35 +72,94 @@ public partial class ImageViewer : UserControl
             async e => { await Dispatcher.UIThread.InvokeAsync(() => { ZoomOut(e); }); });
 
     #region Zoom
-    /// <inheritdoc cref="Zoom.ZoomIn(MainViewModel)"/>
-    private void ZoomIn(PointerWheelEventArgs e) =>
-        ZoomPanControl.ZoomWithPointerWheel(e);
 
-    /// <inheritdoc cref="Zoom.ZoomOut(MainViewModel)"/>
-    private void ZoomOut(PointerWheelEventArgs e) =>
+    /// <inheritdoc cref="Zoom.ZoomIn(MainViewModel)" />
+    private void ZoomIn(PointerWheelEventArgs e)
+    {
         ZoomPanControl.ZoomWithPointerWheel(e);
+    }
 
-    /// <inheritdoc cref="Zoom.ZoomIn(MainViewModel)"/>
-    public void ZoomIn() =>
+    /// <inheritdoc cref="Zoom.ZoomOut(MainViewModel)" />
+    private void ZoomOut(PointerWheelEventArgs e)
+    {
+        ZoomPanControl.ZoomWithPointerWheel(e);
+    }
+
+    /// <inheritdoc cref="Zoom.ZoomIn(MainViewModel)" />
+    public void ZoomIn()
+    {
         ZoomPanControl.ZoomIn();
+    }
 
-    /// <inheritdoc cref="Zoom.ZoomOut(MainViewModel)"/>
-    public void ZoomOut() =>
+    /// <inheritdoc cref="Zoom.ZoomOut(MainViewModel)" />
+    public void ZoomOut()
+    {
         ZoomPanControl.ZoomOut();
+    }
 
-    /// <inheritdoc cref="Zoom.ResetZoom(bool, MainViewModel)"/>
-    public void ResetZoom(bool enableAnimations = true) =>
+    /// <inheritdoc cref="Zoom.ResetZoom(bool, MainViewModel)" />
+    public void ResetZoom(bool enableAnimations = true)
+    {
         ZoomPanControl.ResetZoom(enableAnimations);
-    
+    }
+
     #endregion
 
     #region Image Transformation
-    public void Rotate(bool clockWise) => _imageTransformer?.Rotate(clockWise);
-    public void Rotate(double angle) => _imageTransformer?.Rotate(angle);
-    public void Flip(bool animate) => _imageTransformer?.Flip(animate);
-        
-    #endregion
 
+    public async Task RotateAsync(double angle)
+    {
+        await _imageTransformer?.RotateAsync(angle);
+    }
+
+    public async Task FlipAsync(bool horizontal)
+    {
+        await _imageTransformer?.FlipAsync(horizontal);
+    }
+
+    public async Task ApplyBitmapAndRefresh(Bitmap bmp, MainViewModel vm)
+    {
+        if (bmp is null || vm is null)
+            return;
+
+        // if (vm.PicViewer.ImageSource.Value is Bitmap oldBmp)
+        //     oldBmp.Dispose();
+
+        vm.PicViewer.ImageSource.Value = bmp;
+
+        var ps = bmp.PixelSize;
+        vm.PicViewer.PixelWidth.Value  = ps.Width;
+        vm.PicViewer.PixelHeight.Value = ps.Height;
+
+        ImageLayoutTransformControl.LayoutTransform = null;
+        MainImage.RenderTransform = null;
+
+        MainImage.Width = double.NaN;
+        MainImage.Height = double.NaN;
+        MainImage.InvalidateMeasure();
+        MainImage.InvalidateArrange();
+        MainImage.InvalidateVisual();
+
+        WindowResizing.SetSize(ps.Width, ps.Height, 0, 0, vm);
+        ZoomPanControl.NotifyContentResized();
+    }
+
+    public async Task ApplySnapshotBitmap(Bitmap bmp, MainViewModel vm)
+    {
+        if (bmp is null || vm is null)
+            return;
+
+        vm.PicViewer.ImageSource.Value = bmp;
+
+        var ps = bmp.PixelSize;
+        vm.PicViewer.PixelWidth.Value  = ps.Width;
+        vm.PicViewer.PixelHeight.Value = ps.Height;
+
+        WindowResizing.SetSize(ps.Width, ps.Height, 0, 0, vm);
+        ZoomPanControl.NotifyContentResized();
+    }
+    
+    #endregion
     private void MainImage_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (!Settings.UIProperties.ShowInterface && ZoomPanControl.ZoomLevel is 100)

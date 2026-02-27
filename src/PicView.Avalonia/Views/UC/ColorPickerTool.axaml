@@ -1,0 +1,38 @@
+<UserControl
+    x:Class="PicView.Avalonia.Views.UC.ColorPickerTool"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Width="160" Height="160"
+    IsHitTestVisible="False">
+
+    <!-- Circle lens with white ring -->
+    <Grid>
+        <!-- Circular clip so the image appears as a perfect circle -->
+        <Grid.Clip>
+            <EllipseGeometry Center="80,80" RadiusX="80" RadiusY="80"/>
+        </Grid.Clip>
+        <Grid.Effect>
+            <DropShadowEffect BlurRadius="8" Opacity="0.5"/>
+        </Grid.Effect>
+
+
+        <!-- The magnified bitmap you’ll update from code -->
+        <Image x:Name="MagnifierImage" Stretch="UniformToFill"/>
+
+        <!-- Circular ring on top -->
+        <Ellipse Stroke="White" StrokeThickness="2"/>
+
+        <!-- HEX label pill at the bottom -->
+        <Border Background="#AA000000"
+                CornerRadius="6"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,8"
+                Padding="8,4">
+            <TextBlock x:Name="HexLabel"
+                       Text="#FFFFFF"
+                       Foreground="White"
+                       FontWeight="Medium"/>
+        </Border>
+    </Grid>
+</UserControl>

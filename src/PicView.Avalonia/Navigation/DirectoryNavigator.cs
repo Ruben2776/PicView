@@ -111,33 +111,42 @@ public static class DirectoryNavigator
     private static List<FileInfo>? GetNextFolderFileList(bool next, ImageIterator iterator,
         MainViewModel vm)
     {
-        var currentFolder = iterator?.ImagePaths[iterator.CurrentIndex].DirectoryName;
-        if (string.IsNullOrEmpty(currentFolder))
+        try
         {
+            var currentFolder = iterator?.ImagePaths[iterator.CurrentIndex].DirectoryName;
+            if (string.IsNullOrEmpty(currentFolder))
+            {
+                return null;
+            }
+
+            string? parentFolder;
+            var initialDirectory = Settings.StartUp.StartUpDirectory;
+            if (!string.IsNullOrWhiteSpace(initialDirectory))
+            {
+                parentFolder = Path.GetDirectoryName(initialDirectory);
+            }
+            else
+            {
+                parentFolder = Path.GetDirectoryName(currentFolder);
+            }
+
+            if (string.IsNullOrEmpty(parentFolder))
+            {
+                return null;
+            }
+
+            var parentDirectories = Directory.GetDirectories(parentFolder, "*", SearchOption.AllDirectories);
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            if (parentDirectories.Length > 1)
+            {
+                return NextDirectoryInCurrentDirectories(parentDirectories, currentFolder, false, next, vm);
+            }
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            // Access denied to the parent directory
+            DialogManager.AddMessageDialog(TranslationManager.Translation.AccessDenied, ex.Message);
             return null;
-        }
-
-        string? parentFolder;
-        var initialDirectory = Settings.StartUp.StartUpDirectory;
-        if (!string.IsNullOrWhiteSpace(initialDirectory))
-        {
-            parentFolder = Path.GetDirectoryName(initialDirectory);
-        }
-        else
-        {
-            parentFolder = Path.GetDirectoryName(currentFolder);
-        }
-
-        if (string.IsNullOrEmpty(parentFolder))
-        {
-            return null;
-        }
-
-        var parentDirectories = Directory.GetDirectories(parentFolder, "*", SearchOption.AllDirectories);
-        // ReSharper disable once ConvertIfStatementToReturnStatement
-        if (parentDirectories.Length > 1)
-        {
-            return NextDirectoryInCurrentDirectories(parentDirectories, currentFolder, false, next, vm);
         }
 
         return null;

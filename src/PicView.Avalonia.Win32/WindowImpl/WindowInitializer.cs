@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using PicView.Avalonia.Extensions;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Input;
@@ -270,8 +271,11 @@ public class WindowInitializer : IPlatformSpecificUpdate
         void Show()
         {
             WindowFunctions.InitializeWindowSizeAndPosition(_settingsWindow,
-                vm.Window.SettingsWindowConfig.WindowProperties);
-            _settingsWindow.Show(desktop.MainWindow);
+                 vm.Window.SettingsWindowConfig.WindowProperties);
+             _settingsWindow.Show(desktop.MainWindow);
+
+            var pos = new PixelPoint(vm.Window.SettingsWindowConfig.WindowProperties.Left.GetValueOrDefault(), vm.Window.SettingsWindowConfig.WindowProperties.Top.GetValueOrDefault());
+           WindowFunctions.OpenOnSameScreen(_settingsWindow, desktop.MainWindow, position: pos);
         }
     }
 
@@ -541,5 +545,15 @@ public class WindowInitializer : IPlatformSpecificUpdate
 
             _ = FunctionsMapper.CloseMenus();
         }
+    }
+
+    public async Task ShowHistoryWindow(MainViewModel _vm)
+    {
+        if (_vm.HistoryManager is null)
+            _vm.HistoryManager = new History.HistoryManager(_vm);
+            
+        await _vm.HistoryManager.Show();
+
+        _ = FunctionsMapper.CloseMenus();
     }
 }

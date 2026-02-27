@@ -2,7 +2,8 @@
     x:Class="PicView.Avalonia.Views.UC.CropControl"
     x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"    
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     ClipToBounds="False">
     <UserControl.Resources>
@@ -27,6 +28,16 @@
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource CropGeometry}"
+                        Fill="{StaticResource Brush0}"
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="{CompiledBinding Crop.SaveCropImageCommand}" Header="{CompiledBinding Translation.SaveAs.Value, Mode=OneWay}" ToolTip.Tip="{CompiledBinding Translation.SaveAs.Value, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Path
+                        Data="{StaticResource SaveGeometry}"
                         Fill="{StaticResource Brush0}"
                         Height="12"
                         Stretch="Fill"
@@ -147,6 +158,97 @@
             <Rectangle Fill="#80000000" x:Name="BottomRectangle" />
             <Rectangle Fill="#80000000" x:Name="LeftRectangle" />
             <Rectangle Fill="#80000000" x:Name="RightRectangle" />
+
+            <!-- Hover Menu -->
+            <Border
+                x:Name="HoverMenu"
+                Background="{DynamicResource MenuBackgroundColor}"
+                BorderBrush="{DynamicResource OuterBorderColor}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Opacity="0.8"
+                Effect="{DynamicResource MenuShadowButtonBorder}"
+                ZIndex="1000">
+
+                <Border.Styles>
+                    <Style Selector="Border#HoverMenu:pointerover">
+                        <Setter Property="Opacity" Value="1"/>
+                    </Style>
+                    <Style Selector="TextBlock.btnTxt">
+                        <Setter Property="MaxWidth" Value="105" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+                    </Style>
+                    <Style Selector="Button.btn, RepeatButton.btn">
+                        <Setter Property="Canvas.Top" Value="-1" />
+                        <Setter Property="Width" Value="45" />
+                        <Setter Property="Height" Value="42" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderThickness" Value="0,0,1,0" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+                        <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+                    </Style>
+                </Border.Styles>
+                <Border.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.25" Easing="CircularEaseOut"/>
+                    </Transitions>
+                </Border.Transitions>
+
+                <Canvas Height="42" Width="180">
+
+                    <Border
+                        Background="{DynamicResource SecondaryBackgroundColor}"
+                        BorderBrush="{DynamicResource OuterBorderColor}"
+                        BorderThickness="0,0,0,1"
+                        CornerRadius="8,8,8,8"
+                        Height="42"
+                        Width="180"
+                        x:Name="TopBorder" />
+
+                    <customControls:IconButton
+                        Canvas.Left="-1"
+                        Classes="hover btn"
+                        Command="{Binding Crop.CropImageCommand}"
+                        CornerRadius="8,0,0,8"
+                        Data="{StaticResource CropGeometry}"
+                        IsRepeatEnabled="False"
+                        IconHeight="17"
+                        IconWidth="17"
+                        ToolTip.Tip="{CompiledBinding Translation.CropPicture.Value, Mode=OneWay}" />
+
+                    <customControls:IconButton
+                        Canvas.Left="44"
+                        Classes="hover btn"
+                        Command="{CompiledBinding Crop.SaveCropImageCommand}"
+                        Data="{StaticResource SaveGeometry}"
+                        IsRepeatEnabled="False"
+                        IconHeight="17"
+                        IconWidth="17"
+                        ToolTip.Tip="{CompiledBinding Translation.SaveAs.Value, Mode=OneWay}" />
+
+                    <customControls:IconButton
+                        Canvas.Left="90"
+                        Classes="hover btn"
+                        Command="{CompiledBinding Crop.CopyCropImageCommand}"
+                        Data="{StaticResource CopyGeometry}"
+                        IsRepeatEnabled="False"
+                        IconHeight="17"
+                        IconWidth="17"
+                        ToolTip.Tip="{CompiledBinding Translation.CopyImageTooltip.Value, Mode=OneWay}" />
+
+                    <customControls:IconButton
+                        Canvas.Left="134"
+                        Classes="hover btn"
+                        Command="{CompiledBinding Crop.CloseCropCommand}"
+                        CornerRadius="0,8,8,0"
+                        Data="{StaticResource CloseGeometry}"
+                        IsRepeatEnabled="False"
+                        IconHeight="17"
+                        IconWidth="17"
+                        ToolTip.Tip="{CompiledBinding Translation.Close.Value, Mode=OneWay}" />
+                </Canvas>                                                  
+            </Border>
         </Canvas>
     </Panel>
 </UserControl>

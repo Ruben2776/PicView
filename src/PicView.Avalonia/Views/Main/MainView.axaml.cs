@@ -122,10 +122,11 @@ public partial class MainView : UserControl
 
     private void PointerPressedBehavior(object? sender, PointerPressedEventArgs e)
     {
-        if (DataContext is not MainViewModel vm)
-        {
-            return;
-        }
+        if (DataContext is not MainViewModel vm) return;
+
+        MenuManager.CloseMenus(vm);
+
+
         if (e.ClickCount is 2 && Settings.UIProperties.DoubleClickBehavior is 2)
         {
             vm.PlatformWindowService.ToggleFullscreen();
@@ -172,7 +173,6 @@ public partial class MainView : UserControl
         
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            CropMenuItem.IsEnabled = CropFunctions.DetermineIfShouldBeEnabled(vm);
             vm.PicViewer.ShouldOptimizeImageBeEnabled.Value = ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(vm.PicViewer.FileInfo?.CurrentValue);
 
             // Set source for ChangeCtrlZoomImage

@@ -45,6 +45,15 @@ public static class SettingsManager
     private static SettingsConfiguration? Configuration { get; set; }
 
     /// <summary>
+    /// Global Configuration Support
+    /// </summary>
+    /// <remarks>
+    /// Overrides any UserSettings with GlobalSettings if they are set
+    /// </remarks>
+    public static GlobalSettingsConfiguration? GlobalConfiguration { get; private set; }
+    public static AppSettings? GlobalSettings { get; private set; }
+
+    /// <summary>
     /// Loads application settings synchronously from a file or initializes them to default if loading fails.
     /// </summary>
     /// <returns>
@@ -55,6 +64,17 @@ public static class SettingsManager
     {
         try
         {
+            // Load global config (read-only, Program Path)
+            GlobalConfiguration ??= new GlobalSettingsConfiguration();
+            string globalPath = ConfigFileManager.ResolveDefaultConfigPath(GlobalConfiguration);
+            if (File.Exists(globalPath))
+            {
+                var bytes = File.ReadAllBytes(globalPath);
+                GlobalSettings = JsonSerializer.Deserialize<AppSettings>(
+                    bytes, SettingsGenerationContext.Default.AppSettings);
+            }
+
+            // Load user config (User Profile or Program Path)
             Configuration ??= new SettingsConfiguration();
             var path = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
             
@@ -69,6 +89,7 @@ public static class SettingsManager
             {
                 // Fallback to defaults if no user config found
                 Settings = GetDefaults();
+
                 return false;
             }
         }
@@ -78,6 +99,10 @@ public static class SettingsManager
             SetDefaults();
             return false;
         }
+
+        // Apply Global Overrides
+        if (GlobalSettings != null)
+            ApplyOverrides(Settings, GlobalSettings);
 
         return true;
     }
@@ -90,7 +115,7 @@ public static class SettingsManager
     /// </returns>
     public static async ValueTask<bool> SaveSettingsAsync()
     {
-        if (Settings == null)
+        if (Settings == null || Configuration == null)
         {
             return false;
         }
@@ -147,6 +172,10 @@ public static class SettingsManager
 
         // Get the default culture from the OS
         settings.UIProperties.UserLanguage = CultureInfo.CurrentCulture.Name;
+
+        // Apply Global Overrides
+        if (GlobalSettings != null)
+            ApplyOverrides(settings, GlobalSettings);
 
         return settings;
     }
@@ -238,5 +267,45 @@ public static class SettingsManager
 
         existingSettings.Version = SettingsConfiguration.CurrentSettingsVersion;
         return existingSettings;
+    }
+
+    private static void ApplyOverrides(AppSettings target, AppSettings global) => MergeObjects(target, global);
+
+    private static void MergeObjects(object? target, object? source)
+    {
+        if (target == null || source == null)
+            return;
+
+        var targetType = target.GetType();
+        var sourceType = source.GetType();
+
+        foreach (var prop in sourceType.GetProperties())
+        {
+            var sourceValue = prop.GetValue(source);
+            if (sourceValue == null)
+                continue;
+
+            var targetProp = targetType.GetProperty(prop.Name);
+            if (targetProp == null || !targetProp.CanWrite)
+                continue;
+
+            var targetValue = targetProp.GetValue(target);
+
+            if (prop.PropertyType.IsClass && prop.PropertyType != typeof(string))
+            {
+                if (targetValue == null)
+                {
+                    targetProp.SetValue(target, sourceValue);
+                }
+                else
+                {
+                    MergeObjects(targetValue, sourceValue);
+                }
+            }
+            else
+            {
+                targetProp.SetValue(target, sourceValue);
+            }
+        }
     }
 }

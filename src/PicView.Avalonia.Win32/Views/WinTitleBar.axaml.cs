@@ -36,7 +36,7 @@ public partial class WinTitleBar : UserControl
         GlassThemeHelper.ApplyTransparentStyle(CloseButton);
         GlassThemeHelper.ApplyTransparentStyle(MinimizeButton);
         GlassThemeHelper.ApplyTransparentStyle(RestoreButton);
-        GlassThemeHelper.ApplyTransparentStyle(FullscreenButton);
+        GlassThemeHelper.ApplyTransparentStyle(MaximizeOrFullscreenButton);
         GlassThemeHelper.ApplyTransparentStyle(GalleryButton);
         GlassThemeHelper.ApplyTransparentStyle(MenuButton);
         GlassThemeHelper.ApplyTransparentStyle(MainMenu);

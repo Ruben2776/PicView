@@ -428,5 +428,21 @@
   "_2Star": "2星評分",
   "_3Star": "3星評分",
   "_4Star": "4星評分",
-  "_5Star": "5星評分"
+  "_5Star": "5星評分",
+
+  "MaximizeWindowMode": "最大化視窗模式",
+  "EnableFileChangeHistory": "啟用檔案變更歷史",
+  "ShowPromptToSaveChanges": "顯示儲存變更提示",
+  "ShowExportToPDFInMenu": "在選單中顯示匯出為 PDF",
+  "AccessDenied": "拒絕訪問",
+  "Disgard": "丟棄",
+  "ExportToPdf": "匯出為 PDF",
+  "HideHistoryWindow": "隱藏歷史視窗",
+  "History": "歷史",
+  "Horizontal": "水平",
+  "SaveChanges": "儲存變更",
+  "ShowHistoryWindow": "顯示歷史視窗",
+  "Tools": "工具",
+  "Menu": "選單",
+  "Vertical": "垂直"
 }

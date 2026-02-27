@@ -42,4 +42,5 @@ public interface IPlatformSpecificService
     void InitiateFileAssociationService();
     
     Task<bool> DeleteFile(string path, bool recycle);
+    Task<bool> SaveFile(string path);
 }

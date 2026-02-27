@@ -227,6 +227,11 @@ public class ToolsViewModel : IDisposable
         await FunctionsMapper.ToggleConstrainBackgroundColor();
     });
 
+    public ReactiveCommand ExportToPdfCommand { get; } = new(async (_, _) =>
+    {
+        await FunctionsMapper.ExportToPdf();
+    });
+
     // Image related
     public ReactiveCommand RotateLeftCommand { get; } =
         new(async (_, _) => { await FunctionsMapper.RotateLeft(); });
@@ -238,6 +243,7 @@ public class ToolsViewModel : IDisposable
     public ReactiveCommand ZoomOutCommand { get; } = new(async (_, _) => { await FunctionsMapper.ZoomOut(); });
 
     public ReactiveCommand FlipCommand { get; } = new(async (_, _) => { await FunctionsMapper.Flip(); });
+    public ReactiveCommand FlipVerticalCommand { get; } = new(async (_, _) => { await FunctionsMapper.FlipVertical(); });
 
     public ReactiveCommand StretchCommand { get; } = new(async (_, _) => { await FunctionsMapper.Stretch(); });
 
@@ -260,6 +266,9 @@ public class ToolsViewModel : IDisposable
 
     public ReactiveCommand ShowSideBySideCommand { get; } =
         new(async (_, _) => { await FunctionsMapper.SideBySide(); });
+
+    public ReactiveCommand ToggleHistoryWindowCommand { get; } =
+        new(async (_, _) => { await FunctionsMapper.ToggleHistoryWindow(); });
 
     // Wallpaper
     public ReactiveCommand<string> SetAsWallpaperCommand { get; } = new(async (path, _) =>

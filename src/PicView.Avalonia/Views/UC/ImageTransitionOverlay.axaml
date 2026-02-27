@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="PicView.Avalonia.Views.UC.ImageTransitionOverlay"
+             xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels"
+             x:DataType="viewModels:MainViewModel">
+  <Grid>
+    <ContentControl x:Name="Host" />
+
+    <Border x:Name="Stage"
+            IsHitTestVisible="False"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            ClipToBounds="True">
+      <Grid>
+        <Image x:Name="Outgoing"
+               Opacity="1"
+               Stretch="Uniform"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"
+               RenderTransformOrigin="0.5,0.5"/>
+        <Image x:Name="Incoming"
+               Opacity="0"
+               Stretch="Uniform"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"
+               RenderTransformOrigin="0.5,0.5"/>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>
+

@@ -18,28 +18,28 @@ public class IconButton : Button
     /// Defines the <see cref="Icon"/> property.
     /// The icon is displayed as a <see cref="DrawingImage"/> with support for dynamic brush changes.
     /// </summary>
-    public static readonly AvaloniaProperty<DrawingImage?> IconProperty =
+    public static readonly StyledProperty<DrawingImage?> IconProperty =
         AvaloniaProperty.Register<IconButton, DrawingImage?>(nameof(Icon));
 
     /// <summary>
     /// Defines the <see cref="Data"/> property.
     /// The icon can also be displayed as a <see cref="StreamGeometry"/> for path-based rendering.
     /// </summary>
-    public static readonly AvaloniaProperty<StreamGeometry> PathProperty =
-        AvaloniaProperty.Register<CopyButton, StreamGeometry>(nameof(Data));
+    public static readonly StyledProperty<StreamGeometry?> DataProperty =
+        AvaloniaProperty.Register<CopyButton, StreamGeometry?>(nameof(Data));
 
     /// <summary>
     /// Defines the <see cref="IconWidth"/> property.
     /// The width of the icon, whether it is a <see cref="DrawingImage"/> or <see cref="StreamGeometry"/>.
     /// </summary>
-    public static readonly AvaloniaProperty<double> IconWidthProperty =
+    public static readonly StyledProperty<double> IconWidthProperty =
         AvaloniaProperty.Register<IconButton, double>(nameof(IconWidth));
 
     /// <summary>
     /// Defines the <see cref="IconHeight"/> property.
     /// The height of the icon, whether it is a <see cref="DrawingImage"/> or <see cref="StreamGeometry"/>.
     /// </summary>
-    public static readonly AvaloniaProperty<double> IconHeightProperty =
+    public static readonly StyledProperty<double> IconHeightProperty =
         AvaloniaProperty.Register<IconButton, double>(nameof(IconHeight));
 
     /// <summary>
@@ -62,8 +62,8 @@ public class IconButton : Button
     /// </summary>
     public StreamGeometry? Data
     {
-        get => (StreamGeometry)GetValue(PathProperty)!;
-        set => SetValue(PathProperty, value);
+        get => (StreamGeometry)GetValue(DataProperty)!;
+        set => SetValue(DataProperty, value);
     }
 
     /// <summary>
@@ -98,7 +98,10 @@ public class IconButton : Button
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == IconProperty)
+        if (change.Property == IconProperty ||
+            change.Property == DataProperty ||
+            change.Property == IconWidthProperty ||
+            change.Property == IconHeightProperty)
         {
             Content = BuildIcon();
         }

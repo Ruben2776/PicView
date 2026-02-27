@@ -1,4 +1,5 @@
 ﻿using PicView.Avalonia.Functions;
+using PicView.Avalonia.History;
 using PicView.Avalonia.Interfaces;
 using PicView.Core.ViewModels;
 using ImageViewer = PicView.Avalonia.Views.UC.ImageViewer;
@@ -29,11 +30,13 @@ public class MainViewModel
     public AboutViewModel? AboutView { get; set; }
     public PrintPreviewViewModel? PrintPreview { get; set; }
     public BatchResizeViewModel? BatchResizeViewModel { get; set; }
+    public HistoryManager? HistoryManager { get; set; }
     public KeybindingsViewModel? Keybindings { get; set; }
-
+    
     public MainViewModel(IPlatformSpecificService? platformSpecificService, IPlatformWindowService? platformWindowService)
     {
         FunctionsMapper.Vm = this;
+        HistoryManager = new HistoryManager(this);
         PlatformService = platformSpecificService;
         PlatformWindowService = platformWindowService;
     }

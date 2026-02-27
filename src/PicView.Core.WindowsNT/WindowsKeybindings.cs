@@ -39,6 +39,7 @@ public static class WindowsKeybindings
                                                "Shift+D": "NextFolder",
                                                "F": "Flip",
                                                "G": "ToggleGallery",
+                                               "H": "History",
                                                "J": "ResizeWindow",
                                                "K": "KeybindingsWindow",
                                                "L": "ToggleLooping",

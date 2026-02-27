@@ -29,6 +29,8 @@ public static class LanguageUpdater
         translationViewModel.IsShowingBottomGallery.Value = Settings.Gallery.IsBottomGalleryShown ?
             TranslationManager.Translation.HideBottomGallery :
             TranslationManager.Translation.ShowBottomGallery;
+
+        translationViewModel.IsShowingHistoryWindow.Value = TranslationManager.Translation.ShowHistoryWindow;
         
         translationViewModel.IsLooping.Value = Settings.UIProperties.Looping
             ? TranslationManager.Translation.LoopingEnabled

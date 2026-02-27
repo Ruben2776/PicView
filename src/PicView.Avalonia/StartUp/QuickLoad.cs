@@ -211,8 +211,7 @@ public static class QuickLoad
         vm.PicViewer.SecondaryImageSource.Value = secondaryPreloadValue?.ImageModel?.Image;
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            WindowResizing.SetSize(magickImage.Width, magickImage.Height, secondaryPreloadValue.ImageModel.PixelWidth,
-                secondaryPreloadValue.ImageModel.PixelHeight, vm.PicViewer.RotationAngle.CurrentValue, vm);
+            WindowResizing.SetSize(magickImage.Width, magickImage.Height, secondaryPreloadValue.ImageModel.PixelWidth, secondaryPreloadValue.ImageModel.PixelHeight, vm);
         }, DispatcherPriority.Send);
         if (Settings.WindowProperties.AutoFit && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
@@ -241,7 +240,6 @@ public static class QuickLoad
 
         vm.PicViewer.ImageSource.Value = imageModel.Image;
         vm.PicViewer.ImageType.Value = imageModel.ImageType;
-        vm.PicViewer.RotationAngle.Value = 0;
         vm.PicViewer.PixelWidth.Value = imageModel.PixelWidth;
         vm.PicViewer.PixelHeight.Value = imageModel.PixelHeight;
         vm.PicViewer.Format.Value = imageModel.Format;

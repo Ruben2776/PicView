@@ -101,6 +101,11 @@ public class WindowProperties
     /// Only applies when <see cref="AutoFit"/> is <c>true</c>.
     /// </remarks>
     public double Margin { get; set; } = 15;
+
+    /// <summary>
+    /// 0 => Fullscreen, 1 => Maximized
+    /// </summary>
+    public int WindowMaximizeMode { get; set; } = 0;
 }
 
 public class UIProperties
@@ -210,6 +215,31 @@ public class UIProperties
     /// 0 => None, 1 => Reset zoom, 2 => Toggle fullscreen
     /// </summary>
     public int DoubleClickBehavior { get; set; } = 1;
+
+    /// <summary>
+    /// Show Print In Bottom Toolbar instead of Flip.
+    /// </summary>
+    public bool ShowPrintInBottomToolbar { get; set; } = false;
+
+    /// <summary>
+    /// Enable Check For Updates
+    /// </summary>
+    public bool EnableCheckForUpdates { get; set; } = true;
+
+    /// <summary>
+    /// Determines whether a save changes confirmation dialog is displayed when navigating away from an image with changes.
+    /// </summary>
+    public bool ShowPromptToSaveChanges { get; set; } = false;
+
+    /// <summary>
+    /// Indicates whether the Export to PDF button is shown in the file menu
+    /// </summary>
+    public bool ShowExportToPDFInMenu { get; set; } = false;
+
+    /// <summary>
+    /// Enables file change snapshot history
+    /// </summary>
+    public bool EnableFileChangeHistory { get; set; } = false;
 }
 
 public class Theme

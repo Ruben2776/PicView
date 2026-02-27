@@ -30,6 +30,7 @@ public static class MacOsKeybindings
                                                 "Home": "ScrollToTop",
                                                 "End": "ScrollToBottom",
                                                 "G": "ToggleGallery",
+                                                "H": "History",
                                                 "F": "Flip",
                                                 "L": "ToggleLooping",
                                                 "C": "Crop",

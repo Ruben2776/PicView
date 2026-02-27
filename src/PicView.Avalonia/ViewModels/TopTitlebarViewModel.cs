@@ -52,7 +52,6 @@ public class TopTitlebarViewModel
             return;
         }
 
-        CropFunctions.DetermineIfShouldBeEnabled(vm);
         vm.PicViewer.ShouldOptimizeImageBeEnabled.Value =
             ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(vm.PicViewer.FileInfo?.CurrentValue);
     }

@@ -276,7 +276,9 @@ namespace PicView.Core.ViewModels
 
         private async ValueTask CancelAsync()
         {
-            await _cts?.CancelAsync();
+            if( _cts is not null)
+                await _cts.CancelAsync();
+            
             IsFinished.Value = false;
             IsRunning.Value = false;
         }

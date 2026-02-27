@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using Avalonia;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Styling;
 using PicView.Avalonia.CustomControls;
@@ -21,7 +22,7 @@ public partial class FileMenu : AnimatedMenu
                     var brush = texture as ImageBrush;
                     MainBorder.Background = brush;
                     DownArrow.Fill = brush;
-                    DownArrow.StrokeThickness = 0;
+                    DownArrowBorder.StrokeThickness = 0;
                 }
             }
 
@@ -55,6 +56,8 @@ public partial class FileMenu : AnimatedMenu
             {
                 PrintButton.IsEnabled = false;
             }
-        };
+
+            PointerPressed += (_, e) => e.Handled = true;
+        };        
     }
 }

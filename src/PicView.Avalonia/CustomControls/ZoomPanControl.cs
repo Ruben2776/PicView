@@ -121,6 +121,13 @@ public class ZoomPanControl : Decorator
         base.OnDetachedFromVisualTree(e);
     }
 
+    public void NotifyContentResized()
+    {
+        ConstrainTranslationToBounds();
+        UpdateChildTransform();
+        InvalidateArrange();
+    }
+
     #endregion
 
     #region Public Zoom API

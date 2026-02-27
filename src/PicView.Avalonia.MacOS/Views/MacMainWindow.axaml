@@ -264,13 +264,25 @@
                                                  Mode=OneWay}"
                         IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
                                                     Converter={x:Static ObjectConverters.IsNotNull}}" />
-                    <!--  Flip  -->
-                    <NativeMenuItem
-                        Command="{CompiledBinding Tools.FlipCommand}"
-                        Header="{CompiledBinding Translation.Flip.Value,
-                                                 Mode=OneWay}"
-                        IsEnabled="{CompiledBinding PicViewer.ImageSource.Value,
-                                                    Converter={x:Static ObjectConverters.IsNotNull}}" />
+                    <!--  Flip Horizontal  -->
+                    <NativeMenuItem Command="{CompiledBinding Tools.FlipCommand}" IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <MenuItem.Header>
+                            <MultiBinding StringFormat="{}{0} {1}">
+                                <CompiledBinding Path="Translation.Flip.Value" />
+                                <CompiledBinding Path="Translation.Horizontal.Value" />
+                            </MultiBinding>
+                        </MenuItem.Header>
+                    </NativeMenuItem>
+
+                    <!--  Flip Vertical  -->
+                    <NativeMenuItem Command="{CompiledBinding Tools.FlipVerticalCommand}" IsEnabled="{CompiledBinding PicViewer.ImageSource.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <MenuItem.Header>
+                            <MultiBinding StringFormat="{}{0} {1}">
+                                <CompiledBinding Path="Translation.Flip.Value" />
+                                <CompiledBinding Path="Translation.Vertical.Value" />
+                            </MultiBinding>
+                        </MenuItem.Header>
+                    </NativeMenuItem>
 
                     <NativeMenuItemSeparator />
 
