@@ -152,6 +152,14 @@ public static class TranslationManager
                     "zh-HK" => "zh-TW",  // Treat Hong Kong as Traditional Chinese
                     _ => "zh-CN"         // Default to Simplified Chinese
                 };
+            case "sr":
+                // Serbian Cyrilic vs Serbian Latin
+                return userCulture.Name switch
+                {
+                    "sr-Cyrl" => "sr-Cyrl",  // Serbian Cyrillic
+                    "sr-Latn" => "sr-Latn",  // Serbian Latin
+                    _ => "sr-Cyrl"           // Default to Serbian Cyrillic
+                };
             case "de":
                 // Handle German-speaking regions (Austria, Germany, Switzerland)
                 return "de";  // Map all 'de-*' to 'de'
