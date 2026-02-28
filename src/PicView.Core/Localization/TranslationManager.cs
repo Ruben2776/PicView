@@ -89,15 +89,10 @@ public static class TranslationManager
     /// Retrieves a list of available language files in the language directory.
     /// </summary>
     /// <returns>An enumerable collection of paths to available language JSON files.</returns>
-    public static ValueEnumerable<Where<Children<FileSystemInfoTraverser, FileSystemInfo>, FileSystemInfo>, FileSystemInfo> GetLanguages(string languagesDirectory)
-    {
-        return new DirectoryInfo(languagesDirectory)
+    public static ValueEnumerable<Where<Children<FileSystemInfoTraverser, FileSystemInfo>, FileSystemInfo>, FileSystemInfo> GetLanguages() =>
+        new DirectoryInfo(GetLanguagesDirectory)
             .ChildrenAndSelf()
             .Where(x => x.Extension.Equals(".json", StringComparison.OrdinalIgnoreCase));
-    }
-    
-    public static ValueEnumerable<Where<Children<FileSystemInfoTraverser, FileSystemInfo>, FileSystemInfo>, FileSystemInfo> GetLanguages() =>
-        GetLanguages(GetLanguagesDirectory);
 
     /// <summary>
     /// Determines the file path for the specified ISO language code.
@@ -106,9 +101,8 @@ public static class TranslationManager
     /// <returns>The file path of the matching language file, or the English language file as a fallback.</returns>
     private static string DetermineLanguageFilePath(string isoLanguageCode)
     {
-        var languagesDirectory = GetLanguagesDirectory;
-        var matchingFile = GetLanguages(languagesDirectory).Where(x => x.Name.StartsWith(isoLanguageCode)).FirstOrDefault();
-        return matchingFile?.FullName ?? Path.Combine(languagesDirectory, "en.json");
+        var matchingFile = GetLanguages().Where(x => x.Name.StartsWith(isoLanguageCode)).FirstOrDefault();
+        return matchingFile?.FullName ?? Path.Combine(GetLanguagesDirectory, "en.json");
     }
 
     /// <summary>
@@ -166,12 +160,8 @@ public static class TranslationManager
             case "pt":
                 return "pt";
             default:
-                // Fall back to the base language if it's available in the translation files
-                var foundLanguage = GetLanguages(GetLanguagesDirectory)
-                    .Where(x => x.Name.StartsWith(baseLanguageCode, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
-                    return foundLanguage is not null 
-                    ? baseLanguageCode
-                    : "en"; // Default to English if not found
+                var languageFilePath = DetermineLanguageFilePath(baseLanguageCode);
+                return Path.GetFileNameWithoutExtension(languageFilePath)!;
         }
     }
 }
