@@ -42,6 +42,7 @@ public static class GetImageModel
             // Check if rotation is needed
             var orientation = ExifOrientationHelper.GetImageOrientation(magickImage);
             var shouldAutoOrient = orientation is not (ExifOrientation.None or ExifOrientation.Horizontal);
+            var shouldColorManage = HasNonSrgbColorProfile(magickImage);
             
             if (fileInfo.Extension.Equals(".b64", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -104,7 +105,7 @@ public static class GetImageModel
                 case MagickFormat.Ico:
                 case MagickFormat.Icon:
                 case MagickFormat.Wbmp:
-                    if (shouldAutoOrient)
+                    if (shouldAutoOrient || shouldColorManage)
                     {
                         await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
                     }
@@ -178,6 +179,17 @@ public static class GetImageModel
             PixelHeight = 0,
             PixelWidth = 0
         };
+    }
+
+    private static bool HasNonSrgbColorProfile(MagickImage magickImage)
+    {
+        var colorProfile = magickImage.GetColorProfile();
+        if (colorProfile is null)
+        {
+            return false;
+        }
+
+        return colorProfile.Description?.Contains("sRGB", StringComparison.OrdinalIgnoreCase) != true;
     }
 
     #region Image Processing Methods

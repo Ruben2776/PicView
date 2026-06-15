@@ -34,6 +34,7 @@ public static class GetImage
 
         // Rotate image according to EXIF orientation
         magickImage.AutoOrient();
+        TransformToSrgbIfNeeded(magickImage);
 
         var bitmap = magickImage.ToWriteableBitmap();
         if (shouldDisposeMagickImage)
@@ -56,6 +57,7 @@ public static class GetImage
 
         // Rotate image according to EXIF orientation
         magickImage.AutoOrient();
+        TransformToSrgbIfNeeded(magickImage);
 
         var bitmap = magickImage.ToWriteableBitmap();
         if (shouldDisposeMagickImage)
@@ -85,6 +87,7 @@ public static class GetImage
 
         // Rotate image according to EXIF orientation
         magickImage.AutoOrient();
+        TransformToSrgbIfNeeded(magickImage);
 
         var bitmap = magickImage.ToWriteableBitmap();
         magickImage.Dispose();
@@ -96,5 +99,22 @@ public static class GetImage
         var magickImage = new MagickImage();
         magickImage.Ping(fileInfo);
         return magickImage;
+    }
+
+    internal static void TransformToSrgbIfNeeded(MagickImage magickImage)
+    {
+        if (magickImage.GetColorProfile() is null)
+        {
+            return;
+        }
+
+        try
+        {
+            magickImage.TransformColorSpace(ColorProfiles.SRGB);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetImage), nameof(TransformToSrgbIfNeeded), e);
+        }
     }
 }
