@@ -199,7 +199,7 @@ public static class QuickLoad
 
         if (isStartUp && Settings.WindowProperties.AutoFit)
         {
-            WindowFunctions.CenterWindowOnScreen();
+            WindowResizing.FastCenterWindow(mainWindow);
         }
 
         vm.IsLoadingIndicatorShown.Value = false;

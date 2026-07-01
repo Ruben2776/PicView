@@ -2,8 +2,6 @@ using Avalonia.Input;
 using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
-using PicView.Avalonia.UI;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Localization;
 using R3;
 
@@ -23,11 +21,6 @@ public partial class EffectsWindow : GenericWindow, IDisposable
         {
             MinWidth = MaxWidth = Bounds.Width;
             Title = $"{TranslationManager.Translation.Effects} - PicView";
-            
-            ClientSizeProperty.Changed.ToObservable()
-                .ObserveOn(UIHelper.GetFrameProvider)
-                .Subscribe(size => { WindowResizing.HandleWindowResize(this, size); })
-                .AddTo(_disposables);
         };
         KeyDown += (_, e) =>
         {

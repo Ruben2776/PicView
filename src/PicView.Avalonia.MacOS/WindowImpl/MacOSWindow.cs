@@ -66,7 +66,7 @@ public static class MacOSWindow
 
         WindowFunctions.RestoreInterface(vm);
         
-        WindowResizing.SetSize(vm, WindowResizeReason.Application);
+        WindowResizing.SetSize(window, WindowResizeReason.Application);
         
         if (Settings.WindowProperties.AutoFit && Settings.WindowProperties.KeepCentered)
         {
@@ -123,7 +123,7 @@ public static class MacOSWindow
         // Sometimes the window is not centered properly, so center it again
         WindowFunctions.CenterWindowOnScreen(window);
         
-        WindowResizing.SetSize(vm, WindowResizeReason.Application);
+        WindowResizing.SetSize(window, WindowResizeReason.Application);
         
         // Reset changing state flag so subscription can fire again. Need to be delayed by dispatcher to not be misfired. 
         Dispatcher.UIThread.Post(() => window.IsChangingWindowState = false, DispatcherPriority.SystemIdle);
@@ -146,7 +146,7 @@ public static class MacOSWindow
 
             
             // Use WindowResizing to reset the max size of the window
-            WindowResizing.SetSize(vm, WindowResizeReason.Application);
+            WindowResizing.SetSize(window, WindowResizeReason.Application);
             
             // Set the window size to the screen size
             window.Width = ScreenHelper.ScreenSize.WorkingAreaWidth;

@@ -106,7 +106,6 @@ public partial class SettingsWindow : GenericWindow
         };
 
         _disposable = ClientSizeProperty.Changed.ToObservable()
-            .ObserveOn(UIHelper.GetFrameProvider)
             .Subscribe(UpdateWindowSizeAndPosition);
 
         InitializeFileAssociationManager();

@@ -82,11 +82,13 @@ public class App : Application, IPlatformSpecificService
 
         _mainWindow = new MacMainWindow();
         _mainWindowViewModel = _mainWindow.DataContext as MainWindowViewModel;
+        _coreViewModel.MainWindows.MainWindows.Add(_mainWindowViewModel);
+        _coreViewModel.MainWindows.ActiveWindow.Value = _mainWindowViewModel;
         
         TranslationManager.Init();
         SettingsUpdater.InitializeSettings(_mainWindowViewModel, settingsExists);
-
         StartUpHelper.HandleWindowScalingMode(_coreViewModel, _mainWindow);
+        _mainWindow.Show();
         
         var arg = Environment.GetCommandLineArgs();
         if (arg.Length > 1)
@@ -95,11 +97,11 @@ public class App : Application, IPlatformSpecificService
         }
         if (startUpFilePath is not null)
         {
-            Task.Run(() => QuickLoad.QuickLoadAsync(_coreViewModel, startUpFilePath, false));
+            Task.Run(() => QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, startUpFilePath, false));
         }
         else
         {
-            StartUpHelper.StartUpMenuOrLastFile(_coreViewModel);
+            StartUpHelper.StartUpMenuOrLastFile(_mainWindow, _coreViewModel);
         }
         
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
@@ -116,18 +118,13 @@ public class App : Application, IPlatformSpecificService
             if (!_isInitialLoad)
             {
                 _isInitialLoad = true;
-
-                // Force switch to ImageViewer (in case we were sitting on the Start Menu)
-                // _vm.ImageViewer ??= new ImageViewer();
-                // _vm.MainWindow.CurrentView.Value = _vm.ImageViewer;
-                //
-                // await NavigationManager.LoadPicFromStringAsync(startUpFilePath, _vm).ConfigureAwait(false);
+                await QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, startUpFilePath, true, true).ConfigureAwait(false);
                 return;
             }
             if (Settings.UIProperties.OpenInSameWindow)
             {
                 Dispatcher.UIThread.Invoke(() => { _mainWindow.Activate(); }, DispatcherPriority.Send);
-                //await NavigationManager.LoadPicFromStringAsync(startUpFilePath, _vm).ConfigureAwait(false);
+                await _coreViewModel.MainWindows.ActiveWindow.CurrentValue.WindowTabs.LoadFromStringAsync(startUpFilePath).ConfigureAwait(false);
             }
             else
             {
