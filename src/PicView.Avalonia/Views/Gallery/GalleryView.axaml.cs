@@ -1,5 +1,6 @@
 using System.Collections.Specialized;
 using Avalonia;
+using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Threading;
 using ObservableCollections;
@@ -84,13 +85,26 @@ public partial class GalleryView : GalleryAnimationControl
                             if (localIndex >= 0 && localIndex <= GalleryItemsControl.Items.Count)
                             {
                                 GalleryItemsControl.Items.Insert(localIndex, item);
-                                if (tab.NavigationIndex.Value == localIndex)
+                                if (tab.NavigationIndex.Value != localIndex)
                                 {
-                                    GalleryItemsControl.CurrentItemIndex = localIndex;
-                                    GalleryItemsControl.SelectedItemIndex = localIndex;
-                                    GalleryItemsControl.UpdatePreviousAndNextSelection(localIndex, -1);
-                                    GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                                    return;
                                 }
+
+                                GalleryItemsControl.CurrentItemIndex = localIndex;
+                                GalleryItemsControl.SelectedItemIndex = localIndex;
+                                Dispatcher.Post(() =>
+                                {
+                                    if (GalleryItemsControl.ItemsPanelRoot.Children[localIndex] is not ContentPresenter
+                                        presenter)
+                                    {
+                                        return;
+                                    }
+
+                                    var child = presenter.Child as GalleryItem; 
+                                    child?.SetCurrent(true);
+                                    child?.SetSelected(true);
+                                    GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                                }, DispatcherPriority.Render);
                             }
                             else
                             {
