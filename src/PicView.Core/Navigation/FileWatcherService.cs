@@ -176,7 +176,7 @@ public class FileWatcherService(
         
         tab.ImageIterator.UpdateNavigationProperties();
 
-        if (insertionIndex >= 0 && tab.Gallery.GalleryItems.Count > insertionIndex)
+        if (insertionIndex >= 0 && tab.Gallery.IsGalleryDocked.CurrentValue)
         {
             var item = new GalleryItemViewModel
             {
