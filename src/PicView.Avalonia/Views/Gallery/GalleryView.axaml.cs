@@ -131,16 +131,16 @@ public partial class GalleryView : GalleryAnimationControl
             case NotifyCollectionChangedAction.Remove:
                 if (e.IsSingleItem)
                 {
-                    var newItem = e.NewItem;
+                    var oldItem = e.OldItem;
                     Dispatcher.UIThread.Post(() =>
                     {
-                        GalleryItemsControl.Items.Remove(newItem);
+                        GalleryItemsControl.Items.Remove(oldItem);
                         GalleryItemsControl.ScrollToCenterOfCurrentItem();  
                     });
                 }
                 else
                 {
-                    foreach (var item in e.NewItems)
+                    foreach (var item in e.OldItems)
                     {
                         Dispatcher.UIThread.Post(() =>
                         {

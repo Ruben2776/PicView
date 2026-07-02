@@ -167,14 +167,27 @@ public class FileWatcherService(
 
         var newFile = new FileInfo(e.FullPath);
 
-        var files = tab.ImageIterator.Files as List<FileInfo>;
-        var insertionIndex = -1;
-        if (files != null)
+        if (tab.ImageIterator.Files is not List<FileInfo> files)
         {
-            insertionIndex = FileSortOrder.InsertSorted(files, newFile, _stringComparer);
+            return;
         }
+        var insertionIndex = FileSortOrder.InsertSorted(files, newFile, _stringComparer);
         
         tab.ImageIterator.UpdateNavigationProperties();
+        
+        if (tab.Model.FileInfo is null)
+        {
+            return;
+        }
+        var newIndex = files.FindIndex(x =>
+            x.FullName.AsSpan().Equals(tab.Model.FileInfo.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase));
+        if (newIndex >= 0)
+        {
+            tab.ImageIterator.SetCurrentIndex(newIndex);
+        }
+
+        _cache.Resynchronize(tab.Id, files);
+        tab.UpdateTabTitle();
 
         if (insertionIndex >= 0 && tab.Gallery.IsGalleryDocked.CurrentValue)
         {
@@ -207,20 +220,6 @@ public class FileWatcherService(
                 item.Image.Value = thumb;
             }
         }
-
-        var currentFile = tab.Model?.FileInfo;
-        if (currentFile != null && files != null)
-        {
-            var newIndex = files.FindIndex(x =>
-                x.FullName.AsSpan().Equals(currentFile.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase));
-            if (newIndex >= 0)
-            {
-                tab.ImageIterator.SetCurrentIndex(newIndex);
-            }
-        }
-
-        _cache.Resynchronize(tab.Id, files);
-        tab.UpdateTabTitle();
     }
 
     private async ValueTask OnFileDeletedAsync(TabViewModel tab, FileSystemEventArgs e)
@@ -234,23 +233,23 @@ public class FileWatcherService(
         thumbnailCache?.Remove(fullPath);
         
         var oldIndex = tab.ImageIterator.CurrentIndex;
-        var currentFile = tab.Model?.FileInfo;
-        var wasCurrentFileDeleted =
-            currentFile?.FullName.AsSpan().Equals(e.FullPath.AsSpan(), StringComparison.OrdinalIgnoreCase) ?? false;
+        var currentFile = tab.Model.FileInfo;
+        if (currentFile is null)
+        {
+            return;
+        }
+        var wasCurrentFileDeleted = currentFile.FullName.AsSpan().Equals(e.FullPath.AsSpan(), StringComparison.OrdinalIgnoreCase);
 
         if (tab.ImageIterator.Files is not List<FileInfo> files)
         {
             return;
         }
         var removeIndex = files.FindIndex(x => x.FullName.AsSpan().Equals(fullPath.AsSpan(), StringComparison.OrdinalIgnoreCase));
-        if (removeIndex >= 0)
+        if (removeIndex is -1)
         {
-            files.RemoveAt(removeIndex);
-            if (tab.Gallery.GalleryItems.Count > removeIndex)
-            {
-                tab.Gallery.GalleryItems.RemoveAt(removeIndex);
-            }
+            return;
         }
+        files.RemoveAt(removeIndex);
         
         if (files.Count is 0)
         {
@@ -270,19 +269,21 @@ public class FileWatcherService(
         }
         else
         {
-            if (currentFile != null)
+            var newIndex = files.FindIndex(x =>
+                x.FullName.AsSpan().Equals(currentFile.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase));
+            if (newIndex >= 0)
             {
-                var newIndex = files.FindIndex(x =>
-                    x.FullName.AsSpan().Equals(currentFile.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase));
-                if (newIndex >= 0)
-                {
-                    tab.ImageIterator.SetCurrentIndex(newIndex);
-                }
+                tab.ImageIterator.SetCurrentIndex(newIndex);
             }
         }
 
         _cache.Resynchronize(tab.Id, files);
         tab.UpdateTabTitle();
+        
+        if (tab.Gallery.GalleryItems.Count > removeIndex)
+        {
+            tab.Gallery.GalleryItems.RemoveAt(removeIndex);
+        }
     }
 
     private async ValueTask OnFileRenamedAsync(TabViewModel tab, RenamedEventArgs e)
