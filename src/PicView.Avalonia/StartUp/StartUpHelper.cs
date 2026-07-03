@@ -127,7 +127,7 @@ public static class StartUpHelper
         HandlePostWindowUpdates(vm, desktop, window);
     }
     
-    public static void HandleWindowScalingMode(CoreViewModel vm, MainWindow window, bool shouldCenter = true)
+    public static void HandleWindowScalingMode(CoreViewModel vm, MainWindow window, bool adjustPos = true)
     {
         ScreenHelper.UpdateScreenSize(window);
 
@@ -146,13 +146,16 @@ public static class StartUpHelper
         }
         else if (Settings.WindowProperties.AutoFit)
         {
-            window.WindowStartupLocation = shouldCenter ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
+            window.WindowStartupLocation = adjustPos ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
             WindowFunctions.SetAutoFit(vm.MainWindows.ActiveWindow.CurrentValue, window, false);
         }
         else 
         {
             WindowFunctions.SetSingleManualWindow(vm.MainWindows.ActiveWindow.CurrentValue, window);
-            WindowFunctions.InitializeWindowSizeAndPosition(window);
+            if (adjustPos)
+            {
+                WindowFunctions.InitializeWindowSizeAndPosition(window);
+            }
         }
     }
 
