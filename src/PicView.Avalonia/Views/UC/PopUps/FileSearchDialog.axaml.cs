@@ -30,14 +30,12 @@ public partial class FileSearchDialog : AnimatedPopUp
         Loaded += OnLoaded;
     }
 
-    private async ValueTask LoadSelectedFile(string source, CancellationToken ct)
+    private static async ValueTask LoadSelectedFile(string source, CancellationToken ct)
     {
         if (Application.Current.DataContext is not CoreViewModel core)
         {
             return;
         }
-
-        _ = AnimatedClosing();
 
         await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.LoadFromStringAsync(source);
     }
@@ -47,6 +45,13 @@ public partial class FileSearchDialog : AnimatedPopUp
         SetupSearchSubscription();
         SearchBox.Focus();        
         AddHandler(KeyDownEvent, KeysDownAsync, RoutingStrategies.Tunnel);
+        
+        if (Application.Current.DataContext is not CoreViewModel core)
+        {
+            return;
+        }
+
+        core.SharedNavigationService.LoadFromStringCommand.Subscribe(_ => CloseMenu(sender, e)).AddTo(ref _disposables);
     }
 
     private async ValueTask KeysDownAsync(object? sender, KeyEventArgs e)

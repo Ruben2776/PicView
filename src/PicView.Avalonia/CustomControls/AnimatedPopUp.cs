@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 using Avalonia.Media;
@@ -104,9 +105,19 @@ public class AnimatedPopUp : ContentControl
 
     public async Task AnimatedClosing(bool remove = true)
     {
-        if ( TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        MainWindow mainWindow;
+        if (TopLevel.GetTopLevel(this) is MainWindow TopLevelMainWindow)
         {
-            return;
+            mainWindow = TopLevelMainWindow;
+        }
+        else
+        {
+            if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop 
+                || desktop.MainWindow is not MainWindow desktopMainWindow)
+            {
+                return;
+            }
+            mainWindow = desktopMainWindow;
         }
         
         if (mainWindow.DataContext is MainWindowViewModel vm)
@@ -127,7 +138,8 @@ public class AnimatedPopUp : ContentControl
         );
         if (remove)
         {
-            mainWindow.UIHelper.GetMainView.MainPanel.Children.Remove(this);
+            var removed = mainWindow.UIHelper.GetMainView.MainPanel.Children.Remove(this);
+            Console.WriteLine(removed);
         }
         else
         {
