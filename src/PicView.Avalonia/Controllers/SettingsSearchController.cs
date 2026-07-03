@@ -667,11 +667,6 @@ public class SettingsSearchController(SettingsView view) : IDisposable
             return;
         }
 
-        if (Math.Abs(view.ContentScrollViewer.Offset.Y - section.Bounds.Y) < 1.0)
-        {
-            return;
-        }
-
         PerformProgrammaticScroll(section.Bounds.Y);
     }
 

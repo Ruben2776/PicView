@@ -1,8 +1,8 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="ScrollBar" x:Key="MainScrollbar">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="MainScrollbar" TargetType="ScrollBar">
         <Setter Property="Cursor" Value="Arrow" />
 
         <Style Selector="^:horizontal">
@@ -11,78 +11,76 @@
             <Setter Property="Template">
                 <ControlTemplate>
                     <Border
-                        Background="{DynamicResource WindowButtonBackgroundColor}"
                         Name="PART_Track"
+                        Background="{DynamicResource WindowButtonBackgroundColor}"
                         UseLayoutRounding="False">
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <RepeatButton
+                                Name="PART_LineUpButton"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Width="16"
+                                Height="16"
+                                VerticalAlignment="Center"
                                 Background="Transparent"
                                 Classes="repeat"
                                 Focusable="False"
-                                Grid.Column="0"
-                                Grid.Row="0"
-                                Height="16"
-                                Interval="55"
-                                MinWidth="30"
-                                Name="PART_LineUpButton"
-                                VerticalAlignment="Center"
-                                Width="16">
+                                Interval="55">
                                 <Path
-                                    Data="{StaticResource FilledArrowLeftGeometry}"
-                                    Fill="{TemplateBinding Foreground}"
+                                    Width="12"
                                     Height="12"
                                     HorizontalAlignment="Center"
-                                    Stretch="Fill"
                                     VerticalAlignment="Center"
-                                    Width="12" />
+                                    Data="{StaticResource FilledArrowLeftGeometry}"
+                                    Fill="{TemplateBinding Foreground}"
+                                    Stretch="Fill" />
                             </RepeatButton>
                             <Track
-                                DeferThumbDrag="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                                Grid.Column="1"
                                 Grid.Row="1"
+                                Grid.Column="1"
+                                DeferThumbDrag="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                                 Maximum="{TemplateBinding Maximum}"
                                 Minimum="{TemplateBinding Minimum}"
                                 Orientation="{TemplateBinding Orientation}"
+                                ViewportSize="{TemplateBinding ViewportSize}"
                                 Value="{TemplateBinding Value,
-                                                        Mode=TwoWay}"
-                                ViewportSize="{TemplateBinding ViewportSize}">
+                                                        Mode=TwoWay}">
                                 <Track.DecreaseButton>
                                     <RepeatButton
+                                        Name="PART_PageUpButton"
                                         Background="Transparent"
                                         Classes="repeattrack"
                                         Focusable="False"
-                                        Interval="55"
-                                        Name="PART_PageUpButton" />
+                                        Interval="55" />
                                 </Track.DecreaseButton>
                                 <Track.IncreaseButton>
                                     <RepeatButton
+                                        Name="PART_PageDownButton"
                                         Background="Transparent"
                                         Classes="repeattrack"
                                         Focusable="False"
-                                        Interval="55"
-                                        Name="PART_PageDownButton" />
+                                        Interval="55" />
                                 </Track.IncreaseButton>
                                 <Thumb Name="thumb" />
                             </Track>
                             <RepeatButton
+                                Name="PART_LineDownButton"
+                                Grid.Column="2"
+                                Width="16"
+                                Height="16"
+                                VerticalAlignment="Center"
                                 Background="Transparent"
                                 Classes="repeat"
                                 Focusable="False"
-                                Grid.Column="2"
-                                Height="16"
-                                Interval="55"
-                                MinWidth="30"
-                                Name="PART_LineDownButton"
-                                VerticalAlignment="Center"
-                                Width="16">
+                                Interval="55">
                                 <Path
-                                    Data="{StaticResource FilledArrowRightGeometry}"
-                                    Fill="{TemplateBinding Foreground}"
+                                    Width="12"
                                     Height="12"
                                     HorizontalAlignment="Center"
-                                    Stretch="Fill"
                                     VerticalAlignment="Center"
-                                    Width="12" />
+                                    Data="{StaticResource FilledArrowRightGeometry}"
+                                    Fill="{TemplateBinding Foreground}"
+                                    Stretch="Fill" />
                             </RepeatButton>
                         </Grid>
                     </Border>
@@ -101,70 +99,68 @@
                         UseLayoutRounding="False">
                         <Grid RowDefinitions="Auto,*,Auto">
                             <RepeatButton
+                                Name="PART_LineUpButton"
+                                Grid.Row="0"
+                                HorizontalAlignment="Center"
                                 Background="Transparent"
                                 Classes="repeat"
                                 Focusable="False"
-                                Grid.Row="0"
-                                HorizontalAlignment="Center"
-                                Interval="55"
-                                MinHeight="{StaticResource ScrollBarThickness}"
-                                Name="PART_LineUpButton">
+                                Interval="55">
                                 <Path
-                                    Data="{StaticResource FilledArrowUpGeometry}"
-                                    Fill="{TemplateBinding Foreground}"
+                                    Width="16"
                                     Height="16"
                                     HorizontalAlignment="Center"
-                                    Stretch="Fill"
                                     VerticalAlignment="Center"
-                                    Width="16" />
+                                    Data="{StaticResource FilledArrowUpGeometry}"
+                                    Fill="{TemplateBinding Foreground}"
+                                    Stretch="Fill" />
                             </RepeatButton>
                             <Track
-                                DeferThumbDrag="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                                Grid.Column="1"
                                 Grid.Row="1"
+                                Grid.Column="1"
+                                DeferThumbDrag="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                                 IsDirectionReversed="True"
                                 Maximum="{TemplateBinding Maximum}"
                                 Minimum="{TemplateBinding Minimum}"
                                 Orientation="{TemplateBinding Orientation}"
+                                ViewportSize="{TemplateBinding ViewportSize}"
                                 Value="{TemplateBinding Value,
-                                                        Mode=TwoWay}"
-                                ViewportSize="{TemplateBinding ViewportSize}">
+                                                        Mode=TwoWay}">
                                 <Track.DecreaseButton>
                                     <RepeatButton
+                                        Name="PART_PageUpButton"
                                         Background="Transparent"
                                         Classes="repeattrack"
                                         Focusable="False"
-                                        Interval="55"
-                                        Name="PART_PageUpButton" />
+                                        Interval="55" />
                                 </Track.DecreaseButton>
                                 <Track.IncreaseButton>
                                     <RepeatButton
+                                        Name="PART_PageDownButton"
                                         Background="Transparent"
                                         Classes="repeattrack"
                                         Focusable="False"
-                                        Interval="55"
-                                        Name="PART_PageDownButton" />
+                                        Interval="55" />
                                 </Track.IncreaseButton>
                                 <Thumb Name="thumb" />
                             </Track>
                             <RepeatButton
+                                Name="PART_LineDownButton"
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                HorizontalAlignment="Center"
                                 Background="Transparent"
                                 Classes="repeat"
                                 Focusable="False"
-                                Grid.Column="2"
-                                Grid.Row="2"
-                                HorizontalAlignment="Center"
-                                Interval="55"
-                                MinHeight="{StaticResource ScrollBarThickness}"
-                                Name="PART_LineDownButton">
+                                Interval="55">
                                 <Path
-                                    Data="{StaticResource FilledArrowDownGeometry}"
-                                    Fill="{TemplateBinding Foreground}"
+                                    Width="16"
                                     Height="16"
                                     HorizontalAlignment="Center"
-                                    Stretch="Fill"
                                     VerticalAlignment="Center"
-                                    Width="16" />
+                                    Data="{StaticResource FilledArrowDownGeometry}"
+                                    Fill="{TemplateBinding Foreground}"
+                                    Stretch="Fill" />
                             </RepeatButton>
                         </Grid>
                     </Border>
