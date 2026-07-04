@@ -978,8 +978,6 @@
         <customControls:DraggableTabControl
             x:Name="MainTabControl"
             Background="{DynamicResource SecondaryBackgroundColor}"
-            BorderBrush="{DynamicResource TertiaryBorderColor}"
-            BorderThickness="0,0,0,1"
             DataContext="{CompiledBinding WindowTabs}"
             ItemsSource="{CompiledBinding Tabs.Value,
                                           Mode=TwoWay}"
@@ -1033,7 +1031,7 @@
 
             <customControls:DraggableTabControl.ContentTemplate>
                 <DataTemplate DataType="viewModels:TabViewModel">
-                    <ContentControl ClipToBounds="True" Content="{Binding CurrentView.Value, Mode=OneWay}" />
+                    <ContentControl Content="{Binding CurrentView.Value, Mode=OneWay}" />
                 </DataTemplate>
             </customControls:DraggableTabControl.ContentTemplate>
 

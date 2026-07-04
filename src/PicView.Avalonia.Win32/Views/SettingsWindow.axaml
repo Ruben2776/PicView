@@ -127,7 +127,6 @@
                                                Mode=OneWay}"
                         TextAlignment="Center" />
 
-
                 </DockPanel>
             </Border>
 

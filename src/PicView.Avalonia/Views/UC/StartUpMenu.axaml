@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:TabViewModel"
-    Background="Transparent">
+    Background="{DynamicResource WindowBackgroundColor}">
     <UserControl.Resources>
         <SolidColorBrush x:Key="SelectFileBrush" Color="{StaticResource SecondaryTextColor}" />
         <SolidColorBrush x:Key="OpenLastFileBrush" Color="{StaticResource SecondaryTextColor}" />
