@@ -134,6 +134,9 @@ public partial class SettingsView : UserControl
         ZoomSection.ShowZoomPercentageToggleButton.Classes.Remove("altHover");
         ZoomSection.ShowZoomPercentageToggleButton.Classes.Add("hover");
         
+        ZoomSection.ShowZoomPreviewerToggleButton.Classes.Remove("altHover");
+        ZoomSection.ShowZoomPreviewerToggleButton.Classes.Add("hover");
+        
         MouseSection.TouchPadButton.Classes.Remove("altHover");
         MouseSection.TouchPadButton.Classes.Add("hover");
         

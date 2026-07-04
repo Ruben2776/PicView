@@ -24,6 +24,10 @@ public partial class WinTitleBar : MainTitleBar
             {
                 ApplyGlassThemeStyles();
             }
+            else if (!Settings.Theme.Dark)
+            {
+                ApplyLightThemeStyles();
+            }
 
             InitializeEventHandlers();
         };
@@ -43,13 +47,26 @@ public partial class WinTitleBar : MainTitleBar
         GlassThemeHelper.ApplyTransparentStyle(MenuButton);
         GlassThemeHelper.ApplyTransparentStyle(MainMenu);
 
-        var glassForeground = UIHelper.GetBrush("SecondaryTextColor");
-        EditableTitlebar.Foreground = glassForeground;
-        CloseButton.Foreground = glassForeground;
-        MinimizeButton.Foreground = glassForeground;
-        RestoreButton.Foreground = glassForeground;
-        DropDownMenuButton.Foreground = glassForeground;
-        MenuButton.Foreground = glassForeground;
+        SetSecondaryForeground();
+    }
+    
+    private void SetSecondaryForeground()
+    {
+        var secondaryTextColor = UIHelper.GetBrush("SecondaryTextColor");
+        EditableTitlebar.Foreground = secondaryTextColor;
+        CloseButton.Foreground = secondaryTextColor;
+        MinimizeButton.Foreground = secondaryTextColor;
+        RestoreButton.Foreground = secondaryTextColor;
+        DropDownMenuButton.Foreground = secondaryTextColor;
+        MenuButton.Foreground = secondaryTextColor;
+    }
+    
+    private void ApplyLightThemeStyles()
+    {
+        UIHelper.SwitchHoverBorderClass(MenuButton);
+        UIHelper.SwitchHoverBorderClass(SearchButton);
+        UIHelper.SwitchHoverBorderClass(DropDownMenuButton);
+        UIHelper.SwitchHoverBorderClass(CreateTabButton);
     }
     
     private void InitializeEventHandlers()

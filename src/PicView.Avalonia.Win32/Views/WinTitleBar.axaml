@@ -1078,7 +1078,7 @@
 
             </StackPanel>
 
-            <Button
+            <customControls:IconButton
                 x:Name="DropDownMenuButton"
                 Width="30"
                 Margin="2,3,7,3"
@@ -1088,18 +1088,15 @@
                 Command="{CompiledBinding TopTitlebarViewModel.ToggleDropDownMenuCommand}"
                 CommandParameter="{CompiledBinding}"
                 CornerRadius="6"
+                Data="{StaticResource FilledArrowDownGeometry}"
                 DockPanel.Dock="Right"
+                Foreground="{DynamicResource MainTextColor}"
+                IconHeight="17"
+                IconWidth="17"
                 IsTabStop="False"
-                IsVisible="{Binding TopTitlebarViewModel.IsMenuButtonVisible.Value}">
-                <Path
-                    Width="17"
-                    Height="17"
-                    Data="{StaticResource FilledArrowDownGeometry}"
-                    Fill="{DynamicResource MainTextColor}"
-                    Stretch="Fill" />
-            </Button>
+                IsVisible="{Binding TopTitlebarViewModel.IsMenuButtonVisible.Value}" />
 
-            <Button
+            <customControls:IconButton
                 x:Name="CreateTabButton"
                 Width="30"
                 Margin="0,3,2,3"
@@ -1108,17 +1105,13 @@
                 Classes="noBorderHover"
                 Command="{CompiledBinding WindowTabs.CreateTab}"
                 CornerRadius="6"
+                Data="{StaticResource AddGeometry}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"
+                IconHeight="13"
+                IconWidth="13"
                 IsTabStop="False"
-                IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}">
-                <Path
-                    Width="13"
-                    Height="13"
-                    Data="{StaticResource AddGeometry}"
-                    Fill="{DynamicResource MainTextColor}"
-                    Stretch="Fill" />
-            </Button>
+                IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}" />
 
             <uc:EditableTitlebar
                 x:Name="EditableTitlebar"

@@ -182,7 +182,7 @@ public partial class DropDownMenu : AnimatedMenu
     private void ApplyLightTheme()
     {
         var white = Brushes.White;
-        MainBorder.Background = white;
+        MainBorder.Background = new SolidColorBrush(Color.FromRgb(251, 251, 251));
 
         // Gallery
         MainGalleryButton.Classes.Remove("altHover");
