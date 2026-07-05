@@ -34,18 +34,6 @@ public partial class ImageViewer : UserControl, IDisposable
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
         InitializeImageTransformer();
-
-        if (DataContext is TabViewModel tab)
-        {
-            if (!Settings.UIProperties.ShowInterface && Settings.UIProperties.ShowAltInterfaceButtons)
-            {
-                tab.Hoverbar.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
-            }
-            else
-            {
-                tab.Hoverbar.IsHoverbarVisible.Value = false;
-            }
-        }
         
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
         AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);

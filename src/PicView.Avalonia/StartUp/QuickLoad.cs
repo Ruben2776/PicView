@@ -90,12 +90,15 @@ public static class QuickLoad
         {
             core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
         }, DispatcherPriority.Send);
+        
         var safeFileName = HttpManager.GetSafeFileName(url);
         var destPath = TempFileManager.GetNewTempFilePath(safeFileName);
         using var client = new HttpClientDownloadWithProgress(url, destPath);
-        Debug.Assert(core.MainWindows.ActiveWindow.CurrentValue != null);
         var tab = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue;
+        
         TabNavigationInitializer.Initialize(core, mainWindow);
+        ShowHoverBarIfNeeded(core);
+        
         client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
         {
             var displayProgress = HttpManager.GetProgressDisplay(totalFileSize, totalBytesDownloaded, progressPercentage);
@@ -122,7 +125,7 @@ public static class QuickLoad
         tab.SourceURL = url;
         tab.SingleImageType = SingleImageType.Url;
         tab.UpdateTabTitle();
-
+        
         FileHistoryManager.Add(url);
 
         if (Settings.UIProperties.IsTaskbarProgressEnabled)
@@ -204,6 +207,7 @@ public static class QuickLoad
 
         vm.IsLoadingIndicatorShown.Value = false;
         tab.UpdateTabTitle();
+        ShowHoverBarIfNeeded(core);
         if (Settings.UIProperties.IsTaskbarProgressEnabled)
         {
             core.PlatformService.SetTaskbarProgress((ulong)tab.ImageIterator.CurrentIndex, (ulong)tab.ImageIterator.Files.Count);
@@ -239,6 +243,7 @@ public static class QuickLoad
             ViewChangeHelper.SwitchToStartUpMenu(core.MainWindows.ActiveWindow.CurrentValue);
             return;
         }
+        ShowHoverBarIfNeeded(core);
         core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = false;
         await LoadGalleryIfNeeded(core).ConfigureAwait(false);
     }
@@ -262,6 +267,19 @@ public static class QuickLoad
         else
         {
             Settings.Gallery.DockPosition = GalleryDockPosition.Closed;
+        }
+    }
+
+    private static void ShowHoverBarIfNeeded(CoreViewModel core)
+    {
+        var tab = core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value;
+        if (!Settings.UIProperties.ShowInterface && Settings.UIProperties.ShowAltInterfaceButtons)
+        {
+            tab.Hoverbar.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
+        }
+        else
+        {
+            tab.Hoverbar.IsHoverbarVisible.Value = false;
         }
     }
 
