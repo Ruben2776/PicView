@@ -1,48 +1,48 @@
 <UserControl
     x:Class="PicView.Avalonia.Views.Config.GeneralSettingsView"
-    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:CoreViewModel">
 
     <StackPanel HorizontalAlignment="Center">
 
         <StackPanel Classes="searchHeader">
             <Image
+                Width="18"
                 Height="18"
-                Source="{StaticResource GeneralSettingsImage}"
-                Width="18" />
+                Source="{StaticResource GeneralSettingsImage}" />
             <TextBlock
-                Classes="txt bold"
                 Margin="0,20,0,20"
+                Classes="txt bold"
                 Text="{CompiledBinding Translation.GeneralSettings.Value,
                                        Mode=OneWay}" />
         </StackPanel>
 
         <Border
-            Classes="searchBorder"
             Margin="0,10,0,0"
-            ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.StartUpSearchTags}">
+            ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.StartUpSearchTags}"
+            Classes="searchBorder">
             <StackPanel>
                 <TextBlock
-                    Classes="txt bold"
                     Margin="0,0,0,10"
+                    Classes="txt bold"
                     Text="{CompiledBinding Translation.ApplicationStartup.Value,
                                            Mode=OneWay}" />
                 <ComboBox
+                    x:Name="ApplicationStartupBox"
+                    Width="300"
+                    Margin="0,6,0,10"
+                    Padding="5,7,0,7"
                     Background="{DynamicResource SecondaryBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    Margin="0,6,0,10"
-                    Padding="5,7,0,7"
                     SelectedIndex="{CompiledBinding SettingsViewModel.StartUpIndex.Value,
-                                                    Mode=TwoWay}"
-                    Width="300"
-                    x:Name="ApplicationStartupBox">
+                                                    Mode=TwoWay}">
                     <ComboBoxItem Content="{CompiledBinding Translation.None.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem Content="{CompiledBinding Translation.OpenLastFile.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                 </ComboBox>
@@ -50,71 +50,72 @@
         </Border>
 
         <TextBlock
-            Classes="txt bold searchHeader"
             Margin="0,20,0,10"
             Padding="7,0,7,0"
+            Classes="txt bold searchHeader"
             Text="{CompiledBinding Translation.FileManagement.Value,
                                    Mode=OneWay}" />
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.DeleteFileDialogSearchTags}">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.DeleteFileDialogSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <customControls:TextToggleButton
+                    x:Name="DeletingToggleButton"
                     Classes="altHover settingsToggleButton"
                     IsChecked="{CompiledBinding SettingsViewModel.IsShowingPermanentDeletionDialog.Value,
                                                 Mode=TwoWay}"
                     Text="{CompiledBinding Translation.ShowConfirmationDialogWhenPermanentlyDeletingFile.Value,
-                                           Mode=OneWay}"
-                    x:Name="DeletingToggleButton" />
+                                           Mode=OneWay}" />
 
                 <customControls:TextToggleButton
+                    x:Name="RecyclingToggleButton"
                     Classes="altHover settingsToggleButton"
                     IsChecked="{CompiledBinding SettingsViewModel.IsShowingRecycleDialog.Value,
                                                 Mode=TwoWay}"
                     Text="{CompiledBinding Translation.ShowConfirmationDialogWhenMovingFileToRecycleBin.Value,
-                                           Mode=OneWay}"
-                    x:Name="RecyclingToggleButton" />
+                                           Mode=OneWay}" />
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.SubDirectorySearchTags}">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.SubDirectorySearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
+                x:Name="SubdirectoriesToggleButton"
                 Classes="altHover settingsToggleButton"
-                IsChecked="{CompiledBinding SettingsViewModel.IsIncludingSubdirectories.Value,
+                IsChecked="{CompiledBinding !SettingsViewModel.IsIncludingSubdirectories.Value,
                                             Mode=TwoWay}"
                 Text="{CompiledBinding Translation.SearchSubdirectory.Value,
-                                       Mode=OneWay}"
-                x:Name="SubdirectoriesToggleButton" />
+                                       Mode=OneWay}" />
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.FileHistorySearchTags}">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.FileHistorySearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
+                x:Name="FileHistoryToggleButton"
                 Classes="altHover settingsToggleButton"
+                Command="{Binding MainWindows.ActiveWindow.Value.ToggleFileHistoryCommand}"
                 IsChecked="{CompiledBinding SettingsViewModel.IsFileHistoryEnabled.Value,
-                                            Mode=TwoWay}"
+                                            Mode=OneWay}"
                 Text="{CompiledBinding Translation.ToggleFileHistory.Value,
-                                       Mode=OneWay}"
-                x:Name="FileHistoryToggleButton" />
+                                       Mode=OneWay}" />
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WhenDeletingFileSearchTags}">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WhenDeletingFileSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock
-                    Classes="txt bold"
                     Margin="0,20,0,10"
+                    Classes="txt bold"
                     Text="{CompiledBinding Translation.WhenDeletingAFile.Value,
                                            Mode=OneWay}" />
                 <ComboBox
+                    x:Name="DeletingFileBox"
+                    Width="300"
+                    Margin="0,6,0,10"
+                    Padding="5,7,0,7"
                     Background="{DynamicResource SecondaryBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    Margin="0,6,0,10"
-                    Padding="5,7,0,7"
                     SelectedIndex="{CompiledBinding SettingsViewModel.DeletionIndex.Value,
-                                                    Mode=TwoWay}"
-                    Width="300"
-                    x:Name="DeletingFileBox">
+                                                    Mode=TwoWay}">
                     <ComboBoxItem Content="{CompiledBinding Translation.NavigateForwards.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem Content="{CompiledBinding Translation.NavigateBackwards.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                 </ComboBox>
