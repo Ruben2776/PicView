@@ -46,6 +46,11 @@ public partial class StartUpMenu : UserControl
         PasteButton.PointerExited += PasteButtonOnPointerExited;
         PasteButton.AddHandler(PointerPressedEvent, PasteClick, RoutingStrategies.Tunnel);
 
+        if (!Settings.Theme.Dark)
+        {
+            Background = new SolidColorBrush(Color.FromArgb(242, 217, 217, 217));
+        }
+
         if (DataContext is not TabViewModel tab)
         {
             return;

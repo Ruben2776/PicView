@@ -377,6 +377,7 @@
   "ShowDockedGalleryWhenUiIsHidden": "当用户界面隐藏时显示底部图库",
   "ShowFadeInButtonsOnHover": "将鼠标悬停时显示淡入按钮",
   "ShowFileSavingDialog": "查看文件保存对话框",
+  "ShowFullPathInTitleBar": "在标题栏中显示完整路径",
   "ShowHoverNavigationBar": "鼠标悬停时显示导航栏",
   "ShowImageGallery": "显示图片相册",
   "ShowImageInfo": "显示图像信息",

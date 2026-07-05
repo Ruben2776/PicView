@@ -379,6 +379,7 @@
   "ShowDockedGalleryWhenUiIsHidden": "Afișează galeria de jos când interfața utilizatorului este ascunsă",
   "ShowFadeInButtonsOnHover": "Afișează butoanele fade-in la trecerea mouse-ului",
   "ShowFileSavingDialog": "Afișează dialogul de salvare fișier",
+  "ShowFullPathInTitleBar": "Afișează calea completă în bara de titlu",
   "ShowHoverNavigationBar": "Afișează bara de navigare la trecerea mouse-ului",
   "ShowImageGallery": "Arată galeria de imagini",
   "ShowImageInfo": "Arată informațiile imaginii",

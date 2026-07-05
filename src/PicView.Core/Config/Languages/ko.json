@@ -379,6 +379,7 @@
   "ShowDockedGalleryWhenUiIsHidden": "UI가 숨겨져 있을 때 하단 갤러리 표시",
   "ShowFadeInButtonsOnHover": "마우스를 올리면 페이드인 버튼 표시",
   "ShowFileSavingDialog": "파일 저장 대화상자 표시",
+  "ShowFullPathInTitleBar": "제목 표시줄에 전체 경로 표시",
   "ShowHoverNavigationBar": "마우스를 올리면 탐색 표시줄 표시",
   "ShowImageGallery": "이미지 갤러리 표시",
   "ShowImageInfo": "이미지 정보 표시",

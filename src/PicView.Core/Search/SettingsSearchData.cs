@@ -10,6 +10,7 @@ public class SettingsSearchData
     public string DeleteFileDialogSearchTags { get; }
     public string SubDirectorySearchTags { get; }
     public string FileHistorySearchTags { get; }
+    public string FullPathInTitleBarySearchTags { get; }
     public string WhenDeletingFileSearchTags { get; }
     public string ThemeSearchTags { get; }
     public string ColorSearchTags { get; }
@@ -95,15 +96,24 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append(TranslationManager.Translation.Folder);
         sb.Append(space);
-        sb.Append("File system");
+        sb.Append(TranslationManager.Translation.FileManagement);
         sb.Append(space);
         sb.Append(TranslationManager.Translation.Navigation);
         SubDirectorySearchTags = sb.ToString();
         
         sb.Append(TranslationManager.Translation.OpenFileHistory);
         sb.Append(space);
-        sb.Append("File system");
+        sb.Append(TranslationManager.Translation.FileManagement);
         FileHistorySearchTags = sb.ToString();
+        
+        sb.Clear();
+        
+        sb.Append(TranslationManager.Translation.ShowFullPathInTitleBar);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.File);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.FileManagement);
+        FullPathInTitleBarySearchTags = sb.ToString();
         
         sb.Clear();
         

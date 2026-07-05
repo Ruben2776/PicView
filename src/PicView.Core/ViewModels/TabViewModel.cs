@@ -155,8 +155,16 @@ public class TabViewModel(Action<uint> closeTab, IFileWatcherService? fileWatche
         
         var index = ImageIterator.CurrentIndex;
         var windowTitles = GetTitles();
+        if (Settings.UIProperties.ShowFullPathInTitleBar)
+        {
+            Title.Value = windowTitles.FilePathTitle;
+        }
+        else
+        {
+            Title.Value = windowTitles.BaseTitle;
+        }
         WindowTitle.Value = windowTitles.TitleWithAppName;
-        Title.Value = windowTitles.BaseTitle;
+
         TitleTooltip.Value = windowTitles.FilePathTitle;
         if (Settings.ImageScaling.ShowImageSideBySide && SecondaryModel is not null)
         {
@@ -182,7 +190,8 @@ public class TabViewModel(Action<uint> closeTab, IFileWatcherService? fileWatche
 
             if (Settings.ImageScaling.ShowImageSideBySide && SecondaryModel is not null)
             {
-                var secondInfo = new ImageTitleInfo(SecondaryModel.FileInfo, SecondaryModel.PixelWidth, SecondaryModel.PixelHeight, index + 1, ImageIterator.Files.Count);
+                var secondIndex = ImageIterator.SecondaryCurrentIndex;
+                var secondInfo = new ImageTitleInfo(SecondaryModel.FileInfo, SecondaryModel.PixelWidth, SecondaryModel.PixelHeight, secondIndex, ImageIterator.Files.Count);
                 return ImageTitleFormatter.GenerateTitleForSideBySide(firstInfo, secondInfo, zoom, ImageIterator.Files);
             }
 
@@ -208,8 +217,8 @@ public class TabViewModel(Action<uint> closeTab, IFileWatcherService? fileWatche
             }
             var zoom = ZoomLevel.CurrentValue;
             var singleTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, nameTitle, zoom);
-            WindowTitle.Value = singleTitles.TitleWithAppName;
             Title.Value = singleTitles.BaseTitle;
+            WindowTitle.Value = singleTitles.TitleWithAppName;
             TitleTooltip.Value = singleTitles.FilePathTitle;
         }
         

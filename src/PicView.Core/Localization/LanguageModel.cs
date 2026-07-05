@@ -393,6 +393,7 @@ public class LanguageModel
     public string? ShowConfirmationOnEsc { get; set; }
     public string? ShowFadeInButtonsOnHover { get; set; }
     public string? ShowFileSavingDialog { get; set; }
+    public string? ShowFullPathInTitleBar { get; set; }
     public string? ShowHoverNavigationBar { get; set; }
     public string? ShowImageGallery { get; set; }
     public string? ShowImageInfo { get; set; }

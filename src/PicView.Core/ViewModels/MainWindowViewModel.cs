@@ -515,6 +515,9 @@ public class MainWindowViewModel : IDisposable
 
     public ReactiveCommand ToggleFileHistoryCommand { get; }
     private async ValueTask ToggleFileHistory(Unit unit, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.ToggleFileHistory(); }
+    
+    public ReactiveCommand ToggleShowFullPathInTitleBarCommand { get; }
+    private async ValueTask ToggleShowFullPathInTitleBar(Unit unit, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.ToggleShowFullPathInTitleBar(); }
 
     #endregion
     
@@ -679,6 +682,7 @@ public class MainWindowViewModel : IDisposable
         ShowRecentHistoryFileCommand = new ReactiveCommand(ShowRecentHistoryFile);
         ToggleOpeningInSameWindowCommand = new ReactiveCommand(ToggleOpeningInSameWindow);
         ToggleFileHistoryCommand = new ReactiveCommand(ToggleFileHistory);
+        ToggleShowFullPathInTitleBarCommand = new ReactiveCommand(ToggleShowFullPathInTitleBar);
     }
 
     public void Dispose()
@@ -827,6 +831,7 @@ public class MainWindowViewModel : IDisposable
             ShowRecentHistoryFileCommand,
             ToggleOpeningInSameWindowCommand,
             ToggleFileHistoryCommand,
+            ToggleShowFullPathInTitleBarCommand,
             IsBottomToolbarShown,
             IsAutoFit,
             IsSideBySide,

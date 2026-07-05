@@ -375,6 +375,7 @@
   "ShowConfirmationOnEsc": "Prikaži dijalog za potvrdu pri pritisku na 'Esc'",
   "ShowFadeInButtonsOnHover": "Prikaži dugmad za postepeno pojavljivanje pri prelasku mišem",
   "ShowFileSavingDialog": "Prikaži dijalog za čuvanje fajla",
+  "ShowFullPathInTitleBar": "Prikaži punu putanju u naslovnoj traci",
   "ShowHoverNavigationBar": "Prikaži navigacionu traku za prelazak mišem",
   "ShowImageGallery": "Prikaži galeriju slika",
   "ShowImageInfo": "Prikaži informacije o slici",

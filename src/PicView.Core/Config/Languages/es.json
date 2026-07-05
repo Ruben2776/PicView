@@ -379,6 +379,7 @@
   "ShowDockedGalleryWhenUiIsHidden": "Mostrar galería inferior cuando la interfaz de usuario está oculta",
   "ShowFadeInButtonsOnHover": "Mostrar botones de desvanecimiento al pasar el ratón",
   "ShowFileSavingDialog": "Mostrar el cuadro de diálogo de guardar archivo",
+  "ShowFullPathInTitleBar": "Mostrar la ruta completa en la barra de título",
   "ShowHoverNavigationBar": "Mostrar barra de navegación al pasar el ratón",
   "ShowImageGallery": "Mostrar galería de imáagenes",
   "ShowImageInfo": "Mostrar Información de Imagen",

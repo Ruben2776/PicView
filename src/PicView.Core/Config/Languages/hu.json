@@ -379,6 +379,7 @@
   "ShowDockedGalleryWhenUiIsHidden": "Alsó galéria megjelenítése, ha a felhasználói felület rejtett",
   "ShowFadeInButtonsOnHover": "Elhalványulás gombok megjelenítése az egérrel való rámutatáskor",
   "ShowFileSavingDialog": "Fájlmentési párbeszédpanel megjelenítése",
+  "ShowFullPathInTitleBar": "Teljes elérési út megjelenítése a címsorban",
   "ShowHoverNavigationBar": "Navigációs sáv megjelenítése egérmutató fölé vitelekor",
   "ShowImageGallery": "Képgaléria megjelenítése",
   "ShowImageInfo": "Kép információ megjelenítése",

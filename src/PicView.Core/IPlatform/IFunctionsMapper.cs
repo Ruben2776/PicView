@@ -57,6 +57,8 @@ public interface IFunctionsMapper
     ValueTask ToggleConstrainBackgroundColor();
     ValueTask ChangeBackground();
     ValueTask ToggleDropDownMenu();
+    ValueTask ToggleFileHistory();
+    ValueTask ToggleShowFullPathInTitleBar();
     
     // Gallery
     ValueTask ToggleGallery();
@@ -138,9 +140,6 @@ public interface IFunctionsMapper
     ValueTask SortFilesRandomly();
     ValueTask SortFilesAscending();
     ValueTask SortFilesDescending();
-    
-    // File History
-    ValueTask ToggleFileHistory();
 
     // Ratings
     ValueTask Set0Star();

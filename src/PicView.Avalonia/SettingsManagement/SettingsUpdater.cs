@@ -194,6 +194,20 @@ public static class SettingsUpdater
         await SaveSettingsAsync();
     }
     
+    public static async Task ToggleShowFullPathInTitleBar(MainWindowViewModel vm)
+    {
+        if (Settings.UIProperties.ShowFullPathInTitleBar)
+        {
+            Settings.UIProperties.ShowFullPathInTitleBar = false;
+        }
+        else
+        {
+            Settings.UIProperties.ShowFullPathInTitleBar = true;
+        }
+        vm.WindowTabs.ActiveTab.CurrentValue.UpdateTabTitle();
+        await SaveSettingsAsync();
+    }
+    
     public static async Task ToggleSideBySide(MainWindow mainWindow)
     {
         if (Application.Current.DataContext is not CoreViewModel core)

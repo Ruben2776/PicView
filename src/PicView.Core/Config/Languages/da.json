@@ -379,6 +379,7 @@
   "ShowDockedGalleryWhenUiIsHidden": "Vis nederste galleri, når brugergrænsefladen er skjult",
   "ShowFadeInButtonsOnHover": "Vis skjulte knapper, når musen er i kanterne i programmet",
   "ShowFileSavingDialog": "Vis gem fil dialogen",
+  "ShowFullPathInTitleBar": "Vis fuld sti i titellinjen",
   "ShowHoverNavigationBar": "Vis navigationslinje ved museføring",
   "ShowImageGallery": "Vis billedgalleri",
   "ShowImageInfo": "Vis billede Info",

@@ -379,6 +379,7 @@
   "ShowDockedGalleryWhenUiIsHidden": "Untere Galerie anzeigen, wenn die Benutzeroberfläche ausgeblendet ist",
   "ShowFadeInButtonsOnHover": "Fade-in-Schaltflächen bei Mauszeiger anzeigen",
   "ShowFileSavingDialog": "Dateispeicherdialog anzeigen",
+  "ShowFullPathInTitleBar": "Vollständigen Pfad in der Titelleiste anzeigen",
   "ShowHoverNavigationBar": "Navigationsleiste bei Mauszeigeranzeige anzeigen",
   "ShowImageGallery": "Bildergalerie anzeigen",
   "ShowImageInfo": "Bildinformationen anzeigen",

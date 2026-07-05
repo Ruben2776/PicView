@@ -97,6 +97,17 @@
                                        Mode=OneWay}" />
         </Border>
 
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.FileHistorySearchTags}" Classes="searchBorder">
+            <customControls:TextToggleButton
+                x:Name="ShowFullPathInTitleBarToggleButton"
+                Classes="altHover settingsToggleButton"
+                Command="{Binding MainWindows.ActiveWindow.Value.ToggleShowFullPathInTitleBarCommand}"
+                IsChecked="{CompiledBinding SettingsViewModel.IsShowingFullPathInTitleBar.Value,
+                                            Mode=OneWay}"
+                Text="{CompiledBinding Translation.ShowFullPathInTitleBar.Value,
+                                       Mode=OneWay}" />
+        </Border>
+
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WhenDeletingFileSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock

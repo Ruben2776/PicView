@@ -35,6 +35,9 @@ public static class SettingsSearchIndex
         // File History
         if (t.OpenFileHistory != null)
             list.Add(new SettingsSearchItem(t.OpenFileHistory, data.FileHistorySearchTags));
+        
+        if (t.ShowFullPathInTitleBar != null)
+            list.Add(new SettingsSearchItem(t.ShowFullPathInTitleBar, data.FullPathInTitleBarySearchTags));
 
         // When Deleting File (Navigation)
         if (t.WhenDeletingAFile != null)

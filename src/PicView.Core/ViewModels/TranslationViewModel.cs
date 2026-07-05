@@ -303,6 +303,7 @@ public class TranslationViewModel
         ShowConfirmationOnEsc.Value = t.ShowConfirmationOnEsc;
         ShowFadeInButtonsOnHover.Value = t.ShowFadeInButtonsOnHover;
         ShowFileSavingDialog.Value = t.ShowFileSavingDialog;
+        ShowFullPathInTitleBar.Value = t.ShowFullPathInTitleBar;
         ShowHoverNavigationBar.Value = t.ShowHoverNavigationBar;
         ShowImageGallery.Value = t.ShowImageGallery;
         ShowInFolder.Value = t.ShowInFolder;
@@ -688,6 +689,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ShowConfirmationOnEsc { get; } = new();
     public BindableReactiveProperty<string?> ShowFadeInButtonsOnHover { get; } = new();
     public BindableReactiveProperty<string?> ShowFileSavingDialog { get; } = new();
+    public BindableReactiveProperty<string?> ShowFullPathInTitleBar { get; } = new();
     public BindableReactiveProperty<string?> ShowHoverNavigationBar { get; } = new();
     public BindableReactiveProperty<string?> ShowImageGallery { get; } = new();
     public BindableReactiveProperty<string?> ShowInFolder { get; } = new();

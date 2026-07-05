@@ -213,6 +213,8 @@ public class UIProperties
     /// 0 => None, 1 => Reset zoom, 2 => Toggle fullscreen
     /// </summary>
     public int DoubleClickBehavior { get; set; } = 1;
+    
+    public bool ShowFullPathInTitleBar { get; set; } = false;
 }
 
 public class Theme

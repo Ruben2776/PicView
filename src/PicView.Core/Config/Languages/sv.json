@@ -379,6 +379,7 @@
   "ShowDockedGalleryWhenUiIsHidden": "Visa nedre galleriet när användargränssnittet är dolt",
   "ShowFadeInButtonsOnHover": "Visa dolda knappar när musen är i kanterna av programmet",
   "ShowFileSavingDialog": "Visa spara fil-dialog",
+  "ShowFullPathInTitleBar": "Visa fullständig sökväg i namnlisten",
   "ShowHoverNavigationBar": "Visa navigeringsfält vid hovring",
   "ShowImageGallery": "Visa bildgalleri",
   "ShowImageInfo": "Visa bildinformation",

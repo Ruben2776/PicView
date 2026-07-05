@@ -379,6 +379,7 @@
   "ShowDockedGalleryWhenUiIsHidden": "Прикажи доњу галерију када је интерфејс сакривен",
   "ShowFadeInButtonsOnHover": "Прикажи дугмад за постепено појављивање при преласку мишем",
   "ShowFileSavingDialog": "Прикажи дијалог за чување фајла",
+  "ShowFullPathInTitleBar": "Прикажи пуну путању у насловној траци",
   "ShowHoverNavigationBar": "Прикажи навигациону траку за прелазак мишем",
   "ShowImageGallery": "Прикажи галерију слика",
   "ShowImageInfo": "Прикажи информације о слици",

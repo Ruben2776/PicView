@@ -379,6 +379,7 @@
   "ShowDockedGalleryWhenUiIsHidden": "UI が非表示のときに下部のギャラリーを表示する",
   "ShowFadeInButtonsOnHover": "マウスホバー時にフェードインボタンを表示する",
   "ShowFileSavingDialog": "ファイル保存ダイアログを表示",
+  "ShowFullPathInTitleBar": "タイトルバーにフルパスを表示",
   "ShowHoverNavigationBar": "マウスホバー時にナビゲーションバーを表示",
   "ShowImageGallery": "画像ギャラリーを表示",
   "ShowImageInfo": "画像情報を表示",

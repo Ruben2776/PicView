@@ -379,6 +379,7 @@
   "ShowDockedGalleryWhenUiIsHidden": "Arayüz gizlendiğinde alt galeriyi göster",
   "ShowFadeInButtonsOnHover": "Farenin üzerine gelindiğinde soluklaşan düğmeleri göster",
   "ShowFileSavingDialog": "Dosya kaydetme penceresini göster",
+  "ShowFullPathInTitleBar": "Başlık çubuğunda tam yolu göster",
   "ShowHoverNavigationBar": "Fareyle üzerine gelindiğinde gezinme çubuğunu göster",
   "ShowImageGallery": "Fotoğraf galerisini göster",
   "ShowImageInfo": "Görüntü bilgilerini göster",

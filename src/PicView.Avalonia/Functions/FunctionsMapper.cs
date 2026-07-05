@@ -996,6 +996,9 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     
     public async ValueTask ToggleFileHistory() =>
         await SettingsUpdater.ToggleFileHistory(vm).ConfigureAwait(false);
+    
+    public async ValueTask ToggleShowFullPathInTitleBar() =>
+        await SettingsUpdater.ToggleShowFullPathInTitleBar(vm).ConfigureAwait(false);
 
     #endregion
     
