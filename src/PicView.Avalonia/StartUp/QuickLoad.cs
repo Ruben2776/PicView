@@ -273,7 +273,8 @@ public static class QuickLoad
     private static void ShowHoverBarIfNeeded(CoreViewModel core)
     {
         var tab = core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value;
-        if (!Settings.UIProperties.ShowInterface && Settings.UIProperties.ShowAltInterfaceButtons)
+        if (!Settings.UIProperties.ShowInterface && Settings.UIProperties.ShowAltInterfaceButtons
+            || Settings.UIProperties.ShowAltInterfaceButtons && Settings.WindowProperties.Fullscreen)
         {
             tab.Hoverbar.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
         }
