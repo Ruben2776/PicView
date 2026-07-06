@@ -135,16 +135,8 @@ public static class StartUpHelper
         {
             Settings.WindowProperties.Margin = 45;
         }
-
-        if (Settings.WindowProperties.Maximized && !Settings.WindowProperties.Fullscreen)
-        {
-            vm.MainWindows.ActiveWindow.CurrentValue.PlatformWindowService.Maximize(false);
-        }
-        else if (Settings.WindowProperties.Fullscreen)
-        {
-            vm.MainWindows.ActiveWindow.CurrentValue.PlatformWindowService.Fullscreen(false);
-        }
-        else if (Settings.WindowProperties.AutoFit)
+        
+        else if (Settings.WindowProperties.AutoFit && !Settings.WindowProperties.Maximized && !Settings.WindowProperties.Fullscreen)
         {
             window.WindowStartupLocation = adjustPos ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
             WindowFunctions.SetAutoFit(vm.MainWindows.ActiveWindow.CurrentValue, window, false);
@@ -161,6 +153,17 @@ public static class StartUpHelper
 
     public static void HandlePostWindowUpdates(CoreViewModel core, IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
     {
+        var vm = core.MainWindows.ActiveWindow.CurrentValue;
+        // Need to delay setting fullscreen or maximized until after the window is shown to select the correct monitor
+        if (Settings.WindowProperties.Maximized && !Settings.WindowProperties.Fullscreen)
+        {
+            vm.PlatformWindowService.Maximize(false);
+        }
+        else if (Settings.WindowProperties.Fullscreen)
+        {
+            vm.PlatformWindowService.Fullscreen(false);
+        }
+        
         SetMemorySettings();
         
         BackGroundLoadings();
@@ -168,8 +171,8 @@ public static class StartUpHelper
         SetWindowEventHandlers(window);
         HandleThemeUpdates();
 
-        core.MainWindows.ActiveWindow.CurrentValue.ToolTip ??= new ToolTipViewModel();
-        TooltipHelper.StartTooltipSubscription(core.MainWindows.ActiveWindow.CurrentValue.ToolTip, window);
+        vm.ToolTip ??= new ToolTipViewModel();
+        TooltipHelper.StartTooltipSubscription(vm.ToolTip, window);
         
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
@@ -189,11 +192,10 @@ public static class StartUpHelper
             Task.Run(async() =>
             {
                 await KeybindingManager.LoadKeybindings(core.PlatformService);
-                core.MainWindows.ActiveWindow.Value.Mapper =
-                    new FunctionsMapper(core.MainWindows.ActiveWindow.CurrentValue, window);
+                core.MainWindows.ActiveWindow.Value.Mapper = new FunctionsMapper(vm, window);
                 FileHistoryManager.Initialize();
                 HandleWindowControlSettings(core, desktop);
-                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);
+                vm.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);
             });
         }
     }

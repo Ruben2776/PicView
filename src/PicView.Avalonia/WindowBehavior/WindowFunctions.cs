@@ -144,7 +144,7 @@ public static class WindowFunctions
         var shouldBeTopMost = !Settings.WindowProperties.TopMost;
         desktop.MainWindow.Topmost = shouldBeTopMost;
         Settings.WindowProperties.TopMost = shouldBeTopMost;
-        vm.IsTopMost.Value  = shouldBeTopMost;
+        vm.IsTopMost.Value = shouldBeTopMost;
 
         await SaveSettingsAsync().ConfigureAwait(false);
     }
@@ -162,6 +162,8 @@ public static class WindowFunctions
             return;
         }
 
+        var isAutoFit = Settings.WindowProperties.AutoFit;
+        Settings.WindowProperties.AutoFit = !isAutoFit;
         foreach (var vm in core.MainWindows.MainWindows)
         {
             var window = desktop.Windows.FirstOrDefault(w => w.DataContext == vm);
@@ -172,13 +174,12 @@ public static class WindowFunctions
             Toggle(vm, consecutiveMainWindow);
         }
         
-        Settings.WindowProperties.AutoFit = !Settings.WindowProperties.AutoFit;
         await SaveSettingsAsync().ConfigureAwait(false);
         return;
 
         void Toggle(MainWindowViewModel targetVm, MainWindow targetMainWindow)
         {
-            if (Settings.WindowProperties.AutoFit)
+            if (isAutoFit)
             {
                 targetVm.WindowMaxWidth.Value = targetVm.WindowMaxHeight.Value = double.NaN;
                 targetMainWindow.SizeToContent = SizeToContent.Manual;

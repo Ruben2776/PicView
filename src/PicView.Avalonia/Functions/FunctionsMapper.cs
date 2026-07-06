@@ -434,11 +434,9 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     }
     
     /// <inheritdoc cref="SettingsUpdater.ToggleSubdirectories(MainWindowViewModel)" />
-    public async ValueTask ToggleSubdirectories()
-    {
+    public async ValueTask ToggleSubdirectories() =>
         await SettingsUpdater.ToggleSubdirectories(vm).ConfigureAwait(false);
-    }
-    
+
     /// <inheritdoc cref="ToggleUIVisibility.ToggleBottomBar(MainWindowViewModel)" />
     public async ValueTask ToggleBottomToolbar()
     {
@@ -622,13 +620,12 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         await vm.PlatformWindowService.ToggleFullscreen().ConfigureAwait(false);
     
     // This shouldn't be here, but keep as alias and backwards compatibility.
-    public ValueTask Fullscreen() => ToggleFullscreen();
+    public ValueTask Fullscreen() =>
+        ToggleFullscreen();
 
     /// <inheritdoc cref="WindowFunctions.ToggleTopMost(MainWindowViewModel)" />
-    public async ValueTask SetTopMost()
-    {
+    public async ValueTask SetTopMost() =>
         await WindowFunctions.ToggleTopMost(vm).ConfigureAwait(false);
-    }
 
     #endregion
 

@@ -206,6 +206,7 @@
                     Command="{CompiledBinding ToggleSubdirectoriesCommand}"
                     Header="{CompiledBinding Translation.SearchSubdirectory.Value,
                                              Mode=OneWay}"
+                    IsChecked="{Binding GlobalSettings.IsIncludingSubdirectories.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <Separator />
@@ -215,7 +216,7 @@
                     Command="{CompiledBinding ToggleLoopingCommand}"
                     Header="{CompiledBinding Translation.IsLooping.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=TwoWay}"
+                    IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <Separator />
@@ -225,7 +226,7 @@
                     Command="{CompiledBinding ToggleScrollCommand}"
                     Header="{CompiledBinding Translation.IsScrolling.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding IsScrollingEnabled.Value, Mode=TwoWay}"
+                    IsChecked="{Binding IsScrollingEnabled.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <!--  Zoom to fit  -->
@@ -233,7 +234,7 @@
                     Command="{CompiledBinding ZoomToFitCommand}"
                     Header="{CompiledBinding Translation.ZoomToFit.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding IsZoomedToFit.Value, Mode=TwoWay}"
+                    IsChecked="{Binding IsZoomedToFit.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <!--  Toggle side-by-side  -->
@@ -241,7 +242,7 @@
                     Command="{CompiledBinding SideBySideCommand}"
                     Header="{CompiledBinding Translation.SideBySide.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding IsSideBySide.Value, Mode=TwoWay}"
+                    IsChecked="{Binding IsSideBySide.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <Separator />
@@ -251,7 +252,7 @@
                     Command="{CompiledBinding SetTopMostCommand}"
                     Header="{CompiledBinding Translation.StayTopMost.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding IsTopMost.Value, Mode=TwoWay}"
+                    IsChecked="{Binding IsTopMost.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <!--  Toggle auto fit  -->
@@ -259,7 +260,7 @@
                     Command="{CompiledBinding AutoFitWindowCommand}"
                     Header="{CompiledBinding Translation.AutoFitWindow.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding IsAutoFit.Value, Mode=TwoWay}"
+                    IsChecked="{Binding IsAutoFit.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
 
                 <Separator />
