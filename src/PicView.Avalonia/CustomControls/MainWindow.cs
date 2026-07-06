@@ -213,7 +213,7 @@ public class MainWindow : Window, IMainWindow
     // Window has been resized
     private void WindowSizeChanged(object? sender, WindowResizedEventArgs e)
     {
-        if (DataContext is not MainWindowViewModel vm || SharedBottomBar is null || SharedTitleBar is null)
+        if (SharedBottomBar is null || SharedTitleBar is null)
         {
             return;
         }
@@ -244,12 +244,15 @@ public class MainWindow : Window, IMainWindow
         {
             return;
         }
-
-        if (size.NewValue.Value.Width == Bounds.Width && size.NewValue.Value.Height == Bounds.Height)
+        
+        WindowResizing.HandleWindowResize(this, size);
+        var newWidth = size.NewValue.Value.Width;
+        if (newWidth == Bounds.Width || 
+            size.OldValue.Value.Width >= SizeDefaults.FullBtnBp && size.NewValue.Value.Width >= SizeDefaults.FullBtnBp)
         {
             return;
         }
-        WindowResizing.HandleWindowResize(this, size);
+        SetLayoutSizeAndVisibility(newWidth);
     }
     
     #endregion

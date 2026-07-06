@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
@@ -17,15 +16,15 @@ public static class WindowResizing
 
     private static bool KeepWindowSize(Window window, AvaloniaPropertyChangedEventArgs<Size> size)
     {
-        if (!size.OldValue.HasValue || !size.NewValue.HasValue ||
-            size.Sender != window || size.OldValue.Value.Width == 0 || size.OldValue.Value.Height == 0 ||
-            size.NewValue.Value.Width == 0 || size.NewValue.Value.Height == 0)
+        var oldSize = size.OldValue.Value;
+        var newSize = size.NewValue.Value;
+        
+        if (!size.OldValue.HasValue || !size.NewValue.HasValue || 
+            size.Sender != window || oldSize.Width is 0 || oldSize.Height is 0 ||
+            newSize.Width is 0 || newSize.Height is 0)
         {
             return false;
         }
-        
-        var oldSize = size.OldValue.Value;
-        var newSize = size.NewValue.Value;
 
         var x = (oldSize.Width - newSize.Width) / 2;
         var y = (oldSize.Height - newSize.Height) / 2;
@@ -55,9 +54,6 @@ public static class WindowResizing
 
     public static void HandleWindowResize(MainWindow mainWindow, AvaloniaPropertyChangedEventArgs<Size> size)
     {
-        var newWidth = size.NewValue.Value.Width;
-        mainWindow.SetLayoutSizeAndVisibility(newWidth);
-        
         if (!Settings.WindowProperties.AutoFit)
         {
             return;
@@ -81,7 +77,7 @@ public static class WindowResizing
             return;
         }
         
-        var nextNavX = newWidth > 430 ? 50 : 15;
+        var nextNavX = size.NewValue.Value.Width > SizeDefaults.SearchResetAndRotateBtnBp ? 50 : 15;
 
         RepositionCursorIfTriggered(mainWindowVm.IsNavigationButtonLeftClicked,
             clicked => mainWindowVm.IsNavigationButtonLeftClicked = clicked,
