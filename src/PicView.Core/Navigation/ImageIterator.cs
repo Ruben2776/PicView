@@ -1,6 +1,7 @@
 using PicView.Core.FileHistory;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Interfaces;
+using PicView.Core.Preloading;
 using PicView.Core.ViewModels;
 
 namespace PicView.Core.Navigation;
@@ -148,7 +149,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
         // Handle internal TIFF navigation
         // TODO: Figure out how to handle multi-page TIFF files when side-by-side is enabled
-        if (_tab.Model?.TiffNavigation is not null && ShouldNavigateTiffEntry(_tab.Model, IsReversed))
+        if (_tab.Model.TiffNavigation is not null && ShouldNavigateTiffEntry(_tab.Model, IsReversed))
         {
             return;
         }
@@ -169,14 +170,27 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             {
                 // Wait for loading complete
                 var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
-                if (successfullyLoaded && index == CurrentIndex && preLoadValue.ImageModel.Image is not null)
-                {
-                    firstModel = preLoadValue.ImageModel;
-                }
-                else
+                if (!successfullyLoaded || index != CurrentIndex)
                 {
                     TriggerPreload();
                     return;
+                }
+                if (preLoadValue.ImageModel.Image is null)
+                {
+                    await Cache.LoadAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
+                    if (index == CurrentIndex && Cache.TryGet(_tab.Id, index, out var value))
+                    {
+                        firstModel = value.ImageModel;
+                    }
+                    else
+                    {
+                        TriggerPreload();
+                        return;
+                    }
+                }
+                else
+                {
+                    firstModel = preLoadValue.ImageModel;
                 }
             }
         }
