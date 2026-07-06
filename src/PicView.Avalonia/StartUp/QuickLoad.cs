@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using ImageMagick;
@@ -140,6 +139,7 @@ public static class QuickLoad
         bool isStartUp,
         List<FileInfo>? files = null)
     {
+        core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = !core.MainWindows.ActiveWindow.CurrentValue.IsTopToolbarShown.Value;
         Dispatcher.UIThread.Invoke(() =>
         {
            core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
