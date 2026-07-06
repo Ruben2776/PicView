@@ -203,11 +203,11 @@ public class MainWindow : Window, IMainWindow
 
     #region Sizing
 
-    private void SetLayoutSizeAndVisibility(double width)
+    public void SetLayoutSizeAndVisibility(double width)
     {
-        SharedBottomBar.ResponsiveNavigationBtnSize();
+        SharedBottomBar.ResponsiveNavigationBtnSize(width);
         SharedTitleBar.SharedDropDownMenuButton.IsVisible = width > SizeDefaults.MainTitleDropDownBtnBp;
-        SharedTitleBar.SharedSearchButton.IsVisible = width > SizeDefaults.MainTitleSearchBtnBp;
+        SharedTitleBar.SharedSearchButton.IsVisible = width > SizeDefaults.MainTitleDropDownBtnBp;
     }
     
     // Window has been resized
@@ -235,7 +235,6 @@ public class MainWindow : Window, IMainWindow
             Dispatcher.CurrentDispatcher.Post(WindowFunctions.SetManualWindows);
         }
         WindowResizing.SetSize(this, e.Reason);
-        SetLayoutSizeAndVisibility(e.ClientSize.Width);
     }
     
     // Window is being resized

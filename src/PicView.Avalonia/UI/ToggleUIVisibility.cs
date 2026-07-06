@@ -36,7 +36,7 @@ public static class ToggleUIVisibility
 
             WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
 
-            Dispatcher.UIThread.Post(() => mainWindow.SharedBottomBar.ResponsiveNavigationBtnSize());
+            Dispatcher.UIThread.Post(() => mainWindow.SharedBottomBar.ResponsiveNavigationBtnSize(mainWindow.Bounds.Width));
         }
 
         await SaveSettingsAsync();
@@ -108,7 +108,7 @@ public static class ToggleUIVisibility
 
         vm.TopTitlebarViewModel.CloseDropDownMenu();
         WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
-        Dispatcher.UIThread.Post(() => mainWindow.SharedBottomBar.ResponsiveNavigationBtnSize());
+        Dispatcher.UIThread.Post(() => mainWindow.SharedBottomBar.ResponsiveNavigationBtnSize(mainWindow.Bounds.Width));
 
         await SaveSettingsAsync();
     }

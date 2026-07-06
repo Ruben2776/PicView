@@ -8,11 +8,6 @@ public static class SizeDefaults
     
     public const int MainTitlebarHeight = 32;
     
-    /// Breakpoint for showing the dropdown menu button in the title bar
-    public const int MainTitleDropDownBtnBp = 385;
-
-    public const int MainTitleSearchBtnBp = 430;
-    
     public const int TopBorderHeight = 28;
     
     public const int WindowMinSize = 315;
@@ -20,5 +15,12 @@ public static class SizeDefaults
     
     public const int TabHeight = 32;
     
-
+    
+    // Breakpoints
+    public const int FullBtnBp = 520;
+    public const int SearchResetAndRotateBtnBp = 430;
+    /// Breakpoint for showing the dropdown menu button in the title bar
+    public const int MainTitleDropDownBtnBp = 385;
+    public const int SmallNavBtnBp = 350;
+    
 }

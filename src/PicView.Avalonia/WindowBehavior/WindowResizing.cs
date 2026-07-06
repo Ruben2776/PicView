@@ -55,6 +55,9 @@ public static class WindowResizing
 
     public static void HandleWindowResize(MainWindow mainWindow, AvaloniaPropertyChangedEventArgs<Size> size)
     {
+        var newWidth = size.NewValue.Value.Width;
+        mainWindow.SetLayoutSizeAndVisibility(newWidth);
+        
         if (!Settings.WindowProperties.AutoFit)
         {
             return;
@@ -77,16 +80,18 @@ public static class WindowResizing
         {
             return;
         }
+        
+        var nextNavX = newWidth > 430 ? 50 : 15;
 
         RepositionCursorIfTriggered(mainWindowVm.IsNavigationButtonLeftClicked,
             clicked => mainWindowVm.IsNavigationButtonLeftClicked = clicked,
             () => mainWindow.UIHelper.GetBottomBar.PreviousButton,
-            new Point(50, 10));
+            new Point(nextNavX, 10));
 
         RepositionCursorIfTriggered(mainWindowVm.IsNavigationButtonRightClicked,
             clicked => mainWindowVm.IsNavigationButtonRightClicked = clicked,
             () => mainWindow.UIHelper.GetBottomBar.NextButton,
-            new Point(50, 10));
+            new Point(nextNavX, 10));
 
         RepositionCursorIfTriggered(mainWindowVm.IsBottomToolbarRightRotationClicked,
             clicked => mainWindowVm.IsBottomToolbarRightRotationClicked = clicked,

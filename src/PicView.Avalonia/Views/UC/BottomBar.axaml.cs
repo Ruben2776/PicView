@@ -7,6 +7,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Views.UC;
@@ -261,19 +262,18 @@ public partial class BottomBar : UserControl, IDisposable
         }
     }
 
-    public void ResponsiveNavigationBtnSize()
+    public void ResponsiveNavigationBtnSize(double width)
     {
-        var width = MainBottomBorder.Bounds.Width;
         switch (width)
         {
-            case > 520:
+            case > SizeDefaults.FullBtnBp:
                 ResetZoomButton.IsVisible = RotateLeftButton.IsVisible = true;
                 PreviousButton.Width = NextButton.Width = 80;
                 return;
-            case < 520 and > 430:
+            case < SizeDefaults.FullBtnBp and > SizeDefaults.SearchResetAndRotateBtnBp:
                 PreviousButton.Width = NextButton.Width = 65;
                 break;
-            case < 430 and > 350:
+            case < SizeDefaults.SearchResetAndRotateBtnBp and > SizeDefaults.SmallNavBtnBp:
                 PreviousButton.Width = NextButton.Width = 60;
                 break;
             default:
@@ -282,7 +282,7 @@ public partial class BottomBar : UserControl, IDisposable
                 break;
         }
 
-        if (width < 430)
+        if (width < SizeDefaults.SearchResetAndRotateBtnBp)
         {
             ResetZoomButton.IsVisible = RotateLeftButton.IsVisible = false;
         }
