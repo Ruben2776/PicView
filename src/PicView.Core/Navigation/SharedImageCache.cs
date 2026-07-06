@@ -336,11 +336,18 @@ public class SharedImageCache : IImageCache
         _preLoader.Preload(ownerId, currentIndex, reversed, files, token);
     }
 
-    public async ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index)
+    public async ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
     {
-        if (!TryGet(ownerId, index, out var value) || value is null)
+        if (!TryGet(ownerId, index, out var value))
         {
             return false;
+        }
+
+        if (value is null)
+        {
+            var model = await LoadAsync(ownerId, index, list, ct);
+            Add(ownerId, index, new PreLoadValue(model), list.Count, false);
+            return true;
         }
 
         await value.WaitForLoadingCompleteAsync();

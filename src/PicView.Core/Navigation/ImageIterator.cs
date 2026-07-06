@@ -113,7 +113,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                 _tab.SetLoading();
 
                 // Wait for loading complete
-                var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index).ConfigureAwait(false);
+                var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
                 if (successfullyLoaded && index == CurrentIndex && preLoadValue.ImageModel.Image is not null)
                 {
                     UpdateModel(preLoadValue.ImageModel);
@@ -168,7 +168,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             else
             {
                 // Wait for loading complete
-                var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index).ConfigureAwait(false);
+                var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
                 if (successfullyLoaded && index == CurrentIndex && preLoadValue.ImageModel.Image is not null)
                 {
                     firstModel = preLoadValue.ImageModel;
@@ -205,7 +205,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             else
             {
                 // Wait for loading complete
-                var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, secondaryIndex).ConfigureAwait(false);
+                var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, secondaryIndex, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
                 if (successfullyLoaded && index == CurrentIndex && secondaryPreLoadValue.ImageModel.Image is not null)
                 {
                     secondModel = secondaryPreLoadValue.ImageModel;
