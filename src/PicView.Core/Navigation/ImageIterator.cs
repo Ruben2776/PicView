@@ -1,7 +1,6 @@
 using PicView.Core.FileHistory;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Interfaces;
-using PicView.Core.Preloading;
 using PicView.Core.ViewModels;
 
 namespace PicView.Core.Navigation;
@@ -107,36 +106,42 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             else
             {
                 // Is loading in cache, show thumbnail while loading
-                var thumb = _thumbCache.TryGet(targetFile.FullName, out var cachedThumb) ? cachedThumb 
-                    : _thumbnailLoader.GetExifThumbnail(targetFile);
+                await Task.Run(async () =>
+                {
+                    var thumb = _thumbCache.TryGet(targetFile.FullName, out var cachedThumb) ? cachedThumb 
+                        : _thumbnailLoader.GetExifThumbnail(targetFile);
                 
-                _tab.Image.Value = thumb;
-                _tab.SetLoading();
+                    _tab.Image.Value = thumb;
+                    _tab.SetLoading();
 
-                // Wait for loading complete
-                var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
-                if (successfullyLoaded && index == CurrentIndex && preLoadValue.ImageModel.Image is not null)
-                {
-                    UpdateModel(preLoadValue.ImageModel);
-                }
-                else
-                {
-                    TriggerPreload();
-                }
+                    // Wait for loading complete
+                    var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
+                    if (successfullyLoaded && index == CurrentIndex && preLoadValue.ImageModel.Image is not null)
+                    {
+                        UpdateModel(preLoadValue.ImageModel);
+                    }
+                    else
+                    {
+                        TriggerPreload();
+                    }
+                });
             }
         }
         else
         {
             // Not in cache
-            var manuallyLoaded = await Cache.LoadAsync(_tab.Id, index, Files, ct.Token).ConfigureAwait(false);
-            if (index == CurrentIndex && manuallyLoaded is not null)
+            await Task.Run(async () =>
             {
-                UpdateModel(manuallyLoaded);
-            }
-            else
-            {
-                TriggerPreload();
-            }
+                var manuallyLoaded = await Cache.LoadAsync(_tab.Id, index, Files, ct.Token).ConfigureAwait(false);
+                if (index == CurrentIndex && manuallyLoaded is not null)
+                {
+                    UpdateModel(manuallyLoaded);
+                }
+                else
+                {
+                    TriggerPreload();
+                }
+            });
         }
     }
     
