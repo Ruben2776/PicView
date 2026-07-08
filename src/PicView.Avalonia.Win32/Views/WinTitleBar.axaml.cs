@@ -126,6 +126,7 @@ public partial class WinTitleBar : MainTitleBar
         vm.TopTitlebarViewModel.IsBtnPanelVisible.Value = true;
         LogoBorder.IsVisible = true;
         vm.TopTitlebarViewModel.MaxItemWidth.Value = double.NaN;
+        CreateTabButton.IsVisible = false;
                 
         var regularPadding = new Thickness(8);
         FileMenuItem.Padding = regularPadding;
@@ -150,6 +151,7 @@ public partial class WinTitleBar : MainTitleBar
         LogoBorder.IsVisible = true;
         vm.TopTitlebarViewModel.MaxItemWidth.Value = double.NaN;
         DropDownMenuButton.IsVisible = Bounds.Width > SizeDefaults.MainTitleDropDownBtnBp;
+        CreateTabButton.IsVisible = true;
     }
 
     private void CloseMenu()

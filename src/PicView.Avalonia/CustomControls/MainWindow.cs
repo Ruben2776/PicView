@@ -51,6 +51,7 @@ public class MainWindow : Window, IMainWindow
         // Keep window position when resizing
         Debug.Assert(FrameProvider != null, nameof(FrameProvider) + " != null");
         ClientSizeProperty.Changed.ToObservable()
+            .Skip(1)
             .SubscribeOn(FrameProvider)
             .Subscribe(HandleWindowResize, DebugHelper.LogError(nameof(MainWindow), nameof(HandleWindowResize)))
             .AddTo(Disposables);
@@ -240,7 +241,7 @@ public class MainWindow : Window, IMainWindow
     // Window is being resized
     private void HandleWindowResize(AvaloniaPropertyChangedEventArgs<Size> size)
     {
-        if (IsChangingWindowState || WindowState != WindowState.Normal)
+        if (IsChangingWindowState || WindowState != WindowState.Normal || size.Sender is not MainWindow)
         {
             return;
         }
