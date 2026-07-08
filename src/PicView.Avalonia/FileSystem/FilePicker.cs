@@ -82,7 +82,7 @@ public static class FilePicker
                     GetFilePickerFileTypes.ArchiveFileType]
             };
 
-            var files = await provider.OpenFilePickerAsync(options);
+            var files = await ExecuteOnUIThread(() => provider.OpenFilePickerAsync(options)).ConfigureAwait(false);
             return files?.Count >= 1 ? files[0] : null;
         }
         catch (Exception e)

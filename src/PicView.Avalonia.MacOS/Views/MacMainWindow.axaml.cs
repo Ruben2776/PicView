@@ -25,8 +25,7 @@ public partial class MacMainWindow : MainWindow, IPlatformWindowService
         }
         var mainWindowViewModel = new MainWindowViewModel(core.Translation, this, core.GlobalSettings, core.GallerySettings);
         DataContext = mainWindowViewModel;
-        core.MainWindows.MainWindows.Add(mainWindowViewModel);
-        core.MainWindows.ActiveWindow.Value = mainWindowViewModel;
+
         InitializeComponent();
         
         SharedBottomBar = BottomBar;
