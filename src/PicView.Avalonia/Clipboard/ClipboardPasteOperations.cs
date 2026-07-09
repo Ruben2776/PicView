@@ -24,7 +24,7 @@ public static class ClipboardPasteOperations
             var files = await clipboard.TryGetFilesAsync();
             if (files != null)
             {
-                await ClipboardFileOperations.PasteFiles(files, vm, mainWindow);
+                await ClipboardFileOperations.ProcessStorageItems(files, vm, mainWindow).ConfigureAwait(false);
                 return true;
             }
 

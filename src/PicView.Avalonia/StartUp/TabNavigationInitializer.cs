@@ -82,6 +82,13 @@ public static class TabNavigationInitializer
         core.GallerySettings.Initialize();
     }
     
+    public static void InitializeConsecutiveTab(CoreViewModel core, MainWindow mainWindow, TabViewModel tab)
+    {
+        InitializeNewTab(tab, core.MainWindows.ActiveWindow.CurrentValue, mainWindow);
+        tab.Gallery.Initialize();
+        core.GallerySettings.Initialize();
+    }
+    
     public static void InitializeDetachedWindow(MainWindow mainWindow, MainWindowViewModel parentVm, MainWindowViewModel newVm, TabViewModel tab)
     {
         newVm.WindowTabs.Tabs.Value[0] = tab;

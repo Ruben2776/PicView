@@ -94,11 +94,6 @@ public class TabOverviewViewModel
         Tabs.Value.Add(tab);
         return tab;
     }
-    
-    public void CreateTab()
-    {
-        CreateTab(null);
-    }
 
     public TabViewModel CreateTab(FileInfo? file = null)
     {
@@ -109,14 +104,6 @@ public class TabOverviewViewModel
         }
         SharedCache!.RegisterOwner(tab.Id);
         SelectTab(tab);
-        return tab;
-    }
-    
-    public async ValueTask<TabViewModel> CreateNewTabFromFileAsync(FileInfo file)
-    {
-        var tab = CreateTab(file);
-        await SharedNavigation.LoadFromFileAsync(file, tab, tab.GetTabCancellation())
-            .ConfigureAwait(false);
         return tab;
     }
     

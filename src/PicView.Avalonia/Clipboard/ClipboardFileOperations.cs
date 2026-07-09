@@ -1,12 +1,12 @@
 using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
@@ -152,53 +152,31 @@ public static class ClipboardFileOperations
         // TODO implement cut
         return Task.FromResult(false);
     }
-
-    public static async ValueTask PasteFiles(object files, MainWindowViewModel vm, MainWindow mainWindow)
-    {
-        try
-        {
-            switch (files)
-            {
-                case IEnumerable<IStorageItem> items:
-                    await ProcessStorageItems(items.ToArray(), vm, mainWindow);
-                    break;
-                case IStorageItem singleFile:
-                {
-                    var path = singleFile.Path.LocalPath;
-                    if (path.IsArchive())
-                    {
-                        await vm.WindowTabs.LoadFromArchiveAsync(path);
-                    }
-                    else
-                    {
-                        await vm.WindowTabs.LoadFromFileAsync(path).ConfigureAwait(false);
-                    }
-                    break;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            DebugHelper.LogDebug(nameof(ClipboardFileOperations), nameof(PasteFiles), ex);
-        }
-    }
     
-    private static async ValueTask ProcessStorageItems(IStorageItem[] storageItems, MainWindowViewModel vm, MainWindow mainWindow)
+    public static async ValueTask ProcessStorageItems(IStorageItem[] storageItems, MainWindowViewModel vm, MainWindow mainWindow)
     {
-        if (storageItems.Length == 0)
+        if (storageItems.Length is 0 || Application.Current.DataContext is not CoreViewModel core)
         {
             return;
         }
 
         // Load the first file
         var firstItem = storageItems[0].Path.LocalPath;
-        if (firstItem.IsArchive())
+        
+        if (!vm.WindowTabs.ActiveTab.Value.IsInitialized)
         {
-            await vm.WindowTabs.LoadFromArchiveAsync(firstItem).ConfigureAwait(false);
+            await QuickLoad.QuickLoadAsync(mainWindow, core, firstItem, continueFromLeftOff: false).ConfigureAwait(false);
         }
         else
         {
-            await vm.WindowTabs.LoadFromFileAsync(firstItem).ConfigureAwait(false);
+            if (firstItem.IsArchive())
+            {
+                await vm.WindowTabs.LoadFromArchiveAsync(firstItem).ConfigureAwait(false);
+            }
+            else
+            {
+                await vm.WindowTabs.LoadFromFileAsync(firstItem).ConfigureAwait(false);
+            }
         }
 
         if (vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked.CurrentValue)
@@ -212,11 +190,21 @@ public static class ClipboardFileOperations
         {
             var path = file.Path.LocalPath;
             var fileInfo = new FileInfo(path);
-            await vm.WindowTabs.CreateNewTabFromFileAsync(fileInfo);
-            if (Application.Current.DataContext is CoreViewModel core)
+            var tab = vm.WindowTabs.CreateTab(fileInfo);
+            TabNavigationInitializer.InitializeConsecutiveTab(core, mainWindow, tab); 
+            await Dispatcher.UIThread.InvokeAsync(() => 
             {
-                TabNavigationInitializer.Initialize(core, fileInfo, mainWindow);
+                tab.CurrentView.Value = new ImageViewer();
+            });
+            if (fileInfo.IsArchive())
+            {
+                _ = Task.Run(() => vm.WindowTabs.LoadFromArchiveAsync(path, tab).ConfigureAwait(false));
             }
+            else
+            {
+                _ = Task.Run(() => vm.WindowTabs.LoadFromFileAsync(fileInfo, tab).ConfigureAwait(false));
+            }
+            
             file.Dispose();
         }
     }

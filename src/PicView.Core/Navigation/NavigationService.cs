@@ -43,6 +43,9 @@ public class NavigationService(
             // Show image quickly to make it feel fast
             var model = await imageLoader.GetImageModelAsync(fileInfo, ct.Token).ConfigureAwait(false);
             tab.Model = model; // Image updated via reactive subscription
+            tab.FileInfo.Value = model.FileInfo;
+            tab.Image.Value = model.Image;
+            tab.ImageType.Value = model.ImageType;
             
             tab.ImageIterator.Files = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
             var index = FindIndex(fileInfo, tab);
@@ -80,8 +83,9 @@ public class NavigationService(
         }
         var iterator = tab.ImageIterator;
 
-        if (iterator.Files is null || iterator.Files.Count == 0)
+        if (iterator.Files is null || iterator.Files.Count is 0)
         {
+            // TODO: Figure out way to share file list, if another tab is already in the same directory
             await Repopulate();
             return;
         }

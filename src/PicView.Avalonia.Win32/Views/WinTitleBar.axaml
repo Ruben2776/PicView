@@ -1103,7 +1103,7 @@
                 Background="Transparent"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 Classes="noBorderHover"
-                Command="{CompiledBinding WindowTabs.CreateTab}"
+                Command="{CompiledBinding NewTabCommand}"
                 CornerRadius="6"
                 Data="{StaticResource AddGeometry}"
                 DockPanel.Dock="Right"

@@ -213,7 +213,6 @@ public static class QuickLoad
             core.PlatformService.SetTaskbarProgress((ulong)tab.ImageIterator.CurrentIndex, (ulong)tab.ImageIterator.Files.Count);
         }
         
-
         FileHistoryManager.Add(fileInfo.FullName);
 
         await LoadGalleryIfNeeded(core).ConfigureAwait(false);

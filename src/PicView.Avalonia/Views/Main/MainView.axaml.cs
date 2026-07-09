@@ -122,6 +122,16 @@ public partial class MainView : UserControl
             }
 
             tabViewModel.CurrentView.Value = startUpMenu;
+            tabViewModel.SetNewTabTitle();
+        }
+
+        // Fix blank tab title when creating first new tab
+        if (DataContext is MainWindowViewModel vm && vm.WindowTabs.Tabs.CurrentValue.Count is 2)
+        {
+            if (vm.WindowTabs.Tabs.CurrentValue[0].CurrentView.CurrentValue is StartUpMenu)
+            {
+                vm.WindowTabs.Tabs.Value[0].SetNewTabTitle();
+            }
         }
     }
     private void MainTabControlOnSelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -137,16 +147,19 @@ public partial class MainView : UserControl
         }
 
         vm.WindowTabs.SelectTab(tab);
-        if (tab.Model?.FileInfo?.Exists == true)
+        if (string.IsNullOrEmpty(tab.Title.CurrentValue))
         {
-            tab.UpdateTabTitle();
-        }
-        else
-        {
-            tab.SetNewTabTitle();
+            if (tab.Model?.FileInfo?.Exists == true)
+            {
+                tab.UpdateTabTitle();
+            }
+            else
+            {
+                tab.SetNewTabTitle();
+            }
         }
 
-        tab.ImageIterator.UpdateNavigationProperties();
+        tab.ImageIterator?.UpdateNavigationProperties();
     }
 
     private void PointerPressedBehavior(object? sender, PointerPressedEventArgs e)
