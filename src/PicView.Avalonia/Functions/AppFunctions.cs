@@ -11,7 +11,7 @@ public static class AppFunctions
         var getFromArgs = false;
         if (senderTab is not null)
         {
-            if (senderTab.Model.FileInfo.Exists)
+            if (senderTab.Model.FileInfo?.Exists ?? false)
             {
                 openFile = senderTab.Model.FileInfo.FullName;
             }

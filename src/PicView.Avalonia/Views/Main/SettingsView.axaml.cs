@@ -159,6 +159,15 @@ public partial class SettingsView : UserControl
     {
         _controller?.ResetFilters();
         _controller?.ClosePopup();
+
+        if (!e.Properties.IsRightButtonPressed)
+        {
+            return;
+        }
+        if (Resources.TryGetValue("SettingsContextMenu", out var value) && value is ContextMenu contextMenu)
+        {
+            contextMenu.Open();
+        }
     }
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
@@ -169,5 +178,17 @@ public partial class SettingsView : UserControl
     private void OnScrollChanged(object? sender, ScrollChangedEventArgs e)
     {
         _controller?.HandleScrollChanged(ContentScrollViewer.Offset.Y, ContentPanel.Spacing * 2);
+    }
+
+    private void CloseItem_OnClick(object? sender, RoutedEventArgs e)
+    {
+        Dispatcher.Invoke(() =>
+        {
+            if (TopLevel.GetTopLevel(this) is not Window window)
+            {
+                return;
+            }
+            window.Close();
+        });
     }
 }

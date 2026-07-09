@@ -10,10 +10,8 @@
 
     <UserControl.Resources>
         <converters:ResourceKeyToResourceConverter x:Key="ResourceKeyToResourceConverter" />
-    </UserControl.Resources>
 
-    <UserControl.ContextMenu>
-        <ContextMenu x:Name="ContextMenu">
+        <ContextMenu x:Key="SettingsContextMenu">
             <MenuItem
                 x:Name="UserSettingsItem"
                 Foreground="{DynamicResource MainTextColor}"
@@ -36,7 +34,11 @@
                         Source="{StaticResource BracesImage}" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Foreground="{DynamicResource MainTextColor}" Header="{CompiledBinding Translation.ResetButtonText.Value, Mode=OneWay}">
+            <MenuItem
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.ResetSettingsCommand}"
+                Foreground="{DynamicResource MainTextColor}"
+                Header="{CompiledBinding Translation.ResetButtonText.Value,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
                         Width="12"
@@ -45,7 +47,11 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
-            <MenuItem x:Name="CloseItem" Header="{CompiledBinding Translation.Close.Value, Mode=OneWay}">
+            <MenuItem
+                x:Name="CloseItem"
+                Click="CloseItem_OnClick"
+                Header="{CompiledBinding Translation.Close.Value,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -56,13 +62,14 @@
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
-    </UserControl.ContextMenu>
+    </UserControl.Resources>
 
     <DockPanel>
 
         <Panel
             Margin="7,5"
             Background="{DynamicResource MainBackgroundColor}"
+            ContextMenu="{StaticResource SettingsContextMenu}"
             DockPanel.Dock="Top">
             <Image
                 Width="14"
@@ -147,6 +154,7 @@
         <Panel
             x:Name="MainPanel"
             Background="Transparent"
+            ContextMenu="{StaticResource SettingsContextMenu}"
             DockPanel.Dock="Top"
             Focusable="True">
 
@@ -205,6 +213,7 @@
                     Background="Transparent"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
+                    ContextMenu="{StaticResource SettingsContextMenu}"
                     CornerRadius="4"
                     DockPanel.Dock="Left"
                     SelectionMode="Single"

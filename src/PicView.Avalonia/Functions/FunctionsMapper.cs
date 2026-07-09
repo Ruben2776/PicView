@@ -947,11 +947,9 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     #region Other settings
 
     /// <inheritdoc cref="SettingsUpdater.ResetSettings()" />
-    public async ValueTask ResetSettings()
-    {
-        SettingsUpdater.ResetSettings();
-    }
-    
+    public async ValueTask ResetSettings() =>
+        await SettingsUpdater.ResetSettings();
+
     public ValueTask Restart()
     {
         AppFunctions.Restart(vm.WindowTabs.ActiveTab.CurrentValue);

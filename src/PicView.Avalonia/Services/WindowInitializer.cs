@@ -501,9 +501,9 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
                 return;
             }
 
-            if (_fileAssociationsWindow is null)
+            if (core.AssociationsViewModel is null)
             {
-                core.AssociationsViewModel ??= new FileAssociationsViewModel();
+                core.AssociationsViewModel = new FileAssociationsViewModel();
                 _fileAssociationsWindow = provider.CreateFileAssociationsWindow();
                 if (_fileAssociationsWindow is null)
                 {
@@ -521,13 +521,6 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
                 {
                     _fileAssociationsWindow.Show();
                 }
-
-                _fileAssociationsWindow.Closing += (_, _) =>
-                {
-                    core.AssociationsViewModel.Dispose();
-                    core.AssociationsViewModel = null;
-                    _fileAssociationsWindow = null;
-                };
             }
             else
             {

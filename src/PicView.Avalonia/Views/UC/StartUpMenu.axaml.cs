@@ -56,9 +56,10 @@ public partial class StartUpMenu : UserControl
             return;
         }
 
-        tab.Title.Value = TranslationManager.Translation.NoImage ?? string.Empty;
-        tab.WindowTitle.Value = StringExtensions.CombineWithAppName(TranslationManager.Translation.NoImage);
-        tab.TitleTooltip.Value = TranslationManager.Translation.NoImage ?? string.Empty;
+        var noImage = TranslationManager.Translation.NoImage ?? "No image";
+        tab.Title.Value = noImage;
+        tab.WindowTitle.Value = StringExtensions.CombineWithAppName(noImage);
+        tab.TitleTooltip.Value = noImage;
     }
 
     private async ValueTask PasteClick(object? sender, RoutedEventArgs e)

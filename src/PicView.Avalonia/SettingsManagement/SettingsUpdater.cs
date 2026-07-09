@@ -10,6 +10,7 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.ColorHandling;
+using PicView.Core.DebugTools;
 using PicView.Core.Localization;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -19,30 +20,58 @@ public static class SettingsUpdater
 {
     public static void InitializeSettings(MainWindowViewModel vm, bool settingsExists)
     {
-        Task.Run(() => LanguageUpdater.UpdateLanguageAsync(vm.Translation, settingsExists));
+        Task.Run(() =>
+        {
+            _ = LanguageUpdater.UpdateLanguageAsync(vm.Translation, settingsExists);
+            vm.TitlebarHeight.Value = Settings.WindowProperties.Fullscreen
+                                           || !Settings.UIProperties.ShowInterface
+                ? 0
+                : SizeDefaults.MainTitlebarHeight;
+            vm.BottombarHeight.Value = Settings.WindowProperties.Fullscreen
+                                                  || !Settings.UIProperties.ShowInterface
+                ? 0
+                : SizeDefaults.BottombarHeight;
+            vm.IsSideBySide.Value = Settings.ImageScaling.ShowImageSideBySide;
+            vm.IsUIShown.Value  = Settings.UIProperties.ShowInterface;
+            vm.IsTopToolbarShown.Value  = Settings.UIProperties.ShowInterface;
+            vm.IsBottomToolbarShown.Value   = Settings.UIProperties.ShowBottomNavBar &&
+                                        Settings.UIProperties.ShowInterface;
+            vm.IsFullscreen.Value  = Settings.WindowProperties.Fullscreen;
+            vm.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
+        });
         
-        vm.TitlebarHeight.Value = Settings.WindowProperties.Fullscreen
-                                       || !Settings.UIProperties.ShowInterface
-            ? 0
-            : SizeDefaults.MainTitlebarHeight;
-        vm.BottombarHeight.Value = Settings.WindowProperties.Fullscreen
-                                              || !Settings.UIProperties.ShowInterface
-            ? 0
-            : SizeDefaults.BottombarHeight;
-        vm.IsSideBySide.Value = Settings.ImageScaling.ShowImageSideBySide;
-        vm.IsUIShown.Value  = Settings.UIProperties.ShowInterface;
-        vm.IsTopToolbarShown.Value  = Settings.UIProperties.ShowInterface;
-        vm.IsBottomToolbarShown.Value   = Settings.UIProperties.ShowBottomNavBar &&
-                                    Settings.UIProperties.ShowInterface;
-        vm.IsFullscreen.Value  = Settings.WindowProperties.Fullscreen;
-        vm.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
+
     }
     
-    public static void ResetSettings()
+    public static async Task ResetSettings()
     {
-        SetDefaults();
         var core = Application.Current.DataContext as CoreViewModel;
+        if (File.Exists(CurrentSettingsPath))
+        {
+            try
+            {
+                File.Delete(CurrentSettingsPath);
+            }
+            catch (Exception e)
+            {
+                DebugHelper.LogDebug(nameof(SettingsUpdater), nameof(ResetSettings), e);
+                await SetAndSave();
+            }
+        }
+        else
+        {
+            await SetAndSave();
+        }
+
         AppFunctions.Restart(core?.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab?.Value);
+        
+        return;
+
+        async Task SetAndSave()
+        {
+            SetDefaults();
+            await SaveSettingsAsync();
+        }
     }
     
     public static async ValueTask ToggleZoomToFit(MainWindowViewModel vm, MainWindow mainWindow)

@@ -5,11 +5,11 @@ namespace PicView.Avalonia.SettingsManagement;
 
 public static class LanguageUpdater
 {
-    public static async ValueTask UpdateLanguageAsync(TranslationViewModel translationViewModel, bool settingsExists)
+    public static async Task UpdateLanguageAsync(TranslationViewModel translationViewModel, bool settingsExists)
     {
         if (settingsExists)
         {
-            await TranslationManager.LoadLanguage(Settings.UIProperties.UserLanguage).ConfigureAwait(false);
+            await TranslationManager.LoadLanguage(Settings.UIProperties.UserLanguage ?? "en").ConfigureAwait(false);
         }
         else
         {
