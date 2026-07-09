@@ -4,12 +4,9 @@ using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using ImageMagick;
-using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Navigation;
-using PicView.Avalonia.UI;
+using PicView.Core.DebugTools;
 using PicView.Core.ImageEffects;
 using PicView.Core.Localization;
-using PicView.Core.Models;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -226,13 +223,8 @@ public partial class EffectsView : UserControl
 
     private void InitPipeline(EffectsViewModel effectsViewModel)
     {
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            return;
-        }
         _changes
             .Debounce(_debounceTime)
-            .ObserveOn(mainWindow.FrameProvider)
             .Select(_ =>
             {
                 if (_reloading)
@@ -277,7 +269,7 @@ public partial class EffectsView : UserControl
                 }
         
                 viewModel.IsLoading.Value = false;
-            })
+            }, DebugHelper.LogError(nameof(EffectsView), nameof(InitPipeline)))
             .AddTo(ref _disposables);
     }
 
