@@ -80,6 +80,7 @@ public partial class WinTitleBar : MainTitleBar
         
         Observable.EveryValueChanged(vm.TopTitlebarViewModel.IsMainMenuVisible, x => x.Value,
                 mainWindow.FrameProvider)
+            .Skip(1)
             .Subscribe( isVisible =>
             {
                 if (isVisible)
