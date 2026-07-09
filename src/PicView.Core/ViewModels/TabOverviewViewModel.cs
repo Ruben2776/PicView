@@ -94,6 +94,11 @@ public class TabOverviewViewModel
         Tabs.Value.Add(tab);
         return tab;
     }
+    
+    public void CreateTab()
+    {
+        CreateTab(null);
+    }
 
     public TabViewModel CreateTab(FileInfo? file = null)
     {

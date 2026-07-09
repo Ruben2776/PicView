@@ -242,8 +242,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="12.0.5" />
-        <PackageReference Include="Avalonia.Desktop" Version="12.0.5" />
+        <PackageReference Include="Avalonia" Version="12.1.0" />
+        <PackageReference Include="Avalonia.Desktop" Version="12.1.0" />
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
         <PackageReference Include="Magick.NET.AvaloniaMediaImaging" Version="1.1.12" />
         <PackageReference Include="R3Extensions.Avalonia" Version="1.3.1" />
