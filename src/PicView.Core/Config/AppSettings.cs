@@ -227,7 +227,7 @@ public class Theme
     /// <summary>
     /// Represents the color theme configuration setting, which determines the accent and primary colors used in the application.
     /// </summary>
-    public int ColorTheme { get; set; } = 3;
+    public int ColorTheme { get; set; } = 4;
     // Not used yet...
     public bool UseSystemTheme { get; set; } = false;
 
