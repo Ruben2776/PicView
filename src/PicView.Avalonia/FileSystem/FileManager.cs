@@ -18,6 +18,7 @@ public static class FileManager
     /// <param name="recycle">A flag indicating whether to recycle the file (if true) or delete it permanently (if false).</param>
     /// <param name="path">The fully qualified path to the file to be deleted.</param>
     /// <param name="platformService">The platform-specific service responsible for performing the file deletion operation.</param>
+    /// <param name="mainWindow">The main window of the application.</param>
     public static async ValueTask DeleteFileWithOptionalDialog(bool recycle, string path,
         IPlatformSpecificService platformService, MainWindow mainWindow)
     {
