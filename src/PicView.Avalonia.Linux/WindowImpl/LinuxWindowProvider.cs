@@ -19,7 +19,7 @@ public class LinuxWindowProvider : IWindowProvider
 
     public Window CreateConvertWindow() => new ConvertWindow();
 
-    public Window CreateEffectsWindow() => new EffectsWindow();
+    public Window CreateEffectsWindow(EffectsWindowConfig config) => new EffectsWindow(config);
 
     public Window CreateImageInfoWindow(MainWindowViewModel vm) => new ImageInfoWindow(vm.InfoWindow.ImageInfoWindowConfig!);
 

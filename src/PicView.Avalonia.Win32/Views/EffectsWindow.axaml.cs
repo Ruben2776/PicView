@@ -2,9 +2,7 @@ using Avalonia;
 using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.WindowBehavior;
-using PicView.Core.DebugTools;
-using PicView.Core.Extensions;
+using PicView.Core.Config;
 using PicView.Core.Localization;
 using R3;
 
@@ -13,10 +11,10 @@ namespace PicView.Avalonia.Win32.Views;
 public partial class EffectsWindow : GenericWindow, IDisposable
 {
     private readonly CompositeDisposable _disposables = new();
-    public EffectsWindow()
+    public EffectsWindow(EffectsWindowConfig config)
     {
         InitializeComponent();
-        
+
         if (Settings.Theme.GlassTheme)
         {
             IconBorder.Background = Brushes.Transparent;
@@ -45,7 +43,7 @@ public partial class EffectsWindow : GenericWindow, IDisposable
             CloseButton.Foreground = new SolidColorBrush(color);
         }
         
-        GenericWindowHelper.GenericWindowInitialize(this, StringExtensions.CombineWithAppName(TranslationManager.Translation.Effects));
+        GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.Effects, true, config.WindowProperties);
         Loaded += delegate
         {
             ClearEffectsItem.Click += delegate

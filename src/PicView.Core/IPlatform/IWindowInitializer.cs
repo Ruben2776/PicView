@@ -12,7 +12,7 @@ public interface IWindowInitializer
 
     ValueTask ShowSettingsWindow();
     
-    void ShowEffectsWindow();
+    Task ShowEffectsWindow();
     
     void ShowSingleImageResizeWindow();
     

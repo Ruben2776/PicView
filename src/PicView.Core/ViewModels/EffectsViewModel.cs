@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using ImageMagick;
+using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.ImageEffects;
 using PicView.Core.Localization;
@@ -17,7 +18,8 @@ public class EffectsViewModel : IDisposable
     public BindableReactiveProperty<bool> IsResetVisible { get; } = new(false);
     public MagickImage ProcessedImage { get; set; } = new();
     public BindableReactiveProperty<bool> IsLoading { get; } = new(true);
-    
+    public EffectsWindowConfig? WindowConfig { get; set; }
+
     #region Properties
 
     // Color

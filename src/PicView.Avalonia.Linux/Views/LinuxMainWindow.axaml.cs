@@ -265,7 +265,7 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
         _windowInitializer?.ShowFileAssociationsWindow();
 
     public void ShowEffectsWindow() =>
-        _windowInitializer?.ShowEffectsWindow();
+        _ = _windowInitializer?.ShowEffectsWindow();
 
     public void ShowConvertWindow() =>
         _windowInitializer?.ShowConvertWindow();

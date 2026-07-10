@@ -11,7 +11,7 @@ public interface IWindowProvider
     Window CreateBatchResizeWindow(BatchResizeWindowConfig config);
     Window CreateFileAssociationsWindow();
     Window CreateConvertWindow();
-    Window CreateEffectsWindow();
+    Window CreateEffectsWindow(EffectsWindowConfig config);
     Window CreateImageInfoWindow(MainWindowViewModel vm);
     Window CreateKeybindingsWindow(KeybindingWindowConfig config);
     Window CreateSettingsWindow(SettingsWindowConfig config);

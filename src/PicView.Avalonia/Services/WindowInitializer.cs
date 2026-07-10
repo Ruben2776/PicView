@@ -282,42 +282,40 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
         }
     }
 
-    public void ShowEffectsWindow()
+    public async Task ShowEffectsWindow()
     {
-        if (Dispatcher.UIThread.CheckAccess())
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
+            Application.Current.DataContext is not CoreViewModel core)
         {
-            Set();
-        }
-        else
-        {
-            Dispatcher.UIThread.InvokeAsync(Set);
+            return;
         }
 
-        return;
-
-        void Set()
+        if (_effectsWindow is null)
         {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-                Application.Current.DataContext is not CoreViewModel core)
+            core.Effects ??= new EffectsViewModel();
+            if (core.Effects.WindowConfig is null)
             {
-                return;
+                core.Effects.WindowConfig = new EffectsWindowConfig();
+                await core.Effects.WindowConfig.LoadAsync();
             }
 
-            if (_effectsWindow is null)
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                core.Effects ??= new EffectsViewModel();
-                _effectsWindow = provider.CreateEffectsWindow();
+                _effectsWindow = provider.CreateEffectsWindow(core.Effects.WindowConfig);
                 _effectsWindow.DataContext = core;
-                _effectsWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
+                WindowFunctions.InitializeWindowPosition(_effectsWindow, core.Effects.WindowConfig.WindowProperties);
                 _effectsWindow.Show(desktop.MainWindow);
-                _effectsWindow.Closing += (_, _) =>
+                _effectsWindow.Closing += async (_, _) =>
                 {
                     desktop.MainWindow?.Focus();
                     _effectsWindow = null;
+                    await core.Effects.WindowConfig.SaveAsync();
                 };
-            }
-            else
+            });
+        }
+        else
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 if (_effectsWindow.WindowState == WindowState.Minimized)
                 {
@@ -327,7 +325,7 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
                 {
                     _effectsWindow.Activate();
                 }
-            }
+            });
         }
     }
 
