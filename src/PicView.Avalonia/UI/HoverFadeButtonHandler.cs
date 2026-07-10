@@ -86,8 +86,12 @@ public class HoverFadeButtonHandler : IDisposable
             return false;
         }
 
-        if (Settings.UIProperties.ShowHoverNavigationBar && _mainButton is HoverBar hoverBar)
+        if (_mainButton is HoverBar hoverBar)
         {
+            if (Settings.UIProperties.ShowHoverNavigationBar)
+            {
+                return false;
+            }
             if (Application.Current.DataContext is CoreViewModel core)
             {
                 var isBottomToolbarShown =
