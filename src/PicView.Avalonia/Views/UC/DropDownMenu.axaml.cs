@@ -74,11 +74,13 @@ public partial class DropDownMenu : AnimatedMenu
             {
                 if (isVisible)
                 {
+                    _mainWindow.IsDialogOpen = true;
                     MaxHeight = _mainWindow.UIHelper.GetMainView.Bounds.Height - 1;
                     core.FileHistory.UpdateHistory();
                 }
                 else
                 {
+                    _mainWindow.IsDialogOpen = false;
                     // Reset it, so that it opens in default state the next time it opens
                     core.MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.CloseToDefault();
                 }
@@ -393,6 +395,8 @@ public partial class DropDownMenu : AnimatedMenu
         SlideShow60Sec.Click -= SlideShow60SecOnClick;
         SlideShow90Sec.Click -= SlideShow90SecOnClick;
         SlideShow120Sec.Click -= SlideShow120SecOnClick;
+        
+        GC.SuppressFinalize(this);
     }
 
     private void Close_OnClick(object? sender, RoutedEventArgs e)

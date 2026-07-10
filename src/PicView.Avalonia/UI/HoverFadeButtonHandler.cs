@@ -93,6 +93,7 @@ public class HoverFadeButtonHandler : IDisposable
 
         if (!Settings.UIProperties.ShowHoverNavigationBar)
         {
+            hoverBar.IsVisible = false;
             return false;
         }
 
