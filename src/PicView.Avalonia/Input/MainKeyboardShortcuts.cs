@@ -166,9 +166,12 @@ public static class MainKeyboardShortcuts
         // Handle cropping mode
         if (vm.WindowTabs.ActiveTab.CurrentValue.CropService is not null)
         {
-            if (vm.WindowTabs.ActiveTab.CurrentValue.CropService.IsCropping )
+            if (vm.WindowTabs.ActiveTab.CurrentValue.CropService.IsCropping)
             {
-                vm.WindowTabs.ActiveTab.CurrentValue.CropService.CloseCropControl();
+                if (e.Key is Key.Escape)
+                {
+                    vm.WindowTabs.ActiveTab.CurrentValue.CropService.CloseCropControl();
+                }
                 return true;
             }
         }

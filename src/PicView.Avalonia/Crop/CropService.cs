@@ -123,11 +123,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
     public void CloseCropControl()
     {
-        if (mainWindow.DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-        
         if (Settings.Gallery.IsGalleryDocked)
         {
             WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
