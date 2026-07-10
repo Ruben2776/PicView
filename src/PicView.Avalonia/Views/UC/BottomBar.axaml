@@ -365,15 +365,70 @@
 
             <!--  Toggle ctrl zoom  -->
             <MenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding Translation.IsCtrlToZoom.Value, Mode=OneWay}">
-                <!-- <MenuItem.Icon> -->
-                <!--  <Image  -->
-                <!--  Height="12"  -->
-                <!--  Source="{CompiledBinding MainWindow.ChangeCtrlZoomImage.Value}"  -->
-                <!--  Width="12" />  -->
-                <!-- </MenuItem.Icon> -->
+                <MenuItem.Icon>
+                    <Image
+                        Width="12"
+                        Height="12"
+                        Source="{CompiledBinding ChangeCtrlZoomImage.Value}" />
+                </MenuItem.Icon>
             </MenuItem>
 
             <Separator />
+
+            <!--  Tool windows  -->
+            <MenuItem Header="{CompiledBinding Translation.ToolWindows.Value, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Image
+                        Width="12"
+                        Height="12"
+                        Source="{StaticResource BrushImage}" />
+                </MenuItem.Icon>
+
+                <!--  Exif window  -->
+                <MenuItem Command="{CompiledBinding ImageInfoWindowCommand}" Header="{CompiledBinding Translation.ImageInfo.Value, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="12"
+                            Height="12"
+                            Source="{StaticResource CameraImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <!--  Image effects  -->
+                <MenuItem
+                    Command="{Binding EffectsWindowCommand}"
+                    Header="{CompiledBinding Translation.Effects.Value,
+                                             Mode=OneWay}"
+                    ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
+                                                  Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="12"
+                            Height="12"
+                            Source="{StaticResource SparklesImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <!--  Resize  Image  -->
+                <MenuItem Command="{Binding ResizeWindowCommand}" Header="{CompiledBinding Translation.ResizeImage.Value, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="12"
+                            Height="12"
+                            Source="{StaticResource UpscaleImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <!--  Batch Resize  Images  -->
+                <MenuItem Command="{Binding BatchResizeWindowCommand}" Header="{CompiledBinding Translation.BatchResize.Value, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="12"
+                            Height="12"
+                            Source="{StaticResource UpscaleImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
 
             <!--  Show about window  -->
             <MenuItem Command="{CompiledBinding AboutWindowCommand}" Header="{CompiledBinding Translation.About.Value, Mode=OneWay}">

@@ -682,16 +682,6 @@
                         Source="{StaticResource Image}" />
                 </MenuItem.Icon>
 
-                <!--  Exif window  -->
-                <MenuItem Command="{CompiledBinding ImageInfoWindowCommand}" Header="{CompiledBinding Translation.ImageInfo.Value, Mode=OneWay}">
-                    <MenuItem.Icon>
-                        <Image
-                            Width="12"
-                            Height="12"
-                            Source="{StaticResource CameraImage}" />
-                    </MenuItem.Icon>
-                </MenuItem>
-
                 <!--  File properties  -->
                 <MenuItem
                     Command="{CompiledBinding ShowFilePropertiesCommand}"
@@ -706,41 +696,6 @@
                             Width="12"
                             Height="12"
                             Source="{StaticResource FileUserImage}" />
-                    </MenuItem.Icon>
-                </MenuItem>
-
-                <!--  Image effects  -->
-                <MenuItem
-                    Command="{Binding EffectsWindowCommand}"
-                    Header="{CompiledBinding Translation.Effects.Value,
-                                             Mode=OneWay}"
-                    ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
-                                                  Mode=OneWay}">
-                    <MenuItem.Icon>
-                        <Image
-                            Width="12"
-                            Height="12"
-                            Source="{StaticResource SparklesImage}" />
-                    </MenuItem.Icon>
-                </MenuItem>
-
-                <!--  Resize  Image  -->
-                <MenuItem Command="{Binding ResizeWindowCommand}" Header="{CompiledBinding Translation.ResizeImage.Value, Mode=OneWay}">
-                    <MenuItem.Icon>
-                        <Image
-                            Width="12"
-                            Height="12"
-                            Source="{StaticResource UpscaleImage}" />
-                    </MenuItem.Icon>
-                </MenuItem>
-
-                <!--  Batch Resize  Images  -->
-                <MenuItem Command="{Binding BatchResizeWindowCommand}" Header="{CompiledBinding Translation.BatchResize.Value, Mode=OneWay}">
-                    <MenuItem.Icon>
-                        <Image
-                            Width="12"
-                            Height="12"
-                            Source="{StaticResource UpscaleImage}" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -824,6 +779,63 @@
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Path Classes="RotateRightPath" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+            <Separator />
+
+            <!--  Tool windows  -->
+            <MenuItem Header="{CompiledBinding Translation.ToolWindows.Value, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Image
+                        Width="12"
+                        Height="12"
+                        Source="{StaticResource BrushImage}" />
+                </MenuItem.Icon>
+
+                <!--  Exif window  -->
+                <MenuItem Command="{CompiledBinding ImageInfoWindowCommand}" Header="{CompiledBinding Translation.ImageInfo.Value, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="12"
+                            Height="12"
+                            Source="{StaticResource CameraImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <!--  Image effects  -->
+                <MenuItem
+                    Command="{Binding EffectsWindowCommand}"
+                    Header="{CompiledBinding Translation.Effects.Value,
+                                             Mode=OneWay}"
+                    ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
+                                                  Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="12"
+                            Height="12"
+                            Source="{StaticResource SparklesImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <!--  Resize  Image  -->
+                <MenuItem Command="{Binding ResizeWindowCommand}" Header="{CompiledBinding Translation.ResizeImage.Value, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="12"
+                            Height="12"
+                            Source="{StaticResource UpscaleImage}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <!--  Batch Resize  Images  -->
+                <MenuItem Command="{Binding BatchResizeWindowCommand}" Header="{CompiledBinding Translation.BatchResize.Value, Mode=OneWay}">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="12"
+                            Height="12"
+                            Source="{StaticResource UpscaleImage}" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
