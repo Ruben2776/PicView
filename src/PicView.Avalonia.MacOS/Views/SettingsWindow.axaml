@@ -1,10 +1,8 @@
 <Window
-    BorderThickness="1"
-    CanResize="True"
-    ExtendClientAreaTitleBarHeightHint="-1"
-    ExtendClientAreaToDecorationsHint="True"
+    Height="785"
     MinWidth="600"
     Title="SettingsWindow"
+    Width="985"
     x:Class="PicView.Avalonia.MacOS.Views.SettingsWindow"
     x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"

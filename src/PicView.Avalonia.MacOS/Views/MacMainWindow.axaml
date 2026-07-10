@@ -108,10 +108,10 @@
 
 
                     <!--  New Tab  -->
-                    <NativeMenuItem Command="{CompiledBinding NewTabCommand}" Header="New tab (missing translation)" />
+                    <NativeMenuItem Command="{CompiledBinding NewTabCommand}" Header="{Binding Translation.NewTab.Value}" />
 
                     <!--  Close other tabs  -->
-                    <NativeMenuItem Header="Close other tabs (missing translation)" />
+                    <!-- <NativeMenuItem Header="Close other tabs (missing translation)" /> -->
 
                     <NativeMenuItemSeparator />
 

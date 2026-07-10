@@ -43,10 +43,13 @@ public static class GenericWindowHelper
             else
             { 
                 window.WindowState = WindowState.Normal;
-                window.Height = windowConfig.Height ?? window.Height;
-                if (!isWidthLocked)
+                if (windowConfig.Height.HasValue && windowConfig.Height.Value > window.MinHeight)
                 {
-                    window.Width = windowConfig.Width ?? window.Width;
+                    window.Height = windowConfig.Height.Value;
+                }
+                if (!isWidthLocked && windowConfig.Width.HasValue && windowConfig.Width.Value > window.MinWidth)
+                {
+                    window.Width = windowConfig.Width.Value;
                 }
                 if (windowConfig.Top is not null && windowConfig.Left is not null)
                 {
