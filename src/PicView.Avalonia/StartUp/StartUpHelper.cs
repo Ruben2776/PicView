@@ -169,7 +169,7 @@ public static class StartUpHelper
         BackGroundLoadings();
 
         SetWindowEventHandlers(window);
-        HandleThemeUpdates();
+        HandleThemeUpdates(vm);
 
         vm.ToolTip ??= new ToolTipViewModel();
         TooltipHelper.StartTooltipSubscription(vm.ToolTip, window);
@@ -206,7 +206,7 @@ public static class StartUpHelper
         GCSettings.LatencyMode = GCLatencyMode.LowLatency;
     }
 
-    private static void HandleThemeUpdates()
+    private static void HandleThemeUpdates(MainWindowViewModel vm)
     {
         if (Settings.Theme.GlassTheme)
         {
@@ -215,6 +215,7 @@ public static class StartUpHelper
 
         BackgroundManager.SetBackground(Settings.UIProperties.BgColorChoice);
         ColorManager.UpdateAccentColors(Settings.Theme.ColorTheme);
+        UIHelper.SetCtrlToZoomImage(vm);
     }
 
     private static void HandleWindowControlSettings(CoreViewModel vm, IClassicDesktopStyleApplicationLifetime desktop)

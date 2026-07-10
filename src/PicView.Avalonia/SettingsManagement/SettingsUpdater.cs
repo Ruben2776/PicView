@@ -315,17 +315,7 @@ public static class SettingsUpdater
             ? TranslationManager.Translation.CtrlToZoom
             : TranslationManager.Translation.ScrollToZoom;
         
-        // Set source for ChangeCtrlZoomImage
-        if (!Application.Current.TryGetResource("ScanEyeImage", Application.Current.RequestedThemeVariant, out var scanEyeImage ))
-        {
-            return;
-        }
-        if (!Application.Current.TryGetResource("LeftRightArrowsImage", Application.Current.RequestedThemeVariant, out var leftRightArrowsImage ))
-        {
-            return;
-        }
-        var isNavigatingWithCtrl = Settings.Zoom.CtrlZoom;
-        vm.ChangeCtrlZoomImage.Value = isNavigatingWithCtrl ? leftRightArrowsImage as DrawingImage : scanEyeImage as DrawingImage;
+        UIHelper.SetCtrlToZoomImage(vm);
         await SaveSettingsAsync().ConfigureAwait(false);
     }
     
