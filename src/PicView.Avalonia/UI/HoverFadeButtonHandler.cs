@@ -86,21 +86,25 @@ public class HoverFadeButtonHandler : IDisposable
             return false;
         }
 
-        if (_mainButton is HoverBar hoverBar)
+        if (_mainButton is not HoverBar hoverBar)
         {
-            if (!Settings.UIProperties.ShowHoverNavigationBar)
-            {
-                return false;
-            }
-            if (Application.Current.DataContext is CoreViewModel core)
-            {
-                var isBottomToolbarShown =
-                    core.MainWindows.ActiveWindow.CurrentValue.IsBottomToolbarShown.CurrentValue;
-                hoverBar.IsVisible = !isBottomToolbarShown;
-                return !isBottomToolbarShown;
-            }
+            return true;
         }
-        return true;
+
+        if (!Settings.UIProperties.ShowHoverNavigationBar)
+        {
+            return false;
+        }
+
+        if (Application.Current.DataContext is not CoreViewModel core)
+        {
+            return true;
+        }
+
+        var isBottomToolbarShown =
+            core.MainWindows.ActiveWindow.CurrentValue.IsBottomToolbarShown.CurrentValue;
+        hoverBar.IsVisible = !isBottomToolbarShown;
+        return !isBottomToolbarShown;
     }
 
     /// <summary>
