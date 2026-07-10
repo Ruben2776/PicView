@@ -108,7 +108,9 @@ public partial class WinTitleBar : MainTitleBar
         OpenMenu();
         vm.TopTitlebarViewModel.IsBtnPanelVisible.Value = false;
         LogoBorder.IsVisible = false;
-        const int menuItemsCount = 7;
+        CreateTabButton.IsVisible = false;
+        
+        const int menuItemsCount = 6;
         vm.TopTitlebarViewModel.MaxItemWidth.Value = Bounds.Width / menuItemsCount;
         
         var truncatedPadding = new Thickness(2,0,2,0);
