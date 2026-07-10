@@ -4,7 +4,7 @@
     ExtendClientAreaToDecorationsHint="True"
     SizeToContent="WidthAndHeight"
     x:Class="PicView.Avalonia.MacOS.Views.AboutWindow"
-    x:DataType="viewModels:MainWindowViewModel"
+    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
