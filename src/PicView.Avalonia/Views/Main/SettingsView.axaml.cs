@@ -13,11 +13,6 @@ public partial class SettingsView : UserControl
     public SettingsView()
     {
         InitializeComponent();
-
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            FileAssociationsListBoxItem.IsVisible = FileAssociationsListBoxItem.IsVisible = false;
-        }
         
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
@@ -25,6 +20,12 @@ public partial class SettingsView : UserControl
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            FileAssociationsListBoxItem.IsVisible = FileAssociationsListBoxItem.IsVisible = false;
+            FileAssociationsSection.IsVisible = false;
+        }
+        
         _controller = new SettingsSearchController(this);
         _controller.Initialize();
 
