@@ -100,6 +100,7 @@ public class SettingsSearchController(SettingsView view) : IDisposable
     public void ClosePopup()
     {
         view.SuggestionsPopup.Close();
+        view.FilterBox.Text = string.Empty;
     }
 
     public void OnViewModelCategoryChanged(SettingsCategory category)
