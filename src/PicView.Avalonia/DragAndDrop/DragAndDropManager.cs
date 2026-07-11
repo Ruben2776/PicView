@@ -300,19 +300,29 @@ public static class DragAndDropManager
         if (preload && preLoadValue?.ImageModel?.Image is Bitmap bmp)
         {
             thumb = bmp;
-            Dispatcher.CurrentDispatcher.Invoke(() => _dragDropView.UpdateThumbnail(thumb, mainWindow));
+            Dispatcher.UIThread.Invoke(() => _dragDropView.UpdateThumbnail(thumb, mainWindow));
         }
         else
         {
             // Generate thumbnail
             thumb = await GetThumbnails.GetThumbAsync(fileInfo, SizeDefaults.WindowMinSize - 30)
                 .ConfigureAwait(false);
-            await Dispatcher.CurrentDispatcher.InvokeAsync(() => _dragDropView.UpdateThumbnail(thumb, mainWindow));
+            await Dispatcher.UIThread.InvokeAsync(() => _dragDropView.UpdateThumbnail(thumb, mainWindow));
             
             // Load full image in background
-            var model = await GetImageModel.GetImageModelAsync(fileInfo);
-            await Dispatcher.CurrentDispatcher.InvokeAsync(() => _dragDropView.UpdateThumbnail(model.Image as Bitmap, mainWindow));
-            _preLoadValue = new PreLoadValue(model);
+            await Task.Run(async () =>
+            {
+                var model = await GetImageModel.GetImageModelAsync(fileInfo);
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (model is null || _dragDropView is null)
+                    {
+                        return;
+                    }
+                    _dragDropView.UpdateThumbnail(model.Image as Bitmap, mainWindow);
+                });
+                _preLoadValue = new PreLoadValue(model);
+            }).ConfigureAwait(false);
         }
     }
         
