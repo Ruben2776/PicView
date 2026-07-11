@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.StartUp;
 using PicView.Core.DebugTools;
 using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
@@ -152,16 +154,24 @@ public static class IPC
                     // Need to stop taskbar progress if it's running
                     // Otherwise the new taskbar progress will not be updated
                     core.PlatformService.StopTaskbarProgress();
-                    await Dispatcher.UIThread.InvokeAsync(() => 
+                    var desktop = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
+                    var activeWindow = core.MainWindows.ActiveWindow.CurrentValue;
+                    var tabs = activeWindow.WindowTabs;
+                    var tab = tabs.ActiveTab.CurrentValue;
+                    activeWindow.IsLoadingIndicatorShown.Value = true;
+                    if (!tab.IsInitialized)
                     {
-                        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-                        {
-                            return;
-                        }
-                        // Activating the window works fine in debug mode, but not in AOT release mode 
-                        desktop.MainWindow.Activate();
+                        await QuickLoad.QuickLoadAsync(desktop?.MainWindow as MainWindow, core, line, continueFromLeftOff: false).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await tabs.LoadFromStringAsync(line).ConfigureAwait(false);
+                    }
+                    activeWindow.IsLoadingIndicatorShown.Value = false;
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        desktop?.MainWindow.Activate();
                     });
-                    await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.LoadFromStringAsync(line).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
