@@ -7,8 +7,6 @@ namespace PicView.Core.Navigation;
 
 public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, TabViewModel tab) : IImageIterator
 {
-    #region Dependencies & Properties
-
     public IImageCache Cache { get; } = cache ?? throw new ArgumentNullException(nameof(cache));
     public string? CurrentDirectory => Files.Count > 0 ? Files[0].DirectoryName : null;
 
@@ -22,17 +20,14 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
     public int SecondaryCurrentIndex { get; private set; } = -1;
     public bool IsReversed { get; private set; }
 
-    #endregion
-
-    #region Initialization & Property Updates
-
     public void Initialize(IReadOnlyList<FileInfo> files, int initialIndex = 0)
     {
         Files = files ?? [];
         CurrentIndex = initialIndex;
         UpdateNavigationProperties();
     }
-
+    #region Core Navigation Logic
+    
     public void UpdateNavigationProperties()
         => UpdateNavigationProperties(CurrentIndex, Files.Count);
 
@@ -61,10 +56,6 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         _tab.MaxIndex.Value = count;
     }
 
-    #endregion
-
-    #region Core Navigation Logic
-    
     public async ValueTask NavigateAsync(NavigateTo navigateTo, SkipAmount skipAmount, CancellationTokenSource ct)
     {
         if (Settings.ImageScaling.ShowImageSideBySide)

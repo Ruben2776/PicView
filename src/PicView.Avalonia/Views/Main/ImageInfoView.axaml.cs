@@ -2,10 +2,13 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
+using PicView.Avalonia.Resizing;
+using PicView.Avalonia.UI;
 using PicView.Core.ViewModels;
 using PicView.Core.Conversion;
 using PicView.Core.Exif;
 using PicView.Core.Extensions;
+using PicView.Core.FileHandling;
 using PicView.Core.Models;
 using PicView.Core.Sizing;
 using PicView.Core.Titles;
@@ -130,61 +133,42 @@ public partial class ImageInfoView : UserControl
 
     private async Task HandleRenameOnEnterAsync(KeyEventArgs e, Func<string> getNewPath)
     {
-        // if (e.Key is not Key.Enter || DataContext is not MainWindowViewModel vm)
-        // {
-        //     return;
-        // }
-        //
-        // try
-        // {
-        //     var newPath = getNewPath();
-        //     if (string.IsNullOrWhiteSpace(newPath))
-        //     {
-        //         return;
-        //     }
-        //
-        //     await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(true));
-        //     vm.IsLoadingIndicatorShown.Value = true;
-        //     //NavigationManager.DisableWatcher();
-        //
-        //     var fileInfo = vm.WindowTabs.ActiveTab.Value.Model.CurrentValue.FileInfo;
-        //     var oldPath = fileInfo.FullName;
-        //
-        //     // Avoid renaming if the path hasn't changed
-        //     if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
-        //     {
-        //         return;
-        //     }
-        //
-        //     var currentExtension = Path.GetExtension(oldPath);
-        //     var newExtension = Path.GetExtension(newPath);
-        //     if (currentExtension.Equals(newExtension, StringComparison.OrdinalIgnoreCase))
-        //     {
-        //         // Same file, handle simple rename
-        //
-        //         // Make sure the old file is discarded from being cached
-        //         //NavigationManager.RemoveFromPreloader(oldPath);
-        //
-        //         FileHelper.RenameFile(oldPath, newPath);
-        //
-        //         vm.WindowTabs.ActiveTab.Value.Model.CurrentValue.FileInfo = new FileInfo(newPath);
-        //     }
-        //     else
-        //     {
-        //         // Convert and reload
-        //         // await SaveImageHandler.SaveImageWithPossibleNavigation(vm, vm.WindowTabs.ActiveTab.Value.FileInfo.CurrentValue.FullName,
-        //         //     newPath, true, newExtension);
-        //     }
-        //
-        //     //await NavigationManager.QuickReload();
-        //
-        //     await UpdateValuesAsync(vm.WindowTabs.ActiveTab.Value.Model.CurrentValue.FileInfo, CancellationToken.None);
-        // }
-        // finally
-        // {
-        //     await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(false));
-        //     vm.IsLoadingIndicatorShown.Value = false;
-        // }
+        if (e.Key is not Key.Enter || DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+        
+        try
+        {
+            var newPath = getNewPath();
+            if (string.IsNullOrWhiteSpace(newPath))
+            {
+                return;
+            }
+        
+            await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(true));
+            vm.IsLoadingIndicatorShown.Value = true;
+        
+            var oldPath = vm.WindowTabs.ActiveTab.Value.FileInfo.CurrentValue.FullName;
+        
+            // Avoid renaming if the path hasn't changed
+            if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+            
+            var isRenamed = await RenameHelper.RenameAction(vm, newPath);
+            if (isRenamed)
+            {
+                await UpdateValuesAsync(vm.WindowTabs.ActiveTab.Value.Model, CancellationToken.None);
+            }
+            
+        }
+        finally
+        {
+            await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(false));
+            vm.IsLoadingIndicatorShown.Value = false;
+        }
     }
 
 
@@ -223,9 +207,9 @@ public partial class ImageInfoView : UserControl
             DirectoryNameTextBox.Text = imageModel.FileInfo.DirectoryName;
         }
 
-        FileSizeBox.Text = vm.WindowTabs.ActiveTab.Value.Model.FileInfo?.Length.GetReadableFileSize();
-        // vm.WindowTabs.ActiveTab.Value.Model.ShouldOptimizeImageBeEnabled.Value =
-        //     ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(vm.WindowTabs.ActiveTab.Value.Model.FileInfo?.CurrentValue);
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        FileSizeBox.Text = tab.Model.FileInfo?.Length.GetReadableFileSize();
+        tab.ShouldOptimizeImageBeEnabled.Value = ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(tab.Model.FileInfo);
         GoogleLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif.GoogleLink.CurrentValue);
         BingLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif.BingLink.CurrentValue);
 
@@ -246,9 +230,11 @@ public partial class ImageInfoView : UserControl
             return;
         }
 
-        var aspectRatio = (double)vm.WindowTabs.ActiveTab.Value.Model.PixelWidth / vm.WindowTabs.ActiveTab.Value.Model.PixelHeight;
-        // AspectRatioHelper.SetAspectRatioForTextBox(PixelWidthTextBox, PixelHeightTextBox, sender == PixelWidthTextBox,
-        //     aspectRatio, DataContext as MainWindowViewModel);
+        var pixelWidth = vm.WindowTabs.ActiveTab.Value.Model.PixelWidth;
+        var pixelHeight = vm.WindowTabs.ActiveTab.Value.Model.PixelHeight;
+        var aspectRatio = (double)pixelWidth / pixelHeight;
+        AspectRatioHelper.SetAspectRatioForTextBox(PixelWidthTextBox, PixelHeightTextBox, sender == PixelWidthTextBox, aspectRatio,
+            pixelWidth, pixelHeight);
 
         if (!uint.TryParse(PixelWidthTextBox.Text, out var width) ||
             !uint.TryParse(PixelHeightTextBox.Text, out var height))
@@ -288,7 +274,7 @@ public partial class ImageInfoView : UserControl
                     .ConfigureAwait(false);
                 if (success)
                 {
-                    //await NavigationManager.QuickReload().ConfigureAwait(false);
+                    await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -305,7 +291,7 @@ public partial class ImageInfoView : UserControl
                     .ConfigureAwait(false);
                 if (success)
                 {
-                    //await NavigationManager.QuickReload().ConfigureAwait(false);
+                    await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
                 }
             }
         }

@@ -265,7 +265,14 @@ public class FileWatcherService(
             var isNavigatingBackwards = Settings.Navigation.IsNavigatingBackwardsWhenDeleting;
             var targetIndex = isNavigatingBackwards ? oldIndex - 1 : oldIndex;
             targetIndex = Math.Clamp(targetIndex, 0, files.Count - 1);
-            await tab.ImageIterator.IterateToIndexAsync(targetIndex, tab.GetTabCancellation());
+            if (tab.IsFileWatcherNavigationEnabled)
+            {
+                await tab.ImageIterator.IterateToIndexAsync(targetIndex, tab.GetTabCancellation());
+            }
+            else
+            {
+                tab.ImageIterator.SetCurrentIndex(targetIndex);
+            }
         }
         else
         {

@@ -114,7 +114,7 @@ public partial class EditableTitlebar : UserControl
         switch (e.Key)
         {
             case Key.Enter:
-                RenameHelper.RenameAction(vm, mainWindow, TextBox.Text);
+                _ = RenameHelper.RenameAction(vm, TextBox.Text, mainWindow);
                 break;
             case Key.Escape:
                 mainWindow.UIHelper.GetMainView.Focus();

@@ -17,7 +17,7 @@ public static class AspectRatioHelper
     /// <param name="pixelWidth">The current pixel width of the image.</param>
     /// <param name="pixelHeight">The current pixel height of the image.</param>
     public static void SetAspectRatioForTextBox(TextBox widthTextBox, TextBox heightTextBox, bool isWidth,
-        double aspectRatio, int pixelWidth, int pixelHeight)
+        double aspectRatio, uint pixelWidth, uint pixelHeight)
     {
         try
         {
