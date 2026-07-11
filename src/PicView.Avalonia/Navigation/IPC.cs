@@ -28,7 +28,7 @@ public static class IPC
     /// </summary>
     private const string PipeName = "PicViewPipe";
     
-    private static bool? _isRunning;
+    public static bool? IsRunning { get; private set; }
     
     public static void SendWithArgs(string[] args)
     {
@@ -115,13 +115,13 @@ public static class IPC
     /// </remarks>
     public static async Task StartListeningForArguments()
     {
-        if (_isRunning.HasValue && !_isRunning.Value)
+        if (IsRunning.HasValue && !IsRunning.Value)
         {
-            _isRunning = true;
+            IsRunning = true;
             return;
         }
         
-        _isRunning = true;
+        IsRunning = true;
         do
         {
             try
@@ -136,7 +136,7 @@ public static class IPC
                 // Read and process incoming arguments
                 while (await reader.ReadLineAsync() is { } line)
                 {
-                    if (!_isRunning.Value)
+                    if (!IsRunning.Value)
                     {
                         // Setting to open in same window turned off, start new process instead
                         ProcessHelper.StartNewProcess(line);
@@ -147,7 +147,8 @@ public static class IPC
                     Trace.WriteLine("Received argument: " + line);
 #endif
 
-                    if (Application.Current.DataContext is not CoreViewModel core)
+                    var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
+                    if (core is null)
                     {
                         return;
                     }
@@ -161,7 +162,12 @@ public static class IPC
                     activeWindow.IsLoadingIndicatorShown.Value = true;
                     if (!tab.IsInitialized)
                     {
-                        await QuickLoad.QuickLoadAsync(desktop?.MainWindow as MainWindow, core, line, continueFromLeftOff: false).ConfigureAwait(false);
+                        var mainWindow = await Dispatcher.UIThread.InvokeAsync(() => desktop?.MainWindow as MainWindow);
+                        if (mainWindow is null)
+                        {
+                            return;
+                        }
+                        await QuickLoad.QuickLoadAsync(mainWindow, core, line, continueFromLeftOff: false).ConfigureAwait(false);
                     }
                     else
                     {
@@ -185,6 +191,6 @@ public static class IPC
 
     public static void StopListening()
     {
-        _isRunning = false;
+        IsRunning = false;
     }
 }

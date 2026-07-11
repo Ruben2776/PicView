@@ -55,8 +55,7 @@ public class MainWindow : Window, IMainWindow
             .SubscribeOn(FrameProvider)
             .Subscribe(HandleWindowResize, DebugHelper.LogError(nameof(MainWindow), nameof(HandleWindowResize)))
             .AddTo(Disposables);
-            
-        UIHelper.AddDropDownMenu(this);
+        
         Activated += OnActivated;
         
         ScalingChanged += OnScalingChanged;

@@ -61,9 +61,16 @@ public static class StartUpHelper
             {
                 BlankStartUp();
             }
-            else if (Settings.UIProperties.OpenInSameWindow && ProcessHelper.CheckIfAnotherInstanceIsRunning())
+            else if (Settings.UIProperties.OpenInSameWindow && IPC.IsRunning.HasValue && IPC.IsRunning.Value)
             {
-                IPC.SendWithArgs(args);
+                if (!ProcessHelper.CheckIfAnotherInstanceIsRunning())
+                {
+                    ImageStartUp(arg);
+                }
+                else
+                {
+                    IPC.SendWithArgs(args);
+                }
             }
             else
             {
@@ -151,7 +158,7 @@ public static class StartUpHelper
         }
     }
 
-    public static void HandlePostWindowUpdates(CoreViewModel core, IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
+    public static void HandlePostWindowUpdates(CoreViewModel core, IClassicDesktopStyleApplicationLifetime desktop, MainWindow mainWindow)
     {
         var vm = core.MainWindows.ActiveWindow.CurrentValue;
         // Need to delay setting fullscreen or maximized until after the window is shown to select the correct monitor
@@ -168,11 +175,12 @@ public static class StartUpHelper
         
         BackGroundLoadings();
 
-        SetWindowEventHandlers(window);
+        SetWindowEventHandlers(mainWindow);
         HandleThemeUpdates(vm);
+        mainWindow.UIHelper.AddDropDownMenu(mainWindow);
 
         vm.ToolTip ??= new ToolTipViewModel();
-        TooltipHelper.StartTooltipSubscription(vm.ToolTip, window);
+        TooltipHelper.StartTooltipSubscription(vm.ToolTip, mainWindow);
         
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
@@ -192,7 +200,7 @@ public static class StartUpHelper
             Task.Run(async() =>
             {
                 await KeybindingManager.LoadKeybindings(core.PlatformService);
-                core.MainWindows.ActiveWindow.Value.Mapper = new FunctionsMapper(vm, window);
+                core.MainWindows.ActiveWindow.Value.Mapper = new FunctionsMapper(vm, mainWindow);
                 FileHistoryManager.Initialize();
                 HandleWindowControlSettings(core, desktop);
                 vm.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);

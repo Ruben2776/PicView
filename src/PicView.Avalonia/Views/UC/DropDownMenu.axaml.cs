@@ -7,7 +7,6 @@ using Avalonia.Threading;
 using ObservableCollections;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.UI;
 using PicView.Core.DebugTools;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
