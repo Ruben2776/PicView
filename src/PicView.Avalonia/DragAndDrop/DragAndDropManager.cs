@@ -56,18 +56,35 @@ public static class DragAndDropManager
         
         SwitchToImageViewerIfNecessary();
         var path = firstFile.Path.LocalPath;
-
+        if (Application.Current.DataContext is not CoreViewModel core)
+        {
+            return;
+        }
         if (path.IsSupported())
         {
             await LoadSupportedFile(mainWindow, path, tabOverview);
         }
         else if (Directory.Exists(path))
         {
-            await tabOverview.LoadFromDirectoryAsync(path);
+            if (tabOverview.ActiveTab.CurrentValue.IsInitialized)
+            {
+                await tabOverview.LoadFromDirectoryAsync(path);
+            }
+            else
+            {
+                await QuickLoad.QuickLoadAsync(mainWindow, core, path, continueFromLeftOff: false);
+            }
         }
         else if (path.IsArchive())
         {
-            await tabOverview.LoadFromStringAsync(path);
+            if (tabOverview.ActiveTab.CurrentValue.IsInitialized)
+            {
+                await tabOverview.LoadFromArchiveAsync(path);
+            }
+            else
+            {
+                await QuickLoad.QuickLoadAsync(mainWindow, core, path, continueFromLeftOff: false);
+            }
         }
         else
         {
