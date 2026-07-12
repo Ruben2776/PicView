@@ -27,8 +27,8 @@ public static class IPC
     /// This pipe is used to facilitate communication between instances of the application.
     /// </summary>
     private const string PipeName = "PicViewPipe";
-    
-    public static bool? IsRunning { get; private set; }
+
+    private static bool? _isRunning;
     
     public static void SendWithArgs(string[] args)
     {
@@ -42,6 +42,7 @@ public static class IPC
             RetrySendingArgs(args);
         }
     }
+    
 
     private static void RetrySendingArgs(string[] args)
     {
@@ -115,13 +116,13 @@ public static class IPC
     /// </remarks>
     public static async Task StartListeningForArguments()
     {
-        if (IsRunning.HasValue && !IsRunning.Value)
+        if (_isRunning.HasValue && !_isRunning.Value)
         {
-            IsRunning = true;
+            _isRunning = true;
             return;
         }
         
-        IsRunning = true;
+        _isRunning = true;
         do
         {
             try
@@ -136,7 +137,7 @@ public static class IPC
                 // Read and process incoming arguments
                 while (await reader.ReadLineAsync() is { } line)
                 {
-                    if (!IsRunning.Value)
+                    if (!_isRunning.Value)
                     {
                         // Setting to open in same window turned off, start new process instead
                         ProcessHelper.StartNewProcess(line);
@@ -191,6 +192,6 @@ public static class IPC
 
     public static void StopListening()
     {
-        IsRunning = false;
+        _isRunning = false;
     }
 }

@@ -61,7 +61,7 @@ public static class StartUpHelper
             {
                 BlankStartUp();
             }
-            else if (Settings.UIProperties.OpenInSameWindow && IPC.IsRunning.HasValue && IPC.IsRunning.Value)
+            else if (Settings.UIProperties.OpenInSameWindow)
             {
                 if (!ProcessHelper.CheckIfAnotherInstanceIsRunning())
                 {
