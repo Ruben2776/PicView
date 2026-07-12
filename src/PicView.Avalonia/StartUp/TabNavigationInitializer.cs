@@ -18,8 +18,8 @@ public static class TabNavigationInitializer
         // It is initialized after initial image load, to make it feel faster by showing the image asap. 
         
         // 1. Create dependencies
-        var imageLoader = new AvaloniaImageLoader();
-        var thumbnailService = new AvaloniaThumbnailLoader();
+        var imageLoader = ServiceHelper.ImageLoader;
+        var thumbnailService = ServiceHelper.ThumbLoader;
 
         // 2. Create SharedImageCache
         // We use the same loading logic as AvaloniaImageLoader (via GetImageModel)
@@ -57,8 +57,8 @@ public static class TabNavigationInitializer
         // It is initialized after initial image load, to make it feel faster by showing the image asap. 
         
         // 1. Create dependencies
-        var imageLoader = new AvaloniaImageLoader();
-        var thumbnailService = new AvaloniaThumbnailLoader();
+        var imageLoader = ServiceHelper.ImageLoader;
+        var thumbnailService = ServiceHelper.ThumbLoader;
 
         // 2. Create SharedImageCache
         // We use the same loading logic as AvaloniaImageLoader (via GetImageModel)

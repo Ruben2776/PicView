@@ -94,6 +94,10 @@ public partial class GalleryView : GalleryAnimationControl
                                 GalleryItemsControl.SelectedItemIndex = localIndex;
                                 Dispatcher.InvokeAsync(() =>
                                 {
+                                    if (GalleryItemsControl.ItemsPanelRoot is null)
+                                    {
+                                        return;
+                                    }
                                     if (GalleryItemsControl.ItemsPanelRoot.Children.Count <= localIndex)
                                     {
                                         return;

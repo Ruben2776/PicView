@@ -38,10 +38,18 @@ public class NavigationService(
         try
         {
             fileWatcherService.Unwatch(tab);
-            fileWatcherService.Watch(tab, fileInfo.DirectoryName);
 
             // Show image quickly to make it feel fast
-            var model = await imageLoader.GetImageModelAsync(fileInfo, ct.Token).ConfigureAwait(false);
+            ImageModel model;
+            if (cache.TryGet(fileInfo, out var preLoadValue))
+            {
+                model = preLoadValue.ImageModel;
+            }
+            else
+            {
+                model = await imageLoader.GetImageModelAsync(fileInfo, ct.Token).ConfigureAwait(false);
+            }
+            
             tab.Model = model; // Image updated via reactive subscription
             tab.FileInfo.Value = model.FileInfo;
             tab.Image.Value = model.Image;
@@ -52,9 +60,11 @@ public class NavigationService(
             tab.ImageIterator.SetCurrentIndex(index);
             
             tab.UpdateTabTitle();
+            fileWatcherService.Watch(tab, fileInfo.DirectoryName);
             cache.Clear(tab.Id);
             cache.Add(tab.Id, index, new PreLoadValue(model), tab.ImageIterator.Files.Count, false);
             cache.Preload(tab.Id, index, false, tab.ImageIterator.Files, tab.GetTabCancellation().Token);
+            FileHistoryManager.Add(fileInfo.FullName);
 
             if ((tab.Gallery.IsDockedGalleryVisible.CurrentValue || tab.Gallery.IsGalleryExpanded.CurrentValue) && tab.ThumbnailCache != null)
             {
