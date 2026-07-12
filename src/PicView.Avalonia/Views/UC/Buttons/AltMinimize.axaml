@@ -1,29 +1,28 @@
 ﻿<UserControl
-    Background="Transparent"
     x:Class="PicView.Avalonia.Views.UC.Buttons.AltMinimize"
-    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:MainWindowViewModel"
+    Background="Transparent">
     <Button
+        x:Name="XButton"
+        Width="35"
+        Height="30"
+        VerticalAlignment="Top"
         Background="{DynamicResource AltBackgroundColor}"
         BorderBrush="{DynamicResource MainBorderColor}"
-        BorderThickness="1,0,0,0"
-        Classes="ButtonBorder hover"
+        BorderThickness="1,0,0,1"
+        Classes="hover"
         ClickMode="Release"
         Command="{CompiledBinding MinimizeCommand}"
-        CornerRadius="0,0,0,10"
-        Height="30"
         IsVisible="{CompiledBinding !IsUIShown.Value}"
-        VerticalAlignment="Top"
-        Width="35"
-        ZIndex="99"
-        x:Name="XButton">
-        <Viewbox Height="15" Width="15">
+        ZIndex="99">
+        <Viewbox Width="15" Height="15">
             <Path
+                Margin="7.5,0,0,7"
                 Data="{StaticResource MinimizeGeometry}"
                 Fill="{DynamicResource MainTextColor}"
-                Margin="7.5,0,0,7"
                 Stretch="Fill" />
         </Viewbox>
     </Button>

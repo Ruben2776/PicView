@@ -200,4 +200,13 @@ public partial class MainView : UserControl
     {
         DragAndDropManager.DragLeave(TopLevel.GetTopLevel(this) as MainWindow);
     }
+
+    private void DragMove(object? sender, PointerPressedEventArgs e)
+    {
+        if (TopLevel.GetTopLevel(this) is not MainWindow { DataContext: MainWindowViewModel vm } mainWindow)
+        {
+            return;
+        }
+        WindowFunctions.WindowDragAndDoubleClickBehavior(mainWindow, e, vm.PlatformWindowService);
+    }
 }

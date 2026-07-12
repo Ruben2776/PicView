@@ -1056,20 +1056,43 @@
             IsVisible="{Binding IsLoadingIndicatorShown.Value, Mode=OneWay}"
             ZIndex="9" />
 
-        <StackPanel
+        <DockPanel
             x:Name="AltButtonsPanel"
             Height="150"
-            HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Background="Transparent"
             IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}"
+            LastChildFill="True"
             Opacity="0"
-            Orientation="Horizontal"
             ZIndex="9">
-            <buttons:AltMinimize x:Name="AltMinimize" IsVisible="{Binding !IsUIShown.Value}" />
-            <buttons:AltRestore x:Name="AltRestore" IsVisible="{Binding !IsUIShown.Value}" />
-            <buttons:AltClose x:Name="AltClose" IsVisible="{Binding !IsUIShown.Value}" />
-        </StackPanel>
+            <buttons:AltClose
+                x:Name="AltClose"
+                DockPanel.Dock="Right"
+                IsVisible="{Binding !IsUIShown.Value}" />
+            <buttons:AltRestore
+                x:Name="AltRestore"
+                DockPanel.Dock="Right"
+                IsVisible="{Binding !IsUIShown.Value}" />
+            <buttons:AltMinimize
+                x:Name="AltMinimize"
+                DockPanel.Dock="Right"
+                IsVisible="{Binding !IsUIShown.Value}" />
+            <Border
+                Height="30"
+                Padding="2,0"
+                VerticalAlignment="Top"
+                Background="{DynamicResource AltBackgroundColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderThickness="0,0,0,1"
+                DockPanel.Dock="Left"
+                IsVisible="{Binding !IsUIShown.Value}"
+                PointerPressed="DragMove">
+                <TextBlock
+                    Classes="txt"
+                    Text="{Binding WindowTabs.ActiveTab.Value.Title.Value}"
+                    TextAlignment="Center" />
+            </Border>
+        </DockPanel>
 
         <uc:ToolTipMessage
             x:Name="ToolTipMessage"
