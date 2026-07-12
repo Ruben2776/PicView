@@ -61,7 +61,7 @@ public partial class GalleryView : GalleryAnimationControl
                 {
                     var newItem = e.NewItem;
                     var index = e.NewStartingIndex;
-                    Dispatcher.UIThread.Post(() =>
+                    Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         if (index >= 0 && index <= GalleryItemsControl.Items.Count)
                         {
@@ -72,7 +72,7 @@ public partial class GalleryView : GalleryAnimationControl
                             GalleryItemsControl.Items.Add(newItem);
                         }
                         GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                    },DispatcherPriority.Background);
+                    },DispatcherPriority.Background, tab.GetTabCancellation().Token);
                 }
                 else
                 {
@@ -80,7 +80,7 @@ public partial class GalleryView : GalleryAnimationControl
                     foreach (var item in e.NewItems)
                     {
                         var localIndex = index;
-                        Dispatcher.UIThread.Post(() =>
+                        Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             if (localIndex >= 0 && localIndex <= GalleryItemsControl.Items.Count)
                             {
@@ -92,8 +92,12 @@ public partial class GalleryView : GalleryAnimationControl
 
                                 GalleryItemsControl.CurrentItemIndex = localIndex;
                                 GalleryItemsControl.SelectedItemIndex = localIndex;
-                                Dispatcher.Post(() =>
+                                Dispatcher.InvokeAsync(() =>
                                 {
+                                    if (GalleryItemsControl.ItemsPanelRoot.Children.Count <= localIndex)
+                                    {
+                                        return;
+                                    }
                                     if (GalleryItemsControl.ItemsPanelRoot.Children[localIndex] is not ContentPresenter
                                         presenter)
                                     {
@@ -104,13 +108,13 @@ public partial class GalleryView : GalleryAnimationControl
                                     child?.SetCurrent(true);
                                     child?.SetSelected(true);
                                     GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                                }, DispatcherPriority.Render);
+                                }, DispatcherPriority.Render, tab.GetTabCancellation().Token);
                             }
                             else
                             {
                                 GalleryItemsControl.Items.Add(item);
                             }
-                        },DispatcherPriority.Background);
+                        },DispatcherPriority.Background, tab.GetTabCancellation().Token);
                         
                         if (index >= 0)
                         {
@@ -122,39 +126,36 @@ public partial class GalleryView : GalleryAnimationControl
             case NotifyCollectionChangedAction.Reset:
                 if (e.NewItems.IsEmpty)
                 {
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        GalleryItemsControl.Items.Clear();
-                    },DispatcherPriority.Background);
+                    GalleryItemsControl.Items.Clear();
                 }
                 break;
             case NotifyCollectionChangedAction.Remove:
                 if (e.IsSingleItem)
                 {
                     var oldItem = e.OldItem;
-                    Dispatcher.UIThread.Post(() =>
+                    Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         GalleryItemsControl.Items.Remove(oldItem);
                         GalleryItemsControl.ScrollToCenterOfCurrentItem();  
-                    });
+                    }, DispatcherPriority.Render, tab.GetTabCancellation().Token);
                 }
                 else
                 {
                     foreach (var item in e.OldItems)
                     {
-                        Dispatcher.UIThread.Post(() =>
+                        Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             GalleryItemsControl.Items.Remove(item);
-                        },DispatcherPriority.Background);
+                        },DispatcherPriority.Background, tab.GetTabCancellation().Token);
                         if (tab.Model.FileInfo.FullName != item.FileInfo.FullName)
                         {
                             continue;
                         }
 
-                        Dispatcher.UIThread.Post(() =>
+                        Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                        });
+                        }, DispatcherPriority.Render, tab.GetTabCancellation().Token);
                     }
                 }
                 break;

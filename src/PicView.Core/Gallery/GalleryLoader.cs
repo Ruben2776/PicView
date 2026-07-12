@@ -1,21 +1,21 @@
 using PicView.Core.DebugTools;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
-using R3;
 
 namespace PicView.Core.Gallery;
 
 public static class GalleryLoader
 {
+    private static CancellationTokenSource? _cts;
     public static async Task LoadGalleryAsync(TabViewModel tab, IReadOnlyList<FileInfo> files, IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
     {
-        if (tab.Gallery.LoadingState != GalleryLoadingState.NotLoaded)
+        if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
         {
             return;
         }
 
         tab.Gallery.LoadingState = GalleryLoadingState.Loading;
-        tab.Gallery.GalleryItems.Clear();
+        _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
         var dockedHeight = Settings.Gallery.DockedGalleryItemSize;
         var expandedHeight = Settings.Gallery.ExpandedGalleryItemSize;
@@ -52,7 +52,7 @@ public static class GalleryLoader
                 batchList.Clear();
             }
         }
-
+        
         // Add any remaining items in the final batch
         if (batchList.Count > 0)
         {
@@ -62,7 +62,7 @@ public static class GalleryLoader
         // Load thumbnails asynchronously
         var parallelOptions = new ParallelOptions 
         { 
-            CancellationToken = ct, 
+            CancellationToken = _cts.Token, 
             MaxDegreeOfParallelism = Environment.ProcessorCount - 2
         };
         
@@ -73,6 +73,12 @@ public static class GalleryLoader
                 await Parallel.ForAsync(0, tab.Gallery.GalleryItems.Count, parallelOptions,
                 async (i, _) =>
                 {
+                    ct.ThrowIfCancellationRequested();
+                    if (_cts is null || ct.IsCancellationRequested || _cts.IsCancellationRequested)
+                    {
+                        parallelOptions.CancellationToken.ThrowIfCancellationRequested();
+                        throw new OperationCanceledException();
+                    }
                     var item = tab.Gallery.GalleryItems[i];
                     await LoadItem(item).ConfigureAwait(false);
                 });
@@ -82,6 +88,12 @@ public static class GalleryLoader
                 await Parallel.ForAsync(0, tab.Gallery.GalleryItems.Count, parallelOptions,
                 async (i, _) =>
                 {
+                    ct.ThrowIfCancellationRequested();
+                    if (_cts is null || ct.IsCancellationRequested || _cts.IsCancellationRequested)
+                    {
+                        parallelOptions.CancellationToken.ThrowIfCancellationRequested();
+                        throw new OperationCanceledException();
+                    }
                     var item = tab.Gallery.GalleryItems[i];
                     await CheckAndLoad(item).ConfigureAwait(false);
                 });
@@ -89,6 +101,13 @@ public static class GalleryLoader
         }
         catch (OperationCanceledException)
         {
+            if (tab.Gallery.LoadingState is GalleryLoadingState.Restarting)
+            {
+                if(tab.Gallery.GalleryItems.Count > 0)
+                {
+                    tab.Gallery.GalleryItems.Clear();
+                }
+            }
             tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
             return;
         }
@@ -136,6 +155,16 @@ public static class GalleryLoader
             }
             item.Image.Value = thumb;
         }
+    }
+
+    public static async Task ReloadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files, IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
+    {
+        tab.Gallery.LoadingState = GalleryLoadingState.Restarting;
+        tab.Gallery.GalleryItems.Clear();
+        await _cts.CancelAsync();
+        _cts.Dispose();
+        _cts = null;
+        await LoadGalleryAsync(tab, files, thumbnailLoader, thumbnailCache, ct).ConfigureAwait(false);
     }
     
     public static async ValueTask LoadGalleryIfDockedOrExpanded(TabViewModel tabViewModel, GalleryMode2 mode, IThumbnailCache thumbnailCache, IThumbnailLoader thumbnailLoader)

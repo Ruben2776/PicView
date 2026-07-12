@@ -312,12 +312,13 @@ public class TabViewModel(Action<uint> closeTab, IFileWatcherService? fileWatche
     {
         IsClosing = true; // Signal it to be removed from the UI
         closeTab(Id);
+        NavigationCts.Cancel();
         Dispose();
     }
 
     public CancellationTokenSource GetTabCancellation()
     {
-        if (!NavigationCts.IsCancellationRequested)
+        if ( !NavigationCts.IsCancellationRequested)
         {
             return NavigationCts;
         }
@@ -326,6 +327,13 @@ public class TabViewModel(Action<uint> closeTab, IFileWatcherService? fileWatche
         NavigationCts = new CancellationTokenSource();
         oldCts.Dispose();
         return NavigationCts;
+    }
+    
+    public void ResetNavigationCts()
+    {
+        NavigationCts?.Cancel();
+        NavigationCts?.Dispose();
+        NavigationCts = new CancellationTokenSource();
     }
 
     public void DisposeImageIterator()

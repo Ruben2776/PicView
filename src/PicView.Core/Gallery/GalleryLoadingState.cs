@@ -4,5 +4,6 @@ public enum GalleryLoadingState
 {
     NotLoaded,
     Loading,
-    Loaded
+    Loaded,
+    Restarting
 }
