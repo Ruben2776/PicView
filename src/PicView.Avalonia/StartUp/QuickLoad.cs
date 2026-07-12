@@ -251,6 +251,12 @@ public static class QuickLoad
     {
         if (Settings.Gallery.IsGalleryDocked)
         {
+            if (!Settings.UIProperties.ShowInterface && !Settings.Gallery.ShowDockedGalleryInHiddenUI)
+            {
+                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked
+                    .Value = false;
+                return;
+            }
             if (Settings.Gallery.DockPosition is GalleryDockPosition.Closed)
             {
                 Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
@@ -258,7 +264,7 @@ public static class QuickLoad
 
             await GalleryLoader.LoadGalleryAsync(core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value,
                     core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.ImageIterator.Files,
-                    new AvaloniaThumbnailLoader(),
+                    ServiceHelper.ThumbLoader,
                     core.SharedThumbnailCache,
                     core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.GetTabCancellation().Token)
                 .ConfigureAwait(false);

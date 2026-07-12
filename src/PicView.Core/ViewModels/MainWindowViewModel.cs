@@ -222,6 +222,9 @@ public class MainWindowViewModel : IDisposable
 
     public ReactiveCommand GalleryClickCommand { get; }
     private async ValueTask GalleryClick(Unit unit, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.GalleryClick(); }
+    
+    public ReactiveCommand ToggleDockedGalleryInHiddenUICommand { get; }
+    private async ValueTask ToggleDockedGalleryInHiddenUI(Unit unit, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.ToggleDockedGalleryInHiddenUI(); }
 
     #endregion
 
@@ -577,6 +580,7 @@ public class MainWindowViewModel : IDisposable
         OpenCloseBottomGalleryCommand = new ReactiveCommand(OpenCloseBottomGallery);
         CloseGalleryCommand = new ReactiveCommand(CloseGallery);
         GalleryClickCommand = new ReactiveCommand(GalleryClick);
+        ToggleDockedGalleryInHiddenUICommand = new ReactiveCommand(ToggleDockedGalleryInHiddenUI);
 
         // Windows & Dialogs
         AboutWindowCommand = new ReactiveCommand(AboutWindow);
@@ -747,6 +751,7 @@ public class MainWindowViewModel : IDisposable
             OpenCloseBottomGalleryCommand,
             CloseGalleryCommand,
             GalleryClickCommand,
+            ToggleDockedGalleryInHiddenUICommand,
             AboutWindowCommand,
             ConvertWindowCommand,
             KeybindingsWindowCommand,

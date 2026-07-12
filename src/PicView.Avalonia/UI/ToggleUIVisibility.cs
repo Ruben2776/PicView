@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation.Services;
@@ -58,7 +57,7 @@ public static class ToggleUIVisibility
             if (!Settings.Gallery.ShowDockedGalleryInHiddenUI)
             {
                 // Hide gallery if not enabled
-                tab.Gallery.GalleryMode.Value = GalleryMode2.Closed;
+                tab.Gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
                 tab.Gallery.IsGalleryDocked.Value = false;
             }
         }
@@ -84,18 +83,23 @@ public static class ToggleUIVisibility
             {
                 if (tab.ImageIterator.Files.Count > 0)
                 {
-                    if (Application.Current.DataContext is CoreViewModel core)
+                    if (Application.Current.DataContext is not CoreViewModel core)
+                    {
+                        return;
+
+                    }
+
+                    if (tab.Gallery.LoadingState is GalleryLoadingState.NotLoaded)
                     {
                         _ = GalleryLoader.LoadGalleryAsync(
                                 core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value,
                                 core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.ImageIterator.Files,
-                                new AvaloniaThumbnailLoader(),
+                                ServiceHelper.ThumbLoader,
                                 core.SharedThumbnailCache,
                                 core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.GetTabCancellation()
                                     .Token)
                             .ConfigureAwait(false);
                     }
-
                 }
 
                 tab.Gallery.IsDockedGalleryVisible.Value = true;

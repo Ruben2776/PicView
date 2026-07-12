@@ -167,9 +167,9 @@ public static class GalleryLoader
         await LoadGalleryAsync(tab, files, thumbnailLoader, thumbnailCache, ct).ConfigureAwait(false);
     }
     
-    public static async ValueTask LoadGalleryIfDockedOrExpanded(TabViewModel tabViewModel, GalleryMode2 mode, IThumbnailCache thumbnailCache, IThumbnailLoader thumbnailLoader)
+    public static async ValueTask LoadGalleryIfDockedOrExpanded(TabViewModel tabViewModel, GalleryMode mode, IThumbnailCache thumbnailCache, IThumbnailLoader thumbnailLoader)
     {
-        if (mode is GalleryMode2.Docked or GalleryMode2.Expanded)
+        if (mode is GalleryMode.Docked or GalleryMode.Expanded)
         {
             if (tabViewModel.Gallery.LoadingState is GalleryLoadingState.NotLoaded)
             {

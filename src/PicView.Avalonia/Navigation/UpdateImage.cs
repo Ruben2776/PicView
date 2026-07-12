@@ -172,7 +172,7 @@ public static class UpdateImage
         imageViewer.ResetZoomSlim();
         imageViewer.Rotate(0);
 
-        tabViewModel.Gallery.GalleryMode.Value = GalleryMode2.Closed;
+        tabViewModel.Gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
 
         var width = (uint)image.PixelSize.Width;
         var height = (uint)image.PixelSize.Height;

@@ -483,6 +483,9 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         await GalleryLoader.ToggleGalleryAndLoadItem(tab, tab.Gallery.SelectedGalleryItemIndex.Value);
     }
 
+    public async ValueTask ToggleDockedGalleryInHiddenUI() =>
+        await SettingsUpdater.ToggleDockedGalleryInHiddenUI(vm);
+
     #endregion
     
     #region Windows and window functions

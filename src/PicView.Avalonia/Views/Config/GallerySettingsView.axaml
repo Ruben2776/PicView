@@ -1,30 +1,32 @@
 <UserControl
     x:Class="PicView.Avalonia.Views.Config.GallerySettingsView"
-    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:gallery="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:CoreViewModel">
 
     <StackPanel HorizontalAlignment="Center">
 
         <StackPanel Classes="searchHeader">
             <Image
+                Width="18"
                 Height="18"
-                Source="{StaticResource GalleryImage}"
-                Width="18" />
+                Source="{StaticResource GalleryImage}" />
             <TextBlock
-                Classes="txt bold"
                 Margin="0,20,0,20"
+                Classes="txt bold"
                 Text="{CompiledBinding Translation.GallerySettings.Value,
                                        Mode=OneWay}" />
         </StackPanel>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryDockSearchTags}">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryDockSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <customControls:TextIconButton
+                    x:Name="ShowBottomDockedGalleryButton"
+                    Padding="9,8,8,8"
                     Classes="altHover settingsTextIconButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                     CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
@@ -33,14 +35,14 @@
                     IconMargin="0,0,7,0"
                     IconWidth="16"
                     IsEnabled="{CompiledBinding !MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value}"
-                    Padding="9,8,8,8"
                     Text="{CompiledBinding Translation.ShowDockedGalleryAtBottom.Value,
                                            Mode=OneWay}"
                     TextMargin="5,0,5,0"
-                    TextMaxWidth="240"
-                    x:Name="ShowBottomDockedGalleryButton" />
+                    TextMaxWidth="240" />
 
                 <customControls:TextIconButton
+                    x:Name="ShowTopDockedGalleryButton"
+                    Padding="9,8,8,8"
                     Classes="altHover settingsTextIconButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                     CommandParameter="{x:Static gallery:GalleryDockPosition.Top}"
@@ -49,14 +51,14 @@
                     IconMargin="0,0,7,0"
                     IconWidth="16"
                     IsEnabled="{CompiledBinding !MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.IsTopDocked.Value}"
-                    Padding="9,8,8,8"
                     Text="{CompiledBinding Translation.ShowDockedGalleryAtTop.Value,
                                            Mode=OneWay}"
                     TextMargin="5,0,5,0"
-                    TextMaxWidth="240"
-                    x:Name="ShowTopDockedGalleryButton" />
+                    TextMaxWidth="240" />
 
                 <customControls:TextIconButton
+                    x:Name="ShowRightDockedGalleryButton"
+                    Padding="9,8,8,8"
                     Classes="altHover settingsTextIconButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                     CommandParameter="{x:Static gallery:GalleryDockPosition.Right}"
@@ -65,14 +67,14 @@
                     IconMargin="0,0,7,0"
                     IconWidth="16"
                     IsEnabled="{CompiledBinding !MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.IsRightDocked.Value}"
-                    Padding="9,8,8,8"
                     Text="{CompiledBinding Translation.ShowDockedGalleryToTheRight.Value,
                                            Mode=OneWay}"
                     TextMargin="5,0,5,0"
-                    TextMaxWidth="240"
-                    x:Name="ShowRightDockedGalleryButton" />
+                    TextMaxWidth="240" />
 
                 <customControls:TextIconButton
+                    x:Name="ShowLeftDockedGalleryButton"
+                    Padding="9,8,8,8"
                     Classes="altHover settingsTextIconButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                     CommandParameter="{x:Static gallery:GalleryDockPosition.Left}"
@@ -81,262 +83,263 @@
                     IconMargin="0,0,7,0"
                     IconWidth="16"
                     IsEnabled="{CompiledBinding !MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.IsLeftDocked.Value}"
-                    Padding="9,8,8,8"
                     Text="{CompiledBinding Translation.ShowDockedGalleryToTheLeft.Value,
                                            Mode=OneWay}"
                     TextMargin="5,0,5,0"
-                    TextMaxWidth="240"
-                    x:Name="ShowLeftDockedGalleryButton" />
+                    TextMaxWidth="240" />
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryVisibilitySearchTags}">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryVisibilitySearchTags}" Classes="searchBorder">
             <StackPanel>
                 <customControls:TextToggleButton
+                    x:Name="CloseDockedGalleryButton"
                     Classes="altHover settingsToggleButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.CloseGalleryCommand}"
+                    IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}"
                     Text="{CompiledBinding Translation.HideDockedGallery.Value,
-                                           Mode=OneWay}"
-                    x:Name="CloseDockedGalleryButton" />
+                                           Mode=OneWay}" />
 
                 <customControls:TextToggleButton
+                    x:Name="UIHiddenDockedGalleryToggleButton"
                     Classes="altHover settingsToggleButton"
-                    IsChecked="{CompiledBinding GallerySettings.IsDockedGalleryShownInHiddenUI.Value}"
+                    Command="{Binding MainWindows.ActiveWindow.Value.ToggleDockedGalleryInHiddenUICommand}"
+                    IsChecked="{CompiledBinding GallerySettings.IsDockedGalleryShownInHiddenUI.Value,
+                                                Mode=OneWay}"
                     Text="{CompiledBinding Translation.ShowDockedGalleryWhenUiIsHidden.Value,
-                                           Mode=OneWay}"
-                    x:Name="UIHiddenDockedGalleryToggleButton" />
+                                           Mode=OneWay}" />
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MouseNavigationSearchTags}">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MouseNavigationSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock
-                    Classes="txt bold"
                     Margin="0,20,0,20"
+                    Classes="txt bold"
                     Text="{CompiledBinding Translation.MouseWheel.Value,
                                            Mode=OneWay}" />
 
                 <ComboBox
+                    x:Name="MouseSideButtonBox"
+                    Width="300"
+                    Margin="0,6,0,15"
+                    Padding="5,7,0,7"
                     Background="{DynamicResource SecondaryBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    Margin="0,6,0,15"
-                    Padding="5,7,0,7"
                     SelectedIndex="{CompiledBinding SettingsViewModel.GalleryMouseWheelBehavior.Value,
-                                                    Mode=TwoWay}"
-                    Width="300"
-                    x:Name="MouseSideButtonBox">
+                                                    Mode=TwoWay}">
                     <ComboBoxItem Content="Scroll" Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem Content="{CompiledBinding Translation.Navigate.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                 </ComboBox>
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GallerySizeSearchTags}">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GallerySizeSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock
+                    MaxWidth="300"
+                    Margin="0,10,0,10"
                     Classes="txt"
                     FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                    Margin="0,10,0,10"
-                    MaxWidth="300"
                     Text="{CompiledBinding Translation.ExpandedGalleryItemSize.Value,
                                            Mode=OneWay}" />
                 <customControls:CustomSlider
+                    x:Name="ExpandedGallerySlider"
+                    Width="300"
                     Height="30"
+                    Margin="0,1,0,1"
                     HorizontalAlignment="Center"
                     IsSnapToTickEnabled="True"
-                    Margin="0,1,0,1"
                     Maximum="{CompiledBinding GallerySettings.ExpandedGalleryMaxItemSize.Value}"
                     Minimum="{CompiledBinding GallerySettings.ExpandedGalleryMinItemSize.Value}"
                     TickFrequency="1"
                     TickPlacement="BottomRight"
-                    Value="{CompiledBinding GallerySettings.ExpandedGalleryItemSize.Value}"
-                    Width="300"
-                    x:Name="ExpandedGallerySlider" />
+                    Value="{CompiledBinding GallerySettings.ExpandedGalleryItemSize.Value}" />
 
                 <TextBlock
-                    Classes="txt"
                     Margin="0,0,0,15"
+                    Classes="txt"
                     Text="{CompiledBinding GallerySettings.ExpandedGalleryItemSize.Value,
                                            Mode=OneWay}" />
 
                 <TextBlock
-                    Classes="txt"
-                    Margin="0,10,0,10"
                     MaxWidth="300"
+                    Margin="0,10,0,10"
+                    Classes="txt"
                     Text="{CompiledBinding Translation.DockedGalleryItemSize.Value,
                                            Mode=OneWay}" />
                 <customControls:CustomSlider
+                    x:Name="DockedGallerySlider"
+                    Width="300"
                     Height="30"
+                    Margin="0,1,0,1"
                     HorizontalAlignment="Center"
                     IsSnapToTickEnabled="True"
-                    Margin="0,1,0,1"
                     Maximum="{CompiledBinding GallerySettings.DockedGalleryMaxItemSize.Value}"
                     Minimum="{CompiledBinding GallerySettings.DockedGalleryMinItemSize.Value}"
                     TickFrequency="1"
                     TickPlacement="BottomRight"
-                    Value="{CompiledBinding GallerySettings.DockedGalleryItemSize.Value}"
-                    Width="300"
-                    x:Name="DockedGallerySlider" />
+                    Value="{CompiledBinding GallerySettings.DockedGalleryItemSize.Value}" />
 
                 <TextBlock
-                    Classes="txt"
                     Margin="0,0,0,15"
+                    Classes="txt"
                     Text="{CompiledBinding GallerySettings.DockedGalleryItemSize.Value,
                                            Mode=OneWay}" />
 
                 <TextBlock
-                    Classes="txt"
-                    Margin="0,10,0,10"
                     MaxWidth="300"
+                    Margin="0,10,0,10"
+                    Classes="txt"
                     Text="{CompiledBinding Translation.ItemSpacing.Value,
                                            Mode=OneWay}" />
                 <customControls:CustomSlider
+                    Width="300"
                     Height="30"
+                    Margin="0,1,0,1"
                     HorizontalAlignment="Center"
                     IsSnapToTickEnabled="True"
-                    Margin="0,1,0,1"
                     Maximum="70"
                     Minimum="0"
                     TickFrequency="1"
                     TickPlacement="BottomRight"
-                    Value="{CompiledBinding GallerySettings.GalleryItemSpacing.Value}"
-                    Width="300" />
+                    Value="{CompiledBinding GallerySettings.GalleryItemSpacing.Value}" />
 
                 <TextBlock
-                    Classes="txt"
                     Margin="0,0,0,15"
+                    Classes="txt"
                     Text="{CompiledBinding GallerySettings.GalleryItemSpacing.Value,
                                            Mode=OneWay}" />
 
                 <TextBlock
-                    Classes="txt"
-                    Margin="0,10,0,10"
                     MaxWidth="300"
+                    Margin="0,10,0,10"
+                    Classes="txt"
                     Text="{CompiledBinding Translation.LineSpacing.Value,
                                            Mode=OneWay}" />
                 <customControls:CustomSlider
+                    Width="300"
                     Height="30"
+                    Margin="0,1,0,1"
                     HorizontalAlignment="Center"
                     IsSnapToTickEnabled="True"
-                    Margin="0,1,0,1"
                     Maximum="70"
                     Minimum="0"
                     TickFrequency="1"
                     TickPlacement="BottomRight"
-                    Value="{CompiledBinding GallerySettings.GalleryLineSpacing.Value}"
-                    Width="300" />
+                    Value="{CompiledBinding GallerySettings.GalleryLineSpacing.Value}" />
 
                 <TextBlock
-                    Classes="txt"
                     Margin="0,0,0,15"
+                    Classes="txt"
                     Text="{CompiledBinding GallerySettings.GalleryLineSpacing.Value,
                                            Mode=OneWay}" />
             </StackPanel>
         </Border>
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryStretchSearchTags}">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryStretchSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock
+                    MaxWidth="300"
+                    Margin="0,10,0,15"
                     Classes="txt"
                     FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                    Margin="0,10,0,15"
-                    MaxWidth="300"
                     Text="{CompiledBinding Translation.GalleryThumbnailStretch.Value,
                                            Mode=OneWay}" />
                 <ComboBox
+                    x:Name="FullGalleryComboBox"
+                    Width="300"
+                    Margin="0,5,0,15"
+                    Padding="5,7,0,7"
                     Background="{DynamicResource SecondaryBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    Margin="0,5,0,15"
-                    Padding="5,7,0,7"
-                    SelectedIndex="{CompiledBinding GallerySettings.ExpandedGalleryStretchMode.Value}"
-                    Width="300"
-                    x:Name="FullGalleryComboBox">
+                    SelectedIndex="{CompiledBinding GallerySettings.ExpandedGalleryStretchMode.Value}">
                     <ComboBoxItem
+                        x:Name="FullGalleryUniformItem"
                         Content="{CompiledBinding Translation.Uniform.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="FullGalleryUniformItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem
+                        x:Name="FullGalleryUniformToFillItem"
                         Content="{CompiledBinding Translation.UniformToFill.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="FullGalleryUniformToFillItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem
+                        x:Name="FullGalleryFillItem"
                         Content="{CompiledBinding Translation.Fill.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="FullGalleryFillItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem
+                        x:Name="FullGalleryNoneItem"
                         Content="{CompiledBinding Translation.None.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="FullGalleryNoneItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem
+                        x:Name="FullGallerySquareItem"
                         Content="{CompiledBinding Translation.Square.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="FullGallerySquareItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem
+                        x:Name="FullGalleryFillSquareItem"
                         Content="{CompiledBinding Translation.FillSquare.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="FullGalleryFillSquareItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                 </ComboBox>
 
                 <TextBlock
+                    MaxWidth="300"
+                    Margin="0,3,0,15"
                     Classes="txt"
                     FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                    Margin="0,3,0,15"
-                    MaxWidth="300"
                     Text="{CompiledBinding Translation.DockedGalleryThumbnailStretch.Value,
                                            Mode=OneWay}" />
                 <ComboBox
+                    x:Name="DockedGalleryComboBox"
+                    Width="300"
+                    Margin="0,5,0,15"
+                    Padding="5,7,0,7"
                     Background="{DynamicResource SecondaryBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    Margin="0,5,0,15"
-                    Padding="5,7,0,7"
-                    SelectedIndex="{CompiledBinding GallerySettings.DockedGalleryStretchMode.Value}"
-                    Width="300"
-                    x:Name="DockedGalleryComboBox">
+                    SelectedIndex="{CompiledBinding GallerySettings.DockedGalleryStretchMode.Value}">
                     <ComboBoxItem
+                        x:Name="DockedGalleryUniformItem"
                         Content="{CompiledBinding Translation.Uniform.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="DockedGalleryUniformItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem
+                        x:Name="DockedGalleryUniformToFillItem"
                         Content="{CompiledBinding Translation.UniformToFill.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="DockedGalleryUniformToFillItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem
+                        x:Name="DockedGalleryFillItem"
                         Content="{CompiledBinding Translation.Fill.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="DockedGalleryFillItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem
+                        x:Name="DockedGalleryNoneItem"
                         Content="{CompiledBinding Translation.None.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="DockedGalleryNoneItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem
+                        x:Name="DockedGallerySquareItem"
                         Content="{CompiledBinding Translation.Square.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="DockedGallerySquareItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem
+                        x:Name="DockedGalleryFillSquareItem"
                         Content="{CompiledBinding Translation.FillSquare.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}"
-                        x:Name="DockedGalleryFillSquareItem" />
+                        Foreground="{DynamicResource MainTextColor}" />
                 </ComboBox>
             </StackPanel>
         </Border>

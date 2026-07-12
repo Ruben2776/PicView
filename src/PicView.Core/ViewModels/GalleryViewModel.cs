@@ -10,7 +10,7 @@ namespace PicView.Core.ViewModels;
 public class GalleryViewModel : IDisposable
 {
     private DisposableBag _disposables;
-    public ReactiveCommand<GalleryMode2> SetGalleryModeCommand { get; } = new();
+    public ReactiveCommand<GalleryMode> SetGalleryModeCommand { get; } = new();
     public ReactiveCommand<Unit> ContractToDockedOrCloseGalleryCommand { get; } = new();
     public ReactiveCommand<Unit> ToggleGalleryCommand { get; } = new();
     public ReactiveCommand<GalleryDockPosition> SetDockPositionCommand { get; } = new();
@@ -19,7 +19,7 @@ public class GalleryViewModel : IDisposable
     public ReactiveCommand<int> OpenSelectedItemCommand { get; } = new();
 
     public ObservableList<GalleryItemViewModel> GalleryItems { get; } = new([]);
-    public BindableReactiveProperty<GalleryMode2> GalleryMode { get; } = new(GalleryMode2.Closed);
+    public BindableReactiveProperty<GalleryMode> ActiveGalleryMode { get; } = new();
 
     public BindableReactiveProperty<bool> IsGalleryExpanded { get; } = new();
     public BindableReactiveProperty<bool> IsDockedGalleryVisible { get; } = new(Settings.Gallery.IsGalleryDocked);
@@ -37,18 +37,25 @@ public class GalleryViewModel : IDisposable
 
     public void Initialize()
     {
-        Debug.Assert(Settings.Gallery is not null);
         GallerySettingsConverter.UpdateDockPositionProperties(this);
         Observable.EveryValueChanged(Settings.Gallery, g => g.IsGalleryDocked)
         .Subscribe(isDocked =>
         {
-            if (isDocked && GalleryMode.Value == GalleryMode2.Closed)
+            if (isDocked && ActiveGalleryMode.Value is GalleryMode.Closed)
             {
-                GalleryMode.Value = GalleryMode2.Docked;
+                if (!Settings.UIProperties.ShowInterface && !Settings.Gallery.ShowDockedGalleryInHiddenUI)
+                {
+                    ActiveGalleryMode.Value = GalleryMode.Closed;
+                }
+                else
+                {
+                    ActiveGalleryMode.Value = GalleryMode.Docked;
+                }
+                
             }
-            else if (!isDocked && GalleryMode.Value == GalleryMode2.Docked)
+            else if (!isDocked && ActiveGalleryMode.Value == GalleryMode.Docked)
             {
-                GalleryMode.Value = GalleryMode2.Closed;
+                ActiveGalleryMode.Value = GalleryMode.Closed;
             }
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
@@ -73,16 +80,16 @@ public class GalleryViewModel : IDisposable
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
 
-        GalleryMode.Subscribe(mode =>
+        ActiveGalleryMode.Subscribe(mode =>
         {
-            IsGalleryExpanded.Value = mode == GalleryMode2.Expanded;
-            IsDockedGalleryVisible.Value = mode == GalleryMode2.Docked;
+            IsGalleryExpanded.Value = mode == GalleryMode.Expanded;
+            IsDockedGalleryVisible.Value = mode == GalleryMode.Docked;
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
         
         SetGalleryModeCommand.Subscribe(mode =>
         {
-            GalleryMode.Value = mode;
+            ActiveGalleryMode.Value = mode;
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
         
@@ -98,19 +105,19 @@ public class GalleryViewModel : IDisposable
             {
                 if (Settings.Gallery.IsGalleryDocked)
                 {
-                    GalleryMode.Value = GalleryMode2.Docked;
+                    ActiveGalleryMode.Value = GalleryMode.Docked;
                 }
                 else
                 {
                     IsLeftDocked.Value = IsRightDocked.Value = IsTopDocked.Value = IsBottomDocked.Value = false;
-                    GalleryMode.Value = GalleryMode2.Closed;
+                    ActiveGalleryMode.Value = GalleryMode.Closed;
                     Settings.Gallery.IsGalleryDocked = false;
                 }
             }
             else if (Settings.Gallery.IsGalleryDocked && !IsGalleryExpanded.CurrentValue)
             {
                 IsLeftDocked.Value = IsRightDocked.Value = IsTopDocked.Value = IsBottomDocked.Value = false;
-                GalleryMode.Value = GalleryMode2.Closed;
+                ActiveGalleryMode.Value = GalleryMode.Closed;
                 Settings.Gallery.IsGalleryDocked = false;
             }
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
@@ -172,7 +179,7 @@ public class GalleryViewModel : IDisposable
             CloseGalleryCommand,
             NavigateGalleryCommand,
             OpenSelectedItemCommand,
-            GalleryMode,
+            ActiveGalleryMode,
             IsGalleryExpanded,
             IsDockedGalleryVisible,
             ItemSpacing,

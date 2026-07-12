@@ -29,15 +29,15 @@ public class GalleryAnimationControl : UserControl
     private WrapPanel? _itemsPanel;
 
     /// Tracks the previous mode to determine the animation transition
-    private GalleryMode2 _previousMode = GalleryMode2.Closed;
+    private GalleryMode _previousMode = GalleryMode.Closed;
 
-    public static readonly StyledProperty<GalleryMode2> GalleryModeProperty =
-        AvaloniaProperty.Register<GalleryAnimationControl, GalleryMode2>(nameof(GalleryMode));
+    public static readonly StyledProperty<GalleryMode> ActiveGalleryModeProperty =
+        AvaloniaProperty.Register<GalleryAnimationControl, GalleryMode>(nameof(ActiveGalleryMode));
 
-    public GalleryMode2 GalleryMode
+    public GalleryMode ActiveGalleryMode
     {
-        get => GetValue(GalleryModeProperty);
-        set => SetValue(GalleryModeProperty, value);
+        get => GetValue(ActiveGalleryModeProperty);
+        set => SetValue(ActiveGalleryModeProperty, value);
     }
 
     private static Thickness GetDockedMargin => new(0);
@@ -70,7 +70,7 @@ public class GalleryAnimationControl : UserControl
         if (Settings.Gallery.IsGalleryDocked)
         {
             SetDockedLayout(Settings.Gallery.DockPosition);
-            _previousMode = GalleryMode2.Docked;
+            _previousMode = GalleryMode.Docked;
         }
         else
         {
@@ -134,13 +134,13 @@ public class GalleryAnimationControl : UserControl
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == GalleryModeProperty && change.NewValue is GalleryMode2 mode)
+        if (change.Property == ActiveGalleryModeProperty && change.NewValue is GalleryMode mode)
         {
             Dispatcher.UIThread.InvokeAsync(() => OnGalleryModeChanged(mode));
         }
     }
 
-    private async ValueTask OnGalleryModeChanged(GalleryMode2 newMode)
+    private async ValueTask OnGalleryModeChanged(GalleryMode newMode)
     {
         try
         {
@@ -150,12 +150,12 @@ public class GalleryAnimationControl : UserControl
 
             switch (oldMode, newMode)
             {
-                case (GalleryMode2.Closed, GalleryMode2.Docked): await ClosedToDocked(); break;
-                case (GalleryMode2.Closed, GalleryMode2.Expanded): await ClosedToExpanded(); break;
-                case (GalleryMode2.Docked, GalleryMode2.Expanded): await DockedToExpanded(); break;
-                case (GalleryMode2.Docked, GalleryMode2.Closed): await DockedToClosed(); break;
-                case (GalleryMode2.Expanded, GalleryMode2.Docked): await ExpandedToDocked(); break;
-                case (GalleryMode2.Expanded, GalleryMode2.Closed): await ExpandedToClosed(); break;
+                case (GalleryMode.Closed, GalleryMode.Docked): await ClosedToDocked(); break;
+                case (GalleryMode.Closed, GalleryMode.Expanded): await ClosedToExpanded(); break;
+                case (GalleryMode.Docked, GalleryMode.Expanded): await DockedToExpanded(); break;
+                case (GalleryMode.Docked, GalleryMode.Closed): await DockedToClosed(); break;
+                case (GalleryMode.Expanded, GalleryMode.Docked): await ExpandedToDocked(); break;
+                case (GalleryMode.Expanded, GalleryMode.Closed): await ExpandedToClosed(); break;
                 default: UpdateLayoutForCurrentState(); break;
             }
         }
@@ -169,17 +169,17 @@ public class GalleryAnimationControl : UserControl
     private void UpdateLayoutForCurrentState()
     {
         var dock = Settings.Gallery.DockPosition;
-        IsVisible = GalleryMode != GalleryMode2.Closed;
+        IsVisible = ActiveGalleryMode != GalleryMode.Closed;
 
-        switch (GalleryMode)
+        switch (ActiveGalleryMode)
         {
-            case GalleryMode2.Closed:
+            case GalleryMode.Closed:
                 Width = Height = ZeroSize;
                 break;
-            case GalleryMode2.Expanded:
+            case GalleryMode.Expanded:
                 SetExpandedLayout(dock);
                 break;
-            case GalleryMode2.Docked:
+            case GalleryMode.Docked:
             default:
                 SetDockedLayout(dock);
                 break;
@@ -576,7 +576,7 @@ public class GalleryAnimationControl : UserControl
     private void ParentSizeChanged(object? sender, SizeChangedEventArgs e)
     {
         // Keep the layout correct when the view is resized
-        if (GalleryMode == GalleryMode2.Expanded)
+        if (ActiveGalleryMode == GalleryMode.Expanded)
         {
             UpdateLayoutForCurrentState();
         }

@@ -65,6 +65,7 @@ public interface IFunctionsMapper
     ValueTask OpenCloseDockedGallery();
     ValueTask CloseGallery();
     ValueTask GalleryClick();
+    ValueTask ToggleDockedGalleryInHiddenUI();
 
     // Open Windows/Dialogs
     ValueTask AboutWindow();

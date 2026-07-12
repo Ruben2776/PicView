@@ -17,15 +17,15 @@ public static class GalleryManager
     {
         if (Settings.Gallery.IsGalleryDocked && galleryViewModel.IsGalleryExpanded.CurrentValue)
         {
-            galleryViewModel.GalleryMode.Value = GalleryMode2.Docked;
+            galleryViewModel.ActiveGalleryMode.Value = GalleryMode.Docked;
         }
         else if (galleryViewModel.IsGalleryExpanded.CurrentValue)
         {
-            galleryViewModel.GalleryMode.Value = GalleryMode2.Closed;
+            galleryViewModel.ActiveGalleryMode.Value = GalleryMode.Closed;
         }
         else
         {
-            galleryViewModel.GalleryMode.Value = GalleryMode2.Expanded;
+            galleryViewModel.ActiveGalleryMode.Value = GalleryMode.Expanded;
         }
     }
 }

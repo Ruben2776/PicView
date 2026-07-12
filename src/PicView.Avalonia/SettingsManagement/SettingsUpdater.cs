@@ -6,20 +6,25 @@ using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.Navigation.Services;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.ColorHandling;
 using PicView.Core.DebugTools;
+using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.SettingsManagement;
 public static class SettingsUpdater
 {
     public static void InitializeSettings(MainWindowViewModel vm, bool settingsExists)
     {
+        ServiceHelper.SetAvaloniaImageLoader();
+        ServiceHelper.SetGalleryLoader();
         Task.Run(() =>
         {
             _ = LanguageUpdater.UpdateLanguageAsync(vm.Translation, settingsExists);
@@ -39,8 +44,6 @@ public static class SettingsUpdater
             vm.IsFullscreen.Value  = Settings.WindowProperties.Fullscreen;
             vm.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
         });
-        
-
     }
     
     public static async Task ResetSettings()
@@ -72,6 +75,40 @@ public static class SettingsUpdater
             SetDefaults();
             await SaveSettingsAsync();
         }
+    }
+    
+    public static async ValueTask ToggleDockedGalleryInHiddenUI(MainWindowViewModel vm)
+    {
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var files = tab.ImageIterator.Files;
+        var gallery = tab.Gallery;
+        if (Settings.Gallery.ShowDockedGalleryInHiddenUI)
+        {
+            Settings.Gallery.ShowDockedGalleryInHiddenUI = false;
+            if (!Settings.UIProperties.ShowInterface)
+            {
+                gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
+            }
+        }
+        else
+        {
+            Settings.Gallery.ShowDockedGalleryInHiddenUI = true;
+            if (!Settings.UIProperties.ShowInterface && Settings.Gallery.IsGalleryDocked)
+            {
+                gallery.ActiveGalleryMode.Value = GalleryMode.Docked;
+            }
+
+            if (gallery.LoadingState is GalleryLoadingState.NotLoaded)
+            {
+                if (Application.Current.DataContext is not CoreViewModel core)
+                {
+                    return;
+                }
+                await GalleryLoader.LoadGalleryAsync(tab, files, ServiceHelper.ThumbLoader, core.SharedThumbnailCache, tab.GetTabCancellation().Token);
+            }
+        }
+
+        await SaveSettingsAsync();
     }
     
     public static async ValueTask ToggleZoomToFit(MainWindowViewModel vm, MainWindow mainWindow)

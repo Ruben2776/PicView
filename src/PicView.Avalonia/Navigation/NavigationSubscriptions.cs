@@ -31,7 +31,7 @@ public static class NavigationSubscriptions
                 }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(UpdateImage)))
                 .AddTo(tabViewModel.Disposables);
 
-            Observable.EveryValueChanged(tabViewModel, tab => tab.Gallery.GalleryMode.Value, mainWindow.FrameProvider)
+            Observable.EveryValueChanged(tabViewModel, tab => tab.Gallery.ActiveGalleryMode.Value, mainWindow.FrameProvider)
                 .Skip(1)
                 .SubscribeAwait(async (mode, _) =>
                 {
@@ -39,7 +39,7 @@ public static class NavigationSubscriptions
                     {
                         return;
                     }
-                    await GalleryLoader.LoadGalleryIfDockedOrExpanded(tabViewModel, mode, core.SharedThumbnailCache, new AvaloniaThumbnailLoader());
+                    await GalleryLoader.LoadGalleryIfDockedOrExpanded(tabViewModel, mode, core.SharedThumbnailCache, ServiceHelper.ThumbLoader);
                 }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(GalleryLoader.LoadGalleryIfDockedOrExpanded)))
                 .AddTo(tabViewModel.Disposables);
             

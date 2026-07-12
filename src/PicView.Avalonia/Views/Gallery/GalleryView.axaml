@@ -1,16 +1,16 @@
 <customControls:GalleryAnimationControl
-    Background="{DynamicResource MainBackgroundColor}"
-    BorderBrush="{DynamicResource MainBorderColor}"
-    GalleryMode="{CompiledBinding Gallery.GalleryMode.Value}"
-    Padding="1"
     x:Class="PicView.Avalonia.Views.Gallery.GalleryView"
-    x:DataType="viewModels:TabViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:gallery="clr-namespace:PicView.Avalonia.Views.Gallery"
     xmlns:gallerySettings="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    Padding="1"
+    x:DataType="viewModels:TabViewModel"
+    ActiveGalleryMode="{CompiledBinding Gallery.ActiveGalleryMode.Value}"
+    Background="{DynamicResource MainBackgroundColor}"
+    BorderBrush="{DynamicResource MainBorderColor}">
     <Panel>
 
         <Panel.ContextMenu>
@@ -18,9 +18,9 @@
                 <MenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource Image}"
-                            Width="12" />
+                            Source="{StaticResource Image}" />
                     </MenuItem.Icon>
                     <MenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
@@ -62,9 +62,9 @@
                 <MenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource Image}"
-                            Width="12" />
+                            Source="{StaticResource Image}" />
                     </MenuItem.Icon>
                     <MenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"
@@ -107,11 +107,11 @@
                 <MenuItem Command="{Binding Gallery.ToggleGalleryCommand}" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ShowImageGallery.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
+                            Width="12"
+                            Height="12"
                             Data="{StaticResource GalleryGeometry}"
                             Fill="{DynamicResource MainTextColor}"
-                            Height="12"
-                            Stretch="Fill"
-                            Width="12" />
+                            Stretch="Fill" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
@@ -121,11 +121,11 @@
                     IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
                         <Path
+                            Width="12"
+                            Height="12"
                             Data="{StaticResource CloseGeometry}"
                             Fill="{DynamicResource MainTextColor}"
-                            Height="12"
-                            Stretch="Fill"
-                            Width="12" />
+                            Stretch="Fill" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
@@ -135,44 +135,44 @@
                     IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
                         <Path
+                            Width="12"
+                            Height="12"
                             Data="{StaticResource CloseGeometry}"
                             Fill="{DynamicResource MainTextColor}"
-                            Height="12"
-                            Stretch="Fill"
-                            Width="12" />
+                            Stretch="Fill" />
                     </MenuItem.Icon>
                 </MenuItem>
             </ContextMenu>
         </Panel.ContextMenu>
 
         <Button
+            Width="50"
+            Height="60"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
             BorderThickness="1,0,0,0"
             Classes="ButtonBorder hover"
             Command="{CompiledBinding Gallery.ToggleGalleryCommand}"
             CornerRadius="0,0,0,45"
             DockPanel.Dock="Right"
-            Height="60"
-            HorizontalAlignment="Right"
             IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}"
-            VerticalAlignment="Top"
-            Width="50"
             ZIndex="99">
             <Path
-                Data="{StaticResource CloseGeometry}"
-                Fill="{DynamicResource MainTextColor}"
+                Width="23"
                 Height="23"
                 Margin="7,0,0,11"
-                Stretch="Fill"
-                Width="23" />
+                Data="{StaticResource CloseGeometry}"
+                Fill="{DynamicResource MainTextColor}"
+                Stretch="Fill" />
         </Button>
 
         <customControls:NavigateAbleItemsViewer
+            x:Name="GalleryItemsControl"
             CenterCurrentItem="{CompiledBinding !Gallery.IsGalleryExpanded.Value}"
             CurrentItemIndex="{CompiledBinding NavigationIndex.Value,
                                                Mode=OneWay}"
             SelectedItemIndex="{CompiledBinding Gallery.SelectedGalleryItemIndex.Value,
-                                                Mode=TwoWay}"
-            x:Name="GalleryItemsControl">
+                                                Mode=TwoWay}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <gallery:GalleryItem />
@@ -181,10 +181,10 @@
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel
-                        ItemSpacing="{CompiledBinding Gallery.ItemSpacing.Value}"
-                        LineSpacing="{CompiledBinding Gallery.LineSpacing.Value}"
+                        x:Name="GalleryItemsPanel"
                         VerticalAlignment="Center"
-                        x:Name="GalleryItemsPanel" />
+                        ItemSpacing="{CompiledBinding Gallery.ItemSpacing.Value}"
+                        LineSpacing="{CompiledBinding Gallery.LineSpacing.Value}" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </customControls:NavigateAbleItemsViewer>
