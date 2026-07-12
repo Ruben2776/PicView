@@ -149,7 +149,7 @@ public static class QuickLoad
         var vm = core.MainWindows.ActiveWindow.CurrentValue;
         try
         {
-            magickImage.Ping(fileInfo);
+            await magickImage.PingAsync(fileInfo);
 
             if (isStartUp && Settings.WindowProperties.AutoFit && !Settings.ImageScaling.ShowImageSideBySide)
             {
