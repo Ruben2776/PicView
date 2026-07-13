@@ -39,7 +39,7 @@ public class UIControlHelper
             Margin = new Thickness(3, 0, 3, 0),
             IsVisible = false,
             HorizontalAlignment = HorizontalAlignment.Right,
-            ZIndex = 2
+            ZIndex = 9
         };
         GetMainView.MainPanel.Children.Add(dropDownMenu);
         GetDropDownMenu = dropDownMenu;
