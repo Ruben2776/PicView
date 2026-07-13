@@ -28,10 +28,11 @@ public partial class MainView : UserControl
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             // Move alt hover to left side on macOS and switch button order
-            AltButtonsPanel.HorizontalAlignment = HorizontalAlignment.Left; 
-            AltButtonsPanel.Children.Move(AltButtonsPanel.Children.IndexOf(AltClose),0);
-            AltButtonsPanel.Children.Move(AltButtonsPanel.Children.IndexOf(AltMinimize),2);
-            AltMinimize.RenderTransform = new ScaleTransform{ScaleX = -1};
+            DockPanel.SetDock(AltClose, Dock.Left);
+            DockPanel.SetDock(AltMinimize, Dock.Left);
+            DockPanel.SetDock(AltRestore, Dock.Left);
+            DockPanel.SetDock(AltTitleBorder, Dock.Right);
+            AltTitleBorder.BorderThickness = new Thickness(1,0,0,1);
         }
 
 

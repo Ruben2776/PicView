@@ -293,14 +293,18 @@
             <!--  Tool windows  -->
             <NativeMenuItem Header="{Binding Translation.ToolWindows.Value}">
                 <NativeMenu>
-                    <!--  Show Effects window  -->
-                    <NativeMenuItem Command="{Binding EffectsWindowCommand}" Header="{Binding Translation.Effects.Value}" />
-
-                    <!--  Show Resize window  -->
-                    <NativeMenuItem Command="{Binding BatchResizeWindowCommand}" Header="{Binding Translation.Resize.Value}" />
 
                     <!--  Show Image info  -->
                     <NativeMenuItem Command="{Binding ImageInfoWindowCommand}" Header="{Binding Translation.ImageInfo.Value}" />
+
+                    <!--  Show Effects window  -->
+                    <NativeMenuItem Command="{Binding EffectsWindowCommand}" Header="{Binding Translation.Effects.Value}" />
+
+                    <!--  Show Batch Resize window  -->
+                    <NativeMenuItem Command="{Binding BatchResizeWindowCommand}" Header="{Binding Translation.BatchResize.Value}" />
+
+                    <!--  Show Single Resize window  -->
+                    <NativeMenuItem Command="{Binding ResizeWindowCommand}" Header="{Binding Translation.ResizeImage.Value}" />
 
                 </NativeMenu>
             </NativeMenuItem>

@@ -1,26 +1,26 @@
 <UserControl
+    Background="Transparent"
+    DragDrop.AllowDrop="True"
+    Focusable="True"
     x:Class="PicView.Avalonia.Views.Main.MainView"
+    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:MainWindowViewModel"
-    Background="Transparent"
-    DragDrop.AllowDrop="True"
-    Focusable="True">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
-        <SolidColorBrush x:Key="Brush0" Color="{DynamicResource MainTextColor}" />
+        <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="Brush0" />
 
         <ContextMenu x:Key="MainContextMenu">
 
             <!--  Open  -->
             <MenuItem
-                MinWidth="180"
                 Command="{CompiledBinding OpenCommand}"
                 Header="{CompiledBinding Translation.Open.Value,
-                                         Mode=OneWay}">
+                                         Mode=OneWay}"
+                MinWidth="180">
                 <MenuItem.Icon>
                     <Image Classes="OpenImage" />
                 </MenuItem.Icon>
@@ -53,14 +53,14 @@
 
             <!--  Print  -->
             <MenuItem
-                x:Name="PrintMenuItem"
                 Command="{CompiledBinding PrintCommand}"
                 Header="{CompiledBinding Translation.Print.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull},
                                             FallbackValue=False,
-                                            Mode=OneWay}">
+                                            Mode=OneWay}"
+                x:Name="PrintMenuItem">
                 <MenuItem.Icon>
                     <Path Classes="PrintPath" />
                 </MenuItem.Icon>
@@ -68,18 +68,18 @@
 
             <!--  Open with  -->
             <MenuItem
-                x:Name="OpenWithMenuItem"
                 Command="{CompiledBinding OpenWithCommand}"
                 Header="{CompiledBinding Translation.OpenWith.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull},
-                                            FallbackValue=False}">
+                                            FallbackValue=False}"
+                x:Name="OpenWithMenuItem">
                 <MenuItem.Icon>
                     <Image
-                        Width="12"
                         Height="12"
-                        Source="{StaticResource OpenExternalImage}" />
+                        Source="{StaticResource OpenExternalImage}"
+                        Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
 
@@ -194,11 +194,11 @@
             <MenuItem Header="{CompiledBinding Translation.Settings.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
-                        Width="12"
-                        Height="12"
                         Data="{StaticResource WrenchGeometry}"
                         Fill="{StaticResource Brush0}"
-                        Stretch="Fill" />
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
                 </MenuItem.Icon>
 
                 <!--  Toggle Subdirectories  -->
@@ -269,9 +269,9 @@
                 <MenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding Translation.IsCtrlToZoom.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{CompiledBinding ChangeCtrlZoomImage.Value}" />
+                            Source="{CompiledBinding ChangeCtrlZoomImage.Value}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -286,9 +286,9 @@
                                                 Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource EyeOffImage}" />
+                            Source="{StaticResource EyeOffImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -300,9 +300,9 @@
                                                 Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource EyeImage}" />
+                            Source="{StaticResource EyeImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -314,9 +314,9 @@
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource PaletteImage}" />
+                            Source="{StaticResource PaletteImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -324,9 +324,9 @@
                 <MenuItem Header="{CompiledBinding Translation.IsShowingDockedGallery.Value, Mode=OneWay}" IsChecked="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.IsDockedGalleryVisible.Value}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource GalleryImage}" />
+                            Source="{StaticResource GalleryImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -340,9 +340,9 @@
                     ToggleType="CheckBox">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource Panel-Bottom}" />
+                            Source="{StaticResource Panel-Bottom}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -362,9 +362,9 @@
             <MenuItem Header="{CompiledBinding Translation.Navigation.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
-                        Width="14"
                         Height="14"
-                        Source="{StaticResource SignPostImage}" />
+                        Source="{StaticResource SignPostImage}"
+                        Width="14" />
                 </MenuItem.Icon>
 
                 <!--  Next  -->
@@ -377,9 +377,9 @@
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource NextImage}" />
+                            Source="{StaticResource NextImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -393,9 +393,9 @@
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource PrevImage}" />
+                            Source="{StaticResource PrevImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -410,9 +410,9 @@
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource NextImage}" />
+                            Source="{StaticResource NextImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -425,9 +425,9 @@
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource NextImage}" />
+                            Source="{StaticResource NextImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -440,9 +440,9 @@
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource PrevImage}" />
+                            Source="{StaticResource PrevImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -455,9 +455,9 @@
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource PrevImage}" />
+                            Source="{StaticResource PrevImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -471,9 +471,9 @@
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource FirstImage}" />
+                            Source="{StaticResource FirstImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -485,9 +485,9 @@
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource LastImage}" />
+                            Source="{StaticResource LastImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -504,9 +504,9 @@
                                                 Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
-                            Width="14"
                             Height="14"
-                            Source="{StaticResource NextFolderImage}" />
+                            Source="{StaticResource NextFolderImage}"
+                            Width="14" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -521,9 +521,9 @@
                                                 Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
-                            Width="14"
                             Height="14"
-                            Source="{StaticResource PrevFolderImage}" />
+                            Source="{StaticResource PrevFolderImage}"
+                            Width="14" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -535,9 +535,9 @@
                     IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
                     <MenuItem.Icon>
                         <Image
-                            Width="14"
                             Height="14"
-                            Source="{StaticResource ArchiveFile}" />
+                            Source="{StaticResource ArchiveFile}"
+                            Width="14" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -549,9 +549,9 @@
                     IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
                     <MenuItem.Icon>
                         <Image
-                            Width="14"
                             Height="14"
-                            Source="{StaticResource ArchiveFile}" />
+                            Source="{StaticResource ArchiveFile}"
+                            Width="14" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
@@ -560,20 +560,20 @@
 
             <!--  Set as wallpaper  -->
             <MenuItem
-                x:Name="WallpaperMenuItem"
                 Header="{CompiledBinding Translation.SetAsWallpaper.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull},
                                             FallbackValue=False}"
-                IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
+                IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}"
+                x:Name="WallpaperMenuItem">
                 <MenuItem.Icon>
                     <Path
-                        Width="13"
-                        Height="10.40"
                         Data="{StaticResource PanoramaGeometry}"
                         Fill="{DynamicResource MainTextColor}"
-                        Stretch="Fill" />
+                        Height="10.40"
+                        Stretch="Fill"
+                        Width="13" />
                 </MenuItem.Icon>
 
                 <!--  Set as wallpaper filled  -->
@@ -587,11 +587,11 @@
                     IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
                         <Path
-                            Width="13"
-                            Height="10.40"
                             Data="{StaticResource PanoramaGeometry}"
                             Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                            Height="10.40"
+                            Stretch="Fill"
+                            Width="13" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -606,11 +606,11 @@
                     IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
                         <Path
-                            Width="13"
-                            Height="10.40"
                             Data="{StaticResource PanoramaGeometry}"
                             Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                            Height="10.40"
+                            Stretch="Fill"
+                            Width="13" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -625,11 +625,11 @@
                     IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
                         <Path
-                            Width="13"
-                            Height="10.40"
                             Data="{StaticResource PanoramaGeometry}"
                             Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                            Height="10.40"
+                            Stretch="Fill"
+                            Width="13" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -645,11 +645,11 @@
                     IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
                         <Path
-                            Width="13"
-                            Height="10.40"
                             Data="{StaticResource PanoramaGeometry}"
                             Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                            Height="10.40"
+                            Stretch="Fill"
+                            Width="13" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -664,11 +664,11 @@
                     IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
                         <Path
-                            Width="13"
-                            Height="10.40"
                             Data="{StaticResource PanoramaGeometry}"
                             Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                            Height="10.40"
+                            Stretch="Fill"
+                            Width="13" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
@@ -677,9 +677,9 @@
             <MenuItem Header="{CompiledBinding Translation.Image.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
-                        Width="12"
                         Height="12"
-                        Source="{StaticResource Image}" />
+                        Source="{StaticResource Image}"
+                        Width="12" />
                 </MenuItem.Icon>
 
                 <!--  File properties  -->
@@ -693,9 +693,9 @@
                                                 Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource FileUserImage}" />
+                            Source="{StaticResource FileUserImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -703,17 +703,17 @@
 
                 <!--  Optimize image  -->
                 <MenuItem
-                    x:Name="OptimizeMenuItem"
                     Command="{Binding OptimizeImageCommand}"
                     Header="{CompiledBinding Translation.OptimizeImage.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.ShouldOptimizeImageBeEnabled.Value,
-                                                Mode=OneWay}">
+                                                Mode=OneWay}"
+                    x:Name="OptimizeMenuItem">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource PortalImage}" />
+                            Source="{StaticResource PortalImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -721,11 +721,11 @@
 
                 <!--  Crop  -->
                 <MenuItem
-                    x:Name="CropMenuItem"
                     Command="{Binding CropCommand}"
                     Header="{Binding Translation.Crop.Value, Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.ShouldCropBeEnabled.Value,
-                                                Mode=OneWay}">
+                                                Mode=OneWay}"
+                    x:Name="CropMenuItem">
                     <MenuItem.Icon>
                         <Image Classes="CropImage" />
                     </MenuItem.Icon>
@@ -789,18 +789,18 @@
             <MenuItem Header="{CompiledBinding Translation.ToolWindows.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
-                        Width="12"
                         Height="12"
-                        Source="{StaticResource BrushImage}" />
+                        Source="{StaticResource BrushImage}"
+                        Width="12" />
                 </MenuItem.Icon>
 
                 <!--  Exif window  -->
                 <MenuItem Command="{CompiledBinding ImageInfoWindowCommand}" Header="{CompiledBinding Translation.ImageInfo.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource CameraImage}" />
+                            Source="{StaticResource CameraImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -813,9 +813,9 @@
                                                   Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource SparklesImage}" />
+                            Source="{StaticResource SparklesImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -823,9 +823,9 @@
                 <MenuItem Command="{Binding ResizeWindowCommand}" Header="{CompiledBinding Translation.ResizeImage.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource UpscaleImage}" />
+                            Source="{StaticResource UpscaleImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -833,9 +833,9 @@
                 <MenuItem Command="{Binding BatchResizeWindowCommand}" Header="{CompiledBinding Translation.BatchResize.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
-                            Width="12"
                             Height="12"
-                            Source="{StaticResource UpscaleImage}" />
+                            Source="{StaticResource UpscaleImage}"
+                            Width="12" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
@@ -844,14 +844,14 @@
 
             <!--  Delete file  -->
             <MenuItem
-                x:Name="DeleteFileMenuItem"
                 Command="{CompiledBinding DeleteFileCommand}"
                 Header="{CompiledBinding Translation.DeleteFile.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull},
                                             FallbackValue=False,
-                                            Mode=OneWay}">
+                                            Mode=OneWay}"
+                x:Name="DeleteFileMenuItem">
                 <MenuItem.Icon>
                     <Path Classes="RecyclePath" />
                 </MenuItem.Icon>
@@ -870,11 +870,11 @@
             <MenuItem Header="{Binding Translation.Copy.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
-                        Width="12"
-                        Height="12"
                         Data="{StaticResource CopyGeometry}"
                         Fill="{StaticResource Brush0}"
-                        Stretch="Fill" />
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
                 </MenuItem.Icon>
 
                 <!--  Copy image  -->
@@ -950,12 +950,12 @@
 
             <!--  Maximize  -->
             <MenuItem
-                x:Name="MaximizeMenuItem"
                 Command="{CompiledBinding MaximizeCommand}"
                 Header="{CompiledBinding Translation.Maximize.Value,
                                          Mode=OneWay}"
                 IsVisible="{CompiledBinding ShouldMaximizeBeShown.Value,
-                                            Mode=OneWay}">
+                                            Mode=OneWay}"
+                x:Name="MaximizeMenuItem">
                 <MenuItem.Icon>
                     <Image Classes="MaximizeImage" />
                 </MenuItem.Icon>
@@ -977,24 +977,24 @@
             <MenuItem Command="{CompiledBinding ExitCommand}" Header="{CompiledBinding Translation.Close.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
-                        Width="12"
-                        Height="12"
                         Data="{StaticResource CloseGeometry}"
                         Fill="{StaticResource Brush0}"
-                        Stretch="Fill" />
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
     </UserControl.Resources>
 
-    <Panel x:Name="MainPanel" ContextMenu="{StaticResource MainContextMenu}">
+    <Panel ContextMenu="{StaticResource MainContextMenu}" x:Name="MainPanel">
         <customControls:DraggableTabControl
-            x:Name="MainTabControl"
             Background="{DynamicResource SecondaryBackgroundColor}"
             DataContext="{CompiledBinding WindowTabs}"
             ItemsSource="{CompiledBinding Tabs.Value,
                                           Mode=TwoWay}"
-            SelectedItem="{Binding ActiveTab.Value, Mode=TwoWay}">
+            SelectedItem="{Binding ActiveTab.Value, Mode=TwoWay}"
+            x:Name="MainTabControl">
 
             <customControls:DraggableTabControl.Styles>
                 <Style Selector="TabItem">
@@ -1006,34 +1006,34 @@
                 <DataTemplate>
                     <DockPanel Background="Transparent" LastChildFill="True">
                         <customControls:IconButton
-                            Height="{Binding TabHeight}"
-                            Padding="9,0"
                             Background="Transparent"
                             Classes="altHover"
                             Command="{CompiledBinding CloseTab}"
                             Data="{StaticResource CloseGeometry}"
                             DockPanel.Dock="Right"
                             Foreground="{DynamicResource MainTextColor}"
+                            Height="{Binding TabHeight}"
                             IconHeight="12"
-                            IconWidth="12" />
+                            IconWidth="12"
+                            Padding="9,0" />
                         <TextBlock
-                            Margin="7,0,0,0"
                             Classes="txt"
+                            Margin="7,0,0,0"
                             Text="{CompiledBinding TabTitle.Value,
                                                    Mode=OneWay}"
                             TextWrapping="NoWrap" />
                         <ToolTip.Tip>
-                            <DockPanel Width="140" Height="235">
+                            <DockPanel Height="235" Width="140">
                                 <TextBlock
-                                    MaxWidth="135"
-                                    HorizontalAlignment="Center"
                                     Classes="txt bold"
                                     DockPanel.Dock="Top"
                                     FontSize="12"
+                                    HorizontalAlignment="Center"
+                                    MaxWidth="135"
                                     Text="{Binding TabTitle.Value, Mode=OneWay}" />
                                 <customControls:ThumbImage
-                                    HorizontalAlignment="Center"
                                     DockPanel.Dock="Bottom"
+                                    HorizontalAlignment="Center"
                                     Source="{CompiledBinding Image.Value,
                                                              TargetNullValue={StaticResource LogoImage}}" />
                             </DockPanel>
@@ -1052,41 +1052,42 @@
 
         <uc:SpinWaiter
             HorizontalAlignment="Center"
-            VerticalAlignment="Center"
             IsVisible="{Binding IsLoadingIndicatorShown.Value, Mode=OneWay}"
+            VerticalAlignment="Center"
             ZIndex="9" />
 
         <DockPanel
-            x:Name="AltButtonsPanel"
-            Height="150"
-            VerticalAlignment="Top"
             Background="Transparent"
+            Height="150"
             IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}"
             LastChildFill="True"
             Opacity="0"
-            ZIndex="9">
+            VerticalAlignment="Top"
+            ZIndex="9"
+            x:Name="AltButtonsPanel">
             <buttons:AltClose
-                x:Name="AltClose"
                 DockPanel.Dock="Right"
-                IsVisible="{Binding !IsUIShown.Value}" />
+                IsVisible="{Binding !IsUIShown.Value}"
+                x:Name="AltClose" />
             <buttons:AltRestore
-                x:Name="AltRestore"
                 DockPanel.Dock="Right"
-                IsVisible="{Binding !IsUIShown.Value}" />
+                IsVisible="{Binding !IsUIShown.Value}"
+                x:Name="AltRestore" />
             <buttons:AltMinimize
-                x:Name="AltMinimize"
                 DockPanel.Dock="Right"
-                IsVisible="{Binding !IsUIShown.Value}" />
+                IsVisible="{Binding !IsUIShown.Value}"
+                x:Name="AltMinimize" />
             <Border
-                Height="30"
-                Padding="2,0"
-                VerticalAlignment="Top"
                 Background="{DynamicResource AltBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,0,1"
                 DockPanel.Dock="Left"
+                Height="30"
                 IsVisible="{Binding !IsUIShown.Value}"
-                PointerPressed="DragMove">
+                Padding="2,0"
+                PointerPressed="DragMove"
+                VerticalAlignment="Top"
+                x:Name="AltTitleBorder">
                 <TextBlock
                     Classes="txt"
                     Text="{Binding WindowTabs.ActiveTab.Value.Title.Value}"
@@ -1095,10 +1096,10 @@
         </DockPanel>
 
         <uc:ToolTipMessage
-            x:Name="ToolTipMessage"
             HorizontalAlignment="Center"
-            VerticalAlignment="Center"
             Opacity="0"
-            ZIndex="9" />
+            VerticalAlignment="Center"
+            ZIndex="9"
+            x:Name="ToolTipMessage" />
     </Panel>
 </UserControl>
