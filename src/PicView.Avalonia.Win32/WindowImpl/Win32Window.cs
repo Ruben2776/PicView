@@ -28,6 +28,8 @@ public static class Win32Window
         vm.ShouldMaximizeBeShown.Value = true;
         vm.ShouldRestoreBeShown.Value = true;
         
+        vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
+        window.SizeToContent = SizeToContent.Manual;
         if (window.WindowState != WindowState.FullScreen)
         {
             window.WindowState = WindowState.FullScreen;
@@ -58,6 +60,8 @@ public static class Win32Window
         vm.ShouldMaximizeBeShown.Value = false;
         vm.ShouldRestoreBeShown.Value = true;
         
+        window.SizeToContent = SizeToContent.Manual;
+        vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
         if (window.WindowState != WindowState.Maximized)
         {
             window.WindowState = WindowState.Maximized;
@@ -77,6 +81,11 @@ public static class Win32Window
         window.IsChangingWindowState = true;
         
         var wasFullscreen = window.WindowState == WindowState.FullScreen || Settings.WindowProperties.Fullscreen;
+        
+        if (Settings.WindowProperties.AutoFit)
+        {
+            window.SizeToContent = SizeToContent.WidthAndHeight;
+        }
         
         // Update settings
         Settings.WindowProperties.Maximized = false;
@@ -98,7 +107,14 @@ public static class Win32Window
         
         WindowResizing.SetSize(window, WindowResizeReason.Application);
         
-        Dispatcher.UIThread.Post(() => window.IsChangingWindowState = false, DispatcherPriority.SystemIdle);
+        Dispatcher.UIThread.Post(() =>
+        {
+            window.IsChangingWindowState = false;
+            if (Settings.WindowProperties.AutoFit)
+            {
+                window.SizeToContent = SizeToContent.WidthAndHeight;
+            }
+        }, DispatcherPriority.SystemIdle);
         
         if (saveSettings)
         {

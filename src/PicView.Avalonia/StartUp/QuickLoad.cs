@@ -145,18 +145,35 @@ public static class QuickLoad
            core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
         }, DispatcherPriority.Send);
     
-        var magickImage = new MagickImage();
         var vm = core.MainWindows.ActiveWindow.CurrentValue;
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        tab.SetLoading();
+        
+        var magickImage = new MagickImage();
         try
         {
             await magickImage.PingAsync(fileInfo);
 
-            if (isStartUp && Settings.WindowProperties.AutoFit && !Settings.ImageScaling.ShowImageSideBySide)
+            if (isStartUp)
             {
-                // Predict window size and center beforehand for pleasant opening when double-clicking a file
-                WindowResizing.SetSize(magickImage.Width, magickImage.Height,
-                    0, 0, WindowResizeReason.Application, mainWindow, vm);
-                Dispatcher.UIThread.Invoke( () => WindowResizing.FastCenterWindow(mainWindow), DispatcherPriority.Render);
+                // Need to set size for the Maximize or fullscreen functions to work
+                if (Settings.WindowProperties.Maximized && !Settings.WindowProperties.Fullscreen)
+                {
+                    tab.Model.PixelWidth = magickImage.Width;
+                    tab.Model.PixelHeight = magickImage.Height;
+                }
+                else if (Settings.WindowProperties.Fullscreen)
+                {
+                    tab.Model.PixelWidth = magickImage.Width;
+                    tab.Model.PixelHeight = magickImage.Height;
+                }
+                else if (Settings.WindowProperties.AutoFit && !Settings.ImageScaling.ShowImageSideBySide)
+                {
+                    // Predict window size and center beforehand for pleasant opening when double-clicking a file
+                    WindowResizing.SetSize(magickImage.Width, magickImage.Height,
+                        0, 0, WindowResizeReason.Application, mainWindow, vm);
+                    Dispatcher.UIThread.Invoke( () => WindowResizing.FastCenterWindow(mainWindow), DispatcherPriority.Render);
+                }
             }
         }
         catch (Exception e)
@@ -166,8 +183,6 @@ public static class QuickLoad
             DebugHelper.LogDebug(nameof(QuickLoad), nameof(QuickLoadAsync), e);
         }
         
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        tab.SetLoading();
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo, magickImage).ConfigureAwait(false);
         tab.Image.Value = imageModel.Image;
         tab.FileInfo.Value = fileInfo;
@@ -200,7 +215,7 @@ public static class QuickLoad
             }
         }
 
-        if (isStartUp && Settings.WindowProperties.AutoFit)
+        if (!Settings.WindowProperties.Fullscreen && !Settings.WindowProperties.Maximized && isStartUp && Settings.WindowProperties.AutoFit)
         {
             Dispatcher.UIThread.Post(() => WindowFunctions.CenterWindowOnScreen(mainWindow));
         }

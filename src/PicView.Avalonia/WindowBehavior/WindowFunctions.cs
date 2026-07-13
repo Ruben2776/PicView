@@ -284,7 +284,7 @@ public static class WindowFunctions
         });
     }
 
-    public static void InitializeWindowSizeAndPosition(Window window)
+    public static void InitializeWindowSizeAndPosition(MainWindow window)
     {
         if (Dispatcher.UIThread.CheckAccess())
         {
@@ -330,6 +330,27 @@ public static class WindowFunctions
             {
                 window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
+        }
+    }
+    
+    public static void InitializeWindowPosition(MainWindow window)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            Dispatcher.UIThread.InvokeAsync(Set);
+        }
+
+        return;
+
+        void Set()
+        {
+            window.WindowStartupLocation = WindowStartupLocation.Manual;
+            window.Position = new PixelPoint((int)Settings.WindowProperties.Left,
+                (int)Settings.WindowProperties.Top);
         }
     }
 

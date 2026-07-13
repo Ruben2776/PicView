@@ -235,6 +235,11 @@ public static class WindowResizing
                 width = preloadValue.ImageModel.PixelWidth;
                 height = preloadValue.ImageModel.PixelHeight;
             }
+            else if (tab.Model.PixelHeight is not 0 && tab.Model.PixelWidth is not 0)
+            {
+                width = tab.Model.PixelWidth;
+                height = tab.Model.PixelHeight;
+            }
             else if (tab.Model.Image is Bitmap bitmap)
             {
                 width = bitmap.PixelSize.Width;
@@ -351,11 +356,6 @@ public static class WindowResizing
 
     public static void SaveSize(Window window)
     {
-        if (Settings.WindowProperties.Maximized || Settings.WindowProperties.Fullscreen)
-        {
-            return;
-        }
-
         if (Dispatcher.CurrentDispatcher.CheckAccess())
         {
             Set();
@@ -373,6 +373,10 @@ public static class WindowResizing
             var left = window.Position.X;
             Settings.WindowProperties.Top = top;
             Settings.WindowProperties.Left = left;
+            if (Settings.WindowProperties.Maximized || Settings.WindowProperties.Fullscreen)
+            {
+                return;
+            }
             Settings.WindowProperties.Width = window.Bounds.Width;
             Settings.WindowProperties.Height = window.Bounds.Height;
         }

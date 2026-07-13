@@ -125,7 +125,7 @@ public static class StartUpHelper
         desktop.MainWindow = window;
         TranslationManager.Init();
         SettingsUpdater.InitializeSettings(vm.MainWindows.ActiveWindow.CurrentValue, settingsExists);
-
+        
         HandleWindowScalingMode(vm, window);
 
         StartUpMenuOrLastFile(window, vm);
@@ -142,8 +142,12 @@ public static class StartUpHelper
         {
             Settings.WindowProperties.Margin = 45;
         }
-        
-        else if (Settings.WindowProperties.AutoFit && !Settings.WindowProperties.Maximized && !Settings.WindowProperties.Fullscreen)
+
+        if (Settings.WindowProperties.Maximized || Settings.WindowProperties.Fullscreen)
+        {
+            WindowFunctions.InitializeWindowPosition(window);
+        }
+        else if (Settings.WindowProperties.AutoFit)
         {
             window.WindowStartupLocation = adjustPos ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
             WindowFunctions.SetAutoFit(vm.MainWindows.ActiveWindow.CurrentValue, window, false);
