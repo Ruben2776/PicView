@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.FileSorting;
@@ -115,9 +116,9 @@ public class FileWatcherService(
                 await OnFileRenamedAsync(tab, e), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileRenamedAsync)));
             
-            var fileChangedSub = changed.Subscribe( (e) =>
-                OnFileChanged(tab, e), 
-                DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileChanged)));
+            var fileChangedSub = changed.SubscribeAwait(async (e, ct) =>
+                await OnFileChangedAsync(tab, e), 
+                DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileChangedAsync)));
 
             // Combine disposables
             var subscription = Disposable.Combine(fileCreatedSub, fileDeletedSub, fileRenamedSub, fileChangedSub);
@@ -384,7 +385,7 @@ public class FileWatcherService(
         tab.UpdateTabTitle();
     }
     /// Update the tabs FileInfo to reflect an updated new file size
-    private void OnFileChanged(TabViewModel tab, FileSystemEventArgs e)
+    private async ValueTask OnFileChangedAsync(TabViewModel tab, FileSystemEventArgs e)
     {
         var newFile = new FileInfo(e.FullPath);
         var previousFile = tab.Model?.FileInfo;
@@ -408,7 +409,11 @@ public class FileWatcherService(
         {
             return;
         }
-        
+
+        using var magick = new MagickImage();
+        await magick.PingAsync(newFile);
+        tab.Model.PixelWidth = magick.Width;
+        tab.Model.PixelHeight = magick.Height;
         tab.Model.FileInfo = newFile;
         tab.FileInfo.Value = newFile;
         tab.UpdateTabTitle();

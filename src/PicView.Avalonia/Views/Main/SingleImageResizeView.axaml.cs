@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Media;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.UI;
@@ -62,6 +63,9 @@ public partial class SingleImageResizeView : UserControl
 
         mainVm.ResizeImageViewModel?.Dispose();
         mainVm.ResizeImageViewModel = null;
+        
+        PixelWidthTextBox.KeyDown -= TextBoxOnKeyDown;
+        PixelHeightTextBox.KeyDown -= TextBoxOnKeyDown;
     }
 
     private void ApplyThemeAdjustments()
@@ -93,7 +97,6 @@ public partial class SingleImageResizeView : UserControl
     private void RegisterEventHandlers(MainWindowViewModel mainVm)
     {
         var vm = mainVm.ResizeImageViewModel!;
-        var tab = mainVm.WindowTabs.ActiveTab.CurrentValue;
 
         // VM -> UI sync
         vm.IsLoading.Subscribe(SetLoadingState).AddTo(ref _disposables);
@@ -105,6 +108,19 @@ public partial class SingleImageResizeView : UserControl
         ResetButton.Click += (_, _) => vm.ResetSettings();
         CancelButton.Click += (_, _) => vm.CloseAction?.Invoke();
         LinkChainButton.Click += (_, _) => vm.ToggleAspectRatio();
+        
+        PixelWidthTextBox.KeyDown += TextBoxOnKeyDown;
+        PixelHeightTextBox.KeyDown += TextBoxOnKeyDown;
+    }
+
+    private void TextBoxOnKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key is not Key.Enter || DataContext is not MainWindowViewModel mainVm)
+        {
+            return;
+        }
+        var vm = mainVm.ResizeImageViewModel;
+        _ = vm.SaveImage();
     }
 
     private void SetLoadingState(bool isLoading)
