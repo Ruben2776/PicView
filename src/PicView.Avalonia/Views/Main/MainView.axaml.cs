@@ -99,6 +99,20 @@ public partial class MainView : UserControl
 
     private void MainTabControlOnTabCreated(object? sender, TabCreatedEventArgs e)
     {
+        if (DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+        var tabs = vm.WindowTabs.Tabs.CurrentValue;
+        if (tabs.Count >= 2)
+        {
+            AltButtonsPanel.Margin = new Thickness(0, SizeDefaults.TabHeight, 0, 0);
+        }
+        else
+        {
+            AltButtonsPanel.Margin = new Thickness(0);
+        }
+        
         // Only set the StartUpMenu if the View is currently null.
         // This prevents overwriting the view (e.g. an image) when reordering tabs,
         // as reordering triggers the TabCreated event again by recreating containers.
@@ -127,11 +141,11 @@ public partial class MainView : UserControl
         }
 
         // Fix blank tab title when creating first new tab
-        if (DataContext is MainWindowViewModel vm && vm.WindowTabs.Tabs.CurrentValue.Count is 2)
+        if (tabs.Count is 2)
         {
-            if (vm.WindowTabs.Tabs.CurrentValue[0].CurrentView.CurrentValue is StartUpMenu)
+            if (tabs[0].CurrentView.CurrentValue is StartUpMenu)
             {
-                vm.WindowTabs.Tabs.Value[0].SetNewTabTitle();
+                tabs[0].SetNewTabTitle();
             }
         }
     }

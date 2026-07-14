@@ -312,8 +312,7 @@ public class TabViewModel(Action<uint> closeTab, IFileWatcherService? fileWatche
     {
         IsClosing = true; // Signal it to be removed from the UI
         closeTab(Id);
-        NavigationCts.Cancel();
-        Dispose();
+        // Dispose has already been called in the CloseTab method
     }
 
     public CancellationTokenSource GetTabCancellation()
