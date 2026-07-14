@@ -184,7 +184,7 @@ public partial class MainView : UserControl
             return;
         }
 
-        DragAndDropManager.RemoveDragDropView(TopLevel.GetTopLevel(this) as MainWindow);
+        DragAndDropManager.RemoveDragDropView(mainWindow);
         
         if (e.Properties.IsLeftButtonPressed)
         {
@@ -195,30 +195,30 @@ public partial class MainView : UserControl
         }
         else if (e.Properties.IsRightButtonPressed)
         {
-            if (Resources.TryGetResource("MainContextMenu", Application.Current.ActualThemeVariant, out var value))
+            if (!Resources.TryGetResource("MainContextMenu", Application.Current.ActualThemeVariant, out var value))
             {
-                if (value is ContextMenu mainContextMenu)
-                {
-                    if (DataContext is not MainWindowViewModel vm)
-                    {
-                        return;
-                    }
+                return;
+            }
 
-                    var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-                    if (tab.CurrentView.CurrentValue is ImageViewer viewer)
-                    {
-                        if (viewer.ClickArrowLeft.IsPointerOver || viewer.ClickArrowRight.IsPointerOver)
-                        {
-                            return;
-                        }
-                        if (viewer.HoverBar.IsPointerOver)
-                        {
-                            return;
-                        }
-                    }
-                    mainContextMenu.Open(this);
+            if (value is not ContextMenu mainContextMenu || DataContext is not MainWindowViewModel vm)
+            {
+                return;
+            }
+
+            var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+            if (tab.CurrentView.CurrentValue is ImageViewer viewer)
+            {
+                // The click arrows and hover have their own right-click interaction
+                if (viewer.ClickArrowLeft.IsPointerOver || viewer.ClickArrowRight.IsPointerOver)
+                {
+                    return;
+                }
+                if (viewer.HoverBar.IsPointerOver)
+                {
+                    return;
                 }
             }
+            mainContextMenu.Open(this);
         }
     }
     
