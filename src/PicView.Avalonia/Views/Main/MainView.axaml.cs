@@ -183,12 +183,43 @@ public partial class MainView : UserControl
         {
             return;
         }
-        if (MainKeyboardShortcuts.ShiftDown && !CropManager.IsCropping(mainWindow))
-        {
-            WindowFunctions.WindowDragBehavior(mainWindow, e);
-        }
-        
+
         DragAndDropManager.RemoveDragDropView(TopLevel.GetTopLevel(this) as MainWindow);
+        
+        if (e.Properties.IsLeftButtonPressed)
+        {
+            if (MainKeyboardShortcuts.ShiftDown && !CropManager.IsCropping(mainWindow))
+            {
+                WindowFunctions.WindowDragBehavior(mainWindow, e);
+            }
+        }
+        else if (e.Properties.IsRightButtonPressed)
+        {
+            if (Resources.TryGetResource("MainContextMenu", Application.Current.ActualThemeVariant, out var value))
+            {
+                if (value is ContextMenu mainContextMenu)
+                {
+                    if (DataContext is not MainWindowViewModel vm)
+                    {
+                        return;
+                    }
+
+                    var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+                    if (tab.CurrentView.CurrentValue is ImageViewer viewer)
+                    {
+                        if (viewer.ClickArrowLeft.IsPointerOver || viewer.ClickArrowRight.IsPointerOver)
+                        {
+                            return;
+                        }
+                        if (viewer.HoverBar.IsPointerOver)
+                        {
+                            return;
+                        }
+                    }
+                    mainContextMenu.Open(this);
+                }
+            }
+        }
     }
     
     private void HandleLostFocus(object? sender, EventArgs e)
