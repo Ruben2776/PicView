@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using PicView.Avalonia.CustomControls;
 using PicView.Core.Config;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
@@ -7,6 +8,7 @@ namespace PicView.Avalonia.Interfaces;
 
 public interface IWindowProvider
 {
+    MainWindow CreateMainWindow();
     Window CreateAboutWindow();
     Window CreateBatchResizeWindow(BatchResizeWindowConfig config);
     Window CreateFileAssociationsWindow();

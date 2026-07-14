@@ -245,6 +245,12 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     /// <inheritdoc cref="Core.Navigation.Interfaces.INavigationService.NavigateByIncrementsAsync" />
     public async ValueTask Prev100() =>
         await vm.WindowTabs.Prev100().ConfigureAwait(false);
+    
+    public ValueTask StopRepeatedNavigation()
+    {
+        vm.WindowTabs.StopRepeatedNavigation();
+        return ValueTask.CompletedTask;
+    }
 
     public async ValueTask Search() =>
         await Dispatcher.UIThread.InvokeAsync(mainWindow.AddFileSearchDialog);
@@ -527,8 +533,11 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     }
 
     /// <inheritdoc cref="ProcessHelper.StartNewProcess()" />
-    public async ValueTask NewWindow() =>
-        await Task.Run(ProcessHelper.StartNewProcess).ConfigureAwait(false);
+    public ValueTask NewWindow()
+    {
+        WindowFunctions.NewWindow(mainWindow);
+        return ValueTask.CompletedTask;
+    }
 
     public ValueTask ShowStartUpMenu()
     {
@@ -936,12 +945,6 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     public ValueTask CloseTab()
     {
         vm.WindowTabs.CloseTab();
-        return ValueTask.CompletedTask;
-    }
-    
-    public ValueTask StopRepeatedNavigation()
-    {
-        vm?.WindowTabs?.StopRepeatedNavigation();
         return ValueTask.CompletedTask;
     }
 

@@ -5,13 +5,17 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
+using PicView.Avalonia.SettingsManagement;
+using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.ArchiveHandling;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
 using PicView.Core.IPlatform;
+using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -22,6 +26,75 @@ namespace PicView.Avalonia.WindowBehavior;
 
 public static class WindowFunctions
 {
+    #region Window creation behavior
+
+    public static void NewWindow(MainWindow mainWindow)
+    {
+        if (Application.Current.DataContext is not CoreViewModel core ||
+            mainWindow.MainWindowInitializer is null ||
+            Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        var window = mainWindow.MainWindowInitializer.CreateMainWindow();
+        var vm = window.DataContext as MainWindowViewModel;
+        SettingsUpdater.InitializeSettings(vm, true);
+        HandleWindowScalingMode(core, window);
+        var startUpMenu = new StartUpMenu
+        {
+            Buttons =
+            {
+                DataContext = vm
+            }
+        };
+        vm.WindowTabs.ActiveTab.Value.CurrentView.Value = startUpMenu;
+        window.Show();
+        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
+    }
+
+    public static void DetachedWindowStartup(CoreViewModel core, IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
+    {
+        SettingsUpdater.InitializeSettings(window.DataContext as MainWindowViewModel, true);
+        HandleWindowScalingMode(core, window, false);
+        window.Show();
+        
+        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
+    }
+    
+    public static void RegularWindowStartUp(CoreViewModel vm, bool settingsExists,
+        IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
+    {
+        desktop.MainWindow = window;
+        TranslationManager.Init();
+        SettingsUpdater.InitializeSettings(vm.MainWindows.ActiveWindow.CurrentValue, settingsExists);
+        
+        HandleWindowScalingMode(vm, window);
+
+        StartUpHelper.StartUpMenuOrLastFile(window, vm);
+        window.Show();
+
+        StartUpHelper.HandlePostWindowUpdates(vm, desktop, window);
+    }
+    
+    public static void ImageStartUp(string filePath, CoreViewModel vm, bool settingsExists,
+        IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
+    {
+        desktop.MainWindow = window;
+            
+        SettingsUpdater.InitializeSettings(vm.MainWindows.ActiveWindow.CurrentValue, settingsExists);
+
+        HandleWindowScalingMode(vm, window);
+
+        StartUpHelper.HandleStartImage(window, vm, filePath);
+        window.Show();
+
+        StartUpHelper.HandlePostWindowUpdates(vm, desktop, window);
+    }
+
+    #endregion
+    
+    #region Window Closing Behavior
+
     public static async Task WindowClosingBehavior()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
@@ -99,8 +172,38 @@ public static class WindowFunctions
             Environment.Exit(0);
         }
     }
+    
+    #endregion
 
     #region Window State
+    
+    public static void HandleWindowScalingMode(CoreViewModel vm, MainWindow window, bool adjustPos = true)
+    {
+        ScreenHelper.UpdateScreenSize(window);
+
+        if (Settings.WindowProperties.Margin < 0)
+        {
+            Settings.WindowProperties.Margin = 45;
+        }
+
+        if (Settings.WindowProperties.Maximized || Settings.WindowProperties.Fullscreen)
+        {
+            WindowFunctions.InitializeWindowPosition(window);
+        }
+        else if (Settings.WindowProperties.AutoFit)
+        {
+            window.WindowStartupLocation = adjustPos ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
+            WindowFunctions.SetAutoFit(vm.MainWindows.ActiveWindow.CurrentValue, window, false);
+        }
+        else 
+        {
+            WindowFunctions.SetSingleManualWindow(vm.MainWindows.ActiveWindow.CurrentValue, window);
+            if (adjustPos)
+            {
+                WindowFunctions.InitializeWindowSizeAndPosition(window);
+            }
+        }
+    }
 
     /// <summary>
     /// Restores the interface based on settings

@@ -65,7 +65,7 @@ public static class StartUpHelper
             {
                 if (!ProcessHelper.CheckIfAnotherInstanceIsRunning())
                 {
-                    ImageStartUp(arg);
+                    WindowFunctions.ImageStartUp(arg, vm, settingsExists, desktop, window);
                 }
                 else
                 {
@@ -74,29 +74,15 @@ public static class StartUpHelper
             }
             else
             {
-                ImageStartUp(arg);
+                WindowFunctions.ImageStartUp(arg, vm, settingsExists, desktop, window);
             }
         }
         else
         {
-            RegularStartUp(vm, settingsExists, desktop, window);
+            WindowFunctions.RegularWindowStartUp(vm, settingsExists, desktop, window);
         }
             
         return;
-        
-        void ImageStartUp(string filePath)
-        {
-            desktop.MainWindow = window;
-            
-            SettingsUpdater.InitializeSettings(vm.MainWindows.ActiveWindow.CurrentValue, settingsExists);
-
-            HandleWindowScalingMode(vm, window);
-
-            HandleStartImage(window, vm, filePath);
-            window.Show();
-
-            HandlePostWindowUpdates(vm, desktop, window);
-        }
 
         void BlankStartUp()
         {
@@ -104,61 +90,9 @@ public static class StartUpHelper
             
             SettingsUpdater.InitializeSettings(vm.MainWindows.ActiveWindow.CurrentValue, settingsExists);
 
-            HandleWindowScalingMode(vm, window);
+            WindowFunctions.HandleWindowScalingMode(vm, window);
 
             HandlePostWindowUpdates(vm, desktop, window);
-        }
-    }
-    
-    public static void DetachedWindowStartup(CoreViewModel core, IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
-    {
-        SettingsUpdater.InitializeSettings(window.DataContext as MainWindowViewModel, true);
-        HandleWindowScalingMode(core, window, false);
-        window.Show();
-        
-        HandlePostWindowUpdates(core, desktop, window);
-    }
-    
-    public static void RegularStartUp(CoreViewModel vm, bool settingsExists,
-        IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
-    {
-        desktop.MainWindow = window;
-        TranslationManager.Init();
-        SettingsUpdater.InitializeSettings(vm.MainWindows.ActiveWindow.CurrentValue, settingsExists);
-        
-        HandleWindowScalingMode(vm, window);
-
-        StartUpMenuOrLastFile(window, vm);
-        window.Show();
-
-        HandlePostWindowUpdates(vm, desktop, window);
-    }
-    
-    public static void HandleWindowScalingMode(CoreViewModel vm, MainWindow window, bool adjustPos = true)
-    {
-        ScreenHelper.UpdateScreenSize(window);
-
-        if (Settings.WindowProperties.Margin < 0)
-        {
-            Settings.WindowProperties.Margin = 45;
-        }
-
-        if (Settings.WindowProperties.Maximized || Settings.WindowProperties.Fullscreen)
-        {
-            WindowFunctions.InitializeWindowPosition(window);
-        }
-        else if (Settings.WindowProperties.AutoFit)
-        {
-            window.WindowStartupLocation = adjustPos ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
-            WindowFunctions.SetAutoFit(vm.MainWindows.ActiveWindow.CurrentValue, window, false);
-        }
-        else 
-        {
-            WindowFunctions.SetSingleManualWindow(vm.MainWindows.ActiveWindow.CurrentValue, window);
-            if (adjustPos)
-            {
-                WindowFunctions.InitializeWindowSizeAndPosition(window);
-            }
         }
     }
 
@@ -240,7 +174,7 @@ public static class StartUpHelper
         }
     }
 
-    private static void HandleStartImage(MainWindow mainWindow, CoreViewModel vm, string arg)
+    public static void HandleStartImage(MainWindow mainWindow, CoreViewModel vm, string arg)
     {
         Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, vm, arg, continueFromLeftOff: false, isStartup: true));
     }

@@ -35,6 +35,18 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
         await provider.HandlePlatformUpdate(updateInfo, tempPath);
     }
 
+    public MainWindow CreateMainWindow()
+    {
+        var window = provider.CreateMainWindow();
+        if (Application.Current?.DataContext is CoreViewModel core &&
+            window.DataContext is MainWindowViewModel vm)
+        {
+            core.MainWindows.MainWindows.Add(vm);
+            core.MainWindows.ActiveWindow.Value = vm;
+        }
+        return window;
+    }
+
     public void ShowAboutWindow()
     {
         if (Dispatcher.UIThread.CheckAccess())

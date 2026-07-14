@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.MacOS.PlatformUpdate;
 using PicView.Avalonia.MacOS.Views;
@@ -11,6 +12,7 @@ namespace PicView.Avalonia.MacOS.WindowImpl;
 
 public class MacWindowProvider : IWindowProvider
 {
+    public MainWindow CreateMainWindow() => new MacMainWindow();
     public Window CreateAboutWindow() => new AboutWindow();
 
     public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => new BatchResizeWindow(config);

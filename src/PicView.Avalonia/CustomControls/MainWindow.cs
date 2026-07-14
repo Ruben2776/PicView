@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
@@ -9,6 +10,7 @@ using PicView.Avalonia.Crop;
 using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.Services;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.Main;
 using PicView.Avalonia.Views.UC;
@@ -25,6 +27,9 @@ namespace PicView.Avalonia.CustomControls;
 
 public class MainWindow : Window, IMainWindow
 {
+    [SuppressMessage("Usage", "CA2211:Non-constant fields should not be visible")] 
+    public WindowInitializer? MainWindowInitializer;
+    
     public CompositeDisposable Disposables { get; set; } = new();
     /// Flag to prevent window state changes while resizing
     public bool IsChangingWindowState { get; set; }

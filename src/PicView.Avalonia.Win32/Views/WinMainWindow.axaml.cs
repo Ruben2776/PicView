@@ -6,6 +6,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.Win32.WindowImpl;
+using PicView.Avalonia.WindowBehavior;
 using WindowInitializer = PicView.Avalonia.Services.WindowInitializer;
 using PicView.Core.DebugTools;
 using PicView.Core.IPlatform;
@@ -16,8 +17,6 @@ namespace PicView.Avalonia.Win32.Views;
 
 public partial class WinMainWindow : MainWindow, IPlatformWindowService
 {
-    private static WindowInitializer? _windowInitializer;
-
     public WinMainWindow()
     {
         if (Application.Current!.DataContext is not CoreViewModel core)
@@ -42,7 +41,7 @@ public partial class WinMainWindow : MainWindow, IPlatformWindowService
     {
         Loaded += delegate
         {
-            _windowInitializer ??= new WindowInitializer(new Win32WindowProvider());
+            MainWindowInitializer ??= new WindowInitializer(new Win32WindowProvider());
             if (DataContext is not MainWindowViewModel windowViewModel)
             {
                 return;
@@ -187,7 +186,7 @@ public partial class WinMainWindow : MainWindow, IPlatformWindowService
                 }
                 core.MainWindows.MainWindows.Add(newVm);
                 core.MainWindows.ActiveWindow.Value = newVm;
-                StartUpHelper.DetachedWindowStartup(core, desktop, newWindow);
+                WindowFunctions.DetachedWindowStartup(core, desktop, newWindow);
 
                 // Fix null DataContext
                 if (tab.CurrentView.CurrentValue is Control control)
@@ -212,37 +211,37 @@ public partial class WinMainWindow : MainWindow, IPlatformWindowService
     } = 185;
     
     public void ShowAboutWindow() =>
-        _windowInitializer?.ShowAboutWindow();
+        MainWindowInitializer?.ShowAboutWindow();
 
     public async Task ShowImageInfoWindow() =>
-        await _windowInitializer?.ShowImageInfoWindow(DataContext as MainWindowViewModel);
+        await MainWindowInitializer?.ShowImageInfoWindow(DataContext as MainWindowViewModel);
 
     public async Task ShowKeybindingsWindow() =>
-        await _windowInitializer?.ShowKeybindingsWindow();
+        await MainWindowInitializer?.ShowKeybindingsWindow();
 
     public async ValueTask ShowSettingsWindow() =>
-        await _windowInitializer.ShowSettingsWindow();
+        await MainWindowInitializer.ShowSettingsWindow();
 
     public void ShowSingleImageResizeWindow() =>
-        _windowInitializer?.ShowSingleImageResizeWindow();
+        MainWindowInitializer?.ShowSingleImageResizeWindow();
 
     public async ValueTask ShowBatchResizeWindow() =>
-        await _windowInitializer.ShowBatchResizeWindow();
+        await MainWindowInitializer.ShowBatchResizeWindow();
 
     public void ShowFileAssociationsWindow() =>
-        _windowInitializer?.ShowFileAssociationsWindow();
+        MainWindowInitializer?.ShowFileAssociationsWindow();
 
     public void ShowEffectsWindow() =>
-        _ = _windowInitializer?.ShowEffectsWindow();
+        _ = MainWindowInitializer?.ShowEffectsWindow();
 
     public void ShowConvertWindow() =>
-        _windowInitializer?.ShowConvertWindow();
+        MainWindowInitializer?.ShowConvertWindow();
     
     public async Task ShowPrintWindow(string path)
     {
         var vm = Dispatcher.UIThread.Invoke(() => DataContext as MainWindowViewModel);
-        Debug.Assert(_windowInitializer != null, nameof(_windowInitializer) + " != null");
-        await _windowInitializer.ShowPrintWindow(path, vm);
+        Debug.Assert(MainWindowInitializer != null, nameof(MainWindowInitializer) + " != null");
+        await MainWindowInitializer.ShowPrintWindow(path, vm);
     }
 
     /// <inheritdoc />
