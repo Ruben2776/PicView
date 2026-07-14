@@ -375,6 +375,16 @@
 
             <Separator />
 
+            <!--  Application shortcuts  -->
+            <MenuItem Command="{Binding KeybindingsWindowCommand}" Header="{CompiledBinding Translation.ApplicationShortcuts.Value, Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Image
+                        Width="12"
+                        Height="12"
+                        Source="{StaticResource KeyImage}" />
+                </MenuItem.Icon>
+            </MenuItem>
+
             <!--  Tool windows  -->
             <MenuItem Header="{CompiledBinding Translation.ToolWindows.Value, Mode=OneWay}">
                 <MenuItem.Icon>
