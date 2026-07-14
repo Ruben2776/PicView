@@ -63,11 +63,6 @@ public class HoverFadeButtonHandler : IDisposable
 
     private void OnPointerExited(object? sender, PointerEventArgs e)
     {
-        if (e.Pointer.Captured != null) // Don't fade out when captured
-        {
-            return;
-        }
-        
         // Delay fade-out to ensure pointer is truly outside both parent and child
         Dispatcher.CurrentDispatcher.Post(async () =>
         {
