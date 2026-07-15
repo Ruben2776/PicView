@@ -187,7 +187,7 @@ public static class QuickLoad
         tab.Image.Value = imageModel.Image;
         tab.FileInfo.Value = fileInfo;
         tab.Model = imageModel;
-        var initialDirectory = GetInitialDirectory(!Settings.ImageScaling.ShowImageSideBySide, fileInfo);
+        var initialDirectory = GetInitialDirectory(continueFromLeftOff, fileInfo);
 
         if (Settings.ImageScaling.ShowImageSideBySide)
         {
@@ -306,7 +306,7 @@ public static class QuickLoad
 
     private static FileInfo GetInitialDirectory(bool continueFromLeftOff, FileInfo fileInfo)
     {
-        if (!continueFromLeftOff)
+        if (!continueFromLeftOff || !Settings.Sorting.IncludeSubDirectories)
         {
             return fileInfo;
         }
