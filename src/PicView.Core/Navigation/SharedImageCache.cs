@@ -157,6 +157,14 @@ public class SharedImageCache : IImageCache
         return evicted;
     }
     
+    public void UpdateImageModel(uint ownerId, int index, ImageModel model)
+    {
+        if (_ownerDictionaries.TryGetValue(ownerId, out var dict))
+        {
+            dict[index].ImageModel.Image = model;
+        }
+    }
+    
     public bool Contains(ReadOnlySpan<char> span, out PreLoadValue? value) =>
         TryGet(span, out value);
 
@@ -204,10 +212,15 @@ public class SharedImageCache : IImageCache
             return;
         }
 
-        if (removedValue != null)
+        if (removedValue == null)
         {
-            CheckAndDisposeIfNotReferenced(removedValue);
+            return;
         }
+        if (removedValue.ImageModel.Image is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+        removedValue.ImageModel.Image = null;
     }
 
     public void Clear()

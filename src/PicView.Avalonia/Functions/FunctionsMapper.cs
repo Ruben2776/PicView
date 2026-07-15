@@ -696,17 +696,13 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     }
 
     /// <inheritdoc cref="FileSaverHelper.SaveCurrentFile(MainWindowViewModel)" />
-    public async ValueTask Save()
-    {
+    public async ValueTask Save() =>
         await FileSaverHelper.SaveCurrentFile(vm).ConfigureAwait(false);
-    }
-    
+
     /// <inheritdoc cref="FileSaverHelper.SaveFileAs(MainWindowViewModel)" />
-    public async ValueTask SaveAs()
-    {
+    public async ValueTask SaveAs() =>
         await FileSaverHelper.SaveFileAs(vm).ConfigureAwait(false);
-    }
-    
+
     /// <inheritdoc cref="FileManager.DeleteFileWithOptionalDialog" />
     public async ValueTask DeleteFile()
     {

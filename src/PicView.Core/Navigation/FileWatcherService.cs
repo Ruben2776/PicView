@@ -388,14 +388,18 @@ public class FileWatcherService(
     private async ValueTask OnFileChangedAsync(TabViewModel tab, FileSystemEventArgs e)
     {
         var newFile = new FileInfo(e.FullPath);
-        var previousFile = tab.Model?.FileInfo;
+        var previousFile = tab.Model.FileInfo;
+        if (previousFile is null)
+        {
+            return;
+        }
         if (newFile.Length == previousFile.Length)
         {
             // Don't do anything if the file size hasn't changed
             return;
         }
         
-        if (tab.ImageIterator.Files is not List<FileInfo> files)
+        if (tab.ImageIterator?.Files is not List<FileInfo> files)
         {
             return;
         }
@@ -405,15 +409,22 @@ public class FileWatcherService(
             files[index] = newFile;
         }
         
-        if (e.FullPath != tab.FileInfo.CurrentValue.FullName)
+        if (e.FullPath != tab.FileInfo?.CurrentValue?.FullName)
         {
             return;
         }
 
-        using var magick = new MagickImage();
-        await magick.PingAsync(newFile);
-        tab.Model.PixelWidth = magick.Width;
-        tab.Model.PixelHeight = magick.Height;
+        try
+        {
+            using var magick = new MagickImage();
+            await magick.PingAsync(newFile);
+            tab.Model.PixelWidth = magick.Width;
+            tab.Model.PixelHeight = magick.Height;
+        }
+        catch (Exception exception)
+        {
+            DebugHelper.LogDebug(nameof(FileWatcherService), nameof(OnFileChangedAsync), exception);
+        }
         tab.Model.FileInfo = newFile;
         tab.FileInfo.Value = newFile;
         tab.UpdateTabTitle();

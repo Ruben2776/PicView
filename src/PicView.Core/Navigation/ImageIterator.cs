@@ -107,9 +107,16 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
                     // Wait for loading complete
                     var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
-                    if (successfullyLoaded && index == CurrentIndex && preLoadValue.ImageModel.Image is not null)
+                    if (successfullyLoaded && index == CurrentIndex)
                     {
-                        UpdateModel(preLoadValue.ImageModel);
+                        if (preLoadValue.ImageModel.Image is null)
+                        {
+                            await AttemptManualLoad();
+                        }
+                        else
+                        {
+                            UpdateModel(preLoadValue.ImageModel);
+                        }
                     }
                     else
                     {
@@ -123,16 +130,23 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             // Not in cache
             await Task.Run(async () =>
             {
-                var manuallyLoaded = await Cache.LoadAsync(_tab.Id, index, Files, ct.Token).ConfigureAwait(false);
-                if (index == CurrentIndex && manuallyLoaded is not null)
-                {
-                    UpdateModel(manuallyLoaded);
-                }
-                else
-                {
-                    TriggerPreload();
-                }
+                await AttemptManualLoad();
             });
+        }
+        
+        return;
+        
+        async Task AttemptManualLoad()
+        {
+            var manuallyLoaded = await Cache.LoadAsync(_tab.Id, index, Files, ct.Token).ConfigureAwait(false);
+            if (index == CurrentIndex && manuallyLoaded is not null)
+            {
+                UpdateModel(manuallyLoaded);
+            }
+            else
+            {
+                TriggerPreload();
+            }
         }
     }
     

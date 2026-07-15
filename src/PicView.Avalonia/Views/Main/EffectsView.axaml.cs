@@ -266,6 +266,7 @@ public partial class EffectsView : UserControl
                 if (magick is not null)
                 {
                     core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.Value.Image.Value = magick.ToWriteableBitmap();
+                    viewModel.ProcessedImage = magick;
                 }
         
                 viewModel.IsLoading.Value = false;

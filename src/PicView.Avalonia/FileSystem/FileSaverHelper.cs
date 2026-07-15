@@ -1,7 +1,8 @@
 ﻿using Avalonia;
-using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using ImageMagick;
+using PicView.Avalonia.ImageHandling;
 using PicView.Core.DebugTools;
-using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ViewModels;
 
@@ -24,6 +25,15 @@ public static class FileSaverHelper
         
         if (isSaved)
         {
+            var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
+            var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+            var id = tab.Id;
+            var index = tab.ImageIterator.CurrentIndex;
+            var cache = core.SharedCache;
+            var model = await GetImageModel.GetImageModelAsync(tab.FileInfo.CurrentValue);
+            cache.UpdateImageModel(id, index, model);
+            tab.Model = model;
+            tab.UpdateTabTitle();
             // TODO: Add visual design to tell whether file was saved
         }
         
@@ -54,7 +64,7 @@ public static class FileSaverHelper
         }
         if (core.Effects?.ProcessedImage is not null)
         {
-            return await SaveImageFromBitmap();
+            return await SaveProcessedImage();
         }
         
         if (!string.IsNullOrWhiteSpace(filename) && File.Exists(filename))
@@ -62,7 +72,7 @@ public static class FileSaverHelper
             return await SaveImageFromFile();
         }
         
-        return await SaveImageFromBitmap();
+        return await SaveProcessedImage();
         
         async ValueTask<bool> SaveImageFromFile()
         {
@@ -81,7 +91,7 @@ public static class FileSaverHelper
                 vm.WindowTabs.ActiveTab.CurrentValue.ScaleX.Value == -1);
         }
         
-        async ValueTask<bool> SaveImageFromBitmap()
+        async ValueTask<bool> SaveProcessedImage()
         {
             try
             {
@@ -89,37 +99,23 @@ public static class FileSaverHelper
                 {
                     case ImageType.AnimatedGif: // TODO: Add animated GIF support
                     case ImageType.AnimatedWebp: // TODO: Add animated WebP support
+                        return await SaveImageFromFile();
                     case ImageType.Bitmap:
                     {
-                        if (vm.WindowTabs.ActiveTab.CurrentValue.Image.CurrentValue is not Bitmap bitmap)
+                        if (core.Effects?.ProcessedImage is not MagickImage magick)
                         {
                             throw new InvalidOperationException("No bitmap available for saving.");
                         }
-        
-                        const uint quality = 100; // TODO: Add quality slider to user settings
-                        var stream = new FileStream(destination, FileMode.Create);
-                        bitmap.Save(stream, (int)quality);
-                        await stream.DisposeAsync().ConfigureAwait(false);
-                        var ext = Path.GetExtension(destination);
-                        // Add rotation, apply image conversion
-                        if (ext.IsSupported())
+                        if (vm.WindowTabs.ActiveTab.CurrentValue.RotationAngle.CurrentValue is not 0)
                         {
-                            await SaveImageFileHelper.SaveImageAsync(
-                                null,
-                                destination,
-                                destination,
-                                null,
-                                null,
-                                quality,
-                                ext,
-                                vm.WindowTabs.ActiveTab.CurrentValue.RotationAngle.CurrentValue);
+                            magick.Rotate(vm.WindowTabs.ActiveTab.CurrentValue.RotationAngle.CurrentValue);
                         }
-        
+                        await magick.WriteAsync(destination);
                         break;
                     }
                     case ImageType.Svg:
                         // TODO convert svg to bitmap and save
-                        throw new InvalidOperationException("No bitmap available for saving.");
+                        return await SaveImageFromFile();
                     default:
                         throw new InvalidOperationException("No bitmap available for saving.");
                 }
