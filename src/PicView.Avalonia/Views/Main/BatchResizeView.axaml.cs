@@ -23,8 +23,8 @@ public partial class BatchResizeView : UserControl
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
-        SubscribeToEvents();
         InitializeData();
+        SubscribeToEvents();
         if (!Settings.Theme.Dark || Settings.Theme.GlassTheme)
         {
             ColorThemeAdjustments();
@@ -83,7 +83,13 @@ public partial class BatchResizeView : UserControl
         }
         var batch = core.BatchResize;
         
-        CancelButton.Click += delegate { (VisualRoot as Window)?.Close(); };
+        CancelButton.Click += delegate
+        {
+            if (TopLevel.GetTopLevel(this) is Window window)
+            {
+                window.Close();
+            }
+        };
         Observable.EveryValueChanged(this, x => x.ConversionComboBox.SelectedIndex)
             .Subscribe(x =>
             {
@@ -155,7 +161,6 @@ public partial class BatchResizeView : UserControl
         {
             return;
         }
-        var batch = core.BatchResize;
 
         var oneBased = i;
         i++;
@@ -163,7 +168,15 @@ public partial class BatchResizeView : UserControl
         var (percentageItem, widthItem, heightItem, valueBox, outputBox, comboBox) =
             GetThumbControls(i);
 
+        UpdateThumbValues();
         valueBox.TextChanged += delegate
+        {
+            UpdateThumbValues();
+        };
+        
+        return;
+
+        void UpdateThumbValues()
         {
             var (thumbIsPercentageResized, thumbIsWidthResized, thumbIsHeightResized, saveDestination) =
                 GetUserInputtedOptions(percentageItem, widthItem, heightItem, outputBox, comboBox);
@@ -176,19 +189,19 @@ public partial class BatchResizeView : UserControl
 
             if (thumbIsPercentageResized)
             {
-                batch.Thumbs[oneBased] = new BatchThumb(saveDestination, new Percentage(thumbValue));
+                core.BatchResize.Thumbs[oneBased] = new BatchThumb(saveDestination, new Percentage(thumbValue));
             }
 
             if (thumbIsWidthResized)
             {
-                batch.Thumbs[oneBased] = new BatchThumb(saveDestination, width: thumbValue);
+                core.BatchResize.Thumbs[oneBased] = new BatchThumb(saveDestination, width: thumbValue);
             }
 
             if (thumbIsHeightResized)
             {
-                batch.Thumbs[oneBased] = new BatchThumb(saveDestination, height: thumbValue);
+                core.BatchResize.Thumbs[oneBased] = new BatchThumb(saveDestination, height: thumbValue);
             }
-        };
+        }
     }
 
     private (ComboBoxItem? percentageItem, ComboBoxItem? widthItem, ComboBoxItem? heightItem, TextBox? valueBox, TextBox

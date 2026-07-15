@@ -71,7 +71,7 @@
                     Height="28"
                     LineHeight="28"
                     Padding="30,0,0,0"
-                    Text="{CompiledBinding Translation.About.Value,
+                    Text="{Binding Translation.About.Value,
                                            Mode=OneWay}"
                     TextAlignment="Center"
                     x:Name="TitleText" />
