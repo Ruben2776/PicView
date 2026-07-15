@@ -293,7 +293,7 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
         {
             WindowFunctions.InitializeWindowSizeAndPosition(_settingsWindow,
                 core.SettingsViewModel.SettingsWindowConfig.WindowProperties);
-            _settingsWindow?.Show(desktop.MainWindow);
+            _settingsWindow?.Show();
         }
     }
 

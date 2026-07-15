@@ -1,4 +1,5 @@
 <Window
+    CanMinimize="True"
     Height="785"
     MinWidth="600"
     Title="SettingsWindow"
