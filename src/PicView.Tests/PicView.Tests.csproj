@@ -14,7 +14,7 @@
 
     <ItemGroup>
         <PackageReference Include="Avalonia.Headless.XUnit" Version="12.1.999-cibuild0065238-alpha" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
         <PackageReference Include="xunit.v3" Version="4.0.0-pre.108" />
         <PackageReference Include="xunit.runner.visualstudio" Version="4.0.0-pre.4">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
