@@ -8,6 +8,7 @@ using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.StartUp;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
@@ -87,7 +88,7 @@ public class App : Application, IPlatformSpecificService
         
         TranslationManager.Init();
         SettingsUpdater.InitializeSettings(_mainWindowViewModel, settingsExists);
-        StartUpHelper.HandleWindowScalingMode(_coreViewModel, _mainWindow);
+        WindowFunctions.HandleWindowScalingMode(_coreViewModel, _mainWindow);
         _mainWindow.Show();
         
         var arg = Environment.GetCommandLineArgs();
