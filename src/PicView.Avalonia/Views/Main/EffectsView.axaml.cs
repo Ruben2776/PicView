@@ -55,9 +55,24 @@ public partial class EffectsView : UserControl
         // apply existing config to UI if any
         ApplyConfigToUi(core.Effects.EffectConfig.Value);
         if (!IsDefault(core.Effects.EffectConfig.Value))
+        {
             RequestUpdate();
+        }
         else
+        {
             HideResetBtn();
+        }
+
+        // Reset all UI upon file change
+        // TODO: dynamically update Image effects upon image change
+        core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.FileInfo
+            .Subscribe(_ =>
+            {
+                ResetAllUi();
+            }, DebugHelper.LogError(nameof(EffectsView), nameof(ResetAllUi)))
+            .AddTo(ref _disposables);
+
+        core.Effects.IsLoading.Value = false;
     }
     
     private void MoveWindow(object? sender, PointerPressedEventArgs e)

@@ -1,8 +1,7 @@
 ﻿using Avalonia;
-using Avalonia.Threading;
-using ImageMagick;
-using PicView.Avalonia.ImageHandling;
+using Avalonia.Media.Imaging;
 using PicView.Core.DebugTools;
+using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ViewModels;
 
@@ -13,27 +12,20 @@ public static class FileSaverHelper
     public static async ValueTask<bool> SaveCurrentFile(MainWindowViewModel vm)
     {
         bool isSaved;
-        if (vm.WindowTabs.ActiveTab.CurrentValue.FileInfo is null)
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        if (tab.FileInfo is null)
         {
             isSaved = await SaveFileAs(vm).ConfigureAwait(false);
         }
         else
         {
-            isSaved = await SaveFileAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue.FullName,
-                vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue.FullName, vm).ConfigureAwait(false);
+            isSaved = await SaveFileAsync(tab.FileInfo.CurrentValue.FullName,
+                tab.FileInfo.CurrentValue.FullName, vm).ConfigureAwait(false);
         }
         
         if (isSaved)
         {
-            var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-            var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-            var id = tab.Id;
-            var index = tab.ImageIterator.CurrentIndex;
-            var cache = core.SharedCache;
-            var model = await GetImageModel.GetImageModelAsync(tab.FileInfo.CurrentValue);
-            cache.UpdateImageModel(id, index, model);
-            tab.Model = model;
-            tab.UpdateTabTitle();
+            await tab.ImageIterator.ReloadAsync();
             // TODO: Add visual design to tell whether file was saved
         }
         
@@ -62,9 +54,12 @@ public static class FileSaverHelper
         {
             return false;
         }
-        if (core.Effects?.ProcessedImage is not null)
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var angle = tab.RotationAngle.CurrentValue;
+        var isFlipped = tab.ScaleX.CurrentValue is -1;
+        if (core.Effects?.ProcessedImage is { } magick)
         {
-            return await SaveProcessedImage();
+            return await SaveProcessedMagickImage();
         }
         
         if (!string.IsNullOrWhiteSpace(filename) && File.Exists(filename))
@@ -72,26 +67,28 @@ public static class FileSaverHelper
             return await SaveImageFromFile();
         }
         
-        return await SaveProcessedImage();
+        return await SaveBitmap();
         
         async ValueTask<bool> SaveImageFromFile()
         {
-            return await SaveImageFileHelper.SaveImageAsync(null,
+            var isSaved = await SaveImageFileHelper.SaveImageAsync(null,
                 filename,
                 destination,
                 null,
                 null,
                 null,
                 Path.GetExtension(destination),
-                vm.WindowTabs.ActiveTab.CurrentValue.RotationAngle.CurrentValue,
+                angle,
                 null,
                 false,
                 false,
                 true,
-                vm.WindowTabs.ActiveTab.CurrentValue.ScaleX.Value == -1);
+                isFlipped);
+            ResetFlipIfNeeded();
+            return isSaved;
         }
         
-        async ValueTask<bool> SaveProcessedImage()
+        async ValueTask<bool> SaveBitmap()
         {
             try
             {
@@ -99,18 +96,16 @@ public static class FileSaverHelper
                 {
                     case ImageType.AnimatedGif: // TODO: Add animated GIF support
                     case ImageType.AnimatedWebp: // TODO: Add animated WebP support
-                        return await SaveImageFromFile();
                     case ImageType.Bitmap:
                     {
-                        if (core.Effects?.ProcessedImage is not MagickImage magick)
+                        if (tab.Image.CurrentValue is not Bitmap bitmap)
                         {
-                            throw new InvalidOperationException("No bitmap available for saving.");
+                            return false;
                         }
-                        if (vm.WindowTabs.ActiveTab.CurrentValue.RotationAngle.CurrentValue is not 0)
-                        {
-                            magick.Rotate(vm.WindowTabs.ActiveTab.CurrentValue.RotationAngle.CurrentValue);
-                        }
-                        await magick.WriteAsync(destination);
+
+                        await using var stream = FileStreamUtils.GetOptimizedFileStream(new FileInfo(filename), true);
+                        bitmap.Save(stream, PngBitmapEncoderOptions.Default);
+                        ResetFlipIfNeeded();
                         break;
                     }
                     case ImageType.Svg:
@@ -127,6 +122,55 @@ public static class FileSaverHelper
             }
         
             return true;
+        }
+        
+        async ValueTask<bool> SaveProcessedMagickImage()
+        {
+            try
+            {
+                switch (vm.WindowTabs.ActiveTab.CurrentValue.ImageType.CurrentValue)
+                {
+                    case ImageType.AnimatedGif: // TODO: Add animated GIF support
+                    case ImageType.AnimatedWebp: // TODO: Add animated WebP support
+                    case ImageType.Bitmap:
+                    {
+                        if (angle is not 0)
+                        {
+                            magick.Rotate(angle);
+                        }
+
+                        if (isFlipped)
+                        {
+                            magick.Flop();
+                        }
+                        await magick.WriteAsync(destination);
+                        ResetFlipIfNeeded();
+                        break;
+                    }
+                    case ImageType.Svg:
+                        // TODO convert svg to bitmap and save
+                        return await SaveImageFromFile();
+                    default:
+                        throw new InvalidOperationException("No bitmap available for saving.");
+                }
+            }
+            catch (Exception e)
+            {
+                DebugHelper.LogDebug(nameof(FileSaverHelper), nameof(SaveFileAsync), e);
+                return false;
+            }
+        
+            return true;
+        }
+        
+        void ResetFlipIfNeeded()
+        {
+            if (!isFlipped)
+            {
+                return;
+            }
+            // Revert flip after saving it (so that it does not flip the already flipped image again)
+            tab.ScaleX.Value = 1;
         }
     }
 }

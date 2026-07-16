@@ -37,8 +37,6 @@ public class SharedImageCache : IImageCache
     
     // The worker
     private readonly Preloader2 _preLoader;
-    
-    private readonly Lock _disposeLock = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SharedImageCache"/> class.
@@ -157,14 +155,6 @@ public class SharedImageCache : IImageCache
         return evicted;
     }
     
-    public void UpdateImageModel(uint ownerId, int index, ImageModel model)
-    {
-        if (_ownerDictionaries.TryGetValue(ownerId, out var dict))
-        {
-            dict[index].ImageModel.Image = model;
-        }
-    }
-    
     public bool Contains(ReadOnlySpan<char> span, out PreLoadValue? value) =>
         TryGet(span, out value);
 
@@ -233,9 +223,9 @@ public class SharedImageCache : IImageCache
         
         foreach (var kvp in _disposalList)
         {
-            DisposeHelper(kvp.Value.Item);
+            kvp.Value.Item.ImageModel.Dispose();
         }
-        _disposalList.Clear();
+        ForceDisposalQueue();
     }
 
     public void Clear(uint ownerId)
@@ -247,11 +237,13 @@ public class SharedImageCache : IImageCache
 
         var values = dict.Values.ToList();
         dict.Clear();
+        _pathLookup.Clear();
             
         foreach (var value in values)
         {
-            CheckAndDisposeIfNotReferenced(value);
+            value.ImageModel.Dispose();
         }
+        ForceDisposalQueue();
     }
 
     public void Clear(TabViewModel tab, int currentIndex, string directory, IReadOnlyList<FileInfo> files)
@@ -430,7 +422,7 @@ public class SharedImageCache : IImageCache
             {
                 if (_disposalList.TryRemove(kvp.Key, out var removed))
                 {
-                    DisposeHelper(removed.Item);
+                    removed.Item.ImageModel.Dispose();
                 }
             }
         }
@@ -442,26 +434,8 @@ public class SharedImageCache : IImageCache
         {
             if (_disposalList.TryRemove(kvp.Key, out var removed))
             {
-                DisposeHelper(removed.Item);
+                removed.Item.ImageModel.Dispose();
             }
-        }
-    }
-
-    private void DisposeHelper(PreLoadValue? item)
-    {
-        if (item?.ImageModel?.Image is not IDisposable disposable)
-        {
-            return;
-        }
-
-        _disposeLock.Enter();
-        try
-        {
-            disposable.Dispose();
-        }
-        finally
-        {
-            _disposeLock.Exit();
         }
     }
 
