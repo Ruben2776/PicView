@@ -38,7 +38,7 @@ public partial class HoverBar : UserControl, IDisposable
             return;
         }
         
-        AddHandler(PointerPressedEvent, ManagePointerPressed, RoutingStrategies.Tunnel);
+        AddHandler(PointerPressedEvent, ManagePointerPressed, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
         mainWindow.UIHelper.GetMainView.SizeChanged += (_, args) => ApplyResponsiveResize(args.NewSize.Width);
         ApplyResponsiveResize(Bounds.Width);
 

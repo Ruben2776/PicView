@@ -38,7 +38,7 @@
                 x:Name="SideBySideToggleButton"
                 Classes="altHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.SideBySideCommand}"
-                IsChecked="{Binding MainWindows.ActiveWindow.Value.IsSideBySide.Value, Mode=TwoWay}"
+                IsChecked="{Binding MainWindows.ActiveWindow.Value.IsSideBySide.Value, Mode=OneWay}"
                 Text="{CompiledBinding Translation.SideBySide.Value,
                                        Mode=OneWay}" />
 

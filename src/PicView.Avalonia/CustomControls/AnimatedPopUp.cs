@@ -106,14 +106,16 @@ public class AnimatedPopUp : ContentControl
     public async Task AnimatedClosing(bool remove = true)
     {
         MainWindow mainWindow;
-        if (TopLevel.GetTopLevel(this) is MainWindow TopLevelMainWindow)
+        if (TopLevel.GetTopLevel(this) is MainWindow topLevelMainWindow)
         {
-            mainWindow = TopLevelMainWindow;
+            mainWindow = topLevelMainWindow;
         }
         else
         {
-            if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop 
-                || desktop.MainWindow is not MainWindow desktopMainWindow)
+            if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime
+                {
+                    MainWindow: MainWindow desktopMainWindow
+                })
             {
                 return;
             }
@@ -138,8 +140,7 @@ public class AnimatedPopUp : ContentControl
         );
         if (remove)
         {
-            var removed = mainWindow.UIHelper.GetMainView.MainPanel.Children.Remove(this);
-            Console.WriteLine(removed);
+            mainWindow.UIHelper.GetMainView.MainPanel.Children.Remove(this);
         }
         else
         {

@@ -223,8 +223,7 @@
                 Margin="6,0,4,8"
                 Background="{DynamicResource MenuButtonColor}"
                 Classes="ButtonBorder altHover"
-                IsChecked="{CompiledBinding IsSideBySide.Value}"
-                IsEnabled="{CompiledBinding !IsSideBySide.Value}"
+                IsChecked="{Binding IsSideBySide.Value, Mode=OneWay}"
                 ToolTip.Tip="{CompiledBinding Translation.SideBySide.Value,
                                               Mode=OneWay}">
                 <TextBlock

@@ -194,13 +194,13 @@ public static class QuickLoad
             files ??= core.PlatformService.GetFiles(initialDirectory);
             var index = files.FindIndex(x =>
                 x.FullName.AsSpan().Equals(fileInfo.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase));
-            var (nextIndex, _) = IterationHelper.GetIteration(index, files.Count, NavigateTo.Next, SkipAmount.One);
+            var (_, nextIndex, _) = IterationHelper.GetIterations(index, files.Count, NavigateTo.Next, SkipAmount.None);
             var nextFileInfo = files[nextIndex];
             var secondImageModel = await GetImageModel.GetImageModelAsync(nextFileInfo).ConfigureAwait(false);
             tab.SecondaryModel = secondImageModel;
+            TabNavigationInitializer.Initialize(core, files, mainWindow);
             UpdateImage.ChangeImage(mainWindow, tab, core.MainWindows.ActiveWindow.CurrentValue);
             UpdateImage.UpdateTabSideBySideTitles(tab, index, nextIndex, fileInfo, nextFileInfo, files);
-            TabNavigationInitializer.Initialize(core, files, mainWindow);
         }
         else
         {
