@@ -68,20 +68,22 @@ public class App : Application, IPlatformSpecificService
 
     public void SetTaskbarProgress(ulong progress, ulong maximum)
     {
-        if (_taskbarProgress is null)
+        Dispatcher.Invoke(() =>
         {
-            var handle = _mainWindow?.TryGetPlatformHandle()?.Handle;
-
-            // Ensure the handle is valid before proceeding
-            if (handle == IntPtr.Zero || handle is null)
+            if (_taskbarProgress is null)
             {
-                return;
+                var handle = _mainWindow?.TryGetPlatformHandle()?.Handle;
+
+                // Ensure the handle is valid before proceeding
+                if (handle == IntPtr.Zero || handle is null)
+                {
+                    return;
+                }
+
+                _taskbarProgress = new TaskbarProgress(handle.Value);
             }
-
-            _taskbarProgress = new TaskbarProgress(handle.Value);
-        }
-
-        _taskbarProgress.SetProgress(progress, maximum);
+            _taskbarProgress.SetProgress(progress, maximum);
+        });
     }
 
     public void StopTaskbarProgress()
