@@ -1,45 +1,47 @@
-﻿using BenchmarkDotNet.Attributes;
-using PicView.Avalonia.ImageHandling;
-using PicView.Core.FileHandling;
-using PicView.Core.Preloading;
-using ZLinq;
+﻿// using BenchmarkDotNet.Attributes;
+// using PicView.Avalonia.ImageHandling;
+// using PicView.Core.FileHandling;
+// using PicView.Core.Navigation;
+// using PicView.Core.Preloading;
+// using ZLinq;
+//
+// namespace PicView.Benchmarks.ImageBenchmarks;
+//
+// [MemoryDiagnoser] // track allocations
+// public class PreloadingBenchmark
+// {
+//     private List<FileInfo>? _fileInfos;
+//     private const int MaxSize = 12;
+//     
+//     private Preloader? _preLoader;
+//     
+//     [GlobalSetup]
+//     public void Setup()
+//     {
+//         LoadSettings();
+//         
+//         var picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+//         _fileInfos = new DirectoryInfo(picturesPath)
+//             .DescendantsAndSelf()
+//             .OfType<FileInfo>()
+//             .Where(x => x.IsSupported())
+//             .Take(MaxSize * 6)
+//             .ToList();
+//         
+//         _preLoader = new Preloader(GetImageModel.GetImageModelAsync, new SharedImageCache(GetImageModel.GetImageModelAsync));
+//     }
+//     
+//     [Benchmark]
+//     public async ValueTask PreloadImages()
+//     {
+//         for (var i = 0; i < MaxSize; i++)
+//         {
+//             _preLoader.Preload(i, false, _fileInfos);
+//         }
+//     }
+// }
 
-namespace PicView.Benchmarks.ImageBenchmarks;
-
-[MemoryDiagnoser] // track allocations
-public class PreloadingBenchmark
-{
-    private List<FileInfo>? _fileInfos;
-    private const int MaxSize = 12;
-    
-    private PreLoader? _preLoader;
-    
-    [GlobalSetup]
-    public void Setup()
-    {
-        LoadSettings();
-        
-        var picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-        _fileInfos = new DirectoryInfo(picturesPath)
-            .DescendantsAndSelf()
-            .OfType<FileInfo>()
-            .Where(x => x.IsSupported())
-            .Take(MaxSize * 6)
-            .ToList();
-        
-        _preLoader = new PreLoader(GetImageModel.GetImageModelAsync);
-    }
-    
-    [Benchmark]
-    public async ValueTask PreloadImages()
-    {
-        for (var i = 0; i < MaxSize; i++)
-        {
-            await _preLoader.PreLoadAsync(i, false, _fileInfos)
-                .ConfigureAwait(false);
-        }
-    }
-}
+// TODO: rewrite preloading benchmark
 
 /*
  

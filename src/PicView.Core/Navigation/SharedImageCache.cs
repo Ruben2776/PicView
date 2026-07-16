@@ -36,7 +36,7 @@ public class SharedImageCache : IImageCache
     private readonly ConcurrentDictionary<uint, (string Directory, IReadOnlyList<FileInfo> Files, int CurrentIndex)> _ownerContexts = new();
     
     // The worker
-    private readonly Preloader2 _preLoader;
+    private readonly Preloader _preLoader;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SharedImageCache"/> class.
@@ -51,7 +51,7 @@ public class SharedImageCache : IImageCache
         _pathLookup = new ConcurrentDictionary<string, PreLoadValue>(pathComparer);
         _disposalList = new ConcurrentDictionary<string, (PreLoadValue, DateTime)>(pathComparer);
 
-        _preLoader = new Preloader2(imageLoader, this);
+        _preLoader = new Preloader(imageLoader, this);
     }
 
     #region Resynchronize and owner registration
