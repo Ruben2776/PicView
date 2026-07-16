@@ -326,20 +326,11 @@ public class SharedImageCache : IImageCache
 
     #region Loading, preloading and wait for loading
 
-    public async Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
-    {
-        return await _preLoader.AddAsync(ownerId, index, list, false, ct).ConfigureAwait(false);
-    }
+    public async Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) =>
+        await _preLoader.AddAsync(ownerId, index, list, false, ct).ConfigureAwait(false);
 
-    public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) 
-    {
-        // Update context for transfer logic
-        if (files.Count > 0)
-        {
-            _ownerContexts[ownerId] = (files[0].DirectoryName ?? string.Empty, files, currentIndex);
-        }
+    public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) =>
         _preLoader.Preload(ownerId, currentIndex, reversed, files, token);
-    }
 
     public async ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
     {

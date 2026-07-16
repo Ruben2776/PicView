@@ -20,11 +20,6 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
     public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files,
         CancellationToken token)
     {
-        if (files is null || files.Count == 0)
-        {
-            DebugHelper.LogDebug(nameof(Preloader), nameof(Preload), "No files to preload");
-            return;
-        }
         lock (_lock)
         {
             if (_isRunning)
