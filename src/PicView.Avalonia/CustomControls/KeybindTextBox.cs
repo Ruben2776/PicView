@@ -9,7 +9,7 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Input;
-using PicView.Avalonia.UI;
+using PicView.Core.DebugTools;
 using PicView.Core.Localization;
 using R3;
 
@@ -29,7 +29,7 @@ public class KeybindTextBox : TextBox
     public static readonly AvaloniaProperty<bool?> AltProperty =
         AvaloniaProperty.Register<KeybindTextBox, bool?>(nameof(Alt));
     
-    private readonly CompositeDisposable _disposables = new();
+    private DisposableBag _disposables;
 
     public KeybindTextBox()
     {
@@ -77,8 +77,11 @@ public class KeybindTextBox : TextBox
             return;
         }
         this.GetObservable(MethodNameProperty).ToObservable()
-            .Subscribe(_ => Text = FunctionsKeyHelper.GetFunctionKeyName(MethodName, IsReadOnly, Alt))
-            .AddTo(_disposables);
+            .Subscribe(_ =>
+            {
+                Text = FunctionsKeyHelper.GetFunctionKeyName(MethodName, IsReadOnly, Alt);
+            }, DebugHelper.LogError(nameof(KeybindTextBox), nameof(FunctionsKeyHelper.GetFunctionKeyName)))
+            .AddTo(ref _disposables);
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -99,33 +102,35 @@ public class KeybindTextBox : TextBox
 
     private void SetupKeyEventHandlers()
     {
-        if ( TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            return;
-        }
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            var keyUp = Observable.FromEventHandler<KeyEventArgs>(handler => KeyUp += handler, handler => KeyUp -= handler);
-            keyUp.Select(e => e.e)
-                .ObserveOn(mainWindow.FrameProvider)
-                .SubscribeAwait(async (e, _) => await AssociateKey(e))
-                .AddTo(_disposables);
             // On macOS, we only get KeyUp because the option to select a different character
             // when a key is held down interferes with keyboard shortcuts
+            var keyUp = Observable.FromEventHandler<KeyEventArgs>(handler => KeyUp += handler, handler => KeyUp -= handler);
+            keyUp.Select(e => e.e)
+                .SubscribeAwait(async (e, _) =>
+                {
+                    await AssociateKey(e);
+                }, DebugHelper.LogError(nameof(KeybindTextBox), nameof(AssociateKey)))
+                .AddTo(ref _disposables);
         }
         else
         {
             var keyDown = Observable.FromEventHandler<KeyEventArgs>(handler => KeyDown += handler, handler => KeyDown -= handler);
             keyDown.Select(e => e.e)
-                .ObserveOn(mainWindow.FrameProvider)
-                .SubscribeAwait(async (e, _) =>  await AssociateKey(e))
-                .AddTo(_disposables);
+                .SubscribeAwait(async (e, _) =>
+                {
+                    await AssociateKey(e);
+                }, DebugHelper.LogError(nameof(KeybindTextBox), nameof(AssociateKey)))
+                .AddTo(ref _disposables);
             
             var keyUp = Observable.FromEventHandler<KeyEventArgs>(handler => KeyUp += handler, handler => KeyUp -= handler);
             keyUp.Select(e => e.e)
-                .ObserveOn(mainWindow.FrameProvider)
-                .Subscribe(_ => KeyUpHandler())
-                .AddTo(_disposables);
+                .Subscribe(_ =>
+                {
+                    KeyUpHandler();
+                }, DebugHelper.LogError(nameof(KeybindTextBox), nameof(KeyUpHandler)))
+                .AddTo(ref _disposables);
         }
     }
 
