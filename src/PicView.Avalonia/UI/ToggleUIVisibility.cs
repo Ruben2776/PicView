@@ -136,4 +136,32 @@ public static class ToggleUIVisibility
         await SaveSettingsAsync();
     }
 
+    public static void RestoreInterface(MainWindowViewModel vm)
+    {
+        vm.IsUIShown.Value = Settings.UIProperties.ShowInterface;
+        
+        if (!Settings.UIProperties.ShowInterface)
+        {
+            return;
+        }
+        
+        vm.IsTopToolbarShown.Value = true;
+        vm.TitlebarHeight.Value = SizeDefaults.MainTitlebarHeight;
+        
+        if (!Settings.UIProperties.ShowBottomNavBar)
+        {
+            return;
+        }
+        
+        vm.IsBottomToolbarShown.Value = true;
+        vm.BottombarHeight.Value = SizeDefaults.BottombarHeight;
+    }
+    
+    
+    public static void HideInterface(MainWindowViewModel vm)
+    {
+        vm.IsBottomToolbarShown.Value = false;
+        vm.IsTopToolbarShown.Value = false;
+        vm.IsUIShown.Value = false;
+    }
 }

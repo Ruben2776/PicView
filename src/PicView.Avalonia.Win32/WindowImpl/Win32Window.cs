@@ -2,6 +2,7 @@
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.Win32.Views;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Sizing;
@@ -35,7 +36,7 @@ public static class Win32Window
             window.WindowState = WindowState.FullScreen;
         }
         
-        HideInterface(vm);
+        ToggleUIVisibility.HideInterface(vm);
         
         WindowResizing.SetSize(window, WindowResizeReason.Application);
         Dispatcher.UIThread.Post(() => window.IsChangingWindowState = false, DispatcherPriority.SystemIdle);
@@ -100,7 +101,7 @@ public static class Win32Window
 
         if (wasFullscreen)
         {
-            RestoreInterface(vm);
+            ToggleUIVisibility.RestoreInterface(vm);
         }
         
         window.WindowState = WindowState.Normal;
@@ -160,43 +161,4 @@ public static class Win32Window
     {
         mainWindow.WindowState = WindowState.Minimized;
     }
-
-
-    #region Helpers
-
-    /// <summary>
-    /// Restores the interface based on settings
-    /// </summary>
-    private static void RestoreInterface(MainWindowViewModel vm)
-    {
-        vm.IsUIShown.Value = Settings.UIProperties.ShowInterface;
-        
-        if (!Settings.UIProperties.ShowInterface)
-        {
-            return;
-        }
-        
-        vm.IsTopToolbarShown.Value = true;
-        vm.TitlebarHeight.Value = SizeDefaults.MainTitlebarHeight;
-        
-        if (!Settings.UIProperties.ShowBottomNavBar)
-        {
-            return;
-        }
-        
-        vm.IsBottomToolbarShown.Value = true;
-        vm.BottombarHeight.Value = SizeDefaults.BottombarHeight;
-    }
-
-    /// <summary>
-    /// Hides interface elements for fullscreen mode
-    /// </summary>
-    private static void HideInterface(MainWindowViewModel vm)
-    {
-        vm.IsBottomToolbarShown.Value = false;
-        vm.IsTopToolbarShown.Value = false;
-        vm.IsUIShown.Value = false;
-    }
-
-    #endregion Helpers
 }
