@@ -77,16 +77,16 @@
                 VerticalAlignment="Center"
                 Opacity="0"
                 ZIndex="2" />
+            <uc:HoverBar
+                x:Name="HoverBar"
+                VerticalAlignment="Bottom"
+                ZIndex="2" />
             <buttons:GalleryShortcut
                 x:Name="GalleryShortcut"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 IsVisible="{CompiledBinding !$parent[Window].((vm:MainWindowViewModel)DataContext).IsBottomToolbarShown.Value}"
                 Opacity="0"
-                ZIndex="2" />
-            <uc:HoverBar
-                x:Name="HoverBar"
-                VerticalAlignment="Bottom"
                 ZIndex="2" />
         </Panel>
     </DockPanel>
