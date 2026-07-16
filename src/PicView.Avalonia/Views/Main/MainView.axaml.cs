@@ -205,16 +205,24 @@ public partial class MainView : UserControl
             }
 
             var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-            if (tab.CurrentView.CurrentValue is ImageViewer viewer)
+            var view = tab.CurrentView.CurrentValue;
+            switch (view)
             {
-                // The click arrows and hover have their own right-click interaction
-                if (viewer.ClickArrowLeft.IsPointerOver || viewer.ClickArrowRight.IsPointerOver)
+                case CropControl:
+                    return; // Don't show this control's context menu, to not interfere with crop control's context menu
+                case ImageViewer viewer:
                 {
-                    return;
-                }
-                if (viewer.HoverBar.IsPointerOver)
-                {
-                    return;
+                    // The click arrows and hoverbar have their own right-click interaction
+                    if (viewer.ClickArrowLeft.IsPointerOver || viewer.ClickArrowRight.IsPointerOver)
+                    {
+                        return;
+                    }
+                    if (viewer.HoverBar.IsPointerOver)
+                    {
+                        return;
+                    }
+
+                    break;
                 }
             }
             mainContextMenu.Open(this);
