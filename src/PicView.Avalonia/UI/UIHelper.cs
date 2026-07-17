@@ -54,16 +54,6 @@ public static class UIHelper
     private const string MediumFontLocation = "avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto";
     public static FontFamily MediumFontFamily => new(MediumFontLocation);
 
-    public static void ShowMainContextMenu(MainWindow mainWindow)
-    {
-        if (mainWindow.SharedMainView.Resources.TryGetResource("MainContextMenu", Application.Current.ActualThemeVariant,
-                out var value)
-            && value is ContextMenu mainContextMenu)
-        {
-            mainContextMenu.Open();
-        }
-    }
-
     public static void SetCtrlToZoomImage(MainWindowViewModel vm)
     {
         // Set source for ChangeCtrlZoomImage

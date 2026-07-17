@@ -294,17 +294,6 @@ public partial class HoverBar : UserControl, IDisposable
                     DispatcherPriority.Background);
             }
         }
-        else
-        {
-            if (props.IsRightButtonPressed)
-            {
-                if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-                {
-                    return;
-                }
-                UIHelper.ShowMainContextMenu(mainWindow);
-            }
-        }
     }
 
     private void ShowNavigationDialog()

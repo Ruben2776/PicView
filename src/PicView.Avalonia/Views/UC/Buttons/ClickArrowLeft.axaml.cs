@@ -32,25 +32,20 @@ public partial class ClickArrowLeft : UserControl
 
     private void ManagePointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        if (!PolyButton.IsPointerOver)
+        {
+            return;
+        }
+        
         if ( TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
         }
         var props = e.Properties;
 
-        if (PolyButton.IsPointerOver)
+        if (props.IsRightButtonPressed)
         {
-            if (props.IsRightButtonPressed)
-            {
-                mainWindow.AddNavigationDialog();
-            }
-        }
-        else
-        {
-            if (props.IsRightButtonPressed)
-            {
-                UIHelper.ShowMainContextMenu(mainWindow);
-            }
+            mainWindow.AddNavigationDialog();
         }
     }
 }
