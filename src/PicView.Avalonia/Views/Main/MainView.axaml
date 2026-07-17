@@ -151,11 +151,11 @@
 
                 <!--  Sort files by last write time  -->
                 <MenuItem
-                    Command="{CompiledBinding SortFilesByLastAccessTimeCommand}"
+                    Command="{CompiledBinding SortFilesByLastWriteTimeCommand}"
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.Modified.Value,
                                              Mode=OneWay}"
-                    IsChecked="{Binding WindowTabs.IsSortedByLastAccessTime.Value}"
+                    IsChecked="{Binding WindowTabs.IsSortedByLastWriteTime.Value}"
                     ToggleType="Radio" />
 
                 <!--  Sort files randomly  -->
