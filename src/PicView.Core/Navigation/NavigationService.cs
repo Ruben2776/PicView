@@ -41,6 +41,9 @@ public class NavigationService(
 
             // Show image quickly to make it feel fast
             ImageModel model;
+            ImageModel? secondaryModel = null;
+            int index;
+            int secondaryIndex = 0;
             if (cache.TryGet(fileInfo, out var preLoadValue))
             {
                 model = preLoadValue.ImageModel;
@@ -49,20 +52,43 @@ public class NavigationService(
             {
                 model = await imageLoader.GetImageModelAsync(fileInfo, ct.Token).ConfigureAwait(false);
             }
-            
-            tab.Model = model; // Image updated via reactive subscription
-            tab.FileInfo.Value = model.FileInfo;
-            tab.Image.Value = model.Image;
-            tab.ImageType.Value = model.ImageType;
-            
-            tab.ImageIterator.Files = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
-            var index = FindIndex(fileInfo, tab);
-            tab.ImageIterator.SetCurrentIndex(index);
+            if (Settings.ImageScaling.ShowImageSideBySide)
+            {
+                tab.ImageIterator.Files = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
+                index = FindIndex(fileInfo, tab);
+                var (_, nextIteration, _) = IterationHelper.GetIterations(index, tab.ImageIterator.Files.Count, NavigateTo.Next, SkipAmount.None);
+                var secondaryFileInfo = tab.ImageIterator.Files[nextIteration];
+                if (cache.TryGet(secondaryFileInfo, out var secondaryPreLoadValue))
+                {
+                    secondaryModel = secondaryPreLoadValue.ImageModel;
+                }
+                else
+                {
+                    secondaryModel = await imageLoader.GetImageModelAsync(secondaryFileInfo, ct.Token).ConfigureAwait(false);
+                }
+                tab.SecondaryModel = secondaryModel;
+                tab.SecondaryImage.Value = secondaryModel.Image;
+                tab.SecondaryImageType.Value = secondaryModel.ImageType;
+                tab.SecondaryFileInfo.Value = secondaryFileInfo;
+                ShowModel(model);
+                secondaryIndex = nextIteration;
+            }
+            else
+            {
+                ShowModel(model);
+                tab.ImageIterator.Files = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
+                index = FindIndex(fileInfo, tab);
+                tab.ImageIterator.SetCurrentIndex(index);
+            }
             
             tab.UpdateTabTitle();
             fileWatcherService.Watch(tab, fileInfo.DirectoryName);
             cache.Clear(tab.Id);
             cache.Add(tab.Id, index, new PreLoadValue(model), tab.ImageIterator.Files.Count, false);
+            if (secondaryModel is not null)
+            {
+                cache.Add(tab.Id, secondaryIndex, new PreLoadValue(model), tab.ImageIterator.Files.Count, false);
+            }
             cache.Preload(tab.Id, index, false, tab.ImageIterator.Files, tab.GetTabCancellation().Token);
             FileHistoryManager.Add(fileInfo.FullName);
 
@@ -82,6 +108,16 @@ public class NavigationService(
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(NavigationService), nameof(RepopulateIterator), e);
+        }
+        
+        return;
+
+        void ShowModel(ImageModel model)
+        {
+            tab.Model = model; // Image updated via reactive subscription
+            tab.FileInfo.Value = model.FileInfo;
+            tab.Image.Value = model.Image;
+            tab.ImageType.Value = model.ImageType;
         }
     }
 
@@ -109,8 +145,16 @@ public class NavigationService(
 
         var index = FindIndex(fileInfo, tab);
         if (index is not -1)
-        {            
-            await tab.ImageIterator.IterateToIndexAsync(index, ct).ConfigureAwait(false);
+        {
+            if (Settings.ImageScaling.ShowImageSideBySide)
+            {
+                var (_, nextIteration, _) = IterationHelper.GetIterations(index, tab.ImageIterator.Files.Count, NavigateTo.Next, SkipAmount.None);
+                await tab.ImageIterator.IterateToIndicesAsync(index, nextIteration, ct).ConfigureAwait(false);
+            }
+            else
+            {
+                await tab.ImageIterator.IterateToIndexAsync(index, ct).ConfigureAwait(false);
+            }
         }
         else
         {
