@@ -43,14 +43,6 @@ public partial class MainView : UserControl
 
             LostFocus += HandleLostFocus;
             PointerPressed += PointerPressedBehavior;
-
-            if (Resources.TryGetResource("MainContextMenu", Application.Current.ActualThemeVariant, out var value))
-            {
-                if (value is ContextMenu mainContextMenu)
-                {
-                    mainContextMenu.Opening += OnMainContextMenuOpening;
-                }
-            }
             
             //MainTabControl.TabDetached += MainTabControlOnTabDetached;
             MainTabControl.TabCreated += MainTabControlOnTabCreated;
@@ -64,23 +56,15 @@ public partial class MainView : UserControl
         };
     }
 
-    private void OnMainContextMenuOpening(object? sender, CancelEventArgs e)
+    private void HandleContextMenuOpened()
     {
         if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
-        {
-            // Cancel the context menu if the hover bar is visible, because custom pop-up dialogs are shown instead.
-            if (imageViewer.HoverBar.Opacity > 0)
-            {
-                e.Cancel = true;
-            }
-        }
         
-        CropManager.SetIfCropEnabled(TopLevel.GetTopLevel(this) as MainWindow);
+        tab.ShouldCropBeEnabled.Value = CropManager.SetIfCropEnabled(TopLevel.GetTopLevel(this) as MainWindow);
         tab.ShouldOptimizeImageBeEnabled.Value = ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(tab.FileInfo.CurrentValue);
         
         // Set source for ChangeCtrlZoomImage
@@ -217,7 +201,7 @@ public partial class MainView : UserControl
                     {
                         return;
                     }
-                    if (viewer.HoverBar.IsPointerOver)
+                    if (viewer.HoverBar.BottomBorder.IsPointerOver)
                     {
                         return;
                     }
@@ -226,6 +210,7 @@ public partial class MainView : UserControl
                 }
             }
             mainContextMenu.Open(this);
+            HandleContextMenuOpened();
         }
     }
     
