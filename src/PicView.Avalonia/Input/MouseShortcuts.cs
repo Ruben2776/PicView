@@ -241,8 +241,10 @@ public static class MouseShortcuts
                     return;
             }
         }
-        // Handle double click
-        if (e.ClickCount is 2)
+        // Handle double click (only for the left mouse button, so that rapid
+        // double-clicks of the side buttons don't fall through and trigger the
+        // left-button double-click behavior such as toggling fullscreen)
+        if (e.ClickCount is 2 && prop.IsLeftButtonPressed)
         {
             switch (Settings.UIProperties.DoubleClickBehavior)
             {
