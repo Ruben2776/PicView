@@ -555,6 +555,15 @@ public sealed class GifDecoder : IDisposable
                     break;
 
                 case BlockTypes.Extension:
+                    // Some otherwise valid GIFs end with a dangling extension introducer
+                    // instead of a trailer. Preserve the complete frames already parsed.
+                    if (_fileStream.Position >= _fileStream.Length)
+                    {
+                        Frames.RemoveAt(Frames.Count - 1);
+                        terminate = true;
+                        break;
+                    }
+
                     ProcessExtensions(ref curFrame, tempBuf);
                     break;
 

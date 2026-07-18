@@ -1,6 +1,7 @@
 using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
 using ImageMagick;
+using PicView.Avalonia.AnimatedImage.Decoding;
 using PicView.Avalonia.Svg;
 using PicView.Core.DebugTools;
 using PicView.Core.Exif;
@@ -84,7 +85,7 @@ public static class GetImageModel
                         await ProcessSkBitmapAsync(fileInfo, magickImage.Format, imageModel).ConfigureAwait(false);
                     }
 
-                    if (ImageAnalyzer.IsAnimated(fileInfo))
+                    if (IsAnimatedGif(fileInfo))
                     {
                         imageModel.ImageType = ImageType.AnimatedGif;
                     }
@@ -190,6 +191,39 @@ public static class GetImageModel
         }
 
         return colorProfile.Description?.Contains("sRGB", StringComparison.OrdinalIgnoreCase) != true;
+    }
+
+    internal static bool IsAnimatedGif(FileInfo fileInfo)
+    {
+        if (ImageAnalyzer.IsAnimated(fileInfo))
+        {
+            return true;
+        }
+
+        try
+        {
+            using var stream = fileInfo.OpenRead();
+
+            if (stream.Length == 0)
+            {
+                return false;
+            }
+
+            stream.Position = stream.Length - 1;
+            if (stream.ReadByte() != (byte)BlockTypes.Extension)
+            {
+                return false;
+            }
+
+            stream.Position = 0;
+            using var decoder = new GifDecoder(stream, CancellationToken.None);
+            return decoder.Frames.Count > 1;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetImageModel), nameof(IsAnimatedGif), e);
+            return false;
+        }
     }
 
     #region Image Processing Methods
