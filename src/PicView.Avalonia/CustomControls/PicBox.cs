@@ -10,6 +10,7 @@ using Avalonia.Metadata;
 using Avalonia.Rendering.Composition;
 using ImageMagick;
 using PicView.Avalonia.AnimatedImage;
+using PicView.Avalonia.ImageHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Navigation;
@@ -263,12 +264,51 @@ public class PicBox : Control
                 RenderAnimatedImageIfRequired(context);
             }
         }
+        catch (ObjectDisposedException e)
+        {
+            if (Application.Current.DataContext is CoreViewModel core)
+            {
+                core.SharedCache.Clear();
+            }
+            if (DataContext is TabViewModel tab)
+            {
+                try
+                {
+                    if (ImageType is not ImageType.Bitmap)
+                    {
+                        return;
+                    }
+                    var model = GetImageModel.GetImageModelAsync(tab.FileInfo?.CurrentValue).AsTask().Result;
+                    var bitmap = model?.Image;
+                    if (bitmap is not null)
+                    {
+                        try
+                        {
+                            using (context.PushRenderOptions(options))
+                            {
+                                context.DrawImage(bitmap as IImage, sourceRect, destRect);
+                            }
+
+                        }
+                        catch (Exception exception)
+                        {
+                            DebugHelper.LogDebug(nameof(PicBox), nameof(RenderImageSource), exception);
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    DebugHelper.LogDebug(nameof(PicBox), nameof(RenderImageSource), exception);
+                }
+            }
+            DebugHelper.LogDebug(nameof(PicBox), nameof(RenderImageSource), e);
+        }
         catch (Exception e)
         {
             if (ImageType is ImageType.Bitmap)
             {
                 var bitmap = GetBitmapFromAlternativeSources();
-                if (bitmap != null)
+                if (bitmap is not null)
                 {
                     try
                     {
