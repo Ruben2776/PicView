@@ -204,6 +204,10 @@ public partial class MainView : UserControl
                     {
                         return;
                     }
+                    if (viewer.GalleryView.IsPointerOver)
+                    {
+                        return;
+                    }
 
                     break;
                 }
