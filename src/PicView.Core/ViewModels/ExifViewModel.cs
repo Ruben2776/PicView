@@ -850,5 +850,6 @@ public class ExifViewModel : IDisposable
         LensMaker.Value = string.Empty;
         LensModel.Value = string.Empty;
         ExifVersion.Value = string.Empty;
+        DateTaken.Value = null;
     }
 }

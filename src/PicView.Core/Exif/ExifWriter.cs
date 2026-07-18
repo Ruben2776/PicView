@@ -756,14 +756,15 @@ public static class ExifWriter
     public static Task<bool> RemoveImageMetaData(FileInfo fileInfo) =>
         ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
         {
+            magickImage.Strip();
+            
             var profile = magickImage.GetExifProfile();
             if (profile is null)
             {
-                return false;
+                return true;
             }
 
             magickImage.RemoveProfile(profile);
-            magickImage.Strip();
             return true;
         }, nameof(ExifWriter), nameof(RemoveImageMetaData));
 
