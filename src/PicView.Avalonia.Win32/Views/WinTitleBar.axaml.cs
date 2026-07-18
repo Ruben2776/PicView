@@ -109,9 +109,14 @@ public partial class WinTitleBar : MainTitleBar
         vm.TopTitlebarViewModel.IsBtnPanelVisible.Value = false;
         LogoBorder.IsVisible = false;
         CreateTabButton.IsVisible = false;
-        
-        const int menuItemsCount = 6;
-        vm.TopTitlebarViewModel.MaxItemWidth.Value = Bounds.Width / menuItemsCount;
+
+        // Let each menu item size to its own text content instead of capping
+        // every item at (window width / count). A fixed per-item cap truncates
+        // longer translated strings (e.g. German "Einstellungen", Italian
+        // "Impostazioni") even when space is available, and the count below was
+        // wrong (6) for the 7 top-level items. The logo, button panel and tab
+        // button are already hidden above to free the full titlebar width.
+        vm.TopTitlebarViewModel.MaxItemWidth.Value = double.NaN;
         
         var truncatedPadding = new Thickness(2,0,2,0);
         FileMenuItem.Padding = truncatedPadding;
