@@ -62,7 +62,13 @@ public static class MainKeyboardShortcuts
 #endif
 
         // Create key gesture from current state
-        CurrentKeys = new KeyGesture(e.Key, CurrentModifiers);
+        // Use e.KeyModifiers (from the event args) instead of the manually tracked
+        // CurrentModifiers, because the manual tracking can be out of sync if a
+        // modifier key-down event was missed (e.g. focus changes, window deactivation,
+        // or the modifier was pressed before the window had focus). This ensures that
+        // a bare-key binding such as "S" (rotate) only fires when no modifiers are
+        // actually held, so "Ctrl+S" (save) is never mistakenly dispatched as "S".
+        CurrentKeys = new KeyGesture(e.Key, e.KeyModifiers);
 
         // Track key repeat for held down state
         _keyRepeatCount++;
