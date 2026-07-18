@@ -762,6 +762,7 @@ public static class ExifWriter
                 return false;
             }
 
+            magickImage.RemoveProfile(profile);
             magickImage.Strip();
             return true;
         }, nameof(ExifWriter), nameof(RemoveImageMetaData));

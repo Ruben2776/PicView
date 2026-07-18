@@ -806,12 +806,49 @@ public class ExifViewModel : IDisposable
         }
     }
     
-    private static async Task RemoveImageMetaData(FileInfo fileInfo)
+    private async Task RemoveImageMetaData(FileInfo fileInfo)
     {
         if (!fileInfo.Exists)
         {
             return;
         }
         await ExifWriter.RemoveImageMetaData(fileInfo);
+        
+        // Remove UI displayed fields
+        ExifRating.Value = 0;
+        DateTaken.Value = null;
+        Copyright.Value = string.Empty;
+        Authors.Value = string.Empty;
+        Software.Value = string.Empty;
+        Subject.Value = string.Empty;
+        Title.Value = string.Empty;
+        Comment.Value = string.Empty;
+        Latitude.Value = null;
+        Longitude.Value = null;
+        Altitude.Value = null;
+        CompressedBitsPixel.Value = string.Empty;
+        CameraMaker.Value = string.Empty;
+        CameraModel.Value = string.Empty;
+        FNumber.Value = string.Empty;
+        MaxAperture.Value = string.Empty;
+        ExposureBias.Value = string.Empty;
+        ExposureTime.Value = string.Empty;
+        DigitalZoom.Value = string.Empty;
+        FocalLength.Value = string.Empty;
+        FocalLength35Mm.Value = string.Empty;
+        ISOSpeed.Value = string.Empty;
+        MeteringMode.Value = string.Empty;
+        Contrast.Value = string.Empty;
+        Saturation.Value = string.Empty;
+        Sharpness.Value = string.Empty;
+        WhiteBalance.Value = string.Empty;
+        FlashEnergy.Value = string.Empty;
+        FlashMode.Value = string.Empty;
+        LightSource.Value = string.Empty;
+        Brightness.Value = string.Empty;
+        PhotometricInterpretation.Value = string.Empty;
+        LensMaker.Value = string.Empty;
+        LensModel.Value = string.Empty;
+        ExifVersion.Value = string.Empty;
     }
 }
