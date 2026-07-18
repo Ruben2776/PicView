@@ -197,7 +197,7 @@ public partial class MainView : UserControl
                 case ImageViewer viewer:
                 {
                     // The click arrows and hoverbar have their own right-click interaction
-                    if (viewer.ClickArrowLeft.IsPointerOver || viewer.ClickArrowRight.IsPointerOver)
+                    if (viewer.ClickArrowLeft.PolyButton.IsPointerOver || viewer.ClickArrowRight.PolyButton.IsPointerOver)
                     {
                         return;
                     }
