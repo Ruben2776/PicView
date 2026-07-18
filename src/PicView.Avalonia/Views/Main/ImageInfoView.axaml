@@ -93,6 +93,8 @@
             <!--  Remove image data  -->
             <MenuItem
                 x:Name="RemoveImageDataMenuItem"
+                Command="{Binding Exif.RemoveImageMetaDataCommand}"
+                CommandParameter="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                 Header="{CompiledBinding Translation.RemoveImageData.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,

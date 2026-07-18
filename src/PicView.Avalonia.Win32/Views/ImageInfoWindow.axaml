@@ -130,6 +130,8 @@
                     BorderThickness="0,0,1,0"
                     Classes="errorHover"
                     ClickMode="Release"
+                    Command="{Binding Exif.RemoveImageMetaDataCommand}"
+                    CommandParameter="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                     DockPanel.Dock="Right"
                     Foreground="{DynamicResource MainTextColor}"
                     Icon="{StaticResource OffImage}"

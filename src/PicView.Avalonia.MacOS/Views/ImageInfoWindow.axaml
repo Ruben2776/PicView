@@ -49,17 +49,17 @@
                 BorderThickness="0,0,1,0"
                 Classes="errorHover"
                 ClickMode="Release"
+                Command="{Binding Exif.RemoveImageMetaDataCommand}"
+                CommandParameter="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource OffImage}"
                 IconHeight="17"
                 IconMargin="10,0,5,0"
                 IconWidth="17"
-                IsEnabled="{CompiledBinding Exif.IsExifAvailable.Value,
-                                            FallbackValue=False}"
-                IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
-                Text="{CompiledBinding Translation.RemoveImageData.Value,
-                                       Mode=OneWay}"
+                IsEnabled="{Binding Exif.IsExifAvailable.Value, FallbackValue=False}"
+                IsVisible="{Binding InfoWindow.IsExtraButtonsEnabled.Value}"
+                Text="{Binding Translation.RemoveImageData.Value, Mode=OneWay}"
                 TextMargin="5,0,5,0" />
 
             <customControls:TextIconButton

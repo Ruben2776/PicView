@@ -27,6 +27,8 @@ public class ExifViewModel : IDisposable
         SetExifRating4Command = new ReactiveCommand<FileInfo>(async (s, _) => await SetRating(s, 4));
         SetExifRating5Command = new ReactiveCommand<FileInfo>(async (s, _) => await SetRating(s, 5));
 
+        RemoveImageMetaDataCommand = new ReactiveCommand<FileInfo>(async (f, _) => await RemoveImageMetaData(f));
+        
         SetDateTakenCommand = new ReactiveCommand<FileInfo>(async (f, _) => await SetDateTaken(f));
 
         SetAuthorsCommand = new ReactiveCommand<string>(async (s, _) => { Authors.Value = s; await AddExifPropertyAsync(ExifWriter.AddAuthors, s); });
@@ -159,7 +161,7 @@ public class ExifViewModel : IDisposable
     public ReactiveCommand<FileInfo>? SetExifRating3Command { get; set; }
     public ReactiveCommand<FileInfo>? SetExifRating4Command { get; set; }
     public ReactiveCommand<FileInfo>? SetExifRating5Command { get; set; }
-
+    public ReactiveCommand<FileInfo> RemoveImageMetaDataCommand { get; set; }
     public ReactiveCommand<FileInfo> SetDateTakenCommand { get; set; }
     public ReactiveCommand<string> SetAuthorsCommand { get; set; }
     public ReactiveCommand<string> SetCopyrightCommand { get; set; }
@@ -802,5 +804,14 @@ public class ExifViewModel : IDisposable
         {
             await addAction(_fileInfo, value);
         }
+    }
+    
+    private static async Task RemoveImageMetaData(FileInfo fileInfo)
+    {
+        if (!fileInfo.Exists)
+        {
+            return;
+        }
+        await ExifWriter.RemoveImageMetaData(fileInfo);
     }
 }

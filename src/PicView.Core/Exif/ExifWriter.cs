@@ -749,11 +749,11 @@ public static class ExifWriter
         }, nameof(ExifWriter), nameof(AddExifVersion));
 
     /// <summary>
-    /// Removes the EXIF profile metadata from the specified image file.
+    /// Removes the EXIF metadata from the specified image file.
     /// </summary>
-    /// <param name="fileInfo">The file information of the image from which the EXIF profile will be removed.</param>
-    /// <returns>A task representing the asynchronous operation, containing a boolean value that indicates whether the EXIF profile was successfully removed.</returns>
-    public static Task<bool> RemoveExifProfile(FileInfo fileInfo) =>
+    /// <param name="fileInfo">The file information of the image from which the EXIF data will be removed.</param>
+    /// <returns>A task representing the asynchronous operation, containing a boolean value that indicates whether the EXIF data was successfully removed.</returns>
+    public static Task<bool> RemoveImageMetaData(FileInfo fileInfo) =>
         ExifFunctions.TryUpdateImageProfileAsync(fileInfo, magickImage =>
         {
             var profile = magickImage.GetExifProfile();
@@ -762,9 +762,9 @@ public static class ExifWriter
                 return false;
             }
 
-            magickImage.RemoveProfile(profile);
+            magickImage.Strip();
             return true;
-        }, nameof(ExifWriter), nameof(RemoveExifProfile));
+        }, nameof(ExifWriter), nameof(RemoveImageMetaData));
 
     /// <summary>
     /// Adds authors metadata to the EXIF profile of the specified image file.
