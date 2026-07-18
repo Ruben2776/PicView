@@ -30,7 +30,21 @@ public static class GetImage
         {
             magickImage = new MagickImage();
         }
-        magickImage = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magickImage);
+
+        try
+        {
+            magickImage = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magickImage);
+        }
+        catch (Exception e)
+        {
+            magickImage?.Dispose();
+            DebugHelper.LogDebug(nameof(GetImage), nameof(GetNonStandardBitmapAsync), e);
+            if (fileInfo.IsCommon())
+            {
+                return await GetSkBitmapAsync(fileInfo).ConfigureAwait(false);
+            }
+            return null;
+        }
 
         // Rotate image according to EXIF orientation
         magickImage.AutoOrient();

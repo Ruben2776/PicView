@@ -133,6 +133,13 @@ public static class SupportedFiles
     /// <param name="fileInfo">FileInfo to check</param>
     extension(FileInfo fileInfo)
     {
+        public bool IsCommon()
+            => fileInfo.Extension switch
+            {
+                ".jpg" or ".jpeg" or ".png" or ".bmp" or ".gif" or ".jfif" => true,
+                _ => false
+            };
+        
         /// <summary>
         /// Extension method to check if a `FileInfo` is supported.
         /// </summary>
