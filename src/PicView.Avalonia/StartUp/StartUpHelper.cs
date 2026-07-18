@@ -194,6 +194,10 @@ public static class StartUpHelper
         else
         {
             ShowStartUpMenu();
+            if (Settings.WindowProperties.AutoFit && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                WindowFunctions.CenterWindowOnScreen(mainWindow);
+            }
         }
 
         return;
