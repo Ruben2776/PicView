@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using ImageMagick;
 using PicView.Core.Localization;
@@ -389,14 +389,21 @@ public static class ExifReader
 
         try
         {
-            var decodedComment = Encoding.ASCII.GetString(commentBytes);
-            if (string.IsNullOrWhiteSpace(decodedComment))
-            {
-                return string.Empty;
-            }
+            // The first 8 bytes of an EXIF UserComment identify the character
+            // encoding ("ASCII", "UNICODE", "JIS", or NULs when undefined).
+            var header = Encoding.ASCII.GetString(commentBytes, 0, 8).TrimEnd('\0');
+            var textBytes = commentBytes[8..];
 
-            var result = decodedComment.StartsWith("UNICODE") ? decodedComment.Replace("UNICODE", "") : decodedComment;
-            return result.StartsWith("ASCII") ? string.Empty : result;
+            var result = header switch
+            {
+                "ASCII" => Encoding.ASCII.GetString(textBytes),
+                "UNICODE" => Encoding.Unicode.GetString(textBytes),
+                "JIS" => Encoding.UTF8.GetString(textBytes),
+                _ => Encoding.UTF8.GetString(textBytes)
+            };
+
+            result = result.TrimEnd('\0').TrimEnd();
+            return string.IsNullOrWhiteSpace(result) ? string.Empty : result;
         }
         catch (Exception)
         {
