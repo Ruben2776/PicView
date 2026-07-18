@@ -520,8 +520,28 @@ public class GalleryAnimationControl : UserControl
         {
             var startHeight = ParentControl.Bounds.Height;
             var targetHeight = GetDockedSize;
-            Height = startHeight;
-            await AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed).RunAsync(this);
+            if (Settings.WindowProperties.AutoFit)
+            {
+                Height = startHeight;
+                await AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed).RunAsync(this);
+            }
+            else
+            {
+                // Need to continuously update the image size while animating if auto-fit is off
+                if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+                {
+                    return;
+                }
+                var cts = new CancellationTokenSource();
+                var ct = cts.Token;
+                Observable.EveryUpdate(mainWindow.FrameProvider, ct).Subscribe(_ =>
+                {
+                    WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+                });
+                await AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed).RunAsync(this, ct);
+                await cts.CancelAsync();
+            }
+
             Height = targetHeight;
         }
         else
