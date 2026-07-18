@@ -1,115 +1,115 @@
 <UserControl
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.UC.Buttons.StarOutlineButtons"
-    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="viewModels:MainWindowViewModel"
+    mc:Ignorable="d">
 
     <StackPanel Orientation="Horizontal">
         <Canvas
+            Width="30"
             PointerEntered="Star1_OnPointerEntered"
             PointerExited="Stars_OnPointerExited"
-            PointerPressed="OneStarCLick"
-            Width="30">
+            PointerPressed="OneStarCLick">
             <Button
-                Background="Transparent"
+                x:Name="Star1"
                 Canvas.Left="5"
                 Canvas.Top="3"
+                Background="Transparent"
                 Command="{CompiledBinding Exif.SetExifRating1Command}"
-                CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.Model.FileInfo.FullName}"
+                CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                 Foreground="{DynamicResource MainTextColor}"
-                ToolTip.Tip="{Binding Translation._1Star, Mode=OneWay}"
-                x:Name="Star1">
+                ToolTip.Tip="{Binding Translation._1Star, Mode=OneWay}">
                 <Image
-                    Height="20"
-                    Source="{StaticResource StarOutlineDrawingImage}"
+                    x:Name="Star1Icon"
                     Width="20"
-                    x:Name="Star1Icon" />
+                    Height="20"
+                    Source="{StaticResource StarOutlineDrawingImage}" />
             </Button>
         </Canvas>
         <Canvas
+            Width="30"
             PointerEntered="Star2_OnPointerEntered"
             PointerExited="Stars_OnPointerExited"
-            PointerPressed="TwoStarCLick"
-            Width="30">
+            PointerPressed="TwoStarCLick">
             <Button
-                Background="Transparent"
+                x:Name="Star2"
                 Canvas.Left="3"
                 Canvas.Top="3"
+                Background="Transparent"
                 Command="{CompiledBinding Exif.SetExifRating2Command}"
-                CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.Model.FileInfo.FullName}"
-                ToolTip.Tip="{Binding Translation._2Star, Mode=OneWay}"
-                x:Name="Star2">
+                CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
+                ToolTip.Tip="{Binding Translation._2Star, Mode=OneWay}">
                 <Image
-                    Height="20"
-                    Source="{StaticResource StarOutlineDrawingImage}"
+                    x:Name="Star2Icon"
                     Width="20"
-                    x:Name="Star2Icon" />
+                    Height="20"
+                    Source="{StaticResource StarOutlineDrawingImage}" />
             </Button>
         </Canvas>
         <Canvas
+            Width="30"
             PointerEntered="Star3_OnPointerEntered"
             PointerExited="Stars_OnPointerExited"
-            PointerPressed="ThreeStarCLick"
-            Width="30">
+            PointerPressed="ThreeStarCLick">
             <Button
-                Background="Transparent"
+                x:Name="Star3"
                 Canvas.Left="3"
                 Canvas.Top="3"
+                Background="Transparent"
                 Command="{CompiledBinding Exif.SetExifRating3Command}"
-                CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.Model.FileInfo.FullName}"
-                ToolTip.Tip="{Binding Translation._3Star, Mode=OneWay}"
-                x:Name="Star3">
+                CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
+                ToolTip.Tip="{Binding Translation._3Star, Mode=OneWay}">
                 <Image
-                    Height="20"
-                    Source="{StaticResource StarOutlineDrawingImage}"
+                    x:Name="Star3Icon"
                     Width="20"
-                    x:Name="Star3Icon" />
+                    Height="20"
+                    Source="{StaticResource StarOutlineDrawingImage}" />
             </Button>
         </Canvas>
         <Canvas
+            Width="30"
             PointerEntered="Star4_OnPointerEntered"
             PointerExited="Stars_OnPointerExited"
-            PointerPressed="FourStarCLick"
-            Width="30">
+            PointerPressed="FourStarCLick">
             <Button
-                Background="Transparent"
+                x:Name="Star4"
                 Canvas.Left="3"
                 Canvas.Top="3"
+                Background="Transparent"
                 Command="{CompiledBinding Exif.SetExifRating4Command}"
-                CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.Model.FileInfo.FullName}"
-                ToolTip.Tip="{Binding Translation._4Star, Mode=OneWay}"
-                x:Name="Star4">
+                CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
+                ToolTip.Tip="{Binding Translation._4Star, Mode=OneWay}">
                 <Image
-                    Height="20"
-                    Source="{StaticResource StarOutlineDrawingImage}"
+                    x:Name="Star4Icon"
                     Width="20"
-                    x:Name="Star4Icon" />
+                    Height="20"
+                    Source="{StaticResource StarOutlineDrawingImage}" />
             </Button>
         </Canvas>
         <Canvas
+            Width="30"
             PointerEntered="Star5_OnPointerEntered"
             PointerExited="Stars_OnPointerExited"
-            PointerPressed="FiveStarCLick"
-            Width="30">
+            PointerPressed="FiveStarCLick">
             <Button
-                Background="Transparent"
+                x:Name="Star5"
                 Canvas.Left="3"
                 Canvas.Top="3"
+                Background="Transparent"
                 Command="{CompiledBinding Exif.SetExifRating5Command}"
-                CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.Model.FileInfo.FullName}"
-                ToolTip.Tip="{Binding Translation._5Star, Mode=OneWay}"
-                x:Name="Star5">
+                CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
+                ToolTip.Tip="{Binding Translation._5Star, Mode=OneWay}">
                 <Image
-                    Height="20"
-                    Source="{StaticResource StarOutlineDrawingImage}"
+                    x:Name="Star5Icon"
                     Width="20"
-                    x:Name="Star5Icon" />
+                    Height="20"
+                    Source="{StaticResource StarOutlineDrawingImage}" />
             </Button>
         </Canvas>
     </StackPanel>

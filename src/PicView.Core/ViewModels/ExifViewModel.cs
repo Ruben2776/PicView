@@ -20,12 +20,12 @@ public class ExifViewModel : IDisposable
         OpenGoogleLinkCommand = new ReactiveCommand(OpenGoogleMaps);
         OpenBingLinkCommand = new ReactiveCommand(OpenBingMaps);
 
-        SetExifRating0Command = new ReactiveCommand<string>(async (s, _) => await SetRating(s, 0));
-        SetExifRating1Command = new ReactiveCommand<string>(async (s, _) => await SetRating(s, 1));
-        SetExifRating2Command = new ReactiveCommand<string>(async (s, _) => await SetRating(s, 2));
-        SetExifRating3Command = new ReactiveCommand<string>(async (s, _) => await SetRating(s, 3));
-        SetExifRating4Command = new ReactiveCommand<string>(async (s, _) => await SetRating(s, 4));
-        SetExifRating5Command = new ReactiveCommand<string>(async (s, _) => await SetRating(s, 5));
+        SetExifRating0Command = new ReactiveCommand<FileInfo>(async (s, _) => await SetRating(s, 0));
+        SetExifRating1Command = new ReactiveCommand<FileInfo>(async (s, _) => await SetRating(s, 1));
+        SetExifRating2Command = new ReactiveCommand<FileInfo>(async (s, _) => await SetRating(s, 2));
+        SetExifRating3Command = new ReactiveCommand<FileInfo>(async (s, _) => await SetRating(s, 3));
+        SetExifRating4Command = new ReactiveCommand<FileInfo>(async (s, _) => await SetRating(s, 4));
+        SetExifRating5Command = new ReactiveCommand<FileInfo>(async (s, _) => await SetRating(s, 5));
 
         SetDateTakenCommand = new ReactiveCommand<FileInfo>(async (f, _) => await SetDateTaken(f));
 
@@ -153,12 +153,12 @@ public class ExifViewModel : IDisposable
     public ReactiveCommand? OpenGoogleLinkCommand { get; }
     public ReactiveCommand? OpenBingLinkCommand { get; }
 
-    public ReactiveCommand<string>? SetExifRating0Command { get; set; }
-    public ReactiveCommand<string>? SetExifRating1Command { get; set; }
-    public ReactiveCommand<string>? SetExifRating2Command { get; set; }
-    public ReactiveCommand<string>? SetExifRating3Command { get; set; }
-    public ReactiveCommand<string>? SetExifRating4Command { get; set; }
-    public ReactiveCommand<string>? SetExifRating5Command { get; set; }
+    public ReactiveCommand<FileInfo>? SetExifRating0Command { get; set; }
+    public ReactiveCommand<FileInfo>? SetExifRating1Command { get; set; }
+    public ReactiveCommand<FileInfo>? SetExifRating2Command { get; set; }
+    public ReactiveCommand<FileInfo>? SetExifRating3Command { get; set; }
+    public ReactiveCommand<FileInfo>? SetExifRating4Command { get; set; }
+    public ReactiveCommand<FileInfo>? SetExifRating5Command { get; set; }
 
     public ReactiveCommand<FileInfo> SetDateTakenCommand { get; set; }
     public ReactiveCommand<string> SetAuthorsCommand { get; set; }
@@ -776,9 +776,9 @@ public class ExifViewModel : IDisposable
     public void OpenGoogleMaps(Unit unit) => ProcessHelper.OpenLink(GoogleLink.CurrentValue);
     public void OpenBingMaps(Unit unit) => ProcessHelper.OpenLink(BingLink.CurrentValue);
 
-    private async Task<bool> SetRating(string filePath, ushort rating)
+    private async Task<bool> SetRating(FileInfo fileInfo, ushort rating)
     {
-        var isRated = await ExifWriter.SetExifRatingAsync(new FileInfo(filePath), rating).ConfigureAwait(false);
+        var isRated = await ExifWriter.SetExifRatingAsync(fileInfo, rating).ConfigureAwait(false);
         if (!isRated)
         {
             return false;
