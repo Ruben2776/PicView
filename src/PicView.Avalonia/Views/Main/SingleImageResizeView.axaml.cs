@@ -36,6 +36,8 @@ public partial class SingleImageResizeView : UserControl
         vm.PickFileAction = SafePickAsync;
 
         RegisterEventHandlers(mainVm);
+
+        vm.ShowReset.Value = false;
     }
 
     private void SafeClose()
@@ -75,23 +77,25 @@ public partial class SingleImageResizeView : UserControl
             BgPanel.Background = Brushes.Transparent;
         }
 
-        if (!Settings.Theme.Dark)
+        if (Settings.Theme.Dark)
         {
-            var topBg = new SolidColorBrush(Color.FromArgb(65, 162, 162, 162));
-            var bottomBg = new SolidColorBrush(Color.FromArgb(93, 162, 162, 162));
-            MainBorder.Background = topBg;
-            BottomBorder.Background = bottomBg;
-
-            var noThickness = new Thickness(0);
-            PixelWidthTextBox.BorderThickness = noThickness;
-            PixelHeightTextBox.BorderThickness = noThickness;
-
-            if (TryGetResource("CancelBrush", Application.Current.RequestedThemeVariant, out var cBrush) && cBrush is SolidColorBrush brush)
-            {
-                UIHelper.SetButtonHover(CancelButton, brush);
-            }
-            UIHelper.SwitchAccentHoverClass(CancelButton);
+            return;
         }
+
+        var topBg = new SolidColorBrush(Color.FromArgb(65, 162, 162, 162));
+        var bottomBg = new SolidColorBrush(Color.FromArgb(93, 162, 162, 162));
+        MainBorder.Background = topBg;
+        BottomBorder.Background = bottomBg;
+
+        var noThickness = new Thickness(0);
+        PixelWidthTextBox.BorderThickness = noThickness;
+        PixelHeightTextBox.BorderThickness = noThickness;
+
+        if (TryGetResource("CancelBrush", Application.Current.RequestedThemeVariant, out var cBrush) && cBrush is SolidColorBrush brush)
+        {
+            UIHelper.SetButtonHover(CancelButton, brush);
+        }
+        UIHelper.SwitchAccentHoverClass(CancelButton);
     }
 
     private void RegisterEventHandlers(MainWindowViewModel mainVm)
