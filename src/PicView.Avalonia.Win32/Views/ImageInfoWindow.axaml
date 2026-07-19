@@ -161,8 +161,7 @@
                     IconHeight="17"
                     IconMargin="10,0,5,0"
                     IconWidth="17"
-                    IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
-                                                Mode=OneWay}"
+                    IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldOptimizeImageBeEnabled.Value, Mode=OneWay}"
                     IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
                     Text="{CompiledBinding Translation.OptimizeImage.Value,
                                            Mode=OneWay}"
