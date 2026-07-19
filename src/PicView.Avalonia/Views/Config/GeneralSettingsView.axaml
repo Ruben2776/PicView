@@ -76,16 +76,6 @@
             </StackPanel>
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.SubDirectorySearchTags}" Classes="searchBorder">
-            <customControls:TextToggleButton
-                x:Name="SubdirectoriesToggleButton"
-                Classes="altHover settingsToggleButton"
-                IsChecked="{CompiledBinding !SettingsViewModel.IsIncludingSubdirectories.Value,
-                                            Mode=TwoWay}"
-                Text="{CompiledBinding Translation.SearchSubdirectory.Value,
-                                       Mode=OneWay}" />
-        </Border>
-
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.FileHistorySearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="FileHistoryToggleButton"

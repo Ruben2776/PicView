@@ -22,14 +22,13 @@
         </StackPanel>
 
         <!--  Subdirectories  -->
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.NavigationSubdirectorySearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{Binding SettingsViewModel.SearchData.NavigationSubdirectorySearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="IncludeSubdirToggleButton"
                 Classes="altHover settingsToggleButton"
-                IsChecked="{CompiledBinding SettingsViewModel.IsIncludingSubdirectories.Value,
-                                            Mode=TwoWay}"
-                Text="{CompiledBinding Translation.SearchSubdirectory.Value,
-                                       Mode=OneWay}" />
+                Command="{Binding MainWindows.ActiveWindow.Value.ToggleSubdirectoriesCommand}"
+                IsChecked="{Binding GlobalSettings.IsIncludingSubdirectories.Value, Mode=OneWay}"
+                Text="{Binding Translation.SearchSubdirectory.Value, Mode=OneWay}" />
         </Border>
 
         <!--  Looping  -->
