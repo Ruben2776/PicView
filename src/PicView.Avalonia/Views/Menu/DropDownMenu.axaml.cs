@@ -1,7 +1,7 @@
-using Avalonia.Interactivity;
 using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using ObservableCollections;
@@ -13,7 +13,7 @@ using PicView.Core.ViewModels;
 using R3;
 using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 
-namespace PicView.Avalonia.Views.UC;
+namespace PicView.Avalonia.Views.Menu;
 
 public partial class DropDownMenu : AnimatedMenu
 {
@@ -74,6 +74,7 @@ public partial class DropDownMenu : AnimatedMenu
                 if (isVisible)
                 {
                     _mainWindow.IsDialogOpen = true;
+                    core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.CloseMenus(Unit.Default);
                     MaxHeight = _mainWindow.UIHelper.GetMainView.Bounds.Height - 1;
                     core.FileHistory.UpdateHistory();
                 }
@@ -411,5 +412,6 @@ public partial class DropDownMenu : AnimatedMenu
         }
         // Let view model know it is closed
         vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
+        vm.TopTitlebarViewModel.DropDownMenu.CloseMenus(Unit.Default);
     }
 }

@@ -115,6 +115,8 @@ public static class StartUpHelper
         SetWindowEventHandlers(mainWindow);
         HandleThemeUpdates(vm);
         mainWindow.UIHelper.AddDropDownMenu(mainWindow);
+        mainWindow.UIHelper.AddFileMenu(vm);
+        mainWindow.UIHelper.AddSettingsMenu(vm);
 
         vm.ToolTip ??= new ToolTipViewModel();
         TooltipHelper.StartTooltipSubscription(vm.ToolTip, mainWindow);

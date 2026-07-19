@@ -835,7 +835,7 @@
                         <Image
                             Width="12"
                             Height="12"
-                            Source="{StaticResource UpscaleImage}" />
+                            Source="{StaticResource BatchResizeImage}" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>

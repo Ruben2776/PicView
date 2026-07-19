@@ -1,5 +1,5 @@
 <customControls:AnimatedMenu
-    x:Class="PicView.Avalonia.Views.UC.DropDownMenu"
+    x:Class="PicView.Avalonia.Views.Menu.DropDownMenu"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"

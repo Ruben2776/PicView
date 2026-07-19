@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using ObservableCollections;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;

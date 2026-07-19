@@ -6,9 +6,11 @@ using Avalonia.Interactivity;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -106,9 +108,22 @@ public partial class BottomBar : UserControl, IDisposable
 
     private void OnFileMenuButtonClick(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is MainWindowViewModel vm)
+        if (DataContext is not MainWindowViewModel vm)
         {
-            vm.TopTitlebarViewModel.CloseDropDownMenu();
+            return;
+        }
+
+        if (Bounds.Width <= SizeDefaults.BottomMenusBp)
+        {
+            if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+            {
+                return;
+            }
+            mainWindow.UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog());
+        }
+        else
+        {
+            vm.TopTitlebarViewModel.DropDownMenu.ToggleFileMenu();
         }
     }
 
@@ -146,9 +161,22 @@ public partial class BottomBar : UserControl, IDisposable
 
     private void OnSettingsMenuButtonClick(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is MainWindowViewModel vm)
+        if (DataContext is not MainWindowViewModel vm)
         {
-            vm.TopTitlebarViewModel.CloseDropDownMenu();
+            return;
+        }
+
+        if (Bounds.Width <= SizeDefaults.BottomMenusBp)
+        {
+            if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+            {
+                return;
+            }
+            mainWindow.UIHelper.GetMainView.MainPanel.Children.Add(new QuickSettingsDialog());
+        }
+        else
+        {
+            vm.TopTitlebarViewModel.DropDownMenu.ToggleSettingsMenu();
         }
     }
     
@@ -290,7 +318,7 @@ public partial class BottomBar : UserControl, IDisposable
         {
             ZoomInButton.Width = ZoomOutButton.Width = FlipButton.Width = RotateRightButton.Width = 38;
         }
-    }   
+    }
     
     public void Dispose()
     {

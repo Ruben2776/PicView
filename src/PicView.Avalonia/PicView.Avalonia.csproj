@@ -226,6 +226,18 @@
           <DependentUpon>RenameDialog.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Menu\DropDownMenu.axaml.cs">
+          <DependentUpon>DropDownMenu.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Menu\FileMenu.axaml.cs">
+          <DependentUpon>FileMenu.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Menu\SettingsMenu.axaml.cs">
+          <DependentUpon>SettingsMenu.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 

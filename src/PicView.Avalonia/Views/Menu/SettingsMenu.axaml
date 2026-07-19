@@ -1,0 +1,255 @@
+<customControls:AnimatedMenu
+    x:Class="PicView.Avalonia.Views.Menu.SettingsMenu"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    x:DataType="viewModels:MainWindowViewModel"
+    IsOpen="{CompiledBinding TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.Value}">
+
+    <Border Background="Transparent" Effect="{DynamicResource MenuShadowButtonBorder}">
+
+        <Grid
+            Width="359"
+            RowDefinitions="Auto,Auto"
+            UseLayoutRounding="True">
+
+            <!--  Main popup body  -->
+            <Border
+                x:Name="MainBorder"
+                Grid.Row="0"
+                Background="{DynamicResource MenuBackgroundColor}"
+                BorderBrush="{DynamicResource OuterBorderColor}"
+                BorderThickness="1"
+                CornerRadius="8">
+
+                <Canvas Width="359" Height="208">
+
+                    <Border
+                        x:Name="TopBorder"
+                        Width="359"
+                        Height="47"
+                        Background="{DynamicResource SecondaryBackgroundColor}"
+                        BorderBrush="{DynamicResource OuterBorderColor}"
+                        BorderThickness="0,0,0,1"
+                        CornerRadius="8,8,0,0" />
+
+                    <StackPanel
+                        x:Name="TopButtonPanel"
+                        Canvas.Top="-1"
+                        Orientation="Horizontal">
+
+                        <!--  Show About  -->
+                        <customControls:TextIconButton
+                            x:Name="AboutWindowButton"
+                            Width="180"
+                            Height="46"
+                            Background="Transparent"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="0,0,1,0"
+                            Classes="noBorderHover"
+                            Command="{CompiledBinding AboutWindowCommand}"
+                            CornerRadius="8,0,0,0"
+                            FontSize="14"
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource BadgeQuestionMarkImage}"
+                            IconHeight="19"
+                            IconMargin="15,0, 0,0"
+                            IconWidth="19"
+                            Text="{CompiledBinding Translation.About.Value,
+                                                   Mode=OneWay}"
+                            TextMargin="15,0,6,0"
+                            TextMaxWidth="150"
+                            ToolTip.Tip="{CompiledBinding Translation.AboutWindow.Value,
+                                                          Mode=OneWay}" />
+
+                        <!--  Show Settings  -->
+                        <customControls:TextIconButton
+                            x:Name="SettingsButton"
+                            Width="137"
+                            Height="46"
+                            Background="Transparent"
+                            BorderBrush="{DynamicResource MainBorderColor}"
+                            BorderThickness="0,0,1,0"
+                            Classes="noBorderHover"
+                            Command="{Binding SettingsWindowCommand}"
+                            FontSize="14"
+                            Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource CogImage}"
+                            IconHeight="17"
+                            IconMargin="14,0,3,0"
+                            IconWidth="17"
+                            Text="{CompiledBinding Translation.Settings.Value,
+                                                   Mode=OneWay}"
+                            TextMargin="10,0,6,0"
+                            TextMaxWidth="150"
+                            ToolTip.Tip="{CompiledBinding Translation.ShowAllSettingsWindow.Value,
+                                                          Mode=OneWay}" />
+
+                        <!--  Close Menu  -->
+                        <customControls:IconButton
+                            Width="42"
+                            BorderThickness="0"
+                            Classes="hover btn"
+                            ClickMode="Release"
+                            Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseMenuCommand}"
+                            CornerRadius="0,8,0,0"
+                            Data="{StaticResource CloseGeometry}"
+                            IconHeight="10"
+                            IconWidth="10"
+                            ToolTip.Tip="{CompiledBinding Translation.Close.Value,
+                                                          Mode=OneWay}" />
+                    </StackPanel>
+
+                    <!--  Scroll  -->
+                    <ToggleButton
+                        Canvas.Left="7"
+                        Canvas.Top="53"
+                        Width="169"
+                        Height="46"
+                        Background="{DynamicResource MenuButtonColor}"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding ToggleScrollCommand}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        IsChecked="{CompiledBinding IsScrollingEnabled.Value}"
+                        ToolTip.Tip="{CompiledBinding Translation.ToggleScroll.Value,
+                                                      Mode=OneWay}">
+                        <TextBlock
+                            MaxWidth="150"
+                            Classes="txt"
+                            Text="{CompiledBinding Translation.IsScrolling.Value,
+                                                   Mode=OneWay}" />
+                    </ToggleButton>
+
+                    <!--  Looping  -->
+                    <ToggleButton
+                        Canvas.Left="7"
+                        Canvas.Top="104"
+                        Width="169"
+                        Height="46"
+                        Background="{DynamicResource MenuButtonColor}"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding ToggleLoopingCommand}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        ToolTip.Tip="{CompiledBinding Translation.ToggleLooping.Value,
+                                                      Mode=OneWay}">
+                        <TextBlock
+                            MaxWidth="150"
+                            Classes="txt"
+                            Text="{CompiledBinding Translation.IsLooping.Value,
+                                                   Mode=OneWay}" />
+                    </ToggleButton>
+
+                    <!--  Zoom to fit  -->
+                    <ToggleButton
+                        Canvas.Left="182"
+                        Canvas.Top="53"
+                        Width="169"
+                        Height="46"
+                        Background="{DynamicResource MenuButtonColor}"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding ZoomToFitCommand}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        IsChecked="{CompiledBinding IsZoomedToFit.Value}"
+                        ToolTip.Tip="{CompiledBinding Translation.ZoomToFit.Value,
+                                                      Mode=OneWay}">
+                        <TextBlock
+                            MaxWidth="150"
+                            Classes="txt"
+                            Text="{CompiledBinding Translation.ZoomToFit.Value,
+                                                   Mode=OneWay}" />
+                    </ToggleButton>
+
+                    <!--  Auto-fit window  -->
+                    <ToggleButton
+                        Canvas.Left="182"
+                        Canvas.Top="104"
+                        Width="169"
+                        Height="46"
+                        Background="{DynamicResource MenuButtonColor}"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding AutoFitWindowCommand}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        IsChecked="{CompiledBinding IsAutoFit.Value}"
+                        ToolTip.Tip="{CompiledBinding Translation.AutoFitWindow.Value,
+                                                      Mode=OneWay}">
+                        <TextBlock
+                            MaxWidth="150"
+                            Classes="txt"
+                            Text="{CompiledBinding Translation.AutoFitWindow.Value,
+                                                   Mode=OneWay}" />
+                    </ToggleButton>
+
+                    <!--  Topmost  -->
+                    <ToggleButton
+                        Canvas.Left="7"
+                        Canvas.Top="155"
+                        Width="169"
+                        Height="46"
+                        Background="{DynamicResource MenuButtonColor}"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding SetTopMostCommand}"
+                        Foreground="{DynamicResource MainTextColor}"
+                        IsChecked="{CompiledBinding IsTopMost.Value}"
+                        ToolTip.Tip="{CompiledBinding Translation.StayTopMost.Value,
+                                                      Mode=OneWay}">
+                        <TextBlock
+                            MaxWidth="150"
+                            Classes="txt"
+                            Text="{CompiledBinding Translation.StayTopMost.Value,
+                                                   Mode=OneWay}" />
+                    </ToggleButton>
+
+                    <!--  Subdirectories  -->
+                    <ToggleButton
+                        Canvas.Left="182"
+                        Canvas.Top="155"
+                        Width="169"
+                        Height="46"
+                        Background="{DynamicResource MenuButtonColor}"
+                        Classes="ButtonBorder altHover"
+                        Command="{CompiledBinding ToggleSubdirectoriesCommand}"
+                        IsChecked="{CompiledBinding GlobalSettings.IsIncludingSubdirectories.Value}"
+                        ToolTip.Tip="{CompiledBinding Translation.SearchSubdirectory.Value,
+                                                      Mode=OneWay}">
+                        <TextBlock
+                            MaxWidth="150"
+                            Classes="txt"
+                            Text="{CompiledBinding Translation.SearchSubdirectory.Value,
+                                                   Mode=OneWay}" />
+                    </ToggleButton>
+
+                </Canvas>
+            </Border>
+
+            <!--  Arrow  -->
+            <Canvas
+                Grid.Row="1"
+                Width="359"
+                Height="16"
+                Margin="0,-1,-540,0"
+                ClipToBounds="False">
+
+                <!--  Filled triangle  -->
+                <Path
+                    x:Name="DownArrow"
+                    Canvas.Left="6"
+                    Canvas.Top="-1"
+                    Data="M 0,0 L 15,16 L 30,0 Z"
+                    Fill="{DynamicResource MenuBackgroundColor}" />
+
+                <!--  Outline only on the two sides (no top edge)  -->
+                <Path
+                    x:Name="DownArrowBorder"
+                    Canvas.Left="6"
+                    Canvas.Top="-1"
+                    Data="M 0,0 L 15,16 L 30,0"
+                    Stroke="{DynamicResource OuterBorderColor}"
+                    StrokeJoin="Round"
+                    StrokeThickness="1" />
+            </Canvas>
+
+        </Grid>
+
+    </Border>
+</customControls:AnimatedMenu>

@@ -213,6 +213,26 @@ public class MainWindow : Window, IMainWindow
         SharedBottomBar.ResponsiveNavigationBtnSize(width);
         SharedTitleBar.SharedDropDownMenuButton.IsVisible = width > SizeDefaults.MainTitleDropDownBtnBp;
         SharedTitleBar.SharedSearchButton.IsVisible = width > SizeDefaults.MainTitleDropDownBtnBp;
+
+        if (width > SizeDefaults.BottomMenusBp)
+        {
+            return;
+        }
+        if (DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+
+        if (vm.TopTitlebarViewModel.DropDownMenu.IsFileMenuVisible.CurrentValue)
+        {
+            vm.TopTitlebarViewModel.DropDownMenu.IsFileMenuVisible.Value = false;
+            UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog());
+        }
+        if (vm.TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.CurrentValue)
+        {
+            vm.TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.Value = false;
+            UIHelper.GetMainView.MainPanel.Children.Add(new QuickSettingsDialog());
+        }
     }
     
     // Window has been resized

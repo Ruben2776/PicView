@@ -119,6 +119,16 @@
         <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
     </Style>
 
+    <Style Selector="Button.btn, RepeatButton.btn">
+        <Setter Property="Canvas.Top" Value="-1" />
+        <Setter Property="Width" Value="52" />
+        <Setter Property="Height" Value="46" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0,0,1,0" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+    </Style>
+
     <Style Selector="Button.GlassBorder, ToggleButton.GlassBorder, RepeatButton.GlassBorder">
         <Setter Property="BorderBrush" Value="#48000000" />
     </Style>

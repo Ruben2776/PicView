@@ -23,4 +23,6 @@ public static class SizeDefaults
     public const int MainTitleDropDownBtnBp = 385;
     public const int SmallNavBtnBp = 350;
     
+    public const int BottomMenusBp = 610;
+    
 }

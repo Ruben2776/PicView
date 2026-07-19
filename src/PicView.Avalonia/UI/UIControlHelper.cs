@@ -3,8 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Layout;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Views.Main;
+using PicView.Avalonia.Views.Menu;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.ViewModels;
+using DropDownMenu = PicView.Avalonia.Views.Menu.DropDownMenu;
 
 namespace PicView.Avalonia.UI;
 
@@ -43,5 +45,33 @@ public class UIControlHelper
         };
         GetMainView.MainPanel.Children.Add(dropDownMenu);
         GetDropDownMenu = dropDownMenu;
+    }
+
+    public void AddFileMenu(MainWindowViewModel vm)
+    {
+        var fileMenu = new FileMenu
+        {
+            Name = "FileMenu",
+            VerticalAlignment = VerticalAlignment.Bottom,
+            Margin = new Thickness(0,0,205,0),
+            IsVisible = false,
+            DataContext = vm,
+            ZIndex = 9
+        };
+        GetMainView.MainPanel.Children.Add(fileMenu);
+    }
+    
+    public void AddSettingsMenu(MainWindowViewModel vm)
+    {
+        var settingsMenu = new SettingsMenu
+        {
+            Name = "SettingsMenu",
+            VerticalAlignment = VerticalAlignment.Bottom,
+            Margin = new Thickness(202,0,0,0),
+            IsVisible = false,
+            DataContext = vm,
+            ZIndex = 9
+        };
+        GetMainView.MainPanel.Children.Add(settingsMenu);
     }
 }

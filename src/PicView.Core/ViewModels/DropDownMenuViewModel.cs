@@ -2,8 +2,37 @@ using R3;
 
 namespace PicView.Core.ViewModels;
 
-public class DropDownMenuViewModel
+public class DropDownMenuViewModel : IDisposable
 {
+    public DropDownMenuViewModel()
+    {
+        CloseMenuCommand = new ReactiveCommand(CloseMenus);
+    }
+
+    public BindableReactiveProperty<bool> IsFileMenuVisible { get; } = new(false);
+    public BindableReactiveProperty<bool> IsSettingsMenuVisible { get; } = new(false);
+    public ReactiveCommand CloseMenuCommand { get; }
+
+    public void ToggleFileMenu()
+    {
+        IsFileMenuVisible.Value = !IsFileMenuVisible.Value;
+        IsSettingsMenuVisible.Value = false;
+        IsDropDownMenuVisible.Value = false;
+    }
+
+    public void ToggleSettingsMenu()
+    {
+        IsSettingsMenuVisible.Value = !IsSettingsMenuVisible.Value;
+        IsFileMenuVisible.Value = false;
+        IsDropDownMenuVisible.Value = false;
+    }
+    
+    public void CloseMenus(Unit unit)
+    {
+        IsFileMenuVisible.Value = false;
+        IsSettingsMenuVisible.Value = false;
+    }
+    
     public BindableReactiveProperty<bool> IsDropDownMenuVisible { get; } = new(false);
     public BindableReactiveProperty<bool> IsExpandedOptionsOpened { get; } = new(false);
     
@@ -126,6 +155,14 @@ public class DropDownMenuViewModel
     {
         SettingsCarouselIndex.Value = 0;
         await CloseCarousel();
+    }
+    
+    public void Dispose()
+    {
+        IsFileMenuVisible.Dispose();
+        IsSettingsMenuVisible.Dispose();
+        CloseMenuCommand.Dispose();
+        GC.SuppressFinalize(this);
     }
 
 }
