@@ -495,51 +495,63 @@ public partial class EffectsView : UserControl
         ResetColor();
         ResetLighting();
         ResetEffects();
+        
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            // classic
+            BlurSlider.Value = 0;
+            PencilSketchSlider.Value = 0;
+            PosterizeSlider.Value = 0;
+            SolarizeSlider.Value = 0;
 
-        // classic
-        BlurSlider.Value = 0;
-        PencilSketchSlider.Value = 0;
-        PosterizeSlider.Value = 0;
-        SolarizeSlider.Value = 0;
-
-        BlackAndWhiteToggleButton.IsChecked = false;
-        NegativeToggleButton.IsChecked = false;
-        OldMovieToggleButton.IsChecked = false;
+            BlackAndWhiteToggleButton.IsChecked = false;
+            NegativeToggleButton.IsChecked = false;
+            OldMovieToggleButton.IsChecked = false;
+        });
     }
 
     private void ResetColor()
     {
-        HueSlider.Value = 0;
-        SaturationSlider.Value = 0;
-        TemperatureSlider.Value = 0;
-        TintSlider.Value = 0;
-        VibranceSlider.Value = 0;
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            HueSlider.Value = 0;
+            SaturationSlider.Value = 0;
+            TemperatureSlider.Value = 0;
+            TintSlider.Value = 0;
+            VibranceSlider.Value = 0;
 
-        CBShadowsCR.Value = 0; CBShadowsMG.Value = 0; CBShadowsYB.Value = 0;
-        CBMidCR.Value = 0; CBMidMG.Value = 0; CBMidYB.Value = 0;
-        CBHighCR.Value = 0; CBHighMG.Value = 0; CBHighYB.Value = 0;
+            CBShadowsCR.Value = 0; CBShadowsMG.Value = 0; CBShadowsYB.Value = 0;
+            CBMidCR.Value = 0; CBMidMG.Value = 0; CBMidYB.Value = 0;
+            CBHighCR.Value = 0; CBHighMG.Value = 0; CBHighYB.Value = 0;
+        });
     }
 
     private void ResetLighting()
     {
-        ExposureSlider.Value = 0;
-        BrightnessSlider.Value = 0;
-        ContrastSlider.Value = 0;
-        GammaSlider.Value = 1;
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            ExposureSlider.Value = 0;
+            BrightnessSlider.Value = 0;
+            ContrastSlider.Value = 0;
+            GammaSlider.Value = 1;
 
-        HighlightsSlider.Value = 0;
-        ShadowsSlider.Value = 0;
-        BlacksSlider.Value = 0;
-        WhitesSlider.Value = 0;
+            HighlightsSlider.Value = 0;
+            ShadowsSlider.Value = 0;
+            BlacksSlider.Value = 0;
+            WhitesSlider.Value = 0;
+        });
     }
 
     private void ResetEffects()
     {
-        DehazeSlider.Value = 0;
-        ClaritySlider.Value = 0;
-        GrainSlider.Value = 0;
-        SharpenSlider.Value = 0;
-        VignetteSlider.Value = 0;
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            DehazeSlider.Value = 0;
+            ClaritySlider.Value = 0;
+            GrainSlider.Value = 0;
+            SharpenSlider.Value = 0;
+            VignetteSlider.Value = 0;
+        });
     }
 
     public async Task RemoveEffects()
