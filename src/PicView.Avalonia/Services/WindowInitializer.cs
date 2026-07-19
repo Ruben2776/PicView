@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -225,7 +226,14 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
 
         void Show()
         {
-            _keybindingsWindow?.Show(desktop.MainWindow);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                _keybindingsWindow.Show();
+            }
+            else
+            {
+                _keybindingsWindow.Show(desktop.MainWindow);
+            }
         }
     }
 
@@ -319,7 +327,15 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
                 _effectsWindow = provider.CreateEffectsWindow(core.Effects.WindowConfig);
                 _effectsWindow.DataContext = core;
                 WindowFunctions.InitializeWindowPosition(_effectsWindow, core.Effects.WindowConfig.WindowProperties);
-                _effectsWindow.Show(desktop.MainWindow);
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    _effectsWindow.Show();
+                }
+                else
+                {
+                    _effectsWindow.Show(desktop.MainWindow);
+                }
+                
                 _effectsWindow.Closing += async (_, _) =>
                 {
                     desktop.MainWindow?.Focus();
@@ -372,7 +388,15 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
                 _singleImageResizeWindow = provider.CreateSingleImageResizeWindow(activeWindow);
                 _singleImageResizeWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
-                _singleImageResizeWindow.Show(desktop.MainWindow);
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    _singleImageResizeWindow.Show();
+                }
+                else
+                {
+                    _singleImageResizeWindow.Show(desktop.MainWindow);
+                }
+                
                 _singleImageResizeWindow.Closing += (_, _) =>
                 {
                     desktop.MainWindow?.Focus();
@@ -476,7 +500,14 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
                 _convertWindow = provider.CreateConvertWindow();
                 _convertWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 _convertWindow.DataContext = core.MainWindows.ActiveWindow.CurrentValue;
-                _convertWindow.Show(desktop.MainWindow);
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    _convertWindow.Show();
+                }
+                else
+                {
+                    _convertWindow.Show(desktop.MainWindow);
+                }
                 _convertWindow.Closing += (_, _) => _convertWindow = null;
             }
             else
@@ -525,15 +556,7 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
 
                 _fileAssociationsWindow.DataContext = core;
                 _fileAssociationsWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-                if (desktop.MainWindow is not null)
-                {
-                    _fileAssociationsWindow.Show(desktop.MainWindow);
-                }
-                else
-                {
-                    _fileAssociationsWindow.Show();
-                }
+                _fileAssociationsWindow.Show(desktop.MainWindow);
             }
             else
             {
@@ -570,7 +593,14 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
             {
                 _printPreviewWindow = provider.CreatePrintPreviewWindow(vm.PrintPreview.PrintWindowConfig);
                 _printPreviewWindow.DataContext = vm;
-                _printPreviewWindow.Show(desktop.MainWindow);
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    _printPreviewWindow.Show();
+                }
+                else
+                {
+                    _printPreviewWindow.Show(desktop.MainWindow);
+                }
                 
                 _printPreviewWindow.Closing += (_, _) =>
                 {
