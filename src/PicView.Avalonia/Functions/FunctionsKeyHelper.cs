@@ -217,6 +217,7 @@ public static class FunctionsKeyHelper
         AddBinding(toolWindows, "AboutWindow", TranslationManager.Translation.About);
         AddBinding(toolWindows, "SettingsWindow", TranslationManager.Translation.Settings);
         AddBinding(toolWindows, "ImageInfoWindow", TranslationManager.Translation.ImageInfo);
+        AddBinding(toolWindows, "EffectsWindow", TranslationManager.Translation.Effects);
         AddBinding(toolWindows, "ConvertWindow", TranslationManager.Translation.FileConversion);
         AddBinding(toolWindows, "KeybindingsWindow", TranslationManager.Translation.ApplicationShortcuts);
         AddBinding(toolWindows, "BatchResizeWindow", TranslationManager.Translation.BatchResize);
