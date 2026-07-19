@@ -48,9 +48,6 @@ public partial class SettingsView : UserControl
         GeneralSection.RecyclingToggleButton.Classes.Remove("altHover");
         GeneralSection.RecyclingToggleButton.Classes.Add("hover");
         
-        GeneralSection.SubdirectoriesToggleButton.Classes.Remove("altHover");
-        GeneralSection.SubdirectoriesToggleButton.Classes.Add("hover");
-        
         GeneralSection.FileHistoryToggleButton.Classes.Remove("altHover");
         GeneralSection.FileHistoryToggleButton.Classes.Add("hover");
         
