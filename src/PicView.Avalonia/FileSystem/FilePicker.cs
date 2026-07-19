@@ -51,8 +51,11 @@ public static class FilePicker
 
     public static async Task<string?> SelectFile()
     {
-        var file = await SelectIStorageFile().ConfigureAwait(false);
-        return file?.Path.LocalPath;
+        return await Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            var file = await SelectIStorageFile().ConfigureAwait(false);
+            return file?.Path.LocalPath;
+        });
     }
 
     private static async Task<IStorageFile?> SelectIStorageFile()
@@ -149,23 +152,26 @@ public static class FilePicker
 
     public static async Task<string> SelectDirectory()
     {
-        var provider = GetStorageProvider();
-        if (provider is null) return string.Empty;
-
-        var options = new FolderPickerOpenOptions
+        return await Dispatcher.UIThread.InvokeAsync(async () =>
         {
-            Title = TranslationManager.Translation.Folder + " - PicView",
-            AllowMultiple = false
-        };
-        
-        var directories = await ExecuteOnUIThread(() => provider.OpenFolderPickerAsync(options)).ConfigureAwait(false);
-        
-        if (directories is null || directories.Count <= 0)
-        {
-            return string.Empty;
-        }
-        
-        return directories[0].Path.LocalPath;
+            var provider = GetStorageProvider();
+            if (provider is null) return string.Empty;
+    
+            var options = new FolderPickerOpenOptions
+            {
+                Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.Folder),
+                AllowMultiple = false
+            };
+            
+            var directories = await ExecuteOnUIThread(() => provider.OpenFolderPickerAsync(options));
+            
+            if (directories is null || directories.Count <= 0)
+            {
+                return string.Empty;
+            }
+            
+            return directories[0].Path.LocalPath;
+        });
     }
     
     // Helper methods to reduce code duplication
