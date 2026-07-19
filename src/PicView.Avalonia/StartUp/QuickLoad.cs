@@ -219,6 +219,14 @@ public static class QuickLoad
         {
             Dispatcher.UIThread.Post(() => WindowFunctions.CenterWindowOnScreen(mainWindow));
         }
+        else if (isStartUp &&!Settings.ImageScaling.ShowImageSideBySide)
+        {
+            // Fixes certain instances where the image is not sized properly
+            Dispatcher.UIThread.Post(() =>
+            {
+                WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
+            }, DispatcherPriority.Background);
+        }
 
         vm.IsLoadingIndicatorShown.Value = false;
         tab.UpdateTabTitle();
