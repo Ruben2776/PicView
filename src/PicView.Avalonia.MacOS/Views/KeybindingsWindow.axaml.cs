@@ -22,5 +22,6 @@ public partial class KeybindingsWindow : GenericWindow
             XKeybindingsView.Background = UIHelper.GetMenuBackgroundColor();
         }
         GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.ApplicationShortcuts, true, config.WindowProperties);
+        MinWidth = MaxWidth = 618;
     }
 }
