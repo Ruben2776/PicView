@@ -219,7 +219,7 @@ public static class QuickLoad
         {
             Dispatcher.UIThread.Post(() => WindowFunctions.CenterWindowOnScreen(mainWindow));
         }
-        else if (isStartUp &&!Settings.ImageScaling.ShowImageSideBySide)
+        else if (isStartUp)
         {
             // Fixes certain instances where the image is not sized properly
             Dispatcher.UIThread.Post(() =>
