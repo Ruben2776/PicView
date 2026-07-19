@@ -4,7 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.UI;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
