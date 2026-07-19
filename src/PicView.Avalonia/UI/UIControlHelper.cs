@@ -20,6 +20,8 @@ public class UIControlHelper
     public BottomBar? GetBottomBar { get; private set; }
     public DropDownMenu? GetDropDownMenu { get; private set; }
     public ToolTipMessage? GetToolTipMessage { get; private set; }
+    public FileMenu? GetFileMenu { get; private set; }
+    public SettingsMenu? GetSettingsMenu { get; private set; }
 
     public void Initialize(MainWindow mainWindow)
     {
@@ -53,12 +55,14 @@ public class UIControlHelper
         {
             Name = "FileMenu",
             VerticalAlignment = VerticalAlignment.Bottom,
-            Margin = new Thickness(0,0,205,0),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Margin = new Thickness(0,0,147,0),
             IsVisible = false,
             DataContext = vm,
             ZIndex = 9
         };
         GetMainView.MainPanel.Children.Add(fileMenu);
+        GetFileMenu = fileMenu;
     }
     
     public void AddSettingsMenu(MainWindowViewModel vm)
@@ -67,11 +71,13 @@ public class UIControlHelper
         {
             Name = "SettingsMenu",
             VerticalAlignment = VerticalAlignment.Bottom,
-            Margin = new Thickness(202,0,0,0),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Margin = new Thickness(0,0,-102,0),
             IsVisible = false,
             DataContext = vm,
             ZIndex = 9
         };
         GetMainView.MainPanel.Children.Add(settingsMenu);
+        GetSettingsMenu = settingsMenu;
     }
 }

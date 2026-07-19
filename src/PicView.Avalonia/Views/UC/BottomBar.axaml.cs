@@ -10,7 +10,6 @@ using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
-using R3;
 
 namespace PicView.Avalonia.Views.UC;
 

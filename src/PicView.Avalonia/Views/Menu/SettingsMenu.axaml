@@ -1,49 +1,46 @@
 <customControls:AnimatedMenu
+    IsOpen="{CompiledBinding TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.Value}"
     x:Class="PicView.Avalonia.Views.Menu.SettingsMenu"
+    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:MainWindowViewModel"
-    IsOpen="{CompiledBinding TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.Value}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Border Background="Transparent" Effect="{DynamicResource MenuShadowButtonBorder}">
 
         <Grid
-            Width="359"
             RowDefinitions="Auto,Auto"
-            UseLayoutRounding="True">
+            UseLayoutRounding="True"
+            Width="359">
 
             <!--  Main popup body  -->
             <Border
-                x:Name="MainBorder"
-                Grid.Row="0"
                 Background="{DynamicResource MenuBackgroundColor}"
                 BorderBrush="{DynamicResource OuterBorderColor}"
                 BorderThickness="1"
-                CornerRadius="8">
+                CornerRadius="8"
+                Grid.Row="0"
+                x:Name="MainBorder">
 
-                <Canvas Width="359" Height="208">
+                <Canvas Height="208" Width="359">
 
                     <Border
-                        x:Name="TopBorder"
-                        Width="359"
-                        Height="47"
                         Background="{DynamicResource SecondaryBackgroundColor}"
                         BorderBrush="{DynamicResource OuterBorderColor}"
                         BorderThickness="0,0,0,1"
-                        CornerRadius="8,8,0,0" />
+                        CornerRadius="8,8,0,0"
+                        Height="47"
+                        Width="359"
+                        x:Name="TopBorder" />
 
                     <StackPanel
-                        x:Name="TopButtonPanel"
                         Canvas.Top="-1"
-                        Orientation="Horizontal">
+                        Orientation="Horizontal"
+                        x:Name="TopButtonPanel">
 
                         <!--  Show About  -->
                         <customControls:TextIconButton
-                            x:Name="AboutWindowButton"
-                            Width="180"
-                            Height="46"
                             Background="Transparent"
                             BorderBrush="{DynamicResource MainBorderColor}"
                             BorderThickness="0,0,1,0"
@@ -52,6 +49,7 @@
                             CornerRadius="8,0,0,0"
                             FontSize="14"
                             Foreground="{DynamicResource MainTextColor}"
+                            Height="46"
                             Icon="{StaticResource BadgeQuestionMarkImage}"
                             IconHeight="19"
                             IconMargin="15,0, 0,0"
@@ -61,13 +59,12 @@
                             TextMargin="15,0,6,0"
                             TextMaxWidth="150"
                             ToolTip.Tip="{CompiledBinding Translation.AboutWindow.Value,
-                                                          Mode=OneWay}" />
+                                                          Mode=OneWay}"
+                            Width="180"
+                            x:Name="AboutWindowButton" />
 
                         <!--  Show Settings  -->
                         <customControls:TextIconButton
-                            x:Name="SettingsButton"
-                            Width="137"
-                            Height="46"
                             Background="Transparent"
                             BorderBrush="{DynamicResource MainBorderColor}"
                             BorderThickness="0,0,1,0"
@@ -75,6 +72,7 @@
                             Command="{Binding SettingsWindowCommand}"
                             FontSize="14"
                             Foreground="{DynamicResource MainTextColor}"
+                            Height="46"
                             Icon="{StaticResource CogImage}"
                             IconHeight="17"
                             IconMargin="14,0,3,0"
@@ -84,11 +82,12 @@
                             TextMargin="10,0,6,0"
                             TextMaxWidth="150"
                             ToolTip.Tip="{CompiledBinding Translation.ShowAllSettingsWindow.Value,
-                                                          Mode=OneWay}" />
+                                                          Mode=OneWay}"
+                            Width="137"
+                            x:Name="SettingsButton" />
 
                         <!--  Close Menu  -->
                         <customControls:IconButton
-                            Width="42"
                             BorderThickness="0"
                             Classes="hover btn"
                             ClickMode="Release"
@@ -98,123 +97,124 @@
                             IconHeight="10"
                             IconWidth="10"
                             ToolTip.Tip="{CompiledBinding Translation.Close.Value,
-                                                          Mode=OneWay}" />
+                                                          Mode=OneWay}"
+                            Width="42" />
                     </StackPanel>
 
                     <!--  Scroll  -->
                     <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="7"
                         Canvas.Top="53"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding ToggleScrollCommand}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
                         IsChecked="{CompiledBinding IsScrollingEnabled.Value}"
                         ToolTip.Tip="{CompiledBinding Translation.ToggleScroll.Value,
-                                                      Mode=OneWay}">
+                                                      Mode=OneWay}"
+                        Width="169">
                         <TextBlock
-                            MaxWidth="150"
                             Classes="txt"
+                            MaxWidth="150"
                             Text="{CompiledBinding Translation.IsScrolling.Value,
                                                    Mode=OneWay}" />
                     </ToggleButton>
 
                     <!--  Looping  -->
                     <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="7"
                         Canvas.Top="104"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding ToggleLoopingCommand}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
                         ToolTip.Tip="{CompiledBinding Translation.ToggleLooping.Value,
-                                                      Mode=OneWay}">
+                                                      Mode=OneWay}"
+                        Width="169">
                         <TextBlock
-                            MaxWidth="150"
                             Classes="txt"
+                            MaxWidth="150"
                             Text="{CompiledBinding Translation.IsLooping.Value,
                                                    Mode=OneWay}" />
                     </ToggleButton>
 
                     <!--  Zoom to fit  -->
                     <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="182"
                         Canvas.Top="53"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding ZoomToFitCommand}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
                         IsChecked="{CompiledBinding IsZoomedToFit.Value}"
                         ToolTip.Tip="{CompiledBinding Translation.ZoomToFit.Value,
-                                                      Mode=OneWay}">
+                                                      Mode=OneWay}"
+                        Width="169">
                         <TextBlock
-                            MaxWidth="150"
                             Classes="txt"
+                            MaxWidth="150"
                             Text="{CompiledBinding Translation.ZoomToFit.Value,
                                                    Mode=OneWay}" />
                     </ToggleButton>
 
                     <!--  Auto-fit window  -->
                     <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="182"
                         Canvas.Top="104"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding AutoFitWindowCommand}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
                         IsChecked="{CompiledBinding IsAutoFit.Value}"
                         ToolTip.Tip="{CompiledBinding Translation.AutoFitWindow.Value,
-                                                      Mode=OneWay}">
+                                                      Mode=OneWay}"
+                        Width="169">
                         <TextBlock
-                            MaxWidth="150"
                             Classes="txt"
+                            MaxWidth="150"
                             Text="{CompiledBinding Translation.AutoFitWindow.Value,
                                                    Mode=OneWay}" />
                     </ToggleButton>
 
                     <!--  Topmost  -->
                     <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="7"
                         Canvas.Top="155"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding SetTopMostCommand}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
                         IsChecked="{CompiledBinding IsTopMost.Value}"
                         ToolTip.Tip="{CompiledBinding Translation.StayTopMost.Value,
-                                                      Mode=OneWay}">
+                                                      Mode=OneWay}"
+                        Width="169">
                         <TextBlock
-                            MaxWidth="150"
                             Classes="txt"
+                            MaxWidth="150"
                             Text="{CompiledBinding Translation.StayTopMost.Value,
                                                    Mode=OneWay}" />
                     </ToggleButton>
 
                     <!--  Subdirectories  -->
                     <ToggleButton
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="182"
                         Canvas.Top="155"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding ToggleSubdirectoriesCommand}"
+                        Height="46"
                         IsChecked="{CompiledBinding GlobalSettings.IsIncludingSubdirectories.Value}"
                         ToolTip.Tip="{CompiledBinding Translation.SearchSubdirectory.Value,
-                                                      Mode=OneWay}">
+                                                      Mode=OneWay}"
+                        Width="169">
                         <TextBlock
-                            MaxWidth="150"
                             Classes="txt"
+                            MaxWidth="150"
                             Text="{CompiledBinding Translation.SearchSubdirectory.Value,
                                                    Mode=OneWay}" />
                     </ToggleButton>
@@ -224,29 +224,29 @@
 
             <!--  Arrow  -->
             <Canvas
+                ClipToBounds="False"
                 Grid.Row="1"
-                Width="359"
                 Height="16"
-                Margin="0,-1,-540,0"
-                ClipToBounds="False">
+                Margin="500,-1,0,0"
+                Width="359">
 
                 <!--  Filled triangle  -->
                 <Path
-                    x:Name="DownArrow"
                     Canvas.Left="6"
                     Canvas.Top="-1"
                     Data="M 0,0 L 15,16 L 30,0 Z"
-                    Fill="{DynamicResource MenuBackgroundColor}" />
+                    Fill="{DynamicResource MenuBackgroundColor}"
+                    x:Name="DownArrow" />
 
                 <!--  Outline only on the two sides (no top edge)  -->
                 <Path
-                    x:Name="DownArrowBorder"
                     Canvas.Left="6"
                     Canvas.Top="-1"
                     Data="M 0,0 L 15,16 L 30,0"
                     Stroke="{DynamicResource OuterBorderColor}"
                     StrokeJoin="Round"
-                    StrokeThickness="1" />
+                    StrokeThickness="1"
+                    x:Name="DownArrowBorder" />
             </Canvas>
 
         </Grid>

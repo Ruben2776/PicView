@@ -213,11 +213,7 @@ public class MainWindow : Window, IMainWindow
         SharedBottomBar.ResponsiveNavigationBtnSize(width);
         SharedTitleBar.SharedDropDownMenuButton.IsVisible = width > SizeDefaults.MainTitleDropDownBtnBp;
         SharedTitleBar.SharedSearchButton.IsVisible = width > SizeDefaults.MainTitleDropDownBtnBp;
-
-        if (width > SizeDefaults.BottomMenusBp)
-        {
-            return;
-        }
+        
         if (DataContext is not MainWindowViewModel vm)
         {
             return;
@@ -225,13 +221,35 @@ public class MainWindow : Window, IMainWindow
 
         if (vm.TopTitlebarViewModel.DropDownMenu.IsFileMenuVisible.CurrentValue)
         {
-            vm.TopTitlebarViewModel.DropDownMenu.IsFileMenuVisible.Value = false;
-            UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog());
+            switch (width)
+            {
+                case < SizeDefaults.FullBtnBp and > SizeDefaults.SearchResetAndRotateBtnBp:
+                    UIHelper.GetFileMenu.Margin = new Thickness(0, 0, 115, 0);
+                    break;
+                case <= SizeDefaults.BottomMenusBp:
+                    vm.TopTitlebarViewModel.DropDownMenu.IsFileMenuVisible.Value = false;
+                    UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog());
+                    break;
+                default:
+                    UIHelper.GetFileMenu.Margin = new Thickness(0, 0, 147, 0);
+                    break;
+            }
         }
         if (vm.TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.CurrentValue)
         {
-            vm.TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.Value = false;
-            UIHelper.GetMainView.MainPanel.Children.Add(new QuickSettingsDialog());
+            switch (width)
+            {
+                case < SizeDefaults.FullBtnBp and > SizeDefaults.SearchResetAndRotateBtnBp:
+                    UIHelper.GetSettingsMenu.Margin = new Thickness(0, 0, -102, 0);
+                    break;
+                case <= SizeDefaults.BottomMenusBp:
+                    vm.TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.Value = false;
+                    UIHelper.GetMainView.MainPanel.Children.Add(new QuickSettingsDialog());
+                    break;
+                default:
+                    UIHelper.GetSettingsMenu.Margin = new Thickness(0, 0, -40, 0);
+                    break;
+            }
         }
     }
     

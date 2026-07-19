@@ -1,43 +1,43 @@
 <customControls:AnimatedMenu
+    IsOpen="{CompiledBinding TopTitlebarViewModel.DropDownMenu.IsFileMenuVisible.Value}"
     x:Class="PicView.Avalonia.Views.Menu.FileMenu"
+    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:MainWindowViewModel"
-    IsOpen="{CompiledBinding TopTitlebarViewModel.DropDownMenu.IsFileMenuVisible.Value}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Border Background="Transparent" Effect="{DynamicResource MenuShadowButtonBorder}">
 
         <Grid
-            Width="359"
             RowDefinitions="Auto,Auto"
-            UseLayoutRounding="True">
+            UseLayoutRounding="True"
+            Width="359">
 
             <!--  Main popup body  -->
             <Border
-                x:Name="MainBorder"
-                Grid.Row="0"
                 Background="{DynamicResource MenuBackgroundColor}"
                 BorderBrush="{DynamicResource OuterBorderColor}"
                 BorderThickness="1"
-                CornerRadius="8">
+                CornerRadius="8"
+                Grid.Row="0"
+                x:Name="MainBorder">
 
-                <Canvas Width="359" Height="208">
+                <Canvas Height="208" Width="359">
 
                     <Border
-                        x:Name="TopBorder"
-                        Width="359"
-                        Height="47"
                         Background="{DynamicResource SecondaryBackgroundColor}"
                         BorderBrush="{DynamicResource OuterBorderColor}"
                         BorderThickness="0,0,0,1"
-                        CornerRadius="8,8,0,0" />
+                        CornerRadius="8,8,0,0"
+                        Height="47"
+                        Width="359"
+                        x:Name="TopBorder" />
 
                     <StackPanel
-                        x:Name="TopButtonPanel"
                         Canvas.Top="-1"
-                        Orientation="Horizontal">
+                        Orientation="Horizontal"
+                        x:Name="TopButtonPanel">
 
                         <!--  Show Image Info Window  -->
                         <customControls:IconButton
@@ -111,8 +111,6 @@
 
                         <!--  Close Menu  -->
                         <customControls:IconButton
-                            x:Name="CloseButton"
-                            Width="47"
                             BorderThickness="0"
                             Classes="hover btn"
                             ClickMode="Release"
@@ -122,21 +120,21 @@
                             IconHeight="10"
                             IconWidth="10"
                             ToolTip.Tip="{CompiledBinding Translation.Close.Value,
-                                                          Mode=OneWay}" />
+                                                          Mode=OneWay}"
+                            Width="47"
+                            x:Name="CloseButton" />
                     </StackPanel>
 
                     <!--  Open File  -->
                     <customControls:TextIconButton
-                        x:Name="OpenButton"
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="7"
                         Canvas.Top="53"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding OpenCommand}"
                         Data="{StaticResource FolderGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
                         IconHeight="17"
                         IconMargin="9,0,9,0"
                         IconWidth="21.39"
@@ -144,19 +142,19 @@
                                                Mode=OneWay}"
                         TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.OpenFileDialog.Value,
-                                                      Mode=OneWay}" />
+                                                      Mode=OneWay}"
+                        Width="169"
+                        x:Name="OpenButton" />
 
                     <!--  Open With  -->
                     <customControls:TextIconButton
-                        x:Name="OpenWithButton"
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="7"
                         Canvas.Top="104"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding OpenWithCommand}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
                         Icon="{StaticResource OpenExternalImage}"
                         IconHeight="17"
                         IconMargin="11,0,11,0"
@@ -168,20 +166,20 @@
                         Text="{CompiledBinding Translation.OpenWith.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"
-                        ToolTip.Tip="{CompiledBinding Translation.OpenWith.Value}" />
+                        ToolTip.Tip="{CompiledBinding Translation.OpenWith.Value}"
+                        Width="169"
+                        x:Name="OpenWithButton" />
 
                     <!--  Locate On Disk  -->
                     <customControls:TextIconButton
-                        x:Name="ShowInFolderButton"
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="182"
                         Canvas.Top="53"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding OpenInExplorerCommand}"
                         Data="{StaticResource ShowInFolderGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
                         IconHeight="19"
                         IconMargin="11,0,9,0"
                         IconWidth="19"
@@ -193,20 +191,20 @@
                                                Mode=OneWay}"
                         TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.ShowInFolder.Value,
-                                                      Mode=OneWay}" />
+                                                      Mode=OneWay}"
+                        Width="169"
+                        x:Name="ShowInFolderButton" />
 
                     <!--  Save File As  -->
                     <customControls:TextIconButton
-                        x:Name="SaveAsButton"
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="182"
                         Canvas.Top="104"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding SaveAsCommand}"
                         Data="{StaticResource SaveGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
                         IconHeight="19"
                         IconMargin="12,0,11,0"
                         IconWidth="19"
@@ -218,19 +216,20 @@
                                                Mode=OneWay}"
                         TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.SaveAs.Value,
-                                                      Mode=OneWay}" />
+                                                      Mode=OneWay}"
+                        Width="169"
+                        x:Name="SaveAsButton" />
 
                     <!--  Gallery  -->
                     <customControls:TextIconButton
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="7"
                         Canvas.Top="155"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding ToggleGalleryCommand}"
                         Data="{StaticResource GalleryGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
                         IconHeight="19"
                         IconMargin="12,0,11,0"
                         IconWidth="19"
@@ -238,54 +237,55 @@
                                                Mode=OneWay}"
                         TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.ShowImageGallery.Value,
-                                                      Mode=OneWay}" />
+                                                      Mode=OneWay}"
+                        Width="169" />
 
                     <!--  Subdirectories  -->
                     <customControls:TextIconButton
-                        x:Name="NewWindowButton"
+                        Background="{DynamicResource MenuButtonColor}"
                         Canvas.Left="182"
                         Canvas.Top="155"
-                        Width="169"
-                        Height="46"
-                        Background="{DynamicResource MenuButtonColor}"
                         Classes="ButtonBorder altHover"
                         Command="{CompiledBinding NewWindowCommand}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Height="46"
                         Icon="{StaticResource WindowImage}"
                         IconHeight="20"
                         IconMargin="11,0,13,0"
                         IconWidth="20"
                         Text="{CompiledBinding Translation.NewWindow.Value,
                                                Mode=OneWay}"
-                        ToolTip.Tip="{Binding Translation.NewWindow.Value, Mode=OneWay}" />
+                        ToolTip.Tip="{Binding Translation.NewWindow.Value, Mode=OneWay}"
+                        Width="169"
+                        x:Name="NewWindowButton" />
                 </Canvas>
             </Border>
 
             <!--  Arrow  -->
             <Canvas
+                ClipToBounds="False"
                 Grid.Row="1"
-                Width="359"
                 Height="16"
-                Margin="88,-1,0,0"
-                ClipToBounds="False">
+                Margin="29,-1,0,0"
+                Width="359">
 
                 <!--  Filled triangle  -->
                 <Path
-                    x:Name="DownArrow"
                     Canvas.Left="6"
                     Canvas.Top="-1"
                     Data="M 0,0 L 15,16 L 30,0 Z"
-                    Fill="{DynamicResource MenuBackgroundColor}" />
+                    Fill="{DynamicResource MenuBackgroundColor}"
+                    x:Name="DownArrow" />
 
                 <!--  Outline only on the two sides (no top edge)  -->
                 <Path
-                    x:Name="DownArrowBorder"
                     Canvas.Left="6"
                     Canvas.Top="-1"
                     Data="M 0,0 L 15,16 L 30,0"
                     Stroke="{DynamicResource OuterBorderColor}"
                     StrokeJoin="Round"
-                    StrokeThickness="1" />
+                    StrokeThickness="1"
+                    x:Name="DownArrowBorder" />
             </Canvas>
 
         </Grid>
