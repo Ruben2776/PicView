@@ -11,17 +11,14 @@ public class TopTitlebarViewModel
     public BindableReactiveProperty<bool> IsGalleryButtonVisible { get; } = new(true);
     public BindableReactiveProperty<bool> IsMenuButtonVisible { get; } = new(true);
     public BindableReactiveProperty<bool> IsBtnPanelVisible { get; } = new(true);
-    
     public BindableReactiveProperty<double> MaxItemWidth { get; } = new(double.NaN);
 
-    public ReactiveCommand? ToggleMenuCommand { get; private set; }
     public ReactiveCommand? OpenMenuCommand { get; private set; }
     
     public ReactiveCommand? ToggleDropDownMenuCommand { get; private set; }
 
     public TopTitlebarViewModel()
     {
-        ToggleMenuCommand = new ReactiveCommand(ToggleMenu);
         OpenMenuCommand = new ReactiveCommand(OpenMenu);
         ToggleDropDownMenuCommand = new ReactiveCommand(ToggleDropDownMenu);
     }
@@ -45,9 +42,6 @@ public class TopTitlebarViewModel
     {
         DropDownMenu?.IsDropDownMenuVisible.Value = false;
     }
-
-    public void ToggleMenu(Unit unit)
-        => ToggleMenu();
 
     public void ToggleMenu()
     {

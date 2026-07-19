@@ -86,7 +86,7 @@ public partial class WinTitleBar : MainTitleBar
                 if (isVisible)
                 {
                     // Overflow buttons if the window is too small
-                    if (Bounds.Width - SearchButton.Bounds.Width - DropDownMenuButton.Bounds.Width - CreateTabButton.Bounds.Width < SizeDefaults.SecondaryWindowMinWidth)
+                    if (Bounds.Width - SearchButton.Bounds.Width - CreateTabButton.Bounds.Width < SizeDefaults.MainTitleDropDownBtnBp)
                     {
                         OpenTruncatedMenu(vm);
                     }
@@ -110,7 +110,7 @@ public partial class WinTitleBar : MainTitleBar
         LogoBorder.IsVisible = false;
         CreateTabButton.IsVisible = false;
         
-        const int menuItemsCount = 6;
+        const int menuItemsCount = 7;
         vm.TopTitlebarViewModel.MaxItemWidth.Value = Bounds.Width / menuItemsCount;
         
         var truncatedPadding = new Thickness(2,0,2,0);

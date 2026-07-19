@@ -228,14 +228,9 @@ public static class WindowResizing
             return null;
         }
         double width, height, secondaryWidth, secondaryHeight;
-        if (tab.Model?.FileInfo is not null)
+        if (tab.Model.FileInfo is not null)
         {
-            if (vm.WindowTabs.SharedCache?.TryGet(tab.Model.FileInfo, out var preloadValue) ?? false)
-            {
-                width = preloadValue.ImageModel.PixelWidth;
-                height = preloadValue.ImageModel.PixelHeight;
-            }
-            else if (tab.Model.PixelHeight is not 0 && tab.Model.PixelWidth is not 0)
+            if (tab.Model.PixelHeight is not 0 && tab.Model.PixelWidth is not 0)
             {
                 width = tab.Model.PixelWidth;
                 height = tab.Model.PixelHeight;
@@ -244,6 +239,11 @@ public static class WindowResizing
             {
                 width = bitmap.PixelSize.Width;
                 height = bitmap.PixelSize.Height;
+            }
+            else if (vm.WindowTabs.SharedCache?.TryGet(tab.Model.FileInfo, out var preloadValue) ?? false)
+            {
+                width = preloadValue.ImageModel.PixelWidth;
+                height = preloadValue.ImageModel.PixelHeight;
             }
             else
             {
