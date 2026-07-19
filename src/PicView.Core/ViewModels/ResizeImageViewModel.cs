@@ -38,8 +38,8 @@ public class ResizeImageViewModel : IDisposable
             .AddTo(ref _disposables);
 
         DesiredPixelWidth.Subscribe(_ =>
-        { 
-            AdjustAspectRatioCore(isWidth: true);
+        {
+            AdjustAspectRatio(isWidth: true);
         }, DebugHelper.LogError(nameof(ResizeImageViewModel), nameof(AdjustAspectRatioCore)))
         .AddTo(ref _disposables);
 
