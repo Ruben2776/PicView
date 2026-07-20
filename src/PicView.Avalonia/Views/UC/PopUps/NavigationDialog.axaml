@@ -1,15 +1,18 @@
 ﻿<customControls:AnimatedPopUp
-    ClickingOutsideCloses="True"
-    Padding="20"
     x:Class="PicView.Avalonia.Views.UC.PopUps.NavigationDialog"
-    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    Padding="20"
+    x:DataType="viewModels:MainWindowViewModel"
+    ClickingOutsideCloses="True"
+    ZIndex="9">
     <StackPanel Background="Transparent">
         <!--  Next  -->
         <customControls:TextIconButton
+            x:Name="NextButton"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource NextImage}"
             IconHeight="12"
@@ -17,13 +20,13 @@
             IconWidth="12"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.NextImage.Value,
-                                   Mode=OneWay}"
-            x:Name="NextButton" />
+                                   Mode=OneWay}" />
 
         <!--  Prev  -->
         <customControls:TextIconButton
+            x:Name="PrevButton"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource PrevImage}"
             IconHeight="12"
@@ -31,16 +34,16 @@
             IconWidth="12"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.PrevImage.Value,
-                                   Mode=OneWay}"
-            x:Name="PrevButton" />
+                                   Mode=OneWay}" />
 
         <Separator />
 
 
         <!--  Next 10  -->
         <customControls:TextIconButton
+            x:Name="Next10Button"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource ChevronsRightImage}"
             IconHeight="12"
@@ -48,13 +51,13 @@
             IconWidth="12"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.AdvanceBy10Images.Value,
-                                   Mode=OneWay}"
-            x:Name="Next10Button" />
+                                   Mode=OneWay}" />
 
         <!--  Next 100  -->
         <customControls:TextIconButton
+            x:Name="Next100Button"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource ChevronsRightImage}"
             IconHeight="12"
@@ -62,13 +65,13 @@
             IconWidth="12"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.AdvanceBy100Images.Value,
-                                   Mode=OneWay}"
-            x:Name="Next100Button" />
+                                   Mode=OneWay}" />
 
         <!--  Prev 10  -->
         <customControls:TextIconButton
+            x:Name="Prev10Button"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource ChevronsLeftImage}"
             IconHeight="12"
@@ -76,13 +79,13 @@
             IconWidth="12"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.GoBackBy10Images.Value,
-                                   Mode=OneWay}"
-            x:Name="Prev10Button" />
+                                   Mode=OneWay}" />
 
         <!--  Prev 100  -->
         <customControls:TextIconButton
+            x:Name="Prev100Button"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource ChevronsLeftImage}"
             IconHeight="12"
@@ -90,15 +93,15 @@
             IconWidth="12"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.GoBackBy100Images.Value,
-                                   Mode=OneWay}"
-            x:Name="Prev100Button" />
+                                   Mode=OneWay}" />
 
         <Separator />
 
         <!--  First Image  -->
         <customControls:TextIconButton
+            x:Name="FirstImageButton"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource FirstImage}"
             IconHeight="12"
@@ -106,13 +109,13 @@
             IconWidth="12"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.FirstImage.Value,
-                                   Mode=OneWay}"
-            x:Name="FirstImageButton" />
+                                   Mode=OneWay}" />
 
         <!--  Last Image  -->
         <customControls:TextIconButton
+            x:Name="LastImageButton"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource LastImage}"
             IconHeight="12"
@@ -120,15 +123,15 @@
             IconWidth="12"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.LastImage.Value,
-                                   Mode=OneWay}"
-            x:Name="LastImageButton" />
+                                   Mode=OneWay}" />
 
         <Separator />
 
         <!--  Next folder  -->
         <customControls:TextIconButton
+            x:Name="NextFolderButton"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource NextFolderImage}"
             IconHeight="14"
@@ -136,13 +139,13 @@
             IconWidth="14"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.NextFolder.Value,
-                                   Mode=OneWay}"
-            x:Name="NextFolderButton" />
+                                   Mode=OneWay}" />
 
         <!--  Prev folder  -->
         <customControls:TextIconButton
+            x:Name="PrevFolderButton"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource PrevFolderImage}"
             IconHeight="14"
@@ -150,15 +153,15 @@
             IconWidth="14"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.PrevFolder.Value,
-                                   Mode=OneWay}"
-            x:Name="PrevFolderButton" />
+                                   Mode=OneWay}" />
 
         <Separator />
 
         <!--  Next archive  -->
         <customControls:TextIconButton
+            x:Name="NextArchiveButton"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource ArchiveFile}"
             IconHeight="14"
@@ -166,13 +169,13 @@
             IconWidth="14"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.NextArchive.Value,
-                                   Mode=OneWay}"
-            x:Name="NextArchiveButton" />
+                                   Mode=OneWay}" />
 
         <!--  Prev folder  -->
         <customControls:TextIconButton
+            x:Name="PrevArchiveButton"
+            Padding="6"
             Classes="altHover"
             Icon="{StaticResource ArchiveFile}"
             IconHeight="14"
@@ -180,9 +183,7 @@
             IconWidth="14"
             IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                         Converter={x:Static ObjectConverters.IsNotNull}}"
-            Padding="6"
             Text="{CompiledBinding Translation.PrevArchive.Value,
-                                   Mode=OneWay}"
-            x:Name="PrevArchiveButton" />
+                                   Mode=OneWay}" />
     </StackPanel>
 </customControls:AnimatedPopUp>

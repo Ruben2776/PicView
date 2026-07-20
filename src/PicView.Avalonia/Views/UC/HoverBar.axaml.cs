@@ -208,7 +208,7 @@ public partial class HoverBar : UserControl, IDisposable
 
         IsVisible = true;
         
-        if ( TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
         }
@@ -311,7 +311,7 @@ public partial class HoverBar : UserControl, IDisposable
         {
             return;
         }
-        mainWindow.UIHelper.GetMainView.MainPanel.Children.Add(new QuickSettingsDialog());
+        mainWindow.AddQuickSettingsDialog();
     }
 
     private void ShowQuickEditingDialog()
@@ -320,7 +320,7 @@ public partial class HoverBar : UserControl, IDisposable
         {
             return;
         }
-        mainWindow.UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog());
+        mainWindow.AddQuickEditingDialog();
     }
 
     private void ShowSearchDialog()

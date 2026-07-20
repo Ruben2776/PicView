@@ -172,6 +172,11 @@ public class MainWindow : Window, IMainWindow
     
     public bool ContainsRenameDialog() =>
         UIHelper.GetMainView.MainPanel.Children.OfType<RenameDialog>().Any();
+    
+    public bool ContainsQuickEditingDialog() =>
+        UIHelper.GetMainView.MainPanel.Children.OfType<QuickEditingDialog>().Any();
+    public bool ContainsQuickSettingsDialog() =>
+        UIHelper.GetMainView.MainPanel.Children.OfType<QuickSettingsDialog>().Any();
 
     public void AddFileSearchDialog()
     {
@@ -179,6 +184,7 @@ public class MainWindow : Window, IMainWindow
         {
             return;
         }
+        
         vm.TopTitlebarViewModel.CloseDropDownMenu();
         UIHelper.GetMainView.MainPanel.Children.Add(new FileSearchDialog());
     }
@@ -200,8 +206,31 @@ public class MainWindow : Window, IMainWindow
         {
             return;
         }
+        
         vm.TopTitlebarViewModel.CloseDropDownMenu();
         UIHelper.GetMainView.MainPanel.Children.Add(new RenameDialog());
+    }
+    
+    public void AddQuickEditingDialog()
+    {
+        if (ContainsQuickEditingDialog() || UIHelper.GetMainView.DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+        
+        vm.TopTitlebarViewModel.CloseDropDownMenu();
+        UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog());
+    }
+    
+    public void AddQuickSettingsDialog()
+    {
+        if (ContainsQuickSettingsDialog() || UIHelper.GetMainView.DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+        
+        vm.TopTitlebarViewModel.CloseDropDownMenu();
+        UIHelper.GetMainView.MainPanel.Children.Add(new QuickSettingsDialog());
     }
 
     #endregion
@@ -228,7 +257,7 @@ public class MainWindow : Window, IMainWindow
                     break;
                 case <= SizeDefaults.BottomMenusBp:
                     vm.TopTitlebarViewModel.DropDownMenu.IsFileMenuVisible.Value = false;
-                    UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog());
+                    AddQuickEditingDialog();
                     break;
                 default:
                     UIHelper.GetFileMenu.Margin = new Thickness(0, 0, 147, 0);
@@ -244,7 +273,7 @@ public class MainWindow : Window, IMainWindow
                     break;
                 case <= SizeDefaults.BottomMenusBp:
                     vm.TopTitlebarViewModel.DropDownMenu.IsSettingsMenuVisible.Value = false;
-                    UIHelper.GetMainView.MainPanel.Children.Add(new QuickSettingsDialog());
+                    AddQuickSettingsDialog();
                     break;
                 default:
                     UIHelper.GetSettingsMenu.Margin = new Thickness(0, 0, -40, 0);

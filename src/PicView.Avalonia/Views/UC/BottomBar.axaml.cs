@@ -118,7 +118,8 @@ public partial class BottomBar : UserControl, IDisposable
             {
                 return;
             }
-            mainWindow.UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog());
+
+            mainWindow.AddQuickEditingDialog();
         }
         else
         {
@@ -171,7 +172,8 @@ public partial class BottomBar : UserControl, IDisposable
             {
                 return;
             }
-            mainWindow.UIHelper.GetMainView.MainPanel.Children.Add(new QuickSettingsDialog());
+
+            mainWindow.AddQuickSettingsDialog();
         }
         else
         {

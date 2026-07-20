@@ -6,7 +6,8 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     Padding="20"
     x:DataType="viewModels:MainWindowViewModel"
-    ClickingOutsideCloses="True">
+    ClickingOutsideCloses="True"
+    ZIndex="9">
     <StackPanel Background="Transparent">
         <TextBlock
             x:Name="PromptText"
