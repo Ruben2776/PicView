@@ -597,6 +597,7 @@
                                 Text="{CompiledBinding Translation.Width.Value,
                                                        Mode=OneWay}" />
                             <customControls:NumTextBox
+                                x:Name="WidthBox"
                                 Width="110"
                                 Height="35"
                                 MinWidth="100"
@@ -606,7 +607,8 @@
                                 CornerRadius="4"
                                 Foreground="{DynamicResource MainTextColor}"
                                 Text="{CompiledBinding BatchResize.WidthValue.Value,
-                                                       Mode=TwoWay}" />
+                                                       Mode=TwoWay}"
+                                TextChanged="WidthBox_OnTextChanged" />
                         </StackPanel>
 
                         <Button
@@ -645,6 +647,7 @@
                                 Text="{CompiledBinding Translation.Height.Value,
                                                        Mode=OneWay}" />
                             <customControls:NumTextBox
+                                x:Name="HeightBox"
                                 Width="110"
                                 Height="35"
                                 MinWidth="100"
@@ -654,7 +657,8 @@
                                 CornerRadius="4"
                                 Foreground="{DynamicResource MainTextColor}"
                                 Text="{CompiledBinding BatchResize.HeightValue.Value,
-                                                       Mode=TwoWay}" />
+                                                       Mode=TwoWay}"
+                                TextChanged="HeightBox_OnTextChanged" />
                         </StackPanel>
                     </StackPanel>
 

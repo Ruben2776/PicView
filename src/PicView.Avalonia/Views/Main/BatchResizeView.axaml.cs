@@ -15,6 +15,9 @@ namespace PicView.Avalonia.Views.Main;
 public partial class BatchResizeView : UserControl
 {
     private readonly CompositeDisposable _disposables = new();
+    private bool _suppressAspectRatioUpdate;
+    private double _aspectRatio;
+
     public BatchResizeView()
     {
         InitializeComponent();
@@ -111,6 +114,13 @@ public partial class BatchResizeView : UserControl
                 {
                     LinkChainImage.IsVisible = true;
                     UnlinkChainImage.IsVisible = false;
+
+                    var w = batch.WidthValue.CurrentValue;
+                    var h = batch.HeightValue.CurrentValue;
+                    if (w > 0 && h > 0)
+                    {
+                        _aspectRatio = (double)w / h;
+                    }
                 }
                 else
                 {
@@ -346,5 +356,69 @@ public partial class BatchResizeView : UserControl
     {
         base.OnDetachedFromLogicalTree(e);
         _disposables.Dispose();
+    }
+
+    private void WidthBox_OnTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (_suppressAspectRatioUpdate)
+        {
+            return;
+        }
+        if (Application.Current.DataContext is not CoreViewModel core)
+        {
+            return;
+        }
+        var batch = core.BatchResize;
+        if (!batch.IsKeepingAspectRatio.Value || _aspectRatio <= 0)
+        {
+            return;
+        }
+        if (!uint.TryParse(WidthBox.Text, out var width) || width == 0)
+        {
+            return;
+        }
+
+        var newHeight = (uint)Math.Max(1, Math.Round(width / _aspectRatio));
+        _suppressAspectRatioUpdate = true;
+        try
+        {
+            batch.HeightValue.Value = newHeight;
+        }
+        finally
+        {
+            _suppressAspectRatioUpdate = false;
+        }
+    }
+
+    private void HeightBox_OnTextChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (_suppressAspectRatioUpdate)
+        {
+            return;
+        }
+        if (Application.Current.DataContext is not CoreViewModel core)
+        {
+            return;
+        }
+        var batch = core.BatchResize;
+        if (!batch.IsKeepingAspectRatio.Value || _aspectRatio <= 0)
+        {
+            return;
+        }
+        if (!uint.TryParse(HeightBox.Text, out var height) || height == 0)
+        {
+            return;
+        }
+
+        var newWidth = (uint)Math.Max(1, Math.Round(height * _aspectRatio));
+        _suppressAspectRatioUpdate = true;
+        try
+        {
+            batch.WidthValue.Value = newWidth;
+        }
+        finally
+        {
+            _suppressAspectRatioUpdate = false;
+        }
     }
 }
