@@ -27,6 +27,8 @@ public class DropDownMenuViewModel : IDisposable
         IsDropDownMenuVisible.Value = false;
     }
     
+    public void CloseMenus() => CloseMenus(Unit.Default);
+
     public void CloseMenus(Unit unit)
     {
         IsFileMenuVisible.Value = false;

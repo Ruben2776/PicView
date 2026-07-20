@@ -28,6 +28,7 @@ public static class UINavigationHelper
         vm.IsLoadingIndicatorShown.Value = true;
         await vm.WindowTabs.LoadFromStringAsync(FileHistoryManager.GetNextEntry()).ConfigureAwait(false);
         vm.IsLoadingIndicatorShown.Value = false;
+        vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
     }
     
     public static async ValueTask OpenPreviousFileHistoryEntry(MainWindow mainWindow, MainWindowViewModel vm)
@@ -49,6 +50,7 @@ public static class UINavigationHelper
         vm.IsLoadingIndicatorShown.Value = true;
         await vm.WindowTabs.LoadFromStringAsync(FileHistoryManager.GetPreviousEntry()).ConfigureAwait(false);
         vm.IsLoadingIndicatorShown.Value = false;
+        vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
     }
     
     public static async Task OpenLastFile(MainWindow mainWindow, MainWindowViewModel vm)
@@ -71,5 +73,6 @@ public static class UINavigationHelper
         await vm.WindowTabs.LoadLastFileAsync();
         vm.WindowTabs.ActiveTab.CurrentValue.UpdateTabTitle();
         vm.IsLoadingIndicatorShown.Value = false;
+        vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
     }
 }

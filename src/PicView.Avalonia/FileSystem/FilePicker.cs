@@ -47,6 +47,8 @@ public static class FilePicker
 
 
         await vm.WindowTabs.LoadFromFileAsync(file).ConfigureAwait(false);
+        vm.TopTitlebarViewModel.DropDownMenu.CloseMenus();
+        vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
     }
 
     public static async Task<string?> SelectFile()
