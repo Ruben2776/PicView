@@ -618,6 +618,10 @@ public class ExifViewModel : IDisposable
                 }
             }
 
+            // Read UserComment before any other EXIF tag. Magick.NET normalizes the
+            // profile byte order on first access, which legacy Unicode decoding needs.
+            Comment.Value = ExifReader.GetUserComment(profile);
+
             if (profile != null)
             {
                 DpiY.Value = profile.GetValue(ExifTag.YResolution)?.Value.ToDouble() ?? magick.Density.X;
@@ -760,7 +764,6 @@ public class ExifViewModel : IDisposable
             ExifVersion.Value = ExifReader.GetExifVersion(profile);
             LensModel.Value = profile?.GetValue(ExifTag.LensModel)?.Value ?? string.Empty;
             LensMaker.Value = profile?.GetValue(ExifTag.LensMake)?.Value ?? string.Empty;
-            Comment.Value = ExifReader.GetUserComment(profile);
         }
         catch (Exception e)
         {
