@@ -60,12 +60,12 @@ public class App : Application, IPlatformSpecificService
                         return;
                     }
 
-                    startUpFilePath = fileArgs.Files[0].Path.AbsolutePath;
+                    startUpFilePath = fileArgs.Files[0].Path.LocalPath;
                     await HandleInitialLoadOrConsecutive();
                 }
                 else if (e is ProtocolActivatedEventArgs protocolArgs)
                 {
-                    startUpFilePath = protocolArgs.Uri.AbsolutePath;
+                    startUpFilePath = protocolArgs.Uri.LocalPath;
                     await HandleInitialLoadOrConsecutive();
                 }
 
@@ -102,7 +102,18 @@ public class App : Application, IPlatformSpecificService
         }
         else
         {
-            StartUpHelper.StartUpMenuOrLastFile(_mainWindow, _coreViewModel);
+            // Retry again because FileActivatedEventArgs is very fickle #360 
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (startUpFilePath is not null)
+                {
+                    Task.Run(() => QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, startUpFilePath, false));
+                }
+                else
+                {
+                    StartUpHelper.StartUpMenuOrLastFile(_mainWindow, _coreViewModel);
+                }
+            }, DispatcherPriority.Background);
         }
         
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
