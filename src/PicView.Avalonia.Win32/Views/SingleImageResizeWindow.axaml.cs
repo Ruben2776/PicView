@@ -9,7 +9,7 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class SingleImageResizeWindow : GenericWindow
+public partial class SingleImageResizeWindow : Win32GenericWindow
 {
     public SingleImageResizeWindow(MainWindowViewModel viewModel)
     {

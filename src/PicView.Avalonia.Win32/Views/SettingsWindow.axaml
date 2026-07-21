@@ -25,7 +25,10 @@
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,0,1"
                 DockPanel.Dock="Top">
-                <DockPanel VerticalAlignment="Top" LastChildFill="True">
+                <DockPanel
+                    Margin="0,-1,-1,0"
+                    VerticalAlignment="Top"
+                    LastChildFill="True">
                     <Border
                         x:Name="LogoBorder"
                         Background="{DynamicResource WindowSecondaryBackgroundColor}"
@@ -96,7 +99,8 @@
                         IconWidth="10"
                         IsRepeatEnabled="False"
                         ToolTip.Tip="{CompiledBinding Translation.Close.Value,
-                                                      Mode=OneWay}" />
+                                                      Mode=OneWay}"
+                        WindowDecorationProperties.ElementRole="CloseButton" />
 
                     <customControls:IconButton
                         x:Name="MinimizeButton"

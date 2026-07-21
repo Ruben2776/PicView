@@ -7,7 +7,7 @@ using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class KeybindingsWindow : GenericWindow
+public partial class KeybindingsWindow : Win32GenericWindow
 {
     public KeybindingsWindow(KeybindingWindowConfig config)
     {

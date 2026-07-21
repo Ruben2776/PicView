@@ -1012,6 +1012,7 @@
                 x:Name="WinBtnPanel"
                 DockPanel.Dock="Right"
                 IsVisible="{CompiledBinding TopTitlebarViewModel.IsBtnPanelVisible.Value}"
+                Margin="0,-1,-1,0"
                 Orientation="Horizontal">
 
                 <customControls:IconButton
@@ -1074,7 +1075,8 @@
                     Foreground="{DynamicResource MainTextColor}"
                     IconHeight="10"
                     IconWidth="10"
-                    IsRepeatEnabled="False" />
+                    IsRepeatEnabled="False"
+                    WindowDecorationProperties.ElementRole="CloseButton" />
 
             </StackPanel>
 
