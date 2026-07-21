@@ -8,7 +8,7 @@ using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class PrintPreviewWindow : PrintWindow
+public partial class PrintPreviewWindow : Win32PrintWindow
 {
     public PrintPreviewWindow(PrintWindowConfig config)
     {

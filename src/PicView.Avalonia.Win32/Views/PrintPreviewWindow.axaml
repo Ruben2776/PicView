@@ -19,6 +19,7 @@
 
             <DockPanel
                 Height="28"
+                Margin="0,-1,-1,0"
                 DockPanel.Dock="Top"
                 LastChildFill="True"
                 PointerPressed="MoveWindow">
@@ -49,7 +50,8 @@
                     Foreground="{DynamicResource MainTextColor}"
                     IconHeight="10"
                     IconWidth="10"
-                    IsRepeatEnabled="False" />
+                    IsRepeatEnabled="False"
+                    WindowDecorationProperties.ElementRole="CloseButton" />
 
                 <customControls:IconButton
                     x:Name="MinimizeButton"

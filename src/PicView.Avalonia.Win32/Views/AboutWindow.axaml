@@ -19,7 +19,10 @@
         x:Name="ParentBorder">
         <StackPanel>
 
-            <DockPanel Height="28" LastChildFill="True">
+            <DockPanel
+                Height="28"
+                Margin="0,-1,-1,0"
+                LastChildFill="True">
 
                 <Border
                     Background="{DynamicResource WindowButtonBackgroundColor}"
@@ -47,6 +50,7 @@
                     IconWidth="10"
                     IsRepeatEnabled="False"
                     Width="30"
+                    WindowDecorationProperties.ElementRole="CloseButton"
                     x:Name="CloseButton" />
 
                 <customControls:IconButton

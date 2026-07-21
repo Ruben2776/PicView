@@ -20,6 +20,7 @@
 
             <DockPanel
                 Height="{StaticResource TopBorderHeight}"
+                Margin="0,-1,-1,0"
                 LastChildFill="True"
                 PointerPressed="MoveWindow">
 
@@ -49,6 +50,7 @@
                     IconWidth="10"
                     IsRepeatEnabled="False"
                     Width="30"
+                    WindowDecorationProperties.ElementRole="CloseButton"
                     x:Name="CloseButton" />
 
                 <customControls:IconButton

@@ -12,7 +12,7 @@ using R3;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class BatchResizeWindow : GenericWindow, IDisposable
+public partial class BatchResizeWindow : Win32GenericWindow, IDisposable
 {
     private DisposableBag _disposables;
     public BatchResizeWindow(BatchResizeWindowConfig config)

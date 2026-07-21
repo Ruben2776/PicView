@@ -10,7 +10,7 @@ using R3;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class ImageInfoWindow: GenericWindow, IDisposable
+public partial class ImageInfoWindow: Win32GenericWindow, IDisposable
 {
     private readonly CompositeDisposable _disposables = new();
 
