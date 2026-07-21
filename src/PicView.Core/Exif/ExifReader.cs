@@ -7,6 +7,8 @@ namespace PicView.Core.Exif;
 
 public static class ExifReader
 {
+    private static readonly UTF8Encoding StrictUtf8 = new(false, true);
+
     public static DateTime? GetDateTaken(IExifProfile profile)
     {
         var getDateTaken =
@@ -381,26 +383,126 @@ public static class ExifReader
     /// <returns>A string containing the user comment. Returns an empty string if no comment is found or in case of an error.</returns>
     public static string GetUserComment(IExifProfile? profile)
     {
-        var commentBytes = profile?.GetValue(ExifTag.UserComment)?.Value;
-        if (commentBytes is null || commentBytes.Length <= 8)
+        if (profile is null)
         {
             return string.Empty;
         }
 
         try
         {
-            var decodedComment = Encoding.ASCII.GetString(commentBytes);
-            if (string.IsNullOrWhiteSpace(decodedComment))
+            // ImageMagick normalizes the profile byte order when a tag is first read.
+            // Preserve the original TIFF byte order before accessing UserComment.
+            var isBigEndian = IsBigEndian(profile);
+            var commentBytes = profile.GetValue(ExifTag.UserComment)?.Value;
+            if (commentBytes is null || commentBytes.Length == 0)
             {
                 return string.Empty;
             }
 
-            var result = decodedComment.StartsWith("UNICODE") ? decodedComment.Replace("UNICODE", "") : decodedComment;
-            return result.StartsWith("ASCII") ? string.Empty : result;
+            var value = commentBytes.AsSpan();
+            string result;
+            if (value.StartsWith("UNICODE\0"u8))
+            {
+                var exifVersion = GetExifVersion(profile);
+                var usesUtf8 = string.CompareOrdinal(exifVersion, "0300") >= 0;
+                result = DecodeUnicodeComment(value[8..], usesUtf8, isBigEndian);
+            }
+            else if (value.StartsWith("ASCII\0\0\0"u8))
+            {
+                result = Encoding.ASCII.GetString(value[8..]).TrimEnd('\0');
+            }
+            else if (value.StartsWith("JIS\0\0\0\0\0"u8))
+            {
+                // ISO-2022-JP requires a code-page decoder that PicView does not currently include.
+                result = string.Empty;
+            }
+            else if (value.Length >= 8 && value[..8].IndexOfAnyExcept((byte)0) < 0)
+            {
+                result = DecodeUtf8OrFallback(value[8..], Encoding.ASCII);
+            }
+            else
+            {
+                // PicView previously wrote comments without the EXIF character-code prefix.
+                result = Encoding.ASCII.GetString(value).TrimEnd('\0');
+            }
+
+            return string.IsNullOrWhiteSpace(result) ? string.Empty : result;
         }
         catch (Exception)
         {
             return string.Empty;
         }
+    }
+
+    private static string DecodeUnicodeComment(ReadOnlySpan<byte> comment, bool usesUtf8, bool isBigEndian)
+    {
+        if (comment.Length >= 2 && comment[0] == 0xfe && comment[1] == 0xff)
+        {
+            return Encoding.BigEndianUnicode.GetString(comment[2..]).TrimEnd('\0');
+        }
+
+        if (comment.Length >= 2 && comment[0] == 0xff && comment[1] == 0xfe)
+        {
+            return Encoding.Unicode.GetString(comment[2..]).TrimEnd('\0');
+        }
+
+        if (usesUtf8)
+        {
+            try
+            {
+                return StrictUtf8.GetString(comment).TrimEnd('\0');
+            }
+            catch (DecoderFallbackException)
+            {
+                var fallback = isBigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode;
+                return fallback.GetString(comment).TrimEnd('\0');
+            }
+        }
+
+        var bigEndianPairs = 0;
+        var littleEndianPairs = 0;
+        for (var i = 0; i + 1 < comment.Length; i += 2)
+        {
+            if (comment[i] == 0 && comment[i + 1] != 0)
+            {
+                bigEndianPairs++;
+            }
+            else if (comment[i] != 0 && comment[i + 1] == 0)
+            {
+                littleEndianPairs++;
+            }
+        }
+
+        if (bigEndianPairs > littleEndianPairs)
+        {
+            return Encoding.BigEndianUnicode.GetString(comment).TrimEnd('\0');
+        }
+
+        if (littleEndianPairs > bigEndianPairs)
+        {
+            return Encoding.Unicode.GetString(comment).TrimEnd('\0');
+        }
+
+        var encoding = isBigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode;
+        return encoding.GetString(comment).TrimEnd('\0');
+    }
+
+    private static string DecodeUtf8OrFallback(ReadOnlySpan<byte> comment, Encoding fallback)
+    {
+        try
+        {
+            return StrictUtf8.GetString(comment).TrimEnd('\0');
+        }
+        catch (DecoderFallbackException)
+        {
+            return fallback.GetString(comment).TrimEnd('\0');
+        }
+    }
+
+    private static bool IsBigEndian(IExifProfile profile)
+    {
+        var data = profile.ToByteArray();
+        return (data.Length >= 2 && data[0] == (byte)'M' && data[1] == (byte)'M') ||
+               (data.Length >= 8 && data[6] == (byte)'M' && data[7] == (byte)'M');
     }
 }
