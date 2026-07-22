@@ -320,8 +320,12 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
-                <!--  Toggle bottom gallery  -->
-                <MenuItem Header="{CompiledBinding Translation.IsShowingDockedGallery.Value, Mode=OneWay}" IsChecked="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.IsDockedGalleryVisible.Value}">
+                <!--  Toggle docked gallery  -->
+                <MenuItem
+                    Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.ContractToDockedOrCloseGalleryCommand}"
+                    Header="{CompiledBinding Translation.HideDockedGallery.Value,
+                                             Mode=OneWay}"
+                    IsVisible="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}">
                     <MenuItem.Icon>
                         <Image
                             Width="12"
