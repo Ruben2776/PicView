@@ -43,7 +43,7 @@ public class NavigationService(
             ImageModel model;
             ImageModel? secondaryModel = null;
             int index;
-            int secondaryIndex = 0;
+            var secondaryIndex = 0;
             if (cache.TryGet(fileInfo, out var preLoadValue))
             {
                 model = preLoadValue.ImageModel;
@@ -253,7 +253,7 @@ public class NavigationService(
             // from the already-extracted paths so we don't depend on FileListRetriever's
             // recursion settings.
             var allFiles = prep.EntryKeys.Select(p => new FileInfo(p)).ToList();
-            if (allFiles.Count == 0)
+            if (allFiles.Count is 0)
             {
                 return false;
             }
@@ -274,11 +274,26 @@ public class NavigationService(
             return false;
         }
 
-        // Seed the iterator with just the first extracted file. Watching the temp directory
-        // first ensures every subsequent file creation event is captured by FileWatcherService
-        // and inserted in sorted order into the iterator/gallery.
-        var seedFiles = new List<FileInfo> { new(firstPath) };
-        await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
+        if (Settings.ImageScaling.ShowImageSideBySide && prep.EntryKeys.Length > 1)
+        {
+            var secondKey = prep.EntryKeys[1];
+            var secondPath = await ArchiveExtraction.ExtractEntryAsync(archivePath, secondKey, ct.Token).ConfigureAwait(false);
+            var seedFiles = new List<FileInfo>
+            {
+                new(firstPath),
+                new(secondPath)
+            };
+            await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
+        }
+        else
+        {
+            // Seed the iterator with just the first extracted file. Watching the temp directory
+            // first ensures every subsequent file creation event is captured by FileWatcherService
+            // and inserted in sorted order into the iterator/gallery.
+            var seedFiles = new List<FileInfo> { new(firstPath) };
+            await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
+        }
+
 
         // Kick off background extraction of remaining entries. FileWatcherService picks them up.
         if (prep.EntryKeys.Length > 1)
