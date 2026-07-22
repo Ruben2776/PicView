@@ -71,6 +71,16 @@ public class ExifReaderTests
             WithCharacterCode("ASCII\0\0\0"u8, Encoding.ASCII.GetBytes("ASCII comment\0")));
 
     [Fact]
+    public void GetUserComment_AsciiMarkedUtf8Comment_ReturnsDecodedText() =>
+        AssertComment(UnicodeComment,
+            WithCharacterCode("ASCII\0\0\0"u8, Encoding.UTF8.GetBytes(UnicodeComment + '\0')));
+
+    [Fact]
+    public void GetUserComment_AsciiMarkedUtf16Comment_ReturnsDecodedText() =>
+        AssertComment(UnicodeComment,
+            WithCharacterCode("ASCII\0\0\0"u8, Encoding.Unicode.GetBytes(UnicodeComment + '\0')));
+
+    [Fact]
     public void GetUserComment_UndefinedUtf8Comment_ReturnsDecodedText() =>
         AssertComment(UnicodeComment, WithCharacterCode(new byte[8], Encoding.UTF8.GetBytes(UnicodeComment)));
 
