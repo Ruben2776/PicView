@@ -191,6 +191,8 @@ public static class QuickLoad
         tab.Model = imageModel;
         var initialDirectory = GetInitialDirectory(continueFromLeftOff, fileInfo);
 
+        var isGalleryEnabled = CheckIfGalleryIsNeeded(core);
+        
         if (Settings.ImageScaling.ShowImageSideBySide)
         {
             files ??= core.PlatformService.GetFiles(initialDirectory);
@@ -221,8 +223,8 @@ public static class QuickLoad
         {
             Dispatcher.UIThread.Post(() => WindowFunctions.CenterWindowOnScreen(mainWindow));
         }
-        else if (isStartUp)
-        {
+        else if (isGalleryEnabled)
+        { 
             // Fixes certain instances where the image is not sized properly
             Dispatcher.UIThread.Post(() =>
             {
@@ -240,7 +242,10 @@ public static class QuickLoad
         
         FileHistoryManager.Add(fileInfo.FullName);
 
-        await LoadGalleryIfNeeded(core).ConfigureAwait(false);
+        if (isGalleryEnabled)
+        {
+            await LoadGallery(core).ConfigureAwait(false);
+        }
         
         if (continueFromLeftOff)
         {
@@ -261,6 +266,7 @@ public static class QuickLoad
         core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = true;
         tab.SetLoading();
 
+        var isGalleryEnabled = CheckIfGalleryIsNeeded(core);
         var isArchiveLoaded = await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.LoadFromArchiveAsync(source.FullName).ConfigureAwait(false);
         if (!isArchiveLoaded)
         {
@@ -269,10 +275,13 @@ public static class QuickLoad
         }
         ShowHoverBarIfNeeded(core);
         core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = false;
-        await LoadGalleryIfNeeded(core).ConfigureAwait(false);
+        if (isGalleryEnabled)
+        {
+            await LoadGallery(core).ConfigureAwait(false);
+        }
     }
 
-    private static async ValueTask LoadGalleryIfNeeded(CoreViewModel core)
+    private static bool CheckIfGalleryIsNeeded(CoreViewModel core)
     {
         if (Settings.Gallery.IsGalleryDocked)
         {
@@ -280,24 +289,27 @@ public static class QuickLoad
             {
                 core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked
                     .Value = false;
-                return;
+                return false;
             }
             if (Settings.Gallery.DockPosition is GalleryDockPosition.Closed)
             {
                 Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
             }
 
-            await GalleryLoader.LoadGalleryAsync(core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value,
-                    core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.ImageIterator.Files,
-                    ServiceHelper.ThumbLoader,
-                    core.SharedThumbnailCache,
-                    core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.GetTabCancellation().Token)
-                .ConfigureAwait(false);
+            return true;
         }
-        else
-        {
-            Settings.Gallery.DockPosition = GalleryDockPosition.Closed;
-        }
+        Settings.Gallery.DockPosition = GalleryDockPosition.Closed;
+        return false;
+    }
+    
+    private static async ValueTask LoadGallery(CoreViewModel core)
+    {
+        await GalleryLoader.LoadGalleryAsync(core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value,
+                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.ImageIterator.Files,
+                ServiceHelper.ThumbLoader,
+                core.SharedThumbnailCache,
+                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.GetTabCancellation().Token)
+            .ConfigureAwait(false);
     }
 
     private static void ShowHoverBarIfNeeded(CoreViewModel core)
