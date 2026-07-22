@@ -20,6 +20,45 @@ public static partial class NativeMethods
     public static partial void SHChangeNotify(int wEventId, int uFlags, IntPtr dwItem1, IntPtr dwItem2);
     
     
+    #region Window management
+
+    [LibraryImport("user32.dll")]
+    public static partial IntPtr GetCapture();
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool GetCursorPos(out ScreenPoint pointerPosition);
+
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool GetWindowRect(IntPtr hWnd, out WindowRect windowRect);
+
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool ReleaseCapture();
+
+    [LibraryImport("user32.dll")]
+    public static partial IntPtr SetCapture(IntPtr hWnd);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct ScreenPoint
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WindowRect
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    #endregion Window management
+
+
     #region Disable Screensaver and Power options
 
     private const uint ES_CONTINUOUS = 0x80000000;
