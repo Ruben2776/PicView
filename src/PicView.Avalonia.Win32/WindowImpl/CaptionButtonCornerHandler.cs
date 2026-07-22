@@ -1,8 +1,8 @@
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using Avalonia.Win32.Interop;
+using PicView.Core.WindowsNT;
 
 namespace PicView.Avalonia.Win32.WindowImpl;
 
@@ -59,8 +59,8 @@ internal sealed class CaptionButtonCornerHandler
         if (message == WmNcLeftButtonDown && wParam == HtClose && _isEnabled())
         {
             _isCloseButtonPressed = true;
-            SetCapture(hWnd);
-            _isCloseButtonPressed = GetCapture() == hWnd;
+            NativeMethods.SetCapture(hWnd);
+            _isCloseButtonPressed = NativeMethods.GetCapture() == hWnd;
             handled = true;
             return IntPtr.Zero;
         }
@@ -91,14 +91,14 @@ internal sealed class CaptionButtonCornerHandler
     private void CancelPress(IntPtr hWnd)
     {
         _isCloseButtonPressed = false;
-        if (GetCapture() == hWnd)
+        if (NativeMethods.GetCapture() == hWnd)
         {
-            ReleaseCapture();
+            NativeMethods.ReleaseCapture();
         }
     }
 
     private bool IsCursorInCloseButtonArea(IntPtr hWnd) =>
-        GetCursorPos(out var pointerPosition) &&
+        NativeMethods.GetCursorPos(out var pointerPosition) &&
         IsInCloseButtonArea(hWnd, pointerPosition.X, pointerPosition.Y);
 
     private bool IsInCloseButtonArea(IntPtr hWnd, IntPtr lParam)
@@ -138,7 +138,7 @@ internal sealed class CaptionButtonCornerHandler
             return true;
         }
 
-        if (GetWindowRect(hWnd, out var windowRect))
+        if (NativeMethods.GetWindowRect(hWnd, out var windowRect))
         {
             windowArea = new PixelRect(
                 windowRect.Left,
@@ -150,39 +150,5 @@ internal sealed class CaptionButtonCornerHandler
 
         windowArea = default;
         return false;
-    }
-
-    [DllImport("user32.dll", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetWindowRect(IntPtr hWnd, out WindowRect windowRect);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr SetCapture(IntPtr hWnd);
-
-    [DllImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool ReleaseCapture();
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetCapture();
-
-    [DllImport("user32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool GetCursorPos(out ScreenPoint pointerPosition);
-
-    [StructLayout(LayoutKind.Sequential)]
-    private record struct ScreenPoint
-    {
-        public int X;
-        public int Y;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private record struct WindowRect
-    {
-        public int Left;
-        public int Top;
-        public int Right;
-        public int Bottom;
     }
 }
