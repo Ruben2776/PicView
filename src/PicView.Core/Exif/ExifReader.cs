@@ -409,7 +409,7 @@ public static class ExifReader
             }
             else if (value.StartsWith("ASCII\0\0\0"u8))
             {
-                result = Encoding.ASCII.GetString(value[8..]).TrimEnd('\0');
+                result = DecodeAsciiComment(value[8..], isBigEndian);
             }
             else if (value.StartsWith("JIS\0\0\0\0\0"u8))
             {
@@ -432,6 +432,37 @@ public static class ExifReader
         {
             return string.Empty;
         }
+    }
+
+    private static string DecodeAsciiComment(ReadOnlySpan<byte> comment, bool isBigEndian)
+    {
+        try
+        {
+            var utf8 = StrictUtf8.GetString(comment).TrimEnd('\0');
+            if (!ContainsUnexpectedControlCharacters(utf8))
+            {
+                return utf8;
+            }
+        }
+        catch (DecoderFallbackException)
+        {
+            // Some applications label Unicode comment bytes as ASCII.
+        }
+
+        return DecodeUnicodeComment(comment, false, isBigEndian);
+    }
+
+    private static bool ContainsUnexpectedControlCharacters(ReadOnlySpan<char> text)
+    {
+        foreach (var character in text)
+        {
+            if (char.IsControl(character) && character is not ('\t' or '\r' or '\n'))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static string DecodeUnicodeComment(ReadOnlySpan<byte> comment, bool usesUtf8, bool isBigEndian)
