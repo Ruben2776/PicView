@@ -159,7 +159,7 @@ public static class WindowResizing
 
     public static void SetSize(MainWindow mainWindow, WindowResizeReason reason)
     {
-        var vm = mainWindow.DataContext as  MainWindowViewModel;
+        var vm = mainWindow.DataContext as MainWindowViewModel;
         var size = GetSize(mainWindow, vm);
 
         if (size is null)

@@ -11,6 +11,7 @@ public class GalleryViewModel : IDisposable
     private DisposableBag _disposables;
     public ReactiveCommand<GalleryMode> SetGalleryModeCommand { get; } = new();
     public ReactiveCommand<Unit> ContractToDockedOrCloseGalleryCommand { get; } = new();
+    public ReactiveCommand<Unit> OpenOrCloseDockedGalleryCommand { get; } = new();
     public ReactiveCommand<Unit> ToggleGalleryCommand { get; } = new();
     public ReactiveCommand<GalleryDockPosition> SetDockPositionCommand { get; } = new();
     public ReactiveCommand<Unit> CloseGalleryCommand { get; } = new();
@@ -121,6 +122,12 @@ public class GalleryViewModel : IDisposable
             }
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
+        
+        OpenOrCloseDockedGalleryCommand.Subscribe(_ =>
+            {
+                GalleryManager.OpenOrCloseGallery(this);
+            }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
+            .AddTo(ref _disposables);
         
         CloseGalleryCommand.SubscribeAwait(async (_, ct) =>
         {

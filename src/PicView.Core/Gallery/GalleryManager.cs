@@ -28,4 +28,22 @@ public static class GalleryManager
             galleryViewModel.ActiveGalleryMode.Value = GalleryMode.Expanded;
         }
     }
+    
+    public static void OpenOrCloseGallery(GalleryViewModel galleryViewModel)
+    {
+        if (Settings.Gallery.IsGalleryDocked)
+        {
+            galleryViewModel.ActiveGalleryMode.Value = GalleryMode.Closed;
+            Settings.Gallery.IsGalleryDocked = false;
+        }
+        else
+        {
+            if (Settings.Gallery.DockPosition is GalleryDockPosition.Closed)
+            {
+                Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
+            }
+            Settings.Gallery.IsGalleryDocked = true;
+            galleryViewModel.IsGalleryDocked.Value = true;
+        }
+    }
 }

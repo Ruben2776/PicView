@@ -321,11 +321,7 @@
                 </MenuItem>
 
                 <!--  Toggle docked gallery  -->
-                <MenuItem
-                    Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.ContractToDockedOrCloseGalleryCommand}"
-                    Header="{CompiledBinding Translation.HideDockedGallery.Value,
-                                             Mode=OneWay}"
-                    IsVisible="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}">
+                <MenuItem Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.OpenOrCloseDockedGalleryCommand}" Header="{CompiledBinding Translation.IsShowingDockedGallery.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
                             Width="12"

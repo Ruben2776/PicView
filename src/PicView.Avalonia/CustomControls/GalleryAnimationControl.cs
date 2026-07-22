@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -273,6 +274,14 @@ public class GalleryAnimationControl : UserControl
     {
         SetDockLayoutCore(dock);
         SetDockedThumbPosition(dock);
+        if (Application.Current.ApplicationLifetime is not ClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+        Dispatcher.UIThread.Post(() =>
+        {
+            WindowResizing.SetSize(desktop.MainWindow as MainWindow, WindowResizeReason.Layout);
+        });
     }
 
     private void SetDockLayoutCore(GalleryDockPosition dock)
@@ -449,7 +458,7 @@ public class GalleryAnimationControl : UserControl
         {
             Dispatcher.UIThread.Post(() =>
             {
-                if (Application.Current.DataContext is not CoreViewModel core || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+                if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
                 {
                     return;
                 }
