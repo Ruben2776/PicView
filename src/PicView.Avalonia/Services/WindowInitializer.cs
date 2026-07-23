@@ -249,7 +249,7 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
         {
             core.SettingsViewModel = new SettingsViewModel(core.Translation);
             core.SettingsViewModel.Initialize(new ThemeService(), new LanguageService(), new ImageSettingsService());
-            core.SettingsViewModel.WindowMargin.Subscribe(_ =>
+            core.SettingsViewModel.WindowMargin.Skip(1).Subscribe(_ =>
             {
                 WindowResizing.SetSize(desktop.MainWindow as MainWindow, WindowResizeReason.Application);
             }, DebugHelper.LogError(nameof(core.SettingsViewModel), nameof(core.SettingsViewModel.WindowMargin)));

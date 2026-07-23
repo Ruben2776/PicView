@@ -102,8 +102,8 @@ public partial class SettingsView : UserControl
         GallerySection.ShowRightDockedGalleryButton.Classes.Remove("altHover");
         GallerySection.ShowRightDockedGalleryButton.Classes.Add("hover");
         
-        GallerySection.CloseDockedGalleryButton.Classes.Remove("altHover");
-        GallerySection.CloseDockedGalleryButton.Classes.Add("hover");
+        GallerySection.ToggleDockedGalleryButton.Classes.Remove("altHover");
+        GallerySection.ToggleDockedGalleryButton.Classes.Add("hover");
         
         GallerySection.UIHiddenDockedGalleryToggleButton.Classes.Remove("altHover");
         GallerySection.UIHiddenDockedGalleryToggleButton.Classes.Add("hover");

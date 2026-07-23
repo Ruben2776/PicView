@@ -155,6 +155,8 @@ public static class QuickLoad
         try
         {
             await magickImage.PingAsync(fileInfo);
+            tab.Model.PixelWidth = magickImage.Width;
+            tab.Model.PixelHeight = magickImage.Height;
 
             if (isStartUp)
             {
@@ -169,12 +171,15 @@ public static class QuickLoad
                     tab.Model.PixelWidth = magickImage.Width;
                     tab.Model.PixelHeight = magickImage.Height;
                 }
-                else if (Settings.WindowProperties.AutoFit && !Settings.ImageScaling.ShowImageSideBySide)
+                else if (!Settings.ImageScaling.ShowImageSideBySide)
                 {
                     // Predict window size and center beforehand for pleasant opening when double-clicking a file
-                    WindowResizing.SetSize(magickImage.Width, magickImage.Height,
-                        0, 0, WindowResizeReason.Application, mainWindow, vm);
-                    Dispatcher.UIThread.Invoke( () => WindowResizing.FastCenterWindow(mainWindow), DispatcherPriority.Render);
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        WindowResizing.SetSize(tab.Model.PixelWidth, tab.Model.PixelHeight,
+                            0, 0, WindowResizeReason.Application, mainWindow, vm);
+                        WindowResizing.FastCenterWindow(mainWindow);
+                    }, DispatcherPriority.Render);
                 }
             }
         }
@@ -223,8 +228,8 @@ public static class QuickLoad
         {
             Dispatcher.UIThread.Post(() => WindowFunctions.CenterWindowOnScreen(mainWindow));
         }
-        else if (isGalleryEnabled)
-        { 
+        else if (Settings.ImageScaling.ShowImageSideBySide || isStartUp && !Settings.WindowProperties.AutoFit)
+        {
             // Fixes certain instances where the image is not sized properly
             Dispatcher.UIThread.Post(() =>
             {

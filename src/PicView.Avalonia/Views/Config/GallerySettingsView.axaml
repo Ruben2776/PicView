@@ -92,13 +92,19 @@
 
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.GalleryVisibilitySearchTags}" Classes="searchBorder">
             <StackPanel>
-                <customControls:TextToggleButton
-                    x:Name="CloseDockedGalleryButton"
-                    Classes="altHover settingsToggleButton"
-                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.CloseGalleryCommand}"
-                    IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}"
-                    Text="{CompiledBinding Translation.HideDockedGallery.Value,
-                                           Mode=OneWay}" />
+                <customControls:TextIconButton
+                    x:Name="ToggleDockedGalleryButton"
+                    Margin="6"
+                    Classes="altHover settingsTextIconButton"
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.OpenOrCloseDockedGalleryCommand}"
+                    Icon="{StaticResource GalleryImage}"
+                    IconHeight="16"
+                    IconMargin="7,0,7,0"
+                    IconWidth="16"
+                    Text="{CompiledBinding Translation.IsShowingDockedGallery.Value,
+                                           Mode=OneWay}"
+                    TextMargin="5,0,5,0"
+                    TextMaxWidth="240" />
 
                 <customControls:TextToggleButton
                     x:Name="UIHiddenDockedGalleryToggleButton"

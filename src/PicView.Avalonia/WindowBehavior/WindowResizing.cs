@@ -218,7 +218,6 @@ public static class WindowResizing
             vm.WindowMaxWidth.Value =
                 vm.WindowMaxHeight.Value = double.NaN;
         }
-
     }
 
     public static ImageSize? GetSize(MainWindow mainWindow, MainWindowViewModel vm)
