@@ -226,9 +226,9 @@ public class NavigationService(
         {
             return false;
         }
-
-        // Clean up any previous archive extraction before opening a new one
-        ArchiveExtraction.Cleanup();
+        
+        // Retrieve the temporary directory for the possible previous archive extraction
+        var tempZipDir = ArchiveExtraction.TempZipDirectory;
 
         var preparation = await ArchiveExtraction.PrepareArchiveAsync(
             archivePath,
@@ -304,6 +304,7 @@ public class NavigationService(
         }
 
         FileHistoryManager.Add(archivePath);
+        ArchiveExtraction.Cleanup(tempZipDir);
         return true;
     }
 

@@ -228,23 +228,25 @@ public static class ArchiveExtraction
     /// </summary>
     public static void Cleanup()
     {
+        Cleanup(TempZipDirectory);
+    }
+    
+    public static void Cleanup(string? tempZipDirectory)
+    {
         try
         {
-            if (string.IsNullOrEmpty(TempZipDirectory) || !Directory.Exists(TempZipDirectory))
+            if (string.IsNullOrEmpty(tempZipDirectory) || !Directory.Exists(tempZipDirectory))
             {
                 return;
             }
 
-            Directory.Delete(TempZipDirectory, true);
+            Directory.Delete(tempZipDirectory, true);
+            TempZipDirectory = null;
+            LastOpenedArchive = null;
         }
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(ArchiveExtraction), nameof(Cleanup), ex);
-        }
-        finally
-        {
-            TempZipDirectory = null;
-            LastOpenedArchive = null;
         }
     }
 
