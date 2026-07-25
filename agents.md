@@ -2,7 +2,7 @@
 
 ## Build & Configuration
 
-- **Solution**: `PicView.sln` / `PicView.slnx` in the `src/` root.
+- **Solution**: `PicView.slnx` in the `src/` root.
 - **Target framework**: `net11.0` (with `net10.0-windows11.0.22621` for Win32 project). Language version set to `preview`.
 - **Platforms**: `x64` and `arm64` only — all projects specify `<Platforms>x64;arm64</Platforms>`.
 - **AOT**: `PicView.Core` is configured for Native AOT (`PublishAot`, `Trimming=full`, `IsAotCompatible`). Keep new Core code AOT-compatible (no reflection-heavy patterns).
@@ -92,7 +92,7 @@ public class TempFileTests
 | Project | Purpose                                                                                            |
 |---|----------------------------------------------------------------------------------------------------|
 | `PicView.Core` | Platform-independent core logic (navigation, config, file handling, image models). AOT-compatible. |
-| `PicView.Avalonia` | Shared Avalonia UI layer (views, controls, themes) (view models herein are deprecated).            |
+| `PicView.Avalonia` | Shared Avalonia UI layer (views, controls, themes).            |
 | `PicView.Avalonia.Win32` | Windows-specific UI and platform services.                                                         |
 | `PicView.Avalonia.Linux` | Linux-specific UI and platform services.                                                           |
 | `PicView.Avalonia.MacOS` | macOS-specific UI.                                                                                 |
