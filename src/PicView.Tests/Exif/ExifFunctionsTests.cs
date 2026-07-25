@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using ImageMagick;
 using ImageMagick.Drawing;
 using PicView.Core.Exif;
@@ -172,6 +174,114 @@ public class ExifFunctionsTests : IDisposable
         var actual = await ExifWriter.SetExifRatingAsync(new FileInfo(path), 3);
 
         Assert.False(actual);
+    }
+
+    [Fact]
+    public async Task SetDateTaken_ValidDate_WritesDateToProfile()
+    {
+        var fileInfo = CreateImage(MagickFormat.Jpeg);
+        var date = new DateTime(2023, 1, 1, 12, 0, 0);
+
+        var actual = await ExifWriter.SetDateTaken(fileInfo, date);
+
+        Assert.True(actual);
+        var profile = ReadProfile(fileInfo);
+        Assert.NotNull(profile);
+        
+        var dateString = date.ToString(CultureInfo.InvariantCulture);
+        Assert.Equal(dateString, profile.GetValue(ExifTag.DateTime)?.Value);
+        Assert.Equal(dateString, profile.GetValue(ExifTag.DateTimeOriginal)?.Value);
+    }
+
+    [Fact]
+    public async Task SetDateTaken_NullFileInfo_ReturnsFalse()
+    {
+        var actual = await ExifWriter.SetDateTaken(null, DateTime.Now);
+        Assert.False(actual);
+    }
+
+    [Fact]
+    public async Task AddSubject_ValidString_WritesSubjectToProfile()
+    {
+        var fileInfo = CreateImage(MagickFormat.Jpeg);
+        var subject = "Test Subject";
+
+        var actual = await ExifWriter.AddSubject(fileInfo, subject);
+
+        Assert.True(actual);
+        var profile = ReadProfile(fileInfo);
+        Assert.NotNull(profile);
+        
+        var expectedBytes = Encoding.Unicode.GetBytes(subject);
+        Assert.Equal(expectedBytes, profile.GetValue(ExifTag.XPSubject)?.Value);
+    }
+
+    [Fact]
+    public async Task AddSubject_NullString_ReturnsFalseAndLeavesFileUntouched()
+    {
+        var fileInfo = CreateImage(MagickFormat.Jpeg);
+        var expected = await ReadAllBytesAsync(fileInfo);
+
+        var actual = await ExifWriter.AddSubject(fileInfo, null);
+
+        Assert.False(actual);
+        Assert.Equal(expected, await ReadAllBytesAsync(fileInfo));
+    }
+
+    [Fact]
+    public async Task AddTitle_ValidString_WritesTitleToProfile()
+    {
+        var fileInfo = CreateImage(MagickFormat.Jpeg);
+        var title = "Test Title";
+
+        var actual = await ExifWriter.AddTitle(fileInfo, title);
+
+        Assert.True(actual);
+        var profile = ReadProfile(fileInfo);
+        Assert.NotNull(profile);
+        
+        var expectedBytes = Encoding.Unicode.GetBytes(title);
+        Assert.Equal(expectedBytes, profile.GetValue(ExifTag.XPTitle)?.Value);
+    }
+
+    [Fact]
+    public async Task AddTitle_NullString_ReturnsFalseAndLeavesFileUntouched()
+    {
+        var fileInfo = CreateImage(MagickFormat.Jpeg);
+        var expected = await ReadAllBytesAsync(fileInfo);
+
+        var actual = await ExifWriter.AddTitle(fileInfo, null);
+
+        Assert.False(actual);
+        Assert.Equal(expected, await ReadAllBytesAsync(fileInfo));
+    }
+
+    [Fact]
+    public async Task AddComment_ValidString_WritesCommentToProfile()
+    {
+        var fileInfo = CreateImage(MagickFormat.Jpeg);
+        var comment = "Test Comment";
+
+        var actual = await ExifWriter.AddComment(fileInfo, comment);
+
+        Assert.True(actual);
+        var profile = ReadProfile(fileInfo);
+        Assert.NotNull(profile);
+        
+        var expectedBytes = Encoding.ASCII.GetBytes(comment);
+        Assert.Equal(expectedBytes, profile.GetValue(ExifTag.UserComment)?.Value);
+    }
+
+    [Fact]
+    public async Task AddComment_NullString_ReturnsFalseAndLeavesFileUntouched()
+    {
+        var fileInfo = CreateImage(MagickFormat.Jpeg);
+        var expected = await ReadAllBytesAsync(fileInfo);
+
+        var actual = await ExifWriter.AddComment(fileInfo, null);
+
+        Assert.False(actual);
+        Assert.Equal(expected, await ReadAllBytesAsync(fileInfo));
     }
 
     private FileInfo CreateImage(MagickFormat format, Action<MagickImage>? configure = null)
