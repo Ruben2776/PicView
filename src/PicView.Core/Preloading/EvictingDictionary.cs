@@ -81,7 +81,7 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
     /// If <paramref name="key"/> already exists, its value is updated and no eviction occurs
     /// (this method returns <see langword="false"/> and <paramref name="evictedValue"/> is set to default).
     /// </remarks>
-    public bool TryAdd(int key, TValue value, int totalCount, bool isReverse, [MaybeNullWhen(false)] out TValue evictedValue)
+    public bool TryAdd(int key, TValue value, int totalCount, bool isReverse, out TValue? evictedValue)
     {
         _lock.Enter(); // Lock acquired
         try
@@ -94,7 +94,7 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
                 return false;
             }
 
-            if (_dictionary.Count > _maxSize)
+            if (_dictionary.Count >= _maxSize)
             {
                 // Looping Eviction Logic: Find the key farthest away from the current index.
                 var keyToEvict = -1;
@@ -131,15 +131,20 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
 
                 if (keyToEvict < 0 || !_dictionary.TryGetValue(keyToEvict, out var value1))
                 {
+                    TValue removedValue;
                     if (isReverse)
                     {
-                        _dictionary.Remove(_dictionary.Keys.Max());
+                        var max = _dictionary.Keys.Max();
+                        removedValue = _dictionary[max];
+                        _dictionary.Remove(max);
                     }
                     else
                     {
-                        _dictionary.Remove(_dictionary.Keys.Min());
+                        var min = _dictionary.Keys.Min();
+                        removedValue = _dictionary[min];
+                        _dictionary.Remove(min);
                     }
-                    evictedValue = default;
+                    evictedValue = removedValue;
 #if DEBUG
                     DebugHelper.LogDebug(nameof(EvictingDictionary<>), nameof(TryAdd), $"Invalid parameter for key {keyToEvict}");
 #endif
@@ -153,12 +158,13 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
             }
             else
             {
+                _dictionary.Add(key, value);
                 evictedValue = default;
+                return false;
             }
 
             _dictionary.Add(key, value);
-
-            return !EqualityComparer<TValue>.Default.Equals(evictedValue, default);
+            return true;
         }
         finally
         {
