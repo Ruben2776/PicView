@@ -1,4 +1,3 @@
-using PicView.Core.Config;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
@@ -20,7 +19,7 @@ public class FileWatcherServiceTests : IDisposable
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
 
         // Ensure Settings are initialized for FileWatcherService usage
-        SettingsManager.SetDefaults();
+        SetDefaults();
 
         _testDirectory = Path.Combine(Path.GetTempPath(), "PicViewTests_" + Guid.NewGuid());
         Directory.CreateDirectory(_testDirectory);
@@ -149,6 +148,10 @@ public class FileWatcherServiceTests : IDisposable
     {
         public bool Resynchronized { get; private set; }
         public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files) => Resynchronized = true;
+        public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
 
         // Stub other methods
         public Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => Task.FromResult<ImageModel?>(null);

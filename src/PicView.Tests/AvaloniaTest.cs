@@ -6,9 +6,6 @@ namespace PicView.Tests;
 
 public class AvaloniaTest
 {
-    // MacOS-specific tests disabled due to MacOS project being excluded on Windows
-    // [assembly: AvaloniaTestApplication(typeof(AvaloniaTest))]
-
     [AvaloniaFact]
     public async Task TestPreloader()
     {

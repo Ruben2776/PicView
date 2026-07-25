@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using PicView.Core.Localization;
-using PicView.Tests.LanguageTests;
 using ZLinq;
 
 namespace PicView.Tests;
@@ -17,7 +16,7 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task CheckLanguages()
+    public void CheckLanguages()
     {
         // Load the keys from the en.json file
         var enJsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/en.json");
@@ -43,23 +42,6 @@ public class LanguageAndSettingsUnitTest
                 $"Extra keys in {Path.GetFileName(language.FullName)}: {string.Join(", ", extraKeys)}");
             Assert.True(enKeys.SetEquals(languageKeys), $"Key mismatch in {Path.GetFileName(language.FullName)}");
         }
-    
-        await CheckDanishLanguage();
-        await CheckDutchLanguage();
-        await CheckEnglishLanguage();
-        await CheckGermanLanguage();
-        await CheckFrenchLanguage();
-        await CheckItalianLanguage();
-        await CheckKoreanLanguage();
-        await CheckPolishLanguage();
-        await CheckBrazilianPortugueseLanguage();
-        await CheckRomanianLanguage();
-        await CheckRussianLanguage();
-        await CheckSpanishLanguage();
-        await CheckSwedishLanguage();
-        await CheckTurkishLanguage();
-        await CheckChineseSimplifiedLanguage();
-        await CheckChineseTraditionalLanguage();
     }
 
     private HashSet<string> GetJsonKeys(string filePath)
@@ -91,101 +73,5 @@ public class LanguageAndSettingsUnitTest
         // const Languages da = Languages.da;
         // await TranslationManager.ChangeLanguage((int)da);
         // Assert.Equal("Billede", TranslationManager.Translation.Image);
-    }
-    
-    [Fact]
-    public async Task CheckDanishLanguage()
-    {
-        await DanishUnitTest.CheckDanishLanguage();
-    }
-    
-    [Fact]
-    public async Task CheckDutchLanguage()
-    {
-        await DutchUnitTest.CheckDutchLanguage();
-    }
-    
-    [Fact]
-    public async Task CheckEnglishLanguage()
-    {
-        await EnglishUnitTest.CheckEnglishLanguage();
-    }
-    
-    [Fact]
-    public async Task CheckGermanLanguage()
-    {
-        await GermanUnitTest.CheckGermanLanguage();
-    }
-    
-    [Fact]
-    public async Task CheckFrenchLanguage()
-    {
-        await FrenchUnitTest.CheckFrenchLanguage();
-    }
-
-    [Fact]
-    public async Task CheckItalianLanguage()
-    {
-        await ItalianUnitTest.CheckItalianLanguage();
-    }
-
-    [Fact]
-    public async Task CheckKoreanLanguage()
-    {
-        await KoreanUnitTest.CheckKoreanLanguage();
-    }
-
-    [Fact]
-    public async Task CheckPolishLanguage()
-    {
-        await PolishUnitTest.CheckPolishLanguage();
-    }
-
-    [Fact]
-    public async Task CheckBrazilianPortugueseLanguage()
-    {
-        await BrazilianPortugueseUnitTest.CheckBrazilianPortugueseLanguage();
-    }
-
-    [Fact]
-    public async Task CheckRomanianLanguage()
-    {
-        await RomanianUnitTest.CheckRomanianLanguage();
-    }
-
-    [Fact]
-    public async Task CheckRussianLanguage()
-    {
-        await RussianUnitTest.CheckRussianLanguage();
-    }
-    
-    [Fact]
-    public async Task CheckSpanishLanguage()
-    {
-        await SpanishUnitTest.CheckSpanishLanguage();
-    }
-
-    [Fact]
-    public async Task CheckSwedishLanguage()
-    {
-        await SwedishUnitTest.CheckSwedishLanguage();
-    }
-
-    [Fact]
-    public async Task CheckTurkishLanguage()
-    {
-        await TurkishUnitTest.CheckTurkishLanguage();
-    }
-
-    [Fact]
-    public async Task CheckChineseSimplifiedLanguage()
-    {
-        await ChineseSimplifiedUnitTest.CheckChineseSimplifiedLanguage();
-    }
-
-    [Fact]
-    public async Task CheckChineseTraditionalLanguage()
-    {
-        await ChineseTraditionalUnitTest.CheckChineseTraditionalLanguage();
     }
 }

@@ -12,7 +12,7 @@ public class GalleryNavigationTests
     public GalleryNavigationTests()
     {
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
-        SettingsManager.SetDefaults();
+        SetDefaults();
         TranslationManager.Init();
     }
 
