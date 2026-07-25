@@ -4,7 +4,7 @@ using PicView.Core.Exif;
 
 namespace PicView.Tests.Exif;
 
-public class ExifReaderTests
+public class ExifReaderCommentTests
 {
     private const string UnicodeComment = "Unicode comment: 中文";
 

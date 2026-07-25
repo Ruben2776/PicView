@@ -1,7 +1,9 @@
 using ImageMagick;
+using PicView.Core.Exif;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Tests.Exif;
 
@@ -37,6 +39,62 @@ public class ExifViewModelTests
         {
             File.Delete(path);
         }
+    }
+
+    [Fact]
+    public async Task SetExifRatingCommand_ValidRating_WritesRatingAndUpdatesProperty()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"picview-exif-{Guid.NewGuid():N}.jpg");
+        try
+        {
+            await TranslationManager.LoadLanguage("en");
+            using (var image = new MagickImage(MagickColors.White, 1, 1))
+            {
+                image.Format = MagickFormat.Jpeg;
+                image.Write(path);
+            }
+
+            using var viewModel = new ExifViewModel();
+            var fileInfo = new FileInfo(path);
+            var rated = WaitForRating(viewModel, 4);
+
+            viewModel.SetExifRating4Command!.Execute(fileInfo);
+
+            Assert.Equal((uint)4, await rated);
+            using var ratedImage = new MagickImage(path);
+            Assert.Equal((ushort)4, ratedImage.GetExifProfile()?.GetValue(ExifTag.Rating)?.Value);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task SetExifRatingCommand_MissingFile_DoesNotUpdateProperty()
+    {
+        await TranslationManager.LoadLanguage("en");
+        using var viewModel = new ExifViewModel();
+        var fileInfo = new FileInfo(Path.Combine(Path.GetTempPath(), $"picview-missing-{Guid.NewGuid():N}.jpg"));
+        var rated = WaitForRating(viewModel, 4, TimeSpan.FromSeconds(2));
+
+        viewModel.SetExifRating4Command!.Execute(fileInfo);
+
+        await Assert.ThrowsAsync<TimeoutException>(async () => await rated);
+        Assert.Equal((uint)0, viewModel.ExifRating.Value);
+    }
+
+    private static Task<uint> WaitForRating(ExifViewModel viewModel, uint rating, TimeSpan? timeout = null)
+    {
+        var completion = new TaskCompletionSource<uint>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var subscription = viewModel.ExifRating.Where(value => value == rating)
+            .Subscribe(value => completion.TrySetResult(value));
+
+        return completion.Task.WaitAsync(timeout ?? TimeSpan.FromSeconds(10)).ContinueWith(task =>
+        {
+            subscription.Dispose();
+            return task;
+        }).Unwrap();
     }
 
     private static readonly byte[] BigEndianExif = Convert.FromHexString(

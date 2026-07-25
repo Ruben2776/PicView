@@ -33,10 +33,10 @@ public class ImageIteratorGetIterationsTests
         var result = IterationHelper.GetIterations(2, count, NavigateTo.Next, SkipAmount.One);
 
         // Assert
-        Xunit.Assert.Equal((0, 1, false), result);
+        Assert.Equal((0, 1, false), result);
     }
 
-    [Xunit.Fact]
+    [Fact]
     public void GetIterations_Previous_NoLooping_ClampsAtStart()
     {
         // Arrange
@@ -48,8 +48,8 @@ public class ImageIteratorGetIterationsTests
         var resultFirst = IterationHelper.GetIterations(0, count, NavigateTo.Previous, SkipAmount.One);
 
         // Assert
-        Xunit.Assert.Equal((1, 2, true), result);
-        Xunit.Assert.Equal((0, 1, true), resultFirst);
+        Assert.Equal((1, 2, true), result);
+        Assert.Equal((0, 1, true), resultFirst);
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class ImageIteratorGetIterationsTests
         var last = IterationHelper.GetIterations(2, count, NavigateTo.Last, SkipAmount.One);
 
         // Assert
-        Xunit.Assert.Equal((0, 1, true), first);
-        Xunit.Assert.Equal((2, 3, false), last);
+        Assert.Equal((0, 1, true), first);
+        Assert.Equal((2, 3, false), last);
     }
 }
