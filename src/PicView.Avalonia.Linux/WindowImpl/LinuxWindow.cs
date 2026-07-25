@@ -1,16 +1,128 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Linux.Views;
-using PicView.Avalonia.ViewModels;
+using PicView.Avalonia.Navigation;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Linux.WindowImpl;
 
 public static class LinuxWindow
 {
-    public static bool IsChangingWindowState { get; private set; }
-    
-    public static async Task ToggleFullscreen(LinuxMainWindow? window, MainViewModel? vm, bool saveSettings)
+public static async Task Fullscreen(MainWindow window, MainWindowViewModel vm, bool saveSettings = true)
+    {
+        window.IsChangingWindowState = true;
+
+        if (!Slideshow.IsRunning)
+        {
+            // Don't save the user setting when entering fullscreen from slideshow
+            Settings.WindowProperties.Fullscreen = true;
+        }
+
+        Settings.WindowProperties.Maximized = false;
+        vm.IsMaximized.Value = false;
+        vm.IsFullscreen.Value = true;
+        
+        vm.ShouldMaximizeBeShown.Value = true;
+        vm.ShouldRestoreBeShown.Value = true;
+        
+        vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
+        window.SizeToContent = SizeToContent.Manual;
+        if (window.WindowState != WindowState.FullScreen)
+        {
+            window.WindowState = WindowState.FullScreen;
+        }
+        
+        ToggleUIVisibility.HideInterface(vm);
+        
+        WindowResizing.SetSize(window, WindowResizeReason.Application);
+        Dispatcher.UIThread.Post(() => window.IsChangingWindowState = false, DispatcherPriority.SystemIdle);
+        
+        if (saveSettings)
+        {
+            await SaveSettingsAsync().ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// Maximizes the window
+    /// </summary>
+    public static async Task Maximize(MainWindow window, MainWindowViewModel vm, bool saveSettings = true)
+    {
+        window.IsChangingWindowState = true;
+        
+        Settings.WindowProperties.Maximized = true;
+        vm.IsMaximized.Value = true;
+        vm.IsFullscreen.Value = false;
+        
+        vm.ShouldMaximizeBeShown.Value = false;
+        vm.ShouldRestoreBeShown.Value = true;
+        
+        window.SizeToContent = SizeToContent.Manual;
+        vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
+        if (window.WindowState != WindowState.Maximized)
+        {
+            window.WindowState = WindowState.Maximized;
+        }
+        
+        WindowResizing.SetSize(window, WindowResizeReason.Application);
+        Dispatcher.UIThread.Post(() => window.IsChangingWindowState = false, DispatcherPriority.SystemIdle);
+        
+        if (saveSettings)
+        {
+            await SaveSettingsAsync().ConfigureAwait(false);
+        }
+    }
+
+    public static async Task Restore(MainWindow window, MainWindowViewModel vm, bool saveSettings = true)
+    {
+        window.IsChangingWindowState = true;
+        
+        var wasFullscreen = window.WindowState == WindowState.FullScreen || Settings.WindowProperties.Fullscreen;
+        
+        if (Settings.WindowProperties.AutoFit)
+        {
+            window.SizeToContent = SizeToContent.WidthAndHeight;
+        }
+        
+        // Update settings
+        Settings.WindowProperties.Maximized = false;
+        Settings.WindowProperties.Fullscreen = false;
+        
+        // Update UI state
+        vm.IsMaximized.Value = false;
+        vm.IsFullscreen.Value = false;
+        
+        vm.ShouldMaximizeBeShown.Value = true;
+        vm.ShouldRestoreBeShown.Value = false;
+
+        if (wasFullscreen)
+        {
+            ToggleUIVisibility.RestoreInterface(vm);
+        }
+        
+        window.WindowState = WindowState.Normal;
+        
+        WindowResizing.SetSize(window, WindowResizeReason.Application);
+        
+        Dispatcher.UIThread.Post(() =>
+        {
+            window.IsChangingWindowState = false;
+            if (Settings.WindowProperties.AutoFit)
+            {
+                window.SizeToContent = SizeToContent.WidthAndHeight;
+            }
+        }, DispatcherPriority.SystemIdle);
+        
+        if (saveSettings)
+        {
+            await SaveSettingsAsync().ConfigureAwait(false);
+        }
+    }
+
+    public static async Task ToggleFullscreen(MainWindow window, MainWindowViewModel vm, bool saveSettings = true)
     {
         if (Settings.WindowProperties.Fullscreen)
         {
@@ -20,129 +132,23 @@ public static class LinuxWindow
         {
             await Fullscreen(window, vm, saveSettings);
         }
-    }
-    
-    public static async Task ToggleMaximize(LinuxMainWindow? window, MainViewModel? vm, bool saveSettings = true)
-    {
-        if (window.WindowState == WindowState.Maximized || Settings.WindowProperties.Maximized)
+
+        if (saveSettings)
         {
-            await Restore(window, vm, saveSettings); 
+            await SaveSettingsAsync().ConfigureAwait(false);
+        }
+    }
+
+    public static async Task ToggleMaximize(MainWindow window, MainWindowViewModel vm, bool saveSettings = true)
+    {
+        if (Settings.WindowProperties.Maximized)
+        {
+            await Restore(window, vm, saveSettings);
         }
         else
         {
             await Maximize(window, vm, saveSettings);
         }
-    }
-
-    public static async Task Restore(LinuxMainWindow? window, MainViewModel? vm, bool saveSettings = true)
-    {
-        IsChangingWindowState = true;
-        
-        // Update settings
-        Settings.WindowProperties.Maximized = false;
-        Settings.WindowProperties.Fullscreen = false;
-
-        // Update UI state
-        vm.MainWindow.IsMaximized.Value = false;
-        vm.MainWindow.IsFullscreen.Value = false;
-
-        WindowFunctions.RestoreInterface(vm);
-
-        // Update window state
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            window.WindowState = WindowState.Normal;
-            
-            if (Settings.WindowProperties.AutoFit)
-            {
-                vm.MainWindow.SizeToContent.Value = SizeToContent.WidthAndHeight;
-                vm.MainWindow.CanResize.Value = false;
-                vm.GlobalSettings.IsAutoFit.Value = true;
-                window.SizeToContent = SizeToContent.WidthAndHeight; // Fixes sizeToContent not being applied
-            }
-            else
-            {
-                vm.MainWindow.SizeToContent.Value = SizeToContent.Manual;
-                vm.MainWindow.CanResize.Value = true;
-                vm.GlobalSettings.IsAutoFit.Value = false;
-            }
-        });
-        
-        await WindowResizing.SetSizeAsync(vm);
-        
-        if (Settings.WindowProperties.KeepCentered)
-        {
-            WindowFunctions.CenterWindowOnScreen();
-        }
-        else
-        {
-            WindowFunctions.InitializeWindowSizeAndPosition(window);
-        }
-        
-        Dispatcher.UIThread.Post(() => IsChangingWindowState = false, DispatcherPriority.SystemIdle);
-
-        if (saveSettings)
-        {
-            await SaveSettingsAsync().ConfigureAwait(false);
-        }
-    }
-
-    public static async Task Fullscreen(LinuxMainWindow? window, MainViewModel? vm, bool saveSettings = true)
-    {
-        // Need to set changing state to true, to prevent image resize subscription from firing
-        IsChangingWindowState = true;
-        
-        // Save window size, so that restoring it will return to the same size and position
-        WindowResizing.SaveSize(window);
-        
-        Settings.WindowProperties.Maximized = false;
-        Settings.WindowProperties.Fullscreen = true;
-        
-        vm.MainWindow.IsTopToolbarShown.Value = false;
-        vm.MainWindow.IsBottomToolbarShown.Value = false;
-        
-        vm.MainWindow.IsFullscreen.Value = true;
-        vm.MainWindow.IsMaximized.Value = false;
-        vm.MainWindow.CanResize.Value = true;
-        
-        window.WindowState = WindowState.FullScreen;
-        
-        await WindowResizing.SetSizeAsync(vm);
-        
-        // Reset changing state flag so subscription can fire again. Need to be delayed by dispatcher to not be misfired. 
-        Dispatcher.UIThread.Post(() => IsChangingWindowState = false, DispatcherPriority.SystemIdle);
-        
-        if (saveSettings)
-        {
-            await SaveSettingsAsync().ConfigureAwait(false);
-        }
-    }
-
-    public static async Task Maximize(LinuxMainWindow? window, MainViewModel? vm, bool saveSettings = true)
-    {
-        IsChangingWindowState = true;
-        
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            // Save window size, so that restoring it will return to the same size and position
-            WindowResizing.SaveSize(window);
-            
-            if (Settings.WindowProperties.AutoFit || window.SizeToContent == SizeToContent.WidthAndHeight)
-            {
-                vm.MainWindow.SizeToContent.Value = SizeToContent.Manual;
-            }
-
-            window.WindowState = WindowState.Maximized;
-            Settings.WindowProperties.Maximized = true;
-            WindowResizing.SetSize(vm);
-            WindowFunctions.CenterWindowOnScreen();
-        });
-
-        vm.MainWindow.IsMaximized.Value = true;
-        vm.MainWindow.IsFullscreen.Value = false;
-        vm.MainWindow.CanResize.Value = false;
-        
-        Dispatcher.UIThread.Post(() => IsChangingWindowState = false, DispatcherPriority.SystemIdle);
 
         if (saveSettings)
         {

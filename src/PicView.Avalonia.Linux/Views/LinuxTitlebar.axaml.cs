@@ -1,10 +1,9 @@
+using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.WindowBehavior;
+using PicView.Core.DebugTools;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using R3;
@@ -16,12 +15,18 @@ public partial class LinuxTitlebar : MainTitleBar
     public LinuxTitlebar()
     {
         InitializeComponent();
+        SharedDropDownMenuButton = DropDownMenuButton;
+        SharedSearchButton = SearchButton;
 
         Loaded += (_, _) =>
         {
             if (Settings.Theme.GlassTheme)
             {
                 ApplyGlassThemeStyles();
+            }
+            else if (!Settings.Theme.Dark)
+            {
+                ApplyLightThemeStyles();
             }
 
             InitializeEventHandlers();
@@ -42,65 +47,114 @@ public partial class LinuxTitlebar : MainTitleBar
         GlassThemeHelper.ApplyTransparentStyle(MenuButton);
         GlassThemeHelper.ApplyTransparentStyle(MainMenu);
 
-        var glassForeground = UIHelper.GetBrush("SecondaryTextColor");
-        EditableTitlebar.Foreground = glassForeground;
-        CloseButton.Foreground = glassForeground;
-        MinimizeButton.Foreground = glassForeground;
-        RestoreButton.Foreground = glassForeground;
-        DropDownMenuButton.Foreground = glassForeground;
-        MenuButton.Foreground = glassForeground;
+        SetSecondaryForeground();
     }
-    
+
+    private void SetSecondaryForeground()
+    {
+        var secondaryTextColor = UIHelper.GetBrush("SecondaryTextColor");
+        EditableTitlebar.Foreground = secondaryTextColor;
+        CloseButton.Foreground = secondaryTextColor;
+        MinimizeButton.Foreground = secondaryTextColor;
+        RestoreButton.Foreground = secondaryTextColor;
+        DropDownMenuButton.Foreground = secondaryTextColor;
+        MenuButton.Foreground = secondaryTextColor;
+    }
+
+    private void ApplyLightThemeStyles()
+    {
+        UIHelper.SwitchHoverBorderClass(MenuButton);
+        UIHelper.SwitchHoverBorderClass(SearchButton);
+        UIHelper.SwitchHoverBorderClass(DropDownMenuButton);
+        UIHelper.SwitchHoverBorderClass(CreateTabButton);
+    }
+
     private void InitializeEventHandlers()
     {
-        if (DataContext is not MainWindowViewModel vm)
+        if (DataContext is not MainWindowViewModel vm || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
         }
-        
-        PointerExited += (_, _) => { DragAndDropHelper.RemoveDragDropView(); };
+
         MainMenu.Closed += (_, _) => { CloseMenu(); };
-        
+
         Observable.EveryValueChanged(vm.TopTitlebarViewModel.IsMainMenuVisible, x => x.Value,
-                UIHelper2.GetFrameProvider)
+                mainWindow.FrameProvider)
+            .Skip(1)
             .Subscribe(isVisible =>
             {
                 if (isVisible)
                 {
                     // Overflow buttons if the window is too small
-                    if (Bounds.Width - SearchButton.Bounds.Width - DropDownMenuButton.Bounds.Width - CreateTabButton.Bounds.Width < SizeDefaults.WindowMinSize)
+                    if (Bounds.Width - SearchButton.Bounds.Width - CreateTabButton.Bounds.Width <
+                        SizeDefaults.MainTitleDropDownBtnBp)
                     {
-                        HideButtons(vm);
+                        OpenTruncatedMenu(vm);
                     }
                     else
                     {
-                        ShowButtons(vm);
+                        OpenRegularSizedMenu(vm);
                     }
-                    
-                    MainMenu.Open();
-                    FileMenuItem.Open();
                 }
                 else
                 {
-                    MainMenu.Close();
-                    ShowButtons(vm);
+                    ClosedMenu(vm);
                 }
-            });
+            }, DebugHelper.LogError(nameof(LinuxTitlebar), nameof(InitializeEventHandlers)))
+            .AddTo(mainWindow.Disposables);
     }
 
-    private void HideButtons(MainWindowViewModel vm)
+    private void OpenTruncatedMenu(MainWindowViewModel vm)
     {
+        OpenMenu();
         vm.TopTitlebarViewModel.IsBtnPanelVisible.Value = false;
-        SearchButton.IsVisible = false;
-        DropDownMenuButton.IsVisible = false;
+        LogoBorder.IsVisible = false;
         CreateTabButton.IsVisible = false;
+
+        const int menuItemsCount = 7;
+        vm.TopTitlebarViewModel.MaxItemWidth.Value = Bounds.Width / menuItemsCount;
+
+        var truncatedPadding = new Thickness(2, 0, 2, 0);
+        FileMenuItem.Padding = truncatedPadding;
+        EditMenuItem.Padding = truncatedPadding;
+        ViewMenuItem.Padding = truncatedPadding;
+        ImageMenuItem.Padding = truncatedPadding;
+        NavigateMenuItem.Padding = truncatedPadding;
+        SettingsMenuItem.Padding = truncatedPadding;
+        HelpMenuItem.Padding = truncatedPadding;
     }
-    
-    private void ShowButtons(MainWindowViewModel vm)
+
+    private void OpenRegularSizedMenu(MainWindowViewModel vm)
     {
+        OpenMenu();
         vm.TopTitlebarViewModel.IsBtnPanelVisible.Value = true;
-        SearchButton.IsVisible = true;
-        DropDownMenuButton.IsVisible = true;
+        LogoBorder.IsVisible = true;
+        vm.TopTitlebarViewModel.MaxItemWidth.Value = double.NaN;
+        CreateTabButton.IsVisible = false;
+
+        var regularPadding = new Thickness(8);
+        FileMenuItem.Padding = regularPadding;
+        EditMenuItem.Padding = regularPadding;
+        ViewMenuItem.Padding = regularPadding;
+        ImageMenuItem.Padding = regularPadding;
+        NavigateMenuItem.Padding = regularPadding;
+        SettingsMenuItem.Padding = regularPadding;
+        HelpMenuItem.Padding = regularPadding;
+    }
+
+    private void OpenMenu()
+    {
+        MainMenu.Open();
+        FileMenuItem.Open();
+    }
+
+    private void ClosedMenu(MainWindowViewModel vm)
+    {
+        MainMenu.Close();
+        vm.TopTitlebarViewModel.IsBtnPanelVisible.Value = true;
+        LogoBorder.IsVisible = true;
+        vm.TopTitlebarViewModel.MaxItemWidth.Value = double.NaN;
+        DropDownMenuButton.IsVisible = Bounds.Width > SizeDefaults.MainTitleDropDownBtnBp;
         CreateTabButton.IsVisible = true;
     }
 

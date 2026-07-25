@@ -15,5 +15,4 @@ public partial class PrintPreviewWindow : PrintWindow
         GenericWindowHelper.GenericWindowInitialize(this, StringExtensions.CombineWithAppName(TranslationManager.Translation.Print));
         SetWindowSize();
     }
-
 }

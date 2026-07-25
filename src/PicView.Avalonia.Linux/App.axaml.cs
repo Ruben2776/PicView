@@ -12,8 +12,6 @@ using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 
-using PicView.Avalonia.Linux.WindowImpl;
-
 namespace PicView.Avalonia.Linux;
 
 

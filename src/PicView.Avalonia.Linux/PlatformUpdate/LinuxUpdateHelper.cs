@@ -1,4 +1,3 @@
-using PicView.Avalonia.Update;
 using PicView.Core.Update;
 
 namespace PicView.Avalonia.Linux.PlatformUpdate;

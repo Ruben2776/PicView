@@ -1,46 +1,92 @@
 <Window
-    CanResize="True"
-    ExtendClientAreaChromeHints="SystemChrome"
-    ExtendClientAreaTitleBarHeightHint="-1"
-    MinHeight="200"
-    SizeToContent="Width"
-    Title="Loading..."
     x:Class="PicView.Avalonia.Linux.Views.KeybindingsWindow"
-    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
-    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.DataContext>
-        <viewModels:MainViewModel />
-    </Design.DataContext>
+    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    Title="KeybindingsWindow"
+    MinHeight="200"
+    x:DataType="viewModels:CoreViewModel"
+    CanResize="True"
+    SizeToContent="Width">
 
     <Border
+        x:Name="ParentBorder"
         BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
-        CornerRadius="8"
         PointerPressed="MoveWindow">
         <Panel>
 
-            <Panel
-                Background="{DynamicResource WindowBackgroundColor}"
-                Height="{StaticResource TopBorderHeight}"
+            <DockPanel
+                Height="28"
+                Margin="0,-1,-1,0"
                 VerticalAlignment="Top"
-                x:Name="WindowBorder">
+                LastChildFill="True">
+
+                <Border
+                    x:Name="TopWindowBorder"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    DockPanel.Dock="Left">
+                    <Image
+                        Width="20"
+                        Height="25"
+                        Margin="7,1,7,1"
+                        Source="{StaticResource LogoImage}" />
+                </Border>
+
+                <customControls:IconButton
+                    x:Name="CloseButton"
+                    Width="30"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    Classes="hover"
+                    Click="Close"
+                    ClickMode="Release"
+                    Data="{StaticResource CloseGeometry}"
+                    DockPanel.Dock="Right"
+                    Foreground="{DynamicResource MainTextColor}"
+                    IconHeight="10"
+                    IconWidth="10"
+                    IsRepeatEnabled="False"
+                    ToolTip.Tip="{CompiledBinding Translation.Close.Value,
+                                                  Mode=OneWay}"
+                    WindowDecorationProperties.ElementRole="CloseButton" />
+
+                <customControls:IconButton
+                    x:Name="MinimizeButton"
+                    Width="30"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="1,0,1,0"
+                    Classes="hover"
+                    Click="Minimize"
+                    ClickMode="Release"
+                    Data="{StaticResource MinimizeGeometry}"
+                    DockPanel.Dock="Right"
+                    Foreground="{DynamicResource MainTextColor}"
+                    IconHeight="12"
+                    IconWidth="12"
+                    IsRepeatEnabled="False" />
 
                 <TextBlock
+                    x:Name="TitleText"
+                    Padding="30,0,0,0"
+                    Background="{DynamicResource WindowSecondaryBackgroundColor}"
                     Classes="txt"
                     Foreground="{DynamicResource MainTextColor}"
+                    LineHeight="28"
                     Text="{CompiledBinding Translation.ApplicationShortcuts.Value,
                                            Mode=OneWay}"
                     TextAlignment="Center" />
-            </Panel>
+            </DockPanel>
 
             <Border
+                Margin="0,28,0,0"
                 Background="{DynamicResource WindowBackgroundColor}"
-                Focusable="True"
-                Margin="0,28,0,0">
-                <main:KeybindingsView Padding="0,2,0,10" x:Name="XKeybindingsView" />
+                Focusable="True">
+                <main:KeybindingsView x:Name="KeybindingsView" Padding="0,2,0,10" />
             </Border>
         </Panel>
     </Border>

@@ -69,6 +69,10 @@
     <ProjectReference Include="..\PicView.Core\PicView.Core.csproj" />
     <ProjectReference Include="..\PicView.Core.Linux\PicView.Core.Linux.csproj" />
   </ItemGroup>
+    
+  <ItemGroup>
+      <PackageReference Include="Avalonia.Wayland" Version="12.1.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="App.axaml.cs">

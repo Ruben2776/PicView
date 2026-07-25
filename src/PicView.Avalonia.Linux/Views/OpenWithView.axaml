@@ -1,24 +1,16 @@
 <Window
     CanResize="False"
-    ExtendClientAreaChromeHints="SystemChrome"
     ExtendClientAreaTitleBarHeightHint="-1"
+    ExtendClientAreaToDecorationsHint="True"
     SizeToContent="WidthAndHeight"
-    SystemDecorations="BorderOnly"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
+    WindowDecorations="BorderOnly"
     x:Class="PicView.Avalonia.Linux.Views.OpenWithView"
-    x:DataType="viewModels:MainViewModel"
+    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
-    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
+    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.DataContext>
-        <viewModels:MainViewModel />
-    </Design.DataContext>
     <Panel
         Background="#4D000000"
         Height="400"
@@ -30,8 +22,6 @@
             FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             FontSize="13"
             FontWeight="Medium"
-            Height="{CompiledBinding MainWindow.TitlebarHeight.Value,
-                                     Mode=OneWay}"
             Padding="7"
             Text="{CompiledBinding Translation.OpenWith.Value,
                                    Mode=OneWay}"
@@ -41,9 +31,8 @@
             <StackPanel Margin="5,15,5,5" x:Name="ParentPanel" />
         </customControls:AutoScrollViewer>
         <Button
+            Background="Transparent"
             Classes=" altHover"
-            Height="{CompiledBinding MainWindow.TitlebarHeight.Value,
-                                     Mode=OneWay}"
             Padding="7"
             VerticalAlignment="Bottom"
             x:Name="CancelButton">

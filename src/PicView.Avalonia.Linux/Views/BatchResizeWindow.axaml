@@ -1,36 +1,94 @@
 <Window
-    BorderThickness="1"
-    ExtendClientAreaChromeHints="SystemChrome"
-    ExtendClientAreaTitleBarHeightHint="-1"
-    MinHeight="500"
-    MinWidth="500"
     x:Class="PicView.Avalonia.Linux.Views.BatchResizeWindow"
-    x:DataType="viewModels:MainViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
-    xmlns:viewModels="clr-namespace:PicView.Avalonia.ViewModels;assembly=PicView.Avalonia"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Design.DataContext>
-        <viewModels:MainViewModel />
-    </Design.DataContext>
+    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    x:DataType="viewModels:CoreViewModel">
+
     <Border
-        BorderBrush="{DynamicResource MainBorderColor}"
+        x:Name="ParentBorder"
+        Background="Transparent"
+        BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
-        CornerRadius="8">
+        PointerPressed="MoveWindow">
         <DockPanel LastChildFill="True">
+
             <DockPanel
-                Background="{DynamicResource WindowBackgroundColor}"
+                Height="{StaticResource TopBorderHeight}"
+                Margin="0,-1,-1,0"
                 DockPanel.Dock="Top"
-                Height="28"
-                PointerPressed="MoveWindow"
-                VerticalAlignment="Top">
+                LastChildFill="True">
+
+                <Border
+                    x:Name="IconBorder"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="0,0,1,0"
+                    DockPanel.Dock="Left">
+                    <Image
+                        Width="20"
+                        Height="25"
+                        Margin="7,1,7,1"
+                        Source="{StaticResource LogoImage}" />
+                </Border>
+
+                <customControls:IconButton
+                    x:Name="CloseButton"
+                    Width="30"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderThickness="0"
+                    Classes="hover"
+                    Click="Close"
+                    ClickMode="Release"
+                    Data="{StaticResource CloseGeometry}"
+                    DockPanel.Dock="Right"
+                    Foreground="{DynamicResource MainTextColor}"
+                    IconHeight="10"
+                    IconWidth="10"
+                    IsRepeatEnabled="False"
+                    WindowDecorationProperties.ElementRole="CloseButton" />
+
+                <customControls:IconButton
+                    x:Name="MinimizeButton"
+                    Width="30"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderThickness="1,0,1,0"
+                    Classes="hover"
+                    Click="Minimize"
+                    Data="{StaticResource MinimizeGeometry}"
+                    DockPanel.Dock="Right"
+                    Foreground="{DynamicResource MainTextColor}"
+                    IconHeight="12"
+                    IconWidth="12"
+                    IsRepeatEnabled="False" />
+
                 <TextBlock
+                    x:Name="TitleText"
+                    Height="{StaticResource TopBorderHeight}"
+                    Padding="2,0,2,0"
+                    Background="{DynamicResource WindowSecondaryBackgroundColor}"
                     Classes="txt"
-                    Text="{CompiledBinding Translation.ResizeImage.Value,
+                    Foreground="{DynamicResource MainTextColor}"
+                    LineHeight="{StaticResource TopBorderHeight}"
+                    Text="{CompiledBinding Translation.BatchResize.Value,
                                            Mode=OneWay}"
                     TextAlignment="Center" />
             </DockPanel>
-            <main:BatchResizeView Background="{DynamicResource NoisyTexture}" />
+
+            <Rectangle
+                x:Name="BorderRectangle"
+                Height="1"
+                DockPanel.Dock="Top"
+                Fill="{DynamicResource MainBorderColor}" />
+
+
+            <main:BatchResizeView
+                x:Name="ResizeView"
+                Background="{DynamicResource NoisyTexture}"
+                Focusable="True" />
         </DockPanel>
     </Border>
 </Window>

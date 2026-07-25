@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Linux.PlatformUpdate;
 using PicView.Avalonia.Linux.Views;
@@ -11,6 +12,7 @@ namespace PicView.Avalonia.Linux.WindowImpl;
 
 public class LinuxWindowProvider : IWindowProvider
 {
+    public MainWindow CreateMainWindow() => new LinuxMainWindow();
     public Window CreateAboutWindow() => new AboutWindow();
 
     public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => new BatchResizeWindow(config);

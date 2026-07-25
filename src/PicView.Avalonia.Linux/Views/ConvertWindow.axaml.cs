@@ -1,23 +1,17 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
+using PicView.Core.Extensions;
 using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Linux.Views;
 
-public partial class ConvertWindow : Window
+public partial class ConvertWindow : GenericWindow
 {
     public ConvertWindow()
     {
         InitializeComponent();
-        GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.ConvertTo + " - PicView");
-    }
-    
-    private void MoveWindow(object? sender, PointerPressedEventArgs e)
-    {
-        if (VisualRoot is null) { return; }
-
-        var hostWindow = (Window)VisualRoot;
-        hostWindow?.BeginMoveDrag(e);
+        GenericWindowHelper.GenericWindowInitialize(this, StringExtensions.CombineWithAppName(TranslationManager.Translation.ConvertTo));
     }
 }

@@ -1,11 +1,10 @@
 <customControls:MainWindow
-    MinHeight="{CompiledBinding WindowMinHeight.Value}"
-    MinWidth="{CompiledBinding WindowMinWidth.Value}"
-    SystemDecorations="BorderOnly"
-    Theme="{StaticResource SimpleWindow}"
+    MaxHeight="{CompiledBinding WindowMaxHeight.Value}"
+    MaxWidth="{CompiledBinding WindowMaxWidth.Value}"
+    MinHeight="{CompiledBinding WindowMinHeight}"
+    MinWidth="{CompiledBinding WindowMinWidth}"
     Title="{CompiledBinding WindowTabs.ActiveTab.Value.WindowTitle.Value,
                             FallbackValue=''}"
-    TransparencyLevelHint="Transparent"
     x:Class="PicView.Avalonia.Linux.Views.LinuxMainWindow"
     x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
@@ -15,15 +14,11 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:views="clr-namespace:PicView.Avalonia.Linux.Views"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Border
-        Background="{CompiledBinding ImageBackground.Value,
-                                     Mode=OneWay}"
-        BorderBrush="{DynamicResource WindowBorderColor}"
-        BorderThickness="1">
+    <Border BorderBrush="{DynamicResource WindowBorderColor}" BorderThickness="1">
         <DockPanel LastChildFill="True">
             <views:LinuxTitlebar DockPanel.Dock="Top" x:Name="Titlebar" />
-            <uc:BottomBar2 DockPanel.Dock="Bottom" x:Name="BottomBar" />
-            <main:MainView3 x:Name="MainView" />
+            <uc:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />
+            <main:MainView x:Name="MainView" />
         </DockPanel>
     </Border>
 </customControls:MainWindow>

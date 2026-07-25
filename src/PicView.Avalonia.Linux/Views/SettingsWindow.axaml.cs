@@ -5,9 +5,7 @@ using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
-using PicView.Core.Extensions;
 using PicView.Core.ViewModels;
 using PicView.Core.Localization;
 using R3;
@@ -16,13 +14,11 @@ namespace PicView.Avalonia.Linux.Views;
 
 public partial class SettingsWindow : GenericWindow
 {
-    private readonly SettingsWindowConfig _config;
-    private readonly IDisposable? _disposable;
     
     public SettingsWindow(SettingsWindowConfig config)
     {
-        _config = config;
         InitializeComponent();
+        GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.Settings, false, config.WindowProperties);
         if (Settings.Theme.GlassTheme)
         {
             SettingsView.Background = Brushes.Transparent;
@@ -93,27 +89,13 @@ public partial class SettingsWindow : GenericWindow
 
         Loaded += delegate
         {
-            Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.Settings);
             SettingsView.Focus();
             if (DataContext is not CoreViewModel core)
             {
                 return;
             }
             
-            core.SettingsViewModel.RestoreLastTab(_config.WindowProperties.LastTab);
-            if (_config.WindowProperties.Maximized)
-            {
-                WindowState = WindowState.Maximized;
-            }
-            else
-            {
-                var left = _config.WindowProperties.Left;
-                var top = _config.WindowProperties.Top;
-                if (left.HasValue && top.HasValue)
-                {
-                    Position = new PixelPoint(left.Value, top.Value);
-                }
-            }
+            core.SettingsViewModel.RestoreLastTab(config.WindowProperties.LastTab);
 
             GoForwardButton.Command = core.SettingsViewModel?.GoForwardCommand;
             GoBackButton.Command = core.SettingsViewModel?.GoBackCommand;
@@ -133,24 +115,6 @@ public partial class SettingsWindow : GenericWindow
                     break;
             }
         };
-
-        Closing += async delegate
-        {
-            Hide();
-            if (DataContext is CoreViewModel vm)
-            {
-                _config.WindowProperties.LastTab = vm.SettingsViewModel.GetLastTabId();
-            }
-            await _config.SaveAsync();
-            await SaveSettingsAsync();
-            _disposable?.Dispose();
-        };
-
-        _disposable = ClientSizeProperty.Changed.ToObservable()
-            .ObserveOn(UIHelper.GetFrameProvider)
-            .Subscribe(UpdateWindowSize);
-
-        InitializeFileAssociationManager();
     }
 
     private void FocusFilterBox()
@@ -162,22 +126,7 @@ public partial class SettingsWindow : GenericWindow
             filterBox?.Focus();
         }
     }
-    
-    private void UpdateWindowSizeAndPosition(object? sender, PointerReleasedEventArgs e)
-    {
-        _config.WindowProperties.Left = Position.X;
-        _config.WindowProperties.Top = Position.Y;
 
-        _config.WindowProperties.Width = Bounds.Width;
-        _config.WindowProperties.Height = Bounds.Height;
-    }
-    
-    private void UpdateWindowSize(AvaloniaPropertyChangedEventArgs<Size> size)
-        => WindowFunctions.SetWindowSize(this, size, _config.WindowProperties);
-
-    private static void InitializeFileAssociationManager()
-    {
-    }
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {

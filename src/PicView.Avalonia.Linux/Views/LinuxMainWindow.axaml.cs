@@ -6,9 +6,8 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Linux.WindowImpl;
 using WindowInitializer = PicView.Avalonia.Services.WindowInitializer;
 using PicView.Avalonia.StartUp;
-using PicView.Avalonia.UI;
-using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.DebugTools;
 using PicView.Core.IPlatform;
 using PicView.Core.ViewModels;
 using R3;
@@ -20,7 +19,6 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
 {
     private readonly AvaloniaRenderingFrameProvider? _frameProvider;
     private static WindowInitializer? _windowInitializer;
-    public readonly CompositeDisposable Disposables = new();
 
     public LinuxMainWindow()
     {
@@ -33,12 +31,12 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
         
         // initialize RenderingFrameProvider
         _frameProvider = new AvaloniaRenderingFrameProvider(GetTopLevel(this)!);
-        UIHelper.SetFrameProvider(_frameProvider);
 
         InitializeComponent();
         
         SharedBottomBar = BottomBar;
         SharedTitleBar = Titlebar;
+        SharedMainView = MainView;
         UIHelper.Initialize(this);
         LoadedInitialization();
     }
@@ -52,12 +50,6 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
             {
                 return;
             }
-            ScalingChanged += (_, _) =>
-            {
-                ScreenHelper.UpdateScreenSize(this);
-                //WindowResizing.SetSize(windowViewModel);
-            };
-            PointerExited += (_, _) => { DragAndDropHelper.RemoveDragDropView(); };
 
             Observable.EveryValueChanged(this, x => x.WindowState, _frameProvider)
                 .SubscribeAwait(async (state, _) =>
@@ -69,26 +61,21 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
                         {
                              await Fullscreen();
                         }
-
                         break;
                     case WindowState.Maximized:
                         if (!Settings.WindowProperties.Maximized)
                         {
                             await Maximize();
                         }
-
                         break;
                     case WindowState.Normal:
                         if (Settings.WindowProperties.Fullscreen || Settings.WindowProperties.Maximized)
                         {
                             await Restore();
                         }
-
                         break;
                 }
-            });
-
-            UIHelper2.AddDropDownMenu();
+            }, DebugHelper.LogError(nameof(LinuxMainWindow), nameof(WindowState)));
 
             // Close tabMenu when clicking outside of it
             PointerPressed += (_, _) =>
@@ -98,24 +85,13 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
                     Titlebar.EditableTitlebar.CloseTitlebar();
                 }
 
-                if (!UIHelper2.GetDropDownMenu.IsPointerOver)
+                if (!UIHelper.GetDropDownMenu?.IsPointerOver ?? false)
                 {
                     windowViewModel.TopTitlebarViewModel.CloseDropDownMenu();
                 }
             };
-            UIHelper2.GetMainTabControl.TabDetached += MainTabControlOnTabDetached;
-            Activated += OnActivated;
+            UIHelper.GetMainTabControl?.TabDetached += MainTabControlOnTabDetached;
         };
-    }
-
-    private void OnActivated(object? sender, EventArgs e)
-    {
-        if (Application.Current.DataContext is not CoreViewModel core || Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        core.MainWindows.ActiveWindow.Value = DataContext as MainWindowViewModel;
-        desktop.MainWindow = this;
     }
 
     private void MainTabControlOnTabDetached(object? sender, TabDetachEventArgs e)
@@ -206,7 +182,7 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
                 newVm = newWindow.DataContext as MainWindowViewModel;
                 core.MainWindows.MainWindows.Add(newVm);
                 core.MainWindows.ActiveWindow.Value = newVm;
-                StartUpHelper.DetachedWindowStartup(core, desktop, newWindow);
+                WindowFunctions.DetachedWindowStartup(core, desktop, newWindow);
 
                 // Fix null DataContext
                 if (tab.CurrentView.CurrentValue is Control control)
