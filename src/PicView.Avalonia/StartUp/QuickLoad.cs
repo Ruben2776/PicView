@@ -75,7 +75,9 @@ public static class QuickLoad
         
         if (source.IsArchive())
         {
+            core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = true;
             await LoadArchiveFileAsync(mainWindow, core, fileInfo).ConfigureAwait(false);
+            core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = false;
         }
         else
         {
