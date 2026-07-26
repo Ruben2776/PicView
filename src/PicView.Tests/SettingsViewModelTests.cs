@@ -8,13 +8,11 @@ namespace PicView.Tests;
 
 public class SettingsViewModelTests
 {
-    private readonly ManualFrameProvider _frameProvider;
-
     public SettingsViewModelTests()
     {
-        _frameProvider = new ManualFrameProvider();
-        ObservableSystem.DefaultFrameProvider = _frameProvider;
-        SettingsManager.SetDefaults();
+        var frameProvider = new ManualFrameProvider();
+        ObservableSystem.DefaultFrameProvider = frameProvider;
+        SetDefaults();
         TranslationManager.Init();
     }
 
@@ -68,25 +66,13 @@ public class SettingsViewModelTests
     
     private class ManualFrameProvider : FrameProvider
     {
-        private readonly List<IFrameRunnerWorkItem> _items = new();
+        private readonly List<IFrameRunnerWorkItem> _items = [];
 
         public override long GetFrameCount() => 0;
 
         public override void Register(IFrameRunnerWorkItem callback)
         {
             _items.Add(callback);
-        }
-
-        public void Tick()
-        {
-            for (int i = _items.Count - 1; i >= 0; i--)
-            {
-                var item = _items[i];
-                if (!item.MoveNext(0))
-                {
-                    _items.RemoveAt(i);
-                }
-            }
         }
     }
 }
