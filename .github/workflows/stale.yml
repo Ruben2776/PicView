@@ -9,6 +9,6 @@ jobs:
     steps:
       - uses: actions/stale@v10
         with:
-          stale-issue-message: 'This issue is stale because it has been open 90 days with no activity. Remove stale label or comment or this will be closed in 30 days.'
-          days-before-stale: 90
+          stale-issue-message: 'This issue is stale because it has been open 120 days with no activity. Remove stale label or comment or this will be closed in 30 days.'
+          days-before-stale: 120
           days-before-close: 30
