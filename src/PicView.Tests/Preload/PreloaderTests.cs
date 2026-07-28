@@ -66,10 +66,10 @@ public class PreloaderTests
             return ValueTask.FromResult(new ImageModel { FileInfo = f });
         }, cache);
 
-        var list = new List<FileInfo> { new FileInfo("test1.jpg"), new FileInfo("test2.jpg") };
+        var list = new List<FileInfo> { new("test1.jpg"), new("test2.jpg") };
 
         // Act
-        var result = await preloader.AddAsync(1, 0, list);
+        var result = await preloader.AddAsync(1, 0, list, ct: TestContext.Current.CancellationToken);
 
         // Assert
         Assert.NotNull(result);
@@ -90,14 +90,14 @@ public class PreloaderTests
             return ValueTask.FromResult(new ImageModel { FileInfo = f });
         }, cache);
 
-        var list = new List<FileInfo> { new FileInfo("test1.jpg") };
+        var list = new List<FileInfo> { new("test1.jpg") };
         var fileInfo = list[0];
         
         var preloadValue = new PreLoadValue(new ImageModel { FileInfo = fileInfo });
         cache.Add(1, 0, preloadValue, 1, false);
 
         // Act
-        var result = await preloader.AddAsync(1, 0, list);
+        var result = await preloader.AddAsync(1, 0, list, ct: TestContext.Current.CancellationToken);
 
         // Assert
         Assert.NotNull(result);
@@ -131,7 +131,7 @@ public class PreloaderTests
         preloader.Preload(1, 2, false, list, TestContext.Current.CancellationToken);
 
         // Wait to allow background tasks to complete
-        await Task.Delay(1000, TestContext.Current.CancellationToken);
+        await Task.Delay(250, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(Settings.Navigation.NegativeIterations + Settings.Navigation.PositiveIterations, loadCount);
