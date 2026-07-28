@@ -270,7 +270,6 @@ public static class QuickLoad
             core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
         }, DispatcherPriority.Send);
         TabNavigationInitializer.Initialize(core, source, mainWindow);
-        core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = true;
         tab.SetLoading();
 
         var isGalleryEnabled = CheckIfGalleryIsNeeded(core);
@@ -281,7 +280,6 @@ public static class QuickLoad
             return;
         }
         ShowHoverBarIfNeeded(core);
-        core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = false;
         if (isGalleryEnabled)
         {
             await LoadGallery(core).ConfigureAwait(false);
