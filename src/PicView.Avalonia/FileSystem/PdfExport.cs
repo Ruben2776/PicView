@@ -7,6 +7,7 @@ using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.Printing;
 using PicView.Core.Config;
+using PicView.Core.Extensions;
 using PicView.Core.Localization;
 using PicView.Core.Printing;
 using PicView.Core.ViewModels;
@@ -75,7 +76,7 @@ public static class PdfExport
         }
         var options = new FilePickerSaveOptions
         {
-            Title = TranslationManager.Translation.SaveAs + " - PicView",
+            Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.SaveAs),
             SuggestedFileName = outputFilename,
             FileTypeChoices =
             [
@@ -93,7 +94,7 @@ public static class PdfExport
 
         using var pngStream = new MemoryStream();
         // Avalonia's Bitmap.Save writes PNG by default (no format parameter).
-        bitmap.Save(pngStream);
+        bitmap.Save(pngStream, PngBitmapEncoderOptions.Default);
         pngStream.Position = 0;
 
         // Use MagickImage (or MagickImageCollection for multi-page)

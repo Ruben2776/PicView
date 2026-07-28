@@ -56,8 +56,7 @@ public class PrintPreviewViewModel
     public object? GrayCache { get; set; }
 
     #endregion
-
-
+    
     #region Commands
 
     public ReactiveCommand<Unit> PrintCommand { get; } = new();
