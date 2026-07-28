@@ -25,8 +25,20 @@ public class TiffNavigationTests : IDisposable
 
         SetDefaults();
         TranslationManager.Init();
+        Settings.Navigation.IsFileHistoryEnabled = false;
 
-        // TODO: Create tiff tests
+        _files =
+        [
+            new FileInfo("file0.jpg"),
+            new FileInfo("file1.tiff"),
+            new FileInfo("file2.png")
+        ];
+
+        _cache = new MockImageCache();
+        _mockThumbnailCache = new MockThumbnailCache();
+        _tab = new TabViewModel(_ => { });
+        _iterator = new ImageIterator(_cache, _mockThumbnailCache, new MockThumbnailLoader(), _tab);
+        _iterator.Initialize(_files);
     }
 
     [Fact]
@@ -38,9 +50,10 @@ public class TiffNavigationTests : IDisposable
         // Mock the TIFF model for Index 1
         var tiffModel = CreateTiffModel(_files[1], 3); // 3 pages
         _cache.SetModel(1, tiffModel);
+        _tab.Model = new ImageModel();
 
         // Act: Navigate Next (0 -> 1)
-        await _iterator.IterateToIndexAsync(1, new CancellationTokenSource());
+        await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource());
 
         // Assert
         Assert.Equal(1, _iterator.CurrentIndex);
@@ -60,7 +73,7 @@ public class TiffNavigationTests : IDisposable
         _cache.SetModel(1, tiffModel);
 
         // Act: Navigate Prev (2 -> 1)
-        await _iterator.IterateToIndexAsync(1, new CancellationTokenSource());
+        await _iterator.NavigateAsync(NavigateTo.Previous, SkipAmount.One, new CancellationTokenSource());
 
         // Assert
         Assert.Equal(1, _iterator.CurrentIndex);
@@ -80,7 +93,7 @@ public class TiffNavigationTests : IDisposable
         _cache.SetModel(1, tiffModel); // Cache should return same model
 
         // Act: Navigate Next (Target would be 2 normally)
-        await _iterator.IterateToIndexAsync(2, new CancellationTokenSource());
+        await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource());
 
         // Assert
         Assert.Equal(1, _iterator.CurrentIndex); // Should stay on 1
@@ -101,7 +114,7 @@ public class TiffNavigationTests : IDisposable
         _cache.SetModel(2, nextModel);
 
         // Act: Navigate Next (Target 2)
-        await _iterator.IterateToIndexAsync(2, new CancellationTokenSource());
+        await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource());
 
         // Assert
         Assert.Equal(2, _iterator.CurrentIndex); // Moved to 2
@@ -120,7 +133,7 @@ public class TiffNavigationTests : IDisposable
         _cache.SetModel(1, tiffModel);
 
         // Act: Navigate Prev (Target 0)
-        await _iterator.IterateToIndexAsync(0, new CancellationTokenSource());
+        await _iterator.NavigateAsync(NavigateTo.Previous, SkipAmount.One, new CancellationTokenSource());
 
         // Assert
         Assert.Equal(1, _iterator.CurrentIndex); // Stay on 1
@@ -141,7 +154,7 @@ public class TiffNavigationTests : IDisposable
         _cache.SetModel(0, prevModel);
 
         // Act: Navigate Prev (Target 0)
-        await _iterator.IterateToIndexAsync(0, new CancellationTokenSource());
+        await _iterator.NavigateAsync(NavigateTo.Previous, SkipAmount.One, new CancellationTokenSource());
 
         // Assert
         Assert.Equal(0, _iterator.CurrentIndex); // Moved to 0
@@ -169,7 +182,7 @@ public class TiffNavigationTests : IDisposable
 
     public void Dispose()
     {
-        _iterator.Dispose();
+        
     }
 
     // Mocks
@@ -180,22 +193,17 @@ public class TiffNavigationTests : IDisposable
 
         public void SetModel(int index, ImageModel model) => _models[index] = model;
 
-        public Task<ImageModel?> LoadAsync(string ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
+        public Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
         {
             if (_models.TryGetValue(index, out var model))
                 return Task.FromResult<ImageModel?>(model);
             return Task.FromResult<ImageModel?>(new ImageModel { FileInfo = list[index] });
         }
 
-        public Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool TryGet(FileInfo f, out PreLoadValue? value) { value = null; return false; }
         public bool TryGet(uint ownerId, int index, out PreLoadValue? value)
         {
-            throw new NotImplementedException();
+            value = null; return false;
         }
 
         public bool TryGet(string ownerId, int index, out PreLoadValue? value) { value = null; return false; }
@@ -219,7 +227,6 @@ public class TiffNavigationTests : IDisposable
 
         public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token)
         {
-            throw new NotImplementedException();
         }
 
         public void RemoveOwner(uint ownerId)
@@ -250,7 +257,7 @@ public class TiffNavigationTests : IDisposable
 
         public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            return ValueTask.FromResult(true);
         }
 
         public void TryRemove(string ownerId, int index) { }

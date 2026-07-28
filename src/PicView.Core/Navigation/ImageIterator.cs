@@ -26,6 +26,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         CurrentIndex = initialIndex;
         UpdateNavigationProperties();
     }
+    
     #region Core Navigation Logic
     
     public void UpdateNavigationProperties()
@@ -78,7 +79,8 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         {
             return;
         }
-
+        
+        
         // Handle internal TIFF navigation
         if (_tab.Model?.TiffNavigation is not null && ShouldNavigateTiffEntry(_tab.Model, IsReversed))
         {
@@ -345,6 +347,12 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
     private void UpdateModel(ImageModel newModel)
     {
+        if (newModel.TiffNavigation is not null)
+        {
+            newModel.TiffNavigation.CurrentPage = IsReversed ? newModel.TiffNavigation.PageCount - 1 : 0;
+            UpdateImageFromPage(newModel);
+        }
+
         _tab.Image.Value = newModel.Image;
         _tab.FileInfo.Value = newModel.FileInfo;
         _tab.Model = newModel;
