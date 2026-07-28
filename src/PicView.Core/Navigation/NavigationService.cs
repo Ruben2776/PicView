@@ -445,8 +445,6 @@ public class NavigationService(
         return true;
     }
 
-    public bool CanNavigate(TabViewModel tab) => tab?.ImageIterator?.Files?.Count > 0;
-
     public async ValueTask NavigateToNextFolderAsync(TabViewModel tab, CancellationTokenSource ct)
     {
         var currentDir = tab.Model?.FileInfo?.DirectoryName;
@@ -517,7 +515,7 @@ public class NavigationService(
 
     private async ValueTask ApplySortAsync(TabViewModel tab, CancellationTokenSource ct)
     {
-        if (!CanNavigate(tab))
+        if (tab.ImageIterator.Files.Count <= 0)
         {
             return;
         }
