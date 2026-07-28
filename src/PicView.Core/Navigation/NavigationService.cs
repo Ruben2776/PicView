@@ -161,7 +161,7 @@ public class NavigationService(
             await Repopulate();
         }
         
-        ArchiveExtraction.Cleanup();
+        tab.ArchiveExtractionService.Cleanup();
 
         return;
 
@@ -181,7 +181,7 @@ public class NavigationService(
 
         var first = files[0];
         await RepopulateIterator(first, tab, ct, files).ConfigureAwait(false);
-        ArchiveExtraction.Cleanup();
+        tab.ArchiveExtractionService.Cleanup();
     }
 
     public async ValueTask<bool> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct)
@@ -228,14 +228,14 @@ public class NavigationService(
         }
         
         // Retrieve the temporary directory for the possible previous archive extraction
-        var tempZipDir = ArchiveExtraction.TempZipDirectory;
+        var tempZipDir = tab.ArchiveExtractionService.TempZipDirectory;
 
-        var preparation = await ArchiveExtraction.PrepareArchiveAsync(
+        var preparation = await tab.ArchiveExtractionService.PrepareArchiveAsync(
             archivePath,
             platformService.ExtractWithLocalSoftwareAsync,
             stringComparer).ConfigureAwait(false);
 
-        if (preparation is null || string.IsNullOrEmpty(ArchiveExtraction.TempZipDirectory))
+        if (preparation is null || string.IsNullOrEmpty(tab.ArchiveExtractionService.TempZipDirectory))
         {
             return false;
         }
@@ -267,7 +267,7 @@ public class NavigationService(
         // Staged extraction: extract the first entry, navigate to it, then extract the rest in
         // the background while FileWatcherService inserts each new file into the iterator.
         var firstKey = prep.EntryKeys[0];
-        var firstPath = await ArchiveExtraction.ExtractEntryAsync(archivePath, firstKey, ct.Token).ConfigureAwait(false);
+        var firstPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, firstKey, ct.Token).ConfigureAwait(false);
 
         if (string.IsNullOrEmpty(firstPath) || ct.IsCancellationRequested)
         {
@@ -277,7 +277,7 @@ public class NavigationService(
         if (Settings.ImageScaling.ShowImageSideBySide && prep.EntryKeys.Length > 1)
         {
             var secondKey = prep.EntryKeys[1];
-            var secondPath = await ArchiveExtraction.ExtractEntryAsync(archivePath, secondKey, ct.Token).ConfigureAwait(false);
+            var secondPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, secondKey, ct.Token).ConfigureAwait(false);
             var seedFiles = new List<FileInfo>
             {
                 new(firstPath),
@@ -300,11 +300,11 @@ public class NavigationService(
         {
             var remainingKeys = prep.EntryKeys.Skip(1).ToArray();
             var backgroundToken = tab.GetTabCancellation().Token;
-            _ = Task.Run(() => ArchiveExtraction.ExtractRemainingAsync(archivePath, remainingKeys, backgroundToken), backgroundToken);
+            _ = Task.Run(() => tab.ArchiveExtractionService.ExtractRemainingAsync(archivePath, remainingKeys, backgroundToken), backgroundToken);
         }
 
         FileHistoryManager.Add(archivePath);
-        ArchiveExtraction.Cleanup(tempZipDir);
+        tab.ArchiveExtractionService.Cleanup(tempZipDir);
         return true;
     }
 
@@ -346,7 +346,7 @@ public class NavigationService(
             tab.CanNavigateBackwards.Value = false;
             tab.CanNavigateForwards.Value = false;
 
-            ArchiveExtraction.Cleanup();
+            tab.ArchiveExtractionService.Cleanup();
         }
         catch (Exception e)
         {
@@ -405,7 +405,7 @@ public class NavigationService(
             tab.CanNavigateForwards.Value = false;
 
             FileHistoryManager.Add(url);
-            ArchiveExtraction.Cleanup();
+            tab.ArchiveExtractionService.Cleanup();
         }
         catch (Exception e)
         {
@@ -484,8 +484,8 @@ public class NavigationService(
 
     private async ValueTask NavigateArchiveCoreAsync(TabViewModel tab, bool next, CancellationTokenSource ct)
     {
-        var currentFile = ArchiveExtraction.IsArchived ?
-            new FileInfo(ArchiveExtraction.LastOpenedArchive) : tab.Model.FileInfo;
+        var currentFile = tab.ArchiveExtractionService.IsArchived ?
+            new FileInfo(tab.ArchiveExtractionService.LastOpenedArchive) : tab.Model.FileInfo;
            
         var currentDir = currentFile?.DirectoryName;
         if (currentDir == null)

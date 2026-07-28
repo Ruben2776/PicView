@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using PicView.Core.ArchiveHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.Localization;
@@ -84,6 +85,7 @@ public class TabViewModel(Action<uint> closeTab, IFileWatcherService? fileWatche
     
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator"/>>
     public IImageIterator? ImageIterator { get; private set; }
+    public ArchiveExtractionService ArchiveExtractionService { get; } = new();
     public IThumbnailCache? ThumbnailCache { get; private set; }
 
     private IFileWatcherService? _fileWatcherService = fileWatcherService;
@@ -352,6 +354,7 @@ public class TabViewModel(Action<uint> closeTab, IFileWatcherService? fileWatche
         ThumbnailCache?.RemoveOwner(Id);
 
         ImageIterator?.Dispose();
+        ArchiveExtractionService.Cleanup();
 
         NavigationCts.Dispose();
         Disposables.Dispose();
