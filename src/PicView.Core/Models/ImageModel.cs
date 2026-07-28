@@ -1,8 +1,10 @@
+using System.Diagnostics;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Navigation.Tiff;
 
 namespace PicView.Core.Models;
 
+[DebuggerDisplay("{FileInfo.Name}, {PixelWidth}x{PixelHeight}")]
 public class ImageModel : IDisposable
 {
     public object? Image { get; set; }
