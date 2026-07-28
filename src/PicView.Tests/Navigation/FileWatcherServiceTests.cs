@@ -163,10 +163,14 @@ public class FileWatcherServiceTests : IDisposable
         public void Clear() { }
         public void Clear(uint ownerId) { }
         public bool Contains(PreLoadValue value) => false;
-        public bool Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse) => false;
+        public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
+        {
+            
+        }
+
         public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value) { value = null; return false; }
         public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) { }
-        public void Clear(TabViewModel tab, int currentIndex, string directory, IReadOnlyList<FileInfo> files) { }
+        public void Clear(TabViewModel tab, string directory) { }
         public void TryRemove(uint ownerId, int index) { }
         public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index) => ValueTask.FromResult(false);
     }

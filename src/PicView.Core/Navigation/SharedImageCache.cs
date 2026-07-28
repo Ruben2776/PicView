@@ -123,9 +123,9 @@ public class SharedImageCache : IImageCache
 
     #region Add, Get, Remove, and Clear
     
-    public bool Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
+    public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
     {
-        return TryAdd(ownerId, index, preLoadValue, listCount, isReverse, out _);
+        TryAdd(ownerId, index, preLoadValue, listCount, isReverse, out _);
     }
 
     public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value)
@@ -246,7 +246,7 @@ public class SharedImageCache : IImageCache
         ForceDisposalQueue();
     }
 
-    public void Clear(TabViewModel tab, int currentIndex, string directory, IReadOnlyList<FileInfo> files)
+    public void Clear(TabViewModel tab, string directory)
     {
         var id = tab.Id;
         
@@ -334,7 +334,7 @@ public class SharedImageCache : IImageCache
 
     public async ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
     {
-        if (!TryGet(ownerId, index, out var value))
+        if (!TryGet(list[index], out var value))
         {
             return false;
         }

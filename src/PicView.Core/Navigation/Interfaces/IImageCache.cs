@@ -31,29 +31,14 @@ public interface IImageCache
     bool TryGet(FileInfo f, out PreLoadValue? value);
 
     /// <summary>
-    /// Attempts to retrieve a preload value by owner ID and index.
-    /// </summary>
-    bool TryGet(uint ownerId, int index, out PreLoadValue? value);
-
-    /// <summary>
-    /// Clears the entire cache across all owners.
-    /// </summary>
-    void Clear();
-
-    /// <summary>
     /// Clears cache items associated specifically with the given owner ID.
     /// </summary>
     void Clear(uint ownerId);
 
     /// <summary>
-    /// Checks if the cache contains a file with the specified path.
-    /// </summary>
-    bool Contains(PreLoadValue value);
-
-    /// <summary>
     /// Adds a value to the cache, potentially triggering eviction of distant items.
     /// </summary>
-    bool Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse);
+    void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse);
 
     /// <summary>
     /// Tries to add a value to the cache, returning the evicted value if capacity was exceeded.
@@ -80,9 +65,7 @@ public interface IImageCache
     /// Helper to clear resources specifically for a <see cref="TabViewModel"/>.
     /// Transfers relevant cache items to another eligible tab if possible before removing.
     /// </summary>
-    void Clear(TabViewModel tab, int currentIndex, string directory, IReadOnlyList<FileInfo> files);
-
-    void TryRemove(uint ownerId, int index);
+    void Clear(TabViewModel tab, string directory);
 
     /// <summary>
     /// Resynchronizes the cache for a specific owner when the file list changes (e.g., sorting).

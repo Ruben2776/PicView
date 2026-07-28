@@ -215,7 +215,7 @@ public class TiffNavigationTests : IDisposable
 
         public void Clear(string ownerId) { }
         public bool Contains(PreLoadValue value) => false;
-        public bool Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
+        public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
         {
             throw new NotImplementedException();
         }
@@ -244,7 +244,7 @@ public class TiffNavigationTests : IDisposable
         public void Preload(string ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) { }
         public void RemoveOwner(string ownerId) { }
         public void RegisterOwner(string ownerId) { }
-        public void Clear(TabViewModel tab, int currentIndex, string directory, IReadOnlyList<FileInfo> files) { }
+        public void Clear(TabViewModel tab, string directory) { }
         public void TryRemove(uint ownerId, int index)
         {
             throw new NotImplementedException();

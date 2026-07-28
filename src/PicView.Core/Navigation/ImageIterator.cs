@@ -190,7 +190,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                 if (preLoadValue.ImageModel.Image is null)
                 {
                     await Cache.LoadAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
-                    if (index == CurrentIndex && Cache.TryGet(_tab.Id, index, out var value))
+                    if (index == CurrentIndex && Cache.TryGet(firstFile, out var value))
                     {
                         firstModel = value.ImageModel;
                     }
@@ -416,7 +416,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
     public void Dispose()
     {
-        Cache.Clear(_tab, CurrentIndex, CurrentDirectory, Files);
+        Cache.Clear(_tab, CurrentDirectory);
         Files = [];
         GC.SuppressFinalize(this);
     }

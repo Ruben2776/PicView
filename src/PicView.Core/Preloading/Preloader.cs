@@ -173,7 +173,7 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
                 return;
             }
 
-            if (cache.TryGet(ownerId, index, out _))
+            if (cache.TryGet(list[index], out _))
             {
                 // Return early if cached
                 return;

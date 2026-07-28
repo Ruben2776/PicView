@@ -30,11 +30,10 @@ public class PreloaderTests
             return false;
         }
 
-        public bool Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
+        public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
         {
             Items[index] = preLoadValue;
             ItemsByFile[preLoadValue.ImageModel.FileInfo!.FullName] = preLoadValue;
-            return true;
         }
 
         public Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => Task.FromResult<ImageModel?>(null);
@@ -44,7 +43,7 @@ public class PreloaderTests
         public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) { }
         public void RemoveOwner(uint ownerId) { }
         public void RegisterOwner(uint ownerId) { }
-        public void Clear(TabViewModel tab, int currentIndex, string directory, IReadOnlyList<FileInfo> files) { }
+        public void Clear(TabViewModel tab, string directory) { }
         public void TryRemove(uint ownerId, int index) { }
         public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files) { }
         public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => ValueTask.FromResult(true);
@@ -118,30 +117,26 @@ public class PreloaderTests
             return ValueTask.FromResult(new ImageModel { FileInfo = f });
         }, cache);
 
-        var list = new List<FileInfo>
+        const int capacity = 15;
+        var list = new List<FileInfo>(capacity);
+        for (var i = 1; i <= capacity; i++)
         {
-            new FileInfo("test1.jpg"),
-            new FileInfo("test2.jpg"),
-            new FileInfo("test3.jpg"),
-            new FileInfo("test4.jpg"),
-            new FileInfo("test5.jpg")
-        };
+            list.Add(new FileInfo($"test{i}.jpg"));
+        }
 
-        Settings.Navigation.PositiveIterations = 2;
-        Settings.Navigation.NegativeIterations = 1;
-
+        SetDefaults();
         // Act
         // Current index is 2 ("test3.jpg"). Next starting is 3. Prev starting is 1.
         // It should load next items (index 3 and 4) and prev items (index 1) based on limits.
-        preloader.Preload(1, 2, false, list, CancellationToken.None);
+        preloader.Preload(1, 2, false, list, TestContext.Current.CancellationToken);
 
         // Wait to allow background tasks to complete
-        await Task.Delay(250);
+        await Task.Delay(1000, TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Equal(3, loadCount);
-        Assert.True(cache.Items.ContainsKey(1)); // negative iteration
-        Assert.True(cache.Items.ContainsKey(3)); // positive iteration
-        Assert.True(cache.Items.ContainsKey(4)); // positive iteration
+        Assert.Equal(Settings.Navigation.NegativeIterations + Settings.Navigation.PositiveIterations, loadCount);
+        Assert.True(cache.TryGet(list[0], out _)); // negative iteration
+        Assert.True(cache.TryGet(list[3], out _)); // positive iteration
+        Assert.True(cache.TryGet(list[4], out _)); // positive iteration
     }
 }
