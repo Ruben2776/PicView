@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text;
 using ImageMagick;
 using PicView.Core.Localization;
@@ -347,14 +347,14 @@ public static class ExifReader
 
     public static string GetTitle(IExifProfile? profile)
     {
+        var title = string.Empty;
         var xPTitle = profile?.GetValue(ExifTag.XPTitle)?.Value;
-        if (xPTitle is null)
+        if (xPTitle is not null)
         {
-            return string.Empty;
+            title = Encoding.Unicode.GetString(xPTitle).TrimEnd('\0');
         }
 
-        var title = Encoding.Unicode.GetString(xPTitle).TrimEnd('\0');
-        if (string.IsNullOrWhiteSpace(title))
+        if (!string.IsNullOrWhiteSpace(title))
         {
             return title;
         }

@@ -1,3 +1,4 @@
+using System.Text;
 using ImageMagick;
 using PicView.Core.Exif;
 using PicView.Core.Localization;
@@ -112,5 +113,145 @@ public class ExifViewModelTests
         exif.CopyTo(result, 6);
         jpeg.AsSpan(2).CopyTo(result.AsSpan(6 + exif.Length));
         return result;
+    }
+
+    [Fact]
+    public async Task UpdateExifValues_NullFileInfo_DoesNotThrow()
+    {
+        await TranslationManager.LoadLanguage("en");
+        using var viewModel = new ExifViewModel();
+        var model = new ImageModel { FileInfo = null, PixelWidth = 800, PixelHeight = 600 };
+        
+        viewModel.UpdateExifValues(model, null);
+        
+        Assert.Equal((uint)800, viewModel.PixelWidth.Value);
+        Assert.Equal((uint)600, viewModel.PixelHeight.Value);
+    }
+
+    [Fact]
+    public async Task UpdateExifValues_ImageWithoutExif_SetsDefaultValues()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"picview-noexif-{Guid.NewGuid():N}.jpg");
+        try
+        {
+            await TranslationManager.LoadLanguage("en");
+            using (var image = new MagickImage(MagickColors.White, 10, 20))
+            {
+                image.Format = MagickFormat.Jpeg;
+                image.Density = new Density(72, 72);
+                image.Write(path);
+            }
+
+            var model = new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 10, PixelHeight = 20 };
+            using var viewModel = new ExifViewModel();
+
+            viewModel.UpdateExifValues(model);
+
+            Assert.Equal(72.0, viewModel.DpiX.Value);
+            Assert.Equal(72.0, viewModel.DpiY.Value);
+            Assert.Equal(0, viewModel.Orientation.Value);
+            Assert.Equal(MagickFormat.Jpeg, viewModel.ImageFormat.Value);
+        }
+        finally
+        {
+            if (File.Exists(path)) File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task UpdateExifValues_WithValidExifProfile_PopulatesProperties()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"picview-exif-full-{Guid.NewGuid():N}.jpg");
+        try
+        {
+            await TranslationManager.LoadLanguage("en");
+            using (var image = new MagickImage(MagickColors.White, 100, 100))
+            {
+                image.Format = MagickFormat.Jpeg;
+                var profile = new ExifProfile();
+                profile.SetValue(ExifTag.Make, "TestMake");
+                profile.SetValue(ExifTag.Model, "TestModel");
+                profile.SetValue(ExifTag.Software, "PicViewTest");
+                profile.SetValue(ExifTag.Artist, "TestAuthor");
+                profile.SetValue(ExifTag.Copyright, "TestCopyright");
+                profile.SetValue(ExifTag.XPTitle, Encoding.Unicode.GetBytes("TestTitle\0"));
+                profile.SetValue(ExifTag.ImageDescription, "TestTitle");
+                profile.SetValue(ExifTag.Rating, (ushort)3);
+
+                image.SetProfile(profile);
+                image.Write(path);
+            }
+
+            var model = new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 100, PixelHeight = 100 };
+            using var viewModel = new ExifViewModel();
+
+            viewModel.UpdateExifValues(model);
+
+            Assert.Equal("TestMake", viewModel.CameraMaker.Value);
+            Assert.Equal("TestModel", viewModel.CameraModel.Value);
+            Assert.Equal("PicViewTest", viewModel.Software.Value);
+            Assert.Equal("TestAuthor", viewModel.Authors.Value);
+            Assert.Equal("TestCopyright", viewModel.Copyright.Value);
+            Assert.Equal("TestTitle", viewModel.Title.Value);
+            Assert.Equal((uint)3, viewModel.ExifRating.Value);
+        }
+        finally
+        {
+            if (File.Exists(path)) File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task RemoveImageMetaDataCommand_SetsPropertiesToDefault()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"picview-removeexif-{Guid.NewGuid():N}.jpg");
+        try
+        {
+            await TranslationManager.LoadLanguage("en");
+            using (var image = new MagickImage(MagickColors.White, 10, 10))
+            {
+                image.Format = MagickFormat.Jpeg;
+                var profile = new ExifProfile();
+                profile.SetValue(ExifTag.Artist, "TestAuthor");
+                profile.SetValue(ExifTag.Rating, (ushort)5);
+                image.SetProfile(profile);
+                image.Write(path);
+            }
+
+            var model = new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 10, PixelHeight = 10 };
+            using var viewModel = new ExifViewModel();
+
+            viewModel.UpdateExifValues(model);
+            Assert.Equal("TestAuthor", viewModel.Authors.Value);
+            Assert.Equal((uint)5, viewModel.ExifRating.Value);
+
+            viewModel.RemoveImageMetaDataCommand!.Execute(new FileInfo(path));
+            
+            // Wait a little for the command to finish if it's async under the hood
+            await Task.Delay(500);
+
+            Assert.Equal(string.Empty, viewModel.Authors.Value);
+            Assert.Equal((uint)0, viewModel.ExifRating.Value);
+        }
+        finally
+        {
+            if (File.Exists(path)) File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public async Task OpenGoogleLinkCommand_IsInitialized()
+    {
+        await TranslationManager.LoadLanguage("en");
+        using var viewModel = new ExifViewModel();
+        Assert.NotNull(viewModel.OpenGoogleLinkCommand);
+    }
+
+    [Fact]
+    public async Task OpenBingLinkCommand_IsInitialized()
+    {
+        await TranslationManager.LoadLanguage("en");
+        using var viewModel = new ExifViewModel();
+        Assert.NotNull(viewModel.OpenBingLinkCommand);
     }
 }
