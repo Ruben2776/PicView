@@ -74,6 +74,15 @@ public static class GetImageModel
                     }
                     break;
 
+                case MagickFormat.Heic:
+                case MagickFormat.Heif:
+                    await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
+                    if (IsAnimatedGif(fileInfo))
+                    {
+                        imageModel.ImageType = ImageType.AnimatedHeic;
+                    }
+                    break;
+
                 case MagickFormat.Gif:
                 case MagickFormat.Gif87:
                     if (shouldAutoOrient)

@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Automation;
@@ -141,9 +141,12 @@ public class PicBox : Control
         _animInstance?.Dispose();
         try
         {
-            _animInstance = ImageType == ImageType.AnimatedGif
-                ? new GifInstance(fileStream)
-                : new WebpInstance(fileStream);
+            _animInstance = ImageType switch
+            {
+                ImageType.AnimatedGif => new GifInstance(fileStream),
+                ImageType.AnimatedHeic => new HeicInstance(fileStream),
+                _ => new WebpInstance(fileStream)
+            };
         }
         catch (Exception e)
         {
@@ -331,7 +334,7 @@ public class PicBox : Control
     
     private void RenderAnimatedImageIfRequired(DrawingContext context)
     {
-        if (ImageType is not (ImageType.AnimatedGif or ImageType.AnimatedWebp) || CurrentFileInfo is null)
+        if (ImageType is not (ImageType.AnimatedGif or ImageType.AnimatedWebp or ImageType.AnimatedHeic) || CurrentFileInfo is null)
         {
             CleanupAnimatedResources();
             return;

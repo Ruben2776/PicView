@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Media.Imaging;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
@@ -95,6 +95,7 @@ public static class FileSaverHelper
                 switch (vm.WindowTabs.ActiveTab.CurrentValue.ImageType.CurrentValue)
                 {
                     case ImageType.AnimatedGif: // TODO: Add animated GIF support
+                    case ImageType.AnimatedHeic: // TODO: Add animated HEIC support
                     case ImageType.AnimatedWebp: // TODO: Add animated WebP support
                     case ImageType.Bitmap:
                     {
@@ -131,6 +132,7 @@ public static class FileSaverHelper
                 switch (vm.WindowTabs.ActiveTab.CurrentValue.ImageType.CurrentValue)
                 {
                     case ImageType.AnimatedGif: // TODO: Add animated GIF support
+                    case ImageType.AnimatedHeic: // TODO: Add animated HEIC support
                     case ImageType.AnimatedWebp: // TODO: Add animated WebP support
                     case ImageType.Bitmap:
                     {
