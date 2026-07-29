@@ -1,6 +1,7 @@
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using SharpCompress.Archives;
+using ZLinq;
 
 namespace PicView.Core.ArchiveHandling;
 
@@ -81,6 +82,7 @@ public class ArchiveExtractionService
                     .EnumerateFiles("*", SearchOption.AllDirectories)
                     .Where(f => f.FullName.IsSupported())
                     .Select(f => f.FullName)
+                    .AsValueEnumerable()
                     .ToArray()).ConfigureAwait(false);
 
                 if (files.Length is 0)
