@@ -217,7 +217,7 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
                 }
                 else
                 {
-                    Show();
+                    _keybindingsWindow.Activate();
                 }
             });
         }
@@ -290,7 +290,7 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
                 }
                 else
                 {
-                    Show();
+                    _settingsWindow.Activate();
                 }
             });
         }
@@ -461,7 +461,7 @@ public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, I
                 }
                 else
                 {
-                    Show();
+                    _batchResizeWindow.Activate();
                 }
             });
         }
