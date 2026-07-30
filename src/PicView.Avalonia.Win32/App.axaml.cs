@@ -57,8 +57,6 @@ public class App : Application, IPlatformSpecificService
         _coreViewModel.MainWindows.MainWindows.Add(_mainWindowViewModel);
         _coreViewModel.MainWindows.ActiveWindow.Value = _mainWindowViewModel;
         StartUpHelper.StartWithArguments(_coreViewModel, settingsExists, desktop, _mainWindow);
-
-        desktop.MainWindow = _mainWindow;
     }
 
     #region Interface Implementations

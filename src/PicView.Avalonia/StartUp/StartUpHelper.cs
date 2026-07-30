@@ -214,6 +214,7 @@ public static class StartUpHelper
                 }
             };
             vm.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.Value.CurrentView.Value = startUpMenu;
+            mainWindow.Show();
         }
     }
 

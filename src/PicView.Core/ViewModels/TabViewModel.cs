@@ -270,7 +270,6 @@ public class TabViewModel(Action<uint> closeTab, IFileWatcherService? fileWatche
         if (thumbnailCache != null)
         {
             ThumbnailCache = thumbnailCache;
-            ThumbnailCache.RemoveOwner(Id);
         }
         ImageIterator ??= new ImageIterator(cache, thumbCache, thumbnailLoader, this);
         if (Model?.FileInfo is null)

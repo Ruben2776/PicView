@@ -1,4 +1,7 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
@@ -46,35 +49,39 @@ public static class QuickLoad
             if (check is null)
             {
                 ViewChangeHelper.SwitchToStartUpMenu(core.MainWindows.ActiveWindow.CurrentValue);
+                ShowWindowIfStartUp();
                 return;
             }
 
             switch (check.Value.Type)
             {
                 case FileTypeResolver.LoadAbleFileType.Directory:
-                {
                     var files = FileListRetriever.RetrieveFiles(new FileInfo(check.Value.Data),core.PlatformService.CompareStrings);
                     if (files.Count == 0)
                     {
                         ViewChangeHelper.SwitchToStartUpMenu(core.MainWindows.ActiveWindow.CurrentValue);
+                        ShowWindowIfStartUp();
                         return;
                     }
                     await LoadSingleFileAsync(mainWindow, core, files[0], continueFromLeftOff, isStartup, files).ConfigureAwait(false);
                     return;
-                }
                 case FileTypeResolver.LoadAbleFileType.Web:
-                {
                     await LoadUrlImageAsync(mainWindow, core, check.Value.Data).ConfigureAwait(false);
                     return;
-                }
                 default:
                     ViewChangeHelper.SwitchToStartUpMenu(core.MainWindows.ActiveWindow.CurrentValue);
+                    ShowWindowIfStartUp();
                     return;
             }
         }
         
         if (source.IsArchive())
         {
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                mainWindow.Show();
+                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
+            }, DispatcherPriority.Send);
             core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = true;
             await LoadArchiveFileAsync(mainWindow, core, fileInfo).ConfigureAwait(false);
             core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = false;
@@ -85,12 +92,30 @@ public static class QuickLoad
         }
         core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.CloseMenus();
         core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
+        
+        return;
+
+        void ShowWindowIfStartUp()
+        {
+            if (isStartup)
+            {
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    mainWindow.Show();
+                    if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                    {
+                        desktop.MainWindow = mainWindow;
+                    }
+                });
+            }
+        }
     }
 
     private static async ValueTask LoadUrlImageAsync(MainWindow mainWindow, CoreViewModel core, string url)
     {
         Dispatcher.UIThread.Invoke(() =>
         {
+            mainWindow.Show();
             core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
         }, DispatcherPriority.Send);
         
@@ -99,7 +124,6 @@ public static class QuickLoad
         using var client = new HttpClientDownloadWithProgress(url, destPath);
         var tab = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue;
         
-        TabNavigationInitializer.Initialize(core, mainWindow);
         ShowHoverBarIfNeeded(core);
         
         client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
@@ -123,11 +147,18 @@ public static class QuickLoad
 
         };
         await client.StartDownloadAsync(CancellationToken.None).ConfigureAwait(false);
-        var model = await GetImageModel.GetImageModelAsync(new FileInfo(destPath)).ConfigureAwait(false);
-        tab.Model = model;
-        tab.SourceURL = url;
-        tab.SingleImageType = SingleImageType.Url;
-        tab.UpdateTabTitle();
+        var fileInfo = new FileInfo(destPath);
+        var model = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            UpdateImage.SetSingleImage(mainWindow.DataContext as MainWindowViewModel, mainWindow, model.Image as Bitmap,
+                SingleImageType.Url, url);
+            if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            desktop.MainWindow = mainWindow;
+        });
         
         FileHistoryManager.Add(url);
 
@@ -151,6 +182,7 @@ public static class QuickLoad
     
         var vm = core.MainWindows.ActiveWindow.CurrentValue;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        tab.SingleImageType = SingleImageType.None;
         tab.SetLoading();
         
         var magickImage = new MagickImage();
@@ -163,25 +195,31 @@ public static class QuickLoad
             if (isStartUp)
             {
                 // Need to set size for the Maximize or fullscreen functions to work
-                if (Settings.WindowProperties.Maximized && !Settings.WindowProperties.Fullscreen)
-                {
-                    tab.Model.PixelWidth = magickImage.Width;
-                    tab.Model.PixelHeight = magickImage.Height;
-                }
-                else if (Settings.WindowProperties.Fullscreen)
-                {
-                    tab.Model.PixelWidth = magickImage.Width;
-                    tab.Model.PixelHeight = magickImage.Height;
-                }
-                else if (!Settings.ImageScaling.ShowImageSideBySide)
+                if (!Settings.ImageScaling.ShowImageSideBySide)
                 {
                     // Predict window size and center beforehand for pleasant opening when double-clicking a file
-                    Dispatcher.UIThread.Post(() =>
+                    Dispatcher.UIThread.Invoke(() =>
                     {
-                        WindowResizing.SetSize(tab.Model.PixelWidth, tab.Model.PixelHeight,
-                            0, 0, WindowResizeReason.Application, mainWindow, vm);
-                        WindowResizing.FastCenterWindow(mainWindow);
-                    }, DispatcherPriority.Render);
+                        var size = WindowResizing.GetSize(tab.Model.PixelWidth, tab.Model.PixelHeight,
+                            0, 0, 0, mainWindow, vm);
+                        if (!size.HasValue)
+                        {
+                            return;
+                        }
+                        WindowResizing.SetSize(size.Value, WindowResizeReason.Application, vm);
+                        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                        {
+                            desktop.MainWindow = mainWindow;
+                        }
+
+                        if (Settings.WindowProperties.AutoFit)
+                        {
+                            mainWindow.Width = size.Value.WindowWidth;
+                            mainWindow.Height = size.Value.WindowHeight;
+                        }
+                        mainWindow.Show();
+                        mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
+                    });
                 }
             }
         }
@@ -212,6 +250,15 @@ public static class QuickLoad
             TabNavigationInitializer.Initialize(core, files, mainWindow);
             UpdateImage.ChangeImage(mainWindow, tab, core.MainWindows.ActiveWindow.CurrentValue);
             UpdateImage.UpdateTabSideBySideTitles(tab, index, nextIndex, fileInfo, nextFileInfo, files);
+            if (isStartUp)
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    mainWindow.Show();
+                    WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
+                    mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
+                }, DispatcherPriority.Background);
+            }
         }
         else
         {
@@ -224,19 +271,6 @@ public static class QuickLoad
             {
                 TabNavigationInitializer.Initialize(core, files, mainWindow);
             }
-        }
-
-        if (!Settings.WindowProperties.Fullscreen && !Settings.WindowProperties.Maximized && isStartUp && Settings.WindowProperties.AutoFit)
-        {
-            Dispatcher.UIThread.Post(() => WindowFunctions.CenterWindowOnScreen(mainWindow));
-        }
-        else if (Settings.ImageScaling.ShowImageSideBySide || isStartUp && !Settings.WindowProperties.AutoFit)
-        {
-            // Fixes certain instances where the image is not sized properly
-            Dispatcher.UIThread.Post(() =>
-            {
-                WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
-            }, DispatcherPriority.Background);
         }
 
         vm.IsLoadingIndicatorShown.Value = false;

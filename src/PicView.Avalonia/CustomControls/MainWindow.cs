@@ -50,9 +50,6 @@ public class MainWindow : Window, IMainWindow
     {
         Resized += WindowSizeChanged;
         
-        // Set initial layout size and visibility, so that the UI is responsive at first startup also
-        SetLayoutSizeAndVisibility(Bounds.Width);
-        
         // Keep window position when resizing
         Debug.Assert(FrameProvider != null, nameof(FrameProvider) + " != null");
         ClientSizeProperty.Changed.ToObservable()

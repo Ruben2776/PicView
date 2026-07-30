@@ -185,7 +185,7 @@ public static class FilePicker
             return provider;
         }
 #if DEBUG
-        Console.WriteLine("Missing StorageProvider instance.");
+        DebugHelper.LogDebug(nameof(FilePicker), nameof(GetStorageProvider), "Missing StorageProvider instance.");
 #endif
         return null;
 

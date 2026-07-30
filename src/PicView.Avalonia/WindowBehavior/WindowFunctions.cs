@@ -71,7 +71,6 @@ public static class WindowFunctions
         HandleWindowScalingMode(vm, window);
 
         StartUpHelper.StartUpMenuOrLastFile(window, vm);
-        window.Show();
 
         StartUpHelper.HandlePostWindowUpdates(vm, desktop, window);
     }
@@ -79,14 +78,11 @@ public static class WindowFunctions
     public static void ImageStartUp(string filePath, CoreViewModel vm, bool settingsExists,
         IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
     {
-        desktop.MainWindow = window;
-            
         SettingsUpdater.InitializeSettings(vm.MainWindows.ActiveWindow.CurrentValue, settingsExists);
 
         HandleWindowScalingMode(vm, window);
 
         StartUpHelper.HandleStartImage(window, vm, filePath);
-        window.Show();
 
         StartUpHelper.HandlePostWindowUpdates(vm, desktop, window);
     }
@@ -188,19 +184,19 @@ public static class WindowFunctions
 
         if (Settings.WindowProperties.Maximized || Settings.WindowProperties.Fullscreen)
         {
-            WindowFunctions.InitializeWindowPosition(window);
+            InitializeWindowPosition(window);
         }
         else if (Settings.WindowProperties.AutoFit)
         {
             window.WindowStartupLocation = adjustPos ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
-            WindowFunctions.SetAutoFit(vm.MainWindows.ActiveWindow.CurrentValue, window, false);
+            SetAutoFit(vm.MainWindows.ActiveWindow.CurrentValue, window, false);
         }
         else 
         {
-            WindowFunctions.SetSingleManualWindow(vm.MainWindows.ActiveWindow.CurrentValue, window);
+            SetSingleManualWindow(vm.MainWindows.ActiveWindow.CurrentValue, window);
             if (adjustPos)
             {
-                WindowFunctions.InitializeWindowSizeAndPosition(window);
+                InitializeWindowSizeAndPosition(window);
             }
         }
     }

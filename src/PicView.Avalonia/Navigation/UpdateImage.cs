@@ -22,7 +22,7 @@ public static class UpdateImage
     public static void UpdateFileInfo(TabViewModel tabViewModel,  FileInfo? file)
     {
         if (tabViewModel.Model?.Image is null || tabViewModel.Model.PixelHeight is 0 ||
-            tabViewModel.Model.PixelWidth is 0)
+            tabViewModel.Model.PixelWidth is 0 || tabViewModel.SingleImageType is not SingleImageType.None)
         {
             return;
         }
@@ -46,7 +46,7 @@ public static class UpdateImage
             return;
         }
         
-        if (Settings.UIProperties.IsTaskbarProgressEnabled)
+        if (Settings.UIProperties.IsTaskbarProgressEnabled && tabViewModel.ImageIterator.CurrentIndex > -1 && tabViewModel.ImageIterator.Files.Count > 0)
         {
             core.PlatformService.SetTaskbarProgress((ulong)tabViewModel.ImageIterator.CurrentIndex, (ulong)tabViewModel.ImageIterator.Files.Count);
         }
