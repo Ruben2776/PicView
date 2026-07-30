@@ -8,6 +8,4 @@ public enum GalleryStretchMode
     None = 3,
     Square = 4,
     FillSquare = 5,
-    
-    MaxValue = FillSquare,
 }
