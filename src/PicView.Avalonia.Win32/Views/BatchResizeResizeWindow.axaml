@@ -17,7 +17,6 @@
 
             <DockPanel
                 Height="{StaticResource TopBorderHeight}"
-                Margin="0,-1,-1,0"
                 DockPanel.Dock="Top"
                 LastChildFill="True">
 
@@ -47,8 +46,7 @@
                     Foreground="{DynamicResource MainTextColor}"
                     IconHeight="10"
                     IconWidth="10"
-                    IsRepeatEnabled="False"
-                    WindowDecorationProperties.ElementRole="CloseButton" />
+                    IsRepeatEnabled="False" />
 
                 <customControls:IconButton
                     x:Name="MinimizeButton"

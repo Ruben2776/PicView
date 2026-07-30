@@ -19,8 +19,6 @@ namespace PicView.Avalonia.Views.Main;
 
 public partial class MainView : UserControl
 {
-    public bool IsAlternativeCloseButtonEffectivelyVisible => AltClose.IsEffectivelyVisible;
-
     public MainView()
     {
         InitializeComponent();

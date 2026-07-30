@@ -11,7 +11,7 @@ using R3;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class FileAssociationWindow : Win32GenericWindow
+public partial class FileAssociationWindow : GenericWindow
 {
     private readonly List<(CheckBox CheckBox, string SearchText)> _allCheckBoxes = [];
     private readonly CompositeDisposable _disposables = new();

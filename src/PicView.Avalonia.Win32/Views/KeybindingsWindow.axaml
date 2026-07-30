@@ -20,7 +20,6 @@
 
             <DockPanel
                 Height="28"
-                Margin="0,-1,-1,0"
                 VerticalAlignment="Top"
                 LastChildFill="True">
 
@@ -51,8 +50,7 @@
                     IconWidth="10"
                     IsRepeatEnabled="False"
                     ToolTip.Tip="{CompiledBinding Translation.Close.Value,
-                                                  Mode=OneWay}"
-                    WindowDecorationProperties.ElementRole="CloseButton" />
+                                                  Mode=OneWay}" />
 
                 <customControls:IconButton
                     x:Name="MinimizeButton"

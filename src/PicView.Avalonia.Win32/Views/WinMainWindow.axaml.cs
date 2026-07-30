@@ -29,7 +29,6 @@ public partial class WinMainWindow : MainWindow, IPlatformWindowService
         DataContext = mainWindowViewModel;
 
         InitializeComponent();
-        CaptionButtonCornerHandler.Attach(this, () => IsCloseButtonEffectivelyVisible(mainWindowViewModel));
         
         SharedBottomBar = BottomBar;
         SharedTitleBar = Titlebar;
@@ -37,10 +36,6 @@ public partial class WinMainWindow : MainWindow, IPlatformWindowService
         UIHelper.Initialize(this);
         LoadedInitialization();
     }
-
-    private bool IsCloseButtonEffectivelyVisible(MainWindowViewModel vm) =>
-        (Titlebar.IsEffectivelyVisible && vm.TopTitlebarViewModel.IsBtnPanelVisible.CurrentValue) ||
-        MainView.IsAlternativeCloseButtonEffectivelyVisible;
 
     private void LoadedInitialization()
     {

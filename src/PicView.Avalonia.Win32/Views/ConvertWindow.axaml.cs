@@ -8,7 +8,7 @@ using PicView.Core.Localization;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class ConvertWindow : Win32GenericWindow
+public partial class ConvertWindow : GenericWindow
 {
     public ConvertWindow()
     {

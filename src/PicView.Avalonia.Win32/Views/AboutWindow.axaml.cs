@@ -6,7 +6,7 @@ using PicView.Core.Update;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class AboutWindow : Win32GenericWindow, IPlatformSpecificUpdate
+public partial class AboutWindow : GenericWindow, IPlatformSpecificUpdate
 {
     public AboutWindow()
     {

@@ -16,7 +16,7 @@ using R3;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class SettingsWindow : Win32GenericWindow
+public partial class SettingsWindow : GenericWindow
 {
     
     public SettingsWindow(SettingsWindowConfig config)
