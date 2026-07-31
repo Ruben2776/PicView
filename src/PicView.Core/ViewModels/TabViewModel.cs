@@ -24,14 +24,14 @@ namespace PicView.Core.ViewModels;
 /// lifecycle of resources specific to this tab instance.
 /// </para>
 /// </summary>
-public class TabViewModel(Action<uint> closeTab, IFileWatcherService? fileWatcherService = null) : IDisposable
+public class TabViewModel(Action<uint> closeTab, MainWindowViewModel parentWindowContext, IFileWatcherService? fileWatcherService = null) : IDisposable
 {
     #region Properties
     
     #region Tab logic
     /// The MainWindowViewModel that currently "owns" this tab
-    public MainWindowViewModel? ParentWindowContext { get; set; }
-    
+    public MainWindowViewModel ParentWindowContext { get; set; } = parentWindowContext;
+
     /// Unique identifier for this tab.
     public uint Id { get; } = TabIDGenerator.GetNextId();
 

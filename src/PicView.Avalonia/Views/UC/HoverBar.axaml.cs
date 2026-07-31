@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Core.DebugTools;
@@ -221,18 +222,19 @@ public partial class HoverBar : UserControl, IDisposable
 
     private async Task ManagePointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (Application.Current.DataContext is not CoreViewModel core || TopLevel.GetTopLevel(this) is not MainWindow mainWindow
+            || mainWindow.DataContext is not MainWindowViewModel vm)
         {
             return;
         }
         
         var props = e.Properties;
-        
+
         if (NextButton.IsPointerOver)
         {
             if (props.IsRightButtonPressed)
             {
-                ShowNavigationDialog();
+                mainWindow.AddNavigationDialog();
             }
             else if (props.IsLeftButtonPressed)
             {
@@ -243,7 +245,7 @@ public partial class HoverBar : UserControl, IDisposable
         {
             if (props.IsRightButtonPressed)
             {
-                ShowNavigationDialog();
+                mainWindow.AddNavigationDialog();
             }
             else if (props.IsLeftButtonPressed)
             {
@@ -254,7 +256,7 @@ public partial class HoverBar : UserControl, IDisposable
         {
             if (props.IsRightButtonPressed)
             {
-                ShowQuickSettingsDialog();
+                mainWindow.AddQuickSettingsDialog();
             }
             else if (props.IsLeftButtonPressed)
             {
@@ -265,7 +267,7 @@ public partial class HoverBar : UserControl, IDisposable
         {
             if (props.IsRightButtonPressed || props.IsLeftButtonPressed)
             {
-                ShowQuickEditingDialog();
+                mainWindow.AddQuickEditingDialog();
             }
         }
         else if (RotateLeftButton.IsPointerOver)
@@ -286,7 +288,7 @@ public partial class HoverBar : UserControl, IDisposable
         {
             if (props.IsRightButtonPressed)
             {
-                ShowSearchDialog();
+                mainWindow.AddFileSearchDialog();
 
                 // Wait for animation to finish to properly close tooltip
                 await Task.Delay(TimeSpan.FromSeconds(0.3));
@@ -296,46 +298,11 @@ public partial class HoverBar : UserControl, IDisposable
         }
     }
 
-    private void ShowNavigationDialog()
-    {
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            return;
-        }
-        mainWindow.AddNavigationDialog();
-    }
-
-    private void ShowQuickSettingsDialog()
-    {
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            return;
-        }
-        mainWindow.AddQuickSettingsDialog();
-    }
-
-    private void ShowQuickEditingDialog()
-    {
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            return;
-        }
-        mainWindow.AddQuickEditingDialog();
-    }
-
-    private void ShowSearchDialog()
-    {
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            return;
-        }
-        mainWindow.AddFileSearchDialog();
-    }
-
     public void Dispose()
     {
         Loaded -= OnLoaded;
         RemoveHandler(PointerPressedEvent, ManagePointerPressed);
         _disposables.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

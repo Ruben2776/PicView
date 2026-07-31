@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageTransformations;
@@ -17,7 +16,6 @@ using PicView.Core.ViewModels;
 using R3;
 
 namespace PicView.Avalonia.Views.UC;
-
 
 public partial class ImageViewer : UserControl, IDisposable
 {

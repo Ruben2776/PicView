@@ -26,14 +26,14 @@
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).OpenCommand}"
+                Command="{CompiledBinding ParentWindowContext.OpenCommand}"
                 CornerRadius="6,0,0,6"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource OpenFolderImage}"
                 IconHeight="17"
                 IconWidth="20"
                 IsTabStop="False"
-                ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.OpenFileDialog.Value,
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.OpenFileDialog.Value,
                                               Mode=OneWay}" />
 
             <customControls:IconButton
@@ -44,7 +44,7 @@
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).ZoomOutCommand}"
+                Command="{CompiledBinding ParentWindowContext.ZoomOutCommand}"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource ZoomOutImage}"
                 IconHeight="18"
@@ -59,7 +59,7 @@
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).ZoomInCommand}"
+                Command="{CompiledBinding ParentWindowContext.ZoomInCommand}"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource ZoomImage}"
                 IconHeight="18"
@@ -75,7 +75,7 @@
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="noBorderHover"
-                Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RotateLeftCommand}"
+                Command="{CompiledBinding ParentWindowContext.RotateLeftCommand}"
                 Data="{StaticResource RotateLeftGeometry}"
                 Foreground="{DynamicResource MainTextColor}"
                 IconHeight="16"
@@ -83,7 +83,7 @@
                 IsEnabled="{CompiledBinding Image.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull}}"
                 IsRepeatEnabled="False"
-                ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.RotateLeft.Value,
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.RotateLeft.Value,
                                               Mode=OneWay}" />
 
             <customControls:IconButton
@@ -93,14 +93,14 @@
                 Margin="0"
                 Background="{DynamicResource SecondaryButtonBackgroundColor}"
                 Classes="noBorderHover"
-                Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RotateRightCommand}"
+                Command="{CompiledBinding ParentWindowContext.RotateRightCommand}"
                 Data="{StaticResource RotateRightGeometry}"
                 DockPanel.Dock="Left"
                 Foreground="{DynamicResource MainTextColor}"
                 IconHeight="16"
                 IconWidth="16"
                 IsRepeatEnabled="False"
-                ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.RotateRight.Value,
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.RotateRight.Value,
                                               Mode=OneWay}" />
 
             <customControls:IconButton
@@ -112,14 +112,14 @@
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="1,0,1,0"
                 Classes="noBorderHover"
-                Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).FlipCommand}"
+                Command="{CompiledBinding ParentWindowContext.FlipCommand}"
                 Data="{StaticResource FlipGeometry}"
                 DockPanel.Dock="Left"
                 Foreground="{DynamicResource MainTextColor}"
                 IconHeight="17"
                 IconWidth="17"
                 IsRepeatEnabled="False"
-                ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.IsFlipped.Value,
+                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.IsFlipped.Value,
                                               Mode=OneWay}">
                 <Button.RenderTransform>
                     <ScaleTransform ScaleX="{Binding ScaleX.Value}" />

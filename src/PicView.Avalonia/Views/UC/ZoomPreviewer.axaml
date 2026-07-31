@@ -1,17 +1,17 @@
 ﻿<UserControl
-    Focusable="False"
     x:Class="PicView.Avalonia.Views.UC.ZoomPreviewer"
-    x:DataType="vm:TabViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="vm:TabViewModel"
+    Focusable="False">
     <Border
+        x:Name="MainBorder"
         Background="{DynamicResource MainBackgroundColor}"
         BorderBrush="{DynamicResource MainBorderColor}"
         BorderThickness="1"
-        CornerRadius="6,6,1,1"
-        x:Name="MainBorder">
+        CornerRadius="6,6,1,1">
         <StackPanel>
 
             <Border
@@ -21,31 +21,31 @@
                 CornerRadius="6,6,1,1">
                 <Grid ColumnDefinitions="*,*">
                     <customControls:IconButton
-                        Classes="altHover mainBtn"
-                        Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).ResetZoomCommand}"
-                        CornerRadius="6,0,0,0"
-                        Foreground="{DynamicResource MainTextColor}"
+                        x:Name="ResetZoomButton"
                         Grid.Column="0"
                         Height="25"
+                        Padding="1"
+                        Classes="altHover mainBtn"
+                        Command="{CompiledBinding ParentWindowContext.ResetZoomCommand}"
+                        CornerRadius="6,0,0,0"
+                        Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource RefreshCcwOff}"
                         IconHeight="15"
                         IconWidth="15"
-                        Padding="1"
-                        ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ResetZoom.Value}"
-                        x:Name="ResetZoomButton" />
+                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.ResetZoom.Value}" />
 
                     <customControls:IconButton
+                        x:Name="CloseButton"
+                        Grid.Column="1"
+                        Height="25"
+                        Padding="1"
                         Classes="altHover mainBtn"
                         CornerRadius="0,6,0,0"
                         Data="{StaticResource CloseGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
-                        Grid.Column="1"
-                        Height="25"
                         IconHeight="12"
                         IconWidth="12"
-                        Padding="1"
-                        ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.Close.Value}"
-                        x:Name="CloseButton" />
+                        ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.Close.Value}" />
                 </Grid>
             </Border>
 
@@ -58,17 +58,17 @@
                 </LayoutTransformControl.RenderTransform>
                 <Panel>
                     <customControls:PicBox
+                        x:Name="OverlayImage"
                         ImageType="{CompiledBinding Model.ImageType,
                                                     Mode=OneWay,
                                                     FallbackValue=0}"
-                        Source="{CompiledBinding Image.Value}"
-                        x:Name="OverlayImage" />
+                        Source="{CompiledBinding Image.Value}" />
                     <Canvas x:Name="OverlayCanvas">
                         <Rectangle
+                            x:Name="ViewportBorder"
                             Fill="Transparent"
                             Stroke="{DynamicResource AccentColor}"
-                            StrokeThickness="2"
-                            x:Name="ViewportBorder" />
+                            StrokeThickness="2" />
                     </Canvas>
                 </Panel>
             </LayoutTransformControl>

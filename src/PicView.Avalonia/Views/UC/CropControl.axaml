@@ -24,7 +24,7 @@
     </UserControl.Styles>
     <UserControl.ContextMenu>
         <ContextMenu x:Name="CropContextMenu">
-            <MenuItem Command="{CompiledBinding Crop.CropImageCommand}" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Crop.Value, Mode=OneWay}">
+            <MenuItem Command="{CompiledBinding Crop.CropImageCommand}" Header="{CompiledBinding ParentWindowContext.Translation.Crop.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
                         Width="12"
@@ -32,7 +32,7 @@
                         Source="{StaticResource CropImage}" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{CompiledBinding Crop.CopyCropImageCommand}" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Copy.Value, Mode=OneWay}">
+            <MenuItem Command="{CompiledBinding Crop.CopyCropImageCommand}" Header="{CompiledBinding ParentWindowContext.Translation.Copy.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -42,7 +42,7 @@
                         Stretch="Fill" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{CompiledBinding Crop.CloseCropCommand}" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Close.Value, Mode=OneWay}">
+            <MenuItem Command="{CompiledBinding Crop.CloseCropCommand}" Header="{CompiledBinding ParentWindowContext.Translation.Close.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -78,11 +78,11 @@
                     Classes="txt"
                     FontSize="14"
                     Foreground="{DynamicResource MainTextColor}">
-                    <Run Text="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Width.Value, Mode=OneWay}" />
+                    <Run Text="{CompiledBinding ParentWindowContext.Translation.Width.Value, Mode=OneWay}" />
                     <Run Text=": " />
                     <Run Text="{CompiledBinding Crop.PixelSelectionWidth.Value, Mode=OneWay}" />
                     <Run Text=" x " />
-                    <Run Text="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Height.Value, Mode=OneWay}" />
+                    <Run Text="{CompiledBinding ParentWindowContext.Translation.Height.Value, Mode=OneWay}" />
                     <Run Text=": " />
                     <Run Text="{CompiledBinding Crop.PixelSelectionHeight.Value, Mode=OneWay}" />
                 </TextBlock>

@@ -31,8 +31,9 @@ public class TabOverviewViewModel
     // Needed for correct context in multi-window scenarios
     private MainWindowViewModel? _parentVm;
 
-    public TabOverviewViewModel()
+    public TabOverviewViewModel(MainWindowViewModel parentVm)
     {
+        _parentVm = parentVm;
         ActiveTab = new BindableReactiveProperty<TabViewModel>(CreateInitialTab());
         ActiveTab.Value.IsSelected = true;
     }
@@ -85,8 +86,7 @@ public class TabOverviewViewModel
     
     private TabViewModel CreateTabInternal(FileInfo? file = null)
     {
-        var tab = new TabViewModel(CloseTab, SharedFileWatcher);
-        tab.ParentWindowContext = _parentVm;
+        var tab = new TabViewModel(CloseTab, _parentVm, SharedFileWatcher);
         if (file is not null)
         {
             tab.Model.FileInfo = file;

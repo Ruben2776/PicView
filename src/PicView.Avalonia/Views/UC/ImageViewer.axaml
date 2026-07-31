@@ -13,7 +13,7 @@
 
         <Panel
             x:Name="MainPanel"
-            Background="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.ImageBackground.Value,
+            Background="{CompiledBinding ParentWindowContext.GlobalSettings.ImageBackground.Value,
                                          Mode=OneWay}"
             DockPanel.Dock="Left">
             <LayoutTransformControl x:Name="MainTransform">
@@ -23,18 +23,18 @@
                 <customControls:ZoomPanControl x:Name="ZoomPanControl" FittingScale="{Binding InitialZoom.Value}">
                     <customControls:AutoScrollViewer
                         x:Name="ImageScrollViewer"
-                        Width="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ScrollViewerWidth.Value}"
-                        Height="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ScrollViewerHeight.Value}"
+                        Width="{Binding ParentWindowContext.ScrollViewerWidth.Value}"
+                        Height="{Binding ParentWindowContext.ScrollViewerHeight.Value}"
                         Focusable="False"
                         HorizontalScrollBarVisibility="Disabled"
                         VerticalScrollBarVisibility="Disabled">
                         <Border
                             x:Name="MainBorder"
-                            Width="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ImageWidth.Value}"
-                            Height="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).ImageHeight.Value}"
+                            Width="{Binding ParentWindowContext.ImageWidth.Value}"
+                            Height="{Binding ParentWindowContext.ImageHeight.Value}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Background="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.ConstrainedImageBackground.Value,
+                            Background="{CompiledBinding ParentWindowContext.GlobalSettings.ConstrainedImageBackground.Value,
                                                          Mode=OneWay}">
                             <DockPanel
                                 HorizontalAlignment="Center"
@@ -51,7 +51,7 @@
                                     CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
                                     DockPanel.Dock="Right"
                                     ImageType="{Binding SecondaryImageType.Value}"
-                                    IsVisible="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsSideBySide.Value}"
+                                    IsVisible="{CompiledBinding ParentWindowContext.IsSideBySide.Value}"
                                     Source="{CompiledBinding SecondaryImage.Value}" />
                             </DockPanel>
                         </Border>
@@ -85,7 +85,7 @@
                 x:Name="GalleryShortcut"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                IsVisible="{CompiledBinding !$parent[Window].((vm:MainWindowViewModel)DataContext).IsBottomToolbarShown.Value}"
+                IsVisible="{CompiledBinding !ParentWindowContext.IsBottomToolbarShown.Value}"
                 Opacity="0"
                 ZIndex="2" />
         </Panel>

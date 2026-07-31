@@ -14,7 +14,7 @@ public class MainWindowViewModel : IDisposable
     public GallerySharedSettingsViewModel GallerySettings { get; }
     public GlobalSettingsViewModel GlobalSettings { get; }
     public TopTitlebarViewModel TopTitlebarViewModel { get; }  = new();
-    public TabOverviewViewModel WindowTabs { get; } = new();
+    public TabOverviewViewModel WindowTabs { get; }
     public ToolTipViewModel? ToolTip { get; set; }
     public PrintPreviewViewModel? PrintPreview { get; set; }
     public ImageInfoWindowViewModel? InfoWindow { get; set; } 
@@ -532,6 +532,7 @@ public class MainWindowViewModel : IDisposable
         PlatformWindowService = windowService;
         GlobalSettings = globalSettings;
         GallerySettings = gallerySettings;
+        WindowTabs = new TabOverviewViewModel(this);
         
         // Navigation
         NextCommand = new ReactiveCommand(Next);

@@ -18,7 +18,7 @@ using R3;
 
 namespace PicView.Avalonia.Services;
 
-public class WindowInitializer(IWindowProvider provider) : IWindowInitializer, IPlatformSpecificUpdate
+public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpdate
 {
     private Window? _aboutWindow;
     private Window? _batchResizeWindow;

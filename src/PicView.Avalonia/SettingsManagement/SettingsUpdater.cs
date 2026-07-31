@@ -16,9 +16,9 @@ using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
-using R3;
 
 namespace PicView.Avalonia.SettingsManagement;
+
 public static class SettingsUpdater
 {
     public static void InitializeSettings(MainWindowViewModel vm, bool settingsExists)
