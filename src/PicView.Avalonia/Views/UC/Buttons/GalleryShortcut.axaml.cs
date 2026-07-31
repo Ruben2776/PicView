@@ -9,18 +9,5 @@ public partial class GalleryShortcut : UserControl
     public GalleryShortcut()
     {
         InitializeComponent();
-        Loaded += delegate
-        {
-            if (DataContext is not TabViewModel tab)
-            {
-                return;
-            }
-
-            if (tab.ParentWindowContext is not { } vm)
-            {
-                return;
-            }
-            _ = new HoverFadeButtonHandler(this, InnerButton);
-        };
     }
 }
