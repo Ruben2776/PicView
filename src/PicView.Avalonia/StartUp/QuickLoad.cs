@@ -318,6 +318,14 @@ public static class QuickLoad
         {
             await LoadGallery(core).ConfigureAwait(false);
         }
+
+        if (Settings.WindowProperties.AutoFit)
+        {
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                WindowResizing.FastCenterWindow(mainWindow);
+            }, DispatcherPriority.Send);
+        }
     }
 
     private static bool CheckIfGalleryIsNeeded(CoreViewModel core)
