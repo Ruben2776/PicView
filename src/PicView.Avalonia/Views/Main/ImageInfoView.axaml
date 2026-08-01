@@ -803,6 +803,7 @@
                                 Text="{CompiledBinding Translation.Created.Value,
                                                        Mode=OneWay}" />
                             <customControls:DateTimePickerButtons
+                                x:Name="CreationTimeBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
                                 Margin="5,0,0,0"
                                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -831,6 +832,7 @@
                                 Text="{CompiledBinding Translation.Modified.Value,
                                                        Mode=OneWay}" />
                             <customControls:DateTimePickerButtons
+                                x:Name="ModifiedBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
                                 Margin="5,0,0,0"
                                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -858,6 +860,7 @@
                                 Text="{CompiledBinding Translation.LastAccessTime.Value,
                                                        Mode=OneWay}" />
                             <customControls:DateTimePickerButtons
+                                x:Name="LastAccessedBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
                                 Margin="5,0,0,0"
                                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -917,6 +920,7 @@
                                     Text="{CompiledBinding Translation.DateTaken.Value,
                                                            Mode=OneWay}" />
                                 <customControls:DateTimePickerButtons
+                                    x:Name="DateTakenBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value,
                                                             FallbackValue=0}"
                                     Margin="5,0,0,0"

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -42,7 +42,7 @@ public class DateTimeInput : TemplatedControl
     private bool _isUpdatingFromProperty;
 
     // Holds the TextBoxes for each part of the DateTime.
-    private TextBox? _yearBox, _monthBox, _dayBox, _hourBox, _minuteBox;
+    private ValidationTextBox? _yearBox, _monthBox, _dayBox, _hourBox, _minuteBox;
 
     private CompositeDisposable _disposables = new();
 
@@ -224,9 +224,9 @@ public class DateTimeInput : TemplatedControl
     /// <summary>
     /// Creates a TextBox configured for numeric input.
     /// </summary>
-    private TextBox CreateNumericTextBox(int maxLength, string watermark)
+    private ValidationTextBox CreateNumericTextBox(int maxLength, string watermark)
     {
-        var textBox = new TextBox
+        var textBox = new ValidationTextBox
         {
             MaxLength = maxLength,
             Watermark = watermark,
@@ -365,9 +365,7 @@ public class DateTimeInput : TemplatedControl
             return;
         }
         
-        // Always clear any previous error state when the text changes.
-        // We will re-add it if the new value is invalid.
-        PseudoClasses.Remove(":error");
+        ClearError();
 
         // Try to parse the values from the text boxes into integers.
         var yearParsed = int.TryParse(_yearBox?.Text, out var year);
@@ -407,14 +405,29 @@ public class DateTimeInput : TemplatedControl
         else
         {
             // If any part is not a valid number, the overall DateTime is invalid.
-            SetCurrentValue(SelectedDateTimeProperty, null);
+            OnError();
         }
         return;
         
         void OnError()
         {
             PseudoClasses.Add(":error");
+            _yearBox?.SetError(true);
+            _monthBox?.SetError(true);
+            _dayBox?.SetError(true);
+            _hourBox?.SetError(true);
+            _minuteBox?.SetError(true);
             SetCurrentValue(SelectedDateTimeProperty, null);
+        }
+        
+        void ClearError()
+        {
+            PseudoClasses.Remove(":error");
+            _yearBox?.SetError(false);
+            _monthBox?.SetError(false);
+            _dayBox?.SetError(false);
+            _hourBox?.SetError(false);
+            _minuteBox?.SetError(false);
         }
     }
 
