@@ -246,7 +246,7 @@ public class ArchiveExtractionServiceTests
     public void TabViewModel_ArchiveExtractionService_IsNotNull()
     {
         TranslationManager.Init();
-        var tab = new TabViewModel(_ => { });
+        var tab = new TabViewModel(_ => { }, null!);
 
         Assert.NotNull(tab.ArchiveExtractionService);
     }
@@ -255,8 +255,8 @@ public class ArchiveExtractionServiceTests
     public void TabViewModel_TwoTabs_HaveIndependentServices()
     {
         TranslationManager.Init();
-        var tab1 = new TabViewModel(_ => { });
-        var tab2 = new TabViewModel(_ => { });
+        var tab1 = new TabViewModel(_ => { }, null!);
+        var tab2 = new TabViewModel(_ => { }, null!);
 
         Assert.NotSame(tab1.ArchiveExtractionService, tab2.ArchiveExtractionService);
     }
@@ -265,7 +265,7 @@ public class ArchiveExtractionServiceTests
     public void TabViewModel_Dispose_CleansUpArchiveService()
     {
         TranslationManager.Init();
-        var tab = new TabViewModel(_ => { });
+        var tab = new TabViewModel(_ => { }, null!);
         var service = tab.ArchiveExtractionService;
 
         // Verify initial state

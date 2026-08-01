@@ -118,7 +118,7 @@ public class FileWatcherServiceTests : IDisposable
 
     private TabViewModel CreateTab(string directory)
     {
-        var tab = new TabViewModel(_ => { }, _service);
+        var tab = new TabViewModel(_ => { }, null!, _service);
         // We need to set a model so Watcher can find directory
         // But usually Watch() is called after InitializeImageIterator which likely has files.
         // If Model is null, Watch does nothing.

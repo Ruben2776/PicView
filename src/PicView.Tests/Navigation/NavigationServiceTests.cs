@@ -70,7 +70,7 @@ public class NavigationServiceTests
 
     private TabViewModel CreateTab(string directory)
     {
-        var tab = new TabViewModel(null);
+        var tab = new TabViewModel(null!, null!);
         // Initialize with mocks to avoid null refs
         var thumbCache = new MockThumbnailCache();
         tab.Initialize(_mockCache, thumbCache, new MockThumbnailLoader(), null, thumbCache);

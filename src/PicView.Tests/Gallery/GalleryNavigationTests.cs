@@ -20,7 +20,7 @@ public class GalleryNavigationTests
     public async Task NavigateDirectionalAsync_WhenGalleryIsExpanded_ShouldNavigateGallery()
     {
         // Arrange
-        var tabOverview = new TabOverviewViewModel();
+        var tabOverview = new TabOverviewViewModel(null!);
         var tab = tabOverview.ActiveTab.Value;
         
         tab.Gallery.IsGalleryExpanded.Value = true;
@@ -40,7 +40,7 @@ public class GalleryNavigationTests
     public async Task NavigateDirectionalAsync_WhenGalleryIsExpanded_ShouldNavigateGallery_Previous()
     {
         // Arrange
-        var tabOverview = new TabOverviewViewModel();
+        var tabOverview = new TabOverviewViewModel(null!);
         var tab = tabOverview.ActiveTab.Value;
         
         tab.Gallery.IsGalleryExpanded.Value = true;
@@ -60,7 +60,7 @@ public class GalleryNavigationTests
     public async Task NavigateDirectionalAsync_WhenGalleryIsNotExpanded_ShouldNotNavigateGallery()
     {
         // Arrange
-        var tabOverview = new TabOverviewViewModel();
+        var tabOverview = new TabOverviewViewModel(null!);
         var tab = tabOverview.ActiveTab.Value;
         
         tab.Gallery.IsGalleryExpanded.Value = false;
