@@ -418,13 +418,39 @@ public class DateTimeInput : TemplatedControl
         }
     }
 
-    public void ClearTextBoxes()
+    public DateTime? GetEnteredDateTime()
     {
-        _yearBox?.Text = string.Empty;
-        _monthBox?.Text = string.Empty;
-        _dayBox?.Text = string.Empty;
-        _hourBox?.Text = string.Empty;
-        _minuteBox?.Text = string.Empty;
+        var year = string.IsNullOrWhiteSpace(_yearBox.Text) ? DateTime.Now.Year : int.Parse(_yearBox.Text);
+        if (year is < 1601 or > 9999)
+        {
+            return null;
+        }
+        
+        var month = string.IsNullOrWhiteSpace(_monthBox.Text) ? DateTime.Now.Month : int.Parse(_monthBox.Text);
+        if (month is < 1 or > 12)
+        {
+            return null;
+        }
+        
+        var day = string.IsNullOrWhiteSpace(_dayBox.Text) ? DateTime.Now.Day : int.Parse(_dayBox.Text);
+        if (day is < 1 or > 31)
+        {
+            return null;
+        }
+        
+        var hour = string.IsNullOrWhiteSpace(_hourBox.Text) ? DateTime.Now.Hour : int.Parse(_hourBox.Text);
+        if (hour is < 0 or > 23)
+        {
+            return null;
+        }
+        
+        var minute = string.IsNullOrWhiteSpace(_minuteBox.Text) ? DateTime.Now.Minute : int.Parse(_minuteBox.Text);
+        if (minute is < 0 or > 59)
+        {
+            return null;
+        }
+        
+        return new DateTime(year, month, day, hour, minute, 0);
     }
 
     /// <summary>

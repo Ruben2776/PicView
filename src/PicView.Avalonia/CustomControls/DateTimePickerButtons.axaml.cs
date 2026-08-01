@@ -127,7 +127,13 @@ public partial class DateTimePickerButtons : UserControl
             return;
         }
 
-        SelectedDateTime = DateBox.SelectedDateTime;
+        var enteredDate = DateBox.GetEnteredDateTime();
+        if (!enteredDate.HasValue)
+        {
+            return;
+        }
+
+        SelectedDateTime = enteredDate;
         ExecuteCommand();
     }
 

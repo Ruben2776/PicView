@@ -923,7 +923,6 @@
                                     Command="{CompiledBinding Exif.SetDateTakenCommand}"
                                     CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                                     SelectedDateTime="{CompiledBinding Exif.DateTaken.Value,
-                                                                       Mode=TwoWay,
                                                                        FallbackValue=''}" />
                                 <customControls:CopyButton
                                     Classes="altHover BorderStyle"
