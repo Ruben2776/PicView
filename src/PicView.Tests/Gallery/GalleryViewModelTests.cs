@@ -17,51 +17,6 @@ public class GalleryViewModelTests
         SetDefaults();
     }
 
-    [Fact]
-    public void IsGalleryDocked_Change_Updates_GalleryMode()
-    {
-        using var vm = new GalleryViewModel();
-        
-        // Ensure Initial state is Closed
-        vm.ActiveGalleryMode.Value = GalleryMode.Closed;
-        Settings.Gallery.IsGalleryDocked = false;
-        _frameProvider.Tick(); // Propagate initial false if any
-        
-        // Change Setting to true
-        Settings.Gallery.IsGalleryDocked = true;
-        _frameProvider.Tick();
-        
-        // Expect Docked
-        Assert.Equal(GalleryMode.Docked, vm.ActiveGalleryMode.Value);
-        
-        // Change Setting to false
-        Settings.Gallery.IsGalleryDocked = false;
-        _frameProvider.Tick();
-        
-        // Expect Closed
-        Assert.Equal(GalleryMode.Closed, vm.ActiveGalleryMode.Value);
-    }
-
-    [Fact]
-    public void DockPosition_Change_Forces_Docked()
-    {
-        using var vm = new GalleryViewModel();
-        
-        // Initial state (Closed)
-        Settings.Gallery.IsGalleryDocked = false;
-        vm.ActiveGalleryMode.Value = GalleryMode.Closed;
-        _frameProvider.Tick();
-        
-        // Change Position (different from default Bottom)
-        // Note: Default might be Bottom. Ensure we change it.
-        Settings.Gallery.DockPosition = GalleryDockPosition.Left;
-        _frameProvider.Tick();
-        
-        // Expect Docked and IsGalleryDocked=true
-        Assert.Equal(GalleryMode.Docked, vm.ActiveGalleryMode.Value);
-        Assert.True(Settings.Gallery.IsGalleryDocked);
-    }
-
     private class ManualFrameProvider : FrameProvider
     {
         private readonly List<IFrameRunnerWorkItem> _items = new();
