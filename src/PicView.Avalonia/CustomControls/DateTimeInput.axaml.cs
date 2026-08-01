@@ -9,6 +9,7 @@ using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using PicView.Avalonia.UI;
+using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -44,7 +45,7 @@ public class DateTimeInput : TemplatedControl
     // Holds the TextBoxes for each part of the DateTime.
     private ValidationTextBox? _yearBox, _monthBox, _dayBox, _hourBox, _minuteBox;
 
-    private CompositeDisposable _disposables = new();
+    private DisposableBag _disposables;
 
     private const string PARTContainer = "PART_Container";
     private DockPanel? _controlsContainer;
@@ -201,8 +202,9 @@ public class DateTimeInput : TemplatedControl
         if ( TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {
             Observable.EveryValueChanged(this, x => x.IsEffectivelyEnabled, mainWindow.FrameProvider)
-                .Subscribe(b => _ampmToggle.IsVisible = b)
-                .AddTo(_disposables);
+                .Subscribe(b => _ampmToggle.IsVisible = b,
+                    DebugHelper.LogError(nameof(DateTimeInput), nameof(HideTextBlockWhenNotEnabledSubscription)))
+                .AddTo(ref _disposables);
         }
 
         _ampmToggle.Click += OnAmPmToggleClick;
@@ -289,8 +291,8 @@ public class DateTimeInput : TemplatedControl
         if ( TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {
             Observable.EveryValueChanged(this, x => x.IsEffectivelyEnabled, mainWindow.FrameProvider)
-                .Subscribe(b => textBlock.IsVisible = b)
-                .AddTo(_disposables);
+                .Subscribe(b => textBlock.IsVisible = b, DebugHelper.LogError(nameof(DateTimeInput), nameof(HideTextBlockWhenNotEnabledSubscription)))
+                .AddTo(ref _disposables);
         }
     }
     
@@ -544,7 +546,6 @@ public class DateTimeInput : TemplatedControl
 
         // Dispose prior subscriptions and create a fresh CompositeDisposable
         _disposables.Dispose();
-        _disposables = new CompositeDisposable();
 
         // Null out controls so we don't hold stale references
         _yearBox = _monthBox = _dayBox = _hourBox = _minuteBox = null;

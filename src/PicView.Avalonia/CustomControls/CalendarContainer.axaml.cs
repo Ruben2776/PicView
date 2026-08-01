@@ -19,13 +19,13 @@ public partial class CalendarContainer : UserControl
         set => PartCalendar.SelectedDate = value;
     }
     
-    private DateTime? _initialDate;
+    public DateTime? InitialDate;
     
     public CalendarContainer()
     {
         InitializeComponent();
         
-        Loaded += (_, _) => { _initialDate = SelectedDate; };
+        Loaded += (_, _) => { InitialDate = SelectedDate; };
 
         AcceptButton.Click += async (_, _) => await Accept();
         CancelButton.Click += async (_, _) => await Cancel();
@@ -33,15 +33,15 @@ public partial class CalendarContainer : UserControl
     
     private async Task Accept()
     {
+        Accepted?.Invoke(this, EventArgs.Empty);
         var closeAnimation = AnimationsHelper.OpacityAnimation(1, 0, .3);
         await closeAnimation.RunAsync(this);
         IsVisible = false;      // Hide the control
-        Accepted?.Invoke(this, EventArgs.Empty);
     }
 
     private async Task Cancel()
     {
-        SelectedDate = _initialDate; // Reset to the original time
+        SelectedDate = InitialDate; // Reset to the original time
         var closeAnimation = AnimationsHelper.OpacityAnimation(1, 0, .3);
         await closeAnimation.RunAsync(this);
         IsVisible = false;      // Hide the control

@@ -177,12 +177,12 @@ public partial class DateTimePickerButtons : UserControl
     /// </summary>
     private void OnCalendarAccepted(object? sender, EventArgs e)
     {
-        if (!_calendarContainer.SelectedDate.HasValue)
+        if (!_calendarContainer.SelectedDate.HasValue || _calendarContainer.PartCalendar.SelectedDate is null)
         {
             return;
         }
-        
-        var newDate = _calendarContainer.PartCalendar.DisplayDate.Date;
+
+        var newDate = _calendarContainer.PartCalendar.SelectedDate.Value.Date;
         var oldTime = SelectedDateTime?.TimeOfDay ?? DateTime.Now.TimeOfDay;
         SelectedDateTime = newDate + oldTime;
 
