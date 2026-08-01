@@ -20,20 +20,10 @@ public class UpdateManagerTests
         }
     }
 
-    private static void SetForceUpdate(bool value)
-    {
-        var field = typeof(UpdateManager).GetField("ForceUpdate", BindingFlags.Static | BindingFlags.NonPublic);
-        if (field != null)
-        {
-            field.SetValue(null, value);
-        }
-    }
-
     [Fact]
     public async Task UpdateCurrentVersion_WhenVersionIsCurrent_ReturnsFalse()
     {
-        // Ensure ForceUpdate is false to test current version behavior
-        SetForceUpdate(false);
+        UpdateManager.ForceUpdate = false;
 
         var dummyPlatformUpdate = new DummyPlatformUpdate();
 
@@ -49,7 +39,7 @@ public class UpdateManagerTests
     public async Task UpdateCurrentVersion_WhenVersionIsOld_ReturnsTrue()
     {
         // Set ForceUpdate to true to simulate an old version (3.0.0.3)
-        SetForceUpdate(true);
+        UpdateManager.ForceUpdate = true;
 
         try
         {
@@ -65,7 +55,7 @@ public class UpdateManagerTests
         finally
         {
             // Reset to prevent affecting other tests
-            SetForceUpdate(false);
+            UpdateManager.ForceUpdate = false;
         }
     }
 }
