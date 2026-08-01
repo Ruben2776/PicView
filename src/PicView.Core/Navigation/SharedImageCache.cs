@@ -428,6 +428,8 @@ public class SharedImageCache : IImageCache
                 removed.Item.ImageModel.Dispose();
             }
         }
+        _disposalList.Clear();
+        GC.Collect();
     }
 
     #endregion
