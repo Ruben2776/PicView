@@ -1,21 +1,21 @@
 ﻿<Window
-    BorderThickness="1"
-    CanResize="False"
-    Focusable="True"
-    SizeToContent="WidthAndHeight"
     x:Class="PicView.Avalonia.Win32.Views.SingleImageResizeWindow"
-    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:MainWindowViewModel"
+    BorderThickness="1"
+    CanResize="False"
+    Focusable="True"
+    SizeToContent="WidthAndHeight">
 
     <Border
+        x:Name="ParentBorder"
         Background="Transparent"
         BorderBrush="{DynamicResource WindowBorderColor}"
-        BorderThickness="1"
-        x:Name="ParentBorder">
+        BorderThickness="1">
         <StackPanel>
 
             <DockPanel
@@ -24,19 +24,21 @@
                 PointerPressed="MoveWindow">
 
                 <Border
+                    x:Name="IconBorder"
                     Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    DockPanel.Dock="Left"
-                    x:Name="IconBorder">
+                    DockPanel.Dock="Left">
                     <Image
+                        Width="20"
                         Height="25"
                         Margin="7,1,7,1"
-                        Source="{StaticResource LogoImage}"
-                        Width="20" />
+                        Source="{StaticResource LogoImage}" />
                 </Border>
 
                 <customControls:IconButton
+                    x:Name="CloseButton"
+                    Width="30"
                     Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderThickness="0"
                     Classes="hover"
@@ -48,10 +50,11 @@
                     IconHeight="10"
                     IconWidth="10"
                     IsRepeatEnabled="False"
-                    Width="30"
-                    x:Name="CloseButton" />
+                    WindowDecorationProperties.ElementRole="CloseButton" />
 
                 <customControls:IconButton
+                    x:Name="MinimizeButton"
+                    Width="30"
                     Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
@@ -62,28 +65,26 @@
                     Foreground="{StaticResource MainTextColor}"
                     IconHeight="12"
                     IconWidth="12"
-                    IsRepeatEnabled="False"
-                    Width="30"
-                    x:Name="MinimizeButton" />
+                    IsRepeatEnabled="False" />
 
                 <TextBlock
+                    x:Name="TitleText"
+                    Height="28"
+                    Padding="30,0,0,0"
                     Background="{DynamicResource WindowSecondaryBackgroundColor}"
                     Classes="txt"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="28"
                     LineHeight="28"
-                    Padding="30,0,0,0"
                     Text="{Binding Translation.ResizeImage.Value, Mode=OneWay}"
-                    TextAlignment="Center"
-                    x:Name="TitleText" />
+                    TextAlignment="Center" />
             </DockPanel>
 
             <Rectangle
-                Fill="{DynamicResource WindowBorderColor}"
+                x:Name="BorderRectangle"
                 Height="1"
-                x:Name="BorderRectangle" />
+                Fill="{DynamicResource WindowBorderColor}" />
 
-            <main:SingleImageResizeView Background="{DynamicResource NoisyTexture}" x:Name="ResizeView" />
+            <main:SingleImageResizeView x:Name="ResizeView" Background="{DynamicResource NoisyTexture}" />
         </StackPanel>
     </Border>
 </Window>

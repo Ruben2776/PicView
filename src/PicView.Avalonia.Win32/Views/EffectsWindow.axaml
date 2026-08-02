@@ -1,42 +1,44 @@
 <Window
-    BorderThickness="1"
-    CanResize="False"
-    SizeToContent="WidthAndHeight"
     x:Class="PicView.Avalonia.Win32.Views.EffectsWindow"
-    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:CoreViewModel"
+    BorderThickness="1"
+    CanResize="False"
+    SizeToContent="WidthAndHeight">
 
     <Border
+        x:Name="ParentBorder"
         BorderBrush="{DynamicResource WindowBorderColor}"
-        BorderThickness="1"
-        x:Name="ParentBorder">
+        BorderThickness="1">
         <StackPanel>
 
             <DockPanel
-                Background="{DynamicResource WindowSecondaryBackgroundColor}"
+                x:Name="TitleBarPanel"
                 Height="28"
+                Background="{DynamicResource WindowSecondaryBackgroundColor}"
                 LastChildFill="True"
-                PointerPressed="MoveWindow"
-                x:Name="TitleBarPanel">
+                PointerPressed="MoveWindow">
 
                 <Border
+                    x:Name="IconBorder"
                     Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="0,0,1,0"
-                    DockPanel.Dock="Left"
-                    x:Name="IconBorder">
+                    DockPanel.Dock="Left">
                     <Image
+                        Width="20"
                         Height="25"
                         Margin="7,1,7,1"
-                        Source="{StaticResource LogoImage}"
-                        Width="20" />
+                        Source="{StaticResource LogoImage}" />
                 </Border>
 
                 <customControls:IconButton
+                    x:Name="CloseButton"
+                    Width="30"
                     Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderThickness="0"
                     Classes="hover"
@@ -48,10 +50,11 @@
                     IconHeight="10"
                     IconWidth="10"
                     IsRepeatEnabled="False"
-                    Width="30"
-                    x:Name="CloseButton" />
+                    WindowDecorationProperties.ElementRole="CloseButton" />
 
                 <customControls:IconButton
+                    x:Name="MinimizeButton"
+                    Width="30"
                     Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,1,0"
@@ -62,11 +65,10 @@
                     Foreground="{DynamicResource MainTextColor}"
                     IconHeight="12"
                     IconWidth="12"
-                    IsRepeatEnabled="False"
-                    Width="30"
-                    x:Name="MinimizeButton" />
+                    IsRepeatEnabled="False" />
 
                 <customControls:IconButton
+                    Width="30"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1,0,0,0"
                     Classes="noBorderHover"
@@ -75,38 +77,37 @@
                     Foreground="{DynamicResource MainTextColor}"
                     Icon="{StaticResource GeneralSettingsImage}"
                     IconHeight="16"
-                    IconWidth="16"
-                    Width="30">
+                    IconWidth="16">
                     <customControls:IconButton.Flyout>
                         <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
                             <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.SaveCommand}" Header="{Binding Translation.Save.Value, Mode=OneWay}">
                                 <MenuItem.Icon>
                                     <Path
+                                        Width="12"
+                                        Height="12"
                                         Data="{StaticResource SaveGeometry}"
                                         Fill="{DynamicResource MainTextColor}"
-                                        Height="12"
-                                        Stretch="Fill"
-                                        Width="12" />
+                                        Stretch="Fill" />
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.SaveAsCommand}" Header="{Binding Translation.SaveAs.Value, Mode=OneWay}">
                                 <MenuItem.Icon>
                                     <Path
+                                        Width="12"
+                                        Height="12"
                                         Data="{StaticResource SaveGeometry}"
                                         Fill="{DynamicResource MainTextColor}"
-                                        Height="12"
-                                        Stretch="Fill"
-                                        Width="12" />
+                                        Stretch="Fill" />
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.CopyImageCommand}" Header="{Binding Translation.CopyImage.Value, Mode=OneWay}">
                                 <MenuItem.Icon>
                                     <Path
+                                        Width="12"
+                                        Height="12"
                                         Data="{StaticResource CopyGeometry}"
                                         Fill="{DynamicResource MainTextColor}"
-                                        Height="12"
-                                        Stretch="Fill"
-                                        Width="12" />
+                                        Stretch="Fill" />
                                 </MenuItem.Icon>
                             </MenuItem>
                             <Separator />
@@ -116,20 +117,20 @@
                                 IsVisible="{Binding GlobalSettings.ShowSetAsWallpaper.Value}">
                                 <MenuItem.Icon>
                                     <Path
+                                        Width="13"
+                                        Height="10.40"
                                         Data="{StaticResource PanoramaGeometry}"
                                         Fill="{DynamicResource MainTextColor}"
-                                        Height="10.40"
-                                        Stretch="Fill"
-                                        Width="13" />
+                                        Stretch="Fill" />
                                 </MenuItem.Icon>
                             </MenuItem>
                             <Separator IsVisible="{Binding GlobalSettings.ShowSetAsWallpaper.Value}" />
-                            <MenuItem Header="{Binding Translation.ClearEffects.Value, Mode=OneWay}" x:Name="ClearEffectsItem">
+                            <MenuItem x:Name="ClearEffectsItem" Header="{Binding Translation.ClearEffects.Value, Mode=OneWay}">
                                 <MenuItem.Icon>
                                     <Image
+                                        Width="12"
                                         Height="12"
-                                        Source="{StaticResource ClearImage}"
-                                        Width="12" />
+                                        Source="{StaticResource ClearImage}" />
                                 </MenuItem.Icon>
                             </MenuItem>
                         </MenuFlyout>
@@ -137,25 +138,25 @@
                 </customControls:IconButton>
 
                 <TextBlock
+                    x:Name="TitleText"
+                    Height="28"
+                    Padding="30,0,0,0"
                     Classes="txt"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="28"
                     LineHeight="28"
-                    Padding="30,0,0,0"
                     Text="{Binding Translation.Effects.Value, Mode=OneWay}"
-                    TextAlignment="Center"
-                    x:Name="TitleText" />
+                    TextAlignment="Center" />
             </DockPanel>
 
             <Rectangle
-                Fill="{DynamicResource WindowBorderColor}"
+                x:Name="BorderRectangle"
                 Height="1"
-                x:Name="BorderRectangle" />
+                Fill="{DynamicResource WindowBorderColor}" />
 
             <main:EffectsView
+                x:Name="EffectsView"
                 Background="{DynamicResource NoisyTexture}"
-                Focusable="True"
-                x:Name="EffectsView" />
+                Focusable="True" />
         </StackPanel>
     </Border>
 </Window>

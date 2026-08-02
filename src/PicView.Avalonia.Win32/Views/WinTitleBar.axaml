@@ -1074,7 +1074,8 @@
                     Foreground="{DynamicResource MainTextColor}"
                     IconHeight="10"
                     IconWidth="10"
-                    IsRepeatEnabled="False" />
+                    IsRepeatEnabled="False"
+                    WindowDecorationProperties.ElementRole="CloseButton" />
 
             </StackPanel>
 
