@@ -122,18 +122,20 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                     }
                     else
                     {
+                        if (index != CurrentIndex)
+                        {
+                            await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
+                            return;
+                        }
                         TriggerPreload();
                     }
-                });
+                }, ct.Token);
             }
         }
         else
         {
             // Not in cache
-            await Task.Run(async () =>
-            {
-                await AttemptManualLoad();
-            });
+            await Task.Run(AttemptManualLoad);
         }
         
         return;
@@ -170,7 +172,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         SecondaryCurrentIndex = secondaryIndex;
         var firstFile = Files[index];
         var secondaryFile = Files[secondaryIndex];
-        ImageModel firstModel, secondModel;
+        ImageModel? firstModel = null, secondModel = null;
         if (Cache.TryGet(firstFile, out var preLoadValue))
         {
             if (preLoadValue is { IsLoading: false, ImageModel.Image: not null })
@@ -181,29 +183,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             else
             {
                 // Wait for loading complete
-                var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
-                if (!successfullyLoaded || index != CurrentIndex)
-                {
-                    TriggerPreload();
-                    return;
-                }
-                if (preLoadValue.ImageModel.Image is null)
-                {
-                    await Cache.LoadAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
-                    if (index == CurrentIndex && Cache.TryGet(firstFile, out var value))
-                    {
-                        firstModel = value.ImageModel;
-                    }
-                    else
-                    {
-                        TriggerPreload();
-                        return;
-                    }
-                }
-                else
-                {
-                    firstModel = preLoadValue.ImageModel;
-                }
+                await Task.Run(LoadFirstModelAsync, ct.Token);
             }
         }
         else
@@ -231,16 +211,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             else
             {
                 // Wait for loading complete
-                var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, secondaryIndex, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
-                if (successfullyLoaded && index == CurrentIndex && secondaryPreLoadValue.ImageModel.Image is not null)
-                {
-                    secondModel = secondaryPreLoadValue.ImageModel;
-                }
-                else
-                {
-                    TriggerPreload();
-                    return;
-                }
+                await Task.Run(LoadSecondModelAsync, ct.Token);
             }
         }
         else
@@ -258,6 +229,31 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             }
         }
 
+        if (firstModel is null)
+        {
+            if (index != CurrentIndex || secondaryIndex != SecondaryCurrentIndex)
+            {
+                return;
+            }
+            await Task.Run(LoadFirstModelAsync, ct.Token);
+            if (firstModel is null)
+            {
+                return;
+            }
+        }
+        if (secondModel is null)
+        {
+            if (index != CurrentIndex || secondaryIndex != SecondaryCurrentIndex)
+            {
+                return;
+            }
+            await Task.Run(LoadSecondModelAsync, ct.Token);
+            if (secondModel is null)
+            {
+                return;
+            }
+        }
+
         // We need to update the secondary model first, because updating the first model will trigger reactive subscription,
         // where the secondary model need to be valid beforehand.
         _tab.SecondaryModel = secondModel;
@@ -267,6 +263,89 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         
         FileHistoryManager.Add(firstModel.FileInfo.FullName);
         FileHistoryManager.Add(secondModel.FileInfo.FullName);
+        
+        return;
+        
+        async Task LoadFirstModelAsync()
+        {
+            var thumb = _thumbCache.TryGet(firstFile.FullName, out var cachedThumb) ? cachedThumb 
+                : _thumbnailLoader.GetExifThumbnail(firstFile);
+                
+            _tab.Image.Value = thumb;
+            _tab.SetLoading();
+
+            // Wait for loading complete
+            var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
+            if (successfullyLoaded && index == CurrentIndex && secondaryIndex == SecondaryCurrentIndex)
+            {
+                if (preLoadValue.ImageModel.Image is null)
+                {
+                    var manuallyLoaded = await Cache.LoadAsync(_tab.Id, index, Files, ct.Token).ConfigureAwait(false);
+                    if (index == CurrentIndex && secondaryIndex == SecondaryCurrentIndex && manuallyLoaded is not null)
+                    {
+                        firstModel = manuallyLoaded;
+                    }
+                    else
+                    {
+                        TriggerPreload();
+                    }
+                }
+                else
+                {
+                    firstModel = preLoadValue.ImageModel;
+                }
+            }
+            else
+            {
+                if (index != CurrentIndex && secondaryIndex == SecondaryCurrentIndex)
+                {
+                    await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
+                    return;
+                }
+                TriggerPreload();
+            }
+        }
+
+        async Task LoadSecondModelAsync()
+        {
+            var thumb = _thumbCache.TryGet(secondaryFile.FullName, out var cachedThumb) ? cachedThumb 
+                : _thumbnailLoader.GetExifThumbnail(secondaryFile);
+                
+            _tab.Image.Value = thumb;
+            _tab.SetLoading();
+
+            // Wait for loading complete
+            var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, secondaryIndex, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
+            if (successfullyLoaded && index == CurrentIndex && secondaryIndex == SecondaryCurrentIndex)
+            {
+                if (secondaryPreLoadValue.ImageModel.Image is null)
+                {
+                    var manuallyLoaded = await Cache.LoadAsync(_tab.Id, secondaryIndex, Files, ct.Token).ConfigureAwait(false);
+                    if (index == CurrentIndex && secondaryIndex == SecondaryCurrentIndex && manuallyLoaded is not null)
+                    {
+                        secondModel = manuallyLoaded;
+                    }
+                    else
+                    {
+                        TriggerPreload();
+                    }
+                }
+                else
+                {
+                    secondModel = secondaryPreLoadValue.ImageModel;
+                }
+            }
+            else
+            {
+                if (index != CurrentIndex && secondaryIndex == SecondaryCurrentIndex)
+                {
+                    await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
+                    return;
+                }
+                TriggerPreload();
+            }
+        }
+        
     }
 
     public async ValueTask SkipToIndexAsync(int index, CancellationTokenSource ct)
