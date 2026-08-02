@@ -4,13 +4,11 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Core.Config;
 using PicView.Core.Localization;
-using R3;
 
 namespace PicView.Avalonia.Win32.Views;
 
-public partial class EffectsWindow : GenericWindow, IDisposable
+public partial class EffectsWindow : GenericWindow
 {
-    private readonly CompositeDisposable _disposables = new();
     public EffectsWindow(EffectsWindowConfig config)
     {
         InitializeComponent();
@@ -44,18 +42,5 @@ public partial class EffectsWindow : GenericWindow, IDisposable
         }
         
         GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.Effects, true, config.WindowProperties);
-        Loaded += delegate
-        {
-            ClearEffectsItem.Click += delegate
-            {
-                EffectsView?.RemoveEffects();
-            };
-        };
-    }
-    
-    public void Dispose()
-    {
-        Disposable.Dispose(_disposables);
-        GC.SuppressFinalize(this);
     }
 }
