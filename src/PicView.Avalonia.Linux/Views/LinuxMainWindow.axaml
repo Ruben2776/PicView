@@ -1,10 +1,10 @@
 <customControls:MainWindow
-    MaxHeight="{CompiledBinding WindowMaxHeight.Value}"
-    MaxWidth="{CompiledBinding WindowMaxWidth.Value}"
-    MinHeight="{CompiledBinding WindowMinHeight}"
-    MinWidth="{CompiledBinding WindowMinWidth}"
-    Title="{CompiledBinding WindowTabs.ActiveTab.Value.WindowTitle.Value,
-                            FallbackValue=''}"
+    MaxHeight="{Binding WindowMaxHeight.Value}"
+    MaxWidth="{Binding WindowMaxWidth.Value}"
+    MinHeight="{Binding WindowMinHeight}"
+    MinWidth="{Binding WindowMinWidth}"
+    Title="{Binding WindowTabs.ActiveTab.Value.WindowTitle.Value, FallbackValue=''}"
+    WindowDecorations="None"
     x:Class="PicView.Avalonia.Linux.Views.LinuxMainWindow"
     x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"

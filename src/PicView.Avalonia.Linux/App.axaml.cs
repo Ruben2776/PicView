@@ -60,7 +60,7 @@ public class App : Application, IPlatformSpecificService
 
     public void SetTaskbarProgress(ulong progress, ulong maximum)
     {
-        throw new NotImplementedException();
+        // TODO
     }
 
     public void StopTaskbarProgress()

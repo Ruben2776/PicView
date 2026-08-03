@@ -27,7 +27,8 @@ internal class Program
                 MaxGpuResourceSizeBytes = 256_000_000,
                 UseOpacitySaveLayer = true
             })
-            .UseWayland()
+            .UseX11()
+            .UseWaylandWithFallback()
             .UseHarfBuzz();
     }
 }

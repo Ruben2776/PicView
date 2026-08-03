@@ -196,19 +196,6 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
             TabNavigationInitializer.InitializeDetachedWindow(this, parentVm, newVm, tab);
         });
     }
-
-    protected override async void OnClosing(WindowClosingEventArgs e)
-    {
-        await WindowFunctions.WindowClosingBehavior(this);
-        base.OnClosing(e);
-    }
-
-    protected override void OnClosed(EventArgs e)
-    {
-        _frameProvider?.Dispose();
-        Disposables.Dispose();
-        base.OnClosed(e);
-    }
     
     #region Window interface implementations
     
