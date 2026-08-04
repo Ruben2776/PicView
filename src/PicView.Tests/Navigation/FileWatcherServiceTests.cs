@@ -161,8 +161,18 @@ public class FileWatcherServiceTests : IDisposable
         public bool TryGet(uint ownerId, int index, out PreLoadValue? value) { value = null; return false; }
         public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value) { value = null; return false; }
         public void Clear() { }
+        public bool Contains(FileInfo fileInfo)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Clear(uint ownerId) { }
         public bool Contains(PreLoadValue value) => false;
+        public bool Contains(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
         {
             

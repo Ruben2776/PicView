@@ -3,7 +3,6 @@ using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Navigation.Tiff;
-using PicView.Core.Config;
 using PicView.Core.Localization;
 using PicView.Core.Preloading;
 using PicView.Core.ViewModels;
@@ -208,6 +207,11 @@ public class TiffNavigationTests : IDisposable
 
         public bool TryGet(string ownerId, int index, out PreLoadValue? value) { value = null; return false; }
         public void Clear() { }
+        public bool Contains(FileInfo fileInfo)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Clear(uint ownerId)
         {
             throw new NotImplementedException();
@@ -215,6 +219,11 @@ public class TiffNavigationTests : IDisposable
 
         public void Clear(string ownerId) { }
         public bool Contains(PreLoadValue value) => false;
+        public bool Contains(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
         {
             throw new NotImplementedException();

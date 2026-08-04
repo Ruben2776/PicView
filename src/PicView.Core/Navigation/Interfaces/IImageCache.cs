@@ -30,6 +30,12 @@ public interface IImageCache
     /// </summary>
     bool TryGet(FileInfo f, out PreLoadValue? value);
 
+    public bool Contains(PreLoadValue value);
+
+    public bool Contains(string fileName);
+
+    public bool Contains(FileInfo fileInfo);
+
     /// <summary>
     /// Clears cache items associated specifically with the given owner ID.
     /// </summary>

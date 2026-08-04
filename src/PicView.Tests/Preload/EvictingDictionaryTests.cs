@@ -16,24 +16,40 @@ public class EvictingDictionaryTests
     {
         var dict = new EvictingDictionary<string>(3);
         
-        var evicted = dict.TryAdd(0, "A", 10, false, out var evictedValue);
+        dict.TryAdd(0, "A", 10, false, out var evictedValue, out var isNew);
         
-        Assert.False(evicted);
+        Assert.True(isNew);
         Assert.Null(evictedValue);
         Assert.Equal(1, dict.Count);
         Assert.Equal("A", dict[0]);
     }
 
     [Fact]
-    public void TryAdd_UpdateExisting_ShouldUpdateWithoutEvicting()
+    public void TryAdd_UpdateExisting_SameObject_ShouldUpdateWithoutEvicting()
     {
         var dict = new EvictingDictionary<string>(3);
-        dict.TryAdd(0, "A", 10, false, out _);
+        dict.TryAdd(0, "A", 10, false, out _, out _);
         
-        var evicted = dict.TryAdd(0, "B", 10, false, out var evictedValue);
+        // Add the exact same string reference
+        dict.TryAdd(0, "A", 10, false, out var evictedValue, out var isNew);
         
-        Assert.False(evicted);
+        Assert.False(isNew); // Should flag that it is NOT a new reference
         Assert.Null(evictedValue);
+        Assert.Equal(1, dict.Count);
+        Assert.Equal("A", dict[0]);
+    }
+
+    [Fact]
+    public void TryAdd_UpdateExisting_DifferentObject_ShouldEvictOldObject()
+    {
+        var dict = new EvictingDictionary<string>(3);
+        dict.TryAdd(0, "A", 10, false, out _, out _);
+        
+        // Overwrite index 0 with a DIFFERENT reference
+        dict.TryAdd(0, "B", 10, false, out var evictedValue, out var isNew);
+        
+        Assert.True(isNew); // It's a new reference
+        Assert.Equal("A", evictedValue); // The old reference MUST be evicted
         Assert.Equal(1, dict.Count);
         Assert.Equal("B", dict[0]);
     }
@@ -42,13 +58,13 @@ public class EvictingDictionaryTests
     public void TryAdd_Full_ForwardDirection_ShouldEvictFarthestBehind()
     {
         var dict = new EvictingDictionary<string>(3);
-        dict.TryAdd(0, "A", 10, false, out _);
-        dict.TryAdd(1, "B", 10, false, out _);
-        dict.TryAdd(2, "C", 10, false, out _);
+        dict.TryAdd(0, "A", 10, false, out _, out _);
+        dict.TryAdd(1, "B", 10, false, out _, out _);
+        dict.TryAdd(2, "C", 10, false, out _, out _);
         
-        var evicted = dict.TryAdd(3, "D", 10, false, out var evictedValue);
+        dict.TryAdd(3, "D", 10, false, out var evictedValue, out var isNew);
         
-        Assert.True(evicted);
+        Assert.True(isNew);
         Assert.Equal("A", evictedValue);
         Assert.Equal(3, dict.Count);
         Assert.False(dict.ContainsKey(0));
@@ -59,13 +75,13 @@ public class EvictingDictionaryTests
     public void TryAdd_Full_ForwardDirection_WrapAround_ShouldEvictFarthestBehind()
     {
         var dict = new EvictingDictionary<string>(3);
-        dict.TryAdd(9, "A", 10, false, out _);
-        dict.TryAdd(0, "B", 10, false, out _);
-        dict.TryAdd(1, "C", 10, false, out _);
+        dict.TryAdd(9, "A", 10, false, out _, out _);
+        dict.TryAdd(0, "B", 10, false, out _, out _);
+        dict.TryAdd(1, "C", 10, false, out _, out _);
         
-        var evicted = dict.TryAdd(2, "D", 10, false, out var evictedValue);
+        dict.TryAdd(2, "D", 10, false, out var evictedValue, out var isNew);
         
-        Assert.True(evicted);
+        Assert.True(isNew);
         Assert.Equal("A", evictedValue);
         Assert.False(dict.ContainsKey(9));
         Assert.True(dict.ContainsKey(2));
@@ -75,13 +91,13 @@ public class EvictingDictionaryTests
     public void TryAdd_Full_ReverseDirection_ShouldEvictFarthestAhead()
     {
         var dict = new EvictingDictionary<string>(3);
-        dict.TryAdd(2, "C", 10, true, out _);
-        dict.TryAdd(1, "B", 10, true, out _);
-        dict.TryAdd(0, "A", 10, true, out _);
+        dict.TryAdd(2, "C", 10, true, out _, out _);
+        dict.TryAdd(1, "B", 10, true, out _, out _);
+        dict.TryAdd(0, "A", 10, true, out _, out _);
         
-        var evicted = dict.TryAdd(9, "D", 10, true, out var evictedValue);
+        dict.TryAdd(9, "D", 10, true, out var evictedValue, out var isNew);
         
-        Assert.True(evicted);
+        Assert.True(isNew);
         Assert.Equal("C", evictedValue);
         Assert.False(dict.ContainsKey(2));
         Assert.True(dict.ContainsKey(9));
@@ -91,13 +107,13 @@ public class EvictingDictionaryTests
     public void TryAdd_Full_ReverseDirection_WrapAround_ShouldEvictFarthestAhead()
     {
         var dict = new EvictingDictionary<string>(3);
-        dict.TryAdd(1, "C", 10, true, out _);
-        dict.TryAdd(0, "B", 10, true, out _);
-        dict.TryAdd(9, "A", 10, true, out _);
+        dict.TryAdd(1, "C", 10, true, out _, out _);
+        dict.TryAdd(0, "B", 10, true, out _, out _);
+        dict.TryAdd(9, "A", 10, true, out _, out _);
         
-        var evicted = dict.TryAdd(8, "D", 10, true, out var evictedValue);
+        dict.TryAdd(8, "D", 10, true, out var evictedValue, out var isNew);
         
-        Assert.True(evicted);
+        Assert.True(isNew);
         Assert.Equal("C", evictedValue);
         Assert.False(dict.ContainsKey(1));
         Assert.True(dict.ContainsKey(8));
@@ -107,7 +123,7 @@ public class EvictingDictionaryTests
     public void Remove_ExistingKey_ShouldReturnTrueAndRemove()
     {
         var dict = new EvictingDictionary<string>(3);
-        dict.TryAdd(0, "A", 10, false, out _);
+        dict.TryAdd(0, "A", 10, false, out _, out _);
         
         var removed = dict.Remove(0);
         
@@ -129,7 +145,7 @@ public class EvictingDictionaryTests
     public void RemoveOut_ExistingKey_ShouldReturnTrueAndValue()
     {
         var dict = new EvictingDictionary<string>(3);
-        dict.TryAdd(0, "A", 10, false, out _);
+        dict.TryAdd(0, "A", 10, false, out _, out _);
         
         var removed = dict.Remove(0, out var value);
         
@@ -142,8 +158,8 @@ public class EvictingDictionaryTests
     public void Clear_ShouldRemoveAllItems()
     {
         var dict = new EvictingDictionary<string>(3);
-        dict.TryAdd(0, "A", 10, false, out _);
-        dict.TryAdd(1, "B", 10, false, out _);
+        dict.TryAdd(0, "A", 10, false, out _, out _);
+        dict.TryAdd(1, "B", 10, false, out _, out _);
         
         dict.Clear();
         
@@ -156,7 +172,7 @@ public class EvictingDictionaryTests
     public void Indexer_GetExisting_ShouldReturnValue()
     {
         var dict = new EvictingDictionary<string>(3);
-        dict.TryAdd(0, "A", 10, false, out _);
+        dict.TryAdd(0, "A", 10, false, out _, out _);
         
         Assert.Equal("A", dict[0]);
     }
@@ -173,7 +189,7 @@ public class EvictingDictionaryTests
     public void TryGetValue_ExistingKey_ShouldReturnTrueAndValue()
     {
         var dict = new EvictingDictionary<string>(3);
-        dict.TryAdd(0, "A", 10, false, out _);
+        dict.TryAdd(0, "A", 10, false, out _, out _);
         
         var success = dict.TryGetValue(0, out var value);
         
@@ -196,8 +212,8 @@ public class EvictingDictionaryTests
     public void IEnumerable_ShouldIterateOverAllItems()
     {
         var dict = new EvictingDictionary<string>(3);
-        dict.TryAdd(0, "A", 10, false, out _);
-        dict.TryAdd(1, "B", 10, false, out _);
+        dict.TryAdd(0, "A", 10, false, out _, out _);
+        dict.TryAdd(1, "B", 10, false, out _, out _);
         
         var items = dict.ToList();
         

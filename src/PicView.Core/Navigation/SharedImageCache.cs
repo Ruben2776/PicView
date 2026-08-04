@@ -10,7 +10,7 @@ namespace PicView.Core.Navigation;
 /// Acts as the central station for acquiring and managing cached <see cref="ImageModel"/> resources.
 /// <para>
 /// This class coordinates between the storage container (multiple <see cref="EvictingDictionary{TValue}"/>) 
-/// and the background worker (<see cref="Preloader2"/>) to ensure images are loaded, retrieved, 
+/// and the background worker (<see cref="Preloader"/>) to ensure images are loaded, retrieved, 
 /// and evicted efficiently across multiple tab owners.
 /// </para>
 /// </summary>
@@ -27,21 +27,16 @@ public class SharedImageCache : IImageCache
     /// which provides eviction capabilities to limit memory usage.
     /// </remarks>
     private readonly ConcurrentDictionary<uint, EvictingDictionary<PreLoadValue>> _ownerDictionaries = new();
-    
-    /// Fast lookup by file path (using OS-specific string comparer)
-    private readonly ConcurrentDictionary<string, PreLoadValue> _pathLookup;
-    /// Lazy disposal list: FilePath -> (PreLoadValue, ExpirationTime)
-    private readonly ConcurrentDictionary<string, (PreLoadValue Item, DateTime Expiration)> _disposalList;
-    /// Keep track of which directories and file lists each owner has for transfer logic
     private readonly ConcurrentDictionary<uint, (string Directory, IReadOnlyList<FileInfo> Files, int CurrentIndex)> _ownerContexts = new();
-    
+    private readonly ConcurrentDictionary<string, PreLoadValue> _pathLookup;
+
+    private readonly PriorityQueue<string, DateTime> _disposalQueue = new();
+    private const int DisposalDelayInSeconds = 15;
+    private readonly Lock _disposalLock = new();
+
     // The worker
     private readonly Preloader _preLoader;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SharedImageCache"/> class.
-    /// </summary>
-    /// <param name="imageLoader">The function used to load an ImageModel from a FileInfo.</param>
     public SharedImageCache(Func<FileInfo, ValueTask<ImageModel>> imageLoader)
     {
         var pathComparer = OperatingSystem.IsWindows()
@@ -49,8 +44,6 @@ public class SharedImageCache : IImageCache
             : StringComparer.Ordinal;
             
         _pathLookup = new ConcurrentDictionary<string, PreLoadValue>(pathComparer);
-        _disposalList = new ConcurrentDictionary<string, (PreLoadValue, DateTime)>(pathComparer);
-
         _preLoader = new Preloader(imageLoader, this);
     }
 
@@ -73,7 +66,7 @@ public class SharedImageCache : IImageCache
         {
             return;
         }
-
+        
         var oldItems = dict.GetEnumerator();
         using IDisposable oldItems1 = oldItems;
         var currentItems = new List<KeyValuePair<int, PreLoadValue>>();
@@ -93,27 +86,22 @@ public class SharedImageCache : IImageCache
         {
             if (newFileMap.TryGetValue(item.Value.ImageModel.FileInfo.FullName, out var newIndex))
             {
-                // Put it back at new index
-                dict.TryAdd(newIndex, item.Value, files.Count, false, out var evicted);
+                // We do not care if it's a new reference here, because we are moving it 
+                // from the cleared dictionary back into the same dictionary. 
+                // The single reference count stays valid.
+                dict.TryAdd(newIndex, item.Value, files.Count, false, out var evicted, out _);
                 if (evicted != null)
                 {
-                    CheckAndDisposeIfNotReferenced(evicted);
+                    ProcessDisposalLogic(evicted);
                 }
             }
             else
             {
-                // File no longer exists in the list
-                CheckAndDisposeIfNotReferenced(item.Value);
+                ProcessDisposalLogic(item.Value);
             }
         }
         
-        // Update context
-        if (files.Count <= 0)
-        {
-            return;
-        }
-
-        if (_ownerContexts.TryGetValue(ownerId, out var ctx))
+        if (files.Count > 0 && _ownerContexts.TryGetValue(ownerId, out var ctx))
         {
             _ownerContexts[ownerId] = (files[0].DirectoryName ?? string.Empty, files, ctx.CurrentIndex);
         }
@@ -123,72 +111,39 @@ public class SharedImageCache : IImageCache
 
     #region Add, Get, Remove, and Clear
     
-    public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
-    {
+    public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse) =>
         TryAdd(ownerId, index, preLoadValue, listCount, isReverse, out _);
-    }
 
     public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value)
     {
         value = null;
-        if (!_ownerDictionaries.TryGetValue(ownerId, out var dict))
+        if (!_ownerDictionaries.TryGetValue(ownerId, out var dict)) return false;
+
+        dict.TryAdd(index, preLoadValue, listCount, isReverse, out var evictedValue, out bool isNewReference);
+
+        if (isNewReference)
         {
-            return false;
+            preLoadValue.AddReference();
+            // Using the indexer forces the lookup to point to the newest wrapper instance 
+            // if a duplicate was accidentally created.
+            _pathLookup[preLoadValue.ImageModel.FileInfo.FullName] = preLoadValue; 
         }
 
-        var path = preLoadValue.ImageModel.FileInfo.FullName;
-        
-        // Ensure path lookup has it
-        _pathLookup.TryAdd(path, preLoadValue);
-        
-        // Add to owner dictionary
-        var evicted = dict.TryAdd(index, preLoadValue, listCount, isReverse, out var evictedValue);
-
-        if (!evicted || evictedValue == null)
+        if (evictedValue is not null)
         {
-            return evicted;
+            ProcessDisposalLogic(evictedValue);
+            value = evictedValue;
         }
 
-        CheckAndDisposeIfNotReferenced(evictedValue);
-        value = evictedValue;
-
-        return evicted;
+        return true;
     }
     
-    public bool Contains(ReadOnlySpan<char> span, out PreLoadValue? value) =>
-        TryGet(span, out value);
-
-    public bool Contains(PreLoadValue value) =>
-        TryGet(value.ImageModel.FileInfo.FullName, out var preLoadValue) && preLoadValue == value;
+    public bool Contains(string fileName) => _pathLookup.TryGetValue(fileName, out _);
+    public bool Contains(FileInfo fileInfo) => _pathLookup.TryGetValue(fileInfo.FullName, out _);
+    public bool Contains(PreLoadValue value) => _pathLookup.TryGetValue(value.ImageModel.FileInfo.FullName, out _);
     
-    public bool TryGet(FileInfo f, out PreLoadValue? value)
-    {
-        if (_pathLookup.TryGetValue(f.FullName, out value))
-        {
-            return true;
-        }
-        return TryResurrect(f.FullName, out value);
-    }
-
-    public bool TryGet(uint ownerId, int index, out PreLoadValue? value)
-    {
-        if (_ownerDictionaries.TryGetValue(ownerId, out var dict))
-        {
-            return dict.TryGetValue(index, out value);
-        }
-        value = null;
-        return false;
-    }
-
-    public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value)
-    {
-        var lookup = _pathLookup.GetAlternateLookup<ReadOnlySpan<char>>();
-        if (lookup.TryGetValue(f, out value))
-        {
-            return true;
-        }
-        return TryResurrect(f.ToString(), out value);
-    }
+    public bool TryGet(FileInfo f, out PreLoadValue? value) => _pathLookup.TryGetValue(f.FullName, out value);
+    public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value) => _pathLookup.GetAlternateLookup<ReadOnlySpan<char>>().TryGetValue(f, out value);
 
     public void TryRemove(uint ownerId, int index)
     {
@@ -196,36 +151,27 @@ public class SharedImageCache : IImageCache
         {
             return;
         }
-
-        if (!dict.Remove(index, out var removedValue))
+        if (!dict.Remove(index, out var removedValue) || removedValue is null)
         {
             return;
         }
 
-        if (removedValue == null)
-        {
-            return;
-        }
-        if (removedValue.ImageModel.Image is IDisposable disposable)
-        {
-            disposable.Dispose();
-        }
-        removedValue.ImageModel.Image = null;
+        ProcessDisposalLogic(removedValue);
     }
 
     public void Clear()
     {
+        var allValues = new List<PreLoadValue>();
         foreach (var dict in _ownerDictionaries.Values)
         {
+            allValues.AddRange(dict.Values);
             dict.Clear();
         }
-        _pathLookup.Clear();
-        
-        foreach (var kvp in _disposalList)
+    
+        foreach(var value in allValues)
         {
-            kvp.Value.Item.ImageModel.Dispose();
+            ProcessDisposalLogic(value);
         }
-        ForceDisposalQueue();
     }
 
     public void Clear(uint ownerId)
@@ -237,13 +183,11 @@ public class SharedImageCache : IImageCache
 
         var values = dict.Values.ToList();
         dict.Clear();
-        _pathLookup.Clear();
-            
+        
         foreach (var value in values)
         {
-            value.ImageModel.Dispose();
+            ProcessDisposalLogic(value);
         }
-        ForceDisposalQueue();
     }
 
     public void Clear(TabViewModel tab, string directory)
@@ -255,7 +199,6 @@ public class SharedImageCache : IImageCache
             var closingItems = dict.Values.ToList();
             dict.Clear();
             
-            // Find another eligible tab
             uint targetOwnerId = 0;
             IReadOnlyList<FileInfo>? targetFiles = null;
             var targetCurrentIndex = 0;
@@ -273,7 +216,7 @@ public class SharedImageCache : IImageCache
                 break;
             }
             
-            if (targetFiles != null && _ownerDictionaries.TryGetValue(targetOwnerId, out var targetDict))
+            if (targetFiles is not null && _ownerDictionaries.TryGetValue(targetOwnerId, out var targetDict))
             {
                 var fileIndexMap = new Dictionary<string, int>(_pathLookup.Comparer);
                 for (var i = 0; i < targetFiles.Count; i++)
@@ -287,34 +230,38 @@ public class SharedImageCache : IImageCache
                 {
                     if (fileIndexMap.TryGetValue(item.ImageModel.FileInfo.FullName, out var targetIndex))
                     {
-                        // Calculate distance
                         var distForward = (targetIndex - targetCurrentIndex + count) % count;
                         var distBackward = (targetCurrentIndex - targetIndex + count) % count;
                         
                         if (distForward <= PreLoaderConfig.PositiveIterations || distBackward <= PreLoaderConfig.NegativeIterations)
                         {
-                            // Transfer
-                            if (targetDict.TryAdd(targetIndex, item, count, false, out var evictedTargetItem))
+                            targetDict.TryAdd(targetIndex, item, count, false, out var evictedTargetItem, out bool isNewReference);
+                            
+                            if (isNewReference)
                             {
-                                if (evictedTargetItem != null)
-                                {
-                                    CheckAndDisposeIfNotReferenced(evictedTargetItem);
-                                }
+                                item.AddReference();
+                                _pathLookup[item.ImageModel.FileInfo.FullName] = item;
+                            }
+                            
+                            // We just removed it from the closing tab's dictionary, so we MUST 
+                            // decrement its reference to represent the loss of the closing tab!
+                            ProcessDisposalLogic(item);
+
+                            if (evictedTargetItem != null)
+                            {
+                                ProcessDisposalLogic(evictedTargetItem);
                             }
                             continue;
                         }
                     }
-                    
-                    // Not transferred
-                    CheckAndDisposeIfNotReferenced(item);
+                    ProcessDisposalLogic(item);
                 }
             }
             else
             {
-                // No eligible tab found
                 foreach (var item in closingItems)
                 {
-                    CheckAndDisposeIfNotReferenced(item);
+                    ProcessDisposalLogic(item);
                 }
             }
         }
@@ -341,8 +288,9 @@ public class SharedImageCache : IImageCache
 
         if (value is null)
         {
-            var model = await LoadAsync(ownerId, index, list, ct);
-            Add(ownerId, index, new PreLoadValue(model), list.Count, false);
+            // The item is securely added to the cache internally during LoadAsync -> Preloader.AddAsync.
+            // Do NOT create a duplicate wrapper wrapper here.
+            await LoadAsync(ownerId, index, list, ct);
             return true;
         }
 
@@ -352,68 +300,40 @@ public class SharedImageCache : IImageCache
 
     #endregion
 
-    #region Disposal and ressurection
-    
-    private bool TryResurrect(string path, out PreLoadValue? value)
+    #region Disposal logic
+
+    internal void ProcessDisposalLogic(PreLoadValue item)
     {
-        // Check if it's in the disposal list
-        if (_disposalList.TryRemove(path, out var pendingDisposal))
-        {
-            value = pendingDisposal.Item;
-            // Add it back to path lookup
-            _pathLookup.TryAdd(path, value);
-            return true;
-        }
-        
-        value = null;
-        return false;
-    }
-
-    internal void CheckAndDisposeIfNotReferenced(PreLoadValue item)
-    {
-        var isReferenced = false;
-        foreach (var dict in _ownerDictionaries.Values)
-        {
-            foreach (var value in dict.Values)
-            {
-                if (value != item)
-                {
-                    continue;
-                }
-
-                isReferenced = true;
-                break;
-            }
-            if (isReferenced) break;
-        }
-
-        if (isReferenced)
+        if (item.ReleaseReference() > 0)
         {
             return;
         }
 
         var path = item.ImageModel.FileInfo.FullName;
-        _pathLookup.TryRemove(path, out _);
-        
-        // Add to disposal queue instead of immediately disposing with a 30-second delay
-        _disposalList.AddOrUpdate(path, 
-            (item, DateTime.UtcNow.AddSeconds(30)), 
-            (_, existing) => existing.Item == item ? (existing.Item, DateTime.UtcNow.AddSeconds(30)) : existing);
-            
-        // Process any expired items lazily
-        ProcessDisposalQueue();
+        lock (_disposalLock)
+        {
+            _disposalQueue.Enqueue(path, DateTime.UtcNow.AddSeconds(DisposalDelayInSeconds));
+        }
+
+        SweepExpiredDisposals();
     }
 
-    private void ProcessDisposalQueue()
+    private void SweepExpiredDisposals()
     {
         var now = DateTime.UtcNow;
-        foreach (var kvp in _disposalList)
+        lock (_disposalLock)
         {
-            if (now >= kvp.Value.Expiration)
+            while (_disposalQueue.TryPeek(out var path, out var expiration) && expiration <= now)
             {
-                if (_disposalList.TryRemove(kvp.Key, out var removed))
+                _disposalQueue.Dequeue();
+
+                if (!_pathLookup.TryGetValue(path, out var value) || value.ReferenceCount is not 0)
                 {
-                    removed.Item.ImageModel.Dispose();
+                    continue;
+                }
+                if (_pathLookup.TryRemove(path, out _))
+                {
+                    value.ImageModel.Dispose();
                 }
             }
         }
@@ -421,14 +341,18 @@ public class SharedImageCache : IImageCache
 
     public void ForceDisposalQueue()
     {
-        foreach (var kvp in _disposalList)
+        lock (_disposalLock)
         {
-            if (_disposalList.TryRemove(kvp.Key, out var removed))
+            _disposalQueue.Clear();
+            
+            foreach (var kvp in _pathLookup)
             {
-                removed.Item.ImageModel.Dispose();
+                if (kvp.Value.ReferenceCount == 0 && _pathLookup.TryRemove(kvp.Key, out var removed))
+                {
+                    removed.ImageModel.Dispose();
+                }
             }
         }
-        _disposalList.Clear();
         GC.Collect();
     }
 

@@ -70,28 +70,34 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
     /// Indicates navigation direction. If <see langword="true"/>, the highest key is evicted;
     /// if <see langword="false"/>, the lowest key is evicted.
     /// </param>
-    /// <param name="evictedValue">
-    /// When this method returns, contains the value of the item that was evicted if an eviction occurred;
-    /// otherwise, the default value for <typeparamref name="TValue"/>.
-    /// </param>
+    /// <param name="evictedValue">The value that was evicted, otherwise null.</param>
     /// <returns>
-    /// <see langword="true"/> if an item was evicted due to capacity; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if an item was added; otherwise, <see langword="false"/>.
     /// </returns>
     /// <remarks>
-    /// If <paramref name="key"/> already exists, its value is updated and no eviction occurs
-    /// (this method returns <see langword="false"/> and <paramref name="evictedValue"/> is set to default).
+    /// If <paramref name="key"/> already exists, its value is updated and no eviction occurs.
     /// </remarks>
-    public bool TryAdd(int key, TValue value, int totalCount, bool isReverse, out TValue? evictedValue)
+    public void TryAdd(int key, TValue value, int totalCount, bool isReverse, out TValue? evictedValue, out bool isNewReference)
     {
-        _lock.Enter(); // Lock acquired
+        _lock.Enter(); 
         try
         {
-            // If the key already exists, just update its value. No eviction.
-            if (_dictionary.ContainsKey(key))
+            isNewReference = true; // Assume new unless proven otherwise
+            
+            // Case 1: Key exists
+            if (_dictionary.TryGetValue(key, out var existingValue))
             {
+                if (ReferenceEquals(existingValue, value))
+                {
+                    isNewReference = false; // It's the same image, no new reference needed!
+                    evictedValue = default;
+                    return; 
+                }
+            
+                // Replacing a DIFFERENT image. The old one is evicted!
                 _dictionary[key] = value;
-                evictedValue = default;
-                return false;
+                evictedValue = existingValue;
+                return;
             }
 
             if (_dictionary.Count >= _maxSize)
@@ -145,10 +151,6 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
                         _dictionary.Remove(min);
                     }
                     evictedValue = removedValue;
-#if DEBUG
-                    DebugHelper.LogDebug(nameof(EvictingDictionary<>), nameof(TryAdd), $"Invalid parameter for key {keyToEvict}");
-#endif
-                    
                 }
                 else
                 {
@@ -158,17 +160,15 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
             }
             else
             {
-                _dictionary.Add(key, value);
                 evictedValue = default;
-                return false;
             }
 
+            // Add the new item
             _dictionary.Add(key, value);
-            return true;
         }
         finally
         {
-            _lock.Exit(); // Lock released
+            _lock.Exit(); 
         }
     }
 

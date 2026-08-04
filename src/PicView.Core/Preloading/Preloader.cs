@@ -1,6 +1,5 @@
 ﻿using PicView.Core.DebugTools;
 using PicView.Core.Models;
-using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 
 namespace PicView.Core.Preloading;
@@ -81,10 +80,7 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
             FileInfo = fileInfo
         }, isLoading: true);
             
-        if (cache.TryAdd(ownerId, index, preloadValue, list.Count, isReverse, out var evicted) && cache is SharedImageCache shared)
-        {
-            shared.CheckAndDisposeIfNotReferenced(evicted);
-        }
+        cache.TryAdd(ownerId, index, preloadValue, list.Count, isReverse, out _);
         // Check cancel before IO
         if (ct.IsCancellationRequested)
         {
@@ -94,20 +90,6 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
         preloadValue.ImageModel = imageModel;
         preloadValue.IsLoading = false;
         return imageModel;
-    }
-
-    public void Add(uint ownerId, int index, ImageModel model, IReadOnlyList<FileInfo> list)
-    {
-        var evicted = cache.TryAdd(ownerId, index, new PreLoadValue(model), list.Count, false, out var evictedValue);
-        if (evicted && cache is SharedImageCache shared)
-        {
-            shared.CheckAndDisposeIfNotReferenced(evictedValue!);
-        }
-    }
-
-    public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files)
-    {
-        cache.Resynchronize(ownerId, files);
     }
 
     private async Task PreLoadInternalAsync(uint ownerId, int currentIndex, IReadOnlyList<FileInfo> list,
@@ -173,7 +155,7 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
                 return;
             }
 
-            if (cache.TryGet(list[index], out _))
+            if (cache.Contains(list[index]))
             {
                 // Return early if cached
                 return;

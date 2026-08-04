@@ -38,8 +38,18 @@ public class PreloaderTests
 
         public Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => Task.FromResult<ImageModel?>(null);
         public void Clear() { }
+        public bool Contains(FileInfo fileInfo)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Clear(uint ownerId) { }
         public bool Contains(PreLoadValue value) => false;
+        public bool Contains(string fileName)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) { }
         public void RemoveOwner(uint ownerId) { }
         public void RegisterOwner(uint ownerId) { }

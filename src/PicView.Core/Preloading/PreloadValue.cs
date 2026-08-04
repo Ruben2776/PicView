@@ -10,7 +10,9 @@ public class PreLoadValue
     private readonly Lock _loadingLock = new();
     private bool _isLoading;
     private TaskCompletionSource<bool>? _loadingCompletionSource;
-
+    private int _referenceCount;
+    public int ReferenceCount => Volatile.Read(ref _referenceCount);
+    
     /// <summary>
     /// Initializes a new instance of the <see cref="PreLoadValue"/> class.
     /// </summary>
@@ -19,6 +21,7 @@ public class PreLoadValue
     public PreLoadValue(ImageModel imageModel, bool isLoading = false)
     {
         ImageModel = imageModel;
+        
         if (isLoading)
         {
             // Vital to prevent deadlocks when SetResult is called inside a lock
@@ -27,6 +30,16 @@ public class PreLoadValue
         }
         IsLoading = isLoading;
     }
+    
+    /// <summary>
+    /// Safely increments the reference count.
+    /// </summary>
+    public void AddReference() => Interlocked.Increment(ref _referenceCount);
+
+    /// <summary>
+    /// Safely decrements the reference count and returns the new count.
+    /// </summary>
+    public int ReleaseReference() => Interlocked.Decrement(ref _referenceCount);
 
     /// <summary>
     /// Gets or sets the image model.
