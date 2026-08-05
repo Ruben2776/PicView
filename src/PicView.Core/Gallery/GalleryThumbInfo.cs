@@ -89,10 +89,10 @@ public static class GalleryThumbInfo
         public bool Equals(GalleryThumbHolder other)
         {
             // Compare FileLocation first as it is the most likely to differ, providing a fast exit.
-            return FileLocation == other.FileLocation &&
-                   FileName == other.FileName &&
-                   FileSize == other.FileSize &&
-                   FileDate == other.FileDate;
+            return string.Equals(FileLocation, other.FileLocation, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(FileName, other.FileName, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(FileSize, other.FileSize, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(FileDate, other.FileDate, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

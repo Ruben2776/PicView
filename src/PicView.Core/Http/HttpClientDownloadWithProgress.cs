@@ -73,8 +73,11 @@ public sealed class HttpClientDownloadWithProgress : IDisposable
         }
         
         var totalBytes = response.Content.Headers.ContentLength;
-        await using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        await ProcessContentStream(totalBytes, contentStream, cancellationToken).ConfigureAwait(false);
+        var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+        await using (contentStream.ConfigureAwait(false))
+        {
+            await ProcessContentStream(totalBytes, contentStream, cancellationToken).ConfigureAwait(false);
+        }
     }
 
     private async Task ProcessContentStream(
@@ -93,15 +96,16 @@ public sealed class HttpClientDownloadWithProgress : IDisposable
             Directory.CreateDirectory(directory);
         }
 
-        await using var fileStream = new FileStream(
+        var fileStream = new FileStream(
             _destinationFilePath, 
             FileMode.Create, 
             FileAccess.Write,
             FileShare.None, 
             bufferSize, 
             true);
-            
-        int bytesRead;
+        await using (fileStream.ConfigureAwait(false))
+        {
+            int bytesRead;
         
         do
         {
@@ -134,6 +138,7 @@ public sealed class HttpClientDownloadWithProgress : IDisposable
         {
             throw new TaskCanceledException("Download was canceled");
         }
+        }
     }
 
     private void OnProgressChanged(long? totalDownloadSize, long totalBytesRead, double? progressPercentage)
@@ -146,7 +151,6 @@ public sealed class HttpClientDownloadWithProgress : IDisposable
     public void Dispose()
     {
         Dispose(true);
-        GC.SuppressFinalize(this);
     }
 
     private void Dispose(bool disposing)
@@ -162,11 +166,6 @@ public sealed class HttpClientDownloadWithProgress : IDisposable
         }
 
         _disposed = true;
-    }
-
-    ~HttpClientDownloadWithProgress()
-    {
-        Dispose(false);
     }
 
     #endregion

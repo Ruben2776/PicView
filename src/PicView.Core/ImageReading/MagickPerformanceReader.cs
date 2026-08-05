@@ -10,13 +10,15 @@ public static class MagickPerformanceReader
     {
         if (fileInfo.Length >= 2147483648)
         {
-            return await ReadMagickWithFileStreamAsync(fileInfo, image);
+            return await ReadMagickWithFileStreamAsync(fileInfo, image).ConfigureAwait(false);
         }
         
-        await using var stream = File.OpenRead(fileInfo.FullName);
-        
-        // Get the length of the file to ensure the buffer is large enough.
-        var fileLength = (int)stream.Length;
+        var stream = File.OpenRead(fileInfo.FullName);
+        await using (stream.ConfigureAwait(false))
+        {
+
+            // Get the length of the file to ensure the buffer is large enough.
+            var fileLength = (int)stream.Length;
         if (fileLength == 0)
         {
             // Handle empty files if necessary, perhaps by throwing an exception.
@@ -45,14 +47,19 @@ public static class MagickPerformanceReader
             // Always return the buffer to the pool.
             ArrayPool<byte>.Shared.Return(buffer);
         }
+        }
     }
-    
+
     public static async ValueTask<MagickImage> ReadMagickWithFileStreamAsync(FileInfo fileInfo, MagickImage? image = null)
     {
         // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
-        await using var fileStream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
-        // ReSharper disable once MethodHasAsyncOverload
-        image.Read(fileStream);
+        var fileStream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
+        // Fixes "The file is too long. This operation is currently limited to supporting files less than 2 gigabytes in size."
+        await using (fileStream.ConfigureAwait(false))
+        {
+            // ReSharper disable once MethodHasAsyncOverload
+            image.Read(fileStream);
         return image;
+        }
     }
 }

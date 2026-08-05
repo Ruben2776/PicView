@@ -99,7 +99,7 @@ public class SettingsViewModel : IDisposable
         }).AddTo(ref _disposables);
         ToggleUsingTouchpadCommand.SubscribeAwait(async (_, _) =>
         {
-            await SaveSettingsAsync();
+            await SaveSettingsAsync().ConfigureAwait(false);
         });
         
         ToggleFadeButtonsCommand = new ReactiveCommand( _ =>
@@ -119,7 +119,7 @@ public class SettingsViewModel : IDisposable
         }).AddTo(ref _disposables);
         ToggleFadeButtonsCommand.SubscribeAwait(async (_, _) =>
         {
-            await SaveSettingsAsync();
+            await SaveSettingsAsync().ConfigureAwait(false);
         });
 
         // Search Initialization
@@ -211,7 +211,7 @@ public class SettingsViewModel : IDisposable
 
     // Language
     public BindableReactiveProperty<List<LanguageItem>> AvailableLanguages { get; } = new();
-    public BindableReactiveProperty<string> UserLanguage { get; } = new(Settings.UIProperties.UserLanguage);
+    public BindableReactiveProperty<string> UserLanguage { get; } = new(Settings.UIProperties.UserLanguage, StringComparer.OrdinalIgnoreCase);
 
     // Navigation
     public BindableReactiveProperty<bool> IsIncludingSubdirectories { get; } = new(Settings.Sorting.IncludeSubDirectories);
@@ -269,7 +269,7 @@ public class SettingsViewModel : IDisposable
 
     
     public BindableReactiveProperty<bool> IsSearchVisible { get; } = new(false);
-    public BindableReactiveProperty<string> SearchQuery { get; } = new(string.Empty);
+    public BindableReactiveProperty<string> SearchQuery { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
     public ReactiveCommand ClearSearchCommand { get; }
 
     // Search properties (Tags and Visibility)
@@ -371,7 +371,7 @@ public class SettingsViewModel : IDisposable
             .SubscribeAwait(async (x, _) =>
             {
                 Settings.UIProperties.ShowPermanentDeletionConfirmation = x;
-                await SaveSettingsAsync();
+                await SaveSettingsAsync().ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
 
@@ -379,7 +379,7 @@ public class SettingsViewModel : IDisposable
             .SubscribeAwait(async (x, _) =>
             {
                 Settings.UIProperties.ShowRecycleConfirmation = x;
-                await SaveSettingsAsync();
+                await SaveSettingsAsync().ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
 
@@ -421,7 +421,7 @@ public class SettingsViewModel : IDisposable
              .SubscribeAwait(async (x, _) => {
                  OpenLastFile.Value = x == 1;
                  Settings.StartUp.OpenLastFile = x == 1;
-                 await SaveSettingsAsync();
+                 await SaveSettingsAsync().ConfigureAwait(false);
              }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
              .AddTo(ref _disposables);
              
@@ -429,7 +429,7 @@ public class SettingsViewModel : IDisposable
              .SubscribeAwait(async (x, _) => {
                  IsNavigatingBackwardsWhenDeleting.Value = x == 1;
                  Settings.Navigation.IsNavigatingBackwardsWhenDeleting = x == 1;
-                 await SaveSettingsAsync();
+                 await SaveSettingsAsync().ConfigureAwait(false);
              }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
              .AddTo(ref _disposables);
         
@@ -438,7 +438,7 @@ public class SettingsViewModel : IDisposable
             .SubscribeAwait(async (x, _) =>
             {
                 _themeService?.SetTheme(x);
-                await SaveSettingsAsync();
+                await SaveSettingsAsync().ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
             
@@ -463,7 +463,7 @@ public class SettingsViewModel : IDisposable
                 IsScalingSetToNearestNeighbor.Value = isNearestNeighbor;
                 Settings.ImageScaling.IsScalingSetToNearestNeighbor = isNearestNeighbor;
                 _imageSettingsService?.TriggerScalingModeUpdate(isNearestNeighbor);
-                await SaveSettingsAsync();
+                await SaveSettingsAsync().ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
             
@@ -473,7 +473,7 @@ public class SettingsViewModel : IDisposable
                 Settings.Zoom.CtrlZoom = x;
                 // Sync MouseWheelBehavior if needed
                 MouseWheelBehavior.Value = x ? 0 : 1;
-                await SaveSettingsAsync();
+                await SaveSettingsAsync().ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
 
@@ -482,7 +482,7 @@ public class SettingsViewModel : IDisposable
                  var reverse = x == 0;
                  HorizontalReverseScroll.Value = reverse;
                  Settings.Zoom.HorizontalReverseScroll = reverse;
-                 await SaveSettingsAsync();
+                 await SaveSettingsAsync().ConfigureAwait(false);
              }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
              
@@ -490,7 +490,7 @@ public class SettingsViewModel : IDisposable
         Observable.EveryValueChanged(this, x => x.MouseSideButtonBehaviorIndex.CurrentValue)
             .SubscribeAwait(async (x, _) => {
                 Settings.Navigation.MouseSideButtonNavigationMode = (NavigationMode)x;
-                await SaveSettingsAsync();
+                await SaveSettingsAsync().ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
 
@@ -499,19 +499,19 @@ public class SettingsViewModel : IDisposable
                 var ctrlZoom = x == 0;
                 Settings.Zoom.CtrlZoom = ctrlZoom;
                 if (CtrlZoom.Value != ctrlZoom) CtrlZoom.Value = ctrlZoom;
-                await SaveSettingsAsync();
+                await SaveSettingsAsync().ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
             
         // Language
         Observable.EveryValueChanged(this, x => x.UserLanguage.CurrentValue)
             .SubscribeAwait(async (x, _) => {
-                if (Settings.UIProperties.UserLanguage != x)
+                if (!string.Equals(Settings.UIProperties.UserLanguage, x, StringComparison.OrdinalIgnoreCase))
                 {
                     Settings.UIProperties.UserLanguage = x;
                     if (_languageService != null)
                     {
-                        await _languageService.UpdateLanguageAsync(x);
+                        await _languageService.UpdateLanguageAsync(x).ConfigureAwait(false);
                     }
                 }
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))

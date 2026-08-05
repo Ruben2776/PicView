@@ -27,13 +27,22 @@ public static class ImageEffectsHelper
 
     private static async Task<MagickImage> LoadImage(FileInfo fileInfo, CancellationToken ct)
     {
+#pragma warning disable MA0004
         await using var fs = FileStreamUtils.GetOptimizedFileStream(fileInfo);
+#pragma warning restore MA0004
         var img = new MagickImage();
 
         if (fileInfo.Length >= 2147483648)
+        {
+            // ReSharper disable once MethodHasAsyncOverloadWithCancellation
+#pragma warning disable MA0042
             img.Read(fs);
+#pragma warning restore MA0042
+        }
         else
+        {
             await img.ReadAsync(fs, ct).ConfigureAwait(false);
+        }
 
         return img;
     }
@@ -160,7 +169,8 @@ public static class ImageEffectsHelper
     private static void ApplyColorBalance(MagickImage img, ColorBalanceTriplet sh, ColorBalanceTriplet mid, ColorBalanceTriplet hi)
     {
         using var baseImg = new MagickImage(img);
-        using var lum = new MagickImage(img) { ColorSpace = ColorSpace.Gray };
+        using var lum = new MagickImage(img);
+        lum.ColorSpace = ColorSpace.Gray;
 
         ApplyBalanceLayer(img, baseImg, lum, sh, 0, 45);
         ApplyBalanceLayer(img, baseImg, lum, mid, 20, 80);

@@ -44,7 +44,7 @@ public static class ProcessHelper
             };
 
             process.Start();
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync().ConfigureAwait(false);
             return true;
         }
         catch (Exception ex)

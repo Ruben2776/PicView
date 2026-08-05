@@ -17,7 +17,7 @@ namespace PicView.Core.Navigation;
 public class SharedImageCache : IImageCache
 {
     /// <summary>
-    /// A private dictionary that maps an owner identifier (string) to an instance
+    /// A private dictionary that maps an owner identifier (<see cref="uint"/>) to an instance
     /// of <see cref="EvictingDictionary{TValue}"/> containing preloaded image data.
     /// </summary>
     /// <remarks>
@@ -27,16 +27,43 @@ public class SharedImageCache : IImageCache
     /// which provides eviction capabilities to limit memory usage.
     /// </remarks>
     private readonly ConcurrentDictionary<uint, EvictingDictionary<PreLoadValue>> _ownerDictionaries = new();
+
+    /// <summary>
+    /// Tracks context information (Directory, Files list, and CurrentIndex) for each active owner tab.
+    /// Used to resolve transfer eligibility when tabs are closed.
+    /// </summary>
     private readonly ConcurrentDictionary<uint, (string Directory, IReadOnlyList<FileInfo> Files, int CurrentIndex)> _ownerContexts = new();
+    
+    /// <summary>
+    /// Fast lookup by full file path (using OS-specific string comparer).
+    /// Acts as the unified global reference map for both active and expiring preloaded items.
+    /// </summary>
     private readonly ConcurrentDictionary<string, PreLoadValue> _pathLookup;
 
+    /// <summary>
+    /// Priority queue used for lazy disposal, ordering file paths by their scheduled expiration timestamp.
+    /// </summary>
     private readonly PriorityQueue<string, DateTime> _disposalQueue = new();
+
+    /// <summary>
+    /// Time delay in seconds before an evicted 0-reference image is fully disposed.
+    /// </summary>
     private const int DisposalDelayInSeconds = 15;
+
+    /// <summary>
+    /// Synchronization lock object protecting thread-safe operations on <see cref="_disposalQueue"/>.
+    /// </summary>
     private readonly Lock _disposalLock = new();
 
-    // The worker
+    /// <summary>
+    /// Background worker responsible for look-ahead calculation and image loading.
+    /// </summary>
     private readonly Preloader _preLoader;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SharedImageCache"/> class.
+    /// </summary>
+    /// <param name="imageLoader">The function used to load an <see cref="ImageModel"/> asynchronously from a <see cref="FileInfo"/>.</param>
     public SharedImageCache(Func<FileInfo, ValueTask<ImageModel>> imageLoader)
     {
         var pathComparer = OperatingSystem.IsWindows()
@@ -49,17 +76,31 @@ public class SharedImageCache : IImageCache
 
     #region Resynchronize and owner registration
     
+    /// <summary>
+    /// Registers a new owner ID (tab) into the cache and initializes its dedicated <see cref="EvictingDictionary{TValue}"/>.
+    /// </summary>
+    /// <param name="ownerId">The unique owner identifier.</param>
     public void RegisterOwner(uint ownerId)
     {
         _ownerDictionaries.TryAdd(ownerId, new EvictingDictionary<PreLoadValue>(PreLoaderConfig.MaxCount));
     }
 
+    /// <summary>
+    /// Removes an owner ID (tab) and its associated context from cache tracking.
+    /// </summary>
+    /// <param name="ownerId">The unique owner identifier to unregister.</param>
     public void RemoveOwner(uint ownerId)
     {
         _ownerDictionaries.TryRemove(ownerId, out _);
         _ownerContexts.TryRemove(ownerId, out _);
     }
 
+    /// <summary>
+    /// Resynchronizes cached items for a specific owner when its file list or sorting order changes.
+    /// Maps existing cached items to their new list indices and evicts items no longer present.
+    /// </summary>
+    /// <param name="ownerId">The unique owner identifier.</param>
+    /// <param name="files">The new file list to resynchronize against.</param>
     public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files)
     {
         if (!_ownerDictionaries.TryGetValue(ownerId, out var dict))
@@ -111,9 +152,28 @@ public class SharedImageCache : IImageCache
 
     #region Add, Get, Remove, and Clear
     
+    /// <summary>
+    /// Adds a preloaded value to the specified owner's cache dictionary at a given index.
+    /// </summary>
+    /// <param name="ownerId">The unique owner identifier.</param>
+    /// <param name="index">The position index in the owner's file list.</param>
+    /// <param name="preLoadValue">The preloaded image item to add.</param>
+    /// <param name="listCount">Total count of items in the owner's current list.</param>
+    /// <param name="isReverse">Indicates direction of movement for eviction evaluation.</param>
     public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse) =>
         TryAdd(ownerId, index, preLoadValue, listCount, isReverse, out _);
 
+    /// <summary>
+    /// Attempts to add a preloaded value to an owner's dictionary, incrementing reference count 
+    /// if new and processing eviction logic if capacity is exceeded.
+    /// </summary>
+    /// <param name="ownerId">The unique owner identifier.</param>
+    /// <param name="index">The position index in the owner's file list.</param>
+    /// <param name="preLoadValue">The preloaded image item to add.</param>
+    /// <param name="listCount">Total count of items in the owner's current list.</param>
+    /// <param name="isReverse">Indicates direction of movement for eviction evaluation.</param>
+    /// <param name="value">Contains the evicted item if capacity was exceeded, or <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> if the owner dictionary was found and modified; otherwise, <see langword="false"/>.</returns>
     public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value)
     {
         value = null;
@@ -138,13 +198,48 @@ public class SharedImageCache : IImageCache
         return true;
     }
     
+    /// <summary>
+    /// Checks if an image matching the given file path is currently registered in the global lookup.
+    /// </summary>
+    /// <param name="fileName">The full file path to look up.</param>
+    /// <returns><see langword="true"/> if found; otherwise, <see langword="false"/>.</returns>
     public bool Contains(string fileName) => _pathLookup.TryGetValue(fileName, out _);
+
+    /// <summary>
+    /// Checks if an image matching the given <see cref="FileInfo"/> is currently registered in the global lookup.
+    /// </summary>
+    /// <param name="fileInfo">The file info to look up.</param>
+    /// <returns><see langword="true"/> if found; otherwise, <see langword="false"/>.</returns>
     public bool Contains(FileInfo fileInfo) => _pathLookup.TryGetValue(fileInfo.FullName, out _);
+
+    /// <summary>
+    /// Checks if the specified <see cref="PreLoadValue"/> instance is registered in the global lookup.
+    /// </summary>
+    /// <param name="value">The preloaded image instance to check.</param>
+    /// <returns><see langword="true"/> if found; otherwise, <see langword="false"/>.</returns>
     public bool Contains(PreLoadValue value) => _pathLookup.TryGetValue(value.ImageModel.FileInfo.FullName, out _);
     
+    /// <summary>
+    /// Attempts to retrieve a cached <see cref="PreLoadValue"/> by its <see cref="FileInfo"/>.
+    /// </summary>
+    /// <param name="f">The file info key.</param>
+    /// <param name="value">Contains the cached item if found; otherwise, <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> if found in cache; otherwise, <see langword="false"/>.</returns>
     public bool TryGet(FileInfo f, out PreLoadValue? value) => _pathLookup.TryGetValue(f.FullName, out value);
+
+    /// <summary>
+    /// Attempts to retrieve a cached <see cref="PreLoadValue"/> using a high-performance span lookup.
+    /// </summary>
+    /// <param name="f">The character span representing the file path.</param>
+    /// <param name="value">Contains the cached item if found; otherwise, <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> if found in cache; otherwise, <see langword="false"/>.</returns>
     public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value) => _pathLookup.GetAlternateLookup<ReadOnlySpan<char>>().TryGetValue(f, out value);
 
+    /// <summary>
+    /// Removes an item at a specific index from an owner's dictionary and releases its reference.
+    /// </summary>
+    /// <param name="ownerId">The unique owner identifier.</param>
+    /// <param name="index">The position index to remove.</param>
     public void TryRemove(uint ownerId, int index)
     {
         if (!_ownerDictionaries.TryGetValue(ownerId, out var dict))
@@ -159,6 +254,9 @@ public class SharedImageCache : IImageCache
         ProcessDisposalLogic(removedValue);
     }
 
+    /// <summary>
+    /// Clears all owner dictionaries and releases reference counts for all cached items.
+    /// </summary>
     public void Clear()
     {
         var allValues = new List<PreLoadValue>();
@@ -174,6 +272,10 @@ public class SharedImageCache : IImageCache
         }
     }
 
+    /// <summary>
+    /// Clears all cached items for a specific owner ID and releases their reference counts.
+    /// </summary>
+    /// <param name="ownerId">The unique owner identifier to clear.</param>
     public void Clear(uint ownerId)
     {
         if (!_ownerDictionaries.TryGetValue(ownerId, out var dict))
@@ -190,6 +292,12 @@ public class SharedImageCache : IImageCache
         }
     }
 
+    /// <summary>
+    /// Clears cache items for a closing tab, attempting to transfer eligible nearby cached images 
+    /// to another tab browsing the same directory before unregistering the owner.
+    /// </summary>
+    /// <param name="tab">The view model of the closing tab.</param>
+    /// <param name="directory">The active directory path of the closing tab.</param>
     public void Clear(TabViewModel tab, string directory)
     {
         var id = tab.Id;
@@ -273,12 +381,36 @@ public class SharedImageCache : IImageCache
 
     #region Loading, preloading and wait for loading
 
+    /// <summary>
+    /// Loads an image asynchronously for an owner or returns it if cached via the background worker.
+    /// </summary>
+    /// <param name="ownerId">The unique owner identifier.</param>
+    /// <param name="index">The index in the file list.</param>
+    /// <param name="list">The list of files.</param>
+    /// <param name="ct">Token to monitor for cancellation requests.</param>
+    /// <returns>A task returning the loaded <see cref="ImageModel"/>, or <see langword="null"/> if failed.</returns>
     public async Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) =>
         await _preLoader.AddAsync(ownerId, index, list, false, ct).ConfigureAwait(false);
 
+    /// <summary>
+    /// Triggers predictive pre-fetching around the specified current index in the background.
+    /// </summary>
+    /// <param name="ownerId">The unique owner identifier.</param>
+    /// <param name="currentIndex">The active index being viewed.</param>
+    /// <param name="reversed">Indicates if iteration is moving backward.</param>
+    /// <param name="files">The list of files to pre-fetch around.</param>
+    /// <param name="token">Token to monitor for cancellation requests.</param>
     public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) =>
         _preLoader.Preload(ownerId, currentIndex, reversed, files, token);
 
+    /// <summary>
+    /// Waits for an image at a specific index to complete its background loading process.
+    /// </summary>
+    /// <param name="ownerId">The unique owner identifier.</param>
+    /// <param name="index">The position index in the list.</param>
+    /// <param name="list">The list of files.</param>
+    /// <param name="ct">Token to monitor for cancellation requests.</param>
+    /// <returns>A task completing with <see langword="true"/> if successfully loaded/awaited; otherwise, <see langword="false"/>.</returns>
     public async ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
     {
         if (!TryGet(list[index], out var value))
@@ -290,11 +422,11 @@ public class SharedImageCache : IImageCache
         {
             // The item is securely added to the cache internally during LoadAsync -> Preloader.AddAsync.
             // Do NOT create a duplicate wrapper wrapper here.
-            await LoadAsync(ownerId, index, list, ct);
+            await LoadAsync(ownerId, index, list, ct).ConfigureAwait(false);
             return true;
         }
 
-        await value.WaitForLoadingCompleteAsync();
+        await value.WaitForLoadingCompleteAsync().ConfigureAwait(false);
         return true;
     }
 
@@ -302,6 +434,11 @@ public class SharedImageCache : IImageCache
 
     #region Disposal logic
 
+    /// <summary>
+    /// Decrements the reference count of a <see cref="PreLoadValue"/>. If references hit 0,
+    /// enqueues the item for delayed lazy disposal and sweeps expired items.
+    /// </summary>
+    /// <param name="item">The preloaded value to process.</param>
     internal void ProcessDisposalLogic(PreLoadValue item)
     {
         if (item.ReleaseReference() > 0)
@@ -318,6 +455,10 @@ public class SharedImageCache : IImageCache
         SweepExpiredDisposals();
     }
 
+    /// <summary>
+    /// Inspects the priority queue and disposes of all images whose 0-reference hold 
+    /// duration has exceeded <see cref="DisposalDelayInSeconds"/>.
+    /// </summary>
     private void SweepExpiredDisposals()
     {
         var now = DateTime.UtcNow;
@@ -339,6 +480,10 @@ public class SharedImageCache : IImageCache
         }
     }
 
+    /// <summary>
+    /// Immediately clears the disposal queue, removes all 0-reference orphan images 
+    /// from the lookup table, disposes of them, and triggers a full Garbage Collection sweep.
+    /// </summary>
     public void ForceDisposalQueue()
     {
         lock (_disposalLock)

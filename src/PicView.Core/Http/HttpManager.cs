@@ -77,30 +77,4 @@ public static class HttpManager
         
         return $"{downloadedMb}/{totalMb} ({(int)progressPercentage.Value}% {percentComplete})";
     }
-    
-    /// <summary>
-    /// Downloads a file from a URL and returns the local file path
-    /// </summary>
-    /// <param name="url">URL to download</param>
-    /// <param name="progressCallback">Callback for download progress</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>Path to the downloaded file</returns>
-    public static async Task<string> DownloadFileAsync(
-        string url, 
-        Action<long?, long?, double?>? progressCallback = null,
-        CancellationToken cancellationToken = default)
-    {
-        var download = GetDownloadClient(url);
-        
-        if (download.Client == null)
-            throw new InvalidOperationException("Failed to create download client");
-            
-        if (progressCallback != null)
-            download.Client.ProgressChanged += (size, downloaded, percentage) => 
-                progressCallback(size, downloaded, percentage);
-                
-        await download.Client.StartDownloadAsync(cancellationToken);
-        
-        return download.DownloadPath;
-    }
 }

@@ -61,7 +61,10 @@ public class ArchiveExtractionService
         {
             if (string.IsNullOrEmpty(archivePath) || !File.Exists(archivePath))
             {
-                throw new ArgumentException("The archive path is invalid or the file does not exist.");
+#if DEBUG
+                DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(PrepareArchiveAsync),
+                    "The archive path is invalid or the file does not exist.");
+#endif
             }
 
             var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -96,12 +99,12 @@ public class ArchiveExtractionService
                 return new ArchivePreparation(tempDirectory, files, IsFullyExtracted: true);
             }
 
-            var archive = await ArchiveFactory.OpenAsyncArchive(archivePath);
+            var archive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
             var entries = await archive.EntriesAsync
                 .Where(e => !e.IsDirectory
                             && !string.IsNullOrEmpty(e.Key)
                             && e.Key!.IsSupported())
-                .Select(e => e.Key!).ToArrayAsync();
+                .Select(e => e.Key!).ToArrayAsync().ConfigureAwait(false);
 
             if (entries.Length is 0)
             {
@@ -138,8 +141,10 @@ public class ArchiveExtractionService
         }
         try
         {
-            await using var archive = await ArchiveFactory.OpenAsyncArchive(archivePath, cancellationToken: ct);
-            await foreach (var entry in archive.EntriesAsync.WithCancellation(ct))
+            var archive = await ArchiveFactory.OpenAsyncArchive(archivePath, cancellationToken: ct).ConfigureAwait(false);
+            await using (archive.ConfigureAwait(false))
+            {
+                await foreach (var entry in archive.EntriesAsync.WithCancellation(ct))
             {
                 if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
                 {
@@ -152,6 +157,7 @@ public class ArchiveExtractionService
                 }
 
                 return WriteEntryFlat(entry, tempDirectory);
+            }
             }
         }
         catch (OperationCanceledException)

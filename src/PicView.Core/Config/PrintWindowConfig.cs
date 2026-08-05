@@ -44,7 +44,7 @@ public class PrintWindowConfig() : ConfigFile("PrintWindow.json")
     public async Task SaveAsync()
     {
         CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(PrintWindowProperties), PrintWindowGenerationContext.Default);
+            CorrectPath, WindowProperties, typeof(PrintWindowProperties), PrintWindowGenerationContext.Default).ConfigureAwait(false);
     }
 
     public class PrintWindowProperties: IWindowProperties

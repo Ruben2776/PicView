@@ -101,19 +101,22 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                 // Is loading in cache, show thumbnail while loading
                 await Task.Run(async () =>
                 {
-                    var thumb = _thumbCache.TryGet(targetFile.FullName, out var cachedThumb) ? cachedThumb 
+                    var thumb = _thumbCache.TryGet(targetFile.FullName, out var cachedThumb)
+                        ? cachedThumb
                         : _thumbnailLoader.GetExifThumbnail(targetFile);
-                
+
                     _tab.Image.Value = thumb;
                     _tab.SetLoading();
 
                     // Wait for loading complete
-                    var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
+                    var successfullyLoaded = await Cache
+                        .WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token)
+                        .ConfigureAwait(false);
                     if (successfullyLoaded && index == CurrentIndex)
                     {
                         if (preLoadValue.ImageModel.Image is null)
                         {
-                            await AttemptManualLoad();
+                            await AttemptManualLoad().ConfigureAwait(false);
                         }
                         else
                         {
@@ -127,15 +130,16 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                             await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
                             return;
                         }
+
                         TriggerPreload();
                     }
-                }, ct.Token);
+                }, ct.Token).ConfigureAwait(false);
             }
         }
         else
         {
             // Not in cache
-            await Task.Run(AttemptManualLoad);
+            await Task.Run(AttemptManualLoad).ConfigureAwait(false);
         }
         
         return;
@@ -183,7 +187,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             else
             {
                 // Wait for loading complete
-                await Task.Run(LoadFirstModelAsync, ct.Token);
+                await Task.Run(LoadFirstModelAsync, ct.Token).ConfigureAwait(false);
             }
         }
         else
@@ -211,7 +215,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             else
             {
                 // Wait for loading complete
-                await Task.Run(LoadSecondModelAsync, ct.Token);
+                await Task.Run(LoadSecondModelAsync, ct.Token).ConfigureAwait(false);
             }
         }
         else
@@ -235,7 +239,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             {
                 return;
             }
-            await Task.Run(LoadFirstModelAsync, ct.Token);
+            await Task.Run(LoadFirstModelAsync, ct.Token).ConfigureAwait(false);
             if (firstModel is null)
             {
                 return;
@@ -247,7 +251,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             {
                 return;
             }
-            await Task.Run(LoadSecondModelAsync, ct.Token);
+            await Task.Run(LoadSecondModelAsync, ct.Token).ConfigureAwait(false);
             if (secondModel is null)
             {
                 return;
@@ -411,7 +415,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
         var (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, to, SkipAmount.One);
         IsReversed = isReversed;
-        await IterateToIndexAsync(iteration, ct);
+        await IterateToIndexAsync(iteration, ct).ConfigureAwait(false);
     }
 
     public void StopRepeatedNavigation()

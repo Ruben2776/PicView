@@ -179,7 +179,7 @@ public class GallerySharedSettingsViewModel
                 if (Math.Abs(Settings.Gallery.DockedGalleryItemSize - x) > 0.001)
                 {   
                     Settings.Gallery.DockedGalleryItemSize = x;
-                    await SaveSettingsAsync();
+                    await SaveSettingsAsync().ConfigureAwait(false);
                 }
             }, result =>
             {
@@ -199,7 +199,7 @@ public class GallerySharedSettingsViewModel
                 if (Math.Abs(Settings.Gallery.ExpandedGalleryItemSize - x) > 0.001)
                 {
                     Settings.Gallery.ExpandedGalleryItemSize = x;
-                    await SaveSettingsAsync();
+                    await SaveSettingsAsync().ConfigureAwait(false);
                 }
             }, result =>
             {
@@ -219,7 +219,7 @@ public class GallerySharedSettingsViewModel
                 if (Math.Abs(Settings.Gallery.ItemSpacing - x) > 0.001)
                 {
                     Settings.Gallery.ItemSpacing = x;
-                    await SaveSettingsAsync();
+                    await SaveSettingsAsync().ConfigureAwait(false);
                 }
             }, result =>
             {
@@ -239,7 +239,7 @@ public class GallerySharedSettingsViewModel
                 if (Math.Abs(Settings.Gallery.LineSpacing - x) > 0.001)
                 {
                     Settings.Gallery.LineSpacing = x;
-                    await SaveSettingsAsync();
+                    await SaveSettingsAsync().ConfigureAwait(false);
                 }
             }, result =>
             {
@@ -259,7 +259,7 @@ public class GallerySharedSettingsViewModel
                 if (Settings.Gallery.DockedGalleryStretchMode != (GalleryStretchMode)x)
                 {
                     Settings.Gallery.DockedGalleryStretchMode = (GalleryStretchMode)x;
-                    await SaveSettingsAsync();
+                    await SaveSettingsAsync().ConfigureAwait(false);
                 }
             }, result =>
             {
@@ -279,7 +279,7 @@ public class GallerySharedSettingsViewModel
                 if (Settings.Gallery.ExpandedGalleryStretchMode != (GalleryStretchMode)x)
                 {
                     Settings.Gallery.ExpandedGalleryStretchMode = (GalleryStretchMode)x;
-                    await SaveSettingsAsync();
+                    await SaveSettingsAsync().ConfigureAwait(false);
                 }
             }, result =>
             {
@@ -306,7 +306,7 @@ public class GallerySharedSettingsViewModel
                 if (Settings.Gallery.ShowDockedGalleryInHiddenUI != x)
                 {
                     Settings.Gallery.ShowDockedGalleryInHiddenUI = x;
-                    await SaveSettingsAsync();
+                    await SaveSettingsAsync().ConfigureAwait(false);
                 }
             }, result =>
             {

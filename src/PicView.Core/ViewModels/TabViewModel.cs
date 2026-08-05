@@ -120,11 +120,11 @@ public class TabViewModel(Action<uint> closeTab, MainWindowViewModel parentWindo
     /// <summary>
     /// The title displayed in the tab.
     /// </summary>
-    public BindableReactiveProperty<string> TabTitle { get; } = new(string.Empty);
+    public BindableReactiveProperty<string> TabTitle { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
     /// <summary>
     /// The tooltip displayed when hovering over the tab.
     /// </summary>
-    public BindableReactiveProperty<string> TabTooltip { get; } = new(string.Empty);
+    public BindableReactiveProperty<string> TabTooltip { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
     
     #endregion
     #endregion

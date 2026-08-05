@@ -44,7 +44,7 @@ public class EffectsWindowConfig() : ConfigFile("EffectsWindow.json")
     public async Task SaveAsync()
     {
         CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(EffectsWindowProperties), EffectsWindowGenerationContext.Default);
+            CorrectPath, WindowProperties, typeof(EffectsWindowProperties), EffectsWindowGenerationContext.Default).ConfigureAwait(false);
     }
 
     public class EffectsWindowProperties : IWindowProperties

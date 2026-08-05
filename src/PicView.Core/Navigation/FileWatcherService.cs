@@ -25,7 +25,7 @@ public class FileWatcherService(
     // Maps Directory Path -> (Watcher, Subscribers)
     private readonly
         ConcurrentDictionary<string, (FileSystemWatcher Watcher, IDisposable Subscription,
-            List<WeakReference<TabViewModel>> Subscribers)> _watchers = new();
+            List<WeakReference<TabViewModel>> Subscribers)> _watchers = new(StringComparer.OrdinalIgnoreCase);
 
     public void Watch(TabViewModel tab, string? directory = null)
     {
@@ -105,19 +105,19 @@ public class FileWatcherService(
             // which protects the Integrity of the 'files' list and the CurrentIndex.
 
             var fileCreatedSub = created.SubscribeAwait(async (e, ct) =>
-                await OnFileCreatedAsync(tab, e), 
+                await OnFileCreatedAsync(tab, e).ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileCreatedAsync)));
 
             var fileDeletedSub = deleted.SubscribeAwait(async (e, ct) =>
-                await OnFileDeletedAsync(tab, e), 
+                await OnFileDeletedAsync(tab, e).ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileDeletedAsync)));
 
             var fileRenamedSub = renamed.SubscribeAwait(async (e, ct) =>
-                await OnFileRenamedAsync(tab, e), 
+                await OnFileRenamedAsync(tab, e).ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileRenamedAsync)));
             
             var fileChangedSub = changed.SubscribeAwait(async (e, ct) =>
-                await OnFileChangedAsync(tab, e), 
+                await OnFileChangedAsync(tab, e).ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileChangedAsync)));
 
             // Combine disposables
@@ -256,7 +256,7 @@ public class FileWatcherService(
         {
             if (tab.ParentWindowContext is not null)
             {
-                await tab.ParentWindowContext.Mapper.ShowStartUpMenu();
+                await tab.ParentWindowContext.Mapper.ShowStartUpMenu().ConfigureAwait(false);
             }
             return;
         }
@@ -268,7 +268,8 @@ public class FileWatcherService(
             targetIndex = Math.Clamp(targetIndex, 0, files.Count - 1);
             if (tab.IsFileWatcherNavigationEnabled)
             {
-                await tab.ImageIterator.IterateToIndexAsync(targetIndex, tab.GetTabCancellation());
+                await tab.ImageIterator.IterateToIndexAsync(targetIndex, tab.GetTabCancellation())
+                    .ConfigureAwait(false);
             }
             else
             {
@@ -409,7 +410,7 @@ public class FileWatcherService(
             files[index] = newFile;
         }
         
-        if (e.FullPath != tab.FileInfo?.CurrentValue?.FullName)
+        if (!string.Equals(e.FullPath, tab.FileInfo?.CurrentValue?.FullName, StringComparison.OrdinalIgnoreCase))
         {
             return;
         }
@@ -417,7 +418,7 @@ public class FileWatcherService(
         try
         {
             using var magick = new MagickImage();
-            await magick.PingAsync(newFile);
+            await magick.PingAsync(newFile).ConfigureAwait(false);
             tab.Model.PixelWidth = magick.Width;
             tab.Model.PixelHeight = magick.Height;
         }

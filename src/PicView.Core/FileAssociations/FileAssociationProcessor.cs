@@ -33,11 +33,11 @@ public static class FileAssociationProcessor
             // If we're on Windows, check for admin permissions
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !IsAdministrator())
             {
-                return await HandleNonAdminWindowsAssociations(groups);
+                return await HandleNonAdminWindowsAssociations(groups).ConfigureAwait(false);
             }
             
             // Standard processing path (non-Windows or already has admin rights)
-            return await HandleDirectAssociations(groups);
+            return await HandleDirectAssociations(groups).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -63,7 +63,7 @@ public static class FileAssociationProcessor
                 
                 if (File.Exists(filePath))
                 {
-                    await ProcessAssociationFile(filePath);
+                    await ProcessAssociationFile(filePath).ConfigureAwait(false);
                 }
                 else
                 {
@@ -142,14 +142,14 @@ public static class FileAssociationProcessor
             // Save instructions to the temp file using the AOT-compatible serializer context
             var json = JsonSerializer.Serialize(instructions, typeof(FileAssociationInstructions), 
                 FileAssociationSourceGenerationContext.Default);
-            await File.WriteAllTextAsync(tempFilePath, json);
+            await File.WriteAllTextAsync(tempFilePath, json).ConfigureAwait(false);
 
             // Create the command line argument
             var associateArg = $"associate:{tempFilePath}";
             Debug.WriteLine($"Launching elevated process with argument: {associateArg}");
 
             // Start new process with elevated permissions
-            return await ProcessHelper.StartProcessWithElevatedPermissionAsync(associateArg);
+            return await ProcessHelper.StartProcessWithElevatedPermissionAsync(associateArg).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -183,11 +183,11 @@ public static class FileAssociationProcessor
 
                         if (fileType.IsSelected.CurrentValue.Value)
                         {
-                            await FileAssociationManager.AssociateFile(cleanExt, fileType.Description);
+                            await FileAssociationManager.AssociateFile(cleanExt, fileType.Description).ConfigureAwait(false);
                         }
                         else
                         {
-                            await FileAssociationManager.UnassociateFile(cleanExt);
+                            await FileAssociationManager.UnassociateFile(cleanExt).ConfigureAwait(false);
                         }
                     }
                 }
@@ -204,7 +204,7 @@ public static class FileAssociationProcessor
             Debug.WriteLine($"Reading association file: {filePath}");
 
             // Read the JSON file
-            var json = await File.ReadAllTextAsync(filePath);
+            var json = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
             
             // Use the source generation context for deserialization
             var instructions = JsonSerializer.Deserialize(json, typeof(FileAssociationInstructions), 
@@ -225,7 +225,7 @@ public static class FileAssociationProcessor
                 try
                 {
                     Debug.WriteLine($"Associating {item.Extension} with description '{item.Description}'");
-                    await FileAssociationManager.AssociateFile(item.Extension, item.Description);
+                    await FileAssociationManager.AssociateFile(item.Extension, item.Description).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -239,7 +239,7 @@ public static class FileAssociationProcessor
                 try
                 {
                     Debug.WriteLine($"Unassociating {extension}");
-                    await FileAssociationManager.UnassociateFile(extension);
+                    await FileAssociationManager.UnassociateFile(extension).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {

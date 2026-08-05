@@ -70,7 +70,7 @@ public class DropDownMenuViewModel : IDisposable
     public async ValueTask CloseGalleryOptions()
     {
         GalleryCarouselIndex.Value = 0;
-        await CloseCarousel();
+        await CloseCarousel().ConfigureAwait(false);
         IsFileHistoryVisible.Value = Settings.Navigation.IsFileHistoryEnabled;
     }
 
@@ -91,13 +91,13 @@ public class DropDownMenuViewModel : IDisposable
     public async ValueTask CloseSlideshowOptions()
     {
         SlideshowCarouselIndex.Value = 0;
-        await CloseCarousel();
+        await CloseCarousel().ConfigureAwait(false);
         IsFileHistoryVisible.Value = Settings.Navigation.IsFileHistoryEnabled;
     }
 
     public async ValueTask CloseCarousel()
     {
-        await Task.Delay(DefaultDelay);
+        await Task.Delay(DefaultDelay).ConfigureAwait(false);
         IsExpandedOptionsOpened.Value = false;
         IsGalleryCarouselVisible.Value = true;
         IsSlideshowCarouselVisible.Value = true;
@@ -137,7 +137,7 @@ public class DropDownMenuViewModel : IDisposable
     public async ValueTask CloseToolWindowsOptions()
     {
         ToolWindowsCarouselIndex.Value = 0;
-        await CloseCarousel();
+        await CloseCarousel().ConfigureAwait(false);
     }
     
     public void OpenSettingsOptions()
@@ -156,7 +156,7 @@ public class DropDownMenuViewModel : IDisposable
     public async ValueTask CloseSettingsOptions()
     {
         SettingsCarouselIndex.Value = 0;
-        await CloseCarousel();
+        await CloseCarousel().ConfigureAwait(false);
     }
     
     public void Dispose()

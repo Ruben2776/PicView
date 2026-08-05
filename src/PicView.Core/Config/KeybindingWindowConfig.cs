@@ -46,7 +46,7 @@ public class KeybindingWindowConfig() : ConfigFile("KeybindingWindowConfig.json"
     {
         CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
             CorrectPath, WindowProperties, typeof(KeybindingWindowProperties),
-            KeybindingsWindowGenerationContext.Default);
+            KeybindingsWindowGenerationContext.Default).ConfigureAwait(false);
     }
 
     public class KeybindingWindowProperties : IWindowProperties

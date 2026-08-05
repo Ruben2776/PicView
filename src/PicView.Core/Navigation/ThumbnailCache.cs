@@ -5,10 +5,10 @@ namespace PicView.Core.Navigation;
 
 public class ThumbnailCache : IThumbnailCache
 {
-    private readonly ConcurrentDictionary<string, object> _thumbnails = new();
+    private readonly ConcurrentDictionary<string, object> _thumbnails = new(StringComparer.OrdinalIgnoreCase);
     
     // Path -> Set of Owners
-    private readonly Dictionary<string, HashSet<uint>> _ownersByFile = new();
+    private readonly Dictionary<string, HashSet<uint>> _ownersByFile = new(StringComparer.OrdinalIgnoreCase);
     
     // Owner -> Set of Paths
     private readonly Dictionary<uint, HashSet<string>> _filesByOwner = new();

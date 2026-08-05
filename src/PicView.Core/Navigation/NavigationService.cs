@@ -96,7 +96,7 @@ public class NavigationService(
             {
                 if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
                 {
-                    await ct.CancelAsync();
+                    await ct.CancelAsync().ConfigureAwait(false);
                     tab.ResetNavigationCts();
                     await GalleryLoader.ReloadGallery(tab, tab.ImageIterator.Files, thumbnailLoader, tab.ThumbnailCache, tab.GetTabCancellation().Token).ConfigureAwait(false);
                     return;
@@ -139,7 +139,7 @@ public class NavigationService(
         if (iterator.Files is null || iterator.Files.Count is 0)
         {
             // TODO: Figure out way to share file list, if another tab is already in the same directory
-            await Repopulate();
+            await Repopulate().ConfigureAwait(false);
             return;
         }
 
@@ -158,7 +158,7 @@ public class NavigationService(
         }
         else
         {
-            await Repopulate();
+            await Repopulate().ConfigureAwait(false);
         }
         
         tab.ArchiveExtractionService.Cleanup();

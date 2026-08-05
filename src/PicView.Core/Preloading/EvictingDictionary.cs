@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using PicView.Core.DebugTools;
 
 namespace PicView.Core.Preloading;
 
@@ -65,17 +64,23 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
     /// </summary>
     /// <param name="key">The unique integer key to add.</param>
     /// <param name="value">The value to associate with <paramref name="key"/>.</param>
-    /// <param name="totalCount">The total count of the file list</param>
+    /// <param name="totalCount">The total count of the file list being iterated.</param>
     /// <param name="isReverse">
-    /// Indicates navigation direction. If <see langword="true"/>, the highest key is evicted;
-    /// if <see langword="false"/>, the lowest key is evicted.
+    /// Indicates navigation direction. If <see langword="true"/>, the item farthest ahead is evicted;
+    /// if <see langword="false"/>, the item farthest behind is evicted.
     /// </param>
-    /// <param name="evictedValue">The value that was evicted, otherwise null.</param>
-    /// <returns>
-    /// <see langword="true"/> if an item was added; otherwise, <see langword="false"/>.
-    /// </returns>
+    /// <param name="evictedValue">
+    /// When this method returns, contains the value evicted due to capacity limits or index replacement, 
+    /// or <see langword="null"/> if no eviction occurred.
+    /// </param>
+    /// <param name="isNewReference">
+    /// When this method returns, contains <see langword="true"/> if the value was newly inserted 
+    /// or replaced a different object reference; otherwise, <see langword="false"/> if the key already 
+    /// contained the exact same object reference.
+    /// </param>
     /// <remarks>
-    /// If <paramref name="key"/> already exists, its value is updated and no eviction occurs.
+    /// If <paramref name="key"/> already exists and holds the exact same reference, no modification 
+    /// or eviction occurs and <paramref name="isNewReference"/> returns <see langword="false"/>.
     /// </remarks>
     public void TryAdd(int key, TValue value, int totalCount, bool isReverse, out TValue? evictedValue, out bool isNewReference)
     {
@@ -338,7 +343,6 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
         }
     }
 
-
     /// <summary>
     /// Returns an enumerator that iterates through a snapshot of the dictionary.
     /// </summary>
@@ -354,7 +358,7 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
         _lock.Enter();
         try
         {
-            snapshot = _dictionary.ToList();
+            snapshot = [.. _dictionary];
         }
         finally
         {
@@ -364,14 +368,7 @@ public class EvictingDictionary<TValue> : IEnumerable<KeyValuePair<int, TValue>>
         return snapshot.GetEnumerator();
     }
 
-
-    /// <summary>
-    /// Returns an enumerator that iterates through a snapshot of the dictionary.
-    /// </summary>
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     #endregion
 }

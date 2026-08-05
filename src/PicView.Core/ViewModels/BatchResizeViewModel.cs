@@ -71,7 +71,7 @@ namespace PicView.Core.ViewModels
         public BindableReactiveProperty<bool> IsWidthResizing { get; } = new();
         public BindableReactiveProperty<bool> IsHeightResizing { get; } = new();
 
-        public BindableReactiveProperty<string?> FilterText { get; } = new(string.Empty);
+        public BindableReactiveProperty<string?> FilterText { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
 
         public BindableReactiveProperty<string[]> ConversionTargets { get; }
         public BindableReactiveProperty<string[]> ResizeModes { get; }
@@ -94,17 +94,17 @@ namespace PicView.Core.ViewModels
             _getFiles = getFiles;
 
             // Commands
-            StartCommand = new ReactiveCommand(async (_, x) => await StartBatchResizeAsync(x));
-            CancelCommand = new ReactiveCommand(async (_, _) => await CancelAsync());
+            StartCommand = new ReactiveCommand(async (_, x) => await StartBatchResizeAsync(x).ConfigureAwait(false));
+            CancelCommand = new ReactiveCommand(async (_, _) => await CancelAsync().ConfigureAwait(false));
             CloseProgressCommand = new ReactiveCommand(_ =>
             {
                 IsFinished.Value = false;
                 IsRunning.Value = false;
             });
             ResetCommand = new ReactiveCommand(_ => { Reset(); });
-            SelectAndAddFolderCommand = new ReactiveCommand(async (_, _) => await SelectAndAddFolder(selectDirectory));
-            SelectAndAddFileCommand = new ReactiveCommand(async (_, _) => await SelectAndAddFile(selectFile));
-            PickOutputFolderCommand = new ReactiveCommand(async (_, _) => await PickOutputFolder(selectDirectory));
+            SelectAndAddFolderCommand = new ReactiveCommand(async (_, _) => await SelectAndAddFolder(selectDirectory).ConfigureAwait(false));
+            SelectAndAddFileCommand = new ReactiveCommand(async (_, _) => await SelectAndAddFile(selectFile).ConfigureAwait(false));
+            PickOutputFolderCommand = new ReactiveCommand(async (_, _) => await PickOutputFolder(selectDirectory).ConfigureAwait(false));
             ToggleAspectRatioCommand = new ReactiveCommand(_ =>
             {
                 IsKeepingAspectRatio.Value = !IsKeepingAspectRatio.Value;
@@ -201,7 +201,7 @@ namespace PicView.Core.ViewModels
 
         private async ValueTask PickOutputFolder(Func<Task<string>> selectDirectory)
         {
-            var dir = await selectDirectory();
+            var dir = await selectDirectory().ConfigureAwait(false);
             if (!string.IsNullOrWhiteSpace(dir))
             {
                 OutputFolder.Value = dir;
@@ -210,7 +210,7 @@ namespace PicView.Core.ViewModels
 
         private async ValueTask SelectAndAddFolder(Func<Task<string>> selectDirectory)
         {
-            var directory = await selectDirectory();
+            var directory = await selectDirectory().ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(directory))
             {
                 return;
@@ -225,7 +225,7 @@ namespace PicView.Core.ViewModels
 
         private async ValueTask SelectAndAddFile(Func<Task<string?>> selectFile)
         {
-            var file = await selectFile();
+            var file = await selectFile().ConfigureAwait(false);
             if (!string.IsNullOrWhiteSpace(file))
             {
                 SelectedFiles.Value.Add(new FileInfo(file));
@@ -234,7 +234,7 @@ namespace PicView.Core.ViewModels
 
         private async ValueTask CancelAsync()
         {
-            await _cts?.CancelAsync();
+            await (_cts?.CancelAsync()).ConfigureAwait(false);
             IsFinished.Value = false;
             IsRunning.Value = false;
         }
@@ -309,7 +309,7 @@ namespace PicView.Core.ViewModels
                             var destFileName = Path.Combine(backupCopyDir, file.Name);
                             File.Copy(file.FullName, destFileName, false);
                             return ValueTask.CompletedTask;
-                        });
+                        }).ConfigureAwait(false);
                     }
 
 
@@ -485,7 +485,7 @@ namespace PicView.Core.ViewModels
                         }
 
                         return ValueTask.CompletedTask;
-                    });
+                    }).ConfigureAwait(false);
                     IsFinished.Value = true;
                 }
                 catch (OperationCanceledException)
@@ -498,7 +498,7 @@ namespace PicView.Core.ViewModels
                 {
                     DebugHelper.LogDebug(nameof(BatchResizeViewModel), nameof(StartBatchResizeAsync), ex);
                 }
-            }, cancellationToken);
+            }, cancellationToken).ConfigureAwait(false);
         }
         
         #region IDisposable

@@ -1,8 +1,11 @@
-﻿namespace PicView.Core.Sizing;
+﻿using System.Runtime.InteropServices;
+
+namespace PicView.Core.Sizing;
 
 /// <summary>
 /// Represents screen dimensions and scaling information.
 /// </summary>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct ScreenSize
 {
     /// <summary>

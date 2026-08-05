@@ -103,7 +103,7 @@ public static class FileHistoryManager
 
     private static void SetPinnedState(string path, bool isPinned)
     {
-        var entryIndex = _entries.FindIndex(x => x.Path == path);
+        var entryIndex = _entries.FindIndex(x => string.Equals(x.Path, path, StringComparison.OrdinalIgnoreCase));
         if (entryIndex < 0 || _entries[entryIndex].IsPinned == isPinned)
         {
             return;
@@ -144,7 +144,7 @@ public static class FileHistoryManager
             return;
         }
 
-        var existingIndex = _entries.FindIndex(x => x.Path == path);
+        var existingIndex = _entries.FindIndex(x => string.Equals(x.Path, path, StringComparison.OrdinalIgnoreCase));
 
         if (existingIndex >= 0)
         {
@@ -272,7 +272,7 @@ public static class FileHistoryManager
     /// </summary>
     public static bool Remove(string path)
     {
-        var index = _entries.FindIndex(e => e.Path == path);
+        var index = _entries.FindIndex(e => string.Equals(e.Path, path, StringComparison.OrdinalIgnoreCase));
         if (index < 0)
         {
             return false;
@@ -302,12 +302,12 @@ public static class FileHistoryManager
             }
 
             var entry = GetEntryByString(oldName);
-            if (string.IsNullOrWhiteSpace(entry?.Path) || _entries.All(x => x.Path != entry?.Path))
+            if (string.IsNullOrWhiteSpace(entry?.Path) || _entries.TrueForAll(x => !string.Equals(x.Path, entry?.Path, StringComparison.OrdinalIgnoreCase)))
             {
                 return;
             }
 
-            var index = _entries.FindIndex(x => x.Path == entry.Path);
+            var index = _entries.FindIndex(x => string.Equals(x.Path, entry.Path, StringComparison.OrdinalIgnoreCase));
             if (index >= 0)
             {
                 _entries[index].Path = newName;
@@ -345,8 +345,10 @@ public static class FileHistoryManager
                 Entries = sortedEntries,
                 IsSortingDescending = IsSortingDescending
             };
-            _fileHistoryConfiguration.CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(_fileHistoryConfiguration,
-                _fileHistoryConfiguration.CorrectPath, historyEntries, typeof(FileHistoryEntries), FileHistoryGenerationContext.Default);
+            _fileHistoryConfiguration.CorrectPath = 
+                await ConfigFileManager.SaveConfigFileAndReturnPathAsync(_fileHistoryConfiguration,
+                _fileHistoryConfiguration.CorrectPath, historyEntries, typeof(FileHistoryEntries), FileHistoryGenerationContext.Default)
+                    .ConfigureAwait(false);
         }
         catch (Exception ex)
         {

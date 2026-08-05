@@ -7,13 +7,12 @@ namespace PicView.Tests.Navigation;
 public class SharedImageCacheTests
 {
     private readonly SharedImageCache _cache;
-    private readonly Func<FileInfo, ValueTask<ImageModel>> _mockLoader;
 
     public SharedImageCacheTests()
     {
         SetDefaults(); // Initialize settings
-        _mockLoader = f => new ValueTask<ImageModel>(new ImageModel { FileInfo = f });
-        _cache = new SharedImageCache(_mockLoader);
+        ValueTask<ImageModel> MockLoader(FileInfo f) => new(new ImageModel { FileInfo = f });
+        _cache = new SharedImageCache(MockLoader);
     }
 
     [Fact]
@@ -23,7 +22,7 @@ public class SharedImageCacheTests
         _cache.RegisterOwner(ownerId);
         
         var files = new[] { new FileInfo("test1.jpg") };
-        var result = await _cache.LoadAsync(ownerId, 0, files);
+        var result = await _cache.LoadAsync(ownerId, 0, files, TestContext.Current.CancellationToken);
         
         Assert.NotNull(result);
         Assert.Equal("test1.jpg", result.FileInfo.Name);

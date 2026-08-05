@@ -87,7 +87,7 @@ public static partial class FileHelper
             var numberStr = fileNameWithoutExtension.Substring(lastParenIndex + 1,
                 fileNameWithoutExtension.Length - lastParenIndex - 2);
 
-            if (int.TryParse(numberStr, out var existingNumber))
+            if (int.TryParse(numberStr, System.Globalization.CultureInfo.CurrentCulture, out var existingNumber))
             {
                 i = existingNumber + 1;
                 fileNameWithoutExtension = fileNameWithoutExtension[..lastParenIndex].TrimEnd();
@@ -137,10 +137,13 @@ public static partial class FileHelper
         try
         {
             var newFile = GenerateUniqueFileName(currentFile);
-            await using var fs = new FileStream(newFile, FileMode.OpenOrCreate, FileAccess.Write);
-            var bytes = await File.ReadAllBytesAsync(currentFile).ConfigureAwait(false);
+            var fs = new FileStream(newFile, FileMode.OpenOrCreate, FileAccess.Write);
+            await using (fs.ConfigureAwait(false))
+            {
+                var bytes = await File.ReadAllBytesAsync(currentFile).ConfigureAwait(false);
             await fs.WriteAsync(bytes).ConfigureAwait(false);
             return newFile;
+            }
         }
         catch (Exception e)
         {

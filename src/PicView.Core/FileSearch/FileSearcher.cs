@@ -1,4 +1,5 @@
-﻿using ZLinq;
+﻿using System.Runtime.InteropServices;
+using ZLinq;
 
 namespace PicView.Core.FileSearch;
 
@@ -68,5 +69,6 @@ public static class FileSearcher
     /// </summary>
     /// <param name="Score">The relevance score of the match.</param>
     /// <param name="Index">The starting index of the match in the filename, or -1 if not in the filename.</param>
+    [StructLayout(LayoutKind.Auto)]
     private readonly record struct MatchResult(int Score, int Index);
 }
