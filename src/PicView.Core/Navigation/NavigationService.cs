@@ -370,10 +370,22 @@ public class NavigationService(
             var title = $"{safeFileName} {TranslationManager.Translation?.Downloading} {displayProgress}";
 
             // Update UI properties
-            if (tab.TabTitle.Value != title) tab.TabTitle.Value = title;
-            if (tab.Title.Value != title) tab.Title.Value = title;
-            if (tab.WindowTitle.Value != title) tab.WindowTitle.Value = title;
-            if (tab.TitleTooltip.Value != title) tab.TitleTooltip.Value = title;
+            if (!string.Equals(tab.TabTitle.Value, title, StringComparison.OrdinalIgnoreCase))
+            {
+                tab.TabTitle.Value = title;
+            }
+            if (!string.Equals(tab.Title.Value, title, StringComparison.OrdinalIgnoreCase))
+            {
+                tab.Title.Value = title;
+            }
+            if (!string.Equals(tab.WindowTitle.Value, title, StringComparison.OrdinalIgnoreCase))
+            {
+                tab.WindowTitle.Value = title;
+            }
+            if (!string.Equals(tab.TitleTooltip.Value, title, StringComparison.OrdinalIgnoreCase))
+            {
+                tab.TitleTooltip.Value = title;
+            }
 
             if (totalBytesDownloaded.HasValue && totalFileSize.HasValue)
             {

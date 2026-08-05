@@ -1,5 +1,7 @@
 [*.cs]
 dotnet_diagnostic.MA0051.severity = none
+MA0051.maximum_lines_per_method = 100
+MA0051.maximum_statements_per_method = 70
 
 dotnet_diagnostic.MA0016.severity = none
 

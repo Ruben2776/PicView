@@ -313,7 +313,7 @@ public class SharedImageCache : IImageCache
             
             foreach (var kvp in _ownerContexts)
             {
-                if (kvp.Key == id || kvp.Value.Directory != directory)
+                if (kvp.Key == id || !string.Equals(kvp.Value.Directory, directory, StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }

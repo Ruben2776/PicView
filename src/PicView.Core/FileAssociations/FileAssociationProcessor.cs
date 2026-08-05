@@ -267,7 +267,7 @@ public static class FileAssociationProcessor
 
     private static bool IsAdministrator()
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!OperatingSystem.IsWindows())
         {
             return false;
         }

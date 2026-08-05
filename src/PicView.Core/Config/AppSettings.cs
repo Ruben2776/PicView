@@ -273,7 +273,7 @@ public class Gallery
 
     public double LineSpacing { get; set; } = 20;
     
-    public GalleryMouseWheel GalleryMouseWheelBehavior { get; set; } = 0;
+    public GalleryMouseWheel GalleryMouseWheelBehavior { get; set; } = GalleryMouseWheel.Scroll;
 }
 
 public class ImageScaling

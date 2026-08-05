@@ -1,4 +1,5 @@
-﻿using ImageMagick;
+﻿using System.Globalization;
+using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.ImageDecoding;
@@ -242,8 +243,8 @@ public class ResizeImageViewModel : IDisposable
                 magickImage.Rotate(rotationAngle);
             }
 
-            var w = Convert.ToUInt32(DesiredPixelWidth.CurrentValue);
-            var h = Convert.ToUInt32(DesiredPixelHeight.CurrentValue);
+            var w = Convert.ToUInt32(DesiredPixelWidth.CurrentValue, CultureInfo.InvariantCulture);
+            var h = Convert.ToUInt32(DesiredPixelHeight.CurrentValue, CultureInfo.InvariantCulture);
 
             magickImage.Resize(w, h);
             await magickImage.WriteAsync(destination).ConfigureAwait(false);

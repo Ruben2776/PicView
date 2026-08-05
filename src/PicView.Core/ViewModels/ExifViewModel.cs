@@ -409,7 +409,9 @@ public class ExifViewModel : IDisposable
 
     private FileInfo? _fileInfo;
 
+#pragma warning disable MA0051
     public void UpdateExifValues(ImageModel model, MagickImage? magick = null)
+#pragma warning restore MA0051
     {
         _fileInfo = model.FileInfo;
         var shouldDispose = magick != null;
@@ -454,45 +456,54 @@ public class ExifViewModel : IDisposable
                         var key = name.ToLowerInvariant();
 
                         // --- Date and Time ---
-                        if (key.Contains("date") && (key.Contains("create") || key.Contains("original")))
+                        if (key.Contains("date", StringComparison.OrdinalIgnoreCase) &&
+                            (key.Contains("create", StringComparison.OrdinalIgnoreCase) 
+                             || key.Contains("original", StringComparison.OrdinalIgnoreCase)))
                         {
-                            if (DateTime.TryParse(val, out var date))
+                            if (DateTime.TryParse(val, CultureInfo.InvariantCulture, out var date))
                             {
-                                profile.SetValue(ExifTag.DateTimeOriginal, date.ToString("yyyy:MM:dd HH:mm:ss"));
+                                profile.SetValue(ExifTag.DateTimeOriginal, 
+                                    date.ToString("yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture));
                             }
                         }
                         // --- Camera Details ---
-                        else if (key.Contains("camera.model.name") || key.Contains("exif:model"))
+                        else if (key.Contains("camera.model.name", StringComparison.OrdinalIgnoreCase)
+                                 || key.Contains("exif:model", StringComparison.OrdinalIgnoreCase))
                         {
                             profile.SetValue(ExifTag.Model, val);
                         }
-                        else if (key.Contains("camera.make.name") || key.Contains("exif:make"))
+                        else if (key.Contains("camera.make.name", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:make", StringComparison.OrdinalIgnoreCase))
                         {
                             profile.SetValue(ExifTag.Make, val);
                         }
                         // --- Exposure Settings ---
-                        else if (key.Contains("exposure.time") || key.Contains("exif:exposuretime"))
+                        else if (key.Contains("exposure.time", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:exposuretime", StringComparison.OrdinalIgnoreCase))
                         {
                             if (ExifFunctions.TryParseRational(val, out var rational))
                             {
                                 profile.SetValue(ExifTag.ExposureTime, rational);
                             }
                         }
-                        else if (key.Contains("f.number") || key.Contains("exif:fnumber"))
+                        else if (key.Contains("f.number", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:fnumber", StringComparison.OrdinalIgnoreCase))
                         {
                             if (ExifFunctions.TryParseRational(val, out var rational))
                             {
                                 profile.SetValue(ExifTag.FNumber, rational);
                             }
                         }
-                        else if (key.Contains("iso") || key.Contains("exif:isospeedratings"))
+                        else if (key.Contains("iso", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:isospeedratings", StringComparison.OrdinalIgnoreCase))
                         {
                             if (ushort.TryParse(val, out var iso))
                             {
                                 profile.SetValue(ExifTag.ISOSpeedRatings, [iso]);
                             }
                         }
-                        else if (key.Contains("exposure.bias") || key.Contains("exif:exposurebiasvalue"))
+                        else if (key.Contains("exposure.bias", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:exposurebiasvalue", StringComparison.OrdinalIgnoreCase))
                         {
                             if (ExifFunctions.TryParseSignedRational(val, out var rational))
                             {
@@ -500,27 +511,31 @@ public class ExifViewModel : IDisposable
                             }
                         }
                         // --- Optics ---
-                        else if (key.Contains("focal.length") && !key.Contains("35mm"))
+                        else if (key.Contains("focal.length", StringComparison.OrdinalIgnoreCase) 
+                                 && !key.Contains("35mm", StringComparison.OrdinalIgnoreCase))
                         {
                             if (ExifFunctions.TryParseRational(val, out var rational))
                             {
                                 profile.SetValue(ExifTag.FocalLength, rational);
                             }
                         }
-                        else if (key.Contains("focal.length.in.35mm") || key.Contains("exif:focallengthin35mmfilm"))
+                        else if (key.Contains("focal.length.in.35mm", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:focallengthin35mmfilm", StringComparison.OrdinalIgnoreCase))
                         {
                             if (ushort.TryParse(val, out var num))
                             {
                                 profile.SetValue(ExifTag.FocalLengthIn35mmFilm, num);
                             }
                         }
-                        else if (key.Contains("lens.model") || key.Contains("exif:lensmodel"))
+                        else if (key.Contains("lens.model", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:lensmodel", StringComparison.OrdinalIgnoreCase))
                         {
                             profile.SetValue(ExifTag.LensModel, val);
                         }
 
                         // --- GPS Coordinates (Lat/Long are Rational Arrays) ---
-                        else if (key.Contains("gps.latitude") && !key.Contains("ref"))
+                        else if (key.Contains("gps.latitude", StringComparison.OrdinalIgnoreCase) 
+                                 && !key.Contains("ref", StringComparison.OrdinalIgnoreCase))
                         {
                             var parts = val.Split([' ', ','], StringSplitOptions.RemoveEmptyEntries);
                             var rationals = parts
@@ -530,7 +545,8 @@ public class ExifViewModel : IDisposable
                                 profile.SetValue(ExifTag.GPSLatitude, rationals);
                             }
                         }
-                        else if (key.Contains("gps.longitude") && !key.Contains("ref"))
+                        else if (key.Contains("gps.longitude", StringComparison.OrdinalIgnoreCase) 
+                                 && !key.Contains("ref", StringComparison.OrdinalIgnoreCase))
                         {
                             var parts = val.Split([' ', ','], StringSplitOptions.RemoveEmptyEntries);
                             var rationals = parts
@@ -540,17 +556,20 @@ public class ExifViewModel : IDisposable
                                 profile.SetValue(ExifTag.GPSLongitude, rationals);
                             }
                         }
-                        else if (key.Contains("gps.latituderef") || key.Contains("exif:gpslatituderef"))
+                        else if (key.Contains("gps.latituderef", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:gpslatituderef", StringComparison.OrdinalIgnoreCase))
                         {
                             profile.SetValue(ExifTag.GPSLatitudeRef, val.Trim());
                         }
-                        else if (key.Contains("gps.longituderef") || key.Contains("exif:gpslongituderef"))
+                        else if (key.Contains("gps.longituderef", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:gpslongituderef", StringComparison.OrdinalIgnoreCase))
                         {
                             profile.SetValue(ExifTag.GPSLongitudeRef, val.Trim());
                         }
 
                         // --- Shooting Info ---
-                        else if (key.Contains("white.balance") || key.Contains("exif:whitebalance"))
+                        else if (key.Contains("white.balance", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:whitebalance", StringComparison.OrdinalIgnoreCase))
                         {
                             // Typically 0 = Auto, 1 = Manual in EXIF
                             if (val.Contains("auto", StringComparison.OrdinalIgnoreCase))
@@ -564,33 +583,40 @@ public class ExifViewModel : IDisposable
                         }
 
                         // --- Identification & Rights ---
-                        if (key.Contains("artist") || key.Contains("author") || key.Contains("exif:artist"))
+                        if (key.Contains("artist", StringComparison.OrdinalIgnoreCase) 
+                            || key.Contains("author", StringComparison.OrdinalIgnoreCase) 
+                            || key.Contains("exif:artist", StringComparison.OrdinalIgnoreCase))
                         {
                             profile.SetValue(ExifTag.Artist, val);
                         }
-                        else if (key.Contains("copyright") || key.Contains("exif:copyright"))
+                        else if (key.Contains("copyright", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:copyright", StringComparison.OrdinalIgnoreCase))
                         {
                             profile.SetValue(ExifTag.Copyright, val);
                         }
-                        else if (key.Contains("software") || key.Contains("exif:software"))
+                        else if (key.Contains("software", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:software", StringComparison.OrdinalIgnoreCase))
                         {
                             profile.SetValue(ExifTag.Software, val);
                         }
 
                         // --- Titles & Comments ---
-                        else if (key.Contains("comment") || key.Contains("exif:usercomment"))
+                        else if (key.Contains("comment", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:usercomment", StringComparison.OrdinalIgnoreCase))
                         {
                             // ExifReader expects ASCII/UNICODE prefixing for UserComment
                             var bytes = Encoding.ASCII.GetBytes("ASCII\0\0\0" + val);
                             profile.SetValue(ExifTag.UserComment, bytes);
                         }
-                        else if (key.Contains("description") || key.Contains("exif:imagedescription"))
+                        else if (key.Contains("description", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:imagedescription", StringComparison.OrdinalIgnoreCase))
                         {
                             profile.SetValue(ExifTag.ImageDescription, val);
                         }
 
                         // --- Rating ---
-                        else if (key.Contains("rating") || key.Contains("exif:rating"))
+                        else if (key.Contains("rating", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:rating", StringComparison.OrdinalIgnoreCase))
                         {
                             if (ushort.TryParse(val, out var rating))
                             {
@@ -599,7 +625,8 @@ public class ExifViewModel : IDisposable
                         }
 
                         // --- Color Representation ---
-                        else if (key.Contains("colorspace") || key.Contains("exif:colorspace"))
+                        else if (key.Contains("colorspace", StringComparison.OrdinalIgnoreCase) 
+                                 || key.Contains("exif:colorspace", StringComparison.OrdinalIgnoreCase))
                         {
                             if (val.Contains("srgb", StringComparison.OrdinalIgnoreCase))
                             {
@@ -630,7 +657,7 @@ public class ExifViewModel : IDisposable
                 if (depth is not null)
                 {
                     var x = depth.Aggregate(0, (current, value) => current + value);
-                    BitDepth.Value = x.ToString();
+                    BitDepth.Value = x.ToString(CultureInfo.InvariantCulture);
                 }
                 else
                 {
@@ -738,17 +765,17 @@ public class ExifViewModel : IDisposable
             ColorRepresentation.Value = profile?.GetValue(ExifTag.ColorSpace)?.Value ?? 0;
             Compression.Value = profile?.GetValue(ExifTag.Compression)?.Value ?? 0;
             CompressedBitsPixel.Value =
-                profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString() ?? string.Empty;
+                profile?.GetValue(ExifTag.CompressedBitsPerPixel)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
             CameraMaker.Value = profile?.GetValue(ExifTag.Make)?.Value ?? string.Empty;
             CameraModel.Value = profile?.GetValue(ExifTag.Model)?.Value ?? string.Empty;
             ExposureProgram.Value = ExifReader.GetExposureProgram(profile);
-            ExposureTime.Value = profile?.GetValue(ExifTag.ExposureTime)?.Value.ToString() ?? string.Empty;
-            FNumber.Value = profile?.GetValue(ExifTag.FNumber)?.Value.ToString() ?? string.Empty;
-            MaxAperture.Value = profile?.GetValue(ExifTag.MaxApertureValue)?.Value.ToString() ?? string.Empty;
-            ExposureBias.Value = profile?.GetValue(ExifTag.ExposureBiasValue)?.Value.ToString() ?? string.Empty;
-            DigitalZoom.Value = profile?.GetValue(ExifTag.DigitalZoomRatio)?.Value.ToString() ?? string.Empty;
+            ExposureTime.Value = profile?.GetValue(ExifTag.ExposureTime)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+            FNumber.Value = profile?.GetValue(ExifTag.FNumber)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+            MaxAperture.Value = profile?.GetValue(ExifTag.MaxApertureValue)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+            ExposureBias.Value = profile?.GetValue(ExifTag.ExposureBiasValue)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+            DigitalZoom.Value = profile?.GetValue(ExifTag.DigitalZoomRatio)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
             FocalLength35Mm.Value = profile?.GetValue(ExifTag.FocalLengthIn35mmFilm)?.Value.ToString() ?? string.Empty;
-            FocalLength.Value = profile?.GetValue(ExifTag.FocalLength)?.Value.ToString() ?? string.Empty;
+            FocalLength.Value = profile?.GetValue(ExifTag.FocalLength)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
             ISOSpeed.Value = ExifReader.GetISOSpeed(profile);
             MeteringMode.Value = profile?.GetValue(ExifTag.MeteringMode)?.Value.ToString() ?? string.Empty;
             Contrast.Value = ExifReader.GetContrast(profile);
@@ -756,7 +783,7 @@ public class ExifViewModel : IDisposable
             Sharpness.Value = ExifReader.GetSharpness(profile);
             WhiteBalance.Value = ExifReader.GetWhiteBalance(profile);
             FlashMode.Value = ExifReader.GetFlashMode(profile);
-            FlashEnergy.Value = profile?.GetValue(ExifTag.FlashEnergy)?.Value.ToString() ?? string.Empty;
+            FlashEnergy.Value = profile?.GetValue(ExifTag.FlashEnergy)?.Value.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
             LightSource.Value = ExifReader.GetLightSource(profile);
             Brightness.Value = profile?.GetValue(ExifTag.BrightnessValue)?.Value.ToString(CultureInfo.CurrentCulture) ??
                                null;

@@ -1,4 +1,5 @@
-﻿using PicView.Core.Extensions;
+﻿using System.Globalization;
+using PicView.Core.Extensions;
 using PicView.Core.FileHandling;
 using PicView.Core.Localization;
 
@@ -68,13 +69,15 @@ public static class HttpManager
     /// <returns>Formatted string showing download progress</returns>
     public static string GetProgressDisplay(long? totalFileSize, long? totalBytesDownloaded, double? progressPercentage)
     {
-        if (!totalFileSize.HasValue || !totalBytesDownloaded.HasValue || !progressPercentage.HasValue) 
+        if (!totalFileSize.HasValue || !totalBytesDownloaded.HasValue || !progressPercentage.HasValue)
+        {
             return string.Empty;
+        }
 
         var percentComplete = TranslationManager.Translation.PercentComplete;
         var downloadedMb = totalBytesDownloaded.Value.GetReadableFileSize();
         var totalMb = totalFileSize.Value.GetReadableFileSize();
         
-        return $"{downloadedMb}/{totalMb} ({(int)progressPercentage.Value}% {percentComplete})";
+        return string.Create(CultureInfo.InvariantCulture, $"{downloadedMb}/{totalMb} ({(int)progressPercentage.Value}% {percentComplete})");
     }
 }

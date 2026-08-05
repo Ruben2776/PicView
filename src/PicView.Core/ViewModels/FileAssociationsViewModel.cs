@@ -116,7 +116,7 @@ public class FileAssociationsViewModel : IDisposable
 
         foreach (var group in currentGroups)
         {
-            var defaultGroup = defaultGroups.FirstOrDefault(g => g.Name == group.Name);
+            var defaultGroup = defaultGroups.FirstOrDefault(g => string.Equals(g.Name, group.Name, StringComparison.OrdinalIgnoreCase));
             if (defaultGroup == null)
             {
                 continue;
@@ -128,7 +128,7 @@ public class FileAssociationsViewModel : IDisposable
             foreach (var fileType in fileTypes)
             {
                 var defaultType = defaultGroup.FileTypes.FirstOrDefault(dt =>
-                    dt.Description == fileType.Description);
+                    string.Equals(dt.Description, fileType.Description, StringComparison.OrdinalIgnoreCase));
 
                 if (defaultType != null)
                 {
@@ -167,10 +167,10 @@ public class FileAssociationsViewModel : IDisposable
                     continue;
                 }
 
-                if (fileType.Extension.StartsWith(".zip") ||
-                    fileType.Extension.StartsWith(".rar") ||
-                    fileType.Extension.StartsWith(".7z") ||
-                    fileType.Extension.StartsWith(".gzip"))
+                if (fileType.Extension.StartsWith(".zip", StringComparison.OrdinalIgnoreCase) ||
+                    fileType.Extension.StartsWith(".rar", StringComparison.OrdinalIgnoreCase) ||
+                    fileType.Extension.StartsWith(".7z", StringComparison.OrdinalIgnoreCase) ||
+                    fileType.Extension.StartsWith(".gzip", StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }

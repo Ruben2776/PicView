@@ -144,20 +144,20 @@ public class ArchiveExtractionService
             var archive = await ArchiveFactory.OpenAsyncArchive(archivePath, cancellationToken: ct).ConfigureAwait(false);
             await using (archive.ConfigureAwait(false))
             {
-                await foreach (var entry in archive.EntriesAsync.WithCancellation(ct))
-            {
-                if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
+                await foreach (var entry in archive.EntriesAsync.WithCancellation(ct).ConfigureAwait(false))
                 {
-                    continue;
-                }
+                    if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
+                    {
+                        continue;
+                    }
 
-                if (!string.Equals(entry.Key, entryKey, StringComparison.Ordinal))
-                {
-                    continue;
-                }
+                    if (!string.Equals(entry.Key, entryKey, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
 
-                return WriteEntryFlat(entry, tempDirectory);
-            }
+                    return WriteEntryFlat(entry, tempDirectory);
+                }
             }
         }
         catch (OperationCanceledException)
