@@ -1,4 +1,4 @@
-﻿{
+{
   "About": "O programu",
   "ActionProgram": "Program akcije",
   "AddFiles": "Dodaj fajlove",
@@ -12,6 +12,7 @@
   "AdvanceBy100Images": "Idi unapred za 100 slika",
   "AdvanceBy10Images": "Idi unapred za 10 slika",
   "AllowZoomOut": "Izbegavaj umanjenje kada je zum na maksimalnoj veličini",
+  "AlwaysUncompressEntireArchive": "Uvek raspakuj celu fasciklu arhive",
   "Alt": "Alt",
   "Altitude": "Nadmorska visina",
   "AperturePriority": "Prioritet otvorenog blamiranja",

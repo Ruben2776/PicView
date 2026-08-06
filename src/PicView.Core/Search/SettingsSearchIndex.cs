@@ -102,6 +102,8 @@ public static class SettingsSearchIndex
             list.Add(new SettingsSearchItem(t.ToggleTaskbarProgress, data.NavigationTaskbarSearchTags));
         if (t.AdjustNavSpeed != null)
             list.Add(new SettingsSearchItem(t.AdjustNavSpeed, data.NavigationSpeedSearchTags));
+        if (t.AlwaysUncompressEntireArchive != null)
+            list.Add(new SettingsSearchItem(t.AlwaysUncompressEntireArchive, data.NavigationArchiveSearchTags));
 
         // Gallery
         if (t.ShowDockedGallery != null)

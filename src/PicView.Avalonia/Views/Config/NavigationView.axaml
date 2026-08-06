@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="PicView.Avalonia.Views.Config.NavigationView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -53,6 +53,17 @@
                 IsChecked="{CompiledBinding SettingsViewModel.IsShowingTaskbarProgress.Value,
                                             Mode=OneWay}"
                 Text="{CompiledBinding Translation.ToggleTaskbarProgress.Value,
+                                       Mode=OneWay}" />
+        </Border>
+
+        <!--  Always uncompress entire archive folder  -->
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.NavigationArchiveSearchTags}" Classes="searchBorder">
+            <customControls:TextToggleButton
+                x:Name="AlwaysUncompressEntireArchiveToggleButton"
+                Classes="altHover settingsToggleButton"
+                IsChecked="{CompiledBinding SettingsViewModel.IsUncompressingEntireArchive.Value,
+                                            Mode=TwoWay}"
+                Text="{CompiledBinding Translation.AlwaysUncompressEntireArchive.Value,
                                        Mode=OneWay}" />
         </Border>
 

@@ -96,7 +96,46 @@ public class ArchiveExtractionService
                 return new ArchivePreparation(tempDirectory, files, IsFullyExtracted: true);
             }
 
-            var archive = await ArchiveFactory.OpenAsyncArchive(archivePath);
+            if (Settings.Navigation.AlwaysUncompressEntireArchive)
+            {
+                var extractedFiles = new List<string>();
+                await using (var fullArchive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false))
+                {
+                    await foreach (var entry in fullArchive.EntriesAsync.ConfigureAwait(false))
+                    {
+                        if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key) || !entry.Key.IsSupported())
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            var extractedPath = WriteEntryFlat(entry, tempDirectory);
+                            if (!string.IsNullOrEmpty(extractedPath))
+                            {
+                                extractedFiles.Add(extractedPath);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(PrepareArchiveAsync), ex);
+                        }
+                    }
+                }
+
+                if (extractedFiles.Count is 0)
+                {
+                    return null;
+                }
+
+                var filesArray = extractedFiles.ToArray();
+                SortByFileName(filesArray, stringComparer);
+
+                LastOpenedArchive = archivePath;
+                return new ArchivePreparation(tempDirectory, filesArray, IsFullyExtracted: true);
+            }
+
+            await using var archive = await ArchiveFactory.OpenAsyncArchive(archivePath);
             var entries = await archive.EntriesAsync
                 .Where(e => !e.IsDirectory
                             && !string.IsNullOrEmpty(e.Key)
@@ -185,36 +224,40 @@ public class ArchiveExtractionService
 
         try
         {
-            await Task.Run(() =>
+            var pending = new HashSet<string>(remainingKeys, StringComparer.Ordinal);
+            await using var archive = await ArchiveFactory.OpenAsyncArchive(archivePath, cancellationToken: ct).ConfigureAwait(false);
+
+            await foreach (var entry in archive.EntriesAsync.WithCancellation(ct).ConfigureAwait(false))
             {
-                var pending = new HashSet<string>(remainingKeys, StringComparer.Ordinal);
-                using var archive = ArchiveFactory.OpenArchive(archivePath);
-
-                foreach (var entry in archive.Entries)
+                if (ct.IsCancellationRequested)
                 {
-                    if (ct.IsCancellationRequested)
-                    {
-                        return;
-                    }
-
-                    if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
-                    {
-                        continue;
-                    }
-
-                    if (!pending.Remove(entry.Key))
-                    {
-                        continue;
-                    }
-
-                    WriteEntryFlat(entry, tempDirectory);
-
-                    if (pending.Count == 0)
-                    {
-                        return;
-                    }
+                    return;
                 }
-            }, ct).ConfigureAwait(false);
+
+                if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
+                {
+                    continue;
+                }
+
+                if (!pending.Remove(entry.Key))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    WriteEntryFlat(entry, tempDirectory);
+                }
+                catch (Exception ex)
+                {
+                    DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(ExtractRemainingAsync), ex);
+                }
+
+                if (pending.Count == 0)
+                {
+                    return;
+                }
+            }
         }
         catch (OperationCanceledException)
         {
@@ -244,8 +287,11 @@ public class ArchiveExtractionService
             }
 
             Directory.Delete(tempZipDirectory, true);
-            TempZipDirectory = null;
-            LastOpenedArchive = null;
+            if (tempZipDirectory == TempZipDirectory)
+            {
+                TempZipDirectory = null;
+                LastOpenedArchive = null;
+            }
         }
         catch (Exception ex)
         {

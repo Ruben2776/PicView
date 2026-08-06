@@ -80,6 +80,106 @@ public class ArchiveExtractionServiceTests
         Assert.Null(result);
     }
 
+    [Fact]
+    public async Task PrepareArchiveAsync_AlwaysUncompressEntireArchive_ExtractsAllFilesAndReturnsFullyExtracted()
+    {
+        var tempZipPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.zip");
+        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var file1 = Path.Combine(tempDir, "test1.jpg");
+            var file2 = Path.Combine(tempDir, "test2.png");
+            File.WriteAllBytes(file1, new byte[] { 0xFF, 0xD8, 0xFF });
+            File.WriteAllBytes(file2, new byte[] { 0x89, 0x50, 0x4E, 0x47 });
+
+            System.IO.Compression.ZipFile.CreateFromDirectory(tempDir, tempZipPath);
+
+            var service = new ArchiveExtractionService();
+
+            // Test default (false)
+            Settings.Navigation.AlwaysUncompressEntireArchive = false;
+            var resultFalse = await service.PrepareArchiveAsync(
+                tempZipPath,
+                (_, _) => Task.FromResult(false),
+                string.Compare);
+
+            Assert.NotNull(resultFalse);
+            Assert.False(resultFalse.Value.IsFullyExtracted);
+            Assert.Equal(2, resultFalse.Value.EntryKeys.Length);
+            service.Cleanup();
+
+            // Test AlwaysUncompressEntireArchive = true
+            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+            var resultTrue = await service.PrepareArchiveAsync(
+                tempZipPath,
+                (_, _) => Task.FromResult(false),
+                string.Compare);
+
+            Assert.NotNull(resultTrue);
+            Assert.True(resultTrue.Value.IsFullyExtracted);
+            Assert.Equal(2, resultTrue.Value.EntryKeys.Length);
+            Assert.True(File.Exists(resultTrue.Value.EntryKeys[0]));
+            Assert.True(File.Exists(resultTrue.Value.EntryKeys[1]));
+            service.Cleanup();
+        }
+        finally
+        {
+            Settings.Navigation.AlwaysUncompressEntireArchive = false;
+            if (File.Exists(tempZipPath)) File.Delete(tempZipPath);
+            if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_MultipleArchivesSequential_CleansUpAndSucceeds()
+    {
+        var tempZipPath1 = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.zip");
+        var tempZipPath2 = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.zip");
+        var tempDir1 = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        var tempDir2 = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDir1);
+        Directory.CreateDirectory(tempDir2);
+
+        try
+        {
+            File.WriteAllBytes(Path.Combine(tempDir1, "a.jpg"), new byte[] { 0xFF, 0xD8, 0xFF });
+            File.WriteAllBytes(Path.Combine(tempDir2, "b.png"), new byte[] { 0x89, 0x50, 0x4E, 0x47 });
+
+            System.IO.Compression.ZipFile.CreateFromDirectory(tempDir1, tempZipPath1);
+            System.IO.Compression.ZipFile.CreateFromDirectory(tempDir2, tempZipPath2);
+
+            Settings.Navigation.AlwaysUncompressEntireArchive = true;
+            var service = new ArchiveExtractionService();
+
+            // First archive
+            var res1 = await service.PrepareArchiveAsync(tempZipPath1, (_, _) => Task.FromResult(false), string.Compare);
+            Assert.NotNull(res1);
+            Assert.True(res1.Value.IsFullyExtracted);
+            var firstTempDir = service.TempZipDirectory;
+
+            // Second archive
+            var res2 = await service.PrepareArchiveAsync(tempZipPath2, (_, _) => Task.FromResult(false), string.Compare);
+            Assert.NotNull(res2);
+            Assert.True(res2.Value.IsFullyExtracted);
+
+            // Cleanup previous temp dir
+            service.Cleanup(firstTempDir);
+            Assert.False(Directory.Exists(firstTempDir));
+
+            service.Cleanup();
+        }
+        finally
+        {
+            Settings.Navigation.AlwaysUncompressEntireArchive = false;
+            if (File.Exists(tempZipPath1)) File.Delete(tempZipPath1);
+            if (File.Exists(tempZipPath2)) File.Delete(tempZipPath2);
+            if (Directory.Exists(tempDir1)) Directory.Delete(tempDir1, true);
+            if (Directory.Exists(tempDir2)) Directory.Delete(tempDir2, true);
+        }
+    }
+
     #endregion
 
     #region ExtractEntryAsync
