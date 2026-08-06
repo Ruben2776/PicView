@@ -79,7 +79,16 @@ public static class DragAndDropManager
         {
             if (tabOverview.ActiveTab.CurrentValue.IsInitialized)
             {
-                await tabOverview.LoadFromArchiveAsync(path);
+                var vm = core.MainWindows.ActiveWindow.CurrentValue;
+                vm.IsLoadingIndicatorShown.Value = true;
+                try
+                {
+                    await tabOverview.LoadFromArchiveAsync(path);
+                }
+                finally
+                {
+                    vm.IsLoadingIndicatorShown.Value = false;
+                }
             }
             else
             {
@@ -231,7 +240,16 @@ public static class DragAndDropManager
                 tab.CurrentView.Value = new ImageViewer();
             }
 
-            await tabOverview.LoadFromFileAsync(file);
+            var vm = mainWindow.DataContext as MainWindowViewModel;
+            if (vm != null) vm.IsLoadingIndicatorShown.Value = true;
+            try
+            {
+                await tabOverview.LoadFromFileAsync(file);
+            }
+            finally
+            {
+                if (vm != null) vm.IsLoadingIndicatorShown.Value = false;
+            }
         }
         else
         {

@@ -28,6 +28,7 @@ public class SettingsSearchData
     public string NavigationLoopSearchTags { get; }
     public string NavigationTaskbarSearchTags { get; }
     public string NavigationSpeedSearchTags { get; }
+    public string NavigationArchiveSearchTags { get; }
     public string GalleryVisibilitySearchTags { get; }
     public string GalleryDockSearchTags { get; }
     public string GallerySizeSearchTags { get; }
@@ -255,6 +256,15 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append("Speed Time");
         NavigationSpeedSearchTags = sb.ToString();
+        
+        sb.Clear();
+        
+        sb.Append(TranslationManager.Translation.Navigation);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.AlwaysUncompressEntireArchive);
+        sb.Append(space);
+        sb.Append("Archive Extract Zip Uncompress");
+        NavigationArchiveSearchTags = sb.ToString();
         
         sb.Clear();
         

@@ -12,6 +12,7 @@
   "AdvanceBy100Images": "이미지 100개 앞으로 이동",
   "AdvanceBy10Images": "이미지 10개 앞으로 이동",
   "AllowZoomOut": "이미지가 이미 최대 크기일 때는 축소하지 않음",
+  "AlwaysUncompressEntireArchive": "항상 전체 압축 파일 폴더 해제",
   "Alt": "Alt",
   "Altitude": "고도",
   "AperturePriority": "조리개 우선",
