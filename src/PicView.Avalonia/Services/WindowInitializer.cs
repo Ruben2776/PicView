@@ -39,13 +39,22 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
     public MainWindow CreateMainWindow()
     {
         var window = provider.CreateMainWindow();
-        if (Application.Current?.DataContext is CoreViewModel core &&
-            window.DataContext is MainWindowViewModel vm)
+        if (Application.Current.DataContext is not CoreViewModel core ||
+            window.DataContext is not MainWindowViewModel vm)
         {
-            core.MainWindows.MainWindows.Add(vm);
-            core.MainWindows.ActiveWindow.Value = vm;
+            return window;
         }
+
+        core.MainWindows.MainWindows.Add(vm);
+        core.MainWindows.ActiveWindow.Value = vm;
         return window;
+    }
+
+    private void CloseMenus(CoreViewModel core)
+    {
+        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.CloseMenu();
+        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.CloseDropDownMenu();
+        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.CloseMenus();
     }
 
     public void ShowAboutWindow()
@@ -98,6 +107,8 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     _aboutWindow.Activate();
                 }
             }
+
+            CloseMenus(core);
         }
     }
 
@@ -148,6 +159,11 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     _imageInfoWindow.Activate();
                 }
             });
+        }
+
+        if (Application.Current.DataContext is CoreViewModel core)
+        {
+            CloseMenus(core);
         }
     }
 
@@ -221,6 +237,8 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 }
             });
         }
+        
+        CloseMenus(core);
 
         return;
 
@@ -295,6 +313,8 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             });
         }
 
+        CloseMenus(core);
+        
         return;
 
         void Show()
@@ -358,6 +378,8 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 }
             });
         }
+        
+        CloseMenus(core);
     }
 
     public void ShowSingleImageResizeWindow()
@@ -414,6 +436,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     _singleImageResizeWindow.Activate();
                 }
             }
+            CloseMenus(core);
         }
     }
 
@@ -465,6 +488,8 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 }
             });
         }
+        
+        CloseMenus(core);
         
         return;
         
@@ -521,6 +546,8 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     _convertWindow.Activate();
                 }
             }
+            
+            CloseMenus(core);
         }
     }
 
@@ -629,6 +656,11 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     _printPreviewWindow.Activate();
                 }
             });
+        }
+
+        if (Application.Current.DataContext is CoreViewModel core)
+        {
+            CloseMenus(core);
         }
     }
 }
