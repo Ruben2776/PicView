@@ -50,7 +50,7 @@
         <PackageReference Include="ObservableCollections" Version="3.3.4" />
         <PackageReference Include="ObservableCollections.R3" Version="3.3.4" />
         <PackageReference Include="R3" Version="1.3.1" />
-        <PackageReference Include="SharpCompress" Version="0.50.3" />
+        <PackageReference Include="SharpCompress" Version="0.50.4" />
         <PackageReference Include="ZLinq" Version="1.5.6" />
         <PackageReference Include="ZLinq.FileSystem" Version="1.5.6" />
         <PackageReference Include="ZString" Version="2.6.0"/>
