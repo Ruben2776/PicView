@@ -266,12 +266,12 @@ public partial class BatchResizeView : UserControl
 
         var batch = core.BatchResize;
         var tab = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue;
-        var collection = tab.ImageIterator.Files;
+        var collection = tab.ImageIterator?.Files;
         var width = tab.Model.PixelWidth;
         var height = tab.Model.PixelHeight;
-        batch.SelectedFiles.Value = new ObservableCollection<FileInfo>(collection);
+        batch.SelectedFiles.Value = collection is null ? [] : new ObservableCollection<FileInfo>(collection);
 
-        if (!string.IsNullOrWhiteSpace(tab.FileInfo?.CurrentValue.DirectoryName))
+        if (!string.IsNullOrWhiteSpace(tab.FileInfo?.CurrentValue?.DirectoryName))
         {
             batch.OutputFolder.Value = Path.Combine(
                 tab.FileInfo?.CurrentValue.DirectoryName,

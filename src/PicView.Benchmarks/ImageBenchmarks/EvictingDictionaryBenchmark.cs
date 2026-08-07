@@ -44,7 +44,7 @@ public class EvictingDictionaryBenchmark
     {
         for (var i = 0; i < _images.Count; i++)
         {
-            _evictingDict.TryAdd(i, _images[i], _images.Count, false, out _);
+            _evictingDict.TryAdd(i, _images[i], _images.Count, false, out _, out _);
         }
     }
 }

@@ -30,6 +30,7 @@ public class TranslationViewModel
         AdvanceBy10Images.Value = t.AdvanceBy10Images;
         AdvanceBy100Images.Value = t.AdvanceBy100Images;
         AllowZoomOut.Value = t.AllowZoomOut;
+        AlwaysUncompressEntireArchive.Value = t.AlwaysUncompressEntireArchive;
         Altitude.Value = t.Altitude;
         Appearance.Value = t.Appearance;
         ApplicationShortcuts.Value = t.ApplicationShortcuts;
@@ -416,6 +417,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> AdvanceBy100Images { get; } = new();
     public BindableReactiveProperty<string?> AdvanceBy10Images { get; } = new();
     public BindableReactiveProperty<string?> AllowZoomOut { get; } = new();
+    public BindableReactiveProperty<string?> AlwaysUncompressEntireArchive { get; } = new();
     public BindableReactiveProperty<string?> Altitude { get; } = new();
     public BindableReactiveProperty<string?> Appearance { get; } = new();
     public BindableReactiveProperty<string?> ApplicationShortcuts { get; } = new();

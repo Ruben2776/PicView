@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
@@ -46,7 +46,15 @@ public static class FilePicker
         });
 
 
-        await vm.WindowTabs.LoadFromFileAsync(file).ConfigureAwait(false);
+        vm.IsLoadingIndicatorShown.Value = true;
+        try
+        {
+            await vm.WindowTabs.LoadFromFileAsync(file).ConfigureAwait(false);
+        }
+        finally
+        {
+            vm.IsLoadingIndicatorShown.Value = false;
+        }
         vm.TopTitlebarViewModel.DropDownMenu.CloseMenus();
         vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
     }

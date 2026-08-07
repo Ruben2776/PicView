@@ -65,6 +65,7 @@ public class ArchiveExtractionService
                 DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(PrepareArchiveAsync),
                     "The archive path is invalid or the file does not exist.");
 #endif
+                return null;
             }
 
             var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -99,8 +100,50 @@ public class ArchiveExtractionService
                 return new ArchivePreparation(tempDirectory, files, IsFullyExtracted: true);
             }
 
+            if (Settings.Navigation.AlwaysUncompressEntireArchive)
+            {
+                var extractedFiles = new List<string>();
+                var fullArchive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
+                await using (fullArchive.ConfigureAwait(false))
+                {
+                    await foreach (var entry in fullArchive.EntriesAsync.ConfigureAwait(false))
+                    {
+                        if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key) || !entry.Key.IsSupported())
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            var extractedPath = WriteEntryFlat(entry, tempDirectory);
+                            if (!string.IsNullOrEmpty(extractedPath))
+                            {
+                                extractedFiles.Add(extractedPath);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(PrepareArchiveAsync), ex);
+                        }
+                    }
+                }
+
+                if (extractedFiles.Count is 0)
+                {
+                    return null;
+                }
+
+                var filesArray = extractedFiles.ToArray();
+                SortByFileName(filesArray, stringComparer);
+
+                LastOpenedArchive = archivePath;
+                return new ArchivePreparation(tempDirectory, filesArray, IsFullyExtracted: true);
+            }
+
             var archive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
-            var entries = await archive.EntriesAsync
+            await using (archive.ConfigureAwait(false))
+            {
+                var entries = await archive.EntriesAsync
                 .Where(e => !e.IsDirectory
                             && !string.IsNullOrEmpty(e.Key)
                             && e.Key!.IsSupported())
@@ -115,6 +158,7 @@ public class ArchiveExtractionService
 
             LastOpenedArchive = archivePath;
             return new ArchivePreparation(tempDirectory, entries, IsFullyExtracted: false);
+            }
         }
         catch (Exception ex)
         {
@@ -250,8 +294,11 @@ public class ArchiveExtractionService
             }
 
             Directory.Delete(tempZipDirectory, true);
-            TempZipDirectory = null;
-            LastOpenedArchive = null;
+            if (string.Equals(tempZipDirectory, TempZipDirectory, StringComparison.OrdinalIgnoreCase))
+            {
+                TempZipDirectory = null;
+                LastOpenedArchive = null;
+            }
         }
         catch (Exception ex)
         {

@@ -1433,20 +1433,10 @@
                                 <StackPanel Orientation="Horizontal">
                                     <ComboBox
                                         x:Name="PresetCombo"
-                                        Width="340"
+                                        Width="460"
+                                        Padding="8"
                                         Classes="CStyle"
                                         Foreground="{StaticResource SecondaryTextColor}" />
-                                    <Button
-                                        x:Name="ApplyPresetBtn"
-                                        Width="120"
-                                        Margin="10,0,0,0"
-                                        Classes="BorderStyle altHover">
-                                        <TextBlock
-                                            HorizontalAlignment="Center"
-                                            Classes="txt"
-                                            Foreground="{DynamicResource MainTextColor}"
-                                            Text="{Binding Translation.Apply.Value}" />
-                                    </Button>
                                     <customControls:IconButton
                                         x:Name="ResetAllBtn"
                                         Width="30"

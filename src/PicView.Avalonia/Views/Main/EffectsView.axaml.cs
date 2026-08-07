@@ -22,7 +22,7 @@ public partial class EffectsView : UserControl
 
     private bool _reloading;
 
-    private readonly List<EffectPreset> _presets = new();
+    private readonly List<EffectPreset> _presets = [];
 
     public EffectsView()
     {
@@ -42,10 +42,6 @@ public partial class EffectsView : UserControl
         core.Effects.EffectConfig.Value ??= new ImageEffectConfig();
         
         // TODO handle initialize when no image present, or the image is not a file
-        // core.Effects.Initialize(core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo);
-        //
-        // Observable.EveryValueChanged(core.Effects, x => x.ProcessedImage).ObserveOn(UIHelper.GetFrameProvider)
-        // .Subscribe(UpdateUIImage);
         
         InitButtons();
         InitControlHooks();
@@ -83,16 +79,6 @@ public partial class EffectsView : UserControl
         }
     }
 
-    private void UpdateUIImage(MagickImage? obj)
-    {
-        if (obj is null || DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-        core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.Value.Image.Value =
-            obj.ToWriteableBitmap();
-    }
-
     private void InitButtons()
     {
         PointerPressed += OnPointerPressed;
@@ -106,7 +92,6 @@ public partial class EffectsView : UserControl
                 window.Close();
             }
         };
-        //ApplyButton.Click += async (_, _) => await CommitToHistoryAndClose();
 
         // Per-tab reset
         ResetColorTabBtn.Click += (_, _) => { ResetColor(); HideCancelBtn(); RequestUpdate(); };
@@ -191,7 +176,10 @@ public partial class EffectsView : UserControl
         // Toggle buttons (Click -> update)
         BlackAndWhiteToggleButton.Click += (_, _) =>
         {
-            if (_reloading) return;
+            if (_reloading)
+            {
+                return;
+            }
             HideCancelBtn();
             RequestUpdate();
         };
@@ -212,12 +200,24 @@ public partial class EffectsView : UserControl
 
         PresetCombo.SelectionChanged += (_, _) =>
         {
-            if (_reloading) return;
-            if (PresetCombo.SelectedItem is not EffectPreset p) return;
+            if (_reloading)
+            {
+                return;
+            }
+            if (PresetCombo.SelectedItem is not EffectPreset p)
+            {
+                return;
+            }
 
             _reloading = true;
-            try { p.Apply(); }
-            finally { _reloading = false; }
+            try
+            {
+                p.Apply();
+            }
+            finally
+            {
+                _reloading = false;
+            }
 
             HideCancelBtn();
             RequestUpdate();
@@ -293,45 +293,48 @@ public partial class EffectsView : UserControl
 
     private void ReadUiIntoConfig(ImageEffectConfig c)
     {
-        // Color
-        c.HueDegrees = HueSlider.Value;
-        c.Saturation = new Percentage(SaturationSlider.Value);
-        c.Temperature = (int)TemperatureSlider.Value;
-        c.Tint = (int)TintSlider.Value;
-        c.Vibrance = (int)VibranceSlider.Value;
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            // Color
+            c.HueDegrees = HueSlider.Value;
+            c.Saturation = new Percentage(SaturationSlider.Value);
+            c.Temperature = (int)TemperatureSlider.Value;
+            c.Tint = (int)TintSlider.Value;
+            c.Vibrance = (int)VibranceSlider.Value;
 
-        // Lighting
-        c.ExposureStops = ExposureSlider.Value;
-        c.Brightness = new Percentage(BrightnessSlider.Value);
-        c.Contrast = new Percentage(ContrastSlider.Value);
-        c.Gamma = GammaSlider.Value;
+            // Lighting
+            c.ExposureStops = ExposureSlider.Value;
+            c.Brightness = new Percentage(BrightnessSlider.Value);
+            c.Contrast = new Percentage(ContrastSlider.Value);
+            c.Gamma = GammaSlider.Value;
 
-        c.Highlights = (int)HighlightsSlider.Value;
-        c.Shadows = (int)ShadowsSlider.Value;
-        c.Blacks = (int)BlacksSlider.Value;
-        c.Whites = (int)WhitesSlider.Value;
+            c.Highlights = (int)HighlightsSlider.Value;
+            c.Shadows = (int)ShadowsSlider.Value;
+            c.Blacks = (int)BlacksSlider.Value;
+            c.Whites = (int)WhitesSlider.Value;
 
-        // Effects
-        c.Dehaze = (int)DehazeSlider.Value;
-        c.Clarity = (int)ClaritySlider.Value;
-        c.Grain = (int)GrainSlider.Value;
-        c.Sharpen = SharpenSlider.Value;
-        c.Vignette = VignetteSlider.Value;
+            // Effects
+            c.Dehaze = (int)DehazeSlider.Value;
+            c.Clarity = (int)ClaritySlider.Value;
+            c.Grain = (int)GrainSlider.Value;
+            c.Sharpen = SharpenSlider.Value;
+            c.Vignette = VignetteSlider.Value;
 
-        // Existing
-        c.BlurLevel = BlurSlider.Value;
-        c.SketchStrokeWidth = PencilSketchSlider.Value;
-        c.PosterizeLevel = (int)PosterizeSlider.Value == 1 ? 2 : (int)PosterizeSlider.Value;
-        c.Solarize = new Percentage(SolarizeSlider.Value);
+            // Existing
+            c.BlurLevel = BlurSlider.Value;
+            c.SketchStrokeWidth = PencilSketchSlider.Value;
+            c.PosterizeLevel = (int)PosterizeSlider.Value == 1 ? 2 : (int)PosterizeSlider.Value;
+            c.Solarize = new Percentage(SolarizeSlider.Value);
 
-        c.BlackAndWhite = BlackAndWhiteToggleButton.IsChecked ?? false;
-        c.Negative = NegativeToggleButton.IsChecked ?? false;
-        c.OldMovie = OldMovieToggleButton.IsChecked ?? false;
+            c.BlackAndWhite = BlackAndWhiteToggleButton.IsChecked ?? false;
+            c.Negative = NegativeToggleButton.IsChecked ?? false;
+            c.OldMovie = OldMovieToggleButton.IsChecked ?? false;
 
-        // Color Balance (Shadows/Mids/Highs)
-        c.CBShadows = new ColorBalanceTriplet((int)CBShadowsCR.Value, (int)CBShadowsMG.Value, (int)CBShadowsYB.Value);
-        c.CBMidtones = new ColorBalanceTriplet((int)CBMidCR.Value, (int)CBMidMG.Value, (int)CBMidYB.Value);
-        c.CBHighlights = new ColorBalanceTriplet((int)CBHighCR.Value, (int)CBHighMG.Value, (int)CBHighYB.Value);
+            // Color Balance (Shadows/Mids/Highs)
+            c.CBShadows = new ColorBalanceTriplet((int)CBShadowsCR.Value, (int)CBShadowsMG.Value, (int)CBShadowsYB.Value);
+            c.CBMidtones = new ColorBalanceTriplet((int)CBMidCR.Value, (int)CBMidMG.Value, (int)CBMidYB.Value);
+            c.CBHighlights = new ColorBalanceTriplet((int)CBHighCR.Value, (int)CBHighMG.Value, (int)CBHighYB.Value);
+        });
     }
 
     private void ApplyConfigToUi(ImageEffectConfig c)
@@ -393,9 +396,8 @@ public partial class EffectsView : UserControl
         _presets.Clear();
 
         // Smart presets: avoid aggressive vignette, keep safe, fast and pleasant
-        _presets.AddRange(new[]
-        {
-            new EffectPreset(TranslationManager.Translation.Normal, () => { ResetAllUi(); }),
+        _presets.AddRange([
+            new EffectPreset(TranslationManager.Translation.Normal, ResetAllUi),
             new EffectPreset(TranslationManager.Translation.VividPop, () =>
             {
                 ResetAllUi();
@@ -454,22 +456,10 @@ public partial class EffectsView : UserControl
                 HighlightsSlider.Value = -10;
                 ShadowsSlider.Value = 10;
             })
-        });
+        ]);
 
         PresetCombo.ItemsSource = _presets;
         PresetCombo.SelectedIndex = 0;
-
-        ApplyPresetBtn.Click += (_, _) =>
-        {
-            if (PresetCombo.SelectedItem is not EffectPreset p) return;
-
-            _reloading = true;
-            try { p.Apply(); }
-            finally { _reloading = false; }
-
-            HideCancelBtn();
-            RequestUpdate();
-        };
     }
 
     private void ResetAllUiAndConfig()
@@ -496,7 +486,7 @@ public partial class EffectsView : UserControl
         ResetLighting();
         ResetEffects();
         
-        Dispatcher.UIThread.InvokeAsync(() =>
+        Dispatcher.UIThread.Invoke(() =>
         {
             // classic
             BlurSlider.Value = 0;
@@ -512,7 +502,7 @@ public partial class EffectsView : UserControl
 
     private void ResetColor()
     {
-        Dispatcher.UIThread.InvokeAsync(() =>
+        Dispatcher.UIThread.Invoke(() =>
         {
             HueSlider.Value = 0;
             SaturationSlider.Value = 0;
@@ -528,7 +518,7 @@ public partial class EffectsView : UserControl
 
     private void ResetLighting()
     {
-        Dispatcher.UIThread.InvokeAsync(() =>
+        Dispatcher.UIThread.Invoke(() =>
         {
             ExposureSlider.Value = 0;
             BrightnessSlider.Value = 0;
@@ -544,7 +534,7 @@ public partial class EffectsView : UserControl
 
     private void ResetEffects()
     {
-        Dispatcher.UIThread.InvokeAsync(() =>
+        Dispatcher.UIThread.Invoke(() =>
         {
             DehazeSlider.Value = 0;
             ClaritySlider.Value = 0;
@@ -599,47 +589,6 @@ public partial class EffectsView : UserControl
     private void OnDetachedFromLogicalTree(object? sender, LogicalTreeAttachmentEventArgs e)
     {
         _disposables.Dispose();
-
-        // if (DataContext is MainViewModel vm)
-        //     vm.MainWindow.IsLoadingIndicatorShown.Value = false;
-    }
-
-    private static string BuildEffectDescription(ImageEffectConfig c)
-    {
-        var parts = new List<string>();
-
-        if (c.ExposureStops != 0) parts.Add($"Exposure {c.ExposureStops:+0.##;-0.##;0}");
-        if (c.Brightness.ToInt32() != 0) parts.Add($"Brightness {c.Brightness.ToInt32()}");
-        if (c.Contrast.ToInt32() != 0) parts.Add($"Contrast {c.Contrast.ToInt32()}");
-        if (c.Gamma is > 0 and not 1) parts.Add($"Gamma {c.Gamma:0.##}");
-
-        if (c.Highlights != 0) parts.Add($"Highlights {c.Highlights:+0;-0;0}");
-        if (c.Shadows != 0) parts.Add($"Shadows {c.Shadows:+0;-0;0}");
-        if (c.Blacks != 0) parts.Add($"Blacks {c.Blacks:+0;-0;0}");
-        if (c.Whites != 0) parts.Add($"Whites {c.Whites:+0;-0;0}");
-
-        if (c.HueDegrees != 0) parts.Add($"Hue {c.HueDegrees:+0;-0;0}");
-        if (c.Saturation.ToInt32() != 0) parts.Add($"Saturation {c.Saturation.ToInt32()}");
-        if (c.Temperature != 0) parts.Add($"Temp {c.Temperature:+0;-0;0}");
-        if (c.Tint != 0) parts.Add($"Tint {c.Tint:+0;-0;0}");
-        if (c.Vibrance != 0) parts.Add($"Vibrance {c.Vibrance:+0;-0;0}");
-
-        if (c.Dehaze != 0) parts.Add($"Dehaze {c.Dehaze}");
-        if (c.Clarity != 0) parts.Add($"Clarity {c.Clarity}");
-        if (c.Grain != 0) parts.Add($"Grain {c.Grain}");
-        if (c.Sharpen > 0) parts.Add($"Sharpen {c.Sharpen:0}");
-        if (c.Vignette > 0) parts.Add($"Vignette {c.Vignette:0}");
-
-        if (c.BlurLevel > 0) parts.Add($"Blur {c.BlurLevel:0}");
-        if (c.PosterizeLevel > 0) parts.Add($"Posterize {c.PosterizeLevel}");
-        if (c.SketchStrokeWidth > 0) parts.Add($"Sketch {c.SketchStrokeWidth:0.##}");
-        if (c.Solarize.ToInt32() > 0) parts.Add($"Solarize {c.Solarize.ToInt32()}");
-
-        if (c.BlackAndWhite) parts.Add("B&W");
-        if (c.Negative) parts.Add("Negative");
-        if (c.OldMovie) parts.Add("Old Movie");
-
-        return parts.Count == 0 ? "Effect: none" : "Effect: " + string.Join(", ", parts);
     }
 
     private bool IsDefault(ImageEffectConfig c)

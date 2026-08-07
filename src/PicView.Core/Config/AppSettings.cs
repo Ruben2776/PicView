@@ -466,4 +466,8 @@ public class Navigation
     /// </summary>
     public bool IsNavigatingBackwardsWhenDeleting { get; set; } = true;
 
+    /// <summary>
+    /// Indicates whether all files in an archive should be extracted at once when opening an archive.
+    /// </summary>
+    public bool AlwaysUncompressEntireArchive { get; set; } = false;
 }
