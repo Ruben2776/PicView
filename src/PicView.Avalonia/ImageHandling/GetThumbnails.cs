@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
 using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;

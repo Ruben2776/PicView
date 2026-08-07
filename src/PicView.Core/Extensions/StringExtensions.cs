@@ -113,7 +113,7 @@ public static partial class StringExtensions
                 continue;
             }
 
-            if (double.TryParse(match.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture, out var percentage))
+            if (double.TryParse(match.Groups[1].Value, System.Globalization.CultureInfo.CurrentCulture, out var percentage))
             {
                 return percentage;
             }

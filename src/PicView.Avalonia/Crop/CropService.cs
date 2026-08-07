@@ -148,7 +148,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         var (fileName, fileInfo, bitmap) = PrepareCropData();
         
         var saveFileDialog = await FilePicker.PickFileForSavingAsync(fileName);
-        if (saveFileDialog == null)
+        if (saveFileDialog is null)
         {
             return;
         }

@@ -44,7 +44,7 @@ public static class FileSearcher
         // Find the first occurrence of the input string in the filename (case-insensitive)
         var indexInName = fileInfo.Name.IndexOf(input, StringComparison.OrdinalIgnoreCase);
 
-        if (indexInName == -1)
+        if (indexInName is -1)
         {
             // Match not in name, check the full path as a fallback
             return fileInfo.Name.Contains(input, StringComparison.OrdinalIgnoreCase)
@@ -59,7 +59,7 @@ public static class FileSearcher
         }
 
         // Starts with or Contains in name
-        return indexInName == 0
+        return indexInName is 0
             ? new MatchResult(StartsWithScore, indexInName)
             : new MatchResult(ContainsInNameScore, indexInName);
     }
