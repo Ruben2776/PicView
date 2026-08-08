@@ -227,6 +227,11 @@ public static class QuickLoad
         {
             // Pinging can lead to crashes when the file cannot be read. 
             // Just catching the exception here means it will still load correctly regardless
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                mainWindow.Show();
+                mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
+            });
             DebugHelper.LogDebug(nameof(QuickLoad), nameof(QuickLoadAsync), e);
         }
         
