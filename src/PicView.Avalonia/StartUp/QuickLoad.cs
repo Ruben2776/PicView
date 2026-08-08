@@ -57,7 +57,7 @@ public static class QuickLoad
             {
                 case FileTypeResolver.LoadAbleFileType.Directory:
                     var files = FileListRetriever.RetrieveFiles(new FileInfo(check.Value.Data),core.PlatformService.CompareStrings);
-                    if (files.Count == 0)
+                    if (files.Count is 0)
                     {
                         ViewChangeHelper.SwitchToStartUpMenu(core.MainWindows.ActiveWindow.CurrentValue);
                         ShowWindowIfStartUp();
@@ -121,32 +121,45 @@ public static class QuickLoad
         
         var safeFileName = HttpManager.GetSafeFileName(url);
         var destPath = TempFileManager.GetNewTempFilePath(safeFileName);
-        using var client = new HttpClientDownloadWithProgress(url, destPath);
-        var tab = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue;
         
-        ShowHoverBarIfNeeded(core);
-        
-        client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
+        try
         {
-            var displayProgress = HttpManager.GetProgressDisplay(totalFileSize, totalBytesDownloaded, progressPercentage);
-            var title = $"{safeFileName} {TranslationManager.Translation?.Downloading} {displayProgress}";
-
-            tab.TabTitle.Value = 
-            tab.Title.Value = 
-            tab.WindowTitle.Value = 
-            tab.TitleTooltip.Value = title;
-
-            if (!Settings.UIProperties.IsTaskbarProgressEnabled || !totalBytesDownloaded.HasValue || !totalFileSize.HasValue)
+            using var client = new HttpClientDownloadWithProgress(url, destPath);
+            var tab = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue;
+        
+            client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
             {
-                return;
-            }
+                var displayProgress = HttpManager.GetProgressDisplay(totalFileSize, totalBytesDownloaded, progressPercentage);
+                var title = $"{safeFileName} {TranslationManager.Translation?.Downloading} {displayProgress}";
 
-            var downloadedBytes = (ulong)totalBytesDownloaded.Value;
-            var totalSize = (ulong)totalFileSize.Value;
-            core.PlatformService.SetTaskbarProgress(downloadedBytes, totalSize);
+                tab.TabTitle.Value = 
+                    tab.Title.Value = 
+                        tab.WindowTitle.Value = 
+                            tab.TitleTooltip.Value = title;
 
-        };
-        await client.StartDownloadAsync(CancellationToken.None).ConfigureAwait(false);
+                if (!Settings.UIProperties.IsTaskbarProgressEnabled || !totalBytesDownloaded.HasValue || !totalFileSize.HasValue)
+                {
+                    return;
+                }
+
+                var downloadedBytes = (ulong)totalBytesDownloaded.Value;
+                var totalSize = (ulong)totalFileSize.Value;
+                core.PlatformService.SetTaskbarProgress(downloadedBytes, totalSize);
+
+            };
+
+            await client.StartDownloadAsync(CancellationToken.None).ConfigureAwait(false);
+            ShowHoverBarIfNeeded(core);
+        }
+        catch (Exception e)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                TooltipHelper.ShowTooltipMessage(e.Message, center: true, TimeSpan.FromSeconds(10));
+                ViewChangeHelper.SwitchToStartUpMenu(mainWindow.DataContext as MainWindowViewModel);
+            });
+            return;
+        }
         var fileInfo = new FileInfo(destPath);
         var model = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
         Dispatcher.UIThread.Invoke(() =>
