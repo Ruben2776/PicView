@@ -21,10 +21,10 @@ public class FileAssociationsViewModel : IDisposable
 
         // Commands
         ApplyCommand = canExecute
-            .ToReactiveCommand(async _ => await ApplyFileAssociations());
+            .ToReactiveCommand(async _ => await ApplyFileAssociations().ConfigureAwait(false));
 
         UnassociateCommand = canExecute
-            .ToReactiveCommand(async _ => { await UnassociateFileAssociations(); });
+            .ToReactiveCommand(async _ => { await UnassociateFileAssociations().ConfigureAwait(false); });
 
         ClearFilterCommand = canExecute
             .ToReactiveCommand(_ => { FilterText.Value = string.Empty; });
@@ -52,7 +52,7 @@ public class FileAssociationsViewModel : IDisposable
     /// <summary>
     /// Gets or sets the filter text used to search and filter file type groups and items.
     /// </summary>
-    public BindableReactiveProperty<string?> FilterText { get; } = new(string.Empty);
+    public BindableReactiveProperty<string?> FilterText { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Gets or sets a value indicating whether the view model is currently processing an operation.
@@ -116,7 +116,7 @@ public class FileAssociationsViewModel : IDisposable
 
         foreach (var group in currentGroups)
         {
-            var defaultGroup = defaultGroups.FirstOrDefault(g => g.Name == group.Name);
+            var defaultGroup = defaultGroups.FirstOrDefault(g => string.Equals(g.Name, group.Name, StringComparison.OrdinalIgnoreCase));
             if (defaultGroup == null)
             {
                 continue;
@@ -128,7 +128,7 @@ public class FileAssociationsViewModel : IDisposable
             foreach (var fileType in fileTypes)
             {
                 var defaultType = defaultGroup.FileTypes.FirstOrDefault(dt =>
-                    dt.Description == fileType.Description);
+                    string.Equals(dt.Description, fileType.Description, StringComparison.OrdinalIgnoreCase));
 
                 if (defaultType != null)
                 {
@@ -167,10 +167,10 @@ public class FileAssociationsViewModel : IDisposable
                     continue;
                 }
 
-                if (fileType.Extension.StartsWith(".zip") ||
-                    fileType.Extension.StartsWith(".rar") ||
-                    fileType.Extension.StartsWith(".7z") ||
-                    fileType.Extension.StartsWith(".gzip"))
+                if (fileType.Extension.StartsWith(".zip", StringComparison.OrdinalIgnoreCase) ||
+                    fileType.Extension.StartsWith(".rar", StringComparison.OrdinalIgnoreCase) ||
+                    fileType.Extension.StartsWith(".7z", StringComparison.OrdinalIgnoreCase) ||
+                    fileType.Extension.StartsWith(".gzip", StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
@@ -214,10 +214,10 @@ public class FileAssociationsViewModel : IDisposable
     #region Associations
 
     private async Task<bool> ApplyFileAssociations()
-        => await SetFileAssociations(false);
+        => await SetFileAssociations(false).ConfigureAwait(false);
 
     private async Task UnassociateFileAssociations()
-        => await SetFileAssociations(true);
+        => await SetFileAssociations(true).ConfigureAwait(false);
 
     private async Task<bool> SetFileAssociations(bool unassociate)
     {
@@ -236,8 +236,8 @@ public class FileAssociationsViewModel : IDisposable
                     UpdateSelection();
                 }
 
-                return await FileAssociationProcessor.SetFileAssociations(FileTypeGroups);
-            });
+                return await FileAssociationProcessor.SetFileAssociations(FileTypeGroups).ConfigureAwait(false);
+            }).ConfigureAwait(false);
         }
         finally
         {

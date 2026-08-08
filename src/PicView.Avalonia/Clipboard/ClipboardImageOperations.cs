@@ -80,7 +80,7 @@ public static class ClipboardImageOperations
         }
     }
 
-    private static async Task<string> GetBase64String(string path)
+    private static async Task<string?> GetBase64String(string path)
     {
         if (!string.IsNullOrWhiteSpace(path))
         {

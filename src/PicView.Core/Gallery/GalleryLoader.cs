@@ -81,7 +81,7 @@ public static class GalleryLoader
                     }
                     var item = tab.Gallery.GalleryItems[i];
                     await LoadItem(item).ConfigureAwait(false);
-                });
+                }).ConfigureAwait(false);
             }
             else
             {
@@ -96,7 +96,7 @@ public static class GalleryLoader
                     }
                     var item = tab.Gallery.GalleryItems[i];
                     await CheckAndLoad(item).ConfigureAwait(false);
-                });
+                }).ConfigureAwait(false);
             }
         }
         catch (OperationCanceledException)
@@ -161,7 +161,7 @@ public static class GalleryLoader
     {
         tab.Gallery.LoadingState = GalleryLoadingState.Restarting;
         tab.Gallery.GalleryItems.Clear();
-        await _cts.CancelAsync();
+        await _cts.CancelAsync().ConfigureAwait(false);
         _cts.Dispose();
         _cts = null;
         await LoadGalleryAsync(tab, files, thumbnailLoader, thumbnailCache, ct).ConfigureAwait(false);

@@ -11,7 +11,7 @@ public class KeybindingsViewModel : IDisposable
     
     private readonly CompositeDisposable _disposables = new();
     
-    public BindableReactiveProperty<string> FilterText { get; } = new(string.Empty);
+    public BindableReactiveProperty<string> FilterText { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
     public BindableReactiveProperty<bool> IsFiltering { get; } = new();
     public BindableReactiveProperty<ObservableCollection<KeyBindingsModel>> FilteredKeys { get; } = new([]);
     public ReactiveCommand? ClearFilteringCommand { get; }

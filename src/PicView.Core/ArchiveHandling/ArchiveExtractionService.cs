@@ -61,7 +61,11 @@ public class ArchiveExtractionService
         {
             if (string.IsNullOrEmpty(archivePath) || !File.Exists(archivePath))
             {
-                throw new ArgumentException("The archive path is invalid or the file does not exist.");
+#if DEBUG
+                DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(PrepareArchiveAsync),
+                    "The archive path is invalid or the file does not exist.");
+#endif
+                return null;
             }
 
             var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -99,7 +103,8 @@ public class ArchiveExtractionService
             if (Settings.Navigation.AlwaysUncompressEntireArchive)
             {
                 var extractedFiles = new List<string>();
-                await using (var fullArchive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false))
+                var fullArchive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
+                await using (fullArchive.ConfigureAwait(false))
                 {
                     await foreach (var entry in fullArchive.EntriesAsync.ConfigureAwait(false))
                     {
@@ -135,12 +140,14 @@ public class ArchiveExtractionService
                 return new ArchivePreparation(tempDirectory, filesArray, IsFullyExtracted: true);
             }
 
-            await using var archive = await ArchiveFactory.OpenAsyncArchive(archivePath);
-            var entries = await archive.EntriesAsync
+            var archive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
+            await using (archive.ConfigureAwait(false))
+            {
+                var entries = await archive.EntriesAsync
                 .Where(e => !e.IsDirectory
                             && !string.IsNullOrEmpty(e.Key)
                             && e.Key!.IsSupported())
-                .Select(e => e.Key!).ToArrayAsync();
+                .Select(e => e.Key!).ToArrayAsync().ConfigureAwait(false);
 
             if (entries.Length is 0)
             {
@@ -151,6 +158,7 @@ public class ArchiveExtractionService
 
             LastOpenedArchive = archivePath;
             return new ArchivePreparation(tempDirectory, entries, IsFullyExtracted: false);
+            }
         }
         catch (Exception ex)
         {
@@ -177,20 +185,23 @@ public class ArchiveExtractionService
         }
         try
         {
-            await using var archive = await ArchiveFactory.OpenAsyncArchive(archivePath, cancellationToken: ct);
-            await foreach (var entry in archive.EntriesAsync.WithCancellation(ct))
+            var archive = await ArchiveFactory.OpenAsyncArchive(archivePath, cancellationToken: ct).ConfigureAwait(false);
+            await using (archive.ConfigureAwait(false))
             {
-                if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
+                await foreach (var entry in archive.EntriesAsync.WithCancellation(ct).ConfigureAwait(false))
                 {
-                    continue;
-                }
+                    if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
+                    {
+                        continue;
+                    }
 
-                if (!string.Equals(entry.Key, entryKey, StringComparison.Ordinal))
-                {
-                    continue;
-                }
+                    if (!string.Equals(entry.Key, entryKey, StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
 
-                return WriteEntryFlat(entry, tempDirectory);
+                    return WriteEntryFlat(entry, tempDirectory);
+                }
             }
         }
         catch (OperationCanceledException)
@@ -224,40 +235,36 @@ public class ArchiveExtractionService
 
         try
         {
-            var pending = new HashSet<string>(remainingKeys, StringComparer.Ordinal);
-            await using var archive = await ArchiveFactory.OpenAsyncArchive(archivePath, cancellationToken: ct).ConfigureAwait(false);
-
-            await foreach (var entry in archive.EntriesAsync.WithCancellation(ct).ConfigureAwait(false))
+            await Task.Run(() =>
             {
-                if (ct.IsCancellationRequested)
-                {
-                    return;
-                }
+                var pending = new HashSet<string>(remainingKeys, StringComparer.Ordinal);
+                using var archive = ArchiveFactory.OpenArchive(archivePath);
 
-                if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
+                foreach (var entry in archive.Entries)
                 {
-                    continue;
-                }
+                    if (ct.IsCancellationRequested)
+                    {
+                        return;
+                    }
 
-                if (!pending.Remove(entry.Key))
-                {
-                    continue;
-                }
+                    if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
+                    {
+                        continue;
+                    }
 
-                try
-                {
+                    if (!pending.Remove(entry.Key))
+                    {
+                        continue;
+                    }
+
                     WriteEntryFlat(entry, tempDirectory);
-                }
-                catch (Exception ex)
-                {
-                    DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(ExtractRemainingAsync), ex);
-                }
 
-                if (pending.Count == 0)
-                {
-                    return;
+                    if (pending.Count == 0)
+                    {
+                        return;
+                    }
                 }
-            }
+            }, ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -287,7 +294,7 @@ public class ArchiveExtractionService
             }
 
             Directory.Delete(tempZipDirectory, true);
-            if (tempZipDirectory == TempZipDirectory)
+            if (string.Equals(tempZipDirectory, TempZipDirectory, StringComparison.OrdinalIgnoreCase))
             {
                 TempZipDirectory = null;
                 LastOpenedArchive = null;

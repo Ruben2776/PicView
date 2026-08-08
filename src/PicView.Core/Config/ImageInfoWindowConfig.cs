@@ -43,7 +43,7 @@ public class ImageInfoWindowConfig() : ConfigFile("ImageInfoWindow.json")
     public async Task SaveAsync()
     {
         CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(ImageInfoWindowProperties), ImageInfoWindowGenerationContext.Default);
+            CorrectPath, WindowProperties, typeof(ImageInfoWindowProperties), ImageInfoWindowGenerationContext.Default).ConfigureAwait(false);
     }
     
     public class ImageInfoWindowProperties : IWindowProperties

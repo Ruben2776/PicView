@@ -1,7 +1,9 @@
-﻿using ImageMagick;
+﻿using System.Runtime.InteropServices;
+using ImageMagick;
 
 namespace PicView.Core.ImageEffects;
 
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct ColorBalanceTriplet(int CyanRed, int MagentaGreen, int YellowBlue);
 
 public class ImageEffectConfig

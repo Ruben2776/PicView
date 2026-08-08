@@ -101,7 +101,8 @@ public static class TranslationManager
     /// <returns>The file path of the matching language file, or the English language file as a fallback.</returns>
     private static string DetermineLanguageFilePath(string isoLanguageCode)
     {
-        var matchingFile = GetLanguages().Where(x => x.Name.StartsWith(isoLanguageCode)).FirstOrDefault();
+        var matchingFile = GetLanguages().Where(x =>
+            x.Name.StartsWith(isoLanguageCode, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
         return matchingFile?.FullName ?? Path.Combine(GetLanguagesDirectory, "en.json");
     }
 

@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 
@@ -30,7 +29,7 @@ public static class ConfigFileManager
         {
             if (!FileHelper.IsPathWritable(path))
             {
-                return await TrySaveRoaming();
+                return await TrySaveRoaming().ConfigureAwait(false);
             }
 
             await JsonFileHelper.WriteJsonAsync(path, value, inputType, context).ConfigureAwait(false);
@@ -41,7 +40,7 @@ public static class ConfigFileManager
             // If unauthorized, try saving to roaming app data
             try
             {
-                return await TrySaveRoaming();
+                return await TrySaveRoaming().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -73,7 +72,7 @@ public static class ConfigFileManager
     /// <returns>The resolved default configuration file path as a string.</returns>
     public static string ResolveDefaultConfigPath(ConfigFile file)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (OperatingSystem.IsMacOS())
         {
             // On macOS, always use the roaming path. We can't save inside an app bundle.
             return file.RoamingConfigPath;
@@ -81,12 +80,8 @@ public static class ConfigFileManager
 
         var path = GetConfigPath(file);
         
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            return path.Replace("\\", "/");
-        }
-        
-        return path.Replace("/", "\\");
+        return OperatingSystem.IsLinux() ? path.Replace('\\', '/') 
+            : path.Replace("/", "\\", StringComparison.OrdinalIgnoreCase);
     }
 
     private static string GetConfigPath(ConfigFile file)

@@ -53,9 +53,8 @@ public static class ExifFunctions
             {
                 return false;
             }
-
-            await using var fileStream = FileStreamUtils.GetOptimizedFileStream(fileInfo, true);
-            await magickImage.WriteAsync(fileStream);
+            
+            await magickImage.WriteAsync(fileInfo).ConfigureAwait(false);
             return true;
         }
         catch (Exception e)

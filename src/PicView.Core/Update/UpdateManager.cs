@@ -26,7 +26,11 @@ public static class UpdateManager
 
 
 #if DEBUG
+#pragma warning disable MA0069
+#pragma warning disable CA2211
     public static bool ForceUpdate = true;
+#pragma warning restore CA2211
+#pragma warning restore MA0069
 #endif
 
     /// <summary>
@@ -39,6 +43,7 @@ public static class UpdateManager
         var tempJsonPath = Path.Combine(tempPath, "update.json");
 
         // Check if update is needed
+        // ReSharper disable once JoinDeclarationAndInitializer
         Version? currentVersion;
 #if DEBUG
         currentVersion = ForceUpdate ? new Version("3.0.0.3") : VersionHelper.GetAssemblyVersion();
@@ -47,7 +52,7 @@ public static class UpdateManager
         currentVersion = VersionHelper.GetAssemblyVersion();
 #endif
         
-        var updateInfo = await DownloadAndParseUpdateInfo(tempJsonPath);
+        var updateInfo = await DownloadAndParseUpdateInfo(tempJsonPath).ConfigureAwait(false);
         if (updateInfo == null)
         {
             return false;
@@ -60,7 +65,7 @@ public static class UpdateManager
         }
 
         // Handle update based on platform and installation type
-        await platformUpdate?.HandlePlatformUpdate(updateInfo, tempPath);
+        await (platformUpdate?.HandlePlatformUpdate(updateInfo, tempPath)).ConfigureAwait(false);
         return true;
     }
 
@@ -80,17 +85,17 @@ public static class UpdateManager
     private static async Task<UpdateInfo?> DownloadAndParseUpdateInfo(string tempJsonPath)
     {
         // Try primary URL first, fallback to secondary if needed
-        if (await DownloadUpdateJson(PrimaryUpdateUrl, tempJsonPath))
+        if (await DownloadUpdateJson(PrimaryUpdateUrl, tempJsonPath).ConfigureAwait(false))
         {
-            return await ParseUpdateJson(tempJsonPath);
+            return await ParseUpdateJson(tempJsonPath).ConfigureAwait(false);
         }
 
-        if (!await DownloadUpdateJson(FallbackUpdateUrl, tempJsonPath))
+        if (!await DownloadUpdateJson(FallbackUpdateUrl, tempJsonPath).ConfigureAwait(false))
         {
             return null;
         }
 
-        return await ParseUpdateJson(tempJsonPath);
+        return await ParseUpdateJson(tempJsonPath).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -101,7 +106,7 @@ public static class UpdateManager
         try
         {
             using var downloader = new HttpClientDownloadWithProgress(url, destinationPath);
-            await downloader.StartDownloadAsync();
+            await downloader.StartDownloadAsync().ConfigureAwait(false);
             return true;
         }
         catch (Exception e)
@@ -118,7 +123,7 @@ public static class UpdateManager
     {
         try
         {
-            var jsonString = await File.ReadAllTextAsync(jsonFilePath);
+            var jsonString = await File.ReadAllTextAsync(jsonFilePath).ConfigureAwait(false);
 
             if (JsonSerializer.Deserialize(
                     jsonString, typeof(UpdateInfo),UpdateSourceGenerationContext.Default) is UpdateInfo updateInfo)
@@ -145,7 +150,7 @@ public static class UpdateManager
             downloader.ProgressChanged += (size, downloaded, percentage) =>
                 UpdateDownloadProgress(vm, size, downloaded, percentage);
 
-            await downloader.StartDownloadAsync();
+            await downloader.StartDownloadAsync().ConfigureAwait(false);
         }
         catch (Exception e)
         {

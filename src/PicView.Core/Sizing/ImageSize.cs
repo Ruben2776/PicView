@@ -1,5 +1,8 @@
-﻿namespace PicView.Core.Sizing;
+﻿using System.Runtime.InteropServices;
 
+namespace PicView.Core.Sizing;
+
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct ImageSize(
     double WindowWidth,
     double WindowHeight,

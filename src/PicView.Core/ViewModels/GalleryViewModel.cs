@@ -132,7 +132,7 @@ public class GalleryViewModel : IDisposable
         CloseGalleryCommand.SubscribeAwait(async (_, ct) =>
         {
             IsGalleryDocked.Value = false;
-            await GalleryManager.CloseDockedGalleryAsync(ct);
+            await GalleryManager.CloseDockedGalleryAsync(ct).ConfigureAwait(false);
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
 
@@ -158,7 +158,7 @@ public class GalleryViewModel : IDisposable
         {
             if (!isDocked)
             {
-                await GalleryManager.CloseDockedGalleryAsync(ct);
+                await GalleryManager.CloseDockedGalleryAsync(ct).ConfigureAwait(false);
             }
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);

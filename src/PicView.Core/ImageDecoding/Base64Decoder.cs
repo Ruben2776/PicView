@@ -63,22 +63,22 @@ public static class Base64Decoder
             return "";
         }
 
-        if (base64.StartsWith("data:image/webp;base64,"))
+        if (base64.StartsWith("data:image/webp;base64,", StringComparison.OrdinalIgnoreCase))
         {
             base64 = base64["data:image/webp;base64,".Length..];
         }
 
-        if (base64.StartsWith("data:image/jpeg;base64,"))
+        if (base64.StartsWith("data:image/jpeg;base64,", StringComparison.OrdinalIgnoreCase))
         {
             base64 = base64["data:image/jpeg;base64,".Length..];
         }
         
-        if (base64.StartsWith("data:image/png;base64,"))
+        if (base64.StartsWith("data:image/png;base64,", StringComparison.OrdinalIgnoreCase))
         {
             base64 = base64["data:image/png;base64,".Length..];
         }
         
-        if (base64.StartsWith("data:image/gif;base64,"))
+        if (base64.StartsWith("data:image/gif;base64,", StringComparison.OrdinalIgnoreCase))
         {
             base64 = base64["data:image/gif;base64,".Length..];
         }

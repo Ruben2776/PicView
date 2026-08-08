@@ -32,7 +32,7 @@ public static class FileAssociationManager
         }
         // Use provided description or generate a default one
         var fileDescription = description ?? $"{fileExtension.TrimStart('.')} Image File";
-        return await _service.RegisterFileAssociation(fileExtension, fileDescription);
+        return await _service.RegisterFileAssociation(fileExtension, fileDescription).ConfigureAwait(false);
     }
     
     /// <summary>
@@ -40,10 +40,10 @@ public static class FileAssociationManager
     /// </summary>
     public static async Task<bool> UnassociateFile(string fileExtension)
     {
-        var isAssociated = await IsFileAssociated(fileExtension);
+        var isAssociated = await IsFileAssociated(fileExtension).ConfigureAwait(false);
         if (isAssociated)
         {
-            return await _service.UnregisterFileAssociation(fileExtension);
+            return await _service.UnregisterFileAssociation(fileExtension).ConfigureAwait(false);
         }
         
         return false;
@@ -58,7 +58,7 @@ public static class FileAssociationManager
         {
             return false;
         }
-        return await _service.IsFileAssociated(fileExtension);
+        return await _service.IsFileAssociated(fileExtension).ConfigureAwait(false);
     }
     
     private static bool EnsureInitialized()

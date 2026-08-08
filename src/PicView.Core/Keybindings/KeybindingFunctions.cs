@@ -16,13 +16,19 @@ public static class KeybindingFunctions
             {
                 KeyBindingsConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(KeyBindingsConfiguration);
             }
-            await using var writer = new StreamWriter(CurrentKeybindingsPath);
-            await writer.WriteAsync(json).ConfigureAwait(false);
+            var writer = new StreamWriter(CurrentKeybindingsPath);
+            await using (writer.ConfigureAwait(false))
+            {
+                await writer.WriteAsync(json).ConfigureAwait(false);
+            }
         }
         catch (UnauthorizedAccessException)
         {
-            await using var writer = new StreamWriter(KeyBindingsConfiguration.RoamingConfigPath);
-            await writer.WriteAsync(json).ConfigureAwait(false);
+            var writer = new StreamWriter(KeyBindingsConfiguration.RoamingConfigPath);
+            await using (writer.ConfigureAwait(false))
+            {
+                await writer.WriteAsync(json).ConfigureAwait(false);
+            }
         }
     }
 

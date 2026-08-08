@@ -43,7 +43,7 @@ public class BatchResizeWindowConfig() : ConfigFile("BatchResizeWindow.json")
     public async Task SaveAsync()
     {
         CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(BatchResizeWindowProperties), BatchResizeWindowGenerationContext.Default);
+            CorrectPath, WindowProperties, typeof(BatchResizeWindowProperties), BatchResizeWindowGenerationContext.Default).ConfigureAwait(false);
     }
     
     public class BatchResizeWindowProperties : IWindowProperties

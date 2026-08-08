@@ -1,4 +1,5 @@
-﻿using ZLinq;
+﻿using System.Runtime.InteropServices;
+using ZLinq;
 
 namespace PicView.Core.FileSearch;
 
@@ -43,7 +44,7 @@ public static class FileSearcher
         // Find the first occurrence of the input string in the filename (case-insensitive)
         var indexInName = fileInfo.Name.IndexOf(input, StringComparison.OrdinalIgnoreCase);
 
-        if (indexInName == -1)
+        if (indexInName is -1)
         {
             // Match not in name, check the full path as a fallback
             return fileInfo.Name.Contains(input, StringComparison.OrdinalIgnoreCase)
@@ -58,7 +59,7 @@ public static class FileSearcher
         }
 
         // Starts with or Contains in name
-        return indexInName == 0
+        return indexInName is 0
             ? new MatchResult(StartsWithScore, indexInName)
             : new MatchResult(ContainsInNameScore, indexInName);
     }
@@ -68,5 +69,6 @@ public static class FileSearcher
     /// </summary>
     /// <param name="Score">The relevance score of the match.</param>
     /// <param name="Index">The starting index of the match in the filename, or -1 if not in the filename.</param>
+    [StructLayout(LayoutKind.Auto)]
     private readonly record struct MatchResult(int Score, int Index);
 }

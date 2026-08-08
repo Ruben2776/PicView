@@ -1,4 +1,5 @@
-﻿using ImageMagick;
+﻿using System.Globalization;
+using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.ImageDecoding;
@@ -192,7 +193,7 @@ public class ResizeImageViewModel : IDisposable
         var isFlipped = tab.ScaleX.CurrentValue < 0;
         var rotationAngle = tab.RotationAngle.CurrentValue;
 
-        await SaveImageInternal(fileInfo, destination, isFlipped, rotationAngle);
+        await SaveImageInternal(fileInfo, destination, isFlipped, rotationAngle).ConfigureAwait(false);
         CloseAction?.Invoke();
     }
 
@@ -206,13 +207,13 @@ public class ResizeImageViewModel : IDisposable
         var fileInfoFullName = fileInfo.FullName;
         var ext = GetSelectedFileExtension(fileInfo, ref fileInfoFullName);
 
-        var destination = await PickFileAction(fileInfo.FullName, ext);
+        var destination = await PickFileAction(fileInfo.FullName, ext).ConfigureAwait(false);
         if (destination == null) return;
 
         var isFlipped = tab.ScaleX.CurrentValue < 0;
         var rotationAngle = tab.RotationAngle.CurrentValue;
 
-        await SaveImageInternal(fileInfo, destination, isFlipped, rotationAngle);
+        await SaveImageInternal(fileInfo, destination, isFlipped, rotationAngle).ConfigureAwait(false);
         CloseAction?.Invoke();
     }
 
@@ -242,8 +243,8 @@ public class ResizeImageViewModel : IDisposable
                 magickImage.Rotate(rotationAngle);
             }
 
-            var w = Convert.ToUInt32(DesiredPixelWidth.CurrentValue);
-            var h = Convert.ToUInt32(DesiredPixelHeight.CurrentValue);
+            var w = Convert.ToUInt32(DesiredPixelWidth.CurrentValue, CultureInfo.InvariantCulture);
+            var h = Convert.ToUInt32(DesiredPixelHeight.CurrentValue, CultureInfo.InvariantCulture);
 
             magickImage.Resize(w, h);
             await magickImage.WriteAsync(destination).ConfigureAwait(false);

@@ -33,7 +33,7 @@ public static class ExifReader
         }
 
         // fallback: try normal parsing
-        if (DateTime.TryParse(getDateTaken, out result))
+        if (DateTime.TryParse(getDateTaken, CultureInfo.InvariantCulture, out result))
         {
             return result;
         }

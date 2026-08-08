@@ -8,9 +8,9 @@ public static class GalleryManager
     {
         Settings.Gallery.IsGalleryDocked = false;
         // Wait for animation to finish
-        await Task.Delay(TimeSpan.FromSeconds(GalleryDefaults.VeryFastAnimationSpeed), ct);
+        await Task.Delay(TimeSpan.FromSeconds(GalleryDefaults.VeryFastAnimationSpeed), ct).ConfigureAwait(false);
         Settings.Gallery.DockPosition = GalleryDockPosition.Closed;
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
     public static void ToggleGallery(GalleryViewModel galleryViewModel)

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Localization;
@@ -105,8 +106,8 @@ public class TranslationViewModel
         ExposureBias.Value = t.ExposureBias;
         ExposureProgram.Value = t.ExposureProgram;
         ExposureTime.Value = t.ExposureTime;
-        File.Value = string.Concat(t.File[0].ToString().ToUpper(), t.File.AsSpan(1));
-        Files.Value = string.Concat(t.File[0].ToString().ToLower(), t.File.AsSpan(1));
+        File.Value = string.Concat(t.File[0].ToString().ToUpper(CultureInfo.CurrentCulture), t.File.AsSpan(1));
+        Files.Value = string.Concat(t.File[0].ToString().ToLower(CultureInfo.CurrentCulture), t.File.AsSpan(1));
         FileAssociations.Value = t.FileAssociations;
         FileConversion.Value = t.FileConversion;
         FileCopyPath.Value = t.FileCopyPath;

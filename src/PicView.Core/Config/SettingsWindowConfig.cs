@@ -43,7 +43,8 @@ public class SettingsWindowConfig() : ConfigFile("SettingsWindow.json")
     public async Task SaveAsync()
     {
         CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
-            CorrectPath, WindowProperties, typeof(SettingsWindowProperties), SettingsWindowGenerationContext.Default);
+            CorrectPath, WindowProperties, typeof(SettingsWindowProperties), SettingsWindowGenerationContext.Default)
+            .ConfigureAwait(false);
     }
     
     public class SettingsWindowProperties : IWindowProperties

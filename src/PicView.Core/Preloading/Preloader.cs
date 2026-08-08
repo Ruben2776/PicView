@@ -35,7 +35,7 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
             _currentOwner = ownerId;
         }
 
-        Task.Run(() => PreLoadInternalAsync(_currentOwner, currentIndex, files, reversed, token), token);
+        _ = Task.Run(() => PreLoadInternalAsync(_currentOwner, currentIndex, files, reversed, token), token);
         lock (_lock)
         {
             _currentOwner = ownerId;
@@ -109,13 +109,13 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
         {
             if (reversed)
             {
-                await LoopAsync(options, false);
-                await LoopAsync(options, true);
+                await LoopAsync(options, false).ConfigureAwait(false);
+                await LoopAsync(options, true).ConfigureAwait(false);
             }
             else
             {
-                await LoopAsync(options, true);
-                await LoopAsync(options, false);
+                await LoopAsync(options, true).ConfigureAwait(false);
+                await LoopAsync(options, false).ConfigureAwait(false);
             }
         }
         catch (Exception ex)
@@ -136,13 +136,17 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
         {
             if (positive)
             {
-                await Parallel.ForAsync(0, PreLoaderConfig.PositiveIterations, parallelOptions,
-                    async (i, _) => { await AddAddition((nextStartingIndex + i) % count); });
+                await Parallel.ForAsync(0, PreLoaderConfig.PositiveIterations, parallelOptions, async (i, _) =>
+                {
+                    await AddAddition((nextStartingIndex + i) % count).ConfigureAwait(false);
+                }).ConfigureAwait(false);
             }
             else
             {
-                await Parallel.ForAsync(0, PreLoaderConfig.NegativeIterations, parallelOptions,
-                    async (i, _) => { await AddAddition((prevStartingIndex - i + count) % count); });
+                await Parallel.ForAsync(0, PreLoaderConfig.NegativeIterations, parallelOptions, async (i, _) =>
+                {
+                    await AddAddition((prevStartingIndex - i + count) % count).ConfigureAwait(false);
+                }).ConfigureAwait(false);
             }
         }
 
@@ -161,7 +165,7 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
                 return;
             }
 
-            await AddAsync(ownerId, index, list, reversed, token);
+            await AddAsync(ownerId, index, list, reversed, token).ConfigureAwait(false);
         }
     }
 }

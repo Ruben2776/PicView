@@ -85,19 +85,8 @@ public static class ImageFormatConverter
         var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
         if (source is not null)
         {
-            await Task.Run(() => source.Save(tempPath));
+            await Task.Run(() => source.Save(tempPath, PngBitmapEncoderOptions.Default));
             return tempPath;
-        }
-
-        // Handle URL paths if no source bitmap was found yet
-        var url = path.GetURL();
-        if (!string.IsNullOrWhiteSpace(url))
-        {
-            path = await HttpManager.DownloadFileAsync(url).ConfigureAwait(false);
-            if (string.IsNullOrEmpty(path))
-            {
-                return string.Empty;
-            }
         }
 
         // Cleanup file:/// prefixes

@@ -155,7 +155,7 @@ public static class SettingsManager
     public static UIProperties GetDefaultUIProperties()
     {
         UIProperties uiProperties;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (OperatingSystem.IsMacOS())
         {
             uiProperties = new UIProperties
             {
@@ -165,7 +165,7 @@ public static class SettingsManager
         }
         else
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (OperatingSystem.IsLinux())
             {
                 uiProperties = new UIProperties
                 {
@@ -185,7 +185,7 @@ public static class SettingsManager
     public static Zoom GetDefaultZoom()
     {
         Zoom zoom;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (OperatingSystem.IsMacOS())
         {
             zoom = new Zoom
             {
