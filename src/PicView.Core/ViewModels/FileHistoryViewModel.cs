@@ -63,7 +63,7 @@ public class FileHistoryViewModel
         {
             var fileName = Path.GetFileName(entry.Path);
             var pinnedEntry = new FileHistoryEntryViewModel();
-            var isCurrentItem = currentFilePath is not null && entry.Path == currentFilePath;
+            var isCurrentItem = currentFilePath is not null && string.Equals(entry.Path, currentFilePath, StringComparison.OrdinalIgnoreCase);
             pinnedEntry.Initialize(
                 entry.Path, 
                 fileName, 
@@ -83,7 +83,7 @@ public class FileHistoryViewModel
                 var index = i + 1;
                 var fileName = Path.GetFileName(path);
                 var entry = new FileHistoryEntryViewModel();
-                var isCurrentItem = currentFilePath is not null && path == currentFilePath;
+                var isCurrentItem = currentFilePath is not null && string.Equals(path, currentFilePath, StringComparison.OrdinalIgnoreCase);
                 entry.Initialize(
                     path, 
                     fileName, 
@@ -103,7 +103,7 @@ public class FileHistoryViewModel
                 var fileName = Path.GetFileName(entry.Path);
                 var unpinnedEntry = new FileHistoryEntryViewModel();
                 
-                var isCurrentItem = currentFilePath is not null && entry.Path == currentFilePath;
+                var isCurrentItem = currentFilePath is not null && string.Equals(entry.Path, currentFilePath, StringComparison.OrdinalIgnoreCase);
                 unpinnedEntry.Initialize(
                     entry.Path, 
                     fileName, 

@@ -185,7 +185,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     {
         if (bitmap != null)
         {
-            bitmap.Save(saveFilePath);
+            bitmap.Save(saveFilePath, PngBitmapEncoderOptions.Default);
             return;
         }
 

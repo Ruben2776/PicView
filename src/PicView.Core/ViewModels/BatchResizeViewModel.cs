@@ -294,7 +294,7 @@ namespace PicView.Core.ViewModels
                     if (SelectedFiles.Value.FirstOrDefault().DirectoryName.Equals(destinationDirectory))
                     {
                         // First create a backup directory in case something goes wrong
-                        var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+                        var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss", System.Globalization.CultureInfo.InvariantCulture);
                         var backupDirName = $"PicView {TranslationManager.Translation.BatchResize} backup {timestamp}";
                         backupCopyDir = Path.Combine(destinationDirectory, backupDirName);
 
