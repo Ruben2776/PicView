@@ -2,7 +2,7 @@
 <img src="https://d33wubrfki0l68.cloudfront.net/327934f4ff80060e07c17935683ecad27cda8080/ee2bc/assets/images/photoshop_1.png" alt="PicView Logo" height="90">
 </h1>
 
-PicView is a fast, free and fully customizable picture viewer for macOS and Windows 10/11. It supports virtually all image file types, including _(animated)_ `WEBP`, _(animated)_ `GIF`, `SVG`, `AVIF`, `HEIC`, `PSD` and many others.
+PicView is a fast, free and fully customizable picture viewer for macOS and Windows 10/11. It supports virtually all image file types, including _(animated)_ `WEBP`, _(animated)_ `GIF`, `SVG`, `AVIF`, `HEIC`, `PSD`, `CBZ` _(Archive)_, `CBR` _(Archive)_, and [many others](#file-support).
 
 Enjoy a clean, free, and fast experience with no annoying pop-ups, and zero tracking. It works out of the box — or you can customize it to your needs.
 
@@ -22,10 +22,10 @@ Enjoy a clean, free, and fast experience with no annoying pop-ups, and zero trac
 
 # Downloads
 
-[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.1/PicView-v5.0.1-win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.1/Setup-PicView-v5.0.1-win-arm64.exe)
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.2/PicView-v5.0.2-win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.2/Setup-PicView-v5.0.2-win-arm64.exe)
 
-[![](https://img.shields.io/badge/macOS-arm64%20(Apple%20Silicon)-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.1/PicView-5.0.1-macOS-arm64.dmg)
-[![](https://img.shields.io/badge/macOS-x64-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.1/PicView-5.0.1-macOS-x64.dmg)
+[![](https://img.shields.io/badge/macOS-arm64%20(Apple%20Silicon)-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.2/PicView-5.0.2-macOS-arm64.dmg)
+[![](https://img.shields.io/badge/macOS-x64-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.2/PicView-5.0.2-macOS-x64.dmg)
 
 [Latest releases at PicView.org](https://picview.org/download)
 
@@ -176,6 +176,7 @@ Changing the file extension will convert the image to the respective format.
 ## File support
 > *   **Common:** .jpg .jpeg .jpe .png .bmp .tif .tiff .gif .ico .jfif .webp .svg .svgz
 > *   **Advanced:** .psd .psb .xcf .jxl .heic .heif .jp2 .hdr .tga .dds
+> *   **Archive:** .zip .7zip .7z .rar .cbr .cb7 .cbt .cbz .xz .bzip2 .gzip .tar .wim .iso .cab
 > *   **RAW:** .3fr .arw .cr2 .cr3 .crw .dcr .dng .erf .kdc .mdc .mef .mos .mrw .nef .nrw .orf .pef .raf .raw .rw2 .srf .x3f
 > *   **Other:** .pgm .hdr .cut .exr .dib .emf .wmf .wpg .pcx .xbm .xpm .wbmp
 
