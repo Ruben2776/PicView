@@ -17,11 +17,17 @@ public class ConfigBenchmark
     private static AppSettings? Settings { get; set; }
 
     private static SettingsConfiguration? Configuration { get; set; }
-
+    
     [Benchmark]
     public async ValueTask Initial()
     {
         await LoadSettingsAsync();
+    }
+
+    [Benchmark]
+    public void Current()
+    {
+        LoadSettings();
     }
 
     [Benchmark]
@@ -54,12 +60,6 @@ public class ConfigBenchmark
         await LoadSettingsLinesAsync();
     }
 
-    [Benchmark]
-    public void ReadAllBytesEnsured()
-    {
-        LoadSettingsEnsuredBytes();
-    }
-
     public static async ValueTask<bool> LoadSettingsAsync()
     {
         try
@@ -74,20 +74,21 @@ public class ConfigBenchmark
                 await using var userStream = File.OpenRead(userPath);
                 if (userStream.Length > 0)
                 {
-                    Settings = await JsonSerializer.DeserializeAsync<AppSettings>(
+                    var settings = await JsonSerializer.DeserializeAsync<AppSettings>(
                         userStream, SettingsGenerationContext.Default.AppSettings).ConfigureAwait(false);
+                    Settings = EnsureSettings(settings);
                 }
             }
 
-            // Fallback to defaults if no user config found
-            // Fallback to defaults if no user config found
-            if (Settings is null)
+            if (Settings is not null)
             {
-                Settings = GetDefaults();
-                return false;
+                return true;
             }
 
-            return true;
+            // Fallback to defaults if no user config found
+            SetDefaults();
+            return false;
+
         }
         catch (Exception ex)
         {
@@ -109,8 +110,9 @@ public class ConfigBenchmark
             if (File.Exists(userPath))
             {
                 using var streamReader = new StreamReader(userPath);
-                Settings = JsonSerializer.Deserialize<AppSettings>(
+                var settings = JsonSerializer.Deserialize<AppSettings>(
                     streamReader.ReadToEnd(), SettingsGenerationContext.Default.AppSettings);
+                Settings = EnsureSettings(settings);
             }
 
             // Fallback to defaults if no user config found
@@ -130,18 +132,6 @@ public class ConfigBenchmark
         }
     }
 
-    private static async ValueTask<AppSettings?> LoadConfigAsync(string path)
-    {
-        await using var stream = File.OpenRead(path);
-        if (stream.Length == 0)
-        {
-            return null;
-        }
-
-        return await JsonSerializer.DeserializeAsync<AppSettings>(
-            stream, SettingsGenerationContext.Default.AppSettings).ConfigureAwait(false);
-    }
-
     public static bool LoadSettingsAllText()
     {
         try
@@ -154,8 +144,9 @@ public class ConfigBenchmark
             if (File.Exists(userPath))
             {
                 var json = File.ReadAllText(userPath);
-                Settings = JsonSerializer.Deserialize<AppSettings>(
+                var settings = JsonSerializer.Deserialize<AppSettings>(
                     json, SettingsGenerationContext.Default.AppSettings);
+                Settings = EnsureSettings(settings);
             }
 
             if (Settings is null)
@@ -186,8 +177,9 @@ public class ConfigBenchmark
             if (File.Exists(userPath))
             {
                 var bytes = File.ReadAllBytes(userPath);
-                Settings = JsonSerializer.Deserialize<AppSettings>(
+                var settings = JsonSerializer.Deserialize<AppSettings>(
                     bytes, SettingsGenerationContext.Default.AppSettings);
+                Settings = EnsureSettings(settings);
             }
 
             if (Settings is null)
@@ -218,8 +210,9 @@ public class ConfigBenchmark
             if (File.Exists(userPath))
             {
                 var bytes = await File.ReadAllBytesAsync(userPath);
-                Settings = JsonSerializer.Deserialize<AppSettings>(
+                var settings = JsonSerializer.Deserialize<AppSettings>(
                     bytes, SettingsGenerationContext.Default.AppSettings);
+                Settings = EnsureSettings(settings);
             }
 
             if (Settings is null)
@@ -250,8 +243,9 @@ public class ConfigBenchmark
             if (File.Exists(userPath))
             {
                 var json = await File.ReadAllTextAsync(userPath);
-                Settings = JsonSerializer.Deserialize<AppSettings>(
+                var settings = JsonSerializer.Deserialize<AppSettings>(
                     json, SettingsGenerationContext.Default.AppSettings);
+                Settings = EnsureSettings(settings);
             }
 
             if (Settings is null)
@@ -269,14 +263,14 @@ public class ConfigBenchmark
             return false;
         }
     }
-
-    public static bool LoadSettingsEnsuredBytes()
+    
+    public static bool LoadSettings()
     {
         try
         {
             Configuration ??= new SettingsConfiguration();
             var path = ConfigFileManager.ResolveDefaultConfigPath(Configuration);
-
+            
             if (File.Exists(path))
             {
                 var bytes = File.ReadAllBytes(path);
@@ -306,21 +300,23 @@ public class ConfigBenchmark
 
 // * Summary *
                                                                                                                                                                                                                                                              
-BenchmarkDotNet v0.15.5, Windows 10 (10.0.19045.6456/22H2/2022Update)
-AMD Ryzen 7 9800X3D 4.70GHz, 1 CPU, 16 logical and 8 physical cores                                                                                                                                                                                          
-.NET SDK 10.0.100-rc.2.25502.107                                                                                                                                                                                                                             
-  [Host]     : .NET 10.0.0 (10.0.0-rc.2.25502.107, 10.0.25.50307), X64 RyuJIT x86-64-v4                                                                                                                                                                      
-  DefaultJob : .NET 10.0.0 (10.0.0-rc.2.25502.107, 10.0.25.50307), X64 RyuJIT x86-64-v4                                                                                                                                                                      
-                                                                                                                                                                                                                                                             
+BenchmarkDotNet v0.16.0-preview.1, Windows 10 (10.0.19045.6466/22H2/2022Update)
+AMD Ryzen 7 9800X3D 4.70GHz, 1 CPU, 16 logical and 8 physical cores                                                                                                                                                                                      
+Memory: 61.65 GB Total, 36.62 GB Available                                                                                                                                                                                                               
+.NET SDK 11.0.100-preview.6.26359.118                                                                                                                                                                                                                    
+  [Host]     : .NET 11.0.0 (11.0.0-preview.6.26359.118, 11.0.26.36018), X64 RyuJIT x86-64-v4                                                                                                                                                             
+  DefaultJob : .NET 11.0.0 (11.0.0-preview.6.26359.118, 11.0.26.36018), X64 RyuJIT x86-64-v4                                                                                                                                                             
+                                                                                                                                                                                                                                                         
 
-| Method              | Mean      | Error    | StdDev   | Gen0   | Allocated |
-|-------------------- |----------:|---------:|---------:|-------:|----------:|
-| Initial             | 115.99 us | 0.336 us | 0.298 us |      - |   3.68 KB |                                                                                                                                                                               
-| WithStreamReader    |  43.29 us | 0.105 us | 0.098 us | 0.4272 |  22.92 KB |
-| ReadAllText         |  43.44 us | 0.112 us | 0.099 us | 0.4272 |  22.92 KB |
-| ReadAllBytes        |  39.50 us | 0.210 us | 0.196 us | 0.0610 |   4.85 KB |
-| ReadAllBytesAsync   | 130.44 us | 2.556 us | 2.391 us |      - |   5.52 KB |
-| ReadAllLinesAsync   | 170.78 us | 2.186 us | 2.044 us | 0.4883 |  21.14 KB |
-| ReadAllBytesEnsured |  39.44 us | 0.052 us | 0.046 us | 0.0610 |   4.85 KB |
+| Method            | Mean     | Error   | StdDev  | Allocated |
+|------------------ |---------:|--------:|--------:|----------:|
+| Initial           | 302.9 us | 2.67 us | 2.50 us |   3.48 KB |                                                                                                                                                                                         
+| Current           | 264.0 us | 2.16 us | 2.02 us |   5.05 KB |
+| WithStreamReader  | 271.7 us | 1.48 us | 1.32 us |  23.36 KB |
+| ReadAllText       | 274.9 us | 3.68 us | 3.44 us |  23.36 KB |
+| ReadAllBytes      | 262.1 us | 1.25 us | 1.05 us |   5.05 KB |
+| ReadAllBytesAsync | 300.1 us | 1.53 us | 1.35 us |   5.75 KB |
+| ReadAllLinesAsync | 369.1 us | 7.19 us | 6.73 us |  21.84 KB |
+
 
 */
