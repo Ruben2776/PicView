@@ -55,6 +55,8 @@ brew install picview
 
 If you like PicView, consider giving it a star or a like on [AlternativeTo](https://alternativeto.net/software/picview/about/)!
 
+<a href="https://hellogithub.com/repository/Ruben2776/PicView" target="_blank"><img src="https://abroad.hellogithub.com/v1/widgets/recommend.svg?rid=03c7e70105e9443aa2c967a7da314bef&claim_uid=Rq8Zb6XJj4M0gAv&theme=small" alt="Featured｜HelloGitHub" /></a>
+
 <br>
 
 ## 💙 Donate
