@@ -133,7 +133,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         else
         {
             // Not in cache
-            await Task.Run(AttemptManualLoad).ConfigureAwait(false);
+            await Task.Run(AttemptManualLoad, ct.Token).ConfigureAwait(false);
         }
         
         return;

@@ -64,20 +64,36 @@ public static class AspectRatioFormatter
     /// <returns>A formatted string representing the aspect ratio and orientation.</returns>
     public static string GetFormattedAspectRatio(uint gcd, uint width, uint height)
     {
-        var square = TranslationManager.Translation.Square;
-        var landscape = TranslationManager.Translation.Landscape;
-        var portrait = TranslationManager.Translation.Portrait;
-
         var firstRatio = width / gcd;
         var secondRatio = height / gcd;
 
-        if (firstRatio == secondRatio)
-        {
-            return $"{firstRatio}:{secondRatio} ({square})";
-        }
+        var orientation = firstRatio == secondRatio 
+            ? TranslationManager.Translation.Square 
+            : firstRatio > secondRatio 
+                ? TranslationManager.Translation.Landscape 
+                : TranslationManager.Translation.Portrait;
 
-        return firstRatio > secondRatio
-            ? $"{firstRatio}:{secondRatio} ({landscape})"
-            : $"{firstRatio}:{secondRatio} ({portrait})";
+        Span<char> buffer = stackalloc char[64];
+        var charsWritten = 0;
+
+        // Format the first ratio
+        firstRatio.TryFormat(buffer, out var written);
+        charsWritten += written;
+
+        buffer[charsWritten++] = ':';
+
+        secondRatio.TryFormat(buffer[charsWritten..], out written);
+        charsWritten += written;
+
+        buffer[charsWritten++] = ' ';
+        buffer[charsWritten++] = '(';
+
+        var orientationSpan = orientation.AsSpan();
+        orientationSpan.CopyTo(buffer[charsWritten..]);
+        charsWritten += orientationSpan.Length;
+
+        buffer[charsWritten++] = ')';
+
+        return new string(buffer[..charsWritten]);
     }
 }
