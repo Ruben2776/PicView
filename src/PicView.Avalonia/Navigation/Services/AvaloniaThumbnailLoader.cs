@@ -17,7 +17,7 @@ public class AvaloniaThumbnailLoader : IThumbnailLoader
 
         var defaultItemHeight = core.GallerySettings.ItemHeight.Value > 0
             ? core.GallerySettings.ItemHeight.Value
-            : GalleryDefaults.DefaultFullGalleryHeight;
+            : GalleryDefaults.DefaultExpandedGalleryHeight;
         
         return await GetThumbnails.GetThumbAsync(file, (uint)defaultItemHeight).ConfigureAwait(false);
     }

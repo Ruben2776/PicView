@@ -11,39 +11,6 @@ namespace PicView.Avalonia.StartUp;
 
 public static class TabNavigationInitializer
 {
-    public static void Initialize(CoreViewModel core, MainWindow mainWindow)
-    {
-        // --- Initialization Logic ---
-        // This is the initialization logic for the navigation system.
-        // It is initialized after initial image load, to make it feel faster by showing the image asap. 
-        
-        // 1. Create dependencies
-        var imageLoader = ServiceHelper.ImageLoader;
-        var thumbnailService = ServiceHelper.ThumbLoader;
-
-        // 2. Create SharedImageCache
-        // We use the same loading logic as AvaloniaImageLoader (via GetImageModel)
-        var sharedCache = core.SharedCache;
-        var thumbnailCache = core.SharedThumbnailCache;
-
-        Debug.Assert(core.PlatformService != null);
-        var fileWatcher = new FileWatcherService(core.PlatformService.CompareStrings, sharedCache, thumbnailCache, thumbnailService);
-
-        // 3. Create NavigationService (Core)
-        core.SharedNavigationService ??= new NavigationService(imageLoader, sharedCache, fileWatcher, core.PlatformService, thumbnailService, core.PlatformService.CompareStrings);
-
-        Debug.Assert(core.MainWindows.ActiveWindow.CurrentValue != null);
-        var tabOverView = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs;
-        var tab = tabOverView.ActiveTab.CurrentValue;
-
-        // 4. Initialize ViewModel
-        tabOverView.LoadAndInitialize(core.SharedNavigationService, sharedCache,thumbnailCache, thumbnailService, fileWatcher);
-        tabOverView.SetParentContext(core.MainWindows.ActiveWindow.CurrentValue);
-        InitializeNewTab(tab, core.MainWindows.ActiveWindow.CurrentValue, mainWindow);
-        tab.Gallery.Initialize();
-        core.GallerySettings.Initialize();
-    }
-    
     public static void Initialize(CoreViewModel core, FileInfo fileInfo, MainWindow mainWindow)
     {
         Debug.Assert(core.PlatformService != null);

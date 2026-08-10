@@ -22,7 +22,7 @@ public static class GalleryLoader
         var maxHeight = Math.Max(dockedHeight, expandedHeight);
         if (maxHeight <= 0)
         {
-            maxHeight = GalleryDefaults.DefaultBottomGalleryHeight;
+            maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
         }
 
         const int batchSize = 20;
@@ -133,7 +133,7 @@ public static class GalleryLoader
                 thumb = await thumbnailLoader.GetThumbnailAsync(item.FileInfo, (uint)maxHeight).ConfigureAwait(false);
             }
 
-            if (thumb != null)
+            if (thumb is not null)
             {
                 thumbnailCache.Add(tab.Id, item.FileInfo.FullName, thumb);
             }
@@ -149,7 +149,7 @@ public static class GalleryLoader
             }
             
             var thumb = await thumbnailLoader.GetThumbnailAsync(item.FileInfo, (uint)maxHeight).ConfigureAwait(false);
-            if (thumb != null)
+            if (thumb is not null)
             {
                 thumbnailCache.Add(tab.Id, item.FileInfo.FullName, thumb);
             }

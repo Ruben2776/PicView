@@ -50,19 +50,19 @@ public class GallerySharedSettingsViewModel
         new(Settings.Gallery.DockedGalleryItemSize);
 
     public BindableReactiveProperty<double> DockedGalleryMaxItemSize { get; } =
-        new(GalleryDefaults.MaxBottomGalleryItemHeight);
+        new(GalleryDefaults.MaxDockedGalleryItemHeight);
 
     public BindableReactiveProperty<double> DockedGalleryMinItemSize { get; } =
-        new(GalleryDefaults.MinBottomGalleryItemHeight);
+        new(GalleryDefaults.MinDockedGalleryItemHeight);
 
     public BindableReactiveProperty<double> ExpandedGalleryItemSize { get; } =
         new(Settings.Gallery.ExpandedGalleryItemSize);
 
     public BindableReactiveProperty<double> ExpandedGalleryMaxItemSize { get; } =
-        new(GalleryDefaults.MaxFullGalleryItemHeight);
+        new(GalleryDefaults.MaxExpandedGalleryItemHeight);
 
     public BindableReactiveProperty<double> ExpandedGalleryMinItemSize { get; } =
-        new(GalleryDefaults.MinFullGalleryItemHeight);
+        new(GalleryDefaults.MinExpandedGalleryItemHeight);
 
     public BindableReactiveProperty<double> GalleryItemSpacing { get; } = new(Settings.Gallery.ItemSpacing);
     public BindableReactiveProperty<double> GalleryLineSpacing { get; } = new(Settings.Gallery.LineSpacing);
