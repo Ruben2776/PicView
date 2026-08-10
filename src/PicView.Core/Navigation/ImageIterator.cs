@@ -125,13 +125,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                     }
                     else
                     {
-                        if (index != CurrentIndex)
-                        {
-                            await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
-                            return;
-                        }
-
-                        TriggerPreload();
+                        _tab.UpdateTabTitle();
                     }
                 }, ct.Token).ConfigureAwait(false);
             }
@@ -291,7 +285,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                     }
                     else
                     {
-                        TriggerPreload();
+                        _tab.UpdateTabTitle();
                     }
                 }
                 else
@@ -301,12 +295,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             }
             else
             {
-                if (index != CurrentIndex && secondaryIndex == SecondaryCurrentIndex)
-                {
-                    await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
-                    return;
-                }
-                TriggerPreload();
+                _tab.UpdateTabTitle();
             }
         }
 
@@ -331,7 +320,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                     }
                     else
                     {
-                        TriggerPreload();
+                        _tab.UpdateTabTitle();
                     }
                 }
                 else
@@ -341,12 +330,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             }
             else
             {
-                if (index != CurrentIndex && secondaryIndex == SecondaryCurrentIndex)
-                {
-                    await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
-                    return;
-                }
-                TriggerPreload();
+                _tab.UpdateTabTitle();
             }
         }
         
