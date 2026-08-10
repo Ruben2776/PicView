@@ -1,4 +1,4 @@
-﻿using PicView.Core.Localization;
+using PicView.Core.Localization;
 
 namespace PicView.Core.Titles;
 
@@ -14,21 +14,40 @@ public static class AspectRatioFormatter
     /// <returns>A string representing the aspect ratio in the format "x:y", or an empty string if the ratio is too large.</returns>
     public static string FormatAspectRatio(uint width, uint height)
     {
-        if (width <= 0 || height <= 0) { return string.Empty; }
+        if (width <= 0 || height <= 0)
+        {
+            return string.Empty;
+        }
 
         var gcd = GCD(width, height);
         var aspectX = width / gcd;
         var aspectY = height / gcd;
 
-        return IsAspectRatioWithinLimits(aspectX, aspectY) 
-            ? $", {aspectX}:{aspectY}" 
-            : string.Empty;
+        if (!IsAspectRatioWithinLimits(aspectX, aspectY))
+        {
+            return string.Empty;
+        }
+
+        Span<char> buffer = stackalloc char[32];
+        var charsWritten = 0;
+
+        buffer[charsWritten++] = ',';
+        buffer[charsWritten++] = ' ';
+
+        aspectX.TryFormat(buffer[charsWritten..], out var written);
+        charsWritten += written;
+
+        buffer[charsWritten++] = ':';
+
+        aspectY.TryFormat(buffer[charsWritten..], out written);
+        charsWritten += written;
+
+        return new string(buffer[..charsWritten]);
     }
     
     private const uint MaxAspectRatioX = 48;
     private const uint MaxAspectRatioY = 18;
-    private static bool IsAspectRatioWithinLimits(uint x, uint y)
-        => x <= MaxAspectRatioX && y <= MaxAspectRatioY;
+    private static bool IsAspectRatioWithinLimits(uint x, uint y) => x <= MaxAspectRatioX && y <= MaxAspectRatioY;
 
     /// <summary>
     /// Calculates the Greatest Common Divisor (GCD) of two integers.
