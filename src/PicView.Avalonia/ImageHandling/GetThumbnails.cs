@@ -1,8 +1,13 @@
-﻿using Avalonia.Media.Imaging;
+using System.Runtime.InteropServices;
+using Avalonia;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using Avalonia.Threading;
 using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageReading;
+using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.ImageHandling;
 
@@ -12,8 +17,18 @@ public static class GetThumbnails
     {
         try
         {
+            if (fileInfo is null)
+            {
+                return null;
+            }
+
+            if (fileInfo.IsCommon() && OperatingSystem.IsWindows())
+            {
+                return GetShellThumb(fileInfo.FullName, 0, (int)height);
+            }
+            
             using var magick = new MagickImage();
-            magick.Ping(fileInfo);
+            await magick.PingAsync(fileInfo);
             var profile = magick.GetExifProfile();
             if (profile == null)
             {
@@ -64,13 +79,50 @@ public static class GetThumbnails
         return thumbnail?.ToWriteableBitmap();
     }
 
+    /// <summary>
+    /// Attempts to get a shell/OS-level thumbnail for the given file path.
+    /// On Windows, this uses the IShellItemImageFactory COM interface.
+    /// Returns null on non-Windows platforms or on failure.
+    /// </summary>
+    public static WriteableBitmap? GetShellThumb(string path, int width, int height)
+    {
+        try
+        {
+            var core = Dispatcher.UIThread.Invoke(() => Application.Current?.DataContext as CoreViewModel);
+
+            var platformService = core?.PlatformService;
+            if (platformService is null)
+            {
+                return null;
+            }
+
+            var pixels = platformService.GetShellThumbnail(path, width, height,
+                out var pixelWidth, out var pixelHeight);
+
+            if (pixels is null || pixelWidth <= 0 || pixelHeight <= 0)
+            {
+                return null;
+            }
+
+            var pixelSize = new PixelSize(pixelWidth, pixelHeight);
+            var bitmap = new WriteableBitmap(pixelSize, new Vector(96, 96),
+                PixelFormat.Bgra8888, AlphaFormat.Premul);
+
+            using var framebuffer = bitmap.Lock();
+            Marshal.Copy(pixels, 0, framebuffer.Address,
+                Math.Min(pixels.Length, framebuffer.RowBytes * pixelHeight));
+
+            return bitmap;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetThumbnails), nameof(GetShellThumb), e);
+            return null;
+        }
+    }
+
     private static async ValueTask<Bitmap?> CreateThumbAsync(MagickImage magick, FileInfo fileInfo, uint height)
     {
-        // TODO: extract thumbnails from PlatformService and convert to Avalonia image,
-        // I.E. https://boldena.com/article/64006
-        // https://github.com/AvaloniaUI/Avalonia/discussions/16703
-        // https://stackoverflow.com/a/42178963/2923736 convert to DLLImport to LibraryImport, source generation & AOT support
-
         switch (magick.Format)
         {
             case MagickFormat.WebP:

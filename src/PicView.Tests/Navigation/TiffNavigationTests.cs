@@ -200,78 +200,19 @@ public class TiffNavigationTests : IDisposable
         }
 
         public bool TryGet(FileInfo f, out PreLoadValue? value) { value = null; return false; }
-        public bool TryGet(uint ownerId, int index, out PreLoadValue? value)
-        {
-            value = null; return false;
-        }
-
-        public bool TryGet(string ownerId, int index, out PreLoadValue? value) { value = null; return false; }
-        public void Clear() { }
-        public bool Contains(FileInfo fileInfo)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Clear(uint ownerId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Clear(string ownerId) { }
+        public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value) { value = null; return false; }
         public bool Contains(PreLoadValue value) => false;
-        public bool Contains(string fileName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token)
-        {
-        }
-
-        public void RemoveOwner(uint ownerId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RegisterOwner(uint ownerId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Add(string ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse) => false;
-        public bool TryAdd(string ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value) { value = null; return false; }
-        public void Preload(string ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) { }
-        public void RemoveOwner(string ownerId) { }
-        public void RegisterOwner(string ownerId) { }
+        public bool Contains(string fileName) => false;
+        public bool Contains(FileInfo fileInfo) => false;
+        public void Clear(uint ownerId) { }
+        public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse) { }
+        public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value) { value = null; return false; }
+        public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) { }
+        public void RemoveOwner(uint ownerId) { }
+        public void RegisterOwner(uint ownerId) { }
         public void Clear(TabViewModel tab, string directory) { }
-        public void TryRemove(uint ownerId, int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
-        {
-            return ValueTask.FromResult(true);
-        }
-
-        public void TryRemove(string ownerId, int index) { }
-        public void Resynchronize(string ownerId, IReadOnlyList<FileInfo> files) { }
-        public ValueTask<bool> WaitForLoadingCompleteAsync(string ownerId, int index) => ValueTask.FromResult(false);
+        public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files) { }
+        public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => ValueTask.FromResult(true);
     }
     
     private class MockThumbnailLoader : IThumbnailLoader

@@ -1,4 +1,4 @@
-﻿namespace PicView.Core.IPlatform;
+namespace PicView.Core.IPlatform;
 
 public interface IPlatformSpecificService
 {
@@ -32,4 +32,10 @@ public interface IPlatformSpecificService
     void InitiateFileAssociationService();
     
     Task<bool> DeleteFile(string path, bool recycle);
+
+    /// <summary>
+    /// Gets a shell thumbnail as raw BGRA pixel data.
+    /// Returns null on non-Windows platforms or on failure.
+    /// </summary>
+    byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight);
 }

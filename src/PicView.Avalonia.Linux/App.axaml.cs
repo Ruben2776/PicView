@@ -156,5 +156,13 @@ public class App : Application, IPlatformSpecificService
     {
     }
 
+    // TODO: Implement Linux thumbnail extraction (e.g. via freedesktop thumbnail spec)
+    public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
+    {
+        pixelWidth = 0;
+        pixelHeight = 0;
+        return null;
+    }
+
     #endregion
 }

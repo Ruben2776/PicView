@@ -17,9 +17,9 @@ public class PreloaderTests
             return ItemsByFile.TryGetValue(f.FullName, out value);
         }
 
-        public bool TryGet(uint ownerId, int index, out PreLoadValue? value)
+        public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value)
         {
-            return Items.TryGetValue(index, out value);
+            return ItemsByFile.TryGetValue(f.ToString(), out value);
         }
         
         public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value)
@@ -37,24 +37,14 @@ public class PreloaderTests
         }
 
         public Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => Task.FromResult<ImageModel?>(null);
-        public void Clear() { }
-        public bool Contains(FileInfo fileInfo)
-        {
-            throw new NotImplementedException();
-        }
-
+        public bool Contains(FileInfo fileInfo) => false;
         public void Clear(uint ownerId) { }
         public bool Contains(PreLoadValue value) => false;
-        public bool Contains(string fileName)
-        {
-            throw new NotImplementedException();
-        }
-
+        public bool Contains(string fileName) => false;
         public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) { }
         public void RemoveOwner(uint ownerId) { }
         public void RegisterOwner(uint ownerId) { }
         public void Clear(TabViewModel tab, string directory) { }
-        public void TryRemove(uint ownerId, int index) { }
         public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files) { }
         public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => ValueTask.FromResult(true);
     }

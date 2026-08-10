@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -248,6 +248,14 @@ public class App : Application, IPlatformSpecificService
         }
         await Task.Run(() => File.Delete(path));
         return !File.Exists(path); 
+    }
+
+    // TODO: Implement macOS thumbnail extraction (e.g. via Quick Look)
+    public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
+    {
+        pixelWidth = 0;
+        pixelHeight = 0;
+        return null;
     }
     
     #endregion

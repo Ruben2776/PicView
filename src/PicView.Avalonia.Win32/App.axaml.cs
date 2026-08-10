@@ -1,4 +1,4 @@
-﻿using System.Runtime;
+using System.Runtime;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -181,6 +181,11 @@ public class App : Application, IPlatformSpecificService
     public void EnableScreensaver()
     {
         NativeMethods.EnableScreensaver();
+    }
+
+    public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
+    {
+        return ShellThumbnailNative.GetShellThumbnailBytes(path, width, height, out pixelWidth, out pixelHeight);
     }
 
     #endregion
