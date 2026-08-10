@@ -1,47 +1,138 @@
-﻿// using BenchmarkDotNet.Attributes;
-// using PicView.Avalonia.ImageHandling;
-// using PicView.Core.FileHandling;
-// using PicView.Core.Navigation;
-// using PicView.Core.Preloading;
-// using ZLinq;
-//
-// namespace PicView.Benchmarks.ImageBenchmarks;
-//
-// [MemoryDiagnoser] // track allocations
-// public class PreloadingBenchmark
-// {
-//     private List<FileInfo>? _fileInfos;
-//     private const int MaxSize = 12;
-//     
-//     private Preloader? _preLoader;
-//     
-//     [GlobalSetup]
-//     public void Setup()
-//     {
-//         LoadSettings();
-//         
-//         var picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-//         _fileInfos = new DirectoryInfo(picturesPath)
-//             .DescendantsAndSelf()
-//             .OfType<FileInfo>()
-//             .Where(x => x.IsSupported())
-//             .Take(MaxSize * 6)
-//             .ToList();
-//         
-//         _preLoader = new Preloader(GetImageModel.GetImageModelAsync, new SharedImageCache(GetImageModel.GetImageModelAsync));
-//     }
-//     
-//     [Benchmark]
-//     public async ValueTask PreloadImages()
-//     {
-//         for (var i = 0; i < MaxSize; i++)
-//         {
-//             _preLoader.Preload(i, false, _fileInfos);
-//         }
-//     }
-// }
+﻿using BenchmarkDotNet.Attributes;
+using PicView.Avalonia.ImageHandling;
+using PicView.Core.FileHandling;
+using PicView.Core.Navigation;
+using PicView.Core.Preloading;
+using PicView.Core.DebugTools;
+using ZLinq;
 
-// TODO: rewrite preloading benchmark
+namespace PicView.Benchmarks.ImageBenchmarks;
+
+[MemoryDiagnoser] // track allocations
+public class PreloadingBenchmark
+{
+    private List<FileInfo>? _fileInfos;
+    private const int MaxSize = 12;
+    
+    private Preloader? _preLoader;
+    private readonly Lock _lock = new();
+    private bool _isRunning;
+    
+    private SharedImageCache _sharedImageCache;
+
+    [BenchmarkCancellation]
+    public CancellationToken CancellationToken { get; set; }
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        LoadSettings();
+        
+        var picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+        _fileInfos = new DirectoryInfo(picturesPath)
+            .DescendantsAndSelf()
+            .OfType<FileInfo>()
+            .Where(x => x.IsSupported())
+            .Take(MaxSize * 6)
+            .ToList();
+        
+        _preLoader = new Preloader(GetImageModel.GetImageModelAsync, _sharedImageCache = new SharedImageCache(GetImageModel.GetImageModelAsync));
+    }
+    
+    [Benchmark]
+    public async ValueTask Current()
+    {
+        uint id = 0;
+        for (var i = 0; i < MaxSize; i++)
+        {
+            await _preLoader.PreLoadInternalAsync(id, i, _fileInfos, false, CancellationToken);
+            await Task.Delay(200, CancellationToken); // Simulate human switching time
+        }
+    }
+    
+    [Benchmark]
+    public async ValueTask ForLoop()
+    {
+        uint id = 0;
+        for (var i = 0; i < MaxSize; i++)
+        {
+            await PreLoadForLoopAsync(id, i, _fileInfos, false, CancellationToken);
+            await Task.Delay(200, CancellationToken); // Simulate human switching time
+        }
+    }
+    
+    
+    public async Task PreLoadForLoopAsync(uint ownerId, int currentIndex, IReadOnlyList<FileInfo> list,
+        bool reversed, CancellationToken token)
+    {
+        var count = list.Count;
+        var nextStartingIndex = (currentIndex + 1) % count;
+        var prevStartingIndex = (currentIndex - 1 + count) % count;
+
+        try
+        {
+            if (reversed)
+            {
+                await LoopAsync(false).ConfigureAwait(false);
+                await LoopAsync(true).ConfigureAwait(false);
+            }
+            else
+            {
+                await LoopAsync(true).ConfigureAwait(false);
+                await LoopAsync(false).ConfigureAwait(false);
+            }
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(Preloader), nameof(PreLoadForLoopAsync), ex);
+        }
+        finally
+        {
+            lock (_lock)
+            {
+                _isRunning = false;
+            }
+        }
+
+        return;
+
+        async Task LoopAsync(bool positive)
+        {
+            if (positive)
+            {
+                for (int i = 0; i < PreLoaderConfig.PositiveIterations; i++)
+                {
+                    await AddAddition((nextStartingIndex + i) % count).ConfigureAwait(false);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < PreLoaderConfig.NegativeIterations; i++)
+                {
+                    await AddAddition((prevStartingIndex - i + count) % count).ConfigureAwait(false);
+                }
+            }
+        }
+
+        async Task AddAddition(int index)
+        {
+            token.ThrowIfCancellationRequested();
+            // Double check cancellation after waiting
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            if (_sharedImageCache.Contains(list[index]))
+            {
+                // Return early if cached
+                return;
+            }
+
+            await _preLoader.AddAsync(ownerId, index, list, reversed, token).ConfigureAwait(false);
+        }
+    }
+}
 
 /*
  

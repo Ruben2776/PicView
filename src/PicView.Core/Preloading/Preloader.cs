@@ -92,7 +92,7 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
         return imageModel;
     }
 
-    private async Task PreLoadInternalAsync(uint ownerId, int currentIndex, IReadOnlyList<FileInfo> list,
+    public async Task PreLoadInternalAsync(uint ownerId, int currentIndex, IReadOnlyList<FileInfo> list,
         bool reversed, CancellationToken token)
     {
         var count = list.Count;
