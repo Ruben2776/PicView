@@ -1,8 +1,11 @@
-﻿namespace PicView.Core.Titles;
+﻿using System.Runtime.InteropServices;
+
+namespace PicView.Core.Titles;
 
 /// <summary>
 /// Struct that holds different representations of a window title.
 /// </summary>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct WindowTitles
 {
     /// <summary>

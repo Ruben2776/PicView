@@ -74,7 +74,6 @@ public class PreLoadValue
                 else if (value && !wasLoading)
                 {
                     _loadingCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-
                 }
             }
         }

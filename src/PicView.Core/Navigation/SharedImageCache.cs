@@ -6,14 +6,7 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Core.Navigation;
 
-/// <summary>
-/// Acts as the central station for acquiring and managing cached <see cref="ImageModel"/> resources.
-/// <para>
-/// This class coordinates between the storage container (multiple <see cref="EvictingDictionary{TValue}"/>) 
-/// and the background worker (<see cref="Preloader"/>) to ensure images are loaded, retrieved, 
-/// and evicted efficiently across multiple tab owners.
-/// </para>
-/// </summary>
+/// <inheritdoc />
 public class SharedImageCache : IImageCache
 {
     /// <summary>
@@ -152,28 +145,11 @@ public class SharedImageCache : IImageCache
 
     #region Add, Get, Remove, and Clear
     
-    /// <summary>
-    /// Adds a preloaded value to the specified owner's cache dictionary at a given index.
-    /// </summary>
-    /// <param name="ownerId">The unique owner identifier.</param>
-    /// <param name="index">The position index in the owner's file list.</param>
-    /// <param name="preLoadValue">The preloaded image item to add.</param>
-    /// <param name="listCount">Total count of items in the owner's current list.</param>
-    /// <param name="isReverse">Indicates direction of movement for eviction evaluation.</param>
+    /// <inheritdoc />
     public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse) =>
         TryAdd(ownerId, index, preLoadValue, listCount, isReverse, out _);
 
-    /// <summary>
-    /// Attempts to add a preloaded value to an owner's dictionary, incrementing reference count 
-    /// if new and processing eviction logic if capacity is exceeded.
-    /// </summary>
-    /// <param name="ownerId">The unique owner identifier.</param>
-    /// <param name="index">The position index in the owner's file list.</param>
-    /// <param name="preLoadValue">The preloaded image item to add.</param>
-    /// <param name="listCount">Total count of items in the owner's current list.</param>
-    /// <param name="isReverse">Indicates direction of movement for eviction evaluation.</param>
-    /// <param name="value">Contains the evicted item if capacity was exceeded, or <see langword="null"/>.</param>
-    /// <returns><see langword="true"/> if the owner dictionary was found and modified; otherwise, <see langword="false"/>.</returns>
+    /// <inheritdoc />
     public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value)
     {
         value = null;
@@ -198,42 +174,25 @@ public class SharedImageCache : IImageCache
         return true;
     }
     
-    /// <summary>
-    /// Checks if an image matching the given file path is currently registered in the global lookup.
-    /// </summary>
-    /// <param name="fileName">The full file path to look up.</param>
-    /// <returns><see langword="true"/> if found; otherwise, <see langword="false"/>.</returns>
-    public bool Contains(string fileName) => _pathLookup.TryGetValue(fileName, out _);
+    /// <inheritdoc />
+    public bool Contains(string fileName) =>
+        _pathLookup.ContainsKey(fileName);
 
-    /// <summary>
-    /// Checks if an image matching the given <see cref="FileInfo"/> is currently registered in the global lookup.
-    /// </summary>
-    /// <param name="fileInfo">The file info to look up.</param>
-    /// <returns><see langword="true"/> if found; otherwise, <see langword="false"/>.</returns>
-    public bool Contains(FileInfo fileInfo) => _pathLookup.TryGetValue(fileInfo.FullName, out _);
+    /// <inheritdoc />
+    public bool Contains(FileInfo fileInfo) =>
+        _pathLookup.ContainsKey(fileInfo.FullName);
 
-    /// <summary>
-    /// Checks if the specified <see cref="PreLoadValue"/> instance is registered in the global lookup.
-    /// </summary>
-    /// <param name="value">The preloaded image instance to check.</param>
-    /// <returns><see langword="true"/> if found; otherwise, <see langword="false"/>.</returns>
-    public bool Contains(PreLoadValue value) => _pathLookup.TryGetValue(value.ImageModel.FileInfo.FullName, out _);
+    /// <inheritdoc />
+    public bool Contains(PreLoadValue value) =>
+        _pathLookup.ContainsKey(value.ImageModel.FileInfo.FullName);
     
-    /// <summary>
-    /// Attempts to retrieve a cached <see cref="PreLoadValue"/> by its <see cref="FileInfo"/>.
-    /// </summary>
-    /// <param name="f">The file info key.</param>
-    /// <param name="value">Contains the cached item if found; otherwise, <see langword="null"/>.</param>
-    /// <returns><see langword="true"/> if found in cache; otherwise, <see langword="false"/>.</returns>
-    public bool TryGet(FileInfo f, out PreLoadValue? value) => _pathLookup.TryGetValue(f.FullName, out value);
+    /// <inheritdoc />
+    public bool TryGet(FileInfo f, out PreLoadValue? value) =>
+        _pathLookup.TryGetValue(f.FullName, out value);
 
-    /// <summary>
-    /// Attempts to retrieve a cached <see cref="PreLoadValue"/> using a high-performance span lookup.
-    /// </summary>
-    /// <param name="f">The character span representing the file path.</param>
-    /// <param name="value">Contains the cached item if found; otherwise, <see langword="null"/>.</param>
-    /// <returns><see langword="true"/> if found in cache; otherwise, <see langword="false"/>.</returns>
-    public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value) => _pathLookup.GetAlternateLookup<ReadOnlySpan<char>>().TryGetValue(f, out value);
+    /// <inheritdoc />
+    public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value) =>
+        _pathLookup.GetAlternateLookup<ReadOnlySpan<char>>().TryGetValue(f, out value);
 
     /// <summary>
     /// Removes an item at a specific index from an owner's dictionary and releases its reference.
@@ -492,7 +451,7 @@ public class SharedImageCache : IImageCache
             
             foreach (var kvp in _pathLookup)
             {
-                if (kvp.Value.ReferenceCount == 0 && _pathLookup.TryRemove(kvp.Key, out var removed))
+                if (kvp.Value.ReferenceCount is 0 && _pathLookup.TryRemove(kvp.Key, out var removed))
                 {
                     removed.ImageModel.Dispose();
                 }
