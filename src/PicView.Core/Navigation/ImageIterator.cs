@@ -103,7 +103,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                 {
                     var thumb = _thumbCache.TryGet(targetFile.FullName, out var cachedThumb)
                         ? cachedThumb
-                        : _thumbnailLoader.GetExifThumbnail(targetFile);
+                        : _thumbnailLoader.GetThumbQuick(targetFile);
 
                     _tab.Image.Value = thumb;
                     _tab.SetLoading();
@@ -267,7 +267,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         async Task LoadFirstModelAsync()
         {
             var thumb = _thumbCache.TryGet(firstFile.FullName, out var cachedThumb) ? cachedThumb 
-                : _thumbnailLoader.GetExifThumbnail(firstFile);
+                : _thumbnailLoader.GetThumbQuick(firstFile);
                 
             _tab.Image.Value = thumb;
             _tab.SetLoading();
@@ -302,7 +302,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         async Task LoadSecondModelAsync()
         {
             var thumb = _thumbCache.TryGet(secondaryFile.FullName, out var cachedThumb) ? cachedThumb 
-                : _thumbnailLoader.GetExifThumbnail(secondaryFile);
+                : _thumbnailLoader.GetThumbQuick(secondaryFile);
                 
             _tab.Image.Value = thumb;
             _tab.SetLoading();

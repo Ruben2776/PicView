@@ -152,6 +152,7 @@ public class NavigationServiceTests
         }
 
         public object? GetExifThumbnail(FileInfo file) => null;
+        public object? GetThumbQuick(FileInfo file) => null;
     }
 
     private class MockTempFileService : ITempFileService

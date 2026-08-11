@@ -13,7 +13,7 @@ namespace PicView.Avalonia.ImageHandling;
 
 public static class GetThumbnails
 {
-    public static async ValueTask<Bitmap?> GetThumbAsync(FileInfo? fileInfo, uint height)
+    public static async ValueTask<Bitmap?> GetThumbAsync(FileInfo fileInfo, uint height)
     {
         try
         {
@@ -30,13 +30,13 @@ public static class GetThumbnails
             using var magick = new MagickImage();
             await magick.PingAsync(fileInfo);
             var profile = magick.GetExifProfile();
-            if (profile == null)
+            if (profile is null)
             {
                 return await CreateThumbAsync(magick, fileInfo, height).ConfigureAwait(false);
             }
 
             var thumbnail = profile.CreateThumbnail();
-            if (thumbnail == null || thumbnail.Height < height)
+            if (thumbnail is null || thumbnail.Height < height)
             {
                 return await CreateThumbAsync(magick, fileInfo, height).ConfigureAwait(false);
             }
@@ -49,6 +49,21 @@ public static class GetThumbnails
             DebugHelper.LogDebug(nameof(GetThumbnails), nameof(GetThumbAsync), e);
             return null;
         }
+    }
+
+    public static Bitmap? GetThumbQuick(FileInfo fileInfo)
+    {
+        if (fileInfo is null)
+        {
+            return null;
+        }
+        var height = Settings.Gallery.DockedGalleryItemSize > Settings.Gallery.ExpandedGalleryItemSize ?
+            Settings.Gallery.DockedGalleryItemSize : Settings.Gallery.ExpandedGalleryItemSize;
+        if (fileInfo.IsCommon() && OperatingSystem.IsWindows())
+        {
+            return GetShellThumb(fileInfo.FullName, 0, (int)height);
+        }
+        return GetExifThumb(fileInfo.FullName);
     }
 
     public static WriteableBitmap? GetExifThumb(string path)

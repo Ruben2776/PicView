@@ -190,6 +190,7 @@ public class FileWatcherServiceTests : IDisposable
         public ValueTask<object?> GetThumbnailAsync(FileInfo file) => ValueTask.FromResult<object?>(null);
         public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size) => ValueTask.FromResult<object?>(null);
         public object? GetExifThumbnail(FileInfo file) => null;
+        public object? GetThumbQuick(FileInfo file) => null;
     }
     
     private class MockThumbnailCache : IThumbnailCache
