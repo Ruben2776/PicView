@@ -169,7 +169,7 @@ public class NavigationServiceTests
         public void Remove(string path) { }
         public void RemoveOwner(uint ownerId) { }
         public void Clear() { }
-        public bool IsEmpty() => true;
+        public bool IsEmpty => true;
     }
 
     private class MockPlatformSpecificService : IPlatformSpecificService

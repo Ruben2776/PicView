@@ -230,7 +230,7 @@ public class TiffNavigationTests : IDisposable
         public void Remove(string path) { }
         public void RemoveOwner(uint ownerId) { }
         public void Clear() { }
-        public bool IsEmpty() => true;
+        public bool IsEmpty => true;
     }
 
     private class MockFrameProvider : FrameProvider

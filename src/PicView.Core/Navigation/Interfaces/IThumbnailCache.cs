@@ -28,5 +28,5 @@ public interface IThumbnailCache
     /// </summary>
     void Clear();
 
-    bool IsEmpty();
+    bool IsEmpty { get; }
 }

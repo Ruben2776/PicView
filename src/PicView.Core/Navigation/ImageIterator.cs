@@ -98,16 +98,20 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             }
             else
             {
+                _tab.SetLoading();
+                
                 // Is loading in cache, show thumbnail while loading
                 await Task.Run(async () =>
                 {
-                    var thumb = _thumbCache.TryGet(targetFile.FullName, out var cachedThumb)
+                    var thumb = !_thumbCache.IsEmpty && _thumbCache.TryGet(targetFile.FullName, out var cachedThumb)
                         ? cachedThumb
                         : _thumbnailLoader.GetThumbQuick(targetFile);
-
+                    if (index != CurrentIndex)
+                    {
+                        return;
+                    }
                     _tab.Image.Value = thumb;
-                    _tab.SetLoading();
-
+                    
                     // Wait for loading complete
                     var successfullyLoaded = await Cache
                         .WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token)
@@ -122,10 +126,6 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                         {
                             UpdateModel(preLoadValue.ImageModel);
                         }
-                    }
-                    else
-                    {
-                        _tab.UpdateTabTitle();
                     }
                 }, ct.Token).ConfigureAwait(false);
             }
@@ -144,10 +144,6 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             if (index == CurrentIndex && manuallyLoaded is not null)
             {
                 UpdateModel(manuallyLoaded);
-            }
-            else
-            {
-                TriggerPreload();
             }
         }
     }

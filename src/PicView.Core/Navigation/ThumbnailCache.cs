@@ -102,6 +102,5 @@ public class ThumbnailCache : IThumbnailCache
         }
     }
 
-    public bool IsEmpty() =>
-        _thumbnails.IsEmpty;
+    public bool IsEmpty => _thumbnails.IsEmpty;
 }

@@ -68,7 +68,7 @@ public static class GalleryLoader
         
         try 
         {
-            if (thumbnailCache.IsEmpty())
+            if (thumbnailCache.IsEmpty)
             {
                 await Parallel.ForAsync(0, tab.Gallery.GalleryItems.Count, parallelOptions,
                 async (i, _) =>
