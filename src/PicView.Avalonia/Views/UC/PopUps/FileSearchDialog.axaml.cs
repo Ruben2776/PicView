@@ -23,6 +23,10 @@ public partial class FileSearchDialog : AnimatedPopUp
             return;
         }
         DataContext = core;
+        if (core.SharedNavigationService is null)
+        {
+            return;
+        }
         core.SharedNavigationService.FilteredFileInfos ??= new BindableReactiveProperty<ObservableCollection<FileSearchResult>?>();
         core.SharedNavigationService.LoadFromStringCommand ??= new ReactiveCommand<string>(LoadSelectedFile);
 

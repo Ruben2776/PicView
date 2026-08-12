@@ -1005,6 +1005,7 @@
                 Icon="{StaticResource SearchImage}"
                 IconHeight="13"
                 IconWidth="13"
+                IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
                 IsTabStop="False"
                 IsVisible="{Binding TopTitlebarViewModel.IsMenuButtonVisible.Value}" />
 
