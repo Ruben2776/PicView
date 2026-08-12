@@ -9,7 +9,7 @@ public class MainWindowViewModel : IDisposable
     #region Properties
     public IFunctionsMapper? Mapper { get; set; }
     public IPlatformWindowService? PlatformWindowService { get; }
-    
+    public FileHistoryViewModel? FileHistory { get; set; }
     public TranslationViewModel Translation { get;  } 
     public GallerySharedSettingsViewModel GallerySettings { get; }
     public GlobalSettingsViewModel GlobalSettings { get; }

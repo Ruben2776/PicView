@@ -18,18 +18,18 @@ namespace PicView.Avalonia.Views.Menu;
 public partial class DropDownMenu : AnimatedMenu
 {
     private IDisposable? _menuVisibilitySubscription;
-    private MainWindow _mainWindow;
+    private readonly MainWindow _mainWindow;
 
     public DropDownMenu(MainWindow mainWindow)
     {
         _mainWindow = mainWindow;
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (mainWindow.DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        core.FileHistory ??= new FileHistoryViewModel(core);
-        DataContext = core;
+        vm.FileHistory ??= new FileHistoryViewModel(vm);
+        DataContext = vm;
         InitializeComponent();
         Loaded += OnLoaded;
 
@@ -60,13 +60,13 @@ public partial class DropDownMenu : AnimatedMenu
         SlideShow90Sec.Click += SlideShow90SecOnClick;
         SlideShow120Sec.Click += SlideShow120SecOnClick;
         
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (_mainWindow.DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        core.FileHistory.PinnedEntries.CollectionChanged += PinnedEntriesOnCollectionChanged;
-        core.FileHistory.Entries.CollectionChanged += EntriesOnCollectionChanged;
+        vm.FileHistory.PinnedEntries.CollectionChanged += PinnedEntriesOnCollectionChanged;
+        vm.FileHistory.Entries.CollectionChanged += EntriesOnCollectionChanged;
 
         _menuVisibilitySubscription = Observable.EveryValueChanged(this, x => x.IsVisible)
             .SubscribeOn(_mainWindow.FrameProvider).Subscribe(isVisible =>
@@ -74,15 +74,15 @@ public partial class DropDownMenu : AnimatedMenu
                 if (isVisible)
                 {
                     _mainWindow.IsDialogOpen = true;
-                    core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.CloseMenus(Unit.Default);
+                    vm.TopTitlebarViewModel.DropDownMenu.CloseMenus(Unit.Default);
                     MaxHeight = _mainWindow.UIHelper.GetMainView.Bounds.Height - 1;
-                    core.FileHistory.UpdateHistory();
+                    vm.FileHistory.UpdateHistory();
                 }
                 else
                 {
                     _mainWindow.IsDialogOpen = false;
                     // Reset it, so that it opens in default state the next time it opens
-                    core.MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.CloseToDefault();
+                    vm.TopTitlebarViewModel.DropDownMenu.CloseToDefault();
                 }
             }, DebugHelper.LogError(nameof(DropDownMenu), nameof(_menuVisibilitySubscription)));
     }
@@ -379,13 +379,13 @@ public partial class DropDownMenu : AnimatedMenu
         base.Dispose();
         Loaded -= OnLoaded;
         _menuVisibilitySubscription?.Dispose();
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (_mainWindow.DataContext is not MainWindowViewModel vm)
         {
             return;
         }
         
-        core.FileHistory.PinnedEntries.CollectionChanged -= PinnedEntriesOnCollectionChanged;
-        core.FileHistory.Entries.CollectionChanged -= EntriesOnCollectionChanged;
+        vm.FileHistory.PinnedEntries.CollectionChanged -= PinnedEntriesOnCollectionChanged;
+        vm.FileHistory.Entries.CollectionChanged -= EntriesOnCollectionChanged;
         
         SlideShow2Sec.Click -= SlideShow2SecOnClick;
         SlideShow5Sec.Click -= SlideShow5SecOnClick;

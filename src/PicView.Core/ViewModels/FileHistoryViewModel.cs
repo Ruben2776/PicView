@@ -7,7 +7,7 @@ namespace PicView.Core.ViewModels;
 
 public class FileHistoryViewModel
 {
-    private readonly CoreViewModel _core;
+    private readonly MainWindowViewModel _vm;
 
     public ObservableList<FileHistoryEntryViewModel> PinnedEntries { get; } = [];
     public BindableReactiveProperty<bool> HasPinnedEntries { get; } = new(false);
@@ -17,9 +17,9 @@ public class FileHistoryViewModel
     public ReactiveCommand ToggleSortCommand { get; }
     public ReactiveCommand OpenFileHistoryCommand { get; }
 
-    public FileHistoryViewModel(CoreViewModel core)
+    public FileHistoryViewModel(MainWindowViewModel vm)
     {
-        _core = core;
+        _vm = vm;
         ClearHistoryCommand = new ReactiveCommand(ClearHistory);
         ToggleSortCommand = new ReactiveCommand(ToggleSort);
         OpenFileHistoryCommand = new ReactiveCommand(OpenFileHistory);
@@ -27,7 +27,7 @@ public class FileHistoryViewModel
 
     private async ValueTask OpenFileHistory(Unit arg1, CancellationToken arg2)
     {
-        await _core.MainWindows.ActiveWindow.CurrentValue.Mapper.ShowRecentHistoryFile().ConfigureAwait(false);
+        await _vm.Mapper.ShowRecentHistoryFile().ConfigureAwait(false);
     }
 
     private void ToggleSort(Unit obj)
@@ -57,7 +57,7 @@ public class FileHistoryViewModel
         
         HasPinnedEntries.Value = pinnedEntries.Any();
         
-        var currentFilePath = _core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.Value?.Model?.FileInfo?.FullName;
+        var currentFilePath = _vm.WindowTabs.ActiveTab.Value?.Model?.FileInfo?.FullName;
         
         foreach (var entry in pinnedEntries)
         {
@@ -70,7 +70,7 @@ public class FileHistoryViewModel
                 true, 
                 isCurrentItem,
                 -1, 
-                _core);
+                _vm);
             PinnedEntries.Add(pinnedEntry);
         }
 
@@ -90,7 +90,7 @@ public class FileHistoryViewModel
                     false, 
                     isCurrentItem,
                     index, 
-                    _core);
+                    _vm);
                 Entries.Add(entry);
             }
         }
@@ -110,7 +110,7 @@ public class FileHistoryViewModel
                     false, 
                     isCurrentItem,
                     index,
-                    _core);
+                    _vm);
                 Entries.Add(unpinnedEntry);
             }
         }

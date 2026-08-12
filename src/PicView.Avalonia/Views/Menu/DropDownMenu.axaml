@@ -6,8 +6,8 @@
     xmlns:gallery="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:CoreViewModel"
-    IsOpen="{CompiledBinding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value}">
+    x:DataType="viewModels:MainWindowViewModel"
+    IsOpen="{CompiledBinding TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value}">
 
     <Border
         x:Name="MainBorder"
@@ -22,7 +22,7 @@
             <Carousel
                 x:Name="GalleryCarousel"
                 DockPanel.Dock="Top"
-                SelectedIndex="{Binding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.GalleryCarouselIndex.Value}">
+                SelectedIndex="{Binding TopTitlebarViewModel.DropDownMenu.GalleryCarouselIndex.Value}">
                 <Carousel.PageTransition>
                     <CompositePageTransition>
                         <PageSlide Orientation="Horizontal" Duration="0:00:00.200" />
@@ -31,7 +31,7 @@
                 <Carousel.Items>
                     <DockPanel
                         VerticalAlignment="Top"
-                        IsVisible="{Binding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.IsGalleryCarouselVisible.Value}"
+                        IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsGalleryCarouselVisible.Value}"
                         LastChildFill="True">
 
                         <customControls:IconButton
@@ -41,7 +41,7 @@
                             BorderBrush="{DynamicResource MainBorderColor}"
                             BorderThickness="0,0,1,0"
                             Classes="noBorderHover"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.OpenGalleryOptions}"
+                            Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenGalleryOptions}"
                             CornerRadius="0,8,0,0"
                             Data="{StaticResource FilledArrowRightGeometry}"
                             DockPanel.Dock="Right"
@@ -55,7 +55,7 @@
                             Background="Transparent"
                             Classes="altHover"
                             Click="Close_OnClick"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.ToggleGalleryCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.ToggleGalleryCommand}"
                             CornerRadius="8,0,0,0"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource GalleryImage}"
@@ -74,7 +74,7 @@
                                 BorderBrush="{DynamicResource MainBorderColor}"
                                 BorderThickness="0,0,1,0"
                                 Classes="noBorderHover"
-                                Command="{CompiledBinding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.CloseGalleryOptions}"
+                                Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseGalleryOptions}"
                                 CornerRadius="8,0,0,0"
                                 Data="{StaticResource FilledArrowLeftGeometry}"
                                 Foreground="{DynamicResource MainTextColor}"
@@ -95,7 +95,7 @@
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
                             CornerRadius="8,0,0,0"
                             Foreground="{DynamicResource MainTextColor}"
@@ -103,14 +103,14 @@
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
-                            IsEnabled="{CompiledBinding !MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value}"
+                            IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value}"
                             Text="{CompiledBinding Translation.ShowDockedGalleryAtBottom.Value}" />
                         <customControls:TextIconButton
                             x:Name="TopDockButton"
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Top}"
                             CornerRadius="8,0,0,0"
                             Foreground="{DynamicResource MainTextColor}"
@@ -118,14 +118,14 @@
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
-                            IsEnabled="{CompiledBinding !MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.IsTopDocked.Value}"
+                            IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsTopDocked.Value}"
                             Text="{CompiledBinding Translation.ShowDockedGalleryAtTop.Value}" />
                         <customControls:TextIconButton
                             x:Name="RightDockButton"
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Right}"
                             CornerRadius="8,0,0,0"
                             Foreground="{DynamicResource MainTextColor}"
@@ -133,14 +133,14 @@
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
-                            IsEnabled="{CompiledBinding !MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.IsRightDocked.Value}"
+                            IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsRightDocked.Value}"
                             Text="{CompiledBinding Translation.ShowDockedGalleryToTheRight.Value}" />
                         <customControls:TextIconButton
                             x:Name="LeftDockButton"
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Left}"
                             CornerRadius="8,0,0,0"
                             Foreground="{DynamicResource MainTextColor}"
@@ -148,21 +148,21 @@
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
-                            IsEnabled="{CompiledBinding !MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.IsLeftDocked.Value}"
+                            IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsLeftDocked.Value}"
                             Text="{CompiledBinding Translation.ShowDockedGalleryToTheLeft.Value}" />
                         <customControls:TextIconButton
                             x:Name="HideDockedButton"
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.CloseGalleryCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.CloseGalleryCommand}"
                             CornerRadius="8,0,0,0"
                             Data="{StaticResource CloseGeometry}"
                             Foreground="{DynamicResource MainTextColor}"
                             IconHeight="12"
                             IconMargin="0,0,7,0"
                             IconWidth="12"
-                            IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}"
+                            IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}"
                             Text="{CompiledBinding Translation.HideDockedGallery.Value}" />
                     </StackPanel>
                 </Carousel.Items>
@@ -172,8 +172,8 @@
             <Carousel
                 x:Name="SlideshowCarousel"
                 DockPanel.Dock="Top"
-                IsEnabled="{Binding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
-                SelectedIndex="{Binding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.SlideshowCarouselIndex.Value}">
+                IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
+                SelectedIndex="{Binding TopTitlebarViewModel.DropDownMenu.SlideshowCarouselIndex.Value}">
                 <Carousel.PageTransition>
                     <CompositePageTransition>
                         <PageSlide Orientation="Horizontal" Duration="0:00:00.200" />
@@ -182,7 +182,7 @@
                 <Carousel.Items>
                     <DockPanel
                         VerticalAlignment="Top"
-                        IsVisible="{Binding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.IsSlideshowCarouselVisible.Value}"
+                        IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsSlideshowCarouselVisible.Value}"
                         LastChildFill="True">
 
                         <customControls:IconButton
@@ -192,7 +192,7 @@
                             BorderBrush="{DynamicResource MainBorderColor}"
                             BorderThickness="0,0,1,0"
                             Classes="noBorderHover"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.OpenSlideshowOptions}"
+                            Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenSlideshowOptions}"
                             Data="{StaticResource FilledArrowRightGeometry}"
                             DockPanel.Dock="Right"
                             Foreground="{DynamicResource MainTextColor}"
@@ -206,7 +206,7 @@
                             Classes="altHover"
                             Click="Close_OnClick"
                             ClickMode="Release"
-                            Command="{Binding MainWindows.ActiveWindow.Value.SlideshowCommand}"
+                            Command="{Binding SlideshowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource SlideshowImage}"
                             IconHeight="14"
@@ -224,7 +224,7 @@
                                 BorderBrush="{DynamicResource MainBorderColor}"
                                 BorderThickness="0,0,1,0"
                                 Classes="noBorderHover"
-                                Command="{CompiledBinding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.CloseSlideshowOptions}"
+                                Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseSlideshowOptions}"
                                 CornerRadius="8,0,0,0"
                                 Data="{StaticResource FilledArrowLeftGeometry}"
                                 Foreground="{DynamicResource MainTextColor}"
@@ -334,7 +334,7 @@
             </Carousel>
 
             <!--  Tool windows Carousel  -->
-            <Carousel DockPanel.Dock="Top" SelectedIndex="{Binding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.ToolWindowsCarouselIndex.Value}">
+            <Carousel DockPanel.Dock="Top" SelectedIndex="{Binding TopTitlebarViewModel.DropDownMenu.ToolWindowsCarouselIndex.Value}">
                 <Carousel.PageTransition>
                     <CompositePageTransition>
                         <PageSlide Orientation="Horizontal" Duration="0:00:00.200" />
@@ -343,7 +343,7 @@
                 <Carousel.Items>
                     <DockPanel
                         VerticalAlignment="Top"
-                        IsVisible="{Binding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.IsToolWindowsCarouselVisible.Value}"
+                        IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsToolWindowsCarouselVisible.Value}"
                         LastChildFill="True">
 
                         <customControls:IconButton
@@ -353,7 +353,7 @@
                             BorderBrush="{DynamicResource MainBorderColor}"
                             BorderThickness="0,0,1,0"
                             Classes="noBorderHover"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.OpenToolWindowsOptions}"
+                            Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenToolWindowsOptions}"
                             Data="{StaticResource FilledArrowRightGeometry}"
                             DockPanel.Dock="Right"
                             Foreground="{DynamicResource MainTextColor}"
@@ -366,7 +366,7 @@
                             Background="Transparent"
                             Classes="altHover"
                             ClickMode="Release"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.OpenToolWindowsOptions}"
+                            Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenToolWindowsOptions}"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource BrushImage}"
                             IconHeight="14"
@@ -384,7 +384,7 @@
                                 BorderBrush="{DynamicResource MainBorderColor}"
                                 BorderThickness="0,0,1,0"
                                 Classes="noBorderHover"
-                                Command="{CompiledBinding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.CloseToolWindowsOptions}"
+                                Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseToolWindowsOptions}"
                                 CornerRadius="8,0,0,0"
                                 Data="{StaticResource FilledArrowLeftGeometry}"
                                 Foreground="{DynamicResource MainTextColor}"
@@ -408,7 +408,7 @@
                             Background="Transparent"
                             Classes="altHover"
                             Click="Close_OnClick"
-                            Command="{Binding MainWindows.ActiveWindow.Value.EffectsWindowCommand}"
+                            Command="{Binding EffectsWindowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource SparklesImage}"
                             IconHeight="14"
@@ -425,7 +425,7 @@
                             Background="Transparent"
                             Classes="altHover"
                             Click="Close_OnClick"
-                            Command="{Binding MainWindows.ActiveWindow.Value.ResizeWindowCommand}"
+                            Command="{Binding ResizeWindowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource BatchResizeImage}"
                             IconHeight="14"
@@ -440,7 +440,7 @@
                             Background="Transparent"
                             Classes="altHover"
                             Click="Close_OnClick"
-                            Command="{Binding MainWindows.ActiveWindow.Value.BatchResizeWindowCommand}"
+                            Command="{Binding BatchResizeWindowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource BatchResizeImage}"
                             IconHeight="14"
@@ -455,7 +455,7 @@
                             Background="Transparent"
                             Classes="altHover"
                             Click="Close_OnClick"
-                            Command="{Binding MainWindows.ActiveWindow.Value.ImageInfoWindowCommand}"
+                            Command="{Binding ImageInfoWindowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource CameraImage}"
                             IconHeight="14"
@@ -470,7 +470,7 @@
                             Background="Transparent"
                             Classes="altHover"
                             Click="Close_OnClick"
-                            Command="{Binding MainWindows.ActiveWindow.Value.CropCommand}"
+                            Command="{Binding CropCommand}"
                             CornerRadius="0,0,8,8"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource CropImage}"
@@ -483,7 +483,7 @@
             </Carousel>
 
             <!--  Settings Carousel  -->
-            <Carousel DockPanel.Dock="Top" SelectedIndex="{Binding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.SettingsCarouselIndex.Value}">
+            <Carousel DockPanel.Dock="Top" SelectedIndex="{Binding TopTitlebarViewModel.DropDownMenu.SettingsCarouselIndex.Value}">
                 <Carousel.PageTransition>
                     <CompositePageTransition>
                         <PageSlide Orientation="Horizontal" Duration="0:00:00.200" />
@@ -492,7 +492,7 @@
                 <Carousel.Items>
                     <DockPanel
                         VerticalAlignment="Top"
-                        IsVisible="{Binding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.IsSettingsCarouselVisible.Value}"
+                        IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsSettingsCarouselVisible.Value}"
                         LastChildFill="True">
 
                         <!--  Expand into settings  -->
@@ -503,7 +503,7 @@
                             BorderBrush="{DynamicResource MainBorderColor}"
                             BorderThickness="0,0,1,0"
                             Classes="noBorderHover"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.OpenSettingsOptions}"
+                            Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenSettingsOptions}"
                             Data="{StaticResource FilledArrowRightGeometry}"
                             DockPanel.Dock="Right"
                             Foreground="{DynamicResource MainTextColor}"
@@ -518,7 +518,7 @@
                             Classes="altHover"
                             Click="Close_OnClick"
                             ClickMode="Release"
-                            Command="{CompiledBinding MainWindows.ActiveWindow.Value.SettingsWindowCommand}"
+                            Command="{CompiledBinding SettingsWindowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource CogImage}"
                             IconHeight="14"
@@ -538,7 +538,7 @@
                                 BorderBrush="{DynamicResource MainBorderColor}"
                                 BorderThickness="0,0,1,0"
                                 Classes="noBorderHover"
-                                Command="{CompiledBinding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.CloseSettingsOptions}"
+                                Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseSettingsOptions}"
                                 CornerRadius="8,0,0,0"
                                 Data="{StaticResource FilledArrowLeftGeometry}"
                                 Foreground="{DynamicResource MainTextColor}"
@@ -561,9 +561,9 @@
                             Padding="7,0"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{Binding MainWindows.ActiveWindow.Value.AutoFitWindowCommand}"
+                            Command="{Binding AutoFitWindowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
-                            IsChecked="{Binding MainWindows.ActiveWindow.Value.IsAutoFit.Value, Mode=TwoWay}"
+                            IsChecked="{Binding IsAutoFit.Value, Mode=TwoWay}"
                             Text="{Binding Translation.AutoFitWindow.Value}"
                             TextMargin="0,0,7,0"
                             ToolTip.Tip="{CompiledBinding Translation.AutoFitWindow.Value,
@@ -575,9 +575,9 @@
                             Padding="7,0"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{Binding MainWindows.ActiveWindow.Value.SetTopMostCommand}"
+                            Command="{Binding SetTopMostCommand}"
                             Foreground="{DynamicResource MainTextColor}"
-                            IsChecked="{Binding MainWindows.ActiveWindow.Value.IsTopMost.Value, Mode=TwoWay}"
+                            IsChecked="{Binding IsTopMost.Value, Mode=TwoWay}"
                             Text="{Binding Translation.StayTopMost.Value}"
                             TextMargin="0,0,7,0"
                             ToolTip.Tip="{CompiledBinding Translation.StayTopMost.Value,
@@ -589,7 +589,7 @@
                             Padding="7,0"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{Binding MainWindows.ActiveWindow.Value.ToggleLoopingCommand}"
+                            Command="{Binding ToggleLoopingCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=TwoWay}"
                             Text="{Binding Translation.ToggleLooping.Value}"
@@ -603,9 +603,9 @@
                             Padding="7,0"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{Binding MainWindows.ActiveWindow.Value.ToggleScrollCommand}"
+                            Command="{Binding ToggleScrollCommand}"
                             Foreground="{DynamicResource MainTextColor}"
-                            IsChecked="{Binding MainWindows.ActiveWindow.Value.IsScrollingEnabled.Value, Mode=TwoWay}"
+                            IsChecked="{Binding IsScrollingEnabled.Value, Mode=TwoWay}"
                             Text="{Binding Translation.IsScrolling.Value}"
                             TextMargin="0,0,7,0"
                             ToolTip.Tip="{CompiledBinding Translation.ToggleScroll.Value,
@@ -617,9 +617,9 @@
                             Padding="7,0"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{Binding MainWindows.ActiveWindow.Value.ZoomToFitCommand}"
+                            Command="{Binding ZoomToFitCommand}"
                             Foreground="{DynamicResource MainTextColor}"
-                            IsChecked="{Binding MainWindows.ActiveWindow.Value.IsZoomedToFit.Value, Mode=TwoWay}"
+                            IsChecked="{Binding IsZoomedToFit.Value, Mode=TwoWay}"
                             Text="{Binding Translation.ZoomToFit.Value}"
                             TextMargin="0,0,7,0"
                             ToolTip.Tip="{CompiledBinding Translation.ZoomToFit.Value,
@@ -631,9 +631,9 @@
                             Padding="7,0"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{Binding MainWindows.ActiveWindow.Value.SideBySideCommand}"
+                            Command="{Binding SideBySideCommand}"
                             Foreground="{DynamicResource MainTextColor}"
-                            IsChecked="{Binding MainWindows.ActiveWindow.Value.IsSideBySide.Value, Mode=TwoWay}"
+                            IsChecked="{Binding IsSideBySide.Value, Mode=TwoWay}"
                             Text="{Binding Translation.SideBySide.Value}"
                             TextMargin="0,0,7,0"
                             ToolTip.Tip="{CompiledBinding Translation.SideBySideTooltip.Value,
@@ -650,7 +650,7 @@
                             Padding="15,9"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{Binding MainWindows.ActiveWindow.Value.AboutWindowCommand}"
+                            Command="{Binding AboutWindowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource AboutImage}"
                             IconHeight="14"
@@ -666,7 +666,7 @@
                             Padding="15,9"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{Binding MainWindows.ActiveWindow.Value.KeybindingsWindowCommand}"
+                            Command="{Binding KeybindingsWindowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource KeyImage}"
                             IconHeight="14"
@@ -681,7 +681,7 @@
                             Padding="15,9"
                             Background="Transparent"
                             Classes="altHover"
-                            Command="{Binding MainWindows.ActiveWindow.Value.SettingsWindowCommand}"
+                            Command="{Binding SettingsWindowCommand}"
                             CornerRadius="0,0,8,8"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource CogImage}"
@@ -698,7 +698,7 @@
             <DockPanel
                 Margin="0,0,0,5"
                 VerticalAlignment="Top"
-                IsVisible="{CompiledBinding MainWindows.ActiveWindow.Value.TopTitlebarViewModel.DropDownMenu.IsFileHistoryVisible.Value}"
+                IsVisible="{CompiledBinding TopTitlebarViewModel.DropDownMenu.IsFileHistoryVisible.Value}"
                 LastChildFill="False">
 
                 <Rectangle

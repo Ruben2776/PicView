@@ -24,8 +24,6 @@ public class CoreViewModel(
     public AboutViewModel? AboutView { get; set; } // Single about window
     public EffectsViewModel? Effects { get; set; }
     public BatchResizeViewModel? BatchResize { get; set; }
-    public FileHistoryViewModel? FileHistory { get; set; }
-    
     public FileAssociationsViewModel? AssociationsViewModel { get; set; }
     
     // --- Overview models ---
