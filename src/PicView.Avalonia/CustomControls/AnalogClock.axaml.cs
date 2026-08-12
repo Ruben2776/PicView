@@ -51,6 +51,9 @@ public partial class AnalogClock : UserControl
         _isPM = SelectedTime.Hour >= 12;
         _is24Hour = !DateTimeFormatInfo.CurrentInfo.ShortTimePattern.Contains("tt");
 
+        // The AM/PM toggle is meaningless when the culture formats time on a 24-hour clock
+        AmBtn.IsVisible = PmBtn.IsVisible = !_is24Hour;
+
         Loaded += (_, _) =>
         {
             if (_isGenerated)
@@ -65,6 +68,9 @@ public partial class AnalogClock : UserControl
 
             CancelButton.Click += async (_, _) => await Cancel();
             AcceptButton.Click += async (_, _) => await Accept();
+
+            AmBtn.Click += (_, _) => SetMeridiem(false);
+            PmBtn.Click += (_, _) => SetMeridiem(true);
 
             GenerateClockFace();
 
@@ -130,7 +136,6 @@ public partial class AnalogClock : UserControl
         const double textFontSize = 14;
         var numberRadius = ClockRadius - arcHalfThickness - ClockMargin;
         var diameter = ClockRadius * 2;
-        var panel = new Panel();
 
         _centerPoint = new Point(ClockRadius, ClockRadius);
 
@@ -168,27 +173,37 @@ public partial class AnalogClock : UserControl
         MainPanel.Children.Add(_elapsedMinutesArc);
 
         // --- Numbers ---
-        var canvas = new Canvas();
         for (var h = 1; h <= 12; h++)
         {
             double angleDeg = h * 30 - 90;
             var angleRad = angleDeg * Math.PI / 180;
             var x = ClockRadius + numberRadius * Math.Cos(angleRad);
             var y = ClockRadius + numberRadius * Math.Sin(angleRad);
-            var text = new TextBlock { Text = h.ToString(), FontSize = textFontSize, Classes = { "txt" } };
-            text.PointerEntered += (_, _) => { text.Foreground = UIHelper.GetSolidColorBrush("SecondaryAccentColor"); };
-            text.PointerExited += (_, _) => { text.Foreground = UIHelper.GetBrush("MainTextColor"); };
+            var btn = new Button
+            {
+                Background = Brushes.Transparent,
+                Classes = { "altHover" },
+                Padding = new Thickness(10,5)
+            };
+            var text = new TextBlock
+            {
+                Text = h.ToString(),
+                FontSize = textFontSize,
+                Classes = { "txt" },
+                Background = Brushes.Transparent 
+            };
+            btn.Content = text;
+            btn.PointerEntered += (_, _) => { text.Foreground = UIHelper.GetSolidColorBrush("SecondaryAccentColor"); };
+            btn.PointerExited += (_, _) => { text.Foreground = UIHelper.GetBrush("MainTextColor"); };
             var h1 = h;
-            text.PointerPressed += (_, _) => { UpdateTimeFromInt(h1); };
+            btn.Click  += (_, _) => { UpdateTimeFromInt(h1); };
             text.Measure(Size.Infinity);
             var size = text.DesiredSize;
-            Canvas.SetLeft(text, x - size.Width / 2);
-            Canvas.SetTop(text, y - size.Height / 2);
-            canvas.Children.Add(text);
+            btn.CornerRadius = new CornerRadius(size.Width);
+            Canvas.SetLeft(btn, x - (size.Width + 20) / 2);
+            Canvas.SetTop(btn, y - (size.Height + 10) / 2);
+            MainCanvas.Children.Add(btn);
         }
-
-        panel.Children.Add(canvas);
-        MainPanel.Children.Add(panel);
 
         CreateClockHands();
     }
@@ -256,9 +271,8 @@ public partial class AnalogClock : UserControl
         Canvas.SetTop(_minuteHand, ClockRadius - _minuteHand.Height);
 
         // Add to existing canvas
-        var canvas = MainPanel.Children.OfType<Panel>().First().Children.OfType<Canvas>().First();
-        canvas.Children.Add(_hourHand);
-        canvas.Children.Add(_minuteHand);
+        MainCanvas.Children.Add(_hourHand);
+        MainCanvas.Children.Add(_minuteHand);
     }
 
     #endregion
@@ -386,6 +400,36 @@ public partial class AnalogClock : UserControl
         DigitalTime.Text = newTime.ToShortTimeString();
 
         UpdateArcOpacity();
+        UpdateAmPmButtons();
+    }
+
+    // ReSharper disable once InconsistentNaming
+    private void SetMeridiem(bool isPM)
+    {
+        if (_isPM == isPM)
+        {
+            return;
+        }
+
+        // AM hours (0-11) and PM hours (12-23) are always 12 apart within the same day
+        var newTime = SelectedTime.AddHours(isPM ? 12 : -12);
+
+        SetCurrentValue(SelectedTimeProperty, newTime);
+        UpdateHands(newTime);
+    }
+
+    private void UpdateAmPmButtons()
+    {
+        if (_is24Hour)
+        {
+            return;
+        }
+
+        var accent = UIHelper.GetSolidColorBrush("AccentColor");
+        var border = UIHelper.GetBrush("MainBorderColor");
+
+        AmBtn.BorderBrush = _isPM ? border : accent;
+        PmBtn.BorderBrush = _isPM ? accent : border;
     }
 
     private void UpdateArcOpacity()
@@ -448,6 +492,7 @@ public partial class AnalogClock : UserControl
         // Update AM/PM state based on DateTime
         _isPM = time.Hour >= 12;
         UpdateArcOpacity();
+        UpdateAmPmButtons();
     }
 
     private void UpdateTimeFromInt(int roundedTime)

@@ -1,45 +1,76 @@
 ﻿<UserControl
     x:Class="PicView.Avalonia.CustomControls.AnalogClock"
     xmlns="https://github.com/avaloniaui"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls">
 
     <StackPanel>
         <StackPanel>
             <Border
+                x:Name="OuterBorder"
+                Padding="15,20,15,15"
                 Background="{DynamicResource MainBackgroundColor}"
                 BorderBrush="{DynamicResource MainBorderColor}"
                 BorderThickness="1,1,1,0"
-                CornerRadius="4,4,0,0"
-                Padding="15,20,15,15"
-                x:Name="OuterBorder">
+                CornerRadius="4,4,0,0">
 
                 <Panel
-                    Height="300"
+                    x:Name="ClockContainer"
                     Width="300"
-                    x:Name="ClockContainer">
+                    Height="300">
                     <Ellipse
+                        x:Name="CircularBorder"
                         Fill="{DynamicResource MenuBackgroundColor}"
                         Stroke="{DynamicResource MainBorderColor}"
-                        StrokeThickness="1"
-                        x:Name="CircularBorder" />
+                        StrokeThickness="1" />
                     <Panel
-                        Height="300"
+                        x:Name="MainPanel"
                         Width="300"
-                        x:Name="MainPanel">
+                        Height="300">
                         <Ellipse
-                            Fill="{DynamicResource MainTextColorFaded}"
+                            Width="20"
                             Height="20"
-                            StrokeThickness="2"
-                            Width="20" />
+                            Fill="{DynamicResource MainTextColorFaded}"
+                            StrokeThickness="2" />
 
                         <TextBlock
-                            Classes="txt txtShadow"
-                            FontSize="14"
+                            x:Name="DigitalTime"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            ZIndex="1"
-                            x:Name="DigitalTime" />
+                            Classes="txt txtShadow"
+                            FontSize="14"
+                            ZIndex="1" />
+
+                        <Canvas x:Name="MainCanvas" />
+
+                        <StackPanel
+                            Margin="0,0,-22,-10"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Orientation="Horizontal">
+                            <Button
+                                x:Name="AmBtn"
+                                Padding="10,5"
+                                Background="{DynamicResource MenuButtonColor}"
+                                BorderBrush="{DynamicResource MainBorderColor}"
+                                BorderThickness="1"
+                                Classes="altHover"
+                                CornerRadius="4"
+                                ZIndex="1">
+                                <TextBlock Classes="txt" Text="AM" />
+                            </Button>
+                            <Button
+                                x:Name="PmBtn"
+                                Padding="10,5"
+                                Background="{DynamicResource MenuButtonColor}"
+                                BorderBrush="{DynamicResource MainBorderColor}"
+                                BorderThickness="1"
+                                Classes="altHover"
+                                CornerRadius="4"
+                                ZIndex="1">
+                                <TextBlock Classes="txt" Text="PM" />
+                            </Button>
+                        </StackPanel>
                     </Panel>
                 </Panel>
             </Border>
@@ -50,34 +81,34 @@
                 CornerRadius="0,0,4,4">
                 <StackPanel Orientation="Horizontal">
                     <customControls:IconButton
+                        x:Name="CancelButton"
+                        Height="30"
                         Background="Transparent"
                         Classes="altHover"
                         CornerRadius="0,0,0,4"
                         Data="{StaticResource CloseGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
-                        Height="30"
                         IconHeight="12"
-                        IconWidth="12"
-                        x:Name="CancelButton" />
+                        IconWidth="12" />
                     <customControls:IconButton
+                        x:Name="AcceptButton"
+                        Height="30"
                         Background="Transparent"
                         Classes="hover"
                         CornerRadius="0,0,4,0"
                         Foreground="{DynamicResource MainTextColor}"
-                        Height="30"
                         Icon="{StaticResource CheckmarkImage}"
                         IconHeight="14"
-                        IconWidth="14"
-                        x:Name="AcceptButton" />
+                        IconWidth="14" />
                 </StackPanel>
             </Border>
         </StackPanel>
         <Polygon
+            x:Name="DownArrow"
             Fill="{DynamicResource MenuBackgroundColor}"
             Points="0,0 15,30, 30,0"
             Stroke="{DynamicResource MainBorderColor}"
-            StrokeThickness="1"
-            x:Name="DownArrow" />
+            StrokeThickness="1" />
     </StackPanel>
 
 </UserControl>
