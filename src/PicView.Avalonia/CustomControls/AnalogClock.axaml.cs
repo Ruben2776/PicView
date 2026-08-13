@@ -142,9 +142,11 @@ public partial class AnalogClock : UserControl
 
         _remainingHoursArc = GetArc(0, 360, diameter - ClockMargin * 4, false, 0.3, "MainBorderColor");
         _remainingHoursArc.Name = "remainingHoursArc";
+        _remainingHoursArc.Cursor = new Cursor(StandardCursorType.Hand);
 
         _remainingMinutesArc = GetArc(0, 360, diameter, false, 0.3, "MainBorderColor");
         _remainingMinutesArc.Name = "remainingMinutesArc";
+        _remainingMinutesArc.Cursor = new Cursor(StandardCursorType.Hand);
 
         _elapsedHoursArc = GetArc(-90, 0, diameter - ClockMargin * 4, true, 1, "AccentColor");
         _elapsedHoursArc.Name = "elapsedHoursArc";
@@ -162,10 +164,16 @@ public partial class AnalogClock : UserControl
         _elapsedHoursArc.PointerPressed += ElapsedHoursArc_PointerPressed;
         _elapsedHoursArc.PointerReleased += ElapsedArc_PointerReleased;
         _elapsedHoursArc.PointerMoved += ElapsedHoursArc_PointerMoved;
+        _remainingHoursArc.PointerPressed += ElapsedHoursArc_PointerPressed;
+        _remainingHoursArc.PointerReleased += ElapsedArc_PointerReleased;
+        _remainingHoursArc.PointerMoved += ElapsedHoursArc_PointerMoved;
 
         _elapsedMinutesArc.PointerPressed += ElapsedMinutesArc_PointerPressed;
         _elapsedMinutesArc.PointerReleased += ElapsedArc_PointerReleased;
         _elapsedMinutesArc.PointerMoved += ElapsedMinutesArc_PointerMoved;
+        _remainingMinutesArc.PointerPressed += ElapsedMinutesArc_PointerPressed;
+        _remainingMinutesArc.PointerReleased += ElapsedArc_PointerReleased;
+        _remainingMinutesArc.PointerMoved += ElapsedMinutesArc_PointerMoved;
 
         MainPanel.Children.Add(_remainingHoursArc);
         MainPanel.Children.Add(_remainingMinutesArc);
@@ -583,6 +591,8 @@ public partial class AnalogClock : UserControl
     private void ElapsedHoursArc_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
         _isDraggingHours = true;
+        var point = e.GetPosition(MainPanel);
+        UpdateArcFromPoint(point, true);
         e.Pointer.Capture(sender as IInputElement);
     }
 
@@ -591,6 +601,8 @@ public partial class AnalogClock : UserControl
     {
         _isDraggingMinutes = true;
         _previousMinuteAngle = -1;
+        var point = e.GetPosition(MainPanel);
+        UpdateArcFromPoint(point, false);
         e.Pointer.Capture(sender as IInputElement);
     }
 
