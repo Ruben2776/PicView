@@ -22,9 +22,13 @@ public static class GetThumbnails
                 return null;
             }
 
-            if (fileInfo.IsCommon() && OperatingSystem.IsWindows())
+            if (fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
             {
-                return GetShellThumb(fileInfo.FullName, 0, (int)height);
+                var shellThumb = GetShellThumb(fileInfo.FullName, 0, (int)height);
+                if (shellThumb is not null)
+                {
+                    return shellThumb;
+                }
             }
             
             using var magick = new MagickImage();
@@ -59,9 +63,13 @@ public static class GetThumbnails
         }
         var height = Settings.Gallery.DockedGalleryItemSize > Settings.Gallery.ExpandedGalleryItemSize ?
             Settings.Gallery.DockedGalleryItemSize : Settings.Gallery.ExpandedGalleryItemSize;
-        if (fileInfo.IsCommon() && OperatingSystem.IsWindows())
+        if (fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
         {
-            return GetShellThumb(fileInfo.FullName, 0, (int)height);
+            var shellThumb = GetShellThumb(fileInfo.FullName, 0, (int)height);
+            if (shellThumb is not null)
+            {
+                return shellThumb;
+            }
         }
         return GetExifThumb(fileInfo.FullName);
     }
@@ -97,7 +105,8 @@ public static class GetThumbnails
     /// <summary>
     /// Attempts to get a shell/OS-level thumbnail for the given file path.
     /// On Windows, this uses the IShellItemImageFactory COM interface.
-    /// Returns null on non-Windows platforms or on failure.
+    /// On macOS, this uses ImageIO (CGImageSource).
+    /// Returns null on unsupported platforms or on failure.
     /// </summary>
     public static WriteableBitmap? GetShellThumb(string path, int width, int height)
     {

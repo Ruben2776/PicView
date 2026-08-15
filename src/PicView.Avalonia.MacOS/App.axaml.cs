@@ -17,6 +17,7 @@ using PicView.Core.MacOS;
 using PicView.Core.MacOS.Cursor;
 using PicView.Core.MacOS.FileAssociation;
 using PicView.Core.MacOS.FileFunctions;
+using PicView.Core.MacOS.Thumbnails;
 using PicView.Core.MacOS.Wallpaper;
 using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
@@ -250,12 +251,9 @@ public class App : Application, IPlatformSpecificService
         return !File.Exists(path); 
     }
 
-    // TODO: Implement macOS thumbnail extraction (e.g. via Quick Look)
     public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
     {
-        pixelWidth = 0;
-        pixelHeight = 0;
-        return null;
+        return ShellThumbnailNative.GetShellThumbnailBytes(path, width, height, out pixelWidth, out pixelHeight);
     }
     
     #endregion
