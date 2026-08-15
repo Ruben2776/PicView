@@ -54,7 +54,7 @@ public static class FileTypeResolver
     ///fd </returns>
     public static FileTypeStruct? CheckIfLoadableString(string s)
     {
-        if (s.StartsWith('"') && s.EndsWith('"'))
+        if (s.StartsWith('"', StringComparison.OrdinalIgnoreCase) && s.EndsWith('"', StringComparison.OrdinalIgnoreCase))
         {
             s = s[1..^1];
         }
@@ -66,7 +66,7 @@ public static class FileTypeResolver
         if (Uri.TryCreate(s, UriKind.Absolute, out var uri) && uri.IsFile)
         {
             path = uri.LocalPath; // Decodes the path correctly (e.g., "%5B%5D" -> "[]")
-            path = path.Replace("%20", " ");
+            path = path.Replace("%20", " ", StringComparison.OrdinalIgnoreCase);
         }
 
         // Use the decoded 'path' variable for file system checks
@@ -85,10 +85,8 @@ public static class FileTypeResolver
         {
             return new FileTypeStruct(LoadAbleFileType.Web, s);
         }
-
-        var base64String = Base64Decoder.IsBase64String(s);
-
-        if (!string.IsNullOrEmpty(base64String))
+        
+        if (Base64Decoder.IsBase64String(s, out var base64String))
         {
             return new FileTypeStruct(LoadAbleFileType.Base64, base64String);
         }

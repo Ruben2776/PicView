@@ -81,31 +81,60 @@ public static class GetImage
         return bitmap;
     }
     
-    public static async ValueTask<Bitmap?> GetBase64ImageAsync(FileInfo fileInfo)
+    public static async ValueTask<Bitmap?> GetBase64ImageAsync(FileInfo fileInfo, CancellationToken ct = default)
     {
-        var base64String = await File.ReadAllTextAsync(fileInfo.FullName).ConfigureAwait(false);
-        var base64Data = Convert.FromBase64String(base64String);
-        var magickImage = new MagickImage
+        try
         {
-            Quality = 100,
-            ColorSpace = ColorSpace.Transparent
-        };
+            var base64String = await File.ReadAllTextAsync(fileInfo.FullName, ct).ConfigureAwait(false);
+            return await GetBase64ImageAsync(base64String, ct);
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetImage), nameof(GetBase64ImageAsync), e);
+            return null;
+        }
+    }
+    
+    public static async ValueTask<Bitmap?> GetBase64ImageAsync(string base64String, CancellationToken ct = default)
+    {
+        try 
+        {
+            var base64Data = Convert.FromBase64String(base64String);
+            var magickImage = new MagickImage
+            {
+                Quality = 100,
+                ColorSpace = ColorSpace.Transparent
+            };
 
-        var readSettings = new MagickReadSettings
-        {
-            Density = new Density(300, 300),
-            BackgroundColor = MagickColors.Transparent
-        };
+            var readSettings = new MagickReadSettings
+            {
+                Density = new Density(300, 300),
+                BackgroundColor = MagickColors.Transparent
+            };
         
-        await magickImage.ReadAsync(new MemoryStream(base64Data), readSettings).ConfigureAwait(false);
+            await magickImage.ReadAsync(new MemoryStream(base64Data), readSettings, ct).ConfigureAwait(false);
 
-        // Rotate image according to EXIF orientation
-        magickImage.AutoOrient();
-        TransformToSrgbIfNeeded(magickImage);
+            // Rotate image according to EXIF orientation
+            magickImage.AutoOrient();
+            TransformToSrgbIfNeeded(magickImage);
 
-        var bitmap = magickImage.ToWriteableBitmap();
-        magickImage.Dispose();
-        return bitmap;
+            var bitmap = magickImage.ToWriteableBitmap();
+            magickImage.Dispose();
+            return bitmap;
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetImage), nameof(GetBase64ImageAsync), e);
+            return null;
+        }
     }
     
     public static MagickImage CreateAndPingMagickImage(FileInfo fileInfo)

@@ -5,6 +5,7 @@ using Avalonia.Svg.Skia;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
@@ -161,21 +162,18 @@ public static class UpdateImage
     public static void SetSingleImage(MainWindowViewModel vm, MainWindow mainWindow, Bitmap image, SingleImageType type, string name)
     {
         var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (tabViewModel?.CurrentView?.CurrentValue is not ImageViewer imageViewer)
-        {
-            return;
-        }
-        
         tabViewModel.Image.Value = image;
         tabViewModel.ImageType.Value = ImageType.Bitmap;
-        
-        imageViewer.ResetZoomSlim();
-        imageViewer.Rotate(0);
 
         tabViewModel.Gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
 
         var width = (uint)image.PixelSize.Width;
         var height = (uint)image.PixelSize.Height;
+
+        tabViewModel.Model.PixelWidth = width;
+        tabViewModel.Model.PixelHeight = height;
+
+        tabViewModel.SingleImageType = type;
         
         if (Settings.WindowProperties.AutoFit)
         {
@@ -183,17 +181,41 @@ public static class UpdateImage
                 WindowResizeReason.Application,
                 mainWindow, vm);
         }
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            if (tabViewModel.CurrentView?.CurrentValue is not ImageViewer imageViewer)
+            {
+                tabViewModel.CurrentView.Value = new ImageViewer();
+                WindowResizing.SetSize(width, height, 0,0,
+                    WindowResizeReason.Application,
+                    mainWindow, vm);
+                return;
+            }
+
+            imageViewer.ResetZoomSlim();
+            imageViewer.Rotate(0);
+        });
+        
         var zoom = tabViewModel.ZoomLevel.CurrentValue;
         var windowTitles = ImageTitleFormatter.GenerateTitleForSingleImage(width, height, name, zoom);
         tabViewModel.WindowTitle.Value = windowTitles.TitleWithAppName;
         tabViewModel.Title.Value = windowTitles.BaseTitle;
         tabViewModel.TitleTooltip.Value = windowTitles.FilePathTitle;
-
-        tabViewModel.Model.PixelWidth = width;
-        tabViewModel.Model.PixelHeight = height;
-
-        tabViewModel.SingleImageType = type;
         
         tabViewModel.DisposeImageIterator();
+    }
+
+    public static async ValueTask SetSingeBase64ImageAsync(string base64, MainWindowViewModel vm, MainWindow mainWindow, CancellationToken ct)
+    {
+        var base64Model =
+            await GetImageModel.GetBase64ImageModelAsync(base64, ct)
+                .ConfigureAwait(false);
+
+        if (base64Model is null)
+        {
+            return;
+        }
+        
+        SetSingleImage(vm, mainWindow, base64Model.Image as Bitmap, SingleImageType.Base64, TranslationManager.Translation.Base64Image);
     }
 }

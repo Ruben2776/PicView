@@ -2,7 +2,7 @@
 
 namespace PicView.Core.Navigation.Interfaces;
 
-public interface IImageLoader
+public interface IImageModelLoader
 {
     ValueTask<ImageModel> GetImageModelAsync(FileInfo file, CancellationToken ct);
 }

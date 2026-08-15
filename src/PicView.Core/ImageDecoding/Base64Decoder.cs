@@ -52,38 +52,46 @@ public static class Base64Decoder
     }
 
     /// <summary>
-    /// Determines whether a string is a valid Base64 string.
+    /// Determines if the specified string is a valid Base64 encoded string, optionally without a data URI scheme.
     /// </summary>
-    /// <param name="base64">The string to check.</param>
-    /// <returns>String as a valid Base64 string; otherwise, "".</returns>
-    public static string IsBase64String(string base64)
+    /// <param name="source">The string to validate as a Base64 encoded string.</param>
+    /// <param name="result">The processed Base64 string without a data URI scheme if the input is valid, otherwise null.</param>
+    /// <returns>True if the string is a valid Base64 encoded string, otherwise false.</returns>
+    public static bool IsBase64String(string source, out string? result)
     {
-        if (string.IsNullOrEmpty(base64))
+        if (string.IsNullOrEmpty(source))
         {
-            return "";
+            result = null;
+            return false;
         }
 
-        if (base64.StartsWith("data:image/webp;base64,", StringComparison.OrdinalIgnoreCase))
+        if (source.StartsWith("data:image/webp;base64,", StringComparison.OrdinalIgnoreCase))
         {
-            base64 = base64["data:image/webp;base64,".Length..];
+            source = source["data:image/webp;base64,".Length..];
         }
 
-        if (base64.StartsWith("data:image/jpeg;base64,", StringComparison.OrdinalIgnoreCase))
+        if (source.StartsWith("data:image/jpeg;base64,", StringComparison.OrdinalIgnoreCase))
         {
-            base64 = base64["data:image/jpeg;base64,".Length..];
+            source = source["data:image/jpeg;base64,".Length..];
         }
         
-        if (base64.StartsWith("data:image/png;base64,", StringComparison.OrdinalIgnoreCase))
+        if (source.StartsWith("data:image/png;base64,", StringComparison.OrdinalIgnoreCase))
         {
-            base64 = base64["data:image/png;base64,".Length..];
+            source = source["data:image/png;base64,".Length..];
         }
         
-        if (base64.StartsWith("data:image/gif;base64,", StringComparison.OrdinalIgnoreCase))
+        if (source.StartsWith("data:image/gif;base64,", StringComparison.OrdinalIgnoreCase))
         {
-            base64 = base64["data:image/gif;base64,".Length..];
+            source = source["data:image/gif;base64,".Length..];
         }
 
-        var buffer = new Span<byte>(new byte[base64.Length]);
-        return Convert.TryFromBase64String(base64, buffer, out _) ? base64 : "";
+        var buffer = new Span<byte>(new byte[source.Length]);
+        if (Convert.TryFromBase64String(source, buffer, out _))
+        {
+            result = source;
+            return true;
+        }
+        result = null;
+        return false;
     }
 }

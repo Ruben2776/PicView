@@ -23,7 +23,7 @@ public static class GetImageModel
     /// <param name="fileInfo">The file information of the image to process.</param>
     /// <param name="magickImage">An optional <see cref="MagickImage"/> instance. If null, a new instance will be created internally.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the constructed <see cref="ImageModel"/>.</returns>
-    public static async ValueTask<ImageModel> GetImageModelAsync(FileInfo fileInfo, MagickImage? magickImage)
+    public static async ValueTask<ImageModel?> GetImageModelAsync(FileInfo fileInfo, MagickImage? magickImage, CancellationToken ct = default)
     {
         if (fileInfo is null)
         {
@@ -47,8 +47,7 @@ public static class GetImageModel
             
             if (fileInfo.Extension.Equals(".b64", StringComparison.InvariantCultureIgnoreCase))
             {
-                await ProcessBase64Async(fileInfo, MagickFormat.Data, imageModel).ConfigureAwait(false);
-                return imageModel;
+                return await GetBase64ImageModelAsync(fileInfo, ct).ConfigureAwait(false);
             }
 
             // Process the image based on type
@@ -154,6 +153,46 @@ public static class GetImageModel
             }
         }
     }
+    
+    public static async ValueTask<ImageModel?> GetBase64ImageModelAsync(FileInfo fileInfo, CancellationToken ct)
+    {
+        try
+        {
+            var base64DataImage = await GetImage.GetBase64ImageAsync(fileInfo, ct).ConfigureAwait(false);
+            var model = new ImageModel();
+            SetBitmapProperties(base64DataImage, model);
+            return model;
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetImage), nameof(GetBase64ImageModelAsync), e);
+            return null;
+        }
+    }
+    
+    public static async ValueTask<ImageModel?> GetBase64ImageModelAsync(string base64String, CancellationToken ct)
+    {
+        try
+        {
+            var base64DataImage = await GetImage.GetBase64ImageAsync(base64String, ct).ConfigureAwait(false);
+            var model = new ImageModel();
+            SetBitmapProperties(base64DataImage, model);
+            return model;
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetImage), nameof(GetBase64ImageModelAsync), e);
+            return null;
+        }
+    }
 
     public static void SetBitmapProperties(Bitmap? bitmap, ImageModel imageModel, ImageType imageType = ImageType.Bitmap)
     {
@@ -241,12 +280,6 @@ public static class GetImageModel
         imageModel.PixelHeight = magickImage.Height;
         imageModel.ImageType = ImageType.Svg;
         imageModel.Image = SvgSource.LoadFromSvg(svgData);
-    }
-
-    private static async ValueTask ProcessBase64Async(FileInfo fileInfo, MagickFormat format, ImageModel imageModel)
-    {
-        var bitmap = await GetImage.GetBase64ImageAsync(fileInfo).ConfigureAwait(false);
-        SetBitmapProperties(bitmap, imageModel);
     }
     
     private static async ValueTask ProcessRawImageAsync(FileInfo fileInfo, ImageModel imageModel, MagickImage magickImage)

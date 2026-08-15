@@ -20,7 +20,7 @@ using R3;
 namespace PicView.Core.Navigation;
 
 public class NavigationService(
-    IImageLoader imageLoader,
+    IImageModelLoader imageModelLoader,
     IImageCache cache,
     IFileWatcherService fileWatcherService,
     IPlatformSpecificService platformService,
@@ -50,7 +50,7 @@ public class NavigationService(
             }
             else
             {
-                model = await imageLoader.GetImageModelAsync(fileInfo, ct.Token).ConfigureAwait(false);
+                model = await imageModelLoader.GetImageModelAsync(fileInfo, ct.Token).ConfigureAwait(false);
             }
             tab.ImageIterator.Files = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
             index = FindIndex(fileInfo, tab);
@@ -74,7 +74,7 @@ public class NavigationService(
                         }
                         else
                         {
-                            secondaryModel = await imageLoader.GetImageModelAsync(secondaryFileInfo, ct.Token).ConfigureAwait(false);
+                            secondaryModel = await imageModelLoader.GetImageModelAsync(secondaryFileInfo, ct.Token).ConfigureAwait(false);
                         }
                         tab.SecondaryModel = secondaryModel;
                         tab.SecondaryImage.Value = secondaryModel.Image;
@@ -238,9 +238,6 @@ public class NavigationService(
                 return true;
             case FileTypeResolver.LoadAbleFileType.Zip:
                 return await LoadFromArchiveAsync(check.Value.Data, tab, ct).ConfigureAwait(false);
-            case FileTypeResolver.LoadAbleFileType.Base64:
-                await LoadFromBase64Async(check.Value.Data, tab, ct).ConfigureAwait(false);
-                return true;
             default:
                 return false;
         }
@@ -254,139 +251,86 @@ public class NavigationService(
         }
 
         tab.SetLoading();
+        
+        // Retrieve the temporary directory for the possible previous archive extraction
+        var tempZipDir = tab.ArchiveExtractionService.TempZipDirectory;
 
-        try
+        var preparation = await tab.ArchiveExtractionService.PrepareArchiveAsync(
+            archivePath,
+            platformService.ExtractWithLocalSoftwareAsync,
+            stringComparer).ConfigureAwait(false);
+
+        if (preparation is null || string.IsNullOrEmpty(tab.ArchiveExtractionService.TempZipDirectory))
         {
-            // Retrieve the temporary directory for the possible previous archive extraction
-            var tempZipDir = tab.ArchiveExtractionService.TempZipDirectory;
+            return false;
+        }
 
-            var preparation = await tab.ArchiveExtractionService.PrepareArchiveAsync(
-                archivePath,
-                platformService.ExtractWithLocalSoftwareAsync,
-                stringComparer).ConfigureAwait(false);
+        if (ct.IsCancellationRequested)
+        {
+            return false;
+        }
 
-            if (preparation is null || string.IsNullOrEmpty(tab.ArchiveExtractionService.TempZipDirectory))
+        var prep = preparation.Value;
+
+        if (prep.IsFullyExtracted)
+        {
+            // Local-software extractor already wrote every file to disk; build the file list
+            // from the already-extracted paths so we don't depend on FileListRetriever's
+            // recursion settings.
+            var allFiles = prep.EntryKeys.Select(p => new FileInfo(p)).ToList();
+            if (allFiles.Count is 0)
             {
                 return false;
             }
 
-            if (ct.IsCancellationRequested)
-            {
-                return false;
-            }
+            await RepopulateIterator(allFiles[0], tab, ct, allFiles).ConfigureAwait(false);
 
-            var prep = preparation.Value;
-
-            if (prep.IsFullyExtracted)
-            {
-                // Local-software extractor already wrote every file to disk; build the file list
-                // from the already-extracted paths so we don't depend on FileListRetriever's
-                // recursion settings.
-                var allFiles = prep.EntryKeys.Select(p => new FileInfo(p)).ToList();
-                if (allFiles.Count is 0)
-                {
-                    return false;
-                }
-
-                await RepopulateIterator(allFiles[0], tab, ct, allFiles).ConfigureAwait(false);
-
-                FileHistoryManager.Add(archivePath);
-                tab.ArchiveExtractionService.Cleanup(tempZipDir);
-                return true;
-            }
-
-            // Staged extraction: extract the first entry, navigate to it, then extract the rest in
-            // the background while FileWatcherService inserts each new file into the iterator.
-            var firstKey = prep.EntryKeys[0];
-            var firstPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, firstKey, ct.Token).ConfigureAwait(false);
-
-            if (string.IsNullOrEmpty(firstPath) || ct.IsCancellationRequested)
-            {
-                return false;
-            }
-
-            if (Settings.ImageScaling.ShowImageSideBySide && prep.EntryKeys.Length > 1)
-            {
-                var secondKey = prep.EntryKeys[1];
-                var secondPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, secondKey, ct.Token).ConfigureAwait(false);
-                var seedFiles = new List<FileInfo>
-                {
-                    new(firstPath),
-                    new(secondPath)
-                };
-                await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
-            }
-            else
-            {
-                // Seed the iterator with just the first extracted file. Watching the temp directory
-                // first ensures every subsequent file creation event is captured by FileWatcherService
-                // and inserted in sorted order into the iterator/gallery.
-                var seedFiles = new List<FileInfo> { new(firstPath) };
-                await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
-            }
-
-
-            // Kick off background extraction of remaining entries. FileWatcherService picks them up.
-            if (prep.EntryKeys.Length > 1)
-            {
-                var remainingKeys = prep.EntryKeys.Skip(1).ToArray();
-                var backgroundToken = tab.GetTabCancellation().Token;
-                _ = Task.Run(() => tab.ArchiveExtractionService.ExtractRemainingAsync(archivePath, remainingKeys, backgroundToken), backgroundToken);
-            }
-
+            FileHistoryManager.Add(archivePath);
             tab.ArchiveExtractionService.Cleanup(tempZipDir);
             return true;
         }
-        finally
-        {
-        }
-    }
 
-    public async ValueTask LoadFromBase64Async(string source, TabViewModel tab, CancellationTokenSource ct)
-    {
-        if (string.IsNullOrWhiteSpace(source))
+        // Staged extraction: extract the first entry, navigate to it, then extract the rest in
+        // the background while FileWatcherService inserts each new file into the iterator.
+        var firstKey = prep.EntryKeys[0];
+        var firstPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, firstKey, ct.Token).ConfigureAwait(false);
+
+        if (string.IsNullOrEmpty(firstPath) || ct.IsCancellationRequested)
         {
-            return;
+            return false;
         }
 
-        try
+        if (Settings.ImageScaling.ShowImageSideBySide && prep.EntryKeys.Length > 1)
         {
-            var base64Data = Base64Decoder.IsBase64String(source);
-            if (string.IsNullOrEmpty(base64Data))
+            var secondKey = prep.EntryKeys[1];
+            var secondPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, secondKey, ct.Token).ConfigureAwait(false);
+            var seedFiles = new List<FileInfo>
             {
-                return;
-            }
-
-            var bytes = Convert.FromBase64String(base64Data);
-
-            // Write to a temp file so we can reuse the regular image-loading pipeline.
-            var destPath = TempFileManager.GetNewTempFilePath($"base64_{Guid.NewGuid():N}");
-            await File.WriteAllBytesAsync(destPath, bytes, ct.Token).ConfigureAwait(false);
-
-            if (ct.IsCancellationRequested)
-            {
-                return;
-            }
-
-            tab.ImageIterator?.Dispose();
-
-            var model = await imageLoader.GetImageModelAsync(new FileInfo(destPath), ct.Token).ConfigureAwait(false);
-            tab.Model = model;
-            tab.SecondaryModel = null;
-
-            tab.SingleImageType = SingleImageType.Base64;
-            tab.UpdateTabTitle();
-
-            tab.CanNavigateBackwards.Value = false;
-            tab.CanNavigateForwards.Value = false;
-
-            tab.ArchiveExtractionService.Cleanup();
+                new(firstPath),
+                new(secondPath)
+            };
+            await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
         }
-        catch (Exception e)
+        else
         {
-            DebugHelper.LogDebug(nameof(NavigationService), nameof(LoadFromBase64Async), e);
-            tab.TabTitle.Value = TranslationManager.Translation?.ErrorLoadingImage ?? "Error";
+            // Seed the iterator with just the first extracted file. Watching the temp directory
+            // first ensures every subsequent file creation event is captured by FileWatcherService
+            // and inserted in sorted order into the iterator/gallery.
+            var seedFiles = new List<FileInfo> { new(firstPath) };
+            await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
         }
+
+
+        // Kick off background extraction of remaining entries. FileWatcherService picks them up.
+        if (prep.EntryKeys.Length > 1)
+        {
+            var remainingKeys = prep.EntryKeys.Skip(1).ToArray();
+            var backgroundToken = tab.GetTabCancellation().Token;
+            _ = Task.Run(() => tab.ArchiveExtractionService.ExtractRemainingAsync(archivePath, remainingKeys, backgroundToken), backgroundToken);
+        }
+
+        tab.ArchiveExtractionService.Cleanup(tempZipDir);
+        return true;
     }
 
     public async ValueTask LoadFromUrlAsync(string url, TabViewModel tab, CancellationTokenSource ct)
@@ -438,7 +382,7 @@ public class NavigationService(
                 return;
             }
             
-            var model = await imageLoader.GetImageModelAsync(new FileInfo(destPath), ct.Token).ConfigureAwait(false);
+            var model = await imageModelLoader.GetImageModelAsync(new FileInfo(destPath), ct.Token).ConfigureAwait(false);
             tab.Model = model;
             tab.SecondaryModel = null;
             

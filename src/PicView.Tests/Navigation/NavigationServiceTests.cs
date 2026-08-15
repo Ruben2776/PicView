@@ -12,7 +12,7 @@ namespace PicView.Tests.Navigation;
 
 public class NavigationServiceTests
 {
-    private readonly MockImageLoader _mockImageLoader;
+    private readonly MockImageModelLoader _mockImageModelLoader;
     private readonly MockImageCache _mockCache;
     private readonly MockFileWatcherService _mockFileWatcherService;
     private readonly MockThumbnailLoader _mockThumbnailLoader;
@@ -100,11 +100,21 @@ public class NavigationServiceTests
         }
     }
 
-    private class MockImageLoader : IImageLoader
+    private class MockImageModelLoader : IImageModelLoader
     {
         public ValueTask<ImageModel> GetImageModelAsync(FileInfo file, CancellationToken ct)
         {
             return ValueTask.FromResult(new ImageModel { FileInfo = file });
+        }
+
+        public ValueTask<ImageModel?> GetBase64ImageAsync(FileInfo file, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ValueTask<ImageModel?> GetBase64ImageAsync(string base64String, CancellationToken ct)
+        {
+            throw new NotImplementedException();
         }
     }
 
