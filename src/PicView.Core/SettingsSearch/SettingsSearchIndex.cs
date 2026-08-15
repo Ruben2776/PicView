@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using PicView.Core.Localization;
 
-namespace PicView.Core.Search;
+namespace PicView.Core.SettingsSearch;
 
 public static class SettingsSearchIndex
 {

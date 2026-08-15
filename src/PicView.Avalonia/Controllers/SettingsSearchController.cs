@@ -6,7 +6,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.Main;
-using PicView.Core.Search;
+using PicView.Core.SettingsSearch;
 using PicView.Core.ViewModels;
 using R3;
 

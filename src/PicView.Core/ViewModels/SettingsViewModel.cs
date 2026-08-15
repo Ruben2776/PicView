@@ -5,7 +5,7 @@ using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.ISettings;
 using PicView.Core.Navigation;
-using PicView.Core.Search;
+using PicView.Core.SettingsSearch;
 using R3;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator

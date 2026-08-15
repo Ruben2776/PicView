@@ -1,3 +1,3 @@
-namespace PicView.Core.Search;
+namespace PicView.Core.SettingsSearch;
 
 public record SettingsSearchItem(string Name, string Tags);

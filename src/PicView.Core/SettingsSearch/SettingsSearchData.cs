@@ -1,7 +1,7 @@
 using Cysharp.Text;
 using PicView.Core.Localization;
 
-namespace PicView.Core.Search;
+namespace PicView.Core.SettingsSearch;
 
 public class SettingsSearchData
 {
