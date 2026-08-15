@@ -319,7 +319,10 @@ public class FileWatcherService(
         if (removeIndex >= 0)
         {
             files.RemoveAt(removeIndex);
-            tab.Gallery.GalleryItems.RemoveAt(removeIndex);
+            if (tab.Gallery.GalleryItems.Count > removeIndex)
+            {
+                tab.Gallery.GalleryItems.RemoveAt(removeIndex);
+            }
         }
         var insertionIndex = FileSortOrder.InsertSorted(files, newFileInfo, _stringComparer);
 
