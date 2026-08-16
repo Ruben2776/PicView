@@ -4,6 +4,7 @@ using R3;
 
 namespace PicView.Tests.Resizing;
 
+[Collection("Sequential")]
 public class ResizeImageViewModelTests
 {
     private ManualFrameProvider _frameProvider;

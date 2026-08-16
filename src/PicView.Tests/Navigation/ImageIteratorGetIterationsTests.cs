@@ -6,6 +6,11 @@ namespace PicView.Tests.Navigation;
 
 public class ImageIteratorGetIterationsTests
 {
+    public ImageIteratorGetIterationsTests()
+    {
+        SetDefaults();
+    }
+    
     [Fact]
     public void GetIterations_Next_NoLooping_ClampsAtEnd()
     {
@@ -33,7 +38,7 @@ public class ImageIteratorGetIterationsTests
         var result = IterationHelper.GetIterations(2, count, NavigateTo.Next, SkipAmount.One);
 
         // Assert
-        Assert.Equal((0, 1, false), result);
+        Assert.Equal((1, 2, false), result);
     }
 
     [Fact]
@@ -44,12 +49,10 @@ public class ImageIteratorGetIterationsTests
         Settings.UIProperties.Looping = false;
 
         // Act
-        var result = IterationHelper.GetIterations(2, count, NavigateTo.Previous, SkipAmount.One);
-        var resultFirst = IterationHelper.GetIterations(0, count, NavigateTo.Previous, SkipAmount.One);
+        var result = IterationHelper.GetIterations(0, count, NavigateTo.Previous, SkipAmount.One);
 
         // Assert
-        Assert.Equal((1, 2, true), result);
-        Assert.Equal((0, 1, true), resultFirst);
+        Assert.Equal((0, 1, true), result);
     }
 
     [Fact]

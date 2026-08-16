@@ -1,7 +1,3 @@
-using System;
-using System.Reflection;
-using System.Threading.Tasks;
-using Xunit;
 using PicView.Core.Update;
 using PicView.Core.IPlatform;
 
