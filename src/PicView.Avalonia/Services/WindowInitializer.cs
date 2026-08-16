@@ -450,7 +450,8 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
         if (_batchResizeWindow is null)
         {
             core.BatchResize ??= new BatchResizeViewModel(
-                FilePicker.SelectDirectory, FilePicker.SelectFile, core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue,
+                FilePicker.SelectDirectory, FilePicker.SelectFile, 
+                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.FileInfo?.CurrentValue ?? null,
                 core.PlatformService.GetFiles);
             if (core.BatchResize.Config is null)
             {

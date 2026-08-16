@@ -20,6 +20,7 @@ public class BatchResizeViewModel : IDisposable
     private readonly Lock _lock = new();
     private CancellationTokenSource? _cts;
     public BatchThumb[] Thumbs = new BatchThumb[7];
+    private DisposableBag _disposables;
         
     public BatchResizeWindowConfig? Config { get; set; }
         
@@ -94,28 +95,59 @@ public class BatchResizeViewModel : IDisposable
         _getFiles = getFiles;
 
         // Commands
-        StartCommand = new ReactiveCommand(async (_, x) => await StartBatchResizeAsync(x).ConfigureAwait(false));
+        StartCommand = new ReactiveCommand(async (_, x) => 
+            await StartBatchResizeAsync(x).ConfigureAwait(false));
+        _disposables.Add(StartCommand);
+        
         CancelCommand = new ReactiveCommand(async (_, _) => await CancelAsync().ConfigureAwait(false));
+        _disposables.Add(CancelCommand);
+        
         CloseProgressCommand = new ReactiveCommand(_ =>
         {
             IsFinished.Value = false;
             IsRunning.Value = false;
         });
-        ResetCommand = new ReactiveCommand(_ => { Reset(); });
+        _disposables.Add(CloseProgressCommand);
+        
+        ResetCommand = new ReactiveCommand(_ =>
+        {
+            Reset();
+        });
+        _disposables.Add(ResetCommand);
+        
         SelectAndAddFolderCommand = new ReactiveCommand(async (_, _) => await SelectAndAddFolder(selectDirectory).ConfigureAwait(false));
+        _disposables.Add(SelectAndAddFolderCommand);
+        
         SelectAndAddFileCommand = new ReactiveCommand(async (_, _) => await SelectAndAddFile(selectFile).ConfigureAwait(false));
+        _disposables.Add(SelectAndAddFileCommand);
+        
         PickOutputFolderCommand = new ReactiveCommand(async (_, _) => await PickOutputFolder(selectDirectory).ConfigureAwait(false));
+        _disposables.Add(PickOutputFolderCommand);
+        
         ToggleAspectRatioCommand = new ReactiveCommand(_ =>
         {
             IsKeepingAspectRatio.Value = !IsKeepingAspectRatio.Value;
         });
-        ClearFilterCommand = new ReactiveCommand(_ => { FilterText.Value = string.Empty; });
+        _disposables.Add(ToggleAspectRatioCommand);
+        
+        ClearFilterCommand = new ReactiveCommand(_ =>
+        {
+            FilterText.Value = string.Empty;
+        });
+        _disposables.Add(ClearFilterCommand);
+        
         RemoveFileFromListCommand = new ReactiveCommand<FileInfo>((value, _) =>
         {
             SelectedFiles.Value.Remove(value);
             return ValueTask.CompletedTask;
         });
-        RemoveAllCommand = new ReactiveCommand(_ => { SelectedFiles.Value.Clear(); });
+        _disposables.Add(RemoveFileFromListCommand);
+        
+        RemoveAllCommand = new ReactiveCommand(_ =>
+        {
+            SelectedFiles.Value.Clear();
+        });
+        _disposables.Add(RemoveAllCommand);
 
         Debug.Assert(TranslationManager.Translation.NoConversion != null);
 
@@ -128,6 +160,7 @@ public class BatchResizeViewModel : IDisposable
             nameof(ConversionTarget.Heic),
             nameof(ConversionTarget.Jxl)
         ]);
+        _disposables.Add(ConversionTargets);
 
         Debug.Assert(TranslationManager.Translation.NoResize != null);
         Debug.Assert(TranslationManager.Translation.Width != null);
@@ -142,6 +175,7 @@ public class BatchResizeViewModel : IDisposable
             TranslationManager.Translation.WidthAndHeight,
             TranslationManager.Translation.Percentage
         ]);
+        _disposables.Add(ResizeModes);
 
         ResizeModes = new BindableReactiveProperty<string[]>([
             TranslationManager.Translation.NoResize,
@@ -150,6 +184,7 @@ public class BatchResizeViewModel : IDisposable
             TranslationManager.Translation.Width,
             TranslationManager.Translation.Height
         ]);
+        _disposables.Add(ResizeModes);
 
         Debug.Assert(TranslationManager.Translation.None != null);
         Debug.Assert(TranslationManager.Translation.Lossless != null);
@@ -159,6 +194,7 @@ public class BatchResizeViewModel : IDisposable
             TranslationManager.Translation.Lossless,
             TranslationManager.Translation.Lossy
         ]);
+        _disposables.Add(CompressionModes);
 
         ThumbnailAmounts = new BindableReactiveProperty<string[]>([
             TranslationManager.Translation.None,
@@ -170,6 +206,7 @@ public class BatchResizeViewModel : IDisposable
             "6",
             "7"
         ]);
+        _disposables.Add(ThumbnailAmounts);
 
         // defaults
         IsKeepingAspectRatio.Value = true;
@@ -178,9 +215,14 @@ public class BatchResizeViewModel : IDisposable
         Conversion.Value = ConversionTarget.NoConversion;
         Resize.Value = ResizeMode.None;
 
-        Observable.EveryValueChanged(FilterText, x => x.CurrentValue)
-            .Skip(1)
-            .Subscribe(_ => { UpdateFilteredFiles(); });
+#pragma warning disable MA0040
+        Observable.EveryValueChanged(FilterText, x => x.CurrentValue).Skip(1)
+#pragma warning restore MA0040
+            .Subscribe(_ =>
+            {
+                UpdateFilteredFiles();
+            }, DebugHelper.LogError(nameof(BatchResizeViewModel), nameof(UpdateFilteredFiles)))
+            .AddTo(ref _disposables);
     }
 
     private void UpdateFilteredFiles()
@@ -514,6 +556,7 @@ public class BatchResizeViewModel : IDisposable
     {
         _cts?.Cancel();
         _cts?.Dispose();
+        _disposables.Dispose();
             
         GC.SuppressFinalize(this);
     }
