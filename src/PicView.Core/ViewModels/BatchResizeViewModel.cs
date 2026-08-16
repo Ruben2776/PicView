@@ -400,9 +400,16 @@ namespace PicView.Core.ViewModels
                             else if (IsHeightResizing.Value)
                             {
                                 magick.Resize(0, SingleHeightValue.Value);
+                            } 
+                            
+                            if (IsQualityEnabled.Value)
+                            {
+                                magick.Quality = Quality.Value;
                             }
 
+#pragma warning disable MA0042
                             magick.Write(destinationFileName);
+#pragma warning restore MA0042
                             if (Compression.Value is CompressionMode.Lossless or CompressionMode.Lossy)
                             {
                                 ImageOptimizer imageOptimizer = new()
