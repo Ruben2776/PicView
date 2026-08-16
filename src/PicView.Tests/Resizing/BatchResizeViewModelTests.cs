@@ -428,4 +428,100 @@ public class BatchResizeViewModelTests
             CleanDirectory(heightOutput);
         }
     }
+
+    [Fact]
+    public async Task StartBatchResizeAsync_WithThumbnails_GeneratesExpectedThumbnailCount()
+    {
+        SetDefaults();
+        await TranslationManager.LoadLanguage("en");
+
+        var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
+        var outputDir = Path.Combine(Path.GetTempPath(), $"BatchResizeOutput_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(sourceDir);
+        Directory.CreateDirectory(outputDir);
+
+        var sourceImage1 = CreateTempImage(sourceDir, "png", 200, 100);
+        var sourceImage2 = CreateTempImage(sourceDir, "png", 200, 100);
+
+        try
+        {
+            var vm = CreateViewModel(outputDir, sourceImage1, sourceImage2);
+            vm.ThumbnailAmount = 2;
+            vm.Thumbs =
+            [
+                new BatchThumb("thumb_50", new Percentage(50)),
+                new BatchThumb("thumb_80w", width: 80)
+            ];
+
+            await RunBatchResizeAsync(vm);
+
+            var thumb50Dir = Path.Combine(outputDir, "thumb_50");
+            var thumb80wDir = Path.Combine(outputDir, "thumb_80w");
+            var expectedThumbnailCount = vm.SelectedFiles.Value.Count * vm.ThumbnailAmount;
+
+            Assert.Equal(2, Directory.GetFiles(thumb50Dir).Length);
+            Assert.Equal(2, Directory.GetFiles(thumb80wDir).Length);
+            Assert.Equal(expectedThumbnailCount, Directory.GetFiles(thumb50Dir, "*", SearchOption.AllDirectories).Length +
+                                                 Directory.GetFiles(thumb80wDir, "*", SearchOption.AllDirectories).Length);
+        }
+        finally
+        {
+            CleanDirectory(sourceDir);
+            CleanDirectory(outputDir);
+        }
+    }
+
+    [Fact]
+    public async Task StartBatchResizeAsync_WithThumbnailParameters_AppliesBatchThumbConfiguration()
+    {
+        SetDefaults();
+        await TranslationManager.LoadLanguage("en");
+
+        var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
+        var outputPercentage = Path.Combine(Path.GetTempPath(), $"BatchResizeThumbPercent_{Guid.NewGuid():N}");
+        var outputWidth = Path.Combine(Path.GetTempPath(), $"BatchResizeThumbWidth_{Guid.NewGuid():N}");
+        var outputHeight = Path.Combine(Path.GetTempPath(), $"BatchResizeThumbHeight_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(sourceDir);
+        Directory.CreateDirectory(outputPercentage);
+        Directory.CreateDirectory(outputWidth);
+        Directory.CreateDirectory(outputHeight);
+
+        var sourceImage = CreateTempImage(sourceDir, "png", 200, 100);
+
+        try
+        {
+            var percentageVm = CreateViewModel(outputPercentage, sourceImage);
+            percentageVm.ThumbnailAmount = 1;
+            percentageVm.Thumbs = [new BatchThumb("thumb_percent", new Percentage(50))];
+            await RunBatchResizeAsync(percentageVm);
+
+            var widthVm = CreateViewModel(outputWidth, sourceImage);
+            widthVm.ThumbnailAmount = 1;
+            widthVm.Thumbs = [new BatchThumb("thumb_width", width: 80)];
+            await RunBatchResizeAsync(widthVm);
+
+            var heightVm = CreateViewModel(outputHeight, sourceImage);
+            heightVm.ThumbnailAmount = 1;
+            heightVm.Thumbs = [new BatchThumb("thumb_height", height: 40)];
+            await RunBatchResizeAsync(heightVm);
+
+            using var percentageThumb = new MagickImage(Directory.GetFiles(Path.Combine(outputPercentage, "thumb_percent")).Single());
+            using var widthThumb = new MagickImage(Directory.GetFiles(Path.Combine(outputWidth, "thumb_width")).Single());
+            using var heightThumb = new MagickImage(Directory.GetFiles(Path.Combine(outputHeight, "thumb_height")).Single());
+
+            Assert.Equal((uint)100, percentageThumb.Width);
+            Assert.Equal((uint)50, percentageThumb.Height);
+            Assert.Equal((uint)80, widthThumb.Width);
+            Assert.Equal((uint)40, widthThumb.Height);
+            Assert.Equal((uint)80, heightThumb.Width);
+            Assert.Equal((uint)40, heightThumb.Height);
+        }
+        finally
+        {
+            CleanDirectory(sourceDir);
+            CleanDirectory(outputPercentage);
+            CleanDirectory(outputWidth);
+            CleanDirectory(outputHeight);
+        }
+    }
 }
