@@ -5,6 +5,7 @@ public enum ImageType
     Invalid,
     AnimatedGif,
     AnimatedWebp,
+    AnimatedAvif,
     Bitmap,
     Svg,
 }

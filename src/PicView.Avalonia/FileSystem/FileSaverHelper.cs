@@ -96,6 +96,7 @@ public static class FileSaverHelper
                 {
                     case ImageType.AnimatedGif: // TODO: Add animated GIF support
                     case ImageType.AnimatedWebp: // TODO: Add animated WebP support
+                    case ImageType.AnimatedAvif: // TODO: Add animated AVIF support
                     case ImageType.Bitmap:
                     {
                         if (tab.Image.CurrentValue is not Bitmap bitmap)
@@ -132,6 +133,7 @@ public static class FileSaverHelper
                 {
                     case ImageType.AnimatedGif: // TODO: Add animated GIF support
                     case ImageType.AnimatedWebp: // TODO: Add animated WebP support
+                    case ImageType.AnimatedAvif: // TODO: Add animated AVIF support
                     case ImageType.Bitmap:
                     {
                         if (angle is not 0)

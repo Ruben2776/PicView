@@ -115,6 +115,15 @@ public static class GetImageModel
                     }
                     break;
                 
+                case MagickFormat.Avif:
+                    await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
+
+                    if (ImageAnalyzer.IsAnimated(fileInfo))
+                    {
+                        imageModel.ImageType = ImageType.AnimatedAvif;
+                    }
+                    break;
+
                 case MagickFormat.Tif:
                 case MagickFormat.Tiff:
                     await ProcessTiff(fileInfo, imageModel, magickImage);
