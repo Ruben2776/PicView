@@ -4,6 +4,7 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Tests.ArchiveHandling;
 
+[Collection("Sequential")]
 public class ArchiveExtractionServiceTests
 {
     public ArchiveExtractionServiceTests()

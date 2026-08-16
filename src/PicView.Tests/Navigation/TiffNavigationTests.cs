@@ -10,6 +10,7 @@ using R3;
 
 namespace PicView.Tests.Navigation;
 
+[Collection("Sequential")]
 public class TiffNavigationTests : IDisposable
 {
     private readonly ImageIterator _iterator;

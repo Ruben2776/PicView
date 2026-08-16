@@ -1,4 +1,5 @@
 using PicView.Core.FileHandling.Interfaces;
+using PicView.Core.FileHistory;
 using PicView.Core.Localization;
 using PicView.Core.IPlatform;
 using PicView.Core.Models;
@@ -10,7 +11,8 @@ using R3;
 
 namespace PicView.Tests.Navigation;
 
-public class NavigationServiceTests
+[Collection("Sequential")]
+public class NavigationServiceTests : IDisposable
 {
     private readonly MockImageModelLoader _mockImageModelLoader;
     private readonly MockImageCache _mockCache;
@@ -21,9 +23,41 @@ public class NavigationServiceTests
 
     public NavigationServiceTests()
     {
+        ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
-        TranslationManager.Init();
-        // TODO: Create navigation tests
+        TranslationManager.LoadLanguage("en").AsTask().GetAwaiter().GetResult();
+        FileHistoryManager.Initialize();
+
+        _testDirectory = Path.Combine(Path.GetTempPath(), "PicViewTests_" + Guid.NewGuid());
+        Directory.CreateDirectory(_testDirectory);
+
+        _mockImageModelLoader = new MockImageModelLoader();
+        _mockCache = new MockImageCache();
+        _mockFileWatcherService = new MockFileWatcherService();
+        _mockThumbnailLoader = new MockThumbnailLoader();
+
+        _navigationService = new NavigationService(
+            _mockImageModelLoader,
+            _mockCache,
+            _mockFileWatcherService,
+            new MockPlatformSpecificService(),
+            _mockThumbnailLoader,
+            string.CompareOrdinal);
+    }
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_testDirectory))
+        {
+            try
+            {
+                Directory.Delete(_testDirectory, true);
+            }
+            catch
+            {
+                // Ignore cleanup errors
+            }
+        }
     }
 
     [Fact]
@@ -54,7 +88,7 @@ public class NavigationServiceTests
         
         var fileInfo = new FileInfo(Path.Combine(_testDirectory, "test.jpg"));
         // Create a dummy file so there is something to load
-        File.Create(fileInfo.FullName).Dispose();
+        await File.Create(fileInfo.FullName).DisposeAsync();
         
         var cts = new CancellationTokenSource();
         // Provide files list to avoid RetrieveFiles attempting to read directory
@@ -73,7 +107,7 @@ public class NavigationServiceTests
         var tab = new TabViewModel(null!, null!);
         // Initialize with mocks to avoid null refs
         var thumbCache = new MockThumbnailCache();
-        tab.Initialize(_mockCache, thumbCache, new MockThumbnailLoader(), null, thumbCache);
+        tab.Initialize(_mockCache, thumbCache, _mockThumbnailLoader, null, thumbCache);
         tab.ImageIterator.Files = new List<FileInfo>();
         return tab;
     }

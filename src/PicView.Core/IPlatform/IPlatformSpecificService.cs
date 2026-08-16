@@ -34,8 +34,8 @@ public interface IPlatformSpecificService
     Task<bool> DeleteFile(string path, bool recycle);
 
     /// <summary>
-    /// Gets a shell thumbnail as raw BGRA pixel data.
-    /// Returns null on non-Windows platforms or on failure.
+    /// Gets an OS-level thumbnail as raw BGRA pixel data.
+    /// Implemented on Windows and macOS, returns null on unsupported platforms or on failure.
     /// </summary>
     byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight);
 }

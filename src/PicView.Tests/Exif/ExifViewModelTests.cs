@@ -1,6 +1,5 @@
 using System.Text;
 using ImageMagick;
-using PicView.Core.Exif;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
@@ -8,6 +7,7 @@ using R3;
 
 namespace PicView.Tests.Exif;
 
+[Collection("Sequential")]
 public class ExifViewModelTests
 {
     [Fact]
@@ -179,7 +179,7 @@ public class ExifViewModelTests
                 profile.SetValue(ExifTag.Rating, (ushort)3);
 
                 image.SetProfile(profile);
-                image.Write(path);
+                await image.WriteAsync(path, TestContext.Current.CancellationToken);
             }
 
             var model = new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 100, PixelHeight = 100 };
@@ -215,7 +215,7 @@ public class ExifViewModelTests
                 profile.SetValue(ExifTag.Artist, "TestAuthor");
                 profile.SetValue(ExifTag.Rating, (ushort)5);
                 image.SetProfile(profile);
-                image.Write(path);
+                await image.WriteAsync(path, TestContext.Current.CancellationToken);
             }
 
             var model = new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 10, PixelHeight = 10 };
@@ -228,7 +228,7 @@ public class ExifViewModelTests
             viewModel.RemoveImageMetaDataCommand!.Execute(new FileInfo(path));
             
             // Wait a little for the command to finish if it's async under the hood
-            await Task.Delay(500);
+            await Task.Delay(500, TestContext.Current.CancellationToken);
 
             Assert.Equal(string.Empty, viewModel.Authors.Value);
             Assert.Equal((uint)0, viewModel.ExifRating.Value);

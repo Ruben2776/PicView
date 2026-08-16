@@ -42,41 +42,4 @@ public static class AppLauncher
             return false;
         }
     }
-
-    /// <summary>
-    /// Launches the default application for the file type
-    /// </summary>
-    /// <param name="filePath">Path to the file to open</param>
-    /// <returns>True if the file was opened successfully</returns>
-    public static async Task<bool> OpenWithDefaultAppAsync(string filePath)
-    {
-        try
-        {
-            if (string.IsNullOrEmpty(filePath))
-                return false;
-
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "open",
-                    Arguments = $"\"{filePath}\"",
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-
-            process.Start();
-            await process.WaitForExitAsync();
-            
-            return process.ExitCode == 0;
-        }
-        catch (Exception ex)
-        {
-#if DEBUG
-            Console.WriteLine($"Error opening file {filePath}: {ex.Message}");
-#endif
-            return false;
-        }
-    }
 }
