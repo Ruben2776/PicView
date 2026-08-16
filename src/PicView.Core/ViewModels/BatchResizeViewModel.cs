@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using ImageMagick;
 using PicView.Core.BatchResize;
@@ -80,8 +80,8 @@ namespace PicView.Core.ViewModels
 
 
         // Logs
-        public BindableReactiveProperty<ObservableCollection<FileInfo>> SelectedFiles { get; } = new();
-        public BindableReactiveProperty<ObservableCollection<FileInfo>> FilteredFiles { get; } = new();
+        public BindableReactiveProperty<ObservableCollection<FileInfo>> SelectedFiles { get; } = new([]);
+        public BindableReactiveProperty<ObservableCollection<FileInfo>> FilteredFiles { get; } = new([]);
         public BindableReactiveProperty<ObservableCollection<BatchLogEntry>>? ProcessedFiles { get; } = new([]);
         public BindableReactiveProperty<bool> IsFiltering { get; } = new(false);
 
