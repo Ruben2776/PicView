@@ -128,16 +128,6 @@ public class TabOverviewViewModel
         var tab = ActiveTab.Value;
         CloseTab(tab);
     }
-    
-    public void CloseTab(uint tabId)
-    {
-        var tab = Tabs.Value.FirstOrDefault(t => t.Id == tabId);
-        if (tab is null)
-        {
-            return;
-        }
-        CloseTab(tab);
-    }
 
 
     public void CloseTab(TabViewModel tab)

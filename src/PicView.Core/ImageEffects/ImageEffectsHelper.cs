@@ -80,7 +80,7 @@ public static class ImageEffectsHelper
 
         if (c.BlurLevel > 0) img.Blur(0, c.BlurLevel);
         if (c.Sharpen > 0) ApplySharpen(img, c.Sharpen);
-        if (c.Vignette > 0) ApplySafeVignette(img, c.Vignette);
+        if (c.Vignette > 0) ApplySafeVignette(img);
 
         if (c.SketchStrokeWidth > 0) img.Charcoal(c.SketchStrokeWidth, 3);
         if (c.PosterizeLevel > 0) img.Posterize(c.PosterizeLevel);
@@ -262,7 +262,7 @@ public static class ImageEffectsHelper
         img.UnsharpMask(0, 0.6 + amt / 100.0, 1.0, 0.02);
     }
 
-    private static void ApplySafeVignette(MagickImage img, double amt)
+    private static void ApplySafeVignette(MagickImage img)
     {
         using var mask = new MagickImage("radial-gradient:white-black", new MagickReadSettings
         {

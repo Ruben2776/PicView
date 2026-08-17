@@ -8,6 +8,7 @@ using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
@@ -48,13 +49,6 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
         core.MainWindows.MainWindows.Add(vm);
         core.MainWindows.ActiveWindow.Value = vm;
         return window;
-    }
-
-    private void CloseMenus(CoreViewModel core)
-    {
-        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.CloseMenu();
-        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.CloseDropDownMenu();
-        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.CloseMenus();
     }
 
     public void ShowAboutWindow()
@@ -108,7 +102,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 }
             }
 
-            CloseMenus(core);
+            UIHelper.CloseMenus(core);
         }
     }
 
@@ -163,7 +157,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
 
         if (Application.Current.DataContext is CoreViewModel core)
         {
-            CloseMenus(core);
+            UIHelper.CloseMenus(core);
         }
     }
 
@@ -238,7 +232,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             });
         }
         
-        CloseMenus(core);
+        UIHelper.CloseMenus(core);
 
         return;
 
@@ -313,7 +307,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             });
         }
 
-        CloseMenus(core);
+        UIHelper.CloseMenus(core);
         
         return;
 
@@ -379,7 +373,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             });
         }
         
-        CloseMenus(core);
+        UIHelper.CloseMenus(core);
     }
 
     public void ShowSingleImageResizeWindow()
@@ -436,7 +430,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     _singleImageResizeWindow.Activate();
                 }
             }
-            CloseMenus(core);
+            UIHelper.CloseMenus(core);
         }
     }
 
@@ -490,7 +484,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             });
         }
         
-        CloseMenus(core);
+        UIHelper.CloseMenus(core);
         
         return;
         
@@ -548,7 +542,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 }
             }
             
-            CloseMenus(core);
+            UIHelper.CloseMenus(core);
         }
     }
 
@@ -661,7 +655,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
 
         if (Application.Current.DataContext is CoreViewModel core)
         {
-            CloseMenus(core);
+            UIHelper.CloseMenus(core);
         }
     }
 }

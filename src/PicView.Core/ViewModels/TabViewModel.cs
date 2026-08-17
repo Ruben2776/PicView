@@ -24,7 +24,7 @@ namespace PicView.Core.ViewModels;
 /// lifecycle of resources specific to this tab instance.
 /// </para>
 /// </summary>
-public class TabViewModel(Action<uint> closeTab, MainWindowViewModel parentWindowContext, IFileWatcherService? fileWatcherService = null) : IDisposable
+public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel parentWindowContext, IFileWatcherService? fileWatcherService = null) : IDisposable
 {
     #region Properties
     
@@ -312,7 +312,7 @@ public class TabViewModel(Action<uint> closeTab, MainWindowViewModel parentWindo
     public void CloseTab()
     {
         IsClosing = true; // Signal it to be removed from the UI
-        closeTab(Id);
+        closeTab(this);
         // Dispose has already been called in the CloseTab method
     }
 

@@ -659,17 +659,15 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         {
             return;
         }
-        await core.PlatformService.Print(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName);
+        await core.PlatformService.Print(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName).ConfigureAwait(false);
     }
     
     public async ValueTask SaveAsPDF() =>
         await PdfExport.SavePdfWithFilePicker(vm);
 
-    /// <inheritdoc cref="FilePicker.SelectAndLoadFile(MainWindowViewModel)" />
-    public async ValueTask Open()
-    {
+    /// <inheritdoc cref="FilePicker.SelectAndLoadFile(MainWindow, MainWindowViewModel)" />
+    public async ValueTask Open() => 
         await FilePicker.SelectAndLoadFile(mainWindow, vm).ConfigureAwait(false);
-    }
 
     /// <inheritdoc cref="FileManager.OpenWith(string)" />
     public ValueTask OpenWith()

@@ -1,9 +1,10 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.StartUp;
+using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
@@ -26,8 +27,9 @@ public static class FilePicker
         {
             return;
         }
-
         var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
+        UIHelper.CloseMenus(core);
+
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         if (!tab.IsInitialized)
         {
@@ -55,8 +57,6 @@ public static class FilePicker
         {
             vm.IsLoadingIndicatorShown.Value = false;
         }
-        vm.TopTitlebarViewModel.DropDownMenu.CloseMenus();
-        vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
     }
 
     public static async Task<string?> SelectFile()

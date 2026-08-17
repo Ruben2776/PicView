@@ -16,6 +16,13 @@ namespace PicView.Avalonia.UI;
 public static class UIHelper
 {
     
+    public static void CloseMenus(CoreViewModel core)
+    {
+        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.CloseMenu();
+        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.CloseDropDownMenu();
+        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.CloseMenus();
+    }
+    
     public static ClickArrowRight? GetClickArrowRight(MainWindowViewModel vm)
     {
         if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
