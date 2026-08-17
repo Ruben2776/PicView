@@ -2,6 +2,7 @@
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
 using PicView.Core.FileHandling;
+using PicView.Core.FileHistory;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.UI;
@@ -22,11 +23,11 @@ public static class RenameHelper
     {
         vm.IsLoadingIndicatorShown.Value = true;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var oldPath = tab.FileInfo.CurrentValue.FullName;
+        var newPath = Path.Combine(tab.FileInfo.CurrentValue.DirectoryName, newName);
+        
         var isRenamed = await Task.Run(async () =>
         {
-            var oldPath = tab.FileInfo.CurrentValue.FullName;
-            var newPath = Path.Combine(tab.FileInfo.CurrentValue.DirectoryName, newName);
-
             if (newPath == oldPath)
             {
                 // TODO
@@ -57,6 +58,11 @@ public static class RenameHelper
             vm.IsLoadingIndicatorShown.Value = false;
             return true;
         });
+
+        if (isRenamed)
+        {
+            FileHistoryManager.Rename(oldPath, newPath);
+        }
         
         mainWindow?.UIHelper.GetMainView.Focus();
         MainKeyboardShortcuts.IsKeysEnabled = true;

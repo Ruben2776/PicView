@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
+using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
 using PicView.Core.Gallery;
 using PicView.Core.Models;
@@ -387,6 +388,8 @@ public class FileWatcherService(
 
         _cache.Resynchronize(tab.Id, files);
         tab.UpdateTabTitle();
+        
+        FileHistoryManager.Rename(e.OldFullPath, e.FullPath);
     }
     /// Update the tabs FileInfo to reflect an updated new file size
     private async ValueTask OnFileChangedAsync(TabViewModel tab, FileSystemEventArgs e)
