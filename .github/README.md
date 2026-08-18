@@ -22,10 +22,10 @@ Enjoy a clean, free, and fast experience with no annoying pop-ups, and zero trac
 
 # Downloads
 
-[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.3/PicView-v5.0.3-win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.3/Setup-PicView-v5.0.3-win-arm64.exe)
+[![](https://img.shields.io/badge/Windows-x64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.4/PicView-v5.0.4-win-x64.zip) [![](https://img.shields.io/badge/Windows-arm64-blue?style=flat-square&logo=windows&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.4/Setup-PicView-v5.0.4-win-arm64.exe)
 
-[![](https://img.shields.io/badge/macOS-arm64%20(Apple%20Silicon)-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.3/PicView-5.0.3-macOS-arm64.dmg)
-[![](https://img.shields.io/badge/macOS-x64-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.3/PicView-5.0.3-macOS-x64.dmg)
+[![](https://img.shields.io/badge/macOS-arm64%20(Apple%20Silicon)-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.4/PicView-5.0.4-macOS-arm64.dmg)
+[![](https://img.shields.io/badge/macOS-x64-blueviolet?style=flat-square&logo=apple&logoColor=fff)](https://github.com/Ruben2776/PicView/releases/download/5.0.4/PicView-5.0.4-macOS-x64.dmg)
 
 [Latest releases at PicView.org](https://picview.org/download)
 
