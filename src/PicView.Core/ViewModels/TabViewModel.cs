@@ -26,9 +26,8 @@ namespace PicView.Core.ViewModels;
 /// </summary>
 public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel parentWindowContext, IFileWatcherService? fileWatcherService = null) : IDisposable
 {
-    #region Properties
-    
     #region Tab logic
+    
     /// The MainWindowViewModel that currently "owns" this tab
     public MainWindowViewModel ParentWindowContext { get; set; } = parentWindowContext;
 
@@ -48,15 +47,18 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
     
     public SingleImageType SingleImageType { get; set; }
     public string? SourceURL { get; set; }
+    
     #endregion
 
     #region UI view models
+    
     public BindableReactiveProperty<object?> CurrentView { get; } = new(null);
     public HoverbarViewModel Hoverbar { get; } = new();
     public GalleryViewModel Gallery { get; } = new();
     
     public CropViewModel? Crop { get; set; }
     public ICropService? CropService { get; set; }
+    
     #endregion
     
     #region Image properties
@@ -85,7 +87,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
     
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator"/>>
     public IImageIterator? ImageIterator { get; private set; }
-    public ArchiveExtractionService ArchiveExtractionService { get; } = new();
+    public ArchiveExtractionService? ArchiveExtractionService { get; } = new();
     public IThumbnailCache? ThumbnailCache { get; private set; }
 
     private IFileWatcherService? _fileWatcherService = fileWatcherService;
@@ -126,9 +128,6 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
     /// </summary>
     public BindableReactiveProperty<string> TabTooltip { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
     
-    #endregion
-    #endregion
-
     /// <summary>
     /// Updates the window title and tab title based on the current image model.
     /// </summary>
@@ -247,6 +246,10 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
         TitleTooltip.Value = TranslationManager.Translation.Loading;
         TabTitle.Value = TranslationManager.Translation.Loading;
     }
+    
+    #endregion
+
+    #region Initialization
 
     public void Initialize(IImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, IFileWatcherService? fileWatcherService = null, IThumbnailCache? thumbnailCache = null)
     {
@@ -290,6 +293,8 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
         var directory = files.Count > 0 ? files[0].DirectoryName : null;
         _fileWatcherService?.Watch(this, directory);
     }
+    
+    #endregion
 
     public async Task Next()
     {

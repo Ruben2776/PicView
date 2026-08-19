@@ -254,9 +254,12 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         _tab.Model = firstModel;
         UpdateNavigationProperties();
         TriggerPreload();
-        
-        FileHistoryManager.Add(firstModel.FileInfo.FullName);
-        FileHistoryManager.Add(secondModel.FileInfo.FullName);
+
+        if (!_tab.ArchiveExtractionService.IsArchived)
+        {
+            FileHistoryManager.Add(firstModel.FileInfo.FullName);
+            FileHistoryManager.Add(secondModel.FileInfo.FullName);
+        }
         
         return;
         
@@ -421,9 +424,12 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         _tab.Model = newModel;
         UpdateNavigationProperties();
         TriggerPreload();
-        
-        // Update the file history
-        FileHistoryManager.Add(newModel.FileInfo.FullName);
+
+        if (!_tab.ArchiveExtractionService.IsArchived)
+        {
+            // Update the file history
+            FileHistoryManager.Add(newModel.FileInfo.FullName);
+        }
     }
 
     private void TriggerPreload()

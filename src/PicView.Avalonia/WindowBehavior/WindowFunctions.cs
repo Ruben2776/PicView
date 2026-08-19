@@ -118,12 +118,13 @@ public static class WindowFunctions
         window.Hide();
         
         string? lastFile;
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
 
-        if (!string.IsNullOrEmpty(ArchiveExtraction.LastOpenedArchive))
+        if (!string.IsNullOrEmpty(tab.ArchiveExtractionService?.LastOpenedArchive))
         {
-            lastFile = ArchiveExtraction.LastOpenedArchive;
+            lastFile = tab.ArchiveExtractionService.LastOpenedArchive;
         }
-        else if (vm.WindowTabs.ActiveTab.CurrentValue.SingleImageType is SingleImageType.Url && vm.WindowTabs.ActiveTab.CurrentValue.SourceURL is not null)
+        else if (tab.SingleImageType is SingleImageType.Url && tab.SourceURL is not null)
         {
             lastFile = vm.WindowTabs.ActiveTab.CurrentValue.SourceURL;
         }
@@ -144,7 +145,10 @@ public static class WindowFunctions
             await KeybindingManager.UpdateKeyBindingsFile();
             TempFileManager.Cleanup();
             await FileHistoryManager.SaveToFileAsync();
-            ArchiveExtraction.Cleanup();
+            foreach (var tabViewModel in vm.WindowTabs.Tabs.CurrentValue)
+            {
+                tabViewModel.ArchiveExtractionService.Cleanup();
+            }
         }
         catch (Exception e)
         {
@@ -199,30 +203,6 @@ public static class WindowFunctions
                 InitializeWindowSizeAndPosition(window);
             }
         }
-    }
-
-    /// <summary>
-    /// Restores the interface based on settings
-    /// </summary>
-    public static void RestoreInterface(MainWindowViewModel vm)
-    {
-        vm.IsUIShown.Value = Settings.UIProperties.ShowInterface;
-
-        if (!Settings.UIProperties.ShowInterface)
-        {
-            return;
-        }
-
-        vm.IsTopToolbarShown.Value = true;
-        vm.TitlebarHeight.Value = SizeDefaults.MainTitlebarHeight;
-
-        if (!Settings.UIProperties.ShowBottomNavBar)
-        {
-            return;
-        }
-
-        vm.IsBottomToolbarShown.Value = true;
-        vm.BottombarHeight.Value = SizeDefaults.BottombarHeight;
     }
 
     public static void ShowMinimizedWindow(Window window)

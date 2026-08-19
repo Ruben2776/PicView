@@ -15,13 +15,4 @@ public static class ServiceHelper
     {
         ThumbLoader = new AvaloniaThumbnailLoader();
     }
-
-    /// <summary>
-    ///     Creates a new <see cref="ArchiveExtractionService"/> instance.
-    ///     Each tab should own its own service for isolated archive extraction state.
-    /// </summary>
-    public static ArchiveExtractionService CreateArchiveExtractionService()
-    {
-        return new ArchiveExtractionService();
-    }
 }

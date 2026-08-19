@@ -398,7 +398,7 @@ public static class QuickLoad
             return fileInfo;
         }
 
-        if (!string.IsNullOrWhiteSpace(Settings.StartUp.StartUpDirectory) && !ArchiveExtraction.IsArchived)
+        if (!string.IsNullOrWhiteSpace(Settings.StartUp.StartUpDirectory))
         {
             return fileInfo.FullName.Contains(Settings.StartUp.StartUpDirectory) ?
                 new FileInfo(Settings.StartUp.StartUpDirectory) : new FileInfo(fileInfo.DirectoryName);

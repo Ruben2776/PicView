@@ -1,9 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using PicView.Core.ArchiveHandling;
 using PicView.Core.Config.ConfigFileManagement;
 using PicView.Core.DebugTools;
-using PicView.Core.FileHandling;
 using ZLinq;
 using ZLinq.Linq;
 
@@ -129,17 +127,6 @@ public static class FileHistoryManager
     public static void Add(string path)
     {
         if (!Settings.Navigation.IsFileHistoryEnabled)
-        {
-            return;
-        }
-        
-        if (string.IsNullOrWhiteSpace(path))
-        {
-            return;
-        }
-
-        // Don't add if browsing an archive, unless the file is an archive itself.
-        if (!string.IsNullOrWhiteSpace(ArchiveExtraction.TempZipDirectory) && !path.IsArchive())
         {
             return;
         }
