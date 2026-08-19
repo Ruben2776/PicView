@@ -191,6 +191,13 @@ public static class StartUpHelper
             else
             {
                 Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, vm, Settings.StartUp.LastFile, continueFromLeftOff: true, isStartup: true));
+                if (Settings.WindowProperties.AutoFit)
+                {
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        WindowResizing.FastCenterWindow(mainWindow);
+                    }, DispatcherPriority.Loaded + 1);
+                }
             }
         }
         else
