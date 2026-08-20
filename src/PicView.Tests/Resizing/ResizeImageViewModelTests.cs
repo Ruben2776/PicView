@@ -1,3 +1,5 @@
+using ImageMagick;
+using PicView.Core.Extensions;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
 using R3;
@@ -59,8 +61,8 @@ public class ResizeImageViewModelTests
         mainVm.WindowTabs.ActiveTab.Value.Model = model;
         _frameProvider.Tick();
 
-        Assert.Equal(1920u, resizeVm.OriginalPixelWidth);
-        Assert.Equal(1080u, resizeVm.OriginalPixelHeight);
+        Assert.Equal(1920u, resizeVm.OriginalPixelWidth.Value);
+        Assert.Equal(1080u, resizeVm.OriginalPixelHeight.Value);
         Assert.Equal("1920", resizeVm.DesiredPixelWidth.Value);
         Assert.Equal("1080", resizeVm.DesiredPixelHeight.Value);
     }
@@ -203,5 +205,85 @@ public class ResizeImageViewModelTests
         Assert.True(resizeVm.IsQualityEnabled.Value);
         Assert.Equal(75, resizeVm.Quality.Value);
         Assert.True(resizeVm.ShowReset.Value);
+    }
+
+    [Fact]
+    public async Task UpdateOutputFileSizeAsync_ValidImage_UpdatesOutputFileSize()
+    {
+        var tempFile = Path.Combine(Path.GetTempPath(), $"test_resize_{Guid.NewGuid():N}.png");
+        try
+        {
+            using (var image = new MagickImage(MagickColors.Red, 200, 200))
+            {
+                image.Format = MagickFormat.Png;
+                image.Write(tempFile);
+            }
+
+            var fileInfo = new FileInfo(tempFile);
+            var (mainVm, resizeVm) = CreateViewModels();
+            var model = new ImageModel
+            {
+                PixelWidth = 200,
+                PixelHeight = 200,
+                FileInfo = fileInfo
+            };
+
+            mainVm.WindowTabs.ActiveTab.Value.Model = model;
+            mainVm.WindowTabs.ActiveTab.Value.FileInfo.Value = fileInfo;
+            _frameProvider.Tick();
+
+            await resizeVm.UpdateOutputFileSizeAsync();
+
+            Assert.False(string.IsNullOrEmpty(resizeVm.OutputFileSize.Value));
+        }
+        finally
+        {
+            if (File.Exists(tempFile))
+            {
+                File.Delete(tempFile);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task UpdateOutputFileSizeAsync_ResizedDimensions_UpdatesOutputFileSize()
+    {
+        var tempFile = Path.Combine(Path.GetTempPath(), $"test_resize_{Guid.NewGuid():N}.png");
+        try
+        {
+            using (var image = new MagickImage(MagickColors.Blue, 500, 500))
+            {
+                image.Format = MagickFormat.Png;
+                image.Write(tempFile);
+            }
+
+            var fileInfo = new FileInfo(tempFile);
+            var (mainVm, resizeVm) = CreateViewModels();
+            var model = new ImageModel
+            {
+                PixelWidth = 500,
+                PixelHeight = 500,
+                FileInfo = fileInfo
+            };
+
+            mainVm.WindowTabs.ActiveTab.Value.Model = model;
+            mainVm.WindowTabs.ActiveTab.Value.FileInfo.Value = fileInfo;
+            _frameProvider.Tick();
+
+            resizeVm.DesiredPixelWidth.Value = "50";
+            resizeVm.DesiredPixelHeight.Value = "50";
+            _frameProvider.Tick();
+
+            await resizeVm.UpdateOutputFileSizeAsync();
+
+            Assert.False(string.IsNullOrEmpty(resizeVm.OutputFileSize.Value));
+        }
+        finally
+        {
+            if (File.Exists(tempFile))
+            {
+                File.Delete(tempFile);
+            }
+        }
     }
 }

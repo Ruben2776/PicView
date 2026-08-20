@@ -2,6 +2,7 @@
 using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
+using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using R3;
@@ -13,11 +14,14 @@ public class ResizeImageViewModel : IDisposable
     private double _aspectRatio;
     private DisposableBag _disposables;
     private bool _isInternalChange;
+    private string? _lastTempFilePath;
 
-    public uint OriginalPixelWidth { get; private set; }
-    public uint OriginalPixelHeight { get; private set; }
+    public BindableReactiveProperty<uint> OriginalPixelWidth { get; } = new();
+    public BindableReactiveProperty<uint> OriginalPixelHeight { get; } = new();
+    public BindableReactiveProperty<string> OriginalFileSize { get; } = new();
     public BindableReactiveProperty<string> DesiredPixelWidth { get; } = new();
     public BindableReactiveProperty<string> DesiredPixelHeight { get; } = new();
+    public BindableReactiveProperty<string> OutputFileSize { get; } = new();
     public BindableReactiveProperty<double> Quality { get; } = new(90);
     public BindableReactiveProperty<bool> IsQualityEnabled { get; } = new(true);
     public BindableReactiveProperty<int> SelectedConversionIndex { get; } = new(0);
@@ -59,6 +63,19 @@ public class ResizeImageViewModel : IDisposable
         Quality.Subscribe(_ => ShowReset.Value = true,
                 DebugHelper.LogError(nameof(ResizeImageViewModel), nameof(Quality)))
             .AddTo(ref _disposables);
+
+        Observable.Merge(
+            DesiredPixelWidth.Select(_ => Unit.Default),
+            DesiredPixelHeight.Select(_ => Unit.Default),
+            Quality.Select(_ => Unit.Default),
+            SelectedConversionIndex.Select(_ => Unit.Default)
+        )
+        .Debounce(TimeSpan.FromMilliseconds(50))
+        .SubscribeAwait(async (_, _) =>
+        {
+            await UpdateOutputFileSizeAsync().ConfigureAwait(false);
+        }, DebugHelper.LogError(nameof(ResizeImageViewModel), nameof(UpdateOutputFileSizeAsync)))
+        .AddTo(ref _disposables);
     }
 
     private void UpdateFromImageChange(ImageModel? model)
@@ -67,10 +84,10 @@ public class ResizeImageViewModel : IDisposable
         {
             return;
         }
-        OriginalPixelWidth = _mainVm.WindowTabs.ActiveTab.CurrentValue.Model.PixelWidth;
-        OriginalPixelHeight = _mainVm.WindowTabs.ActiveTab.CurrentValue.Model.PixelHeight;
+        OriginalPixelWidth.Value = _mainVm.WindowTabs.ActiveTab.CurrentValue.Model.PixelWidth;
+        OriginalPixelHeight.Value = _mainVm.WindowTabs.ActiveTab.CurrentValue.Model.PixelHeight;
         
-        _aspectRatio = (double)OriginalPixelWidth / OriginalPixelHeight;
+        _aspectRatio = (double)OriginalPixelWidth.Value / OriginalPixelHeight.Value;
             
         DesiredPixelWidth.Value = model.PixelWidth.ToString();
         DesiredPixelHeight.Value = model.PixelHeight.ToString();
@@ -80,6 +97,28 @@ public class ResizeImageViewModel : IDisposable
         {
             UpdateQualitySliderState(tab.FileInfo.CurrentValue);
         }
+
+        if (model.FileInfo != null && File.Exists(model.FileInfo.FullName))
+        {
+            OriginalFileSize.Value = model.FileInfo.Length.GetReadableFileSize();
+        }
+        else if (model.FileInfo != null)
+        {
+            try
+            {
+                OriginalFileSize.Value = model.FileInfo.Length.GetReadableFileSize();
+            }
+            catch
+            {
+                OriginalFileSize.Value = string.Empty;
+            }
+        }
+        else
+        {
+            OriginalFileSize.Value = string.Empty;
+        }
+
+        _ = UpdateOutputFileSizeAsync();
     }
 
     private void ReAdjustQualitySliderFromConversion()
@@ -130,19 +169,23 @@ public class ResizeImageViewModel : IDisposable
         {
             if (isWidth)
             {
-                if (uint.TryParse(DesiredPixelWidth.Value, out var width))
+                if (!uint.TryParse(DesiredPixelWidth.Value, out var width))
                 {
-                    var newHeight = (uint)Math.Clamp(Math.Round(width / _aspectRatio), uint.MinValue, uint.MaxValue);
-                    DesiredPixelHeight.Value = newHeight.ToString();
+                    return;
                 }
+
+                var newHeight = (uint)Math.Clamp(Math.Round(width / _aspectRatio, MidpointRounding.ToEven), uint.MinValue, uint.MaxValue);
+                DesiredPixelHeight.Value = newHeight.ToString();
             }
             else
             {
-                if (uint.TryParse(DesiredPixelHeight.Value, out var height))
+                if (!uint.TryParse(DesiredPixelHeight.Value, out var height))
                 {
-                    var newWidth = (uint)Math.Clamp(Math.Round(height * _aspectRatio), uint.MinValue, uint.MaxValue);
-                    DesiredPixelWidth.Value = newWidth.ToString();
+                    return;
                 }
+
+                var newWidth = (uint)Math.Clamp(Math.Round(height * _aspectRatio, MidpointRounding.ToEven), uint.MinValue, uint.MaxValue);
+                DesiredPixelWidth.Value = newWidth.ToString();
             }
         }
     }
@@ -184,7 +227,7 @@ public class ResizeImageViewModel : IDisposable
         var tab = _mainVm.WindowTabs.ActiveTab.CurrentValue;
 
         var fileInfo = tab.FileInfo.CurrentValue;
-        if (fileInfo == null)
+        if (fileInfo is null)
         {
             return;
         }
@@ -202,7 +245,10 @@ public class ResizeImageViewModel : IDisposable
         var tab = _mainVm.WindowTabs.ActiveTab.CurrentValue;
 
         var fileInfo = tab.FileInfo.CurrentValue;
-        if (fileInfo == null || PickFileAction == null) return;
+        if (fileInfo is null || PickFileAction is null)
+        {
+            return;
+        }
 
         var fileInfoFullName = fileInfo.FullName;
         var ext = GetSelectedFileExtension(fileInfo, ref fileInfoFullName);
@@ -302,13 +348,11 @@ public class ResizeImageViewModel : IDisposable
     public void ResetSettings()
     {
         var tab = _mainVm.WindowTabs.ActiveTab.CurrentValue;
-        if (tab == null) return;
-
         var fileInfo = tab.FileInfo.CurrentValue;
 
         _isInternalChange = true;
-        DesiredPixelWidth.Value = OriginalPixelWidth.ToString();
-        DesiredPixelHeight.Value = OriginalPixelHeight.ToString();
+        DesiredPixelWidth.Value = OriginalPixelWidth.Value.ToString();
+        DesiredPixelHeight.Value = OriginalPixelHeight.Value.ToString();
         _isInternalChange = false;
 
         if (fileInfo != null)
@@ -327,6 +371,95 @@ public class ResizeImageViewModel : IDisposable
         SelectedConversionIndex.Value = 0;
         IsKeepingAspectRatio.Value = true;
         ShowReset.Value = false;
+
+        _ = UpdateOutputFileSizeAsync();
+    }
+
+    public async Task UpdateOutputFileSizeAsync()
+    {
+        var tab = _mainVm.WindowTabs.ActiveTab.CurrentValue;
+
+        var fileInfo = tab.FileInfo.CurrentValue ?? tab.Model?.FileInfo;
+        if (fileInfo is null || !File.Exists(fileInfo.FullName) ||
+            !uint.TryParse(DesiredPixelWidth.Value, CultureInfo.InvariantCulture, out var w) || w == 0 ||
+            !uint.TryParse(DesiredPixelHeight.Value, CultureInfo.InvariantCulture, out var h) || h == 0)
+        {
+            OutputFileSize.Value = string.Empty;
+            return;
+        }
+
+        var isFlipped = tab.ScaleX.CurrentValue < 0;
+        var rotationAngle = tab.RotationAngle.CurrentValue;
+
+        var dummyDest = fileInfo.FullName;
+        var ext = GetSelectedFileExtension(fileInfo, ref dummyDest);
+
+        var tempFilePath = TempFileManager.GetNewTempFilePath($"temp_resize_{Guid.NewGuid():N}{ext}");
+
+        try
+        {
+            var quality = GetQualityValue(ext, tempFilePath);
+
+            using var magickImage = new MagickImage(fileInfo);
+            if (quality is not null)
+            {
+                magickImage.Quality = quality.Value;
+            }
+
+            if (isFlipped)
+            {
+                magickImage.Flop();
+            }
+
+            if (rotationAngle != 0)
+            {
+                magickImage.Rotate(rotationAngle);
+            }
+
+            magickImage.Resize(w, h);
+            await magickImage.WriteAsync(tempFilePath).ConfigureAwait(false);
+
+            var tempFileInfo = new FileInfo(tempFilePath);
+            if (tempFileInfo.Exists)
+            {
+                OutputFileSize.Value = tempFileInfo.Length.GetReadableFileSize();
+            }
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(ResizeImageViewModel), nameof(UpdateOutputFileSizeAsync), e);
+        }
+        finally
+        {
+            CleanupTempFile(_lastTempFilePath);
+            _lastTempFilePath = tempFilePath;
+        }
+    }
+
+    private static void CleanupTempFile(string? path)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            return;
+        }
+
+        try
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            var dir = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
+            {
+                Directory.Delete(dir, true);
+            }
+        }
+        catch
+        {
+            // Ignore cleanup exceptions
+        }
     }
 
     public void ToggleAspectRatio()
@@ -356,7 +489,14 @@ public class ResizeImageViewModel : IDisposable
         IsKeepingAspectRatio.Dispose();
         IsLoading.Dispose();
         ShowReset.Dispose();
-        
+        OutputFileSize.Dispose();
+        OriginalFileSize.Dispose();
+        OriginalPixelWidth.Dispose();
+        OriginalPixelHeight.Dispose();
+
+        CleanupTempFile(_lastTempFilePath);
+        _lastTempFilePath = null;
+
         GC.SuppressFinalize(this);
     }
 }
