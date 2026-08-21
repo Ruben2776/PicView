@@ -196,7 +196,7 @@ public static class StartUpHelper
                     Dispatcher.UIThread.Post(() =>
                     {
                         WindowResizing.FastCenterWindow(mainWindow);
-                    }, DispatcherPriority.Loaded + 1);
+                    }, DispatcherPriority.Loaded);
                 }
             }
         }
