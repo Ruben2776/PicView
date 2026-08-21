@@ -211,7 +211,7 @@ public static class QuickLoad
                 if (!Settings.ImageScaling.ShowImageSideBySide)
                 {
                     // Predict window size and center beforehand for pleasant opening when double-clicking a file
-                    Dispatcher.UIThread.Invoke(() =>
+                    Dispatcher.UIThread.Post(() =>
                     {
                         var size = WindowResizing.GetSize(tab.Model.PixelWidth, tab.Model.PixelHeight,
                             0, 0, 0, mainWindow, vm);
@@ -219,7 +219,7 @@ public static class QuickLoad
                         {
                             return;
                         }
-                        WindowResizing.SetSize(size.Value, WindowResizeReason.Application, vm);
+                        WindowResizing.SetSize(size.Value, WindowResizeReason.Application, mainWindow, vm);
                         if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                         {
                             desktop.MainWindow = mainWindow;
@@ -232,7 +232,7 @@ public static class QuickLoad
                         }
                         mainWindow.Show();
                         mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
-                    });
+                    }, DispatcherPriority.Loaded);
                 }
             }
         }

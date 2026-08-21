@@ -167,7 +167,7 @@ public static class WindowResizing
             return;
         }
 
-        SetSize(size.Value, reason, vm);
+        SetSize(size.Value, reason, mainWindow, vm);
     }
 
     public static void SetSize(double width, double height, double secondWidth, double secondHeight, WindowResizeReason reason, MainWindow mainWindow, MainWindowViewModel vm)
@@ -179,10 +179,10 @@ public static class WindowResizing
             return;
         }
 
-        SetSize(size.Value, reason, vm);
+        SetSize(size.Value, reason, mainWindow, vm);
     }
 
-    public static void SetSize(ImageSize size, WindowResizeReason reason, MainWindowViewModel vm)
+    public static void SetSize(ImageSize size, WindowResizeReason reason, MainWindow mainWindow, MainWindowViewModel vm)
     {
         vm.WindowTabs.ActiveTab.CurrentValue.InitialZoom.Value = size.InitialZoom;
         vm.ScrollViewerWidth.Value = size.ScrollViewerWidth;
@@ -212,6 +212,11 @@ public static class WindowResizing
                 vm.WindowMaxWidth.Value = size.WindowWidth;
                 vm.WindowMaxHeight.Value = size.WindowHeight;
             }
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                // Fixes weird window size bug where the window width is at a fixed value
+                mainWindow.Width = mainWindow.Height = double.NaN;
+            });
         }
         else
         {
