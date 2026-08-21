@@ -1,15 +1,18 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Media.Imaging;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
+using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.Views.Gallery;
 
@@ -20,6 +23,67 @@ public partial class GalleryItem : NavigateAbleItem
         InitializeComponent();
         GalleryContextMenu.Opened += GalleryContextMenuOnOpened;
         GalleryContextMenu.Closed += GalleryContextMenuOnClosed;
+    }
+
+    private IDisposable? _imageSubscription;
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        EffectiveViewportChanged += OnEffectiveViewportChanged;
+    }
+    
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        EffectiveViewportChanged -= OnEffectiveViewportChanged;
+        UnloadImage();
+    }
+
+    private void OnEffectiveViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
+    {
+        var isVisible = e.EffectiveViewport is { Width: > 0, Height: > 0 };
+        if (isVisible)
+        {
+            LoadImage();
+        }
+        else
+        {
+            UnloadImage();
+        }
+    }
+
+    private void LoadImage()
+    {
+        if (_imageSubscription is not null || DataContext is not GalleryItemViewModel vm)
+        {
+            return;
+        }
+        
+        _imageSubscription = Observable.EveryValueChanged(vm.Image, img => img.Value)
+            .Subscribe(img =>
+            {
+                GalleryImage.Source = img as Bitmap;    
+            }, DebugHelper.LogError(nameof(GalleryItem), nameof(LoadImage)));
+    }
+
+    private void UnloadImage()
+    {
+        _imageSubscription?.Dispose();
+        _imageSubscription = null;
+        GalleryImage.Source = null;
+    }
+
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        base.OnDataContextChanged(e);
+        if (_imageSubscription is null)
+        {
+            return;
+        }
+
+        UnloadImage();
+        LoadImage();
     }
 
     private void GalleryContextMenuOnClosed(object? sender, RoutedEventArgs e)
@@ -83,16 +147,6 @@ public partial class GalleryItem : NavigateAbleItem
         base.OnDetachedFromLogicalTree(e);
         GalleryContextMenu.Opened -= GalleryContextMenuOnOpened;
         GalleryContextMenu.Closed -= GalleryContextMenuOnClosed;
-    }
-
-    private void PrintItem_OnClick(object? sender, RoutedEventArgs e)
-    {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item)
-        {
-            return;
-        }
-        var fileName = item.FileLocation.CurrentValue;
-        core.PlatformService.Print(fileName);
     }
 
     private void OpenWith_OnClick(object? sender, RoutedEventArgs e)

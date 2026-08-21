@@ -5,6 +5,7 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using ObservableCollections;
 using PicView.Avalonia.CustomControls;
+using PicView.Core.DebugTools;
 using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -37,7 +38,7 @@ public partial class GalleryView : GalleryAnimationControl
                 _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
             };
             GalleryItemsControl.Navigate(direction);
-        });
+        }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.NavigateGalleryCommand)));
 
          if (Settings.Gallery.IsGalleryDocked)
          {
@@ -77,54 +78,51 @@ public partial class GalleryView : GalleryAnimationControl
                 else
                 {
                     var index = e.NewStartingIndex;
-                    foreach (var item in e.NewItems)
+                    var newItems = e.NewItems.ToArray();
+                    Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         var localIndex = index;
-                        Dispatcher.UIThread.InvokeAsync(() =>
+                        var needsScroll = false;
+                        
+                        foreach (var item in newItems)
                         {
                             if (localIndex >= 0 && localIndex <= GalleryItemsControl.Items.Count)
                             {
                                 GalleryItemsControl.Items.Insert(localIndex, item);
-                                if (tab.NavigationIndex.Value != localIndex)
+                                if (tab != null && tab.NavigationIndex.Value == localIndex)
                                 {
-                                    return;
+                                    GalleryItemsControl.CurrentItemIndex = localIndex;
+                                    GalleryItemsControl.SelectedItemIndex = localIndex;
+                                    needsScroll = true;
                                 }
-
-                                GalleryItemsControl.CurrentItemIndex = localIndex;
-                                GalleryItemsControl.SelectedItemIndex = localIndex;
-                                Dispatcher.InvokeAsync(() =>
-                                {
-                                    if (GalleryItemsControl.ItemsPanelRoot is null)
-                                    {
-                                        return;
-                                    }
-                                    if (GalleryItemsControl.ItemsPanelRoot.Children.Count <= localIndex)
-                                    {
-                                        return;
-                                    }
-                                    if (GalleryItemsControl.ItemsPanelRoot.Children[localIndex] is not ContentPresenter
-                                        presenter)
-                                    {
-                                        return;
-                                    }
-
-                                    var child = presenter.Child as GalleryItem; 
-                                    child?.SetCurrent(true);
-                                    child?.SetSelected(true);
-                                    GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                                }, DispatcherPriority.Render, tab.GetTabCancellation().Token);
                             }
                             else
                             {
                                 GalleryItemsControl.Items.Add(item);
                             }
-                        },DispatcherPriority.Background, tab.GetTabCancellation().Token);
-                        
-                        if (index >= 0)
-                        {
-                            index++;
+                            
+                            if (localIndex >= 0)
+                            {
+                                localIndex++;
+                            }
                         }
-                    }
+
+                        if (needsScroll && tab != null)
+                        {
+                            Dispatcher.InvokeAsync(() =>
+                            {
+                                if (GalleryItemsControl.ItemsPanelRoot is null) return;
+                                var targetIndex = tab.NavigationIndex.Value;
+                                if (GalleryItemsControl.ItemsPanelRoot.Children.Count <= targetIndex) return;
+                                if (GalleryItemsControl.ItemsPanelRoot.Children[targetIndex] is not ContentPresenter presenter) return;
+
+                                var child = presenter.Child as GalleryItem; 
+                                child?.SetCurrent(true);
+                                child?.SetSelected(true);
+                                GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                            }, DispatcherPriority.Render, tab.GetTabCancellation().Token);
+                        }
+                    }, DispatcherPriority.Background, tab.GetTabCancellation().Token);
                 }
                 break;
             case NotifyCollectionChangedAction.Reset:
