@@ -5,6 +5,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
@@ -56,12 +57,77 @@ public class NavigateAbleItemsViewer : ItemsControl
     public NavigateAbleItemsViewer()
     {
         AddHandler(PointerWheelChangedEvent, OnPointerWheelChanged, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
+        LayoutUpdated += (_, _) => ScheduleVisibilityUpdate();
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
+        if (_scrollViewer != null)
+        {
+            _scrollViewer.ScrollChanged -= ScrollViewerOnScrollChanged;
+            _scrollViewer.SizeChanged -= ScrollViewerOnSizeChanged;
+        }
+
         _scrollViewer = e.NameScope.Find<AutoScrollViewer>("PART_ScrollViewer");
+        _scrollViewer.ScrollChanged += ScrollViewerOnScrollChanged;
+        _scrollViewer.SizeChanged += ScrollViewerOnSizeChanged;
+    }
+
+    private void ScrollViewerOnScrollChanged(object? sender, ScrollChangedEventArgs e) => ScheduleVisibilityUpdate();
+    private void ScrollViewerOnSizeChanged(object? sender, SizeChangedEventArgs e) => ScheduleVisibilityUpdate();
+
+    private bool _isVisibilityUpdatePending;
+    
+    private void ScheduleVisibilityUpdate()
+    {
+        if (_isVisibilityUpdatePending)
+        {
+            return;
+        }
+        _isVisibilityUpdatePending = true;
+        Dispatcher.UIThread.Post(() =>
+        {
+            _isVisibilityUpdatePending = false;
+            UpdateViewportVisibility();
+        }, DispatcherPriority.Background);
+    }
+    
+    private void UpdateViewportVisibility()
+    {
+        var animControl = this.FindLogicalAncestorOfType<GalleryAnimationControl>();
+        var isAnimating = animControl?.IsInAnimation ?? false;
+
+        var viewportRect = new Rect(new Point(0, 0), _scrollViewer.Viewport);
+        // Extend viewport slightly to preload items right before the user scrolls into view
+        var extendedViewportRect = viewportRect.Inflate(new Thickness(0, 200, 0, 200)); 
+
+        for (var i = 0; i < ItemCount; i++)
+        {
+            var container = ContainerFromIndex(i);
+            if (container is not { IsVisible: true })
+            {
+                continue;
+            }
+            
+            if (container is not ContentPresenter { Child: NavigateAbleItem item })
+            {
+                continue;
+            }
+
+            var position = container.TranslatePoint(new Point(0, 0), _scrollViewer);
+            if (!position.HasValue)
+            {
+                continue;
+            }
+
+            var itemRect = new Rect(position.Value, container.Bounds.Size);
+            var isVisible = extendedViewportRect.Intersects(itemRect);
+            if (!isAnimating && isVisible)
+            {
+                item.SetViewportVisibility(isVisible);
+            }
+        }
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)

@@ -41,6 +41,8 @@ public class GalleryAnimationControl : UserControl
         set => SetValue(ActiveGalleryModeProperty, value);
     }
 
+    public bool IsInAnimation { get; private set; }
+
     private static Thickness GetDockedMargin => new(0);
     private static Thickness GetExpandedMargin => new(15, 40, 15, 5);
     private static double GetDockedSize => Settings.Gallery.DockedGalleryItemSize + BorderTopAndBottomThickness + SizeDefaults.ScrollbarSize;
@@ -145,6 +147,7 @@ public class GalleryAnimationControl : UserControl
     {
         try
         {
+            IsInAnimation = true;
             var oldMode = _previousMode;
             _previousMode = newMode;
             IsVisible = true;
@@ -164,6 +167,10 @@ public class GalleryAnimationControl : UserControl
         {
             UpdateLayoutForCurrentState(); // Fallback
             DebugHelper.LogDebug(nameof(GalleryAnimationControl), nameof(OnGalleryModeChanged), ex);
+        }
+        finally
+        {
+            IsInAnimation = false;
         }
     }
 

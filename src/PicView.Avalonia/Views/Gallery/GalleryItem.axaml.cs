@@ -4,7 +4,6 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Media.Imaging;
 using PicView.Avalonia.Clipboard;
@@ -27,22 +26,9 @@ public partial class GalleryItem : NavigateAbleItem
 
     private IDisposable? _imageSubscription;
 
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    public override void SetViewportVisibility(bool isVisible)
     {
-        base.OnAttachedToVisualTree(e);
-        EffectiveViewportChanged += OnEffectiveViewportChanged;
-    }
-    
-    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnDetachedFromVisualTree(e);
-        EffectiveViewportChanged -= OnEffectiveViewportChanged;
-        UnloadImage();
-    }
-
-    private void OnEffectiveViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
-    {
-        var isVisible = e.EffectiveViewport is { Width: > 0, Height: > 0 };
+        base.SetViewportVisibility(isVisible);
         if (isVisible)
         {
             LoadImage();
