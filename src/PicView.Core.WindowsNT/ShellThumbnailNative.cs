@@ -180,13 +180,8 @@ public static partial class ShellThumbnailNative
         var totalBytes = stride * bmp.bmHeight;
         var pixels = new byte[totalBytes];
 
-        // HBITMAP from Shell uses bottom-up row order (standard DIB layout).
-        // Flip rows so the output is top-down BGRA.
-        for (var y = 0; y < bmp.bmHeight; y++)
-        {
-            var srcOffset = (bmp.bmHeight - 1 - y) * stride;
-            Marshal.Copy(bmp.bmBits + srcOffset, pixels, y * stride, stride);
-        }
+        // HBITMAP from Shell is top-down 32bpp BGRA, copy directly
+        Marshal.Copy(bmp.bmBits, pixels, 0, totalBytes);
 
         return pixels;
     }
