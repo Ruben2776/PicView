@@ -44,27 +44,25 @@ public class DropDownMenuViewModel : IDisposable
     public BindableReactiveProperty<int> SlideshowCarouselIndex { get; } = new(0);
     public BindableReactiveProperty<bool> IsSlideshowCarouselVisible { get; } = new(true);
     
-    public BindableReactiveProperty<int> ToolWindowsCarouselIndex { get; } = new(0);
-    public BindableReactiveProperty<bool> IsToolWindowsCarouselVisible { get; } = new(true);
-    
     public BindableReactiveProperty<int> SettingsCarouselIndex { get; } = new(0);
     public BindableReactiveProperty<bool> IsSettingsCarouselVisible { get; } = new(true);
     
     public BindableReactiveProperty<bool> IsFileHistoryVisible { get; } = new(false);
+    
+    public BindableReactiveProperty<bool> IsExtraButtonsVisible { get; } = new(true);
 
     private const int DefaultDelay = 95;
     public void OpenGalleryOptions()
     {
         GalleryCarouselIndex.Value = 1;
         SlideshowCarouselIndex.Value = 0;
-        ToolWindowsCarouselIndex.Value = 0;
         SettingsCarouselIndex.Value = 0;
         IsGalleryCarouselVisible.Value = true;
         IsExpandedOptionsOpened.Value = true;
         IsSlideshowCarouselVisible.Value = false;
-        IsToolWindowsCarouselVisible.Value = false;
         IsSettingsCarouselVisible.Value = false;
         IsFileHistoryVisible.Value = false;
+        IsExtraButtonsVisible.Value = false;
     }
 
     public async ValueTask CloseGalleryOptions()
@@ -72,20 +70,20 @@ public class DropDownMenuViewModel : IDisposable
         GalleryCarouselIndex.Value = 0;
         await CloseCarousel().ConfigureAwait(false);
         IsFileHistoryVisible.Value = Settings.Navigation.IsFileHistoryEnabled;
+        IsExtraButtonsVisible.Value = true;
     }
 
     public void OpenSlideshowOptions()
     {
         SlideshowCarouselIndex.Value = 1;
         GalleryCarouselIndex.Value = 0;
-        ToolWindowsCarouselIndex.Value = 0;
         SettingsCarouselIndex.Value = 0;
         IsExpandedOptionsOpened.Value = true;
         IsSlideshowCarouselVisible.Value = true;
         IsGalleryCarouselVisible.Value = false;
-        IsToolWindowsCarouselVisible.Value = false;
         IsSettingsCarouselVisible.Value = false;
         IsFileHistoryVisible.Value = false;
+        IsExtraButtonsVisible.Value = false;
     }
 
     public async ValueTask CloseSlideshowOptions()
@@ -93,6 +91,7 @@ public class DropDownMenuViewModel : IDisposable
         SlideshowCarouselIndex.Value = 0;
         await CloseCarousel().ConfigureAwait(false);
         IsFileHistoryVisible.Value = Settings.Navigation.IsFileHistoryEnabled;
+        IsExtraButtonsVisible.Value = true;
     }
 
     public async ValueTask CloseCarousel()
@@ -101,43 +100,22 @@ public class DropDownMenuViewModel : IDisposable
         IsExpandedOptionsOpened.Value = false;
         IsGalleryCarouselVisible.Value = true;
         IsSlideshowCarouselVisible.Value = true;
-        IsToolWindowsCarouselVisible.Value = true;
         IsSettingsCarouselVisible.Value = true;
         IsFileHistoryVisible.Value = Settings.Navigation.IsFileHistoryEnabled;
+        IsExtraButtonsVisible.Value = true;
     }
 
     public void CloseToDefault()
     {
         SlideshowCarouselIndex.Value = 0;
         GalleryCarouselIndex.Value = 0;
-        ToolWindowsCarouselIndex.Value = 0;
         SettingsCarouselIndex.Value = 0;
         IsExpandedOptionsOpened.Value = false;
         IsGalleryCarouselVisible.Value = true;
         IsSlideshowCarouselVisible.Value = true;
-        IsToolWindowsCarouselVisible.Value = true;
         IsSettingsCarouselVisible.Value = true;
         IsFileHistoryVisible.Value = Settings.Navigation.IsFileHistoryEnabled;
-    }
-    
-    public void OpenToolWindowsOptions()
-    {
-        ToolWindowsCarouselIndex.Value = 1;
-        GalleryCarouselIndex.Value = 0;
-        SlideshowCarouselIndex.Value = 0;
-        SettingsCarouselIndex.Value = 0;
-        IsExpandedOptionsOpened.Value = true;
-        IsToolWindowsCarouselVisible.Value = true;
-        IsGalleryCarouselVisible.Value = false;
-        IsSlideshowCarouselVisible.Value = false;
-        IsSettingsCarouselVisible.Value = false;
-        IsFileHistoryVisible.Value = false;
-    }
-    
-    public async ValueTask CloseToolWindowsOptions()
-    {
-        ToolWindowsCarouselIndex.Value = 0;
-        await CloseCarousel().ConfigureAwait(false);
+        IsExtraButtonsVisible.Value = true;
     }
     
     public void OpenSettingsOptions()
@@ -146,11 +124,11 @@ public class DropDownMenuViewModel : IDisposable
         GalleryCarouselIndex.Value = 0;
         SlideshowCarouselIndex.Value = 0;
         IsExpandedOptionsOpened.Value = true;
-        IsToolWindowsCarouselVisible.Value = false;
         IsGalleryCarouselVisible.Value = false;
         IsSlideshowCarouselVisible.Value = false;
         IsSettingsCarouselVisible.Value = true;
         IsFileHistoryVisible.Value = false;
+        IsExtraButtonsVisible.Value = false;
     }
     
     public async ValueTask CloseSettingsOptions()

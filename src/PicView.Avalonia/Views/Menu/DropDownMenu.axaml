@@ -98,12 +98,14 @@
                             Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
                             CornerRadius="8,0,0,0"
+                            DockPanel.Dock="Top"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource GalleryImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
                             IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value}"
+                            IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value}"
                             Text="{CompiledBinding Translation.ShowDockedGalleryAtBottom.Value}" />
                         <customControls:TextIconButton
                             x:Name="TopDockButton"
@@ -150,23 +152,60 @@
                             IconWidth="14"
                             IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsLeftDocked.Value}"
                             Text="{CompiledBinding Translation.ShowDockedGalleryToTheLeft.Value}" />
-                        <customControls:TextIconButton
-                            x:Name="HideDockedButton"
-                            Padding="15,7,15,7"
-                            Background="Transparent"
-                            Classes="altHover"
-                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.CloseGalleryCommand}"
-                            CornerRadius="8,0,0,0"
-                            Data="{StaticResource CloseGeometry}"
-                            Foreground="{DynamicResource MainTextColor}"
-                            IconHeight="12"
-                            IconMargin="0,0,7,0"
-                            IconWidth="12"
-                            IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}"
-                            Text="{CompiledBinding Translation.HideDockedGallery.Value}" />
                     </StackPanel>
                 </Carousel.Items>
             </Carousel>
+
+            <customControls:TextIconButton
+                x:Name="BottomDockButton2"
+                Padding="15,7,15,7"
+                Background="Transparent"
+                Classes="altHover"
+                Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
+                CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
+                CornerRadius="8,0,0,0"
+                DockPanel.Dock="Top"
+                Foreground="{DynamicResource MainTextColor}"
+                Icon="{StaticResource GalleryImage}"
+                IconHeight="14"
+                IconMargin="0,0,7,0"
+                IconWidth="14"
+                Text="{CompiledBinding Translation.ShowDockedGalleryAtBottom.Value}">
+                <customControls:TextIconButton.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="!WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value" />
+                        <Binding Path="TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value" />
+                    </MultiBinding>
+                </customControls:TextIconButton.IsVisible>
+            </customControls:TextIconButton>
+
+            <customControls:TextIconButton
+                x:Name="HideDockedButton"
+                Padding="15,7,15,7"
+                Background="Transparent"
+                Classes="altHover"
+                Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.CloseGalleryCommand}"
+                CornerRadius="8,0,0,0"
+                Data="{StaticResource CloseGeometry}"
+                DockPanel.Dock="Top"
+                Foreground="{DynamicResource MainTextColor}"
+                IconHeight="12"
+                IconMargin="0,0,7,0"
+                IconWidth="12"
+                Text="{CompiledBinding Translation.HideDockedGallery.Value}">
+                <customControls:TextIconButton.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value" />
+                        <Binding Path="TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value" />
+                    </MultiBinding>
+                </customControls:TextIconButton.IsVisible>
+            </customControls:TextIconButton>
+
+            <Rectangle
+                Height="1"
+                Margin="15,0,0,0"
+                DockPanel.Dock="Top"
+                Fill="{DynamicResource MainBorderColor}" />
 
             <!--  Slideshow Carousel  -->
             <Carousel
@@ -333,154 +372,105 @@
                 </Carousel.Items>
             </Carousel>
 
-            <!--  Tool windows Carousel  -->
-            <Carousel DockPanel.Dock="Top" SelectedIndex="{Binding TopTitlebarViewModel.DropDownMenu.ToolWindowsCarouselIndex.Value}">
-                <Carousel.PageTransition>
-                    <CompositePageTransition>
-                        <PageSlide Orientation="Horizontal" Duration="0:00:00.200" />
-                    </CompositePageTransition>
-                </Carousel.PageTransition>
-                <Carousel.Items>
-                    <DockPanel
-                        VerticalAlignment="Top"
-                        IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsToolWindowsCarouselVisible.Value}"
-                        LastChildFill="True">
+            <Rectangle
+                Height="1"
+                Margin="15,0,0,0"
+                DockPanel.Dock="Top"
+                Fill="{DynamicResource MainBorderColor}" />
 
-                        <customControls:IconButton
-                            x:Name="ToolWindowsExpandButton"
-                            Width="35"
-                            Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                            BorderBrush="{DynamicResource MainBorderColor}"
-                            BorderThickness="0,0,1,0"
-                            Classes="noBorderHover"
-                            Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenToolWindowsOptions}"
-                            Data="{StaticResource FilledArrowRightGeometry}"
-                            DockPanel.Dock="Right"
-                            Foreground="{DynamicResource MainTextColor}"
-                            IconHeight="12"
-                            IconWidth="12" />
+            <!--  Effects  -->
+            <customControls:TextIconButton
+                x:Name="EffectsButton"
+                Padding="15,7,15,7"
+                Background="Transparent"
+                Classes="altHover"
+                Click="Close_OnClick"
+                Command="{Binding EffectsWindowCommand}"
+                DockPanel.Dock="Top"
+                Foreground="{DynamicResource MainTextColor}"
+                Icon="{StaticResource SparklesImage}"
+                IconHeight="14"
+                IconMargin="0,0,7,0"
+                IconWidth="14"
+                IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
+                Text="{Binding Translation.Effects.Value}"
+                ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
+                                              Mode=OneWay}" />
 
-                        <customControls:TextIconButton
-                            x:Name="ToolWindowButton"
-                            Padding="15,7,15,7"
-                            Background="Transparent"
-                            Classes="altHover"
-                            ClickMode="Release"
-                            Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenToolWindowsOptions}"
-                            Foreground="{DynamicResource MainTextColor}"
-                            Icon="{StaticResource BrushImage}"
-                            IconHeight="14"
-                            IconMargin="0,0,7,0"
-                            IconWidth="14"
-                            Text="{Binding Translation.ToolWindows.Value}" />
-                    </DockPanel>
-                    <StackPanel VerticalAlignment="Top">
-                        <Panel Height="30">
-                            <customControls:IconButton
-                                x:Name="ToolWindowContractButton"
-                                Width="35"
-                                HorizontalAlignment="Left"
-                                Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
-                                BorderThickness="0,0,1,0"
-                                Classes="noBorderHover"
-                                Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseToolWindowsOptions}"
-                                CornerRadius="8,0,0,0"
-                                Data="{StaticResource FilledArrowLeftGeometry}"
-                                Foreground="{DynamicResource MainTextColor}"
-                                IconHeight="14"
-                                IconWidth="14" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                Classes="txt"
-                                Text="{CompiledBinding Translation.ToolWindows.Value,
-                                                       Mode=OneWay}" />
-                        </Panel>
-                        <Rectangle
-                            Height="1"
-                            Margin="5,2"
-                            Fill="{DynamicResource MainBorderColor}" />
+            <!--  Single image Resize  -->
+            <customControls:TextIconButton
+                x:Name="SingleImageResizeButton"
+                Padding="15,7,15,7"
+                Background="Transparent"
+                Classes="altHover"
+                Click="Close_OnClick"
+                Command="{Binding ResizeWindowCommand}"
+                DockPanel.Dock="Top"
+                Foreground="{DynamicResource MainTextColor}"
+                Icon="{StaticResource BatchResizeImage}"
+                IconHeight="14"
+                IconMargin="0,0,7,0"
+                IconWidth="14"
+                IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
+                Text="{Binding Translation.ResizeImage.Value}" />
 
-                        <!--  Effects  -->
-                        <customControls:TextIconButton
-                            x:Name="EffectsButton"
-                            Padding="15,7,15,7"
-                            Background="Transparent"
-                            Classes="altHover"
-                            Click="Close_OnClick"
-                            Command="{Binding EffectsWindowCommand}"
-                            Foreground="{DynamicResource MainTextColor}"
-                            Icon="{StaticResource SparklesImage}"
-                            IconHeight="14"
-                            IconMargin="0,0,7,0"
-                            IconWidth="14"
-                            Text="{Binding Translation.Effects.Value}"
-                            ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
-                                                          Mode=OneWay}" />
+            <!--  Batch Resize  -->
+            <customControls:TextIconButton
+                x:Name="BatchResizeButton"
+                Padding="15,7,15,7"
+                Background="Transparent"
+                Classes="altHover"
+                Click="Close_OnClick"
+                Command="{Binding BatchResizeWindowCommand}"
+                DockPanel.Dock="Top"
+                Foreground="{DynamicResource MainTextColor}"
+                Icon="{StaticResource BatchResizeImage}"
+                IconHeight="14"
+                IconMargin="0,0,7,0"
+                IconWidth="14"
+                IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
+                Text="{Binding Translation.BatchResize.Value}" />
 
-                        <!--  Single image Resize  -->
-                        <customControls:TextIconButton
-                            x:Name="SingleImageResizeButton"
-                            Padding="15,7,15,7"
-                            Background="Transparent"
-                            Classes="altHover"
-                            Click="Close_OnClick"
-                            Command="{Binding ResizeWindowCommand}"
-                            Foreground="{DynamicResource MainTextColor}"
-                            Icon="{StaticResource BatchResizeImage}"
-                            IconHeight="14"
-                            IconMargin="0,0,7,0"
-                            IconWidth="14"
-                            Text="{Binding Translation.ResizeImage.Value}" />
+            <!--  Image info  -->
+            <customControls:TextIconButton
+                x:Name="ImageInfoButton"
+                Padding="15,7,15,7"
+                Background="Transparent"
+                Classes="altHover"
+                Click="Close_OnClick"
+                Command="{Binding ImageInfoWindowCommand}"
+                DockPanel.Dock="Top"
+                Foreground="{DynamicResource MainTextColor}"
+                Icon="{StaticResource CameraImage}"
+                IconHeight="14"
+                IconMargin="0,0,7,0"
+                IconWidth="14"
+                IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
+                Text="{Binding Translation.ImageInfo.Value}" />
 
-                        <!--  Batch Resize  -->
-                        <customControls:TextIconButton
-                            x:Name="BatchResizeButton"
-                            Padding="15,7,15,7"
-                            Background="Transparent"
-                            Classes="altHover"
-                            Click="Close_OnClick"
-                            Command="{Binding BatchResizeWindowCommand}"
-                            Foreground="{DynamicResource MainTextColor}"
-                            Icon="{StaticResource BatchResizeImage}"
-                            IconHeight="14"
-                            IconMargin="0,0,7,0"
-                            IconWidth="14"
-                            Text="{Binding Translation.BatchResize.Value}" />
+            <!--  Crop  -->
+            <customControls:TextIconButton
+                x:Name="CropButton"
+                Padding="15,7,15,7"
+                Background="Transparent"
+                Classes="altHover"
+                Click="Close_OnClick"
+                Command="{Binding CropCommand}"
+                CornerRadius="0,0,8,8"
+                DockPanel.Dock="Top"
+                Foreground="{DynamicResource MainTextColor}"
+                Icon="{StaticResource CropImage}"
+                IconHeight="14"
+                IconMargin="0,0,7,0"
+                IconWidth="14"
+                IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
+                Text="{Binding Translation.Crop.Value}" />
 
-                        <!--  Image info  -->
-                        <customControls:TextIconButton
-                            x:Name="ImageInfoButton"
-                            Padding="15,7,15,7"
-                            Background="Transparent"
-                            Classes="altHover"
-                            Click="Close_OnClick"
-                            Command="{Binding ImageInfoWindowCommand}"
-                            Foreground="{DynamicResource MainTextColor}"
-                            Icon="{StaticResource CameraImage}"
-                            IconHeight="14"
-                            IconMargin="0,0,7,0"
-                            IconWidth="14"
-                            Text="{Binding Translation.ImageInfo.Value}" />
-
-                        <!--  Crop  -->
-                        <customControls:TextIconButton
-                            x:Name="CropButton"
-                            Padding="15,7,15,7"
-                            Background="Transparent"
-                            Classes="altHover"
-                            Click="Close_OnClick"
-                            Command="{Binding CropCommand}"
-                            CornerRadius="0,0,8,8"
-                            Foreground="{DynamicResource MainTextColor}"
-                            Icon="{StaticResource CropImage}"
-                            IconHeight="14"
-                            IconMargin="0,0,7,0"
-                            IconWidth="14"
-                            Text="{Binding Translation.Crop.Value}" />
-                    </StackPanel>
-                </Carousel.Items>
-            </Carousel>
+            <Rectangle
+                Height="1"
+                Margin="15,0,0,0"
+                DockPanel.Dock="Top"
+                Fill="{DynamicResource MainBorderColor}" />
 
             <!--  Settings Carousel  -->
             <Carousel DockPanel.Dock="Top" SelectedIndex="{Binding TopTitlebarViewModel.DropDownMenu.SettingsCarouselIndex.Value}">
@@ -702,8 +692,8 @@
                 LastChildFill="False">
 
                 <Rectangle
-                    Height="2"
-                    Margin="10,5,0,5"
+                    Height="1"
+                    Margin="15,0,0,0"
                     DockPanel.Dock="Top"
                     Fill="{DynamicResource MainBorderColor}" />
 
@@ -712,7 +702,7 @@
 
                     <customControls:IconButton
                         x:Name="HistorySortButton"
-                        Margin="0,0,0,0"
+                        Margin="0,5,0,0"
                         Padding="8,5"
                         Background="Transparent"
                         Classes="hover"

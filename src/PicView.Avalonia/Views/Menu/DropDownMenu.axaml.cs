@@ -200,6 +200,8 @@ public partial class DropDownMenu : AnimatedMenu
         
         BottomDockButton.Classes.Remove("altHover");
         BottomDockButton.Classes.Add("hover");
+        BottomDockButton2.Classes.Remove("altHover");
+        BottomDockButton2.Classes.Add("hover");
         
         TopDockButton.Classes.Remove("altHover");
         TopDockButton.Classes.Add("hover");
@@ -248,17 +250,6 @@ public partial class DropDownMenu : AnimatedMenu
         
         SlideShow120Sec.Classes.Remove("altHover");
         SlideShow120Sec.Classes.Add("hover");
-        
-        // Tool windows
-        ToolWindowsExpandButton.Background = white;
-        ToolWindowsExpandButton.Classes.Remove("noBorderHover");
-        ToolWindowsExpandButton.Classes.Add("hover");
-        
-        ToolWindowButton.Classes.Remove("altHover");
-        ToolWindowButton.Classes.Add("hover");
-        
-        ToolWindowContractButton.Classes.Remove("noBorderHover");
-        ToolWindowContractButton.Classes.Add("hover");
         
         EffectsButton.Classes.Remove("altHover");
         EffectsButton.Classes.Add("hover");
