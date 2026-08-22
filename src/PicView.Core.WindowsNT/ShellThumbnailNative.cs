@@ -182,6 +182,13 @@ public static partial class ShellThumbnailNative
 
         // HBITMAP from Shell is top-down 32bpp BGRA, copy directly
         Marshal.Copy(bmp.bmBits, pixels, 0, totalBytes);
+        // HBITMAP from Shell uses bottom-up row order (standard DIB layout).
+        // Flip rows so the output is top-down BGRA.
+        for (var y = 0; y < bmp.bmHeight; y++)
+        {
+            var srcOffset = (bmp.bmHeight - 1 - y) * stride;
+            Marshal.Copy(bmp.bmBits + srcOffset, pixels, y * stride, stride);
+        }
 
         return pixels;
     }
