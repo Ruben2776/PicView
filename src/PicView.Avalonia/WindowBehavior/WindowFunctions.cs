@@ -147,7 +147,7 @@ public static class WindowFunctions
             await FileHistoryManager.SaveToFileAsync();
             foreach (var tabViewModel in vm.WindowTabs.Tabs.CurrentValue)
             {
-                tabViewModel.ArchiveExtractionService.Cleanup();
+                tabViewModel.ArchiveExtractionService?.Cleanup();
             }
         }
         catch (Exception e)
