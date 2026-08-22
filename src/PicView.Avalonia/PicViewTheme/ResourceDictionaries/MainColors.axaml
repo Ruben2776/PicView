@@ -53,6 +53,7 @@
             <Color x:Key="MenuItemHoverBackground">#FF4B4B4B</Color>
 
             <!--  TABS  -->
+            <Color x:Key="BehindTabBackground">#fff</Color>
             <Color x:Key="TabItemSelectedBackground">Transparent</Color>
             <Color x:Key="TabItemUnSelectedBackground">Transparent</Color>
             <Color x:Key="TabItemBorderColor">#D1D9E4</Color>
@@ -76,7 +77,7 @@
 
 
         <!--  ==========================================  -->
-        <!--  LIGHT THEME (Cool Slate / Blue Tint)  -->
+        <!--  LIGHT THEME  -->
         <!--  ==========================================  -->
         <ResourceDictionary x:Key="Light">
             <!--  Global Text  -->
@@ -89,28 +90,25 @@
             <Color x:Key="WindowLogoColor">#fff</Color>
 
             <!--  TOP TITLE BAR  -->
-            <LinearGradientBrush x:Key="TitleBarBackgroundColor" StartPoint="5%,50%" EndPoint="100%,50%">
-                <!--  Left edge: White  -->
-                <GradientStop Offset="0.3" Color="#FFFFFF" />
+            <Color x:Key="TitleBarForeground">#EE51516C</Color>
 
-                <!--  Center: Slate/Blue-tint  -->
-                <GradientStop Offset="0.5" Color="#EDF1F5" />
-
-                <!--  Right edge: White  -->
-                <GradientStop Offset="0.7" Color="#FFFFFF" />
-            </LinearGradientBrush>
+            <Color x:Key="TitleBarBackgroundColor">#fff</Color>
             <Color x:Key="TitleBarBorderColor">Gainsboro</Color>
             <Color x:Key="TitleBarButtonBackground">#fff</Color>
-            <Color x:Key="TitleBarButtonBorder">Transparent</Color>
-
-            <Color x:Key="TitleBarForeground">#EE51516C</Color>
+            <Color x:Key="TitleBarButtonBorder">#fff</Color>
 
             <Color x:Key="EditableTitlebarBackground">Transparent</Color>
             <Color x:Key="EditableTitlebarForeground">#EE25203C</Color>
 
             <!--  BOTTOM TOOLBAR  -->
-            <Color x:Key="BottomBarBackgroundColor">#F2F5F9</Color>
-            <Color x:Key="BottomBarBorderColor">#D1D9E4</Color>
+            <Color x:Key="BottomBarForegroundColor">#EE393939</Color>
+
+            <Color x:Key="BottomBarBackgroundColor">#ECF8F8F8</Color>
+            <Color x:Key="BottomBarBorderColor">Gainsboro</Color>
+
+            <Color x:Key="BottomBarButtonBackgroundColor">#FCFCFC</Color>
+            <Color x:Key="BottomBarButtonBorderColor">#fff</Color>
+            <Color x:Key="BottomBarButtonBackgroundAltColor">#FBFBFB</Color>
 
             <!--  Bottom Toolbar Buttons  -->
             <Color x:Key="BottomBarNavBtnBackground">Transparent</Color>
@@ -128,14 +126,19 @@
             <Color x:Key="MenuItemHoverBackground">#E1E7F0</Color>
 
             <!--  TABS  -->
+            <Color x:Key="BehindTabBackground">#fff</Color>
             <Color x:Key="TabItemSelectedBackground">#fff</Color>
             <Color x:Key="TabItemUnSelectedBackground">#F2F5F9</Color>
             <Color x:Key="TabItemBorderColor">#9ABCBCBC</Color>
             <Color x:Key="TabItemHoverBackground">#E1E7F0</Color>
 
             <!--  StartUpMenu  -->
-            <Color x:Key="StartUpMenuBackground">#ECECECFF</Color>
-            <Color x:Key="StartUpMenuForeground">#595959</Color>
+            <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
+                <GradientStop Offset="0.0" Color="#ECECECFF" />
+                <GradientStop Offset="0.5" Color="#FFCDC9C5" />
+                <GradientStop Offset="1.0" Color="#ECECECFF" />
+            </ConicGradientBrush>
+            <Color x:Key="StartUpMenuForeground">#6A6A6A</Color>
 
 
         </ResourceDictionary>

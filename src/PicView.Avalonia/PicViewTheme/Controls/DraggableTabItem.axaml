@@ -68,10 +68,6 @@
                 <ScaleTransform ScaleX="1.05" ScaleY="1.05" />
             </Setter>
         </Style>
-        <Style Selector="^:dragging:not(.noBorder) /template/ Border#PART_LayoutRoot">
-            <Setter Property="BorderThickness" Value="1,0,1,0" />
-            <Setter Property="BorderBrush" Value="{DynamicResource TertiaryBorderColor}" />
-        </Style>
 
         <Style Selector="^:detached">
             <Setter Property="Width" Value="0" />

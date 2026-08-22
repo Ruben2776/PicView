@@ -990,7 +990,7 @@
     <Panel x:Name="MainPanel">
         <customControls:DraggableTabControl
             x:Name="MainTabControl"
-            Background="{DynamicResource SecondaryBackgroundColor}"
+            Background="{DynamicResource BehindTabBackground}"
             DataContext="{CompiledBinding WindowTabs}"
             ItemsSource="{CompiledBinding Tabs.Value,
                                           Mode=TwoWay}"
