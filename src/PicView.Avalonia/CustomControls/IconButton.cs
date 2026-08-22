@@ -126,14 +126,7 @@ public class IconButton : Button
                     continue;
                 }
 
-                if (Settings.Theme.GlassTheme)
-                {
-                    pen.Brush = UIHelper.GetBrush("SecondaryTextColor");
-                }
-                else
-                {
-                    pen.Brush = UIHelper.GetBrush("MainTextColor");
-                }
+                pen.Brush = Foreground;
             }
 
             var image = new Image
@@ -162,14 +155,9 @@ public class IconButton : Button
             // Revert brush to main text color on pointer exit
             PointerExited += delegate
             {
-                if (Settings.Theme.GlassTheme)
-                {
-                    return;
-                }
-
                 Dispatcher.UIThread.Invoke(() =>
                 {
-                    var brush = UIHelper.GetBrush("MainTextColor");
+                    var brush = Foreground;
                     foreach (var drawing in drawingGroup.Children)
                     {
                         if (drawing is GeometryDrawing { Pen: Pen pen })

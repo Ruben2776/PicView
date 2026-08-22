@@ -2,13 +2,14 @@
     x:Class="PicView.Avalonia.Views.UC.StartUpMenu"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:TabViewModel"
-    Background="{DynamicResource WindowBackgroundColor}">
+    Background="{DynamicResource StartUpMenuBackground}">
     <UserControl.Resources>
-        <SolidColorBrush x:Key="SelectFileBrush" Color="{StaticResource SecondaryTextColor}" />
-        <SolidColorBrush x:Key="OpenLastFileBrush" Color="{StaticResource SecondaryTextColor}" />
-        <SolidColorBrush x:Key="PasteBrush" Color="{StaticResource SecondaryTextColor}" />
+        <SolidColorBrush x:Key="SelectFileBrush" Color="{DynamicResource StartUpMenuForeground}" />
+        <SolidColorBrush x:Key="OpenLastFileBrush" Color="{DynamicResource StartUpMenuForeground}" />
+        <SolidColorBrush x:Key="PasteBrush" Color="{DynamicResource StartUpMenuForeground}" />
     </UserControl.Resources>
     <Panel>
         <Viewbox
@@ -33,37 +34,15 @@
 
             <Button x:Name="SelectFileButton" Background="Transparent">
                 <StackPanel Orientation="Horizontal">
-                    <Image Height="20.091">
-                        <Image.Source>
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M64,192L64,120A40,40,0,0,1,104,80L179.89,80A40,40,0,0,1,202.08,86.72L229.92,105.28A40,40,0,0,0,252.11,112L408,112A40,40,0,0,1,448,152L448,192">
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource SelectFileBrush}"
-                                                    LineJoin="Round"
-                                                    MiterLimit="1"
-                                                    Thickness="32" />
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M479.9,226.55L463.68,392A40,40,0,0,1,423.75,432L88.25,432A40,40,0,0,1,48.32,392L32.1,226.55A32,32,0,0,1,64,192L448.1,192A32,32,0,0,1,479.9,226.55z">
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource SelectFileBrush}"
-                                                    LineJoin="Round"
-                                                    MiterLimit="1"
-                                                    Thickness="32" />
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image.Source>
-                    </Image>
+                    <Path
+                        Height="18"
+                        Data="{StaticResource FolderGeometry}"
+                        Fill="{StaticResource SelectFileBrush}"
+                        Stretch="Uniform" />
                     <Label
                         x:Name="OpenFileDialogLabel"
                         Padding="8,9,15,5"
+                        Content="{Binding ParentWindowContext.Translation.OpenFileDialog.Value}"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         FontSize="14"
                         Foreground="{StaticResource SelectFileBrush}" />
@@ -72,34 +51,11 @@
 
             <Button x:Name="OpenLastFileButton" Background="Transparent">
                 <StackPanel Height="30" Orientation="Horizontal">
-                    <Image Height="20.091">
-                        <Image.Source>
-                            <DrawingImage>
-                                <DrawingImage.Drawing>
-                                    <DrawingGroup ClipGeometry="M0,0 V512 H512 V0 H0 Z">
-                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M112,111L112,401C112,418.44,129,429.52,143,421.16L390.9,272.79C403.02,265.54,403.02,246.46,390.9,239.21L143,90.84C129,82.48,112,93.56,112,111z">
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource OpenLastFileBrush}"
-                                                    LineJoin="Miter"
-                                                    MiterLimit="1"
-                                                    Thickness="32" />
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                        <GeometryDrawing Geometry="F1 M512,512z M0,0z M400,80L400,432">
-                                            <GeometryDrawing.Pen>
-                                                <Pen
-                                                    Brush="{StaticResource OpenLastFileBrush}"
-                                                    LineJoin="Miter"
-                                                    MiterLimit="1"
-                                                    Thickness="32" />
-                                            </GeometryDrawing.Pen>
-                                        </GeometryDrawing>
-                                    </DrawingGroup>
-                                </DrawingImage.Drawing>
-                            </DrawingImage>
-                        </Image.Source>
-                    </Image>
+                    <Path
+                        Height="18"
+                        Data="{StaticResource PlaySkipForwardGeometry}"
+                        Fill="{StaticResource OpenLastFileBrush}"
+                        Stretch="Uniform" />
                     <Label
                         x:Name="OpenLastFileLabel"
                         Padding="8,8,15,2"

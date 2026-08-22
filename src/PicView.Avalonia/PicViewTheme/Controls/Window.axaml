@@ -1,9 +1,9 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="Window" x:Key="{x:Type Window}">
+    <ControlTheme x:Key="{x:Type Window}" TargetType="Window">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="TransparencyBackgroundFallback" Value="{StaticResource MenuBackgroundColor}" />
+        <Setter Property="TransparencyBackgroundFallback" Value="{StaticResource WindowBackgroundColor}" />
         <Setter Property="Foreground" Value="{StaticResource MainTextColor}" />
-        <Setter Property="BorderBrush" Value="{StaticResource MainBorderColor}" />
+        <Setter Property="BorderBrush" Value="{StaticResource WindowBorderColor}" />
         <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="-1" />
         <Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
         <Setter Property="WindowDecorations" Value="Full" />
@@ -24,12 +24,12 @@
                             </ExperimentalAcrylicBorder>
 
                             <ContentPresenter
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                Margin="{TemplateBinding Padding}"
                                 Name="PART_ContentPresenter"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}" />
                         </Panel>
                     </VisualLayerManager>
                 </Panel>

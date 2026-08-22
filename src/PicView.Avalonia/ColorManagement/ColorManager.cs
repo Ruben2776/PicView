@@ -135,6 +135,9 @@ public static class ColorManager
         var secondaryBrush = new SolidColorBrush(SecondaryAccentColor);
         var logoAccentBrush = new SolidColorBrush(LogoAccentColor);
 
+        // Calculate the contrasting text color based on the PrimaryAccentColor
+        var accentForegroundBrush = new SolidColorBrush(GetContrastingForegroundColor(PrimaryAccentColor));
+
         if (Settings.Theme.GlassTheme)
         {
             GlassThemeHelper.GlassThemeUpdates();
@@ -144,6 +147,9 @@ public static class ColorManager
         UpdateResourceIfExists("AccentColor", primaryBrush);
         UpdateResourceIfExists("SecondaryAccentColor", secondaryBrush);
         UpdateResourceIfExists("LogoAccentColor", logoAccentBrush);
+    
+        // Push the dynamic foreground brush to the application resources
+        UpdateResourceIfExists("AccentForegroundBrush", accentForegroundBrush);
     }
 
     /// <summary>
@@ -178,4 +184,16 @@ public static class ColorManager
     }
 
     public static Color GetColor(int color) => ThemeColorMap.TryGetValue(color, out var colors) ? colors.Primary : default;
+    
+    /// <summary>
+    /// Calculates the relative luminance of a color and returns a contrasting foreground color (White or Soft Black).
+    /// </summary>
+    public static Color GetContrastingForegroundColor(Color bg)
+    {
+        // Relative luminance calculation based on sRGB
+        var luminance = (0.299 * bg.R + 0.587 * bg.G + 0.114 * bg.B) / 255.0;
+    
+        // Return a soft black for light/bright backgrounds, white for dark ones
+        return luminance > 0.55 ? Color.FromRgb(28, 28, 28) : Colors.White;
+    }
 }

@@ -114,7 +114,6 @@
 
         <Style Selector="^:not(.noHover):selected /template/ ContentPresenter#PART_HeaderPresenter">
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
-            <Setter Property="Effect" Value="{StaticResource TextShadow}" />
         </Style>
 
         <Style Selector="^:nth-child(1) /template/ Border#root">
@@ -152,7 +151,6 @@
 
         <Style Selector="^.active /template/ ContentPresenter#PART_HeaderPresenter">
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
-            <Setter Property="Effect" Value="{StaticResource TextShadow}" />
         </Style>
 
     </ControlTheme>
@@ -314,7 +312,6 @@
 
         <Style Selector="^:not(.noHover):selected /template/ ContentPresenter#PART_HeaderPresenter">
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
-            <Setter Property="Effect" Value="{StaticResource TextShadow}" />
         </Style>
 
         <Style Selector="^:not(.noHover):selected /template/ ContentPresenter#icon">
@@ -336,7 +333,6 @@
 
         <Style Selector="^.active /template/ ContentPresenter#PART_HeaderPresenter">
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
-            <Setter Property="Effect" Value="{StaticResource TextShadow}" />
         </Style>
 
         <Style Selector="^.active /template/ ContentPresenter#icon">

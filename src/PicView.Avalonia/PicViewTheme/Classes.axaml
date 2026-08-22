@@ -34,10 +34,6 @@
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
     </Style>
 
-    <Style Selector="TextBlock.txtShadow">
-        <Setter Property="Effect" Value="{StaticResource TextShadow}" />
-    </Style>
-
     <Style Selector="Button.hover, customControls|CopyButton:hover">
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />

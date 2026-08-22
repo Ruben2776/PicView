@@ -2285,7 +2285,7 @@
             <GeometryDrawing Geometry="F1 M4 12L20 12">
                 <GeometryDrawing.Pen>
                     <Pen
-                        Brush="{DynamicResource MainTextColor}"
+                        Brush="{DynamicResource TitleBarForeground}"
                         LineCap="Round"
                         LineJoin="Round"
                         MiterLimit="4"
@@ -2295,7 +2295,7 @@
             <GeometryDrawing Geometry="F1 M4 6L20 6">
                 <GeometryDrawing.Pen>
                     <Pen
-                        Brush="{DynamicResource MainTextColor}"
+                        Brush="{DynamicResource TitleBarForeground}"
                         LineCap="Round"
                         LineJoin="Round"
                         MiterLimit="4"
@@ -2305,7 +2305,7 @@
             <GeometryDrawing Geometry="F1 M4 18L20 18">
                 <GeometryDrawing.Pen>
                     <Pen
-                        Brush="{DynamicResource MainTextColor}"
+                        Brush="{DynamicResource TitleBarForeground}"
                         LineCap="Round"
                         LineJoin="Round"
                         MiterLimit="4"
