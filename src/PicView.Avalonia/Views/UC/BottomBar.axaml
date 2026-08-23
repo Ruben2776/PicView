@@ -913,7 +913,8 @@
                 IsVisible="{Binding !IsAutoFit.Value}"
                 Stretch="Fill"
                 Stroke="{DynamicResource MainBorderColor}"
-                StrokeThickness="1" />
+                StrokeThickness="1"
+                WindowDecorationProperties.ElementRole="ResizeSE" />
         </Panel>
     </Border>
 </UserControl>
