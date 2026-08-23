@@ -343,6 +343,11 @@ public static class WindowFunctions
         {
             window ??= desktop.MainWindow;
 
+            if (window is null)
+            {
+                return;
+            }
+
             ScreenHelper.UpdateScreenSize(window);
             var screen = ScreenHelper.ScreenSize;
 
@@ -357,10 +362,10 @@ public static class WindowFunctions
             var centeredY = y + (top ? 0 : (screen.WorkingAreaHeight - windowSize.Height) / 2);
 
             // Set the window's new position
-            window?.Position = horizontal
+            window.Position = horizontal
                 ? new PixelPoint((int)centeredX, (int)centeredY)
                 : new PixelPoint(window.Position.X, (int)centeredY);
-        });
+        }, DispatcherPriority.Render);
     }
 
     public static void InitializeWindowSizeAndPosition(MainWindow window)

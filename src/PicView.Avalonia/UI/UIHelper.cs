@@ -79,7 +79,7 @@ public static class UIHelper
     /// <summary>
     /// Centers the window or gallery based on current state
     /// </summary>
-    public static void Center(MainWindowViewModel vm)
+    public static void Center(MainWindowViewModel vm, MainWindow mainWindow)
     {
         if (vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryExpanded.CurrentValue)
         {
@@ -87,7 +87,7 @@ public static class UIHelper
         }
         else
         {
-            WindowFunctions.CenterWindowOnScreen();
+            WindowFunctions.CenterWindowOnScreen(mainWindow);
         }
     }
 

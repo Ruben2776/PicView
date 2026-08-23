@@ -82,6 +82,13 @@ public static class QuickLoad
                 mainWindow.Show();
                 core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
             }, DispatcherPriority.Send);
+            if (Settings.WindowProperties.AutoFit)
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    WindowFunctions.CenterWindowOnScreen(mainWindow);
+                }, DispatcherPriority.Background);
+            }
             core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = true;
             await LoadArchiveFileAsync(mainWindow, core, fileInfo).ConfigureAwait(false);
             core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = false;

@@ -496,7 +496,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     
     #region Windows and window functions
     
-    /// <inheritdoc cref="DialogManager.HandleShouldClosing" />
+    /// <inheritdoc cref="MainWindow.HandleShouldClosing" />
     public async ValueTask Close()
     {
         await mainWindow.HandleShouldClosing(vm);
@@ -510,7 +510,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
 
     public ValueTask Center()
     {
-        UIHelper.Center(vm);
+        UIHelper.Center(vm, mainWindow);
         return ValueTask.CompletedTask;
     }
 
