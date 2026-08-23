@@ -31,7 +31,7 @@ public static class ScreenHelper
         // Need to lock it to prevent multiple calls
         lock (Lock)
         {
-            var screen = window.Screens.ScreenFromWindow(window);
+            var screen = window?.Screens?.ScreenFromWindow(window);
 
             if (screen is null)
             {
