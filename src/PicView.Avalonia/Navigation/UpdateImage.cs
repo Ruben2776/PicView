@@ -201,6 +201,7 @@ public static class UpdateImage
         tabViewModel.WindowTitle.Value = windowTitles.TitleWithAppName;
         tabViewModel.Title.Value = windowTitles.BaseTitle;
         tabViewModel.TitleTooltip.Value = windowTitles.FilePathTitle;
+        tabViewModel.TabTitle.Value = name;
         
         tabViewModel.DisposeImageIterator();
     }
