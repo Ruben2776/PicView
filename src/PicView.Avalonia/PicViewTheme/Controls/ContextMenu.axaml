@@ -1,11 +1,11 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
 
-    <ControlTheme TargetType="ContextMenu" x:Key="{x:Type ContextMenu}">
+    <ControlTheme x:Key="{x:Type ContextMenu}" TargetType="ContextMenu">
         <Setter Property="Background" Value="{DynamicResource ContextMenuBackgroundColor}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ContextMenuBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="6,4" />
         <Setter Property="TextBlock.FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
@@ -13,15 +13,15 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
+                    Padding="{TemplateBinding Padding}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="8"
-                    Padding="{TemplateBinding Padding}">
+                    CornerRadius="8">
                     <ItemsPresenter
+                        Name="PART_ItemsPresenter"
                         ItemsPanel="{TemplateBinding ItemsPanel}"
-                        KeyboardNavigation.TabNavigation="Continue"
-                        Name="PART_ItemsPresenter" />
+                        KeyboardNavigation.TabNavigation="Continue" />
                 </Border>
             </ControlTemplate>
         </Setter>

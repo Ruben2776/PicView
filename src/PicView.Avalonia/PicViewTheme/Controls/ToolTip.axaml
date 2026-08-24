@@ -1,8 +1,8 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="ToolTip" x:Key="{x:Type ToolTip}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type ToolTip}" TargetType="ToolTip">
         <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -12,16 +12,16 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <ContentPresenter
+                    Name="PART_ContentPresenter"
+                    Padding="8"
                     Background="{DynamicResource ContextMenuBackgroundColor}"
                     BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     Content="{TemplateBinding Content}"
                     ContentTemplate="{TemplateBinding ContentTemplate}"
                     CornerRadius="5"
-                    Foreground="{DynamicResource ContextMenuTextColor}"
-                    IsHitTestVisible="False"
-                    Name="PART_ContentPresenter"
-                    Padding="8" />
+                    Foreground="{DynamicResource ContextMenuForegroundColor}"
+                    IsHitTestVisible="False" />
             </ControlTemplate>
         </Setter>
     </ControlTheme>

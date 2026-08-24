@@ -37,8 +37,8 @@
                             OverlayInputPassThroughElement="{Binding $parent[Menu]}"
                             Placement="BottomEdgeAlignedLeft">
                             <Border
-                                Background="{DynamicResource MainBorderColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="1">
                                 <ItemsPresenter
                                     Name="PART_ItemsPresenter"
@@ -51,11 +51,16 @@
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^:selected /template/ Border#root">
+        <Style Selector="^.AccentHighLight:selected /template/ Border#root">
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
         </Style>
 
-        <Style Selector="^:selected /template/ ContentPresenter#PART_HeaderPresenter">
+        <Style Selector="^.SubtleHighLight:selected /template/ Border#root">
+            <Setter Property="Background" Value="{DynamicResource MenuItemHoverBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource MenuItemHoverBackground}" />
+        </Style>
+
+        <Style Selector="^.AccentHighLight:selected /template/ ContentPresenter#PART_HeaderPresenter">
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
         </Style>
 
@@ -63,9 +68,10 @@
             <Setter Property="IsVisible" Value="False" />
         </Style>
 
-        <Style Selector="^:disabled">
-            <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
+        <Style Selector="^:disabled /template/ Border#root">
+            <Setter Property="Background" Value="{DynamicResource DisabledMenuBackgroundColor}" />
         </Style>
+
     </ControlTheme>
 
     <ControlTheme x:Key="{x:Type Menu}" TargetType="Menu">

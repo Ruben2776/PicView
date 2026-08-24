@@ -1,59 +1,59 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="CheckBox" x:Key="{x:Type CheckBox}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type CheckBox}" TargetType="CheckBox">
         <Setter Property="Padding" Value="4" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <ControlTemplate TargetType="{x:Type CheckBox}">
                 <Border
+                    Name="border"
+                    Padding="{TemplateBinding Padding}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}"
-                    Name="border"
-                    Padding="{TemplateBinding Padding}">
+                    CornerRadius="{TemplateBinding CornerRadius}">
                     <StackPanel Orientation="Horizontal">
                         <Decorator
-                            HorizontalAlignment="Center"
                             Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center"
                             VerticalAlignment="Center">
 
-                            <Canvas Height="20" Width="20">
+                            <Canvas Width="20" Height="20">
                                 <Image
+                                    x:Name="TickMark"
+                                    Width="18"
                                     Height="18"
                                     IsVisible="False"
-                                    Source="{StaticResource SquareCheckImage}"
-                                    Width="18"
-                                    x:Name="TickMark" />
+                                    Source="{StaticResource SquareCheckImage}" />
 
                                 <Image
+                                    x:Name="indeterminateMark"
+                                    Width="18"
                                     Height="18"
                                     IsVisible="False"
                                     Source="{StaticResource SquareImage}"
-                                    Stretch="Fill"
-                                    Width="18"
-                                    x:Name="indeterminateMark" />
+                                    Stretch="Fill" />
 
                                 <Image
+                                    x:Name="CrossMark"
+                                    Width="18"
                                     Height="18"
                                     IsVisible="False"
                                     Source="{StaticResource SquareXImage}"
-                                    Stretch="Fill"
-                                    Width="18"
-                                    x:Name="CrossMark" />
+                                    Stretch="Fill" />
                             </Canvas>
                         </Decorator>
                         <ContentPresenter
+                            Name="PART_ContentPresenter"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            Name="PART_ContentPresenter"
                             RecognizesAccessKey="True"
-                            TextElement.Foreground="{TemplateBinding Foreground}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            TextElement.Foreground="{TemplateBinding Foreground}" />
                     </StackPanel>
                 </Border>
             </ControlTemplate>
@@ -97,7 +97,7 @@
 
         <Style Selector="^.hover:pointerover /template/ Border#border">
             <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
@@ -114,7 +114,7 @@
         </Style>
         <Style Selector="^.altHover:pointerover /template/ Border#border">
             <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
@@ -138,7 +138,7 @@
         </Style>
         <Style Selector="^.noBorderHover:pointerover /template/ Border#border">
             <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="Transparent" />

@@ -28,7 +28,7 @@
                     Source="{StaticResource LogoImage}" />
             </Border>
 
-            <Menu
+            <customControls:StyledMenu
                 x:Name="MainMenu"
                 Height="{Binding TitlebarHeight.Value, Mode=OneWay}"
                 HorizontalAlignment="Left"
@@ -37,7 +37,7 @@
                 ZIndex="9">
 
                 <!--  File  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     x:Name="FileMenuItem"
                     Height="{Binding TitlebarHeight.Value, Mode=OneWay}"
                     MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
@@ -46,7 +46,7 @@
                     </MenuItem.Header>
 
                     <!--  Open  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding OpenCommand}"
                         Header="{CompiledBinding Translation.Open.Value,
                                                  Mode=OneWay}"
@@ -54,10 +54,10 @@
                         <MenuItem.Icon>
                             <Image Classes="OpenImage" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Save  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding SaveCommand}"
                         Header="{CompiledBinding Translation.Save.Value,
                                                  Mode=OneWay}"
@@ -66,10 +66,10 @@
                         <MenuItem.Icon>
                             <Path Classes="SavePath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Save as  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding SaveAsCommand}"
                         Header="{Binding Translation.SaveAs.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
@@ -77,10 +77,10 @@
                         <MenuItem.Icon>
                             <Path Classes="SavePath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Export to PDF  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         x:Name="PDFMenuItem"
                         Command="{Binding SaveAsPDFCommand}"
                         CommandParameter="{Binding WindowTabs.ActiveTab.Value.Image.Value}"
@@ -90,10 +90,10 @@
                         <MenuItem.Icon>
                             <Path Classes="SavePath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Print  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         x:Name="PrintMenuItem"
                         Command="{Binding PrintCommand}"
                         Header="{Binding Translation.Print.Value, Mode=OneWay}"
@@ -102,10 +102,10 @@
                         <MenuItem.Icon>
                             <Path Classes="PrintPath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Open with  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         x:Name="OpenWithMenuItem"
                         Command="{Binding OpenWithCommand}"
                         Header="{Binding Translation.OpenWith.Value, Mode=OneWay}"
@@ -117,10 +117,10 @@
                                 Height="12"
                                 Source="{StaticResource OpenExternalImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Locate on disk  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding OpenInExplorerCommand}"
                         Header="{Binding Translation.ShowInFolder.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
@@ -128,15 +128,12 @@
                         <MenuItem.Icon>
                             <Path Classes="ShowInFolderPath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource MainBorderColor}"
-                        Opacity=".3" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Close  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding ExitCommand}"
                         Header="{CompiledBinding Translation.Close.Value,
                                                  Mode=OneWay}"
@@ -144,18 +141,18 @@
                         <MenuItem.Icon>
                             <Path Classes="ClosePath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Edit  -->
-                <MenuItem x:Name="EditMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem x:Name="EditMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.Edit.Value, Mode=OneWay}" />
                     </MenuItem.Header>
 
                     <!--  Copy image  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding CopyImageCommand}"
                         Header="{Binding Translation.CopyImage.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -163,10 +160,10 @@
                         <MenuItem.Icon>
                             <Path Classes="CopyPath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Copy file  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding CopyFileCommand}"
                         Header="{Binding Translation.CopyFile.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
@@ -174,10 +171,10 @@
                         <MenuItem.Icon>
                             <Path Classes="CopyPath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Copy file path  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding CopyFilePathCommand}"
                         Header="{Binding Translation.FileCopyPath.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
@@ -185,10 +182,10 @@
                         <MenuItem.Icon>
                             <Path Classes="CopyPath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Copy base64  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding CopyBase64Command}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                         Theme="{StaticResource MainBg}">
@@ -201,15 +198,12 @@
                         <MenuItem.Icon>
                             <Path Classes="CopyPath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Duplicate file  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding DuplicateFileCommand}"
                         Header="{Binding Translation.DuplicateFile.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -217,25 +211,22 @@
                         <MenuItem.Icon>
                             <Path Classes="DuplicatePath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Paste  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding PasteCommand}"
                         Header="{Binding Translation.Paste.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Path Classes="PastePath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Delete file  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding DeleteFileCommand}"
                         Header="{Binding Translation.DeleteFile.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -243,18 +234,18 @@
                         <MenuItem.Icon>
                             <Path Classes="RecyclePath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  View  -->
-                <MenuItem x:Name="ViewMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem x:Name="ViewMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.View.Value, Mode=OneWay}" />
                     </MenuItem.Header>
 
                     <!--  Change background  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding ChangeBackgroundCommand}"
                         Header="{CompiledBinding Translation.ChangeBackground.Value,
                                                  Mode=OneWay}"
@@ -266,15 +257,12 @@
                                 Height="12"
                                 Source="{StaticResource PaletteImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Toggle UI  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding ToggleInterfaceCommand}"
                         Header="{Binding Translation.IsShowingUI.Value, Mode=OneWay}"
                         IsVisible="{Binding IsUIShown.Value, Mode=OneWay}"
@@ -285,7 +273,7 @@
                                 Height="12"
                                 Source="{StaticResource EyeOffImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Toggle bottom bar  -->
                     <MenuItem
@@ -301,25 +289,20 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Toggle side-by-side  -->
                     <MenuItem
                         Command="{Binding SideBySideCommand}"
                         Header="{Binding Translation.SideBySide.Value, Mode=OneWay}"
+                        IsChecked="{Binding IsSideBySide.Value}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Toggle gallery  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding ToggleGalleryCommand}"
                         Header="{Binding Translation.ShowImageGallery.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
@@ -329,25 +312,22 @@
                                 Height="12"
                                 Source="{StaticResource GalleryImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Fullscreen  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding ToggleFullscreenCommand}"
                         Header="{Binding Translation.Fullscreen.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Path Classes="FullscreenPath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Maximize  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         x:Name="MaximizeMenuItem"
                         Command="{Binding MaximizeCommand}"
                         Header="{Binding Translation.Maximize.Value, Mode=OneWay}"
@@ -356,10 +336,10 @@
                         <MenuItem.Icon>
                             <Image Classes="MaximizeImage" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Restore  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding RestoreCommand}"
                         Header="{Binding Translation.RestoreDown.Value, Mode=OneWay}"
                         IsVisible="{Binding ShouldRestoreBeShown.Value, Mode=OneWay}"
@@ -367,18 +347,18 @@
                         <MenuItem.Icon>
                             <Path Classes="RestorePath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Image  -->
-                <MenuItem x:Name="ImageMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem x:Name="ImageMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.Image.Value, Mode=OneWay}" />
                     </MenuItem.Header>
 
                     <!--  Exif window  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding ImageInfoWindowCommand}"
                         Header="{CompiledBinding Translation.ImageInfo.Value,
                                                  Mode=OneWay}"
@@ -389,10 +369,10 @@
                                 Height="12"
                                 Source="{StaticResource CameraImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  File properties  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding ShowFilePropertiesCommand}"
                         Header="{Binding Translation.FileProperties.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -403,10 +383,10 @@
                                 Height="12"
                                 Source="{StaticResource FileUserImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Image effects  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding EffectsWindowCommand}"
                         Header="{Binding Translation.Effects.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}"
@@ -417,10 +397,10 @@
                                 Height="12"
                                 Source="{StaticResource SparklesImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Single image resize  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding ResizeWindowCommand}"
                         Header="{Binding Translation.ResizeImage.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
@@ -430,10 +410,10 @@
                                 Height="12"
                                 Source="{StaticResource UpscaleImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Batch resize  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding BatchResizeWindowCommand}"
                         Header="{Binding Translation.BatchResize.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
@@ -443,15 +423,12 @@
                                 Height="12"
                                 Source="{StaticResource UpscaleImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Optimize image  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding OptimizeImageCommand}"
                         Header="{Binding Translation.OptimizeImage.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
@@ -461,15 +438,12 @@
                                 Height="12"
                                 Source="{StaticResource PortalImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Crop  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         x:Name="CropMenuItem"
                         Command="{Binding CropCommand}"
                         Header="{Binding Translation.Crop.Value, Mode=OneWay}"
@@ -478,15 +452,12 @@
                         <MenuItem.Icon>
                             <Image Classes="CropImage" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Flip  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding FlipCommand}"
                         Header="{Binding Translation.IsFlipped.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -499,10 +470,10 @@
                                 </Image.RenderTransform>
                             </Image>
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Rotate left  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding RotateLeftCommand}"
                         Header="{Binding Translation.RotateLeft.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -511,10 +482,10 @@
                         <MenuItem.Icon>
                             <Path Classes="RotateLeftPath" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Rotate right  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding RotateRightCommand}"
                         Header="{Binding Translation.RotateRight.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -523,17 +494,17 @@
                         <MenuItem.Icon>
                             <Path Classes="RotateRightPath" />
                         </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
+                    </customControls:StyledMenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Navigate  -->
-                <MenuItem x:Name="NavigateMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem x:Name="NavigateMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.Navigate.Value, Mode=OneWay}" />
                     </MenuItem.Header>
 
                     <!--  Next  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding NextCommand}"
                         Header="{Binding Translation.NextImage, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
@@ -545,10 +516,10 @@
                                 Height="12"
                                 Source="{StaticResource NextImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Prev  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding PrevCommand}"
                         Header="{Binding Translation.PrevImage, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
@@ -560,16 +531,13 @@
                                 Height="12"
                                 Source="{StaticResource PrevImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
 
                     <!--  Next 10  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding Next10Command}"
                         Header="{Binding Translation.AdvanceBy10Images, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
@@ -581,10 +549,10 @@
                                 Height="12"
                                 Source="{StaticResource NextImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Next 100  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding Next100Command}"
                         Header="{Binding Translation.AdvanceBy100Images, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
@@ -596,10 +564,10 @@
                                 Height="12"
                                 Source="{StaticResource NextImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Prev 10  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding Prev10Command}"
                         Header="{Binding Translation.GoBackBy10Images.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value}"
@@ -611,10 +579,10 @@
                                 Height="12"
                                 Source="{StaticResource PrevImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Prev 100  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding Prev100Command}"
                         Header="{Binding Translation.GoBackBy100Images.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value}"
@@ -626,15 +594,12 @@
                                 Height="12"
                                 Source="{StaticResource PrevImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  First Image  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding FirstCommand}"
                         Header="{Binding Translation.FirstImage.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value}"
@@ -645,10 +610,12 @@
                                 Height="12"
                                 Source="{StaticResource FirstImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Last Image  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
+                        BorderBrush="{DynamicResource MenuSeparatorColor}"
+                        BorderThickness="0,0,0,1"
                         Command="{Binding LastCommand}"
                         Header="{Binding Translation.LastImage.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
@@ -659,15 +626,10 @@
                                 Height="12"
                                 Source="{StaticResource LastImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
-
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    </customControls:StyledMenuItem>
 
                     <!--  Next folder  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding NextFolderCommand}"
                         Header="{Binding Translation.NextFolder.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -678,10 +640,10 @@
                                 Height="14"
                                 Source="{StaticResource NextFolderImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Prev folder  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding PrevFolderCommand}"
                         Header="{Binding Translation.PrevFolder.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -692,15 +654,12 @@
                                 Height="14"
                                 Source="{StaticResource PrevFolderImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Next archive  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding NextArchiveCommand}"
                         Header="{CompiledBinding Translation.NextArchive.Value,
                                                  Mode=OneWay}"
@@ -712,10 +671,10 @@
                                 Height="14"
                                 Source="{StaticResource ArchiveFile}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Prev archive  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding PrevArchiveCommand}"
                         Header="{CompiledBinding Translation.PrevArchive.Value,
                                                  Mode=OneWay}"
@@ -727,21 +686,18 @@
                                 Height="14"
                                 Source="{StaticResource ArchiveFile}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Sort files by  -->
-                    <MenuItem Header="{Binding Translation.SortFilesBy.Value, Mode=OneWay}" Theme="{StaticResource MainBg}">
+                    <customControls:StyledMenuItem Header="{Binding Translation.SortFilesBy.Value, Mode=OneWay}" Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Path Classes="SortFilesPath" />
                         </MenuItem.Icon>
 
                         <!--  Sort files by name  -->
-                        <MenuItem
+                        <customControls:StyledMenuItem
                             Command="{Binding SortFilesByNameCommand}"
                             GroupName="Sort"
                             Header="{Binding Translation.FileName.Value, Mode=OneWay}"
@@ -750,7 +706,7 @@
                             ToggleType="Radio" />
 
                         <!--  Sort files by size  -->
-                        <MenuItem
+                        <customControls:StyledMenuItem
                             Command="{Binding SortFilesBySizeCommand}"
                             GroupName="Sort"
                             Header="{Binding Translation.FileSize.Value, Mode=OneWay}"
@@ -759,7 +715,7 @@
                             ToggleType="Radio" />
 
                         <!--  Sort files by extension  -->
-                        <MenuItem
+                        <customControls:StyledMenuItem
                             Command="{Binding SortFilesByExtensionCommand}"
                             GroupName="Sort"
                             Header="{Binding Translation.FileExtension.Value, Mode=OneWay}"
@@ -768,7 +724,7 @@
                             ToggleType="Radio" />
 
                         <!--  Sort files by creation time  -->
-                        <MenuItem
+                        <customControls:StyledMenuItem
                             Command="{Binding SortFilesByCreationTimeCommand}"
                             GroupName="Sort"
                             Header="{Binding Translation.Created.Value, Mode=OneWay}"
@@ -777,7 +733,7 @@
                             ToggleType="Radio" />
 
                         <!--  Sort files by last access time  -->
-                        <MenuItem
+                        <customControls:StyledMenuItem
                             Command="{Binding SortFilesByLastAccessTimeCommand}"
                             GroupName="Sort"
                             Header="{Binding Translation.LastAccessTime.Value, Mode=OneWay}"
@@ -786,7 +742,7 @@
                             ToggleType="Radio" />
 
                         <!--  Sort files by last write time  -->
-                        <MenuItem
+                        <customControls:StyledMenuItem
                             Command="{Binding SortFilesByLastAccessTimeCommand}"
                             GroupName="Sort"
                             Header="{Binding Translation.Modified.Value, Mode=OneWay}"
@@ -795,7 +751,7 @@
                             ToggleType="Radio" />
 
                         <!--  Sort files randomly  -->
-                        <MenuItem
+                        <customControls:StyledMenuItem
                             Command="{Binding SortFilesRandomlyCommand}"
                             GroupName="Sort"
                             Header="{Binding Translation.Random.Value, Mode=OneWay}"
@@ -803,10 +759,7 @@
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
-                        <Separator
-                            Margin="0"
-                            Background="{DynamicResource ContextMenuBackgroundColor}"
-                            Opacity=".9" />
+                        <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                         <!--  Sort files ascending  -->
                         <MenuItem
@@ -818,7 +771,7 @@
                             ToggleType="Radio" />
 
                         <!--  Sort files descending  -->
-                        <MenuItem
+                        <customControls:StyledMenuItem
                             Command="{Binding SortFilesDescendingCommand}"
                             GroupName="Order"
                             Header="{Binding Translation.Descending.Value, Mode=OneWay}"
@@ -826,17 +779,17 @@
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
-                    </MenuItem>
-                </MenuItem>
+                    </customControls:StyledMenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Settings  -->
-                <MenuItem x:Name="SettingsMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem x:Name="SettingsMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.Settings.Value, Mode=OneWay}" />
                     </MenuItem.Header>
 
                     <!--  Toggle Subdirectories  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding ToggleSubdirectoriesCommand}"
                         Header="{CompiledBinding Translation.SearchSubdirectory.Value,
                                                  Mode=OneWay}"
@@ -844,13 +797,10 @@
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Toggle looping  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding ToggleLoopingCommand}"
                         Header="{CompiledBinding Translation.IsLooping.Value,
                                                  Mode=OneWay}"
@@ -858,13 +808,10 @@
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Toggle scrolling  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Header="{CompiledBinding Translation.IsScrolling.Value,
                                                  Mode=OneWay}"
                         IsChecked="{CompiledBinding IsScrollingEnabled.Value}"
@@ -872,7 +819,7 @@
                         ToggleType="CheckBox" />
 
                     <!--  Zoom to fit  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding ZoomToFitCommand}"
                         Header="{CompiledBinding Translation.ZoomToFit.Value,
                                                  Mode=OneWay}"
@@ -880,13 +827,10 @@
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Toggle topmost  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding SetTopMostCommand}"
                         Header="{CompiledBinding Translation.StayTopMost.Value,
                                                  Mode=OneWay}"
@@ -895,7 +839,7 @@
                         ToggleType="CheckBox" />
 
                     <!--  Toggle auto fit  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding AutoFitWindowCommand}"
                         Header="{CompiledBinding Translation.AutoFitWindow.Value,
                                                  Mode=OneWay}"
@@ -903,24 +847,21 @@
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
+                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Toggle ctrl zoom  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding ChangeCtrlZoomCommand}"
                         Header="{CompiledBinding Translation.IsCtrlToZoom.Value,
                                                  Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
-                        <!-- <MenuItem.Icon> -->
-                        <!--  <Image  -->
-                        <!--  Height="12"  -->
-                        <!--  Source="{CompiledBinding MainWindow.ChangeCtrlZoomImage.Value}"  -->
-                        <!--  Width="12" />  -->
-                        <!-- </MenuItem.Icon> -->
-                    </MenuItem>
+                        <MenuItem.Icon>
+                            <Image
+                                Width="12"
+                                Height="12"
+                                Source="{CompiledBinding ChangeCtrlZoomImage.Value}" />
+                        </MenuItem.Icon>
+                    </customControls:StyledMenuItem>
 
                     <Separator
                         Margin="0"
@@ -928,7 +869,7 @@
                         Opacity=".9" />
 
                     <!--  Show Settings window  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding SettingsWindowCommand}"
                         Header="{CompiledBinding Translation.ShowAllSettingsWindow.Value,
                                                  Mode=OneWay}"
@@ -936,17 +877,17 @@
                         <MenuItem.Icon>
                             <Image Classes="CogImage" />
                         </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
+                    </customControls:StyledMenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Help  -->
-                <MenuItem x:Name="HelpMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
+                <customControls:StyledMenuItem x:Name="HelpMenuItem" MaxWidth="{Binding TopTitlebarViewModel.MaxItemWidth.Value}">
                     <MenuItem.Header>
                         <TextBlock Classes="txt" Text="{Binding Translation.Help.Value, Mode=OneWay}" />
                     </MenuItem.Header>
 
                     <!--  Show about window  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding AboutWindowCommand}"
                         Header="{CompiledBinding Translation.About.Value,
                                                  Mode=OneWay}"
@@ -957,10 +898,10 @@
                                 Height="12"
                                 Source="{StaticResource AboutImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Check for updates  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{CompiledBinding CheckForUpdatesCommand}"
                         Header="{CompiledBinding Translation.CheckForUpdates.Value,
                                                  Mode=OneWay}"
@@ -971,9 +912,9 @@
                                 Height="12"
                                 Source="{StaticResource DownloadImage}" />
                         </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
-            </Menu>
+                    </customControls:StyledMenuItem>
+                </customControls:StyledMenuItem>
+            </customControls:StyledMenu>
 
             <customControls:IconButton
                 x:Name="MenuButton"

@@ -10,10 +10,7 @@
             <Setter Property="Focusable" Value="False" />
             <Setter Property="Template">
                 <ControlTemplate>
-                    <Border
-                        Background="Transparent"
-                        CornerRadius="4"
-                        UseLayoutRounding="False">
+                    <Border Background="{DynamicResource ScrollbarBackgroundColor}" UseLayoutRounding="False">
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <RepeatButton
                                 Name="PART_LineUpButton"
@@ -27,14 +24,14 @@
                                 Classes="repeat"
                                 Focusable="False"
                                 Interval="55">
-                                <PathIcon
+                                <Path
                                     Width="12"
                                     Height="12"
                                     Data="{StaticResource FilledChevronLeftGeometry}"
-                                    Foreground="{TemplateBinding Foreground}" />
+                                    Fill="{DynamicResource ScrollbarThumbColor}"
+                                    Stretch="Fill" />
                             </RepeatButton>
                             <Track
-                                Grid.Row="1"
                                 Grid.Column="1"
                                 DeferThumbDrag="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                                 Maximum="{TemplateBinding Maximum}"
@@ -72,11 +69,12 @@
                                 Classes="repeat"
                                 Focusable="False"
                                 Interval="55">
-                                <PathIcon
+                                <Path
                                     Width="12"
                                     Height="12"
                                     Data="{StaticResource FilledChevronRightGeometry}"
-                                    Foreground="{TemplateBinding Foreground}" />
+                                    Fill="{DynamicResource ScrollbarThumbColor}"
+                                    Stretch="Fill" />
                             </RepeatButton>
                         </Grid>
                     </Border>
@@ -102,13 +100,14 @@
                                 DockPanel.Dock="Top"
                                 Focusable="False"
                                 Interval="55">
-                                <PathIcon
+                                <Path
                                     Width="16"
                                     Height="16"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Data="{StaticResource FilledArrowUpGeometry}"
-                                    Foreground="{TemplateBinding Foreground}" />
+                                    Fill="{DynamicResource ScrollbarThumbColor}"
+                                    Stretch="Fill" />
                             </RepeatButton>
 
                             <RepeatButton
@@ -120,13 +119,14 @@
                                 DockPanel.Dock="Bottom"
                                 Focusable="False"
                                 Interval="55">
-                                <PathIcon
+                                <Path
                                     Width="16"
                                     Height="16"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Data="{StaticResource FilledArrowDownGeometry}"
-                                    Foreground="{TemplateBinding Foreground}" />
+                                    Fill="{DynamicResource ScrollbarThumbColor}"
+                                    Stretch="Fill" />
                             </RepeatButton>
 
                             <Track
@@ -163,9 +163,9 @@
         </Style>
 
         <Style Selector="^ /template/ Thumb#thumb">
-            <Setter Property="Background" Value="{DynamicResource MainBackgroundColor}" />
+            <Setter Property="Background" Value="{DynamicResource ScrollbarThumbColor}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="{DynamicResource TertiaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ScrollbarThumbBorderColor}" />
             <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -254,8 +254,8 @@
         </Style>
 
         <Style Selector="^ /template/ Thumb#thumb">
-            <Setter Property="Background" Value="{DynamicResource MainBackgroundColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource TertiaryBorderColor}" />
+            <Setter Property="Background" Value="{DynamicResource ScrollbarThumbColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ScrollbarThumbBorderColor}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Template">
@@ -331,8 +331,8 @@
         </Style>
 
         <Style Selector="^ /template/ Thumb#thumb">
-            <Setter Property="Background" Value="{DynamicResource MainBackgroundColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource TertiaryBorderColor}" />
+            <Setter Property="Background" Value="{DynamicResource ScrollbarThumbColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ScrollbarThumbBorderColor}" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Template">

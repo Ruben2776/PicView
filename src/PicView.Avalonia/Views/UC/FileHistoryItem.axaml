@@ -101,7 +101,7 @@
                         <Image />
                         <TextBlock
                             Classes="txt"
-                            Foreground="{DynamicResource ContextMenuTextColor}"
+                            Foreground="{DynamicResource ContextMenuForegroundColor}"
                             Text="{Binding FilePath.Value}" />
                     </StackPanel>
                 </ToolTip.Tip>

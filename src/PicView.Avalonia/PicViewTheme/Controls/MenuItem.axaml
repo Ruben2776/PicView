@@ -5,7 +5,7 @@
 
     <ControlTheme x:Key="{x:Type MenuItem}" TargetType="MenuItem">
         <Setter Property="Background" Value="{DynamicResource ContextMenuBackgroundColor}" />
-        <Setter Property="Foreground" Value="{DynamicResource ContextMenuTextColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource ContextMenuForegroundColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="6" />
@@ -69,8 +69,8 @@
                                                      Mode=TwoWay}"
                             Placement="RightEdgeAlignedTop">
                             <Border
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource MenuBackgroundColor}"
+                                BorderBrush="{DynamicResource MenuBorderColor}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="{TemplateBinding CornerRadius}">
                                 <ItemsPresenter
@@ -107,13 +107,18 @@
             </Setter>
         </Style>
 
-        <Style Selector="^:not(.noHover):selected /template/ Border#root">
+        <Style Selector="^:not(.SubtleHighLight):selected /template/ Border#root">
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
         </Style>
 
-        <Style Selector="^:not(.noHover):selected /template/ ContentPresenter#PART_HeaderPresenter">
+        <Style Selector="^:not(.SubtleHighLight):selected /template/ ContentPresenter#PART_HeaderPresenter">
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+        </Style>
+
+        <Style Selector="^.SubtleHighLight:selected /template/ Border#root">
+            <Setter Property="Background" Value="{DynamicResource MenuItemHoverBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource MenuItemHoverBackground}" />
         </Style>
 
         <Style Selector="^:nth-child(1) /template/ Border#root">
@@ -144,15 +149,6 @@
             <Setter Property="Opacity" Value="{StaticResource ThemeDisabledOpacity}" />
         </Style>
 
-        <Style Selector="^.active /template/ Border#root">
-            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryAccentColor}" />
-        </Style>
-
-        <Style Selector="^.active /template/ ContentPresenter#PART_HeaderPresenter">
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
-        </Style>
-
     </ControlTheme>
 
     <ControlTheme x:Key="Slim" TargetType="MenuItem">
@@ -168,7 +164,7 @@
                             VerticalAlignment="Center"
                             Content="{TemplateBinding Header}"
                             ContentTemplate="{TemplateBinding HeaderTemplate}"
-                            Foreground="{DynamicResource ContextMenuTextColor}">
+                            Foreground="{DynamicResource ContextMenuForegroundColor}">
                             <ContentPresenter.DataTemplates>
                                 <DataTemplate DataType="sys:String">
                                     <AccessText Text="{Binding}" />
@@ -201,11 +197,10 @@
     </ControlTheme>
 
     <ControlTheme x:Key="MainBg" TargetType="MenuItem">
-        <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
+        <Setter Property="Background" Value="{DynamicResource MenuBackgroundColor}" />
         <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="0" />
-        <Setter Property="Padding" Value="6" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="6,8" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Name="root" Background="{TemplateBinding Background}">
@@ -273,7 +268,6 @@
                                 CornerRadius="{TemplateBinding CornerRadius}">
                                 <ItemsPresenter
                                     Name="PART_ItemsPresenter"
-                                    Margin="2"
                                     Grid.IsSharedSizeScope="True"
                                     ItemsPanel="{TemplateBinding ItemsPanel}" />
                             </Border>
@@ -305,38 +299,29 @@
             </Setter>
         </Style>
 
-        <Style Selector="^:not(.noHover):selected /template/ Border#root">
+        <Style Selector="^.AccentHighLight:selected /template/ Border#root">
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
         </Style>
 
-        <Style Selector="^:not(.noHover):selected /template/ ContentPresenter#PART_HeaderPresenter">
+        <Style Selector="^.AccentHighLight:selected /template/ ContentPresenter#PART_HeaderPresenter">
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
         </Style>
 
-        <Style Selector="^:not(.noHover):selected /template/ ContentPresenter#icon">
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+        <Style Selector="^.SubtleHighLight:selected /template/ Border#root">
+            <Setter Property="Background" Value="{DynamicResource MenuItemHoverBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource MenuItemHoverBackground}" />
         </Style>
 
         <Style Selector="^:empty /template/ Path#rightArrow">
             <Setter Property="IsVisible" Value="False" />
         </Style>
 
-        <Style Selector="^:disabled">
-            <Setter Property="Opacity" Value="{StaticResource ThemeDisabledOpacity}" />
+        <Style Selector="^:disabled /template/ Border#root">
+            <Setter Property="Background" Value="{DynamicResource DisabledMenuBackgroundColor}" />
         </Style>
-
-        <Style Selector="^.active /template/ Border#root">
-            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryAccentColor}" />
-        </Style>
-
-        <Style Selector="^.active /template/ ContentPresenter#PART_HeaderPresenter">
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
-        </Style>
-
-        <Style Selector="^.active /template/ ContentPresenter#icon">
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+        <Style Selector="^:disabled /template/ ContentPresenter#PART_HeaderPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource DisabledMenuForegroundColor}" />
         </Style>
 
     </ControlTheme>

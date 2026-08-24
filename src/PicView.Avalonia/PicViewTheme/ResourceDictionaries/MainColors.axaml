@@ -16,76 +16,6 @@
 
             <!--  Global Window  -->
             <Color x:Key="WindowBackgroundColor">#C4252525</Color>
-            <Color x:Key="WindowBorderColor">#1A1A1A</Color>
-            <Color x:Key="WindowLogoColor">#C4252525</Color>
-
-            <!--  TOP TITLE BAR  -->
-            <Color x:Key="TitleBarBackgroundColor">#FF303030</Color>
-            <Color x:Key="TitleBarBorderColor">#FF3A3A3A</Color>
-            <Color x:Key="TitleBarButtonBackground">#FF2B2B2B</Color>
-            <Color x:Key="TitleBarButtonBorder">Transparent</Color>
-
-            <Color x:Key="TitleBarForeground">#540F0F5F</Color>
-
-            <Color x:Key="EditableTitlebarBackground">Transparent</Color>
-            <Color x:Key="EditableTitlebarForeground">#540F0F4C</Color>
-
-            <!--  BOTTOM TOOLBAR  -->
-            <Color x:Key="BottomBarBackgroundColor">#292929</Color>
-            <Color x:Key="BottomBarBorderColor">#FF3A3A3A</Color>
-
-            <!--  Bottom Toolbar Buttons  -->
-            <Color x:Key="BottomBarNavBtnBackground">#CC252525</Color>
-            <!--  Prev/Next  -->
-            <Color x:Key="BottomBarActionBtnBackground">#FF2e2e2e</Color>
-            <!--  File/Settings  -->
-            <Color x:Key="BottomBarToolBtnBackground">#A7222222</Color>
-            <!--  Zoom/Rotate  -->
-            <Color x:Key="BottomBarButtonHoverBackground">#FF4B4B4B</Color>
-
-            <!--  MENUS & DROPDOWNS  -->
-            <Color x:Key="MenuBackgroundColor">#292929</Color>
-            <Color x:Key="MenuBorderColor">#FF3A3A3A</Color>
-            <Color x:Key="MenuButtonBackground">#2F2F2F</Color>
-
-            <Color x:Key="ContextMenuBackgroundColor">#EE2b2b2b</Color>
-            <Color x:Key="ContextMenuTextColor">#EDEBEB</Color>
-            <Color x:Key="MenuItemHoverBackground">#FF4B4B4B</Color>
-
-            <!--  TABS  -->
-            <Color x:Key="BehindTabBackground">#fff</Color>
-            <Color x:Key="TabItemSelectedBackground">Transparent</Color>
-            <Color x:Key="TabItemUnSelectedBackground">Transparent</Color>
-            <Color x:Key="TabItemBorderColor">#D1D9E4</Color>
-            <Color x:Key="TabItemHoverBackground">#E1E7F0</Color>
-
-            <!--  StartUpMenu  -->
-            <Color x:Key="StartUpMenuBackground">#EEF5FFFF</Color>
-
-            <!--  EFFECTS & MISC  -->
-            <Color x:Key="ErrorColor">#B51522</Color>
-            <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}" />
-
-            <ImageBrush
-                x:Key="NoisyTexture"
-                DestinationRect="0,0,200,200"
-                Opacity=".6"
-                Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
-                Stretch="Fill"
-                TileMode="FlipXY" />
-        </ResourceDictionary>
-
-
-        <!--  ==========================================  -->
-        <!--  LIGHT THEME  -->
-        <!--  ==========================================  -->
-        <ResourceDictionary x:Key="Light">
-            <!--  Global Text  -->
-            <Color x:Key="MainTextColor">#424242</Color>
-            <Color x:Key="MainTextColorFaded">#768396</Color>
-
-            <!--  Global Window  -->
-            <Color x:Key="WindowBackgroundColor">#C4252525</Color>
             <Color x:Key="WindowBorderColor">Transparent</Color>
             <Color x:Key="WindowLogoColor">#fff</Color>
 
@@ -117,13 +47,21 @@
             <Color x:Key="BottomBarButtonHoverBackground">#E1E7F0</Color>
 
             <!--  MENUS & DROPDOWNS  -->
-            <Color x:Key="MenuBackgroundColor">#F7F9FC</Color>
+            <Color x:Key="MenuBackgroundColor">#fff</Color>
+
+            <Color x:Key="DisabledMenuBackgroundColor">#E3DFE7</Color>
+            <Color x:Key="DisabledMenuForegroundColor">#A9A5AC</Color>
+
+            <Color x:Key="MenuSeparatorColor">#DAE6F4</Color>
             <Color x:Key="MenuBorderColor">#B5C0CE</Color>
+
             <Color x:Key="MenuButtonBackground">#FFFFFF</Color>
 
             <Color x:Key="ContextMenuBackgroundColor">#F7F9FC</Color>
-            <Color x:Key="ContextMenuTextColor">#1E2633</Color>
-            <Color x:Key="MenuItemHoverBackground">#E1E7F0</Color>
+            <Color x:Key="ContextMenuForegroundColor">#1E2633</Color>
+            <Color x:Key="ContextMenuBorderColor">#B5C0CE</Color>
+
+            <Color x:Key="MenuItemHoverBackground">#D9DEF2</Color>
 
             <!--  TABS  -->
             <Color x:Key="BehindTabBackground">#fff</Color>
@@ -138,7 +76,98 @@
                 <GradientStop Offset="0.5" Color="#FFCDC9C5" />
                 <GradientStop Offset="1.0" Color="#ECECECFF" />
             </ConicGradientBrush>
-            <Color x:Key="StartUpMenuForeground">#6A6A6A</Color>
+            <Color x:Key="StartUpMenuForeground">#FF616161</Color>
+
+            <!--  EFFECTS & MISC  -->
+            <Color x:Key="ErrorColor">#B51522</Color>
+            <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}" />
+
+            <ImageBrush
+                x:Key="NoisyTexture"
+                DestinationRect="0,0,200,200"
+                Opacity=".6"
+                Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
+                Stretch="Fill"
+                TileMode="FlipXY" />
+        </ResourceDictionary>
+
+
+        <!--  ==========================================  -->
+        <!--  LIGHT THEME  -->
+        <!--  ==========================================  -->
+        <ResourceDictionary x:Key="Light">
+            <!--  Global Text  -->
+            <Color x:Key="MainTextColor">#424242</Color>
+            <Color x:Key="MainTextColorFaded">#768396</Color>
+
+            <!--  Global Window  -->
+            <Color x:Key="WindowBackgroundColor">#C4252525</Color>
+            <Color x:Key="WindowBorderColor">Transparent</Color>
+            <Color x:Key="WindowLogoColor">#fff</Color>
+
+            <!--  TOP TITLE BAR  -->
+            <Color x:Key="TitleBarBackgroundColor">#fff</Color>
+            <Color x:Key="TitleBarForeground">#EE51516C</Color>
+            <Color x:Key="TitleBarBorderColor">Gainsboro</Color>
+            <Color x:Key="TitleBarButtonBackground">#fff</Color>
+            <Color x:Key="TitleBarButtonBorder">#fff</Color>
+
+            <Color x:Key="EditableTitlebarBackground">Transparent</Color>
+            <Color x:Key="EditableTitlebarForeground">#EE25203C</Color>
+
+            <!--  BOTTOM TOOLBAR  -->
+            <Color x:Key="BottomBarBackgroundColor">#ECF8F8F8</Color>
+            <Color x:Key="BottomBarForegroundColor">#EE393939</Color>
+            <Color x:Key="BottomBarBorderColor">Gainsboro</Color>
+
+            <Color x:Key="BottomBarButtonBackgroundColor">#FCFCFC</Color>
+            <Color x:Key="BottomBarButtonBorderColor">#fff</Color>
+            <Color x:Key="BottomBarButtonBackgroundAltColor">#FBFBFB</Color>
+
+            <!--  Bottom Toolbar Buttons  -->
+            <Color x:Key="BottomBarNavBtnBackground">Transparent</Color>
+            <Color x:Key="BottomBarActionBtnBackground">Transparent</Color>
+            <Color x:Key="BottomBarToolBtnBackground">Transparent</Color>
+            <Color x:Key="BottomBarButtonHoverBackground">#E1E7F0</Color>
+
+            <!--  MENUS & DROPDOWNS  -->
+            <Color x:Key="MenuBackgroundColor">#fff</Color>
+
+            <Color x:Key="DisabledMenuBackgroundColor">#E3DFE7</Color>
+            <Color x:Key="DisabledMenuForegroundColor">#A9A5AC</Color>
+
+            <Color x:Key="MenuSeparatorColor">#DAE6F4</Color>
+            <Color x:Key="MenuBorderColor">#B5C0CE</Color>
+
+            <Color x:Key="MenuButtonBackground">#FFFFFF</Color>
+
+            <Color x:Key="ContextMenuBackgroundColor">#F7F9FC</Color>
+            <Color x:Key="ContextMenuForegroundColor">#1E2633</Color>
+            <Color x:Key="ContextMenuBorderColor">#B5C0CE</Color>
+
+            <Color x:Key="MenuItemHoverBackground">#D9DEF2</Color>
+
+            <!--  TABS  -->
+            <Color x:Key="BehindTabBackground">#fff</Color>
+            <Color x:Key="TabItemSelectedBackground">#fff</Color>
+            <Color x:Key="TabItemUnSelectedBackground">#F2F5F9</Color>
+            <Color x:Key="TabItemBorderColor">#9ABCBCBC</Color>
+            <Color x:Key="TabItemHoverBackground">#E1E7F0</Color>
+
+            <!--  Scrollbar  -->
+            <Color x:Key="ScrollbarBackgroundColor">Yellow</Color>
+            <Color x:Key="ScrollbarBorderColor">Yellow</Color>
+
+            <Color x:Key="ScrollbarThumbColor">Purple</Color>
+            <Color x:Key="ScrollbarThumbBorderColor">Purple</Color>
+
+            <!--  StartUpMenu  -->
+            <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
+                <GradientStop Offset="0.0" Color="#ECECECFF" />
+                <GradientStop Offset="0.5" Color="#FFCDC9C5" />
+                <GradientStop Offset="1.0" Color="#ECECECFF" />
+            </ConicGradientBrush>
+            <Color x:Key="StartUpMenuForeground">#FF616161</Color>
 
 
         </ResourceDictionary>
