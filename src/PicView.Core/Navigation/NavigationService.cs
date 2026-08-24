@@ -522,7 +522,7 @@ public class NavigationService(
             // Retrieve and sort files based on new settings
             var newFiles = await Task.Run(() => FileListRetriever.RetrieveFiles(currentFile, stringComparer), ct.Token).ConfigureAwait(false);
 
-            if (newFiles.Count == 0)
+            if (newFiles.Count is 0)
             {
                 return;
             }
@@ -539,6 +539,8 @@ public class NavigationService(
             
             // Update title
             tab.UpdateTabTitle();
+            
+            GalleryLoader.SortLoadedGallery(tab, newFiles);
         }
         catch (Exception e)
         {

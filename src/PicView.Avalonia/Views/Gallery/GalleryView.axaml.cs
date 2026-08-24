@@ -59,6 +59,7 @@ public partial class GalleryView : GalleryAnimationControl
     {
         var tab = Dispatcher.UIThread.Invoke(() =>
             Application.Current.DataContext is not CoreViewModel core ? null : core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue);
+        var cancellationToken = tab.GetTabCancellation().Token;
 
         switch (e.Action)
         {
@@ -78,7 +79,7 @@ public partial class GalleryView : GalleryAnimationControl
                             _galleryItems.Add(newItem);
                         }
                         GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                    }, DispatcherPriority.Background, tab.GetTabCancellation().Token);
+                    }, DispatcherPriority.Background, cancellationToken);
                 }
                 else
                 {
@@ -125,19 +126,48 @@ public partial class GalleryView : GalleryAnimationControl
                                 child?.SetCurrent(true);
                                 child?.SetSelected(true);
                                 GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                            }, DispatcherPriority.Loaded, tab.GetTabCancellation().Token);
+                            }, DispatcherPriority.Loaded, cancellationToken);
                         }
-                    }, DispatcherPriority.Background, tab.GetTabCancellation().Token);
+                    }, DispatcherPriority.Background, cancellationToken);
                 }
                 break;
             case NotifyCollectionChangedAction.Reset:
-                if (e.NewItems.IsEmpty)
+                var gallery = tab.Gallery;
+                var currentItems = gallery.GalleryItems.ToArray();
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    _galleryItems.Clear();
+                    if (currentItems.Length <= 0)
                     {
-                        _galleryItems.Clear();
-                    }, DispatcherPriority.Background, tab.GetTabCancellation().Token);
-                }
+                        return;
+                    }
+
+                    _galleryItems.AddRange(currentItems);
+                    GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
+                    GalleryItemsControl.SelectedItemIndex = tab.NavigationIndex.Value;
+
+                    Dispatcher.InvokeAsync(() =>
+                    {
+                        if (GalleryItemsControl.ItemsPanelRoot is null)
+                        {
+                            return;
+                        }
+                        var targetIndex = tab.NavigationIndex.Value;
+                        if (GalleryItemsControl.ItemsPanelRoot.Children.Count <= targetIndex ||
+                            GalleryItemsControl.ItemsPanelRoot.Children[targetIndex] is not ContentPresenter presenter)
+                        {
+                            return;
+                        }
+                        var child = presenter.Child as GalleryItem; 
+                        child?.SetCurrent(true);
+                        child?.SetSelected(true);
+                        Dispatcher.UIThread.Post(() =>
+                        {
+                            GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                        }, DispatcherPriority.Background);
+                    }, DispatcherPriority.Loaded, cancellationToken);
+
+                }, DispatcherPriority.Background, cancellationToken);
                 break;
             case NotifyCollectionChangedAction.Remove:
                 if (e.IsSingleItem)
@@ -147,7 +177,7 @@ public partial class GalleryView : GalleryAnimationControl
                     {
                         _galleryItems.Remove(oldItem);
                         GalleryItemsControl.ScrollToCenterOfCurrentItem();  
-                    }, DispatcherPriority.Render, tab.GetTabCancellation().Token);
+                    }, DispatcherPriority.Render, cancellationToken);
                 }
                 else
                 {
@@ -155,15 +185,41 @@ public partial class GalleryView : GalleryAnimationControl
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         _galleryItems.RemoveAll(oldItems);
-                        if (tab != null && oldItems.Any(item => tab.Model.FileInfo.FullName == item.FileInfo.FullName))
+                        if (oldItems.Any(item => tab.Model.FileInfo?.FullName == item.FileInfo?.FullName))
                         {
                             GalleryItemsControl.ScrollToCenterOfCurrentItem();
                         }
-                    }, DispatcherPriority.Background, tab.GetTabCancellation().Token);
+                    }, DispatcherPriority.Background, cancellationToken);
                 }
                 break;
-            // Replace, Move
-            default:
+            case NotifyCollectionChangedAction.Move:
+                var oldMoveIndex = e.OldStartingIndex;
+                var newMoveIndex = e.NewStartingIndex;
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (oldMoveIndex >= 0 && oldMoveIndex < _galleryItems.Count && 
+                        newMoveIndex >= 0 && newMoveIndex < _galleryItems.Count)
+                    {
+                        _galleryItems.Move(oldMoveIndex, newMoveIndex);
+                        GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                    }
+                }, DispatcherPriority.Background, cancellationToken);
+                break;
+            case NotifyCollectionChangedAction.Replace:
+                var replaceIndex = e.NewStartingIndex;
+                var replaceItem = e.NewItem;
+                if (replaceIndex < 0 && replaceIndex > _galleryItems.Count)
+                {
+                    return;
+                }
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _galleryItems[replaceIndex] = replaceItem;
+                }, DispatcherPriority.Loaded, cancellationToken);
+                Dispatcher.UIThread.Post(() =>
+                {
+                    GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                }, DispatcherPriority.Render);
                 break;
         }
     }

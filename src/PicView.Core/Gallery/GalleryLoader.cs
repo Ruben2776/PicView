@@ -193,4 +193,51 @@ public static class GalleryLoader
 
         await tabViewModel.ImageIterator.SkipToIndexAsync(index, tabViewModel.GetTabCancellation()).ConfigureAwait(false);
     }
+
+    public static void SortLoadedGallery(TabViewModel tab, IReadOnlyList<FileInfo> files)
+    {
+        if (tab.Gallery.GalleryItems is null || tab.Gallery.GalleryItems.Count <= 1 || files is null || files.Count is 0)
+        {
+            return;
+        }
+
+        var orderMap = new Dictionary<string, int>(files.Count, StringComparer.OrdinalIgnoreCase);
+        for (var i = 0; i < files.Count; i++)
+        {
+            orderMap.TryAdd(files[i].FullName, i);
+        }
+
+        var comparer = Comparer<GalleryItemViewModel>.Create((x, y) =>
+        {
+            if (ReferenceEquals(x, y))
+            {
+                return 0;
+            }
+            if (x is null)
+            {
+                return 1;
+            }
+            if (y is null)
+            {
+                return -1;
+            }
+
+            var xPath = x.FileInfo?.FullName;
+            var yPath = y.FileInfo?.FullName;
+
+            var indexX = -1;
+            var indexY = -1;
+            var hasX = xPath is not null && orderMap.TryGetValue(xPath, out indexX);
+            var hasY = yPath is not null && orderMap.TryGetValue(yPath, out indexY);
+
+            return hasX switch
+            {
+                true when hasY => indexX.CompareTo(indexY),
+                true => -1,
+                _ => hasY ? 1 : 0
+            };
+        });
+
+        tab.Gallery.GalleryItems.Sort(comparer);
+    }
 }
