@@ -103,19 +103,31 @@ public static class WindowFunctions
 
     public static async Task WindowClosingBehavior(Window window)
     {
-        WindowResizing.SaveSize(window);
+        CoreViewModel? core = null;
+        MainWindowViewModel? vm = null;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            WindowResizing.SaveSize(window);
 
-        if (Application.Current.DataContext is not CoreViewModel core)
+            if (Application.Current.DataContext is not CoreViewModel coreViewModel)
+            {
+                return;
+            }
+
+            if (window.DataContext is not MainWindowViewModel mainWindowView)
+            {
+                return;
+            }
+
+            window.Hide();
+            core = coreViewModel;
+            vm = mainWindowView;
+        });
+
+        if (core is null || vm is null)
         {
             return;
         }
-
-        if (window.DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-        
-        window.Hide();
         
         string? lastFile;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
