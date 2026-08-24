@@ -917,7 +917,8 @@
                 IsVisible="{Binding !IsAutoFit.Value}"
                 Stretch="Fill"
                 Stroke="{DynamicResource BottomBarBorderColor}"
-                StrokeThickness="1" />
+                StrokeThickness="1"
+                WindowDecorationProperties.ElementRole="ResizeSE" />
         </Panel>
     </Border>
 </UserControl>

@@ -2,7 +2,6 @@
     x:Class="PicView.Avalonia.Views.UC.StartUpMenu"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:TabViewModel"
     Background="{DynamicResource StartUpMenuBackground}">

@@ -175,12 +175,12 @@ public static class StartUpHelper
         }
     }
 
-    public static void HandleStartImage(MainWindow mainWindow, CoreViewModel vm, string arg)
+    public static void HandleStartImage(MainWindow mainWindow, CoreViewModel core, string arg)
     {
-        Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, vm, arg, continueFromLeftOff: false, isStartup: true));
+        Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, core, arg, continueFromLeftOff: false, isStartup: true));
     }
 
-    public static void StartUpMenuOrLastFile(MainWindow mainWindow, CoreViewModel vm)
+    public static void StartUpMenuOrLastFile(MainWindow mainWindow, CoreViewModel core)
     {
         if (Settings.StartUp.OpenLastFile)
         {
@@ -190,7 +190,7 @@ public static class StartUpHelper
             }
             else
             {
-                Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, vm, Settings.StartUp.LastFile, continueFromLeftOff: true, isStartup: true));
+                Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, core, Settings.StartUp.LastFile, continueFromLeftOff: true, isStartup: true));
                 if (Settings.WindowProperties.AutoFit)
                 {
                     Dispatcher.UIThread.Post(() =>
@@ -213,14 +213,17 @@ public static class StartUpHelper
 
         void ShowStartUpMenu()
         {
+            var vm = core.MainWindows.ActiveWindow.CurrentValue;
+            var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+            tab.ParentWindowContext = vm;
             var startUpMenu = new StartUpMenu
             {
                 Buttons =
                 {
-                    DataContext = vm
+                    DataContext = tab
                 }
             };
-            vm.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.Value.CurrentView.Value = startUpMenu;
+            tab.CurrentView.Value = startUpMenu;
             mainWindow.Show();
         }
     }
