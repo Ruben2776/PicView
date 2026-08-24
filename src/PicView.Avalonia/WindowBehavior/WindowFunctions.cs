@@ -147,7 +147,7 @@ public static class WindowFunctions
             await FileHistoryManager.SaveToFileAsync();
             foreach (var tabViewModel in vm.WindowTabs.Tabs.CurrentValue)
             {
-                tabViewModel.ArchiveExtractionService.Cleanup();
+                tabViewModel.ArchiveExtractionService?.Cleanup();
             }
         }
         catch (Exception e)
@@ -343,6 +343,11 @@ public static class WindowFunctions
         {
             window ??= desktop.MainWindow;
 
+            if (window is null)
+            {
+                return;
+            }
+
             ScreenHelper.UpdateScreenSize(window);
             var screen = ScreenHelper.ScreenSize;
 
@@ -360,7 +365,7 @@ public static class WindowFunctions
             window.Position = horizontal
                 ? new PixelPoint((int)centeredX, (int)centeredY)
                 : new PixelPoint(window.Position.X, (int)centeredY);
-        });
+        }, DispatcherPriority.Render);
     }
 
     public static void InitializeWindowSizeAndPosition(MainWindow window)

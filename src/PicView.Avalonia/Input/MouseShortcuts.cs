@@ -32,8 +32,8 @@ public static class MouseShortcuts
         
         e.Handled = true;
 
-        var ctrl = e.KeyModifiers == KeyModifiers.Control;
-        var shift = e.KeyModifiers == KeyModifiers.Shift;
+        var ctrl = e.KeyModifiers is KeyModifiers.Control;
+        var shift = e.KeyModifiers is KeyModifiers.Shift;
         var reverse = e.Delta.Y < 0;
 
         if (Settings.Zoom.ScrollEnabled)
@@ -143,10 +143,14 @@ public static class MouseShortcuts
         MainWindowViewModel mainViewModel,
         AutoScrollViewer imageScrollViewer)
     {
-        if (!Settings.Zoom.ScrollEnabled || e.KeyModifiers == KeyModifiers.Shift)
+        if (!Settings.Zoom.ScrollEnabled || e.KeyModifiers is KeyModifiers.Shift)
         {
             if (IsTouchPadOrTouch(e))
             {
+                if (e.KeyModifiers is KeyModifiers.Control)
+                {
+                    await LoadNextPicAsync(reverse, mainViewModel, force: true); //#379
+                }
                 return;
             }
 
@@ -165,9 +169,9 @@ public static class MouseShortcuts
         }
     }
 
-    private static async ValueTask LoadNextPicAsync(bool reverse, MainWindowViewModel mainViewModel)
+    private static async ValueTask LoadNextPicAsync(bool reverse, MainWindowViewModel mainViewModel, bool force = false)
     {
-        if (Settings.Zoom.IsUsingTouchPad)
+        if (Settings.Zoom.IsUsingTouchPad && !force)
         {
             return;
         }

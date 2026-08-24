@@ -1,5 +1,7 @@
 using PicView.Core.FileHandling.Interfaces;
 using PicView.Core.FileHistory;
+using PicView.Core.FileSorting;
+using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.IPlatform;
 using PicView.Core.Models;
@@ -112,7 +114,102 @@ public class NavigationServiceTests : IDisposable
         return tab;
     }
 
-    // Mocks
+    [Fact]
+    public async Task ApplySortAsync_SortsLoadedGalleryItems()
+    {
+        // Arrange
+        var tab = CreateTab(_testDirectory);
+        var file1 = new FileInfo(Path.Combine(_testDirectory, "1.jpg"));
+        var file2 = new FileInfo(Path.Combine(_testDirectory, "2.jpg"));
+        var file3 = new FileInfo(Path.Combine(_testDirectory, "3.jpg"));
+
+        await File.Create(file1.FullName).DisposeAsync();
+        await File.Create(file2.FullName).DisposeAsync();
+        await File.Create(file3.FullName).DisposeAsync();
+
+        tab.Model = new ImageModel { FileInfo = file1 };
+        tab.ImageIterator.Files = new List<FileInfo> { file1, file2, file3 };
+        tab.ImageIterator.SetCurrentIndex(0);
+
+        var item1 = new GalleryItemViewModel { FileInfo = file1 };
+        var item2 = new GalleryItemViewModel { FileInfo = file2 };
+        var item3 = new GalleryItemViewModel { FileInfo = file3 };
+
+        tab.Gallery.GalleryItems.Add(item1);
+        tab.Gallery.GalleryItems.Add(item2);
+        tab.Gallery.GalleryItems.Add(item3);
+
+        var cts = new CancellationTokenSource();
+
+        // Act - sort descending
+        Settings.Sorting.SortPreference = (int)SortFilesBy.Name;
+        await _navigationService.SortAsync(tab, ascending: false, cts);
+
+        // Assert
+        Assert.Equal(3, tab.ImageIterator.Files.Count);
+        Assert.Equal(file3.FullName, tab.ImageIterator.Files[0].FullName);
+        Assert.Equal(file2.FullName, tab.ImageIterator.Files[1].FullName);
+        Assert.Equal(file1.FullName, tab.ImageIterator.Files[2].FullName);
+
+        Assert.Equal(3, tab.Gallery.GalleryItems.Count);
+        Assert.Same(item3, tab.Gallery.GalleryItems[0]);
+        Assert.Same(item2, tab.Gallery.GalleryItems[1]);
+        Assert.Same(item1, tab.Gallery.GalleryItems[2]);
+
+        Assert.Equal(2, tab.ImageIterator.CurrentIndex);
+    }
+
+    [Fact]
+    public void SortLoadedGallery_ReordersGalleryItems_ToMatchFileList()
+    {
+        // Arrange
+        var tab = CreateTab(_testDirectory);
+        var fileA = new FileInfo(Path.Combine(_testDirectory, "a.jpg"));
+        var fileB = new FileInfo(Path.Combine(_testDirectory, "b.jpg"));
+        var fileC = new FileInfo(Path.Combine(_testDirectory, "c.jpg"));
+        var fileD = new FileInfo(Path.Combine(_testDirectory, "d.jpg"));
+
+        var itemA = new GalleryItemViewModel { FileInfo = fileA };
+        var itemB = new GalleryItemViewModel { FileInfo = fileB };
+        var itemC = new GalleryItemViewModel { FileInfo = fileC };
+        var itemD = new GalleryItemViewModel { FileInfo = fileD };
+
+        tab.Gallery.GalleryItems.Add(itemA);
+        tab.Gallery.GalleryItems.Add(itemB);
+        tab.Gallery.GalleryItems.Add(itemC);
+        tab.Gallery.GalleryItems.Add(itemD);
+
+        var targetOrder = new List<FileInfo> { fileC, fileA, fileD, fileB };
+
+        // Act
+        GalleryLoader.SortLoadedGallery(tab, targetOrder);
+
+        // Assert
+        Assert.Equal(4, tab.Gallery.GalleryItems.Count);
+        Assert.Same(itemC, tab.Gallery.GalleryItems[0]);
+        Assert.Same(itemA, tab.Gallery.GalleryItems[1]);
+        Assert.Same(itemD, tab.Gallery.GalleryItems[2]);
+        Assert.Same(itemB, tab.Gallery.GalleryItems[3]);
+    }
+
+    [Fact]
+    public void SortLoadedGallery_HandlesEmptyOrSingleItem()
+    {
+        // Arrange
+        var tab = CreateTab(_testDirectory);
+        var file = new FileInfo(Path.Combine(_testDirectory, "single.jpg"));
+        var item = new GalleryItemViewModel { FileInfo = file };
+
+        // Act & Assert - Empty
+        GalleryLoader.SortLoadedGallery(tab, new List<FileInfo> { file });
+        Assert.Empty(tab.Gallery.GalleryItems);
+
+        // Act & Assert - Single item
+        tab.Gallery.GalleryItems.Add(item);
+        GalleryLoader.SortLoadedGallery(tab, new List<FileInfo> { file });
+        Assert.Single(tab.Gallery.GalleryItems);
+        Assert.Same(item, tab.Gallery.GalleryItems[0]);
+    }
 
     private class MockFileWatcherService : IFileWatcherService
     {

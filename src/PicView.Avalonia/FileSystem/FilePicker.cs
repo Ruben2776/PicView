@@ -48,7 +48,10 @@ public static class FilePicker
         });
 
 
-        vm.IsLoadingIndicatorShown.Value = true;
+        if (!tab.Gallery.IsGalleryDocked.CurrentValue)
+        {
+            vm.IsLoadingIndicatorShown.Value = true;
+        }
         try
         {
             await vm.WindowTabs.LoadFromFileAsync(file).ConfigureAwait(false);
