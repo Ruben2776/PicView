@@ -155,11 +155,11 @@
             <Color x:Key="TabItemHoverBackground">#E1E7F0</Color>
 
             <!--  Scrollbar  -->
-            <Color x:Key="ScrollbarBackgroundColor">Yellow</Color>
-            <Color x:Key="ScrollbarBorderColor">Yellow</Color>
+            <Color x:Key="ScrollbarBackgroundColor">#fff</Color>
+            <Color x:Key="ScrollbarBorderColor">#fff</Color>
 
-            <Color x:Key="ScrollbarThumbColor">Purple</Color>
-            <Color x:Key="ScrollbarThumbBorderColor">Purple</Color>
+            <Color x:Key="ScrollbarThumbColor">#fff</Color>
+            <Color x:Key="ScrollbarThumbBorderColor">#FFB5C2D6</Color>
 
             <!--  StartUpMenu  -->
             <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">

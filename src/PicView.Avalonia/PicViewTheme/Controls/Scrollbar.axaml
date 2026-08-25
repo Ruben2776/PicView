@@ -29,7 +29,9 @@
                                     Height="12"
                                     Data="{StaticResource FilledChevronLeftGeometry}"
                                     Fill="{DynamicResource ScrollbarThumbColor}"
-                                    Stretch="Fill" />
+                                    Stretch="Fill"
+                                    Stroke="{DynamicResource ScrollbarThumbBorderColor}"
+                                    StrokeThickness="1" />
                             </RepeatButton>
                             <Track
                                 Grid.Column="1"
@@ -74,12 +76,25 @@
                                     Height="12"
                                     Data="{StaticResource FilledChevronRightGeometry}"
                                     Fill="{DynamicResource ScrollbarThumbColor}"
-                                    Stretch="Fill" />
+                                    Stretch="Fill"
+                                    Stroke="{DynamicResource ScrollbarThumbBorderColor}"
+                                    StrokeThickness="1" />
                             </RepeatButton>
                         </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter>
+
+            <Style Selector="^ /template/ RepeatButton#PART_LineDownButton:pointerover &gt; Path">
+                <Setter Property="Fill" Value="{DynamicResource AccentColor}" />
+                <Setter Property="Stroke" Value="{DynamicResource SecondaryAccentColor}" />
+            </Style>
+
+            <Style Selector="^ /template/ RepeatButton#PART_LineUpButton:pointerover &gt; Path">
+                <Setter Property="Fill" Value="{DynamicResource AccentColor}" />
+                <Setter Property="Stroke" Value="{DynamicResource SecondaryAccentColor}" />
+            </Style>
+
         </Style>
 
         <Style Selector="^:vertical">

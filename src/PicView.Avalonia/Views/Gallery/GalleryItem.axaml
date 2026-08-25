@@ -8,7 +8,7 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:GalleryItemViewModel"
     Background="{DynamicResource MenuBackgroundColor}"
-    CornerRadius="4">
+    CornerRadius="0">
     <Border
         Width="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ItemWidth.Value,
                                 Mode=OneWay}"
@@ -20,9 +20,7 @@
         ToolTip.HorizontalOffset="0"
         ToolTip.Placement="TopEdgeAlignedLeft"
         ToolTip.VerticalOffset="0">
-        <customControls:ThumbImage
-            x:Name="GalleryImage"
-            Stretch="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.GalleryStretch.Value}" />
+        <customControls:ThumbImage x:Name="GalleryImage" Stretch="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.GalleryStretch.Value}" />
         <ToolTip.Tip>
             <StackPanel MaxWidth="600">
                 <TextBlock
