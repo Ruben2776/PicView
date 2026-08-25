@@ -122,7 +122,9 @@
                                     VerticalAlignment="Center"
                                     Data="{StaticResource FilledArrowUpGeometry}"
                                     Fill="{DynamicResource ScrollbarThumbColor}"
-                                    Stretch="Fill" />
+                                    Stretch="Fill"
+                                    Stroke="{DynamicResource ScrollbarThumbBorderColor}"
+                                    StrokeThickness="1" />
                             </RepeatButton>
 
                             <RepeatButton
@@ -141,7 +143,9 @@
                                     VerticalAlignment="Center"
                                     Data="{StaticResource FilledArrowDownGeometry}"
                                     Fill="{DynamicResource ScrollbarThumbColor}"
-                                    Stretch="Fill" />
+                                    Stretch="Fill"
+                                    Stroke="{DynamicResource ScrollbarThumbBorderColor}"
+                                    StrokeThickness="1" />
                             </RepeatButton>
 
                             <Track
@@ -175,6 +179,16 @@
                     </Border>
                 </ControlTemplate>
             </Setter>
+
+            <Style Selector="^ /template/ RepeatButton#PART_LineDownButton:pointerover &gt; Path">
+                <Setter Property="Fill" Value="{DynamicResource AccentColor}" />
+                <Setter Property="Stroke" Value="{DynamicResource SecondaryAccentColor}" />
+            </Style>
+
+            <Style Selector="^ /template/ RepeatButton#PART_LineUpButton:pointerover &gt; Path">
+                <Setter Property="Fill" Value="{DynamicResource AccentColor}" />
+                <Setter Property="Stroke" Value="{DynamicResource SecondaryAccentColor}" />
+            </Style>
         </Style>
 
         <Style Selector="^ /template/ Thumb#thumb">

@@ -147,6 +147,11 @@
 
             <Color x:Key="MenuItemHoverBackground">#D9DEF2</Color>
 
+            <Color x:Key="DropMenuBackgroundColor">#FEF9FBFF</Color>
+            <Color x:Key="DropDownMenuButtonBackground">#fff</Color>
+            <Color x:Key="DropDownMenuButtonForeground">#FF656565</Color>
+            <Color x:Key="DropDownMenuButtonBorderColor">#F4EFF1F5</Color>
+
             <!--  TABS  -->
             <Color x:Key="BehindTabBackground">#fff</Color>
             <Color x:Key="TabItemSelectedBackground">#fff</Color>
