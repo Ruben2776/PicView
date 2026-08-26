@@ -183,6 +183,7 @@
                     <WrapPanel
                         x:Name="GalleryItemsPanel"
                         VerticalAlignment="Center"
+                        ItemHeight="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ItemHeight.Value}"
                         ItemSpacing="{CompiledBinding Gallery.ItemSpacing.Value}"
                         LineSpacing="{CompiledBinding Gallery.LineSpacing.Value}" />
                 </ItemsPanelTemplate>
