@@ -27,7 +27,7 @@ public class GalleryAnimationControl : UserControl
 
     private DisposableBag _disposables;
     private NavigateAbleItemsViewer? _viewer;
-    private WrapPanel? _itemsPanel;
+    private VirtualizingGallery? _itemsPanel;
 
     /// Tracks the previous mode to determine the animation transition
     private GalleryMode _previousMode = GalleryMode.Closed;
@@ -61,7 +61,7 @@ public class GalleryAnimationControl : UserControl
     {
         _viewer = this.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl");
 
-        if (_viewer?.ItemsPanelRoot is WrapPanel panel)
+        if (_viewer?.ItemsPanelRoot is VirtualizingGallery panel)
         {
             _itemsPanel = panel;
         }
@@ -206,6 +206,8 @@ public class GalleryAnimationControl : UserControl
 
     private void SetExpandedLayoutCore(GalleryDockPosition dock)
     {
+        _itemsPanel.IsExpanded = true;
+        
         if (ParentControl != null)
         {
             if (IsHorizontalDock(dock))
@@ -293,8 +295,9 @@ public class GalleryAnimationControl : UserControl
 
     private void SetDockLayoutCore(GalleryDockPosition dock)
     {
+        _itemsPanel.IsExpanded = false;
+        
         var size = GetDockedSize;
-
         TabViewModel.Gallery.ItemSpacing.Value = 0;
         
         if (IsHorizontalDock(dock))

@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -5,38 +7,24 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using PicView.Core.Gallery;
+using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.CustomControls;
 
 /// <summary>
-/// A virtualizing wrap panel for image galleries supporting variable item widths with fixed item height,
-/// horizontal or vertical orientation, and container recycling.
+///     A virtualizing wrap panel for image galleries supporting variable item widths with fixed item height,
+///     horizontal or vertical orientation, and container recycling.
 /// </summary>
-public class VirtualizingGallery: VirtualizingPanel, IScrollSnapPointsInfo
+public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
 {
     /// <inheritdoc cref="WrapPanel" />
     public static readonly StyledProperty<Orientation> OrientationProperty =
-        AvaloniaProperty.Register<WrapPanel, Orientation>(nameof(Orientation), defaultValue: Orientation.Horizontal);
-    /// <inheritdoc cref="WrapPanel" />
-    public Orientation Orientation
-    {
-        get => GetValue(OrientationProperty);
-        set => SetValue(OrientationProperty, value);
-    }
-    
-    /// <summary>
-    /// The fixed item height of all items.
-    /// <remarks>Must be greater than zero. The widths are calculated dynamically.</remarks>
-    /// </summary>
-    public double ItemHeight
-    {
-        get => GetValue(ItemHeightProperty);
-        set => SetValue(ItemHeightProperty, value);
-    }
-    
+        AvaloniaProperty.Register<WrapPanel, Orientation>(nameof(Orientation));
+
     /// <inheritdoc cref="WrapPanel" />
     public static readonly StyledProperty<double> ItemHeightProperty =
-        AvaloniaProperty.Register<WrapPanel, double>(nameof(ItemHeight), GalleryDefaults.DefaultDockedGalleryHeight);
+        AvaloniaProperty.Register<WrapPanel, double>(nameof(ItemHeight),
+            GalleryDefaults.DefaultDockedGalleryHeight);
 
     /// <inheritdoc cref="WrapPanel" />
     public static readonly StyledProperty<double> ItemSpacingProperty =
@@ -45,7 +33,29 @@ public class VirtualizingGallery: VirtualizingPanel, IScrollSnapPointsInfo
     /// <inheritdoc cref="WrapPanel" />
     public static readonly StyledProperty<double> LineSpacingProperty =
         AvaloniaProperty.Register<WrapPanel, double>(nameof(LineSpacing));
-    
+
+    private readonly List<Rect> _itemBounds = [];
+
+    private readonly List<RealizedItem> _realizedItems = [];
+    private Rect _viewport;
+
+    /// <inheritdoc cref="WrapPanel" />
+    public Orientation Orientation
+    {
+        get => GetValue(OrientationProperty);
+        set => SetValue(OrientationProperty, value);
+    }
+
+    /// <summary>
+    ///     The fixed item height of all items.
+    ///     <remarks>Must be greater than zero. The widths are calculated dynamically.</remarks>
+    /// </summary>
+    public double ItemHeight
+    {
+        get => GetValue(ItemHeightProperty);
+        set => SetValue(ItemHeightProperty, value);
+    }
+
     /// <inheritdoc cref="WrapPanel" />
     public double ItemSpacing
     {
@@ -59,239 +69,309 @@ public class VirtualizingGallery: VirtualizingPanel, IScrollSnapPointsInfo
         get => GetValue(LineSpacingProperty);
         set => SetValue(LineSpacingProperty, value);
     }
+
+    public bool IsExpanded { get; set; }
     
-    /// <inheritdoc/>
-    protected override Size MeasureOverride(Size constraint)
+    public Rect? GetItemBounds(int index)
     {
-        var itemWidth = double.NaN;
-        var itemHeight = ItemHeight;
-        var itemSpacing = ItemSpacing;
-        var lineSpacing = LineSpacing;
-        var orientation = Orientation;
-        var children = Children;
-        var curLineSize = new UVSize(orientation);
-        var panelSize = new UVSize(orientation);
-        var uvConstraint = new UVSize(orientation, constraint.Width, constraint.Height);
-        var itemWidthSet = !double.IsNaN(itemWidth);
-        var itemHeightSet = !double.IsNaN(itemHeight);
-        var itemExists = false;
-        var lineExists = false;
-        var useLayoutRounding = UseLayoutRounding;
-
-        var childConstraint = new Size(
-            itemWidthSet ? itemWidth : constraint.Width,
-            itemHeightSet ? itemHeight : constraint.Height);
-
-        for (int i = 0, count = children.Count; i < count; ++i)
+        if (index >= 0 && index < _itemBounds.Count)
         {
-            var child = children[i];
-            // Flow passes its own constraint to children
-            child.Measure(childConstraint);
-
-            var childSize = new UVSize(orientation,
-                itemWidthSet ? itemWidth : child.DesiredSize.Width,
-                itemHeightSet ? itemHeight : child.DesiredSize.Height);
-
-            var nextSpacing = itemExists && child.IsVisible ? itemSpacing : 0;
-            if (GreaterThan(useLayoutRounding, curLineSize.U + childSize.U + nextSpacing, uvConstraint.U)) // Need to switch to another line
-            {
-                panelSize.U = Math.Max(curLineSize.U, panelSize.U);
-                panelSize.V += curLineSize.V + (lineExists ? lineSpacing : 0);
-                curLineSize = childSize;
-
-                itemExists = child.IsVisible;
-                lineExists = true;
-            }
-            else // Continue to accumulate a line
-            {
-                curLineSize.U += childSize.U + nextSpacing;
-                curLineSize.V = Math.Max(childSize.V, curLineSize.V);
-
-                itemExists |= child.IsVisible; // keep true
-            }
+            return _itemBounds[index];
         }
-
-        // The last line size, if any should be added
-        panelSize.U = Math.Max(curLineSize.U, panelSize.U);
-        panelSize.V += curLineSize.V + (lineExists ? lineSpacing : 0);
-
-        return new Size(panelSize.Width, panelSize.Height);
-    }
-    
-    /// <inheritdoc/>
-    protected override Size ArrangeOverride(Size finalSize)
-    {
-        var itemWidth = double.NaN;
-        var itemHeight = ItemHeight;
-        var itemSpacing = ItemSpacing;
-        var lineSpacing = LineSpacing;
-        var orientation = Orientation;
-        var isHorizontal = orientation == Orientation.Horizontal;
-        var children = Children;
-        var firstInLine = 0;
-        double accumulatedV = 0;
-        var itemU = isHorizontal ? itemWidth : itemHeight;
-        var curLineSize = new UVSize(orientation);
-        var uvFinalSize = new UVSize(orientation, finalSize.Width, finalSize.Height);
-        var itemWidthSet = !double.IsNaN(itemWidth);
-        var itemHeightSet = !double.IsNaN(itemHeight);
-        var itemExists = false;
-        var lineExists = false;
-        var useLayoutRounding = UseLayoutRounding;
-
-        for (var i = 0; i < children.Count; ++i)
-        {
-            var child = children[i];
-            var childSize = new UVSize(orientation,
-                itemWidthSet ? itemWidth : child.DesiredSize.Width,
-                itemHeightSet ? itemHeight : child.DesiredSize.Height);
-
-            var nextSpacing = itemExists && child.IsVisible ? itemSpacing : 0;
-            if (GreaterThan(useLayoutRounding, curLineSize.U + childSize.U + nextSpacing, uvFinalSize.U)) // Need to switch to another line
-            {
-                accumulatedV += lineExists ? lineSpacing : 0; // add spacing to arrange line first
-                ArrangeLine(curLineSize.V, firstInLine, i);
-                accumulatedV += curLineSize.V; // add the height of the line just arranged
-                curLineSize = childSize;
-
-                firstInLine = i;
-
-                itemExists = child.IsVisible;
-                lineExists = true;
-            }
-            else // Continue to accumulate a line
-            {
-                curLineSize.U += childSize.U + nextSpacing;
-                curLineSize.V = Math.Max(childSize.V, curLineSize.V);
-
-                itemExists |= child.IsVisible; // keep true
-            }
-        }
-
-        // Arrange the last line, if any
-        if (firstInLine < children.Count)
-        {
-            accumulatedV += lineExists ? lineSpacing : 0; // add spacing to arrange line first
-            ArrangeLine(curLineSize.V, firstInLine, children.Count);
-        }
-
-        return finalSize;
-
-        void ArrangeLine(double lineV, int start, int endExcluded)
-        {
-            var useItemU = isHorizontal ? itemWidthSet : itemHeightSet;
-            var u = 0d;
-            // Count of spacings between items
-            const double stretchRatio = 1d;
-
-            for (var i = start; i < endExcluded; ++i)
-            {
-                var layoutSlotU = GetChildU(i) * stretchRatio;
-                children[i].Arrange(isHorizontal ?
-                    new Rect(u, accumulatedV, layoutSlotU, lineV) :
-                    new Rect(accumulatedV, u, lineV, layoutSlotU));
-                u += layoutSlotU + (children[i].IsVisible ? itemSpacing : 0);
-            }
-
-            return;
-            double GetChildU(int i) => useItemU ? itemU :
-                isHorizontal ? children[i].DesiredSize.Width : children[i].DesiredSize.Height;
-        }
-    }
-        
-        
-    private struct UVSize
-    {
-        internal UVSize(Orientation orientation, double width, double height)
-        {
-            U = V = 0d;
-            _orientation = orientation;
-            Width = width;
-            Height = height;
-        }
-
-        internal UVSize(Orientation orientation)
-        {
-            U = V = 0d;
-            _orientation = orientation;
-        }
-
-        internal double U;
-        internal double V;
-        private Orientation _orientation;
-
-        internal double Width
-        {
-            get => _orientation == Orientation.Horizontal ? U : V;
-            set { if (_orientation == Orientation.Horizontal) U = value; else V = value; }
-        }
-
-        internal double Height
-        {
-            get => _orientation == Orientation.Horizontal ? V : U;
-            set { if (_orientation == Orientation.Horizontal) V = value; else U = value; }
-        }
-    }
-    
-    
-    private static bool GreaterThan(bool useLayoutRounding, double value1, double value2)
-    {
-        return useLayoutRounding
-            ? value1 > value2 && value1 - value2 > LayoutHelper.LayoutEpsilon
-            : GreaterThan(value1, value2);
-    }
-    public static bool GreaterThan(double value1, double value2) => value1 > value2 && !AreClose(value1, value2);
-    internal const double DoubleEpsilon = 2.2204460492503131e-016;
-    public static bool AreClose(double value1, double value2)
-    {
-        //in case they are Infinities (then epsilon check does not work)
-        if (value1 == value2)
-        {
-            return true;
-        }
-        var eps = (Math.Abs(value1) + Math.Abs(value2) + 10.0) * DoubleEpsilon;
-        var delta = value1 - value2;
-        return -eps < delta && eps > delta;
-    }
-
-    
-    protected override Control ScrollIntoView(int index)
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override Control ContainerFromIndex(int index)
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override int IndexFromContainer(Control container)
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override IEnumerable<Control> GetRealizedContainers()
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override IInputElement? GetControl(NavigationDirection direction, IInputElement? from, bool wrap)
-    {
-        throw new NotImplementedException();
+        return null;
     }
 
     public IReadOnlyList<double> GetIrregularSnapPoints(Orientation orientation, SnapPointsAlignment snapPointsAlignment)
     {
-        throw new NotImplementedException();
+        if (_itemBounds.Count == 0) return [];
+
+        var snapPoints = new List<double>();
+
+        if (orientation is not Orientation.Horizontal)
+        {
+            return snapPoints;
+        }
+
+        if (!IsExpanded)
+        {
+            // Docked mode: Snap to individual items
+            foreach (var bounds in _itemBounds)
+            {
+                var point = snapPointsAlignment switch
+                {
+                    SnapPointsAlignment.Near => bounds.Left,
+                    SnapPointsAlignment.Center => bounds.Center.X,
+                    SnapPointsAlignment.Far => bounds.Right,
+                    _ => bounds.Left
+                };
+                snapPoints.Add(point);
+            }
+        }
+        else
+        {
+            // Expanded mode: Snap to the start of each column
+            var lastX = -1.0;
+            foreach (var bounds in _itemBounds)
+            {
+                if (!(Math.Abs(bounds.X - lastX) > 1.0))
+                {
+                    continue;
+                }
+
+                lastX = bounds.X;
+                var point = snapPointsAlignment switch
+                {
+                    SnapPointsAlignment.Near => bounds.Left,
+                    SnapPointsAlignment.Center => bounds.Center.X,
+                    SnapPointsAlignment.Far => bounds.Right,
+                    _ => bounds.Left
+                };
+                snapPoints.Add(point);
+            }
+        }
+
+        return snapPoints;
     }
 
     public double GetRegularSnapPoints(Orientation orientation, SnapPointsAlignment snapPointsAlignment, out double offset)
     {
-        throw new NotImplementedException();
+        offset = 0d;
+        return 0d; // We return 0 here because our layout requires irregular snap points
     }
 
-    public bool AreHorizontalSnapPointsRegular { get; set; }
-    public bool AreVerticalSnapPointsRegular { get; set; }
+    public bool AreHorizontalSnapPointsRegular { get; set; } = false;
+    public bool AreVerticalSnapPointsRegular { get; set; } = false;
     public event EventHandler<RoutedEventArgs>? HorizontalSnapPointsChanged;
     public event EventHandler<RoutedEventArgs>? VerticalSnapPointsChanged;
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        EffectiveViewportChanged += OnEffectiveViewportChanged;
+    }
+
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        EffectiveViewportChanged -= OnEffectiveViewportChanged;
+    }
+
+    private void OnEffectiveViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
+    {
+        _viewport = e.EffectiveViewport;
+        InvalidateMeasure();
+    }
+
+    private Size CalculateBounds(Size availableSize)
+    {
+        _itemBounds.Clear();
+
+        if (Items is not IEnumerable<object> items)
+        {
+            return new Size();
+        }
+
+        double currentX = 0;
+        double currentY = 0;
+        double currentColumnMaxWidth = 0;
+        double maxExtentY = 0;
+
+        foreach (var item in items)
+        {
+            var itemWidth = ItemHeight; // Fallback for square
+
+            // Calculate dynamic width based on the fixed ItemHeight
+            if (item is GalleryItemViewModel { PixelHeight: > 0 } vm)
+            {
+                var aspectRatio = (double)vm.PixelWidth / vm.PixelHeight;
+                itemWidth = ItemHeight * aspectRatio;
+            }
+
+            if (IsExpanded)
+            {
+                // Vertical Wrapping: Wrap to next column if exceeding available height
+                if (currentY + ItemHeight > availableSize.Height && currentY > 0)
+                {
+                    currentY = 0;
+                    currentX += currentColumnMaxWidth + LineSpacing;
+                    currentColumnMaxWidth = 0; // Reset for the new column
+                }
+
+                _itemBounds.Add(new Rect(currentX, currentY, itemWidth, ItemHeight));
+
+                currentY += ItemHeight + ItemSpacing;
+                currentColumnMaxWidth = Math.Max(currentColumnMaxWidth, itemWidth);
+                maxExtentY = Math.Max(maxExtentY, currentY - ItemSpacing);
+            }
+            else
+            {
+                // Horizontal Docked Mode (Single Row)
+                _itemBounds.Add(new Rect(currentX, currentY, itemWidth, ItemHeight));
+                currentX += itemWidth + ItemSpacing;
+            }
+        }
+
+        if (IsExpanded)
+        {
+            var totalWidth = currentX + currentColumnMaxWidth;
+            // Guard against Infinity if height is temporarily unconstrained during layout passes
+            var totalHeight = double.IsInfinity(availableSize.Height) ? maxExtentY : availableSize.Height;
+            return new Size(totalWidth, totalHeight);
+        }
+    
+        return new Size(currentX > 0 ? currentX - ItemSpacing : 0, ItemHeight);
+    }
+
+    /// <inheritdoc />
+    protected override Size MeasureOverride(Size availableSize)
+    {
+        if (Items is null || Items.Count is 0)
+        {
+            return new Size();
+        }
+
+        // 1. Calculate all layout boundaries instantly in memory
+        var extentSize = CalculateBounds(availableSize);
+
+        // 2. Determine what is visible (inflate by 2x ItemHeight to buffer scrolling)
+        var visibleRect = _viewport == new Rect() ? new Rect(new Point(), availableSize) : _viewport;
+        visibleRect = visibleRect.Inflate(new Thickness(ItemHeight * 2));
+
+        // 3. Find which indices fall inside the visible rect
+        var startIndex = -1;
+        var endIndex = -1;
+
+        for (var i = 0; i < _itemBounds.Count; i++)
+        {
+            if (visibleRect.Intersects(_itemBounds[i]))
+            {
+                if (startIndex == -1) startIndex = i;
+                endIndex = i;
+            }
+            else if (startIndex != -1 && _itemBounds[i].X > visibleRect.Right)
+            {
+                // Early exit: We've completely passed the visible horizontal viewport
+                break;
+            }
+        }
+
+        if (startIndex == -1) return extentSize;
+
+        // 4. Recycle items that are no longer visible
+        for (var i = _realizedItems.Count - 1; i >= 0; i--)
+        {
+            var realized = _realizedItems[i];
+            if (realized.Index < startIndex || realized.Index > endIndex)
+            {
+                ItemContainerGenerator?.ClearItemContainer(realized.Element);
+                RemoveInternalChild(realized.Element);
+                _realizedItems.RemoveAt(i);
+            }
+        }
+
+        // 5. Realize and measure items that ARE visible
+        var itemsList = Items as IList;
+        for (var i = startIndex; i <= endIndex; i++)
+        {
+            var container = ContainerFromIndex(i);
+            if (container == null)
+            {
+                // Generate and add container using Avalonia's generator
+                var item = itemsList![i];
+                if (ItemContainerGenerator!.NeedsContainer(item, i, out var recycleKey))
+                {
+                    container = ItemContainerGenerator.CreateContainer(item, i, recycleKey);
+                    ItemContainerGenerator.PrepareItemContainer(container, item, i);
+                    AddInternalChild(container);
+                    ItemContainerGenerator.ItemContainerPrepared(container, item, i);
+
+                    // Keep the realized items list sorted by index
+                    var insertIndex = _realizedItems.FindIndex(r => r.Index > i);
+                    if (insertIndex == -1)
+                        _realizedItems.Add(new RealizedItem(i, container));
+                    else
+                        _realizedItems.Insert(insertIndex, new RealizedItem(i, container));
+                }
+            }
+
+            // Measure the container using the exact bounds we already calculated
+            container?.Measure(_itemBounds[i].Size);
+        }
+
+        return extentSize;
+    }
+
+    /// <inheritdoc />
+    protected override Size ArrangeOverride(Size finalSize)
+    {
+        if (Items is null)
+        {
+            return new Size();
+        }
+
+        foreach (var realized in _realizedItems)
+        {
+            if (realized.Index >= 0 && realized.Index < _itemBounds.Count)
+            {
+                realized.Element.Arrange(_itemBounds[realized.Index]);
+            }
+        }
+
+        return finalSize;
+    }
+    
+    protected override void OnItemsChanged(IReadOnlyList<object?> items, NotifyCollectionChangedEventArgs e)
+    {
+        base.OnItemsChanged(items, e);
+        InvalidateMeasure();
+    }
+
+
+    protected override Control? ScrollIntoView(int index)
+    {
+        // Return the container if it happens to be realized, otherwise null. 
+        // We handle the actual scrolling externally now.
+        return ContainerFromIndex(index);
+    }
+
+    protected override Control? ContainerFromIndex(int index)
+    {
+        foreach (var realizedItem in _realizedItems)
+        {
+            if (realizedItem.Index == index)
+            {
+                return realizedItem.Element;
+            }
+        }
+
+        return null;
+    }
+
+    protected override int IndexFromContainer(Control container)
+    {
+        foreach (var realizedItem in _realizedItems)
+        {
+            if (realizedItem.Element == container)
+            {
+                return realizedItem.Index;
+            }
+        }
+
+        return -1;
+    }
+
+    protected override IEnumerable<Control> GetRealizedContainers()
+    {
+        return _realizedItems.Select(realizedItem => realizedItem.Element);
+    }
+
+    protected override IInputElement? GetControl(NavigationDirection direction, IInputElement? from, bool wrap)
+    {
+        // Let the NavigateAbleItemsViewer handle spatial navigation
+        return null;
+    }
+
+
+    private record struct RealizedItem(int Index, Control Element);
 }

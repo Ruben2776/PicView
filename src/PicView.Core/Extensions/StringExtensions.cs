@@ -86,17 +86,38 @@ public static partial class StringExtensions
         });
     }
     
-    /// <summary>
-    /// Shortens the given string <paramref name="name"/> to the specified <paramref name="amount"/> and appends "..." to it.
-    /// </summary>
-    /// <param name="name">The string to shorten.</param>
-    /// <param name="amount">The length to shorten the string to.</param>
-    /// <returns>The shortened string with "..." appended at the end.</returns>
-    public static string Shorten(this string name, int amount)
+    
+    public static string CombineSize(uint width, uint height)
     {
-        name = name[..amount];
-        name += "...";
-        return name;
+        // Allocate small buffers on the stack to determine character lengths
+        Span<char> widthBuffer = stackalloc char[32];
+        Span<char> heightBuffer = stackalloc char[32];
+
+        // Format into the buffers to get the exact lengths
+        if (!width.TryFormat(widthBuffer, out var widthLength) ||
+            !height.TryFormat(heightBuffer, out var heightLength))
+        {
+            return string.Empty;
+        }
+
+        // Calculate total length: width length + 3 (for " x ") + height length
+        var requiredLength = widthLength + 3 + heightLength;
+
+        // Create the string with exactly one heap allocation
+        return string.Create(requiredLength, (width, height, widthLength), static (destination, state) =>
+        {
+            // Format width into the beginning of the destination
+            state.width.TryFormat(destination[..state.widthLength], out _);
+
+            // Add the " x " separator manually
+            var offset = state.widthLength;
+            destination[offset++] = ' ';
+            destination[offset++] = 'x';
+            destination[offset++] = ' ';
+
+            // Format height into the remaining space
+            state.height.TryFormat(destination[offset..], out _);
+        });
     }
 
     /// <summary>

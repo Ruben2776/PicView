@@ -45,8 +45,13 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
+
+        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        {
+            return;
+        }
         
-        _imageSubscription = Observable.EveryValueChanged(vm.Image, img => img.Value)
+        _imageSubscription = Observable.EveryValueChanged(vm.Image, img => img.Value, mainWindow.FrameProvider)
             .Subscribe(img =>
             {
                 GalleryImage.Source = img as Bitmap;    

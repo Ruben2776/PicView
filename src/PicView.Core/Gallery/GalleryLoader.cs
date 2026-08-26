@@ -1,3 +1,4 @@
+using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
@@ -32,13 +33,32 @@ public static class GalleryLoader
         foreach (var file in files)
         {
             ct.ThrowIfCancellationRequested();
-            
-            var item = new GalleryItemViewModel
+
+            GalleryItemViewModel item;
+            try
             {
-                FileInfo = file
-            };
-            
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(file);
+                using var magick = new MagickImage();
+                await magick.PingAsync(file, ct).ConfigureAwait(false);
+                item = new GalleryItemViewModel
+                {
+                    FileInfo = file,
+                    PixelWidth = magick.Width,
+                    PixelHeight = magick.Height
+                };
+
+            }
+            catch (Exception e)
+            {
+                item = new GalleryItemViewModel
+                {
+                    FileInfo = file,
+                };
+#if DEBUG
+                DebugHelper.LogDebug(nameof(GalleryLoader), nameof(LoadGalleryAsync), e);
+#endif
+            }
+
+            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(file, item.PixelWidth, item.PixelHeight);
             item.FileName.Value = thumbData.FileName;
             item.FileSize.Value = thumbData.FileSize;
             item.FileDate.Value = thumbData.FileDate;
@@ -122,7 +142,7 @@ public static class GalleryLoader
                 DebugHelper.LogDebug(nameof(GalleryLoader), nameof(LoadGalleryAsync), "Invalid file");
                 return;
             }
-            
+
             object? thumb;
             if (thumbnailCache.TryGet(item.FileInfo.FullName, out var cached))
             {

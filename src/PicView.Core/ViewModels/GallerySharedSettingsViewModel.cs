@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using R3;

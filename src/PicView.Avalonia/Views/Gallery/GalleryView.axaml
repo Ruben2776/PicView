@@ -180,7 +180,7 @@
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel
+                    <customControls:VirtualizingGallery
                         x:Name="GalleryItemsPanel"
                         VerticalAlignment="Center"
                         ItemHeight="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ItemHeight.Value}"

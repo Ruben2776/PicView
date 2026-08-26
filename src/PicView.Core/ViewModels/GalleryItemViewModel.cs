@@ -11,7 +11,8 @@ public class GalleryItemViewModel : IDisposable
             FileName,
             FileLocation,
             FileSize,
-            FileDate);
+            FileDate,
+            ImageSize);
     }
     
     // Data Properties
@@ -20,6 +21,9 @@ public class GalleryItemViewModel : IDisposable
     public BindableReactiveProperty<string> FileLocation { get; } = new();
     public BindableReactiveProperty<string> FileSize { get; } = new();
     public BindableReactiveProperty<string> FileDate { get; } = new();
+    public BindableReactiveProperty<string> ImageSize { get; } = new();
     
     public FileInfo? FileInfo { get; set; }
+    public uint PixelWidth { get; set; }
+    public uint PixelHeight { get; set; }
 }

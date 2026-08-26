@@ -1,4 +1,5 @@
 using Avalonia;
+using ImageMagick;
 using PicView.Avalonia.ImageHandling;
 using PicView.Core.Gallery;
 using PicView.Core.Navigation.Interfaces;
@@ -22,9 +23,9 @@ public class AvaloniaThumbnailLoader : IThumbnailLoader
         return await GetThumbnails.GetThumbAsync(file, (uint)defaultItemHeight).ConfigureAwait(false);
     }
 
-    public async ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size)
+    public async ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, MagickImage? magickImage = null)
     {
-        return await GetThumbnails.GetThumbAsync(file, size).ConfigureAwait(false);
+        return await GetThumbnails.GetThumbAsync(file, size, magickImage).ConfigureAwait(false);
     }
 
     public object? GetExifThumbnail(FileInfo file) =>
