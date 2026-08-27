@@ -141,10 +141,10 @@ public static class WindowFunctions
 
         try
         {
-            await SaveSettingsAsync();
-            await KeybindingManager.UpdateKeyBindingsFile();
+            await SaveSettingsAsync().ConfigureAwait(true);
+            await KeybindingManager.UpdateKeyBindingsFile().ConfigureAwait(true);
             TempFileManager.Cleanup();
-            await FileHistoryManager.SaveToFileAsync();
+            await FileHistoryManager.SaveToFileAsync().ConfigureAwait(true);
             foreach (var tabViewModel in vm.WindowTabs.Tabs.CurrentValue)
             {
                 tabViewModel.ArchiveExtractionService?.Cleanup();

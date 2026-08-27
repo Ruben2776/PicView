@@ -214,7 +214,7 @@ Improvements to the current code or bug fixes are also welcome!
 ## Translators/Languages
 Simplified Chinese by <a href="https://github.com/Crystal-RainSlide">Crystal-RainSlide</a>, <a href="https://github.com/jasoneri">jasoneri</a><br>
 Traditional Chinese by <a href="https://github.com/wcxu21">wcxu21</a>, <a href="https://github.com/jasoneri">jasoneri</a><br>
-Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a> <i>(help wanted to update translation)</i><br>
+Spanish by <a href="https://github.com/lk-KEVIN">lk.KEVIN</a>, <a href="https://github.com/JanBermejoToran">Jan Bermejo Toran</a><br>
 Korean by <a href="https://github.com/VenusGirl">VenusGirl</a><br>
 German by <a href="https://github.com/Brotbox">Brotbox</a>, [uDEV2019](https://github.com/uDEV2019)<br>
 Polish by <a href="https://github.com/YourSenseiCreeper">YourSenseiCreeper</a><br>
@@ -231,6 +231,7 @@ Hungarian by <a href="https://github.com/JohnFowler58">JohnFowler58</a> <br>
 Turkish by <a href="https://github.com/odest">Dest</a><br>
 Slovenian by <a href="https://github.com/anderlli0053">Andrew Poženel</a><br>
 Serbian by <a href="https://github.com/ozzii">ozzii</a>, <a href="https://github.com/rammba">Radoš Milićev</a><br>
+Catalan by <a href="https://github.com/JanBermejoToran">Jan Bermejo Toran</a><br>
 English and Danish by <a href="https://github.com/Ruben2776">Ruben2776</a><br>
 
 **Looking for translators!**
