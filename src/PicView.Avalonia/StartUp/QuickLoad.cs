@@ -306,12 +306,21 @@ public static class QuickLoad
             core.PlatformService.SetTaskbarProgress((ulong)tab.ImageIterator.CurrentIndex, (ulong)tab.ImageIterator.Files.Count);
         }
         
-        FileHistoryManager.Add(fileInfo.FullName);
-
         if (isGalleryEnabled)
         {
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
+                {
+                    imageViewer.GalleryView.GalleryItemsControl.SelectedItemIndex = tab.NavigationIndex.Value;
+                    imageViewer.GalleryView.GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
+                    imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                }
+            }, DispatcherPriority.Loaded);
             await LoadGallery(core).ConfigureAwait(false);
         }
+        
+        FileHistoryManager.Add(fileInfo.FullName);
         
         if (continueFromLeftOff)
         {

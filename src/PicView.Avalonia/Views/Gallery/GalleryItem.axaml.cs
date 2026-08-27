@@ -5,7 +5,6 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
@@ -56,7 +55,7 @@ public partial class GalleryItem : NavigateAbleItem
             .SubscribeAwait(async (_, ct) =>
             {
                 var thumb = await vm.ThumbnailLoaderFunc(ct).ConfigureAwait(false);
-                GalleryImage.Source = thumb as IImage;    
+                vm.Image.Value = thumb;
             }, DebugHelper.LogError(nameof(GalleryItem), nameof(LoadImage)));
     }
 

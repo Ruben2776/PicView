@@ -111,13 +111,8 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
         {
             // Expanded mode: Snap to the start of each column
             var lastX = -1.0;
-            foreach (var bounds in _itemBounds)
+            foreach (var bounds in _itemBounds.Where(bounds => Math.Abs(bounds.X - lastX) > 1.0))
             {
-                if (!(Math.Abs(bounds.X - lastX) > 1.0))
-                {
-                    continue;
-                }
-
                 lastX = bounds.X;
                 var point = snapPointsAlignment switch
                 {
@@ -212,15 +207,16 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
             }
         }
 
-        if (IsExpanded)
+        if (!IsExpanded)
         {
-            var totalWidth = currentX + currentColumnMaxWidth;
-            // Guard against Infinity if height is temporarily unconstrained during layout passes
-            var totalHeight = double.IsInfinity(availableSize.Height) ? maxExtentY : availableSize.Height;
-            return new Size(totalWidth, totalHeight);
+            return new Size(currentX > 0 ? currentX - ItemSpacing : 0, ItemHeight);
         }
-    
-        return new Size(currentX > 0 ? currentX - ItemSpacing : 0, ItemHeight);
+
+        var totalWidth = currentX + currentColumnMaxWidth;
+        // Guard against Infinity if height is temporarily unconstrained during layout passes
+        var totalHeight = double.IsInfinity(availableSize.Height) ? maxExtentY : availableSize.Height;
+        return new Size(totalWidth, totalHeight);
+
     }
 
     /// <inheritdoc />
@@ -262,12 +258,14 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
         for (var i = _realizedItems.Count - 1; i >= 0; i--)
         {
             var realized = _realizedItems[i];
-            if (realized.Index < startIndex || realized.Index > endIndex)
+            if (realized.Index >= startIndex && realized.Index <= endIndex)
             {
-                ItemContainerGenerator?.ClearItemContainer(realized.Element);
-                RemoveInternalChild(realized.Element);
-                _realizedItems.RemoveAt(i);
+                continue;
             }
+
+            ItemContainerGenerator?.ClearItemContainer(realized.Element);
+            RemoveInternalChild(realized.Element);
+            _realizedItems.RemoveAt(i);
         }
 
         // 5. Realize and measure items that ARE visible
@@ -310,12 +308,9 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
             return new Size();
         }
 
-        foreach (var realized in _realizedItems)
+        foreach (var realized in _realizedItems.Where(realized => realized.Index >= 0 && realized.Index < _itemBounds.Count))
         {
-            if (realized.Index >= 0 && realized.Index < _itemBounds.Count)
-            {
-                realized.Element.Arrange(_itemBounds[realized.Index]);
-            }
+            realized.Element.Arrange(_itemBounds[realized.Index]);
         }
 
         return finalSize;

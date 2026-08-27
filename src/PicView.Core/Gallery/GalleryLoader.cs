@@ -71,6 +71,7 @@ public static class GalleryLoader
                     item.FileSize.Value = thumbData.FileSize;
                     item.FileDate.Value = thumbData.FileDate;
                     item.FileLocation.Value = thumbData.FileLocation;
+                    item.ImageSize.Value = thumbData.ImageSize;
 
                     // 2. Assign the lazy-loading logic, but don't execute it!
                     item.ThumbnailLoaderFunc = async _ =>

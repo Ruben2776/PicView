@@ -205,6 +205,7 @@ public class FileWatcherService(
             item.FileSize.Value = thumbData.FileSize;
             item.FileDate.Value = thumbData.FileDate;
             item.FileLocation.Value = thumbData.FileLocation;
+            item.ImageSize.Value = thumbData.ImageSize;
 
             tab.Gallery.GalleryItems.Insert(insertionIndex, item);
 
@@ -343,6 +344,7 @@ public class FileWatcherService(
             item.FileSize.Value = thumbData.FileSize;
             item.FileDate.Value = thumbData.FileDate;
             item.FileLocation.Value = thumbData.FileLocation;
+            item.ImageSize.Value = thumbData.ImageSize;
 
             tab.Gallery.GalleryItems.Insert(insertionIndex, item);
 

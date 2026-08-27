@@ -20,7 +20,10 @@
         ToolTip.HorizontalOffset="0"
         ToolTip.Placement="TopEdgeAlignedLeft"
         ToolTip.VerticalOffset="0">
-        <customControls:ThumbImage x:Name="GalleryImage" Stretch="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.GalleryStretch.Value}" />
+        <customControls:ThumbImage
+            x:Name="GalleryImage"
+            Source="{Binding Image.Value}"
+            Stretch="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.GalleryStretch.Value}" />
         <ToolTip.Tip>
             <StackPanel MaxWidth="600">
                 <TextBlock

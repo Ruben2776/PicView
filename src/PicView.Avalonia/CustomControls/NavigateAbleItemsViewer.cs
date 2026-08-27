@@ -207,7 +207,7 @@ public class NavigateAbleItemsViewer : ItemsControl
         // Need to use Post to have calculations take place after render
         Dispatcher.UIThread.Post(() =>
         {
-            if (_scrollViewer is null || CurrentItemIndex < 0 || CurrentItemIndex >= ItemCount)
+            if (_scrollViewer is null)
             {
                 return;
             }
