@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Avalonia;
-using Avalonia.Threading;
 using Microsoft.Win32;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
@@ -60,8 +59,11 @@ public static class WinUpdateHelper
     {
         var fileName = Path.GetFileName(downloadUrl);
         var tempFileDownloadPath = Path.Combine(tempPath, fileName);
-
-        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
+        
+        if (Application.Current.DataContext is not CoreViewModel core)
+        {
+            return;
+        }
         
         await UpdateManager.DownloadUpdateFile(core, downloadUrl, tempFileDownloadPath);
 
