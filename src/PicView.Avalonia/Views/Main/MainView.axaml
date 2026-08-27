@@ -1061,6 +1061,7 @@
             Height="150"
             VerticalAlignment="Top"
             Background="Transparent"
+            IsHitTestVisible="{Binding !IsUIShown.Value, Mode=OneWay}"
             IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}"
             LastChildFill="True"
             Opacity="0"

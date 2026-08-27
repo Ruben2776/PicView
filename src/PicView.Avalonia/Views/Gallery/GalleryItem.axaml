@@ -20,9 +20,31 @@
         ToolTip.HorizontalOffset="0"
         ToolTip.Placement="TopEdgeAlignedLeft"
         ToolTip.VerticalOffset="0">
-        <customControls:ThumbImage
-            x:Name="GalleryImage"
-            Stretch="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.GalleryStretch.Value}" />
+<Grid>
+            <customControls:ThumbImage
+                x:Name="GalleryImage"
+                Stretch="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.GalleryStretch.Value}" />
+            <!-- Motion photo badge -->
+            <Border
+                Margin="3"
+                Padding="4,3"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Background="{DynamicResource AltBackgroundColor}"
+                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderThickness="1"
+                CornerRadius="3"
+                IsHitTestVisible="False"
+                IsVisible="{CompiledBinding IsMotionPhoto.Value}"
+                Opacity="0.9">
+                <Path
+                    Width="8"
+                    Height="8"
+                    Data="F1M0,0L10,5 0,10z"
+                    Fill="{DynamicResource MainTextColor}"
+                    Stretch="Uniform" />
+            </Border>
+        </Grid>
         <ToolTip.Tip>
             <StackPanel MaxWidth="600">
                 <TextBlock

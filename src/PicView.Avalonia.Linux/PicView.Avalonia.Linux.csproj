@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
@@ -111,6 +111,22 @@
 	<ItemGroup>
 	  <None Update="PicView.exe.manifest">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<!-- Motion photo playback native library (see Build\Build-FFmpegNative.ps1) -->
+	<ItemGroup Condition="('$(Platform)' == 'x64' or '$(RuntimeIdentifier)' == 'linux-x64') and Exists('$(MSBuildThisFileDirectory)..\..\Build\ffmpeg-native\linux-x64\libpicviewffmpeg.so')">
+	  <None Include="..\..\Build\ffmpeg-native\linux-x64\libpicviewffmpeg.so">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	    <Link>ffmpeg\linux-x64\libpicviewffmpeg.so</Link>
+	  </None>
+	</ItemGroup>
+	<ItemGroup Condition="('$(Platform)' == 'arm64' or '$(RuntimeIdentifier)' == 'linux-arm64') and Exists('$(MSBuildThisFileDirectory)..\..\Build\ffmpeg-native\linux-arm64\libpicviewffmpeg.so')">
+	  <None Include="..\..\Build\ffmpeg-native\linux-arm64\libpicviewffmpeg.so">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	    <Link>ffmpeg\linux-arm64\libpicviewffmpeg.so</Link>
 	  </None>
 	</ItemGroup>
 </Project>

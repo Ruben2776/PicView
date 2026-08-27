@@ -239,6 +239,13 @@ public class ZoomPanControl : Decorator
             return;
         }
 
+        // Interactive children (e.g. the motion photo play badge) handle their own clicks;
+        // starting a pan here would capture the pointer and swallow their click.
+        if (e.Source is Button)
+        {
+            return;
+        }
+
         // Panning shouldn't happen when moving the window by holding shift
         if (e.KeyModifiers == KeyModifiers.Shift)
         {

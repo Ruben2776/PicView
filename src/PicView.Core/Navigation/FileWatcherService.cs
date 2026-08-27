@@ -6,6 +6,7 @@ using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
 using PicView.Core.Gallery;
 using PicView.Core.Models;
+using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 using R3;
@@ -221,6 +222,7 @@ public class FileWatcherService(
                     thumbnailCache?.Add(tab.Id, newFile.FullName, thumb);
                 }
                 item.Image.Value = thumb;
+                item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(newFile, null) is not null;
             }
         }
     }

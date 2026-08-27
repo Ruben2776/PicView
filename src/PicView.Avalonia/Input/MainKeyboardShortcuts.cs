@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
@@ -184,6 +185,22 @@ public static class MainKeyboardShortcuts
         if (vm.IsEditableTitlebarOpen.CurrentValue)
         {
             return true;
+        }
+
+        // Motion photo playback: Space plays/pauses, Escape stops an active playback
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer &&
+            imageViewer.IsMotionPhotoActive)
+        {
+            if (e.Key is Key.Space)
+            {
+                imageViewer.ToggleMotionPhotoPlayPause();
+                return true;
+            }
+
+            if (e.Key is Key.Escape && imageViewer.StopMotionPhotoIfPlaying())
+            {
+                return true;
+            }
         }
 
         // Handle open dialog
