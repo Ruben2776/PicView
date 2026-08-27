@@ -19,6 +19,7 @@ namespace PicView.Avalonia.CustomControls;
 public class GalleryAnimationControl : UserControl
 {
     #region Fields and Properties
+    
     private const int ZeroSize = 0;
     private const int BorderTopAndBottomThickness = 2;
 
@@ -99,7 +100,7 @@ public class GalleryAnimationControl : UserControl
             return;
         }
         
-        if ( TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
         }
@@ -244,23 +245,6 @@ public class GalleryAnimationControl : UserControl
             _viewer.ScrollToCenterOfCurrentItem();
         }
     }
-    
-    private void SetDockedThumbs()
-    {
-        ApplyThumbSettings(
-            Settings.Gallery.DockedGalleryItemSize,
-            Settings.Gallery.DockedGalleryStretchMode,
-            GetDockedMargin);
-    }
-    
-    private void SetDockedStretch(int x)
-    {
-        SetDockedThumbs();
-        if (_viewer.CenterCurrentItem)
-        {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }
-    }
 
     private void UpdateExpandedItemHeight(double itemHeight)
     {
@@ -386,6 +370,23 @@ public class GalleryAnimationControl : UserControl
         }
     }
     
+    private void SetDockedThumbs()
+    {
+        ApplyThumbSettings(
+            Settings.Gallery.DockedGalleryItemSize,
+            Settings.Gallery.DockedGalleryStretchMode,
+            GetDockedMargin);
+    }
+    
+    private void SetDockedStretch(int x)
+    {
+        SetDockedThumbs();
+        if (_viewer.CenterCurrentItem)
+        {
+            _viewer.ScrollToCenterOfCurrentItem();
+        }
+    }
+    
     private void ApplyThumbSettings(double size, GalleryStretchMode mode, Thickness margin, double spacing = 0)
     {
         if (Application.Current.DataContext is not CoreViewModel core)
@@ -463,7 +464,7 @@ public class GalleryAnimationControl : UserControl
         }
 
         SetDockedThumbPosition(dock);
-        _viewer?.ScrollToCenterOfCurrentItem();
+        _viewer.ScrollToCenterOfCurrentItem();
         if (Settings.WindowProperties.AutoFit)
         {
             Dispatcher.UIThread.Post(() =>

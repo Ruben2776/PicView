@@ -1,7 +1,6 @@
 using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Collections;
-using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Threading;
 using ObservableCollections;
@@ -79,7 +78,7 @@ public partial class GalleryView : GalleryAnimationControl
                             _galleryItems.Add(newItem);
                         }
                         SyncGalleryViewerScroll(tab);
-                    }, DispatcherPriority.Background, cancellationToken);
+                    }, DispatcherPriority.Loaded, cancellationToken);
                 }
                 else
                 {
@@ -97,7 +96,7 @@ public partial class GalleryView : GalleryAnimationControl
                         }
 
                         SyncGalleryViewerScroll(tab);
-                    }, DispatcherPriority.Background, cancellationToken);
+                    }, DispatcherPriority.Loaded, cancellationToken);
                 }
                 break;
             case NotifyCollectionChangedAction.Reset:
@@ -112,7 +111,7 @@ public partial class GalleryView : GalleryAnimationControl
                     }
 
                     SyncGalleryViewerScroll(tab);
-                }, DispatcherPriority.Background, cancellationToken);
+                }, DispatcherPriority.Loaded, cancellationToken);
                 break;
             case NotifyCollectionChangedAction.Remove:
                 if (e.IsSingleItem)
@@ -122,7 +121,7 @@ public partial class GalleryView : GalleryAnimationControl
                     {
                         _galleryItems.Remove(oldItem);
                         GalleryItemsControl.ScrollToCenterOfCurrentItem();  
-                    }, DispatcherPriority.Render, cancellationToken);
+                    }, DispatcherPriority.Loaded, cancellationToken);
                 }
                 else
                 {
@@ -134,7 +133,7 @@ public partial class GalleryView : GalleryAnimationControl
                         {
                             GalleryItemsControl.ScrollToCenterOfCurrentItem();
                         }
-                    }, DispatcherPriority.Background, cancellationToken);
+                    }, DispatcherPriority.Loaded, cancellationToken);
                 }
                 break;
             case NotifyCollectionChangedAction.Move:
@@ -148,7 +147,7 @@ public partial class GalleryView : GalleryAnimationControl
                         _galleryItems.Move(oldMoveIndex, newMoveIndex);
                         GalleryItemsControl.ScrollToCenterOfCurrentItem();
                     }
-                }, DispatcherPriority.Background, cancellationToken);
+                }, DispatcherPriority.Loaded, cancellationToken);
                 break;
             case NotifyCollectionChangedAction.Replace:
                 var replaceIndex = e.NewStartingIndex;
@@ -164,14 +163,13 @@ public partial class GalleryView : GalleryAnimationControl
                 Dispatcher.UIThread.Post(() =>
                 {
                     GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                }, DispatcherPriority.Render);
+                }, DispatcherPriority.Loaded);
                 break;
         }
     }
 
     private void SyncGalleryViewerScroll(TabViewModel tab)
     {
-        // Sync the viewer's indices with the tab's current state
         GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
         GalleryItemsControl.SelectedItemIndex = tab.NavigationIndex.Value;
         GalleryItemsControl.ScrollToCenterOfCurrentItem();

@@ -57,7 +57,7 @@ public class NavigateAbleItemsViewer : ItemsControl
     public NavigateAbleItemsViewer()
     {
         AddHandler(PointerWheelChangedEvent, OnPointerWheelChanged, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
-        LayoutUpdated += (_, _) => ScheduleVisibilityUpdate();
+        LayoutUpdated += (_, _) => UpdateViewportVisibility();
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -65,32 +65,12 @@ public class NavigateAbleItemsViewer : ItemsControl
         base.OnApplyTemplate(e);
         _scrollViewer = e.NameScope.Find<AutoScrollViewer>("PART_ScrollViewer");
     }
-
-
-    private bool _isVisibilityUpdatePending;
-    
-    private void ScheduleVisibilityUpdate()
-    {
-        if (_isVisibilityUpdatePending)
-        {
-            return;
-        }
-        _isVisibilityUpdatePending = true;
-        Dispatcher.UIThread.Post(() =>
-        {
-            _isVisibilityUpdatePending = false;
-            UpdateViewportVisibility();
-        }, DispatcherPriority.Background);
-    }
     
     private void UpdateViewportVisibility()
     {
-        var animControl = this.FindLogicalAncestorOfType<GalleryAnimationControl>();
-        var isAnimating = animControl?.IsInAnimation ?? false;
-
         var viewportRect = new Rect(new Point(0, 0), _scrollViewer.Viewport);
         // Extend viewport slightly to preload items right before the user scrolls into view
-        var extendedViewportRect = viewportRect.Inflate(new Thickness(0, 200, 0, 200)); 
+        var extendedViewportRect = viewportRect.Inflate(new Thickness(200)); 
 
         for (var i = 0; i < ItemCount; i++)
         {
@@ -113,7 +93,7 @@ public class NavigateAbleItemsViewer : ItemsControl
 
             var itemRect = new Rect(position.Value, container.Bounds.Size);
             var isVisible = extendedViewportRect.Intersects(itemRect);
-            if (!isAnimating && isVisible)
+            if (isVisible)
             {
                 item.SetViewportVisibility(isVisible);
             }
