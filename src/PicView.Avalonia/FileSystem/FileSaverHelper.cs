@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
@@ -50,7 +51,8 @@ public static class FileSaverHelper
 
     public static async ValueTask<bool> SaveFileAsync(string? filename, string destination, MainWindowViewModel vm)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
+        if (core is null)
         {
             return false;
         }
@@ -62,7 +64,7 @@ public static class FileSaverHelper
             return await SaveProcessedMagickImage();
         }
         
-        if (!string.IsNullOrWhiteSpace(filename) && File.Exists(filename))
+        if (!string.IsNullOrWhiteSpace(filename))
         {
             return await SaveImageFromFile();
         }

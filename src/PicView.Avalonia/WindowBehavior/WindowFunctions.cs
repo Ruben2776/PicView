@@ -103,31 +103,19 @@ public static class WindowFunctions
 
     public static async Task WindowClosingBehavior(Window window)
     {
-        CoreViewModel? core = null;
-        MainWindowViewModel? vm = null;
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            WindowResizing.SaveSize(window);
+        WindowResizing.SaveSize(window);
 
-            if (Application.Current.DataContext is not CoreViewModel coreViewModel)
-            {
-                return;
-            }
-
-            if (window.DataContext is not MainWindowViewModel mainWindowView)
-            {
-                return;
-            }
-
-            window.Hide();
-            core = coreViewModel;
-            vm = mainWindowView;
-        });
-
-        if (core is null || vm is null)
+        if (Application.Current.DataContext is not CoreViewModel core)
         {
             return;
         }
+
+        if (window.DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+        
+        window.Hide();
         
         string? lastFile;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
@@ -153,10 +141,10 @@ public static class WindowFunctions
 
         try
         {
-            await SaveSettingsAsync();
-            await KeybindingManager.UpdateKeyBindingsFile();
+            await SaveSettingsAsync().ConfigureAwait(true);
+            await KeybindingManager.UpdateKeyBindingsFile().ConfigureAwait(true);
             TempFileManager.Cleanup();
-            await FileHistoryManager.SaveToFileAsync();
+            await FileHistoryManager.SaveToFileAsync().ConfigureAwait(true);
             foreach (var tabViewModel in vm.WindowTabs.Tabs.CurrentValue)
             {
                 tabViewModel.ArchiveExtractionService?.Cleanup();
