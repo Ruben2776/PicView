@@ -25,6 +25,9 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
     public static readonly StyledProperty<double> ItemHeightProperty =
         AvaloniaProperty.Register<WrapPanel, double>(nameof(ItemHeight),
             GalleryDefaults.DefaultDockedGalleryHeight);
+    
+    public static readonly StyledProperty<double> ItemWidthProperty =
+        AvaloniaProperty.Register<VirtualizingGallery, double>(nameof(ItemWidth), double.NaN);
 
     /// <inheritdoc cref="WrapPanel" />
     public static readonly StyledProperty<double> ItemSpacingProperty =
@@ -45,6 +48,15 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
         get => GetValue(OrientationProperty);
         set => SetValue(OrientationProperty, value);
     }
+    
+    /// <summary>
+    /// The width is either double.NaN or the same as ItemWidth when in a square ratio.
+    /// </summary>
+    public double ItemWidth
+    {
+        get => GetValue(ItemWidthProperty);
+        set => SetValue(ItemWidthProperty, value);
+    }
 
     /// <summary>
     ///     The fixed item height of all items.
@@ -53,25 +65,46 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
     public double ItemHeight
     {
         get => GetValue(ItemHeightProperty);
-        set => SetValue(ItemHeightProperty, value);
+        set
+        {
+            SetValue(ItemHeightProperty, value); 
+            InvalidateMeasure();
+        }
     }
 
     /// <inheritdoc cref="WrapPanel" />
     public double ItemSpacing
     {
         get => GetValue(ItemSpacingProperty);
-        set => SetValue(ItemSpacingProperty, value);
+        set
+        {
+            SetValue(ItemSpacingProperty, value); 
+            InvalidateMeasure();
+        }
     }
 
     /// <inheritdoc cref="WrapPanel" />
     public double LineSpacing
     {
         get => GetValue(LineSpacingProperty);
-        set => SetValue(LineSpacingProperty, value);
+        set
+        {
+            SetValue(LineSpacingProperty, value); 
+            InvalidateMeasure();
+        }
     }
 
-    public bool IsExpanded { get; set; }
-    
+    public bool IsExpanded
+    {
+        get;
+        set
+        {
+            if (field == value) return;
+            field = value;
+            InvalidateMeasure();
+        }
+    }
+
     public Rect? GetItemBounds(int index)
     {
         if (index >= 0 && index < _itemBounds.Count)
@@ -176,8 +209,13 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
         {
             var itemWidth = ItemHeight; // Fallback for square
 
-            // Calculate dynamic width based on the fixed ItemHeight
-            if (item is GalleryItemViewModel { PixelHeight: > 0 } vm)
+            // 1. Check if the user forced a specific width (e.g., Square Stretch Mode)
+            if (!double.IsNaN(ItemWidth))
+            {
+                itemWidth = ItemWidth;
+            }
+            // 2. Otherwise, dynamically calculate based on aspect ratio
+            else if (item is GalleryItemViewModel { PixelHeight: > 0 } vm)
             {
                 var aspectRatio = (double)vm.PixelWidth / vm.PixelHeight;
                 itemWidth = ItemHeight * aspectRatio;

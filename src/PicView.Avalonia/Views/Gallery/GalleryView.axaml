@@ -185,6 +185,7 @@
                         VerticalAlignment="Center"
                         ItemHeight="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ItemHeight.Value}"
                         ItemSpacing="{CompiledBinding Gallery.ItemSpacing.Value}"
+                        ItemWidth="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ItemWidth.Value}"
                         LineSpacing="{CompiledBinding Gallery.LineSpacing.Value}" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
