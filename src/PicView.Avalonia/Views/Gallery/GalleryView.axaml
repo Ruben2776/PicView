@@ -8,8 +8,8 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:TabViewModel"
     ActiveGalleryMode="{CompiledBinding Gallery.ActiveGalleryMode.Value}"
-    Background="{DynamicResource MainBackgroundColor}"
-    BorderBrush="{DynamicResource MainBorderColor}">
+    Background="{DynamicResource GalleryBackgroundColor}"
+    BorderBrush="{DynamicResource GalleryBorderColor}">
     <Panel>
 
         <Panel.ContextMenu>

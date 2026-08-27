@@ -101,7 +101,7 @@
             <Color x:Key="MainTextColorFaded">#768396</Color>
 
             <!--  Global Window  -->
-            <Color x:Key="WindowBackgroundColor">#C4252525</Color>
+            <Color x:Key="WindowTitleBackgroundColor">#fff</Color>
             <Color x:Key="WindowBorderColor">Transparent</Color>
             <Color x:Key="WindowLogoColor">#fff</Color>
 
@@ -161,10 +161,15 @@
 
             <!--  Scrollbar  -->
             <Color x:Key="ScrollbarBackgroundColor">#fff</Color>
-            <Color x:Key="ScrollbarBorderColor">#fff</Color>
+            <Color x:Key="ScrollbarBorderColor">#FFDDDDDD</Color>
 
             <Color x:Key="ScrollbarThumbColor">#fff</Color>
             <Color x:Key="ScrollbarThumbBorderColor">#FFB5C2D6</Color>
+
+            <!--  Gallery  -->
+            <Color x:Key="GalleryBackgroundColor">#FFF5FAFF</Color>
+            <Color x:Key="GalleryBorderColor">#FFDCDCDC</Color>
+
 
             <!--  StartUpMenu  -->
             <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
@@ -174,6 +179,7 @@
             </ConicGradientBrush>
             <Color x:Key="StartUpMenuForeground">#FF616161</Color>
 
+            <Color x:Key="NoisyTexture">#17FFFFFF</Color>
 
         </ResourceDictionary>
 

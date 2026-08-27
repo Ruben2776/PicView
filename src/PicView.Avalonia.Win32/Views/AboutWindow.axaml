@@ -23,8 +23,8 @@
 
                 <Border
                     x:Name="IconBorder"
-                    Background="{DynamicResource WindowButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    Background="{DynamicResource WindowLogoColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
                     DockPanel.Dock="Left">
                     <Image
@@ -37,7 +37,7 @@
                 <customControls:IconButton
                     x:Name="CloseButton"
                     Width="30"
-                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    Background="{DynamicResource WindowTitleBackgroundColor}"
                     BorderThickness="0"
                     Classes="hover"
                     Click="Close"
@@ -53,8 +53,8 @@
                 <customControls:IconButton
                     x:Name="MinimizeButton"
                     Width="30"
-                    Background="{DynamicResource WindowButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    Background="{DynamicResource WindowTitleBackgroundColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
                     Click="Minimize"
@@ -69,7 +69,7 @@
                     x:Name="TitleText"
                     Height="28"
                     Padding="30,0,0,0"
-                    Background="{DynamicResource WindowSecondaryBackgroundColor}"
+                    Background="{DynamicResource TitleBarBackgroundColor}"
                     Classes="txt"
                     Foreground="{DynamicResource MainTextColor}"
                     LineHeight="28"
@@ -80,7 +80,7 @@
             <Rectangle
                 x:Name="BorderRectangle"
                 Height="1"
-                Fill="{DynamicResource WindowBorderColor}" />
+                Fill="{DynamicResource TitleBarButtonBorder}" />
 
             <main:AboutView
                 x:Name="AboutView"

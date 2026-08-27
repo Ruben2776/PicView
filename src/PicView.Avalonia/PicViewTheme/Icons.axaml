@@ -3494,41 +3494,36 @@
 
     <DrawingImage x:Key="DownloadImage">
         <DrawingGroup>
-            <DrawingGroup>
-                <DrawingGroup.Transform>
-                    <MatrixTransform Matrix="3.6666667,0,0,3.6666667,0,0" />
-                </DrawingGroup.Transform>
-                <GeometryDrawing Geometry="F1 M12 15L12 3">
-                    <GeometryDrawing.Pen>
-                        <Pen
-                            Brush="{DynamicResource MainTextColor}"
-                            LineCap="Round"
-                            LineJoin="Round"
-                            MiterLimit="4"
-                            Thickness="2" />
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <GeometryDrawing Geometry="F1 M21 15L21 19Q21 19.0983 20.9904 19.196Q20.9807 19.2938 20.9616 19.3902Q20.9424 19.4865 20.9139 19.5806Q20.8854 19.6746 20.8478 19.7654Q20.8102 19.8561 20.7638 19.9428Q20.7175 20.0294 20.6629 20.1111Q20.6084 20.1928 20.546 20.2688Q20.4837 20.3447 20.4142 20.4142Q20.3447 20.4837 20.2688 20.546Q20.1928 20.6084 20.1111 20.6629Q20.0294 20.7175 19.9428 20.7638Q19.8561 20.8102 19.7654 20.8478Q19.6746 20.8854 19.5806 20.9139Q19.4865 20.9424 19.3902 20.9616Q19.2938 20.9807 19.196 20.9904Q19.0983 21 19 21L5 21Q4.90175 21 4.80397 20.9904Q4.70618 20.9807 4.60982 20.9616Q4.51345 20.9424 4.41943 20.9139Q4.32541 20.8854 4.23463 20.8478Q4.14386 20.8102 4.05721 20.7638Q3.97055 20.7175 3.88886 20.6629Q3.80716 20.6084 3.73121 20.546Q3.65526 20.4837 3.58579 20.4142Q3.51631 20.3447 3.45398 20.2688Q3.39165 20.1928 3.33706 20.1111Q3.28247 20.0294 3.23616 19.9428Q3.18984 19.8561 3.15224 19.7654Q3.11464 19.6746 3.08612 19.5806Q3.0576 19.4865 3.03843 19.3902Q3.01926 19.2938 3.00963 19.196Q3 19.0983 3 19L3 15">
-                    <GeometryDrawing.Pen>
-                        <Pen
-                            Brush="{DynamicResource MainTextColor}"
-                            LineCap="Round"
-                            LineJoin="Round"
-                            MiterLimit="4"
-                            Thickness="2" />
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-                <GeometryDrawing Geometry="F1 M7 10L12 15L17 10">
-                    <GeometryDrawing.Pen>
-                        <Pen
-                            Brush="{DynamicResource MainTextColor}"
-                            LineCap="Round"
-                            LineJoin="Round"
-                            MiterLimit="4"
-                            Thickness="2" />
-                    </GeometryDrawing.Pen>
-                </GeometryDrawing>
-            </DrawingGroup>
+            <GeometryDrawing Geometry="F1 M12 15L12 3">
+                <GeometryDrawing.Pen>
+                    <Pen
+                        Brush="{DynamicResource MainTextColor}"
+                        LineCap="Round"
+                        LineJoin="Round"
+                        MiterLimit="4"
+                        Thickness="2" />
+                </GeometryDrawing.Pen>
+            </GeometryDrawing>
+            <GeometryDrawing Geometry="F1 M21 15L21 19Q21 19.0983 20.9904 19.196Q20.9807 19.2938 20.9616 19.3902Q20.9424 19.4865 20.9139 19.5806Q20.8854 19.6746 20.8478 19.7654Q20.8102 19.8561 20.7638 19.9428Q20.7175 20.0294 20.6629 20.1111Q20.6084 20.1928 20.546 20.2688Q20.4837 20.3447 20.4142 20.4142Q20.3447 20.4837 20.2688 20.546Q20.1928 20.6084 20.1111 20.6629Q20.0294 20.7175 19.9428 20.7638Q19.8561 20.8102 19.7654 20.8478Q19.6746 20.8854 19.5806 20.9139Q19.4865 20.9424 19.3902 20.9616Q19.2938 20.9807 19.196 20.9904Q19.0983 21 19 21L5 21Q4.90175 21 4.80397 20.9904Q4.70618 20.9807 4.60982 20.9616Q4.51345 20.9424 4.41943 20.9139Q4.32541 20.8854 4.23463 20.8478Q4.14386 20.8102 4.05721 20.7638Q3.97055 20.7175 3.88886 20.6629Q3.80716 20.6084 3.73121 20.546Q3.65526 20.4837 3.58579 20.4142Q3.51631 20.3447 3.45398 20.2688Q3.39165 20.1928 3.33706 20.1111Q3.28247 20.0294 3.23616 19.9428Q3.18984 19.8561 3.15224 19.7654Q3.11464 19.6746 3.08612 19.5806Q3.0576 19.4865 3.03843 19.3902Q3.01926 19.2938 3.00963 19.196Q3 19.0983 3 19L3 15">
+                <GeometryDrawing.Pen>
+                    <Pen
+                        Brush="{DynamicResource MainTextColor}"
+                        LineCap="Round"
+                        LineJoin="Round"
+                        MiterLimit="4"
+                        Thickness="2" />
+                </GeometryDrawing.Pen>
+            </GeometryDrawing>
+            <GeometryDrawing Geometry="F1 M7 10L12 15L17 10">
+                <GeometryDrawing.Pen>
+                    <Pen
+                        Brush="{DynamicResource MainTextColor}"
+                        LineCap="Round"
+                        LineJoin="Round"
+                        MiterLimit="4"
+                        Thickness="2" />
+                </GeometryDrawing.Pen>
+            </GeometryDrawing>
         </DrawingGroup>
     </DrawingImage>
 
