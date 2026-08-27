@@ -35,7 +35,7 @@ public static class FFmpegService
     }
 
     public delegate IntPtr PvOpenCallback(IntPtr opaque, PvReadCallback read, PvSeekCallback seek, out PvVideoInfo info);
-    public delegate int PvDecodeNextCallback(IntPtr session, IntPtr dst, int dstCapacity, out double pts);
+    public delegate int PvDecodeNextCallback(IntPtr session, IntPtr dst, int dstCapacity, out double pts, out int width, out int height);
     public delegate void PvCloseCallback(IntPtr session);
 
     private static readonly object InitLock = new();

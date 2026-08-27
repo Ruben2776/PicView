@@ -366,5 +366,5 @@ MigrationBackup/
 /src/.zip 
 /src/.zip 
 
-# Built picview-ffmpeg native libraries (produced by Build\Build-FFmpegNative.ps1)
+# Cross-compiled picview-ffmpeg native libraries (produced by Build\Build-FFmpegNative.ps1)
 Build/ffmpeg-native/

@@ -50,12 +50,7 @@ case $TARGET in
     OUTLIB=libpicviewffmpeg.so
     ;;
   osx-x64)
-    if [ "$(uname)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ]; then
-      # Native build on Intel macOS hosts: no cross toolchain required
-      CONFIGURE_FLAGS=(--target-os=darwin --arch=x86_64 --enable-pic --x86asmexe=nasm)
-    else
-      CONFIGURE_FLAGS=(--target-os=darwin --arch=x86_64 --enable-cross-compile --enable-pic "--ar=zig ar" "--ranlib=zig ranlib" "--nm=$MACHONM" "--cc=zig cc" "--ld=zig cc --target=x86_64-macos.11.0" "--extra-cflags=--target=x86_64-macos.11.0" --x86asmexe=nasm)
-    fi
+    CONFIGURE_FLAGS=(--target-os=darwin --arch=x86_64 --enable-cross-compile --enable-pic "--ar=zig ar" "--ranlib=zig ranlib" "--nm=$MACHONM" "--cc=zig cc" "--ld=zig cc --target=x86_64-macos.11.0" "--extra-cflags=--target=x86_64-macos.11.0" --x86asmexe=nasm)
     if [ "$(uname)" = "Darwin" ]; then
       # Apple hosts link natively (zig cc rejects -exported_symbols_list)
       LINK_CMD=(cc -arch x86_64 -dynamiclib)
@@ -67,12 +62,7 @@ case $TARGET in
     OUTLIB=libpicviewffmpeg.dylib
     ;;
   osx-arm64)
-    if [ "$(uname)" = "Darwin" ] && [ "$(uname -m)" = "arm64" ]; then
-      # Native build on Apple Silicon hosts: no cross toolchain required
-      CONFIGURE_FLAGS=(--target-os=darwin --arch=aarch64 --enable-pic)
-    else
-      CONFIGURE_FLAGS=(--target-os=darwin --arch=aarch64 --enable-cross-compile --enable-pic "--ar=zig ar" "--ranlib=zig ranlib" "--nm=$MACHONM" --disable-x86asm "--cc=zig cc" "--ld=zig cc --target=aarch64-macos.11.0" "--extra-cflags=--target=aarch64-macos.11.0")
-    fi
+    CONFIGURE_FLAGS=(--target-os=darwin --arch=aarch64 --enable-cross-compile --enable-pic "--ar=zig ar" "--ranlib=zig ranlib" "--nm=$MACHONM" --disable-x86asm "--cc=zig cc" "--ld=zig cc --target=aarch64-macos.11.0" "--extra-cflags=--target=aarch64-macos.11.0")
     if [ "$(uname)" = "Darwin" ]; then
       # Apple hosts link natively (zig cc rejects -exported_symbols_list)
       LINK_CMD=(cc -arch arm64 -dynamiclib)

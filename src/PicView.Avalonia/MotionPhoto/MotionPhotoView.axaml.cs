@@ -1,11 +1,15 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Core.DebugTools;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using PicView.Core.MotionPhoto;
+using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.MotionPhoto;
 
@@ -24,9 +28,25 @@ namespace PicView.Avalonia.MotionPhoto;
 /// </summary>
 public partial class MotionPhotoView : UserControl, IDisposable
 {
+    /// <summary>Inset between the badge and the corner of the image it is anchored to.</summary>
+    private const double BadgeCornerInset = 15;
+
+    /// <summary>
+    /// Vertical offset of the badge below its anchor. When the interface is hidden,
+    /// the alternative title bar with the window controls overlays the top of the view,
+    /// so the badge is moved below it; with multiple tabs the tab bar shifts that bar
+    /// down by the tab height.
+    /// </summary>
+    private const double BadgeTopInsetBelowAltBar = 45;
+
+    private static readonly double BadgeTopInsetBelowAltBarMultiTab = 45 + SizeDefaults.TabHeight;
+
     private Stream? _videoStream;
     private MotionPhotoDecoder? _decoder;
     private ImageModel? _model;
+    private IDisposable? _uiShownSubscription;
+    private TranslateTransform? _badgeOffset;
+    private double _badgeTopInset = BadgeCornerInset;
     private bool _isSessionBusy;
     private bool _firstFrameShownInSession;
     private bool _isDisposed;
@@ -62,6 +82,54 @@ public partial class MotionPhotoView : UserControl, IDisposable
     }
 
     /// <summary>
+    /// Re-hosts the play badge into a floating overlay panel outside the transformed
+    /// image container, so it stays upright when the image is rotated, flipped or
+    /// zoomed while the hosting view keeps it anchored to the image's on-screen
+    /// top-right corner. The video surface stays behind to cover the image.
+    /// Must be called once by the hosting view before the badge can be shown.
+    /// </summary>
+    public void FloatBadge(Panel overlayHost)
+    {
+        if (ReferenceEquals(PlayBadge.Parent, overlayHost))
+        {
+            return;
+        }
+
+        (PlayBadge.Parent as Panel)?.Children.Remove(PlayBadge);
+        overlayHost.Children.Add(PlayBadge);
+
+        // The badge is placed top-left in the overlay and translated to its anchor,
+        // which the hosting view recomputes via UpdateBadgePosition()
+        _badgeOffset = new TranslateTransform();
+        PlayBadge.RenderTransform = _badgeOffset;
+    }
+
+    /// <summary>
+    /// Anchors the floating badge to the given point, which is the on-screen top-right
+    /// corner of this view expressed in the overlay host's coordinate space. The badge
+    /// is clamped inside the host bounds, so it rests against the panel edges when the
+    /// corner is zoomed or panned out of view. A null corner leaves the previous position.
+    /// </summary>
+    internal void UpdateBadgePosition(Point? visualTopRightCorner, Size hostSize)
+    {
+        if (_badgeOffset is null || visualTopRightCorner is not { } corner)
+        {
+            return;
+        }
+
+        var badgeBounds = PlayBadge.Bounds;
+        var left = corner.X - badgeBounds.Width - BadgeCornerInset;
+        var top = corner.Y + _badgeTopInset;
+
+        // Clamped positions keep the same inset from the panel edges as from the
+        // image corner, so the badge rests 15px inside the panel rather than on it
+        _badgeOffset.X = Math.Clamp(left, BadgeCornerInset,
+            Math.Max(BadgeCornerInset, hostSize.Width - badgeBounds.Width - BadgeCornerInset));
+        _badgeOffset.Y = Math.Clamp(top, _badgeTopInset,
+            Math.Max(_badgeTopInset, hostSize.Height - badgeBounds.Height - BadgeCornerInset));
+    }
+
+    /// <summary>
     /// Called whenever a new image is displayed. Stops any running playback and prepares
     /// (or hides) the motion photo overlay for the new model. Null hides the overlay.
     /// </summary>
@@ -69,6 +137,8 @@ public partial class MotionPhotoView : UserControl, IDisposable
     {
         Stop();
         _model = model;
+        EnsureUiStateSubscription();
+        UpdateBadgeInset();
 
         if (model?.ImageType is ImageType.MotionPhoto &&
             model.MotionPhoto is not null &&
@@ -84,8 +154,39 @@ public partial class MotionPhotoView : UserControl, IDisposable
         }
         else
         {
+            // The badge no longer hides with the view, so it must be hidden explicitly
             IsVisible = false;
+            PlayBadge.IsVisible = false;
         }
+    }
+
+    /// <summary>
+    /// When the interface is hidden (fullscreen), the alternative title bar with the
+    /// window controls overlays the top of the view and takes pointer input there, so
+    /// the badge is moved below it. With multiple tabs the tab bar shifts that bar
+    /// down by the tab height.
+    /// </summary>
+    private void UpdateBadgeInset()
+    {
+        if (DataContext is not TabViewModel tab || tab.ParentWindowContext.IsUIShown.CurrentValue)
+        {
+            _badgeTopInset = BadgeCornerInset;
+            return;
+        }
+
+        _badgeTopInset = tab.ParentWindowContext.WindowTabs.Tabs.CurrentValue.Count >= 2
+            ? BadgeTopInsetBelowAltBarMultiTab
+            : BadgeTopInsetBelowAltBar;
+    }
+
+    private void EnsureUiStateSubscription()
+    {
+        if (_uiShownSubscription is not null || DataContext is not TabViewModel tab)
+        {
+            return;
+        }
+
+        _uiShownSubscription = tab.ParentWindowContext.IsUIShown.Subscribe(_ => UpdateBadgeInset());
     }
 
     /// <summary>
@@ -150,6 +251,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
         if (!FFmpegService.TryInitialize())
         {
             IsVisible = false;
+            PlayBadge.IsVisible = false;
             return;
         }
 
@@ -171,6 +273,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
             _isSessionBusy = false;
             // Extraction failed: degrade to the still image
             IsVisible = false;
+            PlayBadge.IsVisible = false;
             return;
         }
 
@@ -202,6 +305,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
             DebugHelper.LogDebug(nameof(MotionPhotoView), nameof(PlayAsync), e);
             CleanupSession();
             IsVisible = false;
+            PlayBadge.IsVisible = false;
         }
         finally
         {
@@ -233,7 +337,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
     private void OnPlaybackEnded(object? sender, EventArgs e) =>
         Dispatcher.UIThread.Post(FreezeBackToCover);
 
-    private void OnFrameReady(int index, IntPtr bgra, int byteCount) =>
+    private void OnFrameReady(int index, IntPtr bgra, int byteCount, int width, int height) =>
         Dispatcher.UIThread.Post(() =>
         {
             var decoder = _decoder;
@@ -245,7 +349,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
 
             try
             {
-                VideoSurface.UpdateFrame(bgra, byteCount, decoder.Width, decoder.Height);
+                VideoSurface.UpdateFrame(bgra, byteCount, width, height);
                 if (!VideoSurface.IsVisible)
                 {
                     VideoSurface.IsVisible = true;
@@ -300,6 +404,8 @@ public partial class MotionPhotoView : UserControl, IDisposable
 
         _isDisposed = true;
         PlayBadge.Click -= OnPlayBadgeClicked;
+        _uiShownSubscription?.Dispose();
+        _uiShownSubscription = null;
         Stop();
         VideoSurface.Clear();
         GC.SuppressFinalize(this);

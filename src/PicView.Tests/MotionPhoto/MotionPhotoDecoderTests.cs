@@ -57,9 +57,10 @@ public class MotionPhotoDecoderTests
         var finished = new ManualResetEventSlim(false);
         var failed = false;
 
-        decoder.FrameReady += (index, buffer, byteCount) =>
+        decoder.FrameReady += (index, buffer, byteCount, width, height) =>
         {
             frames.Add((buffer, byteCount));
+            Assert.Equal(width * height * 4, byteCount);
             decoder.ReleaseBuffer(index);
         };
         decoder.Ended += (_, _) => finished.Set();
@@ -73,9 +74,7 @@ public class MotionPhotoDecoderTests
         Assert.True(finished.Wait(TimeSpan.FromSeconds(20)), "playback did not finish in time");
         Assert.False(failed, "decoding failed");
         Assert.True(frames.Count > 0, "no frames decoded");
-
-        var expectedBytes = decoder.Width * decoder.Height * 4;
-        Assert.All(frames, f => Assert.Equal(expectedBytes, f.byteCount));
+        Assert.All(frames, f => Assert.True(f.byteCount > 0));
 
         decoder.Dispose();
     }
