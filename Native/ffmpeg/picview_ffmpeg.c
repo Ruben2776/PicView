@@ -231,18 +231,8 @@ PV_API PvSession *pv_open(void *opaque, PvReadCb read_cb, PvSeekCb seek_cb, PvVi
     s->time_base = av_q2d(stream->time_base);
     s->start_ts = stream->start_time != AV_NOPTS_VALUE ? stream->start_time : 0;
 
-    /* Report the display dimensions (rotated upright); pv_decode_next emits
-     * every frame at exactly this size. */
-    if (s->rotation == 90 || s->rotation == 270)
-    {
-        out_info->width = s->height;
-        out_info->height = s->width;
-    }
-    else
-    {
-        out_info->width = s->width;
-        out_info->height = s->height;
-    }
+    out_info->width = s->width;
+    out_info->height = s->height;
 
     AVRational rate = av_guess_frame_rate(s->fmt, stream, NULL);
     out_info->fps = (rate.den > 0 && rate.num > 0) ? (double)rate.num / rate.den : 30.0;
@@ -267,6 +257,13 @@ fail:
     return NULL;
 }
 
+/*
+ * Prepares the scaler for the given frame. Output dimensions are the frame's own
+ * dimensions, except when the frame does not fit the caller's buffer (declared at
+ * open time), in which case it is scaled to the declared size. Container metadata
+ * dimensions occasionally disagree with the decoded dimensions (phone videos with
+ * conformance-window cropping), so every frame reports its actual output size.
+ */
 /*
  * Reads the container's display rotation (displaymatrix side data, written by
  * phone cameras for portrait recordings). av_display_rotation_get() reports how
@@ -343,19 +340,16 @@ static void pv_rotate_bgra(const uint8_t *src, int w, int h, uint8_t *dst, int r
     }
 }
 
-/*
- * Prepares the scaler for the given frame. Every frame is scaled to the codec's
- * declared dimensions, so pv_decode_next always emits exactly the size reported
- * at open time (display dimensions, rotation already applied). Decoded dimensions
- * occasionally disagree with the container metadata (phone videos with
- * conformance-window cropping); scaling to a fixed size keeps the caller's
- * buffers fixed too.
- */
 static int pv_ensure_sws(PvSession *s, const AVFrame *frame, int *out_w, int *out_h)
 {
     enum AVPixelFormat fmt = (enum AVPixelFormat)frame->format;
-    int dst_w = s->width;
-    int dst_h = s->height;
+    int dst_w = frame->width;
+    int dst_h = frame->height;
+    if ((int64_t)dst_w * dst_h * 4 > (int64_t)s->width * s->height * 4)
+    {
+        dst_w = s->width;
+        dst_h = s->height;
+    }
 
     *out_w = dst_w;
     *out_h = dst_h;
@@ -405,10 +399,11 @@ static double pv_frame_pts(PvSession *s, const AVFrame *frame, double fps)
     return fps > 0 ? (double)s->frame_count / fps : 0;
 }
 
-PV_API int pv_decode_next(PvSession *s, uint8_t *dst, int dst_capacity, double *out_pts)
+PV_API int pv_decode_next(PvSession *s, uint8_t *dst, int dst_capacity, double *out_pts,
+                          int *out_width, int *out_height)
 {
     if (s == NULL || dst == NULL || dst_capacity < s->width * s->height * 4 ||
-        out_pts == NULL)
+        out_pts == NULL || out_width == NULL || out_height == NULL)
     {
         return -1;
     }
@@ -427,6 +422,14 @@ PV_API int pv_decode_next(PvSession *s, uint8_t *dst, int dst_capacity, double *
             {
                 av_frame_unref(s->frame);
                 return -1;
+            }
+
+            int out_w = dst_w;
+            int out_h = dst_h;
+            if (s->rotation == 90 || s->rotation == 270)
+            {
+                out_w = dst_h;
+                out_h = dst_w;
             }
 
             if (s->rotation != 0)
@@ -462,9 +465,11 @@ PV_API int pv_decode_next(PvSession *s, uint8_t *dst, int dst_capacity, double *
 
             double fps = s->time_base > 0 ? 0 : 30.0;
             *out_pts = pv_frame_pts(s, s->frame, fps);
+            *out_width = out_w;
+            *out_height = out_h;
             s->frame_count++;
             av_frame_unref(s->frame);
-            return dst_w * dst_h * 4;
+            return out_w * out_h * 4;
         }
 
         if (r != AVERROR(EAGAIN))

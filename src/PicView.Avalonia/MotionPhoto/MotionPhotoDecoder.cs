@@ -51,10 +51,12 @@ public sealed class MotionPhotoDecoder : IDisposable
 
     /// <summary>
     /// Raised on the worker thread when a frame is ready for display:
-    /// (buffer index, pointer to BGRA32 data, byte count). The buffer stays valid
-    /// until <see cref="ReleaseBuffer"/> is called.
+    /// (buffer index, pointer to BGRA32 data, byte count, frame width, frame height).
+    /// The dimensions are the frame's actual dimensions, which may differ from
+    /// <see cref="Width"/>/<see cref="Height"/> (container metadata can disagree with
+    /// the decoded size). The buffer stays valid until <see cref="ReleaseBuffer"/> is called.
     /// </summary>
-    public event Action<int, IntPtr, int>? FrameReady;
+    public event Action<int, IntPtr, int, int, int>? FrameReady;
 
     /// <summary>Raised on the worker thread when the end of the video is reached.</summary>
     public event EventHandler? Ended;
@@ -175,7 +177,7 @@ public sealed class MotionPhotoDecoder : IDisposable
                     index = OverflowBufferIndex;
                 }
 
-                var written = FFmpegService.PvDecodeNext(_session, _frameBuffers[index], _frameBufferSize, out var pts);
+                var written = FFmpegService.PvDecodeNext(_session, _frameBuffers[index], _frameBufferSize, out var pts, out var frameWidth, out var frameHeight);
                 if (written <= 0)
                 {
                     if (index != OverflowBufferIndex)
@@ -206,7 +208,7 @@ public sealed class MotionPhotoDecoder : IDisposable
                     continue;
                 }
 
-                FrameReady?.Invoke(index, _frameBuffers[index], written);
+                FrameReady?.Invoke(index, _frameBuffers[index], written, frameWidth, frameHeight);
             }
         }
         catch (Exception e)

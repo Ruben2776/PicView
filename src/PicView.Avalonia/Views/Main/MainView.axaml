@@ -1060,7 +1060,6 @@
             x:Name="AltButtonsPanel"
             Height="150"
             VerticalAlignment="Top"
-            Background="Transparent"
             IsHitTestVisible="{Binding !IsUIShown.Value, Mode=OneWay}"
             IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}"
             LastChildFill="True"
@@ -1068,14 +1067,17 @@
             ZIndex="9">
             <buttons:AltClose
                 x:Name="AltClose"
+                VerticalAlignment="Top"
                 DockPanel.Dock="Right"
                 IsVisible="{Binding !IsUIShown.Value}" />
             <buttons:AltRestore
                 x:Name="AltRestore"
+                VerticalAlignment="Top"
                 DockPanel.Dock="Right"
                 IsVisible="{Binding !IsUIShown.Value}" />
             <buttons:AltMinimize
                 x:Name="AltMinimize"
+                VerticalAlignment="Top"
                 DockPanel.Dock="Right"
                 IsVisible="{Binding !IsUIShown.Value}" />
             <Border

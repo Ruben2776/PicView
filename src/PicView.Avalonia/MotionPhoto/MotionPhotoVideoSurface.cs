@@ -8,11 +8,11 @@ using PicView.Core.DebugTools;
 namespace PicView.Avalonia.MotionPhoto;
 
 /// <summary>
-/// Renders motion photo video frames supplied by libvlc software video callbacks
-/// (MediaPlayer.SetVideoCallbacks). Frames arrive as BGRA32 ("RV32") bytes and are drawn
-/// letterboxed into the control. This works on every display stack, including Wayland
-/// (where native child-window embedding is impossible with libvlc 3.x), and lets the
-/// video participate in the normal Avalonia compositor (zoom, rotation, overlays).
+/// Renders motion photo video frames decoded by <see cref="MotionPhotoDecoder"/>
+/// (a statically-linked, purpose-built FFmpeg). Frames arrive as BGRA32 bytes and are
+/// drawn letterboxed into the control. This works on every display stack, including
+/// Wayland, and lets the video participate in the normal Avalonia compositor (zoom,
+/// rotation, overlays).
 /// </summary>
 public sealed class MotionPhotoVideoSurface : Control
 {

@@ -16,15 +16,14 @@ native library per target that exports only four functions (pv_open,
 pv_decode_next, pv_close, pv_version) - see Native\ffmpeg\picview_ffmpeg.c.
 
 Prerequisites (one-time):
-  Windows host (win-x64 builds natively; everything else cross-compiles):
+  Windows host (builds every target by cross-compiling):
     * MSYS2 (https://www.msys2.org), installed to C:\msys64 by default:
         pacman -Syu
         pacman -S base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-nasm diffutils tar
-    * zig on PATH (https://ziglang.org - only needed for cross-targets, i.e.
-      everything except win-x64):
+    * zig on PATH (https://ziglang.org - used to cross-compile Linux/macOS/ARM):
         winget install Zig.Zig    (or scoop install zig)
-  macOS host (builds the osx-* targets natively on the host architecture):
-    * brew install make            (plus nasm for Intel hosts, zig for cross-targets)
+  macOS host (builds the osx-* targets):
+    * brew install nasm zig make
     * GNU make must be reachable as 'make'; set PV_EXTRA_PATH to the directory
       that contains it, e.g. "$((brew --prefix make))/libexec/gnubin"
 
@@ -53,21 +52,7 @@ $repoRoot = Join-Path $scriptRoot ".."
 $shim = Join-Path $repoRoot "Native\ffmpeg\picview_ffmpeg.c"
 $outputDir = Join-Path $scriptRoot "ffmpeg-native"
 
-function Test-TargetRequiresZig([string]$target) {
-    # win-x64 builds natively with MSYS2's MINGW64 gcc; the osx-* targets build
-    # natively on a macOS host of the same architecture. Everything else is
-    # cross-compiled through zig cc.
-    switch ($target) {
-        'win-x64'   { return $false }
-        'osx-arm64' { return -not ($IsMacOS -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq [System.Runtime.InteropServices.Architecture]::Arm64) }
-        'osx-x64'   { return -not ($IsMacOS -and [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -eq [System.Runtime.InteropServices.Architecture]::X64) }
-        default     { return $true }
-    }
-}
-
-$zigCommand = Get-Command zig -ErrorAction SilentlyContinue
-$needsZig = @($Targets | Where-Object { Test-TargetRequiresZig $_ }).Count -gt 0
-if ($needsZig -and -not $zigCommand) {
+if (-not (Get-Command zig -ErrorAction SilentlyContinue)) {
     Write-Error "zig not found on PATH. Install it with: winget install Zig.Zig (or scoop install zig / brew install zig)"
 }
 
@@ -123,8 +108,7 @@ if (-not (Test-Path $sourceDir)) {
 # 2. Build the small Mach-O nm used by configure to detect the '_' symbol prefix
 #    when cross-compiling for Apple targets from Windows (GNU nm cannot read
 #    Mach-O objects). Apple hosts use their native nm instead.
-$appleTargets = @($Targets | Where-Object { $_ -like 'osx-*' })
-if ($IsWindows -and $appleTargets.Count -gt 0) {
+if ($IsWindows) {
     $machonm = Join-Path $workRoot "machonm.exe"
     Write-Host "Building machonm helper..."
     zig cc -target x86_64-windows (Join-Path $scriptRoot "ffmpeg\machonm.c") -o $machonm
@@ -135,12 +119,10 @@ else {
 }
 
 # 3. Build each target
-# build-target.sh prepends PV_EXTRA_PATH to its PATH; make sure zig (when needed)
-# and any caller-provided toolchain directories (e.g. GNU make on macOS) are reachable
-if ($zigCommand) {
-    $zigDir = ConvertTo-ShellPath (Split-Path $zigCommand.Source)
-    $env:PV_EXTRA_PATH = [string]::IsNullOrEmpty($env:PV_EXTRA_PATH) ? $zigDir : "$env:PV_EXTRA_PATH`:$zigDir"
-}
+# build-target.sh prepends PV_EXTRA_PATH to its PATH; make sure zig (and any
+# caller-provided toolchain directory, e.g. GNU make on macOS) is reachable
+$zigDir = ConvertTo-ShellPath (Split-Path (Get-Command zig).Source)
+$env:PV_EXTRA_PATH = [string]::IsNullOrEmpty($env:PV_EXTRA_PATH) ? $zigDir : "$env:PV_EXTRA_PATH`:$zigDir"
 
 $env:PV_ROOT = ConvertTo-ShellPath $workRoot
 $env:PV_SRC = ConvertTo-ShellPath $sourceDir

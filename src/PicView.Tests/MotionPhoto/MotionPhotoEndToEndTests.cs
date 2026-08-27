@@ -84,8 +84,9 @@ public class MotionPhotoEndToEndTests
                 var frameCount = 0;
                 var finished = new ManualResetEventSlim(false);
                 var failed = false;
-                decoder!.FrameReady += (index, _, _) =>
+                decoder!.FrameReady += (index, _, byteCount, width, height) =>
                 {
+                    Assert.Equal(width * height * 4, byteCount);
                     Interlocked.Increment(ref frameCount);
                     decoder.ReleaseBuffer(index);
                 };

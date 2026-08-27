@@ -8,25 +8,37 @@
     IsVisible="False">
     <Panel>
         <mp:MotionPhotoVideoSurface x:Name="VideoSurface" IsVisible="False" />
+        <!-- The badge is re-hosted into a floating overlay by FloatBadge() and positioned
+             by UpdateBadgePosition(), so it stays upright while anchored to the image's
+             on-screen top-right corner regardless of rotation, flipping or zooming. -->
         <Button
             x:Name="PlayBadge"
-            Margin="0,15,15,0"
             Padding="10,7"
-            HorizontalAlignment="Right"
+            HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Background="{DynamicResource AltBackgroundColor}"
             BorderBrush="{DynamicResource MainBorderColor}"
             BorderThickness="1"
             CornerRadius="15"
             Cursor="Hand"
+            IsVisible="False"
             ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.MotionPhoto.Value}">
             <StackPanel Orientation="Horizontal" Spacing="7">
-                <Path
-                    Width="11"
-                    Height="11"
-                    Data="F1M0,0L10,5 0,10z"
-                    Fill="{DynamicResource MainTextColor}"
-                    Stretch="Uniform" />
+                <Grid Width="13" Height="13">
+                    <Path
+                        Width="7.9"
+                        Height="7.9"
+                        Data="{StaticResource LivePhotoRingGeometry}"
+                        Stretch="Uniform"
+                        Stroke="{DynamicResource MainTextColor}"
+                        StrokeThickness="1.5" />
+                    <Path
+                        Data="{StaticResource LivePhotoGlyphGeometry}"
+                        Stretch="Uniform"
+                        Stroke="{DynamicResource MainTextColor}"
+                        StrokeLineCap="Round"
+                        StrokeThickness="1.8" />
+                </Grid>
                 <TextBlock
                     VerticalAlignment="Center"
                     FontSize="12"
