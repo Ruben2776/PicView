@@ -12,6 +12,7 @@ using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.Localization;
+using PicView.Core.Models;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -37,6 +38,100 @@ public partial class ImageViewer : UserControl, IDisposable
         AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         AddHandler(PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
+
+        // Zoom/pan is locked for the duration of motion photo playback
+        MotionPhotoView.PlaybackStarted += OnMotionPhotoPlaybackStarted;
+        MotionPhotoView.PlaybackStopped += OnMotionPhotoPlaybackStopped;
+        MotionPhotoView.FirstFrameShown += OnMotionPhotoFirstFrameShown;
+        SecondaryMotionPhotoView.PlaybackStarted += OnMotionPhotoPlaybackStarted;
+        SecondaryMotionPhotoView.PlaybackStopped += OnMotionPhotoPlaybackStopped;
+        SecondaryMotionPhotoView.FirstFrameShown += OnMotionPhotoFirstFrameShown;
+    }
+
+    private void OnMotionPhotoPlaybackStarted(object? sender, EventArgs e)
+    {
+        ZoomPanControl.IsEnabled = false;
+
+        // Only one clip plays at a time
+        if (ReferenceEquals(sender, MotionPhotoView))
+        {
+            SecondaryMotionPhotoView.Stop();
+        }
+        else
+        {
+            MotionPhotoView.Stop();
+        }
+    }
+
+    private void OnMotionPhotoPlaybackStopped(object? sender, EventArgs e)
+    {
+        if (ReferenceEquals(sender, MotionPhotoView))
+        {
+            MainImage.IsVisible = true;
+        }
+        else
+        {
+            SecondaryImage.IsVisible = true;
+        }
+
+        ZoomPanControl.IsEnabled = !MotionPhotoView.IsPlaying && !SecondaryMotionPhotoView.IsPlaying;
+    }
+
+    private void OnMotionPhotoFirstFrameShown(object? sender, EventArgs e)
+    {
+        // Hide the still image while its video covers it, so the letterboxed video
+        // never leaves strips of the still visible along its sides.
+        if (ReferenceEquals(sender, MotionPhotoView))
+        {
+            MainImage.IsVisible = false;
+        }
+        else
+        {
+            SecondaryImage.IsVisible = false;
+        }
+    }
+
+    /// <summary>
+    /// Notifies the motion photo overlays that a new image is displayed,
+    /// stopping any running playback and preparing the badge when applicable.
+    /// May be called from any thread; UI work is marshalled to the UI thread.
+    /// </summary>
+    public void UpdateMotionPhoto(TabViewModel tabViewModel)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            UpdateMotionPhotoOverlays(tabViewModel);
+        }
+        else
+        {
+            Dispatcher.UIThread.Post(() => UpdateMotionPhotoOverlays(tabViewModel));
+        }
+    }
+
+    private void UpdateMotionPhotoOverlays(TabViewModel tabViewModel)
+    {
+        var isSingleImage = tabViewModel.SingleImageType is not SingleImageType.None;
+        MotionPhotoView.OnImageChanged(isSingleImage ? null : tabViewModel.Model);
+        SecondaryMotionPhotoView.OnImageChanged(isSingleImage ? null : tabViewModel.SecondaryModel);
+    }
+
+    /// <summary>Whether the current image is a playable motion photo.</summary>
+    public bool IsMotionPhotoActive => MotionPhotoView.IsMotionPhotoActive || SecondaryMotionPhotoView.IsMotionPhotoActive;
+
+    /// <summary>Stops motion photo playback. Returns true when playback was active.</summary>
+    public bool StopMotionPhotoIfPlaying() => MotionPhotoView.StopIfPlaying() | SecondaryMotionPhotoView.StopIfPlaying();
+
+    /// <summary>Starts, pauses or resumes motion photo playback.</summary>
+    public void ToggleMotionPhotoPlayPause()
+    {
+        if (MotionPhotoView.IsPlaying || !SecondaryMotionPhotoView.IsMotionPhotoActive)
+        {
+            MotionPhotoView.TogglePlayPause();
+        }
+        else
+        {
+            SecondaryMotionPhotoView.TogglePlayPause();
+        }
     }
 
     public void TriggerScalingModeUpdate(bool invalidate) =>
@@ -186,6 +281,14 @@ public partial class ImageViewer : UserControl, IDisposable
         RemoveHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged);
         RemoveHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent);
         RemoveHandler(PinchEvent, TouchMagnifyEvent);
+        MotionPhotoView.PlaybackStarted -= OnMotionPhotoPlaybackStarted;
+        MotionPhotoView.PlaybackStopped -= OnMotionPhotoPlaybackStopped;
+        MotionPhotoView.FirstFrameShown -= OnMotionPhotoFirstFrameShown;
+        MotionPhotoView.Dispose();
+        SecondaryMotionPhotoView.PlaybackStarted -= OnMotionPhotoPlaybackStarted;
+        SecondaryMotionPhotoView.PlaybackStopped -= OnMotionPhotoPlaybackStopped;
+        SecondaryMotionPhotoView.FirstFrameShown -= OnMotionPhotoFirstFrameShown;
+        SecondaryMotionPhotoView.Dispose();
         _disposables.Dispose();
         HoverBar.Dispose();
     }

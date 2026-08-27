@@ -1,4 +1,5 @@
 using PicView.Core.DebugTools;
+using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 
@@ -138,8 +139,9 @@ public static class GalleryLoader
                 thumbnailCache.Add(tab.Id, item.FileInfo.FullName, thumb);
             }
             item.Image.Value = thumb;
+            DetectMotionPhoto(item);
         }
-        
+
         async ValueTask LoadItem(GalleryItemViewModel item)
         {
             if (item.FileInfo is null)
@@ -147,14 +149,20 @@ public static class GalleryLoader
                 DebugHelper.LogDebug(nameof(GalleryLoader), nameof(LoadGalleryAsync), "Invalid file");
                 return;
             }
-            
+
             var thumb = await thumbnailLoader.GetThumbnailAsync(item.FileInfo, (uint)maxHeight).ConfigureAwait(false);
             if (thumb is not null)
             {
                 thumbnailCache.Add(tab.Id, item.FileInfo.FullName, thumb);
             }
             item.Image.Value = thumb;
+            DetectMotionPhoto(item);
         }
+
+        // Runs inside the parallel thumbnail loop (thread-pool threads). The detector is
+        // stateless and thread-safe; cost overlaps with thumbnail I/O.
+        static void DetectMotionPhoto(GalleryItemViewModel item) =>
+            item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, null) is not null;
     }
 
     public static async Task ReloadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files, IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)

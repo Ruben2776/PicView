@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
 	<TargetFramework>net11.0</TargetFramework>
@@ -114,5 +114,21 @@
 
 	<ItemGroup>
 	  <UpToDateCheckInput Remove="Views\SettingsWindow.axaml" />
+	</ItemGroup>
+
+	<!-- Motion photo playback native library (see Build\Build-FFmpegNative.ps1) -->
+	<ItemGroup Condition="('$(Platform)' == 'x64' or '$(RuntimeIdentifier)' == 'osx-x64') and Exists('$(MSBuildThisFileDirectory)..\..\Build\ffmpeg-native\osx-x64\libpicviewffmpeg.dylib')">
+	  <None Include="..\..\Build\ffmpeg-native\osx-x64\libpicviewffmpeg.dylib">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	    <Link>ffmpeg\osx-x64\libpicviewffmpeg.dylib</Link>
+	  </None>
+	</ItemGroup>
+	<ItemGroup Condition="('$(Platform)' == 'arm64' or '$(RuntimeIdentifier)' == 'osx-arm64') and Exists('$(MSBuildThisFileDirectory)..\..\Build\ffmpeg-native\osx-arm64\libpicviewffmpeg.dylib')">
+	  <None Include="..\..\Build\ffmpeg-native\osx-arm64\libpicviewffmpeg.dylib">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	    <Link>ffmpeg\osx-arm64\libpicviewffmpeg.dylib</Link>
+	  </None>
 	</ItemGroup>
 </Project>

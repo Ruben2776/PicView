@@ -254,6 +254,7 @@ public class LanguageModel
     public string? MouseKeyForward { get; set; }
     public string? MouseSideButtons { get; set; }
     public string? MouseWheel { get; set; }
+    public string? MotionPhoto { get; set; }
     public string? MoveToRecycleBin { get; set; }
     public string? MoveWindow { get; set; }
     public string? Navigate { get; set; }

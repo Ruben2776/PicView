@@ -150,6 +150,8 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
             else
             {
                 SetSingleTitle();
+                // TabTitle/TabTooltip are not touched by SetSingleTitle
+                AppendMotionPhotoMarkerIfNeeded(includeTabTitles: false);
             }
 
             return;
@@ -178,6 +180,8 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
             TabTitle.Value = Model.FileInfo.Name;
             TabTooltip.Value = Model.FileInfo.FullName;
         }
+
+        AppendMotionPhotoMarkerIfNeeded(includeTabTitles: true);
         
         return;
         
@@ -223,7 +227,33 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
             WindowTitle.Value = singleTitles.TitleWithAppName;
             TitleTooltip.Value = singleTitles.FilePathTitle;
         }
-        
+
+        // Appends a localized " (Motion Photo)" suffix to the computed titles when the
+        // current image (or the secondary one in side-by-side mode) carries a video.
+        void AppendMotionPhotoMarkerIfNeeded(bool includeTabTitles)
+        {
+            if (Model?.MotionPhoto is null && SecondaryModel?.MotionPhoto is null)
+            {
+                return;
+            }
+
+            var marker = TranslationManager.Translation.MotionPhoto;
+            if (string.IsNullOrEmpty(marker))
+            {
+                return;
+            }
+
+            var suffix = $" ({marker})";
+            Title.Value += suffix;
+            WindowTitle.Value += suffix;
+            TitleTooltip.Value += suffix;
+            if (includeTabTitles)
+            {
+                TabTitle.Value += suffix;
+                TabTooltip.Value += suffix;
+            }
+        }
+
     }
     
     public void SetNewTabTitle()

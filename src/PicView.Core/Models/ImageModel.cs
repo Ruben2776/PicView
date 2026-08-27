@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using PicView.Core.ImageDecoding;
+using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation.Tiff;
 
 namespace PicView.Core.Models;
@@ -13,6 +14,7 @@ public class ImageModel : IDisposable
     public uint PixelHeight { get; set; }
     public ImageType ImageType { get; set; }
     public TiffNavigationInfo? TiffNavigation { get; set; }
+    public MotionPhotoInfo? MotionPhoto { get; set; }
     
     public void Dispose()
     {

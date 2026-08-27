@@ -215,6 +215,12 @@ public class UIProperties
     public int DoubleClickBehavior { get; set; } = 1;
     
     public bool ShowFullPathInTitleBar { get; set; } = false;
+
+    /// <summary>
+    /// Determines whether the embedded video of a motion photo is played automatically
+    /// when the image is shown. When false, playback starts via the motion photo badge.
+    /// </summary>
+    public bool AutoPlayMotionPhotos { get; set; } = false;
 }
 
 public class Theme

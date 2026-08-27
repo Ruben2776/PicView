@@ -1,0 +1,38 @@
+<UserControl
+    x:Class="PicView.Avalonia.MotionPhoto.MotionPhotoView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mp="clr-namespace:PicView.Avalonia.MotionPhoto"
+    xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    x:DataType="vm:TabViewModel"
+    IsVisible="False">
+    <Panel>
+        <mp:MotionPhotoVideoSurface x:Name="VideoSurface" IsVisible="False" />
+        <Button
+            x:Name="PlayBadge"
+            Margin="0,15,15,0"
+            Padding="10,7"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="{DynamicResource AltBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderThickness="1"
+            CornerRadius="15"
+            Cursor="Hand"
+            ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.MotionPhoto.Value}">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+                <Path
+                    Width="11"
+                    Height="11"
+                    Data="F1M0,0L10,5 0,10z"
+                    Fill="{DynamicResource MainTextColor}"
+                    Stretch="Uniform" />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    Foreground="{DynamicResource MainTextColor}"
+                    Text="{CompiledBinding ParentWindowContext.Translation.MotionPhoto.Value}" />
+            </StackPanel>
+        </Button>
+    </Panel>
+</UserControl>

@@ -99,6 +99,7 @@ public static class FileSaverHelper
                     case ImageType.AnimatedGif: // TODO: Add animated GIF support
                     case ImageType.AnimatedWebp: // TODO: Add animated WebP support
                     case ImageType.AnimatedAvif: // TODO: Add animated AVIF support
+                    case ImageType.MotionPhoto: // Saves the still cover; the embedded video is only kept via the file-copy path
                     case ImageType.Bitmap:
                     {
                         if (tab.Image.CurrentValue is not Bitmap bitmap)
@@ -136,6 +137,7 @@ public static class FileSaverHelper
                     case ImageType.AnimatedGif: // TODO: Add animated GIF support
                     case ImageType.AnimatedWebp: // TODO: Add animated WebP support
                     case ImageType.AnimatedAvif: // TODO: Add animated AVIF support
+                    case ImageType.MotionPhoto: // Saving a processed image drops the embedded video, keep the still only
                     case ImageType.Bitmap:
                     {
                         if (angle is not 0)

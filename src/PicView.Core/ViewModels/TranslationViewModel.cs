@@ -188,6 +188,7 @@ public class TranslationViewModel
         MouseDrag.Value = t.MouseDrag;
         MouseSideButtons.Value = t.MouseSideButtons;
         MouseWheel.Value = t.MouseWheel;
+        MotionPhoto.Value = t.MotionPhoto;
         MoveToRecycleBin.Value = t.MoveToRecycleBin;
         MoveWindow.Value = t.MoveWindow;
         Navigate.Value = t.Navigate;
@@ -575,6 +576,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> MouseDrag { get; } = new();
     public BindableReactiveProperty<string?> MouseSideButtons { get; } = new();
     public BindableReactiveProperty<string?> MouseWheel { get; } = new();
+    public BindableReactiveProperty<string?> MotionPhoto { get; } = new();
     public BindableReactiveProperty<string?> MoveToRecycleBin { get; } = new();
     public BindableReactiveProperty<string?> MoveWindow { get; } = new();
     public BindableReactiveProperty<string?> Navigate { get; } = new();

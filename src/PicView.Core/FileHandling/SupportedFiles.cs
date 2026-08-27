@@ -31,6 +31,7 @@ public static class SupportedFiles
         ".tga",
         ".heic",
         ".heif",
+        ".livp",
         ".hdr",
         ".xcf",
         ".jxl",

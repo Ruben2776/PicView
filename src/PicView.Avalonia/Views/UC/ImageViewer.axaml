@@ -5,6 +5,7 @@
     xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:gallery="clr-namespace:PicView.Avalonia.Views.Gallery"
+    xmlns:mp="clr-namespace:PicView.Avalonia.MotionPhoto"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="vm:TabViewModel">
@@ -40,19 +41,24 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 LastChildFill="False">
-                                <customControls:PicBox
-                                    x:Name="MainImage"
-                                    CurrentFileInfo="{Binding FileInfo.Value}"
-                                    DockPanel.Dock="Left"
-                                    ImageType="{Binding ImageType.Value}"
-                                    Source="{CompiledBinding Image.Value}" />
-                                <customControls:PicBox
-                                    x:Name="SecondaryImage"
-                                    CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
+                                <Grid DockPanel.Dock="Left">
+                                    <customControls:PicBox
+                                        x:Name="MainImage"
+                                        CurrentFileInfo="{Binding FileInfo.Value}"
+                                        ImageType="{Binding ImageType.Value}"
+                                        Source="{CompiledBinding Image.Value}" />
+                                    <mp:MotionPhotoView x:Name="MotionPhotoView" />
+                                </Grid>
+                                <Grid
                                     DockPanel.Dock="Right"
-                                    ImageType="{Binding SecondaryImageType.Value}"
-                                    IsVisible="{CompiledBinding ParentWindowContext.IsSideBySide.Value}"
-                                    Source="{CompiledBinding SecondaryImage.Value}" />
+                                    IsVisible="{CompiledBinding ParentWindowContext.IsSideBySide.Value}">
+                                    <customControls:PicBox
+                                        x:Name="SecondaryImage"
+                                        CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
+                                        ImageType="{Binding SecondaryImageType.Value}"
+                                        Source="{CompiledBinding SecondaryImage.Value}" />
+                                    <mp:MotionPhotoView x:Name="SecondaryMotionPhotoView" AllowAutoPlay="False" />
+                                </Grid>
                             </DockPanel>
                         </Border>
                     </customControls:AutoScrollViewer>
@@ -81,13 +87,18 @@
                 x:Name="HoverBar"
                 VerticalAlignment="Bottom"
                 ZIndex="2" />
-            <buttons:GalleryShortcut
-                x:Name="GalleryShortcut"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                IsVisible="{CompiledBinding !ParentWindowContext.IsBottomToolbarShown.Value}"
-                Opacity="0"
-                ZIndex="2" />
+            <!-- Floating host for the motion photo badges. Living outside MainTransform,
+                 the badges stay upright while the code-behind anchors each one to the
+                 on-screen top-right corner of its image, regardless of rotation,
+                 flipping or zooming. -->
+            <Panel x:Name="MotionPhotoBadgeHost" ZIndex="2" />
+        <buttons:GalleryShortcut
+            x:Name="GalleryShortcut"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            IsVisible="{CompiledBinding !ParentWindowContext.IsBottomToolbarShown.Value}"
+            Opacity="0"
+            ZIndex="2" />
         </Panel>
     </DockPanel>
 </UserControl>
