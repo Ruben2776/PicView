@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
@@ -10,7 +6,6 @@ using ImageMagick;
 using PicView.Avalonia;
 using PicView.Avalonia.FileSystem;
 using PicView.Core.ViewModels;
-using Xunit;
 
 namespace PicView.Tests.FileTests;
 

@@ -201,6 +201,7 @@ public class FileWatcherServiceTests : IDisposable
         public void Clear(TabViewModel tab, string directory) { }
         public void TryRemove(uint ownerId, int index) { }
         public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index) => ValueTask.FromResult(false);
+        public void DeleteFromCache(string fileName) { }
     }
 
     private class MockThumbnailLoader : IThumbnailLoader

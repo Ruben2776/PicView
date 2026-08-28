@@ -21,6 +21,7 @@ public class FileSavingService(FilePickerService? filePickerService = null)
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         if (tab.FileInfo?.CurrentValue is null)
         {
+            // If the viewed pic is not a file, open file picker
             isSaved = await SaveFileAs(vm).ConfigureAwait(false);
         }
         else
@@ -31,7 +32,8 @@ public class FileSavingService(FilePickerService? filePickerService = null)
         
         if (isSaved)
         {
-            await tab.ImageIterator.ReloadAsync();
+            tab.ImageIterator.Cache.DeleteFromCache(tab.FileInfo.CurrentValue.FullName);
+            await tab.ImageIterator.ReloadAsync(false);
             // TODO: Add visual design to tell whether file was saved
         }
         
