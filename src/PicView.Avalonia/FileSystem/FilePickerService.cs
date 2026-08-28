@@ -10,9 +10,6 @@ using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace PicView.Avalonia.FileSystem;
 

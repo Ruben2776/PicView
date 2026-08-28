@@ -18,12 +18,6 @@ public static class FilePicker
         return await _filePickerService.SelectFile().ConfigureAwait(false);
     }
 
-    public static async ValueTask<bool> PickAndSaveFileAsAsync(string? fileName, MainWindowViewModel vm)
-    {
-        _filePickerService ??= new FilePickerService();
-        return await _filePickerService.PickAndSaveFileAsAsync(fileName, vm).ConfigureAwait(false);
-    }
-
     public static async Task<string?> PickFileForSavingAsync(string? fileName, string? ext = null)
     {
         _filePickerService ??= new FilePickerService();
