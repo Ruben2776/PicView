@@ -70,7 +70,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         {
             int iteration;
             bool isReversed;
-            if (navigateTo == NavigateTo.Next && CurrentIndex == Files.Count - 1 && _tab.IsArchiveExtracting.Value)
+            if (navigateTo == NavigateTo.Next && CurrentIndex >= Files.Count - 1 && _tab.IsArchiveExtracting.Value)
             {
                 iteration = CurrentIndex + 1;
                 isReversed = false;
@@ -426,7 +426,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
         int iteration;
         bool isReversed;
-        if (to == NavigateTo.Next && CurrentIndex == Files.Count - 1 && _tab.IsArchiveExtracting.Value)
+        if (to == NavigateTo.Next && CurrentIndex >= Files.Count - 1 && _tab.IsArchiveExtracting.Value)
         {
             iteration = CurrentIndex + 1;
             isReversed = false;

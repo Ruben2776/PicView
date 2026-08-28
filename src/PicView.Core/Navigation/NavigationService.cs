@@ -297,8 +297,74 @@ public class NavigationService(
                 return true;
             }
 
-            // Staged extraction: extract up to the first 10 entries immediately and navigate to them,
-            // then extract the rest in the background while FileWatcherService inserts each new file into the iterator.
+            if (!Settings.Navigation.AlwaysUncompressEntireArchive)
+            {
+                // Staged extraction: extract the first entry (or 2 if side-by-side), navigate to it, then extract the rest in
+                // the background one by one while FileWatcherService inserts each new file into the iterator.
+                var firstKey = prep.EntryKeys[0];
+                var firstPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, firstKey, ct.Token).ConfigureAwait(false);
+
+                if (string.IsNullOrEmpty(firstPath) || ct.IsCancellationRequested)
+                {
+                    return false;
+                }
+
+                if (Settings.ImageScaling.ShowImageSideBySide && prep.EntryKeys.Length > 1)
+                {
+                    var secondKey = prep.EntryKeys[1];
+                    var secondPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, secondKey, ct.Token).ConfigureAwait(false);
+                    var seedFiles = new List<FileInfo>
+                    {
+                        new(firstPath),
+                        new(secondPath)
+                    };
+                    await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
+                }
+                else
+                {
+                    var seedFiles = new List<FileInfo> { new(firstPath) };
+                    await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
+                }
+
+                FileHistoryManager.Add(archivePath);
+
+                // Kick off background extraction of remaining entries one by one without batching or progress indicator.
+                var initialCount = Settings.ImageScaling.ShowImageSideBySide && prep.EntryKeys.Length > 1 ? 2 : 1;
+                if (prep.EntryKeys.Length > initialCount)
+                {
+                    var remainingKeys = prep.EntryKeys.Skip(initialCount).ToArray();
+                    var backgroundToken = tab.ArchiveExtractionService.ResetExtractionCts();
+                    tab.IsArchiveExtracting.Value = true;
+                    tab.ArchiveExtractionProgressText.Value = null;
+                    tab.ImageIterator?.UpdateNavigationProperties();
+
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await tab.ArchiveExtractionService.ExtractRemainingAsync(archivePath, remainingKeys, ct: backgroundToken).ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            tab.IsArchiveExtracting.Value = false;
+                            tab.ArchiveExtractionProgressText.Value = null;
+                            tab.ImageIterator?.NotifyFileAdded();
+                            tab.ImageIterator?.UpdateNavigationProperties();
+                        }
+                    }, backgroundToken);
+                }
+                else
+                {
+                    tab.IsArchiveExtracting.Value = false;
+                    tab.ArchiveExtractionProgressText.Value = null;
+                }
+
+                tab.ArchiveExtractionService.Cleanup(tempZipDir);
+                return true;
+            }
+
+            // Staged extraction (AlwaysUncompressEntireArchive = true): extract up to the first 10 entries immediately and navigate to them,
+            // then extract the rest in batches of 10 in the background while reporting progress with the bottom-right indicator.
             const int initialExtractCount = 10;
             var initialKeys = prep.EntryKeys.Take(initialExtractCount).ToArray();
             var extractedPaths = await tab.ArchiveExtractionService.ExtractEntriesAsync(archivePath, initialKeys, ct.Token).ConfigureAwait(false);
@@ -309,8 +375,8 @@ public class NavigationService(
             }
 
             // Seed iterator with initial extracted pages for immediate viewing and preloading
-            var seedFiles = extractedPaths.Select(p => new FileInfo(p)).ToList();
-            await RepopulateIterator(seedFiles[0], tab, ct, seedFiles).ConfigureAwait(false);
+            var seedFilesList = extractedPaths.Select(p => new FileInfo(p)).ToList();
+            await RepopulateIterator(seedFilesList[0], tab, ct, seedFilesList).ConfigureAwait(false);
 
             FileHistoryManager.Add(archivePath);
 

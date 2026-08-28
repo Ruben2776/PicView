@@ -569,5 +569,32 @@ public class ArchiveExtractionServiceTests
         Assert.False(token2.IsCancellationRequested);
     }
 
+    [Fact]
+    public void Cleanup_PreviousTempDir_DoesNotCancelCurrentExtractionToken()
+    {
+        var service = new ArchiveExtractionService();
+        var token = service.ResetExtractionCts();
+
+        var previousDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(previousDir);
+
+        try
+        {
+            service.Cleanup(previousDir);
+
+            // Token for current extraction should NOT be cancelled
+            Assert.False(token.IsCancellationRequested);
+            Assert.False(Directory.Exists(previousDir));
+        }
+        finally
+        {
+            if (Directory.Exists(previousDir))
+            {
+                Directory.Delete(previousDir, true);
+            }
+            service.Cleanup();
+        }
+    }
+
     #endregion
 }

@@ -1113,7 +1113,7 @@
             BorderThickness="1"
             CornerRadius="4"
             IsHitTestVisible="False"
-            IsVisible="{Binding WindowTabs.ActiveTab.Value.IsArchiveExtracting.Value, Mode=OneWay}"
+            IsVisible="{Binding WindowTabs.ActiveTab.Value.ArchiveExtractionProgressText.Value, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
             ZIndex="10">
             <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
                 <Viewbox Width="14" Height="14" VerticalAlignment="Center">

@@ -68,6 +68,10 @@ public class ArchiveExtractionService
                 return null;
             }
 
+            _extractionCts?.Cancel();
+            _extractionCts?.Dispose();
+            _extractionCts = null;
+
             var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(tempDirectory);
             TempZipDirectory = tempDirectory;
@@ -352,27 +356,45 @@ public class ArchiveExtractionService
     /// </summary>
     public void Cleanup()
     {
-        Cleanup(TempZipDirectory);
+        _extractionCts?.Cancel();
+        _extractionCts?.Dispose();
+        _extractionCts = null;
+
+        var tempDirectory = TempZipDirectory;
+        if (!string.IsNullOrEmpty(tempDirectory) && Directory.Exists(tempDirectory))
+        {
+            try
+            {
+                Directory.Delete(tempDirectory, true);
+            }
+            catch (Exception ex)
+            {
+                DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(Cleanup), ex);
+            }
+        }
+
+        TempZipDirectory = null;
+        LastOpenedArchive = null;
     }
     
     public void Cleanup(string? tempZipDirectory)
     {
+        if (string.IsNullOrEmpty(tempZipDirectory))
+        {
+            return;
+        }
+
+        if (string.Equals(tempZipDirectory, TempZipDirectory, StringComparison.OrdinalIgnoreCase))
+        {
+            Cleanup();
+            return;
+        }
+
         try
         {
-            _extractionCts?.Cancel();
-            _extractionCts?.Dispose();
-            _extractionCts = null;
-
-            if (string.IsNullOrEmpty(tempZipDirectory) || !Directory.Exists(tempZipDirectory))
+            if (Directory.Exists(tempZipDirectory))
             {
-                return;
-            }
-
-            Directory.Delete(tempZipDirectory, true);
-            if (string.Equals(tempZipDirectory, TempZipDirectory, StringComparison.OrdinalIgnoreCase))
-            {
-                TempZipDirectory = null;
-                LastOpenedArchive = null;
+                Directory.Delete(tempZipDirectory, true);
             }
         }
         catch (Exception ex)
