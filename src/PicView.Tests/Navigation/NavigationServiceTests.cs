@@ -104,14 +104,45 @@ public class NavigationServiceTests : IDisposable
         Assert.True(_mockThumbnailLoader.GetThumbnailAsyncCalledCount > 0, "Gallery should be reloaded (GetThumbnailAsync called)");
     }
 
-    private TabViewModel CreateTab(string directory)
+    private TabViewModel CreateTab(string directory, MainWindowViewModel? parentVm = null)
     {
-        var tab = new TabViewModel(null!, null!);
+        var tab = new TabViewModel(null!, parentVm!);
         // Initialize with mocks to avoid null refs
         var thumbCache = new MockThumbnailCache();
         tab.Initialize(_mockCache, thumbCache, _mockThumbnailLoader, null, thumbCache);
         tab.ImageIterator.Files = new List<FileInfo>();
         return tab;
+    }
+
+    [Fact]
+    public async Task LoadFromArchiveAsync_ExtractsInitialSeedFiles_AndResetsLoadingIndicator()
+    {
+        var tempZipPath = Path.Combine(_testDirectory, "test_archive.zip");
+        var archiveSourceDir = Path.Combine(_testDirectory, "archive_source");
+        Directory.CreateDirectory(archiveSourceDir);
+
+        for (var i = 1; i <= 15; i++)
+        {
+            await File.WriteAllBytesAsync(Path.Combine(archiveSourceDir, $"img_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF]);
+        }
+
+        System.IO.Compression.ZipFile.CreateFromDirectory(archiveSourceDir, tempZipPath);
+
+        var tab = CreateTab(_testDirectory);
+        var cts = new CancellationTokenSource();
+
+        var success = await _navigationService.LoadFromArchiveAsync(tempZipPath, tab, cts);
+
+        Assert.True(success);
+        Assert.True(tab.ArchiveExtractionService.IsArchived);
+        Assert.NotNull(tab.ImageIterator.Files);
+        // Initially populated with 10 seed files
+        Assert.True(tab.ImageIterator.Files.Count >= 10);
+        Assert.NotNull(tab.Model);
+        Assert.NotNull(tab.Model.FileInfo);
+        Assert.True(File.Exists(tab.Model.FileInfo.FullName));
+
+        tab.ArchiveExtractionService.Cleanup();
     }
 
     [Fact]
