@@ -225,15 +225,74 @@ public class ArchiveExtractionServiceTests
                 Assert.True(File.Exists(path));
             }
 
-            // Extract remaining 4 pages
+            // Extract remaining 4 pages with progress tracking
+            var progressReports = new List<int>();
+            var progress = new Progress<int>(progressReports.Add);
             var remainingKeys = prep.Value.EntryKeys.Skip(10).ToArray();
-            await service.ExtractRemainingAsync(tempZipPath, remainingKeys);
+            await service.ExtractRemainingAsync(
+                tempZipPath,
+                remainingKeys,
+                initialCount: 10,
+                totalCount: 14,
+                progress: progress,
+                batchSize: 10);
 
             foreach (var key in remainingKeys)
             {
                 var expectedPath = Path.Combine(service.TempZipDirectory!, key);
                 Assert.True(File.Exists(expectedPath));
             }
+
+            // Progress should report the final count
+            Assert.Contains(14, progressReports);
+
+            service.Cleanup();
+        }
+        finally
+        {
+            if (File.Exists(tempZipPath)) File.Delete(tempZipPath);
+            if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractRemainingAsync_MultipleBatches_ReportsProgressAtEachBatch()
+    {
+        var tempZipPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.zip");
+        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            for (var i = 1; i <= 25; i++)
+            {
+                File.WriteAllBytes(Path.Combine(tempDir, $"page_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF]);
+            }
+
+            System.IO.Compression.ZipFile.CreateFromDirectory(tempDir, tempZipPath);
+
+            var service = new ArchiveExtractionService();
+            var prep = await service.PrepareArchiveAsync(tempZipPath, (_, _) => Task.FromResult(false), string.Compare);
+            Assert.NotNull(prep);
+
+            var initialKeys = prep.Value.EntryKeys.Take(10).ToArray();
+            await service.ExtractEntriesAsync(tempZipPath, initialKeys);
+
+            var progressReports = new List<int>();
+            var progress = new Progress<int>(progressReports.Add);
+            var remainingKeys = prep.Value.EntryKeys.Skip(10).ToArray();
+
+            await service.ExtractRemainingAsync(
+                tempZipPath,
+                remainingKeys,
+                initialCount: 10,
+                totalCount: 25,
+                progress: progress,
+                batchSize: 10);
+
+            // Progress should have reported after first batch of 10 (20) and upon completion (25)
+            Assert.Contains(20, progressReports);
+            Assert.Contains(25, progressReports);
 
             service.Cleanup();
         }
@@ -483,6 +542,31 @@ public class ArchiveExtractionServiceTests
         // Dispose should not throw
         var exception = Record.Exception(() => tab.Dispose());
         Assert.Null(exception);
+    }
+
+    [Fact]
+    public void ResetExtractionCts_ReturnsActiveToken_AndCancelsOnCleanup()
+    {
+        var service = new ArchiveExtractionService();
+        var token = service.ResetExtractionCts();
+
+        Assert.False(token.IsCancellationRequested);
+
+        service.Cleanup();
+
+        Assert.True(token.IsCancellationRequested);
+    }
+
+    [Fact]
+    public void ResetExtractionCts_CancelsPreviousToken()
+    {
+        var service = new ArchiveExtractionService();
+        var token1 = service.ResetExtractionCts();
+        Assert.False(token1.IsCancellationRequested);
+
+        var token2 = service.ResetExtractionCts();
+        Assert.True(token1.IsCancellationRequested);
+        Assert.False(token2.IsCancellationRequested);
     }
 
     #endregion

@@ -9,6 +9,7 @@ using R3;
 
 namespace PicView.Tests.Navigation;
 
+[Collection("Sequential")]
 public class FileWatcherServiceTests : IDisposable
 {
     private readonly FileWatcherService _service;

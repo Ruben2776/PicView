@@ -108,13 +108,33 @@ public class SharedImageCache : IImageCache
         {
             currentItems.Add(oldItems.Current);
         }
-        dict.Clear();
-
         var newFileMap = new Dictionary<string, int>(_pathLookup.Comparer);
         for (var i = 0; i < files.Count; i++)
         {
             newFileMap[files[i].FullName] = i;
         }
+
+        // Fast-path: if no existing cached item's index shifted and none were removed, avoid clearing the cache
+        var anyIndexChanged = false;
+        foreach (var item in currentItems)
+        {
+            if (!newFileMap.TryGetValue(item.Value.ImageModel.FileInfo.FullName, out var newIndex) || newIndex != item.Key)
+            {
+                anyIndexChanged = true;
+                break;
+            }
+        }
+
+        if (!anyIndexChanged)
+        {
+            if (files.Count > 0 && _ownerContexts.TryGetValue(ownerId, out var existingCtx))
+            {
+                _ownerContexts[ownerId] = (files[0].DirectoryName ?? string.Empty, files, existingCtx.CurrentIndex);
+            }
+            return;
+        }
+
+        dict.Clear();
 
         foreach (var item in currentItems)
         {

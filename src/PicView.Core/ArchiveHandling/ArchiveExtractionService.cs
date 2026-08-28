@@ -224,52 +224,71 @@ public class ArchiveExtractionService
 
     /// <summary>
     ///     Extracts every entry whose key is present in <paramref name="remainingKeys" /> to the
-    ///     <see cref="TempZipDirectory" />. The archive is opened once and walked in its native
-    ///     order, which avoids reopening overhead.
+    ///     <see cref="TempZipDirectory" /> in batches with low priority. The archive is opened once and walked in its native
+    ///     order, reporting extraction count progress after each batch.
     /// </summary>
-    public async Task ExtractRemainingAsync(
+    public void ExtractRemaining(
         string archivePath,
         IReadOnlyCollection<string> remainingKeys,
+        int initialCount = 0,
+        int totalCount = 0,
+        IProgress<int>? progress = null,
+        int batchSize = 10,
         CancellationToken ct = default)
     {
         var tempDirectory = TempZipDirectory;
-        if (string.IsNullOrEmpty(tempDirectory) || remainingKeys.Count == 0)
+        if (string.IsNullOrEmpty(tempDirectory) || remainingKeys is null || remainingKeys.Count == 0)
         {
             return;
         }
 
         try
         {
-            await Task.Run(() =>
+            var pending = new HashSet<string>(remainingKeys, StringComparer.Ordinal);
+            using var archive = ArchiveFactory.OpenArchive(archivePath);
+
+            var extractedCount = initialCount;
+            var batchCounter = 0;
+
+            foreach (var entry in archive.Entries)
             {
-                var pending = new HashSet<string>(remainingKeys, StringComparer.Ordinal);
-                using var archive = ArchiveFactory.OpenArchive(archivePath);
-
-                foreach (var entry in archive.Entries)
+                if (ct.IsCancellationRequested)
                 {
-                    if (ct.IsCancellationRequested)
-                    {
-                        return;
-                    }
-
-                    if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
-                    {
-                        continue;
-                    }
-
-                    if (!pending.Remove(entry.Key))
-                    {
-                        continue;
-                    }
-
-                    WriteEntryFlat(entry, tempDirectory);
-
-                    if (pending.Count == 0)
-                    {
-                        return;
-                    }
+                    return;
                 }
-            }, ct).ConfigureAwait(false);
+
+                if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
+                {
+                    continue;
+                }
+
+                if (!pending.Remove(entry.Key))
+                {
+                    continue;
+                }
+
+                WriteEntryFlat(entry, tempDirectory);
+                extractedCount++;
+                batchCounter++;
+
+                // Yield CPU to higher-priority UI and navigation threads
+                Thread.Yield();
+
+                // Report progress after each batch or upon completing extraction
+                if (batchCounter >= batchSize || pending.Count == 0)
+                {
+                    batchCounter = 0;
+                    progress?.Report(extractedCount);
+
+                    // Brief pause between batches to give foreground operations maximum CPU/IO priority
+                    Thread.Sleep(5);
+                }
+
+                if (pending.Count == 0)
+                {
+                    return;
+                }
+            }
         }
         catch (OperationCanceledException)
         {
@@ -277,8 +296,55 @@ public class ArchiveExtractionService
         }
         catch (Exception ex)
         {
-            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(ExtractRemainingAsync), ex);
+            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(ExtractRemaining), ex);
         }
+    }
+
+    /// <summary>
+    ///     Asynchronously extracts remaining archive entries on a lowest-priority background thread.
+    /// </summary>
+    public Task ExtractRemainingAsync(
+        string archivePath,
+        IReadOnlyCollection<string> remainingKeys,
+        int initialCount = 0,
+        int totalCount = 0,
+        IProgress<int>? progress = null,
+        int batchSize = 10,
+        CancellationToken ct = default)
+    {
+        var tcs = new TaskCompletionSource();
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                ExtractRemaining(archivePath, remainingKeys, initialCount, totalCount, progress, batchSize, ct);
+                tcs.TrySetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.TrySetException(ex);
+            }
+        })
+        {
+            IsBackground = true,
+            Priority = ThreadPriority.Lowest,
+            Name = "ArchiveExtractionWorker"
+        };
+        thread.Start();
+        return tcs.Task;
+    }
+
+    private CancellationTokenSource? _extractionCts;
+
+    /// <summary>
+    ///     Resets and returns a dedicated cancellation token for background extraction operations.
+    /// </summary>
+    public CancellationToken ResetExtractionCts()
+    {
+        _extractionCts?.Cancel();
+        _extractionCts?.Dispose();
+        _extractionCts = new CancellationTokenSource();
+        return _extractionCts.Token;
     }
 
     /// <summary>
@@ -293,6 +359,10 @@ public class ArchiveExtractionService
     {
         try
         {
+            _extractionCts?.Cancel();
+            _extractionCts?.Dispose();
+            _extractionCts = null;
+
             if (string.IsNullOrEmpty(tempZipDirectory) || !Directory.Exists(tempZipDirectory))
             {
                 return;

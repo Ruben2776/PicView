@@ -34,7 +34,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
     private void UpdateNavigationProperties(int index, int count)
     {
-        if (count <= 1)
+        if (count <= 1 && !_tab.IsArchiveExtracting.Value)
         {
             _tab.CanNavigateForwards.Value = false;
             _tab.CanNavigateBackwards.Value = false;
@@ -42,13 +42,14 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         else
         {
             var isLooping = Settings.UIProperties.Looping;
+            var isExtracting = _tab.IsArchiveExtracting.Value;
             if (Settings.ImageScaling.ShowImageSideBySide)
             {
-                _tab.CanNavigateForwards.Value = isLooping || index < count - 2;
+                _tab.CanNavigateForwards.Value = isLooping || isExtracting || index < count - 2;
             }
             else
             {
-                _tab.CanNavigateForwards.Value = isLooping || index < count - 1;
+                _tab.CanNavigateForwards.Value = isLooping || isExtracting || index < count - 1;
             }
 
             _tab.CanNavigateBackwards.Value = isLooping || index > 0;
@@ -67,7 +68,17 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         }
         else
         {
-            var (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, navigateTo, skipAmount);
+            int iteration;
+            bool isReversed;
+            if (navigateTo == NavigateTo.Next && CurrentIndex == Files.Count - 1 && _tab.IsArchiveExtracting.Value)
+            {
+                iteration = CurrentIndex + 1;
+                isReversed = false;
+            }
+            else
+            {
+                (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, navigateTo, skipAmount);
+            }
             IsReversed = isReversed;
             await IterateToIndexAsync(iteration, ct).ConfigureAwait(false);
         }
@@ -75,11 +86,28 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
     public async ValueTask IterateToIndexAsync(int index, CancellationTokenSource ct)
     {
-        if (index < 0 || index >= Files.Count)
+        if (index < 0)
         {
             return;
         }
-        
+
+        if (index >= Files.Count)
+        {
+            if (_tab.IsArchiveExtracting.Value)
+            {
+                _tab.SetLoading();
+                var fileAppeared = await WaitForFileIndexAsync(index, ct.Token).ConfigureAwait(false);
+                if (!fileAppeared || index >= Files.Count)
+                {
+                    UpdateNavigationProperties();
+                    return;
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
         
         // Handle internal TIFF navigation
         if (_tab.Model?.TiffNavigation is not null && ShouldNavigateTiffEntry(_tab.Model, IsReversed))
@@ -106,7 +134,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                     var thumb = !_thumbCache.IsEmpty && _thumbCache.TryGet(targetFile.FullName, out var cachedThumb)
                         ? cachedThumb
                         : _thumbnailLoader.GetThumbQuick(targetFile);
-                    if (index != CurrentIndex)
+                    if (!IsTargetActive(targetFile, index))
                     {
                         return;
                     }
@@ -116,7 +144,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                     var successfullyLoaded = await Cache
                         .WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token)
                         .ConfigureAwait(false);
-                    if (successfullyLoaded && index == CurrentIndex)
+                    if (successfullyLoaded && IsTargetActive(targetFile, index))
                     {
                         if (preLoadValue.ImageModel.Image is null)
                         {
@@ -141,7 +169,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         async Task AttemptManualLoad()
         {
             var manuallyLoaded = await Cache.LoadAsync(_tab.Id, index, Files, ct.Token).ConfigureAwait(false);
-            if (index == CurrentIndex && manuallyLoaded is not null)
+            if (IsTargetActive(targetFile, index) && manuallyLoaded is not null)
             {
                 UpdateModel(manuallyLoaded);
             }
@@ -396,7 +424,17 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
         _lastRepeatTime = now;
 
-        var (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, to, SkipAmount.One);
+        int iteration;
+        bool isReversed;
+        if (to == NavigateTo.Next && CurrentIndex == Files.Count - 1 && _tab.IsArchiveExtracting.Value)
+        {
+            iteration = CurrentIndex + 1;
+            isReversed = false;
+        }
+        else
+        {
+            (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, to, SkipAmount.One);
+        }
         IsReversed = isReversed;
         await IterateToIndexAsync(iteration, ct).ConfigureAwait(false);
     }
@@ -405,6 +443,60 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
     {
         // Reset the throttle so the next click reacts instantly.
         _lastRepeatTime = DateTime.MinValue; 
+    }
+
+    private readonly object _fileWaitLock = new();
+    private TaskCompletionSource<bool>? _fileAddedTcs;
+
+    public void NotifyFileAdded()
+    {
+        lock (_fileWaitLock)
+        {
+            _fileAddedTcs?.TrySetResult(true);
+        }
+    }
+
+    private async Task<bool> WaitForFileIndexAsync(int targetIndex, CancellationToken ct)
+    {
+        while (targetIndex >= Files.Count && _tab.IsArchiveExtracting.Value && !ct.IsCancellationRequested)
+        {
+            TaskCompletionSource<bool> tcs;
+            lock (_fileWaitLock)
+            {
+                _fileAddedTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                tcs = _fileAddedTcs;
+            }
+
+            using var reg = ct.Register(() => tcs.TrySetCanceled(ct));
+
+            try
+            {
+                var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(3000, ct)).ConfigureAwait(false);
+                if (completedTask != tcs.Task)
+                {
+                    break;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
+        }
+
+        return targetIndex < Files.Count;
+    }
+
+    private bool IsTargetActive(FileInfo targetFile, int targetIndex)
+    {
+        if (CurrentIndex == targetIndex)
+        {
+            return true;
+        }
+        if (CurrentIndex >= 0 && CurrentIndex < Files.Count)
+        {
+            return string.Equals(Files[CurrentIndex].FullName, targetFile.FullName, StringComparison.OrdinalIgnoreCase);
+        }
+        return false;
     }
 
     #endregion

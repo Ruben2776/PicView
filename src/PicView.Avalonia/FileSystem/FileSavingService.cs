@@ -56,7 +56,14 @@ public class FileSavingService(FilePickerService? filePickerService = null)
 
     public async ValueTask<bool> SaveFileAsync(string? filename, string destination, MainWindowViewModel vm)
     {
-        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
+        if (Application.Current is null)
+        {
+            return false;
+        }
+
+        var core = Dispatcher.UIThread.CheckAccess()
+            ? Application.Current.DataContext as CoreViewModel
+            : await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         if (core is null)
         {
             return false;

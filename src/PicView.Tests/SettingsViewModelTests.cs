@@ -6,6 +6,7 @@ using R3;
 
 namespace PicView.Tests;
 
+[Collection("Sequential")]
 public class SettingsViewModelTests
 {
     public SettingsViewModelTests()

@@ -314,12 +314,48 @@ public class NavigationService(
 
             FileHistoryManager.Add(archivePath);
 
-            // Kick off background extraction of remaining entries. FileWatcherService picks them up.
+            // Kick off background extraction of remaining entries in batches of 10. FileWatcherService picks them up.
             if (prep.EntryKeys.Length > initialKeys.Length)
             {
+                var totalCount = prep.EntryKeys.Length;
+                var initialExtractedCount = extractedPaths.Count;
                 var remainingKeys = prep.EntryKeys.Skip(initialKeys.Length).ToArray();
-                var backgroundToken = tab.GetTabCancellation().Token;
-                _ = Task.Run(() => tab.ArchiveExtractionService.ExtractRemainingAsync(archivePath, remainingKeys, backgroundToken), backgroundToken);
+                var backgroundToken = tab.ArchiveExtractionService.ResetExtractionCts();
+
+                tab.IsArchiveExtracting.Value = true;
+                tab.ArchiveExtractionProgressText.Value = $"{initialExtractedCount}/{totalCount}";
+
+                var progress = new Progress<int>(current =>
+                {
+                    tab.ArchiveExtractionProgressText.Value = $"{current}/{totalCount}";
+                });
+
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await tab.ArchiveExtractionService.ExtractRemainingAsync(
+                            archivePath,
+                            remainingKeys,
+                            initialCount: initialExtractedCount,
+                            totalCount: totalCount,
+                            progress: progress,
+                            batchSize: 10,
+                            ct: backgroundToken).ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        tab.IsArchiveExtracting.Value = false;
+                        tab.ArchiveExtractionProgressText.Value = null;
+                        tab.ImageIterator?.NotifyFileAdded();
+                        tab.ImageIterator?.UpdateNavigationProperties();
+                    }
+                }, backgroundToken);
+            }
+            else
+            {
+                tab.IsArchiveExtracting.Value = false;
+                tab.ArchiveExtractionProgressText.Value = null;
             }
 
             tab.ArchiveExtractionService.Cleanup(tempZipDir);
