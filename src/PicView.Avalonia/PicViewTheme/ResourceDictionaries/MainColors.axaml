@@ -15,14 +15,15 @@
             <Color x:Key="SecondaryTextColor">#ffffff</Color>
 
             <!--  Global Window  -->
-            <Color x:Key="WindowBackgroundColor">#C4252525</Color>
+            <Color x:Key="WindowTitleBackgroundColor">#fff</Color>
+            <Color x:Key="WindowButtonBackgroundColor">#fff</Color>
             <Color x:Key="WindowBorderColor">Transparent</Color>
             <Color x:Key="WindowLogoColor">#fff</Color>
+            <Color x:Key="WindowMainBackgroundColor">#fff</Color>
 
             <!--  TOP TITLE BAR  -->
-            <Color x:Key="TitleBarForeground">#EE51516C</Color>
-
             <Color x:Key="TitleBarBackgroundColor">#fff</Color>
+            <Color x:Key="TitleBarForeground">#EE51516C</Color>
             <Color x:Key="TitleBarBorderColor">Gainsboro</Color>
             <Color x:Key="TitleBarButtonBackground">#fff</Color>
             <Color x:Key="TitleBarButtonBorder">#fff</Color>
@@ -31,9 +32,8 @@
             <Color x:Key="EditableTitlebarForeground">#EE25203C</Color>
 
             <!--  BOTTOM TOOLBAR  -->
-            <Color x:Key="BottomBarForegroundColor">#EE393939</Color>
-
             <Color x:Key="BottomBarBackgroundColor">#ECF8F8F8</Color>
+            <Color x:Key="BottomBarForegroundColor">#EE393939</Color>
             <Color x:Key="BottomBarBorderColor">Gainsboro</Color>
 
             <Color x:Key="BottomBarButtonBackgroundColor">#FCFCFC</Color>
@@ -48,14 +48,13 @@
 
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#fff</Color>
+            <Color x:Key="MenuSeparatorColor">#DAE6F4</Color>
+            <Color x:Key="MenuButtonBackground">#fff</Color>
+            <Color x:Key="MenuBorderColor">#fff</Color>
+            <Color x:Key="MenuSurroundingBorderColor">#B5C0CE</Color>
 
             <Color x:Key="DisabledMenuBackgroundColor">#E3DFE7</Color>
             <Color x:Key="DisabledMenuForegroundColor">#A9A5AC</Color>
-
-            <Color x:Key="MenuSeparatorColor">#DAE6F4</Color>
-            <Color x:Key="MenuBorderColor">#B5C0CE</Color>
-
-            <Color x:Key="MenuButtonBackground">#FFFFFF</Color>
 
             <Color x:Key="ContextMenuBackgroundColor">#F7F9FC</Color>
             <Color x:Key="ContextMenuForegroundColor">#1E2633</Color>
@@ -63,12 +62,29 @@
 
             <Color x:Key="MenuItemHoverBackground">#D9DEF2</Color>
 
+            <Color x:Key="DropMenuBackgroundColor">#FEF9FBFF</Color>
+            <Color x:Key="DropDownMenuButtonBackground">#fff</Color>
+            <Color x:Key="DropDownMenuButtonForeground">#FF656565</Color>
+            <Color x:Key="DropDownMenuButtonBorderColor">#F4EFF1F5</Color>
+
             <!--  TABS  -->
             <Color x:Key="BehindTabBackground">#fff</Color>
             <Color x:Key="TabItemSelectedBackground">#fff</Color>
             <Color x:Key="TabItemUnSelectedBackground">#F2F5F9</Color>
             <Color x:Key="TabItemBorderColor">#9ABCBCBC</Color>
             <Color x:Key="TabItemHoverBackground">#E1E7F0</Color>
+
+            <!--  Scrollbar  -->
+            <Color x:Key="ScrollbarBackgroundColor">#fff</Color>
+            <Color x:Key="ScrollbarBorderColor">#FFDDDDDD</Color>
+
+            <Color x:Key="ScrollbarThumbColor">#fff</Color>
+            <Color x:Key="ScrollbarThumbBorderColor">#FFB5C2D6</Color>
+
+            <!--  Gallery  -->
+            <Color x:Key="GalleryBackgroundColor">#FFF5FAFF</Color>
+            <Color x:Key="GalleryBorderColor">#FFDCDCDC</Color>
+
 
             <!--  StartUpMenu  -->
             <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
@@ -102,8 +118,10 @@
 
             <!--  Global Window  -->
             <Color x:Key="WindowTitleBackgroundColor">#fff</Color>
+            <Color x:Key="WindowButtonBackgroundColor">#fff</Color>
             <Color x:Key="WindowBorderColor">Transparent</Color>
             <Color x:Key="WindowLogoColor">#fff</Color>
+            <Color x:Key="WindowMainBackgroundColor">#fff</Color>
 
             <!--  TOP TITLE BAR  -->
             <Color x:Key="TitleBarBackgroundColor">#fff</Color>
@@ -132,14 +150,13 @@
 
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#fff</Color>
+            <Color x:Key="MenuSeparatorColor">#DAE6F4</Color>
+            <Color x:Key="MenuButtonBackground">#fff</Color>
+            <Color x:Key="MenuBorderColor">#fff</Color>
+            <Color x:Key="MenuSurroundingBorderColor">#B5C0CE</Color>
 
             <Color x:Key="DisabledMenuBackgroundColor">#E3DFE7</Color>
             <Color x:Key="DisabledMenuForegroundColor">#A9A5AC</Color>
-
-            <Color x:Key="MenuSeparatorColor">#DAE6F4</Color>
-            <Color x:Key="MenuBorderColor">#B5C0CE</Color>
-
-            <Color x:Key="MenuButtonBackground">#FFFFFF</Color>
 
             <Color x:Key="ContextMenuBackgroundColor">#F7F9FC</Color>
             <Color x:Key="ContextMenuForegroundColor">#1E2633</Color>

@@ -13,20 +13,20 @@
     <Border
         x:Name="ParentBorder"
         BorderBrush="{DynamicResource WindowBorderColor}"
-        BorderThickness="1">
+        BorderThickness="1"
+        PointerPressed="MoveWindow">
         <StackPanel>
 
             <DockPanel
                 x:Name="TitleBarPanel"
                 Height="28"
-                Background="{DynamicResource WindowSecondaryBackgroundColor}"
-                LastChildFill="True"
-                PointerPressed="MoveWindow">
+                Background="{DynamicResource WindowTitleBackgroundColor}"
+                LastChildFill="True">
 
                 <Border
                     x:Name="IconBorder"
-                    Background="{DynamicResource WindowButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    Background="{DynamicResource WindowLogoColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
                     DockPanel.Dock="Left">
                     <Image
@@ -56,7 +56,7 @@
                     x:Name="MinimizeButton"
                     Width="30"
                     Background="{DynamicResource WindowButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
                     Click="Minimize"
@@ -69,7 +69,7 @@
 
                 <customControls:IconButton
                     Width="30"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,0,0"
                     Classes="noBorderHover"
                     ClickMode="Press"
@@ -155,7 +155,7 @@
 
             <main:EffectsView
                 x:Name="EffectsView"
-                Background="{DynamicResource NoisyTexture}"
+                Background="{DynamicResource WindowMainBackgroundColor}"
                 Focusable="True" />
         </StackPanel>
     </Border>

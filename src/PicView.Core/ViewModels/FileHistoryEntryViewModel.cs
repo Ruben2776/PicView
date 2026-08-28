@@ -1,4 +1,5 @@
 using PicView.Core.FileHistory;
+using PicView.Core.Gallery;
 using R3;
 
 namespace PicView.Core.ViewModels;
@@ -15,6 +16,28 @@ public class FileHistoryEntryViewModel : IDisposable
     public ReactiveCommand<Unit> PinCommand { get; } = new();
     public ReactiveCommand<Unit> UnpinCommand { get; } = new();
     public ReactiveCommand<Unit> RemoveCommand { get; } = new();
+    
+    public Task<object?> GetThumbnail => GetThumbnailAsync();
+
+    private async Task<object?> GetThumbnailAsync()
+    {
+        var file = new FileInfo(FilePath.Value);
+        if (!file.Exists)
+        {
+            return null;
+        }
+        var tabs = _vm.WindowTabs;
+        var cache = tabs.SharedCache;
+        var thumbnailLoader = _vm.WindowTabs.SharedThumbnailLoader;
+        if (cache.TryGet(file.FullName, out var cached) && cached is not null)
+        {
+            return cached.ImageModel.Image;
+        }
+
+        var thumb = await thumbnailLoader.GetThumbnailAsync(file, 150)
+            .ConfigureAwait(false);
+        return thumb;
+    }
     
     public void Initialize(string path, string fileName, bool isPinned, bool isCurrentItem, int index, MainWindowViewModel vm)
     {

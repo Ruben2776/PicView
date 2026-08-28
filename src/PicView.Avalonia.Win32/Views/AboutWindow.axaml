@@ -37,7 +37,7 @@
                 <customControls:IconButton
                     x:Name="CloseButton"
                     Width="30"
-                    Background="{DynamicResource WindowTitleBackgroundColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderThickness="0"
                     Classes="hover"
                     Click="Close"
@@ -53,7 +53,7 @@
                 <customControls:IconButton
                     x:Name="MinimizeButton"
                     Width="30"
-                    Background="{DynamicResource WindowTitleBackgroundColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
@@ -76,11 +76,6 @@
                     Text="{Binding Translation.About.Value, Mode=OneWay}"
                     TextAlignment="Center" />
             </DockPanel>
-
-            <Rectangle
-                x:Name="BorderRectangle"
-                Height="1"
-                Fill="{DynamicResource TitleBarButtonBorder}" />
 
             <main:AboutView
                 x:Name="AboutView"

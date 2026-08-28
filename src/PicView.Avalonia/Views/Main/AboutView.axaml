@@ -229,9 +229,7 @@
             <TextBlock
                 Margin="0,5,0,5"
                 HorizontalAlignment="Center"
-                Classes="txt"
-                FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                FontSize="16"
+                Classes="txt bold"
                 Foreground="{StaticResource SecondaryTextColor}"
                 Text="{CompiledBinding Translation.Credits}" />
 
@@ -277,17 +275,6 @@
                     Classes="txt"
                     Foreground="{StaticResource SecondaryTextColor}"
                     Text="Ioinicons" />
-            </HyperlinkButton>
-
-            <HyperlinkButton
-                Margin="0,1,0,5"
-                HorizontalAlignment="Center"
-                NavigateUri="https://fontawesome.com/"
-                ToolTip.Tip="https://fontawesome.com/">
-                <TextBlock
-                    Classes="txt"
-                    Foreground="{StaticResource SecondaryTextColor}"
-                    Text="Font Awesome" />
             </HyperlinkButton>
 
             <HyperlinkButton

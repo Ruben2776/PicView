@@ -3,8 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:ClassModifier="internal">
     <ControlTheme x:Key="{x:Type ToolTip}" TargetType="ToolTip">
-        <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
@@ -15,7 +13,7 @@
                     Name="PART_ContentPresenter"
                     Padding="8"
                     Background="{DynamicResource ContextMenuBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource ContextMenuBorderColor}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     Content="{TemplateBinding Content}"
                     ContentTemplate="{TemplateBinding ContentTemplate}"

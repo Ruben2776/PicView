@@ -96,9 +96,13 @@
                 DockPanel.Dock="Left"
                 Foreground="{DynamicResource MainTextColor}">
                 <ToolTip.Tip>
-                    <StackPanel MaxWidth="500" MaxHeight="700">
-                        <!--  TODO: Show thumbnail here  -->
-                        <Image />
+                    <StackPanel MaxWidth="300" MaxHeight="700">
+                        <customControls:ThumbImage
+                            Height="150"
+                            MaxWidth="250"
+                            HorizontalAlignment="Center"
+                            Source="{CompiledBinding GetThumbnail^,
+                                                     TargetNullValue={StaticResource LogoImage}}" />
                         <TextBlock
                             Classes="txt"
                             Foreground="{DynamicResource ContextMenuForegroundColor}"
