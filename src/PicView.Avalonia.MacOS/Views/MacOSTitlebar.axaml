@@ -1,45 +1,42 @@
 <customControls:MainTitleBar
+    IsVisible="{CompiledBinding IsTopToolbarShown.Value,
+                                Mode=OneWay}"
     x:Class="PicView.Avalonia.MacOS.Views.MacOSTitlebar"
+    x:DataType="viewModels:MainWindowViewModel"
+    x:Name="Titlebar"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:Name="Titlebar"
-    x:DataType="viewModels:MainWindowViewModel"
-    IsVisible="{CompiledBinding IsTopToolbarShown.Value,
-                                Mode=OneWay}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <DockPanel
-        x:Name="TopWindowBorder"
-        Background="{DynamicResource MainBackgroundColor}"
-        LastChildFill="True">
+        Background="{DynamicResource TitleBarBackgroundColor}"
+        LastChildFill="True"
+        x:Name="TopWindowBorder">
 
         <!--  Traffic lights reserved  -->
-        <Rectangle Width="70" DockPanel.Dock="Left" />
+        <Rectangle DockPanel.Dock="Left" Width="70" />
 
         <customControls:IconButton
-            x:Name="DropDownMenuButton"
-            Width="30"
             Background="Transparent"
-            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderBrush="{DynamicResource TitleBarBorderColor}"
             BorderThickness="0"
             Classes="altHover"
             Command="{CompiledBinding TopTitlebarViewModel.ToggleDropDownMenuCommand}"
             Data="{StaticResource FilledArrowDownGeometry}"
             DockPanel.Dock="Right"
-            Foreground="{DynamicResource MainTextColor}"
+            Foreground="{DynamicResource TitleBarForeground}"
             IconHeight="17"
             IconWidth="17"
             IsRepeatEnabled="False"
-            IsTabStop="False" />
+            IsTabStop="False"
+            Width="30"
+            x:Name="DropDownMenuButton" />
 
         <customControls:IconButton
-            x:Name="CreateTabButton"
-            Width="30"
-            Margin="0"
             Background="Transparent"
-            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderBrush="{DynamicResource TitleBarBorderColor}"
             BorderThickness="0"
             Classes="altHover"
             Command="{CompiledBinding NewTabCommand}"
@@ -50,28 +47,31 @@
             IconWidth="13"
             IsRepeatEnabled="False"
             IsTabStop="False"
-            IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}" />
+            IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}"
+            Margin="0"
+            Width="30"
+            x:Name="CreateTabButton" />
 
         <customControls:IconButton
-            x:Name="SearchButton"
-            Width="30"
-            Margin="0"
             Background="Transparent"
-            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderBrush="{DynamicResource TitleBarBorderColor}"
             BorderThickness="0"
             Classes="altHover"
             DockPanel.Dock="Right"
-            Foreground="{DynamicResource MainTextColor}"
+            Foreground="{DynamicResource TitleBarForeground}"
             Icon="{StaticResource SearchImage}"
             IconHeight="13"
             IconWidth="13"
             IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
             IsRepeatEnabled="False"
-            IsTabStop="False" />
+            IsTabStop="False"
+            Margin="0"
+            Width="30"
+            x:Name="SearchButton" />
 
         <uc:EditableTitlebar
-            x:Name="EditableTitlebar"
             Background="Transparent"
-            Foreground="{DynamicResource MainTextColor}" />
+            Foreground="{DynamicResource EditableTitlebarForeground}"
+            x:Name="EditableTitlebar" />
     </DockPanel>
 </customControls:MainTitleBar>

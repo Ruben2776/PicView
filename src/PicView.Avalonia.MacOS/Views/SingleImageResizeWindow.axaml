@@ -11,13 +11,13 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border
-        BorderBrush="{DynamicResource MainBorderColor}"
+        BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
         CornerRadius="8">
         <Panel>
 
             <DockPanel
-                Background="{DynamicResource SecondaryBackgroundColor}"
+                Background="{DynamicResource WindowTitleBackgroundColor}"
                 Height="28"
                 PointerPressed="MoveWindow"
                 VerticalAlignment="Top">
@@ -30,7 +30,7 @@
             </DockPanel>
 
             <main:SingleImageResizeView
-                Background="{DynamicResource WindowBackgroundColor}"
+                Background="{DynamicResource WindowMainBackgroundColor}"
                 Margin="0,28,0,0"
                 PointerPressed="MoveWindow"
                 x:Name="XAboutView" />
