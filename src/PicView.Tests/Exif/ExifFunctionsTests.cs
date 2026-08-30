@@ -6,6 +6,7 @@ using PicView.Core.Exif;
 
 namespace PicView.Tests.Exif;
 
+[Collection("Sequential")]
 public class ExifFunctionsTests : IDisposable
 {
     private readonly string _directory =

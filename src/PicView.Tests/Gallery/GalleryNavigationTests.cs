@@ -7,6 +7,7 @@ using Xunit;
 
 namespace PicView.Tests.Gallery;
 
+[Collection("Sequential")]
 public class GalleryNavigationTests
 {
     public GalleryNavigationTests()

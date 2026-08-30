@@ -70,11 +70,8 @@ public class FilePickerService(IStorageProvider? storageProvider = null)
 
     public async Task<string?> SelectFile()
     {
-        return await Dispatcher.UIThread.InvokeAsync(async () =>
-        {
-            var file = await SelectIStorageFile().ConfigureAwait(false);
-            return file?.Path.LocalPath;
-        });
+        var file = await SelectIStorageFile().ConfigureAwait(false);
+        return file?.Path.LocalPath;
     }
 
     private async Task<IStorageFile?> SelectIStorageFile()
@@ -171,26 +168,23 @@ public class FilePickerService(IStorageProvider? storageProvider = null)
 
     public async Task<string> SelectDirectory()
     {
-        return await Dispatcher.UIThread.InvokeAsync(async () =>
+        var provider = GetStorageProvider();
+        if (provider is null) return string.Empty;
+
+        var options = new FolderPickerOpenOptions
         {
-            var provider = GetStorageProvider();
-            if (provider is null) return string.Empty;
-    
-            var options = new FolderPickerOpenOptions
-            {
-                Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.Folder),
-                AllowMultiple = false
-            };
-            
-            var directories = await ExecuteOnUIThread(() => provider.OpenFolderPickerAsync(options));
-            
-            if (directories is null || directories.Count <= 0)
-            {
-                return string.Empty;
-            }
-            
-            return directories[0].Path.LocalPath;
-        });
+            Title = StringExtensions.CombineWithAppName(TranslationManager.Translation.Folder),
+            AllowMultiple = false
+        };
+        
+        var directories = await ExecuteOnUIThread(() => provider.OpenFolderPickerAsync(options)).ConfigureAwait(false);
+        
+        if (directories is null || directories.Count <= 0)
+        {
+            return string.Empty;
+        }
+        
+        return directories[0].Path.LocalPath;
     }
     
     private IStorageProvider? GetStorageProvider()
@@ -225,7 +219,10 @@ public class FilePickerService(IStorageProvider? storageProvider = null)
     
     private static async Task<T> ExecuteOnUIThread<T>(Func<Task<T>> action)
     {
-        // Try to use file picker in Dispatcher #228
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            return await action().ConfigureAwait(false);
+        }
         return await Dispatcher.UIThread.InvokeAsync(action).ConfigureAwait(false);
     }
 }

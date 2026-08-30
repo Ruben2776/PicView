@@ -4,25 +4,23 @@ using Avalonia.Headless;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia;
+
 using PicView.Avalonia.FileSystem;
 using PicView.Core.ViewModels;
 
 namespace PicView.Tests.FileTests;
 
+[Collection("Sequential")]
 public class AvaloniaHeadlessSavingTests
 {
     private static bool _setupDone = false;
     
     public AvaloniaHeadlessSavingTests()
     {
+        LoadSettings();
+
         if (!_setupDone)
         {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-            
-            LoadSettings();
-
             Core.Localization.TranslationManager.Init();
             if (Core.Localization.TranslationManager.Translation != null)
             {
@@ -33,22 +31,46 @@ public class AvaloniaHeadlessSavingTests
 
             _setupDone = true;
         }
+
     }
 
-    private T RunWithDispatcher<T>(ValueTask<T> task)
-    {
-        while (!task.IsCompleted)
-        {
-            Dispatcher.UIThread.RunJobs();
-            Thread.Sleep(10);
-        }
-        return task.GetAwaiter().GetResult();
-    }
-
-    private MainWindowViewModel CreateDummyVm()
+    private static MainWindowViewModel CreateDummyVm()
     {
         // Try creating with null dependencies since they might just be saved to properties
         return new MainWindowViewModel(null!, null!, null!, null!);
+    }
+
+    [Fact]
+    public async Task SaveCurrentFile_HeadlessNoopProvider_ReturnsFalseWhenContextIsNull()
+    {
+        var vm = CreateDummyVm();
+        var pickerService = new FilePickerService(null);
+        var savingService = new FileSavingService(pickerService);
+        var result = await savingService.SaveCurrentFile(vm);
+        
+        Assert.False(result);
+    }
+    
+    [Fact]
+    public async Task SaveFileAs_HeadlessNoopProvider_ReturnsFalse()
+    {
+        var vm = CreateDummyVm();
+        var pickerService = new FilePickerService(null);
+        var savingService = new FileSavingService(pickerService);
+        var result = await savingService.SaveFileAs(vm);
+        
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task SaveFileAsync_HeadlessNoopProvider_ReturnsFalseWhenDataContextIsNull()
+    {
+        var vm = CreateDummyVm();
+        var pickerService = new FilePickerService(null);
+        var savingService = new FileSavingService(pickerService);
+        var result = await savingService.SaveFileAsync("test.jpg", "test.jpg", vm);
+        
+        Assert.False(result);
     }
 
     [Fact]
@@ -104,5 +126,7 @@ public class AvaloniaHeadlessSavingTests
                 Directory.Delete(tempDir, true);
             }
         }
+    }
+
     }
 }
