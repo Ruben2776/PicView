@@ -1,7 +1,7 @@
 <ResourceDictionary
+    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:ClassModifier="internal">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.ThemeDictionaries>
 
@@ -87,24 +87,24 @@
 
 
             <!--  StartUpMenu  -->
-            <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
-                <GradientStop Offset="0.0" Color="#ECECECFF" />
-                <GradientStop Offset="0.5" Color="#FFCDC9C5" />
-                <GradientStop Offset="1.0" Color="#ECECECFF" />
+            <ConicGradientBrush Center="50%,50%" x:Key="StartUpMenuBackground">
+                <GradientStop Color="#ECECECFF" Offset="0.0" />
+                <GradientStop Color="#FFCDC9C5" Offset="0.5" />
+                <GradientStop Color="#ECECECFF" Offset="1.0" />
             </ConicGradientBrush>
             <Color x:Key="StartUpMenuForeground">#FF616161</Color>
 
             <!--  EFFECTS & MISC  -->
             <Color x:Key="ErrorColor">#B51522</Color>
-            <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}" />
+            <SolidColorBrush Color="{StaticResource ErrorColor}" x:Key="ErrorBrush" />
 
             <ImageBrush
-                x:Key="NoisyTexture"
                 DestinationRect="0,0,200,200"
                 Opacity=".6"
                 Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 Stretch="Fill"
-                TileMode="FlipXY" />
+                TileMode="FlipXY"
+                x:Key="NoisyTexture" />
         </ResourceDictionary>
 
 
@@ -117,11 +117,14 @@
             <Color x:Key="MainTextColorFaded">#768396</Color>
 
             <!--  Global Window  -->
-            <Color x:Key="WindowTitleBackgroundColor">#fff</Color>
-            <Color x:Key="WindowButtonBackgroundColor">#fff</Color>
             <Color x:Key="WindowBorderColor">Transparent</Color>
             <Color x:Key="WindowLogoColor">#fff</Color>
+
+            <!--  Tool Windows  -->
+            <Color x:Key="WindowTitleBackgroundColor">#fff</Color>
+            <Color x:Key="WindowButtonBackgroundColor">#fff</Color>
             <Color x:Key="WindowMainBackgroundColor">#fff</Color>
+            <Color x:Key="WindowBottomToolbarBackgroundColor">#46252525</Color>
 
             <!--  TOP TITLE BAR  -->
             <Color x:Key="TitleBarBackgroundColor">#fff</Color>
@@ -189,13 +192,14 @@
 
 
             <!--  StartUpMenu  -->
-            <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
-                <GradientStop Offset="0.0" Color="#ECECECFF" />
-                <GradientStop Offset="0.5" Color="#FFCDC9C5" />
-                <GradientStop Offset="1.0" Color="#ECECECFF" />
+            <ConicGradientBrush Center="50%,50%" x:Key="StartUpMenuBackground">
+                <GradientStop Color="#ECECECFF" Offset="0.0" />
+                <GradientStop Color="#FFCDC9C5" Offset="0.5" />
+                <GradientStop Color="#ECECECFF" Offset="1.0" />
             </ConicGradientBrush>
             <Color x:Key="StartUpMenuForeground">#FF616161</Color>
 
+            <!--  EFFECTS & MISC  -->
             <Color x:Key="NoisyTexture">#17FFFFFF</Color>
 
         </ResourceDictionary>

@@ -154,7 +154,7 @@
             </Border>
 
             <StackPanel
-                Background="#46252525"
+                Background="{DynamicResource WindowBottomToolbarBackgroundColor}"
                 Height="80"
                 Orientation="Horizontal"
                 x:Name="BottomBorder">
