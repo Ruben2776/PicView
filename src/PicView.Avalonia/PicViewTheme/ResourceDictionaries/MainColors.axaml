@@ -1,7 +1,7 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
 
     <ResourceDictionary.ThemeDictionaries>
 
@@ -12,24 +12,25 @@
             <!--  Global Text  -->
             <Color x:Key="MainTextColor">#E2E0E0</Color>
             <Color x:Key="MainTextColorFaded">#d6d4d4</Color>
-            <Color x:Key="SecondaryTextColor">#ffffff</Color>
+            <Color x:Key="SecondaryTextColor">#fff</Color>
 
             <!--  Global Window  -->
             <Color x:Key="WindowTitleBackgroundColor">#fff</Color>
-            <Color x:Key="WindowButtonBackgroundColor">#fff</Color>
-            <Color x:Key="WindowBorderColor">Transparent</Color>
-            <Color x:Key="WindowLogoColor">#fff</Color>
+            <Color x:Key="WindowButtonBackgroundColor">#CC2b2b2b</Color>
+            <Color x:Key="WindowBorderColor">#FF3A3A3A</Color>
+            <Color x:Key="WindowLogoColor">#CC2b2b2b</Color>
             <Color x:Key="WindowMainBackgroundColor">#fff</Color>
 
             <!--  TOP TITLE BAR  -->
-            <Color x:Key="TitleBarBackgroundColor">#fff</Color>
-            <Color x:Key="TitleBarForeground">#EE51516C</Color>
-            <Color x:Key="TitleBarBorderColor">Gainsboro</Color>
-            <Color x:Key="TitleBarButtonBackground">#fff</Color>
-            <Color x:Key="TitleBarButtonBorder">#fff</Color>
+            <Color x:Key="TitleBarBackgroundColor">#FF303030</Color>
+            <Color x:Key="TitleBarForeground">#EEDFDFDF</Color>
+            <Color x:Key="TitleBarBorderColor">#FF3A3A3A</Color>
+            <Color x:Key="TitleBarButtonBackground">#CC2b2b2b</Color>
+            <Color x:Key="TitleBarButtonBorder">#FF3A3A3A</Color>
+            <Color x:Key="TitleBarBackgroundHoverColor">#804E4E4E</Color>
 
             <Color x:Key="EditableTitlebarBackground">Transparent</Color>
-            <Color x:Key="EditableTitlebarForeground">#EE25203C</Color>
+            <Color x:Key="EditableTitlebarForeground">#EEF2F2F2</Color>
 
             <!--  BOTTOM TOOLBAR  -->
             <Color x:Key="BottomBarBackgroundColor">#ECF8F8F8</Color>
@@ -47,8 +48,7 @@
             <Color x:Key="BottomBarButtonHoverBackground">#E1E7F0</Color>
 
             <!--  MENUS & DROPDOWNS  -->
-            <Color x:Key="MenuBackgroundColor">#fff</Color>
-            <Color x:Key="MenuSeparatorColor">#DAE6F4</Color>
+            <Color x:Key="MenuBackgroundColor">#F62B2B2B</Color>
             <Color x:Key="MenuButtonBackground">#fff</Color>
             <Color x:Key="MenuBorderColor">#fff</Color>
             <Color x:Key="MenuSurroundingBorderColor">#B5C0CE</Color>
@@ -56,9 +56,9 @@
             <Color x:Key="DisabledMenuBackgroundColor">#E3DFE7</Color>
             <Color x:Key="DisabledMenuForegroundColor">#A9A5AC</Color>
 
-            <Color x:Key="ContextMenuBackgroundColor">#F7F9FC</Color>
-            <Color x:Key="ContextMenuForegroundColor">#1E2633</Color>
-            <Color x:Key="ContextMenuBorderColor">#B5C0CE</Color>
+            <Color x:Key="ContextMenuBackgroundColor">#EE2b2b2b</Color>
+            <Color x:Key="ContextMenuForegroundColor">#EDEBEB</Color>
+            <Color x:Key="ContextMenuBorderColor">#424A57</Color>
 
             <Color x:Key="MenuItemHoverBackground">#D9DEF2</Color>
 
@@ -87,24 +87,24 @@
 
 
             <!--  StartUpMenu  -->
-            <ConicGradientBrush Center="50%,50%" x:Key="StartUpMenuBackground">
-                <GradientStop Color="#ECECECFF" Offset="0.0" />
-                <GradientStop Color="#FFCDC9C5" Offset="0.5" />
-                <GradientStop Color="#ECECECFF" Offset="1.0" />
+            <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
+                <GradientStop Offset="0.0" Color="#ECECECFF" />
+                <GradientStop Offset="0.5" Color="#FFCDC9C5" />
+                <GradientStop Offset="1.0" Color="#ECECECFF" />
             </ConicGradientBrush>
             <Color x:Key="StartUpMenuForeground">#FF616161</Color>
 
             <!--  EFFECTS & MISC  -->
             <Color x:Key="ErrorColor">#B51522</Color>
-            <SolidColorBrush Color="{StaticResource ErrorColor}" x:Key="ErrorBrush" />
+            <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}" />
 
             <ImageBrush
+                x:Key="NoisyTexture"
                 DestinationRect="0,0,200,200"
                 Opacity=".6"
                 Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 Stretch="Fill"
-                TileMode="FlipXY"
-                x:Key="NoisyTexture" />
+                TileMode="FlipXY" />
         </ResourceDictionary>
 
 
@@ -132,6 +132,7 @@
             <Color x:Key="TitleBarBorderColor">Gainsboro</Color>
             <Color x:Key="TitleBarButtonBackground">#fff</Color>
             <Color x:Key="TitleBarButtonBorder">#fff</Color>
+            <Color x:Key="TitleBarBackgroundHoverColor">#80ADA8E9</Color>
 
             <Color x:Key="EditableTitlebarBackground">Transparent</Color>
             <Color x:Key="EditableTitlebarForeground">#EE25203C</Color>
@@ -153,7 +154,6 @@
 
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#fff</Color>
-            <Color x:Key="MenuSeparatorColor">#DAE6F4</Color>
             <Color x:Key="MenuButtonBackground">#fff</Color>
             <Color x:Key="MenuBorderColor">#fff</Color>
             <Color x:Key="MenuSurroundingBorderColor">#B5C0CE</Color>
@@ -192,10 +192,10 @@
 
 
             <!--  StartUpMenu  -->
-            <ConicGradientBrush Center="50%,50%" x:Key="StartUpMenuBackground">
-                <GradientStop Color="#ECECECFF" Offset="0.0" />
-                <GradientStop Color="#FFCDC9C5" Offset="0.5" />
-                <GradientStop Color="#ECECECFF" Offset="1.0" />
+            <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
+                <GradientStop Offset="0.0" Color="#ECECECFF" />
+                <GradientStop Offset="0.5" Color="#FFCDC9C5" />
+                <GradientStop Offset="1.0" Color="#ECECECFF" />
             </ConicGradientBrush>
             <Color x:Key="StartUpMenuForeground">#FF616161</Color>
 

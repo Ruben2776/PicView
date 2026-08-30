@@ -130,8 +130,6 @@
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
                     <!--  Close  -->
                     <customControls:StyledMenuItem
                         Command="{CompiledBinding ExitCommand}"
@@ -200,8 +198,6 @@
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
                     <!--  Duplicate file  -->
                     <customControls:StyledMenuItem
                         Command="{Binding DuplicateFileCommand}"
@@ -222,8 +218,6 @@
                             <Path Classes="PastePath" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
-
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Delete file  -->
                     <customControls:StyledMenuItem
@@ -259,8 +253,6 @@
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
                     <!--  Toggle UI  -->
                     <customControls:StyledMenuItem
                         Command="{Binding ToggleInterfaceCommand}"
@@ -289,8 +281,6 @@
                         </MenuItem.Icon>
                     </MenuItem>
 
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
                     <!--  Toggle side-by-side  -->
                     <MenuItem
                         Command="{Binding SideBySideCommand}"
@@ -298,8 +288,6 @@
                         IsChecked="{Binding IsSideBySide.Value}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
-
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Toggle gallery  -->
                     <customControls:StyledMenuItem
@@ -313,8 +301,6 @@
                                 Source="{StaticResource GalleryImage}" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
-
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Fullscreen  -->
                     <customControls:StyledMenuItem
@@ -425,8 +411,6 @@
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
                     <!--  Optimize image  -->
                     <customControls:StyledMenuItem
                         Command="{Binding OptimizeImageCommand}"
@@ -440,8 +424,6 @@
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
                     <!--  Crop  -->
                     <customControls:StyledMenuItem
                         x:Name="CropMenuItem"
@@ -453,8 +435,6 @@
                             <Image Classes="CropImage" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
-
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Flip  -->
                     <customControls:StyledMenuItem
@@ -533,8 +513,6 @@
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
 
                     <!--  Next 10  -->
                     <customControls:StyledMenuItem
@@ -596,8 +574,6 @@
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
                     <!--  First Image  -->
                     <customControls:StyledMenuItem
                         Command="{Binding FirstCommand}"
@@ -614,8 +590,6 @@
 
                     <!--  Last Image  -->
                     <customControls:StyledMenuItem
-                        BorderBrush="{DynamicResource MenuSeparatorColor}"
-                        BorderThickness="0,0,0,1"
                         Command="{Binding LastCommand}"
                         Header="{Binding Translation.LastImage.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
@@ -656,8 +630,6 @@
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
 
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
                     <!--  Next archive  -->
                     <customControls:StyledMenuItem
                         Command="{CompiledBinding NextArchiveCommand}"
@@ -687,8 +659,6 @@
                                 Source="{StaticResource ArchiveFile}" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
-
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Sort files by  -->
                     <customControls:StyledMenuItem Header="{Binding Translation.SortFilesBy.Value, Mode=OneWay}" Theme="{StaticResource MainBg}">
@@ -759,8 +729,6 @@
                             Theme="{StaticResource MainBg}"
                             ToggleType="Radio" />
 
-                        <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
                         <!--  Sort files ascending  -->
                         <MenuItem
                             Command="{Binding SortFilesAscendingCommand}"
@@ -797,8 +765,6 @@
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
                     <!--  Toggle looping  -->
                     <customControls:StyledMenuItem
                         Command="{CompiledBinding ToggleLoopingCommand}"
@@ -807,8 +773,6 @@
                         IsChecked="{Binding GlobalSettings.IsLooping.Value}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
-
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Toggle scrolling  -->
                     <customControls:StyledMenuItem
@@ -826,8 +790,6 @@
                         IsChecked="{CompiledBinding IsZoomedToFit.Value}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
-
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
 
                     <!--  Toggle topmost  -->
                     <customControls:StyledMenuItem
@@ -847,8 +809,6 @@
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 
-                    <Separator Margin="0" Background="{DynamicResource MenuSeparatorColor}" />
-
                     <!--  Toggle ctrl zoom  -->
                     <customControls:StyledMenuItem
                         Command="{CompiledBinding ChangeCtrlZoomCommand}"
@@ -862,11 +822,6 @@
                                 Source="{CompiledBinding ChangeCtrlZoomImage.Value}" />
                         </MenuItem.Icon>
                     </customControls:StyledMenuItem>
-
-                    <Separator
-                        Margin="0"
-                        Background="{DynamicResource ContextMenuBackgroundColor}"
-                        Opacity=".9" />
 
                     <!--  Show Settings window  -->
                     <customControls:StyledMenuItem
@@ -923,7 +878,7 @@
                 Background="{DynamicResource TitleBarButtonBackground}"
                 BorderBrush="{DynamicResource TitleBarButtonBorder}"
                 BorderThickness="0,0,1,0"
-                Classes="noBorderHover"
+                Classes="TopTitlebarHover"
                 Command="{CompiledBinding TopTitlebarViewModel.OpenMenuCommand}"
                 Foreground="{DynamicResource TitleBarForeground}"
                 Icon="{StaticResource MenuImage}"
@@ -937,15 +892,14 @@
                 Width="30"
                 Margin="2,3,7,3"
                 Background="Transparent"
-                BorderBrush="{DynamicResource TitleBarButtonBorder}"
-                Classes="noBorderHover"
+                Classes="TopTitlebarHover"
                 Command="{Binding SearchCommand}"
                 CornerRadius="6"
                 DockPanel.Dock="Left"
                 Foreground="{DynamicResource TitleBarForeground}"
                 Icon="{StaticResource SearchImage}"
-                IconHeight="13"
-                IconWidth="13"
+                IconHeight="15"
+                IconWidth="15"
                 IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
                 IsTabStop="False"
                 IsVisible="{Binding TopTitlebarViewModel.IsMenuButtonVisible.Value}" />
@@ -962,13 +916,13 @@
                     Margin="0,0"
                     Background="{DynamicResource TitleBarButtonBackground}"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
-                    BorderThickness="1,0,1,0"
+                    BorderThickness="1,0,0,0"
                     Classes="hover "
                     ClickMode="Release"
                     Command="{CompiledBinding MinimizeCommand}"
                     Data="{StaticResource MinimizeGeometry}"
                     Foreground="{DynamicResource TitleBarForeground}"
-                    IconHeight="12"
+                    IconHeight="2"
                     IconWidth="12"
                     IsRepeatEnabled="False" />
 
@@ -977,6 +931,7 @@
                     Width="30"
                     Background="{DynamicResource TitleBarButtonBackground}"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
+                    BorderThickness="1,0,1,0"
                     Classes="hover"
                     ClickMode="Release"
                     Command="{CompiledBinding ToggleFullscreenCommand}"
@@ -992,8 +947,6 @@
                     x:Name="RestoreButton"
                     Width="30"
                     Background="{DynamicResource TitleBarButtonBackground}"
-                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
-                    BorderThickness="0,0,1,0"
                     Classes="hover"
                     Command="{CompiledBinding RestoreCommand}"
                     Data="{StaticResource RestoreGeometry}"
@@ -1008,7 +961,6 @@
                     x:Name="CloseButton"
                     Width="30"
                     Background="{DynamicResource TitleBarButtonBackground}"
-                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     Classes="hover"
                     ClickMode="Release"
                     Command="{CompiledBinding ExitCommand}"
@@ -1027,15 +979,15 @@
                 Margin="2,3,7,3"
                 Background="Transparent"
                 BorderBrush="{DynamicResource TitleBarBorderColor}"
-                Classes="noBorderHover"
+                Classes="TopTitlebarHover"
                 Command="{CompiledBinding TopTitlebarViewModel.ToggleDropDownMenuCommand}"
                 CommandParameter="{CompiledBinding}"
                 CornerRadius="6"
-                Data="{StaticResource FilledArrowDownGeometry}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource TitleBarForeground}"
-                IconHeight="17"
-                IconWidth="17"
+                Icon="{StaticResource ChevronDownImage}"
+                IconHeight="13"
+                IconWidth="13"
                 IsTabStop="False"
                 IsVisible="{Binding TopTitlebarViewModel.IsMenuButtonVisible.Value}" />
 
@@ -1045,12 +997,12 @@
                 Margin="0,3,2,3"
                 Background="Transparent"
                 BorderBrush="{DynamicResource TitleBarBorderColor}"
-                Classes="noBorderHover"
+                Classes="TopTitlebarHover"
                 Command="{CompiledBinding NewTabCommand}"
                 CornerRadius="6"
-                Data="{StaticResource AddGeometry}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource TitleBarForeground}"
+                Icon="{StaticResource PlusImage}"
                 IconHeight="13"
                 IconWidth="13"
                 IsTabStop="False"
@@ -1059,8 +1011,6 @@
             <uc:EditableTitlebar
                 x:Name="EditableTitlebar"
                 Background="{DynamicResource EditableTitlebarBackground}"
-                BorderBrush="{DynamicResource TitleBarBorderColor}"
-                BorderThickness="0,0,0,1"
                 Foreground="{DynamicResource EditableTitlebarForeground}"
                 IsVisible="{Binding TopTitlebarViewModel.IsEditableTitlebarVisible.Value}" />
 

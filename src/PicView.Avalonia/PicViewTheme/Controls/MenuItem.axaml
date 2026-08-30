@@ -69,8 +69,8 @@
                                                      Mode=TwoWay}"
                             Placement="RightEdgeAlignedTop">
                             <Border
-                                Background="{DynamicResource MenuBackgroundColor}"
-                                BorderBrush="{DynamicResource MenuBorderColor}"
+                                Background="{DynamicResource ContextMenuBackgroundColor}"
+                                BorderBrush="{DynamicResource ContextMenuBorderColor}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="{TemplateBinding CornerRadius}">
                                 <ItemsPresenter
@@ -179,7 +179,7 @@
                             Placement="RightEdgeAlignedTop">
                             <Border
                                 Background="{DynamicResource ContextMenuBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                BorderBrush="{DynamicResource ContextMenuBorderColor}"
                                 BorderThickness="1"
                                 CornerRadius="8">
                                 <ItemsPresenter
@@ -214,8 +214,6 @@
                         </Grid.ColumnDefinitions>
                         <ContentControl
                             Name="icon"
-                            Width="16"
-                            Height="16"
                             Margin="5,0,0,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -224,8 +222,6 @@
                         <ContentControl
                             x:Name="PART_ToggleIconPresenter"
                             Grid.Column="0"
-                            Width="16"
-                            Height="16"
                             Margin="5,0,0,0"
                             VerticalAlignment="Center"
                             IsVisible="True" />
