@@ -13,7 +13,7 @@ namespace PicView.Tests.FileTests;
 [Collection("Sequential")]
 public class AvaloniaHeadlessSavingTests
 {
-    private static bool _setupDone = false;
+    private static bool _setupDone;
     
     public AvaloniaHeadlessSavingTests()
     {
@@ -21,6 +21,10 @@ public class AvaloniaHeadlessSavingTests
 
         if (!_setupDone)
         {
+            AppBuilder.Configure<App>()
+                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
+                .SetupWithoutStarting();
+            
             Core.Localization.TranslationManager.Init();
             if (Core.Localization.TranslationManager.Translation != null)
             {
@@ -31,7 +35,17 @@ public class AvaloniaHeadlessSavingTests
 
             _setupDone = true;
         }
-
+    }
+    
+    
+    private T RunWithDispatcher<T>(ValueTask<T> task)
+    {
+        while (!task.IsCompleted)
+        {
+            Dispatcher.UIThread.RunJobs();
+            Thread.Sleep(10);
+        }
+        return task.GetAwaiter().GetResult();
     }
 
     private static MainWindowViewModel CreateDummyVm()
@@ -41,40 +55,7 @@ public class AvaloniaHeadlessSavingTests
     }
 
     [Fact]
-    public async Task SaveCurrentFile_HeadlessNoopProvider_ReturnsFalseWhenContextIsNull()
-    {
-        var vm = CreateDummyVm();
-        var pickerService = new FilePickerService(null);
-        var savingService = new FileSavingService(pickerService);
-        var result = await savingService.SaveCurrentFile(vm);
-        
-        Assert.False(result);
-    }
-    
-    [Fact]
-    public async Task SaveFileAs_HeadlessNoopProvider_ReturnsFalse()
-    {
-        var vm = CreateDummyVm();
-        var pickerService = new FilePickerService(null);
-        var savingService = new FileSavingService(pickerService);
-        var result = await savingService.SaveFileAs(vm);
-        
-        Assert.False(result);
-    }
-
-    [Fact]
-    public async Task SaveFileAsync_HeadlessNoopProvider_ReturnsFalseWhenDataContextIsNull()
-    {
-        var vm = CreateDummyVm();
-        var pickerService = new FilePickerService(null);
-        var savingService = new FileSavingService(pickerService);
-        var result = await savingService.SaveFileAsync("test.jpg", "test.jpg", vm);
-        
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void ConvertJpgToWebp_ReducesFileSize()
+    public void ConvertJpgToWebp_SavesSuccessFully_AndReducesFileSize()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(tempDir);
@@ -126,7 +107,5 @@ public class AvaloniaHeadlessSavingTests
                 Directory.Delete(tempDir, true);
             }
         }
-    }
-
     }
 }

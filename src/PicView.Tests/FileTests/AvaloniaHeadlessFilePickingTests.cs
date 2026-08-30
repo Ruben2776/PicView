@@ -1,3 +1,8 @@
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Headless;
+using Avalonia.Threading;
+using PicView.Avalonia;
 using PicView.Avalonia.FileSystem;
 using PicView.Core.Localization;
 
@@ -8,35 +13,58 @@ public class AvaloniaHeadlessFilePickingTests
 {
     public AvaloniaHeadlessFilePickingTests()
     {
+        AppBuilder.Configure<App>()
+            .UseHeadless(new AvaloniaHeadlessPlatformOptions())
+            .SetupWithoutStarting();
+        
         TranslationManager.Init();
         TranslationManager.Translation.Folder = "Folder";
         TranslationManager.Translation.SaveAs = "SaveAs";
         TranslationManager.Translation.OpenFileDialog = "Open";
     }
+    
+    private T RunWithDispatcher<T>(Task<T> task)
+    {
+        while (!task.IsCompleted)
+        {
+            Dispatcher.UIThread.RunJobs();
+            Thread.Sleep(10);
+        }
+        return task.GetAwaiter().GetResult();
+    }
 
     [Fact]
-    public async Task SelectFile_HeadlessNoopProvider_ShouldReturnNull()
+    public void SelectFile_HeadlessNoopProvider_ShouldReturnNull()
     {
-        var service = new FilePickerService(null);
-        var result = await service.SelectFile();
+        var window = new Window();
+        var sp = window.StorageProvider;
+        
+        var service = new FilePickerService(sp);
+        var result = RunWithDispatcher(service.SelectFile());
         
         Assert.Null(result);
     }
 
     [Fact]
-    public async Task SelectDirectory_HeadlessNoopProvider_ShouldReturnEmptyString()
+    public void SelectDirectory_HeadlessNoopProvider_ShouldReturnEmptyString()
     {
-        var service = new FilePickerService(null);
-        var result = await service.SelectDirectory();
+        var window = new Window();
+        var sp = window.StorageProvider;
+        
+        var service = new FilePickerService(sp);
+        var result = RunWithDispatcher(service.SelectDirectory());
         
         Assert.Equal(string.Empty, result);
     }
 
     [Fact]
-    public async Task PickFileForSavingAsync_HeadlessNoopProvider_ShouldReturnNull()
+    public void PickFileForSavingAsync_HeadlessNoopProvider_ShouldReturnNull()
     {
-        var service = new FilePickerService(null);
-        var result = await service.PickFileForSavingAsync("test.jpg");
+        var window = new Window();
+        var sp = window.StorageProvider;
+        
+        var service = new FilePickerService(sp);
+        var result = RunWithDispatcher(service.PickFileForSavingAsync("test.jpg"));
         
         Assert.Null(result);
     }
