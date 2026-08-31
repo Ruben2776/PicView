@@ -1101,5 +1101,30 @@
             VerticalAlignment="Center"
             Opacity="0"
             ZIndex="9" />
+
+        <!-- Bottom-right Archive Extraction Progress Indicator -->
+        <Border
+            Margin="0,0,16,16"
+            Padding="8,4"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Background="{DynamicResource AltBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderThickness="1"
+            CornerRadius="4"
+            IsHitTestVisible="False"
+            IsVisible="{Binding WindowTabs.ActiveTab.Value.ArchiveExtractionProgressText.Value, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
+            ZIndex="10">
+            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                <Viewbox Width="14" Height="14" VerticalAlignment="Center">
+                    <uc:SpinWaiter />
+                </Viewbox>
+                <TextBlock
+                    Classes="txt"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    Text="{Binding WindowTabs.ActiveTab.Value.ArchiveExtractionProgressText.Value, Mode=OneWay}" />
+            </StackPanel>
+        </Border>
     </Panel>
 </UserControl>

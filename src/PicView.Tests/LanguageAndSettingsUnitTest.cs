@@ -1,9 +1,10 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using PicView.Core.Localization;
 using ZLinq;
 
 namespace PicView.Tests;
 
+[Collection("Sequential")]
 public class LanguageAndSettingsUnitTest
 {
     [Fact]

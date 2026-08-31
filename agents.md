@@ -1,4 +1,4 @@
-﻿# PicView Development Guidelines
+# PicView Development Guidelines
 
 ## Build & Configuration
 
@@ -27,6 +27,8 @@ dotnet build PicView.Tests\PicView.Tests.csproj
 - **InternalsVisibleTo**: `PicView.Core` exposes internals to `PicView.Tests`.
 
 ### Running Tests
+
+- **Agent Guideline**: When running `dotnet test`, never schedule polling/timeout timers (`schedule`). Allow background execution to complete indefinitely and rely on reactive task completion notifications.
 
 Run all tests:
 

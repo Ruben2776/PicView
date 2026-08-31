@@ -90,7 +90,7 @@ public static class GenericWindowHelper
             
             if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow.Focus();
+                desktop.MainWindow?.Focus();
             }
         };
     }

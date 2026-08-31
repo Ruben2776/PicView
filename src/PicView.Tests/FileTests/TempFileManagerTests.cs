@@ -3,6 +3,7 @@ using System.IO;
 
 namespace PicView.Tests.FileTests;
 
+[Collection("Sequential")]
 public class TempFileManagerTests : IDisposable
 {
     public TempFileManagerTests()

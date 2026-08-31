@@ -6,6 +6,7 @@ using R3;
 
 namespace PicView.Tests.Gallery;
 
+[Collection("Sequential")]
 public class GalleryViewModelTests
 {
     private readonly ManualFrameProvider _frameProvider;

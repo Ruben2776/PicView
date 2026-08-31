@@ -44,7 +44,7 @@ public static class ImageTitleFormatter
         sb.Append(info.Height);
         sb.Append(AspectRatioFormatter.FormatAspectRatio(info.Width, info.Height));
         sb.Append(") "); 
-        if (info.FileInfo is not null)
+        if (info.FileInfo is not null && info.FileInfo.Exists)
         {
             sb.Append(info.FileInfo.Length.GetReadableFileSize());
         }

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using PicView.Core.DebugTools;
@@ -20,7 +20,7 @@ public static class TranslationManager
     /// <summary>
     /// The current language model containing translations.
     /// </summary>
-    public static LanguageModel? Translation { get; private set; }
+    public static LanguageModel Translation { get; private set; } = new();
 
     /// <summary>
     /// Initializes the language model by setting all strings to empty.
