@@ -1009,7 +1009,7 @@
                             Height="{Binding TabHeight}"
                             Padding="9,0"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="AltHover"
                             Command="{CompiledBinding CloseTab}"
                             Data="{StaticResource CloseGeometry}"
                             DockPanel.Dock="Right"
@@ -1102,7 +1102,7 @@
             Opacity="0"
             ZIndex="9" />
 
-        <!-- Bottom-right Archive Extraction Progress Indicator -->
+        <!--  Bottom-right Archive Extraction Progress Indicator  -->
         <Border
             Margin="0,0,16,16"
             Padding="8,4"
@@ -1115,13 +1115,19 @@
             IsHitTestVisible="False"
             IsVisible="{Binding WindowTabs.ActiveTab.Value.ArchiveExtractionProgressText.Value, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
             ZIndex="10">
-            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                <Viewbox Width="14" Height="14" VerticalAlignment="Center">
+            <StackPanel
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="6">
+                <Viewbox
+                    Width="14"
+                    Height="14"
+                    VerticalAlignment="Center">
                     <uc:SpinWaiter />
                 </Viewbox>
                 <TextBlock
-                    Classes="txt"
                     VerticalAlignment="Center"
+                    Classes="txt"
                     FontSize="12"
                     Text="{Binding WindowTabs.ActiveTab.Value.ArchiveExtractionProgressText.Value, Mode=OneWay}" />
             </StackPanel>

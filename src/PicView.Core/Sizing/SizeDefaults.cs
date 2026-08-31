@@ -6,14 +6,12 @@ public static class SizeDefaults
     
     public const int BottombarHeight = 26;
     
-    public const int MainTitlebarHeight = 28;
-    
-    public const int TopBorderHeight = 28;
+    public const int MainTitlebarHeight = 30;
     
     public const int WindowMinSize = 315;
     public const int SecondaryWindowMinWidth = 410;
     
-    public const int TabHeight = 32;
+    public const int TabHeight = 30;
     
     
     // Breakpoints

@@ -8,7 +8,7 @@
         <Setter Property="Foreground" Value="{DynamicResource MainTextColorFaded}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TabItemBorderColor}" />
         <Setter Property="BorderThickness" Value="0,0,0,2" />
-        <Setter Property="Height" Value="32" />
+        <Setter Property="Height" Value="30" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border

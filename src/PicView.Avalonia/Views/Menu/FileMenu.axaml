@@ -10,7 +10,7 @@
     <Border Background="Transparent">
 
         <Grid
-            Width="359"
+            Width="361"
             RowDefinitions="Auto,Auto"
             UseLayoutRounding="True">
 
@@ -19,7 +19,7 @@
                 x:Name="MainBorder"
                 Grid.Row="0"
                 Background="{DynamicResource MenuBackgroundColor}"
-                BorderBrush="{DynamicResource MenuSurroundingBorderColor}"
+                BorderBrush="{DynamicResource DropMenuSurroundingBorderColor}"
                 BorderThickness="1"
                 CornerRadius="8">
 
@@ -30,17 +30,20 @@
                         Width="359"
                         Height="47"
                         Background="{DynamicResource DropMenuBackgroundColor}"
-                        BorderBrush="{DynamicResource MenuBorderColor}"
+                        BorderBrush="{DynamicResource DropMenuBorderColor}"
                         BorderThickness="0,0,0,1"
                         CornerRadius="8,8,0,0" />
 
                     <StackPanel
                         x:Name="TopButtonPanel"
+                        Canvas.Left="-1"
                         Canvas.Top="-1"
                         Orientation="Horizontal">
 
                         <!--  Show Image Info Window  -->
                         <customControls:IconButton
+                            BorderBrush="{DynamicResource DropMenuBorderColor}"
+                            BorderThickness="0,0,1,0"
                             Classes="hover btn"
                             Command="{CompiledBinding ImageInfoWindowCommand}"
                             CornerRadius="8,0,0,0"
@@ -53,6 +56,8 @@
 
                         <!--  Print  -->
                         <customControls:IconButton
+                            BorderBrush="{DynamicResource DropMenuBorderColor}"
+                            BorderThickness="0,0,1,0"
                             Classes="hover btn"
                             Command="{CompiledBinding PrintCommand}"
                             Data="{StaticResource PrintGeometry}"
@@ -67,6 +72,8 @@
 
                         <!--  Crop  -->
                         <customControls:IconButton
+                            BorderBrush="{DynamicResource DropMenuBorderColor}"
+                            BorderThickness="0,0,1,0"
                             Classes="hover btn"
                             Command="{CompiledBinding CropCommand}"
                             Icon="{StaticResource CropImage}"
@@ -81,6 +88,8 @@
 
                         <!--  Effects  -->
                         <customControls:IconButton
+                            BorderBrush="{DynamicResource DropMenuBorderColor}"
+                            BorderThickness="0,0,1,0"
                             Classes="hover btn"
                             Command="{CompiledBinding EffectsWindowCommand}"
                             Icon="{StaticResource SparklesImage}"
@@ -91,6 +100,8 @@
 
                         <!--  Single image resize  -->
                         <customControls:IconButton
+                            BorderBrush="{DynamicResource DropMenuBorderColor}"
+                            BorderThickness="0,0,1,0"
                             Classes="hover btn"
                             Command="{CompiledBinding ResizeImageCommand}"
                             Icon="{StaticResource UpscaleImage}"
@@ -101,6 +112,8 @@
 
                         <!--  Batch resize  -->
                         <customControls:IconButton
+                            BorderBrush="{DynamicResource DropMenuBorderColor}"
+                            BorderThickness="0,0,1,0"
                             Classes="hover btn"
                             Command="{CompiledBinding BatchResizeWindowCommand}"
                             Icon="{StaticResource BatchResizeImage}"
@@ -133,7 +146,9 @@
                         Width="169"
                         Height="46"
                         Background="{DynamicResource MenuButtonBackground}"
-                        Classes="ButtonBorder altHover"
+                        BorderBrush="{DynamicResource DropMenuBorderColor}"
+                        BorderThickness="1"
+                        Classes="AltHover"
                         Command="{CompiledBinding OpenCommand}"
                         Data="{StaticResource FolderGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
@@ -154,7 +169,9 @@
                         Width="169"
                         Height="46"
                         Background="{DynamicResource MenuButtonBackground}"
-                        Classes="ButtonBorder altHover"
+                        BorderBrush="{DynamicResource DropMenuBorderColor}"
+                        BorderThickness="1"
+                        Classes="AltHover"
                         Command="{CompiledBinding OpenWithCommand}"
                         Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource OpenExternalImage}"
@@ -178,7 +195,9 @@
                         Width="169"
                         Height="46"
                         Background="{DynamicResource MenuButtonBackground}"
-                        Classes="ButtonBorder altHover"
+                        BorderBrush="{DynamicResource DropMenuBorderColor}"
+                        BorderThickness="1"
+                        Classes="AltHover"
                         Command="{CompiledBinding OpenInExplorerCommand}"
                         Data="{StaticResource ShowInFolderGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
@@ -203,7 +222,9 @@
                         Width="169"
                         Height="46"
                         Background="{DynamicResource MenuButtonBackground}"
-                        Classes="ButtonBorder altHover"
+                        BorderBrush="{DynamicResource DropMenuBorderColor}"
+                        BorderThickness="1"
+                        Classes="AltHover"
                         Command="{CompiledBinding SaveAsCommand}"
                         Data="{StaticResource SaveGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
@@ -227,7 +248,9 @@
                         Width="169"
                         Height="46"
                         Background="{DynamicResource MenuButtonBackground}"
-                        Classes="ButtonBorder altHover"
+                        BorderBrush="{DynamicResource DropMenuBorderColor}"
+                        BorderThickness="1"
+                        Classes="AltHover"
                         Command="{CompiledBinding ToggleGalleryCommand}"
                         Data="{StaticResource GalleryGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
@@ -240,7 +263,7 @@
                         ToolTip.Tip="{CompiledBinding Translation.ShowImageGallery.Value,
                                                       Mode=OneWay}" />
 
-                    <!--  Subdirectories  -->
+                    <!--  New window  -->
                     <customControls:TextIconButton
                         x:Name="NewWindowButton"
                         Canvas.Left="182"
@@ -248,7 +271,9 @@
                         Width="169"
                         Height="46"
                         Background="{DynamicResource MenuButtonBackground}"
-                        Classes="ButtonBorder altHover"
+                        BorderBrush="{DynamicResource DropMenuBorderColor}"
+                        BorderThickness="1"
+                        Classes="AltHover"
                         Command="{CompiledBinding NewWindowCommand}"
                         Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource WindowImage}"

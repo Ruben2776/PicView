@@ -1,7 +1,7 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
 
     <ResourceDictionary.ThemeDictionaries>
 
@@ -44,10 +44,9 @@
             <Color x:Key="BottomBarButtonHoverBackground">#DB3D3D3D</Color>
 
             <!--  MENUS & DROPDOWNS  -->
-            <Color x:Key="MenuBackgroundColor">#F62B2B2B</Color>
-            <Color x:Key="MenuButtonBackground">#fff</Color>
-            <Color x:Key="MenuBorderColor">#fff</Color>
-            <Color x:Key="MenuSurroundingBorderColor">#B5C0CE</Color>
+            <Color x:Key="MenuBackgroundColor">#292929</Color>
+            <Color x:Key="MenuButtonBackground">#303030</Color>
+            <Color x:Key="MenuBorderColor">#373535</Color>
 
             <Color x:Key="DisabledMenuBackgroundColor">#E3DFE7</Color>
             <Color x:Key="DisabledMenuForegroundColor">#A9A5AC</Color>
@@ -58,17 +57,20 @@
 
             <Color x:Key="MenuItemHoverBackground">#D9DEF2</Color>
 
-            <Color x:Key="DropMenuBackgroundColor">#FEF9FBFF</Color>
+            <!--  Drop menu  -->
+            <Color x:Key="DropMenuSurroundingBorderColor">#FF3B3B3B</Color>
+            <Color x:Key="DropMenuBackgroundColor">#CC252525</Color>
+            <Color x:Key="DropMenuBorderColor">#FF3A3A3A</Color>
             <Color x:Key="DropDownMenuButtonBackground">#fff</Color>
             <Color x:Key="DropDownMenuButtonForeground">#FF656565</Color>
-            <Color x:Key="DropDownMenuButtonBorderColor">#F4EFF1F5</Color>
+            <Color x:Key="DropDownMenuButtonBorderColor">#373535</Color>
 
             <!--  TABS  -->
-            <Color x:Key="BehindTabBackground">#fff</Color>
-            <Color x:Key="TabItemSelectedBackground">#fff</Color>
-            <Color x:Key="TabItemUnSelectedBackground">#F2F5F9</Color>
-            <Color x:Key="TabItemBorderColor">#9ABCBCBC</Color>
-            <Color x:Key="TabItemHoverBackground">#E1E7F0</Color>
+            <Color x:Key="BehindTabBackground">#FF353535</Color>
+            <Color x:Key="TabItemSelectedBackground">#FF252525</Color>
+            <Color x:Key="TabItemUnSelectedBackground">#FF252525</Color>
+            <Color x:Key="TabItemBorderColor">#F42F2F2F</Color>
+            <Color x:Key="TabItemHoverBackground">#D2353535</Color>
 
             <!--  Scrollbar  -->
             <Color x:Key="ScrollbarBackgroundColor">#fff</Color>
@@ -84,25 +86,25 @@
 
             <!--  StartUpMenu  -->
             <ImageBrush
+                x:Key="StartUpMenuBackground"
                 DestinationRect="0,0,200,200"
                 Opacity=".5"
                 Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 Stretch="Fill"
-                TileMode="FlipXY"
-                x:Key="StartUpMenuBackground" />
+                TileMode="FlipXY" />
             <Color x:Key="StartUpMenuForeground">#DDDDDD</Color>
 
             <!--  EFFECTS & MISC  -->
             <Color x:Key="ErrorColor">#B51522</Color>
-            <SolidColorBrush Color="{StaticResource ErrorColor}" x:Key="ErrorBrush" />
+            <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}" />
 
             <ImageBrush
+                x:Key="NoisyTexture"
                 DestinationRect="0,0,200,200"
                 Opacity=".6"
                 Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 Stretch="Fill"
-                TileMode="FlipXY"
-                x:Key="NoisyTexture" />
+                TileMode="FlipXY" />
         </ResourceDictionary>
 
 
@@ -149,7 +151,6 @@
             <Color x:Key="MenuBackgroundColor">#fff</Color>
             <Color x:Key="MenuButtonBackground">#fff</Color>
             <Color x:Key="MenuBorderColor">#fff</Color>
-            <Color x:Key="MenuSurroundingBorderColor">#B5C0CE</Color>
 
             <Color x:Key="DisabledMenuBackgroundColor">#E3DFE7</Color>
             <Color x:Key="DisabledMenuForegroundColor">#A9A5AC</Color>
@@ -160,6 +161,9 @@
 
             <Color x:Key="MenuItemHoverBackground">#D9DEF2</Color>
 
+            <!--  Drop menu  -->
+            <Color x:Key="DropMenuSurroundingBorderColor">#B5C0CE</Color>
+            <Color x:Key="DropMenuBorderColor">#373535</Color>
             <Color x:Key="DropMenuBackgroundColor">#FEF9FBFF</Color>
             <Color x:Key="DropDownMenuButtonBackground">#fff</Color>
             <Color x:Key="DropDownMenuButtonForeground">#FF656565</Color>
@@ -185,10 +189,10 @@
 
 
             <!--  StartUpMenu  -->
-            <ConicGradientBrush Center="50%,50%" x:Key="StartUpMenuBackground">
-                <GradientStop Color="#ECECECFF" Offset="0.0" />
-                <GradientStop Color="#FFCDC9C5" Offset="0.5" />
-                <GradientStop Color="#ECECECFF" Offset="1.0" />
+            <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
+                <GradientStop Offset="0.0" Color="#ECECECFF" />
+                <GradientStop Offset="0.5" Color="#FFCDC9C5" />
+                <GradientStop Offset="1.0" Color="#ECECECFF" />
             </ConicGradientBrush>
             <Color x:Key="StartUpMenuForeground">#FF616161</Color>
 
