@@ -63,20 +63,14 @@ public class GalleryViewModel : IDisposable
         Observable.EveryValueChanged(Settings.Gallery, g => g.ItemSpacing)
         .Subscribe(x =>
         {
-            if (IsGalleryExpanded.CurrentValue)
-            {
-                ItemSpacing.Value = x;
-            }
+            ItemSpacing.Value = x;
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
 
         Observable.EveryValueChanged(Settings.Gallery, g => g.LineSpacing)
         .Subscribe(x =>
         {
-            if (IsGalleryExpanded.CurrentValue)
-            {
-                LineSpacing.Value = x;
-            }
+            LineSpacing.Value = x;
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
 

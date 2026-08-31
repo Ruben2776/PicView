@@ -16,6 +16,7 @@ namespace PicView.Avalonia.Views.Gallery;
 public partial class GalleryView : GalleryAnimationControl
 {
     private readonly AvaloniaList<GalleryItemViewModel> _galleryItems = [];
+    private DisposableBag _disposables = new();
 
     public GalleryView()
     {
@@ -42,7 +43,8 @@ public partial class GalleryView : GalleryAnimationControl
                 _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
             };
             GalleryItemsControl.Navigate(direction);
-        }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.NavigateGalleryCommand)));
+        }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.NavigateGalleryCommand)))
+            .AddTo(ref _disposables);
 
          if (Settings.Gallery.IsGalleryDocked)
          {
@@ -52,6 +54,30 @@ public partial class GalleryView : GalleryAnimationControl
          {
              Height = 0;
          }
+         gallery.ItemSpacing.Subscribe(_ =>
+         {
+             RecalculateGalleryIfNeeded(gallery);
+         }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.ItemSpacing)))
+         .AddTo(ref _disposables);
+         gallery.LineSpacing.Subscribe(_ =>
+             {
+                 RecalculateGalleryIfNeeded(gallery);
+             }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.LineSpacing)))
+             .AddTo(ref _disposables);
+
+    }
+    
+    private void RecalculateGalleryIfNeeded(GalleryViewModel gallery)
+    {
+        if (!gallery.IsGalleryExpanded.CurrentValue || IsInAnimation)
+        {
+            return;
+        }
+
+        if (GalleryItemsControl.ItemsPanelRoot is VirtualizingGallery galleryItemsPanel)
+        {
+            galleryItemsPanel.InvalidateMeasure();
+        }
     }
 
     private void CurrentValueOnCollectionChanged(in NotifyCollectionChangedEventArgs<GalleryItemViewModel> e)

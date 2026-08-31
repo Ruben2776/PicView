@@ -65,33 +65,21 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
     public double ItemHeight
     {
         get => GetValue(ItemHeightProperty);
-        set
-        {
-            SetValue(ItemHeightProperty, value); 
-            InvalidateMeasure();
-        }
+        set => SetValue(ItemHeightProperty, value);
     }
 
     /// <inheritdoc cref="WrapPanel" />
     public double ItemSpacing
     {
         get => GetValue(ItemSpacingProperty);
-        set
-        {
-            SetValue(ItemSpacingProperty, value); 
-            InvalidateMeasure();
-        }
+        set => SetValue(ItemSpacingProperty, value);
     }
 
     /// <inheritdoc cref="WrapPanel" />
     public double LineSpacing
     {
         get => GetValue(LineSpacingProperty);
-        set
-        {
-            SetValue(LineSpacingProperty, value); 
-            InvalidateMeasure();
-        }
+        set => SetValue(LineSpacingProperty, value);
     }
 
     public bool IsExpanded
