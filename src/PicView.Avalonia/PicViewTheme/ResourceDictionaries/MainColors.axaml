@@ -18,7 +18,7 @@
             <Color x:Key="WindowTitleBackgroundColor">#fff</Color>
             <Color x:Key="WindowButtonBackgroundColor">#CC2b2b2b</Color>
             <Color x:Key="WindowBorderColor">#FF3A3A3A</Color>
-            <Color x:Key="WindowLogoColor">#CC2b2b2b</Color>
+            <Color x:Key="WindowLogoColor">#FF303030</Color>
             <Color x:Key="WindowMainBackgroundColor">#fff</Color>
 
             <!--  TOP TITLE BAR  -->
@@ -33,19 +33,15 @@
             <Color x:Key="EditableTitlebarForeground">#EEF2F2F2</Color>
 
             <!--  BOTTOM TOOLBAR  -->
-            <Color x:Key="BottomBarBackgroundColor">#ECF8F8F8</Color>
-            <Color x:Key="BottomBarForegroundColor">#EE393939</Color>
-            <Color x:Key="BottomBarBorderColor">Gainsboro</Color>
+            <Color x:Key="BottomBarBackgroundColor">#292929</Color>
+            <Color x:Key="BottomBarForegroundColor">#EEDFDFDF</Color>
+            <Color x:Key="BottomBarBorderColor">#FF3A3A3A</Color>
 
-            <Color x:Key="BottomBarButtonBackgroundColor">#FCFCFC</Color>
-            <Color x:Key="BottomBarButtonBorderColor">#fff</Color>
-            <Color x:Key="BottomBarButtonBackgroundAltColor">#FBFBFB</Color>
-
-            <!--  Bottom Toolbar Buttons  -->
-            <Color x:Key="BottomBarNavBtnBackground">Transparent</Color>
-            <Color x:Key="BottomBarActionBtnBackground">Transparent</Color>
-            <Color x:Key="BottomBarToolBtnBackground">Transparent</Color>
-            <Color x:Key="BottomBarButtonHoverBackground">#E1E7F0</Color>
+            <Color x:Key="BottomBarButtonBackgroundColor">#CC303030</Color>
+            <Color x:Key="BottomBarButtonBorderColor">#373535</Color>
+            <Color x:Key="BottomBarNavBtnBackground">#FF252525</Color>
+            <Color x:Key="BottomBarToolBtnBackground">#A7222222</Color>
+            <Color x:Key="BottomBarButtonHoverBackground">#DB3D3D3D</Color>
 
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#F62B2B2B</Color>
@@ -138,19 +134,14 @@
             <Color x:Key="EditableTitlebarForeground">#EE25203C</Color>
 
             <!--  BOTTOM TOOLBAR  -->
-            <Color x:Key="BottomBarBackgroundColor">#ECF8F8F8</Color>
+            <Color x:Key="BottomBarBackgroundColor">#fff</Color>
             <Color x:Key="BottomBarForegroundColor">#EE393939</Color>
             <Color x:Key="BottomBarBorderColor">Gainsboro</Color>
 
             <Color x:Key="BottomBarButtonBackgroundColor">#FCFCFC</Color>
             <Color x:Key="BottomBarButtonBorderColor">#fff</Color>
-            <Color x:Key="BottomBarButtonBackgroundAltColor">#FBFBFB</Color>
-
-            <!--  Bottom Toolbar Buttons  -->
-            <Color x:Key="BottomBarNavBtnBackground">Transparent</Color>
-            <Color x:Key="BottomBarActionBtnBackground">Transparent</Color>
-            <Color x:Key="BottomBarToolBtnBackground">Transparent</Color>
-            <Color x:Key="BottomBarButtonHoverBackground">#E1E7F0</Color>
+            <Color x:Key="BottomBarNavBtnBackground">#fff</Color>
+            <Color x:Key="BottomBarToolBtnBackground">#fff</Color>
 
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#fff</Color>

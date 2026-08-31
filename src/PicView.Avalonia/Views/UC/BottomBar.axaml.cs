@@ -245,27 +245,29 @@ public partial class BottomBar : UserControl, IDisposable
 
     private void ApplyLightTheme()
     {
-        FileMenuButton.Classes.Remove("noBorderHover");
-        FileMenuButton.Classes.Add("noBorderHoverAlt");
+        FileMenuButton.Classes.Remove("BottomBarHover");
+        FileMenuButton.Classes.Add("AltHover");
 
-        RotateLeftButton.Classes.Remove("noBorderHover");
-        RotateLeftButton.Classes.Add("noBorderHoverAlt");
+        RotateLeftButton.Classes.Remove("BottomBarToolHover");
+        RotateLeftButton.Classes.Add("AltHover");
 
-        ResetZoomButton.Classes.Remove("noBorderHover");
-        ResetZoomButton.Classes.Add("noBorderHoverAlt");
+        ResetZoomButton.Classes.Remove("BottomBarToolHover");
+        ResetZoomButton.Classes.Add("AltHover");
 
-        SettingsMenuButton.Classes.Remove("noBorderHover");
-        SettingsMenuButton.Classes.Add("noBorderHoverAlt");
+        ZoomOutButton.Classes.Remove("BottomBarToolHover");
+        ZoomOutButton.Classes.Add("AltHover");
+        
+        ZoomInButton.Classes.Remove("BottomBarToolHover");
+        ZoomInButton.Classes.Add("AltHover");
 
-        ZoomOutButton.Classes.Remove("noBorderHover");
-        ZoomInButton.Classes.Remove("noBorderHover");
-        ZoomOutButton.Classes.Add("noBorderHoverAlt");
-        ZoomInButton.Classes.Add("noBorderHoverAlt");
-
-        RotateRightButton.Classes.Remove("noBorderHover");
-        FlipButton.Classes.Remove("noBorderHover");
-        RotateRightButton.Classes.Add("noBorderHoverAlt");
-        FlipButton.Classes.Add("noBorderHoverAlt");
+        RotateRightButton.Classes.Remove("BottomBarToolHover");
+        RotateRightButton.Classes.Add("AltHover");
+        
+        FlipButton.Classes.Remove("BottomBarToolHover");
+        FlipButton.Classes.Add("AltHover");
+        
+        SettingsMenuButton.Classes.Remove("BottomBarHover");
+        SettingsMenuButton.Classes.Add("AltHover");
     }
 
     private void MoveWindow(PointerPressedEventArgs e)

@@ -6,7 +6,7 @@ public static class SizeDefaults
     
     public const int BottombarHeight = 26;
     
-    public const int MainTitlebarHeight = 32;
+    public const int MainTitlebarHeight = 28;
     
     public const int TopBorderHeight = 28;
     

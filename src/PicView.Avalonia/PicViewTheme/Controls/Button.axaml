@@ -33,12 +33,6 @@
                         <Setter Property="Foreground">
                             <SolidColorBrush Color="{DynamicResource MainTextColor}" />
                         </Setter>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
-                        </Setter>
                     </KeyFrame>
                     <KeyFrame Cue="1">
                         <Setter Property="Foreground">
@@ -56,38 +50,6 @@
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
-        </Style>
-
-        <Style Selector="^.accentHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Style.Animations>
-                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
-                    <KeyFrame>
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
-                        </Setter>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="#fff" />
-                        </Setter>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Foreground" Value="#fff" />
-            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryAccentColor}" />
         </Style>
 
         <Style Selector="^.errorHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
@@ -136,7 +98,7 @@
             <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
         </Style>
 
-        <Style Selector="^.TopTitlebarHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Style Selector="^.AltHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Style.Animations>
                 <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
                     <KeyFrame>
@@ -148,39 +110,46 @@
                         <Setter Property="Background">
                             <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
                         </Setter>
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="{DynamicResource MainTextColor}" />
-                        </Setter>
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
-            <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
         </Style>
 
-        <Style Selector="^.noBorderHoverAlt:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Style Selector="^.BottomBarHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Style.Animations>
                 <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
                     <KeyFrame>
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource MainButtonBackgroundColor}" />
-                        </Setter>
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="{DynamicResource MainTextColor}" />
+                            <SolidColorBrush Color="{DynamicResource BottomBarButtonBackgroundColor}" />
                         </Setter>
                     </KeyFrame>
                     <KeyFrame Cue="1">
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
-                        </Setter>
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
+                            <SolidColorBrush Color="{DynamicResource BottomBarButtonHoverBackground}" />
                         </Setter>
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+            <Setter Property="Background" Value="{DynamicResource BottomBarButtonHoverBackground}" />
+        </Style>
+
+        <Style Selector="^.BottomBarToolHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource BottomBarToolBtnBackground}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource BottomBarButtonHoverBackground}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource BottomBarButtonHoverBackground}" />
         </Style>
 
         <!--  End of animations  -->
