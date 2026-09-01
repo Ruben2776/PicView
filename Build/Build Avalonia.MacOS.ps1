@@ -6,7 +6,13 @@
     [string]$outputPath,
 
     [Parameter()]
-    [string]$appVersion
+    [string]$appVersion,
+
+    # Optional: e.g. "Developer ID Application: ...". When set, the bundled
+    # motion photo dylib is signed (hardened runtime, secure timestamp) before
+    # the app bundle itself is signed/notarized.
+    [Parameter()]
+    [string]$CodesignIdentity
 )
 # Define the core project path relative to the script's location
 $coreProjectPath = Join-Path -Path $PSScriptRoot -ChildPath "..\src\PicView.Core\PicView.Core.csproj"
@@ -32,6 +38,28 @@ if ($packageNodes) {
 
 # Save the updated .csproj file
 $coreCsproj.Save($coreProjectPath)
+
+# Motion photo native library: build picview-ffmpeg when its dylib is missing,
+# so dotnet publish picks it up and it is bundled below. One-time prerequisites:
+# brew install zig nasm make
+$ffmpegOutputDir = Join-Path -Path $PSScriptRoot -ChildPath "ffmpeg-native/osx-$Platform"
+$ffmpegDylibPath = Join-Path -Path $ffmpegOutputDir -ChildPath "libpicviewffmpeg.dylib"
+if (-not (Test-Path $ffmpegDylibPath)) {
+    Write-Host "libpicviewffmpeg.dylib not found for osx-$Platform - building picview-ffmpeg..."
+    foreach ($tool in @('zig', 'nasm', 'brew')) {
+        if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) {
+            throw "$tool not found. Install the picview-ffmpeg prerequisites with: brew install zig nasm make"
+        }
+    }
+    # FFmpeg needs GNU make; brew installs it keg-only as gmake, so expose the
+    # directory containing it as 'make' to the build script
+    $gmakeDir = Join-Path (brew --prefix make) 'libexec/gnubin'
+    if (-not (Test-Path (Join-Path $gmakeDir 'make'))) {
+        throw "GNU make not found. Install the picview-ffmpeg prerequisites with: brew install zig nasm make"
+    }
+    $env:PV_EXTRA_PATH = [string]::IsNullOrEmpty($env:PV_EXTRA_PATH) ? $gmakeDir : "$gmakeDir`:$env:PV_EXTRA_PATH"
+    & (Join-Path $PSScriptRoot 'Build-FFmpegNative.ps1') -Targets "osx-$Platform"
+}
 
 # Define the project path for the actual build target
 $avaloniaProjectPath = Join-Path -Path $PSScriptRoot -ChildPath "../src/PicView.Avalonia.MacOS/PicView.Avalonia.MacOS.csproj"
@@ -100,3 +128,16 @@ Get-ChildItem -Path $macOSPath -Recurse | ForEach-Object {
 }
 # Set proper ownership and permissions for the entire .app bundle
 chmod -R 755 $appBundlePath
+
+# Sign the bundled motion photo dylib when a signing identity is provided, so
+# Gatekeeper/notarization accept it (inside-out: dylib before the app bundle).
+# Without an identity the existing bundle signing covers it instead.
+$bundledDylibPath = Join-Path -Path $macOSPath -ChildPath "ffmpeg/osx-$Platform/libpicviewffmpeg.dylib"
+if (Test-Path $bundledDylibPath) {
+    if ($CodesignIdentity) {
+        codesign --force --options runtime --timestamp --sign $CodesignIdentity $bundledDylibPath
+    }
+}
+else {
+    Write-Warning "libpicviewffmpeg.dylib was not bundled; motion photos will play back as still images."
+}
