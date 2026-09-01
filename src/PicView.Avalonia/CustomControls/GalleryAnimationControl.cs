@@ -258,6 +258,15 @@ public class GalleryAnimationControl : UserControl
         }
         core.GallerySettings.ItemHeight.Value = itemHeight;
     }
+    
+    private void ParentSizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        // Keep the layout correct when the view is resized
+        if (ActiveGalleryMode == GalleryMode.Expanded)
+        {
+            UpdateLayoutForCurrentState();
+        }
+    }
 
     #endregion
 
@@ -451,29 +460,27 @@ public class GalleryAnimationControl : UserControl
         if (IsHorizontalDock(dock))
         {
             Height = ZeroSize;
-            var anim = AnimationsHelper.HeightAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed);
-            await anim.RunAsync(this);
+            await AnimationsHelper.HeightAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed).RunAsync(this);
             Height = targetSize;
         }
         else
         {
             Width = ZeroSize;
-            var anim = AnimationsHelper.WidthAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed);
-            await anim.RunAsync(this);
+            await AnimationsHelper.WidthAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed).RunAsync(this);
             Width = targetSize;
         }
 
         SetDockedThumbPosition(dock);
         _viewer.ScrollToCenterOfCurrentItem();
+        
         if (Settings.WindowProperties.AutoFit)
         {
             Dispatcher.UIThread.Post(() =>
             {
-                if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+                if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
                 {
-                    return;
+                    WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
                 }
-                WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
             });
         }
     }
@@ -511,13 +518,18 @@ public class GalleryAnimationControl : UserControl
     private async Task DockedToExpanded()
     {
         var dock = Settings.Gallery.DockPosition;
+        var targetHeight = ParentControl!.Bounds.Height;
+
+        // LOCK the layout wrap constraint to the final size before animating
+        _itemsPanel.WrapHeightOverride = targetHeight;
+        
         SetExpandedLayoutCore(dock);
+        SetExpandedThumbs();
 
         var startSize = GetDockedSize;
 
         if (IsHorizontalDock(dock))
         {
-            var targetHeight = ParentControl.Bounds.Height;
             await AnimationsHelper.HeightAnimation(startSize, targetHeight, GalleryDefaults.MediumAnimationSpeed).RunAsync(this);
             Height = targetHeight;
         }
@@ -528,17 +540,22 @@ public class GalleryAnimationControl : UserControl
             Width = targetWidth;
         }
 
-        SetExpandedThumbs();
         _viewer?.ScrollToCenterOfCurrentItem();
+        
+        // Unlock the layout
+        _itemsPanel.WrapHeightOverride = double.NaN;
     }
 
     private async Task ExpandedToDocked()
     {
         var dock = Settings.Gallery.DockPosition;
+        var startHeight = ParentControl.Bounds.Height;
+
+        // LOCK the layout wrap constraint so it doesn't wrap tighter as the window shrinks
+        _itemsPanel.WrapHeightOverride = startHeight;
 
         if (IsHorizontalDock(dock))
         {
-            var startHeight = ParentControl.Bounds.Height;
             var targetHeight = GetDockedSize;
             if (Settings.WindowProperties.AutoFit)
             {
@@ -561,7 +578,6 @@ public class GalleryAnimationControl : UserControl
                 await AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed).RunAsync(this, ct);
                 await cts.CancelAsync();
             }
-
             Height = targetHeight;
         }
         else
@@ -574,7 +590,10 @@ public class GalleryAnimationControl : UserControl
         }
 
         SetDockedLayout(dock);
-        _viewer?.ScrollToCenterOfCurrentItem();
+        _viewer.ScrollToCenterOfCurrentItem();
+        
+        // Unlock the layout
+        _itemsPanel.WrapHeightOverride = double.NaN;
     }
 
     private async Task ClosedToExpanded()
@@ -582,43 +601,38 @@ public class GalleryAnimationControl : UserControl
         IsVisible = true;
         Width = Height = ZeroSize;
 
-        var targetHeight = ParentControl.Bounds.Height;
+        var targetHeight = ParentControl!.Bounds.Height;
         var targetWidth = ParentControl.Bounds.Width;
+
+        // Lock constraint and set expanded layout BEFORE animation for a smooth reveal
+        _itemsPanel.WrapHeightOverride = targetHeight;
+        SetExpandedLayoutCore(Settings.Gallery.DockPosition);
+        SetExpandedThumbs();
 
         await Task.WhenAll(
             AnimationsHelper.WidthAnimation(ZeroSize, targetWidth, GalleryDefaults.MediumAnimationSpeed).RunAsync(this),
             AnimationsHelper.HeightAnimation(ZeroSize, targetHeight, GalleryDefaults.MediumAnimationSpeed).RunAsync(this)
         );
 
-        _viewer?.SetHorizontalScrolling();
-        _itemsPanel?.Orientation = Orientation.Vertical;
-        TabViewModel?.Gallery.ItemSpacing.Value = Settings.Gallery.ItemSpacing;
-        
-        SetExpandedThumbs();
-        _viewer?.ScrollToCenterOfCurrentItem();
+        _viewer.ScrollToCenterOfCurrentItem();
+        _itemsPanel.WrapHeightOverride = double.NaN;
     }
 
     private async Task ExpandedToClosed()
     {
+        _itemsPanel.WrapHeightOverride = ParentControl.Bounds.Height;
+
         await Task.WhenAll(
             AnimationsHelper.WidthAnimation(Bounds.Width, ZeroSize, GalleryDefaults.FastAnimationSpeed).RunAsync(this),
             AnimationsHelper.HeightAnimation(Bounds.Height, ZeroSize, GalleryDefaults.FastAnimationSpeed).RunAsync(this)
         );
 
         IsVisible = false;
-        if (Application.Current.DataContext is not CoreViewModel core || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-        {
-            return;
-        }
-        WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
-    }
+        _itemsPanel.WrapHeightOverride = double.NaN;
 
-    private void ParentSizeChanged(object? sender, SizeChangedEventArgs e)
-    {
-        // Keep the layout correct when the view is resized
-        if (ActiveGalleryMode == GalleryMode.Expanded)
+        if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {
-            UpdateLayoutForCurrentState();
+            WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
         }
     }
 

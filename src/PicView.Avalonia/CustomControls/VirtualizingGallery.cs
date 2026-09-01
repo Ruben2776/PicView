@@ -37,6 +37,9 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
     public static readonly StyledProperty<double> LineSpacingProperty =
         AvaloniaProperty.Register<WrapPanel, double>(nameof(LineSpacing));
 
+    public static readonly StyledProperty<double> WrapHeightOverrideProperty =
+        AvaloniaProperty.Register<VirtualizingGallery, double>(nameof(WrapHeightOverride), double.NaN);
+
     private readonly List<Rect> _itemBounds = [];
 
     private readonly List<RealizedItem> _realizedItems = [];
@@ -80,6 +83,12 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
     {
         get => GetValue(LineSpacingProperty);
         set => SetValue(LineSpacingProperty, value);
+    }
+    
+    public double WrapHeightOverride
+    {
+        get => GetValue(WrapHeightOverrideProperty);
+        set => SetValue(WrapHeightOverrideProperty, value);
     }
 
     public bool IsExpanded
@@ -197,6 +206,9 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
         double maxExtentY = 0;
         var currentColumnStartIndex = 0; // Track where the current column starts
 
+        // Use the override if provided, otherwise use the actual available height
+        var availableHeight = double.IsNaN(WrapHeightOverride) ? availableSize.Height : WrapHeightOverride;
+
         foreach (var item in items)
         {
             var itemWidth = ItemHeight; // Fallback for square
@@ -215,10 +227,9 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
 
             if (IsExpanded)
             {
-                // Vertical Wrapping: Wrap to next column if exceeding available height
-                if (currentY + ItemHeight > availableSize.Height && currentY > 0)
+                // Vertical Wrapping: Use the locked availableHeight
+                if (currentY + ItemHeight > availableHeight && currentY > 0)
                 {
-                    // Retroactively equalize widths in the column that just finished
                     for (var j = currentColumnStartIndex; j < _itemBounds.Count; j++)
                     {
                         var rect = _itemBounds[j];
@@ -232,7 +243,6 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
                 }
 
                 _itemBounds.Add(new Rect(currentX, currentY, itemWidth, ItemHeight));
-
                 currentY += ItemHeight + ItemSpacing;
                 currentColumnMaxWidth = Math.Max(currentColumnMaxWidth, itemWidth);
                 maxExtentY = Math.Max(maxExtentY, currentY - ItemSpacing);
