@@ -20,6 +20,8 @@ public class NavigateAbleItemsViewer : ItemsControl
     #region Fields and  Avalonia Properties
     
     private AutoScrollViewer? _scrollViewer;
+    private GalleryAnimationControl? _animControl;
+
 
     protected override Type StyleKeyOverride => typeof(NavigateAbleItemsViewer);
 
@@ -63,6 +65,7 @@ public class NavigateAbleItemsViewer : ItemsControl
     {
         base.OnApplyTemplate(e);
         _scrollViewer = e.NameScope.Find<AutoScrollViewer>("PART_ScrollViewer");
+        _animControl = this.FindLogicalAncestorOfType<GalleryAnimationControl>();
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -101,6 +104,10 @@ public class NavigateAbleItemsViewer : ItemsControl
         }
         else
         {
+            if (_animControl.IsInAnimation)
+            {
+                return;
+            }
             // Delayed path: Avalonia hasn't inflated the DataTemplate yet.
             // We listen for the exact moment the Child property is evaluated and set.
             EventHandler<AvaloniaPropertyChangedEventArgs>? handler = null;
