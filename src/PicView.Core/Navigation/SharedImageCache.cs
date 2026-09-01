@@ -108,13 +108,33 @@ public class SharedImageCache : IImageCache
         {
             currentItems.Add(oldItems.Current);
         }
-        dict.Clear();
-
         var newFileMap = new Dictionary<string, int>(_pathLookup.Comparer);
         for (var i = 0; i < files.Count; i++)
         {
             newFileMap[files[i].FullName] = i;
         }
+
+        // Fast-path: if no existing cached item's index shifted and none were removed, avoid clearing the cache
+        var anyIndexChanged = false;
+        foreach (var item in currentItems)
+        {
+            if (!newFileMap.TryGetValue(item.Value.ImageModel.FileInfo.FullName, out var newIndex) || newIndex != item.Key)
+            {
+                anyIndexChanged = true;
+                break;
+            }
+        }
+
+        if (!anyIndexChanged)
+        {
+            if (files.Count > 0 && _ownerContexts.TryGetValue(ownerId, out var existingCtx))
+            {
+                _ownerContexts[ownerId] = (files[0].DirectoryName ?? string.Empty, files, existingCtx.CurrentIndex);
+            }
+            return;
+        }
+
+        dict.Clear();
 
         foreach (var item in currentItems)
         {
@@ -248,6 +268,45 @@ public class SharedImageCache : IImageCache
         foreach (var value in values)
         {
             ProcessDisposalLogic(value);
+        }
+    }
+
+    public void DeleteFromCache(string fileName)
+    {
+        if (!_pathLookup.TryGetValue(fileName, out var cachedValue))
+        {
+            return;
+        }
+
+        // Remove from all active owner dictionaries
+        foreach (var dict in _ownerDictionaries.Values)
+        {
+            int? indexToRemove = null;
+            foreach (var kvp in dict)
+            {
+                if (ReferenceEquals(kvp.Value, cachedValue))
+                {
+                    indexToRemove = kvp.Key;
+                    break;
+                }
+            }
+
+            if (indexToRemove.HasValue && dict.Remove(indexToRemove.Value, out var removedValue) && removedValue != null)
+            {
+                removedValue.ReleaseReference();
+            }
+        }
+
+        // If it was removed from any dictionary, its reference count should have dropped.
+        // But regardless, we want to completely obliterate it from the cache instantly.
+        if (_pathLookup.TryRemove(cachedValue.ImageModel.FileInfo.FullName, out var lookupValue))
+        {
+            // Reset reference to 0 just in case and dispose
+            while (lookupValue.ReferenceCount > 0)
+            {
+                lookupValue.ReleaseReference();
+            }
+            lookupValue.ImageModel.Dispose();
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using PicView.Core.Config.ConfigFileManagement;
 using PicView.Core.DebugTools;
@@ -126,7 +126,7 @@ public static class FileHistoryManager
     /// </summary>
     public static void Add(string path)
     {
-        if (!Settings.Navigation.IsFileHistoryEnabled)
+        if (!Settings.Navigation.IsFileHistoryEnabled || _entries is null)
         {
             return;
         }

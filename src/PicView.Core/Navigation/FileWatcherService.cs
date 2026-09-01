@@ -173,21 +173,22 @@ public class FileWatcherService(
         {
             return;
         }
-        var insertionIndex = FileSortOrder.InsertSorted(files, newFile, _stringComparer);
-        
-        tab.ImageIterator.UpdateNavigationProperties();
-        
-        if (tab.Model.FileInfo is null)
+        int insertionIndex;
+        lock (files)
         {
-            return;
+            insertionIndex = FileSortOrder.InsertSorted(files, newFile, _stringComparer);
         }
-        var newIndex = files.FindIndex(x =>
-            x.FullName.AsSpan().Equals(tab.Model.FileInfo.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase));
-        if (newIndex >= 0)
+        
+        if (insertionIndex <= tab.ImageIterator.CurrentIndex)
         {
-            tab.ImageIterator.SetCurrentIndex(newIndex);
+            tab.ImageIterator.SetCurrentIndex(tab.ImageIterator.CurrentIndex + 1);
+        }
+        else
+        {
+            tab.ImageIterator.UpdateNavigationProperties();
         }
 
+        tab.ImageIterator.NotifyFileAdded();
         _cache.Resynchronize(tab.Id, files);
         tab.UpdateTabTitle();
 

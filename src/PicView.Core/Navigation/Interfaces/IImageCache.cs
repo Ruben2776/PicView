@@ -119,4 +119,11 @@ public interface IImageCache
 
     ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list,
         CancellationToken ct = default);
+    
+    /// <summary>
+    /// Forces the complete removal of a cached item.
+    /// </summary>
+    /// <remarks>This should be called when an image file has e.g., been flipped/rotated.</remarks>
+    /// <param name="fileName"></param>
+    void DeleteFromCache(string fileName);
 }

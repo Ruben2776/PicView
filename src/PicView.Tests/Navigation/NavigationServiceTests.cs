@@ -104,14 +104,93 @@ public class NavigationServiceTests : IDisposable
         Assert.True(_mockThumbnailLoader.GetThumbnailAsyncCalledCount > 0, "Gallery should be reloaded (GetThumbnailAsync called)");
     }
 
-    private TabViewModel CreateTab(string directory)
+    private TabViewModel CreateTab(string directory, MainWindowViewModel? parentVm = null)
     {
-        var tab = new TabViewModel(null!, null!);
+        var tab = new TabViewModel(null!, parentVm!);
         // Initialize with mocks to avoid null refs
         var thumbCache = new MockThumbnailCache();
         tab.Initialize(_mockCache, thumbCache, _mockThumbnailLoader, null, thumbCache);
         tab.ImageIterator.Files = new List<FileInfo>();
         return tab;
+    }
+
+    [Fact]
+    public async Task LoadFromArchiveAsync_AlwaysUncompressEntireArchiveTrue_ExtractsInitial10SeedFiles()
+    {
+        Settings.Navigation.AlwaysUncompressEntireArchive = true;
+        var tempZipPath = Path.Combine(_testDirectory, "test_archive_true.zip");
+        var archiveSourceDir = Path.Combine(_testDirectory, "archive_source_true");
+        Directory.CreateDirectory(archiveSourceDir);
+
+        for (var i = 1; i <= 15; i++)
+        {
+            await File.WriteAllBytesAsync(Path.Combine(archiveSourceDir, $"img_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF]);
+        }
+
+        System.IO.Compression.ZipFile.CreateFromDirectory(archiveSourceDir, tempZipPath);
+
+        var tab = CreateTab(_testDirectory);
+        var cts = new CancellationTokenSource();
+
+        try
+        {
+            var success = await _navigationService.LoadFromArchiveAsync(tempZipPath, tab, cts);
+
+            Assert.True(success);
+            Assert.True(tab.ArchiveExtractionService.IsArchived);
+            Assert.NotNull(tab.ImageIterator.Files);
+            // Initially populated with 10 seed files
+            Assert.True(tab.ImageIterator.Files.Count >= 10);
+            Assert.NotNull(tab.Model);
+            Assert.NotNull(tab.Model.FileInfo);
+            Assert.True(File.Exists(tab.Model.FileInfo.FullName));
+        }
+        finally
+        {
+            tab.ArchiveExtractionService.Cleanup();
+            Settings.Navigation.AlwaysUncompressEntireArchive = false;
+        }
+    }
+
+    [Fact]
+    public async Task LoadFromArchiveAsync_AlwaysUncompressEntireArchiveFalse_ExtractsSingleSeedFile()
+    {
+        Settings.Navigation.AlwaysUncompressEntireArchive = false;
+        var tempZipPath = Path.Combine(_testDirectory, "test_archive_false.zip");
+        var archiveSourceDir = Path.Combine(_testDirectory, "archive_source_false");
+        Directory.CreateDirectory(archiveSourceDir);
+
+        for (var i = 1; i <= 15; i++)
+        {
+            await File.WriteAllBytesAsync(Path.Combine(archiveSourceDir, $"img_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF]);
+        }
+
+        System.IO.Compression.ZipFile.CreateFromDirectory(archiveSourceDir, tempZipPath);
+
+        var tab = CreateTab(_testDirectory);
+        var cts = new CancellationTokenSource();
+
+        try
+        {
+            var success = await _navigationService.LoadFromArchiveAsync(tempZipPath, tab, cts);
+
+            Assert.True(success);
+            Assert.True(tab.ArchiveExtractionService.IsArchived);
+            Assert.NotNull(tab.ImageIterator.Files);
+            // Initially seeded with 1 file (or 2 if side-by-side)
+            Assert.True(tab.ImageIterator.Files.Count >= 1);
+            Assert.NotNull(tab.Model);
+            Assert.NotNull(tab.Model.FileInfo);
+            Assert.True(File.Exists(tab.Model.FileInfo.FullName));
+            // Enables forward navigation while extracting in background
+            Assert.True(tab.CanNavigateForwards.Value);
+            // Should not show the batched progress text indicator
+            Assert.Null(tab.ArchiveExtractionProgressText.Value);
+        }
+        finally
+        {
+            tab.ArchiveExtractionService.Cleanup();
+        }
     }
 
     [Fact]
@@ -274,6 +353,7 @@ public class NavigationServiceTests : IDisposable
         public void Clear(TabViewModel tab, string directory) { }
         public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files) { }
         public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => ValueTask.FromResult(false);
+        public void DeleteFromCache(string fileName) { }
     }
     
     private class MockThumbnailLoader : IThumbnailLoader
