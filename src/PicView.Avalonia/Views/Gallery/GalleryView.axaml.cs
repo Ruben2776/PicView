@@ -16,7 +16,7 @@ namespace PicView.Avalonia.Views.Gallery;
 public partial class GalleryView : GalleryAnimationControl
 {
     private readonly AvaloniaList<GalleryItemViewModel> _galleryItems = [];
-    private DisposableBag _disposables = new();
+    private readonly DisposableBag _disposables;
 
     public GalleryView()
     {
