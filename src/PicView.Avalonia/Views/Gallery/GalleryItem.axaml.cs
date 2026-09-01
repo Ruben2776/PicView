@@ -11,12 +11,13 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
-using R3;
 
 namespace PicView.Avalonia.Views.Gallery;
 
 public partial class GalleryItem : NavigateAbleItem
 {
+    private CancellationTokenSource? _loadCts;
+    
     public GalleryItem()
     {
         InitializeComponent();
@@ -24,14 +25,11 @@ public partial class GalleryItem : NavigateAbleItem
         GalleryContextMenu.Closed += GalleryContextMenuOnClosed;
     }
 
-    private IDisposable? _imageSubscription;
-
-    public override void SetViewportVisibility(bool isVisible)
+    public override async Task SetViewportVisibilityAsync(bool isVisible)
     {
-        base.SetViewportVisibility(isVisible);
         if (isVisible)
         {
-            LoadImage();
+            await LoadImage().ConfigureAwait(false);
         }
         else
         {
@@ -39,43 +37,52 @@ public partial class GalleryItem : NavigateAbleItem
         }
     }
 
-    private void LoadImage()
+    private async Task LoadImage()
     {
-        if (_imageSubscription is not null || DataContext is not GalleryItemViewModel vm)
+        if (DataContext is not GalleryItemViewModel vm)
         {
             return;
         }
 
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        // Fast-path: If the image is already loaded, skip
+        if (vm.Image.Value is Bitmap)
         {
             return;
         }
+
+        if (vm.ThumbnailLoaderFunc == null)
+        {
+            return;
+        }
+
+        _loadCts?.Cancel();
+        _loadCts = new CancellationTokenSource();
+        var token = _loadCts.Token;
+
+        try
+        {
+            // Execute the lazy load directly
+            var thumb = await vm.ThumbnailLoaderFunc(token).ConfigureAwait(false);
         
-        _imageSubscription = Observable.EveryValueChanged(vm.Image, img => img.Value, mainWindow.FrameProvider)
-            .SubscribeAwait(async (_, ct) =>
+            // Ensure the user hasn't scrolled past this item while we were loading
+            if (!token.IsCancellationRequested && thumb is not null)
             {
-                var thumb = await vm.ThumbnailLoaderFunc(ct).ConfigureAwait(false);
                 vm.Image.Value = thumb;
-            }, DebugHelper.LogError(nameof(GalleryItem), nameof(LoadImage)));
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected behavior when the user scrolls fast
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(GalleryItem), nameof(LoadImage), ex);
+        }
     }
 
     private void UnloadImage()
     {
-        _imageSubscription?.Dispose();
-        _imageSubscription = null;
-        GalleryImage.Source = null;
-    }
-
-    protected override void OnDataContextChanged(EventArgs e)
-    {
-        base.OnDataContextChanged(e);
-        if (_imageSubscription is null)
-        {
-            return;
-        }
-
-        UnloadImage();
-        LoadImage();
+        _loadCts?.Cancel();
     }
 
     private void GalleryContextMenuOnClosed(object? sender, RoutedEventArgs e)

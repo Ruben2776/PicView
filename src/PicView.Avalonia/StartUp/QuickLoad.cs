@@ -308,6 +308,7 @@ public static class QuickLoad
         
         if (isGalleryEnabled)
         {
+            await LoadGallery(core).ConfigureAwait(false);
             Dispatcher.UIThread.Invoke(() =>
             {
                 if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
@@ -317,7 +318,6 @@ public static class QuickLoad
                     imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
                 }
             }, DispatcherPriority.Loaded);
-            await LoadGallery(core).ConfigureAwait(false);
         }
         
         FileHistoryManager.Add(fileInfo.FullName);

@@ -120,8 +120,6 @@ public partial class GalleryView : GalleryAnimationControl
                         {
                             _galleryItems.AddRange(newItems);
                         }
-
-                        SyncGalleryViewerScroll(tab);
                     }, DispatcherPriority.Loaded, cancellationToken);
                 }
                 break;

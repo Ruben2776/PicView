@@ -57,47 +57,12 @@ public class NavigateAbleItemsViewer : ItemsControl
     public NavigateAbleItemsViewer()
     {
         AddHandler(PointerWheelChangedEvent, OnPointerWheelChanged, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
-        LayoutUpdated += (_, _) => UpdateViewportVisibility();
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
         _scrollViewer = e.NameScope.Find<AutoScrollViewer>("PART_ScrollViewer");
-    }
-    
-    private void UpdateViewportVisibility()
-    {
-        var viewportRect = new Rect(new Point(0, 0), _scrollViewer.Viewport);
-        // Extend viewport slightly to preload items right before the user scrolls into view
-        var extendedViewportRect = viewportRect.Inflate(new Thickness(200)); 
-
-        for (var i = 0; i < ItemCount; i++)
-        {
-            var container = ContainerFromIndex(i);
-            if (container is not { IsVisible: true })
-            {
-                continue;
-            }
-            
-            if (container is not ContentPresenter { Child: NavigateAbleItem item })
-            {
-                continue;
-            }
-
-            var position = container.TranslatePoint(new Point(0, 0), _scrollViewer);
-            if (!position.HasValue)
-            {
-                continue;
-            }
-
-            var itemRect = new Rect(position.Value, container.Bounds.Size);
-            var isVisible = extendedViewportRect.Intersects(itemRect);
-            if (isVisible)
-            {
-                item.SetViewportVisibility(isVisible);
-            }
-        }
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -129,21 +94,38 @@ public class NavigateAbleItemsViewer : ItemsControl
             return;
         }
 
-        presenter.ApplyTemplate();
-        if (presenter.Child is not NavigateAbleItem navItem)
+        // Fast path: The child is already materialized (e.g., a recycled container)
+        if (presenter.Child is NavigateAbleItem existingItem)
         {
-            return;
+            InitializeNavItem(existingItem, index);
         }
-
-        if (index == CurrentItemIndex)
+        else
         {
-            navItem.SetCurrent(true);
+            // Delayed path: Avalonia hasn't inflated the DataTemplate yet.
+            // We listen for the exact moment the Child property is evaluated and set.
+            EventHandler<AvaloniaPropertyChangedEventArgs>? handler = null;
+            handler = (_, e) =>
+            {
+                if (e.Property != ContentPresenter.ChildProperty || e.NewValue is not NavigateAbleItem newItem)
+                {
+                    return;
+                }
+
+                // Unsubscribe immediately to prevent memory leaks
+                presenter.PropertyChanged -= handler;
+                InitializeNavItem(newItem, index);
+            };
+            presenter.PropertyChanged += handler;
         }
+    }
+    
+    private void InitializeNavItem(NavigateAbleItem navItem, int index)
+    {
+        navItem.SetCurrent(index == CurrentItemIndex);
+        navItem.SetSelected(index == SelectedItemIndex);
 
-        if (index == SelectedItemIndex) navItem.SetSelected(true);
-
-        // If VirtualizingGallery prepared it, it is in the viewport! Load the image.
-        navItem.SetViewportVisibility(true);
+        // Now that the UI element physically exists, trigger the image load!
+        _ = navItem.SetViewportVisibilityAsync(true);
     }
 
     
@@ -153,7 +135,7 @@ public class NavigateAbleItemsViewer : ItemsControl
         if (container is ContentPresenter { Child: NavigateAbleItem navItem })
         {
             // The panel is recycling this item. Unload the image.
-            navItem.SetViewportVisibility(false);
+            _ = navItem.SetViewportVisibilityAsync(false);
         }
     }
     #endregion
@@ -287,8 +269,7 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     public void UpdatePreviousAndNextSelection(int index, int prevIndex)
     {
-        if (_scrollViewer == null || index < 0 || index >= ItemCount 
-            || ContainerFromIndex(index) is not ContentPresenter presenter)
+        if (_scrollViewer is null || index < 0 || ContainerFromIndex(index) is not ContentPresenter presenter)
         {
             return;
         }

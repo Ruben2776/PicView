@@ -104,7 +104,10 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
 
     public IReadOnlyList<double> GetIrregularSnapPoints(Orientation orientation, SnapPointsAlignment snapPointsAlignment)
     {
-        if (_itemBounds.Count == 0) return [];
+        if (_itemBounds.Count is 0)
+        {
+            return [];
+        }
 
         var snapPoints = new List<double>();
 
@@ -268,17 +271,22 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
         {
             if (visibleRect.Intersects(_itemBounds[i]))
             {
-                if (startIndex == -1) startIndex = i;
-                endIndex = i;
+                if (startIndex is -1) startIndex = i;
+                {
+                    endIndex = i;
+                }
             }
-            else if (startIndex != -1 && _itemBounds[i].X > visibleRect.Right)
+            else if (startIndex is not -1 && _itemBounds[i].X > visibleRect.Right)
             {
                 // Early exit: We've completely passed the visible horizontal viewport
                 break;
             }
         }
 
-        if (startIndex == -1) return extentSize;
+        if (startIndex is -1)
+        {
+            return extentSize;
+        }
 
         // 4. Recycle items that are no longer visible
         for (var i = _realizedItems.Count - 1; i >= 0; i--)
@@ -299,7 +307,7 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
         for (var i = startIndex; i <= endIndex; i++)
         {
             var container = ContainerFromIndex(i);
-            if (container == null)
+            if (container is null)
             {
                 // Generate and add container using Avalonia's generator
                 var item = itemsList![i];
@@ -313,9 +321,13 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
                     // Keep the realized items list sorted by index
                     var insertIndex = _realizedItems.FindIndex(r => r.Index > i);
                     if (insertIndex == -1)
+                    {
                         _realizedItems.Add(new RealizedItem(i, container));
+                    }
                     else
+                    {
                         _realizedItems.Insert(insertIndex, new RealizedItem(i, container));
+                    }
                 }
             }
 
@@ -382,7 +394,7 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
         return -1;
     }
 
-    protected override IEnumerable<Control> GetRealizedContainers()
+    protected override IEnumerable<Control>? GetRealizedContainers()
     {
         return _realizedItems.Select(realizedItem => realizedItem.Element);
     }
