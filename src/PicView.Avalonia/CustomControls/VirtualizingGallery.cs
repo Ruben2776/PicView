@@ -195,6 +195,7 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
         double currentY = 0;
         double currentColumnMaxWidth = 0;
         double maxExtentY = 0;
+        var currentColumnStartIndex = 0; // Track where the current column starts
 
         foreach (var item in items)
         {
@@ -217,9 +218,17 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
                 // Vertical Wrapping: Wrap to next column if exceeding available height
                 if (currentY + ItemHeight > availableSize.Height && currentY > 0)
                 {
+                    // Retroactively equalize widths in the column that just finished
+                    for (var j = currentColumnStartIndex; j < _itemBounds.Count; j++)
+                    {
+                        var rect = _itemBounds[j];
+                        _itemBounds[j] = new Rect(rect.X, rect.Y, currentColumnMaxWidth, rect.Height);
+                    }
+
                     currentY = 0;
                     currentX += currentColumnMaxWidth + LineSpacing;
                     currentColumnMaxWidth = 0; // Reset for the new column
+                    currentColumnStartIndex = _itemBounds.Count;
                 }
 
                 _itemBounds.Add(new Rect(currentX, currentY, itemWidth, ItemHeight));
@@ -236,6 +245,16 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
             }
         }
 
+        if (IsExpanded && currentColumnStartIndex < _itemBounds.Count)
+        {
+            // Apply max width to the very last column
+            for (var j = currentColumnStartIndex; j < _itemBounds.Count; j++)
+            {
+                var rect = _itemBounds[j];
+                _itemBounds[j] = new Rect(rect.X, rect.Y, currentColumnMaxWidth, rect.Height);
+            }
+        }
+
         if (!IsExpanded)
         {
             return new Size(currentX > 0 ? currentX - ItemSpacing : 0, ItemHeight);
@@ -245,7 +264,6 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
         // Guard against Infinity if height is temporarily unconstrained during layout passes
         var totalHeight = double.IsInfinity(availableSize.Height) ? maxExtentY : availableSize.Height;
         return new Size(totalWidth, totalHeight);
-
     }
 
     /// <inheritdoc />

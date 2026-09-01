@@ -10,13 +10,8 @@
     Background="{DynamicResource MenuBackgroundColor}"
     CornerRadius="4">
     <Border
-        Width="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ItemWidth.Value,
-                                Mode=OneWay}"
-        Height="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ItemHeight.Value,
-                                 Mode=OneWay}"
         MinWidth="25"
         MinHeight="25"
-        CornerRadius="4"
         ToolTip.HorizontalOffset="0"
         ToolTip.Placement="TopEdgeAlignedLeft"
         ToolTip.VerticalOffset="0">

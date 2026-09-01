@@ -34,7 +34,7 @@ public static class GalleryLoader
             MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount - 1)
         };
 
-        const int batchSize = 50;
+        const int batchSize = 25;
 
         try
         {

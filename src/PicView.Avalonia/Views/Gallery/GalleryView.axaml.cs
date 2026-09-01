@@ -103,7 +103,7 @@ public partial class GalleryView : GalleryAnimationControl
                         {
                             _galleryItems.Add(newItem);
                         }
-                        SyncGalleryViewerScroll(tab);
+                        
                     }, DispatcherPriority.Loaded, cancellationToken);
                 }
                 else
@@ -134,7 +134,7 @@ public partial class GalleryView : GalleryAnimationControl
                         return;
                     }
 
-                    SyncGalleryViewerScroll(tab);
+                    GalleryItemsControl.ScrollToCenterOfCurrentItem();
                 }, DispatcherPriority.Loaded, cancellationToken);
                 break;
             case NotifyCollectionChangedAction.Remove:
@@ -190,12 +190,5 @@ public partial class GalleryView : GalleryAnimationControl
                 }, DispatcherPriority.Loaded);
                 break;
         }
-    }
-
-    private void SyncGalleryViewerScroll(TabViewModel tab)
-    {
-        GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
-        GalleryItemsControl.SelectedItemIndex = tab.NavigationIndex.Value;
-        GalleryItemsControl.ScrollToCenterOfCurrentItem();
     }
 }

@@ -2,7 +2,13 @@ namespace PicView.Core.Gallery;
 
 public enum GalleryStretchMode
 {
+    /// <summary>
+    /// All borders are stretched to fill the available space, while the image inside maintains the aspect ratio.
+    /// </summary>
     Uniform = 0,
+    /// <summary>
+    /// All borders are stretched to fill the available space, while stretching the image inside to fill the available space.
+    /// </summary>
     UniformToFill = 1,
     Fill = 2,
     /// <summary>
