@@ -460,18 +460,23 @@ public class GalleryAnimationControl : UserControl
         if (IsHorizontalDock(dock))
         {
             Height = ZeroSize;
-            await AnimationsHelper.HeightAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed).RunAsync(this);
+            var heightAnim = AnimationsHelper.HeightAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed);
+            await heightAnim.RunAsync(this);
             Height = targetSize;
         }
         else
         {
             Width = ZeroSize;
-            await AnimationsHelper.WidthAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed).RunAsync(this);
+            var widthAnim = AnimationsHelper.WidthAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed);
+            await widthAnim.RunAsync(this);
             Width = targetSize;
         }
 
         SetDockedThumbPosition(dock);
-        _viewer.ScrollToCenterOfCurrentItem();
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _viewer.ScrollToCenterOfCurrentItem();
+        }, DispatcherPriority.Send);
         
         if (Settings.WindowProperties.AutoFit)
         {
@@ -530,17 +535,24 @@ public class GalleryAnimationControl : UserControl
 
         if (IsHorizontalDock(dock))
         {
-            await AnimationsHelper.HeightAnimation(startSize, targetHeight, GalleryDefaults.MediumAnimationSpeed).RunAsync(this);
+            var heightAnim =
+                AnimationsHelper.HeightAnimation(startSize, targetHeight, GalleryDefaults.MediumAnimationSpeed);
+            await heightAnim.RunAsync(this);
             Height = targetHeight;
         }
         else
         {
             var targetWidth = ParentControl.Bounds.Width;
-            await AnimationsHelper.WidthAnimation(startSize, targetWidth, GalleryDefaults.MediumAnimationSpeed).RunAsync(this);
+            var widthAnim = AnimationsHelper.WidthAnimation(startSize, targetWidth, GalleryDefaults.MediumAnimationSpeed);
+            await widthAnim.RunAsync(this);
             Width = targetWidth;
         }
 
-        _viewer?.ScrollToCenterOfCurrentItem();
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _viewer.ScrollToCenterOfCurrentItem();
+        }, DispatcherPriority.Send);
+        
         
         // Unlock the layout
         _itemsPanel.WrapHeightOverride = double.NaN;
@@ -560,7 +572,8 @@ public class GalleryAnimationControl : UserControl
             if (Settings.WindowProperties.AutoFit)
             {
                 Height = startHeight;
-                await AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed).RunAsync(this);
+                var heightAnim = AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed);
+                await heightAnim.RunAsync(this);
             }
             else
             {
@@ -574,7 +587,7 @@ public class GalleryAnimationControl : UserControl
                 Observable.EveryUpdate(mainWindow.FrameProvider, ct).Subscribe(_ =>
                 {
                     WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
-                });
+                }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateExpandedItemHeight)));
                 await AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed).RunAsync(this, ct);
                 await cts.CancelAsync();
             }
