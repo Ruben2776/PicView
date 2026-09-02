@@ -4,7 +4,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Layout;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
@@ -15,7 +14,7 @@ namespace PicView.Avalonia.CustomControls;
 ///     A virtualizing wrap panel for image galleries supporting variable item widths with fixed item height,
 ///     horizontal or vertical orientation, and container recycling.
 /// </summary>
-public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
+public class VirtualizingGallery : VirtualizingPanel
 {
     /// <inheritdoc cref="WrapPanel" />
     public static readonly StyledProperty<Orientation> OrientationProperty =
@@ -39,6 +38,8 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
 
     public static readonly StyledProperty<double> WrapHeightOverrideProperty =
         AvaloniaProperty.Register<VirtualizingGallery, double>(nameof(WrapHeightOverride), double.NaN);
+    
+    private record struct RealizedItem(int Index, Control Element);
 
     private readonly List<Rect> _itemBounds = [];
 
@@ -62,8 +63,8 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
     }
 
     /// <summary>
-    ///     The fixed item height of all items.
-    ///     <remarks>Must be greater than zero. The widths are calculated dynamically.</remarks>
+    /// The fixed item height of all items.
+    /// <remarks>Must be greater than zero. The widths are calculated dynamically.</remarks>
     /// </summary>
     public double ItemHeight
     {
@@ -160,17 +161,6 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
 
         return snapPoints;
     }
-
-    public double GetRegularSnapPoints(Orientation orientation, SnapPointsAlignment snapPointsAlignment, out double offset)
-    {
-        offset = 0d;
-        return 0d; // We return 0 here because our layout requires irregular snap points
-    }
-
-    public bool AreHorizontalSnapPointsRegular { get; set; } = false;
-    public bool AreVerticalSnapPointsRegular { get; set; } = false;
-    public event EventHandler<RoutedEventArgs>? HorizontalSnapPointsChanged;
-    public event EventHandler<RoutedEventArgs>? VerticalSnapPointsChanged;
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
@@ -338,8 +328,8 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
             if (container is null)
             {
                 // Generate and add container using Avalonia's generator
-                var item = itemsList![i];
-                if (ItemContainerGenerator!.NeedsContainer(item, i, out var recycleKey))
+                var item = itemsList[i];
+                if (ItemContainerGenerator.NeedsContainer(item, i, out var recycleKey))
                 {
                     container = ItemContainerGenerator.CreateContainer(item, i, recycleKey);
                     ItemContainerGenerator.PrepareItemContainer(container, item, i);
@@ -360,7 +350,7 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
             }
 
             // Measure the container using the exact bounds we already calculated
-            container?.Measure(_itemBounds[i].Size);
+            container.Measure(_itemBounds[i].Size);
         }
 
         return extentSize;
@@ -422,17 +412,9 @@ public class VirtualizingGallery : VirtualizingPanel, IScrollSnapPointsInfo
         return -1;
     }
 
-    protected override IEnumerable<Control>? GetRealizedContainers()
-    {
-        return _realizedItems.Select(realizedItem => realizedItem.Element);
-    }
+    protected override IEnumerable<Control> GetRealizedContainers() =>
+        _realizedItems.Select(realizedItem => realizedItem.Element);
 
-    protected override IInputElement? GetControl(NavigationDirection direction, IInputElement? from, bool wrap)
-    {
-        // Let the NavigateAbleItemsViewer handle spatial navigation
-        return null;
-    }
-
-
-    private record struct RealizedItem(int Index, Control Element);
+    protected override IInputElement? GetControl(NavigationDirection direction, IInputElement? from, bool wrap) 
+        => null; // Let the NavigateAbleItemsViewer handle spatial navigation
 }

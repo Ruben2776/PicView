@@ -5,7 +5,6 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
