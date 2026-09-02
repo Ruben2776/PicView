@@ -71,7 +71,7 @@
   </ItemGroup>
     
   <ItemGroup>
-      <PackageReference Include="Avalonia.Wayland" Version="12.1.1" />
+      <PackageReference Include="Avalonia.Wayland" Version="12.1.2" />
   </ItemGroup>
 
   <ItemGroup>
