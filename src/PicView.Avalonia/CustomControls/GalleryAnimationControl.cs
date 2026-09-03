@@ -24,7 +24,7 @@ public class GalleryAnimationControl : UserControl
     private const int BorderTopAndBottomThickness = 2;
 
     private TabViewModel? TabViewModel => DataContext as TabViewModel;
-    private Control? ParentControl;
+    private Control? _parentControl;
 
     private DisposableBag _disposables;
     private NavigateAbleItemsViewer? _viewer;
@@ -83,8 +83,8 @@ public class GalleryAnimationControl : UserControl
 
         SetupSubscriptions();
 
-        ParentControl = Parent as Control;
-        ParentControl.SizeChanged += ParentSizeChanged;
+        _parentControl = Parent as Control;
+        _parentControl.SizeChanged += ParentSizeChanged;
     }
 
     private void SetupSubscriptions()
@@ -228,16 +228,16 @@ public class GalleryAnimationControl : UserControl
     {
         _itemsPanel.IsExpanded = true;
         
-        if (ParentControl != null)
+        if (_parentControl != null)
         {
             if (IsHorizontalDock(dock))
             {
                 Width = double.NaN;
-                Height = ParentControl.Bounds.Height;
+                Height = _parentControl.Bounds.Height;
             }
             else
             {
-                Width = ParentControl.Bounds.Width;
+                Width = _parentControl.Bounds.Width;
                 Height = double.NaN;
             }
         }
@@ -278,7 +278,9 @@ public class GalleryAnimationControl : UserControl
         {
             return;
         }
+        
         core.GallerySettings.ItemHeight.Value = itemHeight;
+        _itemsPanel.InvalidateMeasure();
     }
     
     private void ParentSizeChanged(object? sender, SizeChangedEventArgs e)
@@ -531,7 +533,7 @@ public class GalleryAnimationControl : UserControl
     private async Task DockedToExpanded()
     {
         var dock = Settings.Gallery.DockPosition;
-        var targetHeight = ParentControl!.Bounds.Height;
+        var targetHeight = _parentControl!.Bounds.Height;
 
         // LOCK the layout wrap constraint to the final size before animating
         _itemsPanel.WrapHeightOverride = targetHeight;
@@ -550,7 +552,7 @@ public class GalleryAnimationControl : UserControl
         }
         else
         {
-            var targetWidth = ParentControl.Bounds.Width;
+            var targetWidth = _parentControl.Bounds.Width;
             var widthAnim = AnimationsHelper.WidthAnimation(startSize, targetWidth, GalleryDefaults.MediumAnimationSpeed);
             await widthAnim.RunAsync(this);
             Width = targetWidth;
@@ -569,7 +571,7 @@ public class GalleryAnimationControl : UserControl
     private async Task ExpandedToDocked()
     {
         var dock = Settings.Gallery.DockPosition;
-        var startHeight = ParentControl.Bounds.Height;
+        var startHeight = _parentControl.Bounds.Height;
 
         // LOCK the layout wrap constraint so it doesn't wrap tighter as the window shrinks
         _itemsPanel.WrapHeightOverride = startHeight;
@@ -595,7 +597,7 @@ public class GalleryAnimationControl : UserControl
                 Observable.EveryUpdate(mainWindow.FrameProvider, ct).Subscribe(_ =>
                 {
                     WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
-                }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateExpandedItemHeight)));
+                }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(ExpandedToDocked)));
                 var heightAnim =
                     AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed);
                 await heightAnim.RunAsync(this, ct);
@@ -605,7 +607,7 @@ public class GalleryAnimationControl : UserControl
         }
         else
         {
-            var startWidth = ParentControl.Bounds.Width;
+            var startWidth = _parentControl.Bounds.Width;
             var targetWidth = Settings.Gallery.DockedGalleryItemSize;
             Width = startWidth;
             var widthAnim =
@@ -629,8 +631,8 @@ public class GalleryAnimationControl : UserControl
         IsVisible = true;
         Width = Height = ZeroSize;
 
-        var targetHeight = ParentControl!.Bounds.Height;
-        var targetWidth = ParentControl.Bounds.Width;
+        var targetHeight = _parentControl!.Bounds.Height;
+        var targetWidth = _parentControl.Bounds.Width;
 
         // Lock constraint and set expanded layout BEFORE animation for a smooth reveal
         _itemsPanel.WrapHeightOverride = targetHeight;
@@ -648,7 +650,7 @@ public class GalleryAnimationControl : UserControl
 
     private async Task ExpandedToClosed()
     {
-        _itemsPanel.WrapHeightOverride = ParentControl.Bounds.Height;
+        _itemsPanel.WrapHeightOverride = _parentControl.Bounds.Height;
 
         await Task.WhenAll(
             AnimationsHelper.WidthAnimation(Bounds.Width, ZeroSize, GalleryDefaults.FastAnimationSpeed).RunAsync(this),
@@ -672,9 +674,9 @@ public class GalleryAnimationControl : UserControl
     {
         base.OnUnloaded(e);
 
-        if (ParentControl != null)
+        if (_parentControl != null)
         {
-            ParentControl.SizeChanged -= ParentSizeChanged;
+            _parentControl.SizeChanged -= ParentSizeChanged;
         }
 
         Loaded -= OnControlLoaded;

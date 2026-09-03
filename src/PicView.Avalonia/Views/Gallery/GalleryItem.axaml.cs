@@ -5,24 +5,64 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Core.DebugTools;
+using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.Views.Gallery;
 
 public partial class GalleryItem : NavigateAbleItem
 {
     private CancellationTokenSource? _loadCts;
-    
+    private DisposableBag _disposables;
+
     public GalleryItem()
     {
         InitializeComponent();
         GalleryContextMenu.Opened += GalleryContextMenuOnOpened;
         GalleryContextMenu.Closed += GalleryContextMenuOnClosed;
+        if (Application.Current.DataContext is not CoreViewModel core)
+        {
+            return;
+        }
+
+        core.GallerySettings.DockedGalleryStretchMode.Subscribe(x =>
+        {
+            if (!core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked.CurrentValue)
+            {
+                return;
+            }
+
+            GalleryImage.Stretch = x switch
+            {
+                GalleryStretchMode.Uniform or GalleryStretchMode.Square => Stretch.Uniform,
+                GalleryStretchMode.UniformToFill or GalleryStretchMode.FillSquare => Stretch.UniformToFill,
+                _ => GalleryImage.Stretch
+            };
+        }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.DockedGalleryStretchMode)))
+        .AddTo(ref _disposables);
+        
+        core.GallerySettings.ExpandedGalleryStretchMode.Subscribe(x =>
+        {
+            if (!core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryExpanded.CurrentValue)
+            {
+                return;
+            }
+
+            GalleryImage.Stretch = x switch
+            {
+                GalleryStretchMode.Uniform or GalleryStretchMode.Square => Stretch.Uniform,
+                GalleryStretchMode.UniformToFill or GalleryStretchMode.FillSquare => Stretch.UniformToFill,
+                _ => GalleryImage.Stretch
+            };
+        }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.DockedGalleryStretchMode)))
+        .AddTo(ref _disposables);
     }
 
     public override async Task SetViewportVisibilityAsync(bool isVisible)
@@ -141,12 +181,7 @@ public partial class GalleryItem : NavigateAbleItem
         }
     }
 
-    protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
-    {
-        base.OnDetachedFromLogicalTree(e);
-        GalleryContextMenu.Opened -= GalleryContextMenuOnOpened;
-        GalleryContextMenu.Closed -= GalleryContextMenuOnClosed;
-    }
+    #region Menu click events
 
     private void OpenWith_OnClick(object? sender, RoutedEventArgs e)
     {
@@ -269,5 +304,15 @@ public partial class GalleryItem : NavigateAbleItem
         }
         var fileName = item.FileLocation.CurrentValue;
         _ = core.PlatformService.DeleteFile(fileName, recycle: true);
+    }
+    
+    #endregion
+    
+    protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromLogicalTree(e);
+        GalleryContextMenu.Opened -= GalleryContextMenuOnOpened;
+        GalleryContextMenu.Closed -= GalleryContextMenuOnClosed;
+        _disposables.Dispose();
     }
 }
