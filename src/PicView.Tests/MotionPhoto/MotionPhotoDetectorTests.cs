@@ -206,9 +206,9 @@ public class MotionPhotoDetectorTests : IDisposable
     }
 
     [Fact]
-    public void TryDetect_HeicWithSamsungTrailerMarker_ReturnsNull()
+    public void TryDetect_HeicWithSamsungTrailerMarker_ReturnsSamsungTrailer()
     {
-        // The Samsung trailer scan only applies to JPEG files.
+        // Samsung HEIC motion photos without XMP carry the same trailer marker as JPEGs.
         var video = MotionPhotoFixtures.BuildMp4Head(48);
         var path = Path.Combine(_tempDirectory, "samsung.heic");
         using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
@@ -216,6 +216,27 @@ public class MotionPhotoDetectorTests : IDisposable
             stream.Write(new byte[1024]);
             stream.Write("MotionPhoto_Data"u8);
             stream.Write(video);
+        }
+
+        var result = MotionPhotoDetector.TryDetect(new FileInfo(path), MotionPhotoFixtures.PlainXmp);
+
+        Assert.NotNull(result);
+        Assert.Equal(MotionPhotoSource.SamsungTrailer, result.Source);
+        Assert.Equal(1024 + "MotionPhoto_Data".Length, result.VideoOffset);
+    }
+
+    [Fact]
+    public void TryDetect_MarkerInsideSefTrailerWithoutVideo_ReturnsNull()
+    {
+        // mpv2/mpv3 files keep the marker inside the SEF trailer at the end of the file,
+        // where no video follows. That must not be mistaken for a versionless trailer.
+        var path = Path.Combine(_tempDirectory, "mpv2.heic");
+        using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+        {
+            stream.Write(MotionPhotoFixtures.BuildMp4Head(48)); // video in the middle of the file
+            stream.Write(new byte[1024]);
+            stream.Write("MotionPhoto_Data"u8);
+            stream.Write(new byte[64]); // SEF directory tail, no video after the marker
         }
 
         var result = MotionPhotoDetector.TryDetect(new FileInfo(path), MotionPhotoFixtures.PlainXmp);

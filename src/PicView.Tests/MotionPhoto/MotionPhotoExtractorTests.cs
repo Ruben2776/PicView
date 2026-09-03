@@ -141,6 +141,51 @@ public class MotionPhotoExtractorTests : IDisposable
     }
 
     [Fact]
+    public async Task ExtractEmbedded_BogusLength_FallbackFindsVideoInMiddleOfFile()
+    {
+        // Samsung mpv2 layout: [heic image][video][SEF trailer]. The XMP Item:Length
+        // in such files can be bogus (pointing at the trailer), so the expected start
+        // lands nowhere near the video and the ±8 KB window misses it; the whole-file
+        // fallback must locate the video ftyp box instead (and skip the image's own
+        // heic-brand ftyp at the start of the file).
+        var heicFtyp = MotionPhotoFixtures.BuildMp4Head(48);
+        "heic"u8.CopyTo(heicFtyp.AsSpan(8, 4));
+        var video = MotionPhotoFixtures.BuildMp4Head(48);
+        var videoBody = new byte[32 * 1024];
+        var trailer = new byte[84];
+        var path = Path.Combine(_tempDirectory, "mpv2.heif");
+        await using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+        {
+            await stream.WriteAsync(heicFtyp, TestContext.Current.CancellationToken);
+            await stream.WriteAsync(new byte[1024], TestContext.Current.CancellationToken);
+            await stream.WriteAsync(video, TestContext.Current.CancellationToken);
+            await stream.WriteAsync(videoBody, TestContext.Current.CancellationToken);
+            await stream.WriteAsync(trailer, TestContext.Current.CancellationToken);
+        }
+
+        var fileInfo = new FileInfo(path);
+        var videoPosition = heicFtyp.Length + 1024;
+        var info = new MotionPhotoInfo
+        {
+            Source = MotionPhotoSource.EmbeddedXmp,
+            // Bogus offset derived from a wrong XMP Item:Length, far from the real video
+            VideoOffset = fileInfo.Length - 68,
+            VideoLength = 68,
+        };
+
+        var result = await MotionPhotoExtractor.ExtractAsync(fileInfo, info, TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        await using (result.ConfigureAwait(false))
+        {
+            Assert.Equal(fileInfo.Length - videoPosition, result.Length);
+            var buffer = new byte[8];
+            Assert.Equal(8, await result.ReadAsync(buffer, TestContext.Current.CancellationToken));
+            Assert.Equal("ftyp"u8.ToArray(), buffer.AsSpan(4, 4).ToArray());
+        }
+    }
+
+    [Fact]
     public async Task ExtractEmbedded_NoFtypBox_ReturnsNull()
     {
         var path = Path.Combine(_tempDirectory, "corrupt.jpg");
