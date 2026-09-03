@@ -104,7 +104,7 @@ public partial class GalleryView : GalleryAnimationControl
                             _galleryItems.Add(newItem);
                         }
                         
-                    }, DispatcherPriority.Loaded, cancellationToken);
+                    }, DispatcherPriority.Background, cancellationToken);
                 }
                 else
                 {
@@ -120,7 +120,7 @@ public partial class GalleryView : GalleryAnimationControl
                         {
                             _galleryItems.AddRange(newItems);
                         }
-                    }, DispatcherPriority.Loaded, cancellationToken);
+                    }, DispatcherPriority.Background, cancellationToken);
                 }
                 break;
             case NotifyCollectionChangedAction.Reset:
@@ -135,7 +135,7 @@ public partial class GalleryView : GalleryAnimationControl
                     }
 
                     GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                }, DispatcherPriority.Loaded, cancellationToken);
+                }, DispatcherPriority.Background, cancellationToken);
                 break;
             case NotifyCollectionChangedAction.Remove:
                 if (e.IsSingleItem)
@@ -145,7 +145,7 @@ public partial class GalleryView : GalleryAnimationControl
                     {
                         _galleryItems.Remove(oldItem);
                         GalleryItemsControl.ScrollToCenterOfCurrentItem();  
-                    }, DispatcherPriority.Loaded, cancellationToken);
+                    }, DispatcherPriority.Background, cancellationToken);
                 }
                 else
                 {
@@ -157,7 +157,7 @@ public partial class GalleryView : GalleryAnimationControl
                         {
                             GalleryItemsControl.ScrollToCenterOfCurrentItem();
                         }
-                    }, DispatcherPriority.Loaded, cancellationToken);
+                    }, DispatcherPriority.Background, cancellationToken);
                 }
                 break;
             case NotifyCollectionChangedAction.Move:
@@ -171,7 +171,7 @@ public partial class GalleryView : GalleryAnimationControl
                         _galleryItems.Move(oldMoveIndex, newMoveIndex);
                         GalleryItemsControl.ScrollToCenterOfCurrentItem();
                     }
-                }, DispatcherPriority.Loaded, cancellationToken);
+                }, DispatcherPriority.Background, cancellationToken);
                 break;
             case NotifyCollectionChangedAction.Replace:
                 var replaceIndex = e.NewStartingIndex;
@@ -184,10 +184,6 @@ public partial class GalleryView : GalleryAnimationControl
                 {
                     _galleryItems[replaceIndex] = replaceItem;
                 }, DispatcherPriority.Loaded, cancellationToken);
-                Dispatcher.UIThread.Post(() =>
-                {
-                    GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                }, DispatcherPriority.Loaded);
                 break;
         }
     }

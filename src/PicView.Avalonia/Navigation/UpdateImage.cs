@@ -114,7 +114,10 @@ public static class UpdateImage
 
         if (tabViewModel.Gallery.IsDockedGalleryVisible.CurrentValue)
         {
-            imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
+            }, DispatcherPriority.Render);
         }
         tabViewModel.ZoomLevel.Value = Convert.ToInt32(tabViewModel.InitialZoom.CurrentValue * 100);
         tabViewModel.UpdateTabTitle();

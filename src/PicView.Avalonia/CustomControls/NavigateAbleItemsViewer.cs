@@ -165,53 +165,61 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     public void ScrollToCenterOfCurrentItem()
     {
-        // Need to use Post to have calculations take place after render
-        Dispatcher.UIThread.Post(() =>
+        if (Dispatcher.CheckAccess())
         {
-            if (_scrollViewer is null)
-            {
-                return;
-            }
+            ScrollToCenterOfCurrentItemInternal();
+        }
+        else
+        {
+            Dispatcher.UIThread.Post(ScrollToCenterOfCurrentItemInternal,DispatcherPriority.Render);
+        }
+    }
 
-            // Ask the VirtualizingGallery for the exact bounds, realized or not!
-            if (ItemsPanelRoot is not VirtualizingGallery gallery)
-            {
-                return;
-            }
+    private void ScrollToCenterOfCurrentItemInternal()
+    {
+        if (_scrollViewer is null)
+        {
+            return;
+        }
 
-            var itemRect = gallery.GetItemBounds(CurrentItemIndex);
-            if (itemRect is null)
-            {
-                return;
-            }
+        // Ask the VirtualizingGallery for the exact bounds, realized or not!
+        if (ItemsPanelRoot is not VirtualizingGallery gallery)
+        {
+            return;
+        }
 
-            var pos = itemRect.Value;
-            var offset = _scrollViewer.Offset;
-            var newX = offset.X;
-            var newY = offset.Y;
+        var itemRect = gallery.GetItemBounds(CurrentItemIndex);
+        if (itemRect is null)
+        {
+            return;
+        }
 
-            // Center Horizontally if scrolling is possible
-            if (_scrollViewer.Extent.Width > _scrollViewer.Viewport.Width)
-            {
-                var itemCenter = pos.X + pos.Width / 2;
-                var viewportCenter = _scrollViewer.Viewport.Width / 2;
-                var maxScrollX = _scrollViewer.Extent.Width - _scrollViewer.Viewport.Width;
+        var pos = itemRect.Value;
+        var offset = _scrollViewer.Offset;
+        var newX = offset.X;
+        var newY = offset.Y;
+
+        // Center Horizontally if scrolling is possible
+        if (_scrollViewer.Extent.Width > _scrollViewer.Viewport.Width)
+        {
+            var itemCenter = pos.X + pos.Width / 2;
+            var viewportCenter = _scrollViewer.Viewport.Width / 2;
+            var maxScrollX = _scrollViewer.Extent.Width - _scrollViewer.Viewport.Width;
                 
-                newX = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollX);
-            }
+            newX = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollX);
+        }
 
-            // Center Vertically if scrolling is possible
-            if (_scrollViewer.Extent.Height > _scrollViewer.Viewport.Height)
-            {
-                var itemCenter = pos.Y + pos.Height / 2;
-                var viewportCenter = _scrollViewer.Viewport.Height / 2;
-                var maxScrollY = _scrollViewer.Extent.Height - _scrollViewer.Viewport.Height;
+        // Center Vertically if scrolling is possible
+        if (_scrollViewer.Extent.Height > _scrollViewer.Viewport.Height)
+        {
+            var itemCenter = pos.Y + pos.Height / 2;
+            var viewportCenter = _scrollViewer.Viewport.Height / 2;
+            var maxScrollY = _scrollViewer.Extent.Height - _scrollViewer.Viewport.Height;
                 
-                newY = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollY);
-            }
+            newY = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollY);
+        }
 
-            _scrollViewer.Offset = new Vector(newX, newY);
-        });
+        _scrollViewer.Offset = new Vector(newX, newY);
     }
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)

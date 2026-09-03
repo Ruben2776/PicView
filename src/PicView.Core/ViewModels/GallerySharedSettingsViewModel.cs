@@ -20,10 +20,6 @@ public class GallerySharedSettingsViewModel
         new(Settings.Gallery.DockedGalleryStretchMode == GalleryStretchMode.Uniform);
     public BindableReactiveProperty<bool> IsDockedStretchUniformToFill { get; } =
         new(Settings.Gallery.DockedGalleryStretchMode == GalleryStretchMode.UniformToFill);
-    public BindableReactiveProperty<bool> IsDockedStretchToFill { get; } =
-        new(Settings.Gallery.DockedGalleryStretchMode == GalleryStretchMode.Fill);
-    public BindableReactiveProperty<bool> IsDockedStretchNone { get; } =
-        new(Settings.Gallery.DockedGalleryStretchMode == GalleryStretchMode.None);
     public BindableReactiveProperty<bool> IsDockedStretchSquare { get; } =
         new(Settings.Gallery.DockedGalleryStretchMode == GalleryStretchMode.Square);
     public BindableReactiveProperty<bool> IsDockedStretchSquareFill { get; } =
@@ -33,10 +29,6 @@ public class GallerySharedSettingsViewModel
         new(Settings.Gallery.ExpandedGalleryStretchMode == GalleryStretchMode.Uniform);
     public BindableReactiveProperty<bool> IsExpandedStretchUniformToFill { get; } =
         new(Settings.Gallery.ExpandedGalleryStretchMode == GalleryStretchMode.UniformToFill);
-    public BindableReactiveProperty<bool> IsExpandedStretchToFill { get; } =
-        new(Settings.Gallery.ExpandedGalleryStretchMode == GalleryStretchMode.Fill);
-    public BindableReactiveProperty<bool> IsExpandedStretchNone { get; } =
-        new(Settings.Gallery.ExpandedGalleryStretchMode == GalleryStretchMode.None);
     public BindableReactiveProperty<bool> IsExpandedStretchSquare { get; } =
         new(Settings.Gallery.ExpandedGalleryStretchMode == GalleryStretchMode.Square);
     public BindableReactiveProperty<bool> IsExpandedStretchSquareFill { get; } =
@@ -66,11 +58,11 @@ public class GallerySharedSettingsViewModel
     public BindableReactiveProperty<double> GalleryItemSpacing { get; } = new(Settings.Gallery.ItemSpacing);
     public BindableReactiveProperty<double> GalleryLineSpacing { get; } = new(Settings.Gallery.LineSpacing);
 
-    public BindableReactiveProperty<int> DockedGalleryStretchMode { get; } =
-        new((int)Settings.Gallery.DockedGalleryStretchMode);
+    public BindableReactiveProperty<GalleryStretchMode> DockedGalleryStretchMode { get; } =
+        new(Settings.Gallery.DockedGalleryStretchMode);
 
-    public BindableReactiveProperty<int> ExpandedGalleryStretchMode { get; } =
-        new((int)Settings.Gallery.ExpandedGalleryStretchMode);
+    public BindableReactiveProperty<GalleryStretchMode> ExpandedGalleryStretchMode { get; } =
+        new(Settings.Gallery.ExpandedGalleryStretchMode);
 
     public void Initialize()
     {
@@ -147,7 +139,7 @@ public class GallerySharedSettingsViewModel
             });
 
         Observable.EveryValueChanged(Settings.Gallery, x => x.DockedGalleryStretchMode)
-            .Subscribe(x => { DockedGalleryStretchMode.Value = (int)x; }, result =>
+            .Subscribe(x => { DockedGalleryStretchMode.Value = x; }, result =>
             {
 #if DEBUG
                 if (result is { IsFailure: true, Exception: not null })
@@ -159,7 +151,7 @@ public class GallerySharedSettingsViewModel
             });
 
         Observable.EveryValueChanged(Settings.Gallery, x => x.ExpandedGalleryStretchMode)
-            .Subscribe(x => { ExpandedGalleryStretchMode.Value = (int)x; }, result =>
+            .Subscribe(x => { ExpandedGalleryStretchMode.Value = x; }, result =>
             {
 #if DEBUG
                 if (result is { IsFailure: true, Exception: not null })

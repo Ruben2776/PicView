@@ -276,18 +276,6 @@
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
-                        CommandParameter="{x:Static gallerySettings:GalleryStretchMode.Fill}"
-                        Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fill.Value, Mode=OneWay}"
-                        IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedStretchToFill.Value}"
-                        ToggleType="Radio" />
-                    <MenuItem
-                        Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
-                        CommandParameter="{x:Static gallerySettings:GalleryStretchMode.None}"
-                        Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.None.Value, Mode=OneWay}"
-                        IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedStretchNone.Value}"
-                        ToggleType="Radio" />
-                    <MenuItem
-                        Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.Square}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Square.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedStretchSquare.Value}"
@@ -317,18 +305,6 @@
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.UniformToFill}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.UniformToFill.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsDockedStretchUniformToFill.Value}"
-                        ToggleType="Radio" />
-                    <MenuItem
-                        Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"
-                        CommandParameter="{x:Static gallerySettings:GalleryStretchMode.Fill}"
-                        Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fill.Value, Mode=OneWay}"
-                        IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsDockedStretchToFill.Value}"
-                        ToggleType="Radio" />
-                    <MenuItem
-                        Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"
-                        CommandParameter="{x:Static gallerySettings:GalleryStretchMode.None}"
-                        Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.None.Value, Mode=OneWay}"
-                        IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsDockedStretchNone.Value}"
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"

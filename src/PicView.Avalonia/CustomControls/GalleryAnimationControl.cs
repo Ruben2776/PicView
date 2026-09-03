@@ -24,7 +24,7 @@ public class GalleryAnimationControl : UserControl
     private const int BorderTopAndBottomThickness = 2;
 
     private TabViewModel? TabViewModel => DataContext as TabViewModel;
-    private Control? ParentControl => Parent as Control;
+    private Control? ParentControl;
 
     private DisposableBag _disposables;
     private NavigateAbleItemsViewer? _viewer;
@@ -81,14 +81,10 @@ public class GalleryAnimationControl : UserControl
             IsVisible = false; // Don't take up space initially
         }
 
-        if (TabViewModel == null) return;
-
         SetupSubscriptions();
 
-        if (ParentControl != null)
-        {
-            ParentControl.SizeChanged += ParentSizeChanged;
-        }
+        ParentControl = Parent as Control;
+        ParentControl.SizeChanged += ParentSizeChanged;
     }
 
     private void SetupSubscriptions()
@@ -123,10 +119,33 @@ public class GalleryAnimationControl : UserControl
             .Subscribe(UpdateDockedItemHeight, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateDockedItemHeight)))
             .AddTo(ref _disposables);
         
-        core.GallerySettings.ExpandedGalleryStretchMode.Skip(1).Subscribe(SetExpandedThumbs, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateExpandedItemHeight)))
+        core.GallerySettings.ExpandedGalleryStretchMode.Skip(1).Subscribe(mode =>
+            {
+                SetExpandedThumbs(mode);
+                _itemsPanel.InvalidateMeasure();
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    _viewer.ScrollToCenterOfCurrentItem();
+                }, DispatcherPriority.Render);
+            }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateExpandedItemHeight)))
         .AddTo(ref _disposables);
         
-        core.GallerySettings.DockedGalleryStretchMode.Skip(1).Subscribe(SetDockedStretch, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateDockedItemHeight)))
+        core.GallerySettings.DockedGalleryStretchMode.Skip(1).Subscribe(mode =>
+            {
+                SetDockedThumbs(mode);
+                _itemsPanel.InvalidateMeasure();
+                if (_viewer.CenterCurrentItem)
+                {
+                    Dispatcher.UIThread.Invoke(() =>
+                    {
+                        _viewer.ScrollToCenterOfCurrentItem();
+                    }, DispatcherPriority.Render);
+                }
+                else
+                {
+                    _viewer.BringIntoView();
+                }
+            }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateDockedItemHeight)))
         .AddTo(ref _disposables);
     }
 
@@ -237,9 +256,12 @@ public class GalleryAnimationControl : UserControl
             GetExpandedMargin);
     }
     
-    private void SetExpandedThumbs(int x)
+    private void SetExpandedThumbs(GalleryStretchMode mode)
     {
-        SetExpandedThumbs();
+        ApplyThumbSettings(
+            Settings.Gallery.ExpandedGalleryItemSize,
+            mode,
+            GetExpandedMargin);
         if (_viewer.CenterCurrentItem)
         {
             _viewer.ScrollToCenterOfCurrentItem();
@@ -354,7 +376,10 @@ public class GalleryAnimationControl : UserControl
         }
 
         IsVisible = true;
-        SetDockedThumbs();
+        ApplyThumbSettings(
+            Settings.Gallery.DockedGalleryItemSize,
+            Settings.Gallery.DockedGalleryStretchMode,
+            GetDockedMargin);
     }
 
     private void UpdateDockedItemHeight(double itemHeight)
@@ -379,21 +404,12 @@ public class GalleryAnimationControl : UserControl
         }
     }
     
-    private void SetDockedThumbs()
+    private void SetDockedThumbs(GalleryStretchMode mode)
     {
         ApplyThumbSettings(
             Settings.Gallery.DockedGalleryItemSize,
-            Settings.Gallery.DockedGalleryStretchMode,
+            mode,
             GetDockedMargin);
-    }
-    
-    private void SetDockedStretch(int x)
-    {
-        SetDockedThumbs();
-        if (_viewer.CenterCurrentItem)
-        {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }
     }
     
     private void ApplyThumbSettings(double size, GalleryStretchMode mode, Thickness margin, double spacing = 0)
@@ -412,14 +428,6 @@ public class GalleryAnimationControl : UserControl
                 break;
             case GalleryStretchMode.UniformToFill:
                 settings.GalleryStretch.Value = Stretch.UniformToFill;
-                settings.ItemWidth.Value = double.NaN;
-                break;
-            case GalleryStretchMode.Fill:
-                settings.GalleryStretch.Value = Stretch.Fill;
-                settings.ItemWidth.Value = double.NaN;
-                break;
-            case GalleryStretchMode.None:
-                settings.GalleryStretch.Value = Stretch.None;
                 settings.ItemWidth.Value = double.NaN;
                 break;
             case GalleryStretchMode.Square:
@@ -588,7 +596,9 @@ public class GalleryAnimationControl : UserControl
                 {
                     WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
                 }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateExpandedItemHeight)));
-                await AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed).RunAsync(this, ct);
+                var heightAnim =
+                    AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed);
+                await heightAnim.RunAsync(this, ct);
                 await cts.CancelAsync();
             }
             Height = targetHeight;
@@ -598,12 +608,17 @@ public class GalleryAnimationControl : UserControl
             var startWidth = ParentControl.Bounds.Width;
             var targetWidth = Settings.Gallery.DockedGalleryItemSize;
             Width = startWidth;
-            await AnimationsHelper.WidthAnimation(startWidth, targetWidth, GalleryDefaults.SlowAnimationSpeed).RunAsync(this);
+            var widthAnim =
+                AnimationsHelper.WidthAnimation(startWidth, targetWidth, GalleryDefaults.SlowAnimationSpeed);
+            await widthAnim.RunAsync(this);
             Width = targetWidth;
         }
 
         SetDockedLayout(dock);
-        _viewer.ScrollToCenterOfCurrentItem();
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _viewer.ScrollToCenterOfCurrentItem();
+        }, DispatcherPriority.Render);
         
         // Unlock the layout
         _itemsPanel.WrapHeightOverride = double.NaN;
