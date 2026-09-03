@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 namespace PicView.Core.Extensions;
 
@@ -52,8 +52,13 @@ public static partial class StringExtensions
     /// </summary>
     /// <param name="value">The string to combine with the application name.</param>
     /// <returns>A new string containing the original string followed by " - PicView".</returns>
-    public static string CombineWithAppName(string value)
+    public static string CombineWithAppName(string? value)
     {
+        if (string.IsNullOrEmpty(value))
+        {
+            return AppName;
+        }
+
         const string separator = " - ";
         var requiredLength = value.Length + separator.Length + AppName.Length;
 

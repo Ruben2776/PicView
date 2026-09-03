@@ -88,6 +88,8 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
     /// <inheritdoc cref="Core.Navigation.Interfaces.IImageIterator"/>>
     public IImageIterator? ImageIterator { get; private set; }
     public ArchiveExtractionService? ArchiveExtractionService { get; } = new();
+    public BindableReactiveProperty<bool> IsArchiveExtracting { get; } = new(false);
+    public BindableReactiveProperty<string?> ArchiveExtractionProgressText { get; } = new(null);
     public IThumbnailCache? ThumbnailCache { get; private set; }
 
     private IFileWatcherService? _fileWatcherService = fileWatcherService;

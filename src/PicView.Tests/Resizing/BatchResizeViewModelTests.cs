@@ -6,10 +6,13 @@ using R3;
 
 namespace PicView.Tests.Resizing;
 
+[Collection("Sequential")]
 public class BatchResizeViewModelTests
 {
     public BatchResizeViewModelTests()
     {
+        SetDefaults();
+        TranslationManager.Init();
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
     }
 

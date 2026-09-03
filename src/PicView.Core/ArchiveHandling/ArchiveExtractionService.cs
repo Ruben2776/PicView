@@ -68,6 +68,10 @@ public class ArchiveExtractionService
                 return null;
             }
 
+            _extractionCts?.Cancel();
+            _extractionCts?.Dispose();
+            _extractionCts = null;
+
             var tempDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(tempDirectory);
             TempZipDirectory = tempDirectory;
@@ -100,70 +104,105 @@ public class ArchiveExtractionService
                 return new ArchivePreparation(tempDirectory, files, IsFullyExtracted: true);
             }
 
-            if (Settings.Navigation.AlwaysUncompressEntireArchive)
-            {
-                var extractedFiles = new List<string>();
-                var fullArchive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
-                await using (fullArchive.ConfigureAwait(false))
-                {
-                    await foreach (var entry in fullArchive.EntriesAsync.ConfigureAwait(false))
-                    {
-                        if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key) || !entry.Key.IsSupported())
-                        {
-                            continue;
-                        }
-
-                        try
-                        {
-                            var extractedPath = WriteEntryFlat(entry, tempDirectory);
-                            if (!string.IsNullOrEmpty(extractedPath))
-                            {
-                                extractedFiles.Add(extractedPath);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(PrepareArchiveAsync), ex);
-                        }
-                    }
-                }
-
-                if (extractedFiles.Count is 0)
-                {
-                    return null;
-                }
-
-                var filesArray = extractedFiles.ToArray();
-                SortByFileName(filesArray, stringComparer);
-
-                LastOpenedArchive = archivePath;
-                return new ArchivePreparation(tempDirectory, filesArray, IsFullyExtracted: true);
-            }
-
             var archive = await ArchiveFactory.OpenAsyncArchive(archivePath).ConfigureAwait(false);
             await using (archive.ConfigureAwait(false))
             {
                 var entries = await archive.EntriesAsync
-                .Where(e => !e.IsDirectory
-                            && !string.IsNullOrEmpty(e.Key)
-                            && e.Key!.IsSupported())
-                .Select(e => e.Key!).ToArrayAsync().ConfigureAwait(false);
+                    .Where(e => !e.IsDirectory
+                                && !string.IsNullOrEmpty(e.Key)
+                                && e.Key!.IsSupported())
+                    .Select(e => e.Key!).ToArrayAsync().ConfigureAwait(false);
 
-            if (entries.Length is 0)
-            {
-                return null;
-            }
+                if (entries.Length is 0)
+                {
+                    return null;
+                }
 
-            SortByFileName(entries, stringComparer);
+                SortByFileName(entries, stringComparer);
 
-            LastOpenedArchive = archivePath;
-            return new ArchivePreparation(tempDirectory, entries, IsFullyExtracted: false);
+                LastOpenedArchive = archivePath;
+                return new ArchivePreparation(tempDirectory, entries, IsFullyExtracted: false);
             }
         }
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(PrepareArchiveAsync), ex);
             return null;
+        }
+    }
+
+    /// <summary>
+    ///     Extracts a set of archive entries to the previously created <see cref="TempZipDirectory" />.
+    ///     Entries are written flat (without preserving the entry's directory structure) so the
+    ///     standard, non-recursive file listing/sorting works on the result.
+    ///     The archive is opened once and entries are extracted in order.
+    /// </summary>
+    /// <returns>List of absolute paths of successfully extracted files in the requested order.</returns>
+    public async Task<IReadOnlyList<string>> ExtractEntriesAsync(
+        string archivePath,
+        IReadOnlyList<string> entryKeys,
+        CancellationToken ct = default)
+    {
+        var tempDirectory = TempZipDirectory;
+        if (string.IsNullOrEmpty(tempDirectory) || entryKeys is null || entryKeys.Count == 0)
+        {
+            return [];
+        }
+
+        try
+        {
+            var keySet = new HashSet<string>(entryKeys, StringComparer.Ordinal);
+            var extractedMap = new Dictionary<string, string>(StringComparer.Ordinal);
+
+            // Open archive once and extract matching entries
+            var archive = await ArchiveFactory.OpenAsyncArchive(archivePath, cancellationToken: ct).ConfigureAwait(false);
+            await using (archive.ConfigureAwait(false))
+            {
+                await foreach (var entry in archive.EntriesAsync.WithCancellation(ct).ConfigureAwait(false))
+                {
+                    if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
+                    {
+                        continue;
+                    }
+
+                    if (!keySet.Contains(entry.Key))
+                    {
+                        continue;
+                    }
+
+                    var extractedPath = WriteEntryFlat(entry, tempDirectory);
+                    if (!string.IsNullOrEmpty(extractedPath))
+                    {
+                        extractedMap[entry.Key] = extractedPath;
+                    }
+
+                    // Stop early once all requested keys have been extracted
+                    if (extractedMap.Count == keySet.Count)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            // Return paths in the original requested order
+            var result = new List<string>(entryKeys.Count);
+            foreach (var key in entryKeys)
+            {
+                if (extractedMap.TryGetValue(key, out var path))
+                {
+                    result.Add(path);
+                }
+            }
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(ExtractEntriesAsync), ex);
+            return [];
         }
     }
 
@@ -178,93 +217,82 @@ public class ArchiveExtractionService
         string entryKey,
         CancellationToken ct = default)
     {
-        var tempDirectory = TempZipDirectory;
-        if (string.IsNullOrEmpty(tempDirectory) || string.IsNullOrEmpty(entryKey))
+        if (string.IsNullOrEmpty(entryKey))
         {
             return null;
         }
-        try
-        {
-            var archive = await ArchiveFactory.OpenAsyncArchive(archivePath, cancellationToken: ct).ConfigureAwait(false);
-            await using (archive.ConfigureAwait(false))
-            {
-                await foreach (var entry in archive.EntriesAsync.WithCancellation(ct).ConfigureAwait(false))
-                {
-                    if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
-                    {
-                        continue;
-                    }
 
-                    if (!string.Equals(entry.Key, entryKey, StringComparison.Ordinal))
-                    {
-                        continue;
-                    }
-
-                    return WriteEntryFlat(entry, tempDirectory);
-                }
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(ExtractEntryAsync), ex);
-            return null;
-        }
-
-        return null;
+        var results = await ExtractEntriesAsync(archivePath, [entryKey], ct).ConfigureAwait(false);
+        return results.Count > 0 ? results[0] : null;
     }
 
     /// <summary>
     ///     Extracts every entry whose key is present in <paramref name="remainingKeys" /> to the
-    ///     <see cref="TempZipDirectory" />. The archive is opened once and walked in its native
-    ///     order, which avoids reopening overhead.
+    ///     <see cref="TempZipDirectory" /> in batches with low priority. The archive is opened once and walked in its native
+    ///     order, reporting extraction count progress after each batch.
     /// </summary>
-    public async Task ExtractRemainingAsync(
+    public void ExtractRemaining(
         string archivePath,
         IReadOnlyCollection<string> remainingKeys,
+        int initialCount = 0,
+        int totalCount = 0,
+        IProgress<int>? progress = null,
+        int batchSize = 10,
         CancellationToken ct = default)
     {
         var tempDirectory = TempZipDirectory;
-        if (string.IsNullOrEmpty(tempDirectory) || remainingKeys.Count == 0)
+        if (string.IsNullOrEmpty(tempDirectory) || remainingKeys is null || remainingKeys.Count == 0)
         {
             return;
         }
 
         try
         {
-            await Task.Run(() =>
+            var pending = new HashSet<string>(remainingKeys, StringComparer.Ordinal);
+            using var archive = ArchiveFactory.OpenArchive(archivePath);
+
+            var extractedCount = initialCount;
+            var batchCounter = 0;
+
+            foreach (var entry in archive.Entries)
             {
-                var pending = new HashSet<string>(remainingKeys, StringComparer.Ordinal);
-                using var archive = ArchiveFactory.OpenArchive(archivePath);
-
-                foreach (var entry in archive.Entries)
+                if (ct.IsCancellationRequested)
                 {
-                    if (ct.IsCancellationRequested)
-                    {
-                        return;
-                    }
-
-                    if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
-                    {
-                        continue;
-                    }
-
-                    if (!pending.Remove(entry.Key))
-                    {
-                        continue;
-                    }
-
-                    WriteEntryFlat(entry, tempDirectory);
-
-                    if (pending.Count == 0)
-                    {
-                        return;
-                    }
+                    return;
                 }
-            }, ct).ConfigureAwait(false);
+
+                if (entry.IsDirectory || string.IsNullOrEmpty(entry.Key))
+                {
+                    continue;
+                }
+
+                if (!pending.Remove(entry.Key))
+                {
+                    continue;
+                }
+
+                WriteEntryFlat(entry, tempDirectory);
+                extractedCount++;
+                batchCounter++;
+
+                // Yield CPU to higher-priority UI and navigation threads
+                Thread.Yield();
+
+                // Report progress after each batch or upon completing extraction
+                if (batchCounter >= batchSize || pending.Count == 0)
+                {
+                    batchCounter = 0;
+                    progress?.Report(extractedCount);
+
+                    // Brief pause between batches to give foreground operations maximum CPU/IO priority
+                    Thread.Sleep(5);
+                }
+
+                if (pending.Count == 0)
+                {
+                    return;
+                }
+            }
         }
         catch (OperationCanceledException)
         {
@@ -272,8 +300,55 @@ public class ArchiveExtractionService
         }
         catch (Exception ex)
         {
-            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(ExtractRemainingAsync), ex);
+            DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(ExtractRemaining), ex);
         }
+    }
+
+    /// <summary>
+    ///     Asynchronously extracts remaining archive entries on a lowest-priority background thread.
+    /// </summary>
+    public Task ExtractRemainingAsync(
+        string archivePath,
+        IReadOnlyCollection<string> remainingKeys,
+        int initialCount = 0,
+        int totalCount = 0,
+        IProgress<int>? progress = null,
+        int batchSize = 10,
+        CancellationToken ct = default)
+    {
+        var tcs = new TaskCompletionSource();
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                ExtractRemaining(archivePath, remainingKeys, initialCount, totalCount, progress, batchSize, ct);
+                tcs.TrySetResult();
+            }
+            catch (Exception ex)
+            {
+                tcs.TrySetException(ex);
+            }
+        })
+        {
+            IsBackground = true,
+            Priority = ThreadPriority.Lowest,
+            Name = "ArchiveExtractionWorker"
+        };
+        thread.Start();
+        return tcs.Task;
+    }
+
+    private CancellationTokenSource? _extractionCts;
+
+    /// <summary>
+    ///     Resets and returns a dedicated cancellation token for background extraction operations.
+    /// </summary>
+    public CancellationToken ResetExtractionCts()
+    {
+        _extractionCts?.Cancel();
+        _extractionCts?.Dispose();
+        _extractionCts = new CancellationTokenSource();
+        return _extractionCts.Token;
     }
 
     /// <summary>
@@ -281,23 +356,45 @@ public class ArchiveExtractionService
     /// </summary>
     public void Cleanup()
     {
-        Cleanup(TempZipDirectory);
+        _extractionCts?.Cancel();
+        _extractionCts?.Dispose();
+        _extractionCts = null;
+
+        var tempDirectory = TempZipDirectory;
+        if (!string.IsNullOrEmpty(tempDirectory) && Directory.Exists(tempDirectory))
+        {
+            try
+            {
+                Directory.Delete(tempDirectory, true);
+            }
+            catch (Exception ex)
+            {
+                DebugHelper.LogDebug(nameof(ArchiveExtractionService), nameof(Cleanup), ex);
+            }
+        }
+
+        TempZipDirectory = null;
+        LastOpenedArchive = null;
     }
     
     public void Cleanup(string? tempZipDirectory)
     {
+        if (string.IsNullOrEmpty(tempZipDirectory))
+        {
+            return;
+        }
+
+        if (string.Equals(tempZipDirectory, TempZipDirectory, StringComparison.OrdinalIgnoreCase))
+        {
+            Cleanup();
+            return;
+        }
+
         try
         {
-            if (string.IsNullOrEmpty(tempZipDirectory) || !Directory.Exists(tempZipDirectory))
+            if (Directory.Exists(tempZipDirectory))
             {
-                return;
-            }
-
-            Directory.Delete(tempZipDirectory, true);
-            if (string.Equals(tempZipDirectory, TempZipDirectory, StringComparison.OrdinalIgnoreCase))
-            {
-                TempZipDirectory = null;
-                LastOpenedArchive = null;
+                Directory.Delete(tempZipDirectory, true);
             }
         }
         catch (Exception ex)

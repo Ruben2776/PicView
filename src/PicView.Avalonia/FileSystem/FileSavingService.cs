@@ -1,4 +1,7 @@
-﻿using Avalonia;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using PicView.Core.DebugTools;
@@ -8,14 +11,17 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.FileSystem;
 
-public static class FileSaverHelper
+public class FileSavingService(FilePickerService? filePickerService = null)
 {
-    public static async ValueTask<bool> SaveCurrentFile(MainWindowViewModel vm)
+    private readonly FilePickerService _filePickerService = filePickerService ?? new FilePickerService();
+
+    public async ValueTask<bool> SaveCurrentFile(MainWindowViewModel vm)
     {
         bool isSaved;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (tab.FileInfo is null)
+        if (tab.FileInfo?.CurrentValue is null)
         {
+            // If the viewed pic is not a file, open file picker
             isSaved = await SaveFileAs(vm).ConfigureAwait(false);
         }
         else
@@ -26,21 +32,22 @@ public static class FileSaverHelper
         
         if (isSaved)
         {
-            await tab.ImageIterator.ReloadAsync();
+            tab.ImageIterator.Cache.DeleteFromCache(tab.FileInfo.CurrentValue.FullName);
+            await tab.ImageIterator.ReloadAsync(false);
             // TODO: Add visual design to tell whether file was saved
         }
         
         return isSaved;
     }
 
-    public static async ValueTask<bool> SaveFileAs(MainWindowViewModel vm)
+    public async ValueTask<bool> SaveFileAs(MainWindowViewModel vm)
     {
         // Suggest random filename for saving, if it is not an existing file
         var fileName = vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue is null
             ? Path.GetRandomFileName()
             : vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue.Name;
         
-        var isSaved = await FilePicker.PickAndSaveFileAsAsync(fileName, vm);
+        var isSaved = await _filePickerService.PickAndSaveFileAsAsync(fileName, vm).ConfigureAwait(false);
         if (isSaved)
         {
             // TODO: Add visual design to tell whether file was saved
@@ -49,9 +56,16 @@ public static class FileSaverHelper
         return isSaved;
     }
 
-    public static async ValueTask<bool> SaveFileAsync(string? filename, string destination, MainWindowViewModel vm)
+    public async ValueTask<bool> SaveFileAsync(string? filename, string destination, MainWindowViewModel vm)
     {
-        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
+        if (Application.Current is null)
+        {
+            return false;
+        }
+
+        var core = Dispatcher.UIThread.CheckAccess()
+            ? Application.Current.DataContext as CoreViewModel
+            : await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         if (core is null)
         {
             return false;
@@ -107,6 +121,8 @@ public static class FileSaverHelper
                             return false;
                         }
 
+                        if (string.IsNullOrWhiteSpace(filename)) return false;
+
                         await using var stream = FileStreamUtils.GetOptimizedFileStream(new FileInfo(filename), true);
                         bitmap.Save(stream, PngBitmapEncoderOptions.Default);
                         ResetFlipIfNeeded();
@@ -121,7 +137,7 @@ public static class FileSaverHelper
             }
             catch (Exception e)
             {
-                DebugHelper.LogDebug(nameof(FileSaverHelper), nameof(SaveFileAsync), e);
+                DebugHelper.LogDebug(nameof(FileSavingService), nameof(SaveFileAsync), e);
                 return false;
             }
         
@@ -162,7 +178,7 @@ public static class FileSaverHelper
             }
             catch (Exception e)
             {
-                DebugHelper.LogDebug(nameof(FileSaverHelper), nameof(SaveFileAsync), e);
+                DebugHelper.LogDebug(nameof(FileSavingService), nameof(SaveFileAsync), e);
                 return false;
             }
         

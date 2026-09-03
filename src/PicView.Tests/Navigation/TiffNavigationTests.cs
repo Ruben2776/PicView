@@ -214,6 +214,7 @@ public class TiffNavigationTests : IDisposable
         public void Clear(TabViewModel tab, string directory) { }
         public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files) { }
         public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => ValueTask.FromResult(true);
+        public void DeleteFromCache(string fileName) { }
     }
     
     private class MockThumbnailLoader : IThumbnailLoader

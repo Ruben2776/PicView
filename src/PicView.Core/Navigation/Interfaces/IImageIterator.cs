@@ -79,4 +79,9 @@ public interface IImageIterator : IDisposable
     /// Updates the forward/backward navigation permissions based on the current index and list bounds.
     /// </summary>
     void UpdateNavigationProperties();
+
+    /// <summary>
+    /// Notifies the iterator that a new file has been added to the file list.
+    /// </summary>
+    void NotifyFileAdded();
 }

@@ -1,10 +1,11 @@
-﻿using PicView.Core.IPlatform;
+using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
 
 namespace PicView.Tests.Update;
 
+[Collection("Sequential")]
 public class AboutViewModelTests
 {
     public AboutViewModelTests()

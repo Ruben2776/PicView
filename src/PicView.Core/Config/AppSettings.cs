@@ -475,5 +475,5 @@ public class Navigation
     /// <summary>
     /// Indicates whether all files in an archive should be extracted at once when opening an archive.
     /// </summary>
-    public bool AlwaysUncompressEntireArchive { get; set; } = false;
+    public bool AlwaysUncompressEntireArchive { get; set; } = true;
 }

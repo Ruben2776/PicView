@@ -99,7 +99,7 @@ public static class MainKeyboardShortcuts
     {
         if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
-            if (CurrentKeys.Key is Key.LeftAlt or Key.RightAlt)
+            if (CurrentKeys?.Key is Key.LeftAlt or Key.RightAlt)
             {
                 mainWindowViewModel.TopTitlebarViewModel.ToggleMenu();
             }

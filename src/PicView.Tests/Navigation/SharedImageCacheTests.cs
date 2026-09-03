@@ -126,4 +126,49 @@ public class SharedImageCacheTests
         Assert.True(_cache.TryGet(file, out var sharedValue));
         Assert.Equal(preLoadValue, sharedValue);
     }
+
+    [Fact]
+    public void DeleteFromCache_ShouldBypassDisposalQueue_AndRemoveInstantly()
+    {
+        uint ownerId = 1;
+        _cache.RegisterOwner(ownerId);
+        
+        var file = new FileInfo("test1.jpg");
+        var preLoadValue = new PreLoadValue(new ImageModel { FileInfo = file });
+        
+        _cache.TryAdd(ownerId, 0, preLoadValue, 10, false, out _);
+        Assert.Equal(1, preLoadValue.ReferenceCount);
+        Assert.True(_cache.Contains(file));
+        
+        // Delete it from cache
+        _cache.DeleteFromCache(file.FullName);
+        
+        // Should be instantly removed from lookup and reference count decremented to 0
+        Assert.Equal(0, preLoadValue.ReferenceCount);
+        Assert.False(_cache.Contains(file));
+    }
+
+    [Fact]
+    public void DeleteFromCache_WithMultipleOwners_ShouldRemoveFromAllInstantly()
+    {
+        uint ownerId1 = 1;
+        uint ownerId2 = 2;
+        _cache.RegisterOwner(ownerId1);
+        _cache.RegisterOwner(ownerId2);
+        
+        var file = new FileInfo("test1.jpg");
+        var preLoadValue = new PreLoadValue(new ImageModel { FileInfo = file });
+        
+        _cache.Add(ownerId1, 0, preLoadValue, 1, false);
+        _cache.Add(ownerId2, 0, preLoadValue, 1, false);
+        
+        Assert.Equal(2, preLoadValue.ReferenceCount);
+        
+        // Delete from cache completely
+        _cache.DeleteFromCache(file.FullName);
+        
+        // Should be completely removed from all and disposed
+        Assert.Equal(0, preLoadValue.ReferenceCount);
+        Assert.False(_cache.Contains(file));
+    }
 }

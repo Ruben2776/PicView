@@ -3,6 +3,7 @@ using PicView.Core.IPlatform;
 
 namespace PicView.Tests.Update;
 
+[Collection("Sequential")]
 public class UpdateManagerTests
 {
     private class DummyPlatformUpdate : IPlatformSpecificUpdate
