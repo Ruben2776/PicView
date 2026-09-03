@@ -266,10 +266,17 @@ fail:
  */
 /*
  * Reads the container's display rotation (displaymatrix side data, written by
- * phone cameras for portrait recordings). av_display_rotation_get() reports how
- * the transformation rotates the frame; to display the frame upright the decoded
- * pixels must be rotated by the negated angle. Returns that counterclockwise
- * angle normalized to 0/90/180/270.
+ * phone cameras for portrait recordings). av_display_rotation_get() reports the
+ * angle by which the matrix rotates the frame counterclockwise; applying that
+ * same angle to the decoded pixels displays them upright.
+ *
+ * Note: motion photo videos written by phones (Google Pixel, Samsung Galaxy and
+ * even Apple Live Photo MOVs) carry the matrix with the opposite sign compared
+ * to regular camera videos - the still image is the authoritative orientation
+ * and first-party viewers ignore the matrix. Returning the angle as-is (instead
+ * of negating it, as a standard player would) makes the decoded frames match
+ * the still cover photo. Verified against real Pixel/Samsung/Apple samples.
+ * Returns the counterclockwise angle normalized to 0/90/180/270.
  */
 static int pv_read_display_rotation(const AVStream *stream)
 {
@@ -287,7 +294,7 @@ static int pv_read_display_rotation(const AVStream *stream)
         return 0;
     }
 
-    int rotation = -(int)llround(theta);
+    int rotation = (int)llround(theta);
     rotation %= 360;
     if (rotation < 0)
     {

@@ -65,10 +65,12 @@ public static class MotionPhotoDetector
                 }
             }
 
-            // The Samsung trailer format only exists in JPEG files; scanning the tail of
-            // every HEIC image would just waste I/O.
+            // Samsung motion photos carry a "MotionPhoto_Data" trailer marker in both
+            // JPEG and HEIC/HEIF files (HEIC samples without any XMP exist in the wild).
             if (extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
+                extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                extension.Equals(".heic", StringComparison.OrdinalIgnoreCase) ||
+                extension.Equals(".heif", StringComparison.OrdinalIgnoreCase))
             {
                 var samsung = TryDetectSamsungTrailer(fileInfo);
                 if (samsung is not null)
@@ -217,6 +219,15 @@ public static class MotionPhotoDetector
                 return null;
             }
 
+            // The versionless trailer format keeps the video right after the marker.
+            // Newer mpv2/mpv3 files also carry the marker inside their SEF trailer at
+            // the end of the file, where no video follows - reject those, the video
+            // there must be located via XMP or the extractor's ftyp fallback instead.
+            if (!HasFtypBoxAt(fileInfo, videoStart))
+            {
+                return null;
+            }
+
             return new MotionPhotoInfo
             {
                 Source = MotionPhotoSource.SamsungTrailer,
@@ -264,13 +275,19 @@ public static class MotionPhotoDetector
     /// Checks whether the file starts with an ISO BMFF box whose type is "ftyp"
     /// (4-byte box size followed by the "ftyp" signature).
     /// </summary>
-    private static bool HasVideoFileHeader(FileInfo file)
+    private static bool HasVideoFileHeader(FileInfo file) => HasFtypBoxAt(file, 0);
+
+    /// <summary>
+    /// Checks whether an ISO BMFF "ftyp" box starts at the given offset inside the file.
+    /// </summary>
+    private static bool HasFtypBoxAt(FileInfo file, long offset)
     {
         Span<byte> header = stackalloc byte[8];
         try
         {
             using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read,
-                FileShare.ReadWrite, header.Length, FileOptions.SequentialScan);
+                FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+            stream.Seek(offset, SeekOrigin.Begin);
             var totalRead = 0;
             while (totalRead < header.Length)
             {
@@ -289,7 +306,7 @@ public static class MotionPhotoDetector
         }
         catch (Exception e)
         {
-            DebugHelper.LogDebug(nameof(MotionPhotoDetector), nameof(HasVideoFileHeader), e);
+            DebugHelper.LogDebug(nameof(MotionPhotoDetector), nameof(HasFtypBoxAt), e);
             return false;
         }
     }

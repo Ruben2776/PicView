@@ -170,7 +170,10 @@ public static class MotionPhotoExtractor
 
     /// <summary>
     /// Verifies that the expected video start position is a valid MP4 "ftyp" box; otherwise
-    /// searches a ±8 KB window for the closest valid ftyp box.
+    /// searches a ±8 KB window for the closest valid ftyp box. As a last resort the whole
+    /// file is scanned, because some files carry metadata that disagrees with reality
+    /// (e.g. Samsung mpv2 files whose XMP Item:Length points at the SEF trailer while the
+    /// video actually sits in the middle of the file).
     /// </summary>
     internal static async ValueTask<long?> LocateVideoStartAsync(Stream stream, long expectedStart, long fileLength, CancellationToken ct)
     {
@@ -182,26 +185,123 @@ public static class MotionPhotoExtractor
         var windowStart = Math.Max(0, expectedStart - FtypSearchWindowBytes);
         var windowEnd = Math.Min(fileLength, expectedStart + FtypSearchWindowBytes + BoxHeaderSize);
         var windowLength = (int)(windowEnd - windowStart);
-        if (windowLength <= BoxHeaderSize)
+        if (windowLength > BoxHeaderSize)
         {
-            return null;
+            var buffer = new byte[windowLength];
+            stream.Seek(windowStart, SeekOrigin.Begin);
+            var totalRead = 0;
+            while (totalRead < windowLength)
+            {
+                var read = await stream.ReadAsync(buffer.AsMemory(totalRead, windowLength - totalRead), ct).ConfigureAwait(false);
+                if (read is 0)
+                {
+                    break;
+                }
+
+                totalRead += read;
+            }
+
+            var windowed = FindFtypStart(buffer.AsSpan(0, totalRead), windowStart, expectedStart, fileLength);
+            if (windowed is not null)
+            {
+                return windowed;
+            }
         }
 
-        var buffer = new byte[windowLength];
-        stream.Seek(windowStart, SeekOrigin.Begin);
-        var totalRead = 0;
-        while (totalRead < windowLength)
+        return await FindVideoFtypInFileAsync(stream, fileLength, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>Chunk size used by the whole-file ftyp fallback scan.</summary>
+    private const int FtypFileScanChunkBytes = 1024 * 1024;
+
+    /// <summary>
+    /// Scans the entire file for ISO BMFF "ftyp" boxes and returns the last one whose major
+    /// brand is not a HEIF/AVIF image brand (those belong to the still image at the start
+    /// of the file, not to the embedded video). Used only when the metadata-derived
+    /// position turned out to be wrong.
+    /// </summary>
+    private static async ValueTask<long?> FindVideoFtypInFileAsync(Stream stream, long fileLength, CancellationToken ct)
+    {
+        const int overlap = 16; // box size (4) + "ftyp" (4) + major brand (4), plus slack
+        var buffer = new byte[FtypFileScanChunkBytes + overlap];
+        long? lastCandidate = null;
+        long position = 0;
+        stream.Seek(0, SeekOrigin.Begin);
+        while (position < fileLength)
         {
-            var read = await stream.ReadAsync(buffer.AsMemory(totalRead, windowLength - totalRead), ct).ConfigureAwait(false);
-            if (read is 0)
+            var toRead = (int)Math.Min(buffer.Length, fileLength - position);
+            var totalRead = 0;
+            while (totalRead < toRead)
+            {
+                var read = await stream.ReadAsync(buffer.AsMemory(totalRead, toRead - totalRead), ct).ConfigureAwait(false);
+                if (read is 0)
+                {
+                    break;
+                }
+
+                totalRead += read;
+            }
+
+            if (totalRead < BoxHeaderSize)
             {
                 break;
             }
 
-            totalRead += read;
+            var span = buffer.AsSpan(0, totalRead);
+            for (var i = 4; i + BoxHeaderSize + 4 <= span.Length; i++)
+            {
+                if (span[i] != (byte)'f' || span[i + 1] != (byte)'t' ||
+                    span[i + 2] != (byte)'y' || span[i + 3] != (byte)'p')
+                {
+                    continue;
+                }
+
+                var boxStart = position + i - 4;
+                var boxSize = BinaryPrimitives.ReadUInt32BigEndian(span.Slice(i - 4));
+                if (boxSize < BoxHeaderSize || boxStart + boxSize > fileLength)
+                {
+                    continue;
+                }
+
+                if (IsImageBrand(span.Slice(i + 4, 4)))
+                {
+                    continue;
+                }
+
+                lastCandidate = boxStart;
+            }
+
+            // Stop at EOF; otherwise step back so a box header straddling the
+            // chunk boundary is re-examined in the next chunk.
+            if (totalRead < toRead || toRead < buffer.Length)
+            {
+                break;
+            }
+
+            position += totalRead - overlap;
+            stream.Seek(position, SeekOrigin.Begin);
         }
 
-        return FindFtypStart(buffer.AsSpan(0, totalRead), windowStart, expectedStart, fileLength);
+        return lastCandidate;
+    }
+
+    /// <summary>
+    /// Whether the 4-byte ISO BMFF brand identifies a still-image file
+    /// (HEIF/AVIF variants) rather than a video.
+    /// </summary>
+    private static bool IsImageBrand(ReadOnlySpan<byte> brand)
+    {
+        Span<byte> lower = stackalloc byte[4];
+        for (var i = 0; i < 4; i++)
+        {
+            var b = brand[i];
+            lower[i] = b is >= (byte)'A' and <= (byte)'Z' ? (byte)(b + 32) : b;
+        }
+
+        return lower.SequenceEqual("heic"u8) || lower.SequenceEqual("heix"u8) ||
+               lower.SequenceEqual("hevc"u8) || lower.SequenceEqual("heif"u8) ||
+               lower.SequenceEqual("mif1"u8) || lower.SequenceEqual("msf1"u8) ||
+               lower.SequenceEqual("avif"u8) || lower.SequenceEqual("avis"u8);
     }
 
     /// <summary>
