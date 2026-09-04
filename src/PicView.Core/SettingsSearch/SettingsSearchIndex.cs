@@ -91,6 +91,10 @@ public static class SettingsSearchIndex
             list.Add(new SettingsSearchItem(t.HighQuality, data.ImageScalingSearchTags));
         if (t.NearestNeighbor != null)
             list.Add(new SettingsSearchItem(t.NearestNeighbor, data.ImageScalingSearchTags));
+        if (t.AutoPlayMotionPhotos != null)
+            list.Add(new SettingsSearchItem(t.AutoPlayMotionPhotos, data.MotionPhotoSearchTags));
+        if (t.MotionPhoto != null)
+            list.Add(new SettingsSearchItem(t.MotionPhoto, data.MotionPhotoSearchTags));
 
         // Navigation
         if (t.Navigation != null && t.SearchSubdirectory != null)

@@ -35,8 +35,13 @@
                 BorderThickness="1"
                 CornerRadius="3"
                 IsHitTestVisible="False"
-                IsVisible="{CompiledBinding IsMotionPhoto.Value}"
                 Opacity="0.9">
+                <Border.IsVisible>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Path="IsMotionPhoto.Value" />
+                        <Binding Path="$parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ShowMotionPhotoBadges.Value" />
+                    </MultiBinding>
+                </Border.IsVisible>
                 <Grid Width="9" Height="9">
                     <Path
                         Width="5.45"

@@ -132,16 +132,55 @@ public class MotionPhotoDetectorTests : IDisposable
     }
 
     [Fact]
-    public void ReadJpegXmpPacket_FileWithXmpSegment_ReturnsPacket()
+    public void ReadXmpPacket_FileWithXmpSegment_ReturnsPacket()
     {
         var jpeg = MotionPhotoFixtures.BuildJpegWithXmp(MotionPhotoFixtures.PlainXmp);
         var path = Path.Combine(_tempDirectory, "xmp.jpg");
         File.WriteAllBytes(path, jpeg);
 
-        var packet = MotionPhotoDetector.ReadJpegXmpPacket(new FileInfo(path));
+        var packet = MotionPhotoDetector.ReadXmpPacket(new FileInfo(path));
 
         Assert.NotNull(packet);
         Assert.Contains("x:xmpmeta", packet);
+    }
+
+    [Fact]
+    public void TryDetect_HeicWithEmbeddedXmp_DetectsEmbeddedVideo()
+    {
+        // HEIC motion photos keep the XMP packet in a metadata item near the start of the
+        // file. With no XMP passed in, the head byte-scan must still find it - this is what
+        // the gallery relies on, since it has no Magick.NET XMP profile at hand.
+        var video = MotionPhotoFixtures.BuildMp4Head(64);
+        var xmp = MotionPhotoFixtures.NewStandardXmp(video.Length);
+        var path = Path.Combine(_tempDirectory, "pixel.heic");
+        using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+        {
+            stream.Write(MotionPhotoFixtures.BuildMp4Head(32)); // heic ftyp box
+            stream.Write(System.Text.Encoding.UTF8.GetBytes(xmp));
+            stream.Write(new byte[1024]); // image data filler
+            stream.Write(video);
+        }
+        var file = new FileInfo(path);
+
+        var result = MotionPhotoDetector.TryDetect(file, null);
+
+        Assert.NotNull(result);
+        Assert.Equal(MotionPhotoSource.EmbeddedXmp, result.Source);
+        Assert.Equal(file.Length - video.Length, result.VideoOffset);
+    }
+
+    [Fact]
+    public void TryDetect_UnsupportedExtensionWithSidecar_ReturnsNull()
+    {
+        // A PNG with a same-named video file is not a motion photo: only jpg/heic containers
+        // are flagged, matching what the main image pipeline can detect.
+        var imagePath = Path.Combine(_tempDirectory, "IMG_300.png");
+        File.WriteAllBytes(imagePath, [1, 2, 3]);
+        File.WriteAllBytes(Path.Combine(_tempDirectory, "IMG_300.mov"), MotionPhotoFixtures.BuildMp4Head(24));
+
+        var result = MotionPhotoDetector.TryDetect(new FileInfo(imagePath), null);
+
+        Assert.Null(result);
     }
 
     [Fact]
