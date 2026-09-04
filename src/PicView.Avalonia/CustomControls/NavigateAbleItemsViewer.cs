@@ -6,6 +6,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using PicView.Avalonia.Views.Gallery;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
 
@@ -92,50 +93,32 @@ public class NavigateAbleItemsViewer : ItemsControl
         {
             return;
         }
-
-        // Fast path: The child is already materialized (e.g., a recycled container)
-        if (presenter.Child is NavigateAbleItem existingItem)
+        
+        Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
         {
-            InitializeNavItem(existingItem, index);
-        }
-        else
-        {
-            // Delayed path: Avalonia hasn't inflated the DataTemplate yet.
-            // We listen for the exact moment the Child property is evaluated and set.
-            EventHandler<AvaloniaPropertyChangedEventArgs>? handler = null;
-            handler = (_, e) =>
+            if (presenter.Child is not GalleryItem galleryItem)
             {
-                if (e.Property != ContentPresenter.ChildProperty || e.NewValue is not NavigateAbleItem newItem)
-                {
-                    return;
-                }
-
-                // Unsubscribe immediately to prevent memory leaks
-                presenter.PropertyChanged -= handler;
-                InitializeNavItem(newItem, index);
-            };
-            presenter.PropertyChanged += handler;
-        }
-    }
-    
-    private void InitializeNavItem(NavigateAbleItem navItem, int index)
-    {
-        navItem.SetCurrent(index == CurrentItemIndex);
-        navItem.SetSelected(index == SelectedItemIndex);
-
-        // Now that the UI element physically exists, trigger the image load!
-        _ = navItem.SetViewportVisibilityAsync(true);
+                return;
+            }
+            galleryItem.SetCurrent(index == CurrentItemIndex);
+            galleryItem.SetSelected(index == SelectedItemIndex);
+            await galleryItem.LoadImage().ConfigureAwait(false);
+        }, DispatcherPriority.Render);
     }
 
     
     protected override void ClearContainerForItemOverride(Control container)
     {
         base.ClearContainerForItemOverride(container);
-        if (container is ContentPresenter { Child: NavigateAbleItem navItem })
+        if (container is not ContentPresenter presenter)
         {
-            // The panel is recycling this item. Unload the image.
-            _ = navItem.SetViewportVisibilityAsync(false);
+            return;
         }
+        if (presenter.Child is not GalleryItem galleryItem)
+        {
+            return;
+        }
+        galleryItem.UnloadImage();
     }
     #endregion
 

@@ -27,5 +27,5 @@ public class GalleryItemViewModel : IDisposable
     public uint PixelWidth { get; set; }
     public uint PixelHeight { get; set; }
 
-    public Func<CancellationToken, Task<object?>>? ThumbnailLoaderFunc { get; set; }
+    public Func<CancellationToken, ValueTask<object?>>? ThumbnailLoaderFunc { get; set; }
 }

@@ -65,19 +65,7 @@ public partial class GalleryItem : NavigateAbleItem
         .AddTo(ref _disposables);
     }
 
-    public override async Task SetViewportVisibilityAsync(bool isVisible)
-    {
-        if (isVisible)
-        {
-            await LoadImage().ConfigureAwait(false);
-        }
-        else
-        {
-            UnloadImage();
-        }
-    }
-
-    private async Task LoadImage()
+    public async ValueTask LoadImage()
     {
         if (DataContext is not GalleryItemViewModel vm)
         {
@@ -85,7 +73,7 @@ public partial class GalleryItem : NavigateAbleItem
         }
 
         // Fast-path: If the image is already loaded, skip
-        if (vm.Image.Value is Bitmap)
+        if (vm.Image.Value is IImage)
         {
             return;
         }
@@ -120,9 +108,14 @@ public partial class GalleryItem : NavigateAbleItem
         }
     }
 
-    private void UnloadImage()
+    public void UnloadImage()
     {
         _loadCts?.Cancel();
+        if (DataContext is not GalleryItemViewModel vm)
+        {
+            return;
+        }
+        vm.Image.Value = null;
     }
 
     private void GalleryContextMenuOnClosed(object? sender, RoutedEventArgs e)
