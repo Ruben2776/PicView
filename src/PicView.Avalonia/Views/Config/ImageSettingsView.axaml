@@ -44,6 +44,17 @@
 
         </Border>
 
+        <!--  Autoplay motion photos  -->
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MotionPhotoSearchTags}" Classes="searchBorder">
+            <customControls:TextToggleButton
+                x:Name="AutoPlayMotionPhotosToggleButton"
+                Classes="altHover settingsToggleButton"
+                IsChecked="{CompiledBinding SettingsViewModel.IsAutoPlayingMotionPhotos.Value,
+                                            Mode=TwoWay}"
+                Text="{CompiledBinding Translation.AutoPlayMotionPhotos.Value,
+                                       Mode=OneWay}" />
+        </Border>
+
         <!--  Aliasing  -->
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageScalingSearchTags}" Classes="searchBorder">
             <StackPanel>

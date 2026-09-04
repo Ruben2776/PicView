@@ -13,7 +13,6 @@ using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.Localization;
-using PicView.Core.Models;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -158,9 +157,12 @@ public partial class ImageViewer : UserControl, IDisposable
 
     private void UpdateMotionPhotoOverlays(TabViewModel tabViewModel)
     {
-        var isSingleImage = tabViewModel.SingleImageType is not SingleImageType.None;
-        MotionPhotoView.OnImageChanged(isSingleImage ? null : tabViewModel.Model);
-        SecondaryMotionPhotoView.OnImageChanged(isSingleImage ? null : tabViewModel.SecondaryModel);
+        // No SingleImageType check is needed: single (non-file) images such as clipboard or
+        // base64 images never go through file-based detection, so their MotionPhoto metadata
+        // is always null and the overlays hide themselves. Images downloaded from a URL live
+        // in a real temp file and intentionally behave like any local file.
+        MotionPhotoView.OnImageChanged(tabViewModel.Model);
+        SecondaryMotionPhotoView.OnImageChanged(tabViewModel.SecondaryModel);
         UpdateMotionPhotoBadgePositions();
     }
 

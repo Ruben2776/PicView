@@ -24,6 +24,7 @@ public class SettingsSearchData
     public string ImageScrollingSearchTags { get; }
     public string ImageSideBySideSearchTags { get; }
     public string ImageScalingSearchTags { get; }
+    public string MotionPhotoSearchTags { get; }
     public string NavigationSubdirectorySearchTags { get; }
     public string NavigationLoopSearchTags { get; }
     public string NavigationTaskbarSearchTags { get; }
@@ -220,7 +221,18 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append("Scaling Pixelated Nearest Neighbor");
         ImageScalingSearchTags = sb.ToString();
-        
+
+        sb.Clear();
+
+        sb.Append(TranslationManager.Translation.Image);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.MotionPhoto);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.AutoPlayMotionPhotos);
+        sb.Append(space);
+        sb.Append("Motion Photo Live Photo Video Autoplay");
+        MotionPhotoSearchTags = sb.ToString();
+
         sb.Clear();
         
         sb.Append(TranslationManager.Translation.Navigation);

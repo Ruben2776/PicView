@@ -16,22 +16,22 @@ namespace PicView.Core.MotionPhoto;
 public static class MotionPhotoDetector
 {
     private static readonly byte[] SamsungMarkerBytes = Encoding.ASCII.GetBytes("MotionPhoto_Data");
-    private static readonly byte[] JpegXmpHeaderBytes = Encoding.ASCII.GetBytes("http://ns.adobe.com/xap/1.0/");
+    private static readonly byte[] XmpMetaStartBytes = Encoding.ASCII.GetBytes("<x:xmpmeta");
     private static readonly byte[] XmpEndTagBytes = Encoding.ASCII.GetBytes("</x:xmpmeta>");
 
     /// <summary>Scan up to 32 MB from the file tail when searching for the Samsung trailer marker.</summary>
     private const int SamsungScanWindowBytes = 32 * 1024 * 1024;
 
-    /// <summary>Scan up to 1 MB from the file start when searching for a JPEG XMP packet.</summary>
-    private const int JpegXmpScanWindowBytes = 1024 * 1024;
+    /// <summary>Scan up to 1 MB from the file start when searching for an XMP packet.</summary>
+    private const int XmpScanWindowBytes = 1024 * 1024;
 
     /// <summary>
     /// Attempts to detect motion photo data for the given file.
     /// </summary>
     /// <param name="fileInfo">The image file to inspect.</param>
     /// <param name="xmpPacket">
-    /// Optional XMP packet text (e.g. from Magick.NET). When null and the file is a JPEG,
-    /// a lightweight APP1 byte scan is used as fallback.
+    /// Optional XMP packet text (e.g. from Magick.NET). When null, a lightweight byte scan
+    /// of the file head is used as fallback.
     /// </param>
     /// <returns>A <see cref="MotionPhotoInfo"/> describing the video location, or null if not a motion photo.</returns>
     public static MotionPhotoInfo? TryDetect(FileInfo fileInfo, string? xmpPacket)
@@ -49,13 +49,18 @@ public static class MotionPhotoDetector
                 return new MotionPhotoInfo { Source = MotionPhotoSource.LivpContainer };
             }
 
-            if (xmpPacket is null &&
-                (extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                 extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase)))
+            // Motion photo videos only exist in these containers. The gate lives here (rather
+            // than in each caller) so every detection path behaves identically - e.g. a PNG
+            // with a same-named video file must never be flagged as a motion photo.
+            if (!extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) &&
+                !extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) &&
+                !extension.Equals(".heic", StringComparison.OrdinalIgnoreCase) &&
+                !extension.Equals(".heif", StringComparison.OrdinalIgnoreCase))
             {
-                xmpPacket = ReadJpegXmpPacket(fileInfo);
+                return null;
             }
 
+            xmpPacket ??= ReadXmpPacket(fileInfo);
             if (xmpPacket is { Length: > 0 })
             {
                 var fromXmp = TryDetectFromXmp(fileInfo.Length, xmpPacket);
@@ -67,16 +72,10 @@ public static class MotionPhotoDetector
 
             // Samsung motion photos carry a "MotionPhoto_Data" trailer marker in both
             // JPEG and HEIC/HEIF files (HEIC samples without any XMP exist in the wild).
-            if (extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
-                extension.Equals(".heic", StringComparison.OrdinalIgnoreCase) ||
-                extension.Equals(".heif", StringComparison.OrdinalIgnoreCase))
+            var samsung = TryDetectSamsungTrailer(fileInfo);
+            if (samsung is not null)
             {
-                var samsung = TryDetectSamsungTrailer(fileInfo);
-                if (samsung is not null)
-                {
-                    return samsung;
-                }
+                return samsung;
             }
 
             return TryDetectSidecar(fileInfo);
@@ -312,39 +311,34 @@ public static class MotionPhotoDetector
     }
 
     /// <summary>
-    /// Reads the XMP packet from a JPEG file by locating the APP1 segment that starts with the
-    /// XMP namespace header. Only the head of the file is scanned.
+    /// Reads the XMP packet by locating the "&lt;x:xmpmeta" root element in the head of the
+    /// file. Works for JPEG (APP1 XMP segment) and HEIC/HEIF (XMP metadata item) alike, as
+    /// both embed the raw packet text. Only the head of the file is scanned.
     /// </summary>
-    internal static string? ReadJpegXmpPacket(FileInfo fileInfo)
+    internal static string? ReadXmpPacket(FileInfo fileInfo)
     {
         var fileLength = fileInfo.Length;
-        var minimumSize = JpegXmpHeaderBytes.Length + 4;
+        var minimumSize = XmpMetaStartBytes.Length + 4;
         if (fileLength < minimumSize)
         {
             return null;
         }
 
-        var windowLength = (int)Math.Min(fileLength, JpegXmpScanWindowBytes);
+        var windowLength = (int)Math.Min(fileLength, XmpScanWindowBytes);
         var buffer = ArrayPool<byte>.Shared.Rent(windowLength);
         try
         {
             var bytesRead = ReadFileHead(fileInfo, buffer, windowLength);
             var span = buffer.AsSpan(0, bytesRead);
-            var headerIndex = span.IndexOf(JpegXmpHeaderBytes);
-            if (headerIndex < 0)
-            {
-                return null;
-            }
-
-            var packetStart = span.Slice(headerIndex).IndexOf((byte)'<');
-            if (packetStart < 0)
+            var packetIndex = span.IndexOf(XmpMetaStartBytes);
+            if (packetIndex < 0)
             {
                 return null;
             }
 
             // Stop at the end of the XMP packet instead of converting the rest of the
-            // scan window (mostly JPEG image data) into a string.
-            var packetSpan = span.Slice(headerIndex + packetStart);
+            // scan window (mostly image data) into a string.
+            var packetSpan = span.Slice(packetIndex);
             var packetEnd = packetSpan.IndexOf(XmpEndTagBytes);
             if (packetEnd >= 0)
             {

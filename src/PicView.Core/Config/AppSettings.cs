@@ -266,6 +266,11 @@ public class Gallery
     public bool ShowDockedGalleryInHiddenUI { get; set; } = false;
 
     /// <summary>
+    /// Determines whether gallery thumbnails of motion photos display the motion photo badge.
+    /// </summary>
+    public bool ShowMotionPhotoBadges { get; set; } = true;
+
+    /// <summary>
     /// Specifies the height/width of the gallery items displayed at the docked section of the gallery view.
     /// </summary>
     public double DockedGalleryItemSize { get; set; } = 37;

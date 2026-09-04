@@ -39,6 +39,7 @@ public class TranslationViewModel
         Ascending.Value = t.Ascending;
         Authors.Value = t.Authors;
         AutoFitWindow.Value = t.AutoFitWindow;
+        AutoPlayMotionPhotos.Value = t.AutoPlayMotionPhotos;
         BatchResize.Value = t.BatchResize;
         BitDepth.Value = t.BitDepth;
         BlackAndWhite.Value = t.BlackAndWhite;
@@ -310,6 +311,7 @@ public class TranslationViewModel
         ShowHoverNavigationBar.Value = t.ShowHoverNavigationBar;
         ShowImageGallery.Value = t.ShowImageGallery;
         ShowInFolder.Value = t.ShowInFolder;
+        ShowMotionPhotoBadges.Value = t.ShowMotionPhotoBadges;
         ShowUI.Value = t.ShowUI;
         ShowZoomPercentagePopup.Value = t.ShowZoomPercentagePopup;
         ShowZoomPreviewer.Value = t.ShowZoomPreviewer;
@@ -427,6 +429,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Ascending { get; } = new();
     public BindableReactiveProperty<string?> Authors { get; } = new();
     public BindableReactiveProperty<string?> AutoFitWindow { get; } = new();
+    public BindableReactiveProperty<string?> AutoPlayMotionPhotos { get; } = new();
     public BindableReactiveProperty<string?> BatchResize { get; } = new();
     public BindableReactiveProperty<string?> BitDepth { get; } = new();
     public BindableReactiveProperty<string?> BlackAndWhite { get; } = new();
@@ -698,6 +701,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ShowHoverNavigationBar { get; } = new();
     public BindableReactiveProperty<string?> ShowImageGallery { get; } = new();
     public BindableReactiveProperty<string?> ShowInFolder { get; } = new();
+    public BindableReactiveProperty<string?> ShowMotionPhotoBadges { get; } = new();
     public BindableReactiveProperty<string?> ShowUI { get; } = new();
     public BindableReactiveProperty<string?> ShowZoomPercentagePopup { get; } = new();
     public BindableReactiveProperty<string?> ShowZoomPreviewer { get; } = new();
