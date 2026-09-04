@@ -252,7 +252,7 @@ public class Gallery
     /// <summary>
     /// Determines how images will be stretched or scaled, when the gallery is in full/expanded mode.
     /// </summary>
-    public GalleryStretchMode ExpandedGalleryStretchMode { get; set; } = GalleryStretchMode.UniformToFill;
+    public GalleryStretchMode ExpandedGalleryStretchMode { get; set; } = GalleryStretchMode.Uniform;
     public GalleryStretchMode DockedGalleryStretchMode { get; set; } = GalleryStretchMode.UniformToFill;
     
     /// <summary>
