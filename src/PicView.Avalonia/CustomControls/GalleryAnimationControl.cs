@@ -145,7 +145,7 @@ public class GalleryAnimationControl : UserControl
                 {
                     _viewer.BringIntoView();
                 }
-            }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateDockedItemHeight)))
+            }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(core.GallerySettings.DockedGalleryStretchMode)))
         .AddTo(ref _disposables);
     }
 
@@ -281,6 +281,7 @@ public class GalleryAnimationControl : UserControl
         
         core.GallerySettings.ItemHeight.Value = itemHeight;
         _itemsPanel.InvalidateMeasure();
+        _viewer.ScrollToCenterOfCurrentItem();
     }
     
     private void ParentSizeChanged(object? sender, SizeChangedEventArgs e)
@@ -404,6 +405,7 @@ public class GalleryAnimationControl : UserControl
             Width = size;
             Height = double.NaN;
         }
+        _viewer.ScrollToCenterOfCurrentItem();
     }
     
     private void SetDockedThumbs(GalleryStretchMode mode)

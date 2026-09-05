@@ -222,8 +222,7 @@ public partial class HoverBar : UserControl, IDisposable
 
     private async Task ManagePointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core || TopLevel.GetTopLevel(this) is not MainWindow mainWindow
-            || mainWindow.DataContext is not MainWindowViewModel vm)
+        if (Application.Current.DataContext is not CoreViewModel core || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
         }

@@ -1,6 +1,7 @@
 using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Collections;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
 using ObservableCollections;
@@ -186,5 +187,14 @@ public partial class GalleryView : GalleryAnimationControl
                 }, DispatcherPriority.Loaded, cancellationToken);
                 break;
         }
+    }
+    
+    private void ShowGalleryItemSizeSlider(object? sender, PointerPressedEventArgs e)
+    {
+        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        {
+            return;
+        }
+        mainWindow.AddGalleryItemSizeSlider();
     }
 }

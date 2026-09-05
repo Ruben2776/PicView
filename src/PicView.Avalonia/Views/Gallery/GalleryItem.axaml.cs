@@ -128,14 +128,14 @@ public partial class GalleryItem : NavigateAbleItem
         SetContextMenuOpen(true);
     }
 
-    private void Flyout_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    private void ShowGalleryItemSizeSlider(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is not Control ctl)
+        GalleryContextMenu.Close();
+        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
         }
-
-        FlyoutBase.ShowAttachedFlyout(ctl);
+        mainWindow.AddGalleryItemSizeSlider();
     }
     
     

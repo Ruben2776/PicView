@@ -79,6 +79,14 @@
                         IsChecked="{Binding ParentWindowContext.GallerySettings.IsDockedStretchSquareFill.Value}"
                         ToggleType="Radio" />
                 </MenuItem>
+                <MenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ExpandedGalleryItemSize.Value, Mode=OneWay}" PointerPressed="ShowGalleryItemSizeSlider">
+                    <MenuItem.Icon>
+                        <Image
+                            Width="12"
+                            Height="12"
+                            Source="{StaticResource Image}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
                 <MenuItem Command="{Binding Gallery.ToggleGalleryCommand}" Header="{CompiledBinding ParentWindowContext.Translation.ShowImageGallery.Value, Mode=OneWay}">
                     <MenuItem.Icon>
