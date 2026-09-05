@@ -28,6 +28,44 @@ jobs:
         id: get-version
         run: pwsh -File "${{ github.workspace }}/Build/Get-VersionInfo.ps1"
 
+      # Step 3.1: Restore or build picview-ffmpeg, the statically-linked FFmpeg used
+      # for motion photo playback. Outputs are cached; a full build takes roughly ten
+      # minutes, cache hits are instant.
+      - name: Cache picview-ffmpeg (osx-arm64)
+        id: cache-ffmpeg-osx-arm64
+        uses: actions/cache@v4
+        with:
+          path: Build/ffmpeg-native/osx-arm64
+          key: picview-ffmpeg-osx-arm64-${{ hashFiles('Build/Build-FFmpegNative.ps1', 'Build/ffmpeg/**', 'Native/ffmpeg/**') }}
+
+      - name: Cache picview-ffmpeg (osx-x64)
+        id: cache-ffmpeg-osx-x64
+        uses: actions/cache@v4
+        with:
+          path: Build/ffmpeg-native/osx-x64
+          key: picview-ffmpeg-osx-x64-${{ hashFiles('Build/Build-FFmpegNative.ps1', 'Build/ffmpeg/**', 'Native/ffmpeg/**') }}
+
+      - name: Setup zig
+        if: steps.cache-ffmpeg-osx-arm64.outputs.cache-hit != 'true' || steps.cache-ffmpeg-osx-x64.outputs.cache-hit != 'true'
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+
+      - name: Build picview-ffmpeg (macOS)
+        if: steps.cache-ffmpeg-osx-arm64.outputs.cache-hit != 'true' || steps.cache-ffmpeg-osx-x64.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          brew install nasm make
+
+          # FFmpeg needs GNU make; brew installs it keg-only as gmake, so expose
+          # the directory containing it as 'make' to the build script
+          $env:PV_EXTRA_PATH = Join-Path (brew --prefix make) 'libexec/gnubin'
+
+          $targets = @()
+          if ('${{ steps.cache-ffmpeg-osx-arm64.outputs.cache-hit }}' -ne 'true') { $targets += 'osx-arm64' }
+          if ('${{ steps.cache-ffmpeg-osx-x64.outputs.cache-hit }}' -ne 'true') { $targets += 'osx-x64' }
+          & "${{ github.workspace }}/Build/Build-FFmpegNative.ps1" -Targets $targets
+
       # Step 4: Restore dependencies
       - name: Restore dependencies
         run: dotnet restore src/PicView.Avalonia.MacOS/PicView.Avalonia.MacOS.csproj

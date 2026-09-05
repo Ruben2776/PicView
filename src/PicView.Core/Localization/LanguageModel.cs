@@ -39,6 +39,7 @@ public class LanguageModel
     public string? Authors { get; set; }
     public string? Auto { get; set; }
     public string? AutoFitWindow { get; set; }
+    public string? AutoPlayMotionPhotos { get; set; }
     public string? BadArchive { get; set; }
     public string? Base64Image { get; set; }
     public string? BatchResize { get; set; }
@@ -254,6 +255,7 @@ public class LanguageModel
     public string? MouseKeyForward { get; set; }
     public string? MouseSideButtons { get; set; }
     public string? MouseWheel { get; set; }
+    public string? MotionPhoto { get; set; }
     public string? MoveToRecycleBin { get; set; }
     public string? MoveWindow { get; set; }
     public string? Navigate { get; set; }
@@ -400,6 +402,7 @@ public class LanguageModel
     public string? ShowImageInfo { get; set; }
     public string? ShowInFolder { get; set; }
     public string? ShowInfoWindow { get; set; }
+    public string? ShowMotionPhotoBadges { get; set; }
     public string? ShowResizeWindow { get; set; }
     public string? ShowUI { get; set; }
     public string? ShowZoomPercentagePopup { get; set; }

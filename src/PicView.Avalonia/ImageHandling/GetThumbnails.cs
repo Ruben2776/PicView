@@ -13,7 +13,7 @@ namespace PicView.Avalonia.ImageHandling;
 
 public static class GetThumbnails
 {
-    public static async ValueTask<Bitmap?> GetThumbAsync(FileInfo fileInfo, uint height)
+    public static async ValueTask<Bitmap?> GetThumbAsync(FileInfo fileInfo, uint height, MagickImage? magick = null)
     {
         try
         {
@@ -30,23 +30,39 @@ public static class GetThumbnails
                     return shellThumb;
                 }
             }
-            
-            using var magick = new MagickImage();
-            await magick.PingAsync(fileInfo);
-            var profile = magick.GetExifProfile();
-            if (profile is null)
-            {
-                return await CreateThumbAsync(magick, fileInfo, height).ConfigureAwait(false);
-            }
 
-            var thumbnail = profile.CreateThumbnail();
-            if (thumbnail is null || thumbnail.Height < height)
+            var shouldDisposeMagick = false;
+            try
             {
-                return await CreateThumbAsync(magick, fileInfo, height).ConfigureAwait(false);
-            }
+                if (magick is null)
+                {
+                    shouldDisposeMagick = true;
+                    magick = new MagickImage();
+                    await magick.PingAsync(fileInfo);
+                }
 
-            thumbnail.AutoOrient();
-            return thumbnail.ToWriteableBitmap();
+                var profile = magick.GetExifProfile();
+                if (profile is null)
+                {
+                    return await CreateThumbAsync(magick, fileInfo, height).ConfigureAwait(false);
+                }
+
+                var thumbnail = profile.CreateThumbnail();
+                if (thumbnail is null || thumbnail.Height < height)
+                {
+                    return await CreateThumbAsync(magick, fileInfo, height).ConfigureAwait(false);
+                }
+
+                thumbnail.AutoOrient();
+                return thumbnail.ToWriteableBitmap();
+            }
+            finally
+            {
+                if (shouldDisposeMagick)
+                {
+                    magick.Dispose();
+                }
+            }
         }
         catch (Exception e)
         {

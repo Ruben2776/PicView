@@ -15,28 +15,29 @@ public static class GalleryThumbInfo
         public string FileName { get; }
         public string FileSize { get; }
         public string FileDate { get; }
+        public string ImageSize { get; }
+        public uint Width { get; }
+        public uint Height { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GalleryThumbHolder"/> struct.
         /// </summary>
-        private GalleryThumbHolder(string fileLocation, string fileName, string fileSize, string fileDate)
+        private GalleryThumbHolder(string fileLocation, string fileName, string fileSize, string fileDate, uint width, uint height)
         {
             FileLocation = fileLocation;
             FileName = fileName;
             FileSize = fileSize;
             FileDate = fileDate;
+            ImageSize = StringExtensions.CombineSize(width, height);
+            Width = width;
+            Height = height;
         }
 
         /// <summary>
         /// Gets thumbnail data for the specified index.
         /// </summary>
-        public static GalleryThumbHolder GetThumbData(FileInfo? fileInfo)
+        public static GalleryThumbHolder GetThumbData(FileInfo fileInfo, uint width, uint height)
         {
-            if (fileInfo == null)
-            {
-                return default; // Safety check
-            }
-
             var fileLocation = fileInfo.FullName;
             var fileName = Path.GetFileNameWithoutExtension(fileInfo.Name);
 
@@ -79,7 +80,7 @@ public static class GalleryThumbInfo
                 value.AsSpan().CopyTo(span.Slice(label.Length + 2));
             });
 
-            return new GalleryThumbHolder(fileLocation, fileName, fileSize, fileDate);
+            return new GalleryThumbHolder(fileLocation, fileName, fileSize, fileDate, width, height);
         }
 
         /// <summary>

@@ -27,5 +27,8 @@ public class NavigateAbleItem : ContentControl
         PseudoClasses.Set(PseudoContextMenuOpen, isOpen);
     }
     
-    public virtual void SetViewportVisibility(bool isVisible) { }
+    public virtual Task SetViewportVisibilityAsync(bool isVisible)
+    {
+        return Task.CompletedTask;
+    }
 }

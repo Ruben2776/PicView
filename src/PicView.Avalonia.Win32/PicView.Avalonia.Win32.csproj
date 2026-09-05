@@ -120,4 +120,27 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
+
+	<!-- Motion photo playback uses a purpose-built, statically-linked FFmpeg
+	     (picview-ffmpeg). The per-architecture binary is produced by
+	     Build\Build-FFmpegNative.ps1 (also run by the CI workflows) and placed in
+	     Build\ffmpeg-native; it is deployed next to the app only when present, so
+	     development builds work without it (motion photos then degrade to still
+	     images). The condition matches both interactive builds ($(Platform)) and
+	     command-line publishes ($(RuntimeIdentifier), e.g. dotnet publish
+	     -\-runtime win-x64, which leaves Platform at AnyCPU). -->
+	<ItemGroup Condition="('$(Platform)' == 'x64' or '$(RuntimeIdentifier)' == 'win-x64') and Exists('$(MSBuildThisFileDirectory)..\..\Build\ffmpeg-native\win-x64\picview-ffmpeg.dll')">
+	  <None Include="..\..\Build\ffmpeg-native\win-x64\picview-ffmpeg.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	    <Link>ffmpeg\win-x64\picview-ffmpeg.dll</Link>
+	  </None>
+	</ItemGroup>
+	<ItemGroup Condition="('$(Platform)' == 'arm64' or '$(RuntimeIdentifier)' == 'win-arm64') and Exists('$(MSBuildThisFileDirectory)..\..\Build\ffmpeg-native\win-arm64\picview-ffmpeg.dll')">
+	  <None Include="..\..\Build\ffmpeg-native\win-arm64\picview-ffmpeg.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	    <Link>ffmpeg\win-arm64\picview-ffmpeg.dll</Link>
+	  </None>
+	</ItemGroup>
 </Project>

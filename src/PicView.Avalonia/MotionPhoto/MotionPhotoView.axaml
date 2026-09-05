@@ -1,0 +1,50 @@
+<UserControl
+    x:Class="PicView.Avalonia.MotionPhoto.MotionPhotoView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mp="clr-namespace:PicView.Avalonia.MotionPhoto"
+    xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    x:DataType="vm:TabViewModel"
+    IsVisible="False">
+    <Panel>
+        <mp:MotionPhotoVideoSurface x:Name="VideoSurface" IsVisible="False" />
+        <!-- The badge is re-hosted into a floating overlay by FloatBadge() and positioned
+             by UpdateBadgePosition(), so it stays upright while anchored to the image's
+             on-screen top-right corner regardless of rotation, flipping or zooming. -->
+        <Button
+            x:Name="PlayBadge"
+            Padding="10,7"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Background="{DynamicResource AltBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderThickness="1"
+            CornerRadius="15"
+            Cursor="Hand"
+            IsVisible="False"
+            ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.MotionPhoto.Value}">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+                <Grid Width="13" Height="13">
+                    <Path
+                        Width="7.9"
+                        Height="7.9"
+                        Data="{StaticResource LivePhotoRingGeometry}"
+                        Stretch="Uniform"
+                        Stroke="{DynamicResource MainTextColor}"
+                        StrokeThickness="1.5" />
+                    <Path
+                        Data="{StaticResource LivePhotoGlyphGeometry}"
+                        Stretch="Uniform"
+                        Stroke="{DynamicResource MainTextColor}"
+                        StrokeLineCap="Round"
+                        StrokeThickness="1.8" />
+                </Grid>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    Foreground="{DynamicResource MainTextColor}"
+                    Text="{CompiledBinding ParentWindowContext.Translation.MotionPhoto.Value}" />
+            </StackPanel>
+        </Button>
+    </Panel>
+</UserControl>

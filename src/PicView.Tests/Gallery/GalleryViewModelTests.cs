@@ -15,7 +15,6 @@ public class GalleryViewModelTests
     {
         _frameProvider = new ManualFrameProvider();
         ObservableSystem.DefaultFrameProvider = _frameProvider;
-        SetDefaults();
     }
 
     private class ManualFrameProvider : FrameProvider
@@ -41,4 +40,5 @@ public class GalleryViewModelTests
             }
         }
     }
+
 }

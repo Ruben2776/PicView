@@ -89,7 +89,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
     public IImageIterator? ImageIterator { get; private set; }
     public ArchiveExtractionService? ArchiveExtractionService { get; } = new();
     public BindableReactiveProperty<bool> IsArchiveExtracting { get; } = new(false);
-    public BindableReactiveProperty<string?> ArchiveExtractionProgressText { get; } = new(null);
+    public BindableReactiveProperty<string?> ArchiveExtractionProgressText { get; } = new(null, StringComparer.OrdinalIgnoreCase);
     public IThumbnailCache? ThumbnailCache { get; private set; }
 
     private IFileWatcherService? _fileWatcherService = fileWatcherService;
@@ -112,11 +112,11 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
     /// <summary>
     /// The main title displayed in the window title bar.
     /// </summary>
-    public BindableReactiveProperty<string>? Title { get; } = new();
+    public BindableReactiveProperty<string?>? Title { get; } = new();
     /// <summary>
     /// The tooltip displayed when hovering over the title.
     /// </summary>
-    public BindableReactiveProperty<string>? TitleTooltip { get; } = new();
+    public BindableReactiveProperty<string?>? TitleTooltip { get; } = new();
     /// <summary>
     /// The title displayed in the taskbar or task manager.
     /// </summary>
@@ -124,7 +124,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
     /// <summary>
     /// The title displayed in the tab.
     /// </summary>
-    public BindableReactiveProperty<string> TabTitle { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
+    public BindableReactiveProperty<string?> TabTitle { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
     /// <summary>
     /// The tooltip displayed when hovering over the tab.
     /// </summary>

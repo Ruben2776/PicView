@@ -240,6 +240,17 @@ public static class SettingsManager
     {
         existingSettings.UIProperties ??= GetDefaultUIProperties();
         existingSettings.Gallery ??= new Gallery();
+        if (existingSettings.Gallery.ExpandedGalleryItemSize is < GalleryDefaults.MinExpandedGalleryItemHeight
+            or > GalleryDefaults.MaxExpandedGalleryItemHeight)
+        {
+            existingSettings.Gallery.ExpandedGalleryItemSize = GalleryDefaults.DefaultExpandedGalleryHeight;
+        }
+
+        if (existingSettings.Gallery.DockedGalleryItemSize is < GalleryDefaults.MinDockedGalleryItemHeight
+            or > GalleryDefaults.MaxDockedGalleryItemHeight)
+        {
+            existingSettings.Gallery.DockedGalleryItemSize = GalleryDefaults.DefaultDockedGalleryHeight;
+        }
 
         if (existingSettings.Version < 2.0)
         {

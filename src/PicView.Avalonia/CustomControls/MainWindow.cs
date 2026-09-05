@@ -12,6 +12,7 @@ using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Views.Gallery;
 using PicView.Avalonia.Views.Main;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Views.UC.PopUps;
@@ -228,6 +229,17 @@ public class MainWindow : Window, IMainWindow
         
         vm.TopTitlebarViewModel.CloseDropDownMenu();
         UIHelper.GetMainView.MainPanel.Children.Add(new QuickSettingsDialog());
+    }
+    
+    public void AddGalleryItemSizeSlider()
+    {
+        if (UIHelper.GetMainView.DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+
+        vm.TopTitlebarViewModel.CloseDropDownMenu();
+        UIHelper.GetMainView.MainPanel.Children.Add(new GalleryItemSizeSlider());
     }
 
     #endregion

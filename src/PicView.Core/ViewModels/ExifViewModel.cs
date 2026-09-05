@@ -305,8 +305,17 @@ public class ExifViewModel : IDisposable
     public BindableReactiveProperty<string?> LensMaker { get; } = new();
 
     public BindableReactiveProperty<bool> IsExifAvailable { get; } = new();
-    
+
     public BindableReactiveProperty<MagickFormat?> ImageFormat { get; } = new();
+
+    /// <summary>Whether the current image carries a motion photo video.</summary>
+    public BindableReactiveProperty<bool> IsMotionPhoto { get; } = new();
+
+    /// <summary>
+    /// The image format name for display, with a localized " (Motion Photo)" suffix
+    /// appended when the image carries a motion photo video.
+    /// </summary>
+    public BindableReactiveProperty<string?> ImageFormatDisplay { get; } = new();
 
     public void Dispose()
     {
@@ -342,8 +351,10 @@ public class ExifViewModel : IDisposable
             FocalLength,
             FocalLength35Mm,
             GoogleLink,
+            ImageFormatDisplay,
             ISOSpeed,
             IsExifAvailable,
+            IsMotionPhoto,
             Latitude,
             LensMaker,
             LensModel,
@@ -409,6 +420,25 @@ public class ExifViewModel : IDisposable
 
     private FileInfo? _fileInfo;
 
+    /// <summary>
+    /// Rebuilds <see cref="ImageFormatDisplay"/> from the current format, appending the
+    /// localized " (Motion Photo)" suffix when the image carries a motion photo video.
+    /// </summary>
+    private void UpdateImageFormatDisplay()
+    {
+        var format = ImageFormat.CurrentValue?.ToString();
+        if (format is null)
+        {
+            ImageFormatDisplay.Value = null;
+            return;
+        }
+
+        var marker = TranslationManager.Translation.MotionPhoto;
+        ImageFormatDisplay.Value = IsMotionPhoto.CurrentValue && !string.IsNullOrEmpty(marker)
+            ? $"{format} ({marker})"
+            : format;
+    }
+
 #pragma warning disable MA0051
     public void UpdateExifValues(ImageModel model, MagickImage? magick = null)
 #pragma warning restore MA0051
@@ -420,6 +450,7 @@ public class ExifViewModel : IDisposable
 
         var pixelWidth = PixelWidth.Value = model.PixelWidth;
         var pixelHeight = PixelHeight.Value = model.PixelHeight;
+        IsMotionPhoto.Value = model.MotionPhoto is not null;
         try
         {
             if (fileInfo is null || !fileInfo.Exists)
@@ -693,6 +724,7 @@ public class ExifViewModel : IDisposable
             };
 
             ImageFormat.Value = magick.Format;
+            UpdateImageFormatDisplay();
 
             var meter = TranslationManager.Translation.Meter;
 

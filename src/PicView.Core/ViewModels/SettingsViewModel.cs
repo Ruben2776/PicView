@@ -193,6 +193,7 @@ public class SettingsViewModel : IDisposable
     // Image
     public BindableReactiveProperty<bool> IsScalingSetToNearestNeighbor { get; } = new(Settings.ImageScaling.IsScalingSetToNearestNeighbor);
     public BindableReactiveProperty<int> ImageScalingIndex { get; } = new(Settings.ImageScaling.IsScalingSetToNearestNeighbor ? 1 : 0);
+    public BindableReactiveProperty<bool> IsAutoPlayingMotionPhotos { get; } = new(Settings.UIProperties.AutoPlayMotionPhotos);
 
     // Zoom
     public BindableReactiveProperty<bool> CtrlZoom { get; } = new(Settings.Zoom.CtrlZoom);
@@ -319,6 +320,7 @@ public class SettingsViewModel : IDisposable
             BackgroundChoice,
             IsScalingSetToNearestNeighbor,
             ImageScalingIndex,
+            IsAutoPlayingMotionPhotos,
             CtrlZoom,
             HorizontalReverseScroll,
             ScrollDirectionIndex,
@@ -466,6 +468,13 @@ public class SettingsViewModel : IDisposable
                 IsScalingSetToNearestNeighbor.Value = isNearestNeighbor;
                 Settings.ImageScaling.IsScalingSetToNearestNeighbor = isNearestNeighbor;
                 _imageSettingsService?.TriggerScalingModeUpdate(isNearestNeighbor);
+                await SaveSettingsAsync().ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
+            .AddTo(ref _disposables);
+
+        Observable.EveryValueChanged(this, x => x.IsAutoPlayingMotionPhotos.CurrentValue)
+            .SubscribeAwait(async (x, _) => {
+                Settings.UIProperties.AutoPlayMotionPhotos = x;
                 await SaveSettingsAsync().ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);

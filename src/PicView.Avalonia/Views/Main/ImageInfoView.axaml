@@ -753,11 +753,11 @@
                                 Background="{DynamicResource DisabledBackgroundColor}"
                                 Classes="TStyle x"
                                 IsReadOnly="True"
-                                Text="{CompiledBinding Exif.ImageFormat.Value,
+                                Text="{CompiledBinding Exif.ImageFormatDisplay.Value,
                                                        Mode=OneWay}" />
                             <customControls:CopyButton
                                 Classes="altHover BorderStyle"
-                                CopyText="{CompiledBinding Exif.ImageFormat.Value,
+                                CopyText="{CompiledBinding Exif.ImageFormatDisplay.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
                                                             FallbackValue=''}"

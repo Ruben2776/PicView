@@ -5,8 +5,8 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.LogicalTree;
 using Avalonia.Threading;
+using PicView.Avalonia.Views.Gallery;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
 
@@ -57,77 +57,12 @@ public class NavigateAbleItemsViewer : ItemsControl
     public NavigateAbleItemsViewer()
     {
         AddHandler(PointerWheelChangedEvent, OnPointerWheelChanged, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
-        LayoutUpdated += (_, _) => ScheduleVisibilityUpdate();
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-        if (_scrollViewer != null)
-        {
-            _scrollViewer.ScrollChanged -= ScrollViewerOnScrollChanged;
-            _scrollViewer.SizeChanged -= ScrollViewerOnSizeChanged;
-        }
-
         _scrollViewer = e.NameScope.Find<AutoScrollViewer>("PART_ScrollViewer");
-        _scrollViewer.ScrollChanged += ScrollViewerOnScrollChanged;
-        _scrollViewer.SizeChanged += ScrollViewerOnSizeChanged;
-    }
-
-    private void ScrollViewerOnScrollChanged(object? sender, ScrollChangedEventArgs e) => ScheduleVisibilityUpdate();
-    private void ScrollViewerOnSizeChanged(object? sender, SizeChangedEventArgs e) => ScheduleVisibilityUpdate();
-
-    private bool _isVisibilityUpdatePending;
-    
-    private void ScheduleVisibilityUpdate()
-    {
-        if (_isVisibilityUpdatePending)
-        {
-            return;
-        }
-        _isVisibilityUpdatePending = true;
-        Dispatcher.UIThread.Post(() =>
-        {
-            _isVisibilityUpdatePending = false;
-            UpdateViewportVisibility();
-        }, DispatcherPriority.Background);
-    }
-    
-    private void UpdateViewportVisibility()
-    {
-        var animControl = this.FindLogicalAncestorOfType<GalleryAnimationControl>();
-        var isAnimating = animControl?.IsInAnimation ?? false;
-
-        var viewportRect = new Rect(new Point(0, 0), _scrollViewer.Viewport);
-        // Extend viewport slightly to preload items right before the user scrolls into view
-        var extendedViewportRect = viewportRect.Inflate(new Thickness(0, 200, 0, 200)); 
-
-        for (var i = 0; i < ItemCount; i++)
-        {
-            var container = ContainerFromIndex(i);
-            if (container is not { IsVisible: true })
-            {
-                continue;
-            }
-            
-            if (container is not ContentPresenter { Child: NavigateAbleItem item })
-            {
-                continue;
-            }
-
-            var position = container.TranslatePoint(new Point(0, 0), _scrollViewer);
-            if (!position.HasValue)
-            {
-                continue;
-            }
-
-            var itemRect = new Rect(position.Value, container.Bounds.Size);
-            var isVisible = extendedViewportRect.Intersects(itemRect);
-            if (!isAnimating && isVisible)
-            {
-                item.SetViewportVisibility(isVisible);
-            }
-        }
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -158,21 +93,33 @@ public class NavigateAbleItemsViewer : ItemsControl
         {
             return;
         }
+        
+        Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
+        {
+            if (presenter.Child is not GalleryItem galleryItem)
+            {
+                return;
+            }
+            galleryItem.SetCurrent(index == CurrentItemIndex);
+            galleryItem.SetSelected(index == SelectedItemIndex);
+            await galleryItem.LoadImage().ConfigureAwait(false);
+        }, DispatcherPriority.Render);
+    }
 
-        presenter.ApplyTemplate();
-        if (presenter.Child is not NavigateAbleItem navItem)
+    
+    protected override void ClearContainerForItemOverride(Control container)
+    {
+        base.ClearContainerForItemOverride(container);
+        if (container is not ContentPresenter presenter)
         {
             return;
         }
-
-        if (index == CurrentItemIndex)
+        if (presenter.Child is not GalleryItem galleryItem)
         {
-            navItem.SetCurrent(true);
+            return;
         }
-
-        if (index == SelectedItemIndex) navItem.SetSelected(true);
+        galleryItem.UnloadImage();
     }
-
     #endregion
 
     #region Scrolling & Viewport Logic
@@ -201,48 +148,61 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     public void ScrollToCenterOfCurrentItem()
     {
-        // Need to use Post to have calculations take place after render
-        Dispatcher.UIThread.Post(() =>
+        if (Dispatcher.CheckAccess())
         {
-            if (_scrollViewer is null || CurrentItemIndex < 0 || CurrentItemIndex >= ItemCount)
-            {
-                return;
-            }
+            ScrollToCenterOfCurrentItemInternal();
+        }
+        else
+        {
+            Dispatcher.UIThread.Post(ScrollToCenterOfCurrentItemInternal,DispatcherPriority.Render);
+        }
+    }
 
-            var container = ContainerFromIndex(CurrentItemIndex);
+    private void ScrollToCenterOfCurrentItemInternal()
+    {
+        if (_scrollViewer is null)
+        {
+            return;
+        }
 
-            // Get item position relative to the ScrollViewer's viewport
-            var vector = container?.TranslatePoint(new Point(0, 0), _scrollViewer);
-            if (vector is null)
-            {
-                return;
-            }
+        // Ask the VirtualizingGallery for the exact bounds, realized or not!
+        if (ItemsPanelRoot is not VirtualizingGallery gallery)
+        {
+            return;
+        }
 
-            var pos = vector.Value;
-            var offset = _scrollViewer.Offset;
-            var newX = offset.X;
-            var newY = offset.Y;
+        var itemRect = gallery.GetItemBounds(CurrentItemIndex);
+        if (itemRect is null)
+        {
+            return;
+        }
 
-            // Center Horizontally if scrolling is possible
-            if (_scrollViewer.Extent.Width > _scrollViewer.Viewport.Width)
-            {
-                var itemCenter = pos.X + container.Bounds.Width / 2;
-                var viewportCenter = _scrollViewer.Viewport.Width / 2;
-                var diff = itemCenter - viewportCenter;
-                newX = offset.X + diff;
-            }
+        var pos = itemRect.Value;
+        var offset = _scrollViewer.Offset;
+        var newX = offset.X;
+        var newY = offset.Y;
 
-            // Center Vertically if scrolling is possible
-            if (_scrollViewer.Extent.Height > _scrollViewer.Viewport.Height)
-            {
-                var itemCenter = pos.Y + container.Bounds.Height / 2;
-                var viewportCenter = _scrollViewer.Viewport.Height / 2;
-                var diff = itemCenter - viewportCenter;
-                newY = offset.Y + diff;
-            }
+        // Center Horizontally if scrolling is possible
+        if (_scrollViewer.Extent.Width > _scrollViewer.Viewport.Width)
+        {
+            var itemCenter = pos.X + pos.Width / 2;
+            var viewportCenter = _scrollViewer.Viewport.Width / 2;
+            var maxScrollX = _scrollViewer.Extent.Width - _scrollViewer.Viewport.Width;
+                
+            newX = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollX);
+        }
 
-            _scrollViewer.Offset = new Vector(newX, newY);
-        });
+        // Center Vertically if scrolling is possible
+        if (_scrollViewer.Extent.Height > _scrollViewer.Viewport.Height)
+        {
+            var itemCenter = pos.Y + pos.Height / 2;
+            var viewportCenter = _scrollViewer.Viewport.Height / 2;
+            var maxScrollY = _scrollViewer.Extent.Height - _scrollViewer.Viewport.Height;
+                
+            newY = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollY);
+        }
+
+        _scrollViewer.Offset = new Vector(newX, newY);
     }
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
@@ -299,8 +259,7 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     public void UpdatePreviousAndNextSelection(int index, int prevIndex)
     {
-        if (_scrollViewer == null || index < 0 || index >= ItemCount 
-            || ContainerFromIndex(index) is not ContentPresenter presenter)
+        if (_scrollViewer is null || index < 0 || ContainerFromIndex(index) is not ContentPresenter presenter)
         {
             return;
         }
@@ -361,18 +320,21 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     public void Navigate(NavigationDirection direction)
     {
-        if (ItemCount == 0) return;
-
-        if (direction == NavigationDirection.First)
+        if (ItemCount is 0)
         {
-            UpdateSelectionIndex(0);
             return;
         }
 
-        if (direction == NavigationDirection.Last)
+        switch (direction)
         {
-            UpdateSelectionIndex(ItemCount - 1);
-            return;
+            case NavigationDirection.First:
+                UpdateSelectionIndex(0);
+                ScrollToCenterOfCurrentItem();
+                return;
+            case NavigationDirection.Last:
+                UpdateSelectionIndex(ItemCount - 1);
+                ScrollToCenterOfCurrentItem();
+                return;
         }
 
         var startIndex = SelectedItemIndex == -1 ? CurrentItemIndex : SelectedItemIndex;
@@ -380,7 +342,10 @@ public class NavigateAbleItemsViewer : ItemsControl
         if (startIndex >= ItemCount) startIndex = ItemCount - 1;
 
         var items = GetItemPositions();
-        if (items.Count == 0) return;
+        if (items.Count is 0)
+        {
+            return;
+        }
 
         if (items.All(x => x.Index != startIndex))
         {
@@ -391,18 +356,23 @@ public class NavigateAbleItemsViewer : ItemsControl
 
         var targetItem = direction switch
         {
-            NavigationDirection.Up => GetClosestItemAbove(currentItemPos, items),
-            NavigationDirection.Down => GetClosestItemBelow(currentItemPos, items),
+            // If there's no item directly above, wrap to the bottom of the previous column
+            NavigationDirection.Up => GetClosestItemAbove(currentItemPos, items) ?? GetBottomItemInPreviousColumn(currentItemPos, items),
+        
+            // If there's no item directly below, wrap to the top of the next column
+            NavigationDirection.Down => GetClosestItemBelow(currentItemPos, items) ?? GetTopItemInNextColumn(currentItemPos, items),
+        
             NavigationDirection.Left => GetClosestItemLeft(currentItemPos, items),
             NavigationDirection.Right => GetClosestItemRight(currentItemPos, items),
             _ => null
         };
 
-        if (targetItem is not { } validItem || validItem.Index >= items.Count)
+        // FIX: Check against the total ItemCount, and prevent redundant navigation
+        if (targetItem is not { } validItem || validItem.Index >= ItemCount || validItem.Index == startIndex)
         {
             return;
         }
-            
+        
         switch (direction)
         {                
             case NavigationDirection.Left:
@@ -451,27 +421,20 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     private List<ItemPosition> GetItemPositions()
     {
-        var list = new List<ItemPosition>(ItemCount);
-        
-        for (var i = 0; i < ItemCount; i++)
+        var list = new List<ItemPosition>();
+
+        if (ItemsPanelRoot is VirtualizingGallery gallery)
         {
-            var container = ContainerFromIndex(i);
-            if (container is not { IsVisible: true })
+            for (var i = 0; i < ItemCount; i++)
             {
-                continue;
-            }
-                
-            var position = container.TranslatePoint(new Point(0, 0), this);
-            if (position.HasValue)
-            {
-                list.Add(new ItemPosition
+                var bounds = gallery.GetItemBounds(i);
+                if (bounds.HasValue)
                 {
-                    Index = i,
-                    Position = position.Value,
-                    Size = container.Bounds.Size
-                });
+                    list.Add(new ItemPosition(i, bounds.Value.Position, bounds.Value.Size));
+                }
             }
         }
+
         return list;
     }
 

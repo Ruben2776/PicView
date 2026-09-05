@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageTransformations;
@@ -32,11 +33,205 @@ public partial class ImageViewer : UserControl, IDisposable
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
         InitializeImageTransformer();
-        
+
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
         AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         AddHandler(PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
+
+        Dispatcher.UIThread.Post(InitializeMotionPhoto, DispatcherPriority.ApplicationIdle);
+    }
+    
+    private void InitializeMotionPhoto()
+    {
+        // Float the badges above the transformed image container, so they stay upright
+        // when the image is rotated, flipped or zoomed, then keep each badge anchored
+        // to the on-screen top-right corner of its image
+        MotionPhotoView.FloatBadge(MotionPhotoBadgeHost);
+        SecondaryMotionPhotoView.FloatBadge(MotionPhotoBadgeHost);
+
+        MainPanel.LayoutUpdated += OnMotionPhotoBadgeAnchorChanged;
+        MotionPhotoView.LayoutUpdated += OnMotionPhotoBadgeAnchorChanged;
+        SecondaryMotionPhotoView.LayoutUpdated += OnMotionPhotoBadgeAnchorChanged;
+        ImageScrollViewer.ScrollChanged += OnMotionPhotoBadgeScrollChanged;
+        UpdateMotionPhotoBadgePositions();
+
+        // Zooming and panning move the images through render transforms without
+        // triggering layout, so observe the transform values while they change. The
+        // child's render transform is read because animated zooms interpolate it
+        // while the control's own properties already hold the target values.
+        // The frame provider ticks with the render loop, so this only runs while
+        // frames are actually being rendered (i.e. while something visually moves)
+        var frameProvider = (TopLevel.GetTopLevel(this) as MainWindow)?.FrameProvider;
+        Observable.EveryValueChanged(ZoomPanControl, zoom =>
+            {
+                if (zoom.Child?.RenderTransform is TransformGroup group &&
+                    group.Children.Count == 2 &&
+                    group.Children[0] is ScaleTransform scale &&
+                    group.Children[1] is TranslateTransform translate)
+                {
+                    return (X: scale.ScaleX, Y: translate.X, Z: translate.Y);
+                }
+
+                return (X: zoom.Scale, Y: zoom.TranslateX, Z: zoom.TranslateY);
+            }, frameProvider)
+            .Subscribe(_ => UpdateMotionPhotoBadgePositions(),
+                DebugHelper.LogError(nameof(ImageViewer), nameof(OnLoaded)))
+            .AddTo(ref _disposables);
+
+        // The flip animates the RenderTransform of MainTransform without triggering layout
+        Observable.EveryValueChanged(MainTransform,
+                transform => (transform.RenderTransform as ScaleTransform)?.ScaleX ?? 1d,
+                frameProvider)
+            .Subscribe(_ => UpdateMotionPhotoBadgePositions(),
+                DebugHelper.LogError(nameof(ImageViewer), nameof(OnLoaded)))
+            .AddTo(ref _disposables);
+
+        // Zoom/pan is locked for the duration of motion photo playback
+        MotionPhotoView.PlaybackStarted += OnMotionPhotoPlaybackStarted;
+        MotionPhotoView.PlaybackStopped += OnMotionPhotoPlaybackStopped;
+        MotionPhotoView.FirstFrameShown += OnMotionPhotoFirstFrameShown;
+        SecondaryMotionPhotoView.PlaybackStarted += OnMotionPhotoPlaybackStarted;
+        SecondaryMotionPhotoView.PlaybackStopped += OnMotionPhotoPlaybackStopped;
+        SecondaryMotionPhotoView.FirstFrameShown += OnMotionPhotoFirstFrameShown;
+    }
+
+    private void OnMotionPhotoPlaybackStarted(object? sender, EventArgs e)
+    {
+        ZoomPanControl.IsEnabled = false;
+
+        // Only one clip plays at a time
+        if (ReferenceEquals(sender, MotionPhotoView))
+        {
+            SecondaryMotionPhotoView.Stop();
+        }
+        else
+        {
+            MotionPhotoView.Stop();
+        }
+    }
+
+    private void OnMotionPhotoPlaybackStopped(object? sender, EventArgs e)
+    {
+        // Opacity instead of IsVisible: hiding the image would collapse the grid cell
+        // that sizes the video overlay.
+        if (ReferenceEquals(sender, MotionPhotoView))
+        {
+            MainImage.Opacity = 1;
+        }
+        else
+        {
+            SecondaryImage.Opacity = 1;
+        }
+
+        ZoomPanControl.IsEnabled = !MotionPhotoView.IsPlaying && !SecondaryMotionPhotoView.IsPlaying;
+    }
+
+    private void OnMotionPhotoFirstFrameShown(object? sender, EventArgs e)
+    {
+        // Hide the still image while its video covers it, so the letterboxed video
+        // never leaves strips of the still visible along its sides. Opacity is used
+        // instead of IsVisible so the image keeps sizing the grid cell that hosts
+        // the video overlay.
+        if (ReferenceEquals(sender, MotionPhotoView))
+        {
+            MainImage.Opacity = 0;
+        }
+        else
+        {
+            SecondaryImage.Opacity = 0;
+        }
+    }
+
+    /// <summary>
+    /// Notifies the motion photo overlays that a new image is displayed,
+    /// stopping any running playback and preparing the badge when applicable.
+    /// May be called from any thread; UI work is marshalled to the UI thread.
+    /// </summary>
+    public void UpdateMotionPhoto(TabViewModel tabViewModel)
+    {
+        if (Dispatcher.UIThread.CheckAccess())
+        {
+            UpdateMotionPhotoOverlays(tabViewModel);
+        }
+        else
+        {
+            Dispatcher.UIThread.Post(() => UpdateMotionPhotoOverlays(tabViewModel));
+        }
+    }
+
+    private void UpdateMotionPhotoOverlays(TabViewModel tabViewModel)
+    {
+        // No SingleImageType check is needed: single (non-file) images such as clipboard or
+        // base64 images never go through file-based detection, so their MotionPhoto metadata
+        // is always null and the overlays hide themselves. Images downloaded from a URL live
+        // in a real temp file and intentionally behave like any local file.
+        MotionPhotoView.OnImageChanged(tabViewModel.Model);
+        SecondaryMotionPhotoView.OnImageChanged(tabViewModel.SecondaryModel);
+        UpdateMotionPhotoBadgePositions();
+    }
+
+    private void OnMotionPhotoBadgeAnchorChanged(object? sender, EventArgs e) =>
+        UpdateMotionPhotoBadgePositions();
+
+    private void OnMotionPhotoBadgeScrollChanged(object? sender, ScrollChangedEventArgs e) =>
+        UpdateMotionPhotoBadgePositions();
+
+    /// <summary>
+    /// Anchors each floating motion photo badge to the on-screen top-right corner
+    /// of its image.
+    /// </summary>
+    private void UpdateMotionPhotoBadgePositions()
+    {
+        var hostSize = MotionPhotoBadgeHost.Bounds.Size;
+        MotionPhotoView.UpdateBadgePosition(GetVisualTopRightCorner(MotionPhotoView), hostSize);
+        SecondaryMotionPhotoView.UpdateBadgePosition(GetVisualTopRightCorner(SecondaryMotionPhotoView), hostSize);
+    }
+
+    /// <summary>
+    /// Maps the corners of the source into MainPanel coordinates and returns its
+    /// on-screen top-right corner. Rotations are multiples of 90° and flipping keeps
+    /// the rectangle axis-aligned, so that is simply (max X, min Y). Returns null
+    /// when the source cannot currently be mapped.
+    /// </summary>
+    private Point? GetVisualTopRightCorner(Control source)
+    {
+        if (!source.IsVisible || source.Bounds is not { Width: > 0, Height: > 0 })
+        {
+            return null;
+        }
+
+        var bounds = source.Bounds;
+        if (source.TranslatePoint(bounds.TopLeft, MainPanel) is not { } topLeft ||
+            source.TranslatePoint(bounds.TopRight, MainPanel) is not { } topRight ||
+            source.TranslatePoint(bounds.BottomLeft, MainPanel) is not { } bottomLeft ||
+            source.TranslatePoint(bounds.BottomRight, MainPanel) is not { } bottomRight)
+        {
+            return null;
+        }
+
+        var x = Math.Max(Math.Max(topLeft.X, topRight.X), Math.Max(bottomLeft.X, bottomRight.X));
+        var y = Math.Min(Math.Min(topLeft.Y, topRight.Y), Math.Min(bottomLeft.Y, bottomRight.Y));
+        return new Point(x, y);
+    }
+
+    /// <summary>Whether the current image is a playable motion photo.</summary>
+    public bool IsMotionPhotoActive => MotionPhotoView.IsMotionPhotoActive || SecondaryMotionPhotoView.IsMotionPhotoActive;
+
+    /// <summary>Stops motion photo playback. Returns true when playback was active.</summary>
+    public bool StopMotionPhotoIfPlaying() => MotionPhotoView.StopIfPlaying() | SecondaryMotionPhotoView.StopIfPlaying();
+
+    /// <summary>Starts, pauses or resumes motion photo playback.</summary>
+    public void ToggleMotionPhotoPlayPause()
+    {
+        if (MotionPhotoView.IsPlaying || !SecondaryMotionPhotoView.IsMotionPhotoActive)
+        {
+            MotionPhotoView.TogglePlayPause();
+        }
+        else
+        {
+            SecondaryMotionPhotoView.TogglePlayPause();
+        }
     }
 
     public void TriggerScalingModeUpdate(bool invalidate) =>
@@ -186,6 +381,18 @@ public partial class ImageViewer : UserControl, IDisposable
         RemoveHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged);
         RemoveHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent);
         RemoveHandler(PinchEvent, TouchMagnifyEvent);
+        MainPanel.LayoutUpdated -= OnMotionPhotoBadgeAnchorChanged;
+        MotionPhotoView.LayoutUpdated -= OnMotionPhotoBadgeAnchorChanged;
+        SecondaryMotionPhotoView.LayoutUpdated -= OnMotionPhotoBadgeAnchorChanged;
+        ImageScrollViewer.ScrollChanged -= OnMotionPhotoBadgeScrollChanged;
+        MotionPhotoView.PlaybackStarted -= OnMotionPhotoPlaybackStarted;
+        MotionPhotoView.PlaybackStopped -= OnMotionPhotoPlaybackStopped;
+        MotionPhotoView.FirstFrameShown -= OnMotionPhotoFirstFrameShown;
+        MotionPhotoView.Dispose();
+        SecondaryMotionPhotoView.PlaybackStarted -= OnMotionPhotoPlaybackStarted;
+        SecondaryMotionPhotoView.PlaybackStopped -= OnMotionPhotoPlaybackStopped;
+        SecondaryMotionPhotoView.FirstFrameShown -= OnMotionPhotoFirstFrameShown;
+        SecondaryMotionPhotoView.Dispose();
         _disposables.Dispose();
         HoverBar.Dispose();
     }

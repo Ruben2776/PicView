@@ -56,11 +56,8 @@ New-Item -Path $outputPath -ItemType Directory | Out-Null
 # Copy the build output to the final destination
 Copy-Item -Path "$tempPath\*" -Destination $outputPath -Recurse -Force
 
-# Remove the PDB file
-$pdbPath = Join-Path -Path $outputPath -ChildPath "PicView.Avalonia.pdb"
-if (Test-Path $pdbPath) {
-    Remove-Item -Path $pdbPath -Force
-}
+# Remove debug symbols (native PicView.pdb alone is >150 MB)
+Remove-Item -Path "$outputPath\*.pdb" -Force -ErrorAction SilentlyContinue
 
 #Remove uninstended space
 Rename-Item -path $outputPath -NewName $outputPath.Replace(" ","")
