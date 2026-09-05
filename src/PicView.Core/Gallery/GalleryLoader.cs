@@ -1,5 +1,6 @@
 using ImageMagick;
 using PicView.Core.DebugTools;
+using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 
@@ -72,6 +73,7 @@ public static class GalleryLoader
                     item.FileDate.Value = thumbData.FileDate;
                     item.FileLocation.Value = thumbData.FileLocation;
                     item.ImageSize.Value = thumbData.ImageSize;
+                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, null) is not null;
 
                     // 2. Assign the lazy-loading logic, but don't execute it!
                     item.ThumbnailLoaderFunc = async _ =>

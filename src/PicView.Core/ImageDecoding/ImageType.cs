@@ -8,4 +8,5 @@ public enum ImageType
     AnimatedAvif,
     Bitmap,
     Svg,
+    MotionPhoto,
 }

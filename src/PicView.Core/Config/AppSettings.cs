@@ -216,6 +216,12 @@ public class UIProperties
     public int DoubleClickBehavior { get; set; } = 1;
     
     public bool ShowFullPathInTitleBar { get; set; } = false;
+
+    /// <summary>
+    /// Determines whether the embedded video of a motion photo is played automatically
+    /// when the image is shown. When false, playback starts via the motion photo badge.
+    /// </summary>
+    public bool AutoPlayMotionPhotos { get; set; } = false;
 }
 
 public class Theme
@@ -259,6 +265,11 @@ public class Gallery
     /// Determines whether the docked gallery is shown when the user interface is hidden.
     /// </summary>
     public bool ShowDockedGalleryInHiddenUI { get; set; } = false;
+
+    /// <summary>
+    /// Determines whether gallery thumbnails of motion photos display the motion photo badge.
+    /// </summary>
+    public bool ShowMotionPhotoBadges { get; set; } = true;
 
     /// <summary>
     /// Specifies the height/width of the gallery items displayed at the docked section of the gallery view.

@@ -112,6 +112,8 @@ public static class UpdateImage
         
         SetWindowAndImageSize(mainWindow, tabViewModel, vm);
 
+        imageViewer.UpdateMotionPhoto(tabViewModel);
+
         if (tabViewModel.Gallery.IsDockedGalleryVisible.CurrentValue)
         {
             Dispatcher.UIThread.Invoke(() =>
@@ -197,6 +199,7 @@ public static class UpdateImage
 
             imageViewer.ResetZoomSlim();
             imageViewer.Rotate(0);
+            imageViewer.UpdateMotionPhoto(tabViewModel);
         });
         
         var zoom = tabViewModel.ZoomLevel.CurrentValue;

@@ -12,7 +12,7 @@ public class GalleryItemViewModel : IDisposable
             FileLocation,
             FileSize,
             FileDate,
-            ImageSize);
+            IsMotionPhoto);
     }
     
     // Data Properties
@@ -22,6 +22,8 @@ public class GalleryItemViewModel : IDisposable
     public BindableReactiveProperty<string> FileSize { get; } = new();
     public BindableReactiveProperty<string> FileDate { get; } = new();
     public BindableReactiveProperty<string> ImageSize { get; } = new();
+    /// <summary>Whether the file carries a motion photo video (drives the gallery badge).</summary>
+    public BindableReactiveProperty<bool> IsMotionPhoto { get; } = new();
     
     public FileInfo? FileInfo { get; set; }
     public uint PixelWidth { get; set; }

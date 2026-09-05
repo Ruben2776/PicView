@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net11.0</TargetFramework>
@@ -30,6 +30,21 @@
         <ProjectReference Include="..\PicView.Avalonia.MacOS\PicView.Avalonia.MacOS.csproj" />
         <ProjectReference Include="..\PicView.Avalonia\PicView.Avalonia.csproj" />
         <ProjectReference Include="..\PicView.Core\PicView.Core.csproj" />
+    </ItemGroup>
+
+    <!-- Motion photo decoder tests load the bundled picview-ffmpeg native library when present -->
+    <ItemGroup Condition="'$(Platform)' != 'arm64' and Exists('$(MSBuildThisFileDirectory)..\..\Build\ffmpeg-native\win-x64\picview-ffmpeg.dll')">
+        <None Include="..\..\Build\ffmpeg-native\win-x64\picview-ffmpeg.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>ffmpeg\win-x64\picview-ffmpeg.dll</Link>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="MotionPhoto\Samples\sample_h264.mp4">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>MotionPhoto\Samples\sample_h264.mp4</Link>
+        </None>
     </ItemGroup>
 
 </Project>

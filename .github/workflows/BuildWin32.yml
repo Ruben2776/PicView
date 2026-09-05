@@ -28,6 +28,41 @@ jobs:
       - name: Get version from Directory.Build.props
         id: get-version
         run: pwsh -File "${{ github.workspace }}/Build/Get-VersionInfo.ps1"
+
+      # Step 3.1: Restore or build picview-ffmpeg, the statically-linked FFmpeg used
+      # for motion photo playback. Outputs are cached; a full build takes roughly ten
+      # minutes, cache hits are instant.
+      - name: Cache picview-ffmpeg (win-x64)
+        id: cache-ffmpeg-win-x64
+        uses: actions/cache@v4
+        with:
+          path: Build/ffmpeg-native/win-x64
+          key: picview-ffmpeg-win-x64-${{ hashFiles('Build/Build-FFmpegNative.ps1', 'Build/ffmpeg/**', 'Native/ffmpeg/**') }}
+
+      - name: Cache picview-ffmpeg (win-arm64)
+        id: cache-ffmpeg-win-arm64
+        uses: actions/cache@v4
+        with:
+          path: Build/ffmpeg-native/win-arm64
+          key: picview-ffmpeg-win-arm64-${{ hashFiles('Build/Build-FFmpegNative.ps1', 'Build/ffmpeg/**', 'Native/ffmpeg/**') }}
+
+      - name: Setup zig
+        if: steps.cache-ffmpeg-win-x64.outputs.cache-hit != 'true' || steps.cache-ffmpeg-win-arm64.outputs.cache-hit != 'true'
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+
+      - name: Build picview-ffmpeg (Windows)
+        if: steps.cache-ffmpeg-win-x64.outputs.cache-hit != 'true' || steps.cache-ffmpeg-win-arm64.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          # FFmpeg build toolchain inside the preinstalled MSYS2
+          & C:\msys64\usr\bin\pacman.exe -Sy --noconfirm --needed base-devel mingw-w64-x86_64-gcc mingw-w64-x86_64-nasm diffutils tar
+
+          $targets = @()
+          if ('${{ steps.cache-ffmpeg-win-x64.outputs.cache-hit }}' -ne 'true') { $targets += 'win-x64' }
+          if ('${{ steps.cache-ffmpeg-win-arm64.outputs.cache-hit }}' -ne 'true') { $targets += 'win-arm64' }
+          & "${{ github.workspace }}\Build\Build-FFmpegNative.ps1" -Targets $targets
       
       # Step 4 (x64): Publish x64 version
       - name: Publish x64 version

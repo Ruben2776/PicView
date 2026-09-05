@@ -114,6 +114,14 @@
                                                 Mode=OneWay}"
                     Text="{CompiledBinding Translation.ShowDockedGalleryWhenUiIsHidden.Value,
                                            Mode=OneWay}" />
+
+                <customControls:TextToggleButton
+                    x:Name="MotionPhotoBadgesToggleButton"
+                    Classes="altHover settingsToggleButton"
+                    IsChecked="{CompiledBinding GallerySettings.ShowMotionPhotoBadges.Value,
+                                                Mode=TwoWay}"
+                    Text="{CompiledBinding Translation.ShowMotionPhotoBadges.Value,
+                                           Mode=OneWay}" />
             </StackPanel>
         </Border>
 
