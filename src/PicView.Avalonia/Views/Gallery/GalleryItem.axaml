@@ -3,7 +3,6 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:gallery="clr-namespace:PicView.Avalonia.Views.Gallery"
     xmlns:gallerySettings="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:GalleryItemViewModel"
@@ -21,7 +20,7 @@
         ToolTip.Placement="TopEdgeAlignedLeft"
         ToolTip.VerticalOffset="0">
         <Panel>
-            <customControls:ThumbImage x:Name="GalleryImage" Stretch="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.GalleryStretch.Value}" />
+            <customControls:ThumbImage x:Name="GalleryImage" Source="{Binding Image.Value}" />
             <!--  Motion photo badge  -->
             <Border
                 Margin="3"
@@ -83,6 +82,12 @@
                     Margin="2,0,2,4"
                     Classes="txt"
                     Text="{CompiledBinding FileDate.Value}"
+                    TextWrapping="NoWrap" />
+                <TextBlock
+                    x:Name="ImageSize"
+                    Margin="2,0,2,4"
+                    Classes="txt"
+                    Text="{CompiledBinding ImageSize.Value}"
                     TextWrapping="NoWrap" />
             </StackPanel>
         </ToolTip.Tip>
@@ -287,6 +292,8 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <Separator />
+
+                <!--  Expanded menu items  -->
                 <MenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
                         <Image
@@ -308,18 +315,6 @@
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
-                        CommandParameter="{x:Static gallerySettings:GalleryStretchMode.Fill}"
-                        Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fill.Value, Mode=OneWay}"
-                        IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedStretchToFill.Value}"
-                        ToggleType="Radio" />
-                    <MenuItem
-                        Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
-                        CommandParameter="{x:Static gallerySettings:GalleryStretchMode.None}"
-                        Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.None.Value, Mode=OneWay}"
-                        IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedStretchNone.Value}"
-                        ToggleType="Radio" />
-                    <MenuItem
-                        Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.Square}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Square.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedStretchSquare.Value}"
@@ -331,6 +326,8 @@
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedStretchSquareFill.Value}"
                         ToggleType="Radio" />
                 </MenuItem>
+
+                <!--  Docked menu items  -->
                 <MenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding !$parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
                         <Image
@@ -352,18 +349,6 @@
                         ToggleType="Radio" />
                     <MenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"
-                        CommandParameter="{x:Static gallerySettings:GalleryStretchMode.Fill}"
-                        Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fill.Value, Mode=OneWay}"
-                        IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsDockedStretchToFill.Value}"
-                        ToggleType="Radio" />
-                    <MenuItem
-                        Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"
-                        CommandParameter="{x:Static gallerySettings:GalleryStretchMode.None}"
-                        Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.None.Value, Mode=OneWay}"
-                        IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsDockedStretchNone.Value}"
-                        ToggleType="Radio" />
-                    <MenuItem
-                        Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.Square}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Square.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsDockedStretchSquare.Value}"
@@ -375,31 +360,17 @@
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsDockedStretchSquareFill.Value}"
                         ToggleType="Radio" />
                 </MenuItem>
-                <MenuItem
-                    Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ExpandedGalleryItemSize.Value,
-                                             Mode=OneWay}"
-                    PointerPressed="Flyout_OnPointerPressed"
-                    StaysOpenOnClick="True">
+                <MenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ExpandedGalleryItemSize.Value, Mode=OneWay}" PointerPressed="ShowGalleryItemSizeSlider">
                     <MenuItem.Icon>
                         <Image
                             Width="12"
                             Height="12"
                             Source="{StaticResource Image}" />
                     </MenuItem.Icon>
-                    <FlyoutBase.AttachedFlyout>
-                        <Flyout>
-                            <Border
-                                Padding="10,3"
-                                Background="{DynamicResource MainButtonBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
-                                BorderThickness="2"
-                                CornerRadius="4">
-                                <gallery:GalleryItemSizeSlider x:Name="GalleryItemSizeSlider" />
-                            </Border>
-                        </Flyout>
-                    </FlyoutBase.AttachedFlyout>
                 </MenuItem>
+
                 <Separator />
+
                 <MenuItem Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.ToggleGalleryCommand}" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ShowImageGallery.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path

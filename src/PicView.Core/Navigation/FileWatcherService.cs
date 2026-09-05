@@ -61,7 +61,7 @@ public class FileWatcherService(
                 entry.Subscribers.RemoveAll(wr => !wr.TryGetTarget(out _));
 
                 // Add if not exists
-                if (!entry.Subscribers.Any(wr => wr.TryGetTarget(out var t) && ReferenceEquals(t, tab)))
+                if (!entry.Subscribers.Exists(wr => wr.TryGetTarget(out var t) && ReferenceEquals(t, tab)))
                 {
                     entry.Subscribers.Add(new WeakReference<TabViewModel>(tab));
                 }
@@ -195,16 +195,19 @@ public class FileWatcherService(
 
         if (insertionIndex >= 0 && tab.Gallery.IsGalleryDocked.CurrentValue)
         {
+            using var magick = new MagickImage();
+            await magick.PingAsync(newFile).ConfigureAwait(false);
             var item = new GalleryItemViewModel
             {
                 FileInfo = newFile
             };
 
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFile);
+            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFile, magick.Width, magick.Height);
             item.FileName.Value = thumbData.FileName;
             item.FileSize.Value = thumbData.FileSize;
             item.FileDate.Value = thumbData.FileDate;
             item.FileLocation.Value = thumbData.FileLocation;
+            item.ImageSize.Value = thumbData.ImageSize;
 
             tab.Gallery.GalleryItems.Insert(insertionIndex, item);
 
@@ -332,16 +335,19 @@ public class FileWatcherService(
 
         if (insertionIndex >= 0 && insertionIndex > tab.Gallery.GalleryItems.Count)
         {
+            using var magick = new MagickImage();
+            await magick.PingAsync(newFileInfo).ConfigureAwait(false);
             var item = new GalleryItemViewModel
             {
                 FileInfo = newFileInfo
             };
 
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFileInfo);
+            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFileInfo, magick.Width, magick.Height);
             item.FileName.Value = thumbData.FileName;
             item.FileSize.Value = thumbData.FileSize;
             item.FileDate.Value = thumbData.FileDate;
             item.FileLocation.Value = thumbData.FileLocation;
+            item.ImageSize.Value = thumbData.ImageSize;
 
             tab.Gallery.GalleryItems.Insert(insertionIndex, item);
 

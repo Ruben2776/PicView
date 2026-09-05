@@ -1,7 +1,7 @@
 using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Collections;
-using Avalonia.Controls.Presenters;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
 using ObservableCollections;
@@ -17,6 +17,7 @@ namespace PicView.Avalonia.Views.Gallery;
 public partial class GalleryView : GalleryAnimationControl
 {
     private readonly AvaloniaList<GalleryItemViewModel> _galleryItems = [];
+    private readonly DisposableBag _disposables;
 
     public GalleryView()
     {
@@ -43,7 +44,8 @@ public partial class GalleryView : GalleryAnimationControl
                 _ => throw new ArgumentOutOfRangeException(nameof(x), x, null)
             };
             GalleryItemsControl.Navigate(direction);
-        }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.NavigateGalleryCommand)));
+        }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.NavigateGalleryCommand)))
+            .AddTo(ref _disposables);
 
          if (Settings.Gallery.IsGalleryDocked)
          {
@@ -53,6 +55,30 @@ public partial class GalleryView : GalleryAnimationControl
          {
              Height = 0;
          }
+         gallery.ItemSpacing.Subscribe(_ =>
+         {
+             RecalculateGalleryIfNeeded(gallery);
+         }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.ItemSpacing)))
+         .AddTo(ref _disposables);
+         gallery.LineSpacing.Subscribe(_ =>
+         {
+             RecalculateGalleryIfNeeded(gallery);
+         }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.LineSpacing)))
+         .AddTo(ref _disposables);
+
+    }
+    
+    private void RecalculateGalleryIfNeeded(GalleryViewModel gallery)
+    {
+        if (!gallery.IsGalleryExpanded.CurrentValue || IsInAnimation)
+        {
+            return;
+        }
+
+        if (GalleryItemsControl.ItemsPanelRoot is VirtualizingGallery galleryItemsPanel)
+        {
+            galleryItemsPanel.InvalidateMeasure();
+        }
     }
 
     private void CurrentValueOnCollectionChanged(in NotifyCollectionChangedEventArgs<GalleryItemViewModel> e)
@@ -78,7 +104,7 @@ public partial class GalleryView : GalleryAnimationControl
                         {
                             _galleryItems.Add(newItem);
                         }
-                        GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                        
                     }, DispatcherPriority.Background, cancellationToken);
                 }
                 else
@@ -87,46 +113,13 @@ public partial class GalleryView : GalleryAnimationControl
                     var newItems = e.NewItems.ToArray();
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        int insertedIndex;
                         if (index >= 0 && index <= _galleryItems.Count)
                         {
                             _galleryItems.InsertRange(index, newItems);
-                            insertedIndex = index;
                         }
                         else
                         {
-                            insertedIndex = _galleryItems.Count;
                             _galleryItems.AddRange(newItems);
-                        }
-
-                        var needsScroll = false;
-                        if (tab.NavigationIndex.Value >= insertedIndex && 
-                            tab.NavigationIndex.Value < insertedIndex + newItems.Length)
-                        {
-                            GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
-                            GalleryItemsControl.SelectedItemIndex = tab.NavigationIndex.Value;
-                            needsScroll = true;
-                        }
-
-                        if (needsScroll)
-                        {
-                            Dispatcher.InvokeAsync(() =>
-                            {
-                                if (GalleryItemsControl.ItemsPanelRoot is null)
-                                {
-                                    return;
-                                }
-                                var targetIndex = tab.NavigationIndex.Value;
-                                if (GalleryItemsControl.ItemsPanelRoot.Children.Count <= targetIndex ||
-                                    GalleryItemsControl.ItemsPanelRoot.Children[targetIndex] is not ContentPresenter presenter)
-                                {
-                                    return;
-                                }
-                                var child = presenter.Child as GalleryItem; 
-                                child?.SetCurrent(true);
-                                child?.SetSelected(true);
-                                GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                            }, DispatcherPriority.Loaded, cancellationToken);
                         }
                     }, DispatcherPriority.Background, cancellationToken);
                 }
@@ -142,31 +135,7 @@ public partial class GalleryView : GalleryAnimationControl
                         return;
                     }
 
-                    _galleryItems.AddRange(currentItems);
-                    GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
-                    GalleryItemsControl.SelectedItemIndex = tab.NavigationIndex.Value;
-
-                    Dispatcher.InvokeAsync(() =>
-                    {
-                        if (GalleryItemsControl.ItemsPanelRoot is null)
-                        {
-                            return;
-                        }
-                        var targetIndex = tab.NavigationIndex.Value;
-                        if (GalleryItemsControl.ItemsPanelRoot.Children.Count <= targetIndex ||
-                            GalleryItemsControl.ItemsPanelRoot.Children[targetIndex] is not ContentPresenter presenter)
-                        {
-                            return;
-                        }
-                        var child = presenter.Child as GalleryItem; 
-                        child?.SetCurrent(true);
-                        child?.SetSelected(true);
-                        Dispatcher.UIThread.Post(() =>
-                        {
-                            GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                        }, DispatcherPriority.Background);
-                    }, DispatcherPriority.Loaded, cancellationToken);
-
+                    GalleryItemsControl.ScrollToCenterOfCurrentItem();
                 }, DispatcherPriority.Background, cancellationToken);
                 break;
             case NotifyCollectionChangedAction.Remove:
@@ -177,7 +146,7 @@ public partial class GalleryView : GalleryAnimationControl
                     {
                         _galleryItems.Remove(oldItem);
                         GalleryItemsControl.ScrollToCenterOfCurrentItem();  
-                    }, DispatcherPriority.Render, cancellationToken);
+                    }, DispatcherPriority.Background, cancellationToken);
                 }
                 else
                 {
@@ -216,11 +185,16 @@ public partial class GalleryView : GalleryAnimationControl
                 {
                     _galleryItems[replaceIndex] = replaceItem;
                 }, DispatcherPriority.Loaded, cancellationToken);
-                Dispatcher.UIThread.Post(() =>
-                {
-                    GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                }, DispatcherPriority.Render);
                 break;
         }
+    }
+    
+    private void ShowGalleryItemSizeSlider(object? sender, PointerPressedEventArgs e)
+    {
+        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        {
+            return;
+        }
+        mainWindow.AddGalleryItemSizeSlider();
     }
 }

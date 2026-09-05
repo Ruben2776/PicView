@@ -285,16 +285,6 @@
                                                   Mode=OneWay}"
                         Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem
-                        x:Name="FullGalleryFillItem"
-                        Content="{CompiledBinding Translation.Fill.Value,
-                                                  Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
-                    <ComboBoxItem
-                        x:Name="FullGalleryNoneItem"
-                        Content="{CompiledBinding Translation.None.Value,
-                                                  Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
-                    <ComboBoxItem
                         x:Name="FullGallerySquareItem"
                         Content="{CompiledBinding Translation.Square.Value,
                                                   Mode=OneWay}"
@@ -332,16 +322,6 @@
                     <ComboBoxItem
                         x:Name="DockedGalleryUniformToFillItem"
                         Content="{CompiledBinding Translation.UniformToFill.Value,
-                                                  Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
-                    <ComboBoxItem
-                        x:Name="DockedGalleryFillItem"
-                        Content="{CompiledBinding Translation.Fill.Value,
-                                                  Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
-                    <ComboBoxItem
-                        x:Name="DockedGalleryNoneItem"
-                        Content="{CompiledBinding Translation.None.Value,
                                                   Mode=OneWay}"
                         Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem

@@ -1,5 +1,6 @@
 using PicView.Core.Gallery;
 using PicView.Core.Navigation;
+// ReSharper disable All
 
 namespace PicView.Core.Config;
 
@@ -257,7 +258,7 @@ public class Gallery
     /// <summary>
     /// Determines how images will be stretched or scaled, when the gallery is in full/expanded mode.
     /// </summary>
-    public GalleryStretchMode ExpandedGalleryStretchMode { get; set; } = GalleryStretchMode.UniformToFill;
+    public GalleryStretchMode ExpandedGalleryStretchMode { get; set; } = GalleryStretchMode.Uniform;
     public GalleryStretchMode DockedGalleryStretchMode { get; set; } = GalleryStretchMode.UniformToFill;
     
     /// <summary>
@@ -273,12 +274,12 @@ public class Gallery
     /// <summary>
     /// Specifies the height/width of the gallery items displayed at the docked section of the gallery view.
     /// </summary>
-    public double DockedGalleryItemSize { get; set; } = 37;
+    public double DockedGalleryItemSize { get; set; } = GalleryDefaults.DefaultDockedGalleryHeight;
 
     /// <summary>
     /// Specifies the height of gallery thumbnails, when the gallery is in expanded mode.
     /// </summary>
-    public double ExpandedGalleryItemSize { get; set; } = 23;
+    public double ExpandedGalleryItemSize { get; set; } = GalleryDefaults.DefaultExpandedGalleryHeight;
 
     public double ItemSpacing { get; set; } = 25;
 

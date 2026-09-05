@@ -15,66 +15,68 @@ public static class GallerySettingsConverter
 
     public static void UpdateDockedGalleryStretchMode(GallerySharedSettingsViewModel gallerySettings, GalleryStretchMode mode)
     {
-        gallerySettings.IsDockedStretchUniform.Value = false;
-        gallerySettings.IsDockedStretchUniformToFill.Value = false;
-        gallerySettings.IsDockedStretchToFill.Value = false;
-        gallerySettings.IsDockedStretchNone.Value = false;
-        gallerySettings.IsDockedStretchSquare.Value = false;
-        gallerySettings.IsDockedStretchSquareFill.Value = false;
         switch (mode)
         {
             case GalleryStretchMode.Uniform:
                 gallerySettings.IsDockedStretchUniform.Value = true;
+                gallerySettings.IsDockedStretchUniformToFill.Value = false;
+                gallerySettings.IsDockedStretchSquare.Value = false;
+                gallerySettings.IsDockedStretchSquareFill.Value = false;
                 break;
             case GalleryStretchMode.UniformToFill:
+                gallerySettings.IsDockedStretchUniform.Value = false;
                 gallerySettings.IsDockedStretchUniformToFill.Value = true;
-                break;
-            case GalleryStretchMode.Fill:
-                gallerySettings.IsDockedStretchToFill.Value = true;
-                break;
-            case GalleryStretchMode.None:
-                gallerySettings.IsDockedStretchNone.Value = true;
+                gallerySettings.IsDockedStretchSquare.Value = false;
+                gallerySettings.IsDockedStretchSquareFill.Value = false;
                 break;
             case GalleryStretchMode.Square:
+                gallerySettings.IsDockedStretchUniform.Value = false;
+                gallerySettings.IsDockedStretchUniformToFill.Value = false;
                 gallerySettings.IsDockedStretchSquare.Value = true;
+                gallerySettings.IsDockedStretchSquareFill.Value = false;
                 break;
             case GalleryStretchMode.FillSquare:
+                gallerySettings.IsDockedStretchUniform.Value = false;
+                gallerySettings.IsDockedStretchUniformToFill.Value = false;
+                gallerySettings.IsDockedStretchSquare.Value = false;
                 gallerySettings.IsDockedStretchSquareFill.Value = true;
                 break;
         }
 
-        gallerySettings.DockedGalleryStretchMode.Value = (int)mode;
+        gallerySettings.DockedGalleryStretchMode.Value = mode;
+        Settings.Gallery.DockedGalleryStretchMode = mode;
     }
 
     public static void UpdateExpandedGalleryStretchMode(GallerySharedSettingsViewModel gallerySettings, GalleryStretchMode mode)
     {
-        gallerySettings.IsExpandedStretchUniform.Value = false;
-        gallerySettings.IsExpandedStretchUniformToFill.Value = false;
-        gallerySettings.IsExpandedStretchToFill.Value = false;
-        gallerySettings.IsExpandedStretchNone.Value = false;
-        gallerySettings.IsExpandedStretchSquare.Value = false;
-        gallerySettings.IsExpandedStretchSquareFill.Value = false;
         switch (mode)
         {
             case GalleryStretchMode.Uniform:
                 gallerySettings.IsExpandedStretchUniform.Value = true;
-                break;
-            case GalleryStretchMode.UniformToFill:
                 gallerySettings.IsExpandedStretchUniformToFill.Value = false;
-                break;
-            case GalleryStretchMode.Fill:
-                gallerySettings.IsExpandedStretchToFill.Value = false;
-                break;
-            case GalleryStretchMode.None:
-                gallerySettings.IsExpandedStretchNone.Value = false;
-                break;
-            case GalleryStretchMode.Square:
                 gallerySettings.IsExpandedStretchSquare.Value = false;
-                break;
-            case GalleryStretchMode.FillSquare:
                 gallerySettings.IsExpandedStretchSquareFill.Value = false;
                 break;
+            case GalleryStretchMode.UniformToFill:
+                gallerySettings.IsExpandedStretchUniform.Value = false;
+                gallerySettings.IsExpandedStretchUniformToFill.Value = true;
+                gallerySettings.IsExpandedStretchSquare.Value = false;
+                gallerySettings.IsExpandedStretchSquareFill.Value = false;
+                break;
+            case GalleryStretchMode.Square:
+                gallerySettings.IsExpandedStretchUniform.Value = false;
+                gallerySettings.IsExpandedStretchUniformToFill.Value = false;
+                gallerySettings.IsExpandedStretchSquare.Value = true;
+                gallerySettings.IsExpandedStretchSquareFill.Value = false;
+                break;
+            case GalleryStretchMode.FillSquare:
+                gallerySettings.IsExpandedStretchUniform.Value = false;
+                gallerySettings.IsExpandedStretchUniformToFill.Value = false;
+                gallerySettings.IsExpandedStretchSquare.Value = false;
+                gallerySettings.IsExpandedStretchSquareFill.Value = true;
+                break;
         }
-        gallerySettings.ExpandedGalleryStretchMode.Value = (int)mode;
+        gallerySettings.ExpandedGalleryStretchMode.Value = mode;
+        Settings.Gallery.ExpandedGalleryStretchMode = mode;
     }
 }

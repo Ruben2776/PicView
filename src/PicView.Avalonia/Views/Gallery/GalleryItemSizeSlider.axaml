@@ -1,38 +1,75 @@
-﻿<UserControl
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    mc:Ignorable="d"
+﻿<customControls:AnimatedPopUp
     x:Class="PicView.Avalonia.Views.Gallery.GalleryItemSizeSlider"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core">
+    <customControls:AnimatedPopUp.Resources>
+        <ContextMenu x:Key="MainMenu">
+            <!--  Close  -->
+            <MenuItem
+                x:Name="CloseMenuItem"
+                Click="CloseMenu"
+                Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Close.Value,
+                                         Mode=OneWay}">
+                <MenuItem.Icon>
+                    <Path
+                        Width="12"
+                        Height="12"
+                        Data="{StaticResource CloseGeometry}"
+                        Fill="{DynamicResource MainTextColor}"
+                        Stretch="Fill" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+    </customControls:AnimatedPopUp.Resources>
+
     <Panel>
-        <customControls:CustomSlider
-            Height="30"
-            HorizontalAlignment="Center"
-            IsSnapToTickEnabled="True"
-            IsVisible="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}"
-            Margin="0,1,0,1"
-            Maximum="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ExpandedGalleryMaxItemSize.Value}"
-            Minimum="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ExpandedGalleryMinItemSize.Value}"
-            TickFrequency="1"
-            TickPlacement="BottomRight"
-            Value="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ExpandedGalleryItemSize.Value}"
-            Width="270" />
-        <customControls:CustomSlider
-            Height="30"
-            HorizontalAlignment="Center"
-            IsSnapToTickEnabled="True"
-            IsVisible="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsDockedGalleryVisible.Value}"
-            Margin="0,1,0,1"
-            Maximum="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.DockedGalleryMaxItemSize.Value}"
-            Minimum="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.DockedGalleryMinItemSize.Value}"
-            TickFrequency="1"
-            TickPlacement="BottomRight"
-            Value="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.DockedGalleryItemSize.Value}"
-            Width="270" />
+        <customControls:IconButton
+            x:Name="CloseButton"
+            Width="50"
+            Height="50"
+            Margin="0,-15,-10,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="{DynamicResource SecondaryButtonBackgroundColor}"
+            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderThickness="1"
+            Classes="hover"
+            Click="CloseMenu"
+            CornerRadius="50"
+            Data="{StaticResource CloseGeometry}"
+            IconHeight="18"
+            IconWidth="18"
+            ZIndex="1" />
+        <StackPanel
+            Width="425"
+            Margin="0,0,0,5"
+            VerticalAlignment="Center"
+            Background="Transparent">
+
+            <TextBlock
+                x:Name="HeaderTextBlock"
+                Margin="0,15"
+                Classes="txt bold"
+                TextAlignment="Center" />
+
+            <customControls:CustomSlider
+                x:Name="MainSlider"
+                Width="300"
+                Height="35"
+                Margin="0,1,0,1"
+                HorizontalAlignment="Center"
+                IsSnapToTickEnabled="True"
+                TickFrequency="1"
+                TickPlacement="BottomRight" />
+
+            <TextBlock
+                x:Name="ValueTextBlock"
+                Margin="0,0,0,5"
+                Classes="txt"
+                TextAlignment="Center" />
+
+        </StackPanel>
     </Panel>
-</UserControl>
+</customControls:AnimatedPopUp>

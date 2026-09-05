@@ -1,3 +1,4 @@
+using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation.Interfaces;
@@ -8,7 +9,9 @@ namespace PicView.Core.Gallery;
 public static class GalleryLoader
 {
     private static CancellationTokenSource? _cts;
-    public static async Task LoadGalleryAsync(TabViewModel tab, IReadOnlyList<FileInfo> files, IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
+
+    public static async Task LoadGalleryAsync(TabViewModel tab, IReadOnlyList<FileInfo> files,
+        IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
     {
         if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
         {
@@ -26,146 +29,94 @@ public static class GalleryLoader
             maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
         }
 
-        const int batchSize = 20;
-        var batchList = new List<GalleryItemViewModel>(batchSize);
-
-        // Populate items with metadata
-        foreach (var file in files)
+        var parallelOptions = new ParallelOptions
         {
-            ct.ThrowIfCancellationRequested();
-            
-            var item = new GalleryItemViewModel
-            {
-                FileInfo = file
-            };
-            
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(file);
-            item.FileName.Value = thumbData.FileName;
-            item.FileSize.Value = thumbData.FileSize;
-            item.FileDate.Value = thumbData.FileDate;
-            item.FileLocation.Value = thumbData.FileLocation;
-            
-            batchList.Add(item);
-
-            if (batchList.Count >= batchSize)
-            {
-                tab.Gallery.GalleryItems.AddRange(batchList);
-                batchList.Clear();
-            }
-        }
-        
-        // Add any remaining items in the final batch
-        if (batchList.Count > 0)
-        {
-            tab.Gallery.GalleryItems.AddRange(batchList);
-        }
-
-        // Load thumbnails asynchronously
-        var parallelOptions = new ParallelOptions 
-        { 
-            CancellationToken = _cts.Token, 
-            MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount - 2)
+            CancellationToken = _cts.Token,
+            MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount - 1)
         };
-        
-        try 
+
+        const int batchSize = 20;
+
+        try
         {
-            if (thumbnailCache.IsEmpty)
+            for (var i = 0; i < files.Count; i += batchSize)
             {
-                await Parallel.ForAsync(0, tab.Gallery.GalleryItems.Count, parallelOptions,
-                async (i, _) =>
+                _cts.Token.ThrowIfCancellationRequested();
+
+                var currentBatchSize = Math.Min(batchSize, files.Count - i);
+                var batchVms = new GalleryItemViewModel[currentBatchSize];
+
+                // 1. Parallelize the metadata extraction (Massive speed boost)
+                await Parallel.ForAsync(0, currentBatchSize, parallelOptions, async (j, token) =>
                 {
-                    ct.ThrowIfCancellationRequested();
-                    if (_cts is null || ct.IsCancellationRequested || _cts.IsCancellationRequested)
+                    var file = files[i + j];
+                    var item = new GalleryItemViewModel { FileInfo = file };
+
+                    try
                     {
-                        parallelOptions.CancellationToken.ThrowIfCancellationRequested();
-                        throw new OperationCanceledException();
+                        using var magick = new MagickImage();
+                        await magick.PingAsync(file, token).ConfigureAwait(false);
+                        item.PixelWidth = magick.Width;
+                        item.PixelHeight = magick.Height;
                     }
-                    var item = tab.Gallery.GalleryItems[i];
-                    await LoadItem(item).ConfigureAwait(false);
-                }).ConfigureAwait(false);
-            }
-            else
-            {
-                await Parallel.ForAsync(0, tab.Gallery.GalleryItems.Count, parallelOptions,
-                async (i, _) =>
-                {
-                    ct.ThrowIfCancellationRequested();
-                    if (_cts is null || ct.IsCancellationRequested || _cts.IsCancellationRequested)
+                    catch (Exception ex)
                     {
-                        parallelOptions.CancellationToken.ThrowIfCancellationRequested();
-                        throw new OperationCanceledException();
+#if DEBUG
+                        DebugHelper.LogDebug(nameof(GalleryLoader), nameof(LoadGalleryAsync), ex);
+#endif
                     }
-                    var item = tab.Gallery.GalleryItems[i];
-                    await CheckAndLoad(item).ConfigureAwait(false);
+
+                    var thumbData =
+                        GalleryThumbInfo.GalleryThumbHolder.GetThumbData(file, item.PixelWidth, item.PixelHeight);
+                    item.FileName.Value = thumbData.FileName;
+                    item.FileSize.Value = thumbData.FileSize;
+                    item.FileDate.Value = thumbData.FileDate;
+                    item.FileLocation.Value = thumbData.FileLocation;
+                    item.ImageSize.Value = thumbData.ImageSize;
+                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, null) is not null;
+
+                    // 2. Assign the lazy-loading logic, but don't execute it!
+                    item.ThumbnailLoaderFunc = async _ =>
+                    {
+                        if (thumbnailCache.TryGet(file.FullName, out var cached) && cached is not null)
+                        {
+                            return cached;
+                        }
+
+                        var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight)
+                            .ConfigureAwait(false);
+                        if (thumb is not null)
+                        {
+                            thumbnailCache.Add(tab.Id, file.FullName, thumb);
+                        }
+
+                        return thumb;
+                    };
+
+                    // Array assignment ensures perfect sorting order
+                    batchVms[j] = item;
                 }).ConfigureAwait(false);
+
+                // 3. Add chunk directly to the UI
+                tab.Gallery.GalleryItems.AddRange(batchVms);
             }
         }
         catch (OperationCanceledException)
         {
-            if (tab.Gallery.LoadingState is GalleryLoadingState.Restarting)
+            if (tab.Gallery.LoadingState is GalleryLoadingState.Restarting && tab.Gallery.GalleryItems.Count > 0)
             {
-                if(tab.Gallery.GalleryItems.Count > 0)
-                {
-                    tab.Gallery.GalleryItems.Clear();
-                }
+                tab.Gallery.GalleryItems.Clear();
             }
+
             tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
             return;
         }
-        
+
         tab.Gallery.LoadingState = GalleryLoadingState.Loaded;
-        return;
-
-        async ValueTask CheckAndLoad(GalleryItemViewModel item)
-        {
-            if (item.FileInfo is null)
-            {
-                DebugHelper.LogDebug(nameof(GalleryLoader), nameof(LoadGalleryAsync), "Invalid file");
-                return;
-            }
-            
-            object? thumb;
-            if (thumbnailCache.TryGet(item.FileInfo.FullName, out var cached))
-            {
-                thumb = cached;
-            }
-            else
-            {
-                thumb = await thumbnailLoader.GetThumbnailAsync(item.FileInfo, (uint)maxHeight).ConfigureAwait(false);
-            }
-
-            if (thumb is not null)
-            {
-                thumbnailCache.Add(tab.Id, item.FileInfo.FullName, thumb);
-            }
-            item.Image.Value = thumb;
-            DetectMotionPhoto(item);
-        }
-
-        async ValueTask LoadItem(GalleryItemViewModel item)
-        {
-            if (item.FileInfo is null)
-            {
-                DebugHelper.LogDebug(nameof(GalleryLoader), nameof(LoadGalleryAsync), "Invalid file");
-                return;
-            }
-
-            var thumb = await thumbnailLoader.GetThumbnailAsync(item.FileInfo, (uint)maxHeight).ConfigureAwait(false);
-            if (thumb is not null)
-            {
-                thumbnailCache.Add(tab.Id, item.FileInfo.FullName, thumb);
-            }
-            item.Image.Value = thumb;
-            DetectMotionPhoto(item);
-        }
-
-        // Runs inside the parallel thumbnail loop (thread-pool threads). The detector is
-        // stateless and thread-safe; cost overlaps with thumbnail I/O.
-        static void DetectMotionPhoto(GalleryItemViewModel item) =>
-            item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, null) is not null;
     }
 
-    public static async Task ReloadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files, IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
+    public static async Task ReloadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files,
+        IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
     {
         tab.Gallery.LoadingState = GalleryLoadingState.Restarting;
         tab.Gallery.GalleryItems.Clear();
@@ -174,8 +125,9 @@ public static class GalleryLoader
         _cts = null;
         await LoadGalleryAsync(tab, files, thumbnailLoader, thumbnailCache, ct).ConfigureAwait(false);
     }
-    
-    public static async ValueTask LoadGalleryIfDockedOrExpanded(TabViewModel tabViewModel, GalleryMode mode, IThumbnailCache thumbnailCache, IThumbnailLoader thumbnailLoader)
+
+    public static async ValueTask LoadGalleryIfDockedOrExpanded(TabViewModel tabViewModel, GalleryMode mode,
+        IThumbnailCache thumbnailCache, IThumbnailLoader thumbnailLoader)
     {
         if (mode is GalleryMode.Docked or GalleryMode.Expanded)
         {
@@ -190,7 +142,7 @@ public static class GalleryLoader
             }
         }
     }
-    
+
     public static async ValueTask ToggleGalleryAndLoadItem(TabViewModel tabViewModel, int index)
     {
         var gallery = tabViewModel.Gallery;
@@ -199,12 +151,14 @@ public static class GalleryLoader
             GalleryManager.ToggleGallery(gallery);
         }
 
-        await tabViewModel.ImageIterator.SkipToIndexAsync(index, tabViewModel.GetTabCancellation()).ConfigureAwait(false);
+        await tabViewModel.ImageIterator.SkipToIndexAsync(index, tabViewModel.GetTabCancellation())
+            .ConfigureAwait(false);
     }
 
     public static void SortLoadedGallery(TabViewModel tab, IReadOnlyList<FileInfo> files)
     {
-        if (tab.Gallery.GalleryItems is null || tab.Gallery.GalleryItems.Count <= 1 || files is null || files.Count is 0)
+        if (tab.Gallery.GalleryItems is null || tab.Gallery.GalleryItems.Count <= 1 || files is null ||
+            files.Count is 0)
         {
             return;
         }
@@ -221,10 +175,12 @@ public static class GalleryLoader
             {
                 return 0;
             }
+
             if (x is null)
             {
                 return 1;
             }
+
             if (y is null)
             {
                 return -1;

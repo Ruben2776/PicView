@@ -5,11 +5,13 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Core.DebugTools;
+using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -17,59 +19,103 @@ namespace PicView.Avalonia.Views.Gallery;
 
 public partial class GalleryItem : NavigateAbleItem
 {
+    private CancellationTokenSource? _loadCts;
+    private DisposableBag _disposables;
+
     public GalleryItem()
     {
         InitializeComponent();
         GalleryContextMenu.Opened += GalleryContextMenuOnOpened;
         GalleryContextMenu.Closed += GalleryContextMenuOnClosed;
-    }
-
-    private IDisposable? _imageSubscription;
-
-    public override void SetViewportVisibility(bool isVisible)
-    {
-        base.SetViewportVisibility(isVisible);
-        if (isVisible)
-        {
-            LoadImage();
-        }
-        else
-        {
-            UnloadImage();
-        }
-    }
-
-    private void LoadImage()
-    {
-        if (_imageSubscription is not null || DataContext is not GalleryItemViewModel vm)
+        if (Application.Current.DataContext is not CoreViewModel core)
         {
             return;
         }
-        
-        _imageSubscription = Observable.EveryValueChanged(vm.Image, img => img.Value)
-            .Subscribe(img =>
+
+        core.GallerySettings.DockedGalleryStretchMode.Subscribe(x =>
+        {
+            if (!core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked.CurrentValue)
             {
-                GalleryImage.Source = img as Bitmap;    
-            }, DebugHelper.LogError(nameof(GalleryItem), nameof(LoadImage)));
+                return;
+            }
+
+            GalleryImage.Stretch = x switch
+            {
+                GalleryStretchMode.Uniform or GalleryStretchMode.Square => Stretch.Uniform,
+                GalleryStretchMode.UniformToFill or GalleryStretchMode.FillSquare => Stretch.UniformToFill,
+                _ => GalleryImage.Stretch
+            };
+        }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.DockedGalleryStretchMode)))
+        .AddTo(ref _disposables);
+        
+        core.GallerySettings.ExpandedGalleryStretchMode.Subscribe(x =>
+        {
+            if (!core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryExpanded.CurrentValue)
+            {
+                return;
+            }
+
+            GalleryImage.Stretch = x switch
+            {
+                GalleryStretchMode.Uniform or GalleryStretchMode.Square => Stretch.Uniform,
+                GalleryStretchMode.UniformToFill or GalleryStretchMode.FillSquare => Stretch.UniformToFill,
+                _ => GalleryImage.Stretch
+            };
+        }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.DockedGalleryStretchMode)))
+        .AddTo(ref _disposables);
     }
 
-    private void UnloadImage()
+    public async ValueTask LoadImage()
     {
-        _imageSubscription?.Dispose();
-        _imageSubscription = null;
-        GalleryImage.Source = null;
-    }
-
-    protected override void OnDataContextChanged(EventArgs e)
-    {
-        base.OnDataContextChanged(e);
-        if (_imageSubscription is null)
+        if (DataContext is not GalleryItemViewModel vm)
         {
             return;
         }
 
-        UnloadImage();
-        LoadImage();
+        // Fast-path: If the image is already loaded, skip
+        if (vm.Image.Value is IImage)
+        {
+            return;
+        }
+
+        if (vm.ThumbnailLoaderFunc == null)
+        {
+            return;
+        }
+
+        _loadCts?.Cancel();
+        _loadCts = new CancellationTokenSource();
+        var token = _loadCts.Token;
+
+        try
+        {
+            // Execute the lazy load directly
+            var thumb = await vm.ThumbnailLoaderFunc(token).ConfigureAwait(false);
+        
+            // Ensure the user hasn't scrolled past this item while we were loading
+            if (!token.IsCancellationRequested && thumb is not null)
+            {
+                vm.Image.Value = thumb;
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected behavior when the user scrolls fast
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(GalleryItem), nameof(LoadImage), ex);
+        }
+    }
+
+    public void UnloadImage()
+    {
+        _loadCts?.Cancel();
+        if (DataContext is not GalleryItemViewModel vm)
+        {
+            return;
+        }
+        vm.Image.Value = null;
     }
 
     private void GalleryContextMenuOnClosed(object? sender, RoutedEventArgs e)
@@ -82,14 +128,14 @@ public partial class GalleryItem : NavigateAbleItem
         SetContextMenuOpen(true);
     }
 
-    private void Flyout_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    private void ShowGalleryItemSizeSlider(object? sender, PointerPressedEventArgs e)
     {
-        if (sender is not Control ctl)
+        GalleryContextMenu.Close();
+        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
         }
-
-        FlyoutBase.ShowAttachedFlyout(ctl);
+        mainWindow.AddGalleryItemSizeSlider();
     }
     
     
@@ -128,12 +174,7 @@ public partial class GalleryItem : NavigateAbleItem
         }
     }
 
-    protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
-    {
-        base.OnDetachedFromLogicalTree(e);
-        GalleryContextMenu.Opened -= GalleryContextMenuOnOpened;
-        GalleryContextMenu.Closed -= GalleryContextMenuOnClosed;
-    }
+    #region Menu click events
 
     private void OpenWith_OnClick(object? sender, RoutedEventArgs e)
     {
@@ -256,5 +297,15 @@ public partial class GalleryItem : NavigateAbleItem
         }
         var fileName = item.FileLocation.CurrentValue;
         _ = core.PlatformService.DeleteFile(fileName, recycle: true);
+    }
+    
+    #endregion
+    
+    protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromLogicalTree(e);
+        GalleryContextMenu.Opened -= GalleryContextMenuOnOpened;
+        GalleryContextMenu.Closed -= GalleryContextMenuOnClosed;
+        _disposables.Dispose();
     }
 }
