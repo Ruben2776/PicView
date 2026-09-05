@@ -140,8 +140,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
         EnsureUiStateSubscription();
         UpdateBadgeInset();
 
-        if (model?.ImageType is ImageType.MotionPhoto &&
-            model.MotionPhoto is not null &&
+        if (model is { ImageType: ImageType.MotionPhoto, MotionPhoto: not null } &&
             FFmpegService.IsPlaybackSupported &&
             FFmpegService.TryInitialize())
         {
@@ -256,7 +255,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
         }
 
         _isSessionBusy = true;
-        var cancellationToken = (DataContext as TabViewModel)?.GetTabCancellation().Token ?? default;
+        var cancellationToken = (DataContext as TabViewModel)?.GetTabCancellation().Token ?? CancellationToken.None;
         Stream? stream = null;
         try
         {
@@ -338,7 +337,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
         Dispatcher.UIThread.Post(FreezeBackToCover);
 
     private void OnFrameReady(int index, IntPtr bgra, int byteCount, int width, int height) =>
-        Dispatcher.UIThread.Post(() =>
+        Dispatcher.UIThread.Invoke(() =>
         {
             var decoder = _decoder;
             if (decoder is null || _isDisposed)

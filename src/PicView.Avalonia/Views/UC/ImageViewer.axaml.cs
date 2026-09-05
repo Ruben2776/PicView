@@ -33,12 +33,17 @@ public partial class ImageViewer : UserControl, IDisposable
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
         InitializeImageTransformer();
-        
+
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
         AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         AddHandler(PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
 
+        Dispatcher.UIThread.Post(InitializeMotionPhoto, DispatcherPriority.ApplicationIdle);
+    }
+    
+    private void InitializeMotionPhoto()
+    {
         // Float the badges above the transformed image container, so they stay upright
         // when the image is rotated, flipped or zoomed, then keep each badge anchored
         // to the on-screen top-right corner of its image

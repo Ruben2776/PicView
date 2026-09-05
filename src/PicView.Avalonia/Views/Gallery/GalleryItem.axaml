@@ -20,11 +20,9 @@
         ToolTip.HorizontalOffset="0"
         ToolTip.Placement="TopEdgeAlignedLeft"
         ToolTip.VerticalOffset="0">
-        <Grid>
-            <customControls:ThumbImage
-                x:Name="GalleryImage"
-                Stretch="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.GalleryStretch.Value}" />
-            <!-- Motion photo badge -->
+        <Panel>
+            <customControls:ThumbImage x:Name="GalleryImage" Stretch="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.GalleryStretch.Value}" />
+            <!--  Motion photo badge  -->
             <Border
                 Margin="3"
                 Padding="4,3"
@@ -42,7 +40,7 @@
                         <Binding Path="$parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.ShowMotionPhotoBadges.Value" />
                     </MultiBinding>
                 </Border.IsVisible>
-                <Grid Width="9" Height="9">
+                <Panel Width="9" Height="9">
                     <Path
                         Width="5.45"
                         Height="5.45"
@@ -56,9 +54,9 @@
                         Stroke="{DynamicResource MainTextColor}"
                         StrokeLineCap="Round"
                         StrokeThickness="2" />
-                </Grid>
+                </Panel>
             </Border>
-        </Grid>
+        </Panel>
         <ToolTip.Tip>
             <StackPanel MaxWidth="600">
                 <TextBlock

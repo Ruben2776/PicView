@@ -27,7 +27,7 @@ public sealed class MotionPhotoDecoder : IDisposable
     private const int OverflowBufferIndex = FrameBufferCount;
 
     private readonly Stream _stream;
-    private readonly GCHandle _callbackHandle;
+    private GCHandle _callbackHandle;
     private readonly FFmpegService.PvReadCallback _readCallback;
     private readonly FFmpegService.PvSeekCallback _seekCallback;
     private readonly ConcurrentQueue<int> _freeBuffers = new();
