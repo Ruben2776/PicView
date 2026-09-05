@@ -73,15 +73,21 @@
             <Color x:Key="TabItemHoverBackground">#D2353535</Color>
 
             <!--  Scrollbar  -->
-            <Color x:Key="ScrollbarBackgroundColor">#fff</Color>
-            <Color x:Key="ScrollbarBorderColor">#FFDDDDDD</Color>
+            <Color x:Key="ScrollbarBackgroundColor">#FF2C2C2C</Color>
+            <Color x:Key="ScrollbarBorderColor">#FF5D5D5D</Color>
 
-            <Color x:Key="ScrollbarThumbColor">#fff</Color>
-            <Color x:Key="ScrollbarThumbBorderColor">#FFB5C2D6</Color>
+            <Color x:Key="ScrollbarThumbColor">#EE2E2E2E</Color>
+            <Color x:Key="ScrollbarThumbBorderColor">#EE4A4A4A</Color>
+
+            <Color x:Key="ScrollbarIconColor">#EEDFDFDF</Color>
+            <Color x:Key="ScrollbarIconBorderColor">#EE747474</Color>
 
             <!--  Gallery  -->
-            <Color x:Key="GalleryBackgroundColor">#FFF5FAFF</Color>
-            <Color x:Key="GalleryBorderColor">#FFDCDCDC</Color>
+            <Color x:Key="GalleryBackgroundColor">#CE212121</Color>
+            <Color x:Key="GalleryBorderColor">#FF323232</Color>
+
+            <Color x:Key="GalleryItemBackgroundColor">#CE212121</Color>
+            <Color x:Key="GalleryItemBorderColor">#FF3A3A3A</Color>
 
 
             <!--  StartUpMenu  -->
@@ -93,6 +99,11 @@
                 Stretch="Fill"
                 TileMode="FlipXY" />
             <Color x:Key="StartUpMenuForeground">#DDDDDD</Color>
+
+            <!--  PopUp  -->
+            <Color x:Key="PopUpOverlayColor">#A8000000</Color>
+            <Color x:Key="PopUpBackgroundColor">#CC2b2b2b</Color>
+            <Color x:Key="PopUpMainBorderColor">#FF3A3A3A</Color>
 
             <!--  EFFECTS & MISC  -->
             <Color x:Key="ErrorColor">#B51522</Color>

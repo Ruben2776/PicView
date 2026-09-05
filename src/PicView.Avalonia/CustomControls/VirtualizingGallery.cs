@@ -239,9 +239,9 @@ public class VirtualizingGallery : VirtualizingPanel
             }
             else
             {
-                // Horizontal Docked Mode (Single Row)
+                // Horizontal Docked Mode (Single Row) - NO SPACING
                 _itemBounds.Add(new Rect(currentX, currentY, itemWidth, ItemHeight));
-                currentX += itemWidth + ItemSpacing;
+                currentX += itemWidth;
             }
         }
 
@@ -257,7 +257,8 @@ public class VirtualizingGallery : VirtualizingPanel
 
         if (!IsExpanded)
         {
-            return new Size(currentX > 0 ? currentX - ItemSpacing : 0, ItemHeight);
+            // Return exact width without deducting spacing
+            return new Size(currentX, ItemHeight);
         }
 
         var totalWidth = currentX + currentColumnMaxWidth;

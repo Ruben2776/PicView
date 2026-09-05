@@ -6,15 +6,15 @@
     <ControlTheme x:Key="{x:Type customControls:AnimatedPopUp}" TargetType="customControls:AnimatedPopUp">
         <Setter Property="Template">
             <ControlTemplate>
-                <Panel x:Name="PART_Overlay" Background="#A8000000">
+                <Panel x:Name="PART_Overlay" Background="{DynamicResource PopUpOverlayColor}">
                     <Border
                         x:Name="PART_Border"
                         Margin="20"
                         Padding="{TemplateBinding Padding}"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Background="{DynamicResource MainBackgroundColor}"
-                        BorderBrush="{DynamicResource MainBorderColor}"
+                        Background="{DynamicResource PopUpBackgroundColor}"
+                        BorderBrush="{DynamicResource PopUpMainBorderColor}"
                         BorderThickness="1"
                         CornerRadius="8">
                         <ContentPresenter Content="{TemplateBinding Content}" />

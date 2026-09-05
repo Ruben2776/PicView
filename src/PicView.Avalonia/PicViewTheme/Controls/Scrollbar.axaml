@@ -28,9 +28,9 @@
                                     Width="12"
                                     Height="12"
                                     Data="{StaticResource FilledChevronLeftGeometry}"
-                                    Fill="{DynamicResource ScrollbarThumbColor}"
+                                    Fill="{DynamicResource ScrollbarIconColor}"
                                     Stretch="Fill"
-                                    Stroke="{DynamicResource ScrollbarThumbBorderColor}"
+                                    Stroke="{DynamicResource ScrollbarIconBorderColor}"
                                     StrokeThickness="1" />
                             </RepeatButton>
                             <Track
@@ -75,9 +75,9 @@
                                     Width="12"
                                     Height="12"
                                     Data="{StaticResource FilledChevronRightGeometry}"
-                                    Fill="{DynamicResource ScrollbarThumbColor}"
+                                    Fill="{DynamicResource ScrollbarIconColor}"
                                     Stretch="Fill"
-                                    Stroke="{DynamicResource ScrollbarThumbBorderColor}"
+                                    Stroke="{DynamicResource ScrollbarIconBorderColor}"
                                     StrokeThickness="1" />
                             </RepeatButton>
                         </Grid>
@@ -121,9 +121,9 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Data="{StaticResource FilledArrowUpGeometry}"
-                                    Fill="{DynamicResource ScrollbarThumbColor}"
+                                    Fill="{DynamicResource ScrollbarIconColor}"
                                     Stretch="Fill"
-                                    Stroke="{DynamicResource ScrollbarThumbBorderColor}"
+                                    Stroke="{DynamicResource ScrollbarIconBorderColor}"
                                     StrokeThickness="1" />
                             </RepeatButton>
 
@@ -142,9 +142,9 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Data="{StaticResource FilledArrowDownGeometry}"
-                                    Fill="{DynamicResource ScrollbarThumbColor}"
+                                    Fill="{DynamicResource ScrollbarIconColor}"
                                     Stretch="Fill"
-                                    Stroke="{DynamicResource ScrollbarThumbBorderColor}"
+                                    Stroke="{DynamicResource ScrollbarIconBorderColor}"
                                     StrokeThickness="1" />
                             </RepeatButton>
 
