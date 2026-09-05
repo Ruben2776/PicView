@@ -60,7 +60,7 @@ public class FileWatcherService(
                 entry.Subscribers.RemoveAll(wr => !wr.TryGetTarget(out _));
 
                 // Add if not exists
-                if (!entry.Subscribers.Any(wr => wr.TryGetTarget(out var t) && ReferenceEquals(t, tab)))
+                if (!entry.Subscribers.Exists(wr => wr.TryGetTarget(out var t) && ReferenceEquals(t, tab)))
                 {
                     entry.Subscribers.Add(new WeakReference<TabViewModel>(tab));
                 }
