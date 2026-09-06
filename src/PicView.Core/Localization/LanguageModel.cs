@@ -292,7 +292,9 @@ public class LanguageModel
     public string? OpenWith { get; set; }
     public string? OptimizeImage { get; set; }
     public string? Orientation { get; set; }
+    public string? OriginalSize { get; set; }
     public string? OutputFolder { get; set; }
+    public string? OutputSize { get; set; }
     public string? Pan { get; set; }
     public string? PaperSize { get; set; }
     public string? PasswordArchive { get; set; }
