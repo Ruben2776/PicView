@@ -19,63 +19,67 @@
         PointerPressed="MoveWindow">
         <StackPanel>
 
-            <DockPanel Height="28" LastChildFill="True">
+            <Border
+                Background="{DynamicResource WindowTitleBackgroundColor}"
+                BorderBrush="{DynamicResource TitleBarButtonBorder}"
+                BorderThickness="0,0,0,1">
+                <DockPanel Height="28" LastChildFill="True">
 
-                <Border
-                    x:Name="IconBorder"
-                    Background="{DynamicResource WindowLogoColor}"
-                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
-                    BorderThickness="0,0,1,0"
-                    DockPanel.Dock="Left">
-                    <Image
-                        Width="20"
-                        Height="25"
-                        Margin="7,1,7,1"
-                        Source="{StaticResource LogoImage}" />
-                </Border>
+                    <Border
+                        x:Name="IconBorder"
+                        Background="{DynamicResource WindowLogoColor}"
+                        BorderBrush="{DynamicResource TitleBarButtonBorder}"
+                        BorderThickness="0,0,1,0"
+                        DockPanel.Dock="Left">
+                        <Image
+                            Width="20"
+                            Height="25"
+                            Margin="7,1,7,1"
+                            Source="{StaticResource LogoImage}" />
+                    </Border>
 
-                <customControls:IconButton
-                    x:Name="CloseButton"
-                    Width="30"
-                    Background="{DynamicResource WindowButtonBackgroundColor}"
-                    BorderThickness="0"
-                    Classes="hover"
-                    Click="Close"
-                    ClickMode="Release"
-                    Data="{StaticResource CloseGeometry}"
-                    DockPanel.Dock="Right"
-                    Foreground="{DynamicResource MainTextColor}"
-                    IconHeight="10"
-                    IconWidth="10"
-                    IsRepeatEnabled="False"
-                    WindowDecorationProperties.ElementRole="CloseButton" />
+                    <customControls:IconButton
+                        x:Name="CloseButton"
+                        Width="30"
+                        Background="{DynamicResource WindowButtonBackgroundColor}"
+                        Classes="hover"
+                        Click="Close"
+                        ClickMode="Release"
+                        Data="{StaticResource CloseGeometry}"
+                        DockPanel.Dock="Right"
+                        Foreground="{DynamicResource MainTextColor}"
+                        IconHeight="10"
+                        IconWidth="10"
+                        IsRepeatEnabled="False"
+                        WindowDecorationProperties.ElementRole="CloseButton" />
 
-                <customControls:IconButton
-                    x:Name="MinimizeButton"
-                    Width="30"
-                    Background="{DynamicResource WindowButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
-                    BorderThickness="1,0,1,0"
-                    Classes="hover"
-                    Click="Minimize"
-                    Data="{StaticResource MinimizeGeometry}"
-                    DockPanel.Dock="Right"
-                    Foreground="{DynamicResource MainTextColor}"
-                    IconHeight="12"
-                    IconWidth="12"
-                    IsRepeatEnabled="False" />
+                    <customControls:IconButton
+                        x:Name="MinimizeButton"
+                        Width="30"
+                        Background="{DynamicResource WindowButtonBackgroundColor}"
+                        BorderBrush="{DynamicResource TitleBarButtonBorder}"
+                        BorderThickness="1,0,1,0"
+                        Classes="hover"
+                        Click="Minimize"
+                        Data="{StaticResource MinimizeGeometry}"
+                        DockPanel.Dock="Right"
+                        Foreground="{DynamicResource MainTextColor}"
+                        IconHeight="12"
+                        IconWidth="12"
+                        IsRepeatEnabled="False" />
 
-                <TextBlock
-                    x:Name="TitleText"
-                    Height="28"
-                    Padding="30,0,0,0"
-                    Background="{DynamicResource TitleBarBackgroundColor}"
-                    Classes="txt"
-                    Foreground="{DynamicResource MainTextColor}"
-                    LineHeight="28"
-                    Text="{Binding Translation.About.Value, Mode=OneWay}"
-                    TextAlignment="Center" />
-            </DockPanel>
+                    <TextBlock
+                        x:Name="TitleText"
+                        Height="28"
+                        Padding="30,0,0,0"
+                        Background="{DynamicResource TitleBarBackgroundColor}"
+                        Classes="txt"
+                        Foreground="{DynamicResource MainTextColor}"
+                        LineHeight="28"
+                        Text="{Binding Translation.About.Value, Mode=OneWay}"
+                        TextAlignment="Center" />
+                </DockPanel>
+            </Border>
 
             <main:AboutView
                 x:Name="AboutView"

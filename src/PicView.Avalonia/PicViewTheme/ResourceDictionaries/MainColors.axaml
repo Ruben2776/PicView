@@ -15,11 +15,11 @@
             <Color x:Key="SecondaryTextColor">#fff</Color>
 
             <!--  Global Window  -->
-            <Color x:Key="WindowTitleBackgroundColor">#fff</Color>
+            <Color x:Key="WindowTitleBackgroundColor">#FF2C2C2C</Color>
             <Color x:Key="WindowButtonBackgroundColor">#CC2b2b2b</Color>
             <Color x:Key="WindowBorderColor">#FF3A3A3A</Color>
             <Color x:Key="WindowLogoColor">#FF303030</Color>
-            <Color x:Key="WindowMainBackgroundColor">#fff</Color>
+            <Color x:Key="WindowMainBackgroundColor">#DF252525</Color>
 
             <!--  TOP TITLE BAR  -->
             <Color x:Key="TitleBarBackgroundColor">#FF303030</Color>
@@ -61,9 +61,11 @@
             <Color x:Key="DropMenuSurroundingBorderColor">#FF3B3B3B</Color>
             <Color x:Key="DropMenuBackgroundColor">#CC252525</Color>
             <Color x:Key="DropMenuBorderColor">#FF3A3A3A</Color>
-            <Color x:Key="DropDownMenuButtonBackground">#fff</Color>
-            <Color x:Key="DropDownMenuButtonForeground">#FF656565</Color>
-            <Color x:Key="DropDownMenuButtonBorderColor">#373535</Color>
+
+            <Color x:Key="DropDownMenuBackgroundColor">#FF2A2A2A</Color>
+            <Color x:Key="DropDownMenuButtonBackground">#FF323232</Color>
+            <Color x:Key="DropDownMenuButtonForeground">#FFE2E2E2</Color>
+            <Color x:Key="DropDownMenuButtonBorderColor">#FF424242</Color>
 
             <!--  TABS  -->
             <Color x:Key="BehindTabBackground">#FF353535</Color>
@@ -111,6 +113,11 @@
             <Color x:Key="PopUpOverlayColor">#A8000000</Color>
             <Color x:Key="PopUpBackgroundColor">#CC2b2b2b</Color>
             <Color x:Key="PopUpMainBorderColor">#FF3A3A3A</Color>
+
+            <!--  Tool window styles  -->
+            <Color x:Key="ToolWindowFooterBackground">#CC303030</Color>
+            <Color x:Key="ToolWindowButtonBackground">#FF292929</Color>
+            <Color x:Key="ToolWindowButtonBorderColor">#CC424242</Color>
 
             <!--  EFFECTS & MISC  -->
             <Color x:Key="ErrorColor">#B51522</Color>
@@ -183,6 +190,8 @@
             <Color x:Key="DropMenuSurroundingBorderColor">#B5C0CE</Color>
             <Color x:Key="DropMenuBorderColor">#373535</Color>
             <Color x:Key="DropMenuBackgroundColor">#FEF9FBFF</Color>
+
+            <Color x:Key="DropDownMenuBackgroundColor">#FEF9FBFF</Color>
             <Color x:Key="DropDownMenuButtonBackground">#fff</Color>
             <Color x:Key="DropDownMenuButtonForeground">#FF656565</Color>
             <Color x:Key="DropDownMenuButtonBorderColor">#F4EFF1F5</Color>
@@ -221,6 +230,17 @@
                 <GradientStop Offset="1.0" Color="#ECECECFF" />
             </ConicGradientBrush>
             <Color x:Key="StartUpMenuForeground">#FF616161</Color>
+
+            <!--  PopUp  -->
+            <Color x:Key="PopUpOverlayColor">#A8000000</Color>
+            <Color x:Key="PopUpBackgroundColor">#CC2b2b2b</Color>
+            <Color x:Key="PopUpMainBorderColor">#FF3A3A3A</Color>
+
+            <!--  Tool window styles  -->
+            <Color x:Key="ToolWindowFooterBackground">#CC303030</Color>
+            <Color x:Key="ToolWindowButtonBackground">#FF292929</Color>
+            <Color x:Key="ToolWindowButtonBorderColor">#CC424242</Color>
+
 
             <!--  EFFECTS & MISC  -->
             <Color x:Key="NoisyTexture">#17FFFFFF</Color>

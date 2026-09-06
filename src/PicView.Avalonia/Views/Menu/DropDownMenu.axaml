@@ -12,7 +12,7 @@
     <Border
         x:Name="MainBorder"
         Width="380"
-        Background="{DynamicResource DropMenuBackgroundColor}"
+        Background="{DynamicResource DropDownMenuBackgroundColor}"
         BorderBrush="{DynamicResource MenuBorderColor}"
         BorderThickness="1"
         CornerRadius="8">
@@ -45,7 +45,7 @@
                             CornerRadius="0,8,0,0"
                             Data="{StaticResource FilledArrowRightGeometry}"
                             DockPanel.Dock="Right"
-                            Foreground="{DynamicResource MainTextColor}"
+                            Foreground="{DynamicResource DropDownMenuButtonForeground}"
                             IconHeight="12"
                             IconWidth="12" />
 

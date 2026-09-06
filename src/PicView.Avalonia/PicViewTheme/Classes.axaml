@@ -3,11 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls">
 
-    <Style Selector="Border.borderStyle">
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
-        <Setter Property="BorderThickness" Value="1" />
-    </Style>
-
     <Style Selector="TextBlock.txt">
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
@@ -40,20 +35,13 @@
         </Style>
     </Style>
 
-    <Style Selector="Button.BorderStyle, ToggleButton.BorderStyle">
+    <Style Selector="Button.ToolButtonStyle, ToggleButton.ToolButtonStyle">
         <Setter Property="Width" Value="37" />
         <Setter Property="Height" Value="35" />
-        <Setter Property="Margin" Value="7,0,0,0" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+        <Setter Property="Background" Value="{DynamicResource ToolWindowButtonBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ToolWindowButtonBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="2" />
-    </Style>
-
-    <Style Selector="Button.mainBtn, ToggleButton.mainBtn, RepeatButton.mainBtn">
-        <Setter Property="Width" Value="NaN" />
-        <Setter Property="Height" Value="35" />
-        <Setter Property="Padding" Value="10" />
-        <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
     </Style>
 
     <Style Selector="TextBox.TStyle, CalendarDatePicker.TStyle, customControls|DateTimeInput">

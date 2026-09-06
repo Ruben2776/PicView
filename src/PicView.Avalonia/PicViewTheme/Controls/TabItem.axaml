@@ -15,7 +15,7 @@
                     HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                     Background="{TemplateBinding Background}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     Content="{TemplateBinding Header}"
                     ContentTemplate="{TemplateBinding HeaderTemplate}"
