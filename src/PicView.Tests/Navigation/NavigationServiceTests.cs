@@ -1,3 +1,4 @@
+using ImageMagick;
 using PicView.Core.FileHandling.Interfaces;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
@@ -100,7 +101,10 @@ public class NavigationServiceTests : IDisposable
         await _navigationService.RepopulateIterator(fileInfo, tab, cts, files);
 
         // Assert
-        // GalleryLoader.LoadGalleryAsync calls GetThumbnailAsync
+        // GalleryLoader.LoadGalleryAsync sets lazy ThumbnailLoaderFunc which calls GetThumbnailAsync when invoked
+        Assert.NotEmpty(tab.Gallery.GalleryItems);
+        Assert.NotNull(tab.Gallery.GalleryItems[0].ThumbnailLoaderFunc);
+        await tab.Gallery.GalleryItems[0].ThumbnailLoaderFunc!(cts.Token);
         Assert.True(_mockThumbnailLoader.GetThumbnailAsyncCalledCount > 0, "Gallery should be reloaded (GetThumbnailAsync called)");
     }
 
@@ -366,7 +370,7 @@ public class NavigationServiceTests : IDisposable
             return ValueTask.FromResult<object?>(null);
         }
 
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size) 
+        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, MagickImage? magick = null) 
         {
             GetThumbnailAsyncCalledCount++;
             return ValueTask.FromResult<object?>(null);

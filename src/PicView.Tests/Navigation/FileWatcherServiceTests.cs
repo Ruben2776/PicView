@@ -1,5 +1,4 @@
-using System.Diagnostics;
-using ObservableCollections;
+using ImageMagick;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
@@ -208,7 +207,7 @@ public class FileWatcherServiceTests : IDisposable
     private class MockThumbnailLoader : IThumbnailLoader
     {
         public ValueTask<object?> GetThumbnailAsync(FileInfo file) => ValueTask.FromResult<object?>(null);
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size) => ValueTask.FromResult<object?>(null);
+        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
         public object? GetExifThumbnail(FileInfo file) => null;
         public object? GetThumbQuick(FileInfo file) => null;
     }
