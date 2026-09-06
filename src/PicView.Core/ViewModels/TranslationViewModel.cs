@@ -218,7 +218,9 @@ public class TranslationViewModel
         OpenWith.Value = t.OpenWith;
         OptimizeImage.Value = t.OptimizeImage;
         Orientation.Value = t.Orientation;
+        OriginalSize.Value = t.OriginalSize;
         OutputFolder.Value = t.OutputFolder;
+        OutputSize.Value = t.OutputSize;
         Pan.Value = t.Pan;
         PaperSize.Value = t.PaperSize;
         Paste.Value = t.FilePaste;
@@ -608,7 +610,9 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> OpenWith { get; } = new();
     public BindableReactiveProperty<string?> OptimizeImage { get; } = new();
     public BindableReactiveProperty<string?> Orientation { get; } = new();
+    public BindableReactiveProperty<string?> OriginalSize { get; } = new();
     public BindableReactiveProperty<string?> OutputFolder { get; } = new();
+    public BindableReactiveProperty<string?> OutputSize { get; } = new();
     public BindableReactiveProperty<string?> Pan { get; } = new();
     public BindableReactiveProperty<string?> PaperSize { get; } = new();
     public BindableReactiveProperty<string?> Paste { get; } = new();
