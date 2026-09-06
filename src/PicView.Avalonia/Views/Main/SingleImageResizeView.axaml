@@ -10,7 +10,7 @@
         <SolidColorBrush x:Key="CancelBrush" Color="{DynamicResource MainTextColor}" />
         <SolidColorBrush x:Key="LinkBrush" Color="{StaticResource SecondaryTextColor}" />
     </UserControl.Resources>
-    <Panel x:Name="BgPanel" Background="{DynamicResource TertiaryBackgroundColor}">
+    <Panel x:Name="BgPanel" Background="{DynamicResource WindowMainBackgroundColor}">
         <uc:SpinWaiter x:Name="SpinWaiter" IsVisible="False" />
 
         <StackPanel x:Name="ParentContainer">
@@ -29,7 +29,7 @@
                                 Width="195"
                                 Height="35"
                                 Margin="0"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
+                                BorderThickness="1"
                                 Classes="hover TStyle"
                                 CornerRadius="4"
                                 Foreground="{DynamicResource MainTextColor}"
@@ -44,7 +44,7 @@
                             Height="35"
                             Margin="5,20,5,0"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="MenuItemHover"
                             CornerRadius="6"
                             Foreground="{StaticResource LinkBrush}"
                             Icon="{StaticResource LinkChainImage}"
@@ -156,13 +156,19 @@
             <StackPanel
                 x:Name="BottomBorder"
                 Height="80"
-                Background="{DynamicResource WindowBottomToolbarBackgroundColor}"
-                Orientation="Horizontal">
+                VerticalAlignment="Center"
+                Background="{DynamicResource ToolWindowFooterBackground}"
+                Orientation="Horizontal"
+                PointerPressed="MoveWindow">
                 <Button
                     x:Name="ResetButton"
                     Width="195"
                     Margin="30,0,60,0"
-                    Classes="BorderStyle altHover mainBtn"
+                    Padding="8"
+                    Background="{DynamicResource ToolWindowButtonBackground}"
+                    BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                    BorderThickness="1"
+                    Classes="AltHover"
                     CornerRadius="4"
                     IsVisible="{Binding ResizeImageViewModel.ShowReset.Value}">
                     <TextBlock
@@ -175,7 +181,12 @@
                     x:Name="CancelButton"
                     Width="195"
                     Margin="30,0,60,0"
-                    Classes="BorderStyle altHover mainBtn"
+                    Padding="8"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolWindowButtonBackground}"
+                    BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                    BorderThickness="1"
+                    Classes="AltHover"
                     CornerRadius="4"
                     IsVisible="{Binding !ResizeImageViewModel.ShowReset.Value}">
                     <TextBlock
@@ -190,7 +201,7 @@
                     Width="195"
                     Padding="8"
                     Background="{DynamicResource AccentColor}"
-                    Classes="BorderStyle accentHover mainBtn"
+                    Classes="accentHover"
                     CornerRadius="4">
                     <TextBlock
                         Classes="txt"

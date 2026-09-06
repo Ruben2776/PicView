@@ -25,8 +25,8 @@
 
                 <Border
                     x:Name="IconBorder"
-                    Background="{DynamicResource WindowButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    Background="{DynamicResource WindowLogoColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
                     DockPanel.Dock="Left">
                     <Image
@@ -56,7 +56,7 @@
                     x:Name="MinimizeButton"
                     Width="30"
                     Background="{DynamicResource WindowButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
                     Click="Minimize"
@@ -71,7 +71,7 @@
                     x:Name="TitleText"
                     Height="28"
                     Padding="30,0,0,0"
-                    Background="{DynamicResource WindowSecondaryBackgroundColor}"
+                    Background="{DynamicResource TitleBarBackgroundColor}"
                     Classes="txt"
                     Foreground="{DynamicResource MainTextColor}"
                     LineHeight="28"
@@ -84,7 +84,7 @@
                 Height="1"
                 Fill="{DynamicResource WindowBorderColor}" />
 
-            <main:SingleImageResizeView x:Name="ResizeView" Background="{DynamicResource NoisyTexture}" />
+            <main:SingleImageResizeView x:Name="ResizeView" />
         </StackPanel>
     </Border>
 </Window>

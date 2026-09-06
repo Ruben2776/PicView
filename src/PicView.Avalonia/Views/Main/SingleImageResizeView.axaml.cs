@@ -145,4 +145,12 @@ public partial class SingleImageResizeView : UserControl
             LinkChainButton.Icon = linkImage;
         }
     }
+
+    private void MoveWindow(object? sender, PointerPressedEventArgs e)
+    {
+        if (TopLevel.GetTopLevel(this) is Window window)
+        {
+            window.BeginMoveDrag(e);
+        }
+    }
 }

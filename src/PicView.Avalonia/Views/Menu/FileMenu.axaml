@@ -40,86 +40,36 @@
                         Canvas.Top="-1"
                         Orientation="Horizontal">
 
-                        <!--  Show Image Info Window  -->
-                        <customControls:IconButton
+                        <!--  Optimize image  -->
+                        <customControls:TextIconButton
+                            Width="180"
                             BorderBrush="{DynamicResource DropMenuBorderColor}"
                             BorderThickness="0,0,1,0"
                             Classes="hover btn"
-                            Command="{CompiledBinding ImageInfoWindowCommand}"
+                            Command="{CompiledBinding OptimizeImageCommand}"
                             CornerRadius="8,0,0,0"
-                            Data="{StaticResource ImageInfoGeometry}"
                             Foreground="{DynamicResource MainTextColor}"
+                            Icon="{StaticResource PortalImage}"
                             IconHeight="17"
+                            IconMargin="15,0,10,0"
                             IconWidth="17"
+                            Text="{Binding Translation.OptimizeImage.Value}"
                             ToolTip.Tip="{CompiledBinding Translation.ImageInfo.Value,
                                                           Mode=OneWay}" />
 
                         <!--  Print  -->
-                        <customControls:IconButton
+                        <customControls:TextIconButton
+                            Width="135"
                             BorderBrush="{DynamicResource DropMenuBorderColor}"
                             BorderThickness="0,0,1,0"
                             Classes="hover btn"
                             Command="{CompiledBinding PrintCommand}"
                             Data="{StaticResource PrintGeometry}"
                             IconHeight="17"
+                            IconMargin="15,0,10,0"
                             IconWidth="17"
-                            IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
-                                                        Converter={x:Static ObjectConverters.IsNotNull},
-                                                        FallbackValue=False,
-                                                        Mode=OneWay}"
+                            Text="{Binding Translation.Print.Value}"
                             ToolTip.Tip="{CompiledBinding Translation.Print.Value,
-                                                          Mode=OneWay}" />
-
-                        <!--  Crop  -->
-                        <customControls:IconButton
-                            BorderBrush="{DynamicResource DropMenuBorderColor}"
-                            BorderThickness="0,0,1,0"
-                            Classes="hover btn"
-                            Command="{CompiledBinding CropCommand}"
-                            Icon="{StaticResource CropImage}"
-                            IconHeight="17"
-                            IconWidth="17"
-                            IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
-                                                        Converter={x:Static ObjectConverters.IsNotNull},
-                                                        FallbackValue=False,
-                                                        Mode=OneWay}"
-                            ToolTip.Tip="{CompiledBinding Translation.Crop.Value,
-                                                          Mode=OneWay}" />
-
-                        <!--  Effects  -->
-                        <customControls:IconButton
-                            BorderBrush="{DynamicResource DropMenuBorderColor}"
-                            BorderThickness="0,0,1,0"
-                            Classes="hover btn"
-                            Command="{CompiledBinding EffectsWindowCommand}"
-                            Icon="{StaticResource SparklesImage}"
-                            IconHeight="17"
-                            IconWidth="17"
-                            ToolTip.Tip="{CompiledBinding Translation.Effects.Value,
-                                                          Mode=OneWay}" />
-
-                        <!--  Single image resize  -->
-                        <customControls:IconButton
-                            BorderBrush="{DynamicResource DropMenuBorderColor}"
-                            BorderThickness="0,0,1,0"
-                            Classes="hover btn"
-                            Command="{CompiledBinding ResizeImageCommand}"
-                            Icon="{StaticResource UpscaleImage}"
-                            IconHeight="17"
-                            IconWidth="17"
-                            ToolTip.Tip="{CompiledBinding Translation.ResizeImage.Value,
-                                                          Mode=OneWay}" />
-
-                        <!--  Batch resize  -->
-                        <customControls:IconButton
-                            BorderBrush="{DynamicResource DropMenuBorderColor}"
-                            BorderThickness="0,0,1,0"
-                            Classes="hover btn"
-                            Command="{CompiledBinding BatchResizeWindowCommand}"
-                            Icon="{StaticResource BatchResizeImage}"
-                            IconHeight="17"
-                            IconWidth="17"
-                            ToolTip.Tip="{CompiledBinding Translation.BatchResize.Value,
                                                           Mode=OneWay}" />
 
                         <!--  Close Menu  -->
@@ -263,9 +213,9 @@
                         ToolTip.Tip="{CompiledBinding Translation.ShowImageGallery.Value,
                                                       Mode=OneWay}" />
 
-                    <!--  New window  -->
+                    <!--  Delete file  -->
                     <customControls:TextIconButton
-                        x:Name="NewWindowButton"
+                        x:Name="PrintButton"
                         Canvas.Left="182"
                         Canvas.Top="155"
                         Width="169"
@@ -273,16 +223,16 @@
                         Background="{DynamicResource MenuButtonBackground}"
                         BorderBrush="{DynamicResource DropMenuBorderColor}"
                         BorderThickness="1"
-                        Classes="AltHover"
-                        Command="{CompiledBinding NewWindowCommand}"
+                        Classes="errorHover"
+                        Command="{CompiledBinding DeleteFileCommand}"
+                        Data="{StaticResource RecycleGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
-                        Icon="{StaticResource WindowImage}"
                         IconHeight="20"
                         IconMargin="11,0,13,0"
                         IconWidth="20"
-                        Text="{CompiledBinding Translation.NewWindow.Value,
+                        Text="{CompiledBinding Translation.DeleteFile.Value,
                                                Mode=OneWay}"
-                        ToolTip.Tip="{Binding Translation.NewWindow.Value, Mode=OneWay}" />
+                        ToolTip.Tip="{Binding Translation.MoveToRecycleBin.Value, Mode=OneWay}" />
                 </Canvas>
             </Border>
 

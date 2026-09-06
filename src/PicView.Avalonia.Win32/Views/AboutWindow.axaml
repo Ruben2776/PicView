@@ -23,7 +23,7 @@
                 Background="{DynamicResource WindowTitleBackgroundColor}"
                 BorderBrush="{DynamicResource TitleBarButtonBorder}"
                 BorderThickness="0,0,0,1">
-                <DockPanel Height="28" LastChildFill="True">
+                <DockPanel Height="{StaticResource TopBorderHeight}" LastChildFill="True">
 
                     <Border
                         x:Name="IconBorder"

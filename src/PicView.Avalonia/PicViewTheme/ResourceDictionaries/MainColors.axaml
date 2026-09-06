@@ -151,14 +151,11 @@
             <Color x:Key="MainTextColorFaded">#768396</Color>
 
             <!--  Global Window  -->
-            <Color x:Key="WindowBorderColor">Transparent</Color>
-            <Color x:Key="WindowLogoColor">#fff</Color>
-
-            <!--  Tool Windows  -->
-            <Color x:Key="WindowTitleBackgroundColor">#fff</Color>
+            <Color x:Key="WindowTitleBackgroundColor">Transparent</Color>
             <Color x:Key="WindowButtonBackgroundColor">#fff</Color>
-            <Color x:Key="WindowMainBackgroundColor">#fff</Color>
-            <Color x:Key="WindowBottomToolbarBackgroundColor">#46252525</Color>
+            <Color x:Key="WindowBorderColor">#FF3A3A3A</Color>
+            <Color x:Key="WindowLogoColor">#fff</Color>
+            <Color x:Key="WindowMainBackgroundColor">#DF252525</Color>
 
             <!--  TOP TITLE BAR  -->
             <Color x:Key="TitleBarBackgroundColor">#fff</Color>
@@ -169,7 +166,7 @@
             <Color x:Key="TitleBarBackgroundHoverColor">#80ADA8E9</Color>
 
             <Color x:Key="EditableTitlebarBackground">Transparent</Color>
-            <Color x:Key="EditableTitlebarForeground">#EE25203C</Color>
+            <Color x:Key="EditableTitlebarForeground">#EEF2F2F2</Color>
 
             <!--  BOTTOM TOOLBAR  -->
             <Color x:Key="BottomBarBackgroundColor">#fff</Color>
@@ -180,6 +177,7 @@
             <Color x:Key="BottomBarButtonBorderColor">#fff</Color>
             <Color x:Key="BottomBarNavBtnBackground">#fff</Color>
             <Color x:Key="BottomBarToolBtnBackground">#fff</Color>
+            <Color x:Key="BottomBarButtonHoverBackground">#DB3D3D3D</Color>
 
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#fff</Color>
@@ -197,8 +195,8 @@
 
             <!--  Drop menu  -->
             <Color x:Key="DropMenuSurroundingBorderColor">#B5C0CE</Color>
-            <Color x:Key="DropMenuBorderColor">#373535</Color>
             <Color x:Key="DropMenuBackgroundColor">#FEF9FBFF</Color>
+            <Color x:Key="DropMenuBorderColor">#373535</Color>
 
             <Color x:Key="DropDownMenuBackgroundColor">#FEF9FBFF</Color>
             <Color x:Key="DropDownMenuButtonBackground">#fff</Color>
@@ -219,9 +217,12 @@
             <Color x:Key="ScrollbarThumbColor">#fff</Color>
             <Color x:Key="ScrollbarThumbBorderColor">#FFB5C2D6</Color>
 
+            <Color x:Key="ScrollbarIconColor">#EEDFDFDF</Color>
+            <Color x:Key="ScrollbarIconBorderColor">#EE747474</Color>
+
             <!--  Gallery  -->
-            <Color x:Key="GalleryBackgroundColor">#FFF5FAFF</Color>
-            <Color x:Key="GalleryBorderColor">#FFDCDCDC</Color>
+            <Color x:Key="GalleryBackgroundColor">#CE212121</Color>
+            <Color x:Key="GalleryBorderColor">#FF323232</Color>
 
             <Color x:Key="GalleryItemBackgroundColor">#CE212121</Color>
             <Color x:Key="GalleryItemBorderColor">#FF3A3A3A</Color>
@@ -256,8 +257,9 @@
             <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
 
             <!--  ComboBox  -->
-            <Color x:Key="ComboBoxDropDownBackgroundColor">#CC252525</Color>
-            <Color x:Key="ComboBoxDropDownBorderColor">#FF3A3A3A</Color>
+            <Color x:Key="ComboBoxDropDownBackgroundColor">#282828</Color>
+            <Color x:Key="ComboBoxDropDownBorderColor">#777</Color>
+
 
 
             <!--  EFFECTS & MISC  -->
