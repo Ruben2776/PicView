@@ -1,31 +1,32 @@
 ﻿<UserControl
-    Background="Transparent"
     x:Class="PicView.Avalonia.Views.UC.Buttons.AltClose"
-    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:MainWindowViewModel"
+    Background="Transparent">
     <Button
-        Background="{DynamicResource AltBackgroundColor}"
+        x:Name="XButton"
+        Width="35"
+        Height="30"
+        VerticalAlignment="Top"
+        Background="{DynamicResource PopUpBackgroundColor}"
+        BorderBrush="{DynamicResource PopUpMainBorderColor}"
         BorderThickness="1,0,0,1"
-        Classes="ButtonBorder hover"
+        Classes="hover"
         ClickMode="Release"
         Command="{CompiledBinding ExitCommand}"
         CornerRadius="0,0,0,0"
-        Height="30"
         IsVisible="{CompiledBinding !IsUIShown.Value}"
         ToolTip.Tip="{CompiledBinding Translation.Close.Value,
                                       Mode=OneWay}"
-        VerticalAlignment="Top"
-        Width="35"
-        ZIndex="99"
-        x:Name="XButton">
+        ZIndex="99">
         <Path
-            Data="{StaticResource CloseGeometry}"
-            Fill="{DynamicResource MainTextColor}"
+            Width="12"
             Height="12"
             Margin="0,0,0,3"
-            Stretch="Fill"
-            Width="12" />
+            Data="{StaticResource CloseGeometry}"
+            Fill="{DynamicResource MainTextColor}"
+            Stretch="Fill" />
     </Button>
 </UserControl>

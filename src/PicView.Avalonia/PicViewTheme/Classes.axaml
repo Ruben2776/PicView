@@ -111,7 +111,6 @@
         <Setter Property="Height" Value="46" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0,0,1,0" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
         <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
     </Style>
 

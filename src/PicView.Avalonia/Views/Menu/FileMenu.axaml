@@ -308,7 +308,7 @@
                     Canvas.Left="6"
                     Canvas.Top="-1"
                     Data="M 0,0 L 15,16 L 30,0"
-                    Stroke="{DynamicResource MenuSurroundingBorderColor}"
+                    Stroke="{DynamicResource DropMenuSurroundingBorderColor}"
                     StrokeJoin="Round"
                     StrokeThickness="1" />
             </Canvas>

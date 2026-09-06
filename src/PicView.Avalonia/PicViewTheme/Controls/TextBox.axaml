@@ -4,12 +4,17 @@
     x:ClassModifier="internal">
 
     <ControlTheme x:Key="{x:Type TextBox}" TargetType="TextBox">
+        <Setter Property="Background" Value="{DynamicResource TextBoxBackgroundColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TextBoxBorderColor}" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CaretBrush" Value="{DynamicResource MainTextColor}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource AccentColor}" />
         <Setter Property="SelectionForegroundBrush" Value="{DynamicResource MainTextColor}" />
         <Setter Property="Padding" Value="8,4,0,4" />
         <Setter Property="ScrollViewer.IsScrollChainingEnabled" Value="True" />
         <Setter Property="LineHeight" Value="16" />
+        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
+        <Setter Property="Focusable" Value="True" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
@@ -79,7 +84,7 @@
         </Setter>
 
         <Style Selector="^:pointerover:not(:readonly) /template/ Border#border">
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource TextBoxHoverBorderColor}" />
             <Setter Property="Cursor" Value="IBeam" />
         </Style>
         <Style Selector="^.disabled:pointerover /template/ Border#border">
@@ -99,7 +104,7 @@
         </Style>
 
         <Style Selector="^:disabled /template/ Border#border">
-            <Setter Property="Background" Value="{DynamicResource DisabledBackgroundColor}" />
+            <Setter Property="Background" Value="{DynamicResource TextBoxDisabledBackgroundColor}" />
         </Style>
 
         <Style Selector="^:disabled /template/ TextBlock#watermark">
@@ -110,7 +115,7 @@
         </Style>
 
         <Style Selector="^:readonly /template/ Border#border">
-            <Setter Property="Background" Value="{DynamicResource DisabledBackgroundColor}" />
+            <Setter Property="Background" Value="{DynamicResource TextBoxDisabledBackgroundColor}" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

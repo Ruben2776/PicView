@@ -55,7 +55,7 @@
             <Color x:Key="ContextMenuForegroundColor">#EDEBEB</Color>
             <Color x:Key="ContextMenuBorderColor">#424A57</Color>
 
-            <Color x:Key="MenuItemHoverBackground">#D9DEF2</Color>
+            <Color x:Key="MenuItemHoverBackground">#6F000000</Color>
 
             <!--  Drop menu  -->
             <Color x:Key="DropMenuSurroundingBorderColor">#FF3B3B3B</Color>
@@ -81,6 +81,13 @@
 
             <Color x:Key="ScrollbarIconColor">#EEDFDFDF</Color>
             <Color x:Key="ScrollbarIconBorderColor">#EE747474</Color>
+
+            <!--  TextBox  -->
+            <Color x:Key="TextBoxBackgroundColor">#CC2b2b2b</Color>
+            <Color x:Key="TextBoxBorderColor">#373535</Color>
+            <Color x:Key="TextBoxHoverBorderColor">#777</Color>
+
+            <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
 
             <!--  Gallery  -->
             <Color x:Key="GalleryBackgroundColor">#CE212121</Color>
@@ -194,10 +201,18 @@
             <Color x:Key="ScrollbarThumbColor">#fff</Color>
             <Color x:Key="ScrollbarThumbBorderColor">#FFB5C2D6</Color>
 
+            <!--  TextBox  -->
+            <Color x:Key="TextBoxBackgroundColor">#CC2b2b2b</Color>
+            <Color x:Key="TextBoxHoverBorderColor">#777</Color>
+
+            <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
+
             <!--  Gallery  -->
             <Color x:Key="GalleryBackgroundColor">#FFF5FAFF</Color>
             <Color x:Key="GalleryBorderColor">#FFDCDCDC</Color>
 
+            <Color x:Key="GalleryItemBackgroundColor">#CE212121</Color>
+            <Color x:Key="GalleryItemBorderColor">#FF3A3A3A</Color>
 
             <!--  StartUpMenu  -->
             <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">

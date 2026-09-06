@@ -73,30 +73,6 @@
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
             <Setter Property="Background" Value="{StaticResource ErrorColor}" />
         </Style>
-        <Style Selector="^.altHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Style.Animations>
-                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
-                    <KeyFrame>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource OuterBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
-        </Style>
 
         <Style Selector="^.AltHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Style.Animations>
@@ -114,6 +90,24 @@
                 </Animation>
             </Style.Animations>
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
+        </Style>
+
+        <Style Selector="^.MenuItemHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="Transparent" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource MenuItemHoverBackground}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource MenuItemHoverBackground}" />
         </Style>
 
         <Style Selector="^.BottomBarHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
@@ -166,10 +160,6 @@
 
         <Style Selector="^:not(.active).hover:pressed  /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
-        </Style>
-        <Style Selector="^:not(.active).altHover:pressed  /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
         </Style>
 
         <Style Selector="^.focus:focus-within /template/ ContentPresenter#PART_ContentPresenter">

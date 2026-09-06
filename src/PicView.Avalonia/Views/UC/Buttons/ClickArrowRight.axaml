@@ -1,33 +1,33 @@
 ﻿<UserControl
-    Background="Transparent"
-    Focusable="False"
-    Height="200"
-    Width="100"
     x:Class="PicView.Avalonia.Views.UC.Buttons.ClickArrowRight"
-    x:DataType="viewModels:TabViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    Width="100"
+    Height="200"
+    x:DataType="viewModels:TabViewModel"
+    Background="Transparent"
+    Focusable="False">
     <RepeatButton
-        Background="{StaticResource AltBackgroundColor}"
-        BorderBrush="{StaticResource MainBorderColor}"
+        x:Name="PolyButton"
+        Width="50"
+        Height="60"
+        HorizontalAlignment="Right"
+        Background="{DynamicResource PopUpBackgroundColor}"
+        BorderBrush="{DynamicResource PopUpMainBorderColor}"
         BorderThickness="1,1,0,1"
         Classes="hover"
         Command="{CompiledBinding Next}"
         CornerRadius="2,0,0,2"
-        Height="60"
-        HorizontalAlignment="Right"
         IsVisible="{CompiledBinding CanNavigateForwards.Value,
-                                    FallbackValue=False}"
-        Width="50"
-        x:Name="PolyButton">
+                                    FallbackValue=False}">
         <Polygon
-            Fill="{StaticResource MainTextColor}"
+            Width="20"
             Height="40"
             Margin="5,5,0,0"
+            Fill="{StaticResource MainTextColor}"
             Points="160,128.4 192.3,96 352,256 352,256 352,256 192.3,416 160,383.6 287.3,256"
             RenderTransformOrigin="0.5,0.5"
-            Stretch="Uniform"
-            Width="20" />
+            Stretch="Uniform" />
     </RepeatButton>
 </UserControl>
