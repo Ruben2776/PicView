@@ -181,7 +181,7 @@
                     x:Name="ResetButton"
                     Width="195"
                     Margin="30,0,60,0"
-                    Classes="ToolButtonStyle altHover"
+                    Classes="ToolButtonStyle ToolButtonHover"
                     CornerRadius="4"
                     IsVisible="False">
                     <TextBlock
@@ -196,7 +196,7 @@
                     x:Name="CancelButton"
                     Width="195"
                     Margin="30,0,60,0"
-                    Classes="ToolButtonStyle altHover"
+                    Classes="ToolButtonStyle ToolButtonHover"
                     CornerRadius="4">
                     <TextBlock
                         Classes="txt"
@@ -1454,9 +1454,7 @@
                                 <ComboBox
                                     x:Name="PresetCombo"
                                     Width="460"
-                                    Padding="8"
-                                    Classes="CStyle"
-                                    Foreground="{StaticResource SecondaryTextColor}" />
+                                    Padding="8" />
                                 <customControls:IconButton
                                     x:Name="ResetAllBtn"
                                     Width="30"

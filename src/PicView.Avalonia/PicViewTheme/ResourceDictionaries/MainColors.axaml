@@ -55,7 +55,7 @@
             <Color x:Key="ContextMenuForegroundColor">#EDEBEB</Color>
             <Color x:Key="ContextMenuBorderColor">#424A57</Color>
 
-            <Color x:Key="MenuItemHoverBackground">#6F000000</Color>
+            <Color x:Key="MenuItemHoverBackground">#454545</Color>
 
             <!--  Drop menu  -->
             <Color x:Key="DropMenuSurroundingBorderColor">#FF3B3B3B</Color>
@@ -84,13 +84,6 @@
             <Color x:Key="ScrollbarIconColor">#EEDFDFDF</Color>
             <Color x:Key="ScrollbarIconBorderColor">#EE747474</Color>
 
-            <!--  TextBox  -->
-            <Color x:Key="TextBoxBackgroundColor">#CC2b2b2b</Color>
-            <Color x:Key="TextBoxBorderColor">#373535</Color>
-            <Color x:Key="TextBoxHoverBorderColor">#777</Color>
-
-            <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
-
             <!--  Gallery  -->
             <Color x:Key="GalleryBackgroundColor">#CE212121</Color>
             <Color x:Key="GalleryBorderColor">#FF323232</Color>
@@ -116,8 +109,24 @@
 
             <!--  Tool window styles  -->
             <Color x:Key="ToolWindowFooterBackground">#CC303030</Color>
+
             <Color x:Key="ToolWindowButtonBackground">#FF292929</Color>
             <Color x:Key="ToolWindowButtonBorderColor">#CC424242</Color>
+
+            <Color x:Key="ToolWindowButtonHover">#4C4C4C</Color>
+            <Color x:Key="ToolWindowButtonBorderHover">#CCA2A2A2</Color>
+
+            <!--  TextBox  -->
+            <Color x:Key="TextBoxBackgroundColor">#CC2b2b2b</Color>
+            <Color x:Key="TextBoxBorderColor">#373535</Color>
+            <Color x:Key="TextBoxHoverBorderColor">#777</Color>
+
+            <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
+
+            <!--  ComboBox  -->
+            <Color x:Key="ComboBoxDropDownBackgroundColor">#282828</Color>
+            <Color x:Key="ComboBoxDropDownBorderColor">#777</Color>
+
 
             <!--  EFFECTS & MISC  -->
             <Color x:Key="ErrorColor">#B51522</Color>
@@ -210,12 +219,6 @@
             <Color x:Key="ScrollbarThumbColor">#fff</Color>
             <Color x:Key="ScrollbarThumbBorderColor">#FFB5C2D6</Color>
 
-            <!--  TextBox  -->
-            <Color x:Key="TextBoxBackgroundColor">#CC2b2b2b</Color>
-            <Color x:Key="TextBoxHoverBorderColor">#777</Color>
-
-            <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
-
             <!--  Gallery  -->
             <Color x:Key="GalleryBackgroundColor">#FFF5FAFF</Color>
             <Color x:Key="GalleryBorderColor">#FFDCDCDC</Color>
@@ -238,8 +241,23 @@
 
             <!--  Tool window styles  -->
             <Color x:Key="ToolWindowFooterBackground">#CC303030</Color>
+
             <Color x:Key="ToolWindowButtonBackground">#FF292929</Color>
             <Color x:Key="ToolWindowButtonBorderColor">#CC424242</Color>
+
+            <Color x:Key="ToolWindowButtonHover">#4C4C4C</Color>
+            <Color x:Key="ToolWindowButtonBorderHover">#CCA2A2A2</Color>
+
+            <!--  TextBox  -->
+            <Color x:Key="TextBoxBackgroundColor">#CC2b2b2b</Color>
+            <Color x:Key="TextBoxBorderColor">#373535</Color>
+            <Color x:Key="TextBoxHoverBorderColor">#777</Color>
+
+            <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
+
+            <!--  ComboBox  -->
+            <Color x:Key="ComboBoxDropDownBackgroundColor">#CC252525</Color>
+            <Color x:Key="ComboBoxDropDownBorderColor">#FF3A3A3A</Color>
 
 
             <!--  EFFECTS & MISC  -->

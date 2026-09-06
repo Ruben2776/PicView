@@ -92,6 +92,31 @@
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
         </Style>
 
+        <Style Selector="^.ToolButtonHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource ToolWindowButtonBackground}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource ToolWindowButtonBorderColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource ToolWindowButtonHover}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource ToolWindowButtonBorderHover}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource ToolWindowButtonHover}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ToolWindowButtonBorderHover}" />
+        </Style>
+
         <Style Selector="^.MenuItemHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Style.Animations>
                 <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">

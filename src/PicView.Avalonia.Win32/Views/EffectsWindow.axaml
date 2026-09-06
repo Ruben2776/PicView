@@ -69,9 +69,10 @@
 
                 <customControls:IconButton
                     Width="30"
+                    Background="Transparent"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,0,0"
-                    Classes="noBorderHover"
+                    Classes="MenuItemHover"
                     ClickMode="Press"
                     DockPanel.Dock="Right"
                     Foreground="{DynamicResource MainTextColor}"

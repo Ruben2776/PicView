@@ -63,17 +63,6 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
-    <Style Selector="ComboBox.CStyle">
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
-        <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="2" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-    </Style>
-
     <Style Selector="customControls|TextToggleButton.settingsToggleButton">
         <Setter Property="Width" Value="300" />
         <Setter Property="TextMaxWidth" Value="240" />
