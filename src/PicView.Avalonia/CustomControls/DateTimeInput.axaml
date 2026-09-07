@@ -1,7 +1,7 @@
 ﻿<Styles
     xmlns="https://github.com/avaloniaui"
-    xmlns:controls="using:PicView.Avalonia.CustomControls"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:PicView.Avalonia.CustomControls">
     <Design.PreviewWith>
         <controls:DateTimeInput />
     </Design.PreviewWith>
@@ -10,17 +10,17 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
+                    Name="border"
+                    MinHeight="35"
+                    Padding="{TemplateBinding Padding}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}"
-                    MinHeight="35"
-                    Name="border"
-                    Padding="{TemplateBinding Padding}">
+                    CornerRadius="{TemplateBinding CornerRadius}">
                     <!--  This is the panel where the text boxes will be dynamically added  -->
                     <DockPanel
-                        HorizontalAlignment="Left"
                         Name="PART_Container"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Center" />
                 </Border>
             </ControlTemplate>
@@ -30,7 +30,7 @@
 
         <!--  Active style  -->
         <Style Selector="^:pointerover /template/ Border#border">
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource TextBoxHoverBorderColor}" />
         </Style>
         <Style Selector="^:focus-within /template/ Border#border">
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
@@ -39,7 +39,7 @@
         <!--  Disabled  -->
         <Style Selector="^:disabled /template/ Border#border">
             <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
-            <Setter Property="Background" Value="{DynamicResource DisabledBackgroundColor}" />
+            <Setter Property="Background" Value="{DynamicResource TextBoxDisabledBackgroundColor}" />
         </Style>
 
         <!--  Error  -->

@@ -3,13 +3,19 @@ using Avalonia.Controls.Metadata;
 
 namespace PicView.Avalonia.CustomControls;
 
-[PseudoClasses(Error)]
+[PseudoClasses(Error, Empty)]
 public class ValidationTextBox : FuncTextBox
 {
-    private const string Error = ":error";
+    public const string Error = ":error";
+    public const string Empty = ":empty";
 
     public void SetError(bool hasError)
     {
         PseudoClasses.Set(Error, hasError);
     }
-}
+
+    public void SetEmpty(bool isEmpty)
+    {
+        PseudoClasses.Set(Empty, isEmpty);
+    }
+}

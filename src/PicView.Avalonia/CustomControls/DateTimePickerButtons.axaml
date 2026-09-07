@@ -1,45 +1,41 @@
 ﻿<UserControl
-    Background="Transparent"
     x:Class="PicView.Avalonia.CustomControls.DateTimePickerButtons"
-    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:MainWindowViewModel"
+    Background="Transparent">
     <Panel>
-        <customControls:DateTimeInput
-            Background="{DynamicResource SecondaryBackgroundColor}"
-            Classes="TStyle"
-            Margin="0"
-            x:Name="DateBox" />
+        <customControls:DateTimeInput x:Name="DateBox" Margin="0" />
         <StackPanel
             HorizontalAlignment="Right"
             Orientation="Horizontal"
             ZIndex="1">
             <customControls:IconButton
+                x:Name="CalendarButton"
+                Width="35"
+                Height="35"
                 Classes="altHover"
                 Foreground="{DynamicResource MainTextColor}"
-                Height="35"
                 Icon="{StaticResource CalendarImage}"
                 IconHeight="16"
                 IconWidth="16"
                 IsVisible="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull}}"
-                Width="35"
-                ZIndex="1"
-                x:Name="CalendarButton" />
+                ZIndex="1" />
             <customControls:IconButton
+                x:Name="TimePickerButton"
+                Width="35"
+                Height="35"
                 Classes="altHover"
                 Foreground="{DynamicResource MainTextColor}"
-                Height="35"
                 Icon="{StaticResource ClockImage}"
                 IconHeight="18"
                 IconWidth="18"
                 IsVisible="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull}}"
-                Width="35"
-                ZIndex="1"
-                x:Name="TimePickerButton" />
+                ZIndex="1" />
         </StackPanel>
     </Panel>
 
