@@ -43,8 +43,15 @@
             <Color x:Key="BottomBarToolBtnBackground">#A7222222</Color>
             <Color x:Key="BottomBarButtonHoverBackground">#DB3D3D3D</Color>
 
+            <!--  Hover bar  -->
+            <Color x:Key="HoverBarBackgroundColor">#Ff333333</Color>
+            <Color x:Key="HoverBarBorderColor">#3C3C3C</Color>
+
+            <Color x:Key="HoverBarTrackColor">#525252</Color>
+            <Color x:Key="HoverBarThumbColor">#d6d4d4</Color>
+
             <!--  MENUS & DROPDOWNS  -->
-            <Color x:Key="MenuBackgroundColor">#292929</Color>
+            <Color x:Key="MenuBackgroundColor">#F3292929</Color>
             <Color x:Key="MenuButtonBackground">#303030</Color>
             <Color x:Key="MenuBorderColor">#373535</Color>
 
@@ -190,6 +197,10 @@
             <Color x:Key="BottomBarNavBtnBackground">#fff</Color>
             <Color x:Key="BottomBarToolBtnBackground">#fff</Color>
             <Color x:Key="BottomBarButtonHoverBackground">#DB3D3D3D</Color>
+
+            <!--  Hover bar  -->
+            <Color x:Key="HoverBarBackgroundColor">#292929</Color>
+            <Color x:Key="HoverBarBorderColor">#FF3A3A3A</Color>
 
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#fff</Color>

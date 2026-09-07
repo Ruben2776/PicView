@@ -110,8 +110,6 @@
                                 Margin="0"
                                 Padding="5,7,0,7"
                                 HorizontalAlignment="Right"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
                                 BorderThickness="1"
                                 CornerRadius="4"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"

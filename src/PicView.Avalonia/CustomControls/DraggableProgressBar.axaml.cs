@@ -5,6 +5,7 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using PicView.Avalonia.UI;
@@ -22,10 +23,6 @@ public class DraggableProgressBar : TemplatedControl
     public static readonly StyledProperty<int> CurrentIndexProperty =
         AvaloniaProperty.Register<DraggableProgressBar, int>(nameof(CurrentIndex),
             defaultBindingMode: BindingMode.TwoWay);
-
-    // Define a property for the thumb's fill color
-    public static readonly StyledProperty<IBrush?> ThumbFillProperty =
-        AvaloniaProperty.Register<DraggableProgressBar, IBrush?>(nameof(ThumbFill));
 
     // Define the DragSensitivity property
     public static readonly StyledProperty<double> DragSensitivityProperty =
@@ -81,12 +78,6 @@ public class DraggableProgressBar : TemplatedControl
         set => SetValue(CurrentIndexProperty, value);
     }
 
-    public IBrush? ThumbFill
-    {
-        get => GetValue(ThumbFillProperty);
-        set => SetValue(ThumbFillProperty, value);
-    }
-
     public double DragSensitivity
     {
         get => GetValue(DragSensitivityProperty);
@@ -98,14 +89,6 @@ public class DraggableProgressBar : TemplatedControl
         base.OnApplyTemplate(e);
         _track = e.NameScope.Find<Border>("PART_Track");
         _thumb = e.NameScope.Find<Ellipse>("PART_Thumb");
-
-        if (Settings.Theme.Dark)
-        {
-            return;
-        }
-
-        _track.Background = UIHelper.GetBrush("SecondaryBackgroundColor");
-        _thumb.Fill = UIHelper.GetBrush("TertiaryBackgroundColor");
     }
 
     // Recalculate thumb position when CurrentIndex or Maximum changes
@@ -129,6 +112,19 @@ public class DraggableProgressBar : TemplatedControl
         {
             UpdateThumbPosition();
         }
+    }
+    
+    private void UpdateToolTip(Point position)
+    {
+        if (GetThumbBounds().Contains(position))
+        {
+            ToolTip.SetIsOpen(this, false);
+            return;
+        }
+        
+        var pointerOverIndex = PositionToIndex(position.X);
+        ToolTip.SetTip(this, $"{pointerOverIndex}/{Maximum}");
+        ToolTip.SetIsOpen(this, true);
     }
 
     private void UpdateThumbPosition()
@@ -199,8 +195,6 @@ public class DraggableProgressBar : TemplatedControl
         _dragStartPoint = e.GetPosition(this);
         _dragStartIndex = CurrentIndex;
         
-
-        
         e.Pointer.Capture(_thumb);
     }
 
@@ -220,17 +214,7 @@ public class DraggableProgressBar : TemplatedControl
 
         if (!IsDragging)
         {
-            // Show index position on hover
-            var pos = e.GetPosition(_track);
-            if (GetThumbBounds().Contains(pos))
-            {
-                ToolTip.SetIsOpen(this, false);
-                return;
-            }
-
-            var pointerOverIndex = PositionToIndex(pos.X);
-            ToolTip.SetTip(this, $"{pointerOverIndex}/{Maximum}");
-            ToolTip.SetIsOpen(this, true);
+            UpdateToolTip(e.GetPosition(_track));
             return;
         }
 
