@@ -171,6 +171,24 @@
             <Setter Property="Background" Value="{DynamicResource BottomBarButtonHoverBackground}" />
         </Style>
 
+        <Style Selector="^.HoverBarHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource HoverBarBackgroundColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource HoverBarHoverColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource HoverBarHoverColor}" />
+        </Style>
+
         <Style Selector="^.PrimaryBtnHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Style.Animations>
                 <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
