@@ -1,26 +1,26 @@
 <Window
+    ExtendClientAreaTitleBarHeightHint="-1"
+    ExtendClientAreaToDecorationsHint="True"
+    Height="835"
+    MinHeight="700"
+    MinWidth="660"
+    Width="975"
     x:Class="PicView.Avalonia.MacOS.Views.PrintPreviewWindow"
+    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    Width="975"
-    Height="835"
-    MinWidth="660"
-    MinHeight="700"
-    x:DataType="viewModels:MainWindowViewModel"
-    ExtendClientAreaTitleBarHeightHint="-1"
-    ExtendClientAreaToDecorationsHint="True">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border
-        BorderBrush="{DynamicResource MainBorderColor}"
+        BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
         CornerRadius="8">
         <DockPanel>
 
             <DockPanel
-                Height="28"
-                Background="{DynamicResource SecondaryBackgroundColor}"
+                Background="{DynamicResource WindowTitleBackgroundColor}"
                 DockPanel.Dock="Top"
+                Height="28"
                 PointerPressed="MoveWindow">
 
                 <TextBlock
@@ -31,9 +31,9 @@
             </DockPanel>
 
             <main:PrintPreviewView
-                x:Name="PrintPreviewView"
-                Background="{DynamicResource WindowBackgroundColor}"
-                DockPanel.Dock="Bottom" />
+                Background="{DynamicResource WindowMainBackgroundColor}"
+                DockPanel.Dock="Bottom"
+                x:Name="PrintPreviewView" />
         </DockPanel>
     </Border>
 </Window>
