@@ -12,8 +12,6 @@
     MinWidth="400"
     MinHeight="320"
     x:DataType="coreVm:MainWindowViewModel"
-    BorderBrush="{StaticResource MainBorderColor}"
-    BorderThickness="1"
     ExtendClientAreaTitleBarHeightHint="-1"
     WindowStartupLocation="CenterOwner">
 
@@ -25,8 +23,8 @@
         <DockPanel Background="Transparent">
             <DockPanel
                 x:Name="TopWindowBorder"
-                Height="28"
-                Background="{DynamicResource WindowBackgroundColor}"
+                Height="{StaticResource TopBorderHeight}"
+                Background="{DynamicResource WindowTitleBackgroundColor}"
                 DockPanel.Dock="Top"
                 LastChildFill="True">
 
@@ -41,7 +39,7 @@
                 <customControls:IconButton
                     x:Name="CloseButton"
                     Width="29"
-                    Background="{DynamicResource MainButtonBackgroundColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
                     Classes="hover"
                     Click="Close"
                     ClickMode="Release"
@@ -56,8 +54,8 @@
                 <customControls:IconButton
                     x:Name="MinimizeButton"
                     Width="29"
-                    Background="{DynamicResource MainButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
                     Click="Minimize"
@@ -71,7 +69,7 @@
 
                 <buttons:StarOutlineButtons
                     x:Name="StarOutlineButtons"
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
+                    Background="Transparent"
                     DockPanel.Dock="Right"
                     IsEnabled="{CompiledBinding Exif.IsExifAvailable.Value,
                                                 FallbackValue=False}" />
@@ -79,8 +77,8 @@
                 <customControls:IconButton
                     x:Name="RemoveRatingButton"
                     Width="35"
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    Background="Transparent"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
                     Command="{Binding Exif.SetExifRating0Command}"
@@ -97,13 +95,13 @@
                     Width="1"
                     Height="28"
                     DockPanel.Dock="Right"
-                    Fill="{DynamicResource MainBorderColor}"
+                    Fill="{DynamicResource TitleBarButtonBorder}"
                     IsVisible="{CompiledBinding !InfoWindow.IsExtraButtonsEnabled.Value}" />
 
                 <customControls:TextIconButton
                     x:Name="RecycleButton"
                     Height="28"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
                     Classes="errorHover"
                     ClickMode="Release"
@@ -127,7 +125,7 @@
                 <customControls:TextIconButton
                     x:Name="RemoveImageDataButton"
                     Height="28"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
                     Classes="errorHover"
                     ClickMode="Release"
@@ -152,7 +150,7 @@
                 <customControls:TextIconButton
                     x:Name="OptimizeButton"
                     Height="28"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
                     Command="{Binding OptimizeImageCommand}"
@@ -174,7 +172,7 @@
                 <customControls:TextIconButton
                     x:Name="OpenWithButton"
                     Height="28"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
                     Command="{CompiledBinding OpenWithCommand}"
@@ -197,7 +195,7 @@
                 <customControls:TextIconButton
                     x:Name="DuplicateButton"
                     Height="28"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
                     Classes="noBorderHover"
                     Command="{CompiledBinding DuplicateFileCommand}"
@@ -220,7 +218,7 @@
                 <customControls:TextIconButton
                     x:Name="LocateOnDiskButton"
                     Height="28"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,1,0"
                     Classes="noBorderHover"
                     Command="{CompiledBinding OpenInExplorerCommand}"
@@ -255,7 +253,7 @@
                 Width="{Binding Path=Bounds.Width, ElementName=ParentBorder}"
                 Height="1"
                 DockPanel.Dock="Top"
-                Fill="{DynamicResource MainBorderColor}" />
+                Fill="{DynamicResource TitleBarButtonBorder}" />
             <main:ImageInfoView x:Name="ExifView" Background="{StaticResource NoisyTexture}" />
         </DockPanel>
     </Border>

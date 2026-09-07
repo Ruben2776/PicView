@@ -408,7 +408,7 @@
                                 Classes="hover TStyle x"
                                 Text="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.Name}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
                                                             FallbackValue=True}"
@@ -435,7 +435,7 @@
                                 Text="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.DirectoryName,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.DirectoryName,
                                                            FallbackValue=''}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
@@ -462,7 +462,7 @@
                                 Text="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.FullName,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.FullName,
                                                            FallbackValue=''}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -489,7 +489,7 @@
                                 ToolTip.Tip="{CompiledBinding Translation.SizeTooltip.Value,
                                                               Mode=OneWay}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.PixelWidth.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -516,7 +516,7 @@
                                 ToolTip.Tip="{CompiledBinding Translation.SizeTooltip.Value,
                                                               Mode=OneWay}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.PixelHeight.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -545,7 +545,7 @@
                                                        Mode=OneWay,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.SizeMp.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -572,7 +572,7 @@
                                 Text="{CompiledBinding Exif.Resolution.Value,
                                                        Mode=OneWay}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.Resolution.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -599,7 +599,7 @@
                                 Text="{CompiledBinding Exif.PrintSizeCm.Value,
                                                        Mode=OneWay}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.PrintSizeCm.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -628,7 +628,7 @@
                                                        Mode=OneWay,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.PrintSizeInch.Value,
                                                            Mode=OneWay,
                                                            FallbackValue=''}"
@@ -660,7 +660,7 @@
                                                        Mode=OneWay,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.AspectRatio.Value,
                                                            Mode=OneWay,
                                                            FallbackValue=''}"
@@ -691,7 +691,7 @@
                                                        Mode=OneWay,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.BitDepth.Value,
                                                            Mode=OneWay,
                                                            FallbackValue=''}"
@@ -727,7 +727,7 @@
                                                                 Mode=OneWay,
                                                                 FallbackValue=0}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.Orientation.Value,
                                                            Mode=OneWay,
                                                            FallbackValue=''}"
@@ -756,7 +756,7 @@
                                 Text="{CompiledBinding Exif.ImageFormatDisplay.Value,
                                                        Mode=OneWay}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.ImageFormatDisplay.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
@@ -782,7 +782,7 @@
                                 Classes="TStyle x"
                                 IsReadOnly="True" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{Binding Path=Text, ElementName=FileSizeBox}"
                                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                                             Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -813,7 +813,7 @@
                                                                    FallbackValue=''}" />
 
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.CreationTime,
                                                            FallbackValue=''}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -841,7 +841,7 @@
                                                                    Mode=TwoWay,
                                                                    FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.LastWriteTime,
                                                            FallbackValue=''}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -870,7 +870,7 @@
                                                                    FallbackValue=''}" />
 
                             <customControls:CopyButton
-                                Classes="altHover BorderStyle"
+                                Classes="altHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.LastAccessTime,
                                                            FallbackValue=''}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -929,7 +929,7 @@
                                     SelectedDateTime="{CompiledBinding Exif.DateTaken.Value,
                                                                        FallbackValue=''}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.DateTaken.Value,
                                                                Mode=OneWay,
                                                                FallbackValue=''}"
@@ -958,7 +958,7 @@
                                     Text="{CompiledBinding Exif.Authors.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Authors.Value,
                                                                Mode=TwoWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -985,7 +985,7 @@
                                     Text="{CompiledBinding Exif.Copyright.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Copyright.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1012,7 +1012,7 @@
                                     Text="{CompiledBinding Exif.Software.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Software.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1039,7 +1039,7 @@
                                     Text="{CompiledBinding Exif.Subject.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Subject.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1066,7 +1066,7 @@
                                     Text="{CompiledBinding Exif.Title.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Title.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1093,7 +1093,7 @@
                                     Text="{CompiledBinding Exif.Comment.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Comment.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1150,7 +1150,7 @@
                                     Text="{CompiledBinding Exif.Latitude.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Latitude.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1179,7 +1179,7 @@
                                     Text="{CompiledBinding Exif.Longitude.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Longitude.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1208,7 +1208,7 @@
                                     Text="{CompiledBinding Exif.Altitude.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Altitude.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1223,7 +1223,7 @@
                                 <Button
                                     x:Name="GoogleLinkButton"
                                     Margin="117,0,15,0"
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     Command="{CompiledBinding Exif.OpenGoogleLinkCommand,
                                                               Mode=OneWay}">
                                     <Path
@@ -1235,7 +1235,7 @@
                                 </Button>
                                 <Button
                                     x:Name="BingLinkButton"
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     Command="{CompiledBinding Exif.OpenBingLinkCommand,
                                                               Mode=OneWay}">
                                     <Path
@@ -1293,7 +1293,7 @@
                                     SelectedIndex="{CompiledBinding Exif.ColorRepresentation.Value,
                                                                     Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.ColorRepresentation.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1324,7 +1324,7 @@
                                     SelectedIndex="{CompiledBinding Exif.ResolutionUnit.Value,
                                                                     Mode=OneWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{Binding #ResolutionUnitBox.SelectedItem}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
                                     ToolTip.Tip="{CompiledBinding Translation.Copy.Value,
@@ -1354,7 +1354,7 @@
                                     SelectedIndex="{CompiledBinding Exif.Compression.Value,
                                                                     Mode=OneWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Compression.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1383,7 +1383,7 @@
                                     Text="{CompiledBinding Exif.CompressedBitsPixel.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.CompressedBitsPixel.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1438,7 +1438,7 @@
                                     Text="{CompiledBinding Exif.CameraMaker.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.CameraMaker.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1465,7 +1465,7 @@
                                     Text="{CompiledBinding Exif.CameraModel.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.CameraModel.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1493,7 +1493,7 @@
                                     Text="{CompiledBinding Exif.FNumber.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.FNumber.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1520,7 +1520,7 @@
                                     Text="{CompiledBinding Exif.MaxAperture.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.MaxAperture.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1547,7 +1547,7 @@
                                     Text="{CompiledBinding Exif.ExposureBias.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.ExposureBias.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1574,7 +1574,7 @@
                                     Text="{CompiledBinding Exif.ExposureTime.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.ExposureTime.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1602,7 +1602,7 @@
                                     Text="{CompiledBinding Exif.ExposureProgram.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.ExposureProgram.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1628,7 +1628,7 @@
                                     Text="{CompiledBinding Exif.DigitalZoom.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.DigitalZoom.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1657,7 +1657,7 @@
                                     Text="{CompiledBinding Exif.FocalLength.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.FocalLength.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1684,7 +1684,7 @@
                                     Text="{CompiledBinding Exif.FocalLength35Mm.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.FocalLength35Mm.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1712,7 +1712,7 @@
                                     Text="{CompiledBinding Exif.ISOSpeed.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.ISOSpeed.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1739,7 +1739,7 @@
                                     Text="{CompiledBinding Exif.MeteringMode.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.MeteringMode.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1767,7 +1767,7 @@
                                     Text="{CompiledBinding Exif.Contrast.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Contrast.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1794,7 +1794,7 @@
                                     Text="{CompiledBinding Exif.Saturation.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Saturation.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1822,7 +1822,7 @@
                                     Text="{CompiledBinding Exif.Sharpness.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Sharpness.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1849,7 +1849,7 @@
                                     Text="{CompiledBinding Exif.WhiteBalance.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.WhiteBalance.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1877,7 +1877,7 @@
                                     Text="{CompiledBinding Exif.FlashEnergy.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.FlashEnergy.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1904,7 +1904,7 @@
                                     Text="{CompiledBinding Exif.FlashMode.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.FlashMode.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1931,7 +1931,7 @@
                                     Text="{CompiledBinding Exif.LightSource.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.LightSource.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1958,7 +1958,7 @@
                                     Text="{CompiledBinding Exif.Brightness.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.Brightness.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -1985,7 +1985,7 @@
                                     Text="{CompiledBinding Exif.PhotometricInterpretation.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.PhotometricInterpretation.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -2012,7 +2012,7 @@
                                     Text="{CompiledBinding Exif.LensMaker.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.LensMaker.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -2039,7 +2039,7 @@
                                     Text="{CompiledBinding Exif.LensModel.Value,
                                                            Mode=TwoWay}" />
                                 <customControls:CopyButton
-                                    Classes="altHover BorderStyle"
+                                    Classes="altHover ToolWindowBorderStyle"
                                     CopyText="{CompiledBinding Exif.LensModel.Value,
                                                                Mode=OneWay}"
                                     IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -2067,7 +2067,7 @@
                                         Text="{CompiledBinding Exif.ExifVersion.Value,
                                                                Mode=TwoWay}" />
                                     <customControls:CopyButton
-                                        Classes="altHover BorderStyle"
+                                        Classes="altHover ToolWindowBorderStyle"
                                         CopyText="{CompiledBinding Exif.ExifVersion.Value,
                                                                    Mode=TwoWay}"
                                         IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"

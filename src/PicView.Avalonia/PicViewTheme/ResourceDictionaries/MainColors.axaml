@@ -149,6 +149,7 @@
                 Stretch="Fill"
                 TileMode="FlipXY" />
 
+            <Color x:Key="CropBackground">#A7000000</Color>
         </ResourceDictionary>
 
 

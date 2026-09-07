@@ -12,7 +12,7 @@
     <UserControl.Styles>
         <Styles>
             <Style Selector="Border.x">
-                <Setter Property="Background" Value="{DynamicResource SecondaryButtonBackgroundColor}" />
+                <Setter Property="Background" Value="{StaticResource CropBackground}" />
                 <Setter Property="BorderBrush" Value="#fff" />
                 <Setter Property="BorderThickness" Value="2" />
                 <Setter Property="Width" Value="20" />
@@ -68,8 +68,8 @@
             <Border
                 x:Name="SizeBorder"
                 Padding="8,5"
-                Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                Background="{DynamicResource PopUpBackgroundColor}"
+                BorderBrush="{DynamicResource PopUpMainBorderColor}"
                 BorderThickness="1"
                 CornerRadius="4"
                 IsHitTestVisible="False"

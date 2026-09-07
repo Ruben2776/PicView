@@ -63,6 +63,16 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
+    <Style Selector="Button.ToolWindowBorderStyle, ToggleButton.ToolWindowBorderStyle">
+        <Setter Property="Width" Value="37" />
+        <Setter Property="Height" Value="35" />
+        <Setter Property="Margin" Value="7,0,0,0" />
+        <Setter Property="Background" Value="{DynamicResource ToolWindowButtonBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ToolWindowButtonBorderColor}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="2" />
+    </Style>
+
     <Style Selector="customControls|TextToggleButton.settingsToggleButton">
         <Setter Property="Width" Value="300" />
         <Setter Property="TextMaxWidth" Value="240" />
