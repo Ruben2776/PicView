@@ -424,19 +424,39 @@ public class ExifViewModel : IDisposable
     /// Rebuilds <see cref="ImageFormatDisplay"/> from the current format, appending the
     /// localized " (Motion Photo)" suffix when the image carries a motion photo video.
     /// </summary>
-    private void UpdateImageFormatDisplay()
+    internal void UpdateImageFormatDisplay()
     {
-        var format = ImageFormat.CurrentValue?.ToString();
-        if (format is null)
+        var imageFormat = ImageFormat.CurrentValue;
+        if (imageFormat is null)
+        {
+            ImageFormatDisplay.Value = null;
+            return;
+        }
+
+        Span<char> formatBuffer = stackalloc char[64];
+        if (!Enum.TryFormat(imageFormat.Value, formatBuffer, out var formatLength))
         {
             ImageFormatDisplay.Value = null;
             return;
         }
 
         var marker = TranslationManager.Translation.MotionPhoto;
-        ImageFormatDisplay.Value = IsMotionPhoto.CurrentValue && !string.IsNullOrEmpty(marker)
-            ? $"{format} ({marker})"
-            : format;
+        if (IsMotionPhoto.CurrentValue && !string.IsNullOrEmpty(marker))
+        {
+            var requiredLength = formatLength + 3 + marker.Length;
+            ImageFormatDisplay.Value = string.Create(requiredLength, (imageFormat.Value, formatLength, marker), static (destination, state) =>
+            {
+                Enum.TryFormat(state.Value, destination[..state.formatLength], out _);
+                destination[state.formatLength] = ' ';
+                destination[state.formatLength + 1] = '(';
+                state.marker.AsSpan().CopyTo(destination[(state.formatLength + 2)..]);
+                destination[^1] = ')';
+            });
+        }
+        else
+        {
+            ImageFormatDisplay.Value = new string(formatBuffer[..formatLength]);
+        }
     }
 
 #pragma warning disable MA0051
