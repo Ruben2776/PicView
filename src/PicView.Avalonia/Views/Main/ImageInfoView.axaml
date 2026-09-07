@@ -408,7 +408,7 @@
                                 Classes="hover TStyle x"
                                 Text="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.Name}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
                                                             FallbackValue=True}"
@@ -435,7 +435,7 @@
                                 Text="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.DirectoryName,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.DirectoryName,
                                                            FallbackValue=''}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
@@ -462,7 +462,7 @@
                                 Text="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.FullName,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.FullName,
                                                            FallbackValue=''}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -489,7 +489,7 @@
                                 ToolTip.Tip="{CompiledBinding Translation.SizeTooltip.Value,
                                                               Mode=OneWay}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.PixelWidth.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -516,7 +516,7 @@
                                 ToolTip.Tip="{CompiledBinding Translation.SizeTooltip.Value,
                                                               Mode=OneWay}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.PixelHeight.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -544,7 +544,7 @@
                                                        Mode=OneWay,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.SizeMp.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -570,7 +570,7 @@
                                 Text="{CompiledBinding Exif.Resolution.Value,
                                                        Mode=OneWay}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.Resolution.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -596,7 +596,7 @@
                                 Text="{CompiledBinding Exif.PrintSizeCm.Value,
                                                        Mode=OneWay}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.PrintSizeCm.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -624,7 +624,7 @@
                                                        Mode=OneWay,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.PrintSizeInch.Value,
                                                            Mode=OneWay,
                                                            FallbackValue=''}"
@@ -655,7 +655,7 @@
                                                        Mode=OneWay,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.AspectRatio.Value,
                                                            Mode=OneWay,
                                                            FallbackValue=''}"
@@ -685,7 +685,7 @@
                                                        Mode=OneWay,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.BitDepth.Value,
                                                            Mode=OneWay,
                                                            FallbackValue=''}"
@@ -720,7 +720,7 @@
                                                                 Mode=OneWay,
                                                                 FallbackValue=0}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.Orientation.Value,
                                                            Mode=OneWay,
                                                            FallbackValue=''}"
@@ -748,7 +748,7 @@
                                 Text="{CompiledBinding Exif.ImageFormatDisplay.Value,
                                                        Mode=OneWay}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding Exif.ImageFormatDisplay.Value,
                                                            Mode=OneWay}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value,
@@ -773,7 +773,7 @@
                                 Classes="TStyle x"
                                 IsReadOnly="True" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{Binding Path=Text, ElementName=FileSizeBox}"
                                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                                             Converter={x:Static ObjectConverters.IsNotNull}}"
@@ -805,7 +805,7 @@
                                                                    FallbackValue=''}" />
 
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.CreationTime,
                                                            FallbackValue=''}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -834,7 +834,7 @@
                                                                    Mode=TwoWay,
                                                                    FallbackValue=''}" />
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.LastWriteTime,
                                                            FallbackValue=''}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -864,7 +864,7 @@
                                                                    FallbackValue=''}" />
 
                             <customControls:CopyButton
-                                Classes="altHover ToolWindowBorderStyle"
+                                Classes="ToolButtonHover ToolWindowBorderStyle"
                                 CopyText="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.LastAccessTime,
                                                            FallbackValue=''}"
                                 IsVisible="{CompiledBinding InfoWindow.IsCopyButtonEnabled.Value}"
@@ -889,7 +889,7 @@
                                                         FallbackValue=0}"
                                 Height="1"
                                 Margin="0,0,7,0"
-                                Fill="{DynamicResource MainBorderColor}" />
+                                Fill="{DynamicResource ImageInfoSeparatorColor}" />
                             <Path
                                 Data="{StaticResource AtGeometry}"
                                 Fill="{DynamicResource MainTextColor}"
@@ -899,7 +899,7 @@
                                                         FallbackValue=0}"
                                 Height="1"
                                 Margin="7,0,0,0"
-                                Fill="{DynamicResource MainBorderColor}" />
+                                Fill="{DynamicResource ImageInfoSeparatorColor}" />
                         </StackPanel>
 
                         <WrapPanel Margin="5,10,0,0" HorizontalAlignment="Center">
@@ -1112,7 +1112,7 @@
                                 Width="{CompiledBinding InfoWindow.HalfLineWidth.Value}"
                                 Height="1"
                                 Margin="0,0,7,0"
-                                Fill="{DynamicResource MainBorderColor}" />
+                                Fill="{DynamicResource ImageInfoSeparatorColor}" />
                             <Path
                                 Data="{StaticResource GpsGeometry}"
                                 Fill="{DynamicResource MainTextColor}"
@@ -1121,7 +1121,7 @@
                                 Width="{CompiledBinding InfoWindow.HalfLineWidth.Value}"
                                 Height="1"
                                 Margin="7,0,0,0"
-                                Fill="{DynamicResource MainBorderColor}" />
+                                Fill="{DynamicResource ImageInfoSeparatorColor}" />
                         </StackPanel>
 
                         <WrapPanel Margin="5,10,0,0" HorizontalAlignment="Center">
@@ -1257,13 +1257,13 @@
                                 Width="{CompiledBinding InfoWindow.HalfLineWidth.Value}"
                                 Height="1"
                                 Margin="0,0,7,0"
-                                Fill="{DynamicResource MainBorderColor}" />
+                                Fill="{DynamicResource ImageInfoSeparatorColor}" />
                             <Image Source="{StaticResource PaletteImage}" />
                             <Rectangle
                                 Width="{CompiledBinding InfoWindow.HalfLineWidth.Value}"
                                 Height="1"
                                 Margin="7,0,0,0"
-                                Fill="{DynamicResource MainBorderColor}" />
+                                Fill="{DynamicResource ImageInfoSeparatorColor}" />
                         </StackPanel>
 
                         <WrapPanel Margin="5,10,0,0" HorizontalAlignment="Center">
@@ -1402,7 +1402,7 @@
                                 Width="{CompiledBinding InfoWindow.HalfLineWidth.Value}"
                                 Height="1"
                                 Margin="0,0,7,0"
-                                Fill="{DynamicResource MainBorderColor}" />
+                                Fill="{DynamicResource ImageInfoSeparatorColor}" />
                             <Path
                                 Data="{StaticResource ImageInfoGeometry}"
                                 Fill="{DynamicResource MainTextColor}"
@@ -1411,7 +1411,7 @@
                                 Width="{CompiledBinding InfoWindow.HalfLineWidth.Value}"
                                 Height="1"
                                 Margin="7,0,0,0"
-                                Fill="{DynamicResource MainBorderColor}" />
+                                Fill="{DynamicResource ImageInfoSeparatorColor}" />
                         </StackPanel>
 
                         <WrapPanel Margin="5,10,0,0" HorizontalAlignment="Center">

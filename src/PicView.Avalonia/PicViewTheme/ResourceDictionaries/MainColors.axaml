@@ -104,6 +104,8 @@
             <Color x:Key="GalleryItemBackgroundColor">#CE212121</Color>
             <Color x:Key="GalleryItemBorderColor">#FF3A3A3A</Color>
 
+            <!--  Image info window  -->
+            <Color x:Key="ImageInfoSeparatorColor">#FF3A3A3A</Color>
 
             <!--  StartUpMenu  -->
             <ImageBrush
@@ -260,6 +262,9 @@
 
             <Color x:Key="GalleryItemBackgroundColor">#CE212121</Color>
             <Color x:Key="GalleryItemBorderColor">#FF3A3A3A</Color>
+
+            <!--  Image info window  -->
+            <Color x:Key="ImageInfoSeparatorColor">#FF3A3A3A</Color>
 
             <!--  StartUpMenu  -->
             <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
