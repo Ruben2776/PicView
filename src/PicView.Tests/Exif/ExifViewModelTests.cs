@@ -254,4 +254,40 @@ public class ExifViewModelTests
         using var viewModel = new ExifViewModel();
         Assert.NotNull(viewModel.OpenBingLinkCommand);
     }
+
+    [Fact]
+    public void UpdateImageFormatDisplay_NullFormat_SetsNullDisplay()
+    {
+        using var viewModel = new ExifViewModel();
+        viewModel.ImageFormat.Value = null;
+        viewModel.UpdateImageFormatDisplay();
+
+        Assert.Null(viewModel.ImageFormatDisplay.Value);
+    }
+
+    [Fact]
+    public async Task UpdateImageFormatDisplay_StandardFormat_SetsFormatWithoutSuffix()
+    {
+        await TranslationManager.LoadLanguage("en");
+        using var viewModel = new ExifViewModel();
+        viewModel.ImageFormat.Value = MagickFormat.Jpeg;
+        viewModel.IsMotionPhoto.Value = false;
+        viewModel.UpdateImageFormatDisplay();
+
+        Assert.Equal("Jpeg", viewModel.ImageFormatDisplay.Value);
+    }
+
+    [Fact]
+    public async Task UpdateImageFormatDisplay_MotionPhoto_SetsFormatWithSuffix()
+    {
+        await TranslationManager.LoadLanguage("en");
+        using var viewModel = new ExifViewModel();
+        viewModel.ImageFormat.Value = MagickFormat.Jpeg;
+        viewModel.IsMotionPhoto.Value = true;
+        viewModel.UpdateImageFormatDisplay();
+
+        var expectedMarker = TranslationManager.Translation.MotionPhoto;
+        Assert.False(string.IsNullOrEmpty(expectedMarker));
+        Assert.Equal($"Jpeg ({expectedMarker})", viewModel.ImageFormatDisplay.Value);
+    }
 }
