@@ -21,8 +21,8 @@
             IsVisible="{CompiledBinding BatchResize.IsRunning.Value}">
             <Border
                 Margin="10,0,10,70"
-                Background="{DynamicResource TertiaryBackgroundColor}"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                Background="{DynamicResource ToolWindowButtonBackground}"
+                BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                 BorderThickness="0,0,0,1"
                 CornerRadius="6">
                 <Border.ContextMenu>
@@ -89,7 +89,14 @@
                 VerticalAlignment="Bottom"
                 Orientation="Horizontal">
                 <Button
-                    Classes="BorderStyle altHover mainBtn"
+                    Width="NaN"
+                    Height="35"
+                    Margin="5,0,0,0"
+                    Padding="10"
+                    Background="{DynamicResource ToolWindowButtonBackground}"
+                    BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                    BorderThickness="1"
+                    Classes="MenuItemHover"
                     Command="{CompiledBinding BatchResize.CancelCommand}"
                     CornerRadius="4"
                     DockPanel.Dock="Left"
@@ -102,7 +109,10 @@
                         TextAlignment="Center" />
                 </Button>
                 <Button
-                    Classes="BorderStyle altHover mainBtn"
+                    Background="{DynamicResource ToolWindowButtonBackground}"
+                    BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                    BorderThickness="1"
+                    Classes="altHover"
                     Command="{CompiledBinding BatchResize.CloseProgressCommand}"
                     CornerRadius="4"
                     DockPanel.Dock="Left"
@@ -116,7 +126,10 @@
                 </Button>
                 <Button
                     x:Name="ShowInFolderButton"
-                    Classes="BorderStyle altHover mainBtn"
+                    Background="{DynamicResource ToolWindowButtonBackground}"
+                    BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                    BorderThickness="1"
+                    Classes="altHover"
                     Click="ShowInFolderButton_OnClick"
                     CornerRadius="4"
                     DockPanel.Dock="Left"
@@ -140,7 +153,7 @@
                 DockPanel.Dock="Top">
                 <TabItem
                     x:Name="SelectFilesTabItem"
-                    Classes="alt"
+                    Classes="FloatingTab"
                     CornerRadius="6">
                     <TabItem.Header>
                         <StackPanel Width="112" VerticalAlignment="Center">
@@ -160,7 +173,7 @@
                 </TabItem>
                 <TabItem
                     x:Name="ResizeSettingsTabItem"
-                    Classes="alt"
+                    Classes="FloatingTab"
                     CornerRadius="6">
                     <TabItem.Header>
                         <StackPanel Width="112" VerticalAlignment="Center">
@@ -179,7 +192,7 @@
                 </TabItem>
                 <TabItem
                     x:Name="ThumbnailTabItem"
-                    Classes="alt"
+                    Classes="FloatingTab"
                     CornerRadius="6">
                     <TabItem.Header>
                         <StackPanel Width="112" VerticalAlignment="Center">
@@ -208,9 +221,11 @@
                 Spacing="10">
                 <customControls:TextIconButton
                     x:Name="AddFileButton"
-                    Background="{DynamicResource SoftenColor}"
-                    Classes="ButtonBorder altHover mainBtn"
+                    Padding="7"
+                    Background="Transparent"
+                    Classes="MenuItemHover"
                     Command="{CompiledBinding BatchResize.SelectAndAddFileCommand}"
+                    CornerRadius="4"
                     Foreground="{DynamicResource MainTextColor}"
                     Icon="{StaticResource AddFileImage}"
                     IconHeight="16"
@@ -219,9 +234,11 @@
                     Text="{CompiledBinding Translation.AddFiles}" />
                 <customControls:TextIconButton
                     x:Name="AddFolderButton"
-                    Background="{DynamicResource SoftenColor}"
-                    Classes="ButtonBorder altHover mainBtn"
+                    Padding="7"
+                    Background="Transparent"
+                    Classes="MenuItemHover"
                     Command="{CompiledBinding BatchResize.SelectAndAddFolderCommand}"
+                    CornerRadius="4"
                     Foreground="{DynamicResource MainTextColor}"
                     Icon="{StaticResource AddFolderImage}"
                     IconHeight="16"
@@ -235,9 +252,9 @@
             <Border
                 x:Name="FileLogHeaderBorder"
                 Margin="10,0"
-                Background="{DynamicResource TertiaryBackgroundColor}"
-                BorderBrush="{DynamicResource MainBorderColor}"
-                BorderThickness="0,1,0,1"
+                Background="{DynamicResource LogPanelHeaderColor}"
+                BorderBrush="{DynamicResource LogPanelBorderColor}"
+                BorderThickness="1"
                 CornerRadius="4,4,0,0"
                 DockPanel.Dock="Top"
                 IsVisible="{Binding Path=IsSelected, ElementName=SelectFilesTabItem}">
@@ -321,9 +338,9 @@
             <Border
                 x:Name="FilePanelLogBorder"
                 Margin="10,0,10,75"
-                Background="{DynamicResource TertiaryBackgroundColor}"
-                BorderBrush="{DynamicResource MainBorderColor}"
-                BorderThickness="0,0,0,1"
+                Background="{DynamicResource LogPanelBackgroundColor}"
+                BorderBrush="{DynamicResource LogPanelBorderColor}"
+                BorderThickness="1,0,1,1"
                 CornerRadius="0,0,4,4"
                 DockPanel.Dock="Top"
                 DragDrop.AllowDrop="True"
@@ -346,7 +363,7 @@
                                             IconWidth="12" />
                                         <Button
                                             Background="Transparent"
-                                            Classes="altHover"
+                                            Classes="MenuItemHover"
                                             DockPanel.Dock="Right">
                                             <TextBlock
                                                 Margin="10,0"
@@ -380,7 +397,7 @@
                                             IconWidth="12" />
                                         <Button
                                             Background="Transparent"
-                                            Classes="altHover"
+                                            Classes="MenuItemHover"
                                             DockPanel.Dock="Right">
                                             <TextBlock
                                                 Margin="10,0"
@@ -400,7 +417,7 @@
                 </Panel>
             </Border>
 
-            <!--  Output folder  -->
+            <!--  Main output folder  -->
             <DockPanel
                 Height="36"
                 Margin="0,-85,0,0"
@@ -420,7 +437,7 @@
                     Width="30"
                     Margin="5,0,10,0"
                     Background="Transparent"
-                    Classes="altHover"
+                    Classes="MenuItemHover"
                     ClickMode="Release"
                     Command="{CompiledBinding BatchResize.PickOutputFolderCommand}"
                     CornerRadius="4"
@@ -433,7 +450,7 @@
                 <customControls:FuncTextBox
                     x:Name="OutputFolderTextBox"
                     MinWidth="252"
-                    Classes="hover TStyle"
+                    Classes="TStyle"
                     DockPanel.Dock="Left"
                     Text="{CompiledBinding BatchResize.OutputFolder.Value,
                                            Mode=TwoWay}" />
@@ -463,8 +480,8 @@
                             Height="30"
                             Margin="10,0,0,0"
                             Padding="5,7,0,7"
-                            Background="{DynamicResource SecondaryBackgroundColor}"
-                            BorderBrush="{DynamicResource MainBorderColor}"
+                            Background="{DynamicResource ToolWindowButtonBackground}"
+                            BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                             BorderThickness="1"
                             CornerRadius="2"
                             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -518,8 +535,8 @@
                             Width="252"
                             Margin="11,0,0,0"
                             Padding="5,7,0,7"
-                            Background="{DynamicResource SecondaryBackgroundColor}"
-                            BorderBrush="{DynamicResource MainBorderColor}"
+                            Background="{DynamicResource ToolWindowButtonBackground}"
+                            BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                             BorderThickness="1"
                             CornerRadius="2"
                             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -543,8 +560,8 @@
                             Height="30"
                             Margin="10,0,0,0"
                             Padding="5,7,0,7"
-                            Background="{DynamicResource SecondaryBackgroundColor}"
-                            BorderBrush="{DynamicResource MainBorderColor}"
+                            Background="{DynamicResource ToolWindowButtonBackground}"
+                            BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                             BorderThickness="1"
                             CornerRadius="2"
                             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -743,8 +760,8 @@
                             Height="30"
                             Margin="11,0,10,0"
                             Padding="5,7,0,7"
-                            Background="{DynamicResource SecondaryBackgroundColor}"
-                            BorderBrush="{DynamicResource MainBorderColor}"
+                            Background="{DynamicResource ToolWindowButtonBackground}"
+                            BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                             BorderThickness="1"
                             CornerRadius="2"
                             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -795,8 +812,8 @@
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource ToolWindowButtonBackground}"
+                                BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -856,8 +873,8 @@
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource ToolWindowButtonBackground}"
+                                BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -917,8 +934,8 @@
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource ToolWindowButtonBackground}"
+                                BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -978,8 +995,8 @@
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource ToolWindowButtonBackground}"
+                                BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -1038,8 +1055,8 @@
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource ToolWindowButtonBackground}"
+                                BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -1098,8 +1115,8 @@
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource ToolWindowButtonBackground}"
+                                BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -1159,8 +1176,8 @@
                                 Height="30"
                                 Margin="6,0,10,0"
                                 Padding="5,7,0,7"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource ToolWindowButtonBackground}"
+                                BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                 BorderThickness="1"
                                 CornerRadius="2"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -1190,7 +1207,13 @@
 
                 <Button
                     x:Name="CancelButton"
-                    Classes="BorderStyle altHover mainBtn"
+                    Width="NaN"
+                    Height="35"
+                    Padding="10"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
+                    BorderThickness="1"
+                    Classes="ToolButtonHover"
                     Command="{CompiledBinding BatchResize.CancelCommand}"
                     CornerRadius="4"
                     DockPanel.Dock="Left"
@@ -1205,7 +1228,13 @@
 
                 <Button
                     x:Name="ResetButton"
-                    Classes="BorderStyle altHover mainBtn"
+                    Width="NaN"
+                    Height="35"
+                    Padding="10"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
+                    BorderThickness="1"
+                    Classes="ToolButtonHover"
                     CornerRadius="4"
                     DockPanel.Dock="Left"
                     IsVisible="False">
@@ -1220,8 +1249,13 @@
 
                 <Button
                     x:Name="StartButton"
+                    Width="NaN"
+                    Height="35"
+                    Margin="5,0,0,0"
+                    Padding="10"
                     Background="{DynamicResource AccentColor}"
-                    Classes="BorderStyle accentHover mainBtn"
+                    BorderThickness="1"
+                    Classes="PrimaryBtnHover"
                     Command="{CompiledBinding BatchResize.StartCommand}"
                     CornerRadius="4"
                     DockPanel.Dock="Right">
@@ -1236,6 +1270,19 @@
             </DockPanel>
 
         </DockPanel>
+
+        <Path
+            Width="12"
+            Height="12"
+            Margin="0,0,5,-22"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Data="{StaticResource GripGeometry}"
+            Fill="{DynamicResource BottomBarForegroundColor}"
+            Stretch="Fill"
+            Stroke="{DynamicResource BottomBarBorderColor}"
+            StrokeThickness="1"
+            WindowDecorationProperties.ElementRole="ResizeSE" />
     </Panel>
 
 </UserControl>

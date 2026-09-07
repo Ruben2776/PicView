@@ -163,15 +163,5 @@
             <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
         </Style>
 
-        <Style Selector="^.changeColor  /template/ Image#TickMark">
-            <Setter Property="Source" Value="{StaticResource SquareCheckAltImage}" />
-        </Style>
-        <Style Selector="^.changeColor  /template/ Image#CrossMark">
-            <Setter Property="Source" Value="{StaticResource SquareXAltImage}" />
-        </Style>
-        <Style Selector="^.changeColor  /template/ Image#indeterminateMark">
-            <Setter Property="Source" Value="{StaticResource SquareAltImage}" />
-        </Style>
-
     </ControlTheme>
 </ResourceDictionary>

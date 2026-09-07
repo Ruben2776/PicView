@@ -69,10 +69,14 @@
 
             <!--  TABS  -->
             <Color x:Key="BehindTabBackground">#FF353535</Color>
+
             <Color x:Key="TabItemSelectedBackground">#FF252525</Color>
             <Color x:Key="TabItemUnSelectedBackground">#FF252525</Color>
             <Color x:Key="TabItemBorderColor">#F42F2F2F</Color>
             <Color x:Key="TabItemHoverBackground">#D2353535</Color>
+
+            <Color x:Key="FloatingTabSelectedBackground">#A23C3C3C</Color>
+            <Color x:Key="FloatingTabSelectedBorder">#F4595959</Color>
 
             <!--  Scrollbar  -->
             <Color x:Key="ScrollbarBackgroundColor">#FF2C2C2C</Color>
@@ -127,6 +131,11 @@
             <Color x:Key="ComboBoxDropDownBackgroundColor">#282828</Color>
             <Color x:Key="ComboBoxDropDownBorderColor">#777</Color>
 
+            <!--  Log panel background  -->
+            <Color x:Key="LogPanelHeaderColor">#EB343434</Color>
+            <Color x:Key="LogPanelBackgroundColor">#D72A2A2A</Color>
+            <Color x:Key="LogPanelBorderColor">#8D565656</Color>
+
 
             <!--  EFFECTS & MISC  -->
             <Color x:Key="ErrorColor">#B51522</Color>
@@ -139,7 +148,9 @@
                 Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 Stretch="Fill"
                 TileMode="FlipXY" />
+
         </ResourceDictionary>
+
 
 
         <!--  ==========================================  -->
@@ -205,10 +216,14 @@
 
             <!--  TABS  -->
             <Color x:Key="BehindTabBackground">#fff</Color>
+
             <Color x:Key="TabItemSelectedBackground">#fff</Color>
             <Color x:Key="TabItemUnSelectedBackground">#F2F5F9</Color>
             <Color x:Key="TabItemBorderColor">#9ABCBCBC</Color>
             <Color x:Key="TabItemHoverBackground">#E1E7F0</Color>
+
+            <Color x:Key="FloatingTabSelectedBackground">#A23C3C3C</Color>
+            <Color x:Key="FloatingTabSelectedBorder">#F4595959</Color>
 
             <!--  Scrollbar  -->
             <Color x:Key="ScrollbarBackgroundColor">#fff</Color>
@@ -260,7 +275,10 @@
             <Color x:Key="ComboBoxDropDownBackgroundColor">#282828</Color>
             <Color x:Key="ComboBoxDropDownBorderColor">#777</Color>
 
-
+            <!--  Log panel background  -->
+            <Color x:Key="LogPanelHeaderColor">#EB343434</Color>
+            <Color x:Key="LogPanelBackgroundColor">#D72A2A2A</Color>
+            <Color x:Key="LogPanelBorderColor">#8D565656</Color>
 
             <!--  EFFECTS & MISC  -->
             <Color x:Key="NoisyTexture">#17FFFFFF</Color>

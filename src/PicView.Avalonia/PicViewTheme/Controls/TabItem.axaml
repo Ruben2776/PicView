@@ -46,11 +46,11 @@
             <Setter Property="HorizontalContentAlignment" Value="Right" />
         </Style>
 
-        <Style Selector="^.alt:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource SoftenColor}" />
+        <Style Selector="^.FloatingTab:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource FloatingTabSelectedBackground}" />
             <Setter Property="Opacity" Value="1" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="{DynamicResource TabItemBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource FloatingTabSelectedBorder}" />
             <Setter Property="CornerRadius" Value="6" />
         </Style>
     </ControlTheme>
