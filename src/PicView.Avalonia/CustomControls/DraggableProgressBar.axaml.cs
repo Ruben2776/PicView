@@ -1,14 +1,13 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Shapes;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
-using PicView.Avalonia.UI;
+using PicView.Core.Extensions;
 
 namespace PicView.Avalonia.CustomControls;
 
@@ -123,7 +122,8 @@ public class DraggableProgressBar : TemplatedControl
         }
         
         var pointerOverIndex = PositionToIndex(position.X);
-        ToolTip.SetTip(this, $"{pointerOverIndex}/{Maximum}");
+        var progress = StringExtensions.CombineProgress(pointerOverIndex, Maximum);
+        ToolTip.SetTip(this, progress);
         ToolTip.SetIsOpen(this, true);
     }
 
