@@ -8,12 +8,12 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border
-        BorderBrush="{DynamicResource MainBorderColor}"
+        BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
         CornerRadius="8">
         <DockPanel LastChildFill="True">
             <DockPanel
-                Background="{DynamicResource WindowBackgroundColor}"
+                Background="{DynamicResource WindowTitleBackgroundColor}"
                 DockPanel.Dock="Top"
                 Height="{StaticResource TopBorderHeight}"
                 PointerPressed="MoveWindow"

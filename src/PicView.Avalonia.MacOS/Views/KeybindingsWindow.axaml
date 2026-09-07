@@ -20,7 +20,7 @@
         <Panel>
 
             <Panel
-                Background="{DynamicResource WindowBackgroundColor}"
+                Background="{DynamicResource WindowTitleBackgroundColor}"
                 Height="{StaticResource TopBorderHeight}"
                 VerticalAlignment="Top"
                 x:Name="WindowBorder">
@@ -34,7 +34,7 @@
             </Panel>
 
             <Border
-                Background="{DynamicResource WindowBackgroundColor}"
+                Background="{DynamicResource WindowMainBackgroundColor}"
                 Focusable="True"
                 Margin="0,28,0,0">
                 <main:KeybindingsView Padding="0,2,0,10" x:Name="XKeybindingsView" />

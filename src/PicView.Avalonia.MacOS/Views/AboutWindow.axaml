@@ -9,10 +9,14 @@
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Border CornerRadius="8">
+    <Border
+        BorderBrush="{DynamicResource WindowBorderColor}"
+        BorderThickness="1"
+        CornerRadius="8">
         <Panel>
 
             <DockPanel
+                Background="{DynamicResource WindowTitleBackgroundColor}"
                 Height="28"
                 PointerPressed="MoveWindow"
                 VerticalAlignment="Top">
