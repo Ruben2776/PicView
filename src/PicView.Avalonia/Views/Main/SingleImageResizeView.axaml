@@ -63,7 +63,6 @@
                                 Width="195"
                                 Height="35"
                                 Margin="0"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
                                 Classes="hover TStyle"
                                 CornerRadius="4"
                                 Foreground="{DynamicResource MainTextColor}"
