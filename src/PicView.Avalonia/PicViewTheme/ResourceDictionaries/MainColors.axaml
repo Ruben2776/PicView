@@ -16,7 +16,7 @@
 
             <!--  Global Window  -->
             <Color x:Key="WindowTitleBackgroundColor">#FF2C2C2C</Color>
-            <Color x:Key="WindowButtonBackgroundColor">#CC2b2b2b</Color>
+            <Color x:Key="WindowButtonBackgroundColor">#2B2B2B</Color>
             <Color x:Key="WindowBorderColor">#FF3A3A3A</Color>
             <Color x:Key="WindowLogoColor">#FF303030</Color>
             <Color x:Key="WindowMainBackgroundColor">#DF252525</Color>
@@ -130,7 +130,7 @@
             <Color x:Key="ToolWindowButtonBorderHover">#CCA2A2A2</Color>
 
             <!--  TextBox  -->
-            <Color x:Key="TextBoxBackgroundColor">#CC2b2b2b</Color>
+            <Color x:Key="TextBoxBackgroundColor">#FF292929</Color>
             <Color x:Key="TextBoxBorderColor">#373535</Color>
             <Color x:Key="TextBoxHoverBorderColor">#777</Color>
 

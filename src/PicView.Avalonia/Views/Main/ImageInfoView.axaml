@@ -538,7 +538,6 @@
                             <customControls:FuncTextBox
                                 x:Name="SizeMpTextBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                Background="{DynamicResource DisabledBackgroundColor}"
                                 Classes=" TStyle x"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding Exif.SizeMp.Value,
@@ -566,7 +565,6 @@
                                                        Mode=OneWay}" />
                             <customControls:FuncTextBox
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                Background="{DynamicResource DisabledBackgroundColor}"
                                 Classes=" TStyle x"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding Exif.Resolution.Value,
@@ -593,7 +591,6 @@
                             <customControls:FuncTextBox
                                 x:Name="PrintSizeCmTextBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                Background="{DynamicResource DisabledBackgroundColor}"
                                 Classes=" TStyle x"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding Exif.PrintSizeCm.Value,
@@ -621,7 +618,6 @@
                                 x:Name="PrintSizeInchTextBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value,
                                                         FallbackValue=0}"
-                                Background="{DynamicResource DisabledBackgroundColor}"
                                 Classes=" TStyle x"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding Exif.PrintSizeInch.Value,
@@ -653,7 +649,6 @@
                                 x:Name="AspectRatioTextBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value,
                                                         FallbackValue=0}"
-                                Background="{DynamicResource DisabledBackgroundColor}"
                                 Classes=" TStyle x"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding Exif.AspectRatio.Value,
@@ -684,7 +679,6 @@
                             <customControls:FuncTextBox
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value,
                                                         FallbackValue=0}"
-                                Background="{DynamicResource DisabledBackgroundColor}"
                                 Classes="TStyle x"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding Exif.BitDepth.Value,
@@ -718,7 +712,6 @@
                                                         FallbackValue=0}"
                                 MinWidth="180"
                                 Margin="5,0,0,0"
-                                Background="{DynamicResource DisabledBackgroundColor}"
                                 Classes="CStyle x"
                                 ItemsSource="{CompiledBinding Exif.Orientations.Value,
                                                               Mode=OneWay,
@@ -750,7 +743,6 @@
                             <customControls:FuncTextBox
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value,
                                                         FallbackValue=''}"
-                                Background="{DynamicResource DisabledBackgroundColor}"
                                 Classes="TStyle x"
                                 IsReadOnly="True"
                                 Text="{CompiledBinding Exif.ImageFormatDisplay.Value,
@@ -778,7 +770,6 @@
                             <customControls:FuncTextBox
                                 x:Name="FileSizeBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                Background="{DynamicResource DisabledBackgroundColor}"
                                 Classes="TStyle x"
                                 IsReadOnly="True" />
                             <customControls:CopyButton
@@ -806,6 +797,7 @@
                                 x:Name="CreationTimeBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
                                 Margin="5,0,0,0"
+                                Background="{DynamicResource ToolWindowButtonBackground}"
                                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                                             Converter={x:Static ObjectConverters.IsNotNull}}"
                                 SelectedDateTime="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.CreationTime,
@@ -835,6 +827,7 @@
                                 x:Name="ModifiedBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
                                 Margin="5,0,0,0"
+                                Background="{DynamicResource ToolWindowButtonBackground}"
                                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                                             Converter={x:Static ObjectConverters.IsNotNull}}"
                                 SelectedDateTime="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.LastWriteTime,
@@ -863,6 +856,7 @@
                                 x:Name="LastAccessedBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
                                 Margin="5,0,0,0"
+                                Background="{DynamicResource ToolWindowButtonBackground}"
                                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                                             Converter={x:Static ObjectConverters.IsNotNull}}"
                                 SelectedDateTime="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.LastAccessTime,
@@ -924,6 +918,7 @@
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value,
                                                             FallbackValue=0}"
                                     Margin="5,0,0,0"
+                                    Background="{DynamicResource ToolWindowButtonBackground}"
                                     Command="{CompiledBinding Exif.SetDateTakenCommand}"
                                     CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                                     SelectedDateTime="{CompiledBinding Exif.DateTaken.Value,

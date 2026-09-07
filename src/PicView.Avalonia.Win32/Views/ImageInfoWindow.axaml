@@ -80,7 +80,7 @@
                     Background="Transparent"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
-                    Classes="noBorderHover"
+                    Classes="WindowToolButtonHover"
                     Command="{Binding Exif.SetExifRating0Command}"
                     CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                     DockPanel.Dock="Right"
@@ -152,7 +152,7 @@
                     Height="28"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
-                    Classes="noBorderHover"
+                    Classes="WindowToolButtonHover"
                     Command="{Binding OptimizeImageCommand}"
                     DockPanel.Dock="Right"
                     Foreground="{DynamicResource MainTextColor}"
@@ -174,7 +174,7 @@
                     Height="28"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
-                    Classes="noBorderHover"
+                    Classes="WindowToolButtonHover"
                     Command="{CompiledBinding OpenWithCommand}"
                     DockPanel.Dock="Right"
                     Foreground="{DynamicResource MainTextColor}"
@@ -197,7 +197,7 @@
                     Height="28"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
-                    Classes="noBorderHover"
+                    Classes="WindowToolButtonHover"
                     Command="{CompiledBinding DuplicateFileCommand}"
                     Data="{StaticResource DuplicateGeometry}"
                     DockPanel.Dock="Right"
@@ -220,7 +220,7 @@
                     Height="28"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,1,0"
-                    Classes="noBorderHover"
+                    Classes="WindowToolButtonHover"
                     Command="{CompiledBinding OpenInExplorerCommand}"
                     CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.FullName,
                                                        FallbackValue=''}"
@@ -254,7 +254,7 @@
                 Height="1"
                 DockPanel.Dock="Top"
                 Fill="{DynamicResource TitleBarButtonBorder}" />
-            <main:ImageInfoView x:Name="ExifView" Background="{StaticResource NoisyTexture}" />
+            <main:ImageInfoView x:Name="ExifView" Background="{StaticResource WindowMainBackgroundColor}" />
         </DockPanel>
     </Border>
 </Window>

@@ -196,9 +196,11 @@
 
             <customControls:TextIconButton
                 x:Name="UpdateButton"
+                Width="NaN"
                 Margin="0,10,0,15"
+                Padding="10,7"
                 HorizontalAlignment="Center"
-                Classes="BorderStyle altHover mainBtn"
+                Classes="ToolButtonStyle ToolButtonHover"
                 Command="{CompiledBinding AboutView.UpdateCommand}"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource DownloadImage}"
