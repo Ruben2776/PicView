@@ -231,7 +231,7 @@
                         </Style>
                     </ListBox.Styles>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.General}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.General}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -243,7 +243,7 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.Appearance}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.Appearance}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -255,7 +255,7 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.Interface}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.Interface}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -267,7 +267,7 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.Image}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.Image}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -279,7 +279,7 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.Window}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.Window}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -291,7 +291,7 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.Gallery}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.Gallery}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -303,7 +303,7 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.Slideshow}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.Slideshow}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -315,7 +315,7 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.Navigation}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.Navigation}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -327,7 +327,7 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.Zoom}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.Zoom}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -339,7 +339,7 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.Mouse}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.Mouse}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -351,7 +351,7 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.Language}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.Language}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -363,7 +363,7 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem Tag="{x:Static viewModels1:SettingsCategory.Keybindings}">
+                    <ListBoxItem BorderBrush="{DynamicResource MenuBorderColor}" Tag="{x:Static viewModels1:SettingsCategory.Keybindings}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
@@ -375,7 +375,10 @@
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
-                    <ListBoxItem x:Name="FileAssociationsListBoxItem" Tag="{x:Static viewModels1:SettingsCategory.FileAssociations}">
+                    <ListBoxItem
+                        x:Name="FileAssociationsListBoxItem"
+                        BorderBrush="{DynamicResource MenuBorderColor}"
+                        Tag="{x:Static viewModels1:SettingsCategory.FileAssociations}">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image

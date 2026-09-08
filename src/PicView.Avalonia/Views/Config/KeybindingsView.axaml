@@ -33,6 +33,7 @@
                     Classes="MenuItemHover"
                     Command="{Binding MainWindows.ActiveWindow.Value.KeybindingsWindowCommand}"
                     CornerRadius="4"
+                    Foreground="{DynamicResource MainTextColor}"
                     Icon="{StaticResource KeyImage}"
                     IconHeight="18"
                     IconMargin="5,5,10,5"

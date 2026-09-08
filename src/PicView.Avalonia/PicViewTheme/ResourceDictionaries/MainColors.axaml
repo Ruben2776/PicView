@@ -173,14 +173,18 @@
         <ResourceDictionary x:Key="Light">
             <!--  Global Text  -->
             <Color x:Key="MainTextColor">#424242</Color>
-            <Color x:Key="MainTextColorFaded">#768396</Color>
+            <Color x:Key="MainTextColorFaded">#FFAAA9C2</Color>
 
             <!--  Global Window  -->
             <Color x:Key="WindowTitleBackgroundColor">Transparent</Color>
             <Color x:Key="WindowButtonBackgroundColor">#fff</Color>
             <Color x:Key="WindowBorderColor">#fff</Color>
             <Color x:Key="WindowLogoColor">#fff</Color>
-            <Color x:Key="WindowMainBackgroundColor">#DF252525</Color>
+            <ConicGradientBrush x:Key="WindowMainBackgroundColor" Center="50%,50%">
+                <GradientStop Offset="0.0" Color="#fff" />
+                <GradientStop Offset="0.5" Color="#FFF4F3FF" />
+                <GradientStop Offset="1.0" Color="#fff" />
+            </ConicGradientBrush>
 
             <!--  TOP TITLE BAR  -->
             <Color x:Key="TitleBarBackgroundColor">#fff</Color>
@@ -216,7 +220,7 @@
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#fff</Color>
             <Color x:Key="MenuButtonBackground">#fff</Color>
-            <Color x:Key="MenuBorderColor">#fff</Color>
+            <Color x:Key="MenuBorderColor">#FFDBDBDB</Color>
 
             <Color x:Key="DisabledMenuBackgroundColor">#E3DFE7</Color>
             <Color x:Key="DisabledMenuForegroundColor">#A9A5AC</Color>
@@ -285,7 +289,7 @@
             <Color x:Key="ToolWindowFooterBackground">#CC303030</Color>
 
             <Color x:Key="ToolWindowButtonBackground">#FF292929</Color>
-            <Color x:Key="ToolWindowButtonBorderColor">#CC424242</Color>
+            <Color x:Key="ToolWindowButtonBorderColor">#CCD2D2D2</Color>
 
             <Color x:Key="ToolWindowButtonHover">#4C4C4C</Color>
             <Color x:Key="ToolWindowButtonBorderHover">#CCA2A2A2</Color>
@@ -298,8 +302,8 @@
             <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
 
             <!--  ComboBox  -->
-            <Color x:Key="ComboBoxDropDownBackgroundColor">#282828</Color>
-            <Color x:Key="ComboBoxDropDownBorderColor">#777</Color>
+            <Color x:Key="ComboBoxDropDownBackgroundColor">#fff</Color>
+            <Color x:Key="ComboBoxDropDownBorderColor">#CCBFBFBF</Color>
 
             <!--  Log panel background  -->
             <Color x:Key="LogPanelHeaderColor">#EB343434</Color>

@@ -131,12 +131,26 @@ public class TextIconButton : Button
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == TextProperty) _textBlock.Text = Text;
-        else if (change.Property == TextMarginProperty) _textBlock.Margin = TextMargin;
-        else if (change.Property == TextMaxWidthProperty) _textBlock.MaxWidth = TextMaxWidth;
-        else if (change.Property == ForegroundProperty) _textBlock.Foreground = Foreground;
-        else if (change.Property == FontSizeProperty) _textBlock.FontSize = FontSize;
-        
+        if (change.Property == TextProperty)
+        {
+            _textBlock.Text = Text;
+        }
+        else if (change.Property == TextMarginProperty)
+        {
+            _textBlock.Margin = TextMargin;
+        }
+        else if (change.Property == TextMaxWidthProperty)
+        {
+            _textBlock.MaxWidth = TextMaxWidth;
+        }
+        else if (change.Property == ForegroundProperty)
+        {
+            _textBlock.Foreground = Foreground;
+        }
+        else if (change.Property == FontSizeProperty)
+        {
+            _textBlock.FontSize = FontSize;
+        }
         else if (change.Property == IconProperty || change.Property == PathProperty)
         {
             UpdateIconVisibility();
@@ -173,14 +187,14 @@ public class TextIconButton : Button
         _iconImage.Source = _localIconCopy;
         _pathIcon.Data = Data;
 
-        bool hasDrawing = _localIconCopy != null;
-        bool hasPath = Data != null;
+        var hasDrawing = _localIconCopy != null;
+        var hasPath = Data != null;
 
         _iconImage.IsVisible = hasDrawing;
         _pathIcon.IsVisible = !hasDrawing && hasPath;
     }
 
-    private DrawingImage? CreateLocalIconCopy(DrawingImage? sourceIcon)
+    private static DrawingImage? CreateLocalIconCopy(DrawingImage? sourceIcon)
     {
         if (sourceIcon?.Drawing is not DrawingGroup sourceGroup)
         {
@@ -246,6 +260,10 @@ public class TextIconButton : Button
 
     private void OnPointerEntered(object? sender, PointerEventArgs e)
     {
+        if (Classes.Contains("MenuItemHover"))
+        {
+            return;
+        }
         Dispatcher.UIThread.Post(() =>
         {
             var secondaryBrush = UIHelper.GetBrush("SecondaryTextColor");
@@ -270,6 +288,10 @@ public class TextIconButton : Button
 
     private void OnPointerExited(object? sender, PointerEventArgs e)
     {
+        if (Classes.Contains("MenuItemHover"))
+        {
+            return;
+        }
         Dispatcher.UIThread.Post(() =>
         {
             _textBlock.Foreground = UIHelper.GetBrush("MainTextColor");

@@ -38,6 +38,7 @@
                     Classes="MenuItemHover"
                     Command="{Binding MainWindows.ActiveWindow.Value.FileAssociationsWindowCommand}"
                     CornerRadius="4"
+                    Foreground="{DynamicResource MainTextColor}"
                     Icon="{StaticResource FileAssociationImage}"
                     IconHeight="18"
                     IconMargin="5,5,10,5"

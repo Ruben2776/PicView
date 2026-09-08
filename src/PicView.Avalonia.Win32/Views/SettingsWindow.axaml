@@ -118,7 +118,7 @@
                     <TextBlock
                         x:Name="TitleText"
                         Padding="15,0"
-                        Background="Transparent"
+                        Background="{DynamicResource TitleBarBackgroundColor}"
                         Classes="txt"
                         Foreground="{DynamicResource MainTextColor}"
                         LineHeight="{StaticResource TopBorderHeight}"

@@ -32,7 +32,31 @@ public partial class DropDownMenu : AnimatedMenu
         DataContext = vm;
         InitializeComponent();
         Loaded += OnLoaded;
+        if (!Settings.Theme.Dark)
+        {
+            ApplyLightTheme();
+        }
+    }
+    
+    private void ApplyLightTheme()
+    {
+        AutoFitButton.Classes.Remove("hover");
+        AutoFitButton.Classes.Add("AltHover");
+        
+        TopMostButton.Classes.Remove("hover");
+        TopMostButton.Classes.Add("AltHover");
+        
+        LoopingButton.Classes.Remove("hover");
+        LoopingButton.Classes.Add("AltHover");
 
+        ScrollButton.Classes.Remove("hover");
+        ScrollButton.Classes.Add("AltHover");
+        
+        ZoomToFitButton.Classes.Remove("hover");
+        ZoomToFitButton.Classes.Add("AltHover");
+        
+        SideBySideButton.Classes.Remove("hover");
+        SideBySideButton.Classes.Add("AltHover");
     }
 
     private void OnLoaded(object? sender, RoutedEventArgs e)

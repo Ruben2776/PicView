@@ -48,7 +48,6 @@
                                             Foreground="{DynamicResource MainTextColorFaded}"
                                             IsVisible="{TemplateBinding Text,
                                                                         Converter={x:Static StringConverters.IsNullOrEmpty}}"
-                                            Opacity="0.5"
                                             Text="{TemplateBinding Watermark}"
                                             TextAlignment="{TemplateBinding TextAlignment}"
                                             TextWrapping="{TemplateBinding TextWrapping}" />
