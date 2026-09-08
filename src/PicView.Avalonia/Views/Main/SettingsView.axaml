@@ -68,7 +68,7 @@
 
         <Panel
             Margin="7,5"
-            Background="{DynamicResource MainBackgroundColor}"
+            Background="{DynamicResource MenuBackgroundColor}"
             ContextMenu="{StaticResource SettingsContextMenu}"
             DockPanel.Dock="Top">
             <Image
@@ -83,7 +83,7 @@
                 Padding="37,7,4,7"
                 VerticalAlignment="Center"
                 Background="Transparent"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderBrush="{DynamicResource MenuBorderColor}"
                 BorderThickness="1"
                 CornerRadius="4"
                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
@@ -102,7 +102,7 @@
                 WindowManagerAddShadowHint="True">
                 <Border
                     Background="{DynamicResource MenuBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource MenuBorderColor}"
                     BorderThickness="1"
                     CornerRadius="4">
                     <ListBox
@@ -180,8 +180,8 @@
                         <DataTemplate>
                             <Button
                                 Padding="10,20"
-                                Background="{DynamicResource MainBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource MenuBackgroundColor}"
+                                BorderBrush="{DynamicResource MenuBorderColor}"
                                 BorderThickness="1"
                                 Classes="altHover"
                                 Command="{Binding $parent[UserControl].((viewModels1:CoreViewModel)DataContext).SettingsViewModel.NavigateToCategoryCommand}"
@@ -211,7 +211,7 @@
                     Margin="7,2,1,1"
                     VerticalAlignment="Top"
                     Background="Transparent"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource MenuBorderColor}"
                     BorderThickness="1"
                     ContextMenu="{StaticResource SettingsContextMenu}"
                     CornerRadius="4"

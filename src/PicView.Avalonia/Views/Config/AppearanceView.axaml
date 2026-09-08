@@ -40,8 +40,6 @@
                     Width="300"
                     Margin="0,6,0,10"
                     Padding="5,7,0,7"
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
@@ -415,7 +413,7 @@
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.BackgroundConstrainSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="ConstrainingBackgroundColorToggleButton"
-                Classes="altHover settingsToggleButton"
+                Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleConstrainBackgroundColorCommand}"
                 IsChecked="{CompiledBinding SettingsViewModel.IsConstrainingBackgroundColor.Value}"
                 Text="{CompiledBinding Translation.ConstrainBackgroundToImage.Value,

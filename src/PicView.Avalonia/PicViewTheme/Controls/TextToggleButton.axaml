@@ -75,73 +75,7 @@
             </Style>
         </Style>
 
-        <Style Selector="^.hover:pointerover /template/ Border#border">
-            <Style.Animations>
-                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
-                    <KeyFrame>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource AccentColor}" />
-        </Style>
-        <Style Selector="^.hover:pointerover /template/ TextBlock#text">
-            <Style.Animations>
-                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
-                    <KeyFrame>
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="{DynamicResource MainTextColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="#fff" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Foreground" Value="#fff" />
-        </Style>
-        <Style Selector="^.hover:pointerover /template/ Image#TickMark">
-            <Setter Property="Source" Value="{DynamicResource SquareCheckAltImage}" />
-        </Style>
-        <Style Selector="^.hover:pointerover /template/ Path#CrossMark">
-            <Setter Property="Fill" Value="{StaticResource SecondaryTextColor}" />
-        </Style>
-
-        <Style Selector="^.altHover:pointerover /template/ Border#border">
-            <Style.Animations>
-                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
-                    <KeyFrame>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource OuterBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
-        </Style>
-
-        <Style Selector="^.noBorderHover:pointerover /template/ Border#border">
+        <Style Selector="^.MenuItemHover:pointerover /template/ Border#border">
             <Style.Animations>
                 <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
                     <KeyFrame>
@@ -151,12 +85,12 @@
                     </KeyFrame>
                     <KeyFrame Cue="1">
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
+                            <SolidColorBrush Color="{DynamicResource MenuItemHoverBackground}" />
                         </Setter>
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
+            <Setter Property="Background" Value="{DynamicResource MenuItemHoverBackground}" />
         </Style>
 
         <Style Selector="^:disabled">
