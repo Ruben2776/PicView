@@ -98,9 +98,13 @@ public class IconButton : Button
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == IconProperty || change.Property == ForegroundProperty)
+        if (change.Property == IconProperty)
         {
             Content = BuildIcon();
+        }
+        else if (change.Property == ForegroundProperty)
+        {
+            UpdateIcon();
         }
 
         if (change.Property == IsPressedProperty && !change.GetNewValue<bool>())
@@ -155,7 +159,7 @@ public class IconButton : Button
             // Revert brush to main text color on pointer exit
             PointerExited += delegate
             {
-                Dispatcher.UIThread.Invoke(() =>
+                Dispatcher.UIThread.Invoke(() => 
                 {
                     var brush = Foreground;
                     foreach (var drawing in drawingGroup.Children)
@@ -186,6 +190,25 @@ public class IconButton : Button
         };
 
         return pathIcon;
+    }
+
+    private void UpdateIcon()
+    {
+        if (Icon is not { Drawing: DrawingGroup drawingGroup })
+        {
+            return;
+        }
+
+        // Set the initial pen brush to match the Foreground color
+        foreach (var drawing in drawingGroup.Children)
+        {
+            if (drawing is not GeometryDrawing { Pen: Pen pen })
+            {
+                continue;
+            }
+
+            pen.Brush = Foreground;
+        }
     }
 
     #region Repeat
