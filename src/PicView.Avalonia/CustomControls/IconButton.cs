@@ -98,7 +98,7 @@ public class IconButton : Button
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == IconProperty)
+        if (change.Property == IconProperty || change.Property == ForegroundProperty)
         {
             Content = BuildIcon();
         }

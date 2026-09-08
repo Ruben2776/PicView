@@ -12,7 +12,7 @@
         <Styles>
             <Style Selector="TextBox.x, ComboBox.x">
                 <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-                <Setter Property="MaxHeight" Value="80" />
+                <Setter Property="MaxHeight" Value="34" />
             </Style>
             <Style Selector="TextBox.x">
                 <Setter Property="TextWrapping" Value="Wrap" />
@@ -1028,6 +1028,7 @@
                                 <customControls:FuncTextBox
                                     x:Name="SubjectBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxXxlWidth.Value}"
+                                    MaxHeight="84"
                                     Classes=" TStyle x"
                                     Command="{CompiledBinding Exif.SetSubjectCommand}"
                                     CommandParameter="{Binding $self.Text}"
@@ -1055,6 +1056,7 @@
                                 <customControls:FuncTextBox
                                     x:Name="TitleBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxXxlWidth.Value}"
+                                    MaxHeight="84"
                                     Classes=" TStyle x"
                                     Command="{CompiledBinding Exif.SetTitleCommand}"
                                     CommandParameter="{Binding $self.Text}"
@@ -1281,9 +1283,7 @@
                                     Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
                                     MinWidth="180"
                                     Margin="5,0,0,0"
-                                    Padding="5,7,1,7"
-                                    Classes="CStyle x"
-                                    CornerRadius="2"
+                                    Classes="x"
                                     ItemsSource="{CompiledBinding Exif.ColorRepresentations.Value}"
                                     SelectedIndex="{CompiledBinding Exif.ColorRepresentation.Value,
                                                                     Mode=TwoWay}" />

@@ -24,23 +24,6 @@ public partial class ZoomPreviewer : UserControl
     {
         InitializeComponent();
 
-        if (!Settings.Theme.Dark && Settings.Theme.GlassTheme)
-        {
-            if (Settings.Theme.GlassTheme)
-            {
-                MainBorder.BorderThickness = new Thickness(0);
-            }
-
-            ResetZoomButton.Classes.Remove("altHover");
-            CloseButton.Classes.Remove("altHover");
-            ResetZoomButton.Classes.Add("hover");
-            CloseButton.Classes.Add("hover");
-        }
-        Loaded += OnLoaded;
-    }
-
-    private void OnLoaded(object? sender, RoutedEventArgs e)
-    {
         CloseButton.Click += delegate { SetInvisible(); };
 
         // Add pointer event handlers for dragging
