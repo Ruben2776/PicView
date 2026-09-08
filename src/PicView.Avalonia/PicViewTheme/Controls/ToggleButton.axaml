@@ -28,15 +28,14 @@
                                     IsVisible="False"
                                     Source="{StaticResource SquareCheckImage}" />
 
-                                <Path
+                                <PathIcon
                                     x:Name="CrossMark"
                                     Width="11"
                                     Height="11"
                                     Margin="2,3.9,5,0"
                                     Data="{StaticResource CrossMarkGeometry}"
-                                    Fill="{TemplateBinding Foreground}"
-                                    IsVisible="True"
-                                    Stretch="Fill" />
+                                    Foreground="{TemplateBinding Foreground}"
+                                    IsVisible="True" />
                             </Canvas>
                         </Decorator>
                         <ContentPresenter
@@ -66,7 +65,7 @@
             <Style Selector="^ /template/ Image#TickMark">
                 <Setter Property="IsVisible" Value="False" />
             </Style>
-            <Style Selector="^ /template/ Path#CrossMark">
+            <Style Selector="^ /template/ PathIcon#CrossMark">
                 <Setter Property="IsVisible" Value="True" />
             </Style>
         </Style>

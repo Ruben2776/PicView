@@ -125,12 +125,7 @@
                 <!--  Set as wallpaper  -->
                 <MenuItem x:Name="WallpaperMenuItem" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.SetAsWallpaper.Value, Mode=OneWay}">
                     <MenuItem.Icon>
-                        <Path
-                            Width="13"
-                            Height="10.40"
-                            Data="{StaticResource PanoramaGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                        <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
 
                     <!--  Set as wallpaper filled  -->
@@ -140,12 +135,7 @@
                         Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fill.Value,
                                                  Mode=OneWay}">
                         <MenuItem.Icon>
-                            <Path
-                                Width="13"
-                                Height="10.40"
-                                Data="{StaticResource PanoramaGeometry}"
-                                Fill="{DynamicResource MainTextColor}"
-                                Stretch="Fill" />
+                            <Image Classes="WallpaperImage" />
                         </MenuItem.Icon>
                     </MenuItem>
 
@@ -156,12 +146,7 @@
                         Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fit.Value,
                                                  Mode=OneWay}">
                         <MenuItem.Icon>
-                            <Path
-                                Width="13"
-                                Height="10.40"
-                                Data="{StaticResource PanoramaGeometry}"
-                                Fill="{DynamicResource MainTextColor}"
-                                Stretch="Fill" />
+                            <Image Classes="WallpaperImage" />
                         </MenuItem.Icon>
                     </MenuItem>
 
@@ -172,12 +157,7 @@
                         Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value,
                                                  Mode=OneWay}">
                         <MenuItem.Icon>
-                            <Path
-                                Width="13"
-                                Height="10.40"
-                                Data="{StaticResource PanoramaGeometry}"
-                                Fill="{DynamicResource MainTextColor}"
-                                Stretch="Fill" />
+                            <Image Classes="WallpaperImage" />
                         </MenuItem.Icon>
                     </MenuItem>
 
@@ -189,12 +169,7 @@
                         Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Center.Value,
                                                  Mode=OneWay}">
                         <MenuItem.Icon>
-                            <Path
-                                Width="13"
-                                Height="10.40"
-                                Data="{StaticResource PanoramaGeometry}"
-                                Fill="{DynamicResource MainTextColor}"
-                                Stretch="Fill" />
+                            <Image Classes="WallpaperImage" />
                         </MenuItem.Icon>
                     </MenuItem>
 
@@ -205,12 +180,7 @@
                         Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Tile.Value,
                                                  Mode=OneWay}">
                         <MenuItem.Icon>
-                            <Path
-                                Width="13"
-                                Height="10.40"
-                                Data="{StaticResource PanoramaGeometry}"
-                                Fill="{DynamicResource MainTextColor}"
-                                Stretch="Fill" />
+                            <Image Classes="WallpaperImage" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </MenuItem>

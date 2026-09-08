@@ -22,10 +22,11 @@
         IsVisible="{CompiledBinding CanNavigateBackwards.Value,
                                     FallbackValue=False}">
         <Polygon
+            x:Name="ArrowPolygon"
             Width="20"
             Height="40"
             Margin="0,5,5,0"
-            Fill="{StaticResource MainTextColor}"
+            Fill="{DynamicResource MainTextColor}"
             Points="352,128.4 319.7,96 160,256 160,256 160,256 319.7,416 352,383.6 224.7,256"
             RenderTransformOrigin="0.5,0.5"
             Stretch="Uniform" />

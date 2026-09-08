@@ -118,12 +118,7 @@
                                             FallbackValue=False}"
                 IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                 <MenuItem.Icon>
-                    <Path
-                        Width="13"
-                        Height="10.40"
-                        Data="{StaticResource PanoramaGeometry}"
-                        Fill="{DynamicResource MainTextColor}"
-                        Stretch="Fill" />
+                    <Image Classes="WallpaperImage" />
                 </MenuItem.Icon>
 
                 <!--  Set as wallpaper filled  -->
@@ -136,12 +131,7 @@
                                                 FallbackValue=False}"
                     IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
-                        <Path
-                            Width="13"
-                            Height="10.40"
-                            Data="{StaticResource PanoramaGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                        <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -155,12 +145,7 @@
                                                 FallbackValue=False}"
                     IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
-                        <Path
-                            Width="13"
-                            Height="10.40"
-                            Data="{StaticResource PanoramaGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                        <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -174,12 +159,7 @@
                                                 FallbackValue=False}"
                     IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
-                        <Path
-                            Width="13"
-                            Height="10.40"
-                            Data="{StaticResource PanoramaGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                        <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -194,12 +174,7 @@
                                                 FallbackValue=False}"
                     IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
-                        <Path
-                            Width="13"
-                            Height="10.40"
-                            Data="{StaticResource PanoramaGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                        <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
                 </MenuItem>
 
@@ -213,12 +188,7 @@
                                                 FallbackValue=False}"
                     IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                     <MenuItem.Icon>
-                        <Path
-                            Width="13"
-                            Height="10.40"
-                            Data="{StaticResource PanoramaGeometry}"
-                            Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                        <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>

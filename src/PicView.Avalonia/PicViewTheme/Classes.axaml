@@ -258,6 +258,12 @@
         <Setter Property="Width" Value="12" />
     </Style>
 
+    <Style Selector="Image.WallpaperImage">
+        <Setter Property="Source" Value="{StaticResource WallpaperImage}" />
+        <Setter Property="Height" Value="12" />
+        <Setter Property="Width" Value="12" />
+    </Style>
+
     <Style Selector="Path.ImageInfoPath">
         <Setter Property="Data" Value="{StaticResource ImageInfoGeometry}" />
         <Setter Property="Fill" Value="{DynamicResource MainTextColor}" />
@@ -303,7 +309,6 @@
         <Setter Property="Height" Value="12" />
         <Setter Property="Width" Value="12" />
     </Style>
-
 
     <Style Selector="Path.Xl">
         <Setter Property="Height" Value="15" />

@@ -178,7 +178,7 @@
             <!--  Global Window  -->
             <Color x:Key="WindowTitleBackgroundColor">Transparent</Color>
             <Color x:Key="WindowButtonBackgroundColor">#fff</Color>
-            <Color x:Key="WindowBorderColor">#FF3A3A3A</Color>
+            <Color x:Key="WindowBorderColor">#fff</Color>
             <Color x:Key="WindowLogoColor">#fff</Color>
             <Color x:Key="WindowMainBackgroundColor">#DF252525</Color>
 
@@ -191,7 +191,7 @@
             <Color x:Key="TitleBarBackgroundHoverColor">#80ADA8E9</Color>
 
             <Color x:Key="EditableTitlebarBackground">Transparent</Color>
-            <Color x:Key="EditableTitlebarForeground">#EEF2F2F2</Color>
+            <Color x:Key="EditableTitlebarForeground">#FF494949</Color>
 
             <!--  BOTTOM TOOLBAR  -->
             <Color x:Key="BottomBarBackgroundColor">#fff</Color>
@@ -230,7 +230,7 @@
             <!--  Drop menu  -->
             <Color x:Key="DropMenuSurroundingBorderColor">#B5C0CE</Color>
             <Color x:Key="DropMenuBackgroundColor">#FEF9FBFF</Color>
-            <Color x:Key="DropMenuBorderColor">#373535</Color>
+            <Color x:Key="DropMenuBorderColor">#FFCCCCCC</Color>
 
             <Color x:Key="DropDownMenuBackgroundColor">#FEF9FBFF</Color>
             <Color x:Key="DropDownMenuButtonBackground">#fff</Color>
@@ -277,9 +277,9 @@
             <Color x:Key="StartUpMenuForeground">#FF616161</Color>
 
             <!--  PopUp  -->
-            <Color x:Key="PopUpOverlayColor">#A8000000</Color>
-            <Color x:Key="PopUpBackgroundColor">#CC2b2b2b</Color>
-            <Color x:Key="PopUpMainBorderColor">#FF3A3A3A</Color>
+            <Color x:Key="PopUpOverlayColor">#86555555</Color>
+            <Color x:Key="PopUpBackgroundColor">#EBFFFFFF</Color>
+            <Color x:Key="PopUpMainBorderColor">#FF828282</Color>
 
             <!--  Tool window styles  -->
             <Color x:Key="ToolWindowFooterBackground">#CC303030</Color>
@@ -309,7 +309,7 @@
             <!--  EFFECTS & MISC  -->
             <Color x:Key="NoisyTexture">#17FFFFFF</Color>
 
-            <Color x:Key="SeparatorColor">#FF3A3A3A</Color>
+            <Color x:Key="SeparatorColor">Gainsboro</Color>
         </ResourceDictionary>
 
     </ResourceDictionary.ThemeDictionaries>

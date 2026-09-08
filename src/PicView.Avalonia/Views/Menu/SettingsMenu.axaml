@@ -102,7 +102,7 @@
                     </StackPanel>
 
                     <!--  Scroll  -->
-                    <ToggleButton
+                    <customControls:TextToggleButton
                         Canvas.Left="7"
                         Canvas.Top="53"
                         Width="169"
@@ -114,17 +114,14 @@
                         Command="{CompiledBinding ToggleScrollCommand}"
                         Foreground="{DynamicResource MainTextColor}"
                         IsChecked="{CompiledBinding IsScrollingEnabled.Value}"
+                        Text="{CompiledBinding Translation.IsScrolling.Value,
+                                               Mode=OneWay}"
+                        TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.ToggleScroll.Value,
-                                                      Mode=OneWay}">
-                        <TextBlock
-                            MaxWidth="150"
-                            Classes="txt"
-                            Text="{CompiledBinding Translation.IsScrolling.Value,
-                                                   Mode=OneWay}" />
-                    </ToggleButton>
+                                                      Mode=OneWay}" />
 
                     <!--  Looping  -->
-                    <ToggleButton
+                    <customControls:TextToggleButton
                         Canvas.Left="7"
                         Canvas.Top="104"
                         Width="169"
@@ -135,17 +132,14 @@
                         Classes="AltHover"
                         Command="{CompiledBinding ToggleLoopingCommand}"
                         Foreground="{DynamicResource MainTextColor}"
+                        Text="{CompiledBinding Translation.IsLooping.Value,
+                                               Mode=OneWay}"
+                        TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.ToggleLooping.Value,
-                                                      Mode=OneWay}">
-                        <TextBlock
-                            MaxWidth="150"
-                            Classes="txt"
-                            Text="{CompiledBinding Translation.IsLooping.Value,
-                                                   Mode=OneWay}" />
-                    </ToggleButton>
+                                                      Mode=OneWay}" />
 
                     <!--  Zoom to fit  -->
-                    <ToggleButton
+                    <customControls:TextToggleButton
                         Canvas.Left="182"
                         Canvas.Top="53"
                         Width="169"
@@ -157,17 +151,14 @@
                         Command="{CompiledBinding ZoomToFitCommand}"
                         Foreground="{DynamicResource MainTextColor}"
                         IsChecked="{CompiledBinding IsZoomedToFit.Value}"
+                        Text="{CompiledBinding Translation.ZoomToFit.Value,
+                                               Mode=OneWay}"
+                        TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.ZoomToFit.Value,
-                                                      Mode=OneWay}">
-                        <TextBlock
-                            MaxWidth="150"
-                            Classes="txt"
-                            Text="{CompiledBinding Translation.ZoomToFit.Value,
-                                                   Mode=OneWay}" />
-                    </ToggleButton>
+                                                      Mode=OneWay}" />
 
                     <!--  Auto-fit window  -->
-                    <ToggleButton
+                    <customControls:TextToggleButton
                         Canvas.Left="182"
                         Canvas.Top="104"
                         Width="169"
@@ -179,17 +170,14 @@
                         Command="{CompiledBinding AutoFitWindowCommand}"
                         Foreground="{DynamicResource MainTextColor}"
                         IsChecked="{CompiledBinding IsAutoFit.Value}"
+                        Text="{CompiledBinding Translation.AutoFitWindow.Value,
+                                               Mode=OneWay}"
+                        TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.AutoFitWindow.Value,
-                                                      Mode=OneWay}">
-                        <TextBlock
-                            MaxWidth="150"
-                            Classes="txt"
-                            Text="{CompiledBinding Translation.AutoFitWindow.Value,
-                                                   Mode=OneWay}" />
-                    </ToggleButton>
+                                                      Mode=OneWay}" />
 
                     <!--  Topmost  -->
-                    <ToggleButton
+                    <customControls:TextToggleButton
                         Canvas.Left="7"
                         Canvas.Top="155"
                         Width="169"
@@ -201,17 +189,14 @@
                         Command="{CompiledBinding SetTopMostCommand}"
                         Foreground="{DynamicResource MainTextColor}"
                         IsChecked="{CompiledBinding IsTopMost.Value}"
+                        Text="{CompiledBinding Translation.StayTopMost.Value,
+                                               Mode=OneWay}"
+                        TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.StayTopMost.Value,
-                                                      Mode=OneWay}">
-                        <TextBlock
-                            MaxWidth="150"
-                            Classes="txt"
-                            Text="{CompiledBinding Translation.StayTopMost.Value,
-                                                   Mode=OneWay}" />
-                    </ToggleButton>
+                                                      Mode=OneWay}" />
 
                     <!--  Subdirectories  -->
-                    <ToggleButton
+                    <customControls:TextToggleButton
                         Canvas.Left="182"
                         Canvas.Top="155"
                         Width="169"
@@ -221,15 +206,13 @@
                         BorderThickness="1"
                         Classes="AltHover"
                         Command="{CompiledBinding ToggleSubdirectoriesCommand}"
+                        Foreground="{DynamicResource MainTextColor}"
                         IsChecked="{CompiledBinding GlobalSettings.IsIncludingSubdirectories.Value}"
+                        Text="{CompiledBinding Translation.SearchSubdirectory.Value,
+                                               Mode=OneWay}"
+                        TextMaxWidth="150"
                         ToolTip.Tip="{CompiledBinding Translation.SearchSubdirectory.Value,
-                                                      Mode=OneWay}">
-                        <TextBlock
-                            MaxWidth="150"
-                            Classes="txt"
-                            Text="{CompiledBinding Translation.SearchSubdirectory.Value,
-                                                   Mode=OneWay}" />
-                    </ToggleButton>
+                                                      Mode=OneWay}" />
 
                 </Canvas>
             </Border>

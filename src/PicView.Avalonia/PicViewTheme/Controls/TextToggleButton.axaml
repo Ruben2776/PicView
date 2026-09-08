@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     x:ClassModifier="internal">
-    <ControlTheme x:Key="{x:Type customControls:TextToggleButton}" TargetType="ToggleButton">
+    <ControlTheme x:Key="{x:Type customControls:TextToggleButton}" TargetType="{x:Type customControls:TextToggleButton}">
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
@@ -29,15 +29,14 @@
                                     IsVisible="False"
                                     Source="{StaticResource SquareCheckImage}" />
 
-                                <Path
+                                <PathIcon
                                     x:Name="CrossMark"
                                     Width="11"
                                     Height="11"
                                     Margin="2,3.9,5,0"
                                     Data="{StaticResource CrossMarkGeometry}"
-                                    Fill="{TemplateBinding Foreground}"
-                                    IsVisible="True"
-                                    Stretch="Fill" />
+                                    Foreground="{TemplateBinding Foreground}"
+                                    IsVisible="True" />
                             </Canvas>
                         </Decorator>
                         <TextBlock
@@ -61,7 +60,7 @@
             <Style Selector="^ /template/ Image#TickMark">
                 <Setter Property="IsVisible" Value="True" />
             </Style>
-            <Style Selector="^ /template/ Path#CrossMark">
+            <Style Selector="^ /template/ PathIcon#CrossMark">
                 <Setter Property="IsVisible" Value="False" />
             </Style>
         </Style>
@@ -91,6 +90,61 @@
                 </Animation>
             </Style.Animations>
             <Setter Property="Background" Value="{DynamicResource MenuItemHoverBackground}" />
+        </Style>
+
+        <Style Selector="^.AltHover:pointerover /template/ Border#border">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="Transparent" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
+        </Style>
+        <Style Selector="^.AltHover:pointerover /template/ TextBlock#text">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{DynamicResource MainTextColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+        </Style>
+        <Style Selector="^.AltHover:pointerover:not(:unchecked) /template/ Image#TickMark">
+            <Setter Property="Source" Value="{StaticResource SquareCheckAltImage}" />
+        </Style>
+        <Style Selector="^.AltHover:pointerover:not(:checked) /template/ PathIcon#CrossMark">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{DynamicResource MainTextColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
         </Style>
 
         <Style Selector="^:disabled">

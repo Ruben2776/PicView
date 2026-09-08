@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Core.ViewModels;
@@ -14,6 +15,10 @@ public partial class ClickArrowLeft : UserControl
         InitializeComponent();
         Loaded += delegate
         {
+            if (!Settings.Theme.Dark)
+            {
+                ApplyLightTheme();
+            }
             if (Application.Current.DataContext is not CoreViewModel core)
             {
                 return;
@@ -27,6 +32,19 @@ public partial class ClickArrowLeft : UserControl
             };
             
             _ = new HoverFadeButtonHandler(this, PolyButton);
+        };
+    }
+    
+    private void ApplyLightTheme()
+    {
+        PolyButton.PointerEntered += (_, _) =>
+        {
+            ArrowPolygon.Fill = new SolidColorBrush(Colors.White);
+        };
+
+        PolyButton.PointerExited += (_, _) =>
+        {
+            ArrowPolygon.Fill = UIHelper.GetBrush("MainTextColor");
         };
     }
 

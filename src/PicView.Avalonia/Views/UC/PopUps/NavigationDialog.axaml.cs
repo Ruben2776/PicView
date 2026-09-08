@@ -14,6 +14,49 @@ public partial class NavigationDialog : AnimatedPopUp
     {
         InitializeComponent();
         Loaded += OnLoaded;
+        if (!Settings.Theme.Dark)
+        {
+            ApplyLightTheme();
+        }
+    }
+    
+    private void ApplyLightTheme()
+    {
+        NextButton.Classes.Remove("MenuItemHover");
+        NextButton.Classes.Add("hover");
+        
+        PrevButton.Classes.Remove("MenuItemHover");
+        PrevButton.Classes.Add("hover");
+
+        Next10Button.Classes.Remove("MenuItemHover");
+        Next10Button.Classes.Add("hover");
+        
+        Next100Button.Classes.Remove("MenuItemHover");
+        Next100Button.Classes.Add("hover");
+        
+        Prev10Button.Classes.Remove("MenuItemHover");
+        Prev10Button.Classes.Add("hover");
+        
+        Prev100Button.Classes.Remove("MenuItemHover");
+        Prev100Button.Classes.Add("hover");
+        
+        FirstImageButton.Classes.Remove("MenuItemHover");
+        FirstImageButton.Classes.Add("hover");
+        
+        LastImageButton.Classes.Remove("MenuItemHover");
+        LastImageButton.Classes.Add("hover");
+        
+        NextFolderButton.Classes.Remove("MenuItemHover");
+        NextFolderButton.Classes.Add("hover");
+        
+        PrevFolderButton.Classes.Remove("MenuItemHover");
+        PrevFolderButton.Classes.Add("hover");
+
+        NextArchiveButton.Classes.Remove("MenuItemHover");
+        NextArchiveButton.Classes.Add("hover");
+
+        PrevArchiveButton.Classes.Remove("MenuItemHover");
+        PrevArchiveButton.Classes.Add("hover");
     }
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
