@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="CalendarDayButton" x:Key="{x:Type CalendarDayButton}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type CalendarDayButton}" TargetType="CalendarDayButton">
         <Setter Property="Background" Value="{DynamicResource AccentColor}" />
         <Setter Property="Foreground" Value="{DynamicResource MainTextColorFaded}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -14,47 +14,48 @@
             <ControlTemplate>
                 <Panel Background="Transparent">
 
+                    <!--  The date being hovered  -->
                     <Border
-                        BorderBrush="{StaticResource SecondaryBorderColor}"
+                        Name="Background"
+                        BorderBrush="{DynamicResource SecondaryAccentColor}"
                         BorderThickness="1"
                         CornerRadius="3"
-                        IsVisible="False"
-                        Name="Background" />
+                        IsVisible="False" />
 
                     <Border
+                        Name="TodayBackground"
                         Background="{DynamicResource SecondaryAccentColor}"
                         BorderBrush="{StaticResource SecondaryTextColor}"
                         BorderThickness="1"
                         CornerRadius="3"
                         IsVisible="False"
-                        Name="TodayBackground"
                         Opacity="0.9" />
 
                     <Border
+                        Name="SelectedBackground"
                         Background="{DynamicResource AccentColor}"
                         BorderBrush="{StaticResource SecondaryTextColor}"
                         BorderThickness="1"
                         CornerRadius="3"
-                        IsVisible="False"
-                        Name="SelectedBackground" />
+                        IsVisible="False" />
 
                     <ContentPresenter
+                        Name="PART_ContentPresenter"
+                        Margin="5,1,5,1"
+                        Padding="6,8"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                         Content="{TemplateBinding Content}"
                         ContentTemplate="{TemplateBinding ContentTemplate}"
                         FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                         FontSize="{TemplateBinding FontSize}"
                         Foreground="{TemplateBinding Foreground}"
-                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        Margin="5,1,5,1"
-                        Name="PART_ContentPresenter"
-                        Opacity="1"
-                        Padding="6,8"
-                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        Opacity="1" />
 
                     <Rectangle
+                        Name="FocusVisual"
                         IsHitTestVisible="False"
                         IsVisible="False"
-                        Name="FocusVisual"
                         Stroke="{DynamicResource AccentColor}"
                         StrokeThickness="1" />
 
