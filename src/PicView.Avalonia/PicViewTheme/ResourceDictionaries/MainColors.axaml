@@ -161,6 +161,8 @@
                 TileMode="FlipXY" />
 
             <Color x:Key="CropBackground">#A7000000</Color>
+
+            <Color x:Key="SeparatorColor">#FF3A3A3A</Color>
         </ResourceDictionary>
 
 
@@ -307,6 +309,7 @@
             <!--  EFFECTS & MISC  -->
             <Color x:Key="NoisyTexture">#17FFFFFF</Color>
 
+            <Color x:Key="SeparatorColor">#FF3A3A3A</Color>
         </ResourceDictionary>
 
     </ResourceDictionary.ThemeDictionaries>

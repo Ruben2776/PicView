@@ -1,21 +1,21 @@
 ﻿<UserControl
+    x:Class="PicView.Avalonia.Views.UC.ToolTipMessage"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    x:DataType="viewModels:MainWindowViewModel"
     IsHitTestVisible="False"
     Opacity="0"
-    ZIndex="99"
-    x:Class="PicView.Avalonia.Views.UC.ToolTipMessage"
-    x:DataType="viewModels:MainWindowViewModel"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    ZIndex="99">
     <Border
-        Background="{DynamicResource SecondaryBackgroundColor}"
-        BorderBrush="{DynamicResource MainBorderColor}"
+        Background="{DynamicResource PopUpBackgroundColor}"
+        BorderBrush="{DynamicResource PopUpMainBorderColor}"
         BorderThickness="1"
         CornerRadius="6">
 
         <TextBlock
-            Classes="txt bold"
+            x:Name="ToolTipMessageText"
             Padding="12"
-            x:Name="ToolTipMessageText" />
+            Classes="txt bold" />
     </Border>
 </UserControl>

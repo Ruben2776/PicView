@@ -16,6 +16,7 @@
             Foreground="{DynamicResource MainTextColor}" />
         <TextBlock
             x:Name="PromptFileName"
+            Width="NaN"
             MaxWidth="240"
             Margin="0,15,0,0"
             Classes="txt"
@@ -29,7 +30,7 @@
                 x:Name="CancelButton"
                 Margin="0,0,10,0"
                 Padding="15,0"
-                Classes="BorderStyle altHover mainBtn"
+                Classes="ToolWindowBorderStyle ToolButtonHover"
                 HotKey="Escape">
                 <TextBlock
                     Classes="txt"
@@ -38,9 +39,10 @@
             </Button>
             <Button
                 x:Name="ConfirmButton"
+                Width="NaN"
                 Padding="30,0"
                 Background="{DynamicResource AccentColor}"
-                Classes="BorderStyle accentHover mainBtn"
+                Classes="PrimaryBtnHover ToolWindowBorderStyle"
                 HotKey="Enter">
                 <TextBlock x:Name="ConfirmButtonText" Classes="txt" />
             </Button>

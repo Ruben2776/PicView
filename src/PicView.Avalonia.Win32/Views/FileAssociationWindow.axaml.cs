@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
+using PicView.Core.Extensions;
 using PicView.Core.FileAssociations;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
@@ -20,7 +21,7 @@ public partial class FileAssociationWindow : GenericWindow
     {
         InitializeComponent();
 
-        GenericWindowHelper.AboutWindowInitialize(this);
+        GenericWindowHelper.GenericWindowInitialize(this, StringExtensions.CombineWithAppName(TranslationManager.Translation.FileAssociations));
         
         Loaded += delegate
         {

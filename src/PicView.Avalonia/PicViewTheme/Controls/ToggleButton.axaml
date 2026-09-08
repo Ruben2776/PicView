@@ -89,6 +89,24 @@
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
         </Style>
 
+        <Style Selector="^.MenuItemHover:pointerover /template/ Border#border">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="Transparent" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource MenuItemHoverBackground}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource MenuItemHoverBackground}" />
+        </Style>
+
         <Style Selector="^:disabled">
             <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
         </Style>

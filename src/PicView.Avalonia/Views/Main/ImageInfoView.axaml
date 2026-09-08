@@ -405,7 +405,7 @@
                                 x:Name="FileNameTextBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value,
                                                         FallbackValue=0}"
-                                Classes="hover TStyle x"
+                                Classes="TStyle x"
                                 Text="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.Name}" />
                             <customControls:CopyButton
                                 Classes="ToolButtonHover ToolWindowBorderStyle"
@@ -431,7 +431,7 @@
                                 x:Name="DirectoryNameTextBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value,
                                                         FallbackValue=0}"
-                                Classes="hover TStyle x"
+                                Classes="TStyle x"
                                 Text="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.DirectoryName,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
@@ -458,7 +458,7 @@
                             <customControls:FuncTextBox
                                 x:Name="FullPathTextBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxXlWidth.Value}"
-                                Classes="hover TStyle x"
+                                Classes="TStyle x"
                                 Text="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value.FullName,
                                                        FallbackValue=''}" />
                             <customControls:CopyButton
@@ -483,7 +483,7 @@
                             <customControls:NumTextBox
                                 x:Name="PixelWidthTextBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                Classes="hover TStyle x"
+                                Classes="TStyle x"
                                 Text="{CompiledBinding Exif.PixelWidth.Value,
                                                        Mode=OneWay}"
                                 ToolTip.Tip="{CompiledBinding Translation.SizeTooltip.Value,
@@ -510,7 +510,7 @@
                             <customControls:NumTextBox
                                 x:Name="PixelHeightTextBox"
                                 Width="{CompiledBinding InfoWindow.TextBoxWidth.Value}"
-                                Classes="hover TStyle x"
+                                Classes="TStyle x"
                                 Text="{CompiledBinding Exif.PixelHeight.Value,
                                                        Mode=OneWay}"
                                 ToolTip.Tip="{CompiledBinding Translation.SizeTooltip.Value,

@@ -15,8 +15,8 @@
             Margin="0,-15,-10,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
-            Background="{DynamicResource SecondaryButtonBackgroundColor}"
-            BorderBrush="{DynamicResource MainBorderColor}"
+            Background="{DynamicResource PopUpBackgroundColor}"
+            BorderBrush="{DynamicResource PopUpMainBorderColor}"
             BorderThickness="1"
             Classes="hover"
             Click="CloseMenu"
@@ -40,11 +40,7 @@
                 x:Name="RenameBox"
                 Margin="10,5"
                 Padding="6"
-                VerticalAlignment="Center"
-                Background="{DynamicResource AltBackgroundColor}"
-                BorderBrush="{DynamicResource MainBorderColor}"
-                BorderThickness="1"
-                Classes="hover TStyle"
+                Classes="TStyle"
                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                 Foreground="{DynamicResource MainTextColor}"
                 IsReadOnly="False"
@@ -58,9 +54,10 @@
                 Orientation="Horizontal">
                 <Button
                     x:Name="CancelButton"
+                    Width="NaN"
                     Margin="0,0,10,0"
                     Padding="30,0"
-                    Classes="BorderStyle altHover mainBtn"
+                    Classes="ToolWindowBorderStyle ToolButtonHover"
                     HotKey="Escape"
                     IsCancel="True"
                     IsTabStop="True">
@@ -71,9 +68,10 @@
                 </Button>
                 <Button
                     x:Name="ApplyButton"
+                    Width="NaN"
                     Padding="30,0"
                     Background="{DynamicResource AccentColor}"
-                    Classes="BorderStyle accentHover mainBtn"
+                    Classes="ToolWindowBorderStyle PrimaryBtnHover"
                     HotKey="Enter"
                     IsDefault="True"
                     IsTabStop="True">

@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="Separator" x:Key="{x:Type Separator}">
+    <ControlTheme x:Key="{x:Type Separator}" TargetType="Separator">
         <Setter Property="Focusable" Value="False" />
-        <Setter Property="Background" Value="{DynamicResource MainBorderColor}" />
+        <Setter Property="Background" Value="{DynamicResource SeparatorColor}" />
         <Setter Property="Opacity" Value=".8" />
         <Setter Property="Margin" Value="2" />
         <Setter Property="Height" Value="1" />
