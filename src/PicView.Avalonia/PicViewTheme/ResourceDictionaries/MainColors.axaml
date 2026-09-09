@@ -261,17 +261,21 @@
             <Color x:Key="ScrollbarBorderColor">#FFDDDDDD</Color>
 
             <Color x:Key="ScrollbarThumbColor">#fff</Color>
-            <Color x:Key="ScrollbarThumbBorderColor">#FFB5C2D6</Color>
+            <Color x:Key="ScrollbarThumbBorderColor">#B1BCE7</Color>
 
-            <Color x:Key="ScrollbarIconColor">#EEDFDFDF</Color>
-            <Color x:Key="ScrollbarIconBorderColor">#EE747474</Color>
+            <Color x:Key="ScrollbarIconColor">#EEF5F4FF</Color>
+            <Color x:Key="ScrollbarIconBorderColor">#FFBBCCFF</Color>
 
             <!--  Gallery  -->
-            <Color x:Key="GalleryBackgroundColor">#CE212121</Color>
-            <Color x:Key="GalleryBorderColor">#FF323232</Color>
+            <LinearGradientBrush x:Key="GalleryBackgroundColor" StartPoint="50%,0%" EndPoint="50%,100%">
+                <GradientStop Offset="0.0" Color="#fff" />
+                <GradientStop Offset="0.5" Color="#D4D3DF" />
+                <GradientStop Offset="1.0" Color="#fff" />
+            </LinearGradientBrush>
+            <Color x:Key="GalleryBorderColor">#FFCCCCCC</Color>
 
-            <Color x:Key="GalleryItemBackgroundColor">#CE212121</Color>
-            <Color x:Key="GalleryItemBorderColor">#FF3A3A3A</Color>
+            <Color x:Key="GalleryItemBackgroundColor">#FFF</Color>
+            <Color x:Key="GalleryItemBorderColor">#FFCCCCCC</Color>
 
             <!--  Image info window  -->
             <Color x:Key="ImageInfoSeparatorColor">#FF3A3A3A</Color>
@@ -279,7 +283,7 @@
             <!--  StartUpMenu  -->
             <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
                 <GradientStop Offset="0.0" Color="#ECECECFF" />
-                <GradientStop Offset="0.5" Color="#FFCDC9C5" />
+                <GradientStop Offset="0.5" Color="#C6CDF1" />
                 <GradientStop Offset="1.0" Color="#ECECECFF" />
             </ConicGradientBrush>
             <Color x:Key="StartUpMenuForeground">#FF616161</Color>
