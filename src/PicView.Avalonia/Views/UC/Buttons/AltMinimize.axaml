@@ -20,6 +20,7 @@
         ZIndex="99">
         <Viewbox Width="15" Height="15">
             <Path
+                x:Name="Icon"
                 Margin="7.5,0,0,7"
                 Data="{StaticResource MinimizeGeometry}"
                 Fill="{DynamicResource MainTextColor}"

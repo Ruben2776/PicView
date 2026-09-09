@@ -22,6 +22,7 @@
                                       Mode=OneWay}"
         ZIndex="99">
         <Path
+            x:Name="Icon"
             Width="12"
             Height="12"
             Margin="0,0,0,3"

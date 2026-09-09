@@ -26,6 +26,7 @@
         ZIndex="99">
         <Panel>
             <Path
+                x:Name="FullScreenIcon"
                 Width="12"
                 Height="12"
                 Margin="0,0,0,3"
@@ -34,6 +35,7 @@
                 IsVisible="{CompiledBinding !IsFullscreen.Value}"
                 Stretch="Fill" />
             <Path
+                x:Name="RestoreIcon"
                 Width="12"
                 Height="12"
                 Margin="0,0,0,3"

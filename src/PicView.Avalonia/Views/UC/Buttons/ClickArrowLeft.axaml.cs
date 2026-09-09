@@ -39,7 +39,7 @@ public partial class ClickArrowLeft : UserControl
     {
         PolyButton.PointerEntered += (_, _) =>
         {
-            ArrowPolygon.Fill = new SolidColorBrush(Colors.White);
+            ArrowPolygon.Fill = Brushes.White;
         };
 
         PolyButton.PointerExited += (_, _) =>
