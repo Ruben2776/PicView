@@ -251,7 +251,7 @@
             <Color x:Key="TabItemSelectedBackground">#fff</Color>
             <Color x:Key="TabItemUnSelectedBackground">#F2F5F9</Color>
             <Color x:Key="TabItemBorderColor">#9ABCBCBC</Color>
-            <Color x:Key="TabItemHoverBackground">#E1E7F0</Color>
+            <Color x:Key="TabItemHoverBackground">#FFE5E5E5</Color>
 
             <Color x:Key="FloatingTabSelectedBackground">#A23C3C3C</Color>
             <Color x:Key="FloatingTabSelectedBorder">#F4595959</Color>
@@ -294,13 +294,13 @@
             <Color x:Key="PopUpMainBorderColor">#FF828282</Color>
 
             <!--  Tool window styles  -->
-            <Color x:Key="ToolWindowFooterBackground">#CC303030</Color>
+            <Color x:Key="ToolWindowFooterBackground">#ADE6E5EF</Color>
 
-            <Color x:Key="ToolWindowButtonBackground">#FF292929</Color>
+            <Color x:Key="ToolWindowButtonBackground">#FFF9F9F9</Color>
             <Color x:Key="ToolWindowButtonBorderColor">#CCD2D2D2</Color>
 
-            <Color x:Key="ToolWindowButtonHover">#4C4C4C</Color>
-            <Color x:Key="ToolWindowButtonBorderHover">#CCA2A2A2</Color>
+            <Color x:Key="ToolWindowButtonHover">#C7CBEB</Color>
+            <Color x:Key="ToolWindowButtonBorderHover">#CCF2F2F2</Color>
 
             <!--  TextBox  -->
             <Color x:Key="TextBoxBackgroundColor">#CC2b2b2b</Color>
@@ -310,8 +310,8 @@
             <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
 
             <!--  ComboBox  -->
-            <Color x:Key="ComboBoxDropDownBackgroundColor">#fff</Color>
-            <Color x:Key="ComboBoxDropDownBorderColor">#CCBFBFBF</Color>
+            <Color x:Key="ComboBoxDropDownBackgroundColor">#FFF5F5F5</Color>
+            <Color x:Key="ComboBoxDropDownBorderColor">#CCF9F9F9</Color>
 
             <!--  Log panel background  -->
             <Color x:Key="LogPanelHeaderColor">#EB343434</Color>

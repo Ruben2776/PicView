@@ -69,7 +69,7 @@
 
                 <customControls:IconButton
                     Width="30"
-                    Background="Transparent"
+                    Background="{DynamicResource TitleBarBackgroundColor}"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,0,0"
                     Classes="MenuItemHover"
@@ -137,6 +137,7 @@
                     x:Name="TitleText"
                     Height="28"
                     Padding="30,0,0,0"
+                    Background="{DynamicResource TitleBarBackgroundColor}"
                     Classes="txt"
                     Foreground="{DynamicResource MainTextColor}"
                     LineHeight="28"
