@@ -209,13 +209,17 @@
             <Color x:Key="BottomBarButtonHoverBackground">#DB3D3D3D</Color>
 
             <!--  Hover bar  -->
-            <Color x:Key="HoverBarBackgroundColor">#Ff333333</Color>
-            <Color x:Key="HoverBarBorderColor">#3C3C3C</Color>
+            <Color x:Key="HoverBarBackgroundColor">#fff</Color>
+            <Color x:Key="HoverBarBorderColor">#D9DAF7</Color>
 
-            <Color x:Key="HoverBarTrackColor">#525252</Color>
-            <Color x:Key="HoverBarThumbColor">#d6d4d4</Color>
+            <ConicGradientBrush x:Key="HoverBarTrackColor" Center="50%,50%">
+                <GradientStop Offset="0.0" Color="#D9DAF7" />
+                <GradientStop Offset="0.5" Color="#D4D3DF" />
+                <GradientStop Offset="1.0" Color="#D9DAF7" />
+            </ConicGradientBrush>
+            <Color x:Key="HoverBarThumbColor">#EE8D8AAB</Color>
 
-            <Color x:Key="HoverBarHoverColor">#4D4D4D</Color>
+            <Color x:Key="HoverBarHoverColor">#C7C3EB</Color>
 
             <!--  MENUS & DROPDOWNS  -->
             <Color x:Key="MenuBackgroundColor">#fff</Color>

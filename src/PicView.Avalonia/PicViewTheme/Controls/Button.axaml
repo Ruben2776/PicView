@@ -237,15 +237,6 @@
             <Setter Property="BorderBrush" Value="{DynamicResource SecondaryAccentColor}" />
         </Style>
 
-        <Style Selector="^:not(.active).hover:pressed  /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
-        </Style>
-
-        <Style Selector="^.focus:focus-within /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
-            <Setter Property="BorderThickness" Value="1" />
-        </Style>
-
         <Style Selector="^:disabled">
             <Setter Property="Opacity" Value="{StaticResource ThemeDisabledOpacity}" />
         </Style>

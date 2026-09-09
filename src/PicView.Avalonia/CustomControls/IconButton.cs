@@ -143,6 +143,10 @@ public class IconButton : Button
             // Change brush to secondary accent color on pointer enter
             PointerEntered += delegate
             {
+                if (Classes.Contains("HoverBarHover"))
+                {
+                    return;
+                }
                 Dispatcher.UIThread.Invoke(() =>
                 {
                     var brush = UIHelper.GetBrush("SecondaryTextColor");
