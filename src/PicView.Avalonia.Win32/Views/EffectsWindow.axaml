@@ -72,7 +72,7 @@
                     Background="{DynamicResource TitleBarBackgroundColor}"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,0,0"
-                    Classes="MenuItemHover"
+                    Classes="hover"
                     ClickMode="Press"
                     DockPanel.Dock="Right"
                     Foreground="{DynamicResource MainTextColor}"

@@ -304,9 +304,9 @@
             <!--  TextBox  -->
             <Color x:Key="TextBoxBackgroundColor">#CC2b2b2b</Color>
             <Color x:Key="TextBoxBorderColor">#373535</Color>
-            <Color x:Key="TextBoxHoverBorderColor">#CC909090</Color>
+            <Color x:Key="TextBoxHoverBorderColor">#CC3F3F54</Color>
 
-            <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
+            <Color x:Key="TextBoxDisabledBackgroundColor">#CCD0D0D0</Color>
 
             <!--  ComboBox  -->
             <Color x:Key="ComboBoxDropDownBackgroundColor">#FFFCFCFC</Color>

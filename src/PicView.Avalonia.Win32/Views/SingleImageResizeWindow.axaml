@@ -84,7 +84,7 @@
                 Height="1"
                 Fill="{DynamicResource WindowBorderColor}" />
 
-            <main:SingleImageResizeView x:Name="ResizeView" />
+            <main:SingleImageResizeView x:Name="ResizeView" Background="{DynamicResource WindowMainBackgroundColor}" />
         </StackPanel>
     </Border>
 </Window>

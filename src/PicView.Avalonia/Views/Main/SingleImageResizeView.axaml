@@ -128,7 +128,7 @@
 
                     <StackPanel Margin="5,10,0,0" Spacing="5">
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="{Binding Translation.OriginalSize.Value, Mode=OneWay}" />
+                            <TextBlock Classes="txt" Text="{Binding Translation.OriginalSize.Value, Mode=OneWay}" />
                             <TextBlock x:Name="CurrentSizeTxt" Classes="txt">
                                 <Run Text="{Binding ResizeImageViewModel.OriginalPixelWidth.Value}" />
                                 <Run Text=" x " />
@@ -137,7 +137,7 @@
                             <TextBlock Classes="txt" Text="{Binding ResizeImageViewModel.OriginalFileSize.Value}" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="{Binding Translation.OutputSize.Value, Mode=OneWay}" />
+                            <TextBlock Classes="txt" Text="{Binding Translation.OutputSize.Value, Mode=OneWay}" />
                             <TextBlock x:Name="DesiredSizeTxt" Classes="txt">
                                 <Run Text="{Binding ResizeImageViewModel.DesiredPixelWidth.Value}" />
                                 <Run Text=" x " />

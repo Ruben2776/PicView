@@ -50,15 +50,12 @@
                         Content="{CompiledBinding Translation.DarkTheme.Value,
                                                   Mode=OneWay}"
                         Foreground="{DynamicResource MainTextColor}" />
-                    <ComboBoxItem x:Name="LightThemeBox">
-                        <TextBlock Classes="txt" Foreground="{DynamicResource MainTextColor}">
-                            <TextBlock.Inlines>
-                                <Run Text="{CompiledBinding Translation.LightTheme.Value, Mode=OneWay}" />
-                                <Run FontStyle="Italic" Text=" (beta)" />
-                            </TextBlock.Inlines>
-                        </TextBlock>
-                    </ComboBoxItem>
-                    <ComboBoxItem x:Name="GlassThemeBox">
+                    <ComboBoxItem
+                        x:Name="LightThemeBox"
+                        Content="{CompiledBinding Translation.LightTheme.Value,
+                                                  Mode=OneWay}"
+                        Foreground="{DynamicResource MainTextColor}" />
+                    <ComboBoxItem x:Name="GlassThemeBox" IsEnabled="False">
                         <TextBlock Classes="txt" Foreground="{DynamicResource MainTextColor}">
                             <TextBlock.Inlines>
                                 <Run Text="{CompiledBinding Translation.GlassTheme.Value, Mode=OneWay}" />

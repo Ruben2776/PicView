@@ -23,8 +23,7 @@
         <DockPanel Background="Transparent">
             <DockPanel
                 x:Name="TopWindowBorder"
-                Height="{StaticResource TopBorderHeight}"
-                Background="{DynamicResource WindowTitleBackgroundColor}"
+                Background="{DynamicResource TitleBarBackgroundColor}"
                 DockPanel.Dock="Top"
                 LastChildFill="True">
 
