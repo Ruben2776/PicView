@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
@@ -46,6 +46,8 @@ public class TextIconButton : Button
     private readonly Image _iconImage;
     private readonly PathIcon _pathIcon;
     private DrawingImage? _localIconCopy; // Holds our unique, private copy of the icon
+
+    internal DrawingImage? LocalIconCopy => _localIconCopy;
 
     protected override Type StyleKeyOverride => typeof(Button);
 
@@ -245,7 +247,8 @@ public class TextIconButton : Button
         // Make sure we operate on our private clone, not the public Icon property
         if (_localIconCopy?.Drawing is not DrawingGroup drawingGroup) return;
 
-        var brush = Settings.Theme.GlassTheme 
+        var isGlass = Settings.Theme?.GlassTheme == true;
+        var brush = isGlass 
             ? UIHelper.GetBrush("SecondaryTextColor") 
             : UIHelper.GetBrush("MainTextColor");
 
@@ -258,7 +261,7 @@ public class TextIconButton : Button
         }
     }
 
-    private void OnPointerEntered(object? sender, PointerEventArgs e)
+    private void OnPointerEntered(object? sender, PointerEventArgs? e)
     {
         if (Classes.Contains("MenuItemHover"))
         {
@@ -286,7 +289,7 @@ public class TextIconButton : Button
         });
     }
 
-    private void OnPointerExited(object? sender, PointerEventArgs e)
+    private void OnPointerExited(object? sender, PointerEventArgs? e)
     {
         if (Classes.Contains("MenuItemHover"))
         {
@@ -297,7 +300,10 @@ public class TextIconButton : Button
             _textBlock.Foreground = UIHelper.GetBrush("MainTextColor");
             _pathIcon.Foreground = Foreground;
 
-            if (Settings.Theme.GlassTheme) return;
+            if (Settings.Theme.GlassTheme)
+            {
+                return;
+            }
 
             if (_localIconCopy?.Drawing is not DrawingGroup drawingGroup)
             {
