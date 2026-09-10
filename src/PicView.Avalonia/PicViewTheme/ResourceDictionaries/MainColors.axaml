@@ -250,7 +250,7 @@
             <Color x:Key="TabItemSelectedBackground">#fff</Color>
             <Color x:Key="TabItemUnSelectedBackground">#F2F5F9</Color>
             <Color x:Key="TabItemBorderColor">#9ABCBCBC</Color>
-            <Color x:Key="TabItemHoverBackground">#FFE5E5E5</Color>
+            <Color x:Key="TabItemHoverBackground">#FFEBF3FF</Color>
 
             <Color x:Key="FloatingTabSelectedBackground">#A23C3C3C</Color>
             <Color x:Key="FloatingTabSelectedBorder">#F4595959</Color>
@@ -299,12 +299,12 @@
             <Color x:Key="ToolWindowButtonBorderColor">#CCD2D2D2</Color>
 
             <Color x:Key="ToolWindowButtonHover">#C7CBEB</Color>
-            <Color x:Key="ToolWindowButtonBorderHover">#CCF2F2F2</Color>
+            <Color x:Key="ToolWindowButtonBorderHover">#CC909090</Color>
 
             <!--  TextBox  -->
             <Color x:Key="TextBoxBackgroundColor">#CC2b2b2b</Color>
             <Color x:Key="TextBoxBorderColor">#373535</Color>
-            <Color x:Key="TextBoxHoverBorderColor">#777</Color>
+            <Color x:Key="TextBoxHoverBorderColor">#CC909090</Color>
 
             <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
 
