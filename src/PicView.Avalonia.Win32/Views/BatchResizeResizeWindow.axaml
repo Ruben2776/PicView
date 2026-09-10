@@ -22,7 +22,7 @@
 
                 <Border
                     x:Name="IconBorder"
-                    Background="{DynamicResource WindowTitleBackgroundColor}"
+                    Background="{DynamicResource WindowLogoColor}"
                     BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
                     DockPanel.Dock="Left">
@@ -86,7 +86,7 @@
 
             <main:BatchResizeView
                 x:Name="ResizeView"
-                Background="{DynamicResource NoisyTexture}"
+                Background="{DynamicResource WindowMainBackgroundColor}"
                 Focusable="True" />
         </DockPanel>
     </Border>

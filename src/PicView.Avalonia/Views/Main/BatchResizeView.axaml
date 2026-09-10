@@ -302,7 +302,6 @@
                             HorizontalAlignment="Right"
                             DockPanel.Dock="Right"
                             IsVisible="{Binding Path=!IsVisible, ElementName=ClearButton}"
-                            Opacity="0.5"
                             Orientation="Horizontal">
                             <TextBlock
                                 Classes="txt"

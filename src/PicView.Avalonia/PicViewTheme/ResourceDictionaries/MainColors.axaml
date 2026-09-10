@@ -147,7 +147,6 @@
             <Color x:Key="LogPanelBackgroundColor">#D72A2A2A</Color>
             <Color x:Key="LogPanelBorderColor">#8D565656</Color>
 
-
             <!--  EFFECTS & MISC  -->
             <Color x:Key="ErrorColor">#B51522</Color>
             <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}" />
@@ -310,13 +309,17 @@
             <Color x:Key="TextBoxDisabledBackgroundColor">#CC3E3E3E</Color>
 
             <!--  ComboBox  -->
-            <Color x:Key="ComboBoxDropDownBackgroundColor">#FFF5F5F5</Color>
-            <Color x:Key="ComboBoxDropDownBorderColor">#CCF9F9F9</Color>
+            <Color x:Key="ComboBoxDropDownBackgroundColor">#FFFCFCFC</Color>
+            <Color x:Key="ComboBoxDropDownBorderColor">#D7C9C9C9</Color>
 
             <!--  Log panel background  -->
-            <Color x:Key="LogPanelHeaderColor">#EB343434</Color>
-            <Color x:Key="LogPanelBackgroundColor">#D72A2A2A</Color>
-            <Color x:Key="LogPanelBorderColor">#8D565656</Color>
+            <Color x:Key="LogPanelHeaderColor">#EBFBFBFF</Color>
+            <LinearGradientBrush x:Key="LogPanelBackgroundColor" StartPoint="50%,0%" EndPoint="50%,100%">
+                <GradientStop Offset="0.0" Color="#fff" />
+                <GradientStop Offset="0.5" Color="#D7FBFBFB" />
+                <GradientStop Offset="1.0" Color="#fff" />
+            </LinearGradientBrush>
+            <Color x:Key="LogPanelBorderColor">#8DD0D0D0</Color>
 
             <!--  EFFECTS & MISC  -->
             <Color x:Key="NoisyTexture">#17FFFFFF</Color>

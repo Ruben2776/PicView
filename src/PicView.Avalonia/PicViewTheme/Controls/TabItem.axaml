@@ -1,8 +1,8 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="TabItem" x:Key="{x:Type TabItem}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type TabItem}" TargetType="TabItem">
         <Setter Property="Background" Value="{DynamicResource TabItemUnSelectedBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource MainTextColorFaded}" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -10,17 +10,17 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <ContentPresenter
+                    Name="PART_ContentPresenter"
+                    Padding="{TemplateBinding Padding}"
+                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     Content="{TemplateBinding Header}"
                     ContentTemplate="{TemplateBinding HeaderTemplate}"
                     CornerRadius="{TemplateBinding CornerRadius}"
-                    Foreground="{TemplateBinding Foreground}"
-                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                    Name="PART_ContentPresenter"
-                    Padding="{TemplateBinding Padding}"
-                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    Foreground="{TemplateBinding Foreground}" />
             </ControlTemplate>
         </Setter>
         <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
@@ -56,6 +56,24 @@
         </Style>
         <Style Selector="^.FloatingTab /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="Transparent" />
+        </Style>
+
+        <Style Selector="^.FloatingTab:pointerover:not(:selected)/template/ ContentPresenter#PART_ContentPresenter">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="Transparent" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource MenuItemHoverBackground}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource MenuItemHoverBackground}" />
         </Style>
     </ControlTheme>
 
