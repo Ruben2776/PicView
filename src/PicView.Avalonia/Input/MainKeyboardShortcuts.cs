@@ -260,7 +260,7 @@ public static class MainKeyboardShortcuts
             }
         }
         // Don't interrupt navigating main menu with keyboard
-        else if (vm.TopTitlebarViewModel.IsMainMenuVisible.CurrentValue)
+        else if (vm.IsUIShown.CurrentValue && vm.TopTitlebarViewModel.IsMainMenuVisible.CurrentValue)
         {
             return true;
         }
