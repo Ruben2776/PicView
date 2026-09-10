@@ -43,7 +43,10 @@
                 Classes="PrimaryBtnHover ToolWindowBorderStyle"
                 HotKey="Enter"
                 IsDefault="True">
-                <TextBlock Classes="txt" Text="{CompiledBinding Translation.Close.Value}" />
+                <TextBlock
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    Text="{CompiledBinding Translation.Close.Value}" />
             </Button>
         </StackPanel>
     </Panel>

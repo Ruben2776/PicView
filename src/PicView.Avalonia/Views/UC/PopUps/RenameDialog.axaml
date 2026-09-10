@@ -22,8 +22,11 @@
             Click="CloseMenu"
             CornerRadius="50"
             Data="{StaticResource CloseGeometry}"
+            Focusable="True"
+            Foreground="{DynamicResource MainTextColor}"
             IconHeight="18"
             IconWidth="18"
+            IsTabStop="True"
             ZIndex="1" />
         <StackPanel
             Width="425"
@@ -41,6 +44,7 @@
                 Margin="10,5"
                 Padding="6"
                 Classes="TStyle"
+                Focusable="True"
                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                 Foreground="{DynamicResource MainTextColor}"
                 IsReadOnly="False"
@@ -58,6 +62,7 @@
                     Margin="0,0,10,0"
                     Padding="30,0"
                     Classes="ToolWindowBorderStyle ToolButtonHover"
+                    Focusable="True"
                     HotKey="Escape"
                     IsCancel="True"
                     IsTabStop="True">
@@ -72,10 +77,14 @@
                     Padding="30,0"
                     Background="{DynamicResource AccentColor}"
                     Classes="ToolWindowBorderStyle PrimaryBtnHover"
+                    Focusable="True"
                     HotKey="Enter"
                     IsDefault="True"
                     IsTabStop="True">
-                    <TextBlock Classes="txt" Text="{CompiledBinding Translation.Apply.Value}" />
+                    <TextBlock
+                        Classes="txt"
+                        Foreground="{StaticResource SecondaryTextColor}"
+                        Text="{CompiledBinding Translation.Apply.Value}" />
                 </Button>
             </StackPanel>
         </StackPanel>

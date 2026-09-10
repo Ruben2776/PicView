@@ -240,6 +240,15 @@
         <Style Selector="^:disabled">
             <Setter Property="Opacity" Value="{StaticResource ThemeDisabledOpacity}" />
         </Style>
+
+        <Style Selector="^:focus-within /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="^.PrimaryBtnHover:focus-within /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="BorderBrush" Value="{DynamicResource TextBoxHoverBorderColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
     </ControlTheme>
 
     <ControlTheme

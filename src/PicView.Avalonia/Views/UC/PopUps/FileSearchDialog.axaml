@@ -100,7 +100,7 @@
                                         Background="Transparent"
                                         BorderBrush="{DynamicResource MenuBorderColor}"
                                         BorderThickness="0,0,0,1"
-                                        Classes="MenuItemHover focus"
+                                        Classes="MenuItemHover"
                                         Command="{Binding #SearchBox.((viewModels:CoreViewModel)DataContext).SharedNavigationService.LoadFromStringCommand}"
                                         CommandParameter="{Binding File.FullName}"
                                         Focusable="True"

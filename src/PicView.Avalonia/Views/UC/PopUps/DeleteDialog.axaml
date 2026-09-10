@@ -28,6 +28,7 @@
             Orientation="Horizontal">
             <Button
                 x:Name="CancelButton"
+                Width="NaN"
                 Margin="0,0,10,0"
                 Padding="15,0"
                 Classes="ToolWindowBorderStyle ToolButtonHover"
@@ -44,7 +45,10 @@
                 Background="{DynamicResource AccentColor}"
                 Classes="PrimaryBtnHover ToolWindowBorderStyle"
                 HotKey="Enter">
-                <TextBlock x:Name="ConfirmButtonText" Classes="txt" />
+                <TextBlock
+                    x:Name="ConfirmButtonText"
+                    Classes="txt"
+                    Foreground="{StaticResource SecondaryTextColor}" />
             </Button>
         </StackPanel>
     </StackPanel>
