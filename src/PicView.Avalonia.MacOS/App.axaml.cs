@@ -92,6 +92,10 @@ public class App : Application, IPlatformSpecificService
         SettingsUpdater.InitializeSettings(_mainWindowViewModel, settingsExists);
         WindowFunctions.HandleWindowScalingMode(_coreViewModel, _mainWindow);
         _mainWindow.Show();
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+        {
+            desktopLifetime.MainWindow = _mainWindow;
+        }
 
         var arg = Environment.GetCommandLineArgs();
         if (arg.Length > 1)
