@@ -78,20 +78,21 @@ public class App : Application, IPlatformSpecificService
         TranslationManager.Init();
 
         _coreViewModel = new CoreViewModel(this, GetImageModel.GetImageModelAsync);
-        DataContext = _coreViewModel;
 
         ThemeManager.DetermineTheme(Current, settingsExists);
 
-        _mainWindow = new MacMainWindow();
+        _mainWindow = new MacMainWindow(_coreViewModel);
         _mainWindowViewModel = _mainWindow.DataContext as MainWindowViewModel;
         _coreViewModel.MainWindows.MainWindows.Add(_mainWindowViewModel);
         _coreViewModel.MainWindows.ActiveWindow.Value = _mainWindowViewModel;
+
+        DataContext = _coreViewModel;
         
         TranslationManager.Init();
         SettingsUpdater.InitializeSettings(_mainWindowViewModel, settingsExists);
         WindowFunctions.HandleWindowScalingMode(_coreViewModel, _mainWindow);
         _mainWindow.Show();
-        
+
         var arg = Environment.GetCommandLineArgs();
         if (arg.Length > 1)
         {
