@@ -368,3 +368,9 @@ MigrationBackup/
 
 # Cross-compiled picview-ffmpeg native libraries (produced by Build\Build-FFmpegNative.ps1)
 Build/ffmpeg-native/
+
+# Packaged macOS app bundle output (produced by Build\Build Avalonia.MacOS.ps1)
+Build/mac-release/
+
+# macOS Finder metadata
+.DS_Store
