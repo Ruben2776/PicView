@@ -108,7 +108,7 @@ public class HoverFadeButtonHandler : IDisposable
     /// </summary>
     private bool IsPointerOver()
     {
-        if ((bool)_mainButton?.IsPointerOver)
+        if (_mainButton?.IsPointerOver == true)
         {
             return true;
         }

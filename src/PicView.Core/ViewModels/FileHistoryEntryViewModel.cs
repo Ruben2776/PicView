@@ -5,7 +5,7 @@ namespace PicView.Core.ViewModels;
 
 public class FileHistoryEntryViewModel : IDisposable 
 {
-    private MainWindowViewModel _vm;
+    private MainWindowViewModel _vm = null!;
     public BindableReactiveProperty<string> FilePath { get; } = new();
     public BindableReactiveProperty<string> FileName { get; } = new();
     public BindableReactiveProperty<bool> IsPinned { get; } = new();

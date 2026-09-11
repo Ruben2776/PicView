@@ -116,7 +116,10 @@ public static class TranslationManager
     {
         var jsonString = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
         var language = JsonSerializer.Deserialize(jsonString, typeof(LanguageModel), LanguageSourceGenerationContext.Default) as LanguageModel;
-        Translation = language;
+        if (language is not null)
+        {
+            Translation = language;
+        }
     }
 
     /// <summary>
