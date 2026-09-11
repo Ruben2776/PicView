@@ -43,7 +43,7 @@
                         Background="{DynamicResource WindowButtonBackgroundColor}"
                         BorderBrush="{DynamicResource TitleBarButtonBorder}"
                         BorderThickness="0,0,1,0"
-                        Classes="noBorderHover"
+                        Classes="WindowToolButtonHover"
                         DockPanel.Dock="Left"
                         Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource HomeImage}"
@@ -57,7 +57,7 @@
                         <customControls:IconButton
                             x:Name="GoBackButton"
                             Padding="8,0"
-                            Classes="noBorderHover"
+                            Classes="WindowToolButtonHover"
                             Data="{StaticResource ArrowLeftGeometry}"
                             Foreground="{DynamicResource MainTextColor}"
                             IconHeight="12"
@@ -73,7 +73,7 @@
                         <customControls:IconButton
                             x:Name="GoForwardButton"
                             Padding="8,0"
-                            Classes="noBorderHover"
+                            Classes="WindowToolButtonHover"
                             Data="{StaticResource ArrowRightGeometry}"
                             Foreground="{DynamicResource MainTextColor}"
                             IconHeight="12"

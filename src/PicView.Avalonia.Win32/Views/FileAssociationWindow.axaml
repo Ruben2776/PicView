@@ -156,7 +156,7 @@
                                 x:Name="ClearButton"
                                 Padding="10,3,10,3"
                                 HorizontalAlignment="Right"
-                                Classes="altHover"
+                                Classes="AltHover"
                                 Command="{CompiledBinding AssociationsViewModel.ClearFilterCommand}"
                                 Data="{StaticResource CloseGeometry}"
                                 DockPanel.Dock="Right"
@@ -169,7 +169,7 @@
 
                         <Button
                             Padding="10,2,10,2"
-                            Classes="altHover"
+                            Classes="AltHover"
                             Command="{CompiledBinding AssociationsViewModel.SelectAllCommand}">
                             <TextBlock
                                 Classes="txt"
@@ -187,7 +187,7 @@
                         <Button
                             x:Name="UnSelectAllButton"
                             Padding="10,2,10,2"
-                            Classes="altHover"
+                            Classes="AltHover"
                             Command="{CompiledBinding AssociationsViewModel.UnselectAllCommand}">
                             <TextBlock
                                 Classes="txt"
