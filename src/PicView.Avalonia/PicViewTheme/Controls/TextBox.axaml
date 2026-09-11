@@ -43,7 +43,7 @@
                                                                         Converter={x:Static StringConverters.IsNullOrEmpty}}"
                                             Name="watermark"
                                             Opacity="0.5"
-                                            Text="{TemplateBinding Watermark}"
+                                            Text="{TemplateBinding PlaceholderText}"
                                             TextAlignment="{TemplateBinding TextAlignment}"
                                             TextWrapping="{TemplateBinding TextWrapping}"
                                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />

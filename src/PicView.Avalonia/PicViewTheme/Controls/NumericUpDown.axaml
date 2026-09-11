@@ -41,7 +41,7 @@
                             TextAlignment="{TemplateBinding TextAlignment}"
                             TextWrapping="NoWrap"
                             VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Watermark="{TemplateBinding Watermark}" />
+                            PlaceholderText="{TemplateBinding Watermark}" />
                     </ButtonSpinner>
                 </DataValidationErrors>
             </ControlTemplate>

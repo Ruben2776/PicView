@@ -149,7 +149,7 @@
                                 Text="{CompiledBinding AssociationsViewModel.FilterText.Value,
                                                        FallbackValue='',
                                                        Mode=TwoWay}"
-                                Watermark="{CompiledBinding Translation.Filter.Value,
+                                PlaceholderText="{CompiledBinding Translation.Filter.Value,
                                                             Mode=OneWay}" />
 
                             <customControls:IconButton
