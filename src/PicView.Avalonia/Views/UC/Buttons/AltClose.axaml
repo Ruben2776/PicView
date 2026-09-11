@@ -3,12 +3,13 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    Height="{StaticResource TopBorderHeight}"
     x:DataType="viewModels:MainWindowViewModel"
     Background="Transparent">
     <Button
         x:Name="XButton"
         Width="35"
-        Height="30"
+        Height="{StaticResource TopBorderHeight}"
         VerticalAlignment="Top"
         Background="{DynamicResource PopUpBackgroundColor}"
         BorderBrush="{DynamicResource PopUpMainBorderColor}"

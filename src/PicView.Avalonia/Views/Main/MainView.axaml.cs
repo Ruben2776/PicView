@@ -32,8 +32,14 @@ public partial class MainView : UserControl
             DockPanel.SetDock(AltTitleBorder, Dock.Right);
             AltTitleBorder.BorderThickness = new Thickness(1,0,0,1);
         }
-
-
+        
+        if (!Settings.Theme.Dark)
+        {
+            AltClose.XButton.BorderThickness = new Thickness(0,0,0,1);
+            AltRestore.RestoreButton.BorderThickness = new Thickness(0,0,0,1);
+            AltMinimize.XButton.BorderThickness = new Thickness(0,0,0,1);
+        }
+        
         Loaded += delegate
         {
             AddHandler(DragDrop.DragEnterEvent, DragEnter);

@@ -88,6 +88,7 @@
                         Background="Transparent"
                         Classes="MenuItemHover"
                         CornerRadius="0,4,4,0"
+                        Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource BatchResizeImage}"
                         IconHeight="22"
                         IconMargin="5,0,10,0"
@@ -120,6 +121,7 @@
                         Classes="MenuItemHover"
                         CornerRadius="4,0,0,4"
                         Data="{StaticResource ImageInfoGeometry}"
+                        Foreground="{DynamicResource MainTextColor}"
                         IconHeight="18"
                         IconMargin="5,0,10,0"
                         IconWidth="18"
@@ -138,6 +140,7 @@
                         Background="Transparent"
                         Classes="MenuItemHover"
                         CornerRadius="0,4,4,0"
+                        Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource SparklesImage}"
                         IconHeight="18"
                         IconMargin="5,0,10,0"
@@ -173,6 +176,7 @@
                     BorderThickness="1"
                     Classes="MenuItemHover"
                     CornerRadius="4"
+                    Foreground="{DynamicResource MainTextColor}"
                     Icon="{StaticResource CropImage}"
                     IconHeight="15"
                     IconMargin="15,0,10,0"
@@ -194,6 +198,7 @@
                     BorderThickness="1"
                     Classes="MenuItemHover"
                     CornerRadius="4"
+                    Foreground="{DynamicResource MainTextColor}"
                     Icon="{StaticResource SlideshowImage}"
                     IconHeight="15"
                     IconMargin="15,0,10,0"
@@ -204,7 +209,7 @@
                     ToolTip.Tip="{CompiledBinding Translation.Slideshow.Value,
                                                   Mode=OneWay}" />
 
-                <!--  Show bottom gallery  -->
+                <!--  Show docked gallery  -->
                 <customControls:TextIconButton
                     x:Name="ShowDockedGalleryButton"
                     Width="175"
@@ -216,6 +221,7 @@
                     Classes="MenuItemHover"
                     CornerRadius="4"
                     Data="{StaticResource GalleryGeometry}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IconHeight="15"
                     IconMargin="15,0,10,0"
                     IconWidth="15"
@@ -226,7 +232,7 @@
                                                   Mode=OneWay}" />
 
                 <!--  Side by side  -->
-                <ToggleButton
+                <customControls:TextToggleButton
                     x:Name="SideBySideButton"
                     Width="175"
                     Height="42"
@@ -236,15 +242,13 @@
                     BorderThickness="1"
                     Classes="MenuItemHover"
                     CornerRadius="4"
+                    Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{Binding IsSideBySide.Value, Mode=OneWay}"
+                    Text="{CompiledBinding Translation.SideBySide.Value,
+                                           Mode=OneWay}"
+                    TextMaxWidth="145"
                     ToolTip.Tip="{CompiledBinding Translation.SideBySide.Value,
-                                                  Mode=OneWay}">
-                    <TextBlock
-                        MaxWidth="145"
-                        Classes="txt"
-                        Text="{CompiledBinding Translation.SideBySide.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                                                  Mode=OneWay}" />
 
 
             </WrapPanel>

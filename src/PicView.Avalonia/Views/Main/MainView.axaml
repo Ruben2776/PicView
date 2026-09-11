@@ -1052,7 +1052,7 @@
                 IsVisible="{Binding !IsUIShown.Value}" />
             <Border
                 x:Name="AltTitleBorder"
-                Height="30"
+                Height="{StaticResource TopBorderHeight}"
                 Padding="2,0"
                 VerticalAlignment="Top"
                 Background="{DynamicResource PopUpBackgroundColor}"
