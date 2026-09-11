@@ -90,7 +90,7 @@
                 Foreground="{DynamicResource MainTextColor}"
                 Text="{CompiledBinding SettingsViewModel.SearchQuery.Value,
                                        Mode=TwoWay}"
-                Watermark="{CompiledBinding Translation.Search.Value,
+                PlaceholderText="{CompiledBinding Translation.Search.Value,
                                             Mode=OneWay}" />
 
             <Popup

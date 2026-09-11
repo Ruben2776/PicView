@@ -78,7 +78,7 @@
                     Focusable="True"
                     FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    Watermark="{CompiledBinding Translation.Search.Value,
+                    PlaceholderText="{CompiledBinding Translation.Search.Value,
                                                 Mode=OneWay}" />
             </Panel>
 
