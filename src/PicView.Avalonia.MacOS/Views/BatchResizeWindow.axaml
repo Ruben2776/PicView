@@ -13,7 +13,7 @@
         CornerRadius="8">
         <DockPanel LastChildFill="True">
             <DockPanel
-                Background="{DynamicResource WindowTitleBackgroundColor}"
+                Background="{DynamicResource TitleBarBackgroundColor}"
                 DockPanel.Dock="Top"
                 Height="{StaticResource TopBorderHeight}"
                 PointerPressed="MoveWindow"
@@ -24,7 +24,7 @@
                                            Mode=OneWay}"
                     TextAlignment="Center" />
             </DockPanel>
-            <main:BatchResizeView Background="{DynamicResource NoisyTexture}" />
+            <main:BatchResizeView Background="{DynamicResource WindowMainBackgroundColor}" />
         </DockPanel>
     </Border>
 </Window>

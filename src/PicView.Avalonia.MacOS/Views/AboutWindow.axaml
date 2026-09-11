@@ -16,14 +16,13 @@
         <Panel>
 
             <DockPanel
-                Background="{DynamicResource WindowTitleBackgroundColor}"
+                Background="{DynamicResource TitleBarBackgroundColor}"
                 Height="28"
                 PointerPressed="MoveWindow"
                 VerticalAlignment="Top">
 
                 <TextBlock
                     Classes="txt"
-                    Foreground="{StaticResource SecondaryTextColor}"
                     Text="{CompiledBinding Translation.About.Value,
                                            Mode=OneWay}"
                     TextAlignment="Center" />

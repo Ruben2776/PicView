@@ -18,7 +18,7 @@
         <DockPanel>
 
             <DockPanel
-                Background="{DynamicResource WindowTitleBackgroundColor}"
+                Background="{DynamicResource TitleBarBackgroundColor}"
                 DockPanel.Dock="Top"
                 Height="28"
                 PointerPressed="MoveWindow">

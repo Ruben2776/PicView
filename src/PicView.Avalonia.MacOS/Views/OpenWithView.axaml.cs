@@ -17,11 +17,6 @@ public partial class OpenWithView : Window
     private bool _isLaunchingApp;
     
     private string? _filePath;
-
-    public OpenWithView()
-    {
-        Start();
-    }
     
     public OpenWithView(string path)
     {
@@ -77,7 +72,7 @@ public partial class OpenWithView : Window
                 {
                     var btn = new Button
                     {
-                        Classes = { "altHover" },
+                        Classes = { "AltHover" },
                         Width = 300,
                         Padding = new Thickness(0, 5, 0, 5),
                         Content =

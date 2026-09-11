@@ -20,7 +20,7 @@
         <Panel>
 
             <Panel
-                Background="{DynamicResource WindowTitleBackgroundColor}"
+                Background="{DynamicResource TitleBarBackgroundColor}"
                 Height="{StaticResource TopBorderHeight}"
                 VerticalAlignment="Top"
                 x:Name="WindowBorder">

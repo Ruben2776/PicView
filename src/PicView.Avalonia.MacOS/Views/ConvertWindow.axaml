@@ -9,7 +9,7 @@
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <DockPanel PointerPressed="MoveWindow">
+    <DockPanel Background="{DynamicResource TitleBarBackgroundColor}" PointerPressed="MoveWindow">
         <Panel Background="Transparent" DockPanel.Dock="Top">
             <Border Background="{DynamicResource SecondaryBackgroundColor}" Height="28">
                 <TextBlock

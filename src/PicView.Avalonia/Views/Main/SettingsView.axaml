@@ -1,64 +1,64 @@
 <UserControl
     x:Class="PicView.Avalonia.Views.Main.SettingsView"
+    x:DataType="viewModels1:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:config="clr-namespace:PicView.Avalonia.Views.Config"
     xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels1="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels1:CoreViewModel">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <UserControl.Resources>
         <converters:ResourceKeyToResourceConverter x:Key="ResourceKeyToResourceConverter" />
 
         <ContextMenu x:Key="SettingsContextMenu">
-            <MenuItem
-                x:Name="UserSettingsItem"
+            <customControls:StyledMenuItem
                 Foreground="{DynamicResource MainTextColor}"
-                Header="UserSettings.json">
+                Header="UserSettings.json"
+                x:Name="UserSettingsItem">
                 <MenuItem.Icon>
                     <Image
-                        Width="12"
                         Height="12"
-                        Source="{StaticResource BracesImage}" />
+                        Source="{StaticResource BracesImage}"
+                        Width="12" />
                 </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem
-                x:Name="KeybindingsItem"
+            </customControls:StyledMenuItem>
+            <customControls:StyledMenuItem
                 Foreground="{DynamicResource MainTextColor}"
-                Header="keybindings.json">
+                Header="keybindings.json"
+                x:Name="KeybindingsItem">
                 <MenuItem.Icon>
                     <Image
-                        Width="12"
                         Height="12"
-                        Source="{StaticResource BracesImage}" />
+                        Source="{StaticResource BracesImage}"
+                        Width="12" />
                 </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem
+            </customControls:StyledMenuItem>
+            <customControls:StyledMenuItem
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.ResetSettingsCommand}"
                 Foreground="{DynamicResource MainTextColor}"
                 Header="{CompiledBinding Translation.ResetButtonText.Value,
                                          Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
-                        Width="12"
                         Height="12"
-                        Source="{StaticResource ResetImage}" />
+                        Source="{StaticResource ResetImage}"
+                        Width="12" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
             <Separator />
             <MenuItem
-                x:Name="CloseItem"
                 Click="CloseItem_OnClick"
                 Header="{CompiledBinding Translation.Close.Value,
-                                         Mode=OneWay}">
+                                         Mode=OneWay}"
+                x:Name="CloseItem">
                 <MenuItem.Icon>
                     <Path
-                        Width="12"
-                        Height="12"
                         Data="{StaticResource CloseGeometry}"
                         Fill="{DynamicResource MainTextColor}"
-                        Stretch="Fill" />
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
@@ -67,56 +67,56 @@
     <DockPanel>
 
         <Panel
-            Margin="7,5"
             Background="{DynamicResource MenuBackgroundColor}"
             ContextMenu="{StaticResource SettingsContextMenu}"
-            DockPanel.Dock="Top">
+            DockPanel.Dock="Top"
+            Margin="7,5">
             <Image
-                Width="14"
                 Height="14"
-                Margin="12,0,0,0"
                 HorizontalAlignment="Left"
-                Source="{StaticResource SearchImage}" />
+                Margin="12,0,0,0"
+                Source="{StaticResource SearchImage}"
+                Width="14" />
 
             <TextBox
-                x:Name="FilterBox"
-                Padding="37,7,4,7"
-                VerticalAlignment="Center"
                 Background="Transparent"
                 BorderBrush="{DynamicResource MenuBorderColor}"
                 BorderThickness="1"
                 CornerRadius="4"
                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                 Foreground="{DynamicResource MainTextColor}"
+                Padding="37,7,4,7"
                 Text="{CompiledBinding SettingsViewModel.SearchQuery.Value,
                                        Mode=TwoWay}"
+                VerticalAlignment="Center"
                 Watermark="{CompiledBinding Translation.Search.Value,
-                                            Mode=OneWay}" />
+                                            Mode=OneWay}"
+                x:Name="FilterBox" />
 
             <Popup
-                x:Name="SuggestionsPopup"
-                MinWidth="{Binding Bounds.Width, ElementName=FilterBox}"
-                MaxHeight="300"
                 IsLightDismissEnabled="False"
+                MaxHeight="300"
+                MinWidth="{Binding Bounds.Width, ElementName=FilterBox}"
                 PlacementTarget="{Binding ElementName=FilterBox}"
-                WindowManagerAddShadowHint="True">
+                WindowManagerAddShadowHint="True"
+                x:Name="SuggestionsPopup">
                 <Border
                     Background="{DynamicResource MenuBackgroundColor}"
                     BorderBrush="{DynamicResource MenuBorderColor}"
                     BorderThickness="1"
                     CornerRadius="4">
                     <ListBox
-                        x:Name="SuggestionsListBox"
-                        Margin="0,5"
                         Background="Transparent"
                         ItemsSource="{CompiledBinding SettingsViewModel.Suggestions.Value}"
+                        Margin="0,5"
                         SelectedItem="{CompiledBinding SettingsViewModel.SelectedSuggestion.Value,
-                                                       Mode=OneWay}">
+                                                       Mode=OneWay}"
+                        x:Name="SuggestionsListBox">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock
-                                    Padding="8"
                                     Classes="txt"
+                                    Padding="8"
                                     Text="{Binding Name}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -138,63 +138,63 @@
             </Popup>
 
             <customControls:IconButton
-                x:Name="ClearButton"
-                Padding="10,3,10,3"
-                HorizontalAlignment="Right"
                 Background="Transparent"
-                Classes="altHover"
+                Classes="AltHover"
                 Command="{CompiledBinding SettingsViewModel.ClearSearchCommand}"
                 Data="{StaticResource CloseGeometry}"
                 Foreground="{DynamicResource MainTextColorFaded}"
+                HorizontalAlignment="Right"
                 IconHeight="12"
                 IconWidth="12"
-                IsVisible="{CompiledBinding SettingsViewModel.IsSearchVisible.Value}" />
+                IsVisible="{CompiledBinding SettingsViewModel.IsSearchVisible.Value}"
+                Padding="10,3,10,3"
+                x:Name="ClearButton" />
         </Panel>
 
         <Panel
-            x:Name="MainPanel"
             Background="Transparent"
             ContextMenu="{StaticResource SettingsContextMenu}"
             DockPanel.Dock="Top"
-            Focusable="True">
+            Focusable="True"
+            x:Name="MainPanel">
 
             <customControls:AutoScrollViewer
-                x:Name="OverViewScrollViewer"
                 Background="Transparent"
                 Focusable="True"
-                IsVisible="{Binding SettingsViewModel.IsOverviewVisible.Value, FallbackValue=False}">
+                IsVisible="{Binding SettingsViewModel.IsOverviewVisible.Value, FallbackValue=False}"
+                x:Name="OverViewScrollViewer">
                 <ItemsControl ItemsSource="{CompiledBinding SettingsViewModel.Categories.Value}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel
-                                Margin="15"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
                                 ItemHeight="100"
                                 ItemSpacing="5"
                                 ItemWidth="200"
-                                LineSpacing="5" />
+                                LineSpacing="5"
+                                Margin="15"
+                                VerticalAlignment="Center" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button
-                                Padding="10,20"
                                 Background="{DynamicResource MenuBackgroundColor}"
                                 BorderBrush="{DynamicResource MenuBorderColor}"
                                 BorderThickness="1"
-                                Classes="altHover"
+                                Classes="MenuItemHover"
                                 Command="{Binding $parent[UserControl].((viewModels1:CoreViewModel)DataContext).SettingsViewModel.NavigateToCategoryCommand}"
                                 CommandParameter="{Binding Category}"
-                                CornerRadius="4">
-                                <StackPanel VerticalAlignment="Center" Spacing="5">
+                                CornerRadius="4"
+                                Padding="10,20">
+                                <StackPanel Spacing="5" VerticalAlignment="Center">
                                     <Image
-                                        Width="25"
                                         Height="25"
-                                        Source="{Binding Icon, Converter={StaticResource ResourceKeyToResourceConverter}}" />
+                                        Source="{Binding Icon, Converter={StaticResource ResourceKeyToResourceConverter}}"
+                                        Width="25" />
                                     <TextBlock
-                                        HorizontalAlignment="Center"
                                         Classes="txt"
+                                        HorizontalAlignment="Center"
                                         Text="{Binding Name.Value, Mode=OneWay}" />
                                 </StackPanel>
                             </Button>
@@ -203,21 +203,21 @@
                 </ItemsControl>
             </customControls:AutoScrollViewer>
 
-            <DockPanel x:Name="SplitViewGrid" IsVisible="{Binding !SettingsViewModel.IsOverviewVisible.Value, FallbackValue=False}">
+            <DockPanel IsVisible="{Binding !SettingsViewModel.IsOverviewVisible.Value, FallbackValue=False}" x:Name="SplitViewGrid">
 
                 <ListBox
-                    x:Name="CategoriesListBox"
-                    Width="200"
-                    Margin="7,2,1,1"
-                    VerticalAlignment="Top"
                     Background="Transparent"
                     BorderBrush="{DynamicResource MenuBorderColor}"
                     BorderThickness="1"
                     ContextMenu="{StaticResource SettingsContextMenu}"
                     CornerRadius="4"
                     DockPanel.Dock="Left"
+                    Margin="7,2,1,1"
                     SelectionMode="Single"
-                    Theme="{StaticResource SlimListBox}">
+                    Theme="{StaticResource SlimListBox}"
+                    VerticalAlignment="Top"
+                    Width="200"
+                    x:Name="CategoriesListBox">
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">
                             <Setter Property="Padding" Value="10,15" />
@@ -235,9 +235,9 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource GeneralSettingsImage}" />
+                                    Source="{StaticResource GeneralSettingsImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.GeneralSettings.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -247,9 +247,9 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource PaletteImage}" />
+                                    Source="{StaticResource PaletteImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.Appearance.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -259,9 +259,9 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource ColumnsSettingsImage}" />
+                                    Source="{StaticResource ColumnsSettingsImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.InterfaceConfiguration.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -271,9 +271,9 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource ImageSettingImage}" />
+                                    Source="{StaticResource ImageSettingImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.Image.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -283,9 +283,9 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource WindowImage}" />
+                                    Source="{StaticResource WindowImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.Window.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -295,9 +295,9 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource GalleryImage}" />
+                                    Source="{StaticResource GalleryImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.GallerySettings.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -307,9 +307,9 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource SlideshowImage}" />
+                                    Source="{StaticResource SlideshowImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.Slideshow.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -319,9 +319,9 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource SignPostImage}" />
+                                    Source="{StaticResource SignPostImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.Navigation.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -331,9 +331,9 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource ZoomInImage}" />
+                                    Source="{StaticResource ZoomInImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.Zoom.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -343,9 +343,9 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource MouseWheelIcon}" />
+                                    Source="{StaticResource MouseWheelIcon}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.Mouse.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -355,9 +355,9 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource LanguageSettingsImage}" />
+                                    Source="{StaticResource LanguageSettingsImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.Language.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -367,24 +367,24 @@
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource KeyImage}" />
+                                    Source="{StaticResource KeyImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.ApplicationShortcuts.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
                     </ListBoxItem>
 
                     <ListBoxItem
-                        x:Name="FileAssociationsListBoxItem"
                         BorderBrush="{DynamicResource MenuBorderColor}"
-                        Tag="{x:Static viewModels1:SettingsCategory.FileAssociations}">
+                        Tag="{x:Static viewModels1:SettingsCategory.FileAssociations}"
+                        x:Name="FileAssociationsListBoxItem">
                         <ListBoxItem.Content>
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <Image
-                                    Width="18"
                                     Height="18"
-                                    Source="{StaticResource FileAssociationImage}" />
+                                    Source="{StaticResource FileAssociationImage}"
+                                    Width="18" />
                                 <TextBlock Classes="txt" Text="{CompiledBinding Translation.FileAssociations.Value, Mode=OneWay}" />
                             </StackPanel>
                         </ListBoxItem.Content>
@@ -393,78 +393,78 @@
                 </ListBox>
 
                 <customControls:AutoScrollViewer
-                    x:Name="ContentScrollViewer"
                     Background="Transparent"
-                    Focusable="True">
+                    Focusable="True"
+                    x:Name="ContentScrollViewer">
                     <StackPanel
-                        x:Name="ContentPanel"
                         Margin="0,25,0,100"
-                        Spacing="80">
+                        Spacing="80"
+                        x:Name="ContentPanel">
 
                         <config:GeneralSettingsView
-                            x:Name="GeneralSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="GeneralSection" />
 
                         <config:AppearanceView
-                            x:Name="AppearanceSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="AppearanceSection" />
 
                         <config:InterfaceConfigurationView
-                            x:Name="InterfaceSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="InterfaceSection" />
 
                         <config:ImageSettingsView
-                            x:Name="ImageSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="ImageSection" />
 
                         <config:WindowSettingsView
-                            x:Name="WindowSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="WindowSection" />
 
                         <config:GallerySettingsView
-                            x:Name="GallerySection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="GallerySection" />
 
                         <config:SlideshowSettingsView
-                            x:Name="SlideshowSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="SlideshowSection" />
 
                         <config:NavigationView
-                            x:Name="NavigationSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="NavigationSection" />
 
                         <config:ZoomSettingsView
-                            x:Name="ZoomSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="ZoomSection" />
 
                         <config:MouseView
-                            x:Name="MouseSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="MouseSection" />
 
                         <config:LanguageView
-                            x:Name="LanguageSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="LanguageSection" />
 
                         <config:KeybindingsView
-                            x:Name="KeybindingsSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="KeybindingsSection" />
 
                         <config:FileAssociationsView
-                            x:Name="FileAssociationsSection"
                             Background="Transparent"
-                            Focusable="True" />
+                            Focusable="True"
+                            x:Name="FileAssociationsSection" />
 
                     </StackPanel>
                 </customControls:AutoScrollViewer>

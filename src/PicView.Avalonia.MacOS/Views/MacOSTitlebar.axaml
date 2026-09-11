@@ -57,6 +57,7 @@
             BorderBrush="{DynamicResource TitleBarBorderColor}"
             BorderThickness="0"
             Classes="AltHover"
+            Command="{Binding SearchCommand}"
             DockPanel.Dock="Right"
             Foreground="{DynamicResource TitleBarForeground}"
             Icon="{StaticResource SearchImage}"
