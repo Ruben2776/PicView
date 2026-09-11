@@ -244,7 +244,7 @@ public partial class EffectsView : UserControl
             {
                 if (_reloading)
                 {
-                    return (Config: null, Vm: effectsViewModel);
+                    return (Config: (ImageEffectConfig?)null, Vm: effectsViewModel);
                 }
         
                 var config = effectsViewModel.EffectConfig.Value ??= new ImageEffectConfig();

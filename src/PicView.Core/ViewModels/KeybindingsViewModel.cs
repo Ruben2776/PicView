@@ -7,7 +7,7 @@ namespace PicView.Core.ViewModels;
 
 public class KeybindingsViewModel : IDisposable
 {
-    public KeybindingWindowConfig WindowConfig { get; set; }
+    public KeybindingWindowConfig WindowConfig { get; set; } = new();
     
     private readonly CompositeDisposable _disposables = new();
     
