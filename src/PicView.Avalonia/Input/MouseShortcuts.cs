@@ -211,7 +211,10 @@ public static class MouseShortcuts
                 case NavigationMode.None:
                     return;
                 case NavigationMode.NavigatingFileHistory:
-                    await windowViewModel.Mapper.OpenPreviousFileHistoryEntry().ConfigureAwait(false);
+                    if (windowViewModel.Mapper is not null)
+                    {
+                        await windowViewModel.Mapper.OpenPreviousFileHistoryEntry().ConfigureAwait(false);
+                    }
                     return;
                 case NavigationMode.NavigatingBetweenDirectories:
                     await windowViewModel.WindowTabs.PrevFolder().ConfigureAwait(false);
@@ -232,7 +235,10 @@ public static class MouseShortcuts
                 case NavigationMode.None:
                     return;
                 case NavigationMode.NavigatingFileHistory:
-                    await windowViewModel.Mapper.OpenNextFileHistoryEntry().ConfigureAwait(false);
+                    if (windowViewModel.Mapper is not null)
+                    {
+                        await windowViewModel.Mapper.OpenNextFileHistoryEntry().ConfigureAwait(false);
+                    }
                     return;
                 case NavigationMode.NavigatingBetweenDirectories:
                     await windowViewModel.WindowTabs.NextFolder().ConfigureAwait(false);
@@ -248,7 +254,7 @@ public static class MouseShortcuts
         // Handle double click (only for the left mouse button, so that rapid
         // double-clicks of the side buttons don't fall through and trigger the
         // left-button double-click behavior such as toggling fullscreen)
-        if (e.ClickCount is 2 && prop.IsLeftButtonPressed)
+        if (e.ClickCount is 2 && prop.IsLeftButtonPressed && windowViewModel.Mapper is not null)
         {
             switch (Settings.UIProperties.DoubleClickBehavior)
             {
