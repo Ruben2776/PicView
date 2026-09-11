@@ -53,8 +53,8 @@ public class PicBox : Control
     /// <summary>
     ///     Defines the <see cref="ImageType" /> property.
     /// </summary>
-    public static readonly AvaloniaProperty<ImageType> ImageTypeProperty =
-        AvaloniaProperty.Register<PicBox, ImageType>(nameof(ImageType));
+    public static readonly StyledProperty<ImageType?> ImageTypeProperty =
+        AvaloniaProperty.Register<PicBox, ImageType?>(nameof(ImageType));
     
     public static readonly StyledProperty<FileInfo?> CurrentFileInfoProperty =
         AvaloniaProperty.Register<PicBox, FileInfo?>(nameof(CurrentFileInfo));
@@ -69,7 +69,7 @@ public class PicBox : Control
     /// </summary>
     public ImageType ImageType
     {
-        get => (ImageType)(GetValue(ImageTypeProperty) ?? false);
+        get => GetValue(ImageTypeProperty) ?? ImageType.Invalid;
         set => SetValue(ImageTypeProperty, value);
     }
 
