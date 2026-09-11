@@ -355,7 +355,13 @@ public static class FileHistoryManager
         
         try
         {
-            var bytes = File.ReadAllBytes(_fileHistoryConfiguration.TryGetCurrentUserConfigPath);
+            var configPath = _fileHistoryConfiguration.TryGetCurrentUserConfigPath;
+            if (string.IsNullOrEmpty(configPath))
+            {
+                return;
+            }
+
+            var bytes = File.ReadAllBytes(configPath);
 
             if (JsonSerializer.Deserialize(bytes, typeof(FileHistoryEntries),
                     FileHistoryGenerationContext.Default)
