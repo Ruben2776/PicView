@@ -1,9 +1,9 @@
 <Project>
     <PropertyGroup>
         <Nullable>enable</Nullable>
-        <VersionPrefix>5.0.6</VersionPrefix>
+        <VersionPrefix>5.1.0</VersionPrefix>
         <VersionSuffix></VersionSuffix>
-        <AssemblyVersion>5.0.6.0</AssemblyVersion>
-        <FileVersion>5.0.6</FileVersion>
+        <AssemblyVersion>5.1.0.0</AssemblyVersion>
+        <FileVersion>5.1.0</FileVersion>
     </PropertyGroup>
 </Project>
