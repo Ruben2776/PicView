@@ -17,6 +17,7 @@
                     <!--  The date being hovered  -->
                     <Border
                         Name="Background"
+                        Background="Transparent"
                         BorderBrush="{DynamicResource SecondaryAccentColor}"
                         BorderThickness="1"
                         CornerRadius="3"
@@ -45,6 +46,7 @@
                         Padding="6,8"
                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Background="Transparent"
                         Content="{TemplateBinding Content}"
                         ContentTemplate="{TemplateBinding ContentTemplate}"
                         FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
@@ -67,7 +69,7 @@
             <Setter Property="IsVisible" Value="True" />
         </Style>
         <Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+            <Setter Property="Opacity" Value="1" />
         </Style>
 
         <Style Selector="^:pressed /template/ Border#Background">

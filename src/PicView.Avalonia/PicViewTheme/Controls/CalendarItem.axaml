@@ -5,6 +5,7 @@
     x:ClassModifier="internal">
     <ControlTheme x:Key="{x:Type CalendarItem}" TargetType="CalendarItem">
         <Setter Property="CornerRadius" Value="1" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
@@ -106,14 +107,6 @@
                         </Grid>
                     </Border>
 
-                    <Rectangle
-                        Name="DisabledVisual"
-                        Margin="0,2,0,2"
-                        Fill="{DynamicResource MainTextColor}"
-                        IsVisible="False"
-                        Opacity="{DynamicResource ThemeDisabledOpacity}"
-                        Stretch="Fill" />
-
                 </Panel>
             </ControlTemplate>
         </Setter>
@@ -130,8 +123,5 @@
             </Template>
         </Setter>
 
-        <Style Selector="^:calendardisabled /template/ Rectangle#DisabledVisual">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
     </ControlTheme>
 </ResourceDictionary>

@@ -55,7 +55,7 @@
         </Style>
 
         <Style Selector="^:inactive /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Foreground" Value="{DynamicResource MainTextColorFaded}" />
+            <Setter Property="Opacity" Value="0.95" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>
