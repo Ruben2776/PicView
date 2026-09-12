@@ -101,10 +101,7 @@
             <Setter Property="Width" Value="30" />
             <Setter Property="Template">
                 <ControlTemplate>
-                    <Border
-                        x:Name="Border"
-                        Background="Transparent"
-                        UseLayoutRounding="False">
+                    <Border Background="{DynamicResource ScrollbarBackgroundColor}" UseLayoutRounding="False">
                         <DockPanel>
                             <RepeatButton
                                 Name="PART_LineUpButton"

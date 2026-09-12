@@ -2,10 +2,11 @@
     x:Class="PicView.Avalonia.CustomControls.AutoScrollSign"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Padding="6"
     Background="{DynamicResource PopUpBackgroundColor}"
     BorderBrush="{DynamicResource PopUpMainBorderColor}"
     BorderThickness="1"
-    CornerRadius="8">
+    CornerRadius="6">
     <StackPanel>
         <Path
             Width="7"

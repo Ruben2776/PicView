@@ -47,51 +47,6 @@
 
     </ControlTheme>
 
-    <ControlTheme x:Key="Main" TargetType="customControls:AutoScrollViewer">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,Auto">
-                    <ScrollContentPresenter
-                        Name="PART_ContentPresenter"
-                        Padding="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
-                        HorizontalSnapPointsAlignment="{TemplateBinding HorizontalSnapPointsAlignment}"
-                        HorizontalSnapPointsType="{TemplateBinding HorizontalSnapPointsType}"
-                        ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}"
-                        VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
-                        VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}">
-                        <ScrollContentPresenter.GestureRecognizers>
-                            <ScrollGestureRecognizer
-                                CanHorizontallyScroll="{Binding CanHorizontallyScroll, ElementName=PART_ContentPresenter}"
-                                CanVerticallyScroll="{Binding CanVerticallyScroll, ElementName=PART_ContentPresenter}"
-                                IsScrollInertiaEnabled="{Binding (ScrollViewer.IsScrollInertiaEnabled), ElementName=PART_ContentPresenter}" />
-                        </ScrollContentPresenter.GestureRecognizers>
-                    </ScrollContentPresenter>
-                    <ScrollBar
-                        Name="PART_HorizontalScrollBar"
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Orientation="Horizontal"
-                        Theme="{StaticResource MainScrollbar}" />
-                    <ScrollBar
-                        Name="PART_VerticalScrollBar"
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Orientation="Vertical"
-                        Theme="{StaticResource MainScrollbar}" />
-                    <Canvas Grid.Row="0" Grid.Column="0">
-                        <customControls:AutoScrollSign
-                            Name="PART_AutoScrollSign"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            IsVisible="False" />
-                    </Canvas>
-                </Grid>
-            </ControlTemplate>
-        </Setter>
-    </ControlTheme>
-
     <ControlTheme x:Key="Inline" TargetType="customControls:AutoScrollViewer">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
@@ -132,63 +87,6 @@
                 </Panel>
             </ControlTemplate>
         </Setter>
-    </ControlTheme>
-
-    <ControlTheme x:Key="InlineSlim" TargetType="customControls:AutoScrollViewer">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Panel>
-                    <ScrollContentPresenter
-                        Name="PART_ContentPresenter"
-                        Padding="{TemplateBinding Padding}"
-                        Background="Transparent"
-                        HorizontalSnapPointsAlignment="{TemplateBinding HorizontalSnapPointsAlignment}"
-                        HorizontalSnapPointsType="{TemplateBinding HorizontalSnapPointsType}"
-                        ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}"
-                        VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
-                        VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}">
-                        <ScrollContentPresenter.GestureRecognizers>
-                            <ScrollGestureRecognizer
-                                CanHorizontallyScroll="{Binding CanHorizontallyScroll, ElementName=PART_ContentPresenter}"
-                                CanVerticallyScroll="{Binding CanVerticallyScroll, ElementName=PART_ContentPresenter}"
-                                IsScrollInertiaEnabled="{Binding (ScrollViewer.IsScrollInertiaEnabled), ElementName=PART_ContentPresenter}" />
-                        </ScrollContentPresenter.GestureRecognizers>
-                    </ScrollContentPresenter>
-                    <ScrollBar
-                        Name="PART_HorizontalScrollBar"
-                        Opacity="0"
-                        Orientation="Horizontal"
-                        Theme="{StaticResource FloatingSlim}">
-                        <ScrollBar.Transitions>
-                            <Transitions>
-                                <DoubleTransition
-                                    Easing="CubicEaseOut"
-                                    Property="Opacity"
-                                    Duration="0:0:0.45" />
-                            </Transitions>
-                        </ScrollBar.Transitions>
-                    </ScrollBar>
-                    <ScrollBar
-                        Name="PART_VerticalScrollBar"
-                        HorizontalAlignment="Right"
-                        Orientation="Vertical"
-                        Theme="{StaticResource FloatingSlim}" />
-                    <Canvas>
-                        <customControls:AutoScrollSign
-                            Name="PART_AutoScrollSign"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            IsVisible="False" />
-                    </Canvas>
-                </Panel>
-            </ControlTemplate>
-        </Setter>
-
-        <Style Selector="^:pointerover /template/ ScrollBar#PART_HorizontalScrollBar">
-            <Setter Property="Opacity" Value="1" />
-        </Style>
-
     </ControlTheme>
 
     <ControlTheme x:Key="MenuScrollerOverlay" TargetType="customControls:AutoScrollViewer">
@@ -288,8 +186,8 @@
                         Width="35"
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
-                        Background="{DynamicResource MenuButtonColor}"
-                        BorderBrush="{DynamicResource MainBorderColor}"
+                        Background="{DynamicResource PopUpBackgroundColor}"
+                        BorderBrush="{DynamicResource PopUpMainBorderColor}"
                         BorderThickness="1,0,0,0"
                         Command="{Binding PageRight, RelativeSource={RelativeSource TemplatedParent}}"
                         Cursor="Hand"
@@ -304,8 +202,8 @@
                         Width="35"
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
-                        Background="{DynamicResource MenuButtonColor}"
-                        BorderBrush="{DynamicResource MainBorderColor}"
+                        Background="{DynamicResource PopUpBackgroundColor}"
+                        BorderBrush="{DynamicResource PopUpMainBorderColor}"
                         BorderThickness="0,0,1,0"
                         Command="{Binding PageLeft, RelativeSource={RelativeSource TemplatedParent}}"
                         Cursor="Hand"
