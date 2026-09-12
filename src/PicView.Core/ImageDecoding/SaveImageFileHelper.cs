@@ -225,6 +225,15 @@ public static class SaveImageFileHelper
             return false;
         }
 
+        // Animated images (e.g. animated WebP, animated GIF) contain multiple frames.
+        // Reading them with a single MagickImage loses all but the first frame, producing
+        // a static image. Detect multi-frame images and resize the full collection instead.
+        if (ImageAnalyzer.IsAnimated(fileInfo))
+        {
+            return await ResizeAnimatedImageAsync(fileInfo, width, height, quality, percentage, destination, ext)
+                .ConfigureAwait(false);
+        }
+
         var magick = new MagickImage
         {
             ColorSpace = ColorSpace.Transparent
@@ -337,6 +346,90 @@ public static class SaveImageFileHelper
         catch (Exception)
         {
             return true;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Resizes a multi-frame (animated) image by processing every frame through a
+    /// <see cref="MagickImageCollection"/>, preserving animation timing and disposal.
+    /// </summary>
+    /// <remarks>
+    /// Uses Coalesce() to expand frame diffs into full frames before resizing, mirroring
+    /// the pattern recommended by the Magick.NET documentation for animated images.
+    /// </remarks>
+    private static async Task<bool> ResizeAnimatedImageAsync(FileInfo fileInfo, uint width, uint height,
+        uint? quality, Percentage? percentage, string? destination, string? ext)
+    {
+        try
+        {
+            using var collection = new MagickImageCollection();
+
+            if (fileInfo.Length < 2147483648)
+            {
+                await collection.ReadAsync(fileInfo.FullName).ConfigureAwait(false);
+            }
+            else
+            {
+                // ReSharper disable once MethodHasAsyncOverload
+                collection.Read(fileInfo.FullName);
+            }
+
+            if (quality.HasValue)
+            {
+                foreach (var frame in collection)
+                {
+                    frame.Quality = quality.Value;
+                }
+            }
+
+            // Expand frame diffs into full frames so each frame can be resized independently.
+            collection.Coalesce();
+
+            foreach (var frame in collection)
+            {
+                if (percentage is not null)
+                {
+                    frame.Resize(percentage.Value);
+                }
+                else
+                {
+                    frame.Resize(width, height);
+                }
+            }
+
+            var outputPath = destination ?? fileInfo.FullName;
+
+            if (ext is not null)
+            {
+                outputPath = Path.ChangeExtension(outputPath, ext);
+                var format = Path.GetExtension(ext).ToLowerInvariant() switch
+                {
+                    ".gif" => MagickFormat.Gif,
+                    ".webp" => MagickFormat.WebP,
+                    ".png" => MagickFormat.Png,
+                    ".jpeg" or ".jpg" => MagickFormat.Jpeg,
+                    _ => collection[0].Format
+                };
+                foreach (var frame in collection)
+                {
+                    frame.Format = format;
+                }
+            }
+
+            var dir = Path.GetDirectoryName(outputPath);
+            if (dir is not null && !Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            await collection.WriteAsync(outputPath).ConfigureAwait(false);
+        }
+        catch (MagickException e)
+        {
+            DebugHelper.LogDebug(nameof(SaveImageFileHelper), nameof(ResizeAnimatedImageAsync), e);
+            return false;
         }
 
         return true;
