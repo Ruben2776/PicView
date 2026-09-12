@@ -6,10 +6,6 @@
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:MainWindowViewModel">
-    <UserControl.Resources>
-        <SolidColorBrush x:Key="CancelBrush" Color="{DynamicResource MainTextColor}" />
-        <SolidColorBrush x:Key="LinkBrush" Color="{StaticResource SecondaryTextColor}" />
-    </UserControl.Resources>
     <Panel x:Name="BgPanel" Background="{DynamicResource WindowMainBackgroundColor}">
         <uc:SpinWaiter x:Name="SpinWaiter" IsVisible="False" />
 
@@ -46,7 +42,7 @@
                             Background="Transparent"
                             Classes="MenuItemHover"
                             CornerRadius="6"
-                            Foreground="{StaticResource LinkBrush}"
+                            Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource LinkChainImage}"
                             IconHeight="21"
                             IconWidth="21" />
@@ -185,12 +181,11 @@
                     Background="{DynamicResource ToolWindowButtonBackground}"
                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                     BorderThickness="1"
-                    Classes="AltHover"
+                    Classes="MenuItemHover"
                     CornerRadius="4"
                     IsVisible="{Binding !ResizeImageViewModel.ShowReset.Value}">
                     <TextBlock
                         Classes="txt"
-                        Foreground="{StaticResource CancelBrush}"
                         Text="{Binding Translation.Cancel.Value, Mode=OneWay}"
                         TextAlignment="Center" />
                 </Button>

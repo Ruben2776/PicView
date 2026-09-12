@@ -1,7 +1,7 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
 
     <ResourceDictionary.ThemeDictionaries>
 
@@ -109,12 +109,12 @@
 
             <!--  StartUpMenu  -->
             <ImageBrush
+                x:Key="StartUpMenuBackground"
                 DestinationRect="0,0,200,200"
                 Opacity=".5"
                 Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 Stretch="Fill"
-                TileMode="FlipXY"
-                x:Key="StartUpMenuBackground" />
+                TileMode="FlipXY" />
             <Color x:Key="StartUpMenuForeground">#DDDDDD</Color>
 
             <!--  PopUp  -->
@@ -149,15 +149,15 @@
 
             <!--  EFFECTS & MISC  -->
             <Color x:Key="ErrorColor">#B51522</Color>
-            <SolidColorBrush Color="{StaticResource ErrorColor}" x:Key="ErrorBrush" />
+            <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}" />
 
             <ImageBrush
+                x:Key="NoisyTexture"
                 DestinationRect="0,0,200,200"
                 Opacity=".6"
                 Source="/PicViewTheme/Resources/noisy-texture-200x200-o4-d31-c-161616-t0.png"
                 Stretch="Fill"
-                TileMode="FlipXY"
-                x:Key="NoisyTexture" />
+                TileMode="FlipXY" />
 
             <Color x:Key="CropBackground">#A7000000</Color>
 
@@ -175,14 +175,14 @@
             <Color x:Key="MainTextColorFaded">#FFAAA9C2</Color>
 
             <!--  Global Window  -->
-            <Color x:Key="WindowTitleBackgroundColor">Transparent</Color>
+            <Color x:Key="WindowTitleBackgroundColor">#fff</Color>
             <Color x:Key="WindowButtonBackgroundColor">#fff</Color>
             <Color x:Key="WindowBorderColor">#fff</Color>
             <Color x:Key="WindowLogoColor">#fff</Color>
-            <ConicGradientBrush Center="50%,50%" x:Key="WindowMainBackgroundColor">
-                <GradientStop Color="#fff" Offset="0.0" />
-                <GradientStop Color="#FFF4F3FF" Offset="0.5" />
-                <GradientStop Color="#fff" Offset="1.0" />
+            <ConicGradientBrush x:Key="WindowMainBackgroundColor" Center="50%,50%">
+                <GradientStop Offset="0.0" Color="#fff" />
+                <GradientStop Offset="0.5" Color="#FFF4F3FF" />
+                <GradientStop Offset="1.0" Color="#fff" />
             </ConicGradientBrush>
 
             <!--  TOP TITLE BAR  -->
@@ -211,10 +211,10 @@
             <Color x:Key="HoverBarBackgroundColor">#fff</Color>
             <Color x:Key="HoverBarBorderColor">#D9DAF7</Color>
 
-            <ConicGradientBrush Center="50%,50%" x:Key="HoverBarTrackColor">
-                <GradientStop Color="#D9DAF7" Offset="0.0" />
-                <GradientStop Color="#D4D3DF" Offset="0.5" />
-                <GradientStop Color="#D9DAF7" Offset="1.0" />
+            <ConicGradientBrush x:Key="HoverBarTrackColor" Center="50%,50%">
+                <GradientStop Offset="0.0" Color="#D9DAF7" />
+                <GradientStop Offset="0.5" Color="#D4D3DF" />
+                <GradientStop Offset="1.0" Color="#D9DAF7" />
             </ConicGradientBrush>
             <Color x:Key="HoverBarThumbColor">#EE8D8AAB</Color>
 
@@ -266,10 +266,10 @@
             <Color x:Key="ScrollbarIconBorderColor">#FFBBCCFF</Color>
 
             <!--  Gallery  -->
-            <LinearGradientBrush EndPoint="50%,100%" StartPoint="50%,0%" x:Key="GalleryBackgroundColor">
-                <GradientStop Color="#fff" Offset="0.0" />
-                <GradientStop Color="#D4D3DF" Offset="0.5" />
-                <GradientStop Color="#fff" Offset="1.0" />
+            <LinearGradientBrush x:Key="GalleryBackgroundColor" StartPoint="50%,0%" EndPoint="50%,100%">
+                <GradientStop Offset="0.0" Color="#fff" />
+                <GradientStop Offset="0.5" Color="#D4D3DF" />
+                <GradientStop Offset="1.0" Color="#fff" />
             </LinearGradientBrush>
             <Color x:Key="GalleryBorderColor">#FFCCCCCC</Color>
 
@@ -280,10 +280,10 @@
             <Color x:Key="ImageInfoSeparatorColor">#FF3A3A3A</Color>
 
             <!--  StartUpMenu  -->
-            <ConicGradientBrush Center="50%,50%" x:Key="StartUpMenuBackground">
-                <GradientStop Color="#ECECECFF" Offset="0.0" />
-                <GradientStop Color="#C6CDF1" Offset="0.5" />
-                <GradientStop Color="#ECECECFF" Offset="1.0" />
+            <ConicGradientBrush x:Key="StartUpMenuBackground" Center="50%,50%">
+                <GradientStop Offset="0.0" Color="#ECECECFF" />
+                <GradientStop Offset="0.5" Color="#C6CDF1" />
+                <GradientStop Offset="1.0" Color="#ECECECFF" />
             </ConicGradientBrush>
             <Color x:Key="StartUpMenuForeground">#FF616161</Color>
 
@@ -314,10 +314,10 @@
 
             <!--  Log panel background  -->
             <Color x:Key="LogPanelHeaderColor">#EBFBFBFF</Color>
-            <LinearGradientBrush EndPoint="50%,100%" StartPoint="50%,0%" x:Key="LogPanelBackgroundColor">
-                <GradientStop Color="#fff" Offset="0.0" />
-                <GradientStop Color="#D7FBFBFB" Offset="0.5" />
-                <GradientStop Color="#fff" Offset="1.0" />
+            <LinearGradientBrush x:Key="LogPanelBackgroundColor" StartPoint="50%,0%" EndPoint="50%,100%">
+                <GradientStop Offset="0.0" Color="#fff" />
+                <GradientStop Offset="0.5" Color="#D7FBFBFB" />
+                <GradientStop Offset="1.0" Color="#fff" />
             </LinearGradientBrush>
             <Color x:Key="LogPanelBorderColor">#8DD0D0D0</Color>
 

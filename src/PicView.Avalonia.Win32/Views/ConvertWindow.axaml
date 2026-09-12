@@ -86,7 +86,7 @@
             <main:ConvertView
                 x:Name="ConvertView"
                 Margin="0"
-                Background="{DynamicResource NoisyTexture}"
+                Background="{DynamicResource WindowMainBackgroundColor}"
                 Focusable="True" />
         </StackPanel>
     </Border>
