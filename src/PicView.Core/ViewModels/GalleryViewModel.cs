@@ -38,7 +38,13 @@ public class GalleryViewModel : IDisposable
     public void Initialize()
     {
         GallerySettingsConverter.UpdateDockPositionProperties(this);
-        Observable.EveryValueChanged(Settings.Gallery, g => g.IsGalleryDocked)
+
+        if (Settings.Gallery is not { } gallery)
+        {
+            return;
+        }
+
+        Observable.EveryValueChanged(gallery, g => g.IsGalleryDocked)
         .Subscribe(isDocked =>
         {
             if (isDocked && ActiveGalleryMode.Value is GalleryMode.Closed)
@@ -60,14 +66,14 @@ public class GalleryViewModel : IDisposable
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
 
-        Observable.EveryValueChanged(Settings.Gallery, g => g.ItemSpacing)
+        Observable.EveryValueChanged(gallery, g => g.ItemSpacing)
         .Subscribe(x =>
         {
             ItemSpacing.Value = x;
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
 
-        Observable.EveryValueChanged(Settings.Gallery, g => g.LineSpacing)
+        Observable.EveryValueChanged(gallery, g => g.LineSpacing)
         .Subscribe(x =>
         {
             LineSpacing.Value = x;
@@ -138,7 +144,7 @@ public class GalleryViewModel : IDisposable
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
         
-        Observable.EveryValueChanged(Settings.Gallery, x => x.IsGalleryDocked)
+        Observable.EveryValueChanged(gallery, x => x.IsGalleryDocked)
         .Skip(1)
         .Subscribe(x =>
         {
@@ -157,7 +163,7 @@ public class GalleryViewModel : IDisposable
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
         
-        Observable.EveryValueChanged(Settings.Gallery, x => x.DockPosition)
+        Observable.EveryValueChanged(gallery, x => x.DockPosition)
         .Skip(1)
         .Subscribe(_ => { GallerySettingsConverter.UpdateDockPositionProperties(this); }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);

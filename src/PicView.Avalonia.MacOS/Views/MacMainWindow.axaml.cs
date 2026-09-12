@@ -16,9 +16,14 @@ namespace PicView.Avalonia.MacOS.Views;
 
 public partial class MacMainWindow : MainWindow, IPlatformWindowService
 {
-    public MacMainWindow()
+    public MacMainWindow() : this(null)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+    }
+
+    public MacMainWindow(CoreViewModel? core)
+    {
+        core ??= Application.Current?.DataContext as CoreViewModel;
+        if (core is null)
         {
             return;
         }

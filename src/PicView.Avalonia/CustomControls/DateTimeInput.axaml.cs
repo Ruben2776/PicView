@@ -253,7 +253,7 @@ public class DateTimeInput : TemplatedControl
         var textBox = new ValidationTextBox
         {
             MaxLength = maxLength,
-            Watermark = watermark,
+            PlaceholderText = watermark,
             TextAlignment = TextAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
             Padding = new Thickness(0),

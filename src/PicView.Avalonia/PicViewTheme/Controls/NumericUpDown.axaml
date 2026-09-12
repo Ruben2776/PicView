@@ -37,11 +37,11 @@
                             InnerLeftContent="{Binding InnerLeftContent, RelativeSource={RelativeSource TemplatedParent}}"
                             InnerRightContent="{Binding InnerRightContent, RelativeSource={RelativeSource TemplatedParent}}"
                             IsReadOnly="{TemplateBinding IsReadOnly}"
+                            PlaceholderText="{TemplateBinding Watermark}"
                             ScrollViewer.VerticalScrollBarVisibility="Disabled"
                             Text="{TemplateBinding Text}"
                             TextAlignment="{TemplateBinding TextAlignment}"
-                            TextWrapping="NoWrap"
-                            Watermark="{TemplateBinding Watermark}" />
+                            TextWrapping="NoWrap" />
                     </ButtonSpinner>
                 </DataValidationErrors>
             </ControlTemplate>

@@ -17,7 +17,7 @@ public static class GetImageModel
 {
     /// <inheritdoc cref="GetImageModelAsync(System.IO.FileInfo, MagickImage)"/>
     public static async ValueTask<ImageModel> GetImageModelAsync(FileInfo fileInfo) =>
-        await GetImageModelAsync(fileInfo, null).ConfigureAwait(false);
+        await GetImageModelAsync(fileInfo, null).ConfigureAwait(false) ?? CreateErrorImageModel(fileInfo);
 
     /// <summary>
     /// Asynchronously retrieves an <see cref="ImageModel"/> instance based on the provided file and optional <see cref="MagickImage"/>.
