@@ -24,23 +24,6 @@ public partial class ZoomPreviewer : UserControl
     {
         InitializeComponent();
 
-        if (!Settings.Theme.Dark && Settings.Theme.GlassTheme)
-        {
-            if (Settings.Theme.GlassTheme)
-            {
-                MainBorder.BorderThickness = new Thickness(0);
-            }
-
-            ResetZoomButton.Classes.Remove("altHover");
-            CloseButton.Classes.Remove("altHover");
-            ResetZoomButton.Classes.Add("hover");
-            CloseButton.Classes.Add("hover");
-        }
-        Loaded += OnLoaded;
-    }
-
-    private void OnLoaded(object? sender, RoutedEventArgs e)
-    {
         CloseButton.Click += delegate { SetInvisible(); };
 
         // Add pointer event handlers for dragging
@@ -224,7 +207,8 @@ public partial class ZoomPreviewer : UserControl
     {
         const int defaultHeight = 150;
         OverlayImage.Height = defaultHeight;
-        if (vm.WindowTabs.ActiveTab.CurrentValue.Model is not {} model)
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        if (tab.Model is not {} model)
         {
             return;
         }
@@ -233,22 +217,21 @@ public partial class ZoomPreviewer : UserControl
             return;
         }
 
-        // ReSharper disable once PossibleLossOfFraction
+        OverlayImage.Width = model.PixelWidth * defaultHeight /
+                             model.PixelHeight;
+        if (!Settings.ImageScaling.ShowImageSideBySide)
+        {
+            SecondaryOverlayImage.Width = 0;
+            return;
+        }
 
-        if (Settings.ImageScaling.ShowImageSideBySide)
+        if (tab.SecondaryModel is not {} secondaryModel)
         {
-            // var secondaryWidth = model.SecondaryImageWidth.CurrentValue * defaultHeight /
-            //                      vm.PicViewer.ImageHeight.CurrentValue;
-            // var width = vm.PicViewer.ImageWidth.CurrentValue * defaultHeight / vm.PicViewer.ImageHeight.Value;
-            // OverlayImage.Width = width;
-            //OverlayImage.SecondaryImageWidth = secondaryWidth;
+            return;
         }
-        else
-        {
-            OverlayImage.Width = model.PixelWidth * defaultHeight /
-                                 model.PixelHeight;
-            //OverlayImage.SecondaryImageWidth = 0;
-        }
+        var secondaryWidth = secondaryModel.PixelWidth * defaultHeight /
+                             secondaryModel.PixelHeight;
+        SecondaryOverlayImage.Width = secondaryWidth;
     }
 
     private void RestartHideTimer()

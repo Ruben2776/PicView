@@ -25,8 +25,8 @@
 
                 <Border
                     x:Name="IconBorder"
-                    Background="{DynamicResource WindowBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    Background="{DynamicResource WindowLogoColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="0,0,1,0"
                     DockPanel.Dock="Left">
                     <Image
@@ -39,7 +39,7 @@
                 <customControls:IconButton
                     x:Name="CloseButton"
                     Width="30"
-                    Background="{DynamicResource MainButtonBackgroundColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
                     BorderThickness="0"
                     Classes="hover"
                     Click="Close"
@@ -55,8 +55,8 @@
                 <customControls:IconButton
                     x:Name="MinimizeButton"
                     Width="30"
-                    Background="{DynamicResource MainButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
+                    BorderBrush="{DynamicResource TitleBarButtonBorder}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
                     Click="Minimize"
@@ -71,7 +71,7 @@
                     x:Name="TitleText"
                     Height="28"
                     Padding="30,0,0,0"
-                    Background="{DynamicResource WindowSecondaryBackgroundColor}"
+                    Background="{DynamicResource WindowButtonBackgroundColor}"
                     Classes="txt"
                     Foreground="{DynamicResource MainTextColor}"
                     LineHeight="28"
@@ -84,11 +84,11 @@
                 x:Name="BorderRectangle"
                 Height="1"
                 DockPanel.Dock="Top"
-                Fill="{DynamicResource MainBorderColor}" />
+                Fill="{DynamicResource TitleBarButtonBorder}" />
 
             <main:PrintPreviewView
                 x:Name="PrintPreviewView"
-                Background="{DynamicResource WindowBackgroundColor}"
+                Background="{DynamicResource WindowMainBackgroundColor}"
                 DockPanel.Dock="Bottom"
                 Focusable="True" />
         </DockPanel>

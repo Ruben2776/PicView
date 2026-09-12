@@ -54,7 +54,7 @@
                     x:Name="ResetButton"
                     Width="195"
                     Margin="30,0,60,0"
-                    Classes="BorderStyle altHover mainBtn"
+                    Classes="ToolButtonStyle ToolButtonHover"
                     CornerRadius="4"
                     IsVisible="False">
                     <TextBlock
@@ -68,7 +68,7 @@
                     x:Name="CancelButton"
                     Width="195"
                     Margin="30,0,60,0"
-                    Classes="BorderStyle altHover mainBtn"
+                    Classes="ToolButtonStyle ToolButtonHover"
                     CornerRadius="4">
                     <TextBlock
                         Classes="txt"
@@ -84,7 +84,7 @@
                     Margin="00,0,60,0"
                     Padding="8"
                     Background="{DynamicResource AccentColor}"
-                    Classes="BorderStyle accentHover mainBtn"
+                    Classes="accentHover"
                     CornerRadius="4">
                     <TextBlock
                         Classes="txt"

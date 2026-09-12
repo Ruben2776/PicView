@@ -138,7 +138,7 @@ public class UIProperties
     /// </remarks>
     public bool ShowBottomNavBar { get; set; } = true;
 
-    public bool ShowHoverNavigationBar { get; set; } = false;
+    public bool ShowHoverNavigationBar { get; set; } = true;
 
     /// <summary>
     /// Indicates whether the taskbar progress is enabled when navigating pictures.

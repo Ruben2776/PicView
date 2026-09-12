@@ -1,19 +1,20 @@
 ﻿<ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="CalendarItem" x:Key="{x:Type CalendarItem}">
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type CalendarItem}" TargetType="CalendarItem">
         <Setter Property="CornerRadius" Value="1" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Panel>
                     <Border
+                        Margin="0,2,0,2"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Margin="0,2,0,2">
+                        CornerRadius="{TemplateBinding CornerRadius}">
 
 
                         <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,*">
@@ -40,73 +41,71 @@
                             </Grid.Styles>
 
                             <Rectangle
-                                Fill="{TemplateBinding HeaderBackground}"
                                 Grid.ColumnSpan="3"
                                 Height="35"
-                                Stretch="Fill"
-                                VerticalAlignment="Top" />
+                                VerticalAlignment="Top"
+                                Fill="{TemplateBinding HeaderBackground}"
+                                Stretch="Fill" />
 
                             <customControls:IconButton
-                                Classes="CalendarHeader CalendarNavigation altHover"
+                                Name="PART_PreviousButton"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Width="30"
                                 HorizontalAlignment="Left"
+                                Background="Transparent"
+                                Classes="CalendarHeader CalendarNavigation MenuItemHover"
                                 Icon="{StaticResource PrevImage}"
                                 IconHeight="12"
                                 IconWidth="12"
-                                IsVisible="False"
-                                Name="PART_PreviousButton"
-                                Width="30" />
+                                IsVisible="False" />
 
                             <Button
-                                Classes="CalendarHeader foregroundHoverAlt"
-                                FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                                FontSize="14"
-                                Foreground="{DynamicResource MainTextColor}"
+                                Name="PART_HeaderButton"
+                                Grid.Row="0"
                                 Grid.Column="1"
                                 HorizontalContentAlignment="Center"
-                                Name="PART_HeaderButton"
-                                VerticalContentAlignment="Center" />
+                                VerticalContentAlignment="Center"
+                                Background="Transparent"
+                                Classes="CalendarHeader MenuItemHover"
+                                FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                                FontSize="14"
+                                Foreground="{DynamicResource MainTextColor}" />
 
                             <customControls:IconButton
-                                Classes="CalendarHeader CalendarNavigation altHover"
-                                Grid.Column="2"
+                                Name="PART_NextButton"
                                 Grid.Row="0"
+                                Grid.Column="2"
+                                Width="30"
                                 HorizontalAlignment="Right"
+                                Background="Transparent"
+                                Classes="CalendarHeader CalendarNavigation MenuItemHover"
                                 Icon="{StaticResource NextImage}"
                                 IconHeight="12"
                                 IconWidth="12"
-                                IsVisible="False"
-                                Name="PART_NextButton"
-                                Width="30" />
+                                IsVisible="False" />
 
                             <Grid
-                                ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                                Name="PART_MonthView"
+                                Grid.Row="1"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="3"
-                                Grid.Row="1"
-                                IsVisible="False"
                                 Margin="10"
-                                Name="PART_MonthView"
+                                ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                                IsVisible="False"
                                 RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" />
 
                             <Grid
-                                ColumnDefinitions="Auto,Auto,Auto,Auto"
+                                Name="PART_YearView"
+                                Grid.Row="1"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="3"
-                                Grid.Row="1"
-                                IsVisible="False"
                                 Margin="10"
-                                Name="PART_YearView"
+                                ColumnDefinitions="Auto,Auto,Auto,Auto"
+                                IsVisible="False"
                                 RowDefinitions="Auto,Auto,Auto" />
                         </Grid>
                     </Border>
-
-                    <Rectangle
-                        Fill="{DynamicResource MainTextColor}"
-                        IsVisible="False"
-                        Margin="0,2,0,2"
-                        Name="DisabledVisual"
-                        Opacity="{DynamicResource ThemeDisabledOpacity}"
-                        Stretch="Fill" />
 
                 </Panel>
             </ControlTemplate>
@@ -115,17 +114,14 @@
         <Setter Property="DayTitleTemplate">
             <Template x:DataType="x:String">
                 <TextBlock
-                    Classes="txt"
-                    HorizontalAlignment="Center"
                     Margin="0,4,0,4"
                     Padding="6"
-                    Text="{Binding}"
-                    VerticalAlignment="Center" />
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Classes="txt"
+                    Text="{Binding}" />
             </Template>
         </Setter>
 
-        <Style Selector="^:calendardisabled /template/ Rectangle#DisabledVisual">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
     </ControlTheme>
 </ResourceDictionary>

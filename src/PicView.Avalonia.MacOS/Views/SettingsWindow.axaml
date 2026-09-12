@@ -13,75 +13,80 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border
-        BorderBrush="{DynamicResource MainBorderColor}"
+        BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
         CornerRadius="8"
         PointerPressed="MoveWindow"
         x:Name="MainBorder">
         <DockPanel>
-            <Panel DockPanel.Dock="Top">
+            <DockPanel Background="{DynamicResource TitleBarBackgroundColor}" DockPanel.Dock="Top">
+
+                <!--  Rectangle to reserve space for traffic lights buttons  -->
+                <Rectangle DockPanel.Dock="Left" Width="70" />
+
                 <customControls:IconButton
-                    Background="Transparent"
-                    Classes="noBorderHover"
+                    Background="{DynamicResource ToolWindowButtonBackground}"
+                    Classes="WindowToolButtonHover"
+                    Command="{CompiledBinding SettingsViewModel.GoHomeCommand}"
+                    CornerRadius="4"
+                    DockPanel.Dock="Left"
+                    Foreground="{DynamicResource MainTextColor}"
+                    HorizontalAlignment="Left"
+                    Icon="{StaticResource HomeImage}"
+                    IconHeight="12"
+                    IconWidth="12"
+                    Width="35"
+                    ZIndex="1"
+                    x:Name="HomeButton" />
+
+                <customControls:IconButton
+                    Background="{DynamicResource ToolWindowButtonBackground}"
+                    Classes="WindowToolButtonHover"
                     Command="{CompiledBinding SettingsViewModel.GoBackCommand}"
                     Data="{StaticResource ArrowLeftGeometry}"
+                    DockPanel.Dock="Left"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="28"
+                    Height="{StaticResource TopBorderHeight}"
                     HorizontalAlignment="Left"
                     IconHeight="12"
                     IconWidth="12"
-                    Margin="75,0,0,0"
                     Width="35"
                     ZIndex="1"
                     x:Name="GoBackButton" />
 
                 <customControls:IconButton
-                    Background="Transparent"
-                    Classes="noBorderHover"
+                    Background="{DynamicResource ToolWindowButtonBackground}"
+                    Classes="WindowToolButtonHover"
                     Command="{CompiledBinding SettingsViewModel.GoForwardCommand}"
                     Data="{StaticResource ArrowRightGeometry}"
+                    DockPanel.Dock="Left"
                     Foreground="{DynamicResource MainTextColor}"
                     HorizontalAlignment="Left"
                     IconHeight="12"
                     IconWidth="12"
-                    Margin="110,0,0,0"
                     Width="35"
                     ZIndex="1"
                     x:Name="GoForwardButton" />
 
-                <customControls:IconButton
-                    Background="Transparent"
-                    Classes="noBorderHover"
-                    Command="{CompiledBinding SettingsViewModel.GoHomeCommand}"
-                    CornerRadius="4"
-                    Foreground="{StaticResource SecondaryTextColor}"
-                    HorizontalAlignment="Left"
-                    Icon="{StaticResource HomeImage}"
-                    IconHeight="12"
-                    IconWidth="12"
-                    Margin="145,0,0,0"
-                    Width="35"
+                <buttons:SettingsMenuButton
+                    DockPanel.Dock="Right"
+                    HorizontalAlignment="Right"
                     ZIndex="1"
-                    x:Name="HomeButton" />
+                    x:Name="SettingsButton" />
 
                 <TextBlock
-                    Background="{DynamicResource WindowBackgroundColor}"
+                    Background="{DynamicResource WindowTitleBackgroundColor}"
                     Classes="txt"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="28"
-                    LineHeight="28"
+                    Height="{StaticResource TopBorderHeight}"
+                    LineHeight="{StaticResource TopBorderHeight}"
                     Text="{CompiledBinding Translation.Settings.Value,
                                            Mode=OneWay}"
                     TextAlignment="Center"
                     x:Name="TitleText" />
+            </DockPanel>
 
-                <buttons:SettingsMenuButton
-                    HorizontalAlignment="Right"
-                    ZIndex="1"
-                    x:Name="SettingsButton" />
-            </Panel>
-
-            <main:SettingsView Background="{DynamicResource WindowBackgroundColor}" x:Name="SettingsView" />
+            <main:SettingsView Background="{DynamicResource WindowMainBackgroundColor}" x:Name="SettingsView" />
         </DockPanel>
     </Border>
 </Window>

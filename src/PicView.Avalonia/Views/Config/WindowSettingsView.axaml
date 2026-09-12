@@ -32,7 +32,7 @@
                 <!--  Auto fit  -->
                 <customControls:TextToggleButton
                     x:Name="AutoFitToggleButton"
-                    Classes="altHover settingsToggleButton"
+                    Classes="MenuItemHover settingsToggleButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.AutoFitWindowCommand}"
                     IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value}"
                     Text="{CompiledBinding Translation.AutoFitWindow.Value,
@@ -78,7 +78,7 @@
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WindowTopMostSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="TopMostToggleButton"
-                Classes="altHover settingsToggleButton"
+                Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.SetTopMostCommand}"
                 IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.IsTopMost.Value}"
                 Text="{CompiledBinding Translation.StayTopMost.Value,
@@ -88,7 +88,7 @@
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WindowCenteredSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="StayCenteredToggleButton"
-                Classes="altHover settingsToggleButton"
+                Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsStayingCentered.Value}"
                 IsEnabled="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value}"
                 Text="{CompiledBinding Translation.StayCentered.Value,
@@ -98,7 +98,7 @@
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WindowSameWindowSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="OpenInSameWindowToggleButton"
-                Classes="altHover settingsToggleButton"
+                Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleOpeningInSameWindowCommand}"
                 IsChecked="{CompiledBinding SettingsViewModel.IsOpeningInSameWindow.Value}"
                 Text="{CompiledBinding Translation.OpenInSameWindow.Value,
@@ -108,7 +108,7 @@
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WindowEscSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="ShowConfirmationEscToggleButton"
-                Classes="altHover settingsToggleButton"
+                Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsShowingConfirmationOnEsc.Value}"
                 Text="{CompiledBinding Translation.ShowConfirmationOnEsc.Value,
                                        Mode=OneWay}" />

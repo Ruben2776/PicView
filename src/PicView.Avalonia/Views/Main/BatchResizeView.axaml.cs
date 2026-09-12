@@ -28,55 +28,8 @@ public partial class BatchResizeView : UserControl
     {
         InitializeData();
         SubscribeToEvents();
-        if (!Settings.Theme.Dark || Settings.Theme.GlassTheme)
-        {
-            ColorThemeAdjustments();
-        }
     }
-
-    private void ColorThemeAdjustments()
-    {
-        if (!Settings.Theme.Dark && !Settings.Theme.GlassTheme)
-        {
-            if (!Application.Current.TryGetResource("MenuBackgroundColor",
-                    Application.Current.RequestedThemeVariant, out var menuBackgroundColor))
-            {
-                return;
-            }
-
-            if (menuBackgroundColor is not Color color)
-            {
-                return;
-            }
-
-            Background = new SolidColorBrush(color);
-            var lightColor = new SolidColorBrush(Color.Parse("#F0FFFFFF"));
-            FileLogHeaderBorder.Background = FilePanelLogBorder.Background = lightColor;
-        }
-        else
-        {
-            AddFileButton.BorderThickness = AddFolderButton.BorderThickness = new Thickness(0);
-
-            if (!Application.Current.TryGetResource("SoftenColorBrush",
-                    Application.Current.RequestedThemeVariant, out var menuBackgroundColor))
-            {
-                return;
-            }
-
-            if (menuBackgroundColor is not SolidColorBrush color)
-            {
-                return;
-            }
-
-            FileLogHeaderBorder.Background = FilePanelLogBorder.Background = color;
-        }
-
-        AddFileButton.Classes.Remove("altHover");
-        AddFileButton.Classes.Add("hover");
-
-        AddFolderButton.Classes.Remove("altHover");
-        AddFolderButton.Classes.Add("hover");
-    }
+    
 
     private void SubscribeToEvents()
     {

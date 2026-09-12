@@ -1,8 +1,4 @@
-using Avalonia;
-using Avalonia.Media;
 using PicView.Avalonia.ColorManagement;
-using PicView.Core.ViewModels;
-using PicView.Core.ColorHandling;
 using PicView.Core.ISettings;
 
 namespace PicView.Avalonia.Services;

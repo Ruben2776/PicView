@@ -1,30 +1,30 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="RepeatButton" x:Key="SliderDecreaseTheme">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="SliderDecreaseTheme" TargetType="RepeatButton">
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Height" Value="12" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Background="{DynamicResource AccentColor}" Name="DecreaseThemeBorder" />
+                <Border Name="DecreaseThemeBorder" Background="{DynamicResource AccentColor}" />
             </ControlTemplate>
         </Setter>
     </ControlTheme>
-    <ControlTheme TargetType="RepeatButton" x:Key="SliderIncreaseTheme">
+    <ControlTheme x:Key="SliderIncreaseTheme" TargetType="RepeatButton">
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Height" Value="12" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
-                    Background="{DynamicResource AccentColor}"
                     Name="IncreaseThemeBorder"
+                    Background="{DynamicResource AccentColor}"
                     Opacity="0.2" />
             </ControlTemplate>
         </Setter>
     </ControlTheme>
 
-    <ControlTheme TargetType="Slider" x:Key="{x:Type Slider}">
+    <ControlTheme x:Key="{x:Type Slider}" TargetType="Slider">
         <Style Selector="^:horizontal">
             <Setter Property="MinWidth" Value="40" />
             <Setter Property="MinHeight" Value="20" />
@@ -37,9 +37,9 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Track
+                            Name="PART_Track"
                             Grid.Row="1"
                             IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
-                            Name="PART_Track"
                             Orientation="Horizontal">
                             <Track.DecreaseButton>
                                 <RepeatButton Name="PART_DecreaseButton" Theme="{StaticResource SliderDecreaseTheme}" />
@@ -47,13 +47,13 @@
                             <Track.IncreaseButton>
                                 <RepeatButton Name="PART_IncreaseButton" Theme="{StaticResource SliderIncreaseTheme}" />
                             </Track.IncreaseButton>
-                            <Thumb Height="22" Width="22">
+                            <Thumb Width="22" Height="22">
                                 <Thumb.Template>
                                     <ControlTemplate>
                                         <Rectangle
-                                            Fill="{DynamicResource MainButtonBackgroundColor}"
                                             Name="thumb"
-                                            Stroke="{DynamicResource MainBorderColor}"
+                                            Fill="{DynamicResource ScrollbarThumbColor}"
+                                            Stroke="{DynamicResource ScrollbarThumbBorderColor}"
                                             StrokeThickness="1.5" />
                                     </ControlTemplate>
                                 </Thumb.Template>
@@ -79,7 +79,7 @@
         </Style>
     </ControlTheme>
 
-    <ControlTheme TargetType="Slider" x:Key="SetBg">
+    <ControlTheme x:Key="SetBg" TargetType="Slider">
         <Style Selector="^:horizontal">
             <Setter Property="MinWidth" Value="40" />
             <Setter Property="MinHeight" Value="20" />
@@ -92,37 +92,37 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Border
+                            Grid.Row="1"
+                            Height="14"
+                            VerticalAlignment="Center"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            Grid.Row="1"
-                            Height="14"
-                            VerticalAlignment="Center" />
+                            CornerRadius="{TemplateBinding CornerRadius}" />
                         <Track
+                            Name="PART_Track"
                             Grid.Row="1"
                             IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
-                            Name="PART_Track"
                             Orientation="Horizontal">
                             <Track.DecreaseButton>
                                 <RepeatButton
-                                    Background="Transparent"
+                                    Name="PART_DecreaseButton"
                                     Height="12"
-                                    Name="PART_DecreaseButton" />
+                                    Background="Transparent" />
                             </Track.DecreaseButton>
                             <Track.IncreaseButton>
                                 <RepeatButton
-                                    Background="Transparent"
+                                    Name="PART_IncreaseButton"
                                     Height="12"
-                                    Name="PART_IncreaseButton" />
+                                    Background="Transparent" />
                             </Track.IncreaseButton>
-                            <Thumb Height="22" Width="22">
+                            <Thumb Width="22" Height="22">
                                 <Thumb.Template>
                                     <ControlTemplate>
                                         <Rectangle
-                                            Fill="{DynamicResource SecondaryButtonBackgroundColor}"
                                             Name="thumb"
-                                            Stroke="{DynamicResource MainBorderColor}"
+                                            Fill="{DynamicResource ScrollbarThumbColor}"
+                                            Stroke="{DynamicResource ScrollbarThumbBorderColor}"
                                             StrokeThickness="1.5" />
                                     </ControlTemplate>
                                 </Thumb.Template>

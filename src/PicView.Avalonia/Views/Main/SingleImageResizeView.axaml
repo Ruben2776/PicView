@@ -6,11 +6,7 @@
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:MainWindowViewModel">
-    <UserControl.Resources>
-        <SolidColorBrush x:Key="CancelBrush" Color="{DynamicResource MainTextColor}" />
-        <SolidColorBrush x:Key="LinkBrush" Color="{StaticResource SecondaryTextColor}" />
-    </UserControl.Resources>
-    <Panel x:Name="BgPanel" Background="{DynamicResource TertiaryBackgroundColor}">
+    <Panel x:Name="BgPanel" Background="{DynamicResource WindowMainBackgroundColor}">
         <uc:SpinWaiter x:Name="SpinWaiter" IsVisible="False" />
 
         <StackPanel x:Name="ParentContainer">
@@ -22,14 +18,14 @@
                             <TextBlock
                                 Margin="4,0,0,5"
                                 Classes="txt bold"
-                                Foreground="{StaticResource SecondaryTextColor}"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Text="{Binding Translation.Width.Value, Mode=OneWay}" />
                             <customControls:NumTextBox
                                 x:Name="PixelWidthTextBox"
                                 Width="195"
                                 Height="35"
                                 Margin="0"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
+                                BorderThickness="1"
                                 Classes="hover TStyle"
                                 CornerRadius="4"
                                 Foreground="{DynamicResource MainTextColor}"
@@ -44,9 +40,9 @@
                             Height="35"
                             Margin="5,20,5,0"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="MenuItemHover"
                             CornerRadius="6"
-                            Foreground="{StaticResource LinkBrush}"
+                            Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource LinkChainImage}"
                             IconHeight="21"
                             IconWidth="21" />
@@ -56,14 +52,13 @@
                             <TextBlock
                                 Margin="4,0,0,5"
                                 Classes="txt bold"
-                                Foreground="{StaticResource SecondaryTextColor}"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Text="{Binding Translation.Height.Value, Mode=OneWay}" />
                             <customControls:NumTextBox
                                 x:Name="PixelHeightTextBox"
                                 Width="195"
                                 Height="35"
                                 Margin="0"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
                                 Classes="hover TStyle"
                                 CornerRadius="4"
                                 Foreground="{DynamicResource MainTextColor}"
@@ -78,7 +73,7 @@
                             <TextBlock
                                 Margin="5,0,0,2"
                                 Classes="txt bold"
-                                Foreground="{StaticResource SecondaryTextColor}"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Text="{Binding Translation.Quality.Value, Mode=OneWay}" />
                             <customControls:CustomSlider
                                 x:Name="QualitySlider"
@@ -93,7 +88,7 @@
                             <TextBlock
                                 Margin="8,0,0,3"
                                 Classes="txt"
-                                Foreground="{StaticResource SecondaryTextColor}"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Text="{Binding Path=Value, ElementName=QualitySlider}" />
                         </StackPanel>
                         <StackPanel Margin="48,0,0,0">
@@ -102,7 +97,7 @@
                                 Classes="txt"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                                 FontSize="14"
-                                Foreground="{StaticResource SecondaryTextColor}"
+                                Foreground="{DynamicResource MainTextColor}"
                                 Text="{Binding Translation.ConvertTo.Value, Mode=OneWay}" />
                             <ComboBox
                                 x:Name="ConversionComboBox"
@@ -111,8 +106,6 @@
                                 Margin="0"
                                 Padding="5,7,0,7"
                                 HorizontalAlignment="Right"
-                                Background="{DynamicResource SecondaryBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
                                 BorderThickness="1"
                                 CornerRadius="4"
                                 FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
@@ -131,22 +124,22 @@
 
                     <StackPanel Margin="5,10,0,0" Spacing="5">
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="{Binding Translation.OriginalSize.Value, Mode=OneWay}" />
+                            <TextBlock Classes="txt" Text="{Binding Translation.OriginalSize.Value, Mode=OneWay}" />
                             <TextBlock x:Name="CurrentSizeTxt" Classes="txt">
                                 <Run Text="{Binding ResizeImageViewModel.OriginalPixelWidth.Value}" />
                                 <Run Text=" x " />
                                 <Run Text="{Binding ResizeImageViewModel.OriginalPixelHeight.Value}" />
                             </TextBlock>
-                            <TextBlock Text="{Binding ResizeImageViewModel.OriginalFileSize.Value}" />
+                            <TextBlock Classes="txt" Text="{Binding ResizeImageViewModel.OriginalFileSize.Value}" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Spacing="10">
-                            <TextBlock Text="{Binding Translation.OutputSize.Value, Mode=OneWay}" />
+                            <TextBlock Classes="txt" Text="{Binding Translation.OutputSize.Value, Mode=OneWay}" />
                             <TextBlock x:Name="DesiredSizeTxt" Classes="txt">
                                 <Run Text="{Binding ResizeImageViewModel.DesiredPixelWidth.Value}" />
                                 <Run Text=" x " />
                                 <Run Text="{Binding ResizeImageViewModel.DesiredPixelHeight.Value}" />
                             </TextBlock>
-                            <TextBlock Text="{Binding ResizeImageViewModel.OutputFileSize.Value}" />
+                            <TextBlock Classes="txt" Text="{Binding ResizeImageViewModel.OutputFileSize.Value}" />
                         </StackPanel>
                     </StackPanel>
 
@@ -156,13 +149,20 @@
             <StackPanel
                 x:Name="BottomBorder"
                 Height="80"
-                Background="#46252525"
-                Orientation="Horizontal">
+                VerticalAlignment="Center"
+                Background="{DynamicResource ToolWindowFooterBackground}"
+                Orientation="Horizontal"
+                PointerPressed="MoveWindow">
                 <Button
                     x:Name="ResetButton"
                     Width="195"
+                    Height="35"
                     Margin="30,0,60,0"
-                    Classes="BorderStyle altHover mainBtn"
+                    Padding="8"
+                    Background="{DynamicResource ToolWindowButtonBackground}"
+                    BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                    BorderThickness="1"
+                    Classes="AltHover"
                     CornerRadius="4"
                     IsVisible="{Binding ResizeImageViewModel.ShowReset.Value}">
                     <TextBlock
@@ -174,13 +174,18 @@
                 <Button
                     x:Name="CancelButton"
                     Width="195"
+                    Height="35"
                     Margin="30,0,60,0"
-                    Classes="BorderStyle altHover mainBtn"
+                    Padding="8"
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource ToolWindowButtonBackground}"
+                    BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                    BorderThickness="1"
+                    Classes="MenuItemHover"
                     CornerRadius="4"
                     IsVisible="{Binding !ResizeImageViewModel.ShowReset.Value}">
                     <TextBlock
                         Classes="txt"
-                        Foreground="{StaticResource CancelBrush}"
                         Text="{Binding Translation.Cancel.Value, Mode=OneWay}"
                         TextAlignment="Center" />
                 </Button>
@@ -190,7 +195,7 @@
                     Width="195"
                     Padding="8"
                     Background="{DynamicResource AccentColor}"
-                    Classes="BorderStyle accentHover mainBtn"
+                    Classes="accentHover"
                     CornerRadius="4">
                     <TextBlock
                         Classes="txt"

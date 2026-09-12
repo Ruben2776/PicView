@@ -1,31 +1,31 @@
 ﻿<Styles
     xmlns="https://github.com/avaloniaui"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls">
 
     <Style Selector="customControls|DraggableProgressBar">
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
-                    Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                    CornerRadius="{TemplateBinding CornerRadius}"
                     Name="NavigationProgress"
-                    Padding="4">
+                    Padding="4"
+                    Background="{DynamicResource HoverBarBackgroundColor}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
                     <Border
-                        Background="#A4646464"
-                        CornerRadius="16"
+                        Name="PART_Track"
                         Margin="4"
-                        Name="PART_Track">
+                        Background="{DynamicResource HoverBarTrackColor}"
+                        CornerRadius="16">
                         <!--  The Canvas is crucial for positioning the thumb with a transform  -->
                         <Canvas>
                             <Ellipse
-                                Canvas.Bottom="-3"
+                                Name="PART_Thumb"
                                 Canvas.Left="0"
-                                Fill="{TemplateBinding ThumbFill}"
+                                Canvas.Bottom="-3"
+                                Width="16"
                                 Height="16"
                                 Margin="4"
-                                Name="PART_Thumb"
-                                Width="16">
+                                Fill="{DynamicResource HoverBarThumbColor}">
                                 <Ellipse.RenderTransform>
                                     <TranslateTransform X="0" Y="0" />
                                 </Ellipse.RenderTransform>

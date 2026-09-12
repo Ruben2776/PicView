@@ -3,11 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls">
 
-    <Style Selector="Border.borderStyle">
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
-        <Setter Property="BorderThickness" Value="1" />
-    </Style>
-
     <Style Selector="TextBlock.txt">
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
@@ -34,48 +29,27 @@
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
     </Style>
 
-    <Style Selector="TextBlock.txtShadow">
-        <Setter Property="Effect" Value="{StaticResource TextShadow}" />
-    </Style>
-
     <Style Selector="Button.hover, customControls|CopyButton:hover">
         <Style Selector="^:pointerover">
             <Setter Property="Background" Value="{DynamicResource AccentColor}" />
         </Style>
     </Style>
 
-    <Style Selector="Button.ButtonBorder, ToggleButton.ButtonBorder, SplitButton.ButtonBorder">
-        <Setter Property="Height" Value="40" />
-        <Setter Property="Width" Value="147" />
-        <Setter Property="CornerRadius" Value="4" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Focusable" Value="False" />
-        <Setter Property="BorderBrush" Value="{DynamicResource OuterBorderColor}" />
-        <Setter Property="Background" Value="{DynamicResource MainButtonBackgroundColor}" />
-    </Style>
-
-    <Style Selector="Button.BorderStyle, ToggleButton.BorderStyle">
+    <Style Selector="Button.ToolButtonStyle, ToggleButton.ToolButtonStyle">
         <Setter Property="Width" Value="37" />
         <Setter Property="Height" Value="35" />
-        <Setter Property="Margin" Value="7,0,0,0" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+        <Setter Property="Background" Value="{DynamicResource ToolWindowButtonBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ToolWindowButtonBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="2" />
-    </Style>
-
-    <Style Selector="Button.mainBtn, ToggleButton.mainBtn, RepeatButton.mainBtn">
-        <Setter Property="Width" Value="NaN" />
-        <Setter Property="Height" Value="35" />
-        <Setter Property="Padding" Value="10" />
-        <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
     </Style>
 
     <Style Selector="TextBox.TStyle, CalendarDatePicker.TStyle, customControls|DateTimeInput">
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
-        <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+        <Setter Property="Background" Value="{DynamicResource ToolWindowButtonBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ToolWindowButtonBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="2" />
         <Setter Property="Margin" Value="5,0,0,0" />
@@ -89,15 +63,14 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
-    <Style Selector="ComboBox.CStyle">
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
-        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
-        <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundColor}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+    <Style Selector="Button.ToolWindowBorderStyle, ToggleButton.ToolWindowBorderStyle">
+        <Setter Property="Width" Value="37" />
+        <Setter Property="Height" Value="35" />
+        <Setter Property="Margin" Value="7,0,0,0" />
+        <Setter Property="Background" Value="{DynamicResource ToolWindowButtonBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ToolWindowButtonBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="2" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
     <Style Selector="customControls|TextToggleButton.settingsToggleButton">
@@ -125,7 +98,6 @@
         <Setter Property="Height" Value="46" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0,0,1,0" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
         <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
     </Style>
 
@@ -286,6 +258,12 @@
         <Setter Property="Width" Value="12" />
     </Style>
 
+    <Style Selector="Image.WallpaperImage">
+        <Setter Property="Source" Value="{StaticResource WallpaperImage}" />
+        <Setter Property="Height" Value="12" />
+        <Setter Property="Width" Value="12" />
+    </Style>
+
     <Style Selector="Path.ImageInfoPath">
         <Setter Property="Data" Value="{StaticResource ImageInfoGeometry}" />
         <Setter Property="Fill" Value="{DynamicResource MainTextColor}" />
@@ -331,7 +309,6 @@
         <Setter Property="Height" Value="12" />
         <Setter Property="Width" Value="12" />
     </Style>
-
 
     <Style Selector="Path.Xl">
         <Setter Property="Height" Value="15" />

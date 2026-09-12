@@ -24,7 +24,7 @@
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ShowBottomToolbarSearchTags}" Classes="searchBorder">
             <customControls:TextIconButton
                 x:Name="ShowBottomToolbarButton"
-                Classes="altHover settingsTextIconButton"
+                Classes="MenuItemHover settingsTextIconButton"
                 Command="{Binding MainWindows.ActiveWindow.Value.ToggleBottomToolbarCommand}"
                 Icon="{StaticResource Panel-Bottom}"
                 IconHeight="18"
@@ -39,7 +39,7 @@
             <StackPanel>
                 <customControls:TextIconButton
                     x:Name="HideUIButton"
-                    Classes="altHover settingsTextIconButton"
+                    Classes="MenuItemHover settingsTextIconButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleInterfaceCommand}"
                     Icon="{StaticResource EyeImage}"
                     IconHeight="18"
@@ -50,7 +50,7 @@
                                            Mode=OneWay}" />
                 <customControls:TextIconButton
                     x:Name="ShowUIButton"
-                    Classes="altHover settingsTextIconButton"
+                    Classes="MenuItemHover settingsTextIconButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleInterfaceCommand}"
                     Icon="{StaticResource EyeOffImage}"
                     IconHeight="18"
@@ -66,7 +66,7 @@
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ShowFadeInButtonsSearchTags}" Classes="searchBorder">
             <customControls:TextIconButton
                 x:Name="ToggleFadeUIButton"
-                Classes="altHover settingsTextIconButton"
+                Classes="MenuItemHover settingsTextIconButton"
                 Command="{CompiledBinding SettingsViewModel.ToggleFadeButtonsCommand}"
                 Icon="{StaticResource CursorImage}"
                 IconHeight="18"
@@ -80,7 +80,7 @@
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ShowHoverNavigationBarSearchTags}" Classes="searchBorder">
             <customControls:TextIconButton
                 x:Name="ToggleHoverButton"
-                Classes="altHover settingsTextIconButton"
+                Classes="MenuItemHover settingsTextIconButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleHoverBarCommand}"
                 Icon="{StaticResource CursorImage}"
                 IconHeight="18"

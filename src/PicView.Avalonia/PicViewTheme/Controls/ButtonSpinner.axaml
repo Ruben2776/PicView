@@ -1,23 +1,23 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
 
     <ControlTheme
+        x:Key="SimpleButtonSpinnerRepeatButton"
         BasedOn="{StaticResource {x:Type RepeatButton}}"
-        TargetType="RepeatButton"
-        x:Key="SimpleButtonSpinnerRepeatButton">
+        TargetType="RepeatButton">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Style Selector="^ /template/ RepeatButton:pointerover">
-            <Setter Property="Background" Value="{DynamicResource MainBackgroundColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+            <Setter Property="Background" Value="{DynamicResource ToolWindowButtonHover}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ToolWindowButtonBorderHover}" />
         </Style>
     </ControlTheme>
 
-    <ControlTheme TargetType="ButtonSpinner" x:Key="{x:Type ButtonSpinner}">
+    <ControlTheme x:Key="{x:Type ButtonSpinner}" TargetType="ButtonSpinner">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ToolWindowButtonBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -26,61 +26,61 @@
             <ControlTemplate>
                 <DataValidationErrors>
                     <Border
+                        Name="border"
+                        Margin="{TemplateBinding Padding}"
+                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                        Margin="{TemplateBinding Padding}"
-                        Name="border"
-                        VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                        CornerRadius="{TemplateBinding CornerRadius}">
                         <DockPanel>
                             <UniformGrid
+                                Name="PART_SpinnerPanel"
                                 DockPanel.Dock="Right"
                                 IsVisible="{TemplateBinding ShowButtonSpinner}"
-                                Name="PART_SpinnerPanel"
                                 Rows="2"
                                 TabIndex="2">
                                 <RepeatButton
-                                    Classes="altHover"
-                                    IsTabStop="{TemplateBinding IsTabStop}"
                                     Name="PART_IncreaseButton"
                                     Padding="5,0,5,0"
-                                    Theme="{StaticResource SimpleButtonSpinnerRepeatButton}">
-                                    <Path
-                                        Data="M0,5 L4.5,.5 9,5 6,5 4.5,3.5 3,5 z"
-                                        Fill="{DynamicResource MainTextColor}"
-                                        Height="4"
-                                        HorizontalAlignment="Center"
-                                        Stretch="Uniform"
-                                        VerticalAlignment="Center"
-                                        Width="8" />
-                                </RepeatButton>
-                                <RepeatButton
                                     Classes="altHover"
                                     IsTabStop="{TemplateBinding IsTabStop}"
-                                    Name="PART_DecreaseButton"
-                                    Padding="5,0,5,0"
                                     Theme="{StaticResource SimpleButtonSpinnerRepeatButton}">
                                     <Path
-                                        Data="M0,0 L3,0 4.5,1.5 6,0 9,0 4.5,4.5 z"
-                                        Fill="{DynamicResource MainTextColor}"
+                                        Width="8"
                                         Height="4"
                                         HorizontalAlignment="Center"
-                                        Stretch="Uniform"
                                         VerticalAlignment="Center"
-                                        Width="8" />
+                                        Data="M0,5 L4.5,.5 9,5 6,5 4.5,3.5 3,5 z"
+                                        Fill="{DynamicResource MainTextColor}"
+                                        Stretch="Uniform" />
+                                </RepeatButton>
+                                <RepeatButton
+                                    Name="PART_DecreaseButton"
+                                    Padding="5,0,5,0"
+                                    Classes="altHover"
+                                    IsTabStop="{TemplateBinding IsTabStop}"
+                                    Theme="{StaticResource SimpleButtonSpinnerRepeatButton}">
+                                    <Path
+                                        Width="8"
+                                        Height="4"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="M0,0 L3,0 4.5,1.5 6,0 9,0 4.5,4.5 z"
+                                        Fill="{DynamicResource MainTextColor}"
+                                        Stretch="Uniform" />
                                 </RepeatButton>
                             </UniformGrid>
                             <ContentPresenter
+                                Name="PART_ContentPresenter"
+                                Grid.Column="1"
+                                Padding="{TemplateBinding Padding}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Content="{TemplateBinding Content}"
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
-                                Grid.Column="1"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                Name="PART_ContentPresenter"
-                                Padding="{TemplateBinding Padding}"
-                                TabIndex="1"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                TabIndex="1" />
                         </DockPanel>
                     </Border>
                 </DataValidationErrors>
@@ -92,7 +92,7 @@
             </Style>
         </Style>
         <Style Selector="^:pointerover /template/ Border#border">
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ToolWindowButtonBorderHover}" />
         </Style>
         <Style Selector="^:focus /template/ Border#border">
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />

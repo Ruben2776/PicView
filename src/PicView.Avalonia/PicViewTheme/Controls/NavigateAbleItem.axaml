@@ -1,31 +1,27 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="customControls:NavigateAbleItem" x:Key="{x:Type customControls:NavigateAbleItem}">
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type customControls:NavigateAbleItem}" TargetType="customControls:NavigateAbleItem">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="2" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
+                    Name="border"
+                    Padding="{TemplateBinding Padding}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="{TemplateBinding CornerRadius}"
-                    Name="border"
-                    Opacity="0.92"
-                    Padding="{TemplateBinding Padding}">
+                    Opacity="0.92">
                     <ContentPresenter
-                        BorderBrush="Transparent"
-                        BorderThickness="1"
+                        Name="PART_ContentPresenter"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                         Content="{TemplateBinding Content}"
                         ContentTemplate="{TemplateBinding ContentTemplate}"
-                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        Name="PART_ContentPresenter"
-                        TextElement.Foreground="{TemplateBinding Foreground}"
-                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        TextElement.Foreground="{TemplateBinding Foreground}" />
                 </Border>
             </ControlTemplate>
         </Setter>

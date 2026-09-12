@@ -1,59 +1,59 @@
 ﻿<UserControl
     x:Class="PicView.Avalonia.Views.UC.Buttons.SettingsMenuButton"
-    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:CoreViewModel">
     <customControls:IconButton
-        Background="{DynamicResource WindowSecondaryBackgroundColor}"
-        Classes="noBorderHover"
+        x:Name="SettingsButton"
+        Width="30"
+        Background="{DynamicResource WindowButtonBackgroundColor}"
+        Classes="WindowToolButtonHover"
         ClickMode="Press"
         Foreground="{DynamicResource MainTextColor}"
         Icon="{StaticResource MenuImage}"
         IconHeight="12"
         IconWidth="12"
-        IsRepeatEnabled="False"
-        Width="30"
-        x:Name="SettingsButton">
+        IsRepeatEnabled="False">
         <customControls:IconButton.Flyout>
             <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
-                <MenuItem
+                <customControls:StyledMenuItem
+                    x:Name="UserSettingsItem"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.ShowSettingsFileCommand}"
                     Foreground="{DynamicResource MainTextColor}"
-                    Header="UserSettings.json"
-                    x:Name="UserSettingsItem">
+                    Header="UserSettings.json">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource BracesImage}"
-                            Width="12" />
+                            Source="{StaticResource BracesImage}" />
                     </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem
+                </customControls:StyledMenuItem>
+                <customControls:StyledMenuItem
+                    x:Name="KeybindingsItem"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.ShowKeybindingsFileCommand}"
                     Foreground="{DynamicResource MainTextColor}"
-                    Header="keybindings.json"
-                    x:Name="KeybindingsItem">
+                    Header="keybindings.json">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource BracesImage}"
-                            Width="12" />
+                            Source="{StaticResource BracesImage}" />
                     </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem
+                </customControls:StyledMenuItem>
+                <customControls:StyledMenuItem
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.ResetSettingsCommand}"
                     Foreground="{DynamicResource MainTextColor}"
                     Header="{CompiledBinding Translation.ResetButtonText.Value,
                                              Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource ResetImage}"
-                            Width="12" />
+                            Source="{StaticResource ResetImage}" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
             </MenuFlyout>
         </customControls:IconButton.Flyout>
     </customControls:IconButton>

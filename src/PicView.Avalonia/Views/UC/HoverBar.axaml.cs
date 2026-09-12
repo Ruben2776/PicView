@@ -22,12 +22,6 @@ public partial class HoverBar : UserControl, IDisposable
     public HoverBar()
     {
         InitializeComponent();
-        
-        if (!Settings.Theme.Dark)
-        {
-            ChangeHoverClasses();
-        }
-        
         Loaded += OnLoaded;
 
     }

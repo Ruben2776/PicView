@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="CalendarButton" x:Key="{x:Type CalendarButton}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type CalendarButton}" TargetType="CalendarButton">
         <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
         <Setter Property="Background" Value="{DynamicResource AccentColor}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -17,34 +17,27 @@
                 <Grid>
 
                     <Rectangle
+                        Name="SelectedBackground"
                         Fill="{TemplateBinding Background}"
                         IsVisible="False"
-                        Name="SelectedBackground"
                         Opacity="0.75" />
 
                     <Rectangle
+                        Name="Background"
                         Fill="{TemplateBinding Background}"
                         IsVisible="False"
-                        Name="Background"
                         Opacity="0.5" />
 
                     <!--  Focusable="False"  -->
                     <ContentPresenter
+                        x:Name="PART_ContentPresenter"
+                        Padding="20,15"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                         Content="{TemplateBinding Content}"
                         ContentTemplate="{TemplateBinding ContentTemplate}"
                         FontSize="{TemplateBinding FontSize}"
-                        Foreground="{TemplateBinding Foreground}"
-                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        Padding="20,15"
-                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                        x:Name="PART_ContentPresenter" />
-
-                    <Rectangle
-                        IsHitTestVisible="False"
-                        IsVisible="False"
-                        Name="FocusVisual"
-                        Stroke="{DynamicResource HighlightBrush}"
-                        StrokeThickness="1" />
+                        Foreground="{TemplateBinding Foreground}" />
 
                 </Grid>
             </ControlTemplate>
@@ -62,11 +55,7 @@
         </Style>
 
         <Style Selector="^:inactive /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Foreground" Value="{DynamicResource MainTextColorFaded}" />
-        </Style>
-
-        <Style Selector="^:btnfocused /template/ Rectangle#FocusVisual">
-            <Setter Property="IsVisible" Value="True" />
+            <Setter Property="Opacity" Value="0.95" />
         </Style>
     </ControlTheme>
 </ResourceDictionary>

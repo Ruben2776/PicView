@@ -25,8 +25,9 @@
                         Background="Transparent"
                         BorderBrush="{DynamicResource MainBorderColor}"
                         BorderThickness="0,0,1,0"
-                        Classes="noBorderHover"
+                        Classes="AltHover"
                         CornerRadius="4,0,0,4"
+                        Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource GeneralSettingsImage}"
                         IconHeight="18"
                         IconMargin="5,0,10,0"
@@ -44,8 +45,9 @@
                         Width="185"
                         Padding="15,10"
                         Background="Transparent"
-                        Classes="altHover"
+                        Classes="AltHover"
                         CornerRadius="0,4,4,0"
+                        Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource AboutImage}"
                         IconHeight="18"
                         IconMargin="5,0,10,0"
@@ -66,117 +68,105 @@
                 Orientation="Horizontal">
 
                 <!--  Toggle scroll  -->
-                <ToggleButton
+                <customControls:TextToggleButton
                     x:Name="ScrollButton"
                     Width="175"
                     Height="42"
                     Margin="6,0,4,8"
-                    Background="{DynamicResource MenuButtonColor}"
-                    Classes="ButtonBorder altHover"
+                    Background="{DynamicResource MenuButtonBackground}"
+                    Classes="AltHover"
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).ToggleScrollCommand}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsScrollingEnabled.Value}"
+                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.IsScrolling.Value,
+                                           Mode=OneWay}"
+                    TextMaxWidth="155"
                     ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ToggleScroll.Value,
-                                                  Mode=OneWay}">
-                    <TextBlock
-                        MaxWidth="155"
-                        Classes="txt"
-                        Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.IsScrolling.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                                                  Mode=OneWay}" />
 
                 <!--  Zoom to fit  -->
-                <ToggleButton
+                <customControls:TextToggleButton
                     x:Name="ZoomToFitButton"
                     Width="175"
                     Height="42"
                     Margin="6,0,4,8"
-                    Background="{DynamicResource MenuButtonColor}"
-                    Classes="ButtonBorder altHover"
+                    Background="{DynamicResource MenuButtonBackground}"
+                    Classes="AltHover"
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).ZoomToFitCommand}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsZoomedToFit.Value,
                                                 Mode=TwoWay}"
+                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ZoomToFit.Value,
+                                           Mode=OneWay}"
+                    TextMaxWidth="145"
                     ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ZoomToFit.Value,
-                                                  Mode=OneWay}">
-                    <TextBlock
-                        MaxWidth="145"
-                        Classes="txt"
-                        Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ZoomToFit.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                                                  Mode=OneWay}" />
 
                 <!--  Toggle looping  -->
-                <ToggleButton
+                <customControls:TextToggleButton
                     Width="175"
                     Height="42"
                     Margin="6,0,4,8"
-                    Background="{DynamicResource MenuButtonColor}"
-                    Classes="ButtonBorder altHover"
+                    Background="{DynamicResource MenuButtonBackground}"
+                    Classes="AltHover"
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).ToggleLoopingCommand}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsLooping.Value}"
+                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.IsLooping.Value,
+                                           Mode=OneWay}"
+                    TextMaxWidth="155"
                     ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.ToggleScroll.Value,
-                                                  Mode=OneWay}">
-                    <TextBlock
-                        MaxWidth="155"
-                        Classes="txt"
-                        Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.IsLooping.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                                                  Mode=OneWay}" />
 
                 <!--  Toggle auto fit  -->
-                <ToggleButton
+                <customControls:TextToggleButton
                     Width="175"
                     Height="42"
                     Margin="6,0,4,8"
-                    Background="{DynamicResource MenuButtonColor}"
-                    Classes="ButtonBorder altHover"
+                    Background="{DynamicResource MenuButtonBackground}"
+                    Classes="AltHover"
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).AutoFitWindowCommand}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsAutoFit.Value,
                                                 Mode=TwoWay}"
+                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.AutoFitWindow.Value,
+                                           Mode=OneWay}"
+                    TextMaxWidth="145"
                     ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.AutoFitWindow.Value,
-                                                  Mode=OneWay}">
-                    <TextBlock
-                        MaxWidth="145"
-                        Classes="txt"
-                        Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.AutoFitWindow.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                                                  Mode=OneWay}" />
 
                 <!--  Toggle topmost  -->
-                <ToggleButton
+                <customControls:TextToggleButton
                     Width="175"
                     Height="42"
                     Margin="6,0,4,8"
-                    Background="{DynamicResource MenuButtonColor}"
-                    Classes="ButtonBorder altHover"
+                    Background="{DynamicResource MenuButtonBackground}"
+                    Classes="AltHover"
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).SetTopMostCommand}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsTopMost.Value}"
+                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.StayTopMost.Value,
+                                           Mode=OneWay}"
+                    TextMaxWidth="155"
                     ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.StayTopMost.Value,
-                                                  Mode=OneWay}">
-                    <TextBlock
-                        MaxWidth="155"
-                        Classes="txt"
-                        Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.StayTopMost.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                                                  Mode=OneWay}" />
 
                 <!--  Toggle subdirectories  -->
-                <ToggleButton
+                <customControls:TextToggleButton
                     Width="175"
                     Height="42"
                     Margin="6,0,4,8"
-                    Background="{DynamicResource MenuButtonColor}"
-                    Classes="ButtonBorder altHover"
+                    Background="{DynamicResource MenuButtonBackground}"
+                    Classes="AltHover"
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).ToggleSubdirectoriesCommand}"
+                    Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsIncludingSubdirectories.Value,
                                                 Mode=TwoWay}"
+                    Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.SearchSubdirectory.Value,
+                                           Mode=OneWay}"
+                    TextMaxWidth="145"
                     ToolTip.Tip="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.SearchSubdirectory.Value,
-                                                  Mode=OneWay}">
-                    <TextBlock
-                        MaxWidth="145"
-                        Classes="txt"
-                        Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.SearchSubdirectory.Value,
-                                               Mode=OneWay}" />
-                </ToggleButton>
+                                                  Mode=OneWay}" />
             </WrapPanel>
         </StackPanel>
     </customControls:AutoScrollViewer>

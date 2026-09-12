@@ -1,96 +1,98 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="ComboBox" x:Key="{x:Type ComboBox}">
-        <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type ComboBox}" TargetType="ComboBox">
+        <Setter Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundColor}" />
+        <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ToolWindowButtonBorderColor}" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Padding" Value="4" />
         <Setter Property="MinHeight" Value="20" />
-        <Setter Property="PlaceholderForeground" Value="{StaticResource MainTextColorFaded}" />
+        <Setter Property="PlaceholderForeground" Value="{DynamicResource MainTextColorFaded}" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="Continue" />
         <Setter Property="Template">
             <ControlTemplate>
-                <DockPanel LastChildFill="true" Name="Container">
+                <DockPanel Name="Container" LastChildFill="true">
                     <Border
+                        Name="LeftBorder"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="1,0,0,0"
-                        DockPanel.Dock="Left"
-                        Name="LeftBorder" />
+                        DockPanel.Dock="Left" />
                     <Border
+                        Name="TopBorder"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="0,1,0,0"
-                        DockPanel.Dock="Top"
-                        Name="TopBorder" />
+                        DockPanel.Dock="Top" />
                     <Border
+                        Name="RightBorder"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="0,0,1,0"
-                        DockPanel.Dock="Right"
-                        Name="RightBorder" />
+                        DockPanel.Dock="Right" />
                     <Border
+                        Name="BottomBorder"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="0,0,0,1"
-                        DockPanel.Dock="Bottom"
-                        Name="BottomBorder" />
+                        DockPanel.Dock="Bottom" />
                     <Panel Background="{TemplateBinding Background}">
                         <TextBlock
-                            Foreground="{TemplateBinding PlaceholderForeground}"
+                            Name="PlaceholderTextBlock"
+                            Margin="{TemplateBinding Padding}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Foreground="{TemplateBinding PlaceholderForeground}"
                             IsVisible="{TemplateBinding SelectionBoxItem,
                                                         Converter={x:Static ObjectConverters.IsNull}}"
-                            Margin="{TemplateBinding Padding}"
-                            Name="PlaceholderTextBlock"
-                            Text="{TemplateBinding PlaceholderText}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            Text="{TemplateBinding PlaceholderText}" />
                         <RadioButton
+                            Name="toggle"
                             Background="Transparent"
                             BorderThickness="0"
                             ClickMode="Press"
                             Focusable="False"
                             IsChecked="{TemplateBinding IsDropDownOpen,
                                                         Mode=TwoWay}"
-                            Name="toggle"
                             Theme="{StaticResource NoneTemplate}">
                             <Panel>
                                 <ContentControl
-                                    Content="{TemplateBinding SelectionBoxItem}"
-                                    ContentTemplate="{TemplateBinding ItemTemplate}"
-                                    HorizontalAlignment="Left"
+                                    Width="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
                                     Margin="{TemplateBinding Padding}"
-                                    Width="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    HorizontalAlignment="Left"
+                                    Content="{TemplateBinding SelectionBoxItem}"
+                                    ContentTemplate="{TemplateBinding ItemTemplate}" />
                                 <Path
+                                    Width="17"
+                                    Height="17"
+                                    Margin="0,0,5,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
                                     Data="{StaticResource FilledArrowDownGeometry}"
                                     Fill="{TemplateBinding Foreground}"
-                                    Height="17"
-                                    HorizontalAlignment="Right"
-                                    Margin="0,0,5,0"
-                                    Stretch="Fill"
-                                    VerticalAlignment="Center"
-                                    Width="17" />
+                                    Stretch="Fill" />
                             </Panel>
                         </RadioButton>
 
                         <Popup
+                            Name="PART_Popup"
+                            MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
+                            MaxHeight="{TemplateBinding MaxDropDownHeight}"
                             IsLightDismissEnabled="True"
                             IsOpen="{TemplateBinding IsDropDownOpen,
                                                      Mode=TwoWay}"
-                            MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                            MinWidth="{Binding Bounds.Width, RelativeSource={RelativeSource TemplatedParent}}"
-                            Name="PART_Popup"
                             PlacementTarget="{TemplateBinding}">
                             <Border
-                                Background="{DynamicResource DropDownBgColor}"
-                                BorderBrush="{DynamicResource SecondaryBorderColor}"
+                                Background="{DynamicResource ComboBoxDropDownBackgroundColor}"
+                                BorderBrush="{DynamicResource ComboBoxDropDownBorderColor}"
                                 BorderThickness="1,0,1,1">
                                 <customControls:AutoScrollViewer
                                     HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                     IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
-                                    Theme="{StaticResource Main}"
                                     VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
-                                    <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" Name="PART_ItemsPresenter" />
+                                    <ItemsPresenter Name="PART_ItemsPresenter" ItemsPanel="{TemplateBinding ItemsPanel}" />
                                 </customControls:AutoScrollViewer>
                             </Border>
                         </Popup>
@@ -100,16 +102,16 @@
         </Setter>
 
         <Style Selector="^:pointerover /template/ Border#LeftBorder">
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ComboBoxDropDownBorderColor}" />
         </Style>
         <Style Selector="^:pointerover /template/ Border#TopBorder">
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ComboBoxDropDownBorderColor}" />
         </Style>
         <Style Selector="^:pointerover /template/ Border#RightBorder">
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ComboBoxDropDownBorderColor}" />
         </Style>
         <Style Selector="^:pointerover /template/ Border#BottomBorder">
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ComboBoxDropDownBorderColor}" />
         </Style>
 
         <Style Selector="^:focus /template/ ContentPresenter#PART_ContentPresenter">
@@ -123,16 +125,16 @@
         </Style>
 
         <Style Selector="^:dropdownopen /template/ Border#LeftBorder">
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ComboBoxDropDownBorderColor}" />
         </Style>
         <Style Selector="^:dropdownopen /template/ Border#TopBorder">
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ComboBoxDropDownBorderColor}" />
         </Style>
         <Style Selector="^:dropdownopen /template/ Border#RightBorder">
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ComboBoxDropDownBorderColor}" />
         </Style>
         <Style Selector="^:dropdownopen /template/ Border#BottomBorder">
-            <Setter Property="BorderBrush" Value="{DynamicResource TertiaryBorderColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ComboBoxDropDownBorderColor}" />
             <Setter Property="Opacity" Value=".4" />
         </Style>
 

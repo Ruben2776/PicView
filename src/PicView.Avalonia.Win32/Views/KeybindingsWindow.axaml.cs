@@ -13,35 +13,5 @@ public partial class KeybindingsWindow : GenericWindow
     {
         InitializeComponent();
         GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.ApplicationShortcuts, true, config.WindowProperties);
-        if (Settings.Theme.GlassTheme)
-        {
-            TopWindowBorder.Background = Brushes.Transparent;
-            TopWindowBorder.BorderThickness = new Thickness(0);
-            
-            CloseButton.Background = Brushes.Transparent;
-            CloseButton.BorderThickness = new Thickness(0);
-            MinimizeButton.Background = Brushes.Transparent;
-            MinimizeButton.BorderThickness = new Thickness(0);
-            TitleText.Background = Brushes.Transparent;
-            
-            if (!Application.Current.TryGetResource("SecondaryTextColor",
-                    Application.Current.RequestedThemeVariant, out var textColor))
-            {
-                return;
-            }
-
-            if (textColor is not Color color)
-            {
-                return;
-            }
-            
-            TitleText.Foreground = new SolidColorBrush(color);
-            MinimizeButton.Foreground = new SolidColorBrush(color);
-            CloseButton.Foreground = new SolidColorBrush(color);
-        }
-        else if (!Settings.Theme.Dark)
-        {
-            KeybindingsView.Background = UIHelper.GetMenuBackgroundColor();
-        }
     }
 }

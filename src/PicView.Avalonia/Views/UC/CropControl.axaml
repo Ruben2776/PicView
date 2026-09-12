@@ -12,7 +12,7 @@
     <UserControl.Styles>
         <Styles>
             <Style Selector="Border.x">
-                <Setter Property="Background" Value="{DynamicResource SecondaryButtonBackgroundColor}" />
+                <Setter Property="Background" Value="{StaticResource CropBackground}" />
                 <Setter Property="BorderBrush" Value="#fff" />
                 <Setter Property="BorderThickness" Value="2" />
                 <Setter Property="Width" Value="20" />
@@ -24,15 +24,15 @@
     </UserControl.Styles>
     <UserControl.ContextMenu>
         <ContextMenu x:Name="CropContextMenu">
-            <MenuItem Command="{CompiledBinding Crop.CropImageCommand}" Header="{CompiledBinding ParentWindowContext.Translation.Crop.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem Command="{CompiledBinding Crop.CropImageCommand}" Header="{CompiledBinding ParentWindowContext.Translation.Crop.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
                         Width="12"
                         Height="12"
                         Source="{StaticResource CropImage}" />
                 </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Command="{CompiledBinding Crop.CopyCropImageCommand}" Header="{CompiledBinding ParentWindowContext.Translation.Copy.Value, Mode=OneWay}">
+            </customControls:StyledMenuItem>
+            <customControls:StyledMenuItem Command="{CompiledBinding Crop.CopyCropImageCommand}" Header="{CompiledBinding ParentWindowContext.Translation.Copy.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -41,8 +41,8 @@
                         Fill="{StaticResource Brush0}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Command="{CompiledBinding Crop.CloseCropCommand}" Header="{CompiledBinding ParentWindowContext.Translation.Close.Value, Mode=OneWay}">
+            </customControls:StyledMenuItem>
+            <customControls:StyledMenuItem Command="{CompiledBinding Crop.CloseCropCommand}" Header="{CompiledBinding ParentWindowContext.Translation.Close.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -51,7 +51,7 @@
                         Fill="{StaticResource Brush0}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
     <Panel>
@@ -68,8 +68,8 @@
             <Border
                 x:Name="SizeBorder"
                 Padding="8,5"
-                Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                Background="{DynamicResource PopUpBackgroundColor}"
+                BorderBrush="{DynamicResource PopUpMainBorderColor}"
                 BorderThickness="1"
                 CornerRadius="4"
                 IsHitTestVisible="False"

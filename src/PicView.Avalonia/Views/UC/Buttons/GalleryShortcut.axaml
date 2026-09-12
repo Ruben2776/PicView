@@ -13,8 +13,8 @@
         Height="47"
         HorizontalAlignment="Right"
         VerticalAlignment="Bottom"
-        Background="{DynamicResource AltBackgroundColor}"
-        BorderBrush="{DynamicResource MainBorderColor}"
+        Background="{DynamicResource PopUpBackgroundColor}"
+        BorderBrush="{DynamicResource PopUpMainBorderColor}"
         BorderThickness="1,0,0,0"
         Classes="hover"
         Command="{Binding Gallery.ToggleGalleryCommand}"
@@ -26,6 +26,7 @@
                 Width="28"
                 Height="31">
                 <Path
+                    x:Name="Path1"
                     Canvas.Left="0.233"
                     Canvas.Top="0"
                     Canvas.Bottom="5"
@@ -35,6 +36,7 @@
                     Fill="{DynamicResource MainTextColor}"
                     Stretch="Fill" />
                 <Path
+                    x:Name="Path2"
                     Canvas.Left="-10"
                     Canvas.Top="7.03"
                     Canvas.Right="13"
@@ -44,6 +46,7 @@
                     Fill="{DynamicResource MainTextColor}"
                     Stretch="Fill" />
                 <Path
+                    x:Name="Path3"
                     Canvas.Right="14"
                     Canvas.Bottom="12"
                     Width="7"

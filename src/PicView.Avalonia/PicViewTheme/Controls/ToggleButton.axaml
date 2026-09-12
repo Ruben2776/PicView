@@ -1,53 +1,52 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="ToggleButton" x:Key="{x:Type ToggleButton}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type ToggleButton}" TargetType="ToggleButton">
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
             <ControlTemplate TargetType="{x:Type ToggleButton}">
                 <Border
+                    Name="border"
+                    Padding="{TemplateBinding Padding}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}"
-                    Name="border"
-                    Padding="{TemplateBinding Padding}">
+                    CornerRadius="{TemplateBinding CornerRadius}">
                     <StackPanel Orientation="Horizontal">
                         <Decorator
-                            HorizontalAlignment="Center"
                             Margin="8"
+                            HorizontalAlignment="Center"
                             VerticalAlignment="Center">
 
-                            <Canvas Height="20" Width="20">
+                            <Canvas Width="20" Height="20">
                                 <Image
+                                    x:Name="TickMark"
+                                    Width="18"
                                     Height="18"
                                     IsVisible="False"
-                                    Source="{StaticResource SquareCheckImage}"
-                                    Width="18"
-                                    x:Name="TickMark" />
+                                    Source="{StaticResource SquareCheckImage}" />
 
-                                <Path
-                                    Data="{StaticResource CrossMarkGeometry}"
-                                    Fill="{TemplateBinding Foreground}"
-                                    Height="11"
-                                    IsVisible="True"
-                                    Margin="2,3.9,5,0"
-                                    Stretch="Fill"
+                                <PathIcon
+                                    x:Name="CrossMark"
                                     Width="11"
-                                    x:Name="CrossMark" />
+                                    Height="11"
+                                    Margin="2,3.9,5,0"
+                                    Data="{StaticResource CrossMarkGeometry}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    IsVisible="True" />
                             </Canvas>
                         </Decorator>
                         <ContentPresenter
+                            Name="PART_ContentPresenter"
+                            Margin="7,0,5,0"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            Margin="7,0,5,0"
-                            Name="PART_ContentPresenter"
                             RecognizesAccessKey="True"
-                            TextElement.Foreground="{TemplateBinding Foreground}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            TextElement.Foreground="{TemplateBinding Foreground}" />
                     </StackPanel>
                 </Border>
             </ControlTemplate>
@@ -66,78 +65,14 @@
             <Style Selector="^ /template/ Image#TickMark">
                 <Setter Property="IsVisible" Value="False" />
             </Style>
-            <Style Selector="^ /template/ Path#CrossMark">
+            <Style Selector="^ /template/ PathIcon#CrossMark">
                 <Setter Property="IsVisible" Value="True" />
             </Style>
         </Style>
 
-        <Style Selector="^.hover:pointerover /template/ Border#border">
+        <Style Selector="^.AltHover:pointerover /template/ Border#border">
             <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
-                    <KeyFrame>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource AccentColor}" />
-        </Style>
-        <Style Selector="^.hover:pointerover /template/ Image#TickMark">
-            <Setter Property="Source" Value="{DynamicResource SquareCheckAltImage}" />
-        </Style>
-
-        <Style Selector="^.altHover:pointerover /template/ Border#border">
-            <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
-                    <KeyFrame>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource OuterBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
-        </Style>
-
-        <Style Selector="^.foregroundHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
-                    <KeyFrame>
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="{DynamicResource MainTextColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Foreground" Value="{DynamicResource AccentColor}" />
-        </Style>
-
-        <Style Selector="^.noBorderHover:pointerover /template/ Border#border">
-            <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
                     <KeyFrame>
                         <Setter Property="Background">
                             <SolidColorBrush Color="Transparent" />
@@ -145,28 +80,35 @@
                     </KeyFrame>
                     <KeyFrame Cue="1">
                         <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
+                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
                         </Setter>
                     </KeyFrame>
                 </Animation>
             </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
-        </Style>
-        <Style Selector="^.hover:pressed  /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
         </Style>
-        <Style Selector="^.noBorderHover:pressed  /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
+
+        <Style Selector="^.MenuItemHover:pointerover /template/ Border#border">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="Transparent" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource MenuItemHoverBackground}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource MenuItemHoverBackground}" />
         </Style>
+
         <Style Selector="^:disabled">
             <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
         </Style>
 
-        <Style Selector="^.changeColor  /template/ Image#TickMark">
-            <Setter Property="Source" Value="{StaticResource SquareCheckAltImage}" />
-        </Style>
-        <Style Selector="^.changeColor  /template/ Image#CrossMark">
-            <Setter Property="Source" Value="{StaticResource SquareXAltImage}" />
-        </Style>
     </ControlTheme>
 </ResourceDictionary>

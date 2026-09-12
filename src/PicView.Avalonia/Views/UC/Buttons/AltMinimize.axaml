@@ -3,15 +3,16 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    Height="{StaticResource TopBorderHeight}"
     x:DataType="viewModels:MainWindowViewModel"
     Background="Transparent">
     <Button
         x:Name="XButton"
         Width="35"
-        Height="30"
+        Height="{StaticResource TopBorderHeight}"
         VerticalAlignment="Top"
-        Background="{DynamicResource AltBackgroundColor}"
-        BorderBrush="{DynamicResource MainBorderColor}"
+        Background="{DynamicResource PopUpBackgroundColor}"
+        BorderBrush="{DynamicResource PopUpMainBorderColor}"
         BorderThickness="1,0,0,1"
         Classes="hover"
         ClickMode="Release"
@@ -20,6 +21,7 @@
         ZIndex="99">
         <Viewbox Width="15" Height="15">
             <Path
+                x:Name="Icon"
                 Margin="7.5,0,0,7"
                 Data="{StaticResource MinimizeGeometry}"
                 Fill="{DynamicResource MainTextColor}"

@@ -8,6 +8,7 @@ using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
+using Avalonia.Controls.Metadata;
 using PicView.Avalonia.UI;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
@@ -20,8 +21,12 @@ namespace PicView.Avalonia.CustomControls;
 /// for year, month, day, hour, and minute. The order of the fields is
 /// determined by the current culture's date and time formats.
 /// </summary>
+[PseudoClasses(Error, Empty)]
 public class DateTimeInput : TemplatedControl
 {
+    public const string Error = ":error";
+    public const string Empty = ":empty";
+
     /// <summary>
     /// Defines the SelectedDateTime dependency property.
     /// </summary>
@@ -41,6 +46,7 @@ public class DateTimeInput : TemplatedControl
 
     // Flag to prevent recursive updates between the main property and the text boxes.
     private bool _isUpdatingFromProperty;
+    private bool _isUpdatingFromTextBox;
 
     // Holds the TextBoxes for each part of the DateTime.
     private ValidationTextBox? _yearBox, _monthBox, _dayBox, _hourBox, _minuteBox;
@@ -49,6 +55,17 @@ public class DateTimeInput : TemplatedControl
 
     private const string PARTContainer = "PART_Container";
     private DockPanel? _controlsContainer;
+
+    internal ValidationTextBox? YearBox => _yearBox;
+    internal ValidationTextBox? MonthBox => _monthBox;
+    internal ValidationTextBox? DayBox => _dayBox;
+    internal ValidationTextBox? HourBox => _hourBox;
+    internal ValidationTextBox? MinuteBox => _minuteBox;
+
+    public DateTimeInput()
+    {
+        PseudoClasses.Set(Empty, true);
+    }
 
     /// <summary>
     /// Static constructor to register the default style for this control.
@@ -96,6 +113,11 @@ public class DateTimeInput : TemplatedControl
     /// </summary>
     private void OnSelectedDateTimeChanged(AvaloniaPropertyChangedEventArgs e)
     {
+        if (_isUpdatingFromTextBox)
+        {
+            return;
+        }
+
         if (DataContext is MainWindowViewModel vm)
         {
             if (vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo.Value?.Exists == true)
@@ -235,10 +257,15 @@ public class DateTimeInput : TemplatedControl
             TextAlignment = TextAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
             Padding = new Thickness(0),
+            BorderThickness = new Thickness(0),
+            BorderBrush = Brushes.Transparent,
+            Background = Brushes.Transparent,
             FontFamily = UIHelper.MediumFontFamily,
             FontSize = 12,
             MinWidth = maxLength * 7 // fix for macOS not having proper width
         };
+
+        textBox.SetEmpty(true);
 
         // Attach event handlers
         textBox.TextChanged += OnPartTextChanged;
@@ -355,6 +382,39 @@ public class DateTimeInput : TemplatedControl
         textBox.SelectAll();
     }
 
+    private enum ValidationState
+    {
+        Valid,
+        Empty,
+        Error
+    }
+
+    private static ValidationState ValidatePart(ValidationTextBox? box, int min, int max)
+    {
+        if (box == null || string.IsNullOrWhiteSpace(box.Text))
+        {
+            return ValidationState.Empty;
+        }
+
+        if (int.TryParse(box.Text, out var value) && value >= min && value <= max)
+        {
+            return ValidationState.Valid;
+        }
+
+        return ValidationState.Error;
+    }
+
+    private static void ApplyValidationState(ValidationTextBox? box, ValidationState state)
+    {
+        if (box == null)
+        {
+            return;
+        }
+
+        box.SetEmpty(state == ValidationState.Empty);
+        box.SetError(state == ValidationState.Error);
+    }
+
     /// <summary>
     /// Event handler for when text changes in any of the input TextBoxes.
     /// It attempts to parse the current input into a DateTime object.
@@ -366,106 +426,160 @@ public class DateTimeInput : TemplatedControl
         {
             return;
         }
-        
-        ClearError();
 
-        // Try to parse the values from the text boxes into integers.
-        var yearParsed = int.TryParse(_yearBox?.Text, out var year);
-        var monthParsed = int.TryParse(_monthBox?.Text, out var month);
-        var dayParsed = int.TryParse(_dayBox?.Text, out var day);
-        var hourParsed = int.TryParse(_hourBox?.Text, out var hour);
-        var minuteParsed = int.TryParse(_minuteBox?.Text, out var minute);
-
-        // Only update the source property if all fields have a valid number.
-        if (yearParsed && monthParsed && dayParsed && hourParsed && minuteParsed)
+        _isUpdatingFromTextBox = true;
+        try
         {
-            // Adjust hour for 12-hour clock format
-            if (_is12HourClock)
+            var yearState = ValidatePart(_yearBox, 1, 9999);
+            var monthState = ValidatePart(_monthBox, 1, 12);
+            var dayState = ValidatePart(_dayBox, 1, 31);
+            var hourMin = _is12HourClock ? 1 : 0;
+            var hourMax = _is12HourClock ? 12 : 23;
+            var hourState = ValidatePart(_hourBox, hourMin, hourMax);
+            var minuteState = ValidatePart(_minuteBox, 0, 59);
+
+            ApplyValidationState(_yearBox, yearState);
+            ApplyValidationState(_monthBox, monthState);
+            ApplyValidationState(_dayBox, dayState);
+            ApplyValidationState(_hourBox, hourState);
+            ApplyValidationState(_minuteBox, minuteState);
+
+            var hasAnyError = yearState == ValidationState.Error ||
+                              monthState == ValidationState.Error ||
+                              dayState == ValidationState.Error ||
+                              hourState == ValidationState.Error ||
+                              minuteState == ValidationState.Error;
+
+            var hasAnyEmpty = yearState == ValidationState.Empty ||
+                              monthState == ValidationState.Empty ||
+                              dayState == ValidationState.Empty ||
+                              hourState == ValidationState.Empty ||
+                              minuteState == ValidationState.Empty;
+
+            if (hasAnyError)
             {
-                if (!_isAm && hour < 12) // PM and not 12 PM
+                PseudoClasses.Set(Error, true);
+                PseudoClasses.Set(Empty, false);
+                SetCurrentValue(SelectedDateTimeProperty, null);
+            }
+            else if (!hasAnyEmpty)
+            {
+                var year = int.Parse(_yearBox!.Text!);
+                var month = int.Parse(_monthBox!.Text!);
+                var day = int.Parse(_dayBox!.Text!);
+                var hour = int.Parse(_hourBox!.Text!);
+                var minute = int.Parse(_minuteBox!.Text!);
+
+                // Adjust hour for 12-hour clock format
+                if (_is12HourClock)
                 {
-                    hour += 12;
+                    if (!_isAm && hour < 12) // PM and not 12 PM
+                    {
+                        hour += 12;
+                    }
+                    else if (_isAm && hour == 12) // 12 AM
+                    {
+                        hour = 0;
+                    }
                 }
-                else if (_isAm && hour == 12) // 12 AM
-                {
-                    hour = 0;
-                }
-            }
 
-            try
-            {
-                // Attempt to create a valid DateTime object.
-                var newDateTime = new DateTime(year, month, day, hour, minute, 0);
-                SetCurrentValue(SelectedDateTimeProperty, newDateTime);
+                try
+                {
+                    // Attempt to create a valid DateTime object.
+                    var newDateTime = new DateTime(year, month, day, hour, minute, 0);
+                    PseudoClasses.Set(Error, false);
+                    PseudoClasses.Set(Empty, false);
+                    SetCurrentValue(SelectedDateTimeProperty, newDateTime);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    // The combination of year/month/day is invalid (e.g. Feb 30).
+                    _dayBox?.SetError(true);
+                    _dayBox?.SetEmpty(false);
+                    PseudoClasses.Set(Error, true);
+                    PseudoClasses.Set(Empty, false);
+                    SetCurrentValue(SelectedDateTimeProperty, null);
+                }
             }
-            catch (ArgumentOutOfRangeException)
+            else
             {
-                // One of the values is out of range (e.g., month 13).
-                OnError();
+                // Some or all fields are empty, but none in error
+                PseudoClasses.Set(Error, false);
+                PseudoClasses.Set(Empty, true);
+                SetCurrentValue(SelectedDateTimeProperty, null);
             }
         }
-        else
+        finally
         {
-            // If any part is not a valid number, the overall DateTime is invalid.
-            OnError();
-        }
-        return;
-        
-        void OnError()
-        {
-            PseudoClasses.Add(":error");
-            _yearBox?.SetError(true);
-            _monthBox?.SetError(true);
-            _dayBox?.SetError(true);
-            _hourBox?.SetError(true);
-            _minuteBox?.SetError(true);
-            SetCurrentValue(SelectedDateTimeProperty, null);
-        }
-        
-        void ClearError()
-        {
-            PseudoClasses.Remove(":error");
-            _yearBox?.SetError(false);
-            _monthBox?.SetError(false);
-            _dayBox?.SetError(false);
-            _hourBox?.SetError(false);
-            _minuteBox?.SetError(false);
+            _isUpdatingFromTextBox = false;
         }
     }
 
     public DateTime? GetEnteredDateTime()
     {
-        var year = string.IsNullOrWhiteSpace(_yearBox.Text) ? DateTime.Now.Year : int.Parse(_yearBox.Text);
-        if (year is < 1601 or > 9999)
+        if (_yearBox is null || _monthBox is null || _dayBox is null || _hourBox is null || _minuteBox is null)
         {
             return null;
         }
-        
-        var month = string.IsNullOrWhiteSpace(_monthBox.Text) ? DateTime.Now.Month : int.Parse(_monthBox.Text);
-        if (month is < 1 or > 12)
+
+        int year;
+        if (string.IsNullOrWhiteSpace(_yearBox.Text))
+        {
+            year = DateTime.Now.Year;
+        }
+        else if (!int.TryParse(_yearBox.Text, out year) || year is < 1601 or > 9999)
         {
             return null;
         }
-        
-        var day = string.IsNullOrWhiteSpace(_dayBox.Text) ? DateTime.Now.Day : int.Parse(_dayBox.Text);
-        if (day is < 1 or > 31)
+
+        int month;
+        if (string.IsNullOrWhiteSpace(_monthBox.Text))
+        {
+            month = DateTime.Now.Month;
+        }
+        else if (!int.TryParse(_monthBox.Text, out month) || month is < 1 or > 12)
         {
             return null;
         }
-        
-        var hour = string.IsNullOrWhiteSpace(_hourBox.Text) ? DateTime.Now.Hour : int.Parse(_hourBox.Text);
-        if (hour is < 0 or > 23)
+
+        int day;
+        if (string.IsNullOrWhiteSpace(_dayBox.Text))
+        {
+            day = DateTime.Now.Day;
+        }
+        else if (!int.TryParse(_dayBox.Text, out day) || day is < 1 or > 31)
         {
             return null;
         }
-        
-        var minute = string.IsNullOrWhiteSpace(_minuteBox.Text) ? DateTime.Now.Minute : int.Parse(_minuteBox.Text);
-        if (minute is < 0 or > 59)
+
+        int hour;
+        if (string.IsNullOrWhiteSpace(_hourBox.Text))
+        {
+            hour = DateTime.Now.Hour;
+        }
+        else if (!int.TryParse(_hourBox.Text, out hour) || hour is < 0 or > 23)
         {
             return null;
         }
-        
-        return new DateTime(year, month, day, hour, minute, 0);
+
+        int minute;
+        if (string.IsNullOrWhiteSpace(_minuteBox.Text))
+        {
+            minute = DateTime.Now.Minute;
+        }
+        else if (!int.TryParse(_minuteBox.Text, out minute) || minute is < 0 or > 59)
+        {
+            return null;
+        }
+
+        try
+        {
+            return new DateTime(year, month, day, hour, minute, 0);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            return null;
+        }
     }
 
     /// <summary>
@@ -504,6 +618,14 @@ public class DateTimeInput : TemplatedControl
 
             _hourBox!.Text = hour.ToString("D2");
             _minuteBox!.Text = dt.Value.Minute.ToString("D2");
+
+            ApplyValidationState(_yearBox, ValidationState.Valid);
+            ApplyValidationState(_monthBox, ValidationState.Valid);
+            ApplyValidationState(_dayBox, ValidationState.Valid);
+            ApplyValidationState(_hourBox, ValidationState.Valid);
+            ApplyValidationState(_minuteBox, ValidationState.Valid);
+            PseudoClasses.Set(Error, false);
+            PseudoClasses.Set(Empty, false);
         }
         else
         {
@@ -513,13 +635,19 @@ public class DateTimeInput : TemplatedControl
             _dayBox!.Text = string.Empty;
             _hourBox!.Text = string.Empty;
             _minuteBox!.Text = string.Empty;
-            if (!_is12HourClock || _ampmToggle == null)
+            if (_is12HourClock && _ampmToggle != null)
             {
-                return;
+                _isAm = true;
+                _ampmToggle.Content = CultureInfo.CurrentCulture.DateTimeFormat.AMDesignator;
             }
 
-            _isAm = true;
-            _ampmToggle.Content = CultureInfo.CurrentCulture.DateTimeFormat.AMDesignator;
+            ApplyValidationState(_yearBox, ValidationState.Empty);
+            ApplyValidationState(_monthBox, ValidationState.Empty);
+            ApplyValidationState(_dayBox, ValidationState.Empty);
+            ApplyValidationState(_hourBox, ValidationState.Empty);
+            ApplyValidationState(_minuteBox, ValidationState.Empty);
+            PseudoClasses.Set(Error, false);
+            PseudoClasses.Set(Empty, true);
         }
     }
 

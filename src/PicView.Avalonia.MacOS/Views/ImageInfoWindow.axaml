@@ -1,34 +1,31 @@
 <Window
+    ExtendClientAreaTitleBarHeightHint="-1"
+    ExtendClientAreaToDecorationsHint="True"
+    Height="385"
+    MinHeight="320"
+    MinWidth="400"
+    Title="Loading..."
+    Width="900"
+    WindowStartupLocation="Manual"
     x:Class="PicView.Avalonia.MacOS.Views.ImageInfoWindow"
+    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons;assembly=PicView.Avalonia"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    Title="Loading..."
-    Width="900"
-    Height="385"
-    MinWidth="400"
-    MinHeight="320"
-    x:DataType="viewModels:MainWindowViewModel"
-    ExtendClientAreaTitleBarHeightHint="-1"
-    ExtendClientAreaToDecorationsHint="True"
-    WindowStartupLocation="Manual">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <DockPanel PointerPressed="MoveWindow">
         <DockPanel
-            x:Name="WindowBorder"
-            Height="28"
-            Background="{DynamicResource SecondaryBackgroundColor}"
+            Background="{DynamicResource TitleBarBackgroundColor}"
             DockPanel.Dock="Top"
-            LastChildFill="True">
-            <Rectangle Width="70" DockPanel.Dock="Left" />
+            Height="28"
+            LastChildFill="True"
+            x:Name="WindowBorder">
+            <Rectangle DockPanel.Dock="Left" Width="70" />
 
             <customControls:IconButton
-                x:Name="RecycleButton"
-                Width="45"
-                Height="28"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderBrush="{DynamicResource WindowBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="errorHover"
                 ClickMode="Release"
@@ -36,16 +33,17 @@
                 Data="{StaticResource RecycleGeometry}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"
+                Height="28"
                 IconHeight="17"
                 IconWidth="17"
                 IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
                 ToolTip.Tip="{CompiledBinding Translation.DeleteFile.Value,
-                                              Mode=OneWay}" />
+                                              Mode=OneWay}"
+                Width="45"
+                x:Name="RecycleButton" />
 
             <customControls:TextIconButton
-                x:Name="RemoveImageDataButton"
-                Height="28"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderBrush="{DynamicResource WindowBorderColor}"
                 BorderThickness="0,0,1,0"
                 Classes="errorHover"
                 ClickMode="Release"
@@ -53,6 +51,7 @@
                 CommandParameter="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"
+                Height="28"
                 Icon="{StaticResource OffImage}"
                 IconHeight="17"
                 IconMargin="10,0,5,0"
@@ -60,17 +59,17 @@
                 IsEnabled="{Binding Exif.IsExifAvailable.Value, FallbackValue=False}"
                 IsVisible="{Binding InfoWindow.IsExtraButtonsEnabled.Value}"
                 Text="{Binding Translation.RemoveImageData.Value, Mode=OneWay}"
-                TextMargin="5,0,5,0" />
+                TextMargin="5,0,5,0"
+                x:Name="RemoveImageDataButton" />
 
             <customControls:TextIconButton
-                x:Name="OptimizeButton"
-                Height="28"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderBrush="{DynamicResource WindowBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="noBorderHover"
+                Classes="WindowToolButtonHover"
                 Command="{Binding OptimizeImageCommand}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"
+                Height="28"
                 Icon="{StaticResource PortalImage}"
                 IconHeight="17"
                 IconMargin="10,0,5,0"
@@ -82,17 +81,17 @@
                 TextMargin="5,0,5,0"
                 TextMaxWidth="{CompiledBinding InfoWindow.TextBoxMaxWidth.Value}"
                 ToolTip.Tip="{CompiledBinding Translation.OptimizeImage.Value,
-                                              Mode=OneWay}" />
+                                              Mode=OneWay}"
+                x:Name="OptimizeButton" />
 
             <customControls:TextIconButton
-                x:Name="OpenWithButton"
-                Height="28"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderBrush="{DynamicResource WindowBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="noBorderHover"
+                Classes="WindowToolButtonHover"
                 Command="{CompiledBinding OpenWithCommand}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"
+                Height="28"
                 Icon="{StaticResource OpenExternalImage}"
                 IconHeight="17"
                 IconMargin="10,0,5,0"
@@ -103,55 +102,54 @@
                 TextMargin="5,0,5,0"
                 TextMaxWidth="{CompiledBinding InfoWindow.TextBoxMaxWidth.Value}"
                 ToolTip.Tip="{CompiledBinding Translation.OpenWith.Value,
-                                              Mode=OneWay}" />
+                                              Mode=OneWay}"
+                x:Name="OpenWithButton" />
 
 
             <customControls:IconButton
-                x:Name="DuplicateButton"
-                Width="45"
-                Height="28"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderBrush="{DynamicResource WindowBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="noBorderHover"
+                Classes="WindowToolButtonHover"
                 Command="{CompiledBinding DuplicateFileCommand}"
                 Data="{StaticResource DuplicateGeometry}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"
+                Height="28"
                 IconHeight="17"
                 IconWidth="17"
                 IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
                 ToolTip.Tip="{CompiledBinding Translation.DuplicateFile.Value,
-                                              Mode=OneWay}" />
+                                              Mode=OneWay}"
+                Width="45"
+                x:Name="DuplicateButton" />
 
             <customControls:IconButton
-                x:Name="LocateOnDiskButton"
-                Width="45"
-                Height="28"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderBrush="{DynamicResource WindowBorderColor}"
                 BorderThickness="1,0,1,0"
-                Classes="noBorderHover"
+                Classes="WindowToolButtonHover"
                 Command="{CompiledBinding OpenInExplorerCommand}"
                 Data="{StaticResource ShowInFolderGeometry}"
                 DockPanel.Dock="Right"
                 Foreground="{DynamicResource MainTextColor}"
+                Height="28"
                 IconHeight="17"
                 IconWidth="17"
                 IsVisible="{CompiledBinding InfoWindow.IsExtraButtonsEnabled.Value}"
                 ToolTip.Tip="{CompiledBinding Translation.ShowInFolder.Value,
-                                              Mode=OneWay}" />
+                                              Mode=OneWay}"
+                Width="45"
+                x:Name="LocateOnDiskButton" />
 
             <buttons:StarOutlineButtons
-                x:Name="StarOutlineButtons"
                 DockPanel.Dock="Right"
                 IsEnabled="{CompiledBinding Exif.IsExifAvailable.Value,
-                                            FallbackValue=False}" />
+                                            FallbackValue=False}"
+                x:Name="StarOutlineButtons" />
 
             <customControls:IconButton
-                x:Name="RemoveRatingButton"
-                Width="35"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderBrush="{DynamicResource WindowBorderColor}"
                 BorderThickness="0,0,1,0"
-                Classes="noBorderHover"
+                Classes="WindowToolButtonHover"
                 Command="{CompiledBinding Exif.SetExifRating0Command}"
                 CommandParameter="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value}"
                 DockPanel.Dock="Right"
@@ -162,7 +160,9 @@
                 IsEnabled="{CompiledBinding Exif.IsExifAvailable.Value,
                                             FallbackValue=False}"
                 ToolTip.Tip="{CompiledBinding Translation.RemoveStarRating.Value,
-                                              Mode=OneWay}" />
+                                              Mode=OneWay}"
+                Width="35"
+                x:Name="RemoveRatingButton" />
 
             <TextBlock
                 Classes="txt"
@@ -173,9 +173,9 @@
 
         </DockPanel>
         <main:ImageInfoView
-            x:Name="XExifView"
-            Background="{DynamicResource WindowBackgroundColor}"
+            Background="{DynamicResource WindowMainBackgroundColor}"
             DockPanel.Dock="Bottom"
-            PointerPressed="MoveWindow" />
+            PointerPressed="MoveWindow"
+            x:Name="XExifView" />
     </DockPanel>
 </Window>

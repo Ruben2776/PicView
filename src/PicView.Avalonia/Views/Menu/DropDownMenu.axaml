@@ -12,8 +12,8 @@
     <Border
         x:Name="MainBorder"
         Width="380"
-        Background="{DynamicResource MenuBackgroundColor}"
-        BorderBrush="{DynamicResource OuterBorderColor}"
+        Background="{DynamicResource DropDownMenuBackgroundColor}"
+        BorderBrush="{DynamicResource MenuBorderColor}"
         BorderThickness="1"
         CornerRadius="8">
         <DockPanel>
@@ -37,15 +37,15 @@
                         <customControls:IconButton
                             x:Name="GalleryExpandButton"
                             Width="35"
-                            Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                            BorderBrush="{DynamicResource MainBorderColor}"
+                            Background="{DynamicResource DropDownMenuButtonBackground}"
+                            BorderBrush="{DynamicResource DropDownMenuButtonBorderColor}"
                             BorderThickness="0,0,1,0"
-                            Classes="noBorderHover"
+                            Classes="hover"
                             Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenGalleryOptions}"
                             CornerRadius="0,8,0,0"
                             Data="{StaticResource FilledArrowRightGeometry}"
                             DockPanel.Dock="Right"
-                            Foreground="{DynamicResource MainTextColor}"
+                            Foreground="{DynamicResource DropDownMenuButtonForeground}"
                             IconHeight="12"
                             IconWidth="12" />
 
@@ -53,7 +53,7 @@
                             x:Name="MainGalleryButton"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Click="Close_OnClick"
                             Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.ToggleGalleryCommand}"
                             CornerRadius="8,0,0,0"
@@ -70,14 +70,14 @@
                                 x:Name="GalleryContractButton"
                                 Width="35"
                                 HorizontalAlignment="Left"
-                                Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource DropDownMenuButtonBackground}"
+                                BorderBrush="{DynamicResource DropDownMenuButtonBorderColor}"
                                 BorderThickness="0,0,1,0"
-                                Classes="noBorderHover"
+                                Classes="hover"
                                 Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseGalleryOptions}"
                                 CornerRadius="8,0,0,0"
                                 Data="{StaticResource FilledArrowLeftGeometry}"
-                                Foreground="{DynamicResource MainTextColor}"
+                                Foreground="{DynamicResource DropDownMenuButtonForeground}"
                                 IconHeight="12"
                                 IconWidth="12" />
                             <TextBlock
@@ -89,15 +89,14 @@
                         <Rectangle
                             Height="1"
                             Margin="2,0,5,2"
-                            Fill="{DynamicResource MainBorderColor}" />
+                            Fill="{DynamicResource DropDownMenuButtonBorderColor}" />
                         <customControls:TextIconButton
                             x:Name="BottomDockButton"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
-                            CornerRadius="8,0,0,0"
                             DockPanel.Dock="Top"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource GalleryImage}"
@@ -105,16 +104,14 @@
                             IconMargin="0,0,7,0"
                             IconWidth="14"
                             IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value}"
-                            IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value}"
                             Text="{CompiledBinding Translation.ShowDockedGalleryAtBottom.Value}" />
                         <customControls:TextIconButton
                             x:Name="TopDockButton"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Top}"
-                            CornerRadius="8,0,0,0"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource GalleryImage}"
                             IconHeight="14"
@@ -126,10 +123,9 @@
                             x:Name="RightDockButton"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Right}"
-                            CornerRadius="8,0,0,0"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource GalleryImage}"
                             IconHeight="14"
@@ -141,10 +137,9 @@
                             x:Name="LeftDockButton"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Left}"
-                            CornerRadius="8,0,0,0"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource GalleryImage}"
                             IconHeight="14"
@@ -152,6 +147,20 @@
                             IconWidth="14"
                             IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsLeftDocked.Value}"
                             Text="{CompiledBinding Translation.ShowDockedGalleryToTheLeft.Value}" />
+                        <customControls:TextIconButton
+                            Padding="15,7,15,7"
+                            Background="Transparent"
+                            Classes="hover"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.CloseGalleryCommand}"
+                            CornerRadius="0,0,8,8"
+                            Data="{StaticResource CloseGeometry}"
+                            DockPanel.Dock="Top"
+                            Foreground="{DynamicResource MainTextColor}"
+                            IconHeight="12"
+                            IconMargin="0,0,7,0"
+                            IconWidth="12"
+                            IsEnabled="{Binding WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value}"
+                            Text="{CompiledBinding Translation.HideDockedGallery.Value}" />
                     </StackPanel>
                 </Carousel.Items>
             </Carousel>
@@ -160,7 +169,7 @@
                 x:Name="BottomDockButton2"
                 Padding="15,7,15,7"
                 Background="Transparent"
-                Classes="altHover"
+                Classes="hover"
                 Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                 CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
                 CornerRadius="8,0,0,0"
@@ -183,7 +192,7 @@
                 x:Name="HideDockedButton"
                 Padding="15,7,15,7"
                 Background="Transparent"
-                Classes="altHover"
+                Classes="hover"
                 Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.CloseGalleryCommand}"
                 CornerRadius="8,0,0,0"
                 Data="{StaticResource CloseGeometry}"
@@ -205,7 +214,7 @@
                 Height="1"
                 Margin="15,0,0,0"
                 DockPanel.Dock="Top"
-                Fill="{DynamicResource MainBorderColor}" />
+                Fill="{DynamicResource DropDownMenuButtonBorderColor}" />
 
             <!--  Slideshow Carousel  -->
             <Carousel
@@ -227,14 +236,14 @@
                         <customControls:IconButton
                             x:Name="SlideshowExpandButton"
                             Width="35"
-                            Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                            BorderBrush="{DynamicResource MainBorderColor}"
+                            Background="{DynamicResource DropDownMenuButtonBackground}"
+                            BorderBrush="{DynamicResource DropDownMenuButtonBorderColor}"
                             BorderThickness="0,0,1,0"
-                            Classes="noBorderHover"
+                            Classes="hover"
                             Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenSlideshowOptions}"
                             Data="{StaticResource FilledArrowRightGeometry}"
                             DockPanel.Dock="Right"
-                            Foreground="{DynamicResource MainTextColor}"
+                            Foreground="{DynamicResource DropDownMenuButtonForeground}"
                             IconHeight="12"
                             IconWidth="12" />
 
@@ -242,7 +251,7 @@
                             x:Name="MainSlideshowButton"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Click="Close_OnClick"
                             ClickMode="Release"
                             Command="{Binding SlideshowCommand}"
@@ -259,10 +268,10 @@
                                 x:Name="SlideshowContractButton"
                                 Width="35"
                                 HorizontalAlignment="Left"
-                                Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource DropDownMenuButtonBackground}"
+                                BorderBrush="{DynamicResource DropDownMenuButtonBorderColor}"
                                 BorderThickness="0,0,1,0"
-                                Classes="noBorderHover"
+                                Classes="hover"
                                 Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseSlideshowOptions}"
                                 CornerRadius="8,0,0,0"
                                 Data="{StaticResource FilledArrowLeftGeometry}"
@@ -278,12 +287,12 @@
                         <Rectangle
                             Height="1"
                             Margin="5,2"
-                            Fill="{DynamicResource MainBorderColor}" />
+                            Fill="{DynamicResource DropDownMenuButtonBorderColor}" />
                         <customControls:TextIconButton
                             x:Name="SlideShow2Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             CommandParameter="2000"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
@@ -294,7 +303,7 @@
                             x:Name="SlideShow5Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             CommandParameter="5000"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
@@ -305,7 +314,7 @@
                             x:Name="SlideShow10Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             CommandParameter="10000"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
@@ -316,7 +325,7 @@
                             x:Name="SlideShow20Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             CommandParameter="20000"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
@@ -327,7 +336,7 @@
                             x:Name="SlideShow30Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             CommandParameter="30000"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
@@ -338,7 +347,7 @@
                             x:Name="SlideShow60Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             CommandParameter="60000"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
@@ -349,7 +358,7 @@
                             x:Name="SlideShow90Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             CommandParameter="90000"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
@@ -360,7 +369,7 @@
                             x:Name="SlideShow120Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             CommandParameter="120000"
                             CornerRadius="0,0,8,8"
                             Foreground="{DynamicResource MainTextColor}"
@@ -376,14 +385,14 @@
                 Height="1"
                 Margin="15,0,0,0"
                 DockPanel.Dock="Top"
-                Fill="{DynamicResource MainBorderColor}" />
+                Fill="{DynamicResource DropDownMenuButtonBorderColor}" />
 
             <!--  Effects  -->
             <customControls:TextIconButton
                 x:Name="EffectsButton"
                 Padding="15,7,15,7"
                 Background="Transparent"
-                Classes="altHover"
+                Classes="hover"
                 Click="Close_OnClick"
                 Command="{Binding EffectsWindowCommand}"
                 DockPanel.Dock="Top"
@@ -402,7 +411,7 @@
                 x:Name="SingleImageResizeButton"
                 Padding="15,7,15,7"
                 Background="Transparent"
-                Classes="altHover"
+                Classes="hover"
                 Click="Close_OnClick"
                 Command="{Binding ResizeWindowCommand}"
                 DockPanel.Dock="Top"
@@ -419,7 +428,7 @@
                 x:Name="BatchResizeButton"
                 Padding="15,7,15,7"
                 Background="Transparent"
-                Classes="altHover"
+                Classes="hover"
                 Click="Close_OnClick"
                 Command="{Binding BatchResizeWindowCommand}"
                 DockPanel.Dock="Top"
@@ -436,7 +445,7 @@
                 x:Name="ImageInfoButton"
                 Padding="15,7,15,7"
                 Background="Transparent"
-                Classes="altHover"
+                Classes="hover"
                 Click="Close_OnClick"
                 Command="{Binding ImageInfoWindowCommand}"
                 DockPanel.Dock="Top"
@@ -453,10 +462,9 @@
                 x:Name="CropButton"
                 Padding="15,7,15,7"
                 Background="Transparent"
-                Classes="altHover"
+                Classes="hover"
                 Click="Close_OnClick"
                 Command="{Binding CropCommand}"
-                CornerRadius="0,0,8,8"
                 DockPanel.Dock="Top"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource CropImage}"
@@ -470,7 +478,7 @@
                 Height="1"
                 Margin="15,0,0,0"
                 DockPanel.Dock="Top"
-                Fill="{DynamicResource MainBorderColor}" />
+                Fill="{DynamicResource DropDownMenuButtonBorderColor}" />
 
             <!--  Settings Carousel  -->
             <Carousel DockPanel.Dock="Top" SelectedIndex="{Binding TopTitlebarViewModel.DropDownMenu.SettingsCarouselIndex.Value}">
@@ -489,14 +497,14 @@
                         <customControls:IconButton
                             x:Name="SettingsExpandButton"
                             Width="35"
-                            Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                            BorderBrush="{DynamicResource MainBorderColor}"
+                            Background="{DynamicResource DropDownMenuButtonBackground}"
+                            BorderBrush="{DynamicResource DropDownMenuButtonBorderColor}"
                             BorderThickness="0,0,1,0"
-                            Classes="noBorderHover"
+                            Classes="hover"
                             Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenSettingsOptions}"
                             Data="{StaticResource FilledArrowRightGeometry}"
                             DockPanel.Dock="Right"
-                            Foreground="{DynamicResource MainTextColor}"
+                            Foreground="{DynamicResource DropDownMenuButtonForeground}"
                             IconHeight="12"
                             IconWidth="12" />
 
@@ -505,7 +513,7 @@
                             x:Name="SettingsButton"
                             Padding="15,7,15,7"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Click="Close_OnClick"
                             ClickMode="Release"
                             Command="{CompiledBinding SettingsWindowCommand}"
@@ -524,10 +532,10 @@
                                 x:Name="SettingsContractButton"
                                 Width="35"
                                 HorizontalAlignment="Left"
-                                Background="{DynamicResource SecondaryButtonBackgroundColor}"
-                                BorderBrush="{DynamicResource MainBorderColor}"
+                                Background="{DynamicResource DropDownMenuButtonBackground}"
+                                BorderBrush="{DynamicResource DropDownMenuButtonBorderColor}"
                                 BorderThickness="0,0,1,0"
-                                Classes="noBorderHover"
+                                Classes="hover"
                                 Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseSettingsOptions}"
                                 CornerRadius="8,0,0,0"
                                 Data="{StaticResource FilledArrowLeftGeometry}"
@@ -543,14 +551,14 @@
                         <Rectangle
                             Height="1"
                             Margin="5,2"
-                            Fill="{DynamicResource MainBorderColor}" />
+                            Fill="{DynamicResource DropDownMenuButtonBorderColor}" />
 
                         <!--  Auto-fit window  -->
                         <customControls:TextToggleButton
                             x:Name="AutoFitButton"
                             Padding="7,0"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{Binding AutoFitWindowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding IsAutoFit.Value, Mode=TwoWay}"
@@ -564,7 +572,7 @@
                             x:Name="TopMostButton"
                             Padding="7,0"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{Binding SetTopMostCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding IsTopMost.Value, Mode=TwoWay}"
@@ -578,7 +586,7 @@
                             x:Name="LoopingButton"
                             Padding="7,0"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{Binding ToggleLoopingCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=TwoWay}"
@@ -592,7 +600,7 @@
                             x:Name="ScrollButton"
                             Padding="7,0"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{Binding ToggleScrollCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding IsScrollingEnabled.Value, Mode=TwoWay}"
@@ -606,7 +614,7 @@
                             x:Name="ZoomToFitButton"
                             Padding="7,0"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{Binding ZoomToFitCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding IsZoomedToFit.Value, Mode=TwoWay}"
@@ -620,7 +628,7 @@
                             x:Name="SideBySideButton"
                             Padding="7,0"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{Binding SideBySideCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding IsSideBySide.Value, Mode=TwoWay}"
@@ -632,14 +640,14 @@
                         <Rectangle
                             Height="1"
                             Margin="5,0"
-                            Fill="{DynamicResource MainBorderColor}" />
+                            Fill="{DynamicResource DropDownMenuButtonBorderColor}" />
 
                         <!--  About  -->
                         <customControls:TextIconButton
                             x:Name="AboutButton"
                             Padding="15,9"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{Binding AboutWindowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource AboutImage}"
@@ -655,7 +663,7 @@
                             x:Name="KeybindingsButton"
                             Padding="15,9"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{Binding KeybindingsWindowCommand}"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource KeyImage}"
@@ -670,7 +678,7 @@
                             x:Name="AllSettingsButton"
                             Padding="15,9"
                             Background="Transparent"
-                            Classes="altHover"
+                            Classes="hover"
                             Command="{Binding SettingsWindowCommand}"
                             CornerRadius="0,0,8,8"
                             Foreground="{DynamicResource MainTextColor}"
@@ -695,7 +703,7 @@
                     Height="1"
                     Margin="15,0,0,0"
                     DockPanel.Dock="Top"
-                    Fill="{DynamicResource MainBorderColor}" />
+                    Fill="{DynamicResource DropDownMenuButtonBorderColor}" />
 
                 <!--  File history header buttons  -->
                 <DockPanel DockPanel.Dock="Top">
@@ -780,7 +788,7 @@
                         <Rectangle
                             Height="1"
                             Margin="10,5,0,10"
-                            Fill="{DynamicResource MainBorderColor}"
+                            Fill="{DynamicResource DropDownMenuButtonBorderColor}"
                             IsVisible="{CompiledBinding FileHistory.HasPinnedEntries.Value}"
                             Opacity=".85" />
 

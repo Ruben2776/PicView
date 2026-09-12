@@ -1,53 +1,55 @@
 ﻿<UserControl
     x:Class="PicView.Avalonia.CustomControls.CalendarContainer"
     xmlns="https://github.com/avaloniaui"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls">
     <StackPanel>
         <Calendar
+            x:Name="PartCalendar"
             AllowTapRangeSelection="True"
+            Background="{DynamicResource MenuBackgroundColor}"
+            BorderBrush="{DynamicResource MenuBorderColor}"
             BorderThickness="1,1,1,0"
             CornerRadius="2,2,0,0"
-            DisplayDateStart="1601/01/01"
-            x:Name="PartCalendar" />
+            DisplayDateStart="1601/01/01" />
         <Border
+            Margin="0,-2,0,0"
             Background="{DynamicResource MenuBackgroundColor}"
-            BorderBrush="{DynamicResource MainBorderColor}"
+            BorderBrush="{DynamicResource MenuBorderColor}"
             BorderThickness="1"
-            CornerRadius="0,0,4,4"
-            Margin="0,-2,0,0">
+            CornerRadius="0,0,4,4">
             <StackPanel Orientation="Horizontal">
                 <customControls:IconButton
+                    x:Name="CancelButton"
+                    Width="136"
+                    Height="30"
                     Background="Transparent"
-                    Classes="altHover"
+                    Classes="MenuItemHover"
                     CornerRadius="0,0,0,4"
                     Data="{StaticResource CloseGeometry}"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="30"
                     IconHeight="12"
-                    IconWidth="12"
-                    Width="136"
-                    x:Name="CancelButton" />
+                    IconWidth="12" />
                 <customControls:IconButton
-                    Background="Transparent"
-                    Classes="hover"
+                    x:Name="AcceptButton"
+                    Width="136"
+                    Height="30"
+                    Background="{DynamicResource AccentColor}"
+                    Classes="PrimaryBtnHover"
                     CornerRadius="0,0,4,0"
                     Foreground="{DynamicResource MainTextColor}"
-                    Height="30"
                     Icon="{StaticResource CheckmarkImage}"
                     IconHeight="14"
-                    IconWidth="14"
-                    Width="136"
-                    x:Name="AcceptButton" />
+                    IconWidth="14" />
             </StackPanel>
         </Border>
         <Polygon
-            Fill="{DynamicResource MenuBackgroundColor}"
+            x:Name="DownArrow"
             Margin="122,-4,0,0"
+            Fill="{DynamicResource PopUpBackgroundColor}"
             Points="0,0 15,30, 30,0"
-            Stroke="{DynamicResource MainBorderColor}"
+            Stroke="{DynamicResource PopUpMainBorderColor}"
             StrokeThickness="1"
-            ZIndex="-1"
-            x:Name="DownArrow" />
+            ZIndex="-1" />
     </StackPanel>
 </UserControl>

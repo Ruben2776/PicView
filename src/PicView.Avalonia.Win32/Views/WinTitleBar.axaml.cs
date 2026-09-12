@@ -20,53 +20,8 @@ public partial class WinTitleBar : MainTitleBar
         
         Loaded += (_, _) =>
         {
-            if (Settings.Theme.GlassTheme)
-            {
-                ApplyGlassThemeStyles();
-            }
-            else if (!Settings.Theme.Dark)
-            {
-                ApplyLightThemeStyles();
-            }
-
             InitializeEventHandlers();
         };
-    }
-
-    // Extract method: centralize glass theme styling to remove duplication
-    private void ApplyGlassThemeStyles()
-    {
-        GlassThemeHelper.ApplyTransparentStyle(TopWindowBorder);
-        GlassThemeHelper.ApplyTransparentStyle(LogoBorder);
-        GlassThemeHelper.ApplyTransparentStyle(EditableTitlebar);
-        GlassThemeHelper.ApplyTransparentStyle(CloseButton);
-        GlassThemeHelper.ApplyTransparentStyle(MinimizeButton);
-        GlassThemeHelper.ApplyTransparentStyle(RestoreButton);
-        GlassThemeHelper.ApplyTransparentStyle(FullscreenButton);
-        GlassThemeHelper.ApplyTransparentStyle(DropDownMenuButton);
-        GlassThemeHelper.ApplyTransparentStyle(MenuButton);
-        GlassThemeHelper.ApplyTransparentStyle(MainMenu);
-
-        SetSecondaryForeground();
-    }
-    
-    private void SetSecondaryForeground()
-    {
-        var secondaryTextColor = UIHelper.GetBrush("SecondaryTextColor");
-        EditableTitlebar.Foreground = secondaryTextColor;
-        CloseButton.Foreground = secondaryTextColor;
-        MinimizeButton.Foreground = secondaryTextColor;
-        RestoreButton.Foreground = secondaryTextColor;
-        DropDownMenuButton.Foreground = secondaryTextColor;
-        MenuButton.Foreground = secondaryTextColor;
-    }
-    
-    private void ApplyLightThemeStyles()
-    {
-        UIHelper.SwitchHoverBorderClass(MenuButton);
-        UIHelper.SwitchHoverBorderClass(SearchButton);
-        UIHelper.SwitchHoverBorderClass(DropDownMenuButton);
-        UIHelper.SwitchHoverBorderClass(CreateTabButton);
     }
     
     private void InitializeEventHandlers()

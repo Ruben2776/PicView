@@ -27,7 +27,7 @@
                 <customControls:TextIconButton
                     x:Name="ShowBottomDockedGalleryButton"
                     Padding="9,8,8,8"
-                    Classes="altHover settingsTextIconButton"
+                    Classes="MenuItemHover settingsTextIconButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                     CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
                     Icon="{StaticResource GalleryImage}"
@@ -43,7 +43,7 @@
                 <customControls:TextIconButton
                     x:Name="ShowTopDockedGalleryButton"
                     Padding="9,8,8,8"
-                    Classes="altHover settingsTextIconButton"
+                    Classes="MenuItemHover settingsTextIconButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                     CommandParameter="{x:Static gallery:GalleryDockPosition.Top}"
                     Icon="{StaticResource GalleryImage}"
@@ -59,7 +59,7 @@
                 <customControls:TextIconButton
                     x:Name="ShowRightDockedGalleryButton"
                     Padding="9,8,8,8"
-                    Classes="altHover settingsTextIconButton"
+                    Classes="MenuItemHover settingsTextIconButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                     CommandParameter="{x:Static gallery:GalleryDockPosition.Right}"
                     Icon="{StaticResource GalleryImage}"
@@ -75,7 +75,7 @@
                 <customControls:TextIconButton
                     x:Name="ShowLeftDockedGalleryButton"
                     Padding="9,8,8,8"
-                    Classes="altHover settingsTextIconButton"
+                    Classes="MenuItemHover settingsTextIconButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                     CommandParameter="{x:Static gallery:GalleryDockPosition.Left}"
                     Icon="{StaticResource GalleryImage}"
@@ -95,7 +95,7 @@
                 <customControls:TextIconButton
                     x:Name="ToggleDockedGalleryButton"
                     Margin="6"
-                    Classes="altHover settingsTextIconButton"
+                    Classes="MenuItemHover settingsTextIconButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.Gallery.OpenOrCloseDockedGalleryCommand}"
                     Icon="{StaticResource GalleryImage}"
                     IconHeight="16"
@@ -108,7 +108,7 @@
 
                 <customControls:TextToggleButton
                     x:Name="UIHiddenDockedGalleryToggleButton"
-                    Classes="altHover settingsToggleButton"
+                    Classes="MenuItemHover settingsToggleButton"
                     Command="{Binding MainWindows.ActiveWindow.Value.ToggleDockedGalleryInHiddenUICommand}"
                     IsChecked="{CompiledBinding GallerySettings.IsDockedGalleryShownInHiddenUI.Value,
                                                 Mode=OneWay}"
@@ -117,7 +117,7 @@
 
                 <customControls:TextToggleButton
                     x:Name="MotionPhotoBadgesToggleButton"
-                    Classes="altHover settingsToggleButton"
+                    Classes="MenuItemHover settingsToggleButton"
                     IsChecked="{CompiledBinding GallerySettings.ShowMotionPhotoBadges.Value,
                                                 Mode=TwoWay}"
                     Text="{CompiledBinding Translation.ShowMotionPhotoBadges.Value,
@@ -138,8 +138,6 @@
                     Width="300"
                     Margin="0,6,0,15"
                     Padding="5,7,0,7"
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
@@ -268,8 +266,6 @@
                     Width="300"
                     Margin="0,5,0,15"
                     Padding="5,7,0,7"
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
@@ -308,8 +304,6 @@
                     Width="300"
                     Margin="0,5,0,15"
                     Padding="5,7,0,7"
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"

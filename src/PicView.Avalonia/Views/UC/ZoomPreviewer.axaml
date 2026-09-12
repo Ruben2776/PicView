@@ -8,15 +8,15 @@
     Focusable="False">
     <Border
         x:Name="MainBorder"
-        Background="{DynamicResource MainBackgroundColor}"
-        BorderBrush="{DynamicResource MainBorderColor}"
+        Background="{DynamicResource PopUpBackgroundColor}"
+        BorderBrush="{DynamicResource PopUpMainBorderColor}"
         BorderThickness="1"
         CornerRadius="6,6,1,1">
         <StackPanel>
 
             <Border
-                Background="{DynamicResource MainBackgroundColor}"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                Background="{DynamicResource MenuButtonBackground}"
+                BorderBrush="{DynamicResource MenuBorderColor}"
                 BorderThickness="0,0,1,1"
                 CornerRadius="6,6,1,1">
                 <Grid ColumnDefinitions="*,*">
@@ -24,8 +24,10 @@
                         x:Name="ResetZoomButton"
                         Grid.Column="0"
                         Height="25"
+                        MinWidth="25"
                         Padding="1"
-                        Classes="altHover mainBtn"
+                        Background="Transparent"
+                        Classes="hover"
                         Command="{CompiledBinding ParentWindowContext.ResetZoomCommand}"
                         CornerRadius="6,0,0,0"
                         Foreground="{DynamicResource MainTextColor}"
@@ -38,8 +40,10 @@
                         x:Name="CloseButton"
                         Grid.Column="1"
                         Height="25"
+                        MinWidth="25"
                         Padding="1"
-                        Classes="altHover mainBtn"
+                        Background="Transparent"
+                        Classes="hover"
                         CornerRadius="0,6,0,0"
                         Data="{StaticResource CloseGeometry}"
                         Foreground="{DynamicResource MainTextColor}"
@@ -57,12 +61,24 @@
                     <ScaleTransform ScaleX="{Binding ScaleX.Value}" />
                 </LayoutTransformControl.RenderTransform>
                 <Panel>
-                    <customControls:PicBox
-                        x:Name="OverlayImage"
-                        ImageType="{CompiledBinding Model.ImageType,
-                                                    Mode=OneWay,
-                                                    FallbackValue=0}"
-                        Source="{CompiledBinding Image.Value}" />
+                    <DockPanel
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        LastChildFill="False">
+                        <customControls:PicBox
+                            x:Name="OverlayImage"
+                            CurrentFileInfo="{Binding FileInfo.Value}"
+                            DockPanel.Dock="Left"
+                            ImageType="{Binding ImageType.Value}"
+                            Source="{CompiledBinding Image.Value}" />
+                        <customControls:PicBox
+                            x:Name="SecondaryOverlayImage"
+                            CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
+                            DockPanel.Dock="Right"
+                            ImageType="{Binding SecondaryImageType.Value}"
+                            IsVisible="{CompiledBinding ParentWindowContext.IsSideBySide.Value}"
+                            Source="{CompiledBinding SecondaryImage.Value}" />
+                    </DockPanel>
                     <Canvas x:Name="OverlayCanvas">
                         <Rectangle
                             x:Name="ViewportBorder"

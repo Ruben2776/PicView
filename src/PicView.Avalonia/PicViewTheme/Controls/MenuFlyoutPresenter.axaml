@@ -1,22 +1,22 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="MenuFlyoutPresenter" x:Key="{x:Type MenuFlyoutPresenter}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type MenuFlyoutPresenter}" TargetType="MenuFlyoutPresenter">
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
+                    Name="LayoutRoot"
                     Background="{DynamicResource ContextMenuBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource ContextMenuBorderColor}"
                     BorderThickness="1"
-                    CornerRadius="8"
-                    Name="LayoutRoot">
+                    CornerRadius="8">
                     <ItemsPresenter
+                        Name="PART_ItemsPresenter"
+                        Margin="{TemplateBinding Padding}"
                         Grid.IsSharedSizeScope="True"
                         ItemsPanel="{TemplateBinding ItemsPanel}"
-                        KeyboardNavigation.TabNavigation="Continue"
-                        Margin="{TemplateBinding Padding}"
-                        Name="PART_ItemsPresenter" />
+                        KeyboardNavigation.TabNavigation="Continue" />
                 </Border>
             </ControlTemplate>
         </Setter>

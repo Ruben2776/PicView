@@ -1,47 +1,47 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="NumericUpDown" x:Key="{x:Type NumericUpDown}">
-        <Setter Property="Background" Value="{DynamicResource MainBackgroundColor}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MainBorderColor}" />
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type NumericUpDown}" TargetType="NumericUpDown">
+        <Setter Property="Background" Value="{DynamicResource ToolWindowButtonBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ToolWindowButtonBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="4" />
         <Setter Property="Template">
             <ControlTemplate>
                 <DataValidationErrors>
                     <ButtonSpinner
+                        Name="PART_Spinner"
+                        MinWidth="0"
+                        Padding="0"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
                         AllowSpin="{TemplateBinding AllowSpin}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         ButtonSpinnerLocation="{TemplateBinding ButtonSpinnerLocation}"
                         CornerRadius="{TemplateBinding CornerRadius}"
-                        HorizontalContentAlignment="Stretch"
                         IsTabStop="False"
-                        MinWidth="0"
-                        Name="PART_Spinner"
-                        Padding="0"
-                        ShowButtonSpinner="{TemplateBinding ShowButtonSpinner}"
-                        VerticalContentAlignment="Stretch">
+                        ShowButtonSpinner="{TemplateBinding ShowButtonSpinner}">
                         <TextBox
+                            Name="PART_TextBox"
+                            MinWidth="20"
+                            Margin="4"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             AcceptsReturn="False"
                             Background="Transparent"
                             BorderThickness="0"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                             InnerLeftContent="{Binding InnerLeftContent, RelativeSource={RelativeSource TemplatedParent}}"
                             InnerRightContent="{Binding InnerRightContent, RelativeSource={RelativeSource TemplatedParent}}"
                             IsReadOnly="{TemplateBinding IsReadOnly}"
-                            Margin="4"
-                            MinWidth="20"
-                            Name="PART_TextBox"
-                            Padding="{TemplateBinding Padding}"
+                            PlaceholderText="{TemplateBinding Watermark}"
                             ScrollViewer.VerticalScrollBarVisibility="Disabled"
                             Text="{TemplateBinding Text}"
                             TextAlignment="{TemplateBinding TextAlignment}"
-                            TextWrapping="NoWrap"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            PlaceholderText="{TemplateBinding Watermark}" />
+                            TextWrapping="NoWrap" />
                     </ButtonSpinner>
                 </DataValidationErrors>
             </ControlTemplate>

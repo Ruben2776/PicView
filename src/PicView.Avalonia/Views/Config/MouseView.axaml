@@ -34,8 +34,6 @@
                     Width="300"
                     Margin="0,6,0,15"
                     Padding="5,7,0,7"
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
@@ -57,8 +55,6 @@
                     Width="300"
                     Margin="0,6,0,15"
                     Padding="5,7,0,7"
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
@@ -81,8 +77,6 @@
                     Width="300"
                     Margin="0,6,0,15"
                     Padding="5,7,0,7"
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
@@ -107,8 +101,6 @@
                     Width="300"
                     Margin="0,6,0,15"
                     Padding="5,7,0,7"
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
@@ -124,7 +116,7 @@
             <StackPanel>
                 <customControls:TextIconButton
                     x:Name="TouchPadButton"
-                    Classes="altHover settingsTextIconButton"
+                    Classes="MenuItemHover settingsTextIconButton"
                     Command="{CompiledBinding SettingsViewModel.ToggleUsingTouchpadCommand}"
                     Icon="{StaticResource TouchPadImage}"
                     IconHeight="18"
@@ -137,7 +129,7 @@
                     TextMaxWidth="240" />
                 <customControls:TextIconButton
                     x:Name="MouseButton"
-                    Classes="altHover settingsTextIconButton"
+                    Classes="MenuItemHover settingsTextIconButton"
                     Command="{CompiledBinding SettingsViewModel.ToggleUsingTouchpadCommand}"
                     Icon="{StaticResource MouseWheelIcon}"
                     IconHeight="18"

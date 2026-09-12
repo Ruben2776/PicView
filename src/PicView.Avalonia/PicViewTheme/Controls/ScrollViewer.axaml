@@ -1,19 +1,19 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:Avalonia.Controls.Converters"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <ControlTheme TargetType="ScrollViewer" x:Key="{x:Type ScrollViewer}">
+    x:ClassModifier="internal">
+    <ControlTheme x:Key="{x:Type ScrollViewer}" TargetType="ScrollViewer">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,Auto">
                     <ScrollContentPresenter
+                        Name="PART_ContentPresenter"
+                        Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         HorizontalSnapPointsAlignment="{TemplateBinding HorizontalSnapPointsAlignment}"
                         HorizontalSnapPointsType="{TemplateBinding HorizontalSnapPointsType}"
-                        Name="PART_ContentPresenter"
-                        Padding="{TemplateBinding Padding}"
                         ScrollViewer.IsScrollInertiaEnabled="{TemplateBinding IsScrollInertiaEnabled}"
                         VerticalSnapPointsAlignment="{TemplateBinding VerticalSnapPointsAlignment}"
                         VerticalSnapPointsType="{TemplateBinding VerticalSnapPointsType}">
@@ -25,23 +25,23 @@
                         </ScrollContentPresenter.GestureRecognizers>
                     </ScrollContentPresenter>
                     <ScrollBar
-                        Grid.Row="1"
                         Name="PART_HorizontalScrollBar"
+                        Grid.Row="1"
                         Orientation="Horizontal" />
                     <ScrollBar
-                        Grid.Column="1"
                         Name="PART_VerticalScrollBar"
+                        Grid.Column="1"
                         Orientation="Vertical" />
                     <Panel
-                        Background="{DynamicResource MainBackgroundColor}"
+                        Grid.Row="1"
                         Grid.Column="1"
-                        Grid.Row="1" />
+                        Background="{DynamicResource ScrollbarBackgroundColor}" />
                 </Grid>
             </ControlTemplate>
         </Setter>
     </ControlTheme>
 
-    <ControlTheme TargetType="ScrollViewer" x:Key="SimpleMenuScrollViewer">
+    <ControlTheme x:Key="SimpleMenuScrollViewer" TargetType="ScrollViewer">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <ControlTemplate>
@@ -52,10 +52,8 @@
                         Command="{Binding LineUp, RelativeSource={RelativeSource TemplatedParent}}"
                         DockPanel.Dock="Top">
                         <RepeatButton.IsVisible>
-                            <MultiBinding Converter="{x:Static converters:MenuScrollingVisibilityConverter.Instance}"
-                                          ConverterParameter="0">
-                                <Binding Path="VerticalScrollBarVisibility"
-                                         RelativeSource="{RelativeSource TemplatedParent}" />
+                            <MultiBinding Converter="{x:Static converters:MenuScrollingVisibilityConverter.Instance}" ConverterParameter="0">
+                                <Binding Path="VerticalScrollBarVisibility" RelativeSource="{RelativeSource TemplatedParent}" />
                                 <Binding Path="Offset.Y" RelativeSource="{RelativeSource TemplatedParent}" />
                                 <Binding Path="Extent.Height" RelativeSource="{RelativeSource TemplatedParent}" />
                                 <Binding Path="Viewport.Height" RelativeSource="{RelativeSource TemplatedParent}" />
@@ -69,10 +67,8 @@
                         Command="{Binding LineDown, RelativeSource={RelativeSource TemplatedParent}}"
                         DockPanel.Dock="Bottom">
                         <RepeatButton.IsVisible>
-                            <MultiBinding Converter="{x:Static converters:MenuScrollingVisibilityConverter.Instance}"
-                                          ConverterParameter="100">
-                                <Binding Path="VerticalScrollBarVisibility"
-                                         RelativeSource="{RelativeSource TemplatedParent}" />
+                            <MultiBinding Converter="{x:Static converters:MenuScrollingVisibilityConverter.Instance}" ConverterParameter="100">
+                                <Binding Path="VerticalScrollBarVisibility" RelativeSource="{RelativeSource TemplatedParent}" />
                                 <Binding Path="Offset.Y" RelativeSource="{RelativeSource TemplatedParent}" />
                                 <Binding Path="Extent.Height" RelativeSource="{RelativeSource TemplatedParent}" />
                                 <Binding Path="Viewport.Height" RelativeSource="{RelativeSource TemplatedParent}" />
@@ -80,15 +76,15 @@
                         </RepeatButton.IsVisible>
                         <Path Data="M 0 0 L 4 4 L 8 0 Z" />
                     </RepeatButton>
-                    <ScrollContentPresenter Margin="{TemplateBinding Padding}" Name="PART_ContentPresenter" />
+                    <ScrollContentPresenter Name="PART_ContentPresenter" Margin="{TemplateBinding Padding}" />
                 </DockPanel>
             </ControlTemplate>
         </Setter>
-        <Style Selector="^ /template/ RepeatButton > Path">
-            <Setter Property="Fill" Value="{DynamicResource MainBackgroundColor}" />
+        <Style Selector="^ /template/ RepeatButton &gt; Path">
+            <Setter Property="Fill" Value="{DynamicResource ScrollbarIconColor}" />
         </Style>
 
-        <Style Selector="^ /template/ RepeatButton:pointerover > Path">
+        <Style Selector="^ /template/ RepeatButton:pointerover &gt; Path">
             <Setter Property="Fill" Value="{DynamicResource AccentColor}" />
         </Style>
     </ControlTheme>

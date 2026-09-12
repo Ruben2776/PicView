@@ -1,42 +1,40 @@
 ﻿<UserControl
     x:Class="PicView.Avalonia.Views.Config.LanguageView"
-    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:CoreViewModel">
 
     <StackPanel HorizontalAlignment="Center">
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.LanguageSearchTags}">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.LanguageSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="12">
                     <Image
+                        Width="18"
                         Height="18"
-                        Source="{StaticResource LanguageSettingsImage}"
-                        Width="18" />
+                        Source="{StaticResource LanguageSettingsImage}" />
                     <TextBlock
-                        Classes="txt bold searchHeader"
                         Margin="0,20,0,20"
+                        Classes="txt bold searchHeader"
                         Text="{CompiledBinding Translation.Language.Value,
                                                Mode=OneWay}" />
                 </StackPanel>
                 <ComboBox
+                    x:Name="LanguageBox"
+                    Width="300"
+                    Margin="0,0,0,25"
+                    Padding="5,7,0,7"
                     AutoScrollToSelectedItem="True"
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     DisplayMemberBinding="{CompiledBinding DisplayName}"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
                     ItemsSource="{CompiledBinding SettingsViewModel.AvailableLanguages.Value}"
-                    Margin="0,0,0,25"
-                    Padding="5,7,0,7"
                     SelectedValue="{CompiledBinding SettingsViewModel.UserLanguage.Value,
                                                     Mode=TwoWay}"
-                    SelectedValueBinding="{CompiledBinding Code}"
-                    Width="300"
-                    x:Name="LanguageBox" />
+                    SelectedValueBinding="{CompiledBinding Code}" />
             </StackPanel>
         </Border>
     </StackPanel>

@@ -24,7 +24,7 @@
                 <Border
                     x:Name="IconBorder"
                     Background="{DynamicResource WindowButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource WindowBorderColor}"
                     BorderThickness="0,0,1,0"
                     DockPanel.Dock="Left">
                     <Image
@@ -54,7 +54,7 @@
                     x:Name="MinimizeButton"
                     Width="30"
                     Background="{DynamicResource WindowButtonBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    BorderBrush="{DynamicResource WindowBorderColor}"
                     BorderThickness="1,0,1,0"
                     Classes="hover"
                     Click="Minimize"
@@ -69,7 +69,7 @@
                     x:Name="TitleText"
                     Height="28"
                     Padding="30,0,0,0"
-                    Background="{DynamicResource WindowSecondaryBackgroundColor}"
+                    Background="{DynamicResource WindowTitleBackgroundColor}"
                     Classes="txt"
                     Foreground="{DynamicResource MainTextColor}"
                     LineHeight="28"
@@ -86,7 +86,7 @@
             <main:ConvertView
                 x:Name="ConvertView"
                 Margin="0"
-                Background="{DynamicResource NoisyTexture}"
+                Background="{DynamicResource WindowMainBackgroundColor}"
                 Focusable="True" />
         </StackPanel>
     </Border>

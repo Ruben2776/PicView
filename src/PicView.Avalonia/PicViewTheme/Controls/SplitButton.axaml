@@ -1,8 +1,8 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:Avalonia.Controls.Converters"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:ClassModifier="internal">
 
     <x:Double x:Key="SplitButtonPrimaryButtonSize">24</x:Double>
     <x:Double x:Key="SplitButtonSecondaryButtonSize">24</x:Double>
@@ -11,31 +11,35 @@
     <Thickness x:Key="SplitButtonBorderThemeThickness">1</Thickness>
 
     <converters:MarginMultiplierConverter
+        x:Key="PrimaryButtonBorderMultiplier"
         Bottom="True"
         Indent="1"
         Left="True"
-        Top="True"
-        x:Key="PrimaryButtonBorderMultiplier" />
+        Top="True" />
     <converters:MarginMultiplierConverter
+        x:Key="SecondaryButtonBorderMultiplier"
         Bottom="True"
         Indent="1"
         Right="True"
-        Top="True"
-        x:Key="SecondaryButtonBorderMultiplier" />
+        Top="True" />
     <converters:MarginMultiplierConverter
+        x:Key="SeparatorBorderMultiplier"
         Bottom="True"
         Indent="1"
-        Top="True"
-        x:Key="SeparatorBorderMultiplier" />
-    <converters:CornerRadiusFilterConverter Filter="TopLeft, TopRight" x:Key="TopCornerRadiusFilterConverter" />
-    <converters:CornerRadiusFilterConverter Filter="TopRight, BottomRight" x:Key="RightCornerRadiusFilterConverter" />
-    <converters:CornerRadiusFilterConverter Filter="BottomLeft, BottomRight" x:Key="BottomCornerRadiusFilterConverter" />
-    <converters:CornerRadiusFilterConverter Filter="TopLeft, BottomLeft" x:Key="LeftCornerRadiusFilterConverter" />
+        Top="True" />
+    <converters:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="TopLeft, TopRight" />
+    <converters:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="TopRight, BottomRight" />
+    <converters:CornerRadiusFilterConverter x:Key="BottomCornerRadiusFilterConverter" Filter="BottomLeft, BottomRight" />
+    <converters:CornerRadiusFilterConverter x:Key="LeftCornerRadiusFilterConverter" Filter="TopLeft, BottomLeft" />
 
-    <ControlTheme TargetType="Button" x:Key="SimpleSplitButtonComponent">
+    <ControlTheme x:Key="SimpleSplitButtonComponent" TargetType="Button">
         <Setter Property="Template">
             <ControlTemplate>
                 <ContentPresenter
+                    x:Name="PART_ContentPresenter"
+                    Padding="{TemplateBinding Padding}"
+                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
@@ -43,17 +47,13 @@
                     ContentTemplate="{TemplateBinding ContentTemplate}"
                     CornerRadius="{TemplateBinding CornerRadius}"
                     Foreground="{TemplateBinding Foreground}"
-                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                    Padding="{TemplateBinding Padding}"
-                    RecognizesAccessKey="True"
-                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                    x:Name="PART_ContentPresenter" />
+                    RecognizesAccessKey="True" />
             </ControlTemplate>
         </Setter>
 
     </ControlTheme>
 
-    <ControlTheme TargetType="SplitButton" x:Key="{x:Type SplitButton}">
+    <ControlTheme x:Key="{x:Type SplitButton}" TargetType="SplitButton">
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -66,6 +66,14 @@
                 <Grid ColumnDefinitions="*,Auto,Auto">
 
                     <Button
+                        x:Name="PART_PrimaryButton"
+                        Grid.Column="0"
+                        MinWidth="{DynamicResource SplitButtonPrimaryButtonSize}"
+                        Padding="{TemplateBinding Padding}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness,
@@ -81,25 +89,25 @@
                         FontSize="{TemplateBinding FontSize}"
                         FontWeight="{TemplateBinding FontWeight}"
                         Foreground="{TemplateBinding Foreground}"
-                        Grid.Column="0"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                         KeyboardNavigation.IsTabStop="False"
-                        MinWidth="{DynamicResource SplitButtonPrimaryButtonSize}"
-                        Padding="{TemplateBinding Padding}"
-                        Theme="{StaticResource SimpleSplitButtonComponent}"
-                        VerticalAlignment="Stretch"
-                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                        x:Name="PART_PrimaryButton" />
+                        Theme="{StaticResource SimpleSplitButtonComponent}" />
 
                     <Border
-                        Background="Transparent"
-                        BorderBrush="{DynamicResource MainBorderColor}"
-                        BorderThickness="1,0,0,0"
+                        x:Name="SeparatorBorder"
                         Grid.Column="1"
-                        x:Name="SeparatorBorder" />
+                        Background="Transparent"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="1,0,0,0" />
 
                     <Button
+                        x:Name="PART_SecondaryButton"
+                        Grid.Column="2"
+                        MinWidth="{DynamicResource SplitButtonSecondaryButtonSize}"
+                        Padding="0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness,
@@ -108,143 +116,22 @@
                                                        Converter={StaticResource RightCornerRadiusFilterConverter}}"
                         Focusable="False"
                         Foreground="{TemplateBinding Foreground}"
-                        Grid.Column="2"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"
                         KeyboardNavigation.IsTabStop="False"
-                        MinWidth="{DynamicResource SplitButtonSecondaryButtonSize}"
-                        Padding="0"
-                        Theme="{StaticResource SimpleSplitButtonComponent}"
-                        VerticalAlignment="Stretch"
-                        VerticalContentAlignment="Center"
-                        x:Name="PART_SecondaryButton">
+                        Theme="{StaticResource SimpleSplitButtonComponent}">
                         <PathIcon
-                            Data="{StaticResource FilledChevronDownGeometry}"
-                            Foreground="{TemplateBinding Foreground}"
-                            Height="12"
+                            x:Name="PART_ChevronIcon"
                             Width="12"
-                            x:Name="PART_ChevronIcon" />
+                            Height="12"
+                            Data="{StaticResource FilledChevronDownGeometry}"
+                            Foreground="{TemplateBinding Foreground}" />
                     </Button>
                 </Grid>
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^.hover:pointerover /template/ Button#PART_PrimaryButton">
-            <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
-                    <KeyFrame>
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="{DynamicResource MainTextColor}" />
-                        </Setter>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
-                        </Setter>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
-            <Setter Property="Background" Value="{DynamicResource AccentColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
-        </Style>
-        <Style Selector="^.hover:pointerover /template/ Button#PART_SecondaryButton">
-            <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
-                    <KeyFrame>
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="{DynamicResource MainTextColor}" />
-                        </Setter>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Foreground">
-                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
-                        </Setter>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
-            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryAccentColor}" />
-        </Style>
-
-        <Style Selector="^.altHover:pointerover /template/ Button#PART_PrimaryButton">
-            <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
-                    <KeyFrame>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
-        </Style>
-        <Style Selector="^.altHover:pointerover /template/ Button#PART_SecondaryButton">
-            <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
-                    <KeyFrame>
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBackgroundColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                    <KeyFrame Cue="1">
-                        <Setter Property="Background">
-                            <SolidColorBrush Color="{DynamicResource AltBackgroundHoverColor}" />
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource SecondaryBorderColor}" />
-                        </Setter>
-                    </KeyFrame>
-                </Animation>
-            </Style.Animations>
-            <Setter Property="Background" Value="{DynamicResource AltBackgroundHoverColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBorderColor}" />
-        </Style>
-
-
         <Style Selector="^.accentHover:pointerover /template/ Button#PART_PrimaryButton">
             <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
                     <KeyFrame>
                         <Setter Property="Foreground">
                             <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
@@ -253,7 +140,7 @@
                             <SolidColorBrush Color="{DynamicResource AccentColor}" />
                         </Setter>
                         <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
+                            <SolidColorBrush Color="{DynamicResource ToolWindowButtonBorderColor}" />
                         </Setter>
                     </KeyFrame>
                     <KeyFrame Cue="1">
@@ -275,7 +162,7 @@
         </Style>
         <Style Selector="^.accentHover:pointerover /template/ Button#PART_SecondaryButton">
             <Style.Animations>
-                <Animation Duration="{StaticResource ButtonHoverAnimationDuration}" IterationCount="1">
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
                     <KeyFrame>
                         <Setter Property="Foreground">
                             <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
@@ -284,7 +171,7 @@
                             <SolidColorBrush Color="{DynamicResource AccentColor}" />
                         </Setter>
                         <Setter Property="BorderBrush">
-                            <SolidColorBrush Color="{DynamicResource MainBorderColor}" />
+                            <SolidColorBrush Color="{DynamicResource ToolWindowButtonBorderColor}" />
                         </Setter>
                     </KeyFrame>
                     <KeyFrame Cue="1">

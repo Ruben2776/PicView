@@ -27,8 +27,6 @@ public partial class SingleImageResizeView : UserControl
             return;
         }
 
-        ApplyThemeAdjustments();
-
         mainVm.ResizeImageViewModel.Initialize(mainVm);
         var vm = mainVm.ResizeImageViewModel;
 
@@ -68,34 +66,6 @@ public partial class SingleImageResizeView : UserControl
         
         PixelWidthTextBox.KeyDown -= TextBoxOnKeyDown;
         PixelHeightTextBox.KeyDown -= TextBoxOnKeyDown;
-    }
-
-    private void ApplyThemeAdjustments()
-    {
-        if (!Settings.Theme.Dark || Settings.Theme.GlassTheme)
-        {
-            BgPanel.Background = Brushes.Transparent;
-        }
-
-        if (Settings.Theme.Dark)
-        {
-            return;
-        }
-
-        var topBg = new SolidColorBrush(Color.FromArgb(65, 162, 162, 162));
-        var bottomBg = new SolidColorBrush(Color.FromArgb(93, 162, 162, 162));
-        MainBorder.Background = topBg;
-        BottomBorder.Background = bottomBg;
-
-        var noThickness = new Thickness(0);
-        PixelWidthTextBox.BorderThickness = noThickness;
-        PixelHeightTextBox.BorderThickness = noThickness;
-
-        if (TryGetResource("CancelBrush", Application.Current.RequestedThemeVariant, out var cBrush) && cBrush is SolidColorBrush brush)
-        {
-            UIHelper.SetButtonHover(CancelButton, brush);
-        }
-        UIHelper.SwitchAccentHoverClass(CancelButton);
     }
 
     private void RegisterEventHandlers(MainWindowViewModel mainVm)
@@ -143,6 +113,14 @@ public partial class SingleImageResizeView : UserControl
         if (Application.Current.TryGetResource(resourceName, Application.Current.RequestedThemeVariant, out var link) && link is DrawingImage linkImage)
         {
             LinkChainButton.Icon = linkImage;
+        }
+    }
+
+    private void MoveWindow(object? sender, PointerPressedEventArgs e)
+    {
+        if (TopLevel.GetTopLevel(this) is Window window)
+        {
+            window.BeginMoveDrag(e);
         }
     }
 }

@@ -31,7 +31,6 @@ public partial class StartUpMenu : UserControl
     private void StartUpMenu_Loaded(object? sender, RoutedEventArgs e)
     {
         FilePasteLabel.Content = TranslationManager.Translation.FilePaste ?? "Paste";
-        OpenFileDialogLabel.Content = TranslationManager.Translation.OpenFileDialog ?? "Open File";
         OpenLastFileLabel.Content = TranslationManager.Translation.OpenLastFile ?? "Open Last File";
 
         SelectFileButton.PointerEntered += SelectFileButtonOnPointerEntered;
@@ -45,11 +44,6 @@ public partial class StartUpMenu : UserControl
         PasteButton.PointerEntered += PasteButtonOnPointerEntered;
         PasteButton.PointerExited += PasteButtonOnPointerExited;
         PasteButton.AddHandler(PointerPressedEvent, PasteClick, RoutingStrategies.Tunnel);
-
-        if (!Settings.Theme.Dark)
-        {
-            Background = new SolidColorBrush(Color.FromArgb(242, 217, 217, 217));
-        }
 
         if (DataContext is not TabViewModel tab)
         {
@@ -94,7 +88,7 @@ public partial class StartUpMenu : UserControl
             return;
         }
 
-        if (!this.TryFindResource("SecondaryTextColor", Application.Current.RequestedThemeVariant, out var color))
+        if (!this.TryFindResource("StartUpMenuForeground", Application.Current.RequestedThemeVariant, out var color))
         {
             return;
         }
@@ -121,7 +115,7 @@ public partial class StartUpMenu : UserControl
             return;
         }
 
-        if (!this.TryFindResource("SecondaryTextColor", Application.Current.RequestedThemeVariant, out var color))
+        if (!this.TryFindResource("StartUpMenuForeground", Application.Current.RequestedThemeVariant, out var color))
         {
             return;
         }
@@ -158,7 +152,7 @@ public partial class StartUpMenu : UserControl
             return;
         }
 
-        if (!this.TryFindResource("SecondaryTextColor", Application.Current.RequestedThemeVariant, out var color))
+        if (!this.TryFindResource("StartUpMenuForeground", Application.Current.RequestedThemeVariant, out var color))
         {
             return;
         }

@@ -49,9 +49,7 @@
                                         Source="{CompiledBinding Image.Value}" />
                                     <mp:MotionPhotoView x:Name="MotionPhotoView" />
                                 </Grid>
-                                <Grid
-                                    DockPanel.Dock="Right"
-                                    IsVisible="{CompiledBinding ParentWindowContext.IsSideBySide.Value}">
+                                <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.IsSideBySide.Value}">
                                     <customControls:PicBox
                                         x:Name="SecondaryImage"
                                         CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
@@ -87,18 +85,20 @@
                 x:Name="HoverBar"
                 VerticalAlignment="Bottom"
                 ZIndex="2" />
-            <!-- Floating host for the motion photo badges. Living outside MainTransform,
-                 the badges stay upright while the code-behind anchors each one to the
-                 on-screen top-right corner of its image, regardless of rotation,
-                 flipping or zooming. -->
+            <!--
+                Floating host for the motion photo badges. Living outside MainTransform,
+                the badges stay upright while the code-behind anchors each one to the
+                on-screen top-right corner of its image, regardless of rotation,
+                flipping or zooming.
+            -->
             <Panel x:Name="MotionPhotoBadgeHost" ZIndex="2" />
-        <buttons:GalleryShortcut
-            x:Name="GalleryShortcut"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            IsVisible="{CompiledBinding !ParentWindowContext.IsBottomToolbarShown.Value}"
-            Opacity="0"
-            ZIndex="2" />
+            <buttons:GalleryShortcut
+                x:Name="GalleryShortcut"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                IsVisible="{CompiledBinding !ParentWindowContext.IsBottomToolbarShown.Value}"
+                Opacity="0"
+                ZIndex="2" />
         </Panel>
     </DockPanel>
 </UserControl>

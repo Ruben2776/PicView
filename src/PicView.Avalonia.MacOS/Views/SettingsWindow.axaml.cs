@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
@@ -18,24 +17,6 @@ public partial class SettingsWindow : GenericWindow
         InitializeComponent();
 
         GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.Settings, false, config.WindowProperties);
-        if (!Settings.Theme.Dark || Settings.Theme.GlassTheme)
-        {
-            TitleText.Background = Brushes.Transparent;
-            SettingsView.Background = Brushes.Transparent;
-            SettingsButton.Background = Brushes.Transparent;
-            
-            HomeButton.Classes.Remove("noBorderHover");
-            HomeButton.Classes.Add("hover");
-            GoBackButton.Classes.Remove("noBorderHover");
-            GoBackButton.Classes.Add("hover");
-            GoForwardButton.Classes.Remove("noBorderHover");
-            GoForwardButton.Classes.Add("hover");
-        }
-
-        if (!Settings.Theme.Dark)
-        {
-            MainBorder.Background = UIHelper.GetMenuBackgroundColor();
-        }
         Loaded += delegate
         {
             SettingsView.Focus();

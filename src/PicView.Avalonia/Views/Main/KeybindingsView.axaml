@@ -22,23 +22,23 @@
                 Padding="50,7,4,7"
                 VerticalAlignment="Center"
                 Background="Transparent"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                 BorderThickness="1"
                 CornerRadius="4"
                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                 Foreground="{DynamicResource MainTextColor}"
+                PlaceholderText="{CompiledBinding Translation.Filter.Value,
+                                                  Mode=OneWay}"
                 Text="{CompiledBinding Keybindings.FilterText.Value,
                                        FallbackValue='',
-                                       Mode=TwoWay}"
-                PlaceholderText="{CompiledBinding Translation.Filter.Value,
-                                            Mode=OneWay}" />
+                                       Mode=TwoWay}" />
 
             <!--  clear  -->
             <customControls:IconButton
                 x:Name="ClearButton"
                 Padding="10,3,10,3"
                 HorizontalAlignment="Right"
-                Classes="altHover"
+                Classes="AltHover"
                 Command="{CompiledBinding Keybindings.ClearFilteringCommand}"
                 Data="{StaticResource CloseGeometry}"
                 Foreground="{DynamicResource MainTextColorFaded}"

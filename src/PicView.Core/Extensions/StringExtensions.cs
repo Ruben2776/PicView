@@ -126,6 +126,33 @@ public static partial class StringExtensions
     }
 
     /// <summary>
+    /// Combines current progress and total value into a "current/total" string efficiently with only one allocation.
+    /// </summary>
+    /// <param name="current">The current progress value.</param>
+    /// <param name="total">The total maximum value.</param>
+    /// <returns>A string in the format "{current}/{total}".</returns>
+    public static string CombineProgress(int current, int total)
+    {
+        Span<char> currentBuffer = stackalloc char[32];
+        Span<char> totalBuffer = stackalloc char[32];
+
+        if (!current.TryFormat(currentBuffer, out var currentLength) ||
+            !total.TryFormat(totalBuffer, out var totalLength))
+        {
+            return string.Empty;
+        }
+
+        var requiredLength = currentLength + 1 + totalLength;
+
+        return string.Create(requiredLength, (current, total, currentLength), static (destination, state) =>
+        {
+            state.current.TryFormat(destination[..state.currentLength], out _);
+            destination[state.currentLength] = '/';
+            state.total.TryFormat(destination[(state.currentLength + 1)..], out _);
+        });
+    }
+
+    /// <summary>
     /// Extracts the percentage value from the string, if present.
     /// </summary>
     /// <param name="text">The string containing a percentage value.</param>

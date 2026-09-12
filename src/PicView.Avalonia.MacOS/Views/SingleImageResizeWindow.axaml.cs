@@ -1,4 +1,3 @@
-using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Core.Extensions;
@@ -14,9 +13,5 @@ public partial class SingleImageResizeWindow : GenericWindow
         DataContext = vm;
         InitializeComponent();
         GenericWindowHelper.GenericWindowInitialize(this, StringExtensions.CombineWithAppName(TranslationManager.Translation.ResizeImage));
-        if (!Settings.Theme.Dark || Settings.Theme.GlassTheme)
-        {
-            XAboutView.Background = Brushes.Transparent;
-        }
     }
 }

@@ -32,7 +32,7 @@
         </customControls:AutoScrollViewer>
         <Button
             Background="Transparent"
-            Classes=" altHover"
+            Classes="AltHover"
             Padding="7"
             VerticalAlignment="Bottom"
             x:Name="CancelButton">

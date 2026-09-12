@@ -53,7 +53,7 @@
                     Classes="accentHover"
                     ClickMode="Release"
                     Command="{Binding PinCommand}"
-                    Foreground="{DynamicResource MainTextColor}"
+                    Foreground="{StaticResource SecondaryTextColor}"
                     Icon="{StaticResource PinImage}"
                     IconHeight="14"
                     IconWidth="14"
@@ -67,7 +67,7 @@
                     Classes="accentHover"
                     ClickMode="Release"
                     Command="{Binding UnpinCommand}"
-                    Foreground="{DynamicResource MainTextColor}"
+                    Foreground="{StaticResource SecondaryTextColor}"
                     Icon="{StaticResource UnPinImage}"
                     IconHeight="14"
                     IconWidth="14"
@@ -82,7 +82,7 @@
                     ClickMode="Release"
                     Command="{CompiledBinding RemoveCommand}"
                     Data="{StaticResource CloseGeometry}"
-                    Foreground="{DynamicResource MainTextColor}"
+                    Foreground="{StaticResource SecondaryTextColor}"
                     IconHeight="12"
                     IconWidth="12"
                     ToolTip.Tip="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.Remove.Value}" />
@@ -96,12 +96,16 @@
                 DockPanel.Dock="Left"
                 Foreground="{DynamicResource MainTextColor}">
                 <ToolTip.Tip>
-                    <StackPanel MaxWidth="500" MaxHeight="700">
-                        <!--  TODO: Show thumbnail here  -->
-                        <Image />
+                    <StackPanel MaxWidth="300" MaxHeight="700">
+                        <customControls:ThumbImage
+                            Height="150"
+                            MaxWidth="250"
+                            HorizontalAlignment="Center"
+                            Source="{CompiledBinding GetThumbnail^,
+                                                     TargetNullValue={StaticResource LogoImage}}" />
                         <TextBlock
                             Classes="txt"
-                            Foreground="{DynamicResource ContextMenuTextColor}"
+                            Foreground="{DynamicResource ContextMenuForegroundColor}"
                             Text="{Binding FilePath.Value}" />
                     </StackPanel>
                 </ToolTip.Tip>

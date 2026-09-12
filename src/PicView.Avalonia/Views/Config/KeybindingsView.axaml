@@ -1,43 +1,44 @@
 ﻿<UserControl
     x:Class="PicView.Avalonia.Views.Config.KeybindingsView"
-    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:CoreViewModel">
 
     <StackPanel HorizontalAlignment="Center">
 
-        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.KeybindingsSearchTags}">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.KeybindingsSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Spacing="12">
                     <Image
+                        Width="18"
                         Height="18"
-                        Source="{StaticResource KeyImage}"
-                        Width="18" />
+                        Source="{StaticResource KeyImage}" />
                     <TextBlock
-                        Classes="txt bold searchHeader"
                         Margin="0,20,0,20"
+                        Classes="txt bold searchHeader"
                         Text="{CompiledBinding Translation.ApplicationShortcuts.Value,
                                                Mode=OneWay}" />
                 </StackPanel>
                 <customControls:TextIconButton
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
+                    x:Name="KeyBindingsButton"
+                    Width="300"
+                    Padding="6"
+                    HorizontalAlignment="Center"
+                    Background="{DynamicResource MenuBackgroundColor}"
+                    BorderBrush="{DynamicResource MenuBorderColor}"
                     BorderThickness="1"
-                    Classes="altHover"
+                    Classes="MenuItemHover"
                     Command="{Binding MainWindows.ActiveWindow.Value.KeybindingsWindowCommand}"
                     CornerRadius="4"
-                    HorizontalAlignment="Center"
+                    Foreground="{DynamicResource MainTextColor}"
                     Icon="{StaticResource KeyImage}"
                     IconHeight="18"
                     IconMargin="5,5,10,5"
                     IconWidth="18"
-                    Padding="6"
-                    Text="{Binding Translation.ApplicationShortcuts.Value}"
-                    Width="300"
-                    x:Name="KeyBindingsButton" />
+                    Text="{Binding Translation.ApplicationShortcuts.Value}" />
             </StackPanel>
         </Border>
     </StackPanel>

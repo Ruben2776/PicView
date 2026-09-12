@@ -15,15 +15,18 @@
             Margin="0,-15,-10,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
-            Background="{DynamicResource SecondaryButtonBackgroundColor}"
-            BorderBrush="{DynamicResource MainBorderColor}"
+            Background="{DynamicResource PopUpBackgroundColor}"
+            BorderBrush="{DynamicResource PopUpMainBorderColor}"
             BorderThickness="1"
             Classes="hover"
             Click="CloseMenu"
             CornerRadius="50"
             Data="{StaticResource CloseGeometry}"
+            Focusable="True"
+            Foreground="{DynamicResource MainTextColor}"
             IconHeight="18"
             IconWidth="18"
+            IsTabStop="True"
             ZIndex="1" />
         <StackPanel
             Width="425"
@@ -40,11 +43,8 @@
                 x:Name="RenameBox"
                 Margin="10,5"
                 Padding="6"
-                VerticalAlignment="Center"
-                Background="{DynamicResource AltBackgroundColor}"
-                BorderBrush="{DynamicResource MainBorderColor}"
-                BorderThickness="1"
-                Classes="hover TStyle"
+                Classes="TStyle"
+                Focusable="True"
                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                 Foreground="{DynamicResource MainTextColor}"
                 IsReadOnly="False"
@@ -58,9 +58,11 @@
                 Orientation="Horizontal">
                 <Button
                     x:Name="CancelButton"
+                    Width="NaN"
                     Margin="0,0,10,0"
                     Padding="30,0"
-                    Classes="BorderStyle altHover mainBtn"
+                    Classes="ToolWindowBorderStyle ToolButtonHover"
+                    Focusable="True"
                     HotKey="Escape"
                     IsCancel="True"
                     IsTabStop="True">
@@ -71,13 +73,18 @@
                 </Button>
                 <Button
                     x:Name="ApplyButton"
+                    Width="NaN"
                     Padding="30,0"
                     Background="{DynamicResource AccentColor}"
-                    Classes="BorderStyle accentHover mainBtn"
+                    Classes="ToolWindowBorderStyle PrimaryBtnHover"
+                    Focusable="True"
                     HotKey="Enter"
                     IsDefault="True"
                     IsTabStop="True">
-                    <TextBlock Classes="txt" Text="{CompiledBinding Translation.Apply.Value}" />
+                    <TextBlock
+                        Classes="txt"
+                        Foreground="{StaticResource SecondaryTextColor}"
+                        Text="{CompiledBinding Translation.Apply.Value}" />
                 </Button>
             </StackPanel>
         </StackPanel>

@@ -11,7 +11,7 @@
     <customControls:AnimatedPopUp.Resources>
         <ContextMenu x:Key="MainMenu">
             <!--  Close  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 x:Name="CloseMenuItem"
                 Click="CloseMenu"
                 Header="{CompiledBinding Translation.Close.Value,
@@ -24,7 +24,7 @@
                         Fill="{DynamicResource MainTextColor}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
         </ContextMenu>
     </customControls:AnimatedPopUp.Resources>
 
@@ -36,8 +36,8 @@
             Margin="0,-15,-10,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
-            Background="{DynamicResource SecondaryButtonBackgroundColor}"
-            BorderBrush="{DynamicResource MainBorderColor}"
+            Background="{DynamicResource PopUpBackgroundColor}"
+            BorderBrush="{DynamicResource PopUpMainBorderColor}"
             BorderThickness="1"
             Classes="hover"
             Click="CloseMenu"
@@ -63,34 +63,31 @@
                     Height="16"
                     Margin="20,0,0,5"
                     HorizontalAlignment="Left"
-                    Source="{StaticResource SearchImage}" />
+                    Source="{StaticResource SearchImage}"
+                    ZIndex="1" />
 
                 <customControls:FuncTextBox
                     x:Name="SearchBox"
                     Width="400"
                     Margin="0,0,0,5"
-                    Padding="27,7,4,7"
+                    Padding="35,7,4,7"
                     VerticalAlignment="Center"
-                    Background="{DynamicResource AltBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     CornerRadius="3"
-                    Focusable="True"
-                    FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
-                    Foreground="{DynamicResource MainTextColor}"
-                    PlaceholderText="{CompiledBinding Translation.Search.Value,
+                    Watermark="{CompiledBinding Translation.Search.Value,
                                                 Mode=OneWay}" />
             </Panel>
 
             <Border
-                BorderBrush="{DynamicResource MainBorderColor}"
+                BorderBrush="{DynamicResource MenuBorderColor}"
                 BorderThickness="0,1,1,1"
                 CornerRadius="6"
                 IsVisible="{Binding !!SharedNavigationService.FilteredFileInfos.Value.Count}">
                 <customControls:AutoScrollViewer MaxHeight="550">
                     <Border
-                        Background="#10000000"
-                        Classes="borderStyle"
+                        Background="{DynamicResource MenuBackgroundColor}"
+                        BorderBrush="{DynamicResource MenuBorderColor}"
+                        BorderThickness="1"
                         CornerRadius="6">
                         <ItemsControl
                             x:Name="SearchItemsControl"
@@ -101,9 +98,9 @@
                                     <Button
                                         Padding="5,10"
                                         Background="Transparent"
-                                        BorderBrush="{DynamicResource MainBorderColor}"
+                                        BorderBrush="{DynamicResource MenuBorderColor}"
                                         BorderThickness="0,0,0,1"
-                                        Classes="noBorderHover focus"
+                                        Classes="MenuItemHover"
                                         Command="{Binding #SearchBox.((viewModels:CoreViewModel)DataContext).SharedNavigationService.LoadFromStringCommand}"
                                         CommandParameter="{Binding File.FullName}"
                                         Focusable="True"

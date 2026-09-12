@@ -8,12 +8,12 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border
-        BorderBrush="{DynamicResource MainBorderColor}"
+        BorderBrush="{DynamicResource WindowBorderColor}"
         BorderThickness="1"
         CornerRadius="8">
         <DockPanel LastChildFill="True">
             <DockPanel
-                Background="{DynamicResource WindowBackgroundColor}"
+                Background="{DynamicResource TitleBarBackgroundColor}"
                 DockPanel.Dock="Top"
                 Height="{StaticResource TopBorderHeight}"
                 PointerPressed="MoveWindow"
@@ -24,7 +24,7 @@
                                            Mode=OneWay}"
                     TextAlignment="Center" />
             </DockPanel>
-            <main:BatchResizeView Background="{DynamicResource NoisyTexture}" />
+            <main:BatchResizeView Background="{DynamicResource WindowMainBackgroundColor}" />
         </DockPanel>
     </Border>
 </Window>

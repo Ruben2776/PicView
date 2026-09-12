@@ -6,6 +6,7 @@ using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Views.UC.Buttons;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.UI;
@@ -99,6 +100,23 @@ public static class UIHelper
     public static void SetButtonInterval(IconButton? button)
     {
         button?.Interval = (int)TimeSpan.FromSeconds(Settings.UIProperties.NavSpeed).TotalMilliseconds;
+    }
+    
+    public static T? GetResource<T>(object key)
+    {
+        if (!Application.Current.TryGetResource(key, Application.Current.RequestedThemeVariant, out var resource))
+        {
+            return default;
+        }
+
+        if (resource is T value)
+        {
+            return value;
+        }
+#if DEBUG
+        DebugHelper.LogDebug(nameof(UIHelper), nameof(GetResource), "Missing resource: " + key);
+#endif
+        return default;
     }
 
     public static DrawingImage? GetIcon(string resourceName)

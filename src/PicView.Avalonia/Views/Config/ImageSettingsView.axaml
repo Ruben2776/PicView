@@ -25,7 +25,7 @@
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageScrollingSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="ScrollToggleButton"
-                Classes="altHover settingsToggleButton"
+                Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleScrollCommand}"
                 IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.IsScrollingEnabled.Value}"
                 Text="{CompiledBinding Translation.IsScrolling.Value,
@@ -36,7 +36,7 @@
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.ImageSideBySideSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="SideBySideToggleButton"
-                Classes="altHover settingsToggleButton"
+                Classes="MenuItemHover settingsToggleButton"
                 Command="{CompiledBinding MainWindows.ActiveWindow.Value.SideBySideCommand}"
                 IsChecked="{Binding MainWindows.ActiveWindow.Value.IsSideBySide.Value, Mode=OneWay}"
                 Text="{CompiledBinding Translation.SideBySide.Value,
@@ -48,7 +48,7 @@
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MotionPhotoSearchTags}" Classes="searchBorder">
             <customControls:TextToggleButton
                 x:Name="AutoPlayMotionPhotosToggleButton"
-                Classes="altHover settingsToggleButton"
+                Classes="MenuItemHover settingsToggleButton"
                 IsChecked="{CompiledBinding SettingsViewModel.IsAutoPlayingMotionPhotos.Value,
                                             Mode=TwoWay}"
                 Text="{CompiledBinding Translation.AutoPlayMotionPhotos.Value,
@@ -68,8 +68,6 @@
                     Width="300"
                     Margin="0,6,0,10"
                     Padding="5,7,0,7"
-                    Background="{DynamicResource SecondaryBackgroundColor}"
-                    BorderBrush="{DynamicResource MainBorderColor}"
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"

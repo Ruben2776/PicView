@@ -49,10 +49,6 @@ public partial class BatchResizeWindow : GenericWindow, IDisposable
             MinimizeButton.Foreground = new SolidColorBrush(color);
             CloseButton.Foreground = new SolidColorBrush(color);
         }
-        else if (!Settings.Theme.Dark)
-        {
-
-        }
 
         GenericWindowHelper.GenericWindowInitialize(this, StringExtensions.CombineWithAppName(TranslationManager.Translation.BatchResize), false, config.WindowProperties);
         Loaded += delegate

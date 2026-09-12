@@ -33,7 +33,6 @@
                 <ResourceInclude Source="Controls/ItemsControl.axaml" />
                 <ResourceInclude Source="Controls/ListBox.axaml" />
                 <ResourceInclude Source="Controls/ListBoxItem.axaml" />
-                <ResourceInclude Source="Controls/MainScrollbar.axaml" />
                 <ResourceInclude Source="Controls/Menu.axaml" />
                 <ResourceInclude Source="Controls/MenuFlyoutPresenter.axaml" />
                 <ResourceInclude Source="Controls/MenuItem.axaml" />
