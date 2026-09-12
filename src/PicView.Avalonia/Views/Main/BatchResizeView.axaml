@@ -27,11 +27,11 @@
                 CornerRadius="6">
                 <Border.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="{CompiledBinding Translation.Cancel, Mode=OneWay}">
+                        <customControls:StyledMenuItem Header="{CompiledBinding Translation.Cancel, Mode=OneWay}">
                             <MenuItem.Icon>
                                 <Path Classes="RestorePath" />
                             </MenuItem.Icon>
-                        </MenuItem>
+                        </customControls:StyledMenuItem>
                     </ContextMenu>
                 </Border.ContextMenu>
                 <customControls:AutoScrollViewer MinHeight="50">
@@ -290,11 +290,11 @@
                             BorderThickness="1"
                             FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                             Foreground="{DynamicResource MainTextColor}"
+                            PlaceholderText="{CompiledBinding Translation.Filter.Value,
+                                                              Mode=OneWay}"
                             Text="{CompiledBinding BatchResize.FilterText.Value,
                                                    FallbackValue='',
-                                                   Mode=TwoWay}"
-                            PlaceholderText="{CompiledBinding Translation.Filter.Value,
-                                                        Mode=OneWay}" />
+                                                   Mode=TwoWay}" />
 
                         <!--  File count  -->
                         <StackPanel

@@ -97,7 +97,7 @@
             <ContextMenu x:Name="GalleryContextMenu">
 
                 <!--  Open with  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     x:Name="OpenWith"
                     Click="OpenWith_OnClick"
                     Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.OpenWith.Value,
@@ -108,10 +108,10 @@
                             Height="12"
                             Source="{StaticResource OpenExternalImage}" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Locate on disk  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     x:Name="LocateOnDisk"
                     Click="LocateOnDisk_OnClick"
                     Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ShowInFolder.Value,
@@ -119,17 +119,17 @@
                     <MenuItem.Icon>
                         <Path Classes="ShowInFolderPath" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
                 <Separator />
 
                 <!--  Set as wallpaper  -->
-                <MenuItem x:Name="WallpaperMenuItem" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.SetAsWallpaper.Value, Mode=OneWay}">
+                <customControls:StyledMenuItem x:Name="WallpaperMenuItem" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.SetAsWallpaper.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
 
                     <!--  Set as wallpaper filled  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         x:Name="WallpaperFilled"
                         Click="WallpaperFilled_OnClick"
                         Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fill.Value,
@@ -137,10 +137,10 @@
                         <MenuItem.Icon>
                             <Image Classes="WallpaperImage" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Set as wallpaper fit  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         x:Name="WallpaperFitted"
                         Click="WallpaperFitted_OnClick"
                         Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Fit.Value,
@@ -148,10 +148,10 @@
                         <MenuItem.Icon>
                             <Image Classes="WallpaperImage" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Set as wallpaper stretched  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         x:Name="WallpaperStretched"
                         Click="WallpaperStretched_OnClick"
                         Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value,
@@ -159,11 +159,11 @@
                         <MenuItem.Icon>
                             <Image Classes="WallpaperImage" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
 
                     <!--  Set as wallpaper centered  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         x:Name="WallpaperCentered"
                         Click="WallpaperCentered_OnClick"
                         Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Center.Value,
@@ -171,10 +171,10 @@
                         <MenuItem.Icon>
                             <Image Classes="WallpaperImage" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Set as wallpaper tiled  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         x:Name="WallpaperTiled"
                         Click="WallpaperTiled_OnClick"
                         Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Tile.Value,
@@ -182,10 +182,10 @@
                         <MenuItem.Icon>
                             <Image Classes="WallpaperImage" />
                         </MenuItem.Icon>
-                    </MenuItem>
-                </MenuItem>
+                    </customControls:StyledMenuItem>
+                </customControls:StyledMenuItem>
 
-                <MenuItem
+                <customControls:StyledMenuItem
                     x:Name="CopyFile"
                     Click="CopyFile_OnClick"
                     Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.CopyFile.Value,
@@ -198,9 +198,9 @@
                             Fill="{DynamicResource MainTextColor}"
                             Stretch="Fill" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
-                <MenuItem
+                <customControls:StyledMenuItem
                     x:Name="CopyImage"
                     Click="CopyImage_OnClick"
                     Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.CopyImage.Value,
@@ -213,9 +213,9 @@
                             Fill="{DynamicResource MainTextColor}"
                             Stretch="Fill" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
-                <MenuItem x:Name="CopyBase64" Click="CopyBase64_OnClick">
+                <customControls:StyledMenuItem x:Name="CopyBase64" Click="CopyBase64_OnClick">
                     <MenuItem.Header>
                         <TextBlock>
                             <Run Text="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Copy.Value, Mode=OneWay}" />
@@ -230,9 +230,9 @@
                             Fill="{DynamicResource MainTextColor}"
                             Stretch="Fill" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
-                <MenuItem
+                <customControls:StyledMenuItem
                     x:Name="DuplicateFile"
                     Click="DuplicateFile_OnClick"
                     Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.DuplicateFile.Value,
@@ -245,11 +245,11 @@
                             Fill="{DynamicResource MainTextColor}"
                             Stretch="Fill" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <Separator />
 
-                <MenuItem
+                <customControls:StyledMenuItem
                     x:Name="DeleteFile"
                     Click="DeleteFile_OnClick"
                     Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.DeleteFile.Value,
@@ -262,88 +262,88 @@
                             Fill="{DynamicResource MainTextColor}"
                             Stretch="Fill" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
                 <Separator />
 
                 <!--  Expanded menu items  -->
-                <MenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}">
+                <customControls:StyledMenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
                         <Image
                             Width="12"
                             Height="12"
                             Source="{StaticResource Image}" />
                     </MenuItem.Icon>
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.Uniform}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Uniform.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedStretchUniform.Value}"
                         ToggleType="Radio" />
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.UniformToFill}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.UniformToFill.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedStretchUniformToFill.Value}"
                         ToggleType="Radio" />
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.Square}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Square.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedStretchSquare.Value}"
                         ToggleType="Radio" />
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.FillSquare}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.FillSquare.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsExpandedStretchSquareFill.Value}"
                         ToggleType="Radio" />
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Docked menu items  -->
-                <MenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding !$parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}">
+                <customControls:StyledMenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding !$parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
                         <Image
                             Width="12"
                             Height="12"
                             Source="{StaticResource Image}" />
                     </MenuItem.Icon>
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.Uniform}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Uniform.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsDockedStretchUniform.Value}"
                         ToggleType="Radio" />
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.UniformToFill}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.UniformToFill.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsDockedStretchUniformToFill.Value}"
                         ToggleType="Radio" />
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.Square}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Square.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsDockedStretchSquare.Value}"
                         ToggleType="Radio" />
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"
                         CommandParameter="{x:Static gallerySettings:GalleryStretchMode.FillSquare}"
                         Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.FillSquare.Value, Mode=OneWay}"
                         IsChecked="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.IsDockedStretchSquareFill.Value}"
                         ToggleType="Radio" />
-                </MenuItem>
-                <MenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ExpandedGalleryItemSize.Value, Mode=OneWay}" PointerPressed="ShowGalleryItemSizeSlider">
+                </customControls:StyledMenuItem>
+                <customControls:StyledMenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ExpandedGalleryItemSize.Value, Mode=OneWay}" PointerPressed="ShowGalleryItemSizeSlider">
                     <MenuItem.Icon>
                         <Image
                             Width="12"
                             Height="12"
-                            Source="{StaticResource Image}" />
+                            Source="{StaticResource ImageOutLine}" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <Separator />
 
-                <MenuItem Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.ToggleGalleryCommand}" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ShowImageGallery.Value, Mode=OneWay}">
+                <customControls:StyledMenuItem Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.ToggleGalleryCommand}" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ShowImageGallery.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Width="12"
@@ -352,9 +352,9 @@
                             Fill="{DynamicResource MainTextColor}"
                             Stretch="Fill" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
                 <Separator />
-                <MenuItem
+                <customControls:StyledMenuItem
                     Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.ContractToDockedOrCloseGalleryCommand}"
                     Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.HideDockedGallery.Value,
                                              Mode=OneWay}"
@@ -367,8 +367,8 @@
                             Fill="{DynamicResource MainTextColor}"
                             Stretch="Fill" />
                     </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem
+                </customControls:StyledMenuItem>
+                <customControls:StyledMenuItem
                     Command="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.ContractToDockedOrCloseGalleryCommand}"
                     Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.CloseGallery.Value,
                                              Mode=OneWay}"
@@ -381,7 +381,7 @@
                             Fill="{DynamicResource MainTextColor}"
                             Stretch="Fill" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
             </ContextMenu>
         </Border.ContextMenu>
     </Border>

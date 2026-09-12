@@ -61,7 +61,7 @@
     </UserControl.Styles>
     <UserControl.ContextMenu>
         <ContextMenu x:Name="EffectsContextMenu">
-            <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.SaveCommand}" Header="{CompiledBinding Translation.Save.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.SaveCommand}" Header="{CompiledBinding Translation.Save.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -70,8 +70,8 @@
                         Fill="{DynamicResource MainTextColor}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.SaveAsCommand}" Header="{CompiledBinding Translation.SaveAs.Value}">
+            </customControls:StyledMenuItem>
+            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.SaveAsCommand}" Header="{CompiledBinding Translation.SaveAs.Value}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -80,8 +80,8 @@
                         Fill="{DynamicResource MainTextColor}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.CopyImageCommand}" Header="{CompiledBinding Translation.CopyImage.Value, Mode=OneWay}">
+            </customControls:StyledMenuItem>
+            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.CopyImageCommand}" Header="{CompiledBinding Translation.CopyImage.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -90,9 +90,9 @@
                         Fill="{DynamicResource MainTextColor}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
             <Separator />
-            <MenuItem
+            <customControls:StyledMenuItem
                 Command="{Binding MainWindows.ActiveWindow.Value.SetAsWallpaperCommand}"
                 Header="{CompiledBinding Translation.SetAsWallpaper.Value,
                                          Mode=OneWay}"
@@ -100,18 +100,18 @@
                 <MenuItem.Icon>
                     <Image Classes="WallpaperImage" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
             <Separator IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}" />
-            <MenuItem x:Name="ClearEffectsItem" Header="{CompiledBinding Translation.ClearEffects.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem x:Name="ClearEffectsItem" Header="{CompiledBinding Translation.ClearEffects.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
                         Width="12"
                         Height="12"
                         Source="{StaticResource ClearImage}" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
             <Separator />
-            <MenuItem x:Name="CloseItem" Header="{CompiledBinding Translation.Close.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem x:Name="CloseItem" Header="{CompiledBinding Translation.Close.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -120,7 +120,7 @@
                         Fill="{DynamicResource MainTextColor}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
 

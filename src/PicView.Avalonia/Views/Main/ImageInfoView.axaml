@@ -23,7 +23,7 @@
         <ContextMenu x:Name="MainContextMenu">
 
             <!--  Save  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 Command="{CompiledBinding SaveCommand}"
                 Header="{CompiledBinding Translation.Save.Value,
                                          Mode=OneWay}"
@@ -33,10 +33,10 @@
                 <MenuItem.Icon>
                     <Path Classes="SavePath" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
             <!--  Save as  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 Command="{CompiledBinding SaveAsCommand}"
                 Header="{CompiledBinding Translation.SaveAs.Value,
                                          Mode=OneWay}"
@@ -46,11 +46,11 @@
                 <MenuItem.Icon>
                     <Path Classes="SavePath" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
 
             <!--  Print  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 x:Name="PrintMenuItem"
                 Command="{CompiledBinding PrintCommand}"
                 Header="{CompiledBinding Translation.Print.Value,
@@ -61,10 +61,10 @@
                 <MenuItem.Icon>
                     <Path Classes="PrintPath" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
             <!--  Open with  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 x:Name="OpenWithMenuItem"
                 Command="{CompiledBinding OpenWithCommand}"
                 Header="{CompiledBinding Translation.OpenWith.Value,
@@ -75,10 +75,10 @@
                 <MenuItem.Icon>
                     <Image Classes="OpenWithImage" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
             <!--  Locate on disk  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 Command="{CompiledBinding OpenInExplorerCommand}"
                 Header="{CompiledBinding Translation.ShowInFolder.Value,
                                          Mode=OneWay}"
@@ -88,10 +88,10 @@
                 <MenuItem.Icon>
                     <Path Classes="ShowInFolderPath" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
             <!--  Remove image data  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 x:Name="RemoveImageDataMenuItem"
                 Command="{Binding Exif.RemoveImageMetaDataCommand}"
                 CommandParameter="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value}"
@@ -106,10 +106,10 @@
                         Height="12"
                         Source="{StaticResource OffImage}" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
             <!--  Set as wallpaper  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 x:Name="WallpaperMenuItem"
                 Header="{CompiledBinding Translation.SetAsWallpaper.Value,
                                          Mode=OneWay}"
@@ -122,7 +122,7 @@
                 </MenuItem.Icon>
 
                 <!--  Set as wallpaper filled  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     Command="{CompiledBinding SetAsWallpaperFilledCommand}"
                     Header="{CompiledBinding Translation.Fill.Value,
                                              Mode=OneWay}"
@@ -133,10 +133,10 @@
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Set as wallpaper fit  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     Command="{CompiledBinding SetAsWallpaperFittedCommand}"
                     Header="{CompiledBinding Translation.Fit.Value,
                                              Mode=OneWay}"
@@ -147,10 +147,10 @@
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Set as wallpaper stretched  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     Command="{CompiledBinding SetAsWallpaperStretchedCommand}"
                     Header="{CompiledBinding Translation.Stretch.Value,
                                              Mode=OneWay}"
@@ -161,11 +161,11 @@
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
 
                 <!--  Set as wallpaper centered  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     Command="{CompiledBinding SetAsWallpaperCenteredCommand}"
                     Header="{CompiledBinding Translation.Center.Value,
                                              Mode=OneWay}"
@@ -176,10 +176,10 @@
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Set as wallpaper tiled  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     Command="{CompiledBinding SetAsWallpaperTiledCommand}"
                     Header="{CompiledBinding Translation.Tile.Value,
                                              Mode=OneWay}"
@@ -190,11 +190,11 @@
                     <MenuItem.Icon>
                         <Image Classes="WallpaperImage" />
                     </MenuItem.Icon>
-                </MenuItem>
-            </MenuItem>
+                </customControls:StyledMenuItem>
+            </customControls:StyledMenuItem>
 
             <!--  File properties  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 Command="{CompiledBinding ShowFilePropertiesCommand}"
                 Header="{CompiledBinding Translation.FileProperties.Value,
                                          Mode=OneWay}"
@@ -208,10 +208,10 @@
                         Source="{StaticResource FileUserImage}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
             <!--  Optimize image  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 Command="{CompiledBinding OptimizeImageCommand}"
                 Header="{CompiledBinding Translation.OptimizeImage.Value,
                                          Mode=OneWay}"
@@ -222,10 +222,10 @@
                         Height="12"
                         Source="{StaticResource PortalImage}" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
             <!--  Convert image  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 Command="{CompiledBinding ConvertWindowCommand}"
                 Header="{CompiledBinding Translation.ConvertTo.Value,
                                          Mode=OneWay}"
@@ -239,12 +239,12 @@
                         Source="{StaticResource FileImage}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
             <Separator />
 
             <!--  Delete file  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 Command="{CompiledBinding DeleteFileCommand}"
                 Header="{CompiledBinding Translation.DeleteFile.Value,
                                          Mode=OneWay}"
@@ -254,18 +254,18 @@
                 <MenuItem.Icon>
                     <Path Classes="RecyclePath" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
             <Separator />
 
             <!--  Copy  -->
-            <MenuItem Command="{CompiledBinding CopyFileCommand}" Header="{CompiledBinding Translation.Copy.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem Command="{CompiledBinding CopyFileCommand}" Header="{CompiledBinding Translation.Copy.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path Classes="CopyPath Xl" />
                 </MenuItem.Icon>
 
                 <!--  Copy file  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     Command="{CompiledBinding CopyFileCommand}"
                     Header="{CompiledBinding Translation.CopyFile.Value,
                                              Mode=OneWay}"
@@ -275,10 +275,10 @@
                     <MenuItem.Icon>
                         <Path Classes="CopyPath Xl" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Copy image  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     Command="{CompiledBinding CopyImageCommand}"
                     Header="{CompiledBinding Translation.CopyImage.Value,
                                              Mode=OneWay}"
@@ -288,10 +288,10 @@
                     <MenuItem.Icon>
                         <Path Classes="CopyPath Xl" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Copy file path  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     Command="{CompiledBinding CopyFilePathCommand}"
                     Header="{Binding Translation.FileCopyPath, Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -300,10 +300,10 @@
                     <MenuItem.Icon>
                         <Path Classes="CopyPath Xl" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <!--  Copy base64  -->
-                <MenuItem Command="{CompiledBinding CopyBase64Command}" IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}">
+                <customControls:StyledMenuItem Command="{CompiledBinding CopyBase64Command}" IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}">
                     <MenuItem.Header>
                         <TextBlock>
                             <Run Text="{CompiledBinding Translation.Copy, Mode=OneWay}" />
@@ -313,12 +313,12 @@
                     <MenuItem.Icon>
                         <Path Classes="CopyPath Xl" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
                 <Separator />
 
                 <!--  Duplicate file  -->
-                <MenuItem
+                <customControls:StyledMenuItem
                     Command="{CompiledBinding DuplicateFileCommand}"
                     Header="{CompiledBinding Translation.DuplicateFile,
                                              Mode=OneWay}"
@@ -328,18 +328,18 @@
                     <MenuItem.Icon>
                         <Path Classes="DuplicatePath" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </customControls:StyledMenuItem>
 
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
             <Separator />
 
             <!--  Close  -->
-            <MenuItem x:Name="CloseItem" Header="{CompiledBinding Translation.Close.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem x:Name="CloseItem" Header="{CompiledBinding Translation.Close.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path Classes="ClosePath" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
         </ContextMenu>
     </UserControl.ContextMenu>

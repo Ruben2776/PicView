@@ -411,14 +411,14 @@
             </customControls:StyledMenuItem>
 
             <!--  Resize  Image  -->
-            <MenuItem Command="{Binding ResizeWindowCommand}" Header="{CompiledBinding Translation.ResizeImage.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem Command="{Binding ResizeWindowCommand}" Header="{CompiledBinding Translation.ResizeImage.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
                         Width="12"
                         Height="12"
                         Source="{StaticResource UpscaleImage}" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
 
             <!--  Batch Resize  Images  -->
             <customControls:StyledMenuItem Command="{Binding BatchResizeWindowCommand}" Header="{CompiledBinding Translation.BatchResize.Value, Mode=OneWay}">

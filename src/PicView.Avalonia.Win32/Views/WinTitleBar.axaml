@@ -268,7 +268,7 @@
                     </customControls:StyledMenuItem>
 
                     <!--  Toggle bottom bar  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding ToggleBottomToolbarCommand}"
                         Header="{Binding Translation.ShowBottomToolbar.Value, Mode=OneWay}"
                         IsVisible="{Binding !IsBottomToolbarShown.Value}"
@@ -279,10 +279,10 @@
                                 Height="12"
                                 Source="{StaticResource Panel-Bottom}" />
                         </MenuItem.Icon>
-                    </MenuItem>
+                    </customControls:StyledMenuItem>
 
                     <!--  Toggle side-by-side  -->
-                    <MenuItem
+                    <customControls:StyledMenuItem
                         Command="{Binding SideBySideCommand}"
                         Header="{Binding Translation.SideBySide.Value, Mode=OneWay}"
                         IsChecked="{Binding IsSideBySide.Value}"

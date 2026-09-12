@@ -7,7 +7,7 @@
     <customControls:AnimatedPopUp.Resources>
         <ContextMenu x:Key="MainMenu">
             <!--  Close  -->
-            <MenuItem
+            <customControls:StyledMenuItem
                 x:Name="CloseMenuItem"
                 Click="CloseMenu"
                 Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Close.Value,
@@ -20,7 +20,7 @@
                         Fill="{DynamicResource MainTextColor}"
                         Stretch="Fill" />
                 </MenuItem.Icon>
-            </MenuItem>
+            </customControls:StyledMenuItem>
         </ContextMenu>
     </customControls:AnimatedPopUp.Resources>
 
