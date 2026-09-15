@@ -39,11 +39,12 @@ public class VirtualizingGallery : VirtualizingPanel
     public static readonly StyledProperty<double> WrapHeightOverrideProperty =
         AvaloniaProperty.Register<VirtualizingGallery, double>(nameof(WrapHeightOverride), double.NaN);
     
-    private record struct RealizedItem(int Index, Control Element);
+    public readonly record struct RealizedGalleryItem(int Index, Control Element);
 
     private readonly List<Rect> _itemBounds = [];
 
-    private readonly List<RealizedItem> _realizedItems = [];
+    private readonly List<RealizedGalleryItem> _realizedItems = [];
+    public IReadOnlyList<RealizedGalleryItem> RealizedItems => _realizedItems;
     private Rect _viewport;
 
     /// <inheritdoc cref="WrapPanel" />
@@ -341,11 +342,11 @@ public class VirtualizingGallery : VirtualizingPanel
                     var insertIndex = _realizedItems.FindIndex(r => r.Index > i);
                     if (insertIndex == -1)
                     {
-                        _realizedItems.Add(new RealizedItem(i, container));
+                        _realizedItems.Add(new RealizedGalleryItem(i, container));
                     }
                     else
                     {
-                        _realizedItems.Insert(insertIndex, new RealizedItem(i, container));
+                        _realizedItems.Insert(insertIndex, new RealizedGalleryItem(i, container));
                     }
                 }
             }

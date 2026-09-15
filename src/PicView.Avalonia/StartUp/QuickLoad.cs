@@ -313,7 +313,6 @@ public static class QuickLoad
             {
                 if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
                 {
-                    imageViewer.GalleryView.GalleryItemsControl.SelectedItemIndex = tab.NavigationIndex.Value;
                     imageViewer.GalleryView.GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
                     imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
                 }

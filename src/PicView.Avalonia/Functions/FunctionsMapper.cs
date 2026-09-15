@@ -6,6 +6,7 @@ using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.SettingsManagement;
@@ -483,11 +484,8 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         return ValueTask.CompletedTask;
     }
     
-    public async ValueTask GalleryClick()
-    {
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        await GalleryLoader.ToggleGalleryAndLoadItem(tab, tab.Gallery.SelectedGalleryItemIndex.Value);
-    }
+    public async ValueTask GalleryClick() =>
+        await GalleryHelper.GalleryClick(vm).ConfigureAwait(false);
 
     public async ValueTask ToggleDockedGalleryInHiddenUI() =>
         await SettingsUpdater.ToggleDockedGalleryInHiddenUI(vm);

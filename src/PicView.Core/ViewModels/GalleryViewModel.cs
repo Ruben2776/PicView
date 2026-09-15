@@ -84,6 +84,10 @@ public class GalleryViewModel : IDisposable
         {
             IsGalleryExpanded.Value = mode == GalleryMode.Expanded;
             IsDockedGalleryVisible.Value = mode == GalleryMode.Docked;
+            if (mode != GalleryMode.Expanded)
+            {
+                SelectedGalleryItemIndex.Value = -1;
+            }
         }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
         .AddTo(ref _disposables);
         

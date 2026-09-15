@@ -146,6 +146,7 @@ public static class GalleryLoader
     public static async ValueTask ToggleGalleryAndLoadItem(TabViewModel tabViewModel, int index)
     {
         var gallery = tabViewModel.Gallery;
+        gallery.SelectedGalleryItemIndex.Value = -1;
         if (gallery.IsGalleryExpanded.Value)
         {
             GalleryManager.ToggleGallery(gallery);
