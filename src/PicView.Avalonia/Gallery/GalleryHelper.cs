@@ -2,6 +2,7 @@
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
+using PicView.Core.Sizing;
 using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 
 namespace PicView.Avalonia.Gallery;
@@ -31,7 +32,7 @@ public static class GalleryHelper
 
         if (tab.Gallery.IsLeftDocked.CurrentValue || tab.Gallery.IsRightDocked.CurrentValue)
         {
-            return (galleryBounds.Width, 0);
+            return (galleryBounds.Width + SizeDefaults.HorizontalScrollbarSize, 0);
         }
 
         return (0, galleryBounds.Height);

@@ -41,15 +41,6 @@ public class NavigateAbleItemsViewer : ItemsControl
         set => SetValue(CurrentItemIndexProperty, value);
     }
 
-    public static readonly StyledProperty<bool> CenterCurrentItemProperty =
-        AvaloniaProperty.Register<NavigateAbleItemsViewer, bool>(nameof(CenterCurrentItem));
-
-    public bool CenterCurrentItem
-    {
-        get => GetValue(CenterCurrentItemProperty);
-        set => SetValue(CenterCurrentItemProperty, value);
-    }
-
     #endregion
 
     #region Constructor and Control Overrides
@@ -178,12 +169,6 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     private void ScrollToCenterOfCurrentItemInternal()
     {
-        if (!CenterCurrentItem)
-        {
-            ScrollIntoView(CurrentItemIndex);
-            return;
-        }
-
         // Ask the VirtualizingGallery for the exact bounds, realized or not!
         if (ItemsPanelRoot is not VirtualizingGallery gallery)
         {

@@ -22,6 +22,7 @@ public class GalleryAnimationControl : UserControl
     
     private const int ZeroSize = 0;
     private const int BorderTopAndBottomThickness = 2;
+    private const int BorderSideThickness = 1;
 
     private TabViewModel? TabViewModel => DataContext as TabViewModel;
     private Control? _parentControl;
@@ -46,7 +47,15 @@ public class GalleryAnimationControl : UserControl
 
     private static Thickness GetDockedMargin => new(0);
     private static Thickness GetExpandedMargin => new(15, 40, 15, 5);
-    private static double GetDockedSize => Settings.Gallery.DockedGalleryItemSize + BorderTopAndBottomThickness + SizeDefaults.ScrollbarSize;
+
+    private static double GetDockedSize(GalleryDockPosition dock)
+    {
+        if (IsHorizontalDock(dock))
+        {
+            return Settings.Gallery.DockedGalleryItemSize + BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
+        }
+        return Settings.Gallery.DockedGalleryItemSize + BorderSideThickness + SizeDefaults.VerticalScrollbarSize;
+    } 
     private static bool IsHorizontalDock(GalleryDockPosition dock) => dock is GalleryDockPosition.Top or GalleryDockPosition.Bottom;
 
     #endregion
@@ -302,7 +311,7 @@ public class GalleryAnimationControl : UserControl
     {
         _itemsPanel.IsExpanded = false;
         
-        var size = GetDockedSize;
+        var size = GetDockedSize(dock);
         TabViewModel.Gallery.ItemSpacing.Value = 0;
         
         if (IsHorizontalDock(dock))
@@ -381,7 +390,7 @@ public class GalleryAnimationControl : UserControl
         core.GallerySettings.ItemHeight.Value = itemHeight;
 
         // Resize control bounds
-        var size = itemHeight + BorderTopAndBottomThickness + SizeDefaults.ScrollbarSize;
+        var size = itemHeight + BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
         if (IsHorizontalDock(Settings.Gallery.DockPosition))
         {
             Width = double.NaN;
@@ -454,7 +463,7 @@ public class GalleryAnimationControl : UserControl
         IsVisible = true;
         SetDockLayoutCore(dock);
 
-        var targetSize = GetDockedSize;
+        var targetSize = GetDockedSize(dock);
 
         if (IsHorizontalDock(dock))
         {
@@ -492,7 +501,7 @@ public class GalleryAnimationControl : UserControl
     private async Task DockedToClosed()
     {
         var isHorizontal = IsHorizontalDock(Settings.Gallery.DockPosition);
-        var currentSize = GetDockedSize;
+        var currentSize = GetDockedSize(Settings.Gallery.DockPosition);
 
         if (isHorizontal)
         {
@@ -530,7 +539,7 @@ public class GalleryAnimationControl : UserControl
         SetExpandedLayoutCore(dock);
         SetExpandedThumbs();
 
-        var startSize = GetDockedSize;
+        var startSize = GetDockedSize(dock);
 
         if (IsHorizontalDock(dock))
         {
@@ -567,7 +576,7 @@ public class GalleryAnimationControl : UserControl
 
         if (IsHorizontalDock(dock))
         {
-            var targetHeight = GetDockedSize;
+            var targetHeight = GetDockedSize(dock);
             if (Settings.WindowProperties.AutoFit)
             {
                 Height = startHeight;
@@ -597,7 +606,7 @@ public class GalleryAnimationControl : UserControl
         else
         {
             var startWidth = _parentControl.Bounds.Width;
-            var targetWidth = Settings.Gallery.DockedGalleryItemSize;
+            var targetWidth = GetDockedSize(dock);
             Width = startWidth;
             var widthAnim =
                 AnimationsHelper.WidthAnimation(startWidth, targetWidth, GalleryDefaults.SlowAnimationSpeed);

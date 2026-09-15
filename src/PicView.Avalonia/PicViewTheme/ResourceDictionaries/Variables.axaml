@@ -1,10 +1,12 @@
 <ResourceDictionary
-    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="using:System"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:ClassModifier="internal">
     <sys:TimeSpan x:Key="ButtonHoverAnimationDuration">0.25</sys:TimeSpan>
     <sys:Double x:Key="TopBorderHeight">28</sys:Double>
     <sys:Double x:Key="ThemeDisabledOpacity">0.5</sys:Double>
     <sys:Double x:Key="ScrollBarThickness">60</sys:Double>
+    <sys:Double x:Key="HorizontalScrollbarSize">22</sys:Double>
+    <sys:Double x:Key="VerticalScrollbarSize">30</sys:Double>
 </ResourceDictionary>

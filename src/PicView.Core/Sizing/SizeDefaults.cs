@@ -2,7 +2,8 @@
 
 public static class SizeDefaults
 {
-    public const int ScrollbarSize = 22;
+    public const int HorizontalScrollbarSize = 22;
+    public const int VerticalScrollbarSize = 30;
     
     public const int BottombarHeight = 26;
     

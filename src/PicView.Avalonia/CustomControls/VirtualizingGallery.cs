@@ -122,7 +122,9 @@ public class VirtualizingGallery : VirtualizingPanel
 
         var snapPoints = new List<double>();
 
-        if (orientation is not Orientation.Horizontal)
+        // Only provide snap points when the requested orientation matches our layout's scroll axis
+        var isVerticalDocked = !IsExpanded && Orientation == Orientation.Vertical;
+        if (isVerticalDocked && orientation is not Orientation.Vertical || !isVerticalDocked && orientation is not Orientation.Horizontal)
         {
             return snapPoints;
         }
@@ -132,13 +134,21 @@ public class VirtualizingGallery : VirtualizingPanel
             // Docked mode: Snap to individual items
             foreach (var bounds in _itemBounds)
             {
-                var point = snapPointsAlignment switch
-                {
-                    SnapPointsAlignment.Near => bounds.Left,
-                    SnapPointsAlignment.Center => bounds.Center.X,
-                    SnapPointsAlignment.Far => bounds.Right,
-                    _ => bounds.Left
-                };
+                var point = isVerticalDocked
+                    ? snapPointsAlignment switch
+                    {
+                        SnapPointsAlignment.Near => bounds.Top,
+                        SnapPointsAlignment.Center => bounds.Center.Y,
+                        SnapPointsAlignment.Far => bounds.Bottom,
+                        _ => bounds.Top
+                    }
+                    : snapPointsAlignment switch
+                    {
+                        SnapPointsAlignment.Near => bounds.Left,
+                        SnapPointsAlignment.Center => bounds.Center.X,
+                        SnapPointsAlignment.Far => bounds.Right,
+                        _ => bounds.Left
+                    };
                 snapPoints.Add(point);
             }
         }
@@ -195,6 +205,7 @@ public class VirtualizingGallery : VirtualizingPanel
         double currentY = 0;
         double currentColumnMaxWidth = 0;
         double maxExtentY = 0;
+        double maxItemWidth = 0;
         var currentColumnStartIndex = 0; // Track where the current column starts
 
         // Use the override if provided, otherwise use the actual available height
@@ -238,6 +249,13 @@ public class VirtualizingGallery : VirtualizingPanel
                 currentColumnMaxWidth = Math.Max(currentColumnMaxWidth, itemWidth);
                 maxExtentY = Math.Max(maxExtentY, currentY - ItemSpacing);
             }
+            else if (Orientation == Orientation.Vertical)
+            {
+                // Vertical Docked Mode (Single Column) - NO SPACING
+                _itemBounds.Add(new Rect(currentX, currentY, itemWidth, ItemHeight));
+                currentY += ItemHeight;
+                maxItemWidth = Math.Max(maxItemWidth, itemWidth);
+            }
             else
             {
                 // Horizontal Docked Mode (Single Row) - NO SPACING
@@ -258,8 +276,10 @@ public class VirtualizingGallery : VirtualizingPanel
 
         if (!IsExpanded)
         {
-            // Return exact width without deducting spacing
-            return new Size(currentX, ItemHeight);
+            // Return exact extent without deducting spacing
+            return Orientation == Orientation.Vertical
+                ? new Size(maxItemWidth > 0 ? maxItemWidth : ItemHeight, currentY)
+                : new Size(currentX, ItemHeight);
         }
 
         var totalWidth = currentX + currentColumnMaxWidth;
@@ -296,10 +316,14 @@ public class VirtualizingGallery : VirtualizingPanel
                     endIndex = i;
                 }
             }
-            else if (startIndex is not -1 && _itemBounds[i].X > visibleRect.Right)
+            else if (startIndex is not -1)
             {
-                // Early exit: We've completely passed the visible horizontal viewport
-                break;
+                // Early exit: We've completely passed the visible viewport
+                var pastViewport = Orientation == Orientation.Vertical && !IsExpanded
+                    ? _itemBounds[i].Y > visibleRect.Bottom
+                    : _itemBounds[i].X > visibleRect.Right;
+                if (pastViewport)
+                    break;
             }
         }
 
@@ -366,9 +390,19 @@ public class VirtualizingGallery : VirtualizingPanel
             return new Size();
         }
 
+        var centerHorizontally = !IsExpanded && Orientation == Orientation.Vertical;
+
         foreach (var realized in _realizedItems.Where(realized => realized.Index >= 0 && realized.Index < _itemBounds.Count))
         {
-            realized.Element.Arrange(_itemBounds[realized.Index]);
+            var bounds = _itemBounds[realized.Index];
+
+            if (centerHorizontally && bounds.Width < finalSize.Width)
+            {
+                var offsetX = (finalSize.Width - bounds.Width) / 2;
+                bounds = new Rect(offsetX, bounds.Y, bounds.Width, bounds.Height);
+            }
+
+            realized.Element.Arrange(bounds);
         }
 
         return finalSize;
