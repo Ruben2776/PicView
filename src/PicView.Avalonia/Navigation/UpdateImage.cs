@@ -113,14 +113,7 @@ public static class UpdateImage
         SetWindowAndImageSize(mainWindow, tabViewModel, vm);
 
         imageViewer.UpdateMotionPhoto(tabViewModel);
-
-        if (tabViewModel.Gallery.IsDockedGalleryVisible.CurrentValue)
-        {
-            Dispatcher.UIThread.Invoke(() =>
-            {
-                imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
-            }, DispatcherPriority.Render);
-        }
+        
         tabViewModel.ZoomLevel.Value = Convert.ToInt32(tabViewModel.InitialZoom.CurrentValue * 100);
         tabViewModel.UpdateTabTitle();
     }

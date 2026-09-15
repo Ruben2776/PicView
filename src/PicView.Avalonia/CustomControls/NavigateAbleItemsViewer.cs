@@ -72,10 +72,7 @@ public class NavigateAbleItemsViewer : ItemsControl
         if (change.Property == CurrentItemIndexProperty)
         {
             UpdateCurrentVisualState();
-            if (CenterCurrentItem)
-            {
-                ScrollToCenterOfCurrentItem();
-            }
+            ScrollToCenterOfCurrentItem();
         }
         else if (change.Property == SelectedItemIndexProperty)
         {
@@ -120,10 +117,7 @@ public class NavigateAbleItemsViewer : ItemsControl
 
         if (navItem is GalleryItem galleryItem)
         {
-            Dispatcher.UIThread.InvokeAsync(async () =>
-            {
-                await galleryItem.LoadImage().ConfigureAwait(false);
-            }, DispatcherPriority.Background);
+            _ = galleryItem.LoadImage().ConfigureAwait(false);
         }
     }
 
@@ -184,8 +178,9 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     private void ScrollToCenterOfCurrentItemInternal()
     {
-        if (_scrollViewer is null)
+        if (!CenterCurrentItem)
         {
+            ScrollIntoView(CurrentItemIndex);
             return;
         }
 

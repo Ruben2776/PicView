@@ -7,6 +7,7 @@ using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
@@ -65,9 +66,10 @@ public partial class GalleryItem : NavigateAbleItem
         .AddTo(ref _disposables);
     }
 
-    public async ValueTask LoadImage()
+    public async Task LoadImage()
     {
-        if (DataContext is not GalleryItemViewModel vm)
+        var vm = Dispatcher.UIThread.Invoke(() => DataContext as GalleryItemViewModel);
+        if (vm is null)
         {
             return;
         }
@@ -83,6 +85,7 @@ public partial class GalleryItem : NavigateAbleItem
             return;
         }
 
+        // ReSharper disable once MethodHasAsyncOverload
         _loadCts?.Cancel();
         _loadCts = new CancellationTokenSource();
         var token = _loadCts.Token;

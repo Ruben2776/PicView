@@ -134,17 +134,7 @@ public class GalleryAnimationControl : UserControl
             {
                 SetDockedThumbs(mode);
                 _itemsPanel.InvalidateMeasure();
-                if (_viewer.CenterCurrentItem)
-                {
-                    Dispatcher.UIThread.Invoke(() =>
-                    {
-                        _viewer.ScrollToCenterOfCurrentItem();
-                    }, DispatcherPriority.Render);
-                }
-                else
-                {
-                    _viewer.BringIntoView();
-                }
+                _viewer.ScrollToCenterOfCurrentItem();
             }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(core.GallerySettings.DockedGalleryStretchMode)))
         .AddTo(ref _disposables);
     }
@@ -262,10 +252,7 @@ public class GalleryAnimationControl : UserControl
             Settings.Gallery.ExpandedGalleryItemSize,
             mode,
             GetExpandedMargin);
-        if (_viewer.CenterCurrentItem)
-        {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }
+        _viewer.ScrollToCenterOfCurrentItem();
     }
 
     private void UpdateExpandedItemHeight(double itemHeight)
