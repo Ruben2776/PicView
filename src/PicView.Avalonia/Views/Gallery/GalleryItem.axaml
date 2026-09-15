@@ -268,10 +268,7 @@
                 <!--  Expanded menu items  -->
                 <customControls:StyledMenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
-                        <Image
-                            Width="12"
-                            Height="12"
-                            Source="{StaticResource Image}" />
+                        <Image Classes="SquareDimensionsImage" />
                     </MenuItem.Icon>
                     <customControls:StyledMenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetExpandedStretchModeCommand}"
@@ -302,10 +299,7 @@
                 <!--  Docked menu items  -->
                 <customControls:StyledMenuItem Header="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.Stretch.Value, Mode=OneWay}" IsVisible="{CompiledBinding !$parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}">
                     <MenuItem.Icon>
-                        <Image
-                            Width="12"
-                            Height="12"
-                            Source="{StaticResource Image}" />
+                        <Image Classes="SquareDimensionsImage" />
                     </MenuItem.Icon>
                     <customControls:StyledMenuItem
                         Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).GallerySettings.SetDockedStretchModeCommand}"
@@ -334,10 +328,7 @@
                 </customControls:StyledMenuItem>
                 <customControls:StyledMenuItem Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ExpandedGalleryItemSize.Value, Mode=OneWay}" PointerPressed="ShowGalleryItemSizeSlider">
                     <MenuItem.Icon>
-                        <Image
-                            Width="12"
-                            Height="12"
-                            Source="{StaticResource ImageOutLine}" />
+                        <Image Classes="ScalingImage" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 

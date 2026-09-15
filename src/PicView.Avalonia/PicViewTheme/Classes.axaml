@@ -147,6 +147,19 @@
         <Setter Property="BorderBrush" Value="Transparent" />
     </Style>
 
+
+    <Style Selector="Image.SquareDimensionsImage">
+        <Setter Property="Source" Value="{StaticResource SquareDimensionsImage}" />
+        <Setter Property="Height" Value="12" />
+        <Setter Property="Width" Value="12" />
+    </Style>
+
+    <Style Selector="Image.ScalingImage">
+        <Setter Property="Source" Value="{StaticResource ScalingImage}" />
+        <Setter Property="Height" Value="12" />
+        <Setter Property="Width" Value="12" />
+    </Style>
+
     <Style Selector="Image.OpenImage">
         <Setter Property="Source" Value="{StaticResource OpenFolderImage}" />
         <Setter Property="Height" Value="12" />
