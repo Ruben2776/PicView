@@ -119,14 +119,14 @@
 	  <None Include="..\..\Build\ffmpeg-native\linux-x64\libpicviewffmpeg.so">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	    <Link>ffmpeg\linux-x64\libpicviewffmpeg.so</Link>
+	    <Link>plugins\ffmpeg\linux-x64\libpicviewffmpeg.so</Link>
 	  </None>
 	</ItemGroup>
 	<ItemGroup Condition="('$(Platform)' == 'arm64' or '$(RuntimeIdentifier)' == 'linux-arm64') and Exists('$(MSBuildThisFileDirectory)..\..\Build\ffmpeg-native\linux-arm64\libpicviewffmpeg.so')">
 	  <None Include="..\..\Build\ffmpeg-native\linux-arm64\libpicviewffmpeg.so">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	    <Link>ffmpeg\linux-arm64\libpicviewffmpeg.so</Link>
+	    <Link>plugins\ffmpeg\linux-arm64\libpicviewffmpeg.so</Link>
 	  </None>
 	</ItemGroup>
 </Project>

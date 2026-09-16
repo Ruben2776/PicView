@@ -10,8 +10,25 @@ namespace PicView.Tests.MotionPhoto;
 /// </summary>
 public class MotionPhotoDecoderTests
 {
-    private static string NativeLibraryPath => Path.Combine(
-        AppContext.BaseDirectory, "ffmpeg", "win-x64", "picview-ffmpeg.dll");
+    private static string NativeLibraryPath
+    {
+        get
+        {
+            var ridPath = Path.Combine(AppContext.BaseDirectory, "plugins", "ffmpeg", "win-x64", "picview-ffmpeg.dll");
+            if (File.Exists(ridPath))
+            {
+                return ridPath;
+            }
+
+            var directPath = Path.Combine(AppContext.BaseDirectory, "plugins", "ffmpeg", "picview-ffmpeg.dll");
+            if (File.Exists(directPath))
+            {
+                return directPath;
+            }
+
+            return ridPath;
+        }
+    }
 
     private static string SampleVideoPath => Path.Combine(
         AppContext.BaseDirectory, "MotionPhoto", "Samples", "sample_h264.mp4");

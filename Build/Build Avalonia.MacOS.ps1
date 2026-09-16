@@ -132,7 +132,7 @@ chmod -R 755 $appBundlePath
 # Sign the bundled motion photo dylib when a signing identity is provided, so
 # Gatekeeper/notarization accept it (inside-out: dylib before the app bundle).
 # Without an identity the existing bundle signing covers it instead.
-$bundledDylibPath = Join-Path -Path $macOSPath -ChildPath "ffmpeg/osx-$Platform/libpicviewffmpeg.dylib"
+$bundledDylibPath = Join-Path -Path $macOSPath -ChildPath "plugins/ffmpeg/osx-$Platform/libpicviewffmpeg.dylib"
 if (Test-Path $bundledDylibPath) {
     if ($CodesignIdentity) {
         codesign --force --options runtime --timestamp --sign $CodesignIdentity $bundledDylibPath

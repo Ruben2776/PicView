@@ -36,7 +36,7 @@
     <ItemGroup Condition="'$(Platform)' != 'arm64' and Exists('$(MSBuildThisFileDirectory)..\..\Build\ffmpeg-native\win-x64\picview-ffmpeg.dll')">
         <None Include="..\..\Build\ffmpeg-native\win-x64\picview-ffmpeg.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <Link>ffmpeg\win-x64\picview-ffmpeg.dll</Link>
+            <Link>plugins\ffmpeg\win-x64\picview-ffmpeg.dll</Link>
         </None>
     </ItemGroup>
 

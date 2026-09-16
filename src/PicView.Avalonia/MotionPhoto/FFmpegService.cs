@@ -112,7 +112,7 @@ public static class FFmpegService
     }
 
     /// <summary>
-    /// The native library is deployed to "ffmpeg/&lt;rid&gt;" next to the application by
+    /// The native library is deployed to "plugins/ffmpeg/&lt;rid&gt;" next to the application by
     /// the platform packaging (one self-contained binary per runtime identifier).
     /// </summary>
     private static string? GetNativeLibraryPath()
@@ -139,6 +139,18 @@ public static class FFmpegService
             return null;
         }
 
-        return Path.Combine(AppContext.BaseDirectory, "ffmpeg", rid, libraryName);
+        var pluginsPath = Path.Combine(AppContext.BaseDirectory, "plugins", "ffmpeg", rid, libraryName);
+        if (File.Exists(pluginsPath))
+        {
+            return pluginsPath;
+        }
+
+        var directPluginsPath = Path.Combine(AppContext.BaseDirectory, "plugins", "ffmpeg", libraryName);
+        if (File.Exists(directPluginsPath))
+        {
+            return directPluginsPath;
+        }
+
+        return pluginsPath;
     }
 }
