@@ -178,6 +178,13 @@ public static class StartUpHelper
     public static void HandleStartImage(MainWindow mainWindow, CoreViewModel core, string arg)
     {
         Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, core, arg, continueFromLeftOff: false, isStartup: true));
+        if (Settings.WindowProperties.AutoFit)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                WindowResizing.FastCenterWindow(mainWindow);
+            }, DispatcherPriority.Input);
+        }
     }
 
     public static void StartUpMenuOrLastFile(MainWindow mainWindow, CoreViewModel core)

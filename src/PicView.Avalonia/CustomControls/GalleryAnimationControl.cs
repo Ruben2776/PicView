@@ -297,14 +297,6 @@ public class GalleryAnimationControl : UserControl
     {
         SetDockLayoutCore(dock);
         SetDockedThumbPosition(dock);
-        if (Application.Current.ApplicationLifetime is not ClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        Dispatcher.UIThread.Post(() =>
-        {
-            WindowResizing.SetSize(desktop.MainWindow as MainWindow, WindowResizeReason.Layout);
-        });
     }
 
     private void SetDockLayoutCore(GalleryDockPosition dock)
@@ -462,7 +454,13 @@ public class GalleryAnimationControl : UserControl
         var dock = Settings.Gallery.DockPosition;
         IsVisible = true;
         SetDockLayoutCore(dock);
-
+        SetDockedThumbPosition(dock);
+        
+        Dispatcher.UIThread.Post(() =>
+        {
+            _viewer.ScrollToCenterOfCurrentItem();
+        }, DispatcherPriority.Render);
+        
         var targetSize = GetDockedSize(dock);
 
         if (IsHorizontalDock(dock))
@@ -479,12 +477,6 @@ public class GalleryAnimationControl : UserControl
             await widthAnim.RunAsync(this);
             Width = targetSize;
         }
-
-        SetDockedThumbPosition(dock);
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Send);
         
         if (Settings.WindowProperties.AutoFit)
         {
@@ -515,17 +507,6 @@ public class GalleryAnimationControl : UserControl
         }
 
         IsVisible = false;
-        if (Settings.WindowProperties.AutoFit)
-        {
-            Dispatcher.UIThread.Post(() =>
-            {
-                if (Application.Current.DataContext is not CoreViewModel core || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
-                {
-                    return;
-                }
-                WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
-            });
-        }
     }
 
     private async Task DockedToExpanded()
@@ -540,7 +521,10 @@ public class GalleryAnimationControl : UserControl
         SetExpandedThumbs();
 
         var startSize = GetDockedSize(dock);
-
+        Dispatcher.UIThread.Post(() =>
+        {
+            _viewer.ScrollToCenterOfCurrentItem();
+        }, DispatcherPriority.Render);
         if (IsHorizontalDock(dock))
         {
             var heightAnim =
@@ -555,12 +539,6 @@ public class GalleryAnimationControl : UserControl
             await widthAnim.RunAsync(this);
             Width = targetWidth;
         }
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Send);
-        
         
         // Unlock the layout
         _itemsPanel.WrapHeightOverride = double.NaN;
@@ -573,7 +551,7 @@ public class GalleryAnimationControl : UserControl
 
         // LOCK the layout wrap constraint so it doesn't wrap tighter as the window shrinks
         _itemsPanel.WrapHeightOverride = startHeight;
-
+        
         if (IsHorizontalDock(dock))
         {
             var targetHeight = GetDockedSize(dock);
@@ -636,13 +614,17 @@ public class GalleryAnimationControl : UserControl
         _itemsPanel.WrapHeightOverride = targetHeight;
         SetExpandedLayoutCore(Settings.Gallery.DockPosition);
         SetExpandedThumbs();
+        
+        Dispatcher.UIThread.Post(() =>
+        {
+            _viewer.ScrollToCenterOfCurrentItem();
+        }, DispatcherPriority.Render);
 
         await Task.WhenAll(
             AnimationsHelper.WidthAnimation(ZeroSize, targetWidth, GalleryDefaults.MediumAnimationSpeed).RunAsync(this),
             AnimationsHelper.HeightAnimation(ZeroSize, targetHeight, GalleryDefaults.MediumAnimationSpeed).RunAsync(this)
         );
-
-        _viewer.ScrollToCenterOfCurrentItem();
+        
         _itemsPanel.WrapHeightOverride = double.NaN;
     }
 
