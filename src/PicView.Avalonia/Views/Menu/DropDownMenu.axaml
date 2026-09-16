@@ -159,7 +159,7 @@
                             IconHeight="12"
                             IconMargin="0,0,7,0"
                             IconWidth="12"
-                            IsEnabled="{Binding WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value}"
+                            IsEnabled="{Binding WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}"
                             Text="{CompiledBinding Translation.HideDockedGallery.Value}" />
                     </StackPanel>
                 </Carousel.Items>
@@ -182,7 +182,7 @@
                 Text="{CompiledBinding Translation.ShowDockedGalleryAtBottom.Value}">
                 <customControls:TextIconButton.IsVisible>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="!WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value" />
+                        <Binding Path="!WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value" />
                         <Binding Path="TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value" />
                     </MultiBinding>
                 </customControls:TextIconButton.IsVisible>
