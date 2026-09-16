@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -56,6 +55,24 @@ public class GalleryAnimationControl : UserControl
         }
         return Settings.Gallery.DockedGalleryItemSize + BorderSideThickness + SizeDefaults.VerticalScrollbarSize;
     } 
+
+    private double GetExpandedWrapHeight()
+    {
+        if (_parentControl is null)
+        {
+            return double.NaN;
+        }
+
+        var availableHeight = _parentControl.Bounds.Height
+            - GetExpandedMargin.Top
+            - GetExpandedMargin.Bottom
+            - SizeDefaults.HorizontalScrollbarSize
+            - BorderThickness.Top
+            - BorderThickness.Bottom;
+
+        return Math.Max(0, availableHeight);
+    }
+
     private static bool IsHorizontalDock(GalleryDockPosition dock) => dock is GalleryDockPosition.Top or GalleryDockPosition.Bottom;
 
     #endregion
@@ -226,6 +243,7 @@ public class GalleryAnimationControl : UserControl
     private void SetExpandedLayoutCore(GalleryDockPosition dock)
     {
         _itemsPanel.IsExpanded = true;
+        _itemsPanel.WrapHeightOverride = double.NaN;
         
         if (_parentControl != null)
         {
@@ -514,11 +532,11 @@ public class GalleryAnimationControl : UserControl
         var dock = Settings.Gallery.DockPosition;
         var targetHeight = _parentControl!.Bounds.Height;
 
-        // LOCK the layout wrap constraint to the final size before animating
-        _itemsPanel.WrapHeightOverride = targetHeight;
-        
         SetExpandedLayoutCore(dock);
         SetExpandedThumbs();
+
+        // LOCK the layout wrap constraint to the final calculated available size before animating
+        _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight();
 
         var startSize = GetDockedSize(dock);
         Dispatcher.UIThread.Post(() =>
@@ -540,8 +558,14 @@ public class GalleryAnimationControl : UserControl
             Width = targetWidth;
         }
         
-        // Unlock the layout
+        // Unlock the layout and trigger remeasure to match exact final bounds
         _itemsPanel.WrapHeightOverride = double.NaN;
+        _itemsPanel.InvalidateMeasure();
+
+        // await Dispatcher.UIThread.InvokeAsync(() =>
+        // {
+        //     _viewer.ScrollToCenterOfCurrentItem();
+        // }, DispatcherPriority.Render);
     }
 
     private async Task ExpandedToDocked()
@@ -550,7 +574,7 @@ public class GalleryAnimationControl : UserControl
         var startHeight = _parentControl.Bounds.Height;
 
         // LOCK the layout wrap constraint so it doesn't wrap tighter as the window shrinks
-        _itemsPanel.WrapHeightOverride = startHeight;
+        _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight();
         
         if (IsHorizontalDock(dock))
         {
@@ -600,6 +624,7 @@ public class GalleryAnimationControl : UserControl
         
         // Unlock the layout
         _itemsPanel.WrapHeightOverride = double.NaN;
+        _itemsPanel.InvalidateMeasure();
     }
 
     private async Task ClosedToExpanded()
@@ -610,10 +635,11 @@ public class GalleryAnimationControl : UserControl
         var targetHeight = _parentControl!.Bounds.Height;
         var targetWidth = _parentControl.Bounds.Width;
 
-        // Lock constraint and set expanded layout BEFORE animation for a smooth reveal
-        _itemsPanel.WrapHeightOverride = targetHeight;
         SetExpandedLayoutCore(Settings.Gallery.DockPosition);
         SetExpandedThumbs();
+
+        // Lock constraint and set expanded layout BEFORE animation for a smooth reveal
+        _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight();
         
         Dispatcher.UIThread.Post(() =>
         {
@@ -625,12 +651,29 @@ public class GalleryAnimationControl : UserControl
             AnimationsHelper.HeightAnimation(ZeroSize, targetHeight, GalleryDefaults.MediumAnimationSpeed).RunAsync(this)
         );
         
+        if (IsHorizontalDock(Settings.Gallery.DockPosition))
+        {
+            Width = double.NaN;
+            Height = targetHeight;
+        }
+        else
+        {
+            Width = targetWidth;
+            Height = double.NaN;
+        }
+
         _itemsPanel.WrapHeightOverride = double.NaN;
+        _itemsPanel.InvalidateMeasure();
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _viewer.ScrollToCenterOfCurrentItem();
+        }, DispatcherPriority.Render);
     }
 
     private async Task ExpandedToClosed()
     {
-        _itemsPanel.WrapHeightOverride = _parentControl.Bounds.Height;
+        _itemsPanel.WrapHeightOverride = GetExpandedWrapHeight();
 
         await Task.WhenAll(
             AnimationsHelper.WidthAnimation(Bounds.Width, ZeroSize, GalleryDefaults.FastAnimationSpeed).RunAsync(this),
@@ -639,6 +682,7 @@ public class GalleryAnimationControl : UserControl
 
         IsVisible = false;
         _itemsPanel.WrapHeightOverride = double.NaN;
+        _itemsPanel.InvalidateMeasure();
 
         if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {

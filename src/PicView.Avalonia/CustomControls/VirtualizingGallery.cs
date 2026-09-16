@@ -38,6 +38,17 @@ public class VirtualizingGallery : VirtualizingPanel
 
     public static readonly StyledProperty<double> WrapHeightOverrideProperty =
         AvaloniaProperty.Register<VirtualizingGallery, double>(nameof(WrapHeightOverride), double.NaN);
+
+    static VirtualizingGallery()
+    {
+        AffectsMeasure<VirtualizingGallery>(
+            OrientationProperty,
+            ItemHeightProperty,
+            ItemWidthProperty,
+            ItemSpacingProperty,
+            LineSpacingProperty,
+            WrapHeightOverrideProperty);
+    }
     
     public readonly record struct RealizedGalleryItem(int Index, Control Element);
 
@@ -208,7 +219,9 @@ public class VirtualizingGallery : VirtualizingPanel
         var currentColumnStartIndex = 0; // Track where the current column starts
 
         // Use the override if provided, otherwise use the actual available height
-        var availableHeight = double.IsNaN(WrapHeightOverride) ? availableSize.Height : WrapHeightOverride;
+        var availableHeight = double.IsNaN(WrapHeightOverride) || WrapHeightOverride <= 0
+            ? availableSize.Height
+            : WrapHeightOverride;
 
         foreach (var item in items)
         {
