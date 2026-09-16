@@ -205,7 +205,6 @@ public class VirtualizingGallery : VirtualizingPanel
         double currentY = 0;
         double currentColumnMaxWidth = 0;
         double maxExtentY = 0;
-        double maxItemWidth = 0;
         var currentColumnStartIndex = 0; // Track where the current column starts
 
         // Use the override if provided, otherwise use the actual available height
@@ -251,10 +250,9 @@ public class VirtualizingGallery : VirtualizingPanel
             }
             else if (Orientation == Orientation.Vertical)
             {
-                // Vertical Docked Mode (Single Column) - NO SPACING
-                _itemBounds.Add(new Rect(currentX, currentY, itemWidth, ItemHeight));
+                // Vertical Docked Mode (Single Column) - items fill available width
+                _itemBounds.Add(new Rect(currentX, currentY, availableSize.Width, ItemHeight));
                 currentY += ItemHeight;
-                maxItemWidth = Math.Max(maxItemWidth, itemWidth);
             }
             else
             {
@@ -278,7 +276,7 @@ public class VirtualizingGallery : VirtualizingPanel
         {
             // Return exact extent without deducting spacing
             return Orientation == Orientation.Vertical
-                ? new Size(maxItemWidth > 0 ? maxItemWidth : ItemHeight, currentY)
+                ? new Size(availableSize.Width, currentY)
                 : new Size(currentX, ItemHeight);
         }
 
@@ -390,19 +388,9 @@ public class VirtualizingGallery : VirtualizingPanel
             return new Size();
         }
 
-        var centerHorizontally = !IsExpanded && Orientation == Orientation.Vertical;
-
         foreach (var realized in _realizedItems.Where(realized => realized.Index >= 0 && realized.Index < _itemBounds.Count))
         {
-            var bounds = _itemBounds[realized.Index];
-
-            if (centerHorizontally && bounds.Width < finalSize.Width)
-            {
-                var offsetX = (finalSize.Width - bounds.Width) / 2;
-                bounds = new Rect(offsetX, bounds.Y, bounds.Width, bounds.Height);
-            }
-
-            realized.Element.Arrange(bounds);
+            realized.Element.Arrange(_itemBounds[realized.Index]);
         }
 
         return finalSize;
