@@ -8,16 +8,18 @@
     IsVisible="False">
     <Panel>
         <mp:MotionPhotoVideoSurface x:Name="VideoSurface" IsVisible="False" />
-        <!-- The badge is re-hosted into a floating overlay by FloatBadge() and positioned
-             by UpdateBadgePosition(), so it stays upright while anchored to the image's
-             on-screen top-right corner regardless of rotation, flipping or zooming. -->
+        <!--
+            The badge is re-hosted into a floating overlay by FloatBadge() and positioned
+            by UpdateBadgePosition(), so it stays upright while anchored to the image's
+            on-screen top-right corner regardless of rotation, flipping or zooming.
+        -->
         <Button
             x:Name="PlayBadge"
             Padding="10,7"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Background="{DynamicResource AltBackgroundColor}"
-            BorderBrush="{DynamicResource MainBorderColor}"
+            Background="{DynamicResource PopUpBackgroundColor}"
+            BorderBrush="{DynamicResource PopUpMainBorderColor}"
             BorderThickness="1"
             CornerRadius="15"
             Cursor="Hand"

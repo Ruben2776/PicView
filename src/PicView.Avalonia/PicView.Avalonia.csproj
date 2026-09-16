@@ -238,6 +238,10 @@
           <DependentUpon>SettingsMenu.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\UC\MotionPhotoView.axaml.cs">
+          <DependentUpon>MotionPhotoView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 
