@@ -183,18 +183,23 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                         KeybindingManager.SetDefaultKeybindings(core.PlatformService);
                         FunctionsKeyHelper.ResetKeybindings(core.Keybindings);
                     }, ct);
+                    if (core.Keybindings.WindowConfig is null)
+                    {
+                        core.Keybindings.WindowConfig = new KeybindingWindowConfig();
+                        await core.Keybindings.WindowConfig.LoadAsync();
+                    }
                     await ShowKeybindingsWindow();
                     core.MainWindows.ActiveWindow.CurrentValue.IsLoadingIndicatorShown.Value = false;
                 });
-
-                _ = Task.Run(async () =>
+                
+                await Task.Run(async () =>
                 {
                     await KeybindingManager.LoadKeybindings(core.PlatformService);
                     FunctionsKeyHelper.LoadKeybindingsViewModel(core.Keybindings);
                 });
             }
 
-            if (core.Keybindings.WindowConfig is null)
+            if (core.Keybindings.WindowConfig?.WindowProperties is null)
             {
                 core.Keybindings.WindowConfig = new KeybindingWindowConfig();
                 await core.Keybindings.WindowConfig.LoadAsync();
