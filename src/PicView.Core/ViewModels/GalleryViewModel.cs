@@ -25,13 +25,13 @@ public class GalleryViewModel : IDisposable
     public BindableReactiveProperty<bool> IsDockedGalleryVisible { get; } = new(Settings.Gallery.IsGalleryDocked);
     public BindableReactiveProperty<double> ItemSpacing { get; } = new(Settings.Gallery.ItemSpacing);
     public BindableReactiveProperty<double> LineSpacing { get; } = new(Settings.Gallery.LineSpacing);
-    public BindableReactiveProperty<bool> IsGalleryDocked { get; } = new(Settings.Gallery.IsGalleryDocked);
     public BindableReactiveProperty<int> SelectedGalleryItemIndex { get; } = new(-1);
     
     public BindableReactiveProperty<bool> IsTopDocked { get; } = new();
     public BindableReactiveProperty<bool> IsBottomDocked { get; } = new();
     public BindableReactiveProperty<bool> IsLeftDocked { get; } = new();
     public BindableReactiveProperty<bool> IsRightDocked { get; } = new();
+    public BindableReactiveProperty<bool> IsGalleryDocked { get; } = new(Settings.Gallery.IsGalleryDocked);
 
     public GalleryLoadingState LoadingState { get; set; }
 
