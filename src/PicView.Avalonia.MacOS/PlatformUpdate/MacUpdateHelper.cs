@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Avalonia;
+using Avalonia.Threading;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.Update;
@@ -38,7 +39,8 @@ public static class MacUpdateHelper
             var fileName = Path.GetFileName(downloadUrl);
             var tempFilePath = Path.Combine(tempPath, fileName);
             
-            if (Application.Current.DataContext is not CoreViewModel core)
+            var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
+            if (core is null)
             {
                 return;
             }

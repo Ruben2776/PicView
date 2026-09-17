@@ -135,7 +135,8 @@ public static class TooltipHelper
     /// <param name="interval">The time interval for which the tooltip is displayed. If null, a default interval is used.</param>
     public static void ShowTooltipMessage(object message, bool center = false, TimeSpan? interval = null)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        var core = Dispatcher.UIThread.Invoke(() => Application.Current.DataContext as CoreViewModel);
+        if (core is null)
         {
             return;
         }

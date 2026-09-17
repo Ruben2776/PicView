@@ -93,7 +93,8 @@ public static class WindowFunctions
 
     public static async Task WindowClosingBehavior()
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        var desktop = Dispatcher.UIThread.Invoke(() => Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
+        if (desktop is null)
         {
             return;
         }
@@ -105,17 +106,19 @@ public static class WindowFunctions
     {
         WindowResizing.SaveSize(window);
 
-        if (Application.Current.DataContext is not CoreViewModel core)
+        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
+        if (core is null)
         {
             return;
         }
 
-        if (window.DataContext is not MainWindowViewModel vm)
+        var vm = Dispatcher.UIThread.Invoke(() => window.DataContext as MainWindowViewModel);
+        if (vm is null)
         {
             return;
         }
         
-        window.Hide();
+        Dispatcher.UIThread.Invoke(window.Hide);
         
         string? lastFile;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
