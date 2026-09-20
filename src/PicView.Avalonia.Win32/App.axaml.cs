@@ -50,8 +50,6 @@ public class App : Application, IPlatformSpecificService
         _coreViewModel = new CoreViewModel(this, GetImageModel.GetImageModelAsync);
         DataContext = _coreViewModel;
 
-        ThemeManager.DetermineTheme(Current, settingsExists);
-
         _mainWindow = new WinMainWindow();
         _mainWindowViewModel = _mainWindow.DataContext as MainWindowViewModel;
         _coreViewModel.MainWindows.MainWindows.Add(_mainWindowViewModel);

@@ -20,6 +20,7 @@ using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
+using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
 
@@ -56,10 +57,6 @@ public static class StartUpHelper
                     }
                 });
             }
-            else if (arg.Equals("blank:", StringComparison.OrdinalIgnoreCase))
-            {
-                BlankStartUp();
-            }
             else if (Settings.UIProperties.OpenInSameWindow)
             {
                 if (!ProcessHelper.CheckIfAnotherInstanceIsRunning())
@@ -80,19 +77,17 @@ public static class StartUpHelper
         {
             WindowFunctions.RegularWindowStartUp(vm, settingsExists, desktop, window);
         }
-            
-        return;
+    }
+    
+    public static void HandleWindowStartUpSettings(CoreViewModel core, bool settingsExists, MainWindow window)
+    {
+        TranslationManager.Init();
+        SettingsUpdater.InitializeSettings(core.MainWindows.ActiveWindow.CurrentValue, settingsExists);
 
-        void BlankStartUp()
-        {
-            desktop.MainWindow = window;
-            
-            SettingsUpdater.InitializeSettings(vm.MainWindows.ActiveWindow.CurrentValue, settingsExists);
-
-            WindowFunctions.HandleWindowScalingMode(vm, window);
-
-            HandlePostWindowUpdates(vm, desktop, window);
-        }
+        WindowFunctions.HandleWindowScalingMode(core, window);
+        
+        ThemeManager.DetermineTheme(Application.Current, settingsExists);
+        HandleThemeUpdates(core.MainWindows.ActiveWindow.CurrentValue);
     }
 
     public static void HandlePostWindowUpdates(CoreViewModel core, IClassicDesktopStyleApplicationLifetime desktop, MainWindow mainWindow)
@@ -113,7 +108,6 @@ public static class StartUpHelper
         BackGroundLoadings();
 
         SetWindowEventHandlers(mainWindow);
-        HandleThemeUpdates(vm);
         mainWindow.UIHelper.AddDropDownMenu(mainWindow);
         mainWindow.UIHelper.AddFileMenu(vm);
         mainWindow.UIHelper.AddSettingsMenu(vm);
@@ -155,11 +149,6 @@ public static class StartUpHelper
 
     private static void HandleThemeUpdates(MainWindowViewModel vm)
     {
-        if (Settings.Theme.GlassTheme)
-        {
-            GlassThemeHelper.GlassThemeUpdates();
-        }
-
         BackgroundManager.SetBackground(Settings.UIProperties.BgColorChoice);
         ColorManager.UpdateAccentColors(Settings.Theme.ColorTheme);
         UIHelper.SetCtrlToZoomImage(vm);

@@ -61,30 +61,25 @@ public static class WindowFunctions
         StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
     }
     
-    public static void RegularWindowStartUp(CoreViewModel vm, bool settingsExists,
+    public static void RegularWindowStartUp(CoreViewModel core, bool settingsExists,
         IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
     {
         desktop.MainWindow = window;
-        TranslationManager.Init();
-        SettingsUpdater.InitializeSettings(vm.MainWindows.ActiveWindow.CurrentValue, settingsExists);
-        
-        HandleWindowScalingMode(vm, window);
+        StartUpHelper.HandleWindowStartUpSettings(core, settingsExists, window);
 
-        StartUpHelper.StartUpMenuOrLastFile(window, vm);
+        StartUpHelper.StartUpMenuOrLastFile(window, core);
 
-        StartUpHelper.HandlePostWindowUpdates(vm, desktop, window);
+        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
     }
     
-    public static void ImageStartUp(string filePath, CoreViewModel vm, bool settingsExists,
+    public static void ImageStartUp(string filePath, CoreViewModel core, bool settingsExists,
         IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
     {
-        SettingsUpdater.InitializeSettings(vm.MainWindows.ActiveWindow.CurrentValue, settingsExists);
+        StartUpHelper.HandleWindowStartUpSettings(core, settingsExists, window);
 
-        HandleWindowScalingMode(vm, window);
+        StartUpHelper.HandleStartImage(window, core, filePath);
 
-        StartUpHelper.HandleStartImage(window, vm, filePath);
-
-        StartUpHelper.HandlePostWindowUpdates(vm, desktop, window);
+        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
     }
 
     #endregion

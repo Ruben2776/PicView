@@ -88,9 +88,7 @@ public class App : Application, IPlatformSpecificService
 
         DataContext = _coreViewModel;
         
-        TranslationManager.Init();
-        SettingsUpdater.InitializeSettings(_mainWindowViewModel, settingsExists);
-        WindowFunctions.HandleWindowScalingMode(_coreViewModel, _mainWindow);
+        StartUpHelper.HandleWindowStartUpSettings(_coreViewModel, settingsExists, _mainWindow);
         _mainWindow.Show();
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
         {
