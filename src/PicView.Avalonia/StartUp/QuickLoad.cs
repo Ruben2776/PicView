@@ -299,7 +299,15 @@ public static class QuickLoad
         }
 
         vm.IsLoadingIndicatorShown.Value = false;
-        tab.UpdateTabTitle();
+        
+        if (Settings.WindowProperties.AutoFit && OperatingSystem.IsMacOS())
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                WindowFunctions.CenterWindowOnScreen(mainWindow);
+            }, DispatcherPriority.Render);
+        }
+        
         ShowHoverBarIfNeeded(core);
         if (Settings.UIProperties.IsTaskbarProgressEnabled)
         {

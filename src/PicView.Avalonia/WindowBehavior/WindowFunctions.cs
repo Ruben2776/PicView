@@ -196,7 +196,7 @@ public static class WindowFunctions
         else if (Settings.WindowProperties.AutoFit)
         {
             window.WindowStartupLocation = adjustPos ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
-            SetAutoFit(vm.MainWindows.ActiveWindow.CurrentValue, window, false);
+            SetAutoFit(vm.MainWindows.ActiveWindow.CurrentValue, window);
         }
         else 
         {
@@ -276,17 +276,11 @@ public static class WindowFunctions
         }
     }
 
-    public static void SetAutoFit(MainWindowViewModel vm, Window window, bool center = true)
+    public static void SetAutoFit(MainWindowViewModel vm, Window window)
     {
         window.SizeToContent = SizeToContent.WidthAndHeight;
         Settings.WindowProperties.AutoFit = true;
         vm.IsAutoFit.Value = true;
-
-        if (center)
-        {
-            // Fix unpleasant window placement
-            CenterWindowOnScreen();
-        }
     }
 
     /// <summary>
