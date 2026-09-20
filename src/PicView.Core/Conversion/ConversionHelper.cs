@@ -25,9 +25,9 @@ public static class ConversionHelper
         return await SaveImageFileHelper.ResizeImageAsync(fileInfo, 0, (uint)height).ConfigureAwait(false);
     }
 
-    public static bool DetermineIfOptimizeImageShouldBeEnabled(FileInfo fileInfo)
+    public static bool DetermineIfOptimizeImageShouldBeEnabled(FileInfo? fileInfo)
     {
-        if (fileInfo is null)
+        if (fileInfo is null || !fileInfo.Exists)
         {
             return false;
         }

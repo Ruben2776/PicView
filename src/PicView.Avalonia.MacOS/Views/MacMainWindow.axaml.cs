@@ -7,6 +7,7 @@ using PicView.Avalonia.MacOS.WindowImpl;
 using WindowInitializer = PicView.Avalonia.Services.WindowInitializer;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Conversion;
 using PicView.Core.DebugTools;
 using PicView.Core.IPlatform;
 using PicView.Core.ViewModels;
