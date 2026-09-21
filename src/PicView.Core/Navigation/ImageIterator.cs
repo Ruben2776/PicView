@@ -445,7 +445,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         _lastRepeatTime = DateTime.MinValue; 
     }
 
-    private readonly object _fileWaitLock = new();
+    private readonly Lock _fileWaitLock = new();
     private TaskCompletionSource<bool>? _fileAddedTcs;
 
     public void NotifyFileAdded()
