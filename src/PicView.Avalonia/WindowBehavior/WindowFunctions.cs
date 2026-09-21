@@ -5,19 +5,15 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
-using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
-using PicView.Core.ArchiveHandling;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
 using PicView.Core.IPlatform;
-using PicView.Core.Localization;
 using PicView.Core.Models;
-using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -38,7 +34,6 @@ public static class WindowFunctions
         }
         var window = mainWindow.MainWindowInitializer.CreateMainWindow();
         var vm = window.DataContext as MainWindowViewModel;
-        SettingsUpdater.InitializeSettings(vm, true);
         HandleWindowScalingMode(core, window);
         var startUpMenu = new StartUpMenu
         {
@@ -54,7 +49,6 @@ public static class WindowFunctions
 
     public static void DetachedWindowStartup(CoreViewModel core, IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
     {
-        SettingsUpdater.InitializeSettings(window.DataContext as MainWindowViewModel, true);
         HandleWindowScalingMode(core, window, false);
         window.Show();
         

@@ -132,8 +132,9 @@ public static class StartUpHelper
         {
             Task.Run(async() =>
             {
+                Debug.Assert(core.PlatformService != null);
                 await KeybindingManager.LoadKeybindings(core.PlatformService);
-                core.MainWindows.ActiveWindow.Value.Mapper = new FunctionsMapper(vm, mainWindow);
+                core.MainWindows.ActiveWindow.Value?.Mapper = new FunctionsMapper(vm, mainWindow);
                 FileHistoryManager.Initialize();
                 HandleWindowControlSettings(core, desktop);
                 vm.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);
