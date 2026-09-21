@@ -10,3 +10,7 @@ dotnet_diagnostic.MA0026.severity = none
 dotnet_diagnostic.MA0048.severity = none
 
 dotnet_diagnostic.MA0197.severity = none
+
+# Braces
+dotnet_diagnostic.IDE0011.severity = error
+csharp_prefer_braces = true

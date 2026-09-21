@@ -85,6 +85,7 @@ public class TempFileTests
 - **File-scoped namespaces** (`namespace X;` not block-scoped).
 - **Nullable reference types** enabled globally.
 - **Implicit usings** enabled — no need for `using System;` etc.
+- **Braces** Use curly braces for if statements and loops.
 - **Naming**: PascalCase for public members, `_camelCase` for private fields. Test methods use `MethodOrScenario_Condition_ExpectedResult` pattern.
 - **Async patterns**: `async Task` / `ValueTask` used extensively; avoid `async void`.
 - **Reactive extensions**: R3 (`ObservableCollections.R3`, `R3`) used for reactive patterns in ViewModels.
