@@ -38,7 +38,7 @@ public static class FFmpegService
     public delegate int PvDecodeNextCallback(IntPtr session, IntPtr dst, int dstCapacity, out double pts, out int width, out int height);
     public delegate void PvCloseCallback(IntPtr session);
 
-    private static readonly object InitLock = new();
+    private static readonly Lock InitLock = new();
     private static IntPtr _library;
     private static bool _initialized;
     private static bool _initFailed;
@@ -46,14 +46,6 @@ public static class FFmpegService
     internal static PvOpenCallback PvOpen { get; private set; } = null!;
     internal static PvDecodeNextCallback PvDecodeNext { get; private set; } = null!;
     internal static PvCloseCallback PvClose { get; private set; } = null!;
-
-    /// <summary>
-    /// Video playback is supported on all desktop platforms: the native library is
-    /// bundled per runtime identifier and frames are decoded in software into BGRA32
-    /// buffers rendered by the Avalonia compositor.
-    /// </summary>
-    public static bool IsPlaybackSupported =>
-        OperatingSystem.IsWindows() || OperatingSystem.IsLinux() || OperatingSystem.IsMacOS();
 
     /// <summary>
     /// Attempts to load the native library. Returns false when playback is
@@ -66,7 +58,7 @@ public static class FFmpegService
             return true;
         }
 
-        if (!IsPlaybackSupported || _initFailed)
+        if (_initFailed)
         {
             return false;
         }

@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
+using PicView.Avalonia.MotionPhoto;
 using PicView.Core.DebugTools;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
@@ -11,7 +12,7 @@ using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using R3;
 
-namespace PicView.Avalonia.MotionPhoto;
+namespace PicView.Avalonia.Views.UC;
 
 /// <summary>
 /// Overlay that plays the embedded video of a motion photo on top of the still cover image.
@@ -140,9 +141,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
         EnsureUiStateSubscription();
         UpdateBadgeInset();
 
-        if (model is { ImageType: ImageType.MotionPhoto, MotionPhoto: not null } &&
-            FFmpegService.IsPlaybackSupported &&
-            FFmpegService.TryInitialize())
+        if (model is { ImageType: ImageType.MotionPhoto, MotionPhoto: not null }  && FFmpegService.TryInitialize())
         {
             IsVisible = true;
             PlayBadge.IsVisible = true;

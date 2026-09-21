@@ -1,5 +1,5 @@
 <UserControl
-    x:Class="PicView.Avalonia.MotionPhoto.MotionPhotoView"
+    x:Class="PicView.Avalonia.Views.UC.MotionPhotoView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mp="clr-namespace:PicView.Avalonia.MotionPhoto"
