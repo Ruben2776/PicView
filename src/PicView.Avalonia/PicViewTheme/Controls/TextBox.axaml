@@ -1,9 +1,9 @@
 <ResourceDictionary
+    x:ClassModifier="internal"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:ClassModifier="internal">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <ControlTheme x:Key="{x:Type TextBox}" TargetType="TextBox">
+    <ControlTheme TargetType="TextBox" x:Key="{x:Type TextBox}">
         <Setter Property="Background" Value="{DynamicResource TextBoxBackgroundColor}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TextBoxBorderColor}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -18,45 +18,45 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Border
-                    Name="border"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}">
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Name="border">
                     <DockPanel
-                        Margin="{TemplateBinding Padding}"
                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        Margin="{TemplateBinding Padding}"
                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
 
                         <DataValidationErrors>
 
                             <Grid ColumnDefinitions="Auto,*,Auto">
-                                <ContentPresenter Grid.Column="0" Content="{TemplateBinding InnerLeftContent}" />
+                                <ContentPresenter Content="{TemplateBinding InnerLeftContent}" Grid.Column="0" />
                                 <ScrollViewer
-                                    Name="PART_ScrollViewer"
-                                    Grid.Column="1"
                                     AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
                                     BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}"
+                                    Grid.Column="1"
                                     HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
                                     IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+                                    Name="PART_ScrollViewer"
                                     VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}">
                                     <Panel>
                                         <TextBlock
-                                            Name="watermark"
-                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                             Foreground="{DynamicResource MainTextColorFaded}"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                             IsVisible="{TemplateBinding Text,
                                                                         Converter={x:Static StringConverters.IsNullOrEmpty}}"
-                                            Text="{TemplateBinding Watermark}"
+                                            Name="placeholder"
+                                            Text="{TemplateBinding PlaceholderText}"
                                             TextAlignment="{TemplateBinding TextAlignment}"
-                                            TextWrapping="{TemplateBinding TextWrapping}" />
+                                            TextWrapping="{TemplateBinding TextWrapping}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                                         <TextPresenter
-                                            Name="PART_TextPresenter"
                                             CaretBrush="{TemplateBinding CaretBrush}"
                                             CaretIndex="{TemplateBinding CaretIndex}"
                                             LetterSpacing="{TemplateBinding LetterSpacing}"
                                             LineHeight="{TemplateBinding LineHeight}"
+                                            Name="PART_TextPresenter"
                                             PasswordChar="{TemplateBinding PasswordChar}"
                                             RevealPassword="{TemplateBinding RevealPassword}"
                                             SelectionBrush="{TemplateBinding SelectionBrush}"
@@ -74,7 +74,7 @@
                                         </Style>
                                     </ScrollViewer.Styles>
                                 </ScrollViewer>
-                                <ContentPresenter Grid.Column="2" Content="{TemplateBinding InnerRightContent}" />
+                                <ContentPresenter Content="{TemplateBinding InnerRightContent}" Grid.Column="2" />
                             </Grid>
                         </DataValidationErrors>
                     </DockPanel>
@@ -106,7 +106,7 @@
             <Setter Property="Background" Value="{DynamicResource TextBoxDisabledBackgroundColor}" />
         </Style>
 
-        <Style Selector="^:disabled /template/ TextBlock#watermark">
+        <Style Selector="^:disabled /template/ TextBlock#placeholder">
             <Setter Property="IsVisible" Value="False" />
         </Style>
         <Style Selector="^:disabled /template/ TextPresenter#PART_TextPresenter">

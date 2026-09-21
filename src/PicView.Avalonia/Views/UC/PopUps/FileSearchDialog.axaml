@@ -1,28 +1,28 @@
 ﻿<customControls:AnimatedPopUp
-    x:Class="PicView.Avalonia.Views.UC.PopUps.FileSearchDialog"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:CoreViewModel"
     Background="Transparent"
     ContextMenu="{StaticResource MainMenu}"
-    ZIndex="99">
+    ZIndex="99"
+    x:Class="PicView.Avalonia.Views.UC.PopUps.FileSearchDialog"
+    x:DataType="viewModels:CoreViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <customControls:AnimatedPopUp.Resources>
         <ContextMenu x:Key="MainMenu">
             <!--  Close  -->
             <customControls:StyledMenuItem
-                x:Name="CloseMenuItem"
                 Click="CloseMenu"
                 Header="{CompiledBinding Translation.Close.Value,
-                                         Mode=OneWay}">
+                                         Mode=OneWay}"
+                x:Name="CloseMenuItem">
                 <MenuItem.Icon>
                     <Path
-                        Width="12"
-                        Height="12"
                         Data="{StaticResource CloseGeometry}"
                         Fill="{DynamicResource MainTextColor}"
-                        Stretch="Fill" />
+                        Height="12"
+                        Stretch="Fill"
+                        Width="12" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
         </ContextMenu>
@@ -30,12 +30,6 @@
 
     <Panel>
         <customControls:IconButton
-            x:Name="CloseButton"
-            Width="50"
-            Height="50"
-            Margin="0,-15,-10,0"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
             Background="{DynamicResource PopUpBackgroundColor}"
             BorderBrush="{DynamicResource PopUpMainBorderColor}"
             BorderThickness="1"
@@ -43,39 +37,45 @@
             Click="CloseMenu"
             CornerRadius="50"
             Data="{StaticResource CloseGeometry}"
+            Height="50"
+            HorizontalAlignment="Right"
             IconHeight="18"
             IconWidth="18"
-            ZIndex="1" />
+            Margin="0,-15,-10,0"
+            VerticalAlignment="Top"
+            Width="50"
+            ZIndex="1"
+            x:Name="CloseButton" />
         <StackPanel
-            Width="425"
+            Background="Transparent"
             VerticalAlignment="Center"
-            Background="Transparent">
+            Width="425">
 
             <TextBlock
-                Margin="0,15"
                 Classes="txt bold"
+                Margin="0,15"
                 Text="{Binding Translation.Search.Value}"
                 TextAlignment="Center" />
 
             <Panel>
                 <Image
-                    Width="16"
                     Height="16"
-                    Margin="20,0,0,5"
                     HorizontalAlignment="Left"
+                    Margin="20,0,0,5"
                     Source="{StaticResource SearchImage}"
+                    Width="16"
                     ZIndex="1" />
 
                 <customControls:FuncTextBox
-                    x:Name="SearchBox"
-                    Width="400"
-                    Margin="0,0,0,5"
-                    Padding="35,7,4,7"
-                    VerticalAlignment="Center"
                     BorderThickness="1"
                     CornerRadius="3"
-                    Watermark="{CompiledBinding Translation.Search.Value,
-                                                Mode=OneWay}" />
+                    Margin="0,0,0,5"
+                    Padding="35,7,4,7"
+                    PlaceholderText="{CompiledBinding Translation.Search.Value,
+                                                      Mode=OneWay}"
+                    VerticalAlignment="Center"
+                    Width="400"
+                    x:Name="SearchBox" />
             </Panel>
 
             <Border
@@ -90,13 +90,12 @@
                         BorderThickness="1"
                         CornerRadius="6">
                         <ItemsControl
-                            x:Name="SearchItemsControl"
                             ItemsSource="{CompiledBinding SharedNavigationService.FilteredFileInfos.Value}"
-                            KeyboardNavigation.TabNavigation="Cycle">
+                            KeyboardNavigation.TabNavigation="Cycle"
+                            x:Name="SearchItemsControl">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button
-                                        Padding="5,10"
                                         Background="Transparent"
                                         BorderBrush="{DynamicResource MenuBorderColor}"
                                         BorderThickness="0,0,0,1"
@@ -104,14 +103,15 @@
                                         Command="{Binding #SearchBox.((viewModels:CoreViewModel)DataContext).SharedNavigationService.LoadFromStringCommand}"
                                         CommandParameter="{Binding File.FullName}"
                                         Focusable="True"
-                                        IsTabStop="True">
+                                        IsTabStop="True"
+                                        Padding="5,10">
                                         <customControls:HighlightableTextBlock
-                                            Margin="2,0,0,0"
                                             Classes="txt"
                                             HighlightBrush="{DynamicResource AccentColor}"
                                             HighlightEnd="{Binding MatchEndIndex}"
                                             HighlightStart="{Binding MatchStartIndex}"
                                             IsHitTestVisible="False"
+                                            Margin="2,0,0,0"
                                             Text="{Binding File.Name}"
                                             TextWrapping="Wrap" />
                                     </Button>

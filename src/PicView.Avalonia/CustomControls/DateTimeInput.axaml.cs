@@ -155,11 +155,11 @@ public class DateTimeInput : TemplatedControl
         var today = DateTime.Now;
 
         // --- Create TextBoxes ---
-        _yearBox = CreateNumericTextBox(maxLength:4, watermark: today.Year.ToString("D4"));
-        _monthBox = CreateNumericTextBox(maxLength:2, watermark: today.Month.ToString("D2"));
-        _dayBox = CreateNumericTextBox(maxLength:2, watermark: today.Day.ToString("D2"));
-        _hourBox = CreateNumericTextBox(maxLength:2, watermark: today.TimeOfDay.Hours.ToString("D2"));
-        _minuteBox = CreateNumericTextBox(maxLength:2, watermark: today.TimeOfDay.Minutes.ToString("D2"));
+        _yearBox = CreateNumericTextBox(maxLength:4, placeholderText: today.Year.ToString("D4"));
+        _monthBox = CreateNumericTextBox(maxLength:2, placeholderText: today.Month.ToString("D2"));
+        _dayBox = CreateNumericTextBox(maxLength:2, placeholderText: today.Day.ToString("D2"));
+        _hourBox = CreateNumericTextBox(maxLength:2, placeholderText: today.TimeOfDay.Hours.ToString("D2"));
+        _minuteBox = CreateNumericTextBox(maxLength:2, placeholderText: today.TimeOfDay.Minutes.ToString("D2"));
 
         // --- Determine Date Field Order ---
         var dateParts = dateTimeFormat.ShortDatePattern.Split(dateTimeFormat.DateSeparator)
@@ -248,12 +248,12 @@ public class DateTimeInput : TemplatedControl
     /// <summary>
     /// Creates a TextBox configured for numeric input.
     /// </summary>
-    private ValidationTextBox CreateNumericTextBox(int maxLength, string watermark)
+    private ValidationTextBox CreateNumericTextBox(int maxLength, string placeholderText)
     {
         var textBox = new ValidationTextBox
         {
             MaxLength = maxLength,
-            PlaceholderText = watermark,
+            PlaceholderText = placeholderText,
             TextAlignment = TextAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
             Padding = new Thickness(0),
