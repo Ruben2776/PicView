@@ -199,7 +199,14 @@ public class VirtualizingGallery : VirtualizingPanel
 
     private void OnEffectiveViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
     {
-        _viewport = e.EffectiveViewport;
+        var newViewport = e.EffectiveViewport;
+        if (_viewport == newViewport)
+        {
+            // Avoid re-measuring on every viewport notification, it makes scrolling stutter
+            return;
+        }
+
+        _viewport = newViewport;
         InvalidateMeasure();
     }
 

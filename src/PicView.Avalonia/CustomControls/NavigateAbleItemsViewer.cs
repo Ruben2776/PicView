@@ -19,6 +19,8 @@ public class NavigateAbleItemsViewer : ItemsControl
 {
     #region Fields and  Avalonia Properties
     
+    private const double ScrollLineSize = 50;
+
     private AutoScrollViewer? _scrollViewer;
 
     protected override Type StyleKeyOverride => typeof(NavigateAbleItemsViewer);
@@ -211,6 +213,11 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
+        if (e.Handled)
+        {
+            return;
+        }
+
         switch (Settings.Gallery.GalleryMouseWheelBehavior)
         {
             case GalleryMouseWheel.Navigate:
@@ -235,7 +242,11 @@ public class NavigateAbleItemsViewer : ItemsControl
             return;
         }
 
-        if (e.Delta.Y < 0 || e.Delta.X < 0)
+        // Mark as handled, so the inner ScrollViewer doesn't scroll on its own
+        // and fight the centering of the current item
+        e.Handled = true;
+
+        if (GetScrollDelta(e) < 0)
         {
             _ = tab.Next();
         }
@@ -247,15 +258,51 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     private void ScrollTheControl(PointerWheelEventArgs e)
     {
-        if (e.Delta.Y < 0 || e.Delta.X < 0)
+        if (_scrollViewer is null)
         {
-            _scrollViewer.LineRight();
+            return;
+        }
+
+        // Mark as handled, so the inner ScrollViewer doesn't apply its own scrolling on top of ours.
+        // Otherwise, a small delta on the opposite axis (common on trackpads) makes it scroll backwards
+        e.Handled = true;
+
+        var delta = GetScrollDelta(e);
+        if (delta is 0)
+        {
+            return;
+        }
+
+        var offset = _scrollViewer.Offset;
+        var extent = _scrollViewer.Extent;
+        var viewport = _scrollViewer.Viewport;
+
+        if (_scrollViewer.HorizontalScrollBarVisibility != ScrollBarVisibility.Disabled &&
+            extent.Width > viewport.Width)
+        {
+            var maxX = extent.Width - viewport.Width;
+            offset = offset.WithX(Math.Clamp(offset.X - delta * ScrollLineSize, 0, maxX));
+        }
+        else if (_scrollViewer.VerticalScrollBarVisibility != ScrollBarVisibility.Disabled &&
+                 extent.Height > viewport.Height)
+        {
+            var maxY = extent.Height - viewport.Height;
+            offset = offset.WithY(Math.Clamp(offset.Y - delta * ScrollLineSize, 0, maxY));
         }
         else
         {
-            _scrollViewer.LineLeft();
+            return;
         }
+
+        _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, offset);
     }
+
+    /// <summary>
+    /// Reduces the wheel delta to a single value along the dominant axis,
+    /// so noise on the opposite axis can't reverse the scroll direction.
+    /// </summary>
+    private static double GetScrollDelta(PointerWheelEventArgs e)
+        => Math.Abs(e.Delta.X) > Math.Abs(e.Delta.Y) ? e.Delta.X : e.Delta.Y;
 
     #endregion
 
