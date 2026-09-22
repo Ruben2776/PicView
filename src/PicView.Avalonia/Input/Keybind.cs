@@ -6,6 +6,15 @@ namespace PicView.Avalonia.Input;
 [StructLayout(LayoutKind.Auto)]
 public readonly struct Keybind : IEquatable<Keybind>
 {
+    public const string CtrlModifier = "Ctrl";
+    public const string ControlModifier = "Control";
+    public const string ShiftModifier = "Shift";
+    public const string AltModifier = "Alt";
+    public const string OptionModifier = "Option";
+    public const string WinModifier = "Win";
+    public const string MetaModifier = "Meta";
+    public const string CmdModifier = "Cmd";
+
     public Key Key { get; }
     public MouseButton MouseButton { get; }
     public KeyModifiers Modifiers { get; }
@@ -35,22 +44,22 @@ public readonly struct Keybind : IEquatable<Keybind>
     private static void ValidateModifiers(KeyModifiers modifiers)
     {
         var count = 0;
-        if ((modifiers & KeyModifiers.Control) != 0)
+        if (modifiers.HasFlag(KeyModifiers.Control))
         {
             count++;
         }
 
-        if ((modifiers & KeyModifiers.Shift) != 0)
+        if (modifiers.HasFlag(KeyModifiers.Shift))
         {
             count++;
         }
 
-        if ((modifiers & KeyModifiers.Alt) != 0)
+        if (modifiers.HasFlag(KeyModifiers.Alt))
         {
             count++;
         }
 
-        if ((modifiers & KeyModifiers.Meta) != 0)
+        if (modifiers.HasFlag(KeyModifiers.Meta))
         {
             count++;
         }
@@ -82,23 +91,23 @@ public readonly struct Keybind : IEquatable<Keybind>
             var part = plusIndex == -1 ? span : span.Slice(0, plusIndex);
             part = part.Trim();
 
-            if (part.Equals("Ctrl", StringComparison.OrdinalIgnoreCase) ||
-                part.Equals("Control", StringComparison.OrdinalIgnoreCase))
+            if (part.Equals(CtrlModifier, StringComparison.OrdinalIgnoreCase) ||
+                part.Equals(ControlModifier, StringComparison.OrdinalIgnoreCase))
             {
                 mods |= KeyModifiers.Control;
             }
-            else if (part.Equals("Shift", StringComparison.OrdinalIgnoreCase))
+            else if (part.Equals(ShiftModifier, StringComparison.OrdinalIgnoreCase))
             {
                 mods |= KeyModifiers.Shift;
             }
-            else if (part.Equals("Alt", StringComparison.OrdinalIgnoreCase) ||
-                     part.Equals("Option", StringComparison.OrdinalIgnoreCase))
+            else if (part.Equals(AltModifier, StringComparison.OrdinalIgnoreCase) ||
+                     part.Equals(OptionModifier, StringComparison.OrdinalIgnoreCase))
             {
                 mods |= KeyModifiers.Alt; // Parses both Alt and Mac's Option mapped to Alt[cite: 1]
             }
-            else if (part.Equals("Win", StringComparison.OrdinalIgnoreCase) ||
-                     part.Equals("Meta", StringComparison.OrdinalIgnoreCase) ||
-                     part.Equals("Cmd", StringComparison.OrdinalIgnoreCase))
+            else if (part.Equals(WinModifier, StringComparison.OrdinalIgnoreCase) ||
+                     part.Equals(MetaModifier, StringComparison.OrdinalIgnoreCase) ||
+                     part.Equals(CmdModifier, StringComparison.OrdinalIgnoreCase))
             {
                 mods |= KeyModifiers.Meta;
             }
@@ -132,25 +141,25 @@ public readonly struct Keybind : IEquatable<Keybind>
         string? p2 = null;
         var index = 0;
 
-        if ((Modifiers & KeyModifiers.Control) != 0)
+        if (Modifiers.HasFlag(KeyModifiers.Control))
         {
-            AddPart("Ctrl", ref p0, ref p1, ref p2, ref index);
+            AddPart(CtrlModifier, ref p0, ref p1, ref p2, ref index);
         }
 
-        if ((Modifiers & KeyModifiers.Shift) != 0)
+        if (Modifiers.HasFlag(KeyModifiers.Shift))
         {
-            AddPart("Shift", ref p0, ref p1, ref p2, ref index);
+            AddPart(ShiftModifier, ref p0, ref p1, ref p2, ref index);
         }
 
-        if ((Modifiers & KeyModifiers.Alt) != 0)
+        if (Modifiers.HasFlag(KeyModifiers.Alt))
         {
             // Translates Alt to Option for macOS displays and configurations[cite: 1]
-            AddPart(RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "Option" : "Alt", ref p0, ref p1, ref p2, ref index);
+            AddPart(OperatingSystem.IsMacOS() ? OptionModifier : AltModifier, ref p0, ref p1, ref p2, ref index);
         }
 
-        if ((Modifiers & KeyModifiers.Meta) != 0)
+        if (Modifiers.HasFlag(KeyModifiers.Meta))
         {
-            AddPart(RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "Cmd" : "Win", ref p0, ref p1, ref p2, ref index);
+            AddPart(OperatingSystem.IsMacOS() ? CmdModifier : WinModifier, ref p0, ref p1, ref p2, ref index);
         }
 
         if (Key != Key.None)
