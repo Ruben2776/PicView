@@ -96,24 +96,15 @@ public class App : Application, IPlatformSpecificService
         }
 
         var arg = Environment.GetCommandLineArgs();
-        if (arg.Length > 1)
+        if (arg.Length > 1 && startUpFilePath is null)
         {
-            startUpFilePath = arg[1];
-        }
-        if (startUpFilePath is not null)
-        {
-            Task.Run(() => QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, startUpFilePath, false));
+            Task.Run(() => QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, arg[1], false));
         }
         else
         {
-            // Retry again because FileActivatedEventArgs is very fickle #360 
             Dispatcher.UIThread.Post(() =>
             {
-                if (startUpFilePath is not null)
-                {
-                    Task.Run(() => QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, startUpFilePath, false));
-                }
-                else
+                if (startUpFilePath is null)
                 {
                     StartUpHelper.StartUpMenuOrLastFile(_mainWindow, _coreViewModel);
                 }
@@ -134,7 +125,7 @@ public class App : Application, IPlatformSpecificService
             if (!_isInitialLoad)
             {
                 _isInitialLoad = true;
-                await QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, startUpFilePath, true, true).ConfigureAwait(false);
+                await QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, startUpFilePath, true).ConfigureAwait(false);
                 return;
             }
             if (Settings.UIProperties.OpenInSameWindow)

@@ -63,7 +63,10 @@ public static class WindowFunctions
 
         StartUpHelper.StartUpMenuOrLastFile(window, core);
 
-        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
+        }, priority: DispatcherPriority.Background);
     }
     
     public static void ImageStartUp(string filePath, CoreViewModel core, bool settingsExists,
@@ -73,7 +76,10 @@ public static class WindowFunctions
 
         StartUpHelper.HandleStartImage(window, core, filePath);
 
-        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
+        }, priority: DispatcherPriority.Background);
     }
 
     #endregion

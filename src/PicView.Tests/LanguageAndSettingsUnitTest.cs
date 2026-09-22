@@ -75,4 +75,28 @@ public class LanguageAndSettingsUnitTest
         // await TranslationManager.ChangeLanguage((int)da);
         // Assert.Equal("Billede", TranslationManager.Translation.Image);
     }
+
+    [Fact]
+    public void LanguageItem_ToString_ReturnsDisplayName()
+    {
+        var item = new PicView.Core.ViewModels.LanguageItem("da", "Danish");
+        Assert.Equal("Danish", item.ToString());
+    }
+
+    [Fact]
+    public void ComboBox_WithDisplayMemberBinding_PopulatesSelectionBoxItemTemplate()
+    {
+        var cb = new global::Avalonia.Controls.ComboBox();
+        var items = new List<PicView.Core.ViewModels.LanguageItem>
+        {
+            new("da", "Danish"),
+            new("en", "English")
+        };
+        cb.ItemsSource = items;
+        cb.DisplayMemberBinding = new global::Avalonia.Data.Binding("DisplayName");
+        cb.SelectedIndex = 0;
+
+        Assert.NotNull(cb.SelectionBoxItemTemplate);
+        Assert.Equal(items[0], cb.SelectionBoxItem);
+    }
 }

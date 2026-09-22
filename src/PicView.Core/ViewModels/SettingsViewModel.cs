@@ -707,4 +707,7 @@ public enum SettingsCategory
 
 public record SettingsCategoryItem(BindableReactiveProperty<string?> Name, string Icon, SettingsCategory Category);
 
-public record LanguageItem(string Code, string DisplayName);
+public record LanguageItem(string Code, string DisplayName)
+{
+    public override string ToString() => DisplayName;
+}

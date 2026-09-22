@@ -215,8 +215,11 @@ public static class WindowResizing
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 // Fixes weird window size bug where the window width is at a fixed value
-                mainWindow.Width = mainWindow.Height = double.NaN;
-            });
+                if (!double.IsNaN(mainWindow.Width))
+                {
+                    mainWindow.Width = mainWindow.Height = double.NaN;
+                }
+            }, DispatcherPriority.Render);
         }
         else
         {

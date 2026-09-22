@@ -2,7 +2,6 @@ using System.Runtime;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.Win32.Views;
@@ -54,7 +53,6 @@ public class App : Application, IPlatformSpecificService
         _mainWindowViewModel = _mainWindow.DataContext as MainWindowViewModel;
         _coreViewModel.MainWindows.MainWindows.Add(_mainWindowViewModel);
         _coreViewModel.MainWindows.ActiveWindow.Value = _mainWindowViewModel;
-        desktop.MainWindow = _mainWindow;
         StartUpHelper.StartWithArguments(_coreViewModel, settingsExists, desktop, _mainWindow);
     }
 

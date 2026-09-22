@@ -63,7 +63,7 @@
                                     Margin="{TemplateBinding Padding}"
                                     HorizontalAlignment="Left"
                                     Content="{TemplateBinding SelectionBoxItem}"
-                                    ContentTemplate="{TemplateBinding ItemTemplate}" />
+                                    ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" />
                                 <Path
                                     Width="17"
                                     Height="17"

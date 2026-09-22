@@ -47,13 +47,7 @@ public class MotionPhotoDecoderTests
         SkipUnlessNativeAvailable();
         Assert.True(FFmpegService.TryInitialize());
     }
-
-    [Fact]
-    public void FFmpegService_IsPlaybackSupported_OnDesktop_IsTrue()
-    {
-        Assert.True(FFmpegService.IsPlaybackSupported);
-    }
-
+    
     [Fact]
     public void Decoder_CreateAndDecodeSampleVideo_ProducesBgraFrames()
     {

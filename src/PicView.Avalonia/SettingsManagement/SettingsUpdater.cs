@@ -127,7 +127,7 @@ public static class SettingsUpdater
         WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
 
         var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
-        tabViewModel.ZoomLevel.Value = Convert.ToInt32(tabViewModel.InitialZoom.CurrentValue * 100);;
+        tabViewModel.ZoomLevel.Value = Convert.ToInt32(tabViewModel.InitialZoom.CurrentValue * 100);
         tabViewModel.UpdateTabTitle();
         
         await SaveSettingsAsync().ConfigureAwait(false);

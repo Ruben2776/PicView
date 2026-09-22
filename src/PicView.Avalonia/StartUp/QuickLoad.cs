@@ -239,6 +239,13 @@ public static class QuickLoad
                         }
                         mainWindow.Show();
                         mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
+                        if (Settings.WindowProperties.AutoFit)
+                        {
+                            Dispatcher.UIThread.Post(() =>
+                            {
+                                mainWindow.Width = mainWindow.Height = double.NaN;
+                            }, DispatcherPriority.Render);
+                        }
                     }, DispatcherPriority.Loaded);
                 }
             }
