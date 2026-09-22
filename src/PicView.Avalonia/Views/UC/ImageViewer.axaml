@@ -1,60 +1,60 @@
 <UserControl
     x:Class="PicView.Avalonia.Views.UC.ImageViewer"
-    x:DataType="vm:TabViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:gallery="clr-namespace:PicView.Avalonia.Views.Gallery"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="vm:TabViewModel">
     <DockPanel LastChildFill="True">
-        <gallery:GalleryView ZIndex="1" x:Name="GalleryView" />
+        <gallery:GalleryView x:Name="GalleryView" ZIndex="1" />
 
         <Panel
+            x:Name="MainPanel"
             Background="{CompiledBinding ParentWindowContext.GlobalSettings.ImageBackground.Value,
                                          Mode=OneWay}"
-            DockPanel.Dock="Left"
-            x:Name="MainPanel">
+            DockPanel.Dock="Left">
             <LayoutTransformControl x:Name="MainTransform">
                 <LayoutTransformControl.LayoutTransform>
                     <RotateTransform Angle="{Binding RotationAngle.Value}" />
                 </LayoutTransformControl.LayoutTransform>
-                <customControls:ZoomPanControl FittingScale="{Binding InitialZoom.Value}" x:Name="ZoomPanControl">
+                <customControls:ZoomPanControl x:Name="ZoomPanControl" FittingScale="{Binding InitialZoom.Value}">
                     <customControls:AutoScrollViewer
-                        Focusable="False"
-                        Height="{Binding ParentWindowContext.ScrollViewerHeight.Value}"
-                        HorizontalScrollBarVisibility="Disabled"
-                        VerticalScrollBarVisibility="Disabled"
+                        x:Name="ImageScrollViewer"
                         Width="{Binding ParentWindowContext.ScrollViewerWidth.Value}"
-                        x:Name="ImageScrollViewer">
+                        Height="{Binding ParentWindowContext.ScrollViewerHeight.Value}"
+                        Focusable="False"
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Disabled">
                         <Border
-                            Background="{CompiledBinding ParentWindowContext.GlobalSettings.ConstrainedImageBackground.Value,
-                                                         Mode=OneWay}"
+                            x:Name="MainBorder"
+                            Width="{Binding ParentWindowContext.ImageWidth.Value}"
                             Height="{Binding ParentWindowContext.ImageHeight.Value}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Width="{Binding ParentWindowContext.ImageWidth.Value}"
-                            x:Name="MainBorder">
+                            Background="{CompiledBinding ParentWindowContext.GlobalSettings.ConstrainedImageBackground.Value,
+                                                         Mode=OneWay}">
                             <DockPanel
                                 HorizontalAlignment="Center"
-                                LastChildFill="False"
-                                VerticalAlignment="Center">
+                                VerticalAlignment="Center"
+                                LastChildFill="False">
                                 <Grid DockPanel.Dock="Left">
                                     <customControls:PicBox
+                                        x:Name="MainImage"
                                         CurrentFileInfo="{Binding FileInfo.Value}"
                                         ImageType="{Binding ImageType.Value}"
-                                        Source="{CompiledBinding Image.Value}"
-                                        x:Name="MainImage" />
+                                        Source="{CompiledBinding Image.Value}" />
                                     <uc:MotionPhotoView x:Name="MotionPhotoView" />
                                 </Grid>
                                 <Grid DockPanel.Dock="Right" IsVisible="{CompiledBinding ParentWindowContext.IsSideBySide.Value}">
                                     <customControls:PicBox
+                                        x:Name="SecondaryImage"
                                         CurrentFileInfo="{Binding SecondaryFileInfo.Value}"
                                         ImageType="{Binding SecondaryImageType.Value}"
-                                        Source="{CompiledBinding SecondaryImage.Value}"
-                                        x:Name="SecondaryImage" />
-                                    <uc:MotionPhotoView AllowAutoPlay="False" x:Name="SecondaryMotionPhotoView" />
+                                        Source="{CompiledBinding SecondaryImage.Value}" />
+                                    <uc:MotionPhotoView x:Name="SecondaryMotionPhotoView" AllowAutoPlay="False" />
                                 </Grid>
                             </DockPanel>
                         </Border>
@@ -62,42 +62,42 @@
                 </customControls:ZoomPanControl>
             </LayoutTransformControl>
             <uc:ZoomPreviewer
-                HorizontalAlignment="Right"
-                IsVisible="False"
+                x:Name="ZoomPreview"
                 Margin="0,0,25,25"
-                VerticalAlignment="Bottom"
-                ZIndex="90"
-                x:Name="ZoomPreview" />
-            <buttons:ClickArrowRight
                 HorizontalAlignment="Right"
-                Opacity="0"
-                VerticalAlignment="Center"
-                ZIndex="2"
-                x:Name="ClickArrowRight" />
-            <buttons:ClickArrowLeft
-                HorizontalAlignment="Left"
-                Opacity="0"
-                VerticalAlignment="Center"
-                ZIndex="2"
-                x:Name="ClickArrowLeft" />
-            <uc:HoverBar
                 VerticalAlignment="Bottom"
-                ZIndex="2"
-                x:Name="HoverBar" />
+                IsVisible="False"
+                ZIndex="90" />
+            <buttons:ClickArrowRight
+                x:Name="ClickArrowRight"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Opacity="0"
+                ZIndex="2" />
+            <buttons:ClickArrowLeft
+                x:Name="ClickArrowLeft"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Opacity="0"
+                ZIndex="2" />
+            <uc:HoverBar
+                x:Name="HoverBar"
+                VerticalAlignment="Bottom"
+                ZIndex="2" />
             <!--
                 Floating host for the motion photo badges. Living outside MainTransform,
                 the badges stay upright while the code-behind anchors each one to the
                 on-screen top-right corner of its image, regardless of rotation,
                 flipping or zooming.
             -->
-            <Panel ZIndex="2" x:Name="MotionPhotoBadgeHost" />
+            <Panel x:Name="MotionPhotoBadgeHost" ZIndex="2" />
             <buttons:GalleryShortcut
+                x:Name="GalleryShortcut"
                 HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
                 IsVisible="{CompiledBinding !ParentWindowContext.IsBottomToolbarShown.Value}"
                 Opacity="0"
-                VerticalAlignment="Bottom"
-                ZIndex="2"
-                x:Name="GalleryShortcut" />
+                ZIndex="2" />
         </Panel>
     </DockPanel>
 </UserControl>

@@ -97,16 +97,7 @@ public class GalleryAnimationControl : UserControl
             DebugHelper.LogDebug(nameof(GalleryAnimationControl), nameof(OnControlLoaded), "Could not find ItemsControl.ItemsPanelRoot");
         }
 
-        if (Settings.Gallery.IsGalleryDocked)
-        {
-            SetDockedLayout(Settings.Gallery.DockPosition);
-            _previousMode = GalleryMode.Docked;
-        }
-        else
-        {
-            IsVisible = false; // Don't take up space initially
-        }
-
+        IsVisible = false; // Don't take up space initially
         SetupSubscriptions();
 
         _parentControl = Parent as Control;
@@ -186,7 +177,6 @@ public class GalleryAnimationControl : UserControl
             IsInAnimation = true;
             var oldMode = _previousMode;
             _previousMode = newMode;
-            IsVisible = true;
 
             switch (oldMode, newMode)
             {
@@ -561,11 +551,6 @@ public class GalleryAnimationControl : UserControl
         // Unlock the layout and trigger remeasure to match exact final bounds
         _itemsPanel.WrapHeightOverride = double.NaN;
         _itemsPanel.InvalidateMeasure();
-
-        // await Dispatcher.UIThread.InvokeAsync(() =>
-        // {
-        //     _viewer.ScrollToCenterOfCurrentItem();
-        // }, DispatcherPriority.Render);
     }
 
     private async Task ExpandedToDocked()
