@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
@@ -25,9 +25,9 @@ public static class MainKeyboardShortcuts
     public static KeyModifiers CurrentModifiers { get; private set; }
 
     /// <summary>
-    /// Stores the current key gesture, including the key and its modifiers.
+    /// Stores the current keybind, including the key and its modifiers.
     /// </summary>
-    public static KeyGesture? CurrentKeys { get; private set; }
+    public static Keybind CurrentKeys { get; private set; }
 
     /// <summary>
     /// Gets or sets whether keyboard shortcuts are enabled.
@@ -39,7 +39,7 @@ public static class MainKeyboardShortcuts
     private static int _keyRepeatCount;
     private const int KeyRepeatThreshold = 1;
     
-    public static bool ShiftDown => (CurrentModifiers & KeyModifiers.Shift) == KeyModifiers.Shift;
+    public static bool ShiftDown => CurrentModifiers.HasFlag(KeyModifiers.Shift);
 
     /// <summary>
     /// Processes the KeyDown event for the main window.
@@ -68,14 +68,14 @@ public static class MainKeyboardShortcuts
         // or the modifier was pressed before the window had focus). This ensures that
         // a bare-key binding such as "S" (rotate) only fires when no modifiers are
         // actually held, so "Ctrl+S" (save) is never mistakenly dispatched as "S".
-        CurrentKeys = new KeyGesture(e.Key, e.KeyModifiers);
+        CurrentKeys = new Keybind(e.Key, e.KeyModifiers);
 
         // Track key repeat for held down state
         _keyRepeatCount++;
         IsKeyHeldDown = _keyRepeatCount > KeyRepeatThreshold;
 
         // Handle special cases before processing shortcuts
-        if (await HandleSpecialCases(e, mainWindowViewModel, mainWindow))
+        if (await HandleSpecialCases(e, mainWindowViewModel, mainWindow).ConfigureAwait(false))
         {
             return;
         }
@@ -87,7 +87,7 @@ public static class MainKeyboardShortcuts
         }
 
         // Handle registered shortcuts
-        await ExecuteShortcutIfRegistered(mainWindowViewModel);
+        await ExecuteShortcutIfRegistered(mainWindowViewModel).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -97,14 +97,14 @@ public static class MainKeyboardShortcuts
     /// <param name="mainWindowViewModel">The main window view model.</param>
     public static async ValueTask MainWindow_KeysUpAsync(KeyEventArgs e, MainWindowViewModel? mainWindowViewModel)
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (!OperatingSystem.IsMacOS())
         {
-            if (CurrentKeys?.Key is Key.LeftAlt or Key.RightAlt)
+            if (CurrentKeys.Key is Key.LeftAlt or Key.RightAlt)
             {
                 mainWindowViewModel.TopTitlebarViewModel.ToggleMenu();
             }
         }
-        await mainWindowViewModel.Mapper.StopRepeatedNavigation();
+        await mainWindowViewModel.Mapper.StopRepeatedNavigation().ConfigureAwait(false);
         UpdateModifierState(e.Key, false);
         Reset();
     }
@@ -127,7 +127,7 @@ public static class MainKeyboardShortcuts
             Key.LeftAlt or Key.RightAlt => isDown
                 ? CurrentModifiers | KeyModifiers.Alt
                 : CurrentModifiers & ~KeyModifiers.Alt,
-            Key.LWin or Key.RWin when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => isDown
+            Key.LWin or Key.RWin when OperatingSystem.IsMacOS() => isDown
                 ? CurrentModifiers | KeyModifiers.Meta
                 : CurrentModifiers & ~KeyModifiers.Meta,
             _ => CurrentModifiers
@@ -220,7 +220,7 @@ public static class MainKeyboardShortcuts
             var animatedPopUp = mainWindow.UIHelper.GetMainView.MainPanel.Children.OfType<AnimatedPopUp>().FirstOrDefault();
             if (animatedPopUp is not null)
             {
-                await animatedPopUp.AnimatedClosing();
+                await animatedPopUp.AnimatedClosing().ConfigureAwait(false);
             }
 
             return true;
@@ -255,7 +255,7 @@ public static class MainKeyboardShortcuts
             {
                 if (vm.Mapper != null)
                 {
-                    await vm.Mapper.Close();
+                    await vm.Mapper.Close().ConfigureAwait(false);
                 }
             }
         }
@@ -275,7 +275,7 @@ public static class MainKeyboardShortcuts
     {
         // Get the action string name quickly via dictionary lookup
         var actionName = KeybindingManager.GetActionName(CurrentKeys);
-        if (string.IsNullOrEmpty(actionName))
+        if (actionName is null)
         {
             // Pressed key(s) have no associated function
             return;
@@ -296,7 +296,7 @@ public static class MainKeyboardShortcuts
     {
         IsKeyHeldDown = false;
         IsEscKeyEnabled = true;
-        CurrentKeys = null;
+        CurrentKeys = default;
         _keyRepeatCount = 0;
         ClearKeyDownModifiers();
     }

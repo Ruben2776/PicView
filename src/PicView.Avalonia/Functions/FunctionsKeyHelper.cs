@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.ObjectModel;
-using Avalonia.Input;
 using PicView.Avalonia.Input;
 using PicView.Core.DebugTools;
 using PicView.Core.Localization;
@@ -27,37 +26,36 @@ public static class FunctionsKeyHelper
                     var rotateRightKey = KeybindingManager.CustomShortcuts.Where(x => x.Value == "Up")
                         .Select(x => x.Key).ToList();
                     return rotateRightKey is not { Count: > 0 } ? string.Empty :
-                        alt ? rotateRightKey.LastOrDefault()?.ToString() ?? "" : rotateRightKey.FirstOrDefault()?.ToString() ?? "";
+                        alt ? rotateRightKey.LastOrDefault().ToString() : rotateRightKey.FirstOrDefault().ToString();
 
                 case "ScrollDownInternal":
                     var rotateLeftKey = KeybindingManager.CustomShortcuts.Where(x => x.Value == "Down")
                         .Select(x => x.Key).ToList();
                     return rotateLeftKey is not { Count: > 0 } ? string.Empty :
-                        alt ? rotateLeftKey.LastOrDefault()?.ToString() ?? "" : rotateLeftKey.FirstOrDefault()?.ToString() ?? "";   
+                        alt ? rotateLeftKey.LastOrDefault().ToString() : rotateLeftKey.FirstOrDefault().ToString();
             }
         }
 
         // Find the key associated with the specified function
         var keys = GetKeysFromFunction(methodName);
 
-        var keyGestures = keys ?? keys.ToArray();
-        return keyGestures.Length switch
+        return keys.Length switch
         {
             <= 0 => string.Empty,
-            1 => alt ? string.Empty : FormatPlus(keyGestures?.FirstOrDefault()?.ToString() ?? string.Empty),
-            _ => alt ? FormatPlus(keyGestures.LastOrDefault()?.ToString() ?? string.Empty) : FormatPlus(keyGestures.FirstOrDefault().ToString())
+            1 => alt ? string.Empty : FormatPlus(keys.FirstOrDefault().ToString()),
+            _ => alt ? FormatPlus(keys.LastOrDefault().ToString()) : FormatPlus(keys.FirstOrDefault().ToString())
         };
     }
     
     private static string FormatPlus(string value) =>
         string.IsNullOrEmpty(value) ? string.Empty : value.Replace("+", " + ");
 
-    public static KeyGesture[] GetKeysFromFunction(string methodName)
+    public static Keybind[] GetKeysFromFunction(string methodName)
     {
-        var keys = KeybindingManager.CustomShortcuts.Where(x => x.Value == methodName)?
-            .Select(x => x.Key) ?? null;
+        var keys = KeybindingManager.CustomShortcuts.Where(x => x.Value == methodName)
+            .Select(x => x.Key);
 
-        return keys as KeyGesture[] ?? keys.ToArray();
+        return keys.ToArray();
     }
 
     public static void ResetKeybindings(KeybindingsViewModel keybindings)
@@ -114,13 +112,13 @@ public static class FunctionsKeyHelper
         // Special case: ScrollUpInternal is read-only and derived from 'Up' keys
         AddBinding(scrollKeys, "Up", TranslationManager.Translation.RotateRight);
         var upInternalCheck = KeybindingManager.CustomShortcuts.Where(x => x.Value == "Up")
-            ?.Select(x => x.Key).ToList() ?? null;
+            .Select(x => x.Key).ToList();
         var scrollUpInternal = new KeyBindingsModel
         {
             MethodName = "ScrollUpInternal",
             FriendlyMethodName = TranslationManager.Translation.ScrollUp,
-            Key = FormatPlus(upInternalCheck?.FirstOrDefault()?.ToString() ?? string.Empty),
-            AltKey = FormatPlus(upInternalCheck?.LastOrDefault()?.ToString() ?? string.Empty),
+            Key = FormatPlus(upInternalCheck.Count > 0 ? upInternalCheck.First().ToString() : string.Empty),
+            AltKey = FormatPlus(upInternalCheck.Count > 0 ? upInternalCheck.Last().ToString() : string.Empty),
             IsReadOnly = true
         };
         keybindings.ScrollAndRotateKeys.Value.Add(scrollUpInternal);
@@ -129,13 +127,13 @@ public static class FunctionsKeyHelper
         // Special case: ScrollDownInternal is read-only and derived from 'Down' keys
         AddBinding(scrollKeys, "Down", TranslationManager.Translation.RotateLeft);
         var downInternalCheck = KeybindingManager.CustomShortcuts.Where(x => x.Value == "Down")
-            ?.Select(x => x.Key).ToList() ?? null;
+            .Select(x => x.Key).ToList();
         var scrollDownInternal = new KeyBindingsModel
         {
             MethodName = "ScrollDownInternal",
             FriendlyMethodName = TranslationManager.Translation.ScrollDown,
-            Key = FormatPlus(downInternalCheck?.FirstOrDefault()?.ToString() ?? string.Empty),
-            AltKey = FormatPlus(downInternalCheck?.LastOrDefault()?.ToString() ?? string.Empty),
+            Key = FormatPlus(downInternalCheck.Count > 0 ? downInternalCheck.First().ToString() : string.Empty),
+            AltKey = FormatPlus(downInternalCheck.Count > 0 ? downInternalCheck.Last().ToString() : string.Empty),
             IsReadOnly = true
         };
         keybindings.ScrollAndRotateKeys.Value.Add(scrollDownInternal);

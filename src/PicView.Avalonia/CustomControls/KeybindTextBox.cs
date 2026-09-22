@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -20,8 +20,8 @@ namespace PicView.Avalonia.CustomControls;
 /// </summary>
 public class KeybindTextBox : TextBox
 {
-    public static readonly AvaloniaProperty<KeyGesture?> KeybindProperty =
-        AvaloniaProperty.Register<KeybindTextBox, KeyGesture?>(nameof(Keybind));
+    public static readonly AvaloniaProperty<Keybind> KeybindProperty =
+        AvaloniaProperty.Register<KeybindTextBox, Keybind>(nameof(Keybind));
 
     public static readonly AvaloniaProperty<string?> MethodNameProperty =
         AvaloniaProperty.Register<KeybindTextBox, string?>(nameof(MethodName));
@@ -52,9 +52,9 @@ public class KeybindTextBox : TextBox
 
     protected override Type StyleKeyOverride => typeof(TextBox);
 
-    public KeyGesture? Keybind
+    public Keybind Keybind
     {
-        get => GetValue(KeybindProperty) as KeyGesture;
+        get => (Keybind)GetValue(KeybindProperty);
         set => SetValue(KeybindProperty, value);
     }
 
@@ -212,7 +212,7 @@ public class KeybindTextBox : TextBox
                 return;
         }
 
-        KeybindingManager.CustomShortcuts.Remove(new KeyGesture(e.Key, e.KeyModifiers));
+        KeybindingManager.CustomShortcuts.Remove(new Keybind(e.Key, e.KeyModifiers));
         
         if (string.IsNullOrEmpty(MethodName))
         {
@@ -239,14 +239,14 @@ public class KeybindTextBox : TextBox
             {
                 // If the main key is not present, add a new entry with the alternative key
                 var altKey = (Key)Enum.Parse(typeof(Key), e.Key.ToString());
-                var keyGesture = new KeyGesture(altKey, e.KeyModifiers);
-                KeybindingManager.CustomShortcuts[keyGesture] = MethodName;
+                var keybind = new Keybind(altKey, e.KeyModifiers);
+                KeybindingManager.CustomShortcuts[keybind] = MethodName;
             }
             else
             {
                 // Update the key and function name in the CustomShortcuts dictionary
-                var keyGesture = new KeyGesture(e.Key, e.KeyModifiers);
-                KeybindingManager.CustomShortcuts[keyGesture] = MethodName;
+                var keybind = new Keybind(e.Key, e.KeyModifiers);
+                KeybindingManager.CustomShortcuts[keybind] = MethodName;
             }
         }
         else
@@ -257,8 +257,8 @@ public class KeybindTextBox : TextBox
                 Remove();
             }
 
-            var keyGesture = new KeyGesture(e.Key, e.KeyModifiers);
-            KeybindingManager.CustomShortcuts[keyGesture] = MethodName;
+            var keybind = new Keybind(e.Key, e.KeyModifiers);
+            KeybindingManager.CustomShortcuts[keybind] = MethodName;
         }
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))

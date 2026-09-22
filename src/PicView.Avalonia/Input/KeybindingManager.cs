@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Avalonia.Input;
 using PicView.Core.DebugTools;
@@ -13,7 +13,7 @@ internal partial class SourceGenerationContext : JsonSerializerContext;
 
 public static class KeybindingManager
 {
-    public static Dictionary<KeyGesture, string>? CustomShortcuts { get; private set; }
+    public static Dictionary<Keybind, string>? CustomShortcuts { get; private set; }
 
     public static async ValueTask LoadKeybindings(IPlatformSpecificService platformSpecificService)
     {
@@ -34,7 +34,7 @@ public static class KeybindingManager
                 json, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
             as Dictionary<string, string>;
 
-        CustomShortcuts ??= new Dictionary<KeyGesture, string>();
+        CustomShortcuts ??= new Dictionary<Keybind, string>();
         if (keyValues != null)
         {
             PopulateCustomShortcuts(keyValues);
@@ -69,11 +69,17 @@ public static class KeybindingManager
         {
             try
             {
+                // Use KeyGesture.Parse to correctly resolve Avalonia key name aliases
+                // (e.g. "Esc" → Key.Escape, "Enter" → Key.Return, "Add", "Scroll", etc.)
+                // then convert to a Keybind so lookups via new Keybind(e.Key, e.KeyModifiers) match.
                 var gesture = KeyGesture.Parse(kvp.Key);
-                if (gesture is not null && !string.IsNullOrWhiteSpace(kvp.Value))
+                if (gesture.Key is Key.None || kvp.Value is null)
                 {
-                    CustomShortcuts[gesture] = kvp.Value;
+                    continue;
                 }
+
+                var keybind = new Keybind(gesture.Key, gesture.KeyModifiers);
+                CustomShortcuts[keybind] = kvp.Value;
             }
             catch (Exception exception)
             {
@@ -90,7 +96,7 @@ public static class KeybindingManager
         }
         else
         {
-            CustomShortcuts = new Dictionary<KeyGesture, string>();
+            CustomShortcuts = new Dictionary<Keybind, string>();
         }
         
         var defaultKeybindings = platformSpecificService.DefaultJsonKeyMap();
@@ -103,13 +109,6 @@ public static class KeybindingManager
         }
     }
     
-    public static string? GetActionName(KeyGesture? keyGesture)
-    {
-        if (keyGesture is null || CustomShortcuts is null)
-        {
-            return null;
-        }
-        
-        return CustomShortcuts.GetValueOrDefault(keyGesture);
-    }
+    public static string? GetActionName(Keybind keybind) =>
+        CustomShortcuts?.GetValueOrDefault(keybind);
 }
