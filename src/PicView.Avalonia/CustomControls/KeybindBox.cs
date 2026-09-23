@@ -18,6 +18,18 @@ public class KeybindBox : TemplatedControl
     private bool _isSyncing;
 
     internal TagBox? TagBox { get; private set; }
+    
+    public static readonly StyledProperty<string?> ActionNameProperty =
+        AvaloniaProperty.Register<KeybindBox, string?>(nameof(ActionName));
+
+    /// <summary>
+    /// Gets or sets the placeholder text.
+    /// </summary>
+    public string? ActionName
+    {
+        get => GetValue(ActionNameProperty);
+        set => SetValue(ActionNameProperty, value);
+    }
 
     /// <summary>
     /// Defines the <see cref="PlaceholderText"/> property.

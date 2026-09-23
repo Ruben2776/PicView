@@ -9,7 +9,7 @@
     <!--  Filter  -->
     <DockPanel>
 
-        <Panel Margin="7,0" DockPanel.Dock="Top">
+        <Panel Margin="7,5,7,0" DockPanel.Dock="Top">
             <Image
                 Width="14"
                 Height="14"
@@ -48,8 +48,8 @@
                                             Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
         </Panel>
 
-        <StackPanel Margin="7,10" Spacing="10">
-            <customControls:KeybindBox PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+        <StackPanel Margin="10" Spacing="10">
+            <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
         </StackPanel>
     </DockPanel>
 </UserControl>
