@@ -49,7 +49,7 @@
                                         <StackPanel
                                             VerticalAlignment="Center"
                                             Orientation="Horizontal"
-                                            Spacing="4">
+                                            Spacing="6">
                                             <TextBlock Classes="txt" Text="{Binding}" />
                                             <customControls:IconButton
                                                 Name="tagCloseButton"
@@ -64,8 +64,8 @@
                                                 Cursor="Hand"
                                                 Data="{StaticResource CloseGeometry}"
                                                 Foreground="{DynamicResource MainTextColorFaded}"
-                                                IconHeight="9"
-                                                IconWidth="9" />
+                                                IconHeight="8"
+                                                IconWidth="8" />
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>

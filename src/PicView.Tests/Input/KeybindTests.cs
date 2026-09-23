@@ -17,8 +17,8 @@ public class KeybindTests
     [Fact]
     public void ToString_SingleMouseButton_ReturnsButtonName()
     {
-        var keybind = new Keybind(MouseButton.Left);
-        Assert.Equal("Left", keybind.ToString());
+        var keybind = new Keybind(MouseButton.Middle);
+        Assert.Equal("Middle", keybind.ToString());
     }
 
     [Fact]
@@ -44,8 +44,15 @@ public class KeybindTests
         var isMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
         var altName = isMac ? "Option" : "Alt";
 
-        var keybind = new Keybind(MouseButton.Right, KeyModifiers.Shift | KeyModifiers.Alt);
-        Assert.Equal($"Shift + {altName} + Right", keybind.ToString());
+        var keybind = new Keybind(MouseButton.XButton1, KeyModifiers.Shift | KeyModifiers.Alt);
+        Assert.Equal($"Shift + {altName} + XButton1", keybind.ToString());
+    }
+
+    [Fact]
+    public void ToString_SideMouseButton2_ReturnsButtonName()
+    {
+        var keybind = new Keybind(MouseButton.XButton2);
+        Assert.Equal("XButton2", keybind.ToString());
     }
 
     [Fact]

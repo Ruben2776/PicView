@@ -8,6 +8,7 @@ using Avalonia.VisualTree;
 using PicView.Avalonia;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
+using MouseButton = PicView.Avalonia.Input.MouseButton;
 
 namespace PicView.Tests.Controls;
 
@@ -260,5 +261,481 @@ public class KeybindBoxTests
         var border = box.TagBox.GetVisualDescendants().OfType<Border>().FirstOrDefault(b => b.Name == "PART_Border");
         Assert.NotNull(border);
         Assert.Equal("No", border.Cursor?.ToString());
+    }
+
+    [Fact]
+    public void KeybindBox_WhenTagBoxFocused_KeyPress_AddsTagOnKeyUp()
+    {
+        var box = new KeybindBox();
+        var window = new Window { Content = box };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox!.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(box.TagBox.IsFocused);
+
+        // KeyDown should not add yet
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.F,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        Dispatcher.UIThread.RunJobs();
+        Assert.Empty(box.Keybinds);
+        Assert.Empty(box.Tags);
+
+        // KeyUp commits the keybind
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyUpEvent,
+            Key = Key.F,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Single(box.Keybinds);
+        Assert.Equal(Key.F, box.Keybinds[0].Key);
+        Assert.Single(box.Tags);
+        Assert.Equal("F", box.Tags[0]);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenTagBoxFocused_KeyCombinationWithModifiers_AddsTagOnKeyUp()
+    {
+        var box = new KeybindBox();
+        var window = new Window { Content = box };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox!.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(box.TagBox.IsFocused);
+
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.LeftCtrl,
+            KeyModifiers = KeyModifiers.Control,
+            Source = box.TagBox
+        });
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.P,
+            KeyModifiers = KeyModifiers.Control,
+            Source = box.TagBox
+        });
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyUpEvent,
+            Key = Key.P,
+            KeyModifiers = KeyModifiers.Control,
+            Source = box.TagBox
+        });
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Single(box.Keybinds);
+        Assert.Equal(new Keybind(Key.P, KeyModifiers.Control), box.Keybinds[0]);
+        Assert.Single(box.Tags);
+        Assert.Equal("Ctrl + P", box.Tags[0]);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenTagBoxFocused_ModifierReleasedBeforeKey_PreservesModifiers()
+    {
+        var box = new KeybindBox();
+        var window = new Window { Content = box };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox!.Focus();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.LeftShift,
+            KeyModifiers = KeyModifiers.Shift,
+            Source = box.TagBox
+        });
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.Z,
+            KeyModifiers = KeyModifiers.Shift,
+            Source = box.TagBox
+        });
+        // Modifier released first
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyUpEvent,
+            Key = Key.LeftShift,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        Assert.Empty(box.Keybinds);
+
+        // Normal key released
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyUpEvent,
+            Key = Key.Z,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Single(box.Keybinds);
+        Assert.Equal(new Keybind(Key.Z, KeyModifiers.Shift), box.Keybinds[0]);
+        Assert.Single(box.Tags);
+        Assert.Equal("Shift + Z", box.Tags[0]);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenTagBoxFocused_ModifierOnly_DoesNotAddTag()
+    {
+        var box = new KeybindBox();
+        var window = new Window { Content = box };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox!.Focus();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.LeftCtrl,
+            KeyModifiers = KeyModifiers.Control,
+            Source = box.TagBox
+        });
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyUpEvent,
+            Key = Key.LeftCtrl,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Empty(box.Keybinds);
+        Assert.Empty(box.Tags);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenTagBoxFocused_MiddleMouseButton_AddsTag()
+    {
+        var box = new KeybindBox();
+        var window = new Window { Content = box };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox!.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(box.TagBox.IsFocused);
+
+        box.TagBox.RaiseEvent(new PointerPressedEventArgs(
+            box.TagBox,
+            new Pointer(0, PointerType.Mouse, true),
+            window,
+            new Point(5, 5),
+            (ulong)Environment.TickCount64,
+            new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.MiddleButtonPressed),
+            KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Single(box.Keybinds);
+        Assert.Equal(new Keybind(MouseButton.Middle), box.Keybinds[0]);
+        Assert.Single(box.Tags);
+        Assert.Equal("Middle", box.Tags[0]);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenTagBoxFocused_SideMouseButtons_AddsTags()
+    {
+        var box = new KeybindBox();
+        var window = new Window { Content = box };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox!.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(box.TagBox.IsFocused);
+
+        // Click XButton1
+        box.TagBox.RaiseEvent(new PointerPressedEventArgs(
+            box.TagBox,
+            new Pointer(0, PointerType.Mouse, true),
+            window,
+            new Point(5, 5),
+            (ulong)Environment.TickCount64,
+            new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.XButton1Pressed),
+            KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Single(box.Keybinds);
+        Assert.Equal(new Keybind(MouseButton.XButton1), box.Keybinds[0]);
+        Assert.Equal("XButton1", box.Tags[0]);
+
+        // Click XButton2
+        box.TagBox.RaiseEvent(new PointerPressedEventArgs(
+            box.TagBox,
+            new Pointer(0, PointerType.Mouse, true),
+            window,
+            new Point(5, 5),
+            (ulong)Environment.TickCount64,
+            new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.XButton2Pressed),
+            KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(2, box.Keybinds.Count);
+        Assert.Equal(new Keybind(MouseButton.XButton2), box.Keybinds[1]);
+        Assert.Equal("XButton2", box.Tags[1]);
+        Assert.True(box.TagBox.IsAtMax);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenTagBoxFocused_MouseButtonWithModifier_AddsTag()
+    {
+        var box = new KeybindBox();
+        var window = new Window { Content = box };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox!.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(box.TagBox.IsFocused);
+
+        var expectedKeybind = new Keybind(MouseButton.Middle, KeyModifiers.Alt);
+
+        box.TagBox.RaiseEvent(new PointerPressedEventArgs(
+            box.TagBox,
+            new Pointer(0, PointerType.Mouse, true),
+            window,
+            new Point(5, 5),
+            (ulong)Environment.TickCount64,
+            new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.MiddleButtonPressed),
+            KeyModifiers.Alt));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Single(box.Keybinds);
+        Assert.Equal(expectedKeybind, box.Keybinds[0]);
+        Assert.Single(box.Tags);
+        Assert.Equal(expectedKeybind.ToString(), box.Tags[0]);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenTagBoxNotFocused_KeyPress_IsIgnored()
+    {
+        var box = new KeybindBox();
+        var button = new Button { Content = "Other" };
+        var panel = new StackPanel();
+        panel.Children.Add(box);
+        panel.Children.Add(button);
+
+        var window = new Window { Content = panel };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        button.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(box.TagBox!.IsFocused);
+
+        box.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.A,
+            KeyModifiers = KeyModifiers.None,
+            Source = box
+        });
+        box.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyUpEvent,
+            Key = Key.A,
+            KeyModifiers = KeyModifiers.None,
+            Source = box
+        });
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Empty(box.Keybinds);
+        Assert.Empty(box.Tags);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenTagBoxNotFocused_MiddleMouseButton_DoesNotAddKeybind()
+    {
+        var box = new KeybindBox();
+        var button = new Button { Content = "Other" };
+        var panel = new StackPanel();
+        panel.Children.Add(box);
+        panel.Children.Add(button);
+
+        var window = new Window { Content = panel };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        button.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(box.TagBox!.IsFocused);
+
+        box.RaiseEvent(new PointerPressedEventArgs(
+            box,
+            new Pointer(0, PointerType.Mouse, true),
+            window,
+            new Point(5, 5),
+            (ulong)Environment.TickCount64,
+            new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.MiddleButtonPressed),
+            KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Empty(box.Keybinds);
+        Assert.Empty(box.Tags);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenDuplicateKeybindPressed_IgnoresDuplicate()
+    {
+        var box = new KeybindBox();
+        var window = new Window { Content = box };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox!.Focus();
+        Dispatcher.UIThread.RunJobs();
+
+        // First press of Key.A
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.A,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyUpEvent,
+            Key = Key.A,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        Dispatcher.UIThread.RunJobs();
+        Assert.Single(box.Keybinds);
+
+        // Second press of Key.A
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.A,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyUpEvent,
+            Key = Key.A,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Single(box.Keybinds);
+        Assert.Single(box.Tags);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenMaxTagsReached_DynamicKeyPressIgnored()
+    {
+        var box = new KeybindBox();
+        var window = new Window { Content = box };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox!.Focus();
+        Dispatcher.UIThread.RunJobs();
+
+        // Add 1st key
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.A,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyUpEvent,
+            Key = Key.A,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+
+        // Add 2nd key
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.B,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyUpEvent,
+            Key = Key.B,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(2, box.Keybinds.Count);
+        Assert.True(box.TagBox.IsAtMax);
+
+        // Attempt 3rd key
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.C,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyUpEvent,
+            Key = Key.C,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(2, box.Keybinds.Count);
+        Assert.Equal(2, box.Tags.Count);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenEscapePressed_ClearsFocus()
+    {
+        var box = new KeybindBox();
+        var window = new Window { Content = box };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        box.TagBox!.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(box.TagBox.IsFocused);
+
+        box.TagBox.RaiseEvent(new KeyEventArgs
+        {
+            RoutedEvent = InputElement.KeyDownEvent,
+            Key = Key.Escape,
+            KeyModifiers = KeyModifiers.None,
+            Source = box.TagBox
+        });
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Empty(box.Keybinds);
+        Assert.False(box.TagBox.IsFocused);
     }
 }
