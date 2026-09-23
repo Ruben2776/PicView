@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PicView.Avalonia;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
@@ -13,18 +14,18 @@ namespace PicView.Tests.Controls;
 [Collection("Sequential")]
 public class KeybindBoxTests
 {
-    public KeybindBoxTests()
+    static KeybindBoxTests()
     {
-        try
+        if (Application.Current == null)
         {
             AppBuilder.Configure<App>()
                 .UseHeadless(new AvaloniaHeadlessPlatformOptions())
                 .SetupWithoutStarting();
         }
-        catch (InvalidOperationException)
-        {
-        }
+    }
 
+    public KeybindBoxTests()
+    {
         SetDefaults();
     }
 
@@ -37,6 +38,7 @@ public class KeybindBoxTests
         Assert.Empty(box.Keybinds);
         Assert.NotNull(box.Tags);
         Assert.Empty(box.Tags);
+        Assert.Equal(2, box.MaxTags);
     }
 
     [Fact]
@@ -69,19 +71,41 @@ public class KeybindBoxTests
     }
 
     [Fact]
-    public void KeybindBox_AddMoreThanTwoKeybinds_ThrowsInvalidOperationException()
+    public void KeybindBox_WhenMaxTagsReached_AddingTagThrowsInvalidOperationException()
     {
         var box = new KeybindBox();
         box.Keybinds.Add(new Keybind(Key.A));
         box.Keybinds.Add(new Keybind(Key.B));
+
+        Assert.NotNull(box.TagBox);
+        Assert.True(box.TagBox.IsAtMax);
+
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            box.Tags.Add("C");
+        });
+
+        Assert.Equal(2, box.Tags.Count);
+        Assert.Equal(2, box.Keybinds.Count);
+    }
+
+    [Fact]
+    public void KeybindBox_WhenMaxTagsReached_AddingKeybindThrowsInvalidOperationException()
+    {
+        var box = new KeybindBox();
+        box.Keybinds.Add(new Keybind(Key.A));
+        box.Keybinds.Add(new Keybind(Key.B));
+
+        Assert.NotNull(box.TagBox);
+        Assert.True(box.TagBox.IsAtMax);
 
         Assert.Throws<InvalidOperationException>(() =>
         {
             box.Keybinds.Add(new Keybind(Key.C));
         });
 
-        Assert.Equal(2, box.Keybinds.Count);
         Assert.Equal(2, box.Tags.Count);
+        Assert.Equal(2, box.Keybinds.Count);
     }
 
     [Fact]
@@ -180,6 +204,9 @@ public class KeybindBoxTests
         Assert.Equal(2, box.TagBox.Tags.Count);
         Assert.Equal(k1.ToString(), box.TagBox.Tags[0]);
         Assert.Equal(k2.ToString(), box.TagBox.Tags[1]);
+        Assert.Equal(2, box.TagBox.MaxTags);
+        Assert.True(box.TagBox.IsAtMax);
+        Assert.Contains(TagBox.Max, box.TagBox.Classes);
 
         // Remove tag via TagBox
         box.TagBox.RemoveTag(k1.ToString());
@@ -189,20 +216,49 @@ public class KeybindBoxTests
         Assert.Equal(k2.ToString(), box.TagBox.Tags[0]);
         Assert.Single(box.Keybinds);
         Assert.Equal(k2, box.Keybinds[0]);
+        Assert.False(box.TagBox.IsAtMax);
+        Assert.DoesNotContain(TagBox.Max, box.TagBox.Classes);
     }
 
     [Fact]
-    public void KeybindCollection_ConstructorsAndLimits_BehaveCorrectly()
+    public void KeybindBox_WhenMaxReached_TagBoxCursorIsNo_AndClickingDoesNotShowPresenter()
     {
-        var k1 = new Keybind(Key.X);
-        var k2 = new Keybind(Key.Y);
-        var k3 = new Keybind(Key.Z);
+        var box = new KeybindBox { PlaceholderText = "Press key..." };
+        box.Keybinds.Add(new Keybind(Key.A));
+        box.Keybinds.Add(new Keybind(Key.B));
 
-        var col = new KeybindCollection([k1, k2]);
-        Assert.Equal(2, col.Count);
+        var button = new Button { Content = "Other" };
+        var panel = new StackPanel();
+        panel.Children.Add(box);
+        panel.Children.Add(button);
 
-        Assert.Throws<InvalidOperationException>(() => col.Add(k3));
-        Assert.Throws<ArgumentException>(() => new KeybindCollection(new List<Keybind> { k1, k2, k3 }));
-        Assert.Throws<ArgumentException>(() => new KeybindCollection([k1, k2, k3]));
+        var window = new Window { Content = panel };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        button.Focus();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.NotNull(box.TagBox);
+        Assert.True(box.TagBox.IsAtMax);
+        Assert.Contains(TagBox.Max, box.TagBox.Classes);
+
+        // Click KeybindBox while at max
+        box.RaiseEvent(new PointerPressedEventArgs(
+            box,
+            new Pointer(0, PointerType.Mouse, true),
+            window,
+            new Point(5, 5),
+            (ulong)Environment.TickCount64,
+            new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonPressed),
+            KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.NotNull(box.TagBox.Presenter);
+        Assert.False(box.TagBox.Presenter.IsVisible);
+
+        var border = box.TagBox.GetVisualDescendants().OfType<Border>().FirstOrDefault(b => b.Name == "PART_Border");
+        Assert.NotNull(border);
+        Assert.Equal("No", border.Cursor?.ToString());
     }
 }

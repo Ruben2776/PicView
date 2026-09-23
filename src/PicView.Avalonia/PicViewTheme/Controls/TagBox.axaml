@@ -22,8 +22,7 @@
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding CornerRadius}"
-                    Cursor="Ibeam">
+                    CornerRadius="{TemplateBinding CornerRadius}">
                     <DockPanel VerticalAlignment="Center">
                         <ItemsControl
                             Name="PART_ItemsControl"
@@ -80,7 +79,6 @@
                             CaretIndex="{TemplateBinding CaretIndex,
                                                          Mode=TwoWay}"
                             DockPanel.Dock="Right"
-                            IsVisible="{TemplateBinding IsFocused}"
                             LetterSpacing="{TemplateBinding LetterSpacing}"
                             LineHeight="{TemplateBinding LineHeight}"
                             SelectionForegroundBrush="{TemplateBinding Foreground}"
@@ -93,6 +91,16 @@
             </ControlTemplate>
         </Setter>
 
+        <!--  Default border cursor  -->
+        <Style Selector="^ /template/ Border#PART_Border">
+            <Setter Property="Cursor" Value="Ibeam" />
+        </Style>
+
+        <!--  Max tags reached: No cursor  -->
+        <Style Selector="^:max /template/ Border#PART_Border">
+            <Setter Property="Cursor" Value="No" />
+        </Style>
+
         <!--  Hover: lighten the outer border  -->
         <Style Selector="^:pointerover /template/ Border#PART_Border">
             <Setter Property="BorderBrush" Value="{DynamicResource TextBoxHoverBorderColor}" />
@@ -101,6 +109,19 @@
         <!--  Focus: highlight border  -->
         <Style Selector="^:focus /template/ Border#PART_Border">
             <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
+        </Style>
+
+        <!--  TextPresenter visibility  -->
+        <Style Selector="^ /template/ TextPresenter#PART_TextPresenter">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+
+        <Style Selector="^:focus /template/ TextPresenter#PART_TextPresenter">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+        <Style Selector="^:max /template/ TextPresenter#PART_TextPresenter">
+            <Setter Property="IsVisible" Value="False" />
         </Style>
 
         <!--  Close-button hover: highlight the ×  -->

@@ -17,11 +17,12 @@ namespace PicView.Avalonia.CustomControls;
 /// Each tag chip shows a text label and an "×" button to remove it.
 /// </summary>
 [TemplatePart(PartTextPresenter, typeof(TextPresenter))]
-[PseudoClasses(Empty)]
+[PseudoClasses(Empty, Max)]
 public class TagBox : TemplatedControl
 {
     public const string PartTextPresenter = "PART_TextPresenter";
     public const string Empty = ":empty";
+    public const string Max = ":max";
 
     internal TextPresenter? Presenter { get; private set; }
 
@@ -34,6 +35,23 @@ public class TagBox : TemplatedControl
         get => GetValue(TagsProperty);
         set => SetValue(TagsProperty, value);
     }
+
+    public static readonly StyledProperty<int> MaxTagsProperty =
+        AvaloniaProperty.Register<TagBox, int>(nameof(MaxTags), defaultValue: 0);
+
+    /// <summary>
+    /// Gets or sets the maximum number of tags allowed. 0 or less indicates no limit.
+    /// </summary>
+    public int MaxTags
+    {
+        get => GetValue(MaxTagsProperty);
+        set => SetValue(MaxTagsProperty, value);
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether the maximum number of tags has been reached.
+    /// </summary>
+    public bool IsAtMax => MaxTags > 0 && Tags is not null && Tags.Count >= MaxTags;
 
     public static readonly StyledProperty<ICommand?> RemoveTagCommandProperty =
         AvaloniaProperty.Register<TagBox, ICommand?>(nameof(RemoveTagCommand));
@@ -129,16 +147,32 @@ public class TagBox : TemplatedControl
     static TagBox()
     {
         TagsProperty.Changed.AddClassHandler<TagBox>((box, e) => box.OnTagsChanged(e));
+        MaxTagsProperty.Changed.AddClassHandler<TagBox>((box, e) => box.OnMaxTagsChanged(e));
     }
 
     public TagBox()
     {
-        Tags = [];
+        Tags = new TagCollection(this);
         RemoveTagCommand = new TagRemoveCommand(this);
+    }
+
+    private void OnMaxTagsChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is int newMax && newMax > 0 && Tags is not null && Tags.Count > newMax)
+        {
+            throw new ArgumentException($"A maximum of {newMax} tags are allowed.", nameof(MaxTags));
+        }
+
+        UpdateMaxPseudoClass();
     }
 
     private void OnTagsChanged(AvaloniaPropertyChangedEventArgs e)
     {
+        if (e.OldValue is TagCollection oldTagCol && ReferenceEquals(oldTagCol.Owner, this))
+        {
+            oldTagCol.Owner = null;
+        }
+
         if (e.OldValue is INotifyCollectionChanged oldCollection)
         {
             oldCollection.CollectionChanged -= OnTagsCollectionChanged;
@@ -146,21 +180,59 @@ public class TagBox : TemplatedControl
 
         if (e.NewValue is INotifyCollectionChanged newCollection)
         {
+            if (e.NewValue is TagCollection newTagCol)
+            {
+                newTagCol.Owner = this;
+            }
+
+            if (e.NewValue is ObservableCollection<string> newCol && MaxTags > 0 && newCol.Count > MaxTags)
+            {
+                throw new ArgumentException($"A maximum of {MaxTags} tags are allowed.", nameof(Tags));
+            }
+
             newCollection.CollectionChanged += OnTagsCollectionChanged;
         }
 
         UpdateEmptyPseudoClass();
+        UpdateMaxPseudoClass();
     }
 
     private void OnTagsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         UpdateEmptyPseudoClass();
+        UpdateMaxPseudoClass();
+
+        if (MaxTags > 0 && Tags is not null && Tags.Count > MaxTags)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems is not null)
+            {
+                try
+                {
+                    foreach (string item in e.NewItems)
+                    {
+                        Tags.Remove(item);
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    global::Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    {
+                        foreach (string item in e.NewItems)
+                        {
+                            Tags.Remove(item);
+                        }
+                    });
+                }
+            }
+
+            throw new InvalidOperationException($"A maximum of {MaxTags} tags are allowed.");
+        }
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
-        if (IsFocused)
+        if (IsFocused && !IsAtMax)
         {
             Presenter?.ShowCaret();
         }
@@ -181,7 +253,8 @@ public class TagBox : TemplatedControl
         base.OnApplyTemplate(e);
         Presenter = e.NameScope.Find<TextPresenter>(PartTextPresenter);
         UpdateEmptyPseudoClass();
-        if (IsFocused)
+        UpdateMaxPseudoClass();
+        if (IsFocused && !IsAtMax)
         {
             Presenter?.ShowCaret();
         }
@@ -190,7 +263,10 @@ public class TagBox : TemplatedControl
     protected override void OnGotFocus(FocusChangedEventArgs e)
     {
         base.OnGotFocus(e);
-        Presenter?.ShowCaret();
+        if (!IsAtMax)
+        {
+            Presenter?.ShowCaret();
+        }
     }
 
     protected override void OnLostFocus(FocusChangedEventArgs e)
@@ -205,6 +281,12 @@ public class TagBox : TemplatedControl
 
         if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
+            if (IsAtMax)
+            {
+                e.Handled = true;
+                return;
+            }
+
             Focus();
             if (Presenter is not null)
             {
@@ -228,11 +310,26 @@ public class TagBox : TemplatedControl
             Tags?.Remove(tag);
         }
         UpdateEmptyPseudoClass();
+        UpdateMaxPseudoClass();
     }
 
     private void UpdateEmptyPseudoClass()
     {
         PseudoClasses.Set(Empty, Tags is null || Tags.Count is 0);
+    }
+
+    private void UpdateMaxPseudoClass()
+    {
+        var isAtMax = IsAtMax;
+        PseudoClasses.Set(Max, isAtMax);
+        if (isAtMax)
+        {
+            Presenter?.HideCaret();
+        }
+        else if (IsFocused)
+        {
+            Presenter?.ShowCaret();
+        }
     }
 
     private sealed class TagRemoveCommand(TagBox owner) : ICommand
@@ -247,6 +344,7 @@ public class TagBox : TemplatedControl
             {
                 owner.Tags?.Remove(tag);
                 owner.UpdateEmptyPseudoClass();
+                owner.UpdateMaxPseudoClass();
             }
         }
     }

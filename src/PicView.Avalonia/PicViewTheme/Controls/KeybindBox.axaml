@@ -24,6 +24,7 @@
                     <customControls:TagBox
                         Name="PART_TagBox"
                         DockPanel.Dock="Right"
+                        MaxTags="{TemplateBinding MaxTags}"
                         PlaceholderText="{TemplateBinding PlaceholderText}"
                         Tags="{TemplateBinding Tags}" />
                 </DockPanel>

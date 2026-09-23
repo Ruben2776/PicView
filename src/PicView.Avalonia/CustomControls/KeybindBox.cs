@@ -35,13 +35,28 @@ public class KeybindBox : TemplatedControl
     }
 
     /// <summary>
+    /// Defines the <see cref="MaxTags"/> property.
+    /// </summary>
+    public static readonly StyledProperty<int> MaxTagsProperty =
+        TagBox.MaxTagsProperty.AddOwner<KeybindBox>(new StyledPropertyMetadata<int>(defaultValue: 2));
+
+    /// <summary>
+    /// Gets or sets the maximum number of keybind tags allowed.
+    /// </summary>
+    public int MaxTags
+    {
+        get => GetValue(MaxTagsProperty);
+        set => SetValue(MaxTagsProperty, value);
+    }
+
+    /// <summary>
     /// Defines the <see cref="Keybinds"/> property.
     /// </summary>
     public static readonly StyledProperty<ObservableCollection<Keybind>> KeybindsProperty =
         AvaloniaProperty.Register<KeybindBox, ObservableCollection<Keybind>>(nameof(Keybinds));
 
     /// <summary>
-    /// Gets or sets the collection of keybinds. A maximum of two keybinds are allowed.
+    /// Gets or sets the collection of keybinds.
     /// </summary>
     public ObservableCollection<Keybind> Keybinds
     {
@@ -68,17 +83,27 @@ public class KeybindBox : TemplatedControl
     {
         KeybindsProperty.Changed.AddClassHandler<KeybindBox>((box, e) => box.OnKeybindsChanged(e));
         TagsProperty.Changed.AddClassHandler<KeybindBox>((box, e) => box.OnTagsChanged(e));
+        MaxTagsProperty.Changed.AddClassHandler<KeybindBox>((box, e) => box.OnMaxTagsChanged(e));
     }
 
     public KeybindBox()
     {
-        Tags = [];
-        #if DEBUG
+        TagBox = new TagBox { MaxTags = 2 };
+        Tags = TagBox.Tags;
+#if DEBUG
         // Temp test
-        Keybinds = new KeybindCollection([new Keybind(Key.A), new Keybind(MouseButton.Left, KeyModifiers.Alt)]);
-        #else
-        Keybinds = new KeybindCollection();
-        #endif
+        Keybinds = [with([new Keybind(Key.A), new Keybind(MouseButton.Left, KeyModifiers.Alt)])];
+#else
+        Keybinds = [];
+#endif
+    }
+
+    private void OnMaxTagsChanged(AvaloniaPropertyChangedEventArgs e)
+    {
+        if (TagBox is not null && e.NewValue is int maxTags)
+        {
+            TagBox.MaxTags = maxTags;
+        }
     }
 
     private void OnKeybindsChanged(AvaloniaPropertyChangedEventArgs e)
@@ -90,9 +115,9 @@ public class KeybindBox : TemplatedControl
 
         if (e.NewValue is ObservableCollection<Keybind> newCollection)
         {
-            if (newCollection.Count > KeybindCollection.MaxKeybinds)
+            if (MaxTags > 0 && newCollection.Count > MaxTags)
             {
-                throw new ArgumentException($"A maximum of {KeybindCollection.MaxKeybinds} keybinds are allowed.", nameof(Keybinds));
+                throw new ArgumentException($"A maximum of {MaxTags} keybinds are allowed.", nameof(Keybinds));
             }
 
             newCollection.CollectionChanged += OnKeybindsCollectionChanged;
@@ -113,7 +138,7 @@ public class KeybindBox : TemplatedControl
             newCollection.CollectionChanged += OnTagsCollectionChanged;
         }
 
-        if (TagBox is not null && Tags is not null)
+        if (TagBox is not null && Tags is not null && !ReferenceEquals(TagBox.Tags, Tags))
         {
             TagBox.Tags = Tags;
         }
@@ -124,27 +149,6 @@ public class KeybindBox : TemplatedControl
         if (_isSyncing)
         {
             return;
-        }
-
-        if (Keybinds is not null && Keybinds.Count > KeybindCollection.MaxKeybinds)
-        {
-            _isSyncing = true;
-            try
-            {
-                if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems is not null)
-                {
-                    foreach (Keybind item in e.NewItems)
-                    {
-                        Keybinds.Remove(item);
-                    }
-                }
-            }
-            finally
-            {
-                _isSyncing = false;
-            }
-
-            throw new InvalidOperationException($"A maximum of {KeybindCollection.MaxKeybinds} keybinds are allowed.");
         }
 
         _isSyncing = true;
@@ -163,7 +167,15 @@ public class KeybindBox : TemplatedControl
                         var targetIndex = e.NewStartingIndex >= 0 ? e.NewStartingIndex : Tags.Count;
                         foreach (Keybind item in e.NewItems)
                         {
-                            Tags.Insert(targetIndex++, item.ToString());
+                            try
+                            {
+                                Tags.Insert(targetIndex++, item.ToString());
+                            }
+                            catch
+                            {
+                                Keybinds.Remove(item);
+                                throw;
+                            }
                         }
                     }
                     break;
@@ -269,11 +281,10 @@ public class KeybindBox : TemplatedControl
                     {
                         foreach (string tag in e.NewItems)
                         {
-                            if (Keybinds.Count >= KeybindCollection.MaxKeybinds)
+                            if (TagBox is not null && TagBox.MaxTags > 0 && Keybinds.Count >= TagBox.MaxTags)
                             {
-                                throw new InvalidOperationException($"A maximum of {KeybindCollection.MaxKeybinds} keybinds are allowed.");
+                                break;
                             }
-
                             var keybind = Keybind.Parse(tag);
                             Keybinds.Add(keybind);
                         }
@@ -321,24 +332,30 @@ public class KeybindBox : TemplatedControl
     {
         base.OnApplyTemplate(e);
         TagBox = e.NameScope.Find<TagBox>(PartTagBox);
-        if (TagBox is not null && Tags is not null)
+        if (TagBox is null || Tags is null)
         {
-            TagBox.Tags = Tags;
+            return;
         }
+
+        TagBox.MaxTags = MaxTags;
+        TagBox.Tags = Tags;
     }
 
     protected override void OnGotFocus(FocusChangedEventArgs e)
     {
         base.OnGotFocus(e);
-        if (ReferenceEquals(e.Source, this))
+        if (ReferenceEquals(e.Source, this) && TagBox is not null && !TagBox.IsAtMax)
         {
-            TagBox?.Focus();
+            TagBox.Focus();
         }
     }
 
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
-        TagBox?.Focus();
+        if (TagBox is not null && !TagBox.IsAtMax)
+        {
+            TagBox.Focus();
+        }
     }
 }

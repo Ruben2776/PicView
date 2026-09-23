@@ -6,6 +6,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PicView.Avalonia;
 using PicView.Avalonia.CustomControls;
 
@@ -14,18 +15,18 @@ namespace PicView.Tests.Controls;
 [Collection("Sequential")]
 public class TagBoxTests
 {
-    public TagBoxTests()
+    static TagBoxTests()
     {
-        try
+        if (Application.Current == null)
         {
             AppBuilder.Configure<App>()
                 .UseHeadless(new AvaloniaHeadlessPlatformOptions())
                 .SetupWithoutStarting();
         }
-        catch (InvalidOperationException)
-        {
-        }
+    }
 
+    public TagBoxTests()
+    {
         SetDefaults();
     }
 
@@ -198,5 +199,156 @@ public class TagBoxTests
         var timer = GetCaretTimer(keybindBox.TagBox.Presenter);
         Assert.NotNull(timer);
         Assert.True(timer.IsEnabled);
+    }
+
+    [Fact]
+    public void TagBox_MaxTags_ReachingMax_SetsMaxPseudoClass()
+    {
+        var tagBox = new TagBox { MaxTags = 2 };
+        var window = new Window { Content = tagBox };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(tagBox.IsAtMax);
+        Assert.DoesNotContain(TagBox.Max, tagBox.Classes);
+
+        tagBox.Tags.Add("Tag1");
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(tagBox.IsAtMax);
+        Assert.DoesNotContain(TagBox.Max, tagBox.Classes);
+
+        tagBox.Tags.Add("Tag2");
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(tagBox.IsAtMax);
+        Assert.Contains(TagBox.Max, tagBox.Classes);
+
+        tagBox.RemoveTag("Tag1");
+        Dispatcher.UIThread.RunJobs();
+        Assert.False(tagBox.IsAtMax);
+        Assert.DoesNotContain(TagBox.Max, tagBox.Classes);
+    }
+
+    [Fact]
+    public void TagBox_WhenAtMax_CursorIsNo_AndPresenterIsHidden()
+    {
+        var tagBox = new TagBox { MaxTags = 2, PlaceholderText = "Press key..." };
+        var window = new Window { Content = tagBox };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        var border = tagBox.GetVisualDescendants().OfType<Border>().FirstOrDefault(b => b.Name == "PART_Border");
+        Assert.NotNull(border);
+
+        tagBox.Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(tagBox.IsFocused);
+        Assert.NotNull(tagBox.Presenter);
+        Assert.True(tagBox.Presenter.IsVisible);
+
+        // Add 2 tags to reach max
+        tagBox.Tags.Add("Tag1");
+        tagBox.Tags.Add("Tag2");
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(tagBox.IsAtMax);
+        Assert.Contains(TagBox.Max, tagBox.Classes);
+        Assert.False(tagBox.Presenter.IsVisible);
+        Assert.Equal("No", border.Cursor?.ToString());
+    }
+
+    [Fact]
+    public void TagBox_WhenAtMax_PointerPressedDoesNotShowPresenterOrCaret()
+    {
+        var tagBox = new TagBox { MaxTags = 2, PlaceholderText = "Press key..." };
+        tagBox.Tags.Add("Tag1");
+        tagBox.Tags.Add("Tag2");
+
+        var button = new Button { Content = "Other" };
+        var panel = new StackPanel();
+        panel.Children.Add(tagBox);
+        panel.Children.Add(button);
+
+        var window = new Window { Content = panel };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+
+        button.Focus();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.NotNull(tagBox.Presenter);
+        Assert.False(tagBox.Presenter.IsVisible);
+
+        // Simulate pointer press while at max
+        tagBox.RaiseEvent(new PointerPressedEventArgs(
+            tagBox,
+            new global::Avalonia.Input.Pointer(0, PointerType.Mouse, true),
+            window,
+            new Point(5, 5),
+            (ulong)Environment.TickCount64,
+            new PointerPointProperties(RawInputModifiers.None, PointerUpdateKind.LeftButtonPressed),
+            KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(tagBox.Presenter.IsVisible);
+        var timer = GetCaretTimer(tagBox.Presenter);
+        Assert.True(timer is null || !timer.IsEnabled);
+    }
+
+    [Fact]
+    public void TagBox_AddMoreThanMaxTags_ThrowsInvalidOperationException()
+    {
+        var tagBox = new TagBox { MaxTags = 2 };
+        tagBox.Tags.Add("Tag1");
+        tagBox.Tags.Add("Tag2");
+
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            tagBox.Tags.Add("Tag3");
+        });
+
+        Assert.Equal(2, tagBox.Tags.Count);
+    }
+
+    [Fact]
+    public void TagCollection_EnforcesMaxTags_ThrowsInvalidOperationException()
+    {
+        var collection = new TagCollection(2)
+        {
+            "Tag1",
+            "Tag2"
+        };
+
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            collection.Add("Tag3");
+        });
+
+        Assert.Equal(2, collection.Count);
+    }
+
+    [Fact]
+    public void TagCollection_ConstructorWithCollectionExceedingMax_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() =>
+        {
+            _ = new TagCollection(["1", "2", "3"], maxTags: 2);
+        });
+    }
+
+    [Fact]
+    public void TagCollection_AllowsModificationsWithinLimit()
+    {
+        var collection = new TagCollection(2);
+        collection.Add("Tag1");
+        collection.Add("Tag2");
+
+        collection[0] = "Tag1_Replaced";
+        Assert.Equal("Tag1_Replaced", collection[0]);
+
+        collection.Remove("Tag2");
+        Assert.Single(collection);
+
+        collection.Add("Tag3");
+        Assert.Equal(2, collection.Count);
     }
 }
