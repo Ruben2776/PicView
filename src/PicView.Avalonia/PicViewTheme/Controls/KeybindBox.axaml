@@ -12,16 +12,19 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="8" />
         <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
-        <Setter Property="Focusable" Value="True" />
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="Template">
-            <ControlTemplate>
+            <ControlTemplate TargetType="customControls:KeybindBox">
                 <DockPanel>
                     <TextBlock
                         Margin="0,0,5,0"
                         Classes="txt"
                         DockPanel.Dock="Left"
                         Text="Test" />
-                    <customControls:TagBox DockPanel.Dock="Right" PlaceholderText="{TemplateBinding PlaceholderText}" />
+                    <customControls:TagBox
+                        Name="PART_TagBox"
+                        DockPanel.Dock="Right"
+                        PlaceholderText="{TemplateBinding PlaceholderText}" />
                 </DockPanel>
             </ControlTemplate>
         </Setter>

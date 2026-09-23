@@ -70,7 +70,10 @@
                         </ItemsControl>
                         <TextPresenter
                             Name="PART_TextPresenter"
+                            CaretBlinkInterval="{TemplateBinding CaretBlinkInterval}"
                             CaretBrush="{TemplateBinding CaretBrush}"
+                            CaretIndex="{TemplateBinding CaretIndex,
+                                                   Mode=TwoWay}"
                             DockPanel.Dock="Right"
                             LetterSpacing="{TemplateBinding LetterSpacing}"
                             LineHeight="{TemplateBinding LineHeight}"
@@ -78,7 +81,8 @@
                             Text="{TemplateBinding PlaceholderText,
                                                    Mode=TwoWay}"
                             TextAlignment="Left"
-                            TextWrapping="NoWrap" />
+                            TextWrapping="NoWrap"
+                            VerticalAlignment="Center" />
                     </DockPanel>
                 </Border>
             </ControlTemplate>

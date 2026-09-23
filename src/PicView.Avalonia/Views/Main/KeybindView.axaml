@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="PicView.Avalonia.Views.Main.KeybindView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -49,7 +49,7 @@
         </Panel>
 
         <StackPanel Margin="7,10" Spacing="10">
-            <customControls:KeybindBox PlaceholderText="{Binding Translation.PressKey.Value}" />
+            <customControls:KeybindBox PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
         </StackPanel>
     </DockPanel>
 </UserControl>

@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Metadata;
 
@@ -15,10 +16,14 @@ namespace PicView.Avalonia.CustomControls;
 /// A tag-chip container that displays a collection of removable tag chips inside a bordered box.
 /// Each tag chip shows a text label and an "×" button to remove it.
 /// </summary>
+[TemplatePart(PartTextPresenter, typeof(TextPresenter))]
 [PseudoClasses(Empty)]
 public class TagBox : TemplatedControl
 {
+    public const string PartTextPresenter = "PART_TextPresenter";
     public const string Empty = ":empty";
+
+    internal TextPresenter? Presenter { get; private set; }
 
     public static readonly StyledProperty<ObservableCollection<string>> TagsProperty =
         AvaloniaProperty.Register<TagBox, ObservableCollection<string>>(nameof(Tags));
@@ -44,25 +49,31 @@ public class TagBox : TemplatedControl
     }
 
     #region TextPresenter
-    
+
     /// <summary>
     /// Defines the <see cref="CaretBrush"/> property
     /// </summary>
     public static readonly StyledProperty<IBrush?> CaretBrushProperty =
         AvaloniaProperty.Register<TagBox, IBrush?>(nameof(CaretBrush));
-    
+
     /// <summary>
     /// Defines the <see cref="CaretBlinkInterval"/> property
     /// </summary>
     public static readonly StyledProperty<TimeSpan> CaretBlinkIntervalProperty =
         AvaloniaProperty.Register<TagBox, TimeSpan>(nameof(CaretBlinkInterval), defaultValue: TimeSpan.FromMilliseconds(500));
-    
+
+    /// <summary>
+    /// Defines the <see cref="CaretIndex"/> property
+    /// </summary>
+    public static readonly StyledProperty<int> CaretIndexProperty =
+        AvaloniaProperty.Register<TagBox, int>(nameof(CaretIndex));
+
     /// <summary>
     /// Defines see <see cref="TextPresenter.LineHeight"/> property.
     /// </summary>
     public static readonly StyledProperty<double> LineHeightProperty =
         TextBlock.LineHeightProperty.AddOwner<TagBox>(new StyledPropertyMetadata<double>(defaultValue: 16));
-    
+
     /// <summary>
     /// Gets or sets a brush that is used for the text caret
     /// </summary>
@@ -78,8 +89,16 @@ public class TagBox : TemplatedControl
         get => GetValue(CaretBlinkIntervalProperty);
         set => SetValue(CaretBlinkIntervalProperty, value);
     }
-    
-    
+
+    /// <summary>
+    /// Gets or sets the caret index.
+    /// </summary>
+    public int CaretIndex
+    {
+        get => GetValue(CaretIndexProperty);
+        set => SetValue(CaretIndexProperty, value);
+    }
+
     /// <summary>
     /// Gets or sets the line height.
     /// </summary>
@@ -88,13 +107,13 @@ public class TagBox : TemplatedControl
         get => GetValue(LineHeightProperty);
         set => SetValue(LineHeightProperty, value);
     }
-    
+
     /// <summary>
     /// Defines the <see cref="PlaceholderText"/> property.
     /// </summary>
     public static readonly StyledProperty<string?> PlaceholderTextProperty =
-        AvaloniaProperty.Register<TextBox, string?>(nameof(PlaceholderText));
-    
+        AvaloniaProperty.Register<TagBox, string?>(nameof(PlaceholderText));
+
     /// <summary>
     /// Gets or sets the placeholder text in the tag text box
     /// </summary>
@@ -138,9 +157,19 @@ public class TagBox : TemplatedControl
         UpdateEmptyPseudoClass();
     }
 
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        if (IsFocused)
+        {
+            Presenter?.ShowCaret();
+        }
+    }
+
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
+        Presenter?.HideCaret();
         if (Tags is INotifyCollectionChanged collection)
         {
             collection.CollectionChanged -= OnTagsCollectionChanged;
@@ -150,7 +179,42 @@ public class TagBox : TemplatedControl
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
+        Presenter = e.NameScope.Find<TextPresenter>(PartTextPresenter);
         UpdateEmptyPseudoClass();
+        if (IsFocused)
+        {
+            Presenter?.ShowCaret();
+        }
+    }
+
+    protected override void OnGotFocus(FocusChangedEventArgs e)
+    {
+        base.OnGotFocus(e);
+        Presenter?.ShowCaret();
+    }
+
+    protected override void OnLostFocus(FocusChangedEventArgs e)
+    {
+        base.OnLostFocus(e);
+        Presenter?.HideCaret();
+    }
+
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    {
+        base.OnPointerPressed(e);
+
+        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            Focus();
+            if (Presenter is not null)
+            {
+                var point = e.GetPosition(Presenter);
+                Presenter.MoveCaretToPoint(point);
+                SetCurrentValue(CaretIndexProperty, Presenter.CaretIndex);
+                Presenter.ShowCaret();
+            }
+            e.Handled = true;
+        }
     }
 
     internal void RemoveTag(string tag)
