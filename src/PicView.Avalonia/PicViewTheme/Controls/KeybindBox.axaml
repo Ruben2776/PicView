@@ -17,15 +17,15 @@
             <ControlTemplate TargetType="customControls:KeybindBox">
                 <DockPanel>
                     <TextBlock
-                        Width="210"
+                        Width="220"
                         Margin="0,0,5,0"
                         Classes="txt"
                         DockPanel.Dock="Left"
                         Text="{TemplateBinding ActionName}" />
                     <customControls:TagBox
                         Name="PART_TagBox"
+                        Width="310"
                         Height="40"
-                        MinWidth="210"
                         DockPanel.Dock="Right"
                         MaxTags="{TemplateBinding MaxTags}"
                         PlaceholderText="{TemplateBinding PlaceholderText}"

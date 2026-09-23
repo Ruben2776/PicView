@@ -29,7 +29,7 @@
 
             <TextBox
                 x:Name="FilterBox"
-                Padding="50,7,4,7"
+                Padding="40,7,4,7"
                 VerticalAlignment="Center"
                 Background="Transparent"
                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
@@ -58,7 +58,7 @@
                                             Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
         </Panel>
 
-        <customControls:AutoScrollViewer Margin="0,0,0,80" DockPanel.Dock="Top">
+        <customControls:AutoScrollViewer Margin="0,0,0,65" DockPanel.Dock="Top">
             <StackPanel Margin="15,5">
 
                 <!--  Navigation  -->
@@ -246,31 +246,101 @@
             </StackPanel>
         </customControls:AutoScrollViewer>
 
-        <Panel
+        <!--  Footer  -->
+        <Border
             x:Name="BottomBorder"
-            Height="80"
+            Height="65"
             VerticalAlignment="Bottom"
             Background="{DynamicResource ToolWindowFooterBackground}"
+            BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+            BorderThickness="0,1,0,0"
             DockPanel.Dock="Bottom"
             PointerPressed="MoveWindow">
-            <StackPanel
-                HorizontalAlignment="Left"
-                Orientation="Horizontal"
-                Spacing="10">
+            <Panel>
+                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 
-                <Button DockPanel.Dock="Left">
-                    <TextBlock Classes="txt" Text="{Binding Translation.Cancel.Value}" />
-                </Button>
+                    <Button
+                        x:Name="CancelButton"
+                        Height="35"
+                        Margin="15,0,10,0"
+                        Padding="10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Background="{DynamicResource ToolWindowButtonBackground}"
+                        BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                        BorderThickness="1"
+                        Classes="MenuItemHover"
+                        CornerRadius="4">
+                        <TextBlock
+                            Classes="txt"
+                            Text="{Binding Translation.Cancel.Value, Mode=OneWay}"
+                            TextAlignment="Center" />
+                    </Button>
 
-                <Button HorizontalAlignment="Left">
-                    <TextBlock Classes="txt" Text="{Binding Translation.ResetButtonText.Value}" />
-                </Button>
+                    <Button
+                        x:Name="DefaultButton"
+                        Height="35"
+                        Padding="10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Background="{DynamicResource ToolWindowButtonBackground}"
+                        BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                        BorderThickness="1"
+                        Classes="MenuItemHover"
+                        CornerRadius="4">
+                        <TextBlock
+                            Classes="txt"
+                            Text="{Binding Translation.ResetButtonText.Value, Mode=OneWay}"
+                            TextAlignment="Center" />
+                    </Button>
 
-            </StackPanel>
+                </StackPanel>
 
-            <Button x:Name="SaveButton" HorizontalAlignment="Right">
-                <TextBlock Classes="txt" Text="{Binding Translation.Save.Value}" />
-            </Button>
-        </Panel>
+                <StackPanel
+                    Margin="0,0,20,0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Spacing="10">
+
+                    <Button
+                        x:Name="ApplyButton"
+                        Height="35"
+                        MinWidth="100"
+                        Padding="10,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Background="{DynamicResource ToolWindowButtonBackground}"
+                        BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                        BorderThickness="1"
+                        Classes="MenuItemHover"
+                        CornerRadius="4">
+                        <TextBlock
+                            Classes="txt"
+                            Text="{Binding Translation.Apply.Value, Mode=OneWay}"
+                            TextAlignment="Center" />
+                    </Button>
+
+                    <Button
+                        x:Name="SaveButton"
+                        Height="35"
+                        MinWidth="140"
+                        Padding="10,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Background="{DynamicResource AccentColor}"
+                        BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                        BorderThickness="1"
+                        Classes="accentHover"
+                        CornerRadius="4">
+                        <TextBlock
+                            Classes="txt"
+                            Text="{Binding Translation.Save.Value, Mode=OneWay}"
+                            TextAlignment="Center" />
+                    </Button>
+                </StackPanel>
+
+            </Panel>
+        </Border>
+
     </DockPanel>
 </UserControl>
