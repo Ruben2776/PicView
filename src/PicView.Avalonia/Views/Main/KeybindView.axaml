@@ -6,6 +6,16 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:CoreViewModel">
 
+    <UserControl.Styles>
+
+        <Style Selector="TextBlock.keyBindHeader">
+            <Setter Property="Margin" Value="10,10,10,15" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
+
+    </UserControl.Styles>
+
     <!--  Filter  -->
     <DockPanel>
 
@@ -48,8 +58,149 @@
                                             Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
         </Panel>
 
-        <StackPanel Margin="10" Spacing="10">
-            <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-        </StackPanel>
+        <customControls:AutoScrollViewer Margin="0,0,0,80" DockPanel.Dock="Top">
+            <StackPanel>
+
+                <!--  Navigation  -->
+                <TextBlock
+                    Classes="txt bold keyBindHeader"
+                    DockPanel.Dock="Top"
+                    Text="{CompiledBinding Translation.Navigation.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  Scroll and rotate  -->
+                <TextBlock
+                    Classes="txt bold keyBindHeader"
+                    DockPanel.Dock="Top"
+                    Text="{CompiledBinding Translation.ScrollAndRotate.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  Zoom  -->
+                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.Zoom.Value, Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  Image control  -->
+                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.ImageControl.Value, Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  Interface configuration  -->
+                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.InterfaceConfiguration.Value, Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  File management  -->
+                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.FileManagement.Value, Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  Sort files by  -->
+                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.SortFilesBy.Value, Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  Copy  -->
+                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.Copy.Value, Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  Tab management  -->
+                <TextBlock Classes="txt bold keyBindHeader" Text="{Binding Translation.TabManagement.Value}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  Tool Windows  -->
+                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.ToolWindows.Value, Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  Window management  -->
+                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.WindowManagement.Value, Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  Window scaling  -->
+                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.WindowScaling.Value, Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+                <!--  Set star rating  -->
+                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.SetStarRating.Value, Mode=OneWay}" />
+                <ItemsControl DockPanel.Dock="Top">
+                    <StackPanel Margin="10" Spacing="10">
+                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
+                    </StackPanel>
+                </ItemsControl>
+
+            </StackPanel>
+        </customControls:AutoScrollViewer>
+
+        <Panel
+            x:Name="BottomBorder"
+            Height="80"
+            VerticalAlignment="Bottom"
+            Background="{DynamicResource ToolWindowFooterBackground}"
+            DockPanel.Dock="Bottom"
+            PointerPressed="MoveWindow">
+            <StackPanel
+                HorizontalAlignment="Left"
+                Orientation="Horizontal"
+                Spacing="10">
+
+                <Button DockPanel.Dock="Left">
+                    <TextBlock Classes="txt" Text="{Binding Translation.Cancel.Value}" />
+                </Button>
+
+                <Button HorizontalAlignment="Left">
+                    <TextBlock Classes="txt" Text="{Binding Translation.ResetButtonText.Value}" />
+                </Button>
+
+            </StackPanel>
+
+            <Button x:Name="SaveButton" HorizontalAlignment="Right">
+                <TextBlock Classes="txt" Text="{Binding Translation.Save.Value}" />
+            </Button>
+        </Panel>
     </DockPanel>
 </UserControl>

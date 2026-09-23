@@ -42,6 +42,7 @@
                                     <Border
                                         Margin="2"
                                         Padding="6,2"
+                                        Background="Transparent"
                                         BorderBrush="{DynamicResource TextBoxHoverBorderColor}"
                                         BorderThickness="1"
                                         CornerRadius="3"

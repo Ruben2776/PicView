@@ -1,12 +1,20 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Input;
 
-namespace PicView.Avalonia.Views.Main
+namespace PicView.Avalonia.Views.Main;
+
+public partial class KeybindView : UserControl
 {
-    public partial class KeybindView : UserControl
+    public KeybindView()
     {
-        public KeybindView()
+        InitializeComponent();
+    }
+    
+    private void MoveWindow(object? sender, PointerPressedEventArgs e)
+    {
+        if (TopLevel.GetTopLevel(this) is Window window)
         {
-            InitializeComponent();
+            window.BeginMoveDrag(e);
         }
     }
 }

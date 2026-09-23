@@ -23,6 +23,7 @@
                         Text="{TemplateBinding ActionName}" />
                     <customControls:TagBox
                         Name="PART_TagBox"
+                        MinWidth="170"
                         DockPanel.Dock="Right"
                         MaxTags="{TemplateBinding MaxTags}"
                         PlaceholderText="{TemplateBinding PlaceholderText}"
