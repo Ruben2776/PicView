@@ -59,118 +59,188 @@
         </Panel>
 
         <customControls:AutoScrollViewer Margin="0,0,0,80" DockPanel.Dock="Top">
-            <StackPanel>
+            <StackPanel Margin="15,5">
 
                 <!--  Navigation  -->
                 <TextBlock
+                    x:Name="NavigationHeader"
                     Classes="txt bold keyBindHeader"
-                    DockPanel.Dock="Top"
                     Text="{CompiledBinding Translation.Navigation.Value,
                                            Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <ItemsControl x:Name="NavigationItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  Scroll and rotate  -->
                 <TextBlock
+                    x:Name="ScrollAndRotateHeader"
                     Classes="txt bold keyBindHeader"
-                    DockPanel.Dock="Top"
                     Text="{CompiledBinding Translation.ScrollAndRotate.Value,
                                            Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <ItemsControl x:Name="ScrollAndRotateItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  Zoom  -->
-                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.Zoom.Value, Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <TextBlock
+                    x:Name="ZoomHeader"
+                    Classes="txt bold keyBindHeader"
+                    Text="{CompiledBinding Translation.Zoom.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl x:Name="ZoomItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  Image control  -->
-                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.ImageControl.Value, Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <TextBlock
+                    x:Name="ImageControlHeader"
+                    Classes="txt bold keyBindHeader"
+                    Text="{CompiledBinding Translation.ImageControl.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl x:Name="ImageControlItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  Interface configuration  -->
-                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.InterfaceConfiguration.Value, Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <TextBlock
+                    x:Name="InterfaceConfigurationHeader"
+                    Classes="txt bold keyBindHeader"
+                    Text="{CompiledBinding Translation.InterfaceConfiguration.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl x:Name="InterfaceConfigurationItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  File management  -->
-                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.FileManagement.Value, Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <TextBlock
+                    x:Name="FileManagementHeader"
+                    Classes="txt bold keyBindHeader"
+                    Text="{CompiledBinding Translation.FileManagement.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl x:Name="FileManagementItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  Sort files by  -->
-                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.SortFilesBy.Value, Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <TextBlock
+                    x:Name="SortFilesByHeader"
+                    Classes="txt bold keyBindHeader"
+                    Text="{CompiledBinding Translation.SortFilesBy.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl x:Name="SortFilesByItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  Copy  -->
-                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.Copy.Value, Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <TextBlock
+                    x:Name="CopyHeader"
+                    Classes="txt bold keyBindHeader"
+                    Text="{CompiledBinding Translation.Copy.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl x:Name="CopyItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  Tab management  -->
-                <TextBlock Classes="txt bold keyBindHeader" Text="{Binding Translation.TabManagement.Value}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <TextBlock
+                    x:Name="TabManagementHeader"
+                    Classes="txt bold keyBindHeader"
+                    Text="{CompiledBinding Translation.TabManagement.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl x:Name="TabManagementItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  Tool Windows  -->
-                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.ToolWindows.Value, Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <TextBlock
+                    x:Name="ToolWindowsHeader"
+                    Classes="txt bold keyBindHeader"
+                    Text="{CompiledBinding Translation.ToolWindows.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl x:Name="ToolWindowsItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  Window management  -->
-                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.WindowManagement.Value, Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <TextBlock
+                    x:Name="WindowManagementHeader"
+                    Classes="txt bold keyBindHeader"
+                    Text="{CompiledBinding Translation.WindowManagement.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl x:Name="WindowManagementItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  Window scaling  -->
-                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.WindowScaling.Value, Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <TextBlock
+                    x:Name="WindowScalingHeader"
+                    Classes="txt bold keyBindHeader"
+                    Text="{CompiledBinding Translation.WindowScaling.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl x:Name="WindowScalingItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
                 <!--  Set star rating  -->
-                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.SetStarRating.Value, Mode=OneWay}" />
-                <ItemsControl DockPanel.Dock="Top">
-                    <StackPanel Margin="10" Spacing="10">
-                        <customControls:KeybindBox ActionName="{Binding Translation.Navigate.Value}" PlaceholderText="{Binding Translation.PressKey.Value, Mode=OneWay}" />
-                    </StackPanel>
+                <TextBlock
+                    x:Name="SetStarRatingHeader"
+                    Classes="txt bold keyBindHeader"
+                    Text="{CompiledBinding Translation.SetStarRating.Value,
+                                           Mode=OneWay}" />
+                <ItemsControl x:Name="SetStarRatingItems">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Spacing="10" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
             </StackPanel>
