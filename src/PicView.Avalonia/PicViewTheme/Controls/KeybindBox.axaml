@@ -24,7 +24,8 @@
                     <customControls:TagBox
                         Name="PART_TagBox"
                         DockPanel.Dock="Right"
-                        PlaceholderText="{TemplateBinding PlaceholderText}" />
+                        PlaceholderText="{TemplateBinding PlaceholderText}"
+                        Tags="{TemplateBinding Tags}" />
                 </DockPanel>
             </ControlTemplate>
         </Setter>

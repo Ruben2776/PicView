@@ -25,7 +25,7 @@ public class KeybindTests
     public void ToString_ModifierAndKey_ReturnsCombinedString()
     {
         var keybind = new Keybind(Key.A, KeyModifiers.Control);
-        Assert.Equal("Ctrl+A", keybind.ToString());
+        Assert.Equal("Ctrl + A", keybind.ToString());
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class KeybindTests
         var altName = isMac ? "Option" : "Alt";
 
         var keybind = new Keybind(Key.O, KeyModifiers.Control | KeyModifiers.Alt);
-        Assert.Equal($"Ctrl+{altName}+O", keybind.ToString());
+        Assert.Equal($"Ctrl + {altName} + O", keybind.ToString());
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class KeybindTests
         var altName = isMac ? "Option" : "Alt";
 
         var keybind = new Keybind(MouseButton.Right, KeyModifiers.Shift | KeyModifiers.Alt);
-        Assert.Equal($"Shift+{altName}+Right", keybind.ToString());
+        Assert.Equal($"Shift + {altName} + Right", keybind.ToString());
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class KeybindTests
         var metaName = isMac ? "Cmd" : "Win";
 
         var keybind = new Keybind(Key.S, KeyModifiers.Meta);
-        Assert.Equal($"{metaName}+S", keybind.ToString());
+        Assert.Equal($"{metaName} + S", keybind.ToString());
     }
 
     [Fact]
@@ -66,12 +66,15 @@ public class KeybindTests
     }
 
     [Theory]
-    [InlineData("Ctrl+A")]
-    [InlineData("Shift+Delete")]
-    [InlineData("Ctrl+Shift+Z")]
-    public void Parse_And_ToString_Roundtrips(string representation)
+    [InlineData("Ctrl+A", "Ctrl + A")]
+    [InlineData("Shift+Delete", "Shift + Delete")]
+    [InlineData("Ctrl+Shift+Z", "Ctrl + Shift + Z")]
+    [InlineData("Ctrl + A", "Ctrl + A")]
+    [InlineData("Shift + Delete", "Shift + Delete")]
+    [InlineData("Ctrl + Shift + Z", "Ctrl + Shift + Z")]
+    public void Parse_And_ToString_Roundtrips(string input, string expected)
     {
-        var parsed = Keybind.Parse(representation);
-        Assert.Equal(representation, parsed.ToString());
+        var parsed = Keybind.Parse(input);
+        Assert.Equal(expected, parsed.ToString());
     }
 }

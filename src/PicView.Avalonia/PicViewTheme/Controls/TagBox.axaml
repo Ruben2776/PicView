@@ -31,7 +31,10 @@
                             ItemsSource="{TemplateBinding Tags}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel VerticalAlignment="Center" Orientation="Horizontal" />
+                                    <StackPanel
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal"
+                                        Spacing="5" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -51,18 +54,19 @@
                                             <TextBlock Classes="txt" Text="{Binding}" />
                                             <customControls:IconButton
                                                 Name="tagCloseButton"
-                                                Padding="2,0"
+                                                Padding="5"
                                                 VerticalAlignment="Center"
                                                 Background="Transparent"
                                                 BorderThickness="0"
+                                                Classes="errorHover"
                                                 Command="{Binding $parent[customControls:TagBox].RemoveTagCommand}"
                                                 CommandParameter="{Binding}"
+                                                CornerRadius="4"
                                                 Cursor="Hand"
                                                 Data="{StaticResource CloseGeometry}"
-                                                FontSize="14"
                                                 Foreground="{DynamicResource MainTextColorFaded}"
-                                                IconHeight="12"
-                                                IconWidth="12" />
+                                                IconHeight="9"
+                                                IconWidth="9" />
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>
@@ -74,7 +78,7 @@
                             CaretBlinkInterval="{TemplateBinding CaretBlinkInterval}"
                             CaretBrush="{TemplateBinding CaretBrush}"
                             CaretIndex="{TemplateBinding CaretIndex,
-                                                   Mode=TwoWay}"
+                                                         Mode=TwoWay}"
                             DockPanel.Dock="Right"
                             IsVisible="{TemplateBinding IsFocused}"
                             LetterSpacing="{TemplateBinding LetterSpacing}"

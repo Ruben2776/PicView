@@ -174,22 +174,28 @@ public readonly struct Keybind : IEquatable<Keybind>
         return index switch
         {
             1 => p0 ?? string.Empty,
-            2 => string.Create(p0!.Length + 1 + p1!.Length, (p0, p1), static (destination, state) =>
+            2 => string.Create(p0!.Length + 3 + p1!.Length, (p0, p1), static (destination, state) =>
             {
                 var (first, second) = state;
                 first.AsSpan().CopyTo(destination);
-                destination[first.Length] = '+';
-                second.AsSpan().CopyTo(destination[(first.Length + 1)..]);
+                destination[first.Length] = ' ';
+                destination[first.Length + 1] = '+';
+                destination[first.Length + 2] = ' ';
+                second.AsSpan().CopyTo(destination[(first.Length + 3)..]);
             }),
-            3 => string.Create(p0!.Length + 1 + p1!.Length + 1 + p2!.Length, (p0, p1, p2), static (destination, state) =>
+            3 => string.Create(p0!.Length + 3 + p1!.Length + 3 + p2!.Length, (p0, p1, p2), static (destination, state) =>
             {
                 var (first, second, third) = state;
                 first.AsSpan().CopyTo(destination);
                 var offset = first.Length;
+                destination[offset++] = ' ';
                 destination[offset++] = '+';
+                destination[offset++] = ' ';
                 second.AsSpan().CopyTo(destination[offset..]);
                 offset += second.Length;
+                destination[offset++] = ' ';
                 destination[offset++] = '+';
+                destination[offset++] = ' ';
                 third.AsSpan().CopyTo(destination[offset..]);
             }),
             _ => string.Empty
