@@ -70,19 +70,20 @@
                         </ItemsControl>
                         <TextPresenter
                             Name="PART_TextPresenter"
+                            VerticalAlignment="Center"
                             CaretBlinkInterval="{TemplateBinding CaretBlinkInterval}"
                             CaretBrush="{TemplateBinding CaretBrush}"
                             CaretIndex="{TemplateBinding CaretIndex,
                                                    Mode=TwoWay}"
                             DockPanel.Dock="Right"
+                            IsVisible="{TemplateBinding IsFocused}"
                             LetterSpacing="{TemplateBinding LetterSpacing}"
                             LineHeight="{TemplateBinding LineHeight}"
                             SelectionForegroundBrush="{TemplateBinding Foreground}"
                             Text="{TemplateBinding PlaceholderText,
-                                                   Mode=TwoWay}"
+                                                   Mode=OneWay}"
                             TextAlignment="Left"
-                            TextWrapping="NoWrap"
-                            VerticalAlignment="Center" />
+                            TextWrapping="NoWrap" />
                     </DockPanel>
                 </Border>
             </ControlTemplate>

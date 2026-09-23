@@ -98,11 +98,16 @@ public class TagBoxTests
 
         Assert.NotNull(tagBox.Presenter);
 
+        // By default (not focused): TextPresenter is hidden
+        Assert.False(tagBox.Presenter.IsVisible);
+
         // Focus TagBox
         tagBox.Focus();
         Dispatcher.UIThread.RunJobs();
 
         Assert.True(tagBox.IsFocused);
+        Assert.True(tagBox.Presenter.IsVisible);
+        Assert.Equal("Press key...", tagBox.Presenter.Text);
         var timer = GetCaretTimer(tagBox.Presenter);
         Assert.NotNull(timer);
         Assert.True(timer.IsEnabled);
@@ -112,6 +117,7 @@ public class TagBoxTests
         Dispatcher.UIThread.RunJobs();
 
         Assert.False(tagBox.IsFocused);
+        Assert.False(tagBox.Presenter.IsVisible);
         Assert.False(timer.IsEnabled);
     }
 
@@ -132,6 +138,8 @@ public class TagBoxTests
         button.Focus();
         Dispatcher.UIThread.RunJobs();
         Assert.False(tagBox.IsFocused);
+        Assert.NotNull(tagBox.Presenter);
+        Assert.False(tagBox.Presenter.IsVisible);
 
         // Simulate pointer press on TagBox
         tagBox.RaiseEvent(new PointerPressedEventArgs(
@@ -145,6 +153,8 @@ public class TagBoxTests
         Dispatcher.UIThread.RunJobs();
 
         Assert.True(tagBox.IsFocused);
+        Assert.True(tagBox.Presenter.IsVisible);
+        Assert.Equal("Press key...", tagBox.Presenter.Text);
         var timer = GetCaretTimer(tagBox.Presenter);
         Assert.NotNull(timer);
         Assert.True(timer.IsEnabled);
@@ -168,6 +178,8 @@ public class TagBoxTests
 
         Assert.NotNull(keybindBox.TagBox);
         Assert.False(keybindBox.TagBox.IsFocused);
+        Assert.NotNull(keybindBox.TagBox.Presenter);
+        Assert.False(keybindBox.TagBox.Presenter.IsVisible);
 
         // Click KeybindBox
         keybindBox.RaiseEvent(new PointerPressedEventArgs(
@@ -181,6 +193,8 @@ public class TagBoxTests
         Dispatcher.UIThread.RunJobs();
 
         Assert.True(keybindBox.TagBox.IsFocused);
+        Assert.True(keybindBox.TagBox.Presenter.IsVisible);
+        Assert.Equal("Press key...", keybindBox.TagBox.Presenter.Text);
         var timer = GetCaretTimer(keybindBox.TagBox.Presenter);
         Assert.NotNull(timer);
         Assert.True(timer.IsEnabled);
