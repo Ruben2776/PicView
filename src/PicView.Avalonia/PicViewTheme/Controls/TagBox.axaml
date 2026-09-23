@@ -1,0 +1,104 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    x:ClassModifier="internal">
+
+    <ControlTheme x:Key="{x:Type customControls:TagBox}" TargetType="customControls:TagBox">
+        <Setter Property="Background" Value="{DynamicResource TextBoxBackgroundColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TextBoxBorderColor}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource MainTextColor}" />
+        <Setter Property="CaretBlinkInterval" Value="00:00:00.5000000" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="4,3" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="MinHeight" Value="28" />
+        <Setter Property="Template">
+            <ControlTemplate TargetType="customControls:TagBox">
+                <Border
+                    Name="PART_Border"
+                    Padding="{TemplateBinding Padding}"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}"
+                    Cursor="Ibeam">
+                    <DockPanel VerticalAlignment="Center">
+                        <ItemsControl
+                            Name="PART_ItemsControl"
+                            DockPanel.Dock="Left"
+                            ItemsSource="{TemplateBinding Tags}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel VerticalAlignment="Center" Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <!--  Each tag chip  -->
+                                    <Border
+                                        Margin="2"
+                                        Padding="6,2"
+                                        BorderBrush="{DynamicResource TextBoxHoverBorderColor}"
+                                        BorderThickness="1"
+                                        CornerRadius="3"
+                                        Cursor="Arrow">
+                                        <StackPanel
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal"
+                                            Spacing="4">
+                                            <TextBlock Classes="txt" Text="{Binding}" />
+                                            <customControls:IconButton
+                                                Name="tagCloseButton"
+                                                Padding="2,0"
+                                                VerticalAlignment="Center"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Command="{Binding $parent[customControls:TagBox].RemoveTagCommand}"
+                                                CommandParameter="{Binding}"
+                                                Cursor="Hand"
+                                                Data="{StaticResource CloseGeometry}"
+                                                FontSize="14"
+                                                Foreground="{DynamicResource MainTextColorFaded}"
+                                                IconHeight="12"
+                                                IconWidth="12" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextPresenter
+                            Name="PART_TextPresenter"
+                            CaretBrush="{TemplateBinding CaretBrush}"
+                            DockPanel.Dock="Right"
+                            LetterSpacing="{TemplateBinding LetterSpacing}"
+                            LineHeight="{TemplateBinding LineHeight}"
+                            SelectionForegroundBrush="{TemplateBinding Foreground}"
+                            Text="{TemplateBinding PlaceholderText,
+                                                   Mode=TwoWay}"
+                            TextAlignment="Left"
+                            TextWrapping="NoWrap" />
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+
+        <!--  Hover: lighten the outer border  -->
+        <Style Selector="^:pointerover /template/ Border#PART_Border">
+            <Setter Property="BorderBrush" Value="{DynamicResource TextBoxHoverBorderColor}" />
+        </Style>
+
+        <!--  Focus: highlight border  -->
+        <Style Selector="^:focus /template/ Border#PART_Border">
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
+        </Style>
+
+        <!--  Close-button hover: highlight the ×  -->
+        <Style Selector="^customControls|IconButton#tagCloseButton:pointerover:pointerover /template/ customControls|IconButton#tagCloseButton">
+            <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
+        </Style>
+
+    </ControlTheme>
+
+</ResourceDictionary>

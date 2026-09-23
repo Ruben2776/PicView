@@ -1,0 +1,55 @@
+﻿<UserControl
+    x:Class="PicView.Avalonia.Views.Main.KeybindView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    x:DataType="viewModels:CoreViewModel">
+
+    <!--  Filter  -->
+    <DockPanel>
+
+        <Panel Margin="7,0" DockPanel.Dock="Top">
+            <Image
+                Width="14"
+                Height="14"
+                Margin="15,0,0,0"
+                HorizontalAlignment="Left"
+                Source="{StaticResource SearchImage}" />
+
+            <TextBox
+                x:Name="FilterBox"
+                Padding="50,7,4,7"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
+                BorderThickness="1"
+                CornerRadius="4"
+                FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
+                Foreground="{DynamicResource MainTextColor}"
+                PlaceholderText="{CompiledBinding Translation.Filter.Value,
+                                                  Mode=OneWay}"
+                Text="{CompiledBinding Keybindings.FilterText.Value,
+                                       FallbackValue='',
+                                       Mode=TwoWay}" />
+
+            <!--  clear  -->
+            <customControls:IconButton
+                x:Name="ClearButton"
+                Padding="10,3,10,3"
+                HorizontalAlignment="Right"
+                Classes="AltHover"
+                Command="{CompiledBinding Keybindings.ClearFilteringCommand}"
+                Data="{StaticResource CloseGeometry}"
+                Foreground="{DynamicResource MainTextColorFaded}"
+                IconHeight="12"
+                IconWidth="12"
+                IsVisible="{CompiledBinding Keybindings.FilterText.Value,
+                                            Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        </Panel>
+
+        <StackPanel Margin="7,10" Spacing="10">
+            <customControls:KeybindBox PlaceholderText="{Binding Translation.PressKey.Value}" />
+        </StackPanel>
+    </DockPanel>
+</UserControl>
