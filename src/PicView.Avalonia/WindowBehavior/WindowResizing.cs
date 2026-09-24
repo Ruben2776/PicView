@@ -343,7 +343,14 @@ public static class WindowResizing
             }
             else
             {
-                uiTopSize = vm.TitlebarHeight.CurrentValue + 2;
+                if (vm.IsTopToolbarShown.Value)
+                {
+                    uiTopSize = vm.TitlebarHeight.CurrentValue + 2;
+                }
+                else
+                {
+                    uiTopSize = 0;
+                }
             }
 
             uiBottomSize = Settings.UIProperties.ShowBottomNavBar ? SizeDefaults.BottombarHeight : 0;
