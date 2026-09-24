@@ -83,10 +83,7 @@ public static class QuickLoad
             }, DispatcherPriority.Send);
             if (Settings.WindowProperties.AutoFit)
             {
-                Dispatcher.UIThread.Post(() =>
-                {
-                    WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
-                }, DispatcherPriority.Background);
+                WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
             }
             core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = true;
             await LoadArchiveFileAsync(mainWindow, core, fileInfo).ConfigureAwait(false);
@@ -194,7 +191,7 @@ public static class QuickLoad
         List<FileInfo>? files = null)
     {
         core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = !core.MainWindows.ActiveWindow.CurrentValue.IsTopToolbarShown.Value;
-        Dispatcher.UIThread.Invoke(() =>
+        Dispatcher.UIThread.Post(() =>
         {
            core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
         }, DispatcherPriority.Send);
@@ -253,7 +250,7 @@ public static class QuickLoad
         {
             // Pinging can lead to crashes when the file cannot be read. 
             // Just catching the exception here means it will still load correctly regardless
-            Dispatcher.UIThread.Invoke(() =>
+            Dispatcher.UIThread.Post(() =>
             {
                 mainWindow.Show();
                 mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
@@ -306,12 +303,9 @@ public static class QuickLoad
 
         vm.IsLoadingIndicatorShown.Value = false;
         
-        if (Settings.WindowProperties.AutoFit && OperatingSystem.IsMacOS())
+        if (Settings.WindowProperties.AutoFit)
         {
-            Dispatcher.UIThread.Post(() =>
-            {
-                WindowFunctions.CenterWindowOnScreen(mainWindow);
-            }, DispatcherPriority.Render);
+            WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
         }
         
         ShowHoverBarIfNeeded(core);

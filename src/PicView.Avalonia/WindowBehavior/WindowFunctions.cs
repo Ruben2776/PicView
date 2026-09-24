@@ -321,13 +321,13 @@ public static class WindowFunctions
 
     public static void CenterWindowOnScreen(bool horizontal = true, bool top = false, Window? window = null)
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-
         Dispatcher.UIThread.Post(() =>
         {
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            
             window ??= desktop.MainWindow;
 
             if (window is null)
