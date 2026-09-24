@@ -63,10 +63,8 @@ public static class WindowFunctions
 
         StartUpHelper.StartUpMenuOrLastFile(window, core);
 
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
-        }, priority: DispatcherPriority.Background);
+        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
+
     }
     
     public static void ImageStartUp(string filePath, CoreViewModel core, bool settingsExists,
@@ -76,10 +74,7 @@ public static class WindowFunctions
 
         StartUpHelper.HandleStartImage(window, core, filePath);
 
-        Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
-        }, priority: DispatcherPriority.Background);
+        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
     }
 
     #endregion
@@ -326,13 +321,13 @@ public static class WindowFunctions
 
     public static void CenterWindowOnScreen(bool horizontal = true, bool top = false, Window? window = null)
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-
         Dispatcher.UIThread.Post(() =>
         {
+            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                return;
+            }
+            
             window ??= desktop.MainWindow;
 
             if (window is null)

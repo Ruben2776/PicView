@@ -13,12 +13,6 @@ public static class GalleryHelper
     {
         var tabs = vm.WindowTabs;
         var tab = tabs.ActiveTab.CurrentValue;
-        var gallery = tab.Gallery;
-        if (!Settings.Gallery.IsGalleryDocked || Slideshow.IsRunning || gallery.IsGalleryExpanded.CurrentValue ||
-            !Settings.Gallery.ShowDockedGalleryInHiddenUI && !vm.IsUIShown.CurrentValue)
-        {
-            return (0, 0);
-        }
 
         Rect galleryBounds;
         if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)

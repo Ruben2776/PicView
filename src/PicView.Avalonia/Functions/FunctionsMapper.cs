@@ -428,10 +428,11 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         await SettingsUpdater.ToggleLooping(vm).ConfigureAwait(false);
     }
     
-    /// <inheritdoc cref="ToggleUIVisibility.ToggleInterface(MainWindowViewModel)" />
+    /// <inheritdoc cref="ToggleUIVisibility.ToggleInterface(MainWindowViewModel, MainWindow)" />
     public async ValueTask ToggleInterface()
     {
-        await ToggleUIVisibility.ToggleInterface(vm, mainWindow).ConfigureAwait(false);
+        ToggleUIVisibility.ToggleInterface(vm, mainWindow);
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
     /// <inheritdoc cref="ToggleUIVisibility.ToggleHoverBar(MainWindowViewModel)" />
@@ -444,10 +445,11 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     public async ValueTask ToggleSubdirectories() =>
         await SettingsUpdater.ToggleSubdirectories(vm).ConfigureAwait(false);
 
-    /// <inheritdoc cref="ToggleUIVisibility.ToggleBottomBar(MainWindowViewModel)" />
+    /// <inheritdoc cref="ToggleUIVisibility.ToggleBottomBar(MainWindowViewModel, MainWindow)" />
     public async ValueTask ToggleBottomToolbar()
     {
-        await ToggleUIVisibility.ToggleBottomBar(vm, mainWindow).ConfigureAwait(false);
+        ToggleUIVisibility.ToggleBottomBar(vm, mainWindow);
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
     /// <inheritdoc cref="SettingsUpdater.ToggleTaskbarProgress(MainWindowViewModel)" />

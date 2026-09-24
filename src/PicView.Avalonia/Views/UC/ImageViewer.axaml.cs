@@ -258,7 +258,7 @@ public partial class ImageViewer : UserControl, IDisposable
             mainWindow,
             ImageScrollViewer,
             async args => await Dispatcher.UIThread.InvokeAsync(() => ZoomIn(args)),
-            async args => await Dispatcher.UIThread.InvokeAsync(() => ZoomOut(args)));
+            async args => await Dispatcher.UIThread.InvokeAsync(() => ZoomOut(args))).ConfigureAwait(false);
     }
         
 

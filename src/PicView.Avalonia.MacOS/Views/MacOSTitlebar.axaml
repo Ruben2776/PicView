@@ -16,7 +16,7 @@
         x:Name="TopWindowBorder">
 
         <!--  Traffic lights reserved  -->
-        <Rectangle DockPanel.Dock="Left" Width="70" />
+        <Rectangle DockPanel.Dock="Left" Width="72" />
 
         <customControls:IconButton
             Background="Transparent"

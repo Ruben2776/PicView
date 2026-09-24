@@ -38,13 +38,13 @@ public static class StartUpHelper
             if (arg.StartsWith("associate:", StringComparison.OrdinalIgnoreCase))
             {
                 // Set file associations and exit
-                Task.Run(async () =>
+                _ = Task.Run(async () =>
                 {
                     try
                     {
                         vm.PlatformService.InitiateFileAssociationService();
                         Debug.WriteLine($"Processing file association argument: {arg}");
-                        await FileAssociationProcessor.ProcessFileAssociationArguments(arg);
+                        await FileAssociationProcessor.ProcessFileAssociationArguments(arg).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
@@ -93,14 +93,22 @@ public static class StartUpHelper
     public static void HandlePostWindowUpdates(CoreViewModel core, IClassicDesktopStyleApplicationLifetime desktop, MainWindow mainWindow)
     {
         var vm = core.MainWindows.ActiveWindow.CurrentValue;
-        // Need to delay setting fullscreen or maximized until after the window is shown to select the correct monitor
         if (Settings.WindowProperties.Maximized && !Settings.WindowProperties.Fullscreen)
         {
-            vm.PlatformWindowService.Maximize(false);
+            _ = vm.PlatformWindowService.Maximize(false);
         }
         else if (Settings.WindowProperties.Fullscreen)
         {
-            vm.PlatformWindowService.Fullscreen(false);
+            _ = vm.PlatformWindowService.Fullscreen(false);
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (Settings.WindowProperties.Fullscreen)
+                {
+                    ToggleUIVisibility.FullscreenHideInterface(vm);
+                }
+                WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+                WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
+            },DispatcherPriority.ContextIdle);
         }
         
         SetMemorySettings();
@@ -108,37 +116,41 @@ public static class StartUpHelper
         BackGroundLoadings();
 
         SetWindowEventHandlers(mainWindow);
-        mainWindow.UIHelper.AddDropDownMenu(mainWindow);
-        mainWindow.UIHelper.AddFileMenu(vm);
-        mainWindow.UIHelper.AddSettingsMenu(vm);
-
-        vm.ToolTip ??= new ToolTipViewModel();
-        TooltipHelper.StartTooltipSubscription(vm.ToolTip, mainWindow);
-        
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        Dispatcher.UIThread.Post(() =>
         {
-            // Windows needs a named pipe server to open files in the same window
-            if (Settings.UIProperties.OpenInSameWindow && !ProcessHelper.CheckIfAnotherInstanceIsRunning())
-            {
-                _ = IPC.StartListeningForArguments();
-            }
-        }
+            mainWindow.UIHelper.AddDropDownMenu(mainWindow);
+            mainWindow.UIHelper.AddFileMenu(vm);
+            mainWindow.UIHelper.AddSettingsMenu(vm);
+
+            vm.ToolTip ??= new ToolTipViewModel();
+            TooltipHelper.StartTooltipSubscription(vm.ToolTip, mainWindow);
         
-        Application.Current.Name = "PicView";
+            if (!OperatingSystem.IsMacOS())
+            {
+                // macOS already handles opening files in the same window,
+                // for other platforms we need IPC to open files in the same window
+                if (Settings.UIProperties.OpenInSameWindow && !ProcessHelper.CheckIfAnotherInstanceIsRunning())
+                {
+                    _ = IPC.StartListeningForArguments();
+                }
+            }
+        
+            Application.Current.Name = "PicView";
+        }, priority: DispatcherPriority.Background);
         
         return;
         
         void BackGroundLoadings()
         {
-            Task.Run(async() =>
+            _ = Task.Run(() =>
             {
                 Debug.Assert(core.PlatformService != null);
-                await KeybindingManager.LoadKeybindings(core.PlatformService);
                 core.MainWindows.ActiveWindow.Value?.Mapper = new FunctionsMapper(vm, mainWindow);
                 FileHistoryManager.Initialize();
                 HandleWindowControlSettings(core, desktop);
                 vm.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);
             });
+            _ = Task.Run(() => KeybindingManager.LoadKeybindings(core.PlatformService));
         }
     }
 
@@ -167,7 +179,7 @@ public static class StartUpHelper
 
     public static void HandleStartImage(MainWindow mainWindow, CoreViewModel core, string arg)
     {
-        Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, core, arg, continueFromLeftOff: false, isStartup: true));
+        _ = Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, core, arg, continueFromLeftOff: false, isStartup: true));
         if (Settings.WindowProperties.AutoFit)
         {
             Dispatcher.UIThread.Post(() =>
@@ -187,7 +199,7 @@ public static class StartUpHelper
             }
             else
             {
-                Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, core, Settings.StartUp.LastFile, continueFromLeftOff: true, isStartup: true));
+                _ = Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, core, Settings.StartUp.LastFile, continueFromLeftOff: true, isStartup: true));
                 if (Settings.WindowProperties.AutoFit)
                 {
                     Dispatcher.UIThread.Post(() =>
@@ -200,7 +212,7 @@ public static class StartUpHelper
         else
         {
             ShowStartUpMenu();
-            if (Settings.WindowProperties.AutoFit && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            if (Settings.WindowProperties.AutoFit && OperatingSystem.IsMacOS())
             {
                 WindowFunctions.CenterWindowOnScreen(mainWindow);
             }
@@ -251,6 +263,6 @@ public static class StartUpHelper
     {
         // Extract the ViewModel from the window that received the key press
         var vm = (sender as Control)?.DataContext as MainWindowViewModel;
-        await MainKeyboardShortcuts.MainWindow_KeysUpAsync(e, vm);
+        await MainKeyboardShortcuts.MainWindow_KeysUpAsync(e, vm).ConfigureAwait(false);
     }
 }
