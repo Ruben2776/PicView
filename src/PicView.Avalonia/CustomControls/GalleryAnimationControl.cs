@@ -663,7 +663,7 @@ public class GalleryAnimationControl : UserControl
         await Task.WhenAll(
             AnimationsHelper.WidthAnimation(Bounds.Width, ZeroSize, GalleryDefaults.FastAnimationSpeed).RunAsync(this),
             AnimationsHelper.HeightAnimation(Bounds.Height, ZeroSize, GalleryDefaults.FastAnimationSpeed).RunAsync(this)
-        );
+        ).ConfigureAwait(true);
 
         IsVisible = false;
         _itemsPanel.WrapHeightOverride = double.NaN;

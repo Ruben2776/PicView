@@ -64,9 +64,9 @@ public class HoverFadeButtonHandler : IDisposable
     private void OnPointerExited(object? sender, PointerEventArgs e)
     {
         // Delay fade-out to ensure pointer is truly outside both parent and child
-        Dispatcher.CurrentDispatcher.Post(async () =>
+        _ = Dispatcher.UIThread.Invoke(async () =>
         {
-            await Task.Delay(30); // short delay to allow pointer transitions
+            await Task.Delay(30, _fadeCts.Token).ConfigureAwait(true); // short delay to allow pointer transitions
             if (!IsPointerOver())
             {
                 FadeTo(0, FadeOutDuration);
@@ -134,7 +134,7 @@ public class HoverFadeButtonHandler : IDisposable
         }
     }
 
-    private async Task AnimateOpacityAsync(Control control, double targetOpacity, double durationSeconds,
+    private static async Task AnimateOpacityAsync(Control control, double targetOpacity, double durationSeconds,
         CancellationToken token)
     {
         var from = control.Opacity;
@@ -144,7 +144,7 @@ public class HoverFadeButtonHandler : IDisposable
         }
 
         var anim = AnimationsHelper.OpacityAnimation(from, targetOpacity, durationSeconds);
-        await anim.RunAsync(control, token);
+        await anim.RunAsync(control, token).ConfigureAwait(true);
         // After fade out, ensure fully hidden (in case animation didn't complete)
         if (Math.Abs(targetOpacity) < 0.01)
         {

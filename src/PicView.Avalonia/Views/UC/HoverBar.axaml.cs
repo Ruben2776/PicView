@@ -23,81 +23,83 @@ public partial class HoverBar : UserControl, IDisposable
     {
         InitializeComponent();
         Loaded += OnLoaded;
-
     }
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        Dispatcher.UIThread.Post(() =>
         {
-            return;
-        }
-        
-        AddHandler(PointerPressedEvent, ManagePointerPressed, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
-        mainWindow.UIHelper.GetMainView.SizeChanged += (_, args) => ApplyResponsiveResize(args.NewSize.Width);
-        ApplyResponsiveResize(Bounds.Width);
-
-        if (Settings.Theme.GlassTheme)
-        {
-            GlassThemeUpdates();
-        }
-
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-        
-        _disposables.Add(new HoverFadeButtonHandler(this, BottomBorder));
-
-        Observable.FromEventHandler<RoutedEventArgs>(h => NextButton.Click += h,
-                h => NextButton.Click -= h)
-            .SubscribeAwait(async (_, c) =>
+            if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
             {
-                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverNavigationButtonNextClicked = true;
-                await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.NextFile();
-            }, static result =>
+                return;
+            }
+
+            AddHandler(PointerPressedEvent, ManagePointerPressed, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
+            mainWindow.UIHelper.GetMainView.SizeChanged += (_, args) => ApplyResponsiveResize(args.NewSize.Width);
+            ApplyResponsiveResize(Bounds.Width);
+
+            if (Settings.Theme.GlassTheme)
             {
-#if DEBUG
-                if (result is { IsFailure: true, Exception: not null })
+                GlassThemeUpdates();
+            }
+
+            if (Application.Current.DataContext is not CoreViewModel core)
+            {
+                return;
+            }
+
+            _disposables.Add(new HoverFadeButtonHandler(this, BottomBorder));
+
+            Observable.FromEventHandler<RoutedEventArgs>(h => NextButton.Click += h,
+                    h => NextButton.Click -= h)
+                .SubscribeAwait(async (_, c) =>
                 {
-                    DebugHelper.LogDebug(nameof(HoverBar), nameof(OnLoaded), result.Exception);
-                }
-#endif
-            })
-            .AddTo(ref _disposables);
-        Observable.FromEventHandler<RoutedEventArgs>(h => PreviousButton.Click += h,
-                h => PreviousButton.Click -= h)
-            .SubscribeAwait(async (_, c) =>
-            {
-                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverNavigationButtonPreviousClicked = true;
-                await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.PrevFile();
-            }, static result =>
-            {
-#if DEBUG
-                if (result is { IsFailure: true, Exception: not null })
+                    core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverNavigationButtonNextClicked = true;
+                    await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.NextFile().ConfigureAwait(false);
+                }, static result =>
                 {
-                    DebugHelper.LogDebug(nameof(HoverBar), nameof(OnLoaded), result.Exception);
-                }
+#if DEBUG
+                    if (result is { IsFailure: true, Exception: not null })
+                    {
+                        DebugHelper.LogDebug(nameof(HoverBar), nameof(OnLoaded), result.Exception);
+                    }
 #endif
-            })
-            .AddTo(ref _disposables);
+                })
+                .AddTo(ref _disposables);
+            Observable.FromEventHandler<RoutedEventArgs>(h => PreviousButton.Click += h,
+                    h => PreviousButton.Click -= h)
+                .SubscribeAwait(async (_, c) =>
+                {
+                    core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverNavigationButtonPreviousClicked = true;
+                    await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.PrevFile().ConfigureAwait(false);
+                }, static result =>
+                {
+#if DEBUG
+                    if (result is { IsFailure: true, Exception: not null })
+                    {
+                        DebugHelper.LogDebug(nameof(HoverBar), nameof(OnLoaded), result.Exception);
+                    }
+#endif
+                })
+                .AddTo(ref _disposables);
 
-        Debug.Assert(Settings.Gallery is not null);
-        Observable.EveryValueChanged(Settings.Gallery, x => x.IsGalleryDocked)
-            .Skip(1)
-            .Subscribe(_ =>
-            {
-                ApplyResponsiveResize(Bounds.Width);
-            }, static result =>
-            {
-#if DEBUG
-                if (result is { IsFailure: true, Exception: not null })
+            Debug.Assert(Settings.Gallery is not null);
+            Observable.EveryValueChanged(Settings.Gallery, x => x.IsGalleryDocked)
+                .Skip(1)
+                .Subscribe(_ =>
                 {
-                    DebugHelper.LogDebug(nameof(HoverBar), nameof(OnLoaded), result.Exception);
-                }
+                    ApplyResponsiveResize(Bounds.Width);
+                }, static result =>
+                {
+#if DEBUG
+                    if (result is { IsFailure: true, Exception: not null })
+                    {
+                        DebugHelper.LogDebug(nameof(HoverBar), nameof(OnLoaded), result.Exception);
+                    }
 #endif
-            })
-            .AddTo(ref _disposables);
+                })
+                .AddTo(ref _disposables);
+        }, priority: DispatcherPriority.ContextIdle);
     }
 
     #region Theming
@@ -253,7 +255,7 @@ public partial class HoverBar : UserControl, IDisposable
             }
             else if (props.IsLeftButtonPressed)
             {
-                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.SettingsWindow();
+                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.SettingsWindow().ConfigureAwait(true);
             }
         }
         else if (ImageMenuButton.IsPointerOver)
@@ -284,7 +286,7 @@ public partial class HoverBar : UserControl, IDisposable
                 mainWindow.AddFileSearchDialog();
 
                 // Wait for animation to finish to properly close tooltip
-                await Task.Delay(TimeSpan.FromSeconds(0.3));
+                await Task.Delay(TimeSpan.FromSeconds(0.3)).ConfigureAwait(true);
                 Dispatcher.UIThread.Post(() => { ToolTip.SetIsOpen(ProgressBar, false); },
                     DispatcherPriority.Background);
             }

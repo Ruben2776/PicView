@@ -11,7 +11,6 @@ using PicView.Avalonia.Navigation.Services;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
-using PicView.Core.ArchiveHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
@@ -77,7 +76,7 @@ public static class QuickLoad
         
         if (source.IsArchive())
         {
-            Dispatcher.UIThread.Invoke(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 mainWindow.Show();
                 core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
@@ -86,7 +85,7 @@ public static class QuickLoad
             {
                 Dispatcher.UIThread.Post(() =>
                 {
-                    WindowFunctions.CenterWindowOnScreen(mainWindow);
+                    WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
                 }, DispatcherPriority.Background);
             }
             core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = true;
@@ -120,7 +119,7 @@ public static class QuickLoad
 
     private static async ValueTask LoadUrlImageAsync(MainWindow mainWindow, CoreViewModel core, string url)
     {
-        Dispatcher.UIThread.Invoke(() =>
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
             mainWindow.Show();
             core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
@@ -169,7 +168,7 @@ public static class QuickLoad
         }
         var fileInfo = new FileInfo(destPath);
         var model = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-        Dispatcher.UIThread.Invoke(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             UpdateImage.SetSingleImage(mainWindow.DataContext as MainWindowViewModel, mainWindow, model.Image as Bitmap,
                 SingleImageType.Url, url);
@@ -208,7 +207,7 @@ public static class QuickLoad
         var magickImage = new MagickImage();
         try
         {
-            await magickImage.PingAsync(fileInfo);
+            await magickImage.PingAsync(fileInfo).ConfigureAwait(false);
             tab.Model.PixelWidth = magickImage.Width;
             tab.Model.PixelHeight = magickImage.Height;
 
@@ -430,7 +429,7 @@ public static class QuickLoad
 
         if (!string.IsNullOrWhiteSpace(Settings.StartUp.StartUpDirectory))
         {
-            return fileInfo.FullName.Contains(Settings.StartUp.StartUpDirectory) ?
+            return fileInfo.FullName.Contains(Settings.StartUp.StartUpDirectory, StringComparison.Ordinal) ?
                 new FileInfo(Settings.StartUp.StartUpDirectory) : new FileInfo(fileInfo.DirectoryName);
         }
         return fileInfo;

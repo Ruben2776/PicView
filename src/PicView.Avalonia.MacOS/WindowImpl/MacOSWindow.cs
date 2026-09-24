@@ -116,7 +116,7 @@ public static class MacOSWindow
             window.WindowState = WindowState.FullScreen;
         }
         
-        ToggleUIVisibility.HideInterface(vm);
+        ToggleUIVisibility.FullscreenHideInterface(vm);
         
         WindowResizing.SetSize(window, WindowResizeReason.Application);
         Dispatcher.UIThread.Post(() => window.IsChangingWindowState = false, DispatcherPriority.SystemIdle);
