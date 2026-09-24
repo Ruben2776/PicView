@@ -1,3 +1,4 @@
+using System.Globalization;
 using PicView.Core.Extensions;
 
 namespace PicView.Tests;
@@ -27,10 +28,11 @@ public class StringExtensionsTests
     }
 
     [Theory]
-    [InlineData(100.0, "100%")]
-    [InlineData(50.5, "50.5%")]
-    public void CombineWithPercentage_ValidInputs_ReturnsExpectedString(double zoom, string expected)
+    [InlineData(100.0)]
+    [InlineData(50.5)]
+    public void CombineWithPercentage_ValidInputs_ReturnsExpectedString(double zoom)
     {
+        var expected = $"{zoom.ToString(CultureInfo.CurrentCulture)}%";
         var result = StringExtensions.CombineWithPercentage(zoom);
         Assert.Equal(expected, result);
     }
