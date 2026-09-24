@@ -337,8 +337,7 @@ public class ZoomPanControl : Decorator
 
         if (Settings.Zoom.AvoidZoomingOut && targetScale < 1)
         {
-            ResetZoom(animated);
-            return;
+            targetScale = 1.0;
         }
 
         // Apply deadzone logic
@@ -347,14 +346,14 @@ public class ZoomPanControl : Decorator
         var upperBound = resetZoom + DeadzoneTolerance;
 
         // Check if target scale is within deadzone
-        if (!(targetScale >= lowerBound) || !(targetScale <= upperBound))
+        if (targetScale >= lowerBound && targetScale <= upperBound)
         {
-            SetTransitionsAndScale(targetScale, center, animated);
+            targetScale = resetZoom;
+
+            ZoomPreviewer?.IsVisible = false;
         }
-        else
-        {
-            ResetZoom(animated);
-        }
+
+        SetTransitionsAndScale(targetScale, center, animated);
     }
 
     private void SetTransitionsAndScale(double targetScale, Point center, bool animated)
