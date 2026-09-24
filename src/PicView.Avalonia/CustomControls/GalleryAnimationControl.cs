@@ -49,11 +49,18 @@ public class GalleryAnimationControl : UserControl
 
     private static double GetDockedSize(GalleryDockPosition dock)
     {
-        if (IsHorizontalDock(dock))
+        switch (dock)
         {
-            return Settings.Gallery.DockedGalleryItemSize + BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
+            default:
+            case GalleryDockPosition.Closed:
+                return 0;
+            case GalleryDockPosition.Bottom:
+            case GalleryDockPosition.Top:
+                return Settings.Gallery.DockedGalleryItemSize + BorderSideThickness + SizeDefaults.VerticalScrollbarSize;
+            case GalleryDockPosition.Left:
+            case GalleryDockPosition.Right:
+                return Settings.Gallery.DockedGalleryItemSize + BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
         }
-        return Settings.Gallery.DockedGalleryItemSize + BorderSideThickness + SizeDefaults.VerticalScrollbarSize;
     } 
 
     private double GetExpandedWrapHeight()
@@ -166,7 +173,7 @@ public class GalleryAnimationControl : UserControl
 
         if (change.Property == ActiveGalleryModeProperty && change.NewValue is GalleryMode mode)
         {
-            Dispatcher.UIThread.InvokeAsync(() => OnGalleryModeChanged(mode));
+            _ = Dispatcher.UIThread.InvokeAsync(async () => await OnGalleryModeChanged(mode).ConfigureAwait(false));
         }
     }
 
@@ -180,12 +187,12 @@ public class GalleryAnimationControl : UserControl
 
             switch (oldMode, newMode)
             {
-                case (GalleryMode.Closed, GalleryMode.Docked): await ClosedToDocked(); break;
-                case (GalleryMode.Closed, GalleryMode.Expanded): await ClosedToExpanded(); break;
-                case (GalleryMode.Docked, GalleryMode.Expanded): await DockedToExpanded(); break;
-                case (GalleryMode.Docked, GalleryMode.Closed): await DockedToClosed(); break;
-                case (GalleryMode.Expanded, GalleryMode.Docked): await ExpandedToDocked(); break;
-                case (GalleryMode.Expanded, GalleryMode.Closed): await ExpandedToClosed(); break;
+                case (GalleryMode.Closed, GalleryMode.Docked): await ClosedToDocked().ConfigureAwait(false); break;
+                case (GalleryMode.Closed, GalleryMode.Expanded): await ClosedToExpanded().ConfigureAwait(false); break;
+                case (GalleryMode.Docked, GalleryMode.Expanded): await DockedToExpanded().ConfigureAwait(false); break;
+                case (GalleryMode.Docked, GalleryMode.Closed): await DockedToClosed().ConfigureAwait(false); break;
+                case (GalleryMode.Expanded, GalleryMode.Docked): await ExpandedToDocked().ConfigureAwait(false); break;
+                case (GalleryMode.Expanded, GalleryMode.Closed): await ExpandedToClosed().ConfigureAwait(false); break;
                 default: UpdateLayoutForCurrentState(); break;
             }
         }
@@ -475,14 +482,14 @@ public class GalleryAnimationControl : UserControl
         {
             Height = ZeroSize;
             var heightAnim = AnimationsHelper.HeightAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed);
-            await heightAnim.RunAsync(this);
+            await heightAnim.RunAsync(this).ConfigureAwait(true);
             Height = targetSize;
         }
         else
         {
             Width = ZeroSize;
             var widthAnim = AnimationsHelper.WidthAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed);
-            await widthAnim.RunAsync(this);
+            await widthAnim.RunAsync(this).ConfigureAwait(true);
             Width = targetSize;
         }
         
@@ -505,12 +512,12 @@ public class GalleryAnimationControl : UserControl
 
         if (isHorizontal)
         {
-            await AnimationsHelper.HeightAnimation(currentSize, ZeroSize, GalleryDefaults.MediumAnimationSpeed).RunAsync(this);
+            await AnimationsHelper.HeightAnimation(currentSize, ZeroSize, GalleryDefaults.MediumAnimationSpeed).RunAsync(this).ConfigureAwait(true);
             Height = ZeroSize;
         }
         else
         {
-            await AnimationsHelper.WidthAnimation(currentSize, ZeroSize, GalleryDefaults.MediumAnimationSpeed).RunAsync(this);
+            await AnimationsHelper.WidthAnimation(currentSize, ZeroSize, GalleryDefaults.MediumAnimationSpeed).RunAsync(this).ConfigureAwait(true);
             Width = ZeroSize;
         }
 
@@ -537,20 +544,37 @@ public class GalleryAnimationControl : UserControl
         {
             var heightAnim =
                 AnimationsHelper.HeightAnimation(startSize, targetHeight, GalleryDefaults.MediumAnimationSpeed);
-            await heightAnim.RunAsync(this);
+            await heightAnim.RunAsync(this).ConfigureAwait(true);
             Height = targetHeight;
         }
         else
         {
             var targetWidth = _parentControl.Bounds.Width;
             var widthAnim = AnimationsHelper.WidthAnimation(startSize, targetWidth, GalleryDefaults.MediumAnimationSpeed);
-            await widthAnim.RunAsync(this);
+            await widthAnim.RunAsync(this).ConfigureAwait(true);
             Width = targetWidth;
+            if (OperatingSystem.IsMacOS())
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    // Fixes rendering bug
+                    Width = _parentControl.Bounds.Width;
+                }, DispatcherPriority.Send);
+            }
         }
         
         // Unlock the layout and trigger remeasure to match exact final bounds
         _itemsPanel.WrapHeightOverride = double.NaN;
         _itemsPanel.InvalidateMeasure();
+
+        if (OperatingSystem.IsMacOS())
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                // Mac doesn't want to scroll to center for some reason
+                _viewer.ScrollToCenterOfCurrentItem();
+            }, DispatcherPriority.Render);
+        }
     }
 
     private async Task ExpandedToDocked()
@@ -568,7 +592,7 @@ public class GalleryAnimationControl : UserControl
             {
                 Height = startHeight;
                 var heightAnim = AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed);
-                await heightAnim.RunAsync(this);
+                await heightAnim.RunAsync(this).ConfigureAwait(true);
             }
             else
             {
@@ -585,8 +609,8 @@ public class GalleryAnimationControl : UserControl
                 }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(ExpandedToDocked)));
                 var heightAnim =
                     AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed);
-                await heightAnim.RunAsync(this, ct);
-                await cts.CancelAsync();
+                await heightAnim.RunAsync(this, ct).ConfigureAwait(true);
+                await cts.CancelAsync().ConfigureAwait(true);
             }
             Height = targetHeight;
         }
@@ -597,7 +621,7 @@ public class GalleryAnimationControl : UserControl
             Width = startWidth;
             var widthAnim =
                 AnimationsHelper.WidthAnimation(startWidth, targetWidth, GalleryDefaults.SlowAnimationSpeed);
-            await widthAnim.RunAsync(this);
+            await widthAnim.RunAsync(this).ConfigureAwait(true);
             Width = targetWidth;
         }
 
@@ -634,7 +658,7 @@ public class GalleryAnimationControl : UserControl
         await Task.WhenAll(
             AnimationsHelper.WidthAnimation(ZeroSize, targetWidth, GalleryDefaults.MediumAnimationSpeed).RunAsync(this),
             AnimationsHelper.HeightAnimation(ZeroSize, targetHeight, GalleryDefaults.MediumAnimationSpeed).RunAsync(this)
-        );
+        ).ConfigureAwait(true);
         
         if (IsHorizontalDock(Settings.Gallery.DockPosition))
         {
