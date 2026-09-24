@@ -22,7 +22,7 @@
             <DockPanel Background="{DynamicResource TitleBarBackgroundColor}" DockPanel.Dock="Top">
 
                 <!--  Rectangle to reserve space for traffic lights buttons  -->
-                <Rectangle DockPanel.Dock="Left" Width="70" />
+                <Rectangle DockPanel.Dock="Left" Width="72" />
 
                 <customControls:IconButton
                     Background="{DynamicResource ToolWindowButtonBackground}"
