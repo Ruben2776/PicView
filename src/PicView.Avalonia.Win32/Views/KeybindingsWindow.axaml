@@ -86,7 +86,7 @@
                 Margin="0,28,0,0"
                 Background="{DynamicResource WindowMainBackgroundColor}"
                 Focusable="True">
-                <main:KeybindView x:Name="KeybindingsView" />
+                <main:KeybindingsView x:Name="KeybindingsView" />
             </Border>
         </Panel>
     </Border>
