@@ -81,7 +81,6 @@ public static class StartUpHelper
     
     public static void HandleWindowStartUpSettings(CoreViewModel core, bool settingsExists, MainWindow window)
     {
-        TranslationManager.Init();
         SettingsUpdater.InitializeSettings(core.MainWindows.ActiveWindow.CurrentValue, settingsExists);
 
         WindowFunctions.HandleWindowScalingMode(core, window);
