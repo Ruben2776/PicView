@@ -105,6 +105,7 @@ public class GalleryAnimationControl : UserControl
         }
 
         IsVisible = false; // Don't take up space initially
+        Width = Height = 0; // Make sure it has no size before animation
         SetupSubscriptions();
 
         _parentControl = Parent as Control;
@@ -174,6 +175,13 @@ public class GalleryAnimationControl : UserControl
         if (change.Property == ActiveGalleryModeProperty && change.NewValue is GalleryMode mode)
         {
             _ = Dispatcher.UIThread.InvokeAsync(async () => await OnGalleryModeChanged(mode).ConfigureAwait(false));
+        }
+        else if (change.Property == DockPanel.DockProperty)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                _viewer.ScrollToCenterOfCurrentItem();
+            }, DispatcherPriority.Render);
         }
     }
 
@@ -485,14 +493,14 @@ public class GalleryAnimationControl : UserControl
         if (IsHorizontalDock(dock))
         {
             Height = ZeroSize;
-            var heightAnim = AnimationsHelper.HeightAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed);
+            var heightAnim = AnimationsHelper.HeightAnimation(ZeroSize, targetSize, GalleryDefaults.FastAnimationSpeed);
             await heightAnim.RunAsync(this).ConfigureAwait(true);
             Height = targetSize;
         }
         else
         {
             Width = ZeroSize;
-            var widthAnim = AnimationsHelper.WidthAnimation(ZeroSize, targetSize, GalleryDefaults.VeryFastAnimationSpeed);
+            var widthAnim = AnimationsHelper.WidthAnimation(ZeroSize, targetSize, GalleryDefaults.FastAnimationSpeed);
             await widthAnim.RunAsync(this).ConfigureAwait(true);
             Width = targetSize;
         }
