@@ -179,6 +179,10 @@ public class GalleryAnimationControl : UserControl
 
     private async ValueTask OnGalleryModeChanged(GalleryMode newMode)
     {
+        if (IsInAnimation)
+        {
+            return;
+        }
         try
         {
             IsInAnimation = true;
@@ -310,11 +314,11 @@ public class GalleryAnimationControl : UserControl
 
     private void SetDockedLayout(GalleryDockPosition dock)
     {
-        SetDockLayoutCore(dock);
+        SetDockedLayoutCore(dock);
         SetDockedThumbPosition(dock);
     }
 
-    private void SetDockLayoutCore(GalleryDockPosition dock)
+    private void SetDockedLayoutCore(GalleryDockPosition dock)
     {
         _itemsPanel.IsExpanded = false;
         
@@ -468,7 +472,7 @@ public class GalleryAnimationControl : UserControl
 
         var dock = Settings.Gallery.DockPosition;
         IsVisible = true;
-        SetDockLayoutCore(dock);
+        SetDockedLayoutCore(dock);
         SetDockedThumbPosition(dock);
         
         Dispatcher.UIThread.Post(() =>
@@ -493,6 +497,11 @@ public class GalleryAnimationControl : UserControl
             Width = targetSize;
         }
         
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _viewer.ScrollToCenterOfCurrentItem();
+        }, DispatcherPriority.Render);
+
         if (Settings.WindowProperties.AutoFit)
         {
             Dispatcher.UIThread.Post(() =>
@@ -540,6 +549,7 @@ public class GalleryAnimationControl : UserControl
         {
             _viewer.ScrollToCenterOfCurrentItem();
         }, DispatcherPriority.Render);
+
         if (IsHorizontalDock(dock))
         {
             var heightAnim =
@@ -626,14 +636,15 @@ public class GalleryAnimationControl : UserControl
         }
 
         SetDockedLayout(dock);
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Render);
         
-        // Unlock the layout
+        // Unlock the layout before scrolling so measurements match docked mode
         _itemsPanel.WrapHeightOverride = double.NaN;
         _itemsPanel.InvalidateMeasure();
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            _viewer?.ScrollToCenterOfCurrentItem();
+        }, DispatcherPriority.Render);
     }
 
     private async Task ClosedToExpanded()
@@ -676,7 +687,7 @@ public class GalleryAnimationControl : UserControl
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            _viewer.ScrollToCenterOfCurrentItem();
+            _viewer?.ScrollToCenterOfCurrentItem();
         }, DispatcherPriority.Render);
     }
 

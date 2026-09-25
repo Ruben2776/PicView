@@ -9,6 +9,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.CustomControls;
 
@@ -22,6 +23,10 @@ public class NavigateAbleItemsViewer : ItemsControl
     private const double ScrollLineSize = 50;
 
     private AutoScrollViewer? _scrollViewer;
+    public AutoScrollViewer ScrollViewer => _scrollViewer!;
+
+    private IDisposable? _viewportSubscription;
+    public bool PendingScrollToCurrentItem { get; set; }
 
     protected override Type StyleKeyOverride => typeof(NavigateAbleItemsViewer);
 
@@ -56,6 +61,23 @@ public class NavigateAbleItemsViewer : ItemsControl
     {
         base.OnApplyTemplate(e);
         _scrollViewer = e.NameScope.Find<AutoScrollViewer>("PART_ScrollViewer");
+        _viewportSubscription?.Dispose();
+        _viewportSubscription = _scrollViewer!.GetObservable(global::Avalonia.Controls.ScrollViewer.ViewportProperty)
+            .ToObservable()
+            .Subscribe(_ =>
+            {
+                if (PendingScrollToCurrentItem)
+                {
+                    ScrollToCenterOfCurrentItemInternal();
+                }
+            });
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        _viewportSubscription?.Dispose();
+        _viewportSubscription = null;
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -137,22 +159,12 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     public void SetVerticalScrolling()
     {
-        if (_scrollViewer == null)
-        {
-            return;
-        }
-
         _scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
         _scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
     }
     
     public void SetHorizontalScrolling()
     {
-        if (_scrollViewer == null)
-        {
-            return;
-        }
-
         _scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
         _scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
     }
@@ -165,7 +177,7 @@ public class NavigateAbleItemsViewer : ItemsControl
         }
         else
         {
-            Dispatcher.UIThread.Post(ScrollToCenterOfCurrentItemInternal,DispatcherPriority.Render);
+            Dispatcher.UIThread.Post(ScrollToCenterOfCurrentItemInternal, DispatcherPriority.Render);
         }
     }
 
@@ -174,12 +186,24 @@ public class NavigateAbleItemsViewer : ItemsControl
         // Ask the VirtualizingGallery for the exact bounds, realized or not!
         if (ItemsPanelRoot is not VirtualizingGallery gallery)
         {
+            PendingScrollToCurrentItem = true;
             return;
         }
 
         var itemRect = gallery.GetItemBounds(CurrentItemIndex);
         if (itemRect is null)
         {
+            PendingScrollToCurrentItem = true;
+            return;
+        }
+
+        var viewportWidth = _scrollViewer!.Viewport.Width;
+        var viewportHeight = _scrollViewer.Viewport.Height;
+
+        // If viewport is not yet measured, defer until layout pass
+        if (viewportWidth <= 0 && viewportHeight <= 0)
+        {
+            PendingScrollToCurrentItem = true;
             return;
         }
 
@@ -189,26 +213,27 @@ public class NavigateAbleItemsViewer : ItemsControl
         var newY = offset.Y;
 
         // Center Horizontally if scrolling is possible
-        if (_scrollViewer.Extent.Width > _scrollViewer.Viewport.Width)
+        if (_scrollViewer.Extent.Width > viewportWidth && viewportWidth > 0)
         {
             var itemCenter = pos.X + pos.Width / 2;
-            var viewportCenter = _scrollViewer.Viewport.Width / 2;
-            var maxScrollX = _scrollViewer.Extent.Width - _scrollViewer.Viewport.Width;
+            var viewportCenter = viewportWidth / 2;
+            var maxScrollX = _scrollViewer.Extent.Width - viewportWidth;
                 
             newX = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollX);
         }
 
         // Center Vertically if scrolling is possible
-        if (_scrollViewer.Extent.Height > _scrollViewer.Viewport.Height)
+        if (_scrollViewer.Extent.Height > viewportHeight && viewportHeight > 0)
         {
             var itemCenter = pos.Y + pos.Height / 2;
-            var viewportCenter = _scrollViewer.Viewport.Height / 2;
-            var maxScrollY = _scrollViewer.Extent.Height - _scrollViewer.Viewport.Height;
+            var viewportCenter = viewportHeight / 2;
+            var maxScrollY = _scrollViewer.Extent.Height - viewportHeight;
                 
             newY = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollY);
         }
 
         _scrollViewer.Offset = new Vector(newX, newY);
+        PendingScrollToCurrentItem = false;
     }
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
@@ -258,11 +283,6 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     private void ScrollTheControl(PointerWheelEventArgs e)
     {
-        if (_scrollViewer is null)
-        {
-            return;
-        }
-
         // Mark as handled, so the inner ScrollViewer doesn't apply its own scrolling on top of ours.
         // Otherwise, a small delta on the opposite axis (common on trackpads) makes it scroll backwards
         e.Handled = true;
@@ -294,7 +314,7 @@ public class NavigateAbleItemsViewer : ItemsControl
             return;
         }
 
-        _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, offset);
+        _scrollViewer.SetCurrentValue(global::Avalonia.Controls.ScrollViewer.OffsetProperty, offset);
     }
 
     /// <summary>
@@ -371,7 +391,7 @@ public class NavigateAbleItemsViewer : ItemsControl
             return;
         }
 
-        if (_scrollViewer is null || ItemsPanelRoot is not VirtualizingGallery gallery)
+        if (ItemsPanelRoot is not VirtualizingGallery gallery)
         {
             return;
         }
