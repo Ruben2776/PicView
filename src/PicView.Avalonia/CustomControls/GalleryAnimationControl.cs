@@ -20,8 +20,7 @@ public class GalleryAnimationControl : UserControl
     #region Fields and Properties
     
     private const int ZeroSize = 0;
-    private const int BorderTopAndBottomThickness = 2;
-    private const int BorderSideThickness = 1;
+
 
     private TabViewModel? TabViewModel => DataContext as TabViewModel;
     private Control? _parentControl;
@@ -56,10 +55,10 @@ public class GalleryAnimationControl : UserControl
                 return 0;
             case GalleryDockPosition.Bottom:
             case GalleryDockPosition.Top:
-                return Settings.Gallery.DockedGalleryItemSize + BorderSideThickness + SizeDefaults.VerticalScrollbarSize;
+                return GalleryDefaults.GetDockedGalleryHeight;
             case GalleryDockPosition.Left:
             case GalleryDockPosition.Right:
-                return Settings.Gallery.DockedGalleryItemSize + BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
+                return GalleryDefaults.GetDockedGalleryWidth;
         }
     } 
 
@@ -129,7 +128,7 @@ public class GalleryAnimationControl : UserControl
         // Change layout corresponding to DockPositions
         Observable.EveryValueChanged(Settings.Gallery, gallery => gallery.DockPosition, mainWindow.FrameProvider)
             .Skip(1)
-            .Subscribe(SetDockedLayout, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(SetDockedLayout)))
+            .Subscribe(position => SetDockedLayout(position, false), DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(SetDockedLayout)))
             .AddTo(ref _disposables);
         
         // Update expanded item sizes
@@ -176,10 +175,11 @@ public class GalleryAnimationControl : UserControl
         {
             _ = Dispatcher.UIThread.InvokeAsync(async () => await OnGalleryModeChanged(mode).ConfigureAwait(false));
         }
-        else if (change.Property == DockPanel.DockProperty)
+        else if (change.Property == DockPanel.DockProperty && change.NewValue is Dock dock)
         {
             Dispatcher.UIThread.Post(() =>
             {
+                SetDockedLayout(Settings.Gallery.DockPosition, true);
                 _viewer.ScrollToCenterOfCurrentItem();
             }, DispatcherPriority.Render);
         }
@@ -234,7 +234,7 @@ public class GalleryAnimationControl : UserControl
                 break;
             case GalleryMode.Docked:
             default:
-                SetDockedLayout(dock);
+                SetDockedLayout(dock, true);
                 break;
         }
     }
@@ -320,23 +320,29 @@ public class GalleryAnimationControl : UserControl
 
     #region Docked Configuration
 
-    private void SetDockedLayout(GalleryDockPosition dock)
+    private void SetDockedLayout(GalleryDockPosition dock, bool setSize)
     {
-        SetDockedLayoutCore(dock);
+        SetDockedLayoutCore(dock, setSize);
         SetDockedThumbPosition(dock);
     }
 
-    private void SetDockedLayoutCore(GalleryDockPosition dock)
+    private void SetDockedLayoutCore(GalleryDockPosition dock, bool setSize)
     {
         _itemsPanel.IsExpanded = false;
-        
-        var size = GetDockedSize(dock);
         TabViewModel.Gallery.ItemSpacing.Value = 0;
         
         if (IsHorizontalDock(dock))
         {
-            Width = double.NaN;
-            Height = size;
+            if (setSize)
+            {
+                Width = double.NaN;
+                Height = GetDockedSize(dock);
+            }
+            else
+            {
+                Width = Height = 0;
+            }
+
 
             _itemsPanel?.Orientation = Orientation.Horizontal;
             BorderThickness = dock == GalleryDockPosition.Top ? new Thickness(0, 0, 0, 1) : new Thickness(0, 1, 0, 0);
@@ -345,8 +351,15 @@ public class GalleryAnimationControl : UserControl
         }
         else // Left or Right
         {
-            Width = size;
-            Height = double.NaN;
+            if (setSize)
+            {
+                Width = GetDockedSize(dock);
+                Height = double.NaN;
+            }
+            else
+            {
+                Width = Height = 0;
+            }
 
             _itemsPanel?.Orientation = Orientation.Vertical;
             BorderThickness = dock == GalleryDockPosition.Right ? new Thickness(1, 0, 0, 0) : new Thickness(0, 0, 1, 0);
@@ -409,7 +422,7 @@ public class GalleryAnimationControl : UserControl
         core.GallerySettings.ItemHeight.Value = itemHeight;
 
         // Resize control bounds
-        var size = itemHeight + BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
+        var size = itemHeight + GalleryDefaults.BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
         if (IsHorizontalDock(Settings.Gallery.DockPosition))
         {
             Width = double.NaN;
@@ -480,19 +493,20 @@ public class GalleryAnimationControl : UserControl
 
         var dock = Settings.Gallery.DockPosition;
         IsVisible = true;
-        SetDockedLayoutCore(dock);
+        SetDockedLayoutCore(dock, false);
         SetDockedThumbPosition(dock);
         
-        Dispatcher.UIThread.Post(() =>
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
             _viewer.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Render);
+        }, DispatcherPriority.Background);
         
         var targetSize = GetDockedSize(dock);
 
         if (IsHorizontalDock(dock))
         {
             Height = ZeroSize;
+            Width = double.NaN;
             var heightAnim = AnimationsHelper.HeightAnimation(ZeroSize, targetSize, GalleryDefaults.FastAnimationSpeed);
             await heightAnim.RunAsync(this).ConfigureAwait(true);
             Height = targetSize;
@@ -500,6 +514,7 @@ public class GalleryAnimationControl : UserControl
         else
         {
             Width = ZeroSize;
+            Height = double.NaN;
             var widthAnim = AnimationsHelper.WidthAnimation(ZeroSize, targetSize, GalleryDefaults.FastAnimationSpeed);
             await widthAnim.RunAsync(this).ConfigureAwait(true);
             Width = targetSize;
@@ -643,7 +658,7 @@ public class GalleryAnimationControl : UserControl
             Width = targetWidth;
         }
 
-        SetDockedLayout(dock);
+        SetDockedLayout(dock, true);
         
         // Unlock the layout before scrolling so measurements match docked mode
         _itemsPanel.WrapHeightOverride = double.NaN;

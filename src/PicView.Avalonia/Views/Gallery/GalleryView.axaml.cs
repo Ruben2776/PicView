@@ -46,15 +46,7 @@ public partial class GalleryView : GalleryAnimationControl
             GalleryItemsControl.Navigate(direction);
         }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.NavigateGalleryCommand)))
             .AddTo(ref _disposables);
-
-         if (Settings.Gallery.IsGalleryDocked)
-         {
-             Height = Settings.Gallery.DockedGalleryItemSize + 2 + SizeDefaults.HorizontalScrollbarSize;
-         }
-         else
-         {
-             Height = 0;
-         }
+        
          gallery.ItemSpacing.Subscribe(_ =>
          {
              RecalculateGalleryIfNeeded(gallery);

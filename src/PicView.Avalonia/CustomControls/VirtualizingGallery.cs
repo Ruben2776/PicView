@@ -321,8 +321,7 @@ public class VirtualizingGallery : VirtualizingPanel
         var extentSize = CalculateBounds(availableSize);
 
         _viewer ??= this.FindAncestorOfType<NavigateAbleItemsViewer>();
-
-        // 2. Determine what is visible (inflate by 2x ItemHeight to buffer scrolling)
+        
         if (_viewer is { CurrentItemIndex: >= 0 } && _viewer.CurrentItemIndex < _itemBounds.Count &&
             (_viewport == new Rect() || _viewer.PendingScrollToCurrentItem))
         {
@@ -365,7 +364,7 @@ public class VirtualizingGallery : VirtualizingPanel
             _viewer.ScrollViewer.Offset = new Vector(targetX, targetY);
             _viewer.PendingScrollToCurrentItem = false;
         }
-
+        // 2. Determine what is visible (inflate by 2x ItemHeight to buffer scrolling)
         var visibleRect = _viewport == new Rect() ? new Rect(new Point(), availableSize) : _viewport;
         visibleRect = visibleRect.Inflate(new Thickness(ItemHeight * 2));
 

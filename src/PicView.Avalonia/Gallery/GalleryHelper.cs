@@ -1,8 +1,5 @@
-﻿using Avalonia;
-using PicView.Avalonia.Navigation;
-using PicView.Avalonia.Views.UC;
+﻿using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
-using PicView.Core.Sizing;
 using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 
 namespace PicView.Avalonia.Gallery;
@@ -14,22 +11,16 @@ public static class GalleryHelper
         var tabs = vm.WindowTabs;
         var tab = tabs.ActiveTab.CurrentValue;
 
-        Rect galleryBounds;
-        if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
-        {
-            galleryBounds = imageViewer.GalleryView.Bounds;
-        }
-        else
-        {
-            return (0, 0);
-        }
-
         if (tab.Gallery.IsLeftDocked.CurrentValue || tab.Gallery.IsRightDocked.CurrentValue)
         {
-            return (galleryBounds.Width + SizeDefaults.HorizontalScrollbarSize, 0);
+            return (GalleryDefaults.GetDockedGalleryWidth, 0);
+        }
+        if (tab.Gallery.IsBottomDocked.CurrentValue|| tab.Gallery.IsTopDocked.CurrentValue)
+        {
+            return (0, GalleryDefaults.GetDockedGalleryHeight);
         }
 
-        return (0, galleryBounds.Height);
+        return (0, 0);
     }
 
     public static void CenterGallery(MainWindowViewModel main)
@@ -51,6 +42,6 @@ public static class GalleryHelper
             index = tab.NavigationIndex.Value;
         }
 
-        await GalleryLoader.ToggleGalleryAndLoadItem(tab, index);
+        await GalleryLoader.ToggleGalleryAndLoadItem(tab, index).ConfigureAwait(false);
     }
 }

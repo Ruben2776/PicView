@@ -212,7 +212,7 @@ public static class WindowResizing
                 vm.WindowMaxWidth.Value = size.WindowWidth;
                 vm.WindowMaxHeight.Value = size.WindowHeight;
             }
-            Dispatcher.UIThread.InvokeAsync(() =>
+            Dispatcher.UIThread.Invoke(() =>
             {
                 // Fixes weird window size bug where the window width is at a fixed value
                 if (!double.IsNaN(mainWindow.Width))
