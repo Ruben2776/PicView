@@ -37,7 +37,4 @@ $avaloniaProjectPath = Join-Path -Path $PSScriptRoot -ChildPath "..\src\PicView.
 # Run dotnet publish for the Avalonia project
 dotnet publish $avaloniaProjectPath --runtime "win-$Platform" --self-contained true --configuration Release --output $outputPath /p:PublishReadyToRun=true
 
-# Remove debug symbols (native PicView.pdb alone is >150 MB)
-Remove-Item -Path "$outputPath\*.pdb" -Force -ErrorAction SilentlyContinue
-
 
