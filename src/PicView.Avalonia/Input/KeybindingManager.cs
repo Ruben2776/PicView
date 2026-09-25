@@ -51,10 +51,10 @@ public static class KeybindingManager
         try
         {
             var json = JsonSerializer.Serialize(
-                CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value), 
+                CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value, StringComparer.OrdinalIgnoreCase),
                 typeof(Dictionary<string, string>),
-                SourceGenerationContext.Default).Replace("\\u002B", "+"); // Fix plus sign encoded to Unicode
-            
+                SourceGenerationContext.Default).Replace("\\u002B", "+", StringComparison.Ordinal); // Fix plus sign encoded to Unicode
+
             await KeybindingFunctions.SaveKeyBindingsFile(json).ConfigureAwait(false);
         }
         catch (Exception exception)
@@ -63,7 +63,7 @@ public static class KeybindingManager
         }
     }
 
-    private static void PopulateCustomShortcuts(Dictionary<string, string> keyValues)
+    public static void PopulateCustomShortcuts(Dictionary<string, string> keyValues)
     {
         foreach (var kvp in keyValues)
         {
@@ -98,17 +98,86 @@ public static class KeybindingManager
         {
             CustomShortcuts = new Dictionary<Keybind, string>();
         }
-        
+
         var defaultKeybindings = platformSpecificService.DefaultJsonKeyMap();
 
         if (JsonSerializer.Deserialize(
-                defaultKeybindings, typeof(Dictionary<string, string>), SourceGenerationContext.Default) 
+                defaultKeybindings, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
             is Dictionary<string, string> keyValues)
         {
             PopulateCustomShortcuts(keyValues);
         }
     }
-    
+
     public static string? GetActionName(Keybind keybind) =>
         CustomShortcuts?.GetValueOrDefault(keybind);
+
+    /// <summary>
+    /// Builds and returns a dictionary of default keybindings for the current platform.
+    /// </summary>
+    public static Dictionary<Keybind, string>? GetDefaultShortcuts(IPlatformSpecificService platformSpecificService)
+    {
+        var defaultJson = platformSpecificService.DefaultJsonKeyMap();
+        if (JsonSerializer.Deserialize(
+                defaultJson, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
+            is not Dictionary<string, string> keyValues)
+        {
+            return null;
+        }
+
+        var defaults = new Dictionary<Keybind, string>();
+        foreach (var kvp in keyValues)
+        {
+            try
+            {
+                var gesture = KeyGesture.Parse(kvp.Key);
+                if (gesture.Key is Key.None || kvp.Value is null)
+                {
+                    continue;
+                }
+
+                var keybind = new Keybind(gesture.Key, gesture.KeyModifiers);
+                defaults[keybind] = kvp.Value;
+            }
+            catch
+            {
+                // Skip invalid entries
+            }
+        }
+
+        return defaults;
+    }
+
+    /// <summary>
+    /// Checks whether the current custom shortcuts match the platform defaults exactly.
+    /// </summary>
+    public static bool AreKeybindsDefault(IPlatformSpecificService platformSpecificService)
+    {
+        if (CustomShortcuts is null)
+        {
+            return true;
+        }
+
+        var defaults = GetDefaultShortcuts(platformSpecificService);
+        if (defaults is null)
+        {
+            return CustomShortcuts.Count == 0;
+        }
+
+        if (CustomShortcuts.Count != defaults.Count)
+        {
+            return false;
+        }
+
+        foreach (var kvp in defaults)
+        {
+            if (!CustomShortcuts.TryGetValue(kvp.Key, out var value) ||
+                !string.Equals(value, kvp.Value, StringComparison.Ordinal))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
