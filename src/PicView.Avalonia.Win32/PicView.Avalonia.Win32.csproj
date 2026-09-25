@@ -143,4 +143,8 @@
 	    <Link>plugins\ffmpeg\win-arm64\picview-ffmpeg.dll</Link>
 	  </None>
 	</ItemGroup>
+
+    <PropertyGroup>
+        <CETCompat>false</CETCompat>
+    </PropertyGroup>
 </Project>
