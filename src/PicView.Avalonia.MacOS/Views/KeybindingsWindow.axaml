@@ -1,16 +1,16 @@
 <Window
-    x:Class="PicView.Avalonia.MacOS.Views.KeybindingsWindow"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
-    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    Title="Loading..."
-    MinHeight="200"
-    x:DataType="viewModels:CoreViewModel"
     CanResize="True"
     ExtendClientAreaTitleBarHeightHint="-1"
     ExtendClientAreaToDecorationsHint="True"
-    SizeToContent="Width">
+    MinHeight="200"
+    SizeToContent="Width"
+    Title="Loading..."
+    x:Class="PicView.Avalonia.MacOS.Views.KeybindingsWindow"
+    x:DataType="viewModels:CoreViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
+    xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Border
         BorderBrush="{DynamicResource WindowBorderColor}"
@@ -20,10 +20,10 @@
         <Panel>
 
             <Panel
-                x:Name="WindowBorder"
+                Background="{DynamicResource TitleBarBackgroundColor}"
                 Height="{StaticResource TopBorderHeight}"
                 VerticalAlignment="Top"
-                Background="{DynamicResource TitleBarBackgroundColor}">
+                x:Name="WindowBorder">
 
                 <TextBlock
                     Background="{DynamicResource TitleBarBackgroundColor}"
@@ -35,10 +35,10 @@
             </Panel>
 
             <Border
-                Margin="0,28,0,0"
                 Background="{DynamicResource WindowMainBackgroundColor}"
-                Focusable="True">
-                <main:KeybindingsView x:Name="XKeybindingsView" Padding="0,2,0,10" />
+                Focusable="True"
+                Margin="0,28,0,0">
+                <main:KeybindingsView x:Name="XKeybindingsView" />
             </Border>
         </Panel>
     </Border>
