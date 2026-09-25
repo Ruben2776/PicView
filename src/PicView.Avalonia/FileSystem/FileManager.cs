@@ -36,7 +36,7 @@ public static class FileManager
             }
             else
             {
-                var success = await platformService.DeleteFile(path, recycle);
+                var success = await platformService.DeleteFile(path, recycle).ConfigureAwait(false);
 
                 if (success)
                 {

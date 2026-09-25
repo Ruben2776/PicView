@@ -264,7 +264,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             return;
         }
 
-        await RotateRight();
+        await RotateRight().ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="RotationManager.RotateRight(MainWindowViewModel)" />
@@ -319,7 +319,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             return;
         }
 
-        await RotateLeft();
+        await RotateLeft().ConfigureAwait(false);
     }
     
     public async ValueTask ScrollDown()
@@ -490,7 +490,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         await GalleryHelper.GalleryClick(vm).ConfigureAwait(false);
 
     public async ValueTask ToggleDockedGalleryInHiddenUI() =>
-        await SettingsUpdater.ToggleDockedGalleryInHiddenUI(vm);
+        await SettingsUpdater.ToggleDockedGalleryInHiddenUI(vm).ConfigureAwait(false);
 
     #endregion
     
@@ -499,7 +499,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     /// <inheritdoc cref="MainWindow.HandleShouldClosing" />
     public async ValueTask Close()
     {
-        await mainWindow.HandleShouldClosing(vm);
+        await mainWindow.HandleShouldClosing(vm).ConfigureAwait(false);
     }
     
     public ValueTask Exit()
@@ -517,13 +517,13 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     /// <inheritdoc cref="Interfaces.IPlatformWindowService.MaximizeRestore" />
     public async ValueTask Maximize()
     {
-        await vm.PlatformWindowService.MaximizeRestore();
+        await vm.PlatformWindowService.MaximizeRestore().ConfigureAwait(false);
     }
     
     /// <inheritdoc cref="Interfaces.IPlatformWindowService.Restore" />
     public async ValueTask Restore()
     {
-        await vm.PlatformWindowService.Restore();
+        await vm.PlatformWindowService.Restore().ConfigureAwait(false);
     }
 
     public ValueTask Minimize()
@@ -559,7 +559,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             return;
         }
 
-        await core.AboutView.UpdateCurrentVersion();
+        await core.AboutView.UpdateCurrentVersion().ConfigureAwait(false);
     }
 
     public ValueTask ConvertWindow()
@@ -594,7 +594,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
 
     public async ValueTask BatchResizeWindow()
     {
-        await vm.PlatformWindowService.ShowBatchResizeWindow();
+        await vm.PlatformWindowService.ShowBatchResizeWindow().ConfigureAwait(false);
     }
 
     public ValueTask FileAssociationsWindow()
@@ -613,12 +613,12 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     /// <inheritdoc cref="SettingsUpdater.ToggleZoomToFit" />
     public async ValueTask ZoomToFit()
     {
-        await SettingsUpdater.ToggleZoomToFit(vm, mainWindow);
+        await SettingsUpdater.ToggleZoomToFit(vm, mainWindow).ConfigureAwait(false);
     }
     
     /// <inheritdoc cref="WindowFunctions.ToggleAutoFit()" />
     public async ValueTask AutoFitWindow() =>
-        await WindowFunctions.ToggleAutoFit();
+        await WindowFunctions.ToggleAutoFit().ConfigureAwait(false);
 
     /// <inheritdoc cref="WindowFunctions.SetManualWindows" />
     public ValueTask NormalWindow()
@@ -663,7 +663,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     }
     
     public async ValueTask SaveAsPDF() =>
-        await PdfExport.SavePdfWithFilePicker(vm);
+        await PdfExport.SavePdfWithFilePicker(vm).ConfigureAwait(false);
 
     /// <inheritdoc cref="FilePicker.SelectAndLoadFile(MainWindow, MainWindowViewModel)" />
     public async ValueTask Open() => 
@@ -797,7 +797,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
 
     public async ValueTask ResizeImage() =>
-        await ResizeWindow();
+        await ResizeWindow().ConfigureAwait(false);
 
     /// <inheritdoc cref="CropManager.StartCropControlAsync(MainWindowViewModel, MainWindow)" />
     public async ValueTask Crop() =>
@@ -861,44 +861,44 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     #region Rating
 
     public async ValueTask Set0Star() =>
-        await SetExifRatingHelper.Set0Star(vm);
+        await SetExifRatingHelper.Set0Star(vm).ConfigureAwait(false);
 
     public async ValueTask Set1Star() =>
-        await SetExifRatingHelper.Set1Star(vm);
+        await SetExifRatingHelper.Set1Star(vm).ConfigureAwait(false);
 
     public async ValueTask Set2Star() =>
-        await SetExifRatingHelper.Set2Star(vm);
+        await SetExifRatingHelper.Set2Star(vm).ConfigureAwait(false);
 
     public async ValueTask Set3Star() =>
-        await SetExifRatingHelper.Set3Star(vm);
+        await SetExifRatingHelper.Set3Star(vm).ConfigureAwait(false);
 
     public async ValueTask Set4Star() =>
-        await SetExifRatingHelper.Set4Star(vm);
+        await SetExifRatingHelper.Set4Star(vm).ConfigureAwait(false);
 
     public async ValueTask Set5Star() =>
-        await SetExifRatingHelper.Set5Star(vm);
+        await SetExifRatingHelper.Set5Star(vm).ConfigureAwait(false);
 
     #endregion
 
     #region Wallpaper and lockscreen image
 
     public async ValueTask SetAsWallpaper() =>
-        await SetAsWallpaperFilled();
+        await SetAsWallpaperFilled().ConfigureAwait(false);
 
     public async ValueTask SetAsWallpaperTiled() =>
-        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Tile, vm);
+        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Tile, vm).ConfigureAwait(false);
 
     public async ValueTask SetAsWallpaperCentered() =>
-        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Center, vm);
+        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Center, vm).ConfigureAwait(false);
 
     public async ValueTask SetAsWallpaperStretched() =>
-        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Stretch, vm);
+        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Stretch, vm).ConfigureAwait(false);
 
     public async ValueTask SetAsWallpaperFitted() =>
-        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Fit, vm);
+        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Fit, vm).ConfigureAwait(false);
 
     public async ValueTask SetAsWallpaperFilled() =>
-        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Fill, vm);
+        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Fill, vm).ConfigureAwait(false);
 
     public async ValueTask SetAsLockscreenCentered()
     {
@@ -948,7 +948,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
 
     /// <inheritdoc cref="SettingsUpdater.ResetSettings()" />
     public async ValueTask ResetSettings() =>
-        await SettingsUpdater.ResetSettings();
+        await SettingsUpdater.ResetSettings().ConfigureAwait(false);
 
     public ValueTask Restart()
     {

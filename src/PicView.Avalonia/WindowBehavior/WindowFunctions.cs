@@ -234,8 +234,8 @@ public static class WindowFunctions
             return;
         }
 
-        var isAutoFit = Settings.WindowProperties.AutoFit;
-        Settings.WindowProperties.AutoFit = !isAutoFit;
+        var wasAutoFit = Settings.WindowProperties.AutoFit;
+        Settings.WindowProperties.AutoFit = !wasAutoFit;
         foreach (var vm in core.MainWindows.MainWindows)
         {
             var window = desktop.Windows.FirstOrDefault(w => w.DataContext == vm);
@@ -244,6 +244,10 @@ public static class WindowFunctions
                 continue;
             }
             Toggle(vm, consecutiveMainWindow);
+            if (!wasAutoFit)
+            {
+                CenterWindowOnScreen(consecutiveMainWindow);
+            }
         }
         
         await SaveSettingsAsync().ConfigureAwait(false);
@@ -251,7 +255,7 @@ public static class WindowFunctions
 
         void Toggle(MainWindowViewModel targetVm, MainWindow targetMainWindow)
         {
-            if (isAutoFit)
+            if (wasAutoFit)
             {
                 targetVm.WindowMaxWidth.Value = targetVm.WindowMaxHeight.Value = double.NaN;
                 targetMainWindow.SizeToContent = SizeToContent.Manual;
