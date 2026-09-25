@@ -83,7 +83,7 @@ public static class QuickLoad
             }, DispatcherPriority.Send);
             if (Settings.WindowProperties.AutoFit)
             {
-                WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
+                WindowFunctions.CenterWindowOnScreen(mainWindow);
             }
             core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = true;
             await LoadArchiveFileAsync(mainWindow, core, fileInfo).ConfigureAwait(false);
@@ -191,17 +191,13 @@ public static class QuickLoad
         List<FileInfo>? files = null)
     {
         core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = !core.MainWindows.ActiveWindow.CurrentValue.IsTopToolbarShown.Value;
-        Dispatcher.UIThread.Post(() =>
-        {
-           core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
-        }, DispatcherPriority.Send);
     
         var vm = core.MainWindows.ActiveWindow.CurrentValue;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         tab.SingleImageType = SingleImageType.None;
         tab.SetLoading();
         
-        var magickImage = new MagickImage();
+        using var magickImage = new MagickImage();
         try
         {
             await magickImage.PingAsync(fileInfo).ConfigureAwait(false);
@@ -262,6 +258,10 @@ public static class QuickLoad
         tab.Image.Value = imageModel.Image;
         tab.FileInfo.Value = fileInfo;
         tab.Model = imageModel;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
+        }, DispatcherPriority.Send);
         var initialDirectory = GetInitialDirectory(continueFromLeftOff, fileInfo);
 
         var isGalleryEnabled = CheckIfGalleryIsNeeded(core);
@@ -305,7 +305,7 @@ public static class QuickLoad
         
         if (Settings.WindowProperties.AutoFit)
         {
-            WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
+            WindowFunctions.CenterWindowOnScreen(mainWindow);
         }
         
         ShowHoverBarIfNeeded(core);
@@ -317,7 +317,7 @@ public static class QuickLoad
         if (isGalleryEnabled)
         {
             await LoadGallery(core).ConfigureAwait(false);
-            Dispatcher.UIThread.Invoke(() =>
+            Dispatcher.UIThread.Post(() =>
             {
                 if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
                 {
@@ -333,8 +333,6 @@ public static class QuickLoad
         {
             Settings.StartUp.StartUpDirectory = initialDirectory.FullName;
         }
-        
-        magickImage.Dispose();
     }
     
     private static async ValueTask LoadArchiveFileAsync(MainWindow mainWindow, CoreViewModel core, FileInfo source)
