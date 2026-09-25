@@ -94,7 +94,7 @@ public partial class GalleryView : GalleryAnimationControl
                 {
                     var newItem = e.NewItem;
                     var index = e.NewStartingIndex;
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    Dispatcher.UIThread.Invoke(() =>
                     {
                         if (index >= 0 && index <= _galleryItems.Count)
                         {
@@ -111,7 +111,7 @@ public partial class GalleryView : GalleryAnimationControl
                 {
                     var index = e.NewStartingIndex;
                     var newItems = e.NewItems.ToArray();
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    Dispatcher.UIThread.Invoke(() =>
                     {
                         if (index >= 0 && index <= _galleryItems.Count)
                         {
@@ -127,7 +127,7 @@ public partial class GalleryView : GalleryAnimationControl
             case NotifyCollectionChangedAction.Reset:
                 var gallery = tab.Gallery;
                 var currentItems = gallery.GalleryItems.ToArray();
-                Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.Invoke(() =>
                 {
                     _galleryItems.Clear();
                     if (currentItems.Length <= 0)
@@ -142,7 +142,7 @@ public partial class GalleryView : GalleryAnimationControl
                 if (e.IsSingleItem)
                 {
                     var oldItem = e.OldItem;
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    Dispatcher.UIThread.Invoke(() =>
                     {
                         _galleryItems.Remove(oldItem);
                         GalleryItemsControl.ScrollToCenterOfCurrentItem();  
@@ -151,7 +151,7 @@ public partial class GalleryView : GalleryAnimationControl
                 else
                 {
                     var oldItems = e.OldItems.ToArray();
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    Dispatcher.UIThread.Invoke(() =>
                     {
                         _galleryItems.RemoveAll(oldItems);
                         if (oldItems.Any(item => tab.Model.FileInfo?.FullName == item.FileInfo?.FullName))
@@ -164,7 +164,7 @@ public partial class GalleryView : GalleryAnimationControl
             case NotifyCollectionChangedAction.Move:
                 var oldMoveIndex = e.OldStartingIndex;
                 var newMoveIndex = e.NewStartingIndex;
-                Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.Invoke(() =>
                 {
                     if (oldMoveIndex >= 0 && oldMoveIndex < _galleryItems.Count && 
                         newMoveIndex >= 0 && newMoveIndex < _galleryItems.Count)
@@ -181,7 +181,7 @@ public partial class GalleryView : GalleryAnimationControl
                 {
                     return;
                 }
-                Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.Invoke(() =>
                 {
                     _galleryItems[replaceIndex] = replaceItem;
                 }, DispatcherPriority.Loaded, cancellationToken);
