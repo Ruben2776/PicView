@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
@@ -7,12 +8,14 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using PicView.Avalonia.Views.Gallery;
+using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
 using R3;
 
 namespace PicView.Avalonia.CustomControls;
 
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct ItemPosition(int Index, Point Position, Size Size);
 
 [TemplatePart("PART_ScrollViewer", typeof(AutoScrollViewer))]
@@ -70,7 +73,7 @@ public class NavigateAbleItemsViewer : ItemsControl
                 {
                     ScrollToCenterOfCurrentItemInternal();
                 }
-            });
+            }, DebugHelper.LogError(nameof(OnApplyTemplate), nameof(NavigateAbleItemsViewer)));
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -139,18 +142,15 @@ public class NavigateAbleItemsViewer : ItemsControl
     protected override void ClearContainerForItemOverride(Control container)
     {
         base.ClearContainerForItemOverride(container);
-        if (container is not ContentPresenter presenter)
+        if (container is not ContentPresenter { Child: NavigateAbleItem navItem })
         {
             return;
         }
-        if (presenter.Child is NavigateAbleItem navItem)
+        navItem.SetCurrent(false);
+        navItem.SetSelected(false);
+        if (navItem is GalleryItem galleryItem)
         {
-            navItem.SetCurrent(false);
-            navItem.SetSelected(false);
-            if (navItem is GalleryItem galleryItem)
-            {
-                galleryItem.UnloadImage();
-            }
+            galleryItem.UnloadImage();
         }
     }
     #endregion
@@ -370,12 +370,14 @@ public class NavigateAbleItemsViewer : ItemsControl
         }
     }
 
-    private static NavigateAbleItem? GetNavigateAbleItem(Control? container)
+    private static NavigateAbleItem? GetNavigateAbleItem(Control container)
     {
-        if (container is null) return null;
-        if (container is NavigateAbleItem navItem) return navItem;
-        if (container is ContentPresenter presenter) return presenter.Child as NavigateAbleItem;
-        return null;
+        return container switch
+        {
+            NavigateAbleItem navItem => navItem,
+            ContentPresenter presenter => presenter.Child as NavigateAbleItem,
+            _ => null
+        };
     }
 
     public void ScrollItemIntoView(int index)
@@ -473,9 +475,9 @@ public class NavigateAbleItemsViewer : ItemsControl
             return;
         }
 
-        if (items.All(x => x.Index != startIndex))
+        if (items.TrueForAll(x => x.Index != startIndex))
         {
-            startIndex = items.Last().Index;
+            startIndex = items[^1].Index;
         }
 
         var currentItemPos = items.FirstOrDefault(x => x.Index == startIndex);
@@ -549,15 +551,17 @@ public class NavigateAbleItemsViewer : ItemsControl
     {
         var list = new List<ItemPosition>();
 
-        if (ItemsPanelRoot is VirtualizingGallery gallery)
+        if (ItemsPanelRoot is not VirtualizingGallery gallery)
         {
-            for (var i = 0; i < ItemCount; i++)
+            return list;
+        }
+
+        for (var i = 0; i < ItemCount; i++)
+        {
+            var bounds = gallery.GetItemBounds(i);
+            if (bounds.HasValue)
             {
-                var bounds = gallery.GetItemBounds(i);
-                if (bounds.HasValue)
-                {
-                    list.Add(new ItemPosition(i, bounds.Value.Position, bounds.Value.Size));
-                }
+                list.Add(new ItemPosition(i, bounds.Value.Position, bounds.Value.Size));
             }
         }
 
@@ -595,9 +599,12 @@ public class NavigateAbleItemsViewer : ItemsControl
             .OrderBy(item => item.Position.X)
             .ToList();
 
-        if (nextColumnItems.Count is 0) return null;
+        if (nextColumnItems.Count is 0)
+        {
+            return null;
+        }
 
-        var nextColumnX = nextColumnItems.First().Position.X;
+        var nextColumnX = nextColumnItems[0].Position.X;
 
         return nextColumnItems
             .Where(item => Math.Abs(item.Position.X - nextColumnX) < 1.0)
@@ -614,7 +621,7 @@ public class NavigateAbleItemsViewer : ItemsControl
 
         if (prevColumnItems.Count == 0) return null;
 
-        var prevColumnX = prevColumnItems.First().Position.X;
+        var prevColumnX = prevColumnItems[0].Position.X;
 
         return prevColumnItems
             .Where(item => Math.Abs(item.Position.X - prevColumnX) < 1.0)
