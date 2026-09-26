@@ -526,15 +526,9 @@ public class GalleryAnimationControl : UserControl
             _viewer.ScrollToCenterOfCurrentItem();
         }, DispatcherPriority.Render);
 
-        if (Settings.WindowProperties.AutoFit)
+        if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {
-            Dispatcher.UIThread.Post(() =>
-            {
-                if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
-                {
-                    WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
-                }
-            });
+            WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
         }
     }
 
