@@ -38,7 +38,10 @@ public static class GetThumbnails
                 {
                     shouldDisposeMagick = true;
                     magick = new MagickImage();
-                    await magick.PingAsync(fileInfo).ConfigureAwait(false);
+#pragma warning disable MA0042
+                    // ReSharper disable once MethodHasAsyncOverload
+                    magick.Ping(fileInfo);
+#pragma warning restore MA0042
                 }
 
                 var profile = magick.GetExifProfile();
@@ -177,9 +180,6 @@ public static class GetThumbnails
             case MagickFormat.Png48:
             case MagickFormat.Png64:
             case MagickFormat.APng:
-            case MagickFormat.Jpe:
-            case MagickFormat.Jpeg:
-            case MagickFormat.Pjpeg:
             case MagickFormat.Bmp:
             case MagickFormat.Tif:
             case MagickFormat.Tiff:
@@ -195,6 +195,11 @@ public static class GetThumbnails
                 return null;
             default:
             {
+                if (magick.Format is MagickFormat.Jpeg or MagickFormat.Jpe or MagickFormat.Pjpeg)
+                {
+                    magick.Settings.SetDefine(MagickFormat.Jpeg, "size", $"{height * 2}x{height * 2}");
+                }
+
                 magick = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magick).ConfigureAwait(false);
         
                 var geometry = new MagickGeometry(0, height);

@@ -47,7 +47,7 @@ public static class GalleryLoader
                 var batchVms = new GalleryItemViewModel[currentBatchSize];
 
                 // 1. Parallelize the metadata extraction (Massive speed boost)
-                await Parallel.ForAsync(0, currentBatchSize, parallelOptions, async (j, token) =>
+                Parallel.For(0, currentBatchSize, parallelOptions, j =>
                 {
                     var file = files[i + j];
                     var item = new GalleryItemViewModel { FileInfo = file };
@@ -102,7 +102,7 @@ public static class GalleryLoader
 
                     // Array assignment ensures perfect sorting order
                     batchVms[j] = item;
-                }).ConfigureAwait(false);
+                });
 
                 // 3. Add chunk directly to the UI
                 tab.Gallery.GalleryItems.AddRange(batchVms);

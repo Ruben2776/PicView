@@ -196,43 +196,84 @@ public static class MotionPhotoDetector
             return null;
         }
 
+        const int chunkSize = 64 * 1024;
         var windowLength = (int)Math.Min(fileLength, SamsungScanWindowBytes);
-        var buffer = ArrayPool<byte>.Shared.Rent(windowLength);
+        var scanStart = fileLength - windowLength;
+        var buffer = ArrayPool<byte>.Shared.Rent(chunkSize);
         try
         {
-            var bytesRead = ReadFileTail(fileInfo, buffer, windowLength);
-            if (bytesRead < SamsungMarkerBytes.Length)
+            using var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
+                FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+
+            var currentEnd = fileLength;
+            while (currentEnd > scanStart)
             {
-                return null;
+                var chunkStart = Math.Max(scanStart, currentEnd - chunkSize);
+                var bytesToRead = (int)(currentEnd - chunkStart);
+                if (bytesToRead < SamsungMarkerBytes.Length)
+                {
+                    break;
+                }
+
+                stream.Seek(chunkStart, SeekOrigin.Begin);
+                var totalRead = 0;
+                while (totalRead < bytesToRead)
+                {
+                    var read = stream.Read(buffer, totalRead, bytesToRead - totalRead);
+                    if (read is 0)
+                    {
+                        break;
+                    }
+
+                    totalRead += read;
+                }
+
+                if (totalRead < SamsungMarkerBytes.Length)
+                {
+                    break;
+                }
+
+                var chunkSpan = buffer.AsSpan(0, totalRead);
+                var markerIndex = chunkSpan.LastIndexOf(SamsungMarkerBytes);
+                if (markerIndex >= 0)
+                {
+                    var videoStart = chunkStart + markerIndex + SamsungMarkerBytes.Length;
+                    if (videoStart >= fileLength)
+                    {
+                        return null;
+                    }
+
+                    // The versionless trailer format keeps the video right after the marker.
+                    // Newer mpv2/mpv3 files also carry the marker inside their SEF trailer at
+                    // the end of the file, where no video follows - reject those, the video
+                    // there must be located via XMP or the extractor's ftyp fallback instead.
+                    if (!HasFtypBoxAt(stream, videoStart))
+                    {
+                        return null;
+                    }
+
+                    return new MotionPhotoInfo
+                    {
+                        Source = MotionPhotoSource.SamsungTrailer,
+                        VideoOffset = videoStart,
+                        VideoLength = fileLength - videoStart,
+                    };
+                }
+
+                if (chunkStart <= scanStart || totalRead < bytesToRead)
+                {
+                    break;
+                }
+
+                currentEnd = chunkStart + (SamsungMarkerBytes.Length - 1);
             }
 
-            var markerIndex = buffer.AsSpan(0, bytesRead).LastIndexOf(SamsungMarkerBytes);
-            if (markerIndex < 0)
-            {
-                return null;
-            }
-
-            var videoStart = fileLength - bytesRead + markerIndex + SamsungMarkerBytes.Length;
-            if (videoStart >= fileLength)
-            {
-                return null;
-            }
-
-            // The versionless trailer format keeps the video right after the marker.
-            // Newer mpv2/mpv3 files also carry the marker inside their SEF trailer at
-            // the end of the file, where no video follows - reject those, the video
-            // there must be located via XMP or the extractor's ftyp fallback instead.
-            if (!HasFtypBoxAt(fileInfo, videoStart))
-            {
-                return null;
-            }
-
-            return new MotionPhotoInfo
-            {
-                Source = MotionPhotoSource.SamsungTrailer,
-                VideoOffset = videoStart,
-                VideoLength = fileLength - videoStart,
-            };
+            return null;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(MotionPhotoDetector), nameof(TryDetectSamsungTrailer), e);
+            return null;
         }
         finally
         {
@@ -279,13 +320,11 @@ public static class MotionPhotoDetector
     /// <summary>
     /// Checks whether an ISO BMFF "ftyp" box starts at the given offset inside the file.
     /// </summary>
-    private static bool HasFtypBoxAt(FileInfo file, long offset)
+    private static bool HasFtypBoxAt(Stream stream, long offset)
     {
         Span<byte> header = stackalloc byte[8];
         try
         {
-            using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read,
-                FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
             stream.Seek(offset, SeekOrigin.Begin);
             var totalRead = 0;
             while (totalRead < header.Length)
@@ -310,6 +349,21 @@ public static class MotionPhotoDetector
         }
     }
 
+    private static bool HasFtypBoxAt(FileInfo file, long offset)
+    {
+        try
+        {
+            using var stream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read,
+                FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+            return HasFtypBoxAt(stream, offset);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(MotionPhotoDetector), nameof(HasFtypBoxAt), e);
+            return false;
+        }
+    }
+
     /// <summary>
     /// Reads the XMP packet by locating the "&lt;x:xmpmeta" root element in the head of the
     /// file. Works for JPEG (APP1 XMP segment) and HEIC/HEIF (XMP metadata item) alike, as
@@ -324,16 +378,44 @@ public static class MotionPhotoDetector
             return null;
         }
 
+        const int chunkSize = 64 * 1024;
         var windowLength = (int)Math.Min(fileLength, XmpScanWindowBytes);
-        var buffer = ArrayPool<byte>.Shared.Rent(windowLength);
+        var initialSize = Math.Min(windowLength, chunkSize);
+        var buffer = ArrayPool<byte>.Shared.Rent(initialSize);
         try
         {
-            var bytesRead = ReadFileHead(fileInfo, buffer, windowLength);
-            var span = buffer.AsSpan(0, bytesRead);
+            using var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
+                FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
+
+            var totalRead = 0;
+            while (totalRead < initialSize)
+            {
+                var read = stream.Read(buffer, totalRead, initialSize - totalRead);
+                if (read is 0)
+                {
+                    break;
+                }
+
+                totalRead += read;
+            }
+
+            var span = buffer.AsSpan(0, totalRead);
             var packetIndex = span.IndexOf(XmpMetaStartBytes);
             if (packetIndex < 0)
             {
-                return null;
+                if (windowLength <= initialSize)
+                {
+                    return null;
+                }
+
+                var ext = fileInfo.Extension;
+                if (ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                    ext.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
+                {
+                    return null;
+                }
+
+                return ReadXmpPacketFull(stream, windowLength);
             }
 
             // Stop at the end of the XMP packet instead of converting the rest of the
@@ -343,9 +425,15 @@ public static class MotionPhotoDetector
             if (packetEnd >= 0)
             {
                 packetSpan = packetSpan.Slice(0, packetEnd + XmpEndTagBytes.Length);
+                return Encoding.UTF8.GetString(packetSpan);
             }
 
-            return Encoding.UTF8.GetString(packetSpan);
+            return ReadXmpPacketFull(stream, windowLength, packetIndex);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(MotionPhotoDetector), nameof(ReadXmpPacket), e);
+            return null;
         }
         finally
         {
@@ -353,43 +441,49 @@ public static class MotionPhotoDetector
         }
     }
 
-    private static int ReadFileTail(FileInfo fileInfo, byte[] buffer, int count)
+    private static string? ReadXmpPacketFull(Stream stream, int windowLength, int knownStartIndex = -1)
     {
-        using var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
-            FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-        stream.Seek(Math.Max(0, stream.Length - count), SeekOrigin.Begin);
-        var totalRead = 0;
-        while (totalRead < count)
+        var buffer = ArrayPool<byte>.Shared.Rent(windowLength);
+        try
         {
-            var read = stream.Read(buffer.AsSpan(totalRead, count - totalRead));
-            if (read is 0)
+            stream.Seek(0, SeekOrigin.Begin);
+            var totalRead = 0;
+            while (totalRead < windowLength)
             {
-                break;
+                var read = stream.Read(buffer, totalRead, windowLength - totalRead);
+                if (read is 0)
+                {
+                    break;
+                }
+
+                totalRead += read;
             }
 
-            totalRead += read;
-        }
-
-        return totalRead;
-    }
-
-    private static int ReadFileHead(FileInfo fileInfo, byte[] buffer, int count)
-    {
-        using var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read,
-            FileShare.ReadWrite, 4096, FileOptions.SequentialScan);
-        var totalRead = 0;
-        while (totalRead < count)
-        {
-            var read = stream.Read(buffer.AsSpan(totalRead, count - totalRead));
-            if (read is 0)
+            var span = buffer.AsSpan(0, totalRead);
+            var packetIndex = knownStartIndex >= 0 ? knownStartIndex : span.IndexOf(XmpMetaStartBytes);
+            if (packetIndex < 0)
             {
-                break;
+                return null;
             }
 
-            totalRead += read;
-        }
+            var packetSpan = span.Slice(packetIndex);
+            var packetEnd = packetSpan.IndexOf(XmpEndTagBytes);
+            if (packetEnd >= 0)
+            {
+                packetSpan = packetSpan.Slice(0, packetEnd + XmpEndTagBytes.Length);
+            }
 
-        return totalRead;
+            return Encoding.UTF8.GetString(packetSpan);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(MotionPhotoDetector), nameof(ReadXmpPacketFull), e);
+            return null;
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(buffer);
+        }
     }
 
     /// <summary>
