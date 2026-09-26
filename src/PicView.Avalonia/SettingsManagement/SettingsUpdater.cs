@@ -59,12 +59,12 @@ public static class SettingsUpdater
             catch (Exception e)
             {
                 DebugHelper.LogDebug(nameof(SettingsUpdater), nameof(ResetSettings), e);
-                await SetAndSave();
+                await SetAndSave().ConfigureAwait(false);
             }
         }
         else
         {
-            await SetAndSave();
+            await SetAndSave().ConfigureAwait(false);
         }
 
         AppFunctions.Restart(core?.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab?.Value);
@@ -74,7 +74,7 @@ public static class SettingsUpdater
         async Task SetAndSave()
         {
             SetDefaults();
-            await SaveSettingsAsync();
+            await SaveSettingsAsync().ConfigureAwait(false);
         }
     }
     
@@ -104,7 +104,7 @@ public static class SettingsUpdater
                 {
                     return;
                 }
-                await GalleryHelper.LoadGallery(core).ConfigureAwait(false);
+                GalleryHelper.LoadGallery(core);
             }
         }
 
@@ -154,7 +154,7 @@ public static class SettingsUpdater
             tab.UpdateTabTitle();
         }
         
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
     public static void TurnOffSubdirectories(MainWindowViewModel vm)
@@ -194,7 +194,7 @@ public static class SettingsUpdater
             });
         }
 
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
     public static async Task ToggleConstrainBackgroundColor()
@@ -221,7 +221,7 @@ public static class SettingsUpdater
         }
                  
         globalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
 
     public static async Task ToggleOpeningInSameWindow()
@@ -237,7 +237,7 @@ public static class SettingsUpdater
             Settings.UIProperties.OpenInSameWindow = true;
         }
 
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
 
     public static async Task ToggleFileHistory(MainWindowViewModel vm)
@@ -257,7 +257,7 @@ public static class SettingsUpdater
             vm.Translation.ToggleFileHistory.Value = TranslationManager.Translation.FileHistoryEnabled;
         }
         
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
     public static async Task ToggleShowFullPathInTitleBar(MainWindowViewModel vm)
@@ -271,7 +271,7 @@ public static class SettingsUpdater
             Settings.UIProperties.ShowFullPathInTitleBar = true;
         }
         vm.WindowTabs.ActiveTab.CurrentValue.UpdateTabTitle();
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
     public static async Task ToggleSideBySide(MainWindow mainWindow)
@@ -291,7 +291,7 @@ public static class SettingsUpdater
             if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
             {
                 await tab.ImageIterator.ReloadAsync(false).ConfigureAwait(false);
-                var imageModel = await core.SharedCache.LoadAsync(tab.Id, tab.ImageIterator.SecondaryCurrentIndex, tab.ImageIterator.Files);
+                var imageModel = await core.SharedCache.LoadAsync(tab.Id, tab.ImageIterator.SecondaryCurrentIndex, tab.ImageIterator.Files).ConfigureAwait(false);
                 imageViewer.SecondaryImage.Source = imageModel.Image;
             }
         }
@@ -307,7 +307,7 @@ public static class SettingsUpdater
         
         WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
         tab.UpdateTabTitle();
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
     public static async Task ToggleScroll(MainWindowViewModel vm, MainWindow mainWindow)
@@ -328,7 +328,7 @@ public static class SettingsUpdater
         
         WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
         
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
     public static void TurnOffScroll(MainWindowViewModel vm)
@@ -389,7 +389,7 @@ public static class SettingsUpdater
             tab.CanNavigateBackwards.Value = isLooping || index > 0;
         }
         
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
 }

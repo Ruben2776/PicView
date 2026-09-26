@@ -10,7 +10,7 @@ public static class GalleryLoader
 {
     private static CancellationTokenSource? _cts;
 
-    public static async Task LoadGalleryAsync(TabViewModel tab, IReadOnlyList<FileInfo> files,
+    public static void LoadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files,
         IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
     {
         if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
@@ -65,7 +65,7 @@ public static class GalleryLoader
                     catch (Exception ex)
                     {
 #if DEBUG
-                        DebugHelper.LogDebug(nameof(GalleryLoader), nameof(LoadGalleryAsync), ex);
+                        DebugHelper.LogDebug(nameof(GalleryLoader), nameof(LoadGallery), ex);
 #endif
                     }
 
@@ -122,15 +122,15 @@ public static class GalleryLoader
         tab.Gallery.LoadingState = GalleryLoadingState.Loaded;
     }
 
-    public static async Task ReloadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files,
+    public static void ReloadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files,
         IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
     {
         tab.Gallery.LoadingState = GalleryLoadingState.Restarting;
         tab.Gallery.GalleryItems.Clear();
-        await _cts.CancelAsync().ConfigureAwait(false);
+        _cts.Cancel();
         _cts.Dispose();
         _cts = null;
-        await LoadGalleryAsync(tab, files, thumbnailLoader, thumbnailCache, ct).ConfigureAwait(false);
+        LoadGallery(tab, files, thumbnailLoader, thumbnailCache, ct);
     }
 
     public static async ValueTask ToggleGalleryAndLoadItem(TabViewModel tabViewModel, int index)

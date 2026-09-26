@@ -116,13 +116,16 @@ public class NavigationService(
             {
                 if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
                 {
-                    await ct.CancelAsync().ConfigureAwait(false);
+#pragma warning disable MA0042
+                    // ReSharper disable once MethodHasAsyncOverload
+                    ct.Cancel();
+#pragma warning restore MA0042
                     tab.ResetNavigationCts();
-                    await GalleryLoader.ReloadGallery(tab, tab.ImageIterator.Files, thumbnailLoader, tab.ThumbnailCache, tab.GetTabCancellation().Token).ConfigureAwait(false);
+                    GalleryLoader.ReloadGallery(tab, tab.ImageIterator.Files, thumbnailLoader, tab.ThumbnailCache, tab.GetTabCancellation().Token);
                     return;
                 }
                 tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
-                await GalleryLoader.LoadGalleryAsync(tab, tab.ImageIterator.Files, thumbnailLoader, tab.ThumbnailCache, ct.Token).ConfigureAwait(false);
+                GalleryLoader.LoadGallery(tab, tab.ImageIterator.Files, thumbnailLoader, tab.ThumbnailCache, ct.Token);
             }
         }
         catch (Exception e)

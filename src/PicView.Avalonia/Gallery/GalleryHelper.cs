@@ -47,14 +47,13 @@ public static class GalleryHelper
         await GalleryLoader.ToggleGalleryAndLoadItem(tab, index).ConfigureAwait(false);
     }
     
-    public static async ValueTask LoadGallery(CoreViewModel core)
+    public static void LoadGallery(CoreViewModel core)
     {
-        await GalleryLoader.LoadGalleryAsync(core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value,
+        GalleryLoader.LoadGallery(core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value,
                 core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.ImageIterator.Files,
                 ServiceHelper.ThumbLoader,
                 core.SharedThumbnailCache,
-                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.GetTabCancellation().Token)
-            .ConfigureAwait(false);
+                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.GetTabCancellation().Token);
         Dispatcher.UIThread.Post(() =>
         {
             var tab = core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value;
