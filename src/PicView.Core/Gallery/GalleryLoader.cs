@@ -76,21 +76,24 @@ public static class GalleryLoader
                     item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, null) is not null;
 
                     // 2. Assign the lazy-loading logic, but don't execute it!
-                    item.ThumbnailLoaderFunc = async _ =>
+                    item.ThumbnailLoaderFunc = async cancellationToken =>
                     {
                         if (thumbnailCache.TryGet(file.FullName, out var cached) && cached is not null)
                         {
                             return cached;
                         }
 
-                        var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight)
-                            .ConfigureAwait(false);
-                        if (thumb is not null)
+                        return await Task.Run(async () =>
                         {
-                            thumbnailCache.Add(tab.Id, file.FullName, thumb);
-                        }
+                            var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight)
+                                .ConfigureAwait(false);
+                            if (thumb is not null)
+                            {
+                                thumbnailCache.Add(tab.Id, file.FullName, thumb);
+                            }
 
-                        return thumb;
+                            return thumb;
+                        }, cancellationToken).ConfigureAwait(false);
                     };
 
                     // Array assignment ensures perfect sorting order

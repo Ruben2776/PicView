@@ -38,7 +38,7 @@ public static class GetThumbnails
                 {
                     shouldDisposeMagick = true;
                     magick = new MagickImage();
-                    await magick.PingAsync(fileInfo);
+                    await magick.PingAsync(fileInfo).ConfigureAwait(false);
                 }
 
                 var profile = magick.GetExifProfile();
@@ -187,7 +187,7 @@ public static class GetThumbnails
             case MagickFormat.Icon:
             case MagickFormat.Wbmp:
             {
-                return await GetSkBitmapThumbAsync(fileInfo, height);
+                return await GetSkBitmapThumbAsync(fileInfo, height).ConfigureAwait(false);
             }
         
             case MagickFormat.Svg:
@@ -195,7 +195,7 @@ public static class GetThumbnails
                 return null;
             default:
             {
-                magick = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magick);
+                magick = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magick).ConfigureAwait(false);
         
                 var geometry = new MagickGeometry(0, height);
                 magick.AutoOrient();
@@ -211,8 +211,11 @@ public static class GetThumbnails
         {
             return null;
         }
-        await using var stream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
-        var thumb = Bitmap.DecodeToHeight(stream, (int)height);
-        return thumb;
+        var stream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
+        await using (stream.ConfigureAwait(false))
+        {
+            var thumb = Bitmap.DecodeToHeight(stream, (int)height);
+            return thumb;
+        }
     }
 }

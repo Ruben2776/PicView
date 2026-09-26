@@ -3,7 +3,6 @@ using PicView.Avalonia.Navigation.Services;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
-using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 
 namespace PicView.Avalonia.Gallery;
 
@@ -59,11 +58,13 @@ public static class GalleryHelper
         Dispatcher.UIThread.Post(() =>
         {
             var tab = core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value;
-            if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
+            if (tab.CurrentView.CurrentValue is not ImageViewer imageViewer)
             {
-                imageViewer.GalleryView.GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
-                imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                return;
             }
+
+            imageViewer.GalleryView.GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
+            imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
         }, DispatcherPriority.Loaded);
     }
 }

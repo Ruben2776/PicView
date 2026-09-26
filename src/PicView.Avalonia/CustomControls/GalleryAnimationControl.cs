@@ -177,9 +177,11 @@ public class GalleryAnimationControl : UserControl
         }
         else if (change.Property == DockPanel.DockProperty && change.NewValue is Dock)
         {
+            _itemsPanel.WrapHeightOverride = GetDockedSize(Settings.Gallery.DockPosition);
             Dispatcher.UIThread.Post(() =>
             {
                 SetDockedLayout(Settings.Gallery.DockPosition, true);
+                _itemsPanel.WrapHeightOverride = double.NaN;
             }, DispatcherPriority.Render);
         }
     }
