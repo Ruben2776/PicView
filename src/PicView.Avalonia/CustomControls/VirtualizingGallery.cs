@@ -322,48 +322,6 @@ public class VirtualizingGallery : VirtualizingPanel
 
         _viewer ??= this.FindAncestorOfType<NavigateAbleItemsViewer>();
         
-        if (_viewer is { CurrentItemIndex: >= 0 } && _viewer.CurrentItemIndex < _itemBounds.Count &&
-            (_viewport == new Rect() || _viewer.PendingScrollToCurrentItem))
-        {
-            var isVerticalDocked = !IsExpanded && Orientation == Orientation.Vertical;
-            var targetBounds = _itemBounds[_viewer.CurrentItemIndex];
-
-            var viewportWidth = _viewport.Width > 0
-                ? _viewport.Width
-                : double.IsInfinity(availableSize.Width)
-                    ? _viewer.Bounds.Width > 0 ? _viewer.Bounds.Width : TopLevel.GetTopLevel(this)?.Bounds.Width ?? 0
-                    : availableSize.Width;
-
-            var viewportHeight = _viewport.Height > 0
-                ? _viewport.Height
-                : double.IsInfinity(availableSize.Height)
-                    ? _viewer.Bounds.Height > 0 ? _viewer.Bounds.Height : TopLevel.GetTopLevel(this)?.Bounds.Height ?? 0
-                    : availableSize.Height;
-
-            double targetX = 0;
-            double targetY = 0;
-
-            if (isVerticalDocked)
-            {
-                if (extentSize.Height > viewportHeight && viewportHeight > 0)
-                {
-                    var maxScrollY = extentSize.Height - viewportHeight;
-                    targetY = Math.Clamp(targetBounds.Center.Y - viewportHeight / 2, 0, maxScrollY);
-                }
-            }
-            else
-            {
-                if (extentSize.Width > viewportWidth && viewportWidth > 0)
-                {
-                    var maxScrollX = extentSize.Width - viewportWidth;
-                    targetX = Math.Clamp(targetBounds.Center.X - viewportWidth / 2, 0, maxScrollX);
-                }
-            }
-
-            _viewport = new Rect(targetX, targetY, viewportWidth, viewportHeight);
-            _viewer.ScrollViewer.Offset = new Vector(targetX, targetY);
-            _viewer.PendingScrollToCurrentItem = false;
-        }
         // 2. Determine what is visible (inflate by 2x ItemHeight to buffer scrolling)
         var visibleRect = _viewport == new Rect() ? new Rect(new Point(), availableSize) : _viewport;
         visibleRect = visibleRect.Inflate(new Thickness(ItemHeight * 2));

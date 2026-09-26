@@ -26,10 +26,8 @@ public class NavigateAbleItemsViewer : ItemsControl
     private const double ScrollLineSize = 50;
 
     private AutoScrollViewer? _scrollViewer;
-    public AutoScrollViewer ScrollViewer => _scrollViewer!;
 
     private IDisposable? _viewportSubscription;
-    public bool PendingScrollToCurrentItem { get; set; }
 
     protected override Type StyleKeyOverride => typeof(NavigateAbleItemsViewer);
 
@@ -64,16 +62,6 @@ public class NavigateAbleItemsViewer : ItemsControl
     {
         base.OnApplyTemplate(e);
         _scrollViewer = e.NameScope.Find<AutoScrollViewer>("PART_ScrollViewer");
-        _viewportSubscription?.Dispose();
-        _viewportSubscription = _scrollViewer!.GetObservable(global::Avalonia.Controls.ScrollViewer.ViewportProperty)
-            .ToObservable()
-            .Subscribe(_ =>
-            {
-                if (PendingScrollToCurrentItem)
-                {
-                    ScrollToCenterOfCurrentItemInternal();
-                }
-            }, DebugHelper.LogError(nameof(OnApplyTemplate), nameof(NavigateAbleItemsViewer)));
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -186,14 +174,12 @@ public class NavigateAbleItemsViewer : ItemsControl
         // Ask the VirtualizingGallery for the exact bounds, realized or not!
         if (ItemsPanelRoot is not VirtualizingGallery gallery)
         {
-            PendingScrollToCurrentItem = true;
             return;
         }
 
         var itemRect = gallery.GetItemBounds(CurrentItemIndex);
         if (itemRect is null)
         {
-            PendingScrollToCurrentItem = true;
             return;
         }
 
@@ -203,7 +189,7 @@ public class NavigateAbleItemsViewer : ItemsControl
         // If viewport is not yet measured, defer until layout pass
         if (viewportWidth <= 0 && viewportHeight <= 0)
         {
-            PendingScrollToCurrentItem = true;
+            Dispatcher.UIThread.Post(ScrollToCenterOfCurrentItemInternal, DispatcherPriority.Render);
             return;
         }
 
@@ -233,7 +219,6 @@ public class NavigateAbleItemsViewer : ItemsControl
         }
 
         _scrollViewer.Offset = new Vector(newX, newY);
-        PendingScrollToCurrentItem = false;
     }
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)

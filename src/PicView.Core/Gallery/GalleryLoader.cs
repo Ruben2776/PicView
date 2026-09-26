@@ -126,23 +126,6 @@ public static class GalleryLoader
         await LoadGalleryAsync(tab, files, thumbnailLoader, thumbnailCache, ct).ConfigureAwait(false);
     }
 
-    public static async ValueTask LoadGalleryIfDockedOrExpanded(TabViewModel tabViewModel, GalleryMode mode,
-        IThumbnailCache thumbnailCache, IThumbnailLoader thumbnailLoader)
-    {
-        if (mode is GalleryMode.Docked or GalleryMode.Expanded)
-        {
-            if (tabViewModel.Gallery.LoadingState is GalleryLoadingState.NotLoaded)
-            {
-                await LoadGalleryAsync(tabViewModel,
-                        tabViewModel.ImageIterator.Files,
-                        thumbnailLoader,
-                        thumbnailCache,
-                        tabViewModel.GetTabCancellation().Token)
-                    .ConfigureAwait(false);
-            }
-        }
-    }
-
     public static async ValueTask ToggleGalleryAndLoadItem(TabViewModel tabViewModel, int index)
     {
         var gallery = tabViewModel.Gallery;

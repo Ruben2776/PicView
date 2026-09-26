@@ -5,6 +5,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Functions;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Navigation.Services;
 using PicView.Avalonia.UI;
@@ -80,7 +81,6 @@ public static class SettingsUpdater
     public static async ValueTask ToggleDockedGalleryInHiddenUI(MainWindowViewModel vm)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        var files = tab.ImageIterator.Files;
         var gallery = tab.Gallery;
         if (Settings.Gallery.ShowDockedGalleryInHiddenUI)
         {
@@ -104,11 +104,11 @@ public static class SettingsUpdater
                 {
                     return;
                 }
-                await GalleryLoader.LoadGalleryAsync(tab, files, ServiceHelper.ThumbLoader, core.SharedThumbnailCache, tab.GetTabCancellation().Token);
+                await GalleryHelper.LoadGallery(core).ConfigureAwait(false);
             }
         }
 
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
     
     public static async ValueTask ToggleZoomToFit(MainWindowViewModel vm, MainWindow mainWindow)

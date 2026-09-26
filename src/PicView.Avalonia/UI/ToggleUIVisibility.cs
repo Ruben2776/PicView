@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Navigation.Services;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
@@ -39,7 +39,7 @@ public static class ToggleUIVisibility
         }
     }
 
-    public static void ToggleInterface(MainWindowViewModel vm, MainWindow mainWindow)
+    public static async ValueTask ToggleInterface(MainWindowViewModel vm, MainWindow mainWindow)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         if (Settings.UIProperties.ShowInterface)
@@ -89,14 +89,7 @@ public static class ToggleUIVisibility
 
                     if (tab.Gallery.LoadingState is GalleryLoadingState.NotLoaded)
                     {
-                        _ = GalleryLoader.LoadGalleryAsync(
-                                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value,
-                                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.ImageIterator.Files,
-                                ServiceHelper.ThumbLoader,
-                                core.SharedThumbnailCache,
-                                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.GetTabCancellation()
-                                    .Token)
-                            .ConfigureAwait(false);
+                       await GalleryHelper.LoadGallery(core).ConfigureAwait(false);
                     }
                 }
 

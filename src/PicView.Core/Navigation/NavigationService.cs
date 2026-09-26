@@ -90,7 +90,6 @@ public class NavigationService(
                         tab.SecondaryFileInfo.Value = null;
                     }
                 }
-                ShowModel(model);
             }
             else
             {
@@ -98,9 +97,10 @@ public class NavigationService(
                 tab.SecondaryImage.Value = null;
                 tab.SecondaryImageType.Value = null;
                 tab.SecondaryFileInfo.Value = null;
-                ShowModel(model);
             }
-            
+
+            ShowModel(model);
+
             tab.UpdateTabTitle();
             fileWatcherService.Watch(tab, fileInfo.DirectoryName);
             cache.Clear(tab.Id);

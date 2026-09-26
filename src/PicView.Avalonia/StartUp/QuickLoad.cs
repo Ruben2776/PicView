@@ -5,9 +5,9 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.Navigation.Services;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
@@ -314,36 +314,28 @@ public static class QuickLoad
             core.PlatformService.SetTaskbarProgress((ulong)tab.ImageIterator.CurrentIndex, (ulong)tab.ImageIterator.Files.Count);
         }
         
-        if (isGalleryEnabled)
-        {
-            await LoadGallery(core).ConfigureAwait(false);
-            Dispatcher.UIThread.Post(() =>
-            {
-                if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
-                {
-                    imageViewer.GalleryView.GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
-                    imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                }
-            }, DispatcherPriority.Loaded);
-        }
-        
         FileHistoryManager.Add(fileInfo.FullName);
         
         if (continueFromLeftOff)
         {
             Settings.StartUp.StartUpDirectory = initialDirectory.FullName;
         }
+        
+        if (isGalleryEnabled)
+        {
+            await GalleryHelper.LoadGallery(core).ConfigureAwait(false);
+        }
     }
     
     private static async ValueTask LoadArchiveFileAsync(MainWindow mainWindow, CoreViewModel core, FileInfo source)
     {
         var tab = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue;
-        Dispatcher.UIThread.Invoke(() =>
+        tab.SetLoading();
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
             core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
         }, DispatcherPriority.Send);
         TabNavigationInitializer.Initialize(core, source, mainWindow);
-        tab.SetLoading();
 
         var isGalleryEnabled = CheckIfGalleryIsNeeded(core);
         var isArchiveLoaded = await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.LoadFromArchiveAsync(source.FullName).ConfigureAwait(false);
@@ -355,12 +347,12 @@ public static class QuickLoad
         ShowHoverBarIfNeeded(core);
         if (isGalleryEnabled)
         {
-            await LoadGallery(core).ConfigureAwait(false);
+            await GalleryHelper.LoadGallery(core).ConfigureAwait(false);
         }
 
         if (Settings.WindowProperties.AutoFit)
         {
-            Dispatcher.UIThread.Invoke(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 WindowResizing.FastCenterWindow(mainWindow);
             }, DispatcherPriority.Send);
@@ -386,16 +378,6 @@ public static class QuickLoad
         }
         Settings.Gallery.DockPosition = GalleryDockPosition.Closed;
         return false;
-    }
-    
-    private static async ValueTask LoadGallery(CoreViewModel core)
-    {
-        await GalleryLoader.LoadGalleryAsync(core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value,
-                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.ImageIterator.Files,
-                ServiceHelper.ThumbLoader,
-                core.SharedThumbnailCache,
-                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.GetTabCancellation().Token)
-            .ConfigureAwait(false);
     }
 
     private static void ShowHoverBarIfNeeded(CoreViewModel core)

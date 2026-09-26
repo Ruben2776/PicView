@@ -431,7 +431,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     /// <inheritdoc cref="ToggleUIVisibility.ToggleInterface(MainWindowViewModel, MainWindow)" />
     public async ValueTask ToggleInterface()
     {
-        ToggleUIVisibility.ToggleInterface(vm, mainWindow);
+        await ToggleUIVisibility.ToggleInterface(vm, mainWindow).ConfigureAwait(false);
         await SaveSettingsAsync().ConfigureAwait(false);
     }
     

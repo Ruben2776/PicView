@@ -1,5 +1,8 @@
-﻿using PicView.Avalonia.Views.UC;
+﻿using Avalonia.Threading;
+using PicView.Avalonia.Navigation.Services;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.Gallery;
+using PicView.Core.ViewModels;
 using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 
 namespace PicView.Avalonia.Gallery;
@@ -43,5 +46,24 @@ public static class GalleryHelper
         }
 
         await GalleryLoader.ToggleGalleryAndLoadItem(tab, index).ConfigureAwait(false);
+    }
+    
+    public static async ValueTask LoadGallery(CoreViewModel core)
+    {
+        await GalleryLoader.LoadGalleryAsync(core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value,
+                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.ImageIterator.Files,
+                ServiceHelper.ThumbLoader,
+                core.SharedThumbnailCache,
+                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.GetTabCancellation().Token)
+            .ConfigureAwait(false);
+        Dispatcher.UIThread.Post(() =>
+        {
+            var tab = core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value;
+            if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
+            {
+                imageViewer.GalleryView.GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
+                imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
+            }
+        }, DispatcherPriority.Loaded);
     }
 }

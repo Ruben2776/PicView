@@ -175,12 +175,11 @@ public class GalleryAnimationControl : UserControl
         {
             _ = Dispatcher.UIThread.InvokeAsync(async () => await OnGalleryModeChanged(mode).ConfigureAwait(false));
         }
-        else if (change.Property == DockPanel.DockProperty && change.NewValue is Dock dock)
+        else if (change.Property == DockPanel.DockProperty && change.NewValue is Dock)
         {
             Dispatcher.UIThread.Post(() =>
             {
                 SetDockedLayout(Settings.Gallery.DockPosition, true);
-                _viewer.ScrollToCenterOfCurrentItem();
             }, DispatcherPriority.Render);
         }
     }

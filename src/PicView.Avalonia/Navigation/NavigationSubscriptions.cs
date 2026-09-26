@@ -1,9 +1,9 @@
 ﻿using Avalonia;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Gallery;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
-using PicView.Avalonia.Navigation.Services;
 using PicView.Core.Gallery;
 using R3;
 
@@ -39,15 +39,21 @@ public static class NavigationSubscriptions
                     {
                         return;
                     }
-                    await GalleryLoader.LoadGalleryIfDockedOrExpanded(tabViewModel, mode, core.SharedThumbnailCache, ServiceHelper.ThumbLoader);
-                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(GalleryLoader.LoadGalleryIfDockedOrExpanded)))
+                    if (mode is GalleryMode.Docked or GalleryMode.Expanded)
+                    {
+                        if (tabViewModel.Gallery.LoadingState is GalleryLoadingState.NotLoaded)
+                        {
+                            await GalleryHelper.LoadGallery(core).ConfigureAwait(false);
+                        }
+                    }
+                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(GalleryLoader.LoadGalleryAsync)))
                 .AddTo(tabViewModel.Disposables);
             
             tabViewModel.Gallery.OpenSelectedItemCommand
                 .Skip(1)
                 .SubscribeAwait(async (index, _) =>
                 {
-                    await GalleryLoader.ToggleGalleryAndLoadItem(tabViewModel, index);
+                    await GalleryLoader.ToggleGalleryAndLoadItem(tabViewModel, index).ConfigureAwait(false);
                 }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(GalleryLoader.ToggleGalleryAndLoadItem)))
                 .AddTo(tabViewModel.Disposables);
         });
