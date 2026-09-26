@@ -72,7 +72,7 @@ public class MainWindowViewModel : IDisposable
     public BindableReactiveProperty<bool> IsUIShown { get; } = new();
     public BindableReactiveProperty<bool> IsTopToolbarShown { get; } = new();
 
-    public BindableReactiveProperty<bool> IsEditableTitlebarOpen { get; } = new();
+    public BindableReactiveProperty<bool> IsEditableTitlebarOpen { get; } = new(false);
     
     public BindableReactiveProperty<bool> IsScrollingEnabled { get; } = new(Settings.Zoom.ScrollEnabled);
 

@@ -200,7 +200,11 @@ public static class QuickLoad
         using var magickImage = new MagickImage();
         try
         {
-            await magickImage.PingAsync(fileInfo).ConfigureAwait(false);
+#pragma warning disable MA0042
+            // ReSharper disable once MethodHasAsyncOverloadWithCancellation
+            // ReSharper disable once MethodHasAsyncOverload
+            magickImage.Ping(fileInfo);
+#pragma warning restore MA0042
             tab.Model.PixelWidth = magickImage.Width;
             tab.Model.PixelHeight = magickImage.Height;
 

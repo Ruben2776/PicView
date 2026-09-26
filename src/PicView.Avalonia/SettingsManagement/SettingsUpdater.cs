@@ -26,7 +26,7 @@ public static class SettingsUpdater
     {
         ServiceHelper.SetAvaloniaImageLoader();
         ServiceHelper.SetGalleryLoader();
-        Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
             await LanguageUpdater.UpdateLanguageAsync(vm.Translation, settingsExists).ConfigureAwait(false);
             vm.TitlebarHeight.Value = Settings.WindowProperties.Fullscreen

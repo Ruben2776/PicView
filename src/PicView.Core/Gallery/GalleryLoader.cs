@@ -55,7 +55,10 @@ public static class GalleryLoader
                     try
                     {
                         using var magick = new MagickImage();
-                        await magick.PingAsync(file, token).ConfigureAwait(false);
+#pragma warning disable MA0042
+                        // ReSharper disable once MethodHasAsyncOverloadWithCancellation
+                        magick.Ping(file);
+#pragma warning restore MA0042
                         item.PixelWidth = magick.Width;
                         item.PixelHeight = magick.Height;
                     }
@@ -73,7 +76,6 @@ public static class GalleryLoader
                     item.FileDate.Value = thumbData.FileDate;
                     item.FileLocation.Value = thumbData.FileLocation;
                     item.ImageSize.Value = thumbData.ImageSize;
-                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, null) is not null;
 
                     // 2. Assign the lazy-loading logic, but don't execute it!
                     item.ThumbnailLoaderFunc = async cancellationToken =>
@@ -91,6 +93,8 @@ public static class GalleryLoader
                             {
                                 thumbnailCache.Add(tab.Id, file.FullName, thumb);
                             }
+
+                            item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, null) is not null;
 
                             return thumb;
                         }, cancellationToken).ConfigureAwait(false);
