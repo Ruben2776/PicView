@@ -327,7 +327,7 @@ public static class QuickLoad
         
         if (isGalleryEnabled)
         {
-            GalleryHelper.LoadGallery(core);
+            await GalleryHelper.LoadGalleryAsync(core).ConfigureAwait(false);
         }
     }
     
@@ -351,7 +351,7 @@ public static class QuickLoad
         ShowHoverBarIfNeeded(core);
         if (isGalleryEnabled)
         {
-            GalleryHelper.LoadGallery(core);
+            await GalleryHelper.LoadGalleryAsync(core).ConfigureAwait(false);
         }
 
         if (Settings.WindowProperties.AutoFit)

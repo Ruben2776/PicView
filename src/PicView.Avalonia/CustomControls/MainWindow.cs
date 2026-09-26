@@ -299,22 +299,24 @@ public class MainWindow : Window, IMainWindow
             return;
         }
 
-        if (e.Reason is WindowResizeReason.User && !IsChangingWindowState)
+        if (e.Reason is not WindowResizeReason.User || IsChangingWindowState)
         {
-            if (SharedTitleBar.IsPointerOver && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                // Traffic light button clicked, don't change window state
-                return;
-            }
-
-            if (sender is MainWindow { WindowState: WindowState.FullScreen })
-            {
-                // Don't reset when leaving fullscreen
-                return;
-            }
-            // User manually resized (not maximize or restore), reset to manual window
-            Dispatcher.CurrentDispatcher.Post(WindowFunctions.SetManualWindows);
+            return;
         }
+
+        if (SharedTitleBar.IsPointerOver && OperatingSystem.IsMacOS())
+        {
+            // Traffic light button clicked, don't change window state
+            return;
+        }
+
+        if (sender is MainWindow { WindowState: WindowState.FullScreen })
+        {
+            // Don't reset when leaving fullscreen
+            return;
+        }
+        // User manually resized (not maximize or restore), reset to manual window
+        Dispatcher.CurrentDispatcher.Post(WindowFunctions.SetManualWindows);
         WindowResizing.SetSize(this, e.Reason);
     }
     

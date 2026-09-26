@@ -104,7 +104,7 @@ public static class SettingsUpdater
                 {
                     return;
                 }
-                GalleryHelper.LoadGallery(core);
+                await GalleryHelper.LoadGalleryAsync(core).ConfigureAwait(false);
             }
         }
 

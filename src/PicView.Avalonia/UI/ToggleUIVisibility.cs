@@ -89,7 +89,7 @@ public static class ToggleUIVisibility
 
                     if (tab.Gallery.LoadingState is GalleryLoadingState.NotLoaded)
                     {
-                       GalleryHelper.LoadGallery(core);
+                       await GalleryHelper.LoadGalleryAsync(core).ConfigureAwait(false);
                     }
                 }
 
