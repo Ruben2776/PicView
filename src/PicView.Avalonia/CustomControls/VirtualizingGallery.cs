@@ -186,6 +186,17 @@ public class VirtualizingGallery : VirtualizingPanel
         return snapPoints;
     }
 
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == OrientationProperty)
+        {
+            // The old viewport belongs to the other scroll axis, wait for a fresh one
+            _viewport = default;
+        }
+    }
+
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
@@ -323,7 +334,15 @@ public class VirtualizingGallery : VirtualizingPanel
         _viewer ??= this.FindAncestorOfType<NavigateAbleItemsViewer>();
         
         // 2. Determine what is visible (inflate by 2x ItemHeight to buffer scrolling)
-        var visibleRect = _viewport == new Rect() ? new Rect(new Point(), availableSize) : _viewport;
+        var visibleRect = _viewport;
+        if (visibleRect.Width <= 0 || visibleRect.Height <= 0)
+        {
+            // No usable viewport (not laid out yet, or collapsed to zero size).
+            // Never fall back to an unbounded rect, inside a ScrollViewer that would realize every item.
+            visibleRect = new Rect(0, 0,
+                double.IsInfinity(availableSize.Width) ? 0 : availableSize.Width,
+                double.IsInfinity(availableSize.Height) ? 0 : availableSize.Height);
+        }
         visibleRect = visibleRect.Inflate(new Thickness(ItemHeight * 2));
 
         // 3. Find which indices fall inside the visible rect

@@ -128,7 +128,12 @@ public class GalleryAnimationControl : UserControl
         // Change layout corresponding to DockPositions
         Observable.EveryValueChanged(Settings.Gallery, gallery => gallery.DockPosition, mainWindow.FrameProvider)
             .Skip(1)
-            .Subscribe(position => SetDockedLayout(position, false), DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(SetDockedLayout)))
+            .Subscribe(position =>
+            {
+                // Size directly when already docked, collapsing to 0x0 first causes an extra, expensive layout pass
+                var setSize = ActiveGalleryMode is GalleryMode.Docked && !IsInAnimation;
+                SetDockedLayout(position, setSize);
+            }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(SetDockedLayout)))
             .AddTo(ref _disposables);
         
         // Update expanded item sizes
@@ -321,12 +326,32 @@ public class GalleryAnimationControl : UserControl
 
     #region Docked Configuration
 
+    /// <summary>
+    /// Configures the gallery layout based on the specified dock position and whether to adjust the size.
+    /// </summary>
+    /// <param name="dock">
+    /// The dock position of the gallery. Possible values are defined in the <see cref="GalleryDockPosition"/> enum.
+    /// </param>
+    /// <param name="setSize">
+    /// Whether the gallery dimensions should be adjusted according to the dock position.
+    /// Should be true if the layout needs immediate resizing (skip animation).
+    /// </param>
     private void SetDockedLayout(GalleryDockPosition dock, bool setSize)
     {
         SetDockedLayoutCore(dock, setSize);
         SetDockedThumbPosition(dock);
     }
 
+    /// <summary>
+    /// Adjusts the gallery layout based on the specified dock position and size configuration.
+    /// </summary>
+    /// <param name="dock">
+    /// The desired dock position for the gallery, as defined in the <see cref="GalleryDockPosition"/> enum.
+    /// </param>
+    /// <param name="setSize">
+    /// Whether the gallery dimensions should be adjusted according to the dock position.
+    /// Should be true if the layout needs immediate resizing (skip animation).
+    /// </param>
     private void SetDockedLayoutCore(GalleryDockPosition dock, bool setSize)
     {
         _itemsPanel.IsExpanded = false;
