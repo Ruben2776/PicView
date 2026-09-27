@@ -355,7 +355,7 @@ public class GalleryAnimationControl : UserControl
     private void SetDockedLayoutCore(GalleryDockPosition dock, bool setSize)
     {
         _itemsPanel.IsExpanded = false;
-        TabViewModel.Gallery.ItemSpacing.Value = 0;
+        TabViewModel?.Gallery?.ItemSpacing.Value = 0;
         
         if (IsHorizontalDock(dock))
         {
@@ -392,7 +392,7 @@ public class GalleryAnimationControl : UserControl
 
             _viewer?.SetVerticalScrolling();
         }
-        TabViewModel.Hoverbar.IsHoverbarVisible.Value = !Settings.UIProperties.ShowBottomNavBar && Settings.UIProperties.ShowHoverNavigationBar;
+        TabViewModel?.Hoverbar?.IsHoverbarVisible?.Value = !Settings.UIProperties.ShowBottomNavBar && Settings.UIProperties.ShowHoverNavigationBar;
     }
 
     private void SetDockedThumbPosition(GalleryDockPosition dock)

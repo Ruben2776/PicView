@@ -19,11 +19,6 @@ public partial class CropControl : UserControl
         InitializeComponent();
         if (OperatingSystem.IsMacOS())
         {
-            TopMiddleButton.Cursor = Cursor.Parse("TopSide");
-            BottomMiddleButton.Cursor = Cursor.Parse("BottomSide");
-            LeftMiddleButton.Cursor = Cursor.Parse("LeftSide");
-            RightMiddleButton.Cursor = Cursor.Parse("RightSide");
-        
             MainRectangle.Cursor = Cursor.Parse("DragMove");
         }
         
