@@ -473,6 +473,7 @@
                 IconHeight="14"
                 IconMargin="0,0,7,0"
                 IconWidth="14"
+                IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldCropBeEnabled.Value}"
                 IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
                 Text="{Binding Translation.Crop.Value}" />
 
