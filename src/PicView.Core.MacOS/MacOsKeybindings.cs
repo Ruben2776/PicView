@@ -75,7 +75,7 @@ public static class MacOsKeybindings
                                                 "Cmd+T": "NewTab",
                                                 "Cmd+W": "CloseTab",
                                                 "Ctrl+Cmd+Right": "NextArchive",
-                                                "Ctrl+Cmd+Left": "PrevArchive"
+                                                "Ctrl+Cmd+Left": "PrevArchive",
                                                 "Cmd+Q": "Exit",
                                               }
                                               """;
