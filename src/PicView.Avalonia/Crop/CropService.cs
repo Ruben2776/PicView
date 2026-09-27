@@ -11,6 +11,7 @@ using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
+using PicView.Core.Gallery;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Preloading;
@@ -26,6 +27,8 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     private object? _backUpView;
     private bool _couldNavigateBackwards;
     private bool _couldNavigateForwards;
+    private bool _wasGalleryDocked;
+    private GalleryDockPosition _previousDockPosition;
 
     public async Task StartCropControlAsync()
     {
@@ -35,9 +38,11 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         }
         
         _backUpView = tabViewModel.CurrentView.Value;
-        var isDockedGalleryShown = Settings.Gallery.IsGalleryDocked;
+        _wasGalleryDocked = Settings.Gallery.IsGalleryDocked;
+        _previousDockPosition = Settings.Gallery.DockPosition;
+
         // Hide gallery when entering crop mode
-        if (isDockedGalleryShown)
+        if (_wasGalleryDocked)
         {
             // Reset setting before resizing
             Settings.Gallery.IsGalleryDocked = false;
@@ -73,13 +78,8 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         tabViewModel.CanNavigateForwards.Value = false;
         
         vm.TopTitlebarViewModel.CloseDropDownMenu();
-        
-        if (isDockedGalleryShown)
-        {
-            Settings.Gallery.IsGalleryDocked = true;
-        }
 
-        if (tabViewModel.Crop != null)
+        if (tabViewModel.Crop is not null)
         {
             tabViewModel.Crop.CloseCropCommand.Subscribe(_ =>
             {
@@ -124,12 +124,12 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
     public void CloseCropControl()
     {
-        if (Settings.Gallery.IsGalleryDocked)
+        if (_backUpView is not null)
         {
-            WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
+            tabViewModel.CurrentView.Value = _backUpView;
+            _backUpView = null;
         }
-        
-        tabViewModel.CurrentView.Value = _backUpView;
+
         IsCropping = false;
         tabViewModel.UpdateTabTitle();
         
@@ -137,6 +137,16 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         
         tabViewModel.CanNavigateBackwards.Value = _couldNavigateBackwards;
         tabViewModel.CanNavigateForwards.Value = _couldNavigateForwards;
+
+        if (!_wasGalleryDocked)
+        {
+            return;
+        }
+
+        Settings.Gallery.DockPosition = _previousDockPosition;
+        Settings.Gallery.IsGalleryDocked = true;
+        _wasGalleryDocked = false;
+        WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
     }
 
     private async ValueTask PackAndSaveImage()

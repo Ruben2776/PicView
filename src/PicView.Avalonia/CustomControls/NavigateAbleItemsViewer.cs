@@ -29,6 +29,8 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     private IDisposable? _viewportSubscription;
 
+    private bool _isScrollToCenterDeferred;
+
     protected override Type StyleKeyOverride => typeof(NavigateAbleItemsViewer);
 
     public static readonly StyledProperty<int> SelectedItemIndexProperty =
@@ -186,10 +188,12 @@ public class NavigateAbleItemsViewer : ItemsControl
         var viewportWidth = _scrollViewer!.Viewport.Width;
         var viewportHeight = _scrollViewer.Viewport.Height;
 
-        // If viewport is not yet measured, defer until layout pass
+        // If viewport is not yet measured, defer until the ScrollViewer has been laid out.
+        // Re-posting on the dispatcher here spins forever (starving input and layout)
+        // while the gallery is hidden or not yet measured, e.g. when returning from crop mode.
         if (viewportWidth <= 0 && viewportHeight <= 0)
         {
-            Dispatcher.UIThread.Post(ScrollToCenterOfCurrentItemInternal, DispatcherPriority.Render);
+            DeferScrollToCenterUntilMeasured();
             return;
         }
 
@@ -219,6 +223,29 @@ public class NavigateAbleItemsViewer : ItemsControl
         }
 
         _scrollViewer.Offset = new Vector(newX, newY);
+    }
+
+    private void DeferScrollToCenterUntilMeasured()
+    {
+        if (_isScrollToCenterDeferred || _scrollViewer is null)
+        {
+            return;
+        }
+
+        _isScrollToCenterDeferred = true;
+        _scrollViewer.ScrollChanged += OnDeferredScrollChanged;
+    }
+
+    private void OnDeferredScrollChanged(object? sender, ScrollChangedEventArgs e)
+    {
+        if (_scrollViewer is null || (_scrollViewer.Viewport.Width <= 0 && _scrollViewer.Viewport.Height <= 0))
+        {
+            return;
+        }
+
+        _scrollViewer.ScrollChanged -= OnDeferredScrollChanged;
+        _isScrollToCenterDeferred = false;
+        ScrollToCenterOfCurrentItemInternal();
     }
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
