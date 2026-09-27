@@ -220,7 +220,6 @@ public class FileWatcherServiceTests : IDisposable
         public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
         public void Remove(string path) => RemovedPaths.Add(path);
         public void RemoveOwner(uint ownerId) { }
-        public void Clear() { }
         public bool IsEmpty => true;
     }
 

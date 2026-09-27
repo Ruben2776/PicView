@@ -19,14 +19,9 @@ public interface IThumbnailCache
     void Remove(string path);
 
     /// <summary>
-    /// Removes an owner. If a thumbnail has no more owners, it is removed from memory.
+    /// Removes an owner and the owner's thumbnails. If a thumbnail has no more owners, it is removed from memory.
     /// </summary>
     void RemoveOwner(uint ownerId);
-
-    /// <summary>
-    /// Clears the entire cache.
-    /// </summary>
-    void Clear();
 
     bool IsEmpty { get; }
 }

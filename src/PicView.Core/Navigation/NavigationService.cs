@@ -114,7 +114,7 @@ public class NavigationService(
 
             if ((tab.Gallery.IsDockedGalleryVisible.CurrentValue || tab.Gallery.IsGalleryExpanded.CurrentValue) && tab.ThumbnailCache is not null)
             {
-                tab.ThumbnailCache.Clear();
+                tab.ThumbnailCache.RemoveOwner(tab.Id);
                 if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
                 {
 #pragma warning disable MA0042
