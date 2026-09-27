@@ -58,7 +58,6 @@ public static class WindowFunctions
     public static void RegularWindowStartUp(CoreViewModel core, bool settingsExists,
         IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
     {
-        desktop.MainWindow = window;
         StartUpHelper.HandleWindowStartUpSettings(core, settingsExists, window);
 
         StartUpHelper.StartUpMenuOrLastFile(window, core);
@@ -370,7 +369,7 @@ public static class WindowFunctions
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
+            Dispatcher.UIThread.Post(() =>
             {
                 window.Position = new PixelPoint((int)Settings.WindowProperties.Left,
                     (int)Settings.WindowProperties.Top);
@@ -388,7 +387,7 @@ public static class WindowFunctions
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(Set);
+            Dispatcher.UIThread.Post(Set);
         }
 
         return;
@@ -416,7 +415,7 @@ public static class WindowFunctions
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(Set);
+            Dispatcher.UIThread.Post(Set);
         }
 
         return;
@@ -437,7 +436,7 @@ public static class WindowFunctions
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(Set);
+            Dispatcher.UIThread.Post(Set);
         }
 
         return;
@@ -478,33 +477,6 @@ public static class WindowFunctions
         }
     }
 
-    public static void SetWindowSize(Window window, AvaloniaPropertyChangedEventArgs<Size> size,
-        IWindowProperties properties)
-    {
-        if (!size.NewValue.HasValue)
-        {
-            return;
-        }
-
-        if (size.NewValue.Value == size.OldValue.Value)
-        {
-            return;
-        }
-
-        if (size.NewValue.Value.Width < window.MinWidth)
-        {
-            return;
-        }
-
-        if (size.NewValue.Value.Height < window.MinHeight)
-        {
-            return;
-        }
-
-        properties.Width = window.Bounds.Width;
-        properties.Height = window.Bounds.Height;
-    }
-
     #endregion
 
     #region Window Drag and Behavior
@@ -515,14 +487,14 @@ public static class WindowFunctions
         var currentScreen = ScreenHelper.ScreenSize;
 
         var screen = window.Screens.ScreenFromVisual(window);
-        if (screen == null)
+        if (screen is null)
         {
             return;
         }
 
         if (e.ClickCount == 2 && e.GetCurrentPoint(window).Properties.IsLeftButtonPressed)
         {
-            platformWindowService.MaximizeRestore();
+            _ = platformWindowService.MaximizeRestore();
             return;
         }
 

@@ -95,6 +95,14 @@ public static class QuickLoad
         }
         core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.CloseMenus();
         core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                desktop.MainWindow = mainWindow;
+            }
+        });
         
         return;
 
@@ -223,13 +231,10 @@ public static class QuickLoad
                             return;
                         }
                         WindowResizing.SetSize(size.Value, WindowResizeReason.Application, mainWindow, vm);
-                        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                        {
-                            desktop.MainWindow = mainWindow;
-                        }
 
                         if (Settings.WindowProperties.AutoFit)
                         {
+                            mainWindow.SizeToContent = SizeToContent.Manual;
                             mainWindow.Width = size.Value.WindowWidth;
                             mainWindow.Height = size.Value.WindowHeight;
                         }
@@ -239,10 +244,11 @@ public static class QuickLoad
                         {
                             Dispatcher.UIThread.Post(() =>
                             {
+                                mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                                 mainWindow.Width = mainWindow.Height = double.NaN;
                             }, DispatcherPriority.Render);
                         }
-                    }, DispatcherPriority.Loaded);
+                    }, DispatcherPriority.Send);
                 }
             }
         }

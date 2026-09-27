@@ -28,22 +28,22 @@ public static class SettingsUpdater
         ServiceHelper.SetGalleryLoader();
         _ = Task.Run(async () =>
         {
-            await LanguageUpdater.UpdateLanguageAsync(vm.Translation, settingsExists).ConfigureAwait(false);
             vm.TitlebarHeight.Value = Settings.WindowProperties.Fullscreen
-                                           || !Settings.UIProperties.ShowInterface
+                                      || !Settings.UIProperties.ShowInterface
                 ? 0
                 : SizeDefaults.MainTitlebarHeight;
             vm.BottombarHeight.Value = Settings.WindowProperties.Fullscreen
-                                                  || !Settings.UIProperties.ShowInterface
+                                       || !Settings.UIProperties.ShowInterface
                 ? 0
                 : SizeDefaults.BottombarHeight;
             vm.IsSideBySide.Value = Settings.ImageScaling.ShowImageSideBySide;
             vm.IsUIShown.Value  = Settings.UIProperties.ShowInterface;
             vm.IsTopToolbarShown.Value  = Settings.UIProperties.ShowInterface;
             vm.IsBottomToolbarShown.Value   = Settings.UIProperties.ShowBottomNavBar &&
-                                        Settings.UIProperties.ShowInterface;
+                                              Settings.UIProperties.ShowInterface;
             vm.IsFullscreen.Value  = Settings.WindowProperties.Fullscreen;
             vm.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
+            await LanguageUpdater.UpdateLanguageAsync(vm.Translation, settingsExists).ConfigureAwait(false);
         });
     }
     
