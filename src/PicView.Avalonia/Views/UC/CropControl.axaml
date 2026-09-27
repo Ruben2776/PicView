@@ -24,7 +24,11 @@
     </UserControl.Styles>
     <UserControl.ContextMenu>
         <ContextMenu x:Name="CropContextMenu">
-            <customControls:StyledMenuItem Command="{CompiledBinding Crop.CropImageCommand}" Header="{CompiledBinding ParentWindowContext.Translation.Crop.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem
+                Command="{CompiledBinding Crop.CropImageCommand}"
+                Header="{CompiledBinding ParentWindowContext.Translation.Crop.Value,
+                                         Mode=OneWay}"
+                HotKey="Enter">
                 <MenuItem.Icon>
                     <Image
                         Width="12"

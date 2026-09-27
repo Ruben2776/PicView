@@ -75,7 +75,7 @@ public static class MainKeyboardShortcuts
         IsKeyHeldDown = _keyRepeatCount > KeyRepeatThreshold;
 
         // Handle special cases before processing shortcuts
-        if (await HandleSpecialCases(e, mainWindowViewModel, mainWindow))
+        if (await HandleSpecialCases(e, mainWindowViewModel, mainWindow).ConfigureAwait(false))
         {
             return;
         }
@@ -87,7 +87,7 @@ public static class MainKeyboardShortcuts
         }
 
         // Handle registered shortcuts
-        await ExecuteShortcutIfRegistered(mainWindowViewModel);
+        await ExecuteShortcutIfRegistered(mainWindowViewModel).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -97,14 +97,14 @@ public static class MainKeyboardShortcuts
     /// <param name="mainWindowViewModel">The main window view model.</param>
     public static async ValueTask MainWindow_KeysUpAsync(KeyEventArgs e, MainWindowViewModel? mainWindowViewModel)
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (!OperatingSystem.IsMacOS())
         {
             if (CurrentKeys?.Key is Key.LeftAlt or Key.RightAlt)
             {
                 mainWindowViewModel.TopTitlebarViewModel.ToggleMenu();
             }
         }
-        await mainWindowViewModel.Mapper.StopRepeatedNavigation();
+        await mainWindowViewModel.Mapper.StopRepeatedNavigation().ConfigureAwait(false);
         UpdateModifierState(e.Key, false);
         Reset();
     }
@@ -127,7 +127,7 @@ public static class MainKeyboardShortcuts
             Key.LeftAlt or Key.RightAlt => isDown
                 ? CurrentModifiers | KeyModifiers.Alt
                 : CurrentModifiers & ~KeyModifiers.Alt,
-            Key.LWin or Key.RWin when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => isDown
+            Key.LWin or Key.RWin when OperatingSystem.IsMacOS() => isDown
                 ? CurrentModifiers | KeyModifiers.Meta
                 : CurrentModifiers & ~KeyModifiers.Meta,
             _ => CurrentModifiers
@@ -174,9 +174,20 @@ public static class MainKeyboardShortcuts
         {
             if (vm.WindowTabs.ActiveTab.CurrentValue.CropService.IsCropping)
             {
-                if (e.Key is Key.Escape)
+                switch (e.Key)
                 {
-                    vm.WindowTabs.ActiveTab.CurrentValue.CropService.CloseCropControl();
+                    case Key.Escape:
+                        vm.WindowTabs.ActiveTab.CurrentValue.CropService.CloseCropControl();
+                        break;
+                    case Key.Enter:
+                        await vm.WindowTabs.ActiveTab.CurrentValue.CropService.SaveCropAsync().ConfigureAwait(false);
+                        break;
+                    case Key.C:
+                        if (e.KeyModifiers is KeyModifiers.Control)
+                        {
+                            await vm.WindowTabs.ActiveTab.CurrentValue.CropService.CopyCroppedImageAsync().ConfigureAwait(false);
+                        }
+                        break;
                 }
                 return true;
             }
@@ -220,7 +231,7 @@ public static class MainKeyboardShortcuts
             var animatedPopUp = mainWindow.UIHelper.GetMainView.MainPanel.Children.OfType<AnimatedPopUp>().FirstOrDefault();
             if (animatedPopUp is not null)
             {
-                await animatedPopUp.AnimatedClosing();
+                await animatedPopUp.AnimatedClosing().ConfigureAwait(false);
             }
 
             return true;
@@ -255,7 +266,7 @@ public static class MainKeyboardShortcuts
             {
                 if (vm.Mapper != null)
                 {
-                    await vm.Mapper.Close();
+                    await vm.Mapper.Close().ConfigureAwait(false);
                 }
             }
         }

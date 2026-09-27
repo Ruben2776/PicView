@@ -93,12 +93,12 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
             
             tabViewModel.Crop.CropImageCommand.SubscribeAwait(async (_, _) =>
             {
-                await PackAndSaveImage().ConfigureAwait(false);
+                await PickAndSaveImage().ConfigureAwait(false);
             },DebugHelper.LogError(nameof(CropService), nameof(CloseCropControl)));
         }
     }
 
-    private async ValueTask CopyCroppedImageAsync()
+    public async ValueTask CopyCroppedImageAsync()
     {
         if (GetCroppedImage() is Bitmap bitmap)
         {
@@ -149,7 +149,13 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
     }
 
-    private async ValueTask PackAndSaveImage()
+    public async Task SaveCropAsync()
+    {
+        var (fileName, fileInfo, bitmap) = PrepareCropData();
+        await SaveCroppedImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
+    }
+
+    private async ValueTask PickAndSaveImage()
     {
         if (tabViewModel.Crop is null)
         {
@@ -158,22 +164,26 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         
         var (fileName, fileInfo, bitmap) = PrepareCropData();
         
-        var saveFileDialog = await FilePicker.PickFileForSavingAsync(fileName).ConfigureAwait(false);
-        if (saveFileDialog is null)
+        var saveFileDialogResult = await FilePicker.PickFileForSavingAsync(fileName).ConfigureAwait(false);
+        if (saveFileDialogResult is null)
         {
             return;
         }
+        await SaveCroppedImage(saveFileDialogResult, fileInfo, bitmap).ConfigureAwait(false);
+    }
 
+    private async Task SaveCroppedImage(string fileName, FileInfo fileInfo, Bitmap bitmap)
+    {
         var vm = await Dispatcher.UIThread.InvokeAsync(() => mainWindow.DataContext as MainWindowViewModel);
         if (vm is null)
         {
             return;
         }
         vm.IsLoadingIndicatorShown.Value = true;
-        var newlyCroppedImage = await SaveImage(saveFileDialog, fileInfo, bitmap).ConfigureAwait(false);
-        if (string.Equals(tabViewModel.FileInfo.Value.FullName, saveFileDialog, StringComparison.Ordinal))
+        var newlyCroppedImage = await SaveImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
+        if (string.Equals(tabViewModel.FileInfo.Value.FullName, fileName, StringComparison.Ordinal))
         {
-            tabViewModel.ImageIterator.Cache.DeleteFromCache(saveFileDialog);
+            tabViewModel.ImageIterator.Cache.DeleteFromCache(fileName);
             var newModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
             tabViewModel.ImageIterator.Cache.TryAdd(tabViewModel.Id, tabViewModel.ImageIterator.CurrentIndex, new PreLoadValue(newModel), tabViewModel.ImageIterator.Files.Count, false, out _);
             tabViewModel.FileInfo.Value = fileInfo;
