@@ -74,7 +74,6 @@ public static class GetThumbnails
             {
                 return null;
             }
-
             try
             {
                 return await GetSkBitmapThumbAsync(fileInfo, height).ConfigureAwait(false);
@@ -87,6 +86,9 @@ public static class GetThumbnails
         }
     }
 
+    /// <summary>
+    /// Tries to get shell thumbnail or exif thumbnail if available, otherwise returns null.
+    /// </summary>
     public static Bitmap? GetThumbQuick(FileInfo fileInfo)
     {
         if (fileInfo is null)
@@ -97,11 +99,7 @@ public static class GetThumbnails
             Settings.Gallery.DockedGalleryItemSize : Settings.Gallery.ExpandedGalleryItemSize;
         if (fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
         {
-            var shellThumb = GetShellThumb(fileInfo.FullName, 0, (int)height);
-            if (shellThumb is not null)
-            {
-                return shellThumb;
-            }
+            return GetShellThumb(fileInfo.FullName, 0, (int)height) ?? GetExifThumb(fileInfo.FullName);
         }
         return GetExifThumb(fileInfo.FullName);
     }
@@ -131,7 +129,7 @@ public static class GetThumbnails
             return null;
         }
         thumbnail.AutoOrient();
-        return thumbnail?.ToWriteableBitmap();
+        return thumbnail.ToWriteableBitmap();
     }
 
     /// <summary>
