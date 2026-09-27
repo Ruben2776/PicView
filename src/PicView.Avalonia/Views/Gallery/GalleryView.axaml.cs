@@ -8,7 +8,6 @@ using ObservableCollections;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.DebugTools;
 using PicView.Core.Navigation;
-using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -117,18 +116,10 @@ public partial class GalleryView : GalleryAnimationControl
                 }
                 break;
             case NotifyCollectionChangedAction.Reset:
-                var gallery = tab.Gallery;
-                var currentItems = gallery.GalleryItems.ToArray();
                 Dispatcher.UIThread.Invoke(() =>
                 {
                     _galleryItems.Clear();
-                    if (currentItems.Length <= 0)
-                    {
-                        return;
-                    }
-
-                    GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                }, DispatcherPriority.Background, cancellationToken);
+                }, DispatcherPriority.Render, CancellationToken.None);
                 break;
             case NotifyCollectionChangedAction.Remove:
                 if (e.IsSingleItem)

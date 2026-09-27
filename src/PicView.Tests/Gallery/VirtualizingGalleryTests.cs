@@ -185,4 +185,46 @@ public class VirtualizingGalleryTests
             window.Close();
         }));
     }
+
+    [Fact]
+    public void ResetOrItemReplacement_UpdatesFirstItemContainer()
+    {
+        RunWithDispatcher(Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var gallery = new VirtualizingGallery
+            {
+                ItemHeight = 100,
+                Orientation = Orientation.Horizontal
+            };
+
+            var items = new System.Collections.ObjectModel.ObservableCollection<string> { "Old_Dir_Item_0", "Old_Dir_Item_1" };
+            var viewer = new NavigateAbleItemsViewer
+            {
+                ItemsPanel = new FuncTemplate<Panel?>(() => gallery),
+                ItemsSource = items
+            };
+
+            var window = new Window { Width = 500, Height = 250, Content = viewer };
+            window.Show();
+
+            Assert.NotEmpty(gallery.RealizedItems);
+            var firstRealized = gallery.RealizedItems[0];
+            Assert.Equal("Old_Dir_Item_0", firstRealized.Element.DataContext);
+
+            // Simulate folder change: Clear and Repopulate
+            items.Clear();
+            window.UpdateLayout();
+            Assert.Empty(gallery.RealizedItems);
+
+            items.Add("New_Dir_Item_0");
+            items.Add("New_Dir_Item_1");
+            window.UpdateLayout();
+
+            Assert.NotEmpty(gallery.RealizedItems);
+            var newFirstRealized = gallery.RealizedItems[0];
+            Assert.Equal("New_Dir_Item_0", newFirstRealized.Element.DataContext);
+
+            window.Close();
+        }));
+    }
 }

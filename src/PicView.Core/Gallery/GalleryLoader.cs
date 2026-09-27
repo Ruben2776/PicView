@@ -18,6 +18,11 @@ public static class GalleryLoader
             return;
         }
 
+        if (tab.Gallery.GalleryItems.Count > 0)
+        {
+            tab.Gallery.GalleryItems.Clear();
+        }
+
         tab.Gallery.LoadingState = GalleryLoadingState.Loading;
         _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
 
@@ -127,8 +132,8 @@ public static class GalleryLoader
     {
         tab.Gallery.LoadingState = GalleryLoadingState.Restarting;
         tab.Gallery.GalleryItems.Clear();
-        _cts.Cancel();
-        _cts.Dispose();
+        _cts?.Cancel();
+        _cts?.Dispose();
         _cts = null;
         LoadGallery(tab, files, thumbnailLoader, thumbnailCache, ct);
     }
