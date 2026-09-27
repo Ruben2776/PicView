@@ -88,7 +88,7 @@ public static class UIHelper
         }
         else
         {
-            WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
+            WindowFunctions.CenterWindowOnScreen(mainWindow);
         }
     }
 
