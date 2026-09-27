@@ -70,7 +70,20 @@ public static class GetThumbnails
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(GetThumbnails), nameof(GetThumbAsync), e);
-            return null;
+            if (!fileInfo.IsCommon())
+            {
+                return null;
+            }
+
+            try
+            {
+                return await GetSkBitmapThumbAsync(fileInfo, height).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                DebugHelper.LogDebug(nameof(GetThumbnails), nameof(GetThumbAsync), exception);
+                return null;
+            }
         }
     }
 
