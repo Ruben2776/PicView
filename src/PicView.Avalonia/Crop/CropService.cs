@@ -87,12 +87,12 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
             
             tabViewModel.Crop.CopyCropImageCommand.SubscribeAwait(async (_, _) =>
             {
-                await CopyCroppedImageAsync();
+                await CopyCroppedImageAsync().ConfigureAwait(false);
             },DebugHelper.LogError(nameof(CropService), nameof(CloseCropControl)));
             
             tabViewModel.Crop.CropImageCommand.SubscribeAwait(async (_, _) =>
             {
-                await PackAndSaveImage();
+                await PackAndSaveImage().ConfigureAwait(false);
             },DebugHelper.LogError(nameof(CropService), nameof(CloseCropControl)));
         }
     }
@@ -102,7 +102,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         if (GetCroppedImage() is Bitmap bitmap)
         {
             await Task.WhenAll(ClipboardImageOperations.CopyImageToClipboard(bitmap),
-                AnimationsHelper.CopyAnimation(mainWindow));
+                AnimationsHelper.CopyAnimation(mainWindow)).ConfigureAwait(false);
         }
     }
 
@@ -147,19 +147,19 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         
         var (fileName, fileInfo, bitmap) = PrepareCropData();
         
-        var saveFileDialog = await FilePicker.PickFileForSavingAsync(fileName);
+        var saveFileDialog = await FilePicker.PickFileForSavingAsync(fileName).ConfigureAwait(false);
         if (saveFileDialog is null)
         {
             return;
         }
         
-        await SaveImage(saveFileDialog, fileInfo, bitmap);
+        await SaveImage(saveFileDialog, fileInfo, bitmap).ConfigureAwait(false);
         
         CloseCropControl();
 
-        if (tabViewModel.FileInfo.Value.FullName == saveFileDialog)
+        if (string.Equals(tabViewModel.FileInfo.Value.FullName, saveFileDialog, StringComparison.Ordinal))
         {
-            await tabViewModel.ImageIterator.ReloadAsync();
+            await tabViewModel.ImageIterator.ReloadAsync().ConfigureAwait(false);
         }
     }
 
@@ -183,15 +183,15 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
     private async ValueTask SaveImage(string saveFilePath, FileInfo? fileInfo, Bitmap? bitmap)
     {
-        if (bitmap != null)
+        if (bitmap is not null)
         {
             bitmap.Save(saveFilePath, PngBitmapEncoderOptions.Default);
             return;
         }
 
-        if (fileInfo != null && tabViewModel.Crop != null)
+        if (fileInfo is not null && tabViewModel.Crop is not null)
         {
-            await SaveWithMagickImage(tabViewModel.Crop, saveFilePath, fileInfo);
+            await SaveWithMagickImage(tabViewModel.Crop, saveFilePath, fileInfo).ConfigureAwait(false);
         }
     }
 
@@ -205,6 +205,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         var geometry = new MagickGeometry(x, y, width, height);
 
         image.Crop(geometry);
-        await image.WriteAsync(saveFilePath);
+        await image.WriteAsync(saveFilePath).ConfigureAwait(false);
     }
 }
