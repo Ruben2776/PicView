@@ -146,7 +146,7 @@ public static class StartUpHelper
                 Debug.Assert(core.PlatformService != null);
                 core.MainWindows.ActiveWindow.Value?.Mapper = new FunctionsMapper(vm, mainWindow);
                 FileHistoryManager.Initialize();
-                HandleWindowControlSettings(core, desktop);
+                HandleWindowControlSettings(core, mainWindow);
                 vm.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);
             });
             _ = Task.Run(() => KeybindingManager.LoadKeybindings(core.PlatformService));
@@ -166,13 +166,13 @@ public static class StartUpHelper
         UIHelper.SetCtrlToZoomImage(vm);
     }
 
-    private static void HandleWindowControlSettings(CoreViewModel vm, IClassicDesktopStyleApplicationLifetime desktop)
+    private static void HandleWindowControlSettings(CoreViewModel vm, MainWindow mainWindow)
     {
         vm.MainWindows.ActiveWindow.CurrentValue.IsScrollingEnabled.Value = Settings.Zoom.ScrollEnabled;
 
         if (Settings.WindowProperties.TopMost)
         {
-            Dispatcher.UIThread.Invoke(() => { desktop.MainWindow.Topmost = true; });
+            Dispatcher.UIThread.Invoke(() => { mainWindow.Topmost = true; });
         }
     }
 

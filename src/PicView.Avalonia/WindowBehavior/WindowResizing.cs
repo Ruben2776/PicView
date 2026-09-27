@@ -19,8 +19,8 @@ public static class WindowResizing
         var oldSize = size.OldValue.Value;
         var newSize = size.NewValue.Value;
         
-        if (!size.OldValue.HasValue || !size.NewValue.HasValue || 
-            size.Sender != window || oldSize.Width is 0 || oldSize.Height is 0 ||
+        if (!size.OldValue.HasValue || !size.NewValue.HasValue ||
+            !Equals(size.Sender, window) || oldSize.Width is 0 || oldSize.Height is 0 ||
             newSize.Width is 0 || newSize.Height is 0)
         {
             return false;
