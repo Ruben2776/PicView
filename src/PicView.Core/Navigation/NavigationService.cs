@@ -166,7 +166,7 @@ public class NavigationService(
         }
         var iterator = tab.ImageIterator;
 
-        if (iterator.Files is null || iterator.Files.Count is 0)
+        if (iterator?.Files is null || iterator.Files.Count is 0)
         {
             // TODO: Figure out way to share file list, if another tab is already in the same directory
             await Repopulate().ConfigureAwait(false);
