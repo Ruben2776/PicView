@@ -95,6 +95,10 @@ public static class UpdateImage
         {
             imageViewer.ResetZoomSlim();
             tabViewModel.RotationAngle.Value = 0;
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                imageViewer.ResetFlip();
+            }, DispatcherPriority.Send);
         }
         
         if (tabViewModel.Model.ImageType is ImageType.Svg)

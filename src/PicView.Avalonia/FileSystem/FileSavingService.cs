@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
@@ -19,25 +16,34 @@ public class FileSavingService(FilePickerService? filePickerService = null)
     {
         bool isSaved;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        bool isCurrentImage;
         if (tab.FileInfo?.CurrentValue is null)
         {
             // If the viewed pic is not a file, open file picker
             isSaved = await SaveFileAs(vm).ConfigureAwait(false);
+            isCurrentImage = false;
         }
         else
         {
             isSaved = await SaveFileAsync(tab.FileInfo.CurrentValue.FullName,
                 tab.FileInfo.CurrentValue.FullName, vm).ConfigureAwait(false);
+            isCurrentImage = true;
         }
-        
-        if (isSaved)
+
+        if (!isSaved)
         {
-            tab.ImageIterator.Cache.DeleteFromCache(tab.FileInfo.CurrentValue.FullName);
-            await tab.ImageIterator.ReloadAsync(false);
-            // TODO: Add visual design to tell whether file was saved
+            return false;
         }
-        
-        return isSaved;
+
+        if (!isCurrentImage)
+        {
+            return true;
+        }
+
+        tab.ImageIterator.Cache.DeleteFromCache(tab.FileInfo.CurrentValue.FullName);
+        // TODO: Add visual design to tell whether file was saved
+
+        return true;
     }
 
     public async ValueTask<bool> SaveFileAs(MainWindowViewModel vm)
@@ -57,33 +63,25 @@ public class FileSavingService(FilePickerService? filePickerService = null)
     }
 
     public async ValueTask<bool> SaveFileAsync(string? filename, string destination, MainWindowViewModel vm)
-    {
-        if (Application.Current is null)
-        {
-            return false;
-        }
-
+    { 
         var core = Dispatcher.UIThread.CheckAccess()
             ? Application.Current.DataContext as CoreViewModel
             : await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-        if (core is null)
-        {
-            return false;
-        }
+        
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         var angle = tab.RotationAngle.CurrentValue;
         var isFlipped = tab.ScaleX.CurrentValue is -1;
         if (core.Effects?.ProcessedImage is { } magick)
         {
-            return await SaveProcessedMagickImage();
+            return await SaveProcessedMagickImage().ConfigureAwait(false);
         }
         
         if (!string.IsNullOrWhiteSpace(filename))
         {
-            return await SaveImageFromFile();
+            return await SaveImageFromFile().ConfigureAwait(false);
         }
         
-        return await SaveBitmap();
+        return await SaveBitmap().ConfigureAwait(false);
         
         async ValueTask<bool> SaveImageFromFile()
         {
@@ -99,8 +97,7 @@ public class FileSavingService(FilePickerService? filePickerService = null)
                 false,
                 false,
                 true,
-                isFlipped);
-            ResetFlipIfNeeded();
+                isFlipped).ConfigureAwait(false);
             return isSaved;
         }
         
@@ -123,14 +120,16 @@ public class FileSavingService(FilePickerService? filePickerService = null)
 
                         if (string.IsNullOrWhiteSpace(filename)) return false;
 
-                        await using var stream = FileStreamUtils.GetOptimizedFileStream(new FileInfo(filename), true);
-                        bitmap.Save(stream, PngBitmapEncoderOptions.Default);
-                        ResetFlipIfNeeded();
+                        var stream = FileStreamUtils.GetOptimizedFileStream(new FileInfo(filename), true);
+                        await using (stream.ConfigureAwait(false))
+                        {
+                            bitmap.Save(stream, PngBitmapEncoderOptions.Default);
+                        }
                         break;
                     }
                     case ImageType.Svg:
                         // TODO convert svg to bitmap and save
-                        return await SaveImageFromFile();
+                        return await SaveImageFromFile().ConfigureAwait(false);
                     default:
                         throw new InvalidOperationException("No bitmap available for saving.");
                 }
@@ -165,13 +164,12 @@ public class FileSavingService(FilePickerService? filePickerService = null)
                         {
                             magick.Flop();
                         }
-                        await magick.WriteAsync(destination);
-                        ResetFlipIfNeeded();
+                        await magick.WriteAsync(destination).ConfigureAwait(false);
                         break;
                     }
                     case ImageType.Svg:
                         // TODO convert svg to bitmap and save
-                        return await SaveImageFromFile();
+                        return await SaveImageFromFile().ConfigureAwait(false);
                     default:
                         throw new InvalidOperationException("No bitmap available for saving.");
                 }
@@ -183,16 +181,6 @@ public class FileSavingService(FilePickerService? filePickerService = null)
             }
         
             return true;
-        }
-        
-        void ResetFlipIfNeeded()
-        {
-            if (!isFlipped)
-            {
-                return;
-            }
-            // Revert flip after saving it (so that it does not flip the already flipped image again)
-            tab.ScaleX.Value = 1;
         }
     }
 }

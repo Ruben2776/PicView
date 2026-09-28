@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -45,7 +44,7 @@ public class RotationTransformer(LayoutTransformControl imageLayoutTransformCont
         
         WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && Settings.WindowProperties.Fullscreen)
+        if (OperatingSystem.IsMacOS() && Settings.WindowProperties.Fullscreen)
         {
             // Sometimes the window is off-center after rotating on macOS fullscreen view
             WindowFunctions.CenterWindowOnScreen();
@@ -113,5 +112,12 @@ public class RotationTransformer(LayoutTransformControl imageLayoutTransformCont
         vm.WindowTabs.ActiveTab.CurrentValue.ScaleX.Value = newScaleX;
         vm.Translation.IsFlipped.Value =
             newScaleX is -1 ? TranslationManager.Translation.Flip : TranslationManager.Translation.Unflip;
+    }
+    
+    public void ResetFlip()
+    {
+        _scaleTransform.ScaleX = 1;
+        vm.WindowTabs.ActiveTab.CurrentValue.ScaleX.Value = 1;
+        vm.Translation.IsFlipped.Value = TranslationManager.Translation.Unflip;
     }
 }

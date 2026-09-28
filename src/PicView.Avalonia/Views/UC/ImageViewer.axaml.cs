@@ -373,6 +373,7 @@ public partial class ImageViewer : UserControl, IDisposable
     public void Rotate(bool clockWise) => _imageTransformer?.Rotate(clockWise);
     public void Rotate(int angle) => _imageTransformer?.Rotate(angle);
     public void Flip(bool animate) => _imageTransformer?.Flip(animate);
+    public void ResetFlip() => _imageTransformer?.ResetFlip();
         
     #endregion
 
