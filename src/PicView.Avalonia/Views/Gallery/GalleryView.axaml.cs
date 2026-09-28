@@ -68,7 +68,11 @@ public partial class GalleryView : GalleryAnimationControl
 
         if (GalleryItemsControl.ItemsPanelRoot is VirtualizingGallery galleryItemsPanel)
         {
-            galleryItemsPanel.InvalidateMeasure();
+            RunOnUI(() =>
+            {
+                galleryItemsPanel.InvalidateMeasure();
+            }, DispatcherPriority.Render);
+
         }
     }
 
