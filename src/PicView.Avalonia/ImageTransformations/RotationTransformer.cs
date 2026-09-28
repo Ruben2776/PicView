@@ -116,7 +116,7 @@ public class RotationTransformer(LayoutTransformControl imageLayoutTransformCont
     
     public void ResetFlip()
     {
-        _scaleTransform.ScaleX = 1;
+        _scaleTransform?.ScaleX = 1;
         vm.WindowTabs.ActiveTab.CurrentValue.ScaleX.Value = 1;
         vm.Translation.IsFlipped.Value = TranslationManager.Translation.Unflip;
     }

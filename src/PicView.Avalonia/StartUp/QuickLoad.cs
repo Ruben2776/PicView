@@ -371,19 +371,20 @@ public static class QuickLoad
 
     private static bool CheckIfGalleryIsNeeded(CoreViewModel core)
     {
+        var galleryViewModel = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery;
         if (Settings.Gallery.IsGalleryDocked)
         {
             if (!Settings.UIProperties.ShowInterface && !Settings.Gallery.ShowDockedGalleryInHiddenUI)
             {
-                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked
-                    .Value = false;
+                galleryViewModel.IsGalleryDocked.Value = false;
                 return false;
             }
             if (Settings.Gallery.DockPosition is GalleryDockPosition.Closed)
             {
                 Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
-            }
 
+            }
+            galleryViewModel.ActiveGalleryMode.Value = GalleryMode.DockedNoAnimation;
             return true;
         }
         Settings.Gallery.DockPosition = GalleryDockPosition.Closed;

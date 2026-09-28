@@ -45,42 +45,24 @@ public class GalleryViewModel : IDisposable
         }
 
         Observable.EveryValueChanged(gallery, g => g.IsGalleryDocked)
-        .Subscribe(isDocked =>
-        {
-            if (isDocked && ActiveGalleryMode.Value is GalleryMode.Closed)
-            {
-                if (!Settings.UIProperties.ShowInterface && !Settings.Gallery.ShowDockedGalleryInHiddenUI)
-                {
-                    ActiveGalleryMode.Value = GalleryMode.Closed;
-                }
-                else
-                {
-                    ActiveGalleryMode.Value = GalleryMode.Docked;
-                }
-                
-            }
-            else if (!isDocked && ActiveGalleryMode.Value == GalleryMode.Docked)
-            {
-                ActiveGalleryMode.Value = GalleryMode.Closed;
-            }
-        }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
-        .AddTo(ref _disposables);
+            .Subscribe(SetActiveGallery, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
+            .AddTo(ref _disposables);
 
         Observable.EveryValueChanged(gallery, g => g.ItemSpacing)
-        .Subscribe(x =>
-        {
-            ItemSpacing.Value = x;
-        }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
-        .AddTo(ref _disposables);
+            .Subscribe(x =>
+            {
+                ItemSpacing.Value = x;
+            }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
+            .AddTo(ref _disposables);
 
         Observable.EveryValueChanged(gallery, g => g.LineSpacing)
-        .Subscribe(x =>
-        {
-            LineSpacing.Value = x;
-        }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
-        .AddTo(ref _disposables);
+            .Subscribe(x =>
+            {
+                LineSpacing.Value = x;
+            }, DebugHelper.LogError(nameof(GalleryViewModel), nameof(Initialize)))
+            .AddTo(ref _disposables);
 
-        ActiveGalleryMode.Subscribe(mode =>
+        ActiveGalleryMode.Skip(1).Subscribe(mode =>
         {
             IsGalleryExpanded.Value = mode == GalleryMode.Expanded;
             IsDockedGalleryVisible.Value = mode == GalleryMode.Docked;
@@ -176,6 +158,29 @@ public class GalleryViewModel : IDisposable
     public void Navigate(NavigateTo direction)
     {
         NavigateGalleryCommand.Execute(direction);
+    }
+    
+    public void SetActiveGallery(bool isDocked)
+    {
+        switch (isDocked)
+        {
+            case true when ActiveGalleryMode.Value is GalleryMode.Closed:
+            {
+                if (!Settings.UIProperties.ShowInterface && !Settings.Gallery.ShowDockedGalleryInHiddenUI)
+                {
+                    ActiveGalleryMode.Value = GalleryMode.Closed;
+                }
+                else
+                {
+                    ActiveGalleryMode.Value = GalleryMode.Docked;
+                }
+
+                break;
+            }
+            case false when ActiveGalleryMode.Value is GalleryMode.Docked:
+                ActiveGalleryMode.Value = GalleryMode.Closed;
+                break;
+        }
     }
     
     public void Dispose()

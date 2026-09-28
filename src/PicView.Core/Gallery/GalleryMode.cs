@@ -4,5 +4,7 @@ public enum GalleryMode
 {
     Closed,
     Docked,
-    Expanded
+    Expanded,
+    
+    DockedNoAnimation
 }

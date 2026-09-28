@@ -205,12 +205,16 @@ public class GalleryAnimationControl : UserControl
 
             switch (oldMode, newMode)
             {
+                case (GalleryMode.Closed, GalleryMode.DockedNoAnimation): ClosedToDockedNoAnim(); break;
                 case (GalleryMode.Closed, GalleryMode.Docked): await ClosedToDocked().ConfigureAwait(false); break;
                 case (GalleryMode.Closed, GalleryMode.Expanded): await ClosedToExpanded().ConfigureAwait(false); break;
+                
                 case (GalleryMode.Docked, GalleryMode.Expanded): await DockedToExpanded().ConfigureAwait(false); break;
                 case (GalleryMode.Docked, GalleryMode.Closed): await DockedToClosed().ConfigureAwait(false); break;
+                
                 case (GalleryMode.Expanded, GalleryMode.Docked): await ExpandedToDocked().ConfigureAwait(false); break;
                 case (GalleryMode.Expanded, GalleryMode.Closed): await ExpandedToClosed().ConfigureAwait(false); break;
+                
                 default: UpdateLayoutForCurrentState(); break;
             }
         }
@@ -510,6 +514,40 @@ public class GalleryAnimationControl : UserControl
 
     #region Animations
 
+    private void ClosedToDockedNoAnim()
+    {
+        if (!Settings.Gallery.IsGalleryDocked)
+        {
+            return;
+        }
+
+        var dock = Settings.Gallery.DockPosition;
+        IsVisible = true;
+        SetDockedLayoutCore(dock, true);
+        SetDockedThumbPosition(dock);
+
+        if (IsHorizontalDock(dock))
+        {
+            Height = GetDockedSize(dock);
+            Width = double.NaN;
+        }
+        else
+        {
+            Width = GetDockedSize(dock);
+            Height = double.NaN;
+        }
+        
+        Dispatcher.UIThread.Post(() =>
+        {
+            _viewer.ScrollToCenterOfCurrentItem();
+        }, DispatcherPriority.Render);
+
+        if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
+        {
+            WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+        }
+    }
+
     private async Task ClosedToDocked()
     {
         if (!Settings.Gallery.IsGalleryDocked)
@@ -620,14 +658,10 @@ public class GalleryAnimationControl : UserControl
         _itemsPanel.WrapHeightOverride = double.NaN;
         _itemsPanel.InvalidateMeasure();
 
-        if (OperatingSystem.IsMacOS())
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                // Mac doesn't want to scroll to center for some reason
-                _viewer.ScrollToCenterOfCurrentItem();
-            }, DispatcherPriority.Render);
-        }
+            _viewer.ScrollToCenterOfCurrentItem();
+        }, DispatcherPriority.Render);
     }
 
     private async Task ExpandedToDocked()

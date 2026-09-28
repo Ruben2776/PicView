@@ -34,14 +34,15 @@ public class FileSavingService(FilePickerService? filePickerService = null)
         {
             return false;
         }
-
+        
+        // TODO: Add visual design to tell whether file was saved
+        
         if (!isCurrentImage)
         {
             return true;
         }
 
         tab.ImageIterator.Cache.DeleteFromCache(tab.FileInfo.CurrentValue.FullName);
-        // TODO: Add visual design to tell whether file was saved
 
         return true;
     }
