@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -452,11 +451,8 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 FilePicker.SelectDirectory, FilePicker.SelectFile, 
                 core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.FileInfo?.CurrentValue ?? null,
                 core.PlatformService.GetFiles);
-            if (core.BatchResize.Config is null)
-            {
-                core.BatchResize.Config = new BatchResizeWindowConfig();
-                await core.BatchResize.Config.LoadAsync().ConfigureAwait(false);
-            }
+            core.BatchResize.Config = new BatchResizeWindowConfig();
+            await core.BatchResize.Config.LoadAsync().ConfigureAwait(false);
         
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
