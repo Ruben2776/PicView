@@ -20,7 +20,6 @@ using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
-using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
 
@@ -221,18 +220,26 @@ public static class StartUpHelper
 
         void ShowStartUpMenu()
         {
-            var vm = core.MainWindows.ActiveWindow.CurrentValue;
-            var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-            tab.ParentWindowContext = vm;
-            var startUpMenu = new StartUpMenu
+            Dispatcher.UIThread.Post(() =>
             {
-                Buttons =
+                var vm = core.MainWindows.ActiveWindow.CurrentValue;
+                var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+                tab.ParentWindowContext = vm;
+                var startUpMenu = new StartUpMenu
                 {
-                    DataContext = tab
+                    Buttons =
+                    {
+                        DataContext = tab
+                    }
+                };
+                tab.CurrentView.Value = startUpMenu;
+                mainWindow.Show();
+                if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                {
+                    desktop.MainWindow = mainWindow;
                 }
-            };
-            tab.CurrentView.Value = startUpMenu;
-            mainWindow.Show();
+            }, DispatcherPriority.Send);
+
         }
     }
 
