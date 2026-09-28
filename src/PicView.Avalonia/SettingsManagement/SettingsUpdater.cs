@@ -44,6 +44,7 @@ public static class SettingsUpdater
             vm.IsFullscreen.Value  = Settings.WindowProperties.Fullscreen;
             vm.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
             await LanguageUpdater.UpdateLanguageAsync(vm.Translation, settingsExists).ConfigureAwait(false);
+            vm.WindowTabs.ActiveTab.CurrentValue.SetLoading();
         });
     }
     

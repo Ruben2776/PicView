@@ -203,7 +203,6 @@ public static class QuickLoad
         var vm = core.MainWindows.ActiveWindow.CurrentValue;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         tab.SingleImageType = SingleImageType.None;
-        tab.SetLoading();
         
         using var magickImage = new MagickImage();
         try
@@ -312,6 +311,7 @@ public static class QuickLoad
         }
 
         vm.IsLoadingIndicatorShown.Value = false;
+        UpdateImage.ChangeTabTitleToNewImage(tab);
         
         if (Settings.WindowProperties.AutoFit)
         {

@@ -27,7 +27,7 @@ public static class NavigationSubscriptions
                 .Skip(1)
                 .Subscribe(_ =>
                 {
-                    UpdateImage.ChangeImage(mainWindow, tabViewModel, mainWindowViewModel);
+                    UpdateImage.ChangeImageWithTitle(mainWindow, tabViewModel, mainWindowViewModel);
                 }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(UpdateImage)))
                 .AddTo(tabViewModel.Disposables);
 

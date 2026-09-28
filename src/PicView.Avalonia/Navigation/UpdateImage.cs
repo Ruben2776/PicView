@@ -90,7 +90,28 @@ public static class UpdateImage
         {
             return;
         }
-        
+        ChangeImageInternal(mainWindow, tabViewModel, vm, imageViewer);
+    }
+    
+    public static void ChangeImageWithTitle(MainWindow mainWindow, TabViewModel tabViewModel, MainWindowViewModel vm)
+    {
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is not ImageViewer imageViewer)
+        {
+            return;
+        }
+        ChangeImageInternal(mainWindow, tabViewModel, vm, imageViewer);
+        ChangeTabTitleToNewImage(tabViewModel);
+    }
+
+    public static void ChangeTabTitleToNewImage(TabViewModel tabViewModel)
+    {
+        tabViewModel.ZoomLevel.Value = Convert.ToInt32(tabViewModel.InitialZoom.CurrentValue * 100);
+        tabViewModel.UpdateTabTitle();
+    }
+
+    private static void ChangeImageInternal(MainWindow mainWindow, TabViewModel tabViewModel, MainWindowViewModel vm,
+        ImageViewer imageViewer)
+    {
         if (Settings.Zoom.ResetZoomOnChange)
         {
             imageViewer.ResetZoomSlim();
@@ -117,9 +138,6 @@ public static class UpdateImage
         SetWindowAndImageSize(mainWindow, tabViewModel, vm);
 
         imageViewer.UpdateMotionPhoto(tabViewModel);
-        
-        tabViewModel.ZoomLevel.Value = Convert.ToInt32(tabViewModel.InitialZoom.CurrentValue * 100);
-        tabViewModel.UpdateTabTitle();
     }
 
     public static void SetWindowAndImageSize(MainWindow mainWindow, TabViewModel tabViewModel, MainWindowViewModel vm)
@@ -131,7 +149,7 @@ public static class UpdateImage
             {
 #if DEBUG
                 DebugHelper.LogDebug(nameof(UpdateImage),
-                    nameof(ChangeImage),
+                    nameof(SetWindowAndImageSize),
                     "SecondaryModel.CurrentValue is null");
 #endif
                 secondaryWidth = 0;
