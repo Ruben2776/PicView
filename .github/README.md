@@ -232,6 +232,7 @@ Turkish by <a href="https://github.com/odest">Dest</a><br>
 Slovenian by <a href="https://github.com/anderlli0053">Andrew Poženel</a><br>
 Serbian by <a href="https://github.com/ozzii">ozzii</a>, <a href="https://github.com/rammba">Radoš Milićev</a><br>
 Catalan by <a href="https://github.com/JanBermejoToran">Jan Bermejo Toran</a><br>
+Vietnamese by <a href="https://github.com/1598-user">NanoBit</a><br>
 English and Danish by <a href="https://github.com/Ruben2776">Ruben2776</a><br>
 
 **Looking for translators!**
