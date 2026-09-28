@@ -1,51 +1,51 @@
 <UserControl
     x:Class="PicView.Avalonia.Views.Main.KeybindingsView"
+    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    x:DataType="viewModels:CoreViewModel">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--  Filter  -->
     <DockPanel>
 
-        <Panel Margin="7,0" DockPanel.Dock="Top">
+        <Panel DockPanel.Dock="Top" Margin="7,0">
             <Image
-                Width="14"
                 Height="14"
-                Margin="15,0,0,0"
                 HorizontalAlignment="Left"
-                Source="{StaticResource SearchImage}" />
+                Margin="15,0,0,0"
+                Source="{StaticResource SearchImage}"
+                Width="14" />
 
             <TextBox
-                x:Name="FilterBox"
-                Padding="50,7,4,7"
-                VerticalAlignment="Center"
                 Background="Transparent"
                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                 BorderThickness="1"
                 CornerRadius="4"
                 FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                 Foreground="{DynamicResource MainTextColor}"
+                Padding="50,7,4,7"
                 PlaceholderText="{CompiledBinding Translation.Filter.Value,
                                                   Mode=OneWay}"
                 Text="{CompiledBinding Keybindings.FilterText.Value,
                                        FallbackValue='',
-                                       Mode=TwoWay}" />
+                                       Mode=TwoWay}"
+                VerticalAlignment="Center"
+                x:Name="FilterBox" />
 
             <!--  clear  -->
             <customControls:IconButton
-                x:Name="ClearButton"
-                Padding="10,3,10,3"
-                HorizontalAlignment="Right"
                 Classes="AltHover"
                 Command="{CompiledBinding Keybindings.ClearFilteringCommand}"
                 Data="{StaticResource CloseGeometry}"
                 Foreground="{DynamicResource MainTextColorFaded}"
+                HorizontalAlignment="Right"
                 IconHeight="12"
                 IconWidth="12"
                 IsVisible="{CompiledBinding Keybindings.FilterText.Value,
-                                            Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                                            Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                Padding="10,3,10,3"
+                x:Name="ClearButton" />
         </Panel>
 
         <customControls:AutoScrollViewer>
@@ -58,12 +58,11 @@
                         <DataTemplate>
                             <StackPanel Margin="15,10,10,10" Orientation="Horizontal">
                                 <TextBlock
-                                    Width="170"
                                     Classes="txt"
                                     FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                    Text="{CompiledBinding FriendlyMethodName}" />
+                                    Text="{CompiledBinding FriendlyMethodName}"
+                                    Width="170" />
                                 <customControls:KeybindTextBox
-                                    Width="140"
                                     Alt="False"
                                     Classes="hover TStyle"
                                     IsReadOnly="{CompiledBinding IsReadOnly,
@@ -72,9 +71,9 @@
                                     Text="{CompiledBinding Key,
                                                            Mode=OneTime}"
                                     ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                  Mode=OneWay}" />
+                                                                  Mode=OneWay}"
+                                    Width="140" />
                                 <customControls:KeybindTextBox
-                                    Width="140"
                                     Alt="True"
                                     Classes="hover TStyle"
                                     IsReadOnly="{CompiledBinding IsReadOnly,
@@ -83,7 +82,8 @@
                                     Text="{CompiledBinding AltKey,
                                                            Mode=OneTime}"
                                     ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                  Mode=OneWay}" />
+                                                                  Mode=OneWay}"
+                                    Width="140" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -91,38 +91,40 @@
 
                 <!--  Description  -->
                 <StackPanel
-                    x:Name="MainPanel"
+                    IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}"
                     Margin="5,0,2,25"
-                    IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}">
+                    x:Name="MainPanel">
                     <TextBlock
-                        x:Name="ApplicationShortcutsTextBlock"
-                        Margin="10,20,10,15"
                         Classes="txt"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         FontSize="16"
+                        Margin="10,20,10,15"
                         Text="{CompiledBinding Translation.ApplicationShortcuts.Value,
                                                Mode=OneWay}"
-                        TextAlignment="Center" />
+                        TextAlignment="Center"
+                        x:Name="ApplicationShortcutsTextBlock" />
                     <TextBlock
-                        x:Name="ChangeKeybindingTextBlock"
                         Classes="txt"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         Text="{CompiledBinding Translation.ChangeKeybindingText.Value,
                                                Mode=OneWay}"
-                        TextAlignment="Center" />
+                        TextAlignment="Center"
+                        x:Name="ChangeKeybindingTextBlock" />
                     <Button
-                        x:Name="DefaultButton"
-                        Margin="0,15,0,25"
+                        Classes=" ToolWindowBorderStyle ToolButtonHover"
+                        Command="{CompiledBinding Keybindings.ResetKeybindingsCommand}"
                         HorizontalAlignment="Center"
-                        Classes="BorderStyle altHover mainBtn"
-                        Command="{CompiledBinding Keybindings.ResetKeybindingsCommand}">
+                        Margin="0,15,0,25"
+                        Padding="7"
+                        Width="NaN"
+                        x:Name="DefaultButton">
                         <TextBlock Classes="txt" Text="{CompiledBinding Translation.ResetButtonText.Value, Mode=OneWay}" />
                     </Button>
 
                     <!--  Navigation  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt bold"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.Navigation.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -131,12 +133,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -145,9 +146,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -156,7 +157,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -164,8 +166,8 @@
 
                     <!--  Scroll and rotate  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt bold"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.ScrollAndRotate.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -174,12 +176,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -188,9 +189,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -199,7 +200,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -207,8 +209,8 @@
 
                     <!--  Zoom  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt bold"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.Zoom.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -217,12 +219,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -231,9 +232,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -242,7 +243,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -250,8 +252,8 @@
 
                     <!--  Image control  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt bold"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.ImageControl.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -260,12 +262,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -274,9 +275,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -285,7 +286,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -293,8 +295,8 @@
 
                     <!--  Interface configuration  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt bold"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.InterfaceConfiguration.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -303,12 +305,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -317,9 +318,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -328,7 +329,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -336,8 +338,8 @@
 
                     <!--  File management  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt bold"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.FileManagement.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -346,12 +348,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -360,9 +361,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -371,7 +372,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -379,8 +381,8 @@
 
                     <!--  Sort files by  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt bold"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.SortFilesBy.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -389,12 +391,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -403,9 +404,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -414,7 +415,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -423,8 +425,8 @@
 
                     <!--  Copy  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt bold"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.Copy.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -433,12 +435,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -447,9 +448,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -458,7 +459,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -466,8 +468,8 @@
 
                     <!--  Tab management  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt bold"
+                        Margin="10,10,10,15"
                         Text="{Binding Translation.TabManagement.Value}"
                         TextAlignment="Center" />
                     <ItemsControl ItemsSource="{CompiledBinding Keybindings.TabKeys.Value}">
@@ -475,12 +477,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -489,9 +490,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -500,7 +501,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -508,8 +510,8 @@
 
                     <!--  Tool Windows  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt bold"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.ToolWindows.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -518,12 +520,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -532,9 +533,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -543,7 +544,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -551,10 +553,10 @@
 
                     <!--  Window management  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         FontSize="14"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.WindowManagement.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -563,12 +565,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -577,9 +578,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -588,7 +589,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -596,10 +598,10 @@
 
                     <!--  Window scaling  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         FontSize="14"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.WindowScaling.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -608,12 +610,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -622,9 +623,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -633,7 +634,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -641,10 +643,10 @@
 
                     <!--  Set star rating  -->
                     <TextBlock
-                        Margin="10,10,10,15"
                         Classes="txt"
                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
                         FontSize="14"
+                        Margin="10,10,10,15"
                         Text="{CompiledBinding Translation.SetStarRating.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
@@ -653,12 +655,11 @@
                             <DataTemplate>
                                 <StackPanel Margin="15,0,10,10" Orientation="Horizontal">
                                     <TextBlock
-                                        Width="170"
                                         Classes="txt"
                                         FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                                        Text="{CompiledBinding FriendlyMethodName}" />
+                                        Text="{CompiledBinding FriendlyMethodName}"
+                                        Width="170" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="False"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -667,9 +668,9 @@
                                         Text="{CompiledBinding Key,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                     <customControls:KeybindTextBox
-                                        Width="140"
                                         Alt="True"
                                         Classes="hover TStyle"
                                         IsReadOnly="{CompiledBinding IsReadOnly,
@@ -678,7 +679,8 @@
                                         Text="{CompiledBinding AltKey,
                                                                Mode=OneTime}"
                                         ToolTip.Tip="{CompiledBinding #MainPanel.((viewModels:CoreViewModel)DataContext).Translation.ChangeKeybindingTooltip.Value,
-                                                                      Mode=OneWay}" />
+                                                                      Mode=OneWay}"
+                                        Width="140" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
