@@ -1,4 +1,6 @@
-﻿namespace PicView.Core.Gallery;
+﻿using PicView.Core.Sizing;
+
+namespace PicView.Core.Gallery;
 
 public static class GalleryDefaults
 {
@@ -15,4 +17,9 @@ public static class GalleryDefaults
     public const double FastAnimationSpeed = 0.35;
     public const double MediumAnimationSpeed = 0.5;
     public const double SlowAnimationSpeed = 0.6;
+    
+    public const int BorderTopAndBottomThickness = 2;
+    public const int BorderSideThickness = 1;
+    public static double GetDockedGalleryWidth => Settings.Gallery.DockedGalleryItemSize + BorderTopAndBottomThickness + SizeDefaults.HorizontalScrollbarSize;
+    public static double GetDockedGalleryHeight => Settings.Gallery.DockedGalleryItemSize + BorderSideThickness + SizeDefaults.VerticalScrollbarSize;
 }

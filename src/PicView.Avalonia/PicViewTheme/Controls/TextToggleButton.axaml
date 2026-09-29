@@ -92,6 +92,61 @@
             <Setter Property="Background" Value="{DynamicResource MenuItemHoverBackground}" />
         </Style>
 
+        <Style Selector="^.hover:pointerover /template/ Border#border">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="Transparent" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Background" Value="{DynamicResource AccentColor}" />
+        </Style>
+        <Style Selector="^.hover:pointerover /template/ TextBlock#text">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{DynamicResource MainTextColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+        </Style>
+        <Style Selector="^.hover:pointerover:not(:unchecked) /template/ Image#TickMark">
+            <Setter Property="Source" Value="{StaticResource SquareCheckAltImage}" />
+        </Style>
+        <Style Selector="^.hover:pointerover:not(:checked) /template/ PathIcon#CrossMark">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{DynamicResource MainTextColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+        </Style>
+
         <Style Selector="^.AltHover:pointerover /template/ Border#border">
             <Style.Animations>
                 <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">

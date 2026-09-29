@@ -17,10 +17,9 @@ public class ThumbnailCache : IThumbnailCache
 
     public void Add(uint ownerId, string path, object thumbnail)
     {
+        _thumbnails[path] = thumbnail;
         lock (_lock)
         {
-            _thumbnails[path] = thumbnail;
-
             if (!_ownersByFile.TryGetValue(path, out var owners))
             {
                 owners = [];
@@ -42,10 +41,9 @@ public class ThumbnailCache : IThumbnailCache
 
     public void Remove(string path)
     {
+        _thumbnails.TryRemove(path, out _);
         lock (_lock)
         {
-            _thumbnails.TryRemove(path, out _);
-
             if (!_ownersByFile.TryGetValue(path, out var owners))
             {
                 return;
@@ -89,16 +87,6 @@ public class ThumbnailCache : IThumbnailCache
             }
             
             _filesByOwner.Remove(ownerId);
-        }
-    }
-
-    public void Clear()
-    {
-        lock (_lock)
-        {
-            _thumbnails.Clear();
-            _ownersByFile.Clear();
-            _filesByOwner.Clear();
         }
     }
 

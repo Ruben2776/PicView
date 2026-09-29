@@ -73,6 +73,58 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnFileCreated_WhenFileAlreadyInList_DoesNotDuplicate()
+    {
+        // Arrange: Tab already has this file in files list, but file does not exist on disk yet
+        var existingFilePath = Path.Combine(_testDirectory, "overwrite.jpg");
+
+        var tab = CreateTab(_testDirectory);
+        var files = new List<FileInfo> { new(existingFilePath) };
+        tab.InitializeImageIterator(files, _mockCache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
+        tab.Model = new ImageModel { FileInfo = files[0] };
+
+        _service.Watch(tab);
+
+        // Initial state: 1 file
+        Assert.Single(tab.ImageIterator.Files);
+
+        // Act: Create the file on disk (triggers Created event)
+        await File.WriteAllTextAsync(existingFilePath, "created content", TestContext.Current.CancellationToken);
+
+        // Wait for watcher event
+        await Task.Delay(500, TestContext.Current.CancellationToken);
+
+        // Assert: No duplicates should be inserted
+        Assert.Single(tab.ImageIterator.Files);
+        Assert.Equal(existingFilePath, tab.ImageIterator.Files[0].FullName);
+        Assert.True(_mockCache.Resynchronized);
+    }
+
+    [Fact]
+    public async Task OnFileChanged_UpdatesTabFiles_AndResyncs()
+    {
+        // Arrange
+        var filePath = Path.Combine(_testDirectory, "change.jpg");
+        await File.WriteAllTextAsync(filePath, "dummy content", TestContext.Current.CancellationToken);
+
+        var tab = CreateTab(_testDirectory);
+        var files = new List<FileInfo> { new(filePath) };
+        tab.InitializeImageIterator(files, _mockCache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
+        tab.Model = new ImageModel { FileInfo = files[0] };
+
+        _service.Watch(tab);
+
+        // Act: Modify the file (triggers Changed event)
+        await File.WriteAllTextAsync(filePath, "dummy content modified", TestContext.Current.CancellationToken);
+        await Task.Delay(500, TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.Single(tab.ImageIterator.Files);
+        Assert.True(_mockCache.Resynchronized);
+        Assert.Contains(filePath, _mockThumbnailCache.RemovedPaths);
+    }
+
+    [Fact]
     public async Task OnFileDeleted_UpdatesTabFiles_AndResyncs()
     {
         // Arrange
@@ -220,7 +272,6 @@ public class FileWatcherServiceTests : IDisposable
         public bool TryGet(string path, out object? thumbnail) { thumbnail = null; return false; }
         public void Remove(string path) => RemovedPaths.Add(path);
         public void RemoveOwner(uint ownerId) { }
-        public void Clear() { }
         public bool IsEmpty => true;
     }
 

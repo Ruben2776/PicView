@@ -216,7 +216,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
                     nameTitle = SourceURL ?? string.Empty;
                     break;
                 default:
-                    nameTitle = Model?.FileInfo?.Name ?? string.Empty;
+                    nameTitle = Model?.FileInfo?.FullName ?? string.Empty;
                     break;
             }
             var zoom = ZoomLevel.CurrentValue;

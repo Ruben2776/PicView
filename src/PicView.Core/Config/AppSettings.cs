@@ -183,7 +183,7 @@ public class UIProperties
     /// <summary>
     /// Determines whether a confirmation dialog is displayed when the Escape key is pressed.
     /// </summary>
-    public bool ShowConfirmationOnEsc { get; set; } = false;
+    public bool ShowConfirmationOnEsc { get; set; } = true;
 
     /// <summary>
     /// Determines whether a confirmation dialog is shown when attempting to recycle items.

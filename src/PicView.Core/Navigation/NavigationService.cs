@@ -90,7 +90,6 @@ public class NavigationService(
                         tab.SecondaryFileInfo.Value = null;
                     }
                 }
-                ShowModel(model);
             }
             else
             {
@@ -98,9 +97,10 @@ public class NavigationService(
                 tab.SecondaryImage.Value = null;
                 tab.SecondaryImageType.Value = null;
                 tab.SecondaryFileInfo.Value = null;
-                ShowModel(model);
             }
-            
+
+            ShowModel(model);
+
             tab.UpdateTabTitle();
             fileWatcherService.Watch(tab, fileInfo.DirectoryName);
             cache.Clear(tab.Id);
@@ -112,17 +112,21 @@ public class NavigationService(
             cache.Preload(tab.Id, index, false, tab.ImageIterator.Files, tab.GetTabCancellation().Token);
             FileHistoryManager.Add(fileInfo.FullName);
 
-            if ((tab.Gallery.IsDockedGalleryVisible.CurrentValue || tab.Gallery.IsGalleryExpanded.CurrentValue) && tab.ThumbnailCache != null)
+            if ((tab.Gallery.IsDockedGalleryVisible.CurrentValue || tab.Gallery.IsGalleryExpanded.CurrentValue) && tab.ThumbnailCache is not null)
             {
+                tab.ThumbnailCache.RemoveOwner(tab.Id);
                 if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
                 {
-                    await ct.CancelAsync().ConfigureAwait(false);
+#pragma warning disable MA0042
+                    // ReSharper disable once MethodHasAsyncOverload
+                    ct.Cancel();
+#pragma warning restore MA0042
                     tab.ResetNavigationCts();
-                    await GalleryLoader.ReloadGallery(tab, tab.ImageIterator.Files, thumbnailLoader, tab.ThumbnailCache, tab.GetTabCancellation().Token).ConfigureAwait(false);
+                    GalleryLoader.ReloadGallery(tab, tab.ImageIterator.Files, thumbnailLoader, tab.ThumbnailCache, tab.GetTabCancellation().Token);
                     return;
                 }
                 tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
-                await GalleryLoader.LoadGalleryAsync(tab, tab.ImageIterator.Files, thumbnailLoader, tab.ThumbnailCache, ct.Token).ConfigureAwait(false);
+                GalleryLoader.LoadGallery(tab, tab.ImageIterator.Files, thumbnailLoader, tab.ThumbnailCache, ct.Token);
             }
         }
         catch (Exception e)
@@ -162,7 +166,7 @@ public class NavigationService(
         }
         var iterator = tab.ImageIterator;
 
-        if (iterator.Files is null || iterator.Files.Count is 0)
+        if (iterator?.Files is null || iterator.Files.Count is 0)
         {
             // TODO: Figure out way to share file list, if another tab is already in the same directory
             await Repopulate().ConfigureAwait(false);

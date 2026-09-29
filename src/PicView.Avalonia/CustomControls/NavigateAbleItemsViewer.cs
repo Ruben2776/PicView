@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Metadata;
@@ -7,11 +8,14 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using PicView.Avalonia.Views.Gallery;
+using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.CustomControls;
 
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct ItemPosition(int Index, Point Position, Size Size);
 
 [TemplatePart("PART_ScrollViewer", typeof(AutoScrollViewer))]
@@ -22,6 +26,10 @@ public class NavigateAbleItemsViewer : ItemsControl
     private const double ScrollLineSize = 50;
 
     private AutoScrollViewer? _scrollViewer;
+
+    private IDisposable? _viewportSubscription;
+
+    private bool _isScrollToCenterDeferred;
 
     protected override Type StyleKeyOverride => typeof(NavigateAbleItemsViewer);
 
@@ -56,6 +64,13 @@ public class NavigateAbleItemsViewer : ItemsControl
     {
         base.OnApplyTemplate(e);
         _scrollViewer = e.NameScope.Find<AutoScrollViewer>("PART_ScrollViewer");
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        _viewportSubscription?.Dispose();
+        _viewportSubscription = null;
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -117,18 +132,15 @@ public class NavigateAbleItemsViewer : ItemsControl
     protected override void ClearContainerForItemOverride(Control container)
     {
         base.ClearContainerForItemOverride(container);
-        if (container is not ContentPresenter presenter)
+        if (container is not ContentPresenter { Child: NavigateAbleItem navItem })
         {
             return;
         }
-        if (presenter.Child is NavigateAbleItem navItem)
+        navItem.SetCurrent(false);
+        navItem.SetSelected(false);
+        if (navItem is GalleryItem galleryItem)
         {
-            navItem.SetCurrent(false);
-            navItem.SetSelected(false);
-            if (navItem is GalleryItem galleryItem)
-            {
-                galleryItem.UnloadImage();
-            }
+            galleryItem.UnloadImage();
         }
     }
     #endregion
@@ -137,22 +149,12 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     public void SetVerticalScrolling()
     {
-        if (_scrollViewer == null)
-        {
-            return;
-        }
-
         _scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
         _scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
     }
     
     public void SetHorizontalScrolling()
     {
-        if (_scrollViewer == null)
-        {
-            return;
-        }
-
         _scrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
         _scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
     }
@@ -165,7 +167,7 @@ public class NavigateAbleItemsViewer : ItemsControl
         }
         else
         {
-            Dispatcher.UIThread.Post(ScrollToCenterOfCurrentItemInternal,DispatcherPriority.Render);
+            Dispatcher.UIThread.Post(ScrollToCenterOfCurrentItemInternal, DispatcherPriority.Render);
         }
     }
 
@@ -183,32 +185,67 @@ public class NavigateAbleItemsViewer : ItemsControl
             return;
         }
 
+        var viewportWidth = _scrollViewer!.Viewport.Width;
+        var viewportHeight = _scrollViewer.Viewport.Height;
+
+        // If viewport is not yet measured, defer until the ScrollViewer has been laid out.
+        // Re-posting on the dispatcher here spins forever (starving input and layout)
+        // while the gallery is hidden or not yet measured, e.g. when returning from crop mode.
+        if (viewportWidth <= 0 && viewportHeight <= 0)
+        {
+            DeferScrollToCenterUntilMeasured();
+            return;
+        }
+
         var pos = itemRect.Value;
         var offset = _scrollViewer.Offset;
         var newX = offset.X;
         var newY = offset.Y;
 
         // Center Horizontally if scrolling is possible
-        if (_scrollViewer.Extent.Width > _scrollViewer.Viewport.Width)
+        if (_scrollViewer.Extent.Width > viewportWidth && viewportWidth > 0)
         {
             var itemCenter = pos.X + pos.Width / 2;
-            var viewportCenter = _scrollViewer.Viewport.Width / 2;
-            var maxScrollX = _scrollViewer.Extent.Width - _scrollViewer.Viewport.Width;
+            var viewportCenter = viewportWidth / 2;
+            var maxScrollX = _scrollViewer.Extent.Width - viewportWidth;
                 
             newX = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollX);
         }
 
         // Center Vertically if scrolling is possible
-        if (_scrollViewer.Extent.Height > _scrollViewer.Viewport.Height)
+        if (_scrollViewer.Extent.Height > viewportHeight && viewportHeight > 0)
         {
             var itemCenter = pos.Y + pos.Height / 2;
-            var viewportCenter = _scrollViewer.Viewport.Height / 2;
-            var maxScrollY = _scrollViewer.Extent.Height - _scrollViewer.Viewport.Height;
+            var viewportCenter = viewportHeight / 2;
+            var maxScrollY = _scrollViewer.Extent.Height - viewportHeight;
                 
             newY = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollY);
         }
 
         _scrollViewer.Offset = new Vector(newX, newY);
+    }
+
+    private void DeferScrollToCenterUntilMeasured()
+    {
+        if (_isScrollToCenterDeferred || _scrollViewer is null)
+        {
+            return;
+        }
+
+        _isScrollToCenterDeferred = true;
+        _scrollViewer.ScrollChanged += OnDeferredScrollChanged;
+    }
+
+    private void OnDeferredScrollChanged(object? sender, ScrollChangedEventArgs e)
+    {
+        if (_scrollViewer is null || (_scrollViewer.Viewport.Width <= 0 && _scrollViewer.Viewport.Height <= 0))
+        {
+            return;
+        }
+
+        _scrollViewer.ScrollChanged -= OnDeferredScrollChanged;
+        _isScrollToCenterDeferred = false;
+        ScrollToCenterOfCurrentItemInternal();
     }
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
@@ -258,11 +295,6 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     private void ScrollTheControl(PointerWheelEventArgs e)
     {
-        if (_scrollViewer is null)
-        {
-            return;
-        }
-
         // Mark as handled, so the inner ScrollViewer doesn't apply its own scrolling on top of ours.
         // Otherwise, a small delta on the opposite axis (common on trackpads) makes it scroll backwards
         e.Handled = true;
@@ -294,7 +326,7 @@ public class NavigateAbleItemsViewer : ItemsControl
             return;
         }
 
-        _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, offset);
+        _scrollViewer.SetCurrentValue(global::Avalonia.Controls.ScrollViewer.OffsetProperty, offset);
     }
 
     /// <summary>
@@ -350,12 +382,14 @@ public class NavigateAbleItemsViewer : ItemsControl
         }
     }
 
-    private static NavigateAbleItem? GetNavigateAbleItem(Control? container)
+    private static NavigateAbleItem? GetNavigateAbleItem(Control container)
     {
-        if (container is null) return null;
-        if (container is NavigateAbleItem navItem) return navItem;
-        if (container is ContentPresenter presenter) return presenter.Child as NavigateAbleItem;
-        return null;
+        return container switch
+        {
+            NavigateAbleItem navItem => navItem,
+            ContentPresenter presenter => presenter.Child as NavigateAbleItem,
+            _ => null
+        };
     }
 
     public void ScrollItemIntoView(int index)
@@ -371,7 +405,7 @@ public class NavigateAbleItemsViewer : ItemsControl
             return;
         }
 
-        if (_scrollViewer is null || ItemsPanelRoot is not VirtualizingGallery gallery)
+        if (ItemsPanelRoot is not VirtualizingGallery gallery)
         {
             return;
         }
@@ -453,9 +487,9 @@ public class NavigateAbleItemsViewer : ItemsControl
             return;
         }
 
-        if (items.All(x => x.Index != startIndex))
+        if (items.TrueForAll(x => x.Index != startIndex))
         {
-            startIndex = items.Last().Index;
+            startIndex = items[^1].Index;
         }
 
         var currentItemPos = items.FirstOrDefault(x => x.Index == startIndex);
@@ -529,15 +563,17 @@ public class NavigateAbleItemsViewer : ItemsControl
     {
         var list = new List<ItemPosition>();
 
-        if (ItemsPanelRoot is VirtualizingGallery gallery)
+        if (ItemsPanelRoot is not VirtualizingGallery gallery)
         {
-            for (var i = 0; i < ItemCount; i++)
+            return list;
+        }
+
+        for (var i = 0; i < ItemCount; i++)
+        {
+            var bounds = gallery.GetItemBounds(i);
+            if (bounds.HasValue)
             {
-                var bounds = gallery.GetItemBounds(i);
-                if (bounds.HasValue)
-                {
-                    list.Add(new ItemPosition(i, bounds.Value.Position, bounds.Value.Size));
-                }
+                list.Add(new ItemPosition(i, bounds.Value.Position, bounds.Value.Size));
             }
         }
 
@@ -575,9 +611,12 @@ public class NavigateAbleItemsViewer : ItemsControl
             .OrderBy(item => item.Position.X)
             .ToList();
 
-        if (nextColumnItems.Count is 0) return null;
+        if (nextColumnItems.Count is 0)
+        {
+            return null;
+        }
 
-        var nextColumnX = nextColumnItems.First().Position.X;
+        var nextColumnX = nextColumnItems[0].Position.X;
 
         return nextColumnItems
             .Where(item => Math.Abs(item.Position.X - nextColumnX) < 1.0)
@@ -594,7 +633,7 @@ public class NavigateAbleItemsViewer : ItemsControl
 
         if (prevColumnItems.Count == 0) return null;
 
-        var prevColumnX = prevColumnItems.First().Position.X;
+        var prevColumnX = prevColumnItems[0].Position.X;
 
         return prevColumnItems
             .Where(item => Math.Abs(item.Position.X - prevColumnX) < 1.0)

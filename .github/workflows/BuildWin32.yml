@@ -78,12 +78,6 @@ jobs:
           path: ${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-win-x64/
           retention-days: 14
 
-      # Step 5.5 (x64): Remove .pdb files from x64 build before installer
-      - name: Remove .pdb files from x64 build for installer
-        run: |
-          Remove-Item -Path "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-x64\*.pdb" -Force -ErrorAction SilentlyContinue
-        shell: pwsh
-
       # Step 6 (x64): Install Inno Setup
       - name: Install Inno Setup
         run: |
@@ -127,12 +121,6 @@ jobs:
           name: PicView-v${{steps.get-version.outputs.version}}-win-arm64
           path: ${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-win-arm64/
           retention-days: 14
-
-      # Step 10.5 (arm64): Remove .pdb files from arm64 build before installer
-      - name: Remove .pdb files from arm64 build for installer
-        run: |
-          Remove-Item -Path "${{ github.workspace }}\Build\PicView-v${{steps.get-version.outputs.version}}-win-arm64\*.pdb" -Force -ErrorAction SilentlyContinue
-        shell: pwsh
 
       # Step 11 (arm64): Compile .ISS to .EXE Installer for arm64
       - name: Compile .ISS to .EXE Installer (arm64)

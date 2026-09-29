@@ -89,16 +89,11 @@ public class App : Application, IPlatformSpecificService
         DataContext = _coreViewModel;
         
         StartUpHelper.HandleWindowStartUpSettings(_coreViewModel, settingsExists, _mainWindow);
-        _mainWindow.Show();
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
-        {
-            desktopLifetime.MainWindow = _mainWindow;
-        }
 
         var arg = Environment.GetCommandLineArgs();
         if (arg.Length > 1 && startUpFilePath is null)
         {
-            Task.Run(() => QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, arg[1], false));
+            Task.Run(() => QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, arg[1], false, true));
         }
         else
         {
@@ -125,7 +120,8 @@ public class App : Application, IPlatformSpecificService
             if (!_isInitialLoad)
             {
                 _isInitialLoad = true;
-                await QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, startUpFilePath, true).ConfigureAwait(false);
+                await QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, startUpFilePath, true, true).ConfigureAwait(false);
+                Dispatcher.UIThread.Invoke(() => { _mainWindow.Activate(); }, DispatcherPriority.Send);
                 return;
             }
             if (Settings.UIProperties.OpenInSameWindow)

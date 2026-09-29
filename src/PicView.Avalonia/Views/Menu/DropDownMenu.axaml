@@ -170,6 +170,7 @@
                 Padding="15,7,15,7"
                 Background="Transparent"
                 Classes="hover"
+                Click="Close_OnClick"
                 Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                 CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
                 CornerRadius="8,0,0,0"
@@ -193,6 +194,7 @@
                 Padding="15,7,15,7"
                 Background="Transparent"
                 Classes="hover"
+                Click="Close_OnClick"
                 Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.CloseGalleryCommand}"
                 CornerRadius="8,0,0,0"
                 Data="{StaticResource CloseGeometry}"
@@ -471,6 +473,7 @@
                 IconHeight="14"
                 IconMargin="0,0,7,0"
                 IconWidth="14"
+                IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldCropBeEnabled.Value}"
                 IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
                 Text="{Binding Translation.Crop.Value}" />
 

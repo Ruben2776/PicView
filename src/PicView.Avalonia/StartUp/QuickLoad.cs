@@ -5,9 +5,9 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.Navigation.Services;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
@@ -83,7 +83,7 @@ public static class QuickLoad
             }, DispatcherPriority.Send);
             if (Settings.WindowProperties.AutoFit)
             {
-                WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
+                WindowFunctions.CenterWindowOnScreen(mainWindow);
             }
             core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = true;
             await LoadArchiveFileAsync(mainWindow, core, fileInfo).ConfigureAwait(false);
@@ -95,6 +95,14 @@ public static class QuickLoad
         }
         core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.CloseMenus();
         core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                desktop.MainWindow = mainWindow;
+            }
+        });
         
         return;
 
@@ -191,20 +199,19 @@ public static class QuickLoad
         List<FileInfo>? files = null)
     {
         core.MainWindows.ActiveWindow.Value.IsLoadingIndicatorShown.Value = !core.MainWindows.ActiveWindow.CurrentValue.IsTopToolbarShown.Value;
-        Dispatcher.UIThread.Post(() =>
-        {
-           core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
-        }, DispatcherPriority.Send);
     
         var vm = core.MainWindows.ActiveWindow.CurrentValue;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         tab.SingleImageType = SingleImageType.None;
-        tab.SetLoading();
         
-        var magickImage = new MagickImage();
+        using var magickImage = new MagickImage();
         try
         {
-            await magickImage.PingAsync(fileInfo).ConfigureAwait(false);
+#pragma warning disable MA0042
+            // ReSharper disable once MethodHasAsyncOverloadWithCancellation
+            // ReSharper disable once MethodHasAsyncOverload
+            magickImage.Ping(fileInfo);
+#pragma warning restore MA0042
             tab.Model.PixelWidth = magickImage.Width;
             tab.Model.PixelHeight = magickImage.Height;
 
@@ -223,13 +230,10 @@ public static class QuickLoad
                             return;
                         }
                         WindowResizing.SetSize(size.Value, WindowResizeReason.Application, mainWindow, vm);
-                        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                        {
-                            desktop.MainWindow = mainWindow;
-                        }
 
                         if (Settings.WindowProperties.AutoFit)
                         {
+                            mainWindow.SizeToContent = SizeToContent.Manual;
                             mainWindow.Width = size.Value.WindowWidth;
                             mainWindow.Height = size.Value.WindowHeight;
                         }
@@ -239,10 +243,11 @@ public static class QuickLoad
                         {
                             Dispatcher.UIThread.Post(() =>
                             {
+                                mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
                                 mainWindow.Width = mainWindow.Height = double.NaN;
                             }, DispatcherPriority.Render);
                         }
-                    }, DispatcherPriority.Loaded);
+                    }, DispatcherPriority.Send);
                 }
             }
         }
@@ -262,6 +267,10 @@ public static class QuickLoad
         tab.Image.Value = imageModel.Image;
         tab.FileInfo.Value = fileInfo;
         tab.Model = imageModel;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
+        }, DispatcherPriority.Send);
         var initialDirectory = GetInitialDirectory(continueFromLeftOff, fileInfo);
 
         var isGalleryEnabled = CheckIfGalleryIsNeeded(core);
@@ -302,29 +311,17 @@ public static class QuickLoad
         }
 
         vm.IsLoadingIndicatorShown.Value = false;
+        UpdateImage.ChangeTabTitleToNewImage(tab);
         
         if (Settings.WindowProperties.AutoFit)
         {
-            WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
+            WindowFunctions.CenterWindowOnScreen(mainWindow);
         }
         
         ShowHoverBarIfNeeded(core);
         if (Settings.UIProperties.IsTaskbarProgressEnabled)
         {
             core.PlatformService.SetTaskbarProgress((ulong)tab.ImageIterator.CurrentIndex, (ulong)tab.ImageIterator.Files.Count);
-        }
-        
-        if (isGalleryEnabled)
-        {
-            await LoadGallery(core).ConfigureAwait(false);
-            Dispatcher.UIThread.Invoke(() =>
-            {
-                if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
-                {
-                    imageViewer.GalleryView.GalleryItemsControl.CurrentItemIndex = tab.NavigationIndex.Value;
-                    imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                }
-            }, DispatcherPriority.Loaded);
         }
         
         FileHistoryManager.Add(fileInfo.FullName);
@@ -334,18 +331,21 @@ public static class QuickLoad
             Settings.StartUp.StartUpDirectory = initialDirectory.FullName;
         }
         
-        magickImage.Dispose();
+        if (isGalleryEnabled)
+        {
+            await GalleryHelper.LoadGalleryAsync(core).ConfigureAwait(false);
+        }
     }
     
     private static async ValueTask LoadArchiveFileAsync(MainWindow mainWindow, CoreViewModel core, FileInfo source)
     {
         var tab = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue;
-        Dispatcher.UIThread.Invoke(() =>
+        tab.SetLoading();
+        await Dispatcher.UIThread.InvokeAsync(() =>
         {
             core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
         }, DispatcherPriority.Send);
         TabNavigationInitializer.Initialize(core, source, mainWindow);
-        tab.SetLoading();
 
         var isGalleryEnabled = CheckIfGalleryIsNeeded(core);
         var isArchiveLoaded = await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.LoadFromArchiveAsync(source.FullName).ConfigureAwait(false);
@@ -357,12 +357,12 @@ public static class QuickLoad
         ShowHoverBarIfNeeded(core);
         if (isGalleryEnabled)
         {
-            await LoadGallery(core).ConfigureAwait(false);
+            await GalleryHelper.LoadGalleryAsync(core).ConfigureAwait(false);
         }
 
         if (Settings.WindowProperties.AutoFit)
         {
-            Dispatcher.UIThread.Invoke(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 WindowResizing.FastCenterWindow(mainWindow);
             }, DispatcherPriority.Send);
@@ -371,33 +371,24 @@ public static class QuickLoad
 
     private static bool CheckIfGalleryIsNeeded(CoreViewModel core)
     {
+        var galleryViewModel = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery;
         if (Settings.Gallery.IsGalleryDocked)
         {
             if (!Settings.UIProperties.ShowInterface && !Settings.Gallery.ShowDockedGalleryInHiddenUI)
             {
-                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked
-                    .Value = false;
+                galleryViewModel.IsGalleryDocked.Value = false;
                 return false;
             }
             if (Settings.Gallery.DockPosition is GalleryDockPosition.Closed)
             {
                 Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
-            }
 
+            }
+            galleryViewModel.ActiveGalleryMode.Value = GalleryMode.DockedNoAnimation;
             return true;
         }
         Settings.Gallery.DockPosition = GalleryDockPosition.Closed;
         return false;
-    }
-    
-    private static async ValueTask LoadGallery(CoreViewModel core)
-    {
-        await GalleryLoader.LoadGalleryAsync(core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value,
-                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.ImageIterator.Files,
-                ServiceHelper.ThumbLoader,
-                core.SharedThumbnailCache,
-                core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.GetTabCancellation().Token)
-            .ConfigureAwait(false);
     }
 
     private static void ShowHoverBarIfNeeded(CoreViewModel core)

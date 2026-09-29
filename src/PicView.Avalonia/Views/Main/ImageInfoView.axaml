@@ -15,7 +15,7 @@
                 <Setter Property="MaxHeight" Value="34" />
             </Style>
             <Style Selector="TextBox.x">
-                <Setter Property="TextWrapping" Value="Wrap" />
+                <Setter Property="TextWrapping" Value="NoWrap" />
             </Style>
         </Styles>
     </UserControl.Styles>

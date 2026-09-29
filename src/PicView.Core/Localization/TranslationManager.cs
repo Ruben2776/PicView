@@ -132,10 +132,11 @@ public static class TranslationManager
     /// <summary>
     /// Determines the correct language code based on the system's current UI culture.
     /// </summary>
+    /// <param name="cultureInfo">Optional culture to determine language for. If null, <see cref="CultureInfo.CurrentUICulture"/> is used.</param>
     /// <returns>The ISO language code to use for translations.</returns>
-    public static string DetermineCorrectLanguage()
+    public static string DetermineCorrectLanguage(CultureInfo? cultureInfo = null)
     {
-        var userCulture = CultureInfo.CurrentUICulture;
+        var userCulture = cultureInfo ?? CultureInfo.CurrentUICulture;
         var baseLanguageCode = userCulture.TwoLetterISOLanguageName; // Gets 'da' from 'da-DK'
 
         // Handle special cases, e.g., Chinese or different regions.
@@ -146,23 +147,22 @@ public static class TranslationManager
                 // Simplified Chinese vs Traditional Chinese
                 return userCulture.Name switch
                 {
-                    "zh-TW" => "zh-TW",  // Traditional Chinese
-                    "zh-HK" => "zh-TW",  // Treat Hong Kong as Traditional Chinese
-                    _ => "zh-CN"         // Default to Simplified Chinese
+                    "zh-TW" or "zh-HK" or "zh-MO" => "zh-TW", // Traditional Chinese
+                    var name when name.StartsWith("zh-Hant", StringComparison.OrdinalIgnoreCase) => "zh-TW",
+                    _ => "zh-CN" // Default to Simplified Chinese
                 };
             case "sr":
-                // Serbian Cyrilic vs Serbian Latin
+                // Serbian Cyrillic vs Serbian Latin
                 return userCulture.Name switch
                 {
-                    "sr-Cyrl" => "sr-Cyrl",  // Serbian Cyrillic
-                    "sr-Latn" => "sr-Latn",  // Serbian Latin
-                    _ => "sr-Cyrl"           // Default to Serbian Cyrillic
+                    var name when name.StartsWith("sr-Latn", StringComparison.OrdinalIgnoreCase) => "sr-Latn",
+                    _ => "sr-Cyrl" // Default to Serbian Cyrillic
                 };
             case "de":
                 // Handle German-speaking regions (Austria, Germany, Switzerland)
-                return "de";  // Map all 'de-*' to 'de'
+                return "de"; // Map all 'de-*' to 'de'
             case "pt":
-                return "pt";
+                return "pt-br";
             default:
                 var languageFilePath = DetermineLanguageFilePath(baseLanguageCode);
                 return Path.GetFileNameWithoutExtension(languageFilePath)!;

@@ -203,6 +203,27 @@ public class MotionPhotoDetectorTests : IDisposable
     }
 
     [Fact]
+    public void TryDetect_SamsungTrailer_MarkerCrossesChunkBoundary_FindsVideoAfterMarker()
+    {
+        // 64 KB chunk = 65536. Position video so marker straddles the 64 KB boundary from EOF.
+        const int videoLen = 65530; // marker ends at EOF - 65530, so it crosses 65536 from EOF
+        var video = MotionPhotoFixtures.BuildMp4Head(videoLen);
+        var path = Path.Combine(_tempDirectory, "samsung_boundary.jpg");
+        using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+        {
+            stream.Write(new byte[65536]); // 64 KB prefix
+            stream.Write("MotionPhoto_Data"u8);
+            stream.Write(video);
+        }
+
+        var result = MotionPhotoDetector.TryDetect(new FileInfo(path), MotionPhotoFixtures.PlainXmp);
+
+        Assert.NotNull(result);
+        Assert.Equal(MotionPhotoSource.SamsungTrailer, result.Source);
+        Assert.Equal(65536 + "MotionPhoto_Data".Length, result.VideoOffset);
+    }
+
+    [Fact]
     public void TryDetect_Sidecar_PrefersMovOverMp4()
     {
         var imagePath = Path.Combine(_tempDirectory, "IMG_100.heic");

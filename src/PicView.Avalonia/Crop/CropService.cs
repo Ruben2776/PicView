@@ -11,8 +11,10 @@ using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
+using PicView.Core.Gallery;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
+using PicView.Core.Preloading;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -25,6 +27,8 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     private object? _backUpView;
     private bool _couldNavigateBackwards;
     private bool _couldNavigateForwards;
+    private bool _wasGalleryDocked;
+    private GalleryDockPosition _previousDockPosition;
 
     public async Task StartCropControlAsync()
     {
@@ -34,9 +38,11 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         }
         
         _backUpView = tabViewModel.CurrentView.Value;
-        var isDockedGalleryShown = Settings.Gallery.IsGalleryDocked;
+        _wasGalleryDocked = Settings.Gallery.IsGalleryDocked;
+        _previousDockPosition = Settings.Gallery.DockPosition;
+
         // Hide gallery when entering crop mode
-        if (isDockedGalleryShown)
+        if (_wasGalleryDocked)
         {
             // Reset setting before resizing
             Settings.Gallery.IsGalleryDocked = false;
@@ -72,13 +78,8 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         tabViewModel.CanNavigateForwards.Value = false;
         
         vm.TopTitlebarViewModel.CloseDropDownMenu();
-        
-        if (isDockedGalleryShown)
-        {
-            Settings.Gallery.IsGalleryDocked = true;
-        }
 
-        if (tabViewModel.Crop != null)
+        if (tabViewModel.Crop is not null)
         {
             tabViewModel.Crop.CloseCropCommand.Subscribe(_ =>
             {
@@ -87,22 +88,22 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
             
             tabViewModel.Crop.CopyCropImageCommand.SubscribeAwait(async (_, _) =>
             {
-                await CopyCroppedImageAsync();
+                await CopyCroppedImageAsync().ConfigureAwait(false);
             },DebugHelper.LogError(nameof(CropService), nameof(CloseCropControl)));
             
             tabViewModel.Crop.CropImageCommand.SubscribeAwait(async (_, _) =>
             {
-                await PackAndSaveImage();
+                await PickAndSaveImage().ConfigureAwait(false);
             },DebugHelper.LogError(nameof(CropService), nameof(CloseCropControl)));
         }
     }
 
-    private async ValueTask CopyCroppedImageAsync()
+    public async ValueTask CopyCroppedImageAsync()
     {
         if (GetCroppedImage() is Bitmap bitmap)
         {
             await Task.WhenAll(ClipboardImageOperations.CopyImageToClipboard(bitmap),
-                AnimationsHelper.CopyAnimation(mainWindow));
+                AnimationsHelper.CopyAnimation(mainWindow)).ConfigureAwait(false);
         }
     }
 
@@ -123,12 +124,12 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
 
     public void CloseCropControl()
     {
-        if (Settings.Gallery.IsGalleryDocked)
+        if (_backUpView is not null)
         {
-            WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
+            tabViewModel.CurrentView.Value = _backUpView;
+            _backUpView = null;
         }
-        
-        tabViewModel.CurrentView.Value = _backUpView;
+
         IsCropping = false;
         tabViewModel.UpdateTabTitle();
         
@@ -136,9 +137,25 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         
         tabViewModel.CanNavigateBackwards.Value = _couldNavigateBackwards;
         tabViewModel.CanNavigateForwards.Value = _couldNavigateForwards;
+
+        if (!_wasGalleryDocked)
+        {
+            return;
+        }
+
+        Settings.Gallery.DockPosition = _previousDockPosition;
+        Settings.Gallery.IsGalleryDocked = true;
+        _wasGalleryDocked = false;
+        WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
     }
 
-    private async ValueTask PackAndSaveImage()
+    public async Task SaveCropAsync()
+    {
+        var (fileName, fileInfo, bitmap) = PrepareCropData();
+        await SaveCroppedImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
+    }
+
+    private async ValueTask PickAndSaveImage()
     {
         if (tabViewModel.Crop is null)
         {
@@ -147,26 +164,45 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         
         var (fileName, fileInfo, bitmap) = PrepareCropData();
         
-        var saveFileDialog = await FilePicker.PickFileForSavingAsync(fileName);
-        if (saveFileDialog is null)
+        var saveFileDialogResult = await FilePicker.PickFileForSavingAsync(fileName).ConfigureAwait(false);
+        if (saveFileDialogResult is null)
         {
             return;
         }
-        
-        await SaveImage(saveFileDialog, fileInfo, bitmap);
-        
-        CloseCropControl();
+        await SaveCroppedImage(saveFileDialogResult, fileInfo, bitmap).ConfigureAwait(false);
+    }
 
-        if (tabViewModel.FileInfo.Value.FullName == saveFileDialog)
+    private async Task SaveCroppedImage(string fileName, FileInfo fileInfo, Bitmap bitmap)
+    {
+        var vm = await Dispatcher.UIThread.InvokeAsync(() => mainWindow.DataContext as MainWindowViewModel);
+        if (vm is null)
         {
-            await tabViewModel.ImageIterator.ReloadAsync();
+            return;
         }
+        vm.IsLoadingIndicatorShown.Value = true;
+        var newlyCroppedImage = await SaveImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
+        if (string.Equals(tabViewModel.FileInfo.Value.FullName, fileName, StringComparison.Ordinal))
+        {
+            tabViewModel.ImageIterator.Cache.DeleteFromCache(fileName);
+            var newModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
+            tabViewModel.ImageIterator.Cache.TryAdd(tabViewModel.Id, tabViewModel.ImageIterator.CurrentIndex, new PreLoadValue(newModel), tabViewModel.ImageIterator.Files.Count, false, out _);
+            tabViewModel.FileInfo.Value = fileInfo;
+            tabViewModel.Image.Value = newlyCroppedImage;
+        }
+        
+        await Dispatcher.UIThread.InvokeAsync(CloseCropControl);
+        vm.IsLoadingIndicatorShown.Value = false;
     }
 
     private (string fileName, FileInfo? fileInfo, Bitmap? bitmap) PrepareCropData()
-        => tabViewModel.FileInfo?.CurrentValue?.Exists ?? false
-            ? CreateNewCroppedImage()
-            : (tabViewModel.FileInfo.Value.FullName, tabViewModel.FileInfo.Value, null);
+    {
+        if (tabViewModel.FileInfo is null || !tabViewModel.FileInfo.CurrentValue.Exists)
+        {
+            return CreateNewCroppedImage();
+        }
+
+        return (tabViewModel.FileInfo.Value.FullName, tabViewModel.FileInfo.Value, null);
+    }
 
     private (string fileName, FileInfo fileInfo, Bitmap bitmap) CreateNewCroppedImage()
     {
@@ -181,21 +217,23 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         return (fileName, new FileInfo(fileName), bitmap);
     }
 
-    private async ValueTask SaveImage(string saveFilePath, FileInfo? fileInfo, Bitmap? bitmap)
+    private async ValueTask<Bitmap?> SaveImage(string saveFilePath, FileInfo? fileInfo, Bitmap? bitmap)
     {
-        if (bitmap != null)
+        if (bitmap is not null)
         {
             bitmap.Save(saveFilePath, PngBitmapEncoderOptions.Default);
-            return;
+            return bitmap;
         }
 
-        if (fileInfo != null && tabViewModel.Crop != null)
+        if (fileInfo is not null && tabViewModel.Crop is not null)
         {
-            await SaveWithMagickImage(tabViewModel.Crop, saveFilePath, fileInfo);
+            return await SaveWithMagickImage(tabViewModel.Crop, saveFilePath, fileInfo).ConfigureAwait(false);
         }
+
+        return null;
     }
 
-    private static async ValueTask SaveWithMagickImage(CropViewModel crop, string saveFilePath, FileInfo fileInfo)
+    private static async ValueTask<Bitmap> SaveWithMagickImage(CropViewModel crop, string saveFilePath, FileInfo fileInfo)
     {
         using var image = new MagickImage(fileInfo.FullName);
         var x = Convert.ToInt32(crop.SelectionX.CurrentValue / crop.AspectRatio);
@@ -205,6 +243,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         var geometry = new MagickGeometry(x, y, width, height);
 
         image.Crop(geometry);
-        await image.WriteAsync(saveFilePath);
+        await image.WriteAsync(saveFilePath).ConfigureAwait(false);
+        return image.ToWriteableBitmap();
     }
 }

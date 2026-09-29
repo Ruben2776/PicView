@@ -174,9 +174,20 @@ public static class MainKeyboardShortcuts
         {
             if (vm.WindowTabs.ActiveTab.CurrentValue.CropService.IsCropping)
             {
-                if (e.Key is Key.Escape)
+                switch (e.Key)
                 {
-                    vm.WindowTabs.ActiveTab.CurrentValue.CropService.CloseCropControl();
+                    case Key.Escape:
+                        vm.WindowTabs.ActiveTab.CurrentValue.CropService.CloseCropControl();
+                        break;
+                    case Key.Enter:
+                        await vm.WindowTabs.ActiveTab.CurrentValue.CropService.SaveCropAsync().ConfigureAwait(false);
+                        break;
+                    case Key.C:
+                        if (e.KeyModifiers is KeyModifiers.Control)
+                        {
+                            await vm.WindowTabs.ActiveTab.CurrentValue.CropService.CopyCroppedImageAsync().ConfigureAwait(false);
+                        }
+                        break;
                 }
                 return true;
             }

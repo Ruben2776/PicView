@@ -116,7 +116,7 @@ public static class SaveImageFileHelper
                 }
             }
 
-            if (rotationAngle is not null)
+            if (rotationAngle is not null && rotationAngle.Value is not 0)
             {
                 magickImage.Rotate(rotationAngle.Value);
             }

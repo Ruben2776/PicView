@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
+using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.DebugTools;
 using PicView.Core.FileSearch;
@@ -34,6 +35,12 @@ public partial class FileSearchDialog : AnimatedPopUp
         core.SharedNavigationService.LoadFromStringCommand ??= new ReactiveCommand<string>(LoadSelectedFile);
 
         InitializeComponent();
+        if (OperatingSystem.IsMacOS())
+        {
+            // There's a bug on mac where the first key press is incorrectly captured, e.g., pressing
+            // Cmd+F will input f to the search, so it should be readonly to prevent text from being inserted
+            SearchBox.IsReadOnly = true;
+        }
         Loaded += OnLoaded;
     }
 
@@ -44,11 +51,12 @@ public partial class FileSearchDialog : AnimatedPopUp
             return;
         }
 
-        await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.LoadFromStringAsync(source);
+        await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.LoadFromStringAsync(source).ConfigureAwait(false);
     }
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
+        SearchBox.Clear();
         SetupSearchSubscription();
         SearchBox.Focus();
         AddHandler(KeyDownEvent, KeysDownAsync, RoutingStrategies.Tunnel);
@@ -59,6 +67,15 @@ public partial class FileSearchDialog : AnimatedPopUp
         }
 
         core.SharedNavigationService.LoadFromStringCommand.Subscribe(_ => CloseMenu(sender, e)).AddTo(ref _disposables);
+        
+        if (OperatingSystem.IsMacOS())
+        {
+            Dispatcher.Post(() =>
+            {
+                // Allow text after we are sure the first keystroke is not captured
+                SearchBox.IsReadOnly = false;
+            }, DispatcherPriority.Background);
+        }
     }
 
     private async ValueTask KeysDownAsync(object? sender, KeyEventArgs e)
@@ -154,7 +171,7 @@ public partial class FileSearchDialog : AnimatedPopUp
                     var tab = tabs.ActiveTab.CurrentValue;
                     IEnumerable<FileSearchResult>? results = null;
                     await Task.Run(
-                        () => { results = FileSearcher.GetFileSearchResults(tab.ImageIterator.Files, text); }, ct);
+                        () => { results = FileSearcher.GetFileSearchResults(tab.ImageIterator.Files, text); }, ct).ConfigureAwait(false);
 
                     var fileSearchResults = results as FileSearchResult[] ?? results.ToArray();
                     core.SharedNavigationService.FilteredFileInfos.Value =
@@ -165,14 +182,14 @@ public partial class FileSearchDialog : AnimatedPopUp
                     }
 
                     // Need to delay to make it feel smooth
-                    await Task.Delay(10, ct);
+                    await Task.Delay(10, ct).ConfigureAwait(false);
 
                     for (var i = batchSize; i < fileSearchResults.Length; i += batchSize)
                     {
                         var batch = fileSearchResults.Skip(i).Take(batchSize);
                         foreach (var item in batch)
                         {
-                            await Task.Delay(10, ct);
+                            await Task.Delay(10, ct).ConfigureAwait(false);
                             ct.ThrowIfCancellationRequested();
                             if (!ct.IsCancellationRequested)
                             {

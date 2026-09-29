@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -34,7 +33,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
 
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
     {
-        await provider.HandlePlatformUpdate(updateInfo, tempPath);
+        await provider.HandlePlatformUpdate(updateInfo, tempPath).ConfigureAwait(false);
     }
 
     public MainWindow CreateMainWindow()
@@ -59,7 +58,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(Set);
+            Dispatcher.UIThread.Post(Set);
         }
 
         return;
@@ -114,7 +113,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             if (vm.InfoWindow.ImageInfoWindowConfig?.WindowProperties is null)
             {
                 vm.InfoWindow.ImageInfoWindowConfig = new ImageInfoWindowConfig();
-                await vm.InfoWindow.ImageInfoWindowConfig.LoadAsync();
+                await vm.InfoWindow.ImageInfoWindowConfig.LoadAsync().ConfigureAwait(false);
             }
 
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -134,7 +133,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                         desktop.MainWindow?.Focus();
                     }
 
-                    await vm.InfoWindow.ImageInfoWindowConfig.SaveAsync();
+                    await vm.InfoWindow.ImageInfoWindowConfig.SaveAsync().ConfigureAwait(false);
                     vm.InfoWindow.Dispose();
                     vm.InfoWindow = null;
                 };
@@ -182,27 +181,27 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     {
                         KeybindingManager.SetDefaultKeybindings(core.PlatformService);
                         FunctionsKeyHelper.ResetKeybindings(core.Keybindings);
-                    }, ct);
+                    }, ct).ConfigureAwait(false);
                     if (core.Keybindings.WindowConfig is null)
                     {
                         core.Keybindings.WindowConfig = new KeybindingWindowConfig();
-                        await core.Keybindings.WindowConfig.LoadAsync();
+                        await core.Keybindings.WindowConfig.LoadAsync().ConfigureAwait(false);
                     }
-                    await ShowKeybindingsWindow();
+                    await ShowKeybindingsWindow().ConfigureAwait(false);
                     core.MainWindows.ActiveWindow.CurrentValue.IsLoadingIndicatorShown.Value = false;
                 });
                 
                 await Task.Run(async () =>
                 {
-                    await KeybindingManager.LoadKeybindings(core.PlatformService);
+                    await KeybindingManager.LoadKeybindings(core.PlatformService).ConfigureAwait(false);
                     FunctionsKeyHelper.LoadKeybindingsViewModel(core.Keybindings);
-                });
+                }).ConfigureAwait(false);
             }
 
             if (core.Keybindings.WindowConfig?.WindowProperties is null)
             {
                 core.Keybindings.WindowConfig = new KeybindingWindowConfig();
-                await core.Keybindings.WindowConfig.LoadAsync();
+                await core.Keybindings.WindowConfig.LoadAsync().ConfigureAwait(false);
             }
 
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -217,7 +216,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     {
                         disposable.Dispose();
                     }
-                    await core.Keybindings.WindowConfig.SaveAsync();
+                    await core.Keybindings.WindowConfig.SaveAsync().ConfigureAwait(false);
                     _keybindingsWindow = null;
                 };
             });
@@ -243,7 +242,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
 
         void Show()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            if (OperatingSystem.IsMacOS())
             {
                 _keybindingsWindow.Show();
             }
@@ -275,7 +274,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
         if (core.SettingsViewModel.SettingsWindowConfig is null)
         {
             core.SettingsViewModel.SettingsWindowConfig = new SettingsWindowConfig();
-            await core.SettingsViewModel.SettingsWindowConfig.LoadAsync();
+            await core.SettingsViewModel.SettingsWindowConfig.LoadAsync().ConfigureAwait(false);
         }
 
         if (_settingsWindow is null)
@@ -292,8 +291,8 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     core.SettingsViewModel.SettingsWindowConfig.WindowProperties.LastTab = core.SettingsViewModel.GetLastTabId();
                     desktop.MainWindow?.Focus();   
                     _settingsWindow = null;
-                    await core.SettingsViewModel.SettingsWindowConfig.SaveAsync();
-                    await SaveSettingsAsync();
+                    await core.SettingsViewModel.SettingsWindowConfig.SaveAsync().ConfigureAwait(false);
+                    await SaveSettingsAsync().ConfigureAwait(false);
                 };
             });
         }
@@ -338,7 +337,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             if (core.Effects.WindowConfig is null)
             {
                 core.Effects.WindowConfig = new EffectsWindowConfig();
-                await core.Effects.WindowConfig.LoadAsync();
+                await core.Effects.WindowConfig.LoadAsync().ConfigureAwait(false);
             }
 
             await Dispatcher.UIThread.InvokeAsync(() =>
@@ -346,7 +345,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 _effectsWindow = provider.CreateEffectsWindow(core.Effects.WindowConfig);
                 _effectsWindow.DataContext = core;
                 WindowFunctions.InitializeWindowPosition(_effectsWindow, core.Effects.WindowConfig.WindowProperties);
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                if (OperatingSystem.IsMacOS())
                 {
                     _effectsWindow.Show();
                 }
@@ -359,7 +358,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 {
                     desktop.MainWindow?.Focus();
                     _effectsWindow = null;
-                    await core.Effects.WindowConfig.SaveAsync();
+                    await core.Effects.WindowConfig.SaveAsync().ConfigureAwait(false);
                 };
             });
         }
@@ -389,7 +388,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(Set);
+            Dispatcher.UIThread.Post(Set);
         }
 
         return;
@@ -409,7 +408,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 _singleImageResizeWindow = provider.CreateSingleImageResizeWindow(activeWindow);
                 _singleImageResizeWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                if (OperatingSystem.IsMacOS())
                 {
                     _singleImageResizeWindow.Show();
                 }
@@ -452,11 +451,8 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 FilePicker.SelectDirectory, FilePicker.SelectFile, 
                 core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.FileInfo?.CurrentValue ?? null,
                 core.PlatformService.GetFiles);
-            if (core.BatchResize.Config is null)
-            {
-                core.BatchResize.Config = new BatchResizeWindowConfig();
-                await core.BatchResize.Config.LoadAsync();
-            }
+            core.BatchResize.Config = new BatchResizeWindowConfig();
+            await core.BatchResize.Config.LoadAsync().ConfigureAwait(false);
         
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -507,7 +503,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(Set);
+            Dispatcher.UIThread.Post(Set);
         }
 
         return;
@@ -525,7 +521,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 _convertWindow = provider.CreateConvertWindow();
                 _convertWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 _convertWindow.DataContext = core.MainWindows.ActiveWindow.CurrentValue;
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                if (OperatingSystem.IsMacOS())
                 {
                     _convertWindow.Show();
                 }
@@ -559,7 +555,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
         }
         else
         {
-            Dispatcher.UIThread.InvokeAsync(Set);
+            Dispatcher.UIThread.Post(Set);
         }
 
         return;
@@ -613,14 +609,14 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             if (vm.PrintPreview.PrintWindowConfig is null)
             {
                 vm.PrintPreview.PrintWindowConfig = new PrintWindowConfig();
-                await vm.PrintPreview.PrintWindowConfig.LoadAsync();
+                await vm.PrintPreview.PrintWindowConfig.LoadAsync().ConfigureAwait(false);
             }
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _printPreviewWindow = provider.CreatePrintPreviewWindow(vm.PrintPreview.PrintWindowConfig);
                 _printPreviewWindow.DataContext = vm;
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                if (OperatingSystem.IsMacOS())
                 {
                     _printPreviewWindow.Show();
                 }
@@ -641,7 +637,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 _printPreviewWindow?.Close();
             }).AddTo(vm.PrintPreview.Disposables);
             
-            await provider.InitializePrintAsync(vm, path, _printPreviewWindow);
+            await provider.InitializePrintAsync(vm, path, _printPreviewWindow).ConfigureAwait(false);
         }
         else
         {

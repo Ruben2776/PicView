@@ -107,7 +107,7 @@ public class FileWatcherService(
             // which protects the Integrity of the 'files' list and the CurrentIndex.
 
             var fileCreatedSub = created.SubscribeAwait(async (e, ct) =>
-                await OnFileCreatedAsync(tab, e).ConfigureAwait(false), 
+                await OnFileCreatedAsync(tab, e, ct).ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileCreatedAsync)));
 
             var fileDeletedSub = deleted.SubscribeAwait(async (e, ct) =>
@@ -115,11 +115,11 @@ public class FileWatcherService(
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileDeletedAsync)));
 
             var fileRenamedSub = renamed.SubscribeAwait(async (e, ct) =>
-                await OnFileRenamedAsync(tab, e).ConfigureAwait(false), 
+                await OnFileRenamedAsync(tab, e, ct).ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileRenamedAsync)));
             
             var fileChangedSub = changed.SubscribeAwait(async (e, ct) =>
-                await OnFileChangedAsync(tab, e).ConfigureAwait(false), 
+                await OnFileChangedAsync(tab, e, ct).ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileChangedAsync)));
 
             // Combine disposables
@@ -161,7 +161,53 @@ public class FileWatcherService(
         }
     }
 
-    private async ValueTask OnFileCreatedAsync(TabViewModel tab, FileSystemEventArgs e)
+    private static async ValueTask<bool> WaitForFileReadyAsync(string path, int maxWaitMs = 2000, CancellationToken ct = default)
+    {
+        var startTime = Environment.TickCount64;
+        while (Environment.TickCount64 - startTime < maxWaitMs)
+        {
+            if (ct.IsCancellationRequested)
+            {
+                return false;
+            }
+
+            try
+            {
+                if (File.Exists(path))
+                {
+                    var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    await using (fs.ConfigureAwait(false))
+                    {
+                        if (fs.Length > 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (IOException)
+            {
+                // File locked by writer
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Access restriction or transient lock
+            }
+
+            try
+            {
+                await Task.Delay(50, ct).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    private async ValueTask OnFileCreatedAsync(TabViewModel tab, FileSystemEventArgs e, CancellationToken ct = default)
     {
         if (!e.FullPath.IsSupported())
         {
@@ -174,6 +220,76 @@ public class FileWatcherService(
         {
             return;
         }
+
+        int existingIndex;
+        lock (files)
+        {
+            existingIndex = files.FindIndex(x => x.FullName.AsSpan().Equals(newFile.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (existingIndex >= 0)
+        {
+            lock (files)
+            {
+                files[existingIndex] = newFile;
+            }
+
+            thumbnailCache?.Remove(newFile.FullName);
+            _cache.DeleteFromCache(newFile.FullName);
+
+            var isCurrentFile = string.Equals(e.FullPath, tab.FileInfo?.CurrentValue?.FullName, StringComparison.OrdinalIgnoreCase);
+            if (isCurrentFile)
+            {
+                tab.Model.FileInfo = newFile;
+                tab.FileInfo.Value = newFile;
+                tab.UpdateTabTitle();
+            }
+
+            _cache.Resynchronize(tab.Id, files);
+
+            if (tab.Gallery.IsGalleryDocked.CurrentValue && existingIndex < tab.Gallery.GalleryItems.Count)
+            {
+                try
+                {
+                    await WaitForFileReadyAsync(newFile.FullName, ct: ct).ConfigureAwait(false);
+
+                    using var magick = new MagickImage();
+                    await magick.PingAsync(newFile).ConfigureAwait(false);
+                    var item = tab.Gallery.GalleryItems[existingIndex];
+                    item.FileInfo = newFile;
+
+                    var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFile, magick.Width, magick.Height);
+                    item.FileName.Value = thumbData.FileName;
+                    item.FileSize.Value = thumbData.FileSize;
+                    item.FileDate.Value = thumbData.FileDate;
+                    item.FileLocation.Value = thumbData.FileLocation;
+                    item.ImageSize.Value = thumbData.ImageSize;
+
+                    if (thumbnailLoader != null)
+                    {
+                        var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
+                        if (maxHeight <= 0)
+                        {
+                            maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
+                        }
+
+                        var thumb = await thumbnailLoader.GetThumbnailAsync(newFile, (uint)maxHeight).ConfigureAwait(false);
+                        if (thumb != null)
+                        {
+                            thumbnailCache?.Add(tab.Id, newFile.FullName, thumb);
+                        }
+                        item.Image.Value = thumb;
+                        item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(newFile, null) is not null;
+                    }
+                }
+                catch (Exception exception)
+                {
+                    DebugHelper.LogDebug(nameof(FileWatcherService), nameof(OnFileCreatedAsync), exception);
+                }
+            }
+            return;
+        }
+
         int insertionIndex;
         lock (files)
         {
@@ -195,37 +311,46 @@ public class FileWatcherService(
 
         if (insertionIndex >= 0 && tab.Gallery.IsGalleryDocked.CurrentValue)
         {
-            using var magick = new MagickImage();
-            await magick.PingAsync(newFile).ConfigureAwait(false);
-            var item = new GalleryItemViewModel
+            try
             {
-                FileInfo = newFile
-            };
+                await WaitForFileReadyAsync(newFile.FullName, ct: ct).ConfigureAwait(false);
 
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFile, magick.Width, magick.Height);
-            item.FileName.Value = thumbData.FileName;
-            item.FileSize.Value = thumbData.FileSize;
-            item.FileDate.Value = thumbData.FileDate;
-            item.FileLocation.Value = thumbData.FileLocation;
-            item.ImageSize.Value = thumbData.ImageSize;
+                using var magick = new MagickImage();
+                await magick.PingAsync(newFile).ConfigureAwait(false);
+                var item = new GalleryItemViewModel
+                {
+                    FileInfo = newFile
+                };
 
-            tab.Gallery.GalleryItems.Insert(insertionIndex, item);
+                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFile, magick.Width, magick.Height);
+                item.FileName.Value = thumbData.FileName;
+                item.FileSize.Value = thumbData.FileSize;
+                item.FileDate.Value = thumbData.FileDate;
+                item.FileLocation.Value = thumbData.FileLocation;
+                item.ImageSize.Value = thumbData.ImageSize;
 
-            if (thumbnailLoader != null)
+                tab.Gallery.GalleryItems.Insert(insertionIndex, item);
+
+                if (thumbnailLoader != null)
+                {
+                    var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
+                    if (maxHeight <= 0)
+                    {
+                        maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
+                    }
+
+                    var thumb = await thumbnailLoader.GetThumbnailAsync(newFile, (uint)maxHeight).ConfigureAwait(false);
+                    if (thumb != null)
+                    {
+                        thumbnailCache?.Add(tab.Id, newFile.FullName, thumb);
+                    }
+                    item.Image.Value = thumb;
+                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(newFile, null) is not null;
+                }
+            }
+            catch (Exception exception)
             {
-                var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
-                if (maxHeight <= 0)
-                {
-                    maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
-                }
-
-                var thumb = await thumbnailLoader.GetThumbnailAsync(newFile, (uint)maxHeight).ConfigureAwait(false);
-                if (thumb != null)
-                {
-                    thumbnailCache?.Add(tab.Id, newFile.FullName, thumb);
-                }
-                item.Image.Value = thumb;
-                item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(newFile, null) is not null;
+                DebugHelper.LogDebug(nameof(FileWatcherService), nameof(OnFileCreatedAsync), exception);
             }
         }
     }
@@ -239,6 +364,7 @@ public class FileWatcherService(
         var fullPath = e.FullPath;
 
         thumbnailCache?.Remove(fullPath);
+        _cache.DeleteFromCache(fullPath);
         
         var oldIndex = tab.ImageIterator.CurrentIndex;
         var currentFile = tab.Model.FileInfo;
@@ -302,7 +428,7 @@ public class FileWatcherService(
         }
     }
 
-    private async ValueTask OnFileRenamedAsync(TabViewModel tab, RenamedEventArgs e)
+    private async ValueTask OnFileRenamedAsync(TabViewModel tab, RenamedEventArgs e, CancellationToken ct = default)
     {
         if (!e.FullPath.IsSupported())
         {
@@ -310,6 +436,7 @@ public class FileWatcherService(
         }
 
         thumbnailCache?.Remove(e.OldFullPath);
+        _cache.DeleteFromCache(e.OldFullPath);
 
         var newFileInfo = new FileInfo(e.FullPath);
 
@@ -333,38 +460,48 @@ public class FileWatcherService(
         }
         var insertionIndex = FileSortOrder.InsertSorted(files, newFileInfo, _stringComparer);
 
-        if (insertionIndex >= 0 && insertionIndex > tab.Gallery.GalleryItems.Count)
+        if (insertionIndex >= 0 && tab.Gallery.IsGalleryDocked.CurrentValue && insertionIndex <= tab.Gallery.GalleryItems.Count)
         {
-            using var magick = new MagickImage();
-            await magick.PingAsync(newFileInfo).ConfigureAwait(false);
-            var item = new GalleryItemViewModel
+            try
             {
-                FileInfo = newFileInfo
-            };
+                await WaitForFileReadyAsync(newFileInfo.FullName, ct: ct).ConfigureAwait(false);
 
-            var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFileInfo, magick.Width, magick.Height);
-            item.FileName.Value = thumbData.FileName;
-            item.FileSize.Value = thumbData.FileSize;
-            item.FileDate.Value = thumbData.FileDate;
-            item.FileLocation.Value = thumbData.FileLocation;
-            item.ImageSize.Value = thumbData.ImageSize;
+                using var magick = new MagickImage();
+                await magick.PingAsync(newFileInfo).ConfigureAwait(false);
+                var item = new GalleryItemViewModel
+                {
+                    FileInfo = newFileInfo
+                };
 
-            tab.Gallery.GalleryItems.Insert(insertionIndex, item);
+                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFileInfo, magick.Width, magick.Height);
+                item.FileName.Value = thumbData.FileName;
+                item.FileSize.Value = thumbData.FileSize;
+                item.FileDate.Value = thumbData.FileDate;
+                item.FileLocation.Value = thumbData.FileLocation;
+                item.ImageSize.Value = thumbData.ImageSize;
 
-            if (thumbnailLoader != null)
+                tab.Gallery.GalleryItems.Insert(insertionIndex, item);
+
+                if (thumbnailLoader != null)
+                {
+                    var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
+                    if (maxHeight <= 0)
+                    {
+                        maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
+                    }
+
+                    var thumb = await thumbnailLoader.GetThumbnailAsync(newFileInfo, (uint)maxHeight).ConfigureAwait(false);
+                    if (thumb != null)
+                    {
+                        thumbnailCache?.Add(tab.Id, newFileInfo.FullName, thumb);
+                    }
+                    item.Image.Value = thumb;
+                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(newFileInfo, null) is not null;
+                }
+            }
+            catch (Exception exception)
             {
-                var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
-                if (maxHeight <= 0)
-                {
-                    maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
-                }
-
-                var thumb = await thumbnailLoader.GetThumbnailAsync(newFileInfo, (uint)maxHeight).ConfigureAwait(false);
-                if (thumb != null)
-                {
-                    thumbnailCache?.Add(tab.Id, newFileInfo.FullName, thumb);
-                }
-                item.Image.Value = thumb;
+                DebugHelper.LogDebug(nameof(FileWatcherService), nameof(OnFileRenamedAsync), exception);
             }
         }
 
@@ -400,21 +537,16 @@ public class FileWatcherService(
         
         FileHistoryManager.Rename(e.OldFullPath, e.FullPath);
     }
+
     /// Update the tabs FileInfo to reflect an updated new file size
-    private async ValueTask OnFileChangedAsync(TabViewModel tab, FileSystemEventArgs e)
+    private async ValueTask OnFileChangedAsync(TabViewModel tab, FileSystemEventArgs e, CancellationToken ct = default)
     {
+        if (!e.FullPath.IsSupported())
+        {
+            return;
+        }
+
         var newFile = new FileInfo(e.FullPath);
-        var previousFile = tab.Model.FileInfo;
-        if (previousFile is null)
-        {
-            return;
-        }
-        if (newFile.Length == previousFile.Length)
-        {
-            // Don't do anything if the file size hasn't changed
-            return;
-        }
-        
         if (tab.ImageIterator?.Files is not List<FileInfo> files)
         {
             return;
@@ -424,26 +556,64 @@ public class FileWatcherService(
         {
             files[index] = newFile;
         }
-        
-        if (!string.Equals(e.FullPath, tab.FileInfo?.CurrentValue?.FullName, StringComparison.OrdinalIgnoreCase))
-        {
-            return;
-        }
+
+        var isCurrentFile = string.Equals(e.FullPath, tab.FileInfo?.CurrentValue?.FullName, StringComparison.OrdinalIgnoreCase);
+
+        thumbnailCache?.Remove(newFile.FullName);
+        _cache.DeleteFromCache(newFile.FullName);
+        _cache.Resynchronize(tab.Id, files);
 
         try
         {
-            using var magick = new MagickImage();
-            await magick.PingAsync(newFile).ConfigureAwait(false);
-            tab.Model.PixelWidth = magick.Width;
-            tab.Model.PixelHeight = magick.Height;
+            await WaitForFileReadyAsync(newFile.FullName, ct: ct).ConfigureAwait(false);
+
+            if (isCurrentFile)
+            {
+                using var magick = new MagickImage();
+                await magick.PingAsync(newFile, ct).ConfigureAwait(false);
+                tab.Model.PixelWidth = magick.Width;
+                tab.Model.PixelHeight = magick.Height;
+                tab.Model.FileInfo = newFile;
+                tab.FileInfo.Value = newFile;
+                tab.UpdateTabTitle();
+            }
+
+            if (tab.Gallery.IsGalleryDocked.CurrentValue && index >= 0 && index < tab.Gallery.GalleryItems.Count)
+            {
+                var item = tab.Gallery.GalleryItems[index];
+                item.FileInfo = newFile;
+
+                using var magick = new MagickImage();
+                await magick.PingAsync(newFile).ConfigureAwait(false);
+                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFile, magick.Width, magick.Height);
+                item.FileName.Value = thumbData.FileName;
+                item.FileSize.Value = thumbData.FileSize;
+                item.FileDate.Value = thumbData.FileDate;
+                item.FileLocation.Value = thumbData.FileLocation;
+                item.ImageSize.Value = thumbData.ImageSize;
+
+                if (thumbnailLoader != null)
+                {
+                    var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
+                    if (maxHeight <= 0)
+                    {
+                        maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
+                    }
+
+                    var thumb = await thumbnailLoader.GetThumbnailAsync(newFile, (uint)maxHeight).ConfigureAwait(false);
+                    if (thumb != null)
+                    {
+                        thumbnailCache?.Add(tab.Id, newFile.FullName, thumb);
+                    }
+                    item.Image.Value = thumb;
+                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(newFile, null) is not null;
+                }
+            }
         }
         catch (Exception exception)
         {
             DebugHelper.LogDebug(nameof(FileWatcherService), nameof(OnFileChangedAsync), exception);
         }
-        tab.Model.FileInfo = newFile;
-        tab.FileInfo.Value = newFile;
-        tab.UpdateTabTitle();
     }
 
     #region IDispose

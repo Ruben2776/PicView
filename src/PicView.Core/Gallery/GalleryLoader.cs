@@ -10,12 +10,17 @@ public static class GalleryLoader
 {
     private static CancellationTokenSource? _cts;
 
-    public static async Task LoadGalleryAsync(TabViewModel tab, IReadOnlyList<FileInfo> files,
+    public static void LoadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files,
         IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
     {
         if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
         {
             return;
+        }
+
+        if (tab.Gallery.GalleryItems.Count > 0)
+        {
+            tab.Gallery.GalleryItems.Clear();
         }
 
         tab.Gallery.LoadingState = GalleryLoadingState.Loading;
@@ -47,7 +52,7 @@ public static class GalleryLoader
                 var batchVms = new GalleryItemViewModel[currentBatchSize];
 
                 // 1. Parallelize the metadata extraction (Massive speed boost)
-                await Parallel.ForAsync(0, currentBatchSize, parallelOptions, async (j, token) =>
+                Parallel.For(0, currentBatchSize, parallelOptions, j =>
                 {
                     var file = files[i + j];
                     var item = new GalleryItemViewModel { FileInfo = file };
@@ -55,14 +60,17 @@ public static class GalleryLoader
                     try
                     {
                         using var magick = new MagickImage();
-                        await magick.PingAsync(file, token).ConfigureAwait(false);
+#pragma warning disable MA0042
+                        // ReSharper disable once MethodHasAsyncOverloadWithCancellation
+                        magick.Ping(file);
+#pragma warning restore MA0042
                         item.PixelWidth = magick.Width;
                         item.PixelHeight = magick.Height;
                     }
                     catch (Exception ex)
                     {
 #if DEBUG
-                        DebugHelper.LogDebug(nameof(GalleryLoader), nameof(LoadGalleryAsync), ex);
+                        DebugHelper.LogDebug(nameof(GalleryLoader), nameof(LoadGallery), ex);
 #endif
                     }
 
@@ -73,29 +81,33 @@ public static class GalleryLoader
                     item.FileDate.Value = thumbData.FileDate;
                     item.FileLocation.Value = thumbData.FileLocation;
                     item.ImageSize.Value = thumbData.ImageSize;
-                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, null) is not null;
 
                     // 2. Assign the lazy-loading logic, but don't execute it!
-                    item.ThumbnailLoaderFunc = async _ =>
+                    item.ThumbnailLoaderFunc = async cancellationToken =>
                     {
                         if (thumbnailCache.TryGet(file.FullName, out var cached) && cached is not null)
                         {
                             return cached;
                         }
 
-                        var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight)
-                            .ConfigureAwait(false);
-                        if (thumb is not null)
+                        return await Task.Run(async () =>
                         {
-                            thumbnailCache.Add(tab.Id, file.FullName, thumb);
-                        }
+                            var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight)
+                                .ConfigureAwait(false);
+                            if (thumb is not null)
+                            {
+                                thumbnailCache.Add(tab.Id, file.FullName, thumb);
+                            }
 
-                        return thumb;
+                            item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, null) is not null;
+
+                            return thumb;
+                        }, cancellationToken).ConfigureAwait(false);
                     };
 
                     // Array assignment ensures perfect sorting order
                     batchVms[j] = item;
-                }).ConfigureAwait(false);
+                });
 
                 // 3. Add chunk directly to the UI
                 tab.Gallery.GalleryItems.AddRange(batchVms);
@@ -115,32 +127,15 @@ public static class GalleryLoader
         tab.Gallery.LoadingState = GalleryLoadingState.Loaded;
     }
 
-    public static async Task ReloadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files,
+    public static void ReloadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files,
         IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
     {
         tab.Gallery.LoadingState = GalleryLoadingState.Restarting;
         tab.Gallery.GalleryItems.Clear();
-        await _cts.CancelAsync().ConfigureAwait(false);
-        _cts.Dispose();
+        _cts?.Cancel();
+        _cts?.Dispose();
         _cts = null;
-        await LoadGalleryAsync(tab, files, thumbnailLoader, thumbnailCache, ct).ConfigureAwait(false);
-    }
-
-    public static async ValueTask LoadGalleryIfDockedOrExpanded(TabViewModel tabViewModel, GalleryMode mode,
-        IThumbnailCache thumbnailCache, IThumbnailLoader thumbnailLoader)
-    {
-        if (mode is GalleryMode.Docked or GalleryMode.Expanded)
-        {
-            if (tabViewModel.Gallery.LoadingState is GalleryLoadingState.NotLoaded)
-            {
-                await LoadGalleryAsync(tabViewModel,
-                        tabViewModel.ImageIterator.Files,
-                        thumbnailLoader,
-                        thumbnailCache,
-                        tabViewModel.GetTabCancellation().Token)
-                    .ConfigureAwait(false);
-            }
-        }
+        LoadGallery(tab, files, thumbnailLoader, thumbnailCache, ct);
     }
 
     public static async ValueTask ToggleGalleryAndLoadItem(TabViewModel tabViewModel, int index)

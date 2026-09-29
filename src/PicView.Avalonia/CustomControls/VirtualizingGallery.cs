@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Layout;
+using Avalonia.VisualTree;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
 
@@ -57,6 +58,7 @@ public class VirtualizingGallery : VirtualizingPanel
     private readonly List<RealizedGalleryItem> _realizedItems = [];
     public IReadOnlyList<RealizedGalleryItem> RealizedItems => _realizedItems;
     private Rect _viewport;
+    private NavigateAbleItemsViewer? _viewer;
 
     /// <inheritdoc cref="WrapPanel" />
     public Orientation Orientation
@@ -184,17 +186,31 @@ public class VirtualizingGallery : VirtualizingPanel
         return snapPoints;
     }
 
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+
+        if (change.Property == OrientationProperty)
+        {
+            // The old viewport belongs to the other scroll axis, wait for a fresh one
+            _viewport = default;
+            RecycleAllItems();
+        }
+    }
+
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
+        _viewer = this.FindAncestorOfType<NavigateAbleItemsViewer>();
         EffectiveViewportChanged += OnEffectiveViewportChanged;
     }
-
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromVisualTree(e);
         EffectiveViewportChanged -= OnEffectiveViewportChanged;
+        RecycleAllItems();
+        _viewer = null;
     }
 
     private void OnEffectiveViewportChanged(object? sender, EffectiveViewportChangedEventArgs e)
@@ -208,6 +224,18 @@ public class VirtualizingGallery : VirtualizingPanel
 
         _viewport = newViewport;
         InvalidateMeasure();
+    }
+
+    private void RecycleAllItems()
+    {
+        for (var i = _realizedItems.Count - 1; i >= 0; i--)
+        {
+            var realized = _realizedItems[i];
+            ItemContainerGenerator?.ClearItemContainer(realized.Element);
+            RemoveInternalChild(realized.Element);
+        }
+        _realizedItems.Clear();
+        _itemBounds.Clear();
     }
 
     private Size CalculateBounds(Size availableSize)
@@ -311,14 +339,25 @@ public class VirtualizingGallery : VirtualizingPanel
     {
         if (Items is null || Items.Count is 0)
         {
+            RecycleAllItems();
             return new Size();
         }
 
         // 1. Calculate all layout boundaries instantly in memory
         var extentSize = CalculateBounds(availableSize);
 
+        _viewer ??= this.FindAncestorOfType<NavigateAbleItemsViewer>();
+        
         // 2. Determine what is visible (inflate by 2x ItemHeight to buffer scrolling)
-        var visibleRect = _viewport == new Rect() ? new Rect(new Point(), availableSize) : _viewport;
+        var visibleRect = _viewport;
+        if (visibleRect.Width <= 0 || visibleRect.Height <= 0)
+        {
+            // No usable viewport (not laid out yet, or collapsed to zero size).
+            // Never fall back to an unbounded rect, inside a ScrollViewer that would realize every item.
+            visibleRect = new Rect(0, 0,
+                double.IsInfinity(availableSize.Width) ? 0 : availableSize.Width,
+                double.IsInfinity(availableSize.Height) ? 0 : availableSize.Height);
+        }
         visibleRect = visibleRect.Inflate(new Thickness(ItemHeight * 2));
 
         // 3. Find which indices fall inside the visible rect
@@ -368,11 +407,21 @@ public class VirtualizingGallery : VirtualizingPanel
         var itemsList = Items as IList;
         for (var i = startIndex; i <= endIndex; i++)
         {
+            var item = itemsList?[i];
             var container = ContainerFromIndex(i);
+
+            // If the realized container's DataContext does not match the current item, recycle it
+            if (container is not null && !ReferenceEquals(container.DataContext, item))
+            {
+                ItemContainerGenerator?.ClearItemContainer(container);
+                RemoveInternalChild(container);
+                _realizedItems.RemoveAll(r => r.Element == container);
+                container = null;
+            }
+
             if (container is null)
             {
                 // Generate and add container using Avalonia's generator
-                var item = itemsList[i];
                 if (ItemContainerGenerator.NeedsContainer(item, i, out var recycleKey))
                 {
                     container = ItemContainerGenerator.CreateContainer(item, i, recycleKey);
@@ -394,7 +443,7 @@ public class VirtualizingGallery : VirtualizingPanel
             }
 
             // Measure the container using the exact bounds we already calculated
-            container.Measure(_itemBounds[i].Size);
+            container?.Measure(_itemBounds[i].Size);
         }
 
         return extentSize;
@@ -419,6 +468,81 @@ public class VirtualizingGallery : VirtualizingPanel
     protected override void OnItemsChanged(IReadOnlyList<object?> items, NotifyCollectionChangedEventArgs e)
     {
         base.OnItemsChanged(items, e);
+
+        switch (e.Action)
+        {
+            case NotifyCollectionChangedAction.Reset:
+                RecycleAllItems();
+                break;
+
+            case NotifyCollectionChangedAction.Add:
+                if (e.NewStartingIndex >= 0)
+                {
+                    var count = e.NewItems?.Count ?? 1;
+                    for (var i = 0; i < _realizedItems.Count; i++)
+                    {
+                        var realized = _realizedItems[i];
+                        if (realized.Index >= e.NewStartingIndex)
+                        {
+                            _realizedItems[i] = new RealizedGalleryItem(realized.Index + count, realized.Element);
+                        }
+                    }
+                }
+                break;
+
+            case NotifyCollectionChangedAction.Remove:
+                if (e.OldStartingIndex >= 0)
+                {
+                    var count = e.OldItems?.Count ?? 1;
+                    var oldEndIndex = e.OldStartingIndex + count;
+                    for (var i = _realizedItems.Count - 1; i >= 0; i--)
+                    {
+                        var realized = _realizedItems[i];
+                        if (realized.Index >= e.OldStartingIndex && realized.Index < oldEndIndex)
+                        {
+                            ItemContainerGenerator?.ClearItemContainer(realized.Element);
+                            RemoveInternalChild(realized.Element);
+                            _realizedItems.RemoveAt(i);
+                        }
+                        else if (realized.Index >= oldEndIndex)
+                        {
+                            _realizedItems[i] = new RealizedGalleryItem(realized.Index - count, realized.Element);
+                        }
+                    }
+                }
+                else
+                {
+                    RecycleAllItems();
+                }
+                break;
+
+            case NotifyCollectionChangedAction.Replace:
+                if (e.NewStartingIndex >= 0)
+                {
+                    var count = e.NewItems?.Count ?? 1;
+                    var replaceEndIndex = e.NewStartingIndex + count;
+                    for (var i = _realizedItems.Count - 1; i >= 0; i--)
+                    {
+                        var realized = _realizedItems[i];
+                        if (realized.Index >= e.NewStartingIndex && realized.Index < replaceEndIndex)
+                        {
+                            ItemContainerGenerator?.ClearItemContainer(realized.Element);
+                            RemoveInternalChild(realized.Element);
+                            _realizedItems.RemoveAt(i);
+                        }
+                    }
+                }
+                else
+                {
+                    RecycleAllItems();
+                }
+                break;
+
+            case NotifyCollectionChangedAction.Move:
+                RecycleAllItems();
+                break;
+        }
+
         InvalidateMeasure();
     }
 

@@ -38,7 +38,10 @@ public static class GetThumbnails
                 {
                     shouldDisposeMagick = true;
                     magick = new MagickImage();
-                    await magick.PingAsync(fileInfo);
+#pragma warning disable MA0042
+                    // ReSharper disable once MethodHasAsyncOverload
+                    magick.Ping(fileInfo);
+#pragma warning restore MA0042
                 }
 
                 var profile = magick.GetExifProfile();
@@ -67,10 +70,25 @@ public static class GetThumbnails
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(GetThumbnails), nameof(GetThumbAsync), e);
-            return null;
+            if (!fileInfo.IsCommon())
+            {
+                return null;
+            }
+            try
+            {
+                return await GetSkBitmapThumbAsync(fileInfo, height).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                DebugHelper.LogDebug(nameof(GetThumbnails), nameof(GetThumbAsync), exception);
+                return null;
+            }
         }
     }
 
+    /// <summary>
+    /// Tries to get shell thumbnail or exif thumbnail if available, otherwise returns null.
+    /// </summary>
     public static Bitmap? GetThumbQuick(FileInfo fileInfo)
     {
         if (fileInfo is null)
@@ -81,11 +99,7 @@ public static class GetThumbnails
             Settings.Gallery.DockedGalleryItemSize : Settings.Gallery.ExpandedGalleryItemSize;
         if (fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
         {
-            var shellThumb = GetShellThumb(fileInfo.FullName, 0, (int)height);
-            if (shellThumb is not null)
-            {
-                return shellThumb;
-            }
+            return GetShellThumb(fileInfo.FullName, 0, (int)height) ?? GetExifThumb(fileInfo.FullName);
         }
         return GetExifThumb(fileInfo.FullName);
     }
@@ -115,7 +129,7 @@ public static class GetThumbnails
             return null;
         }
         thumbnail.AutoOrient();
-        return thumbnail?.ToWriteableBitmap();
+        return thumbnail.ToWriteableBitmap();
     }
 
     /// <summary>
@@ -187,7 +201,7 @@ public static class GetThumbnails
             case MagickFormat.Icon:
             case MagickFormat.Wbmp:
             {
-                return await GetSkBitmapThumbAsync(fileInfo, height);
+                return await GetSkBitmapThumbAsync(fileInfo, height).ConfigureAwait(false);
             }
         
             case MagickFormat.Svg:
@@ -195,7 +209,7 @@ public static class GetThumbnails
                 return null;
             default:
             {
-                magick = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magick);
+                magick = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magick).ConfigureAwait(false);
         
                 var geometry = new MagickGeometry(0, height);
                 magick.AutoOrient();
@@ -211,8 +225,11 @@ public static class GetThumbnails
         {
             return null;
         }
-        await using var stream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
-        var thumb = Bitmap.DecodeToHeight(stream, (int)height);
-        return thumb;
+        var stream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
+        await using (stream.ConfigureAwait(false))
+        {
+            var thumb = Bitmap.DecodeToHeight(stream, (int)height);
+            return thumb;
+        }
     }
 }

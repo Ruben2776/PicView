@@ -20,7 +20,6 @@ using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
-using PicView.Core.Localization;
 using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
 
@@ -81,7 +80,6 @@ public static class StartUpHelper
     
     public static void HandleWindowStartUpSettings(CoreViewModel core, bool settingsExists, MainWindow window)
     {
-        TranslationManager.Init();
         SettingsUpdater.InitializeSettings(core.MainWindows.ActiveWindow.CurrentValue, settingsExists);
 
         WindowFunctions.HandleWindowScalingMode(core, window);
@@ -147,7 +145,7 @@ public static class StartUpHelper
                 Debug.Assert(core.PlatformService != null);
                 core.MainWindows.ActiveWindow.Value?.Mapper = new FunctionsMapper(vm, mainWindow);
                 FileHistoryManager.Initialize();
-                HandleWindowControlSettings(core, desktop);
+                HandleWindowControlSettings(core, mainWindow);
                 vm.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);
             });
             _ = Task.Run(() => KeybindingManager.LoadKeybindings(core.PlatformService));
@@ -167,13 +165,13 @@ public static class StartUpHelper
         UIHelper.SetCtrlToZoomImage(vm);
     }
 
-    private static void HandleWindowControlSettings(CoreViewModel vm, IClassicDesktopStyleApplicationLifetime desktop)
+    private static void HandleWindowControlSettings(CoreViewModel vm, MainWindow mainWindow)
     {
         vm.MainWindows.ActiveWindow.CurrentValue.IsScrollingEnabled.Value = Settings.Zoom.ScrollEnabled;
 
         if (Settings.WindowProperties.TopMost)
         {
-            Dispatcher.UIThread.Invoke(() => { desktop.MainWindow.Topmost = true; });
+            Dispatcher.UIThread.Invoke(() => { mainWindow.Topmost = true; });
         }
     }
 
@@ -222,18 +220,26 @@ public static class StartUpHelper
 
         void ShowStartUpMenu()
         {
-            var vm = core.MainWindows.ActiveWindow.CurrentValue;
-            var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-            tab.ParentWindowContext = vm;
-            var startUpMenu = new StartUpMenu
+            Dispatcher.UIThread.Post(() =>
             {
-                Buttons =
+                var vm = core.MainWindows.ActiveWindow.CurrentValue;
+                var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+                tab.ParentWindowContext = vm;
+                var startUpMenu = new StartUpMenu
                 {
-                    DataContext = tab
+                    Buttons =
+                    {
+                        DataContext = tab
+                    }
+                };
+                tab.CurrentView.Value = startUpMenu;
+                mainWindow.Show();
+                if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                {
+                    desktop.MainWindow = mainWindow;
                 }
-            };
-            tab.CurrentView.Value = startUpMenu;
-            mainWindow.Show();
+            }, DispatcherPriority.Send);
+
         }
     }
 
