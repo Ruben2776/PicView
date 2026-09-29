@@ -180,7 +180,6 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     await Task.Run(() =>
                     {
                         KeybindingManager.SetDefaultKeybindings(core.PlatformService);
-                        FunctionsKeyHelper.ResetKeybindings(core.Keybindings);
                     }, ct).ConfigureAwait(false);
                     if (core.Keybindings.WindowConfig is null)
                     {
@@ -194,7 +193,6 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 await Task.Run(async () =>
                 {
                     await KeybindingManager.LoadKeybindings(core.PlatformService).ConfigureAwait(false);
-                    FunctionsKeyHelper.LoadKeybindingsViewModel(core.Keybindings);
                 }).ConfigureAwait(false);
             }
 
