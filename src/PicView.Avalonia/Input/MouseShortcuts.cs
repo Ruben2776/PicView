@@ -6,7 +6,6 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Views.UC;
-using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
@@ -47,7 +46,7 @@ public static class MouseShortcuts
                         return;
                     }
 
-                    await LoadNextPicAsync(reverse, mainViewModel);
+                    await LoadNextPicAsync(reverse, mainViewModel).ConfigureAwait(false);
                     return;
                 }
 
@@ -57,7 +56,7 @@ public static class MouseShortcuts
                 }
                 else
                 {
-                    await LoadNextPicAsync(reverse, mainViewModel);
+                    await LoadNextPicAsync(reverse, mainViewModel).ConfigureAwait(false);
                 }
 
                 return;
@@ -77,27 +76,27 @@ public static class MouseShortcuts
                 {
                     if (zoomOut is not null)
                     {
-                        await zoomOut(e);
+                        await zoomOut(e).ConfigureAwait(false);
                     }
                 }
                 else
                 {
                     if (zoomIn is not null)
                     {
-                        await zoomIn(e);
+                        await zoomIn(e).ConfigureAwait(false);
                     }
                 }
             }
             else
             {
-                await ScrollOrNavigateAsync(e, reverse, mainViewModel, imageScrollViewer);
+                await ScrollOrNavigateAsync(e, reverse, mainViewModel, imageScrollViewer).ConfigureAwait(false);
             }
         }
         else
         {
             if (ctrl)
             {
-                await ScrollOrNavigateAsync(e, reverse, mainViewModel, imageScrollViewer);
+                await ScrollOrNavigateAsync(e, reverse, mainViewModel, imageScrollViewer).ConfigureAwait(false);
             }
             else
             {
@@ -105,14 +104,14 @@ public static class MouseShortcuts
                 {
                     if (zoomOut is not null)
                     {
-                        await zoomOut(e);
+                        await zoomOut(e).ConfigureAwait(false);
                     }
                 }
                 else
                 {
                     if (zoomIn is not null)
                     {
-                        await zoomIn(e);
+                        await zoomIn(e).ConfigureAwait(false);
                     }
                 }
             }
@@ -149,12 +148,12 @@ public static class MouseShortcuts
             {
                 if (e.KeyModifiers is KeyModifiers.Control)
                 {
-                    await LoadNextPicAsync(reverse, mainViewModel, force: true); //#379
+                    await LoadNextPicAsync(reverse, mainViewModel, force: true).ConfigureAwait(false); //#379
                 }
                 return;
             }
 
-            await LoadNextPicAsync(reverse, mainViewModel);
+            await LoadNextPicAsync(reverse, mainViewModel).ConfigureAwait(false);
         }
         else
         {
@@ -164,7 +163,7 @@ public static class MouseShortcuts
             }
             else
             {
-                await LoadNextPicAsync(reverse, mainViewModel);
+                await LoadNextPicAsync(reverse, mainViewModel).ConfigureAwait(false);
             }
         }
     }
@@ -197,74 +196,65 @@ public static class MouseShortcuts
         var topLevel = TopLevel.GetTopLevel(desktop.MainWindow);
         var prop = e.GetCurrentPoint(topLevel).Properties;
 
-        if (window.DataContext is not MainWindowViewModel windowViewModel)
+        if (window.DataContext is not MainWindowViewModel vm)
         {
             return;
         }
-
-        // Handle mouse side buttons
-        if (prop.IsXButton1Pressed)
-        {
-            switch (Settings.Navigation.MouseSideButtonNavigationMode)
-            {
-                default:
-                case NavigationMode.None:
-                    return;
-                case NavigationMode.NavigatingFileHistory:
-                    if (windowViewModel.Mapper is not null)
-                    {
-                        await windowViewModel.Mapper.OpenPreviousFileHistoryEntry().ConfigureAwait(false);
-                    }
-                    return;
-                case NavigationMode.NavigatingBetweenDirectories:
-                    await windowViewModel.WindowTabs.PrevFolder().ConfigureAwait(false);
-                    return;
-                case NavigationMode.NavigatingBetweenFiles:
-                    await windowViewModel.WindowTabs.PrevFile().ConfigureAwait(false);
-                    return;
-                case NavigationMode.NavigatingBetweenArchives:
-                    await windowViewModel.WindowTabs.PrevArchive().ConfigureAwait(false);
-                    return;
-            }
-        }
-        if (prop.IsXButton2Pressed)
-        {
-            switch (Settings.Navigation.MouseSideButtonNavigationMode)
-            {
-                default:
-                case NavigationMode.None:
-                    return;
-                case NavigationMode.NavigatingFileHistory:
-                    if (windowViewModel.Mapper is not null)
-                    {
-                        await windowViewModel.Mapper.OpenNextFileHistoryEntry().ConfigureAwait(false);
-                    }
-                    return;
-                case NavigationMode.NavigatingBetweenDirectories:
-                    await windowViewModel.WindowTabs.NextFolder().ConfigureAwait(false);
-                    return;
-                case NavigationMode.NavigatingBetweenFiles:
-                    await windowViewModel.WindowTabs.NextFile().ConfigureAwait(false);
-                    return;
-                case NavigationMode.NavigatingBetweenArchives:
-                    await windowViewModel.WindowTabs.NextArchive().ConfigureAwait(false);
-                    return;
-            }
-        }
+        
         // Handle double click (only for the left mouse button, so that rapid
         // double-clicks of the side buttons don't fall through and trigger the
         // left-button double-click behavior such as toggling fullscreen)
-        if (e.ClickCount is 2 && prop.IsLeftButtonPressed && windowViewModel.Mapper is not null)
+        if (e.ClickCount is 2 && prop.IsLeftButtonPressed)
         {
+            if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+            {
+                if (imageViewer.GalleryView.IsPointerOver)
+                {
+                    // Prevent unintended behavior when double-clicking on the gallery view
+                    return;
+                }
+            }
             switch (Settings.UIProperties.DoubleClickBehavior)
             {
                 case 1:
-                    await windowViewModel.Mapper.ResetZoom();
-                    break;
+                    await vm.Mapper.ResetZoom().ConfigureAwait(false);
+                    return;
                 case 2:
-                    await windowViewModel.Mapper.ToggleFullscreen();
-                    break;
+                    await vm.Mapper.ToggleFullscreen().ConfigureAwait(false);
+                    return;
             }
+        }
+
+        Keybind? currentKeys;
+        if (prop.IsMiddleButtonPressed)
+        {
+            currentKeys = new Keybind(MouseButton.Middle, e.KeyModifiers);
+        }
+        else if (prop.IsXButton1Pressed)
+        {
+            currentKeys = new Keybind(MouseButton.XButton1, e.KeyModifiers);
+        }
+        else if (prop.IsXButton2Pressed)
+        {
+            currentKeys = new Keybind(MouseButton.XButton2, e.KeyModifiers);
+        }
+        else
+        {
+            return;
+        }
+        // Get the action string name quickly via dictionary lookup
+        var actionName = KeybindingManager.GetActionName(currentKeys.Value);
+        if (actionName is null)
+        {
+            // Pressed key(s) have no associated function
+            return;
+        }
+
+        // Map the string to the instance-specific function using the view model's mapper
+        var function = vm.Mapper.GetFunctionByName(actionName);
+        if (function is not null)
+        {
+            await function.Invoke().ConfigureAwait(false);
         }
     }
 }

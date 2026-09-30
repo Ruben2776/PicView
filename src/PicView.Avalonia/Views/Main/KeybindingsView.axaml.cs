@@ -259,11 +259,10 @@ public partial class KeybindingsView : UserControl
 
         foreach (var kvp in defaults)
         {
-            var functionName = NormalizeFunctionName(kvp.Value);
-            if (!defaultsByFunction.TryGetValue(functionName, out var list))
+            if (!defaultsByFunction.TryGetValue(kvp.Value, out var list))
             {
                 list = [];
-                defaultsByFunction[functionName] = list;
+                defaultsByFunction[kvp.Value] = list;
             }
 
             list.Add(kvp.Key);
@@ -272,10 +271,6 @@ public partial class KeybindingsView : UserControl
         return defaultsByFunction;
     }
 
-    private static string NormalizeFunctionName(string functionName) =>
-        string.Equals(functionName, "ToggleFullscreen", StringComparison.Ordinal)
-            ? "Fullscreen"
-            : functionName;
 
     private bool AreCurrentBindingsDefault()
     {
@@ -290,8 +285,7 @@ public partial class KeybindingsView : UserControl
         {
             foreach (var (box, functionName) in category.Entries)
             {
-                var normalized = NormalizeFunctionName(functionName);
-                defaultsByFunction.TryGetValue(normalized, out var defaultBinds);
+                defaultsByFunction.TryGetValue(functionName, out var defaultBinds);
                 var defaultCount = defaultBinds?.Count ?? 0;
                 var currentCount = box.Keybinds?.Count ?? 0;
 
@@ -353,12 +347,12 @@ public partial class KeybindingsView : UserControl
 
     private void OnResetClicked()
     {
-        if (DataContext is not CoreViewModel coreVm || coreVm.PlatformService is null)
+        if (DataContext is not CoreViewModel core)
         {
             return;
         }
 
-        var defaultsByFunction = GetDefaultsByFunction(coreVm);
+        var defaultsByFunction = GetDefaultsByFunction(core);
 
         // Push current state for undo
         _undoStack.Add(new KeybindSnapshot(_categories));
@@ -373,14 +367,14 @@ public partial class KeybindingsView : UserControl
                 foreach (var (box, functionName) in category.Entries)
                 {
                     box.Keybinds.Clear();
-
-                    var normalized = NormalizeFunctionName(functionName);
-                    if (defaultsByFunction.TryGetValue(normalized, out var defaultBinds))
+                    if (!defaultsByFunction.TryGetValue(functionName, out var defaultBinds))
                     {
-                        foreach (var keybind in defaultBinds)
-                        {
-                            box.Keybinds.Add(keybind);
-                        }
+                        continue;
+                    }
+
+                    foreach (var keybind in defaultBinds)
+                    {
+                        box.Keybinds.Add(keybind);
                     }
                 }
             }
@@ -455,15 +449,16 @@ public partial class KeybindingsView : UserControl
 
     private void OnViewKeyDown(object? sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Z && e.KeyModifiers == KeyModifiers.Control)
+        switch (e.Key)
         {
-            Undo();
-            e.Handled = true;
-        }
-        else if (e.Key == Key.Y && e.KeyModifiers == KeyModifiers.Control)
-        {
-            Redo();
-            e.Handled = true;
+            case Key.Z when e.KeyModifiers == KeyModifiers.Control:
+                Undo();
+                e.Handled = true;
+                break;
+            case Key.Y when e.KeyModifiers == KeyModifiers.Control:
+                Redo();
+                e.Handled = true;
+                break;
         }
     }
 
@@ -491,11 +486,9 @@ public partial class KeybindingsView : UserControl
             if (KeybindingManager.CustomShortcuts is not null)
             {
                 var currentBinds = new ObservableCollection<Keybind>();
-                var normalizedFunction = NormalizeFunctionName(functionName);
                 foreach (var kvp in KeybindingManager.CustomShortcuts)
                 {
-                    var normalizedCustom = NormalizeFunctionName(kvp.Value);
-                    if (string.Equals(normalizedCustom, normalizedFunction, StringComparison.Ordinal))
+                    if (string.Equals(kvp.Value, functionName, StringComparison.Ordinal))
                     {
                         currentBinds.Add(kvp.Key);
                     }
