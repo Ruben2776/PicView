@@ -326,7 +326,7 @@ public class NavigateAbleItemsViewer : ItemsControl
             return;
         }
 
-        _scrollViewer.SetCurrentValue(global::Avalonia.Controls.ScrollViewer.OffsetProperty, offset);
+        _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, offset);
     }
 
     /// <summary>
