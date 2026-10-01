@@ -21,10 +21,7 @@ public class KeyBindingsService(IPlatformSpecificService? specificService = null
         var keybindings = await KeybindingFunctions.LoadKeyBindingsFile().ConfigureAwait(false);
         if (string.IsNullOrWhiteSpace(keybindings))
         {
-            if (platform is not null)
-            {
-                SetDefaultKeybindings(platform);
-            }
+            SetDefaultKeybindings(platform);
         }
         else
         {
@@ -107,14 +104,8 @@ public class KeyBindingsService(IPlatformSpecificService? specificService = null
         }
     }
 
-    public void SetDefaultKeybindings(IPlatformSpecificService? platformSpecificService = null)
+    public void SetDefaultKeybindings(IPlatformSpecificService platform)
     {
-        var platform = platformSpecificService ?? specificService;
-        if (platform is null)
-        {
-            return;
-        }
-
         if (CustomShortcuts is not null)
         {
             CustomShortcuts.Clear();
