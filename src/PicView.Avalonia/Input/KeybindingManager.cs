@@ -13,11 +13,6 @@ public static class KeybindingManager
             _keyBindingsService ??= new KeyBindingsService();
             return _keyBindingsService.CustomShortcuts;
         }
-        set
-        {
-            _keyBindingsService ??= new KeyBindingsService();
-            _keyBindingsService.CustomShortcuts = value;
-        }
     }
 
     public static void LoadKeybindings(IPlatformSpecificService platformSpecificService)
@@ -57,14 +52,5 @@ public static class KeybindingManager
     {
         _keyBindingsService ??= new KeyBindingsService();
         return _keyBindingsService.GetDefaultShortcuts(platformSpecificService);
-    }
-
-    /// <summary>
-    /// Checks whether the current custom shortcuts match the platform defaults exactly.
-    /// </summary>
-    public static bool AreKeybindsDefault(IPlatformSpecificService platformSpecificService)
-    {
-        _keyBindingsService ??= new KeyBindingsService();
-        return _keyBindingsService.AreKeybindsDefault(platformSpecificService);
     }
 }
