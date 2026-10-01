@@ -63,7 +63,7 @@ public static class BackgroundManager
     public static async Task ChangeBackgroundAsync(MainWindowViewModel vm)
     {
         await Dispatcher.UIThread.InvokeAsync(() => ChangeBackground(vm));
-        await SaveSettingsAsync();
+        await SaveSettingsAsync().ConfigureAwait(false);
     }
 
     /// <summary>
