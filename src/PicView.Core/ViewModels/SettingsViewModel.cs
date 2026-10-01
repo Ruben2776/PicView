@@ -203,8 +203,6 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<string[]> MouseSideButtonBehaviors { get; }
     public BindableReactiveProperty<int> MouseSideButtonBehaviorIndex { get; } = new((int)Settings.Navigation.MouseSideButtonNavigationMode);
     
-    public BindableReactiveProperty<int> GalleryMouseWheelBehavior { get; } = new((int)Settings.Gallery.GalleryMouseWheelBehavior);
-    
     public BindableReactiveProperty<string[]> MouseDoubleClickBehaviors { get; }
     public BindableReactiveProperty<int> MouseDoubleClickBehaviorIndex { get; }
 
@@ -497,12 +495,6 @@ public class SettingsViewModel : IDisposable
                         await _languageService.UpdateLanguageAsync(x).ConfigureAwait(false);
                     }
                 }
-            }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
-            .AddTo(ref _disposables);
-        
-        GalleryMouseWheelBehavior
-            .Subscribe(x => {
-                Settings.Gallery.GalleryMouseWheelBehavior = (GalleryMouseWheel)x;
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
     }

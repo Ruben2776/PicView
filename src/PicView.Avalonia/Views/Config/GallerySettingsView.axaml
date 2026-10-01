@@ -141,9 +141,9 @@
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    SelectedIndex="{CompiledBinding SettingsViewModel.GalleryMouseWheelBehavior.Value,
+                    SelectedIndex="{CompiledBinding GlobalSettings.GalleryMouseWheelBehavior.Value,
                                                     Mode=TwoWay}">
-                    <ComboBoxItem Content="Scroll" Foreground="{DynamicResource MainTextColor}" />
+                    <ComboBoxItem Content="{CompiledBinding Translation.Scroll.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem Content="{CompiledBinding Translation.Navigate.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                 </ComboBox>
             </StackPanel>

@@ -135,6 +135,7 @@ public class TranslationViewModel
         Fstop.Value = t.Fstop;
         Fullscreen.Value = t.Fullscreen;
         FullPath.Value = t.FullPath;
+        GalleryMouseWheel.Value = t.GalleryMouseWheel;
         GallerySettings.Value = t.GallerySettings;
         Gamma.Value = t.Gamma;
         Green.Value = t.Green;
@@ -273,6 +274,7 @@ public class TranslationViewModel
         SaveAs.Value = t.SaveAs;
         SaveAsPdf.Value = t.SaveAsPdf;
         Scale.Value = t.Scale;
+        Scroll.Value = t.Scroll;
         ScrollAndRotate.Value = t.ScrollAndRotate;
         ScrollDirection.Value = t.ScrollDirection;
         ScrollDisabled.Value = t.ScrollingDisabled;
@@ -528,6 +530,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Fstop { get; } = new();
     public BindableReactiveProperty<string?> FullPath { get; } = new();
     public BindableReactiveProperty<string?> Fullscreen { get; } = new();
+    public BindableReactiveProperty<string?> GalleryMouseWheel { get; } = new();
     public BindableReactiveProperty<string?> GallerySettings { get; } = new();
     public BindableReactiveProperty<string?> GalleryThumbnailStretch { get; } = new();
     public BindableReactiveProperty<string?> Gamma { get; } = new();
@@ -666,6 +669,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> SaveAs { get; } = new();
     public BindableReactiveProperty<string?> SaveAsPdf { get; } = new();
     public BindableReactiveProperty<string?> Scale { get; } = new();
+    public BindableReactiveProperty<string?> Scroll { get; } = new();
     public BindableReactiveProperty<string?> ScrollAndRotate { get; } = new();
     public BindableReactiveProperty<string?> ScrollDirection { get; } = new();
     public BindableReactiveProperty<string?> ScrollDisabled { get; } = new();

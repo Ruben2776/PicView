@@ -18,9 +18,6 @@
             <Setter Property="Margin" Value="10,20" />
             <Setter Property="Spacing" Value="10" />
         </Style>
-        <Style Selector="StackPanel.mouseBindHeader">
-            <Setter Property="Margin" Value="10,10,10,40" />
-        </Style>
 
     </UserControl.Styles>
 
@@ -96,7 +93,7 @@
 
                 <!--  Mouse wheel  -->
                 <StackPanel
-                    Classes="mouseBindHeader"
+                    Margin="10,20"
                     IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}"
                     Orientation="Horizontal">
                     <TextBlock
@@ -117,6 +114,32 @@
                                                         Mode=TwoWay}">
                         <ComboBoxItem Content="{CompiledBinding Translation.CtrlToZoom.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                         <ComboBoxItem Content="{CompiledBinding Translation.ScrollToZoom.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+                    </ComboBox>
+                </StackPanel>
+
+                <!--  Gallery Mouse wheel  -->
+                <StackPanel
+                    Margin="10,0,10,50"
+                    IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        MinWidth="220"
+                        Margin="0,0,5,0"
+                        Classes="txt"
+                        Text="{CompiledBinding Translation.GalleryMouseWheel.Value,
+                                               Mode=OneWay}" />
+
+                    <ComboBox
+                        x:Name="GalleryMouseWheelBox"
+                        Width="300"
+                        Padding="5,7,0,7"
+                        BorderThickness="1"
+                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                        Foreground="{DynamicResource MainTextColor}"
+                        SelectedIndex="{CompiledBinding GlobalSettings.GalleryMouseWheelBehavior.Value,
+                                                        Mode=TwoWay}">
+                        <ComboBoxItem Content="{CompiledBinding Translation.Scroll.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+                        <ComboBoxItem Content="{CompiledBinding Translation.Navigate.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                     </ComboBox>
                 </StackPanel>
 

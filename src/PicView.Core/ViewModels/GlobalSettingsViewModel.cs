@@ -1,4 +1,5 @@
 ﻿using PicView.Core.DebugTools;
+using PicView.Core.Gallery;
 using R3;
 
 namespace PicView.Core.ViewModels;
@@ -24,6 +25,8 @@ public class GlobalSettingsViewModel
     public BindableReactiveProperty<int> BackgroundChoice { get; } = new();
     
     public BindableReactiveProperty<int> MouseWheelBehavior { get; } = new(Settings.Zoom.CtrlZoom ? 0 : 1);
+    public BindableReactiveProperty<int> GalleryMouseWheelBehavior { get; } = new((int)Settings.Gallery.GalleryMouseWheelBehavior);
+    
     public BindableReactiveProperty<bool> CtrlZoom { get; } = new(Settings.Zoom.CtrlZoom);
     
     public void Initialize()
@@ -50,6 +53,11 @@ public class GlobalSettingsViewModel
                 Settings.Zoom.CtrlZoom = ctrlZoom;
                 if (CtrlZoom.Value != ctrlZoom) CtrlZoom.Value = ctrlZoom;
                 await SaveSettingsAsync().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(MouseWheelBehavior)));
+            }, DebugHelper.LogError(nameof(GlobalSettingsViewModel), nameof(MouseWheelBehavior)));
+        
+        GalleryMouseWheelBehavior
+            .Subscribe(x => {
+                Settings.Gallery.GalleryMouseWheelBehavior = (GalleryMouseWheel)x;
+            }, DebugHelper.LogError(nameof(GlobalSettingsViewModel), nameof(GalleryMouseWheelBehavior)));
     }
 }
