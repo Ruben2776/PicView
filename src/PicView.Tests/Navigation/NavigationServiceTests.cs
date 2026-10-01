@@ -128,7 +128,7 @@ public class NavigationServiceTests : IDisposable
 
         for (var i = 1; i <= 15; i++)
         {
-            await File.WriteAllBytesAsync(Path.Combine(archiveSourceDir, $"img_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF]);
+            await File.WriteAllBytesAsync(Path.Combine(archiveSourceDir, $"img_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
         }
 
         System.IO.Compression.ZipFile.CreateFromDirectory(archiveSourceDir, tempZipPath);
@@ -166,7 +166,7 @@ public class NavigationServiceTests : IDisposable
 
         for (var i = 1; i <= 15; i++)
         {
-            await File.WriteAllBytesAsync(Path.Combine(archiveSourceDir, $"img_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF]);
+            await File.WriteAllBytesAsync(Path.Combine(archiveSourceDir, $"img_{i:D2}.jpg"), [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
         }
 
         System.IO.Compression.ZipFile.CreateFromDirectory(archiveSourceDir, tempZipPath);

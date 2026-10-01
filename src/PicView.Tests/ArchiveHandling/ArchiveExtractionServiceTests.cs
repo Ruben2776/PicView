@@ -110,7 +110,7 @@ public class ArchiveExtractionServiceTests
             Assert.Equal(2, result.Value.EntryKeys.Length);
 
             // Test extracting initial entries
-            var extracted = await service.ExtractEntriesAsync(tempZipPath, result.Value.EntryKeys);
+            var extracted = await service.ExtractEntriesAsync(tempZipPath, result.Value.EntryKeys, TestContext.Current.CancellationToken);
             Assert.Equal(2, extracted.Count);
             Assert.True(File.Exists(extracted[0]));
             Assert.True(File.Exists(extracted[1]));
@@ -178,7 +178,7 @@ public class ArchiveExtractionServiceTests
     {
         var service = new ArchiveExtractionService();
 
-        var result = await service.ExtractEntriesAsync("archive.zip", ["entry.jpg"]);
+        var result = await service.ExtractEntriesAsync("archive.zip", ["entry.jpg"], TestContext.Current.CancellationToken);
 
         Assert.Empty(result);
     }
@@ -188,7 +188,7 @@ public class ArchiveExtractionServiceTests
     {
         var service = new ArchiveExtractionService();
 
-        var result = await service.ExtractEntriesAsync("archive.zip", []);
+        var result = await service.ExtractEntriesAsync("archive.zip", [], TestContext.Current.CancellationToken);
 
         Assert.Empty(result);
     }
@@ -217,7 +217,7 @@ public class ArchiveExtractionServiceTests
 
             // Extract initial 10 pages
             var initialKeys = prep.Value.EntryKeys.Take(10).ToArray();
-            var initialPaths = await service.ExtractEntriesAsync(tempZipPath, initialKeys);
+            var initialPaths = await service.ExtractEntriesAsync(tempZipPath, initialKeys, TestContext.Current.CancellationToken);
 
             Assert.Equal(10, initialPaths.Count);
             foreach (var path in initialPaths)
@@ -229,13 +229,7 @@ public class ArchiveExtractionServiceTests
             var progressReports = new List<int>();
             var progress = new Progress<int>(progressReports.Add);
             var remainingKeys = prep.Value.EntryKeys.Skip(10).ToArray();
-            await service.ExtractRemainingAsync(
-                tempZipPath,
-                remainingKeys,
-                initialCount: 10,
-                totalCount: 14,
-                progress: progress,
-                batchSize: 10);
+            await service.ExtractRemainingAsync(tempZipPath, remainingKeys, initialCount: 10, totalCount: 14, progress: progress, batchSize: 10, ct: TestContext.Current.CancellationToken);
 
             foreach (var key in remainingKeys)
             {
@@ -276,19 +270,13 @@ public class ArchiveExtractionServiceTests
             Assert.NotNull(prep);
 
             var initialKeys = prep.Value.EntryKeys.Take(10).ToArray();
-            await service.ExtractEntriesAsync(tempZipPath, initialKeys);
+            await service.ExtractEntriesAsync(tempZipPath, initialKeys, TestContext.Current.CancellationToken);
 
             var progressReports = new List<int>();
             var progress = new Progress<int>(progressReports.Add);
             var remainingKeys = prep.Value.EntryKeys.Skip(10).ToArray();
 
-            await service.ExtractRemainingAsync(
-                tempZipPath,
-                remainingKeys,
-                initialCount: 10,
-                totalCount: 25,
-                progress: progress,
-                batchSize: 10);
+            await service.ExtractRemainingAsync(tempZipPath, remainingKeys, initialCount: 10, totalCount: 25, progress: progress, batchSize: 10, ct: TestContext.Current.CancellationToken);
 
             // Progress should have reported after first batch of 10 (20) and upon completion (25)
             Assert.Contains(20, progressReports);
@@ -327,7 +315,7 @@ public class ArchiveExtractionServiceTests
 
             // Extract initial pages (up to 10)
             var initialKeys = prep.Value.EntryKeys.Take(10).ToArray();
-            var initialPaths = await service.ExtractEntriesAsync(tempZipPath, initialKeys);
+            var initialPaths = await service.ExtractEntriesAsync(tempZipPath, initialKeys, TestContext.Current.CancellationToken);
 
             Assert.Equal(5, initialPaths.Count);
             foreach (var path in initialPaths)
@@ -358,7 +346,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
 
         // TempZipDirectory is null because PrepareArchiveAsync was never called
-        var result = await service.ExtractEntryAsync("archive.zip", "entry.jpg");
+        var result = await service.ExtractEntryAsync("archive.zip", "entry.jpg", TestContext.Current.CancellationToken);
 
         Assert.Null(result);
     }
@@ -368,7 +356,7 @@ public class ArchiveExtractionServiceTests
     {
         var service = new ArchiveExtractionService();
 
-        var result = await service.ExtractEntryAsync("archive.zip", null!);
+        var result = await service.ExtractEntryAsync("archive.zip", null!, TestContext.Current.CancellationToken);
 
         Assert.Null(result);
     }
@@ -378,7 +366,7 @@ public class ArchiveExtractionServiceTests
     {
         var service = new ArchiveExtractionService();
 
-        var result = await service.ExtractEntryAsync("archive.zip", string.Empty);
+        var result = await service.ExtractEntryAsync("archive.zip", string.Empty, TestContext.Current.CancellationToken);
 
         Assert.Null(result);
     }
@@ -393,7 +381,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
 
         // Should be a no-op when TempZipDirectory is null
-        await service.ExtractRemainingAsync("archive.zip", ["entry1.jpg", "entry2.jpg"]);
+        await service.ExtractRemainingAsync("archive.zip", ["entry1.jpg", "entry2.jpg"], ct: TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -402,7 +390,7 @@ public class ArchiveExtractionServiceTests
         var service = new ArchiveExtractionService();
 
         // Should be a no-op when remaining keys is empty, even if TempZipDirectory were set
-        await service.ExtractRemainingAsync("archive.zip", []);
+        await service.ExtractRemainingAsync("archive.zip", [], ct: TestContext.Current.CancellationToken);
     }
 
     #endregion

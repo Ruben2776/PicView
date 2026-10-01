@@ -72,8 +72,8 @@ public partial class ImageInfoView : UserControl
                 }
             };
 
-            PixelWidthTextBox.KeyDown += async (s, e) => await ResizeImageOnEnter(s, e);
-            PixelHeightTextBox.KeyDown += async (s, e) => await ResizeImageOnEnter(s, e);
+            PixelWidthTextBox.KeyDown += async (s, e) => await ResizeImageOnEnter(s, e).ConfigureAwait(false);
+            PixelHeightTextBox.KeyDown += async (s, e) => await ResizeImageOnEnter(s, e).ConfigureAwait(false);
 
             PixelWidthTextBox.KeyUp += delegate { AdjustAspectRatio(PixelWidthTextBox); };
             PixelHeightTextBox.KeyUp += delegate { AdjustAspectRatio(PixelHeightTextBox); };
@@ -85,14 +85,14 @@ public partial class ImageInfoView : UserControl
             
             FileNameTextBox.KeyDown += async (_, e) =>
                 await HandleRenameOnEnterAsync(e, () =>
-                    Path.Combine(vm.WindowTabs.ActiveTab.Value.Model.FileInfo.DirectoryName!, FileNameTextBox.Text));
+                    Path.Combine(vm.WindowTabs.ActiveTab.Value.Model.FileInfo.DirectoryName!, FileNameTextBox.Text)).ConfigureAwait(false);
 
             FullPathTextBox.KeyDown += async (_, e) =>
-                await HandleRenameOnEnterAsync(e, () => FullPathTextBox.Text ?? string.Empty);
+                await HandleRenameOnEnterAsync(e, () => FullPathTextBox.Text ?? string.Empty).ConfigureAwait(false);
 
             DirectoryNameTextBox.KeyDown += async (_, e) =>
                 await HandleRenameOnEnterAsync(e, () =>
-                    Path.Combine(DirectoryNameTextBox.Text, vm.WindowTabs.ActiveTab.Value.Model.FileInfo.Name));
+                    Path.Combine(DirectoryNameTextBox.Text, vm.WindowTabs.ActiveTab.Value.Model.FileInfo.Name)).ConfigureAwait(false);
 
             // Orientation is for display only atm
             OrientationBox.DropDownClosed += (_, _) =>
@@ -108,12 +108,12 @@ public partial class ImageInfoView : UserControl
 
             ColorRepresentationBox.DropDownClosed += async (_, _) =>
             {
-                await AddExifPropertyAsync(ExifWriter.AddColorSpace, vm.Exif.ColorRepresentation.CurrentValue);
+                await AddExifPropertyAsync(ExifWriter.AddColorSpace, vm.Exif.ColorRepresentation.CurrentValue).ConfigureAwait(false);
             };
             
             CompressionBox.DropDownClosed  += async (_, _) =>
             {
-                await AddExifPropertyAsync(ExifWriter.AddCompression, vm.Exif.Compression.CurrentValue);
+                await AddExifPropertyAsync(ExifWriter.AddCompression, vm.Exif.Compression.CurrentValue).ConfigureAwait(false);
             };
 
             vm.InfoWindow.IsLoading.Value = false;
@@ -157,10 +157,10 @@ public partial class ImageInfoView : UserControl
                 return;
             }
             
-            var isRenamed = await RenameHelper.RenameAction(vm, newPath);
+            var isRenamed = await RenameHelper.RenameAction(vm, newPath).ConfigureAwait(false);
             if (isRenamed)
             {
-                await UpdateValuesAsync(vm.WindowTabs.ActiveTab.Value.Model, CancellationToken.None);
+                await UpdateValuesAsync(vm.WindowTabs.ActiveTab.Value.Model, CancellationToken.None).ConfigureAwait(false);
             }
             
         }
@@ -201,8 +201,8 @@ public partial class ImageInfoView : UserControl
         await Task.Run(() =>
         {
             vm.Exif.UpdateExifValues(imageModel);
-        }, cancellationToken);
-        if (DirectoryNameTextBox.Text != imageModel.FileInfo.DirectoryName)
+        }, cancellationToken).ConfigureAwait(false);
+        if (!string.Equals(DirectoryNameTextBox.Text, imageModel.FileInfo.DirectoryName, StringComparison.Ordinal))
         {
             DirectoryNameTextBox.Text = imageModel.FileInfo.DirectoryName;
         }
@@ -329,7 +329,7 @@ public partial class ImageInfoView : UserControl
     {
         if (DataContext is MainWindowViewModel vm)
         {
-            await addAction(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, value);
+            await addAction(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, value).ConfigureAwait(false);
         }
     }
 }

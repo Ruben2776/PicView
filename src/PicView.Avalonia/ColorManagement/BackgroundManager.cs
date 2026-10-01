@@ -67,15 +67,6 @@ public static class BackgroundManager
     }
 
     /// <summary>
-    /// Sets the background of the view model based on the current background choice.
-    /// </summary>
-    /// <param name="vm">The main view model where the background is set.</param>
-    public static void SetBackground(MainWindowViewModel vm)
-    {
-        SetBackground(vm, Settings.UIProperties.BgColorChoice);
-    }
-    
-    /// <summary>
     /// Sets the background of the view model to a specific background choice.
     /// </summary>
     /// <param name="vm">The main view model where the background is set.</param>

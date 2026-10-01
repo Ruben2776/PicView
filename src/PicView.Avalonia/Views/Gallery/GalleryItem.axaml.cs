@@ -289,7 +289,7 @@ public partial class GalleryItem : NavigateAbleItem
             return;
         }
         var fileName = item.FileLocation.CurrentValue;
-        ClipboardFileOperations.Duplicate(fileName, core.MainWindows.ActiveWindow.CurrentValue, mainWindow).ConfigureAwait(false);
+        _ = ClipboardFileOperations.Duplicate(fileName, core.MainWindows.ActiveWindow.CurrentValue, mainWindow).ConfigureAwait(false);
     }
 
     private void DeleteFile_OnClick(object? sender, RoutedEventArgs e)

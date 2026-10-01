@@ -49,7 +49,7 @@ public class MotionPhotoEndToEndTests
             Assert.Skip("sample video missing");
         }
 
-        var videoBytes = await File.ReadAllBytesAsync(SampleVideoPath);
+        var videoBytes = await File.ReadAllBytesAsync(SampleVideoPath, TestContext.Current.CancellationToken);
         var jpeg = BuildJpegWithXmp(MotionPhotoFixtures.NewStandardXmp(videoBytes.Length));
 
         var directory = MotionPhotoFixtures.CreateTempDirectory();
@@ -58,8 +58,8 @@ public class MotionPhotoEndToEndTests
         {
             await using (var output = File.Create(filePath))
             {
-                await output.WriteAsync(jpeg);
-                await output.WriteAsync(videoBytes);
+                await output.WriteAsync(jpeg, TestContext.Current.CancellationToken);
+                await output.WriteAsync(videoBytes, TestContext.Current.CancellationToken);
             }
 
             var fileInfo = new FileInfo(filePath);
@@ -71,7 +71,7 @@ public class MotionPhotoEndToEndTests
             Assert.Equal(fileInfo.Length - videoBytes.Length, info.VideoOffset);
 
             // 2. Extraction
-            var stream = await MotionPhotoExtractor.ExtractAsync(fileInfo, info);
+            var stream = await MotionPhotoExtractor.ExtractAsync(fileInfo, info, TestContext.Current.CancellationToken);
             Assert.NotNull(stream);
             await using (stream)
             {
