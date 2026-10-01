@@ -26,8 +26,8 @@ public static class ClipboardTextOperations
         try
         {
             _ = AnimationsHelper.CopyAnimation(mainWindow);
-            await clipboard.ClearAsync();
-            await clipboard.SetTextAsync(text);
+            await clipboard.ClearAsync().ConfigureAwait(false);
+            await clipboard.SetTextAsync(text).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

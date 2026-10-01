@@ -29,7 +29,7 @@ public static class ClipboardPasteOperations
         try
         {
             // Need to use dispatcher to access clipboard in this instance
-            var files = await clipboard.TryGetFilesAsync();
+            var files = await clipboard.TryGetFilesAsync().ConfigureAwait(false);
             if (files != null)
             {
                 await ClipboardFileOperations.ProcessStorageItems(files, vm, mainWindow).ConfigureAwait(false);
@@ -42,25 +42,25 @@ public static class ClipboardPasteOperations
             }
 
             // Try to paste text (URLs, file paths)
-            var text = await clipboard.TryGetTextAsync();
+            var text = await clipboard.TryGetTextAsync().ConfigureAwait(false);
             if (!string.IsNullOrWhiteSpace(text))
             {
                 if (Base64Decoder.IsBase64String(text, out var base64))
                 {
-                    await UpdateImage.SetSingeBase64ImageAsync(base64, vm, mainWindow, tab.GetTabCancellation().Token);
+                    await UpdateImage.SetSingeBase64ImageAsync(base64, vm, mainWindow, tab.GetTabCancellation().Token).ConfigureAwait(false);
                 }
                 
                 if (tab.IsInitialized)
                 {
-                    return await tabs.LoadFromStringAsync(text);
+                    return await tabs.LoadFromStringAsync(text).ConfigureAwait(false);
                 }
                 
-                await QuickLoad.QuickLoadAsync(mainWindow, core, text, false);
+                await QuickLoad.QuickLoadAsync(mainWindow, core, text, false).ConfigureAwait(false);
                 return true;
             }
 
             // Try to paste image data
-            await ClipboardImageOperations.PasteClipboardImage(vm, mainWindow);
+            await ClipboardImageOperations.PasteClipboardImage(vm, mainWindow).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

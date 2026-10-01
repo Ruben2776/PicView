@@ -30,7 +30,7 @@ public static class ClipboardImageOperations
         {
             if (cropService.GetCroppedImage() is Bitmap clipboardBitmap)
             {
-                await CopyImageToClipboard(clipboard, clipboardBitmap, mainWindow);
+                await CopyImageToClipboard(clipboard, clipboardBitmap, mainWindow).ConfigureAwait(false);
                 return;
             }
         }
@@ -38,14 +38,14 @@ public static class ClipboardImageOperations
         {
             return;
         }
-        await CopyImageToClipboard(clipboard, bitmap, mainWindow);
+        await CopyImageToClipboard(clipboard, bitmap, mainWindow).ConfigureAwait(false);
     }
     
     public static async Task CopyImageToClipboard(IClipboard clipboard, Bitmap bitmap, MainWindow mainWindow)
     {
         _ = AnimationsHelper.CopyAnimation(mainWindow);
-        await clipboard.ClearAsync();
-        await clipboard.SetBitmapAsync(bitmap);
+        await clipboard.ClearAsync().ConfigureAwait(false);
+        await clipboard.SetBitmapAsync(bitmap).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public static class ClipboardImageOperations
             return false;
         }
         
-        var base64 = await GetBase64String(path);
+        var base64 = await GetBase64String(path).ConfigureAwait(false);
         
         if (string.IsNullOrEmpty(base64))
         {
@@ -69,8 +69,8 @@ public static class ClipboardImageOperations
         
         try
         {
-            await clipboard.ClearAsync();
-            await clipboard.SetTextAsync(base64);
+            await clipboard.ClearAsync().ConfigureAwait(false);
+            await clipboard.SetTextAsync(base64).ConfigureAwait(false);
             return true;
         }
         catch (Exception ex)
@@ -84,7 +84,8 @@ public static class ClipboardImageOperations
     {
         if (!string.IsNullOrWhiteSpace(path))
         {
-            return Convert.ToBase64String(await File.ReadAllBytesAsync(path));
+            var bytes = await File.ReadAllBytesAsync(path).ConfigureAwait(false);
+            return Convert.ToBase64String(bytes);
         }
         return null; // TODO handle non-image types, such as SVGs
     }
@@ -99,7 +100,7 @@ public static class ClipboardImageOperations
 
         try
         {
-            var bitmap = await clipboard.TryGetBitmapAsync();
+            var bitmap = await clipboard.TryGetBitmapAsync().ConfigureAwait(false);
             if (bitmap is null)
             {
                 return;
@@ -119,7 +120,7 @@ public static class ClipboardImageOperations
         {
             return;
         }
-        await clipboard.ClearAsync();
-        await clipboard.SetBitmapAsync(bitmap);
+        await clipboard.ClearAsync().ConfigureAwait(false);
+        await clipboard.SetBitmapAsync(bitmap).ConfigureAwait(false);
     }
 }

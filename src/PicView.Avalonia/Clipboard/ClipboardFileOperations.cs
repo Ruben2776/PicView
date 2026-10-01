@@ -25,6 +25,7 @@ public static class ClipboardFileOperations
     /// </summary>
     /// <param name="path">Path to the file to duplicate, or null to duplicate the current file.</param>
     /// <param name="vm">The main window view model</param>
+    /// <param name="mainWindow"></param>
     public static async Task Duplicate(string? path, MainWindowViewModel vm, MainWindow mainWindow)
     {
         var currentFile = vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName;
@@ -42,13 +43,13 @@ public static class ClipboardFileOperations
             vm.IsLoadingIndicatorShown.Value = true;
             
             // If we are duplicating the currently viewing file, we want to perform navigation to the new file
-            if (targetPath == currentFile)
+            if (string.Equals(targetPath, currentFile, StringComparison.Ordinal))
             {
-                await DuplicateCurrentFile(vm, mainWindow);
+                await DuplicateCurrentFile(vm, mainWindow).ConfigureAwait(false);
             }
             else
             {
-                await DuplicateFile(targetPath, mainWindow);
+                await DuplicateFile(targetPath, mainWindow).ConfigureAwait(false);
             }
         }
         catch (Exception ex)
@@ -83,7 +84,7 @@ public static class ClipboardFileOperations
             }
 
             var duplicatedPath =
-                await FileHelper.DuplicateAndReturnFileNameAsync(currentPath);
+                await FileHelper.DuplicateAndReturnFileNameAsync(currentPath).ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(duplicatedPath) || !File.Exists(duplicatedPath))
             {
@@ -91,7 +92,7 @@ public static class ClipboardFileOperations
             }
             
             _ = AnimationsHelper.CopyAnimation(mainWindow);
-            await vm.WindowTabs.SharedNavigation.LoadFromFileAsync(duplicatedPath, activeTab, activeTab.GetTabCancellation());
+            await vm.WindowTabs.SharedNavigation.LoadFromFileAsync(duplicatedPath, activeTab, activeTab.GetTabCancellation()).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -104,10 +105,10 @@ public static class ClipboardFileOperations
     /// </summary>
     private static async Task DuplicateFile(string path, MainWindow mainWindow)
     {
-        var duplicatedPath = await FileHelper.DuplicateAndReturnFileNameAsync(path);
+        var duplicatedPath = await FileHelper.DuplicateAndReturnFileNameAsync(path).ConfigureAwait(false);
         if (!string.IsNullOrWhiteSpace(duplicatedPath))
         {
-            await AnimationsHelper.CopyAnimation(mainWindow);
+            await AnimationsHelper.CopyAnimation(mainWindow).ConfigureAwait(false);
         }
     }
 
@@ -128,12 +129,12 @@ public static class ClipboardFileOperations
         }
         
         var animTask = AnimationsHelper.CopyAnimation(mainWindow);
-        var storageFile = await mainWindow.StorageProvider.TryGetFileFromPathAsync(Path.GetFullPath(filePath));
+        var storageFile = await mainWindow.StorageProvider.TryGetFileFromPathAsync(Path.GetFullPath(filePath)).ConfigureAwait(false);
         
         if (storageFile != null)
         {
              var fileTask = clipboard.SetFileAsync(storageFile);
-             await Task.WhenAll(animTask, fileTask);
+             await Task.WhenAll(animTask, fileTask).ConfigureAwait(false);
         }
     }
 
