@@ -26,39 +26,37 @@ public static class GenericWindowHelper
     
     public static void GenericWindowInitialize(Window window, string title, bool isWidthLocked, IWindowProperties windowConfig)
     {
-        window.Loaded += delegate
+        if (isWidthLocked)
         {
-            if (isWidthLocked)
+            if (!double.IsNaN(window.Width))
             {
-                if (!double.IsNaN(window.Width))
-                {
-                    window.MinWidth = window.MaxWidth = window.Width;
-                }
+                window.MinWidth = window.MaxWidth = window.Width;
             }
+        }
 
-            if (windowConfig.Maximized)
+        if (windowConfig.Maximized)
+        {
+            window.WindowState = WindowState.Maximized;
+        }
+        else
+        { 
+            window.WindowState = WindowState.Normal;
+            if (windowConfig.Height.HasValue && windowConfig.Height.Value > window.MinHeight)
             {
-                window.WindowState = WindowState.Maximized;
+                window.Height = windowConfig.Height.Value;
             }
-            else
-            { 
-                window.WindowState = WindowState.Normal;
-                if (windowConfig.Height.HasValue && windowConfig.Height.Value > window.MinHeight)
-                {
-                    window.Height = windowConfig.Height.Value;
-                }
-                if (!isWidthLocked && windowConfig.Width.HasValue && windowConfig.Width.Value > window.MinWidth)
-                {
-                    window.Width = windowConfig.Width.Value;
-                }
-                if (windowConfig.Top is not null && windowConfig.Left is not null)
-                {
-                    window.Position = new PixelPoint(windowConfig.Left.Value, windowConfig.Top.Value);
-                }
+            if (!isWidthLocked && windowConfig.Width.HasValue && windowConfig.Width.Value > window.MinWidth)
+            {
+                window.Width = windowConfig.Width.Value;
             }
+            if (windowConfig.Top is not null && windowConfig.Left is not null)
+            {
+                window.Position = new PixelPoint(windowConfig.Left.Value, windowConfig.Top.Value);
+            }
+        }
             
-            window.Title = StringExtensions.CombineWithAppName(title);
-        };
+        window.Title = StringExtensions.CombineWithAppName(title);
+        
         window.KeyUp += (_, e) =>
         {
             if (e.Key is not Key.Escape)

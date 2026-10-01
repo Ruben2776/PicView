@@ -12,6 +12,6 @@ public partial class KeybindingsWindow : GenericWindow
     public KeybindingsWindow(KeybindingWindowConfig config)
     {
         InitializeComponent();
-        GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.ApplicationShortcuts, true, config.WindowProperties);
+        GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.ApplicationShortcuts, false, config.WindowProperties);
     }
 }

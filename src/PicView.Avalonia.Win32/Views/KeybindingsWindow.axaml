@@ -6,6 +6,7 @@
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     Title="KeybindingsWindow"
+    MinWidth="575"
     MinHeight="200"
     x:DataType="viewModels:CoreViewModel"
     CanResize="True"
