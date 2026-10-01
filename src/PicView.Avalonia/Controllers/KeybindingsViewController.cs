@@ -304,14 +304,16 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                     return false;
                 }
 
-                if (defaultBinds is not null && box.Keybinds is not null)
+                if (defaultBinds is null || box.Keybinds is null)
                 {
-                    for (var i = 0; i < defaultBinds.Count; i++)
+                    continue;
+                }
+
+                for (var i = 0; i < defaultBinds.Count; i++)
+                {
+                    if (box.Keybinds[i] != defaultBinds[i])
                     {
-                        if (box.Keybinds[i] != defaultBinds[i])
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
             }

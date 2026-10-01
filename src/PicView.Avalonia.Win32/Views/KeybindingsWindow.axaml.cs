@@ -1,5 +1,3 @@
-using Avalonia;
-using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Core.Config;
