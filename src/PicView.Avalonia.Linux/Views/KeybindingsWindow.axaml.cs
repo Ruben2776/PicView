@@ -11,7 +11,7 @@ public partial class KeybindingsWindow : GenericWindow
     {
         InitializeComponent();
         GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.ApplicationShortcuts, false,
-            config.WindowProperties);
+            config.WindowProperties, false);
         KeyDown += (_, e) => KeybindingsView.Controller?.HandleKeyPressed(e);
     }
 }

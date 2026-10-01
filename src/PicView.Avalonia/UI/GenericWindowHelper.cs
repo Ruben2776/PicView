@@ -24,7 +24,7 @@ public static class GenericWindowHelper
         }
     }
     
-    public static void GenericWindowInitialize(Window window, string title, bool isWidthLocked, IWindowProperties windowConfig)
+    public static void GenericWindowInitialize(Window window, string title, bool isWidthLocked, IWindowProperties windowConfig, bool closeOnEsc = true)
     {
         if (isWidthLocked)
         {
@@ -56,6 +56,25 @@ public static class GenericWindowHelper
         }
             
         window.Title = StringExtensions.CombineWithAppName(title);
+
+        if (closeOnEsc)
+        {
+            window.KeyUp += (_, e) =>
+            {
+                if (e.Key is not Key.Escape)
+                {
+                    return;
+                }
+
+                if (!MainKeyboardShortcuts.IsEscKeyEnabled)
+                {
+                    return;
+                }
+                e.Handled = true;
+                MainKeyboardShortcuts.IsEscKeyEnabled = false;
+                window.Close();
+            };
+        }
         
         window.Closing += (_, _) =>
         {
