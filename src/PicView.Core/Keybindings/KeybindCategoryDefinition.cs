@@ -49,7 +49,7 @@ public static class KeybindCategoryDefinition
     public static List<(string FunctionName, string DisplayName)> GetImageControlEntries(LanguageModel t) =>
     [
         ("SideBySide", t.SideBySide ?? string.Empty),
-        ("Stretch", t.Stretch ?? string.Empty),
+        ("ZoomToFit", t.ZoomToFit ?? string.Empty),
         ("Flip", t.Flip ?? string.Empty),
         ("Crop", t.Crop ?? string.Empty),
         ("ChangeBackground", t.ChangeBackground ?? string.Empty),

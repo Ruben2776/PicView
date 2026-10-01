@@ -50,7 +50,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         var isSearchFocused = view.FilterBox.IsFocused || view.FilterBox.IsKeyboardFocusWithin;
 
         // Handle Escape
-        if (e.Key == Key.Escape && isSearchFocused)
+        if (e.Key is Key.Escape && isSearchFocused)
         {
             if (view.FilterBox.Text?.Length > 0)
             {
@@ -70,7 +70,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             : e.KeyModifiers.HasFlag(KeyModifiers.Control);
 
         // Handle Ctrl+F or '?' to focus search
-        if ((e.Key == Key.F && isCtrl) || (!isSearchFocused && e.Key == Key.OemQuestion))
+        if ((e.Key is Key.F && isCtrl) || (!isSearchFocused && e.Key is Key.OemQuestion))
         {
             view.FilterBox.Focus();
             e.Handled = true;

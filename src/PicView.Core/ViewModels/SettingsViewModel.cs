@@ -2,9 +2,7 @@ using PicView.Core.Config;
 using PicView.Core.Localization;
 using PicView.Core.ColorHandling;
 using PicView.Core.DebugTools;
-using PicView.Core.Gallery;
 using PicView.Core.ISettings;
-using PicView.Core.Navigation;
 using PicView.Core.SettingsSearch;
 using R3;
 
@@ -44,15 +42,6 @@ public class SettingsViewModel : IDisposable
             new SettingsCategoryItem(translation.Language, "LanguageSettingsImage", SettingsCategory.Language),
             new SettingsCategoryItem(translation.FileAssociations, "FileAssociationImage", SettingsCategory.FileAssociations)
         ];
-
-        MouseSideButtonBehaviors = new BindableReactiveProperty<string[]>(
-        [
-            TranslationManager.Translation.None!,
-            TranslationManager.Translation.Navigate!,
-            TranslationManager.Translation.NavigateFileHistory!,
-            TranslationManager.Translation.NavigateBetweenDirectories!,
-            TranslationManager.Translation.Archives!
-        ]);
         
         MouseDoubleClickBehaviors = new BindableReactiveProperty<string[]>(
         [
@@ -200,9 +189,6 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<int> ScrollDirectionIndex { get; } = new(Settings.Zoom.HorizontalReverseScroll ? 0 : 1);
 
     // Mouse
-    public BindableReactiveProperty<string[]> MouseSideButtonBehaviors { get; }
-    public BindableReactiveProperty<int> MouseSideButtonBehaviorIndex { get; } = new((int)Settings.Navigation.MouseSideButtonNavigationMode);
-    
     public BindableReactiveProperty<string[]> MouseDoubleClickBehaviors { get; }
     public BindableReactiveProperty<int> MouseDoubleClickBehaviorIndex { get; }
 
@@ -318,8 +304,6 @@ public class SettingsViewModel : IDisposable
             IsAutoPlayingMotionPhotos,
             HorizontalReverseScroll,
             ScrollDirectionIndex,
-            MouseSideButtonBehaviors,
-            MouseSideButtonBehaviorIndex,
             UserLanguage,
             IsIncludingSubdirectories,
             IsShowingTaskbarProgress,

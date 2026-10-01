@@ -22,7 +22,7 @@ public static class UINavigationHelper
             }
 
             var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-            await QuickLoad.QuickLoadAsync(mainWindow, core, lastFile, true);
+            await QuickLoad.QuickLoadAsync(mainWindow, core, lastFile, true).ConfigureAwait(false);
             return;
         }
         vm.IsLoadingIndicatorShown.Value = true;
@@ -44,7 +44,7 @@ public static class UINavigationHelper
             }
 
             var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-            await QuickLoad.QuickLoadAsync(mainWindow, core, lastFile, true);
+            await QuickLoad.QuickLoadAsync(mainWindow, core, lastFile, true).ConfigureAwait(false);
             return;
         }
         vm.IsLoadingIndicatorShown.Value = true;
@@ -66,11 +66,11 @@ public static class UINavigationHelper
             }
 
             var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-            await QuickLoad.QuickLoadAsync(mainWindow, core, lastFile, true);
+            await QuickLoad.QuickLoadAsync(mainWindow, core, lastFile, true).ConfigureAwait(false);
             return;
         }
         vm.IsLoadingIndicatorShown.Value = true;
-        await vm.WindowTabs.LoadLastFileAsync();
+        await vm.WindowTabs.LoadLastFileAsync().ConfigureAwait(false);
         vm.WindowTabs.ActiveTab.CurrentValue.UpdateTabTitle();
         vm.IsLoadingIndicatorShown.Value = false;
         vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
