@@ -40,7 +40,7 @@ public partial class KeybindingsView : UserControl
             return;
         }
 
-        if (DataContext is not CoreViewModel coreVm)
+        if (DataContext is not CoreViewModel core)
         {
             return;
         }
@@ -88,9 +88,9 @@ public partial class KeybindingsView : UserControl
             KeybindCategoryDefinition.GetStarRatingEntries(translation), pressKeyText);
 
         // Subscribe to filter text changes
-        if (coreVm.Keybindings is not null)
+        if (core.Keybindings is not null)
         {
-            _filterSubscription = coreVm.Keybindings.FilterText
+            _filterSubscription = core.Keybindings.FilterText
                 .Subscribe(ApplyFilter);
         }
 
@@ -133,8 +133,8 @@ public partial class KeybindingsView : UserControl
         // Wire up buttons
         CancelButton.Click += (_, _) => OnCancelClicked();
         DefaultButton.Click += (_, _) => OnResetClicked();
-        ApplyButton.Click += (_, _) => OnApplyClicked();
-        SaveButton.Click += (_, _) => OnSaveClicked();
+        ApplyButton.Click += async (_, _) => await OnApplyClicked().ConfigureAwait(false);
+        SaveButton.Click += async (_, _) => await OnSaveClicked().ConfigureAwait(false);
 
         // Ctrl+Z / Ctrl+Y for undo/redo
         KeyDown += OnViewKeyDown;
@@ -243,15 +243,15 @@ public partial class KeybindingsView : UserControl
         return !current.Equals(_savedSnapshot);
     }
 
-    private static Dictionary<string, List<Keybind>> GetDefaultsByFunction(CoreViewModel coreVm)
+    private static Dictionary<string, List<Keybind>> GetDefaultsByFunction(CoreViewModel core)
     {
         var defaultsByFunction = new Dictionary<string, List<Keybind>>(StringComparer.Ordinal);
-        if (coreVm.PlatformService is null)
+        if (core.PlatformService is null)
         {
             return defaultsByFunction;
         }
 
-        var defaults = KeybindingManager.GetDefaultShortcuts(coreVm.PlatformService);
+        var defaults = KeybindingManager.GetDefaultShortcuts(core.PlatformService);
         if (defaults is null)
         {
             return defaultsByFunction;
@@ -274,12 +274,12 @@ public partial class KeybindingsView : UserControl
 
     private bool AreCurrentBindingsDefault()
     {
-        if (DataContext is not CoreViewModel coreVm || coreVm.PlatformService is null)
+        if (DataContext is not CoreViewModel core)
         {
             return false;
         }
 
-        var defaultsByFunction = GetDefaultsByFunction(coreVm);
+        var defaultsByFunction = GetDefaultsByFunction(core);
 
         foreach (var category in _categories)
         {
@@ -387,13 +387,13 @@ public partial class KeybindingsView : UserControl
         UpdateButtonStates();
     }
 
-    private async void OnApplyClicked()
+    private async Task OnApplyClicked()
     {
         await SaveKeybindings().ConfigureAwait(false);
         Dispatcher.UIThread.Post(UpdateButtonStates);
     }
 
-    private async void OnSaveClicked()
+    private async Task OnSaveClicked()
     {
         await SaveKeybindings().ConfigureAwait(false);
         Dispatcher.UIThread.Post(SafeClose);

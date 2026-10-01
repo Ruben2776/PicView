@@ -176,17 +176,10 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 core.Keybindings.ResetKeybindingsCommand = new ReactiveCommand(async (_, ct) =>
                 {
                     core.MainWindows.ActiveWindow.CurrentValue.IsLoadingIndicatorShown.Value = true;
-                    _keybindingsWindow?.Close();
                     await Task.Run(() =>
                     {
                         KeybindingManager.SetDefaultKeybindings(core.PlatformService);
                     }, ct).ConfigureAwait(false);
-                    if (core.Keybindings.WindowConfig is null)
-                    {
-                        core.Keybindings.WindowConfig = new KeybindingWindowConfig();
-                        await core.Keybindings.WindowConfig.LoadAsync().ConfigureAwait(false);
-                    }
-                    await ShowKeybindingsWindow().ConfigureAwait(false);
                     core.MainWindows.ActiveWindow.CurrentValue.IsLoadingIndicatorShown.Value = false;
                 });
                 
