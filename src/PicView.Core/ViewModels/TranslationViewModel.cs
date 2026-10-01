@@ -203,6 +203,7 @@ public class TranslationViewModel
         NewTab.Value = t.NewTab;
         NewWindow.Value = t.NewWindow;
         NextArchive.Value = t.NextArchive;
+        NextFileInHistory.Value = t.NextFileInHistory;
         NextFolder.Value = t.NextFolder;
         NextImage.Value = t.NextImage;
         NoConversion.Value = t.NoConversion;
@@ -239,6 +240,7 @@ public class TranslationViewModel
         PrevArchive.Value = t.PrevArchive;
         PrevFolder.Value = t.PrevFolder;
         PrevImage.Value = t.PrevImage;
+        PreviousFileInHistory.Value = t.PreviousFileInHistory;
         Print.Value = t.Print;
         Printer.Value = t.Printer;
         PrintSizeCm.Value = t.PrintSizeCm;
@@ -598,6 +600,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> NewTab { get; } = new();
     public BindableReactiveProperty<string?> NewWindow { get; } = new();
     public BindableReactiveProperty<string?> NextArchive { get; } = new();
+    public BindableReactiveProperty<string?> NextFileInHistory { get; } = new();
     public BindableReactiveProperty<string?> NextFolder { get; } = new();
     public BindableReactiveProperty<string?> NextImage { get; } = new();
     public BindableReactiveProperty<string?> NoConversion { get; } = new();
@@ -634,6 +637,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> PrevArchive { get; } = new();
     public BindableReactiveProperty<string?> PrevFolder { get; } = new();
     public BindableReactiveProperty<string?> PrevImage { get; } = new();
+    public BindableReactiveProperty<string?> PreviousFileInHistory { get; } = new();
     public BindableReactiveProperty<string?> Print { get; } = new();
     public BindableReactiveProperty<string?> Printer { get; } = new();
     public BindableReactiveProperty<string?> PrintSizeCm { get; } = new();

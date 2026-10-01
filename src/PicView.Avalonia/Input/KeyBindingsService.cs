@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using Avalonia.Input;
 using PicView.Core.DebugTools;
 using PicView.Core.IPlatform;
 using PicView.Core.Keybindings;
+using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
 
@@ -11,7 +11,7 @@ namespace PicView.Avalonia.Input;
 [JsonSerializable(typeof(Dictionary<string, string>))]
 internal partial class SourceGenerationContext : JsonSerializerContext;
 
-public class KeyBindingsService(IPlatformSpecificService? specificService = null)
+public class KeyBindingsService
 {
     public Dictionary<Keybind, string>? CustomShortcuts { get; set; }
 
@@ -63,42 +63,47 @@ public class KeyBindingsService(IPlatformSpecificService? specificService = null
         }
     }
 
+    private Keybind? ParseToKeybind(KeyValuePair<string, string> kvp)
+    {
+        try
+        {
+            var keybind = Keybind.Parse(kvp.Key);
+            if (kvp.Value is null)
+            {
+                return null;
+            }
+            if (string.Equals(kvp.Key, nameof(MouseButton.Middle), StringComparison.OrdinalIgnoreCase)) 
+            {
+                return new Keybind(MouseButton.Middle, keybind.Modifiers);
+            }
+            if (string.Equals(kvp.Key, nameof(MouseButton.XButton1), StringComparison.OrdinalIgnoreCase))
+            {
+                return new Keybind(MouseButton.XButton1, keybind.Modifiers);
+            }
+            if (string.Equals(kvp.Key, nameof(MouseButton.XButton2), StringComparison.OrdinalIgnoreCase))
+            {
+                return new Keybind(MouseButton.XButton2, keybind.Modifiers);
+            }
+
+            return keybind;
+        }
+        catch (Exception exception)
+        {
+            DebugHelper.LogDebug(nameof(KeyBindingsService), nameof(PopulateCustomShortcuts), exception);
+        }
+
+        return null;
+    }
+
     public void PopulateCustomShortcuts(Dictionary<string, string> keyValues)
     {
         CustomShortcuts ??= new Dictionary<Keybind, string>(keyValues.Count);
         foreach (var kvp in keyValues)
         {
-            try
+            var parsedKey = ParseToKeybind(kvp);
+            if (parsedKey.HasValue)
             {
-                var keybind = Keybind.Parse(kvp.Key);
-                if (kvp.Value is null)
-                {
-                    continue;
-                }
-                if (string.Equals(kvp.Key, nameof(MouseButton.Middle), StringComparison.Ordinal)) 
-                {
-                    var mouseKeybind = new Keybind(MouseButton.Middle, keybind.Modifiers);
-                    CustomShortcuts[mouseKeybind] = kvp.Value;
-                    continue;
-                }
-                if (string.Equals(kvp.Key, nameof(MouseButton.XButton1), StringComparison.Ordinal))
-                {
-                    var mouseKeybind = new Keybind(MouseButton.XButton1, keybind.Modifiers);
-                    CustomShortcuts[mouseKeybind] = kvp.Value;
-                    continue;
-                }
-                if (string.Equals(kvp.Key, nameof(MouseButton.XButton2), StringComparison.Ordinal))
-                {
-                    var mouseKeybind = new Keybind(MouseButton.XButton2, keybind.Modifiers);
-                    CustomShortcuts[mouseKeybind] = kvp.Value;
-                    continue;
-                }
-
-                CustomShortcuts[keybind] = kvp.Value;
-            }
-            catch (Exception exception)
-            {
-                DebugHelper.LogDebug(nameof(KeyBindingsService), nameof(PopulateCustomShortcuts), exception);
+                CustomShortcuts[parsedKey.Value] = kvp.Value;
             }
         }
     }
@@ -130,14 +135,8 @@ public class KeyBindingsService(IPlatformSpecificService? specificService = null
     /// <summary>
     /// Builds and returns a dictionary of default keybindings for the current platform.
     /// </summary>
-    public Dictionary<Keybind, string>? GetDefaultShortcuts(IPlatformSpecificService? platformSpecificService = null)
+    public Dictionary<Keybind, string>? GetDefaultShortcuts(IPlatformSpecificService platform)
     {
-        var platform = platformSpecificService ?? specificService;
-        if (platform is null)
-        {
-            return null;
-        }
-
         var defaultJson = platform.DefaultJsonKeyMap();
         if (JsonSerializer.Deserialize(
                 defaultJson, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
@@ -149,20 +148,10 @@ public class KeyBindingsService(IPlatformSpecificService? specificService = null
         var defaults = new Dictionary<Keybind, string>();
         foreach (var kvp in keyValues)
         {
-            try
+            var parsedKey = ParseToKeybind(kvp);
+            if (parsedKey.HasValue)
             {
-                var gesture = KeyGesture.Parse(kvp.Key);
-                if (gesture.Key is Key.None || kvp.Value is null)
-                {
-                    continue;
-                }
-
-                var keybind = new Keybind(gesture.Key, gesture.KeyModifiers);
-                defaults[keybind] = kvp.Value;
-            }
-            catch
-            {
-                // Skip invalid entries
+                defaults[parsedKey.Value] = kvp.Value;
             }
         }
 
@@ -172,7 +161,7 @@ public class KeyBindingsService(IPlatformSpecificService? specificService = null
     /// <summary>
     /// Checks whether the current custom shortcuts match the platform defaults exactly.
     /// </summary>
-    public bool AreKeybindsDefault(IPlatformSpecificService? platformSpecificService = null)
+    public bool AreKeybindsDefault(IPlatformSpecificService platformSpecificService)
     {
         if (CustomShortcuts is null)
         {
@@ -200,5 +189,24 @@ public class KeyBindingsService(IPlatformSpecificService? specificService = null
         }
 
         return true;
+    }
+
+    public static Dictionary<string, List<Keybind>> GetDefaultsByFunction(CoreViewModel core)
+    {
+        var defaultsByFunction = new Dictionary<string, List<Keybind>>(StringComparer.OrdinalIgnoreCase);
+        var defaults = KeybindingManager.GetDefaultShortcuts(core.PlatformService);
+
+        foreach (var kvp in defaults)
+        {
+            if (!defaultsByFunction.TryGetValue(kvp.Value, out var list))
+            {
+                list = [];
+                defaultsByFunction[kvp.Value] = list;
+            }
+
+            list.Add(kvp.Key);
+        }
+
+        return defaultsByFunction;
     }
 }

@@ -291,7 +291,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             return false;
         }
 
-        var defaultsByFunction = GetDefaultsByFunction(core);
+        var defaultsByFunction = KeyBindingsService.GetDefaultsByFunction(core);
 
         foreach (var category in _categories)
         {
@@ -324,34 +324,6 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         return true;
     }
 
-    private static Dictionary<string, List<Keybind>> GetDefaultsByFunction(CoreViewModel core)
-    {
-        var defaultsByFunction = new Dictionary<string, List<Keybind>>(StringComparer.Ordinal);
-        if (core.PlatformService is null)
-        {
-            return defaultsByFunction;
-        }
-
-        var defaults = KeybindingManager.GetDefaultShortcuts(core.PlatformService);
-        if (defaults is null)
-        {
-            return defaultsByFunction;
-        }
-
-        foreach (var kvp in defaults)
-        {
-            if (!defaultsByFunction.TryGetValue(kvp.Value, out var list))
-            {
-                list = [];
-                defaultsByFunction[kvp.Value] = list;
-            }
-
-            list.Add(kvp.Key);
-        }
-
-        return defaultsByFunction;
-    }
-
     private void OnCancelClicked(object? sender, RoutedEventArgs e)
     {
         if (HasUnsavedChanges())
@@ -380,7 +352,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             return;
         }
 
-        var defaultsByFunction = GetDefaultsByFunction(core);
+        var defaultsByFunction = KeyBindingsService.GetDefaultsByFunction(core);
 
         // Push current state for undo
         _undoStack.Add(new KeybindSnapshot(_categories));

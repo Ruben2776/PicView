@@ -1,5 +1,5 @@
 using PicView.Core.Gallery;
-using PicView.Core.Navigation;
+
 // ReSharper disable All
 
 namespace PicView.Core.Config;

@@ -22,6 +22,8 @@ public static class KeybindCategoryDefinition
         ("PrevFolder", t.PrevFolder ?? string.Empty),
         ("NextArchive", t.NextArchive ?? string.Empty),
         ("PrevArchive", t.PrevArchive ?? string.Empty),
+        ("FileHistoryNext", t.NextFileInHistory ?? string.Empty),
+        ("FileHistoryPrev", t.PreviousFileInHistory ?? string.Empty),
         ("Search", t.Search ?? string.Empty),
         ("GalleryClick", t.SelectGalleryThumb ?? string.Empty),
         ("ToggleLooping", t.ToggleLooping ?? string.Empty),
