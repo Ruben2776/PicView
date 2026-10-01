@@ -57,21 +57,6 @@ public static class GenericWindowHelper
             
         window.Title = StringExtensions.CombineWithAppName(title);
         
-        window.KeyUp += (_, e) =>
-        {
-            if (e.Key is not Key.Escape)
-            {
-                return;
-            }
-
-            if (!MainKeyboardShortcuts.IsEscKeyEnabled)
-            {
-                return;
-            }
-            e.Handled = true;
-            MainKeyboardShortcuts.IsEscKeyEnabled = false;
-            window.Close();
-        };
         window.Closing += (_, _) =>
         {
             windowConfig.Width = window.Width;

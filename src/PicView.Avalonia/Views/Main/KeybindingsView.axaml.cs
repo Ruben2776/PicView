@@ -7,7 +7,7 @@ namespace PicView.Avalonia.Views.Main;
 
 public partial class KeybindingsView : UserControl
 {
-    private KeybindingsViewController? _controller;
+    public KeybindingsViewController? Controller;
 
     public KeybindingsView()
     {
@@ -19,23 +19,14 @@ public partial class KeybindingsView : UserControl
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
-        _controller = new KeybindingsViewController(this);
-        _controller.Initialize();
-
-        KeyDown += OnKeyDown;
+        Controller = new KeybindingsViewController(this);
+        Controller.Initialize();
     }
 
     private void OnUnloaded(object? sender, RoutedEventArgs e)
     {
-        KeyDown -= OnKeyDown;
-
-        _controller?.Dispose();
-        _controller = null;
-    }
-
-    private void OnKeyDown(object? sender, KeyEventArgs e)
-    {
-        _controller?.HandleKeyDown(e);
+        Controller?.Dispose();
+        Controller = null;
     }
 
     private void MoveWindow(object? sender, PointerPressedEventArgs e)

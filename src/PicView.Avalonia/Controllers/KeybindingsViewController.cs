@@ -45,24 +45,28 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         Dispatcher.UIThread.Post(InitializeButtons, DispatcherPriority.Background);
     }
 
-    public void HandleKeyDown(KeyEventArgs e)
+    public void HandleKeyPressed(KeyEventArgs e)
     {
         var isSearchFocused = view.FilterBox.IsFocused || view.FilterBox.IsKeyboardFocusWithin;
 
         // Handle Escape
-        if (e.Key is Key.Escape && isSearchFocused)
+        if (e.Key is Key.Escape)
         {
-            if (view.FilterBox.Text?.Length > 0)
+            if (isSearchFocused)
             {
-                view.FilterBox.Clear();
-            }
-            else
-            {
-                TopLevel.GetTopLevel(view)?.FocusManager?.Focus(null);
-            }
+                if (view.FilterBox.Text?.Length > 0)
+                {
+                    view.FilterBox.Clear();
+                }
+                else
+                {
+                    TopLevel.GetTopLevel(view)?.FocusManager?.Focus(null);
+                }
 
-            e.Handled = true;
-            return;
+                e.Handled = true;
+                return;
+            }
+            SafeClose();
         }
 
         var isCtrl = OperatingSystem.IsMacOS()
