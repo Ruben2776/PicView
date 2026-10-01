@@ -32,7 +32,7 @@ public static class KeybindingFunctions
         }
     }
 
-    public static async Task<string?> LoadKeyBindingsFile()
+    public static byte[]? SetKeyBindingsFileAndReturnBytes()
     {
         var path = ConfigFileManager.ResolveDefaultConfigPath(KeyBindingsConfiguration ??= new KeyBindingsConfiguration());
         if (!File.Exists(path))
@@ -40,7 +40,7 @@ public static class KeybindingFunctions
             return null;
         }
 
-        var text = await File.ReadAllTextAsync(path).ConfigureAwait(false);
+        var text = File.ReadAllBytes(path);
         
         KeyBindingsConfiguration.CorrectPath = path;
         return text;

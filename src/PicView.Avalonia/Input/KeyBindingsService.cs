@@ -15,24 +15,23 @@ public class KeyBindingsService(IPlatformSpecificService? specificService = null
 {
     public Dictionary<Keybind, string>? CustomShortcuts { get; set; }
 
-    public async ValueTask LoadKeybindings(IPlatformSpecificService? platformSpecificService = null)
+    public void LoadKeybindings(IPlatformSpecificService? platform)
     {
-        var platform = platformSpecificService ?? specificService;
-        var keybindings = await KeybindingFunctions.LoadKeyBindingsFile().ConfigureAwait(false);
-        if (string.IsNullOrWhiteSpace(keybindings))
+        var keybindingsBytes = KeybindingFunctions.SetKeyBindingsFileAndReturnBytes();
+        if (keybindingsBytes == null)
         {
             SetDefaultKeybindings(platform);
         }
         else
         {
-            UpdateKeybindings(keybindings);
+            UpdateKeybindings(keybindingsBytes);
         }
     }
 
-    public void UpdateKeybindings(string json)
+    public void UpdateKeybindings(byte[] bytes)
     {
         var keyValues = JsonSerializer.Deserialize(
-                json, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
+                bytes, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
             as Dictionary<string, string>;
 
         CustomShortcuts ??= new Dictionary<Keybind, string>();

@@ -20,10 +20,10 @@ public static class KeybindingManager
         }
     }
 
-    public static async ValueTask LoadKeybindings(IPlatformSpecificService platformSpecificService)
+    public static void LoadKeybindings(IPlatformSpecificService platformSpecificService)
     {
         _keyBindingsService ??= new KeyBindingsService();
-        await _keyBindingsService.LoadKeybindings(platformSpecificService).ConfigureAwait(false);
+        _keyBindingsService.LoadKeybindings(platformSpecificService);
     }
 
     public static async ValueTask UpdateKeyBindingsFile()

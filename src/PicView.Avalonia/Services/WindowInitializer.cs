@@ -160,7 +160,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
         }
     }
 
-    public async Task ShowKeybindingsWindow()
+    public void ShowKeybindingsWindow()
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop
             || Application.Current.DataContext is not CoreViewModel core)
@@ -183,19 +183,16 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     core.MainWindows.ActiveWindow.CurrentValue.IsLoadingIndicatorShown.Value = false;
                 });
                 
-                await Task.Run(async () =>
-                {
-                    await KeybindingManager.LoadKeybindings(core.PlatformService).ConfigureAwait(false);
-                }).ConfigureAwait(false);
+                KeybindingManager.LoadKeybindings(core.PlatformService);
             }
 
             if (core.Keybindings.WindowConfig?.WindowProperties is null)
             {
                 core.Keybindings.WindowConfig = new KeybindingWindowConfig();
-                await core.Keybindings.WindowConfig.LoadAsync().ConfigureAwait(false);
+                core.Keybindings.WindowConfig.Load();
             }
 
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            Dispatcher.UIThread.Invoke(() =>
             {
                 _keybindingsWindow = provider.CreateKeybindingsWindow(core.Keybindings.WindowConfig);
                 _keybindingsWindow.DataContext = core;
@@ -214,7 +211,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
         }
         else
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            Dispatcher.UIThread.Invoke(() =>
             {
                 if (_keybindingsWindow.WindowState == WindowState.Minimized)
                 {

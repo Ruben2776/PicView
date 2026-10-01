@@ -212,8 +212,8 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
     public async Task ShowImageInfoWindow() =>
         await _windowInitializer?.ShowImageInfoWindow(DataContext as MainWindowViewModel);
 
-    public async Task ShowKeybindingsWindow() =>
-        await _windowInitializer?.ShowKeybindingsWindow();
+    public void ShowKeybindingsWindow() =>
+        _windowInitializer?.ShowKeybindingsWindow();
 
     public async ValueTask ShowSettingsWindow() =>
         await _windowInitializer.ShowSettingsWindow();
