@@ -135,6 +135,7 @@ public class TranslationViewModel
         Fstop.Value = t.Fstop;
         Fullscreen.Value = t.Fullscreen;
         FullPath.Value = t.FullPath;
+        GalleryMouseWheel.Value = t.GalleryMouseWheel;
         GallerySettings.Value = t.GallerySettings;
         Gamma.Value = t.Gamma;
         Green.Value = t.Green;
@@ -202,6 +203,7 @@ public class TranslationViewModel
         NewTab.Value = t.NewTab;
         NewWindow.Value = t.NewWindow;
         NextArchive.Value = t.NextArchive;
+        NextFileInHistory.Value = t.NextFileInHistory;
         NextFolder.Value = t.NextFolder;
         NextImage.Value = t.NextImage;
         NoConversion.Value = t.NoConversion;
@@ -233,10 +235,12 @@ public class TranslationViewModel
         Pixels.Value = t.Pixels;
         PresetDescription.Value = t.PresetDescription;
         Presets.Value = t.Presets;
+        PressKey.Value = t.PressKey;
         Posterize.Value = t.Posterize;
         PrevArchive.Value = t.PrevArchive;
         PrevFolder.Value = t.PrevFolder;
         PrevImage.Value = t.PrevImage;
+        PreviousFileInHistory.Value = t.PreviousFileInHistory;
         Print.Value = t.Print;
         Printer.Value = t.Printer;
         PrintSizeCm.Value = t.PrintSizeCm;
@@ -272,6 +276,7 @@ public class TranslationViewModel
         SaveAs.Value = t.SaveAs;
         SaveAsPdf.Value = t.SaveAsPdf;
         Scale.Value = t.Scale;
+        Scroll.Value = t.Scroll;
         ScrollAndRotate.Value = t.ScrollAndRotate;
         ScrollDirection.Value = t.ScrollDirection;
         ScrollDisabled.Value = t.ScrollingDisabled;
@@ -527,6 +532,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Fstop { get; } = new();
     public BindableReactiveProperty<string?> FullPath { get; } = new();
     public BindableReactiveProperty<string?> Fullscreen { get; } = new();
+    public BindableReactiveProperty<string?> GalleryMouseWheel { get; } = new();
     public BindableReactiveProperty<string?> GallerySettings { get; } = new();
     public BindableReactiveProperty<string?> GalleryThumbnailStretch { get; } = new();
     public BindableReactiveProperty<string?> Gamma { get; } = new();
@@ -594,6 +600,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> NewTab { get; } = new();
     public BindableReactiveProperty<string?> NewWindow { get; } = new();
     public BindableReactiveProperty<string?> NextArchive { get; } = new();
+    public BindableReactiveProperty<string?> NextFileInHistory { get; } = new();
     public BindableReactiveProperty<string?> NextFolder { get; } = new();
     public BindableReactiveProperty<string?> NextImage { get; } = new();
     public BindableReactiveProperty<string?> NoConversion { get; } = new();
@@ -626,9 +633,11 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Posterize { get; } = new();
     public BindableReactiveProperty<string?> PresetDescription { get; } = new();
     public BindableReactiveProperty<string?> Presets { get; } = new();
+    public BindableReactiveProperty<string?> PressKey { get; } = new();
     public BindableReactiveProperty<string?> PrevArchive { get; } = new();
     public BindableReactiveProperty<string?> PrevFolder { get; } = new();
     public BindableReactiveProperty<string?> PrevImage { get; } = new();
+    public BindableReactiveProperty<string?> PreviousFileInHistory { get; } = new();
     public BindableReactiveProperty<string?> Print { get; } = new();
     public BindableReactiveProperty<string?> Printer { get; } = new();
     public BindableReactiveProperty<string?> PrintSizeCm { get; } = new();
@@ -664,6 +673,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> SaveAs { get; } = new();
     public BindableReactiveProperty<string?> SaveAsPdf { get; } = new();
     public BindableReactiveProperty<string?> Scale { get; } = new();
+    public BindableReactiveProperty<string?> Scroll { get; } = new();
     public BindableReactiveProperty<string?> ScrollAndRotate { get; } = new();
     public BindableReactiveProperty<string?> ScrollDirection { get; } = new();
     public BindableReactiveProperty<string?> ScrollDisabled { get; } = new();

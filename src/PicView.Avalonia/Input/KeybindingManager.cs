@@ -1,115 +1,56 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using Avalonia.Input;
-using PicView.Core.DebugTools;
 using PicView.Core.IPlatform;
-using PicView.Core.Keybindings;
 
 namespace PicView.Avalonia.Input;
 
-[JsonSourceGenerationOptions(AllowTrailingCommas = true, WriteIndented = true)]
-[JsonSerializable(typeof(Dictionary<string, string>))]
-internal partial class SourceGenerationContext : JsonSerializerContext;
-
 public static class KeybindingManager
 {
-    public static Dictionary<KeyGesture, string>? CustomShortcuts { get; private set; }
+    private static KeyBindingsService? _keyBindingsService;
 
-    public static async ValueTask LoadKeybindings(IPlatformSpecificService platformSpecificService)
+    public static Dictionary<Keybind, string>? CustomShortcuts
     {
-        var keybindings = await KeybindingFunctions.LoadKeyBindingsFile().ConfigureAwait(false);
-        if (string.IsNullOrWhiteSpace(keybindings))
+        get
         {
-            SetDefaultKeybindings(platformSpecificService);
-        }
-        else
-        {
-            UpdateKeybindings(keybindings);
+            _keyBindingsService ??= new KeyBindingsService();
+            return _keyBindingsService.CustomShortcuts;
         }
     }
 
-    private static void UpdateKeybindings(string json)
+    public static void LoadKeybindings(IPlatformSpecificService platformSpecificService)
     {
-        var keyValues = JsonSerializer.Deserialize(
-                json, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
-            as Dictionary<string, string>;
-
-        CustomShortcuts ??= new Dictionary<KeyGesture, string>();
-        if (keyValues != null)
-        {
-            PopulateCustomShortcuts(keyValues);
-        }
+        _keyBindingsService ??= new KeyBindingsService();
+        _keyBindingsService.LoadKeybindings(platformSpecificService);
     }
 
     public static async ValueTask UpdateKeyBindingsFile()
     {
-        if (CustomShortcuts == null)
-        {
-            return;
-        }
-
-        try
-        {
-            var json = JsonSerializer.Serialize(
-                CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value), 
-                typeof(Dictionary<string, string>),
-                SourceGenerationContext.Default).Replace("\\u002B", "+"); // Fix plus sign encoded to Unicode
-            
-            await KeybindingFunctions.SaveKeyBindingsFile(json).ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            DebugHelper.LogDebug(nameof(KeybindingManager), nameof(UpdateKeyBindingsFile), exception);
-        }
+        _keyBindingsService ??= new KeyBindingsService();
+        await _keyBindingsService.UpdateKeyBindingsFile().ConfigureAwait(false);
     }
 
-    private static void PopulateCustomShortcuts(Dictionary<string, string> keyValues)
+    public static void PopulateCustomShortcuts(Dictionary<string, string> keyValues)
     {
-        foreach (var kvp in keyValues)
-        {
-            try
-            {
-                var gesture = KeyGesture.Parse(kvp.Key);
-                if (gesture is not null && !string.IsNullOrWhiteSpace(kvp.Value))
-                {
-                    CustomShortcuts[gesture] = kvp.Value;
-                }
-            }
-            catch (Exception exception)
-            {
-                DebugHelper.LogDebug(nameof(KeybindingManager), nameof(PopulateCustomShortcuts), exception);
-            }
-        }
+        _keyBindingsService ??= new KeyBindingsService();
+        _keyBindingsService.PopulateCustomShortcuts(keyValues);
     }
 
     public static void SetDefaultKeybindings(IPlatformSpecificService platformSpecificService)
     {
-        if (CustomShortcuts is not null)
-        {
-            CustomShortcuts.Clear();
-        }
-        else
-        {
-            CustomShortcuts = new Dictionary<KeyGesture, string>();
-        }
-        
-        var defaultKeybindings = platformSpecificService.DefaultJsonKeyMap();
-
-        if (JsonSerializer.Deserialize(
-                defaultKeybindings, typeof(Dictionary<string, string>), SourceGenerationContext.Default) 
-            is Dictionary<string, string> keyValues)
-        {
-            PopulateCustomShortcuts(keyValues);
-        }
+        _keyBindingsService ??= new KeyBindingsService();
+        _keyBindingsService.SetDefaultKeybindings(platformSpecificService);
     }
-    
-    public static string? GetActionName(KeyGesture? keyGesture)
+
+    public static string? GetActionName(Keybind keybind)
     {
-        if (keyGesture is null || CustomShortcuts is null)
-        {
-            return null;
-        }
-        
-        return CustomShortcuts.GetValueOrDefault(keyGesture);
+        _keyBindingsService ??= new KeyBindingsService();
+        return _keyBindingsService.GetActionName(keybind);
+    }
+
+    /// <summary>
+    /// Builds and returns a dictionary of default keybindings for the current platform.
+    /// </summary>
+    public static Dictionary<Keybind, string>? GetDefaultShortcuts(IPlatformSpecificService platformSpecificService)
+    {
+        _keyBindingsService ??= new KeyBindingsService();
+        return _keyBindingsService.GetDefaultShortcuts(platformSpecificService);
     }
 }

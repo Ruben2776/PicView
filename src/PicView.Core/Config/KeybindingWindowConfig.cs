@@ -12,16 +12,16 @@ public class KeybindingWindowConfig() : ConfigFile("KeybindingWindowConfig.json"
 {
     public KeybindingWindowProperties? WindowProperties { get; private set; }
 
-    public async Task LoadAsync()
+    public void Load()
     {
         CorrectPath ??= ConfigFileManager.ResolveDefaultConfigPath(this);
         try
         {
             if (File.Exists(CorrectPath))
             {
-                var jsonString = await File.ReadAllTextAsync(CorrectPath).ConfigureAwait(false);
+                var jsonBytes = File.ReadAllBytes(CorrectPath);
                 if (JsonSerializer.Deserialize(
-                        jsonString, typeof(KeybindingWindowProperties),
+                        jsonBytes, typeof(KeybindingWindowProperties),
                         KeybindingsWindowGenerationContext.Default) is KeybindingWindowProperties settings)
                 {
                     WindowProperties = settings;

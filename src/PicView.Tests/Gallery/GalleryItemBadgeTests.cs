@@ -110,7 +110,7 @@ public class GalleryItemBadgeTests
         public Task Restore() => Task.CompletedTask;
         public void ShowAboutWindow() { }
         public Task ShowImageInfoWindow() => Task.CompletedTask;
-        public Task ShowKeybindingsWindow() => Task.CompletedTask;
+        public void ShowKeybindingsWindow() { }
         public ValueTask ShowSettingsWindow() => ValueTask.CompletedTask;
         public void ShowEffectsWindow() { }
         public void ShowSingleImageResizeWindow() { }

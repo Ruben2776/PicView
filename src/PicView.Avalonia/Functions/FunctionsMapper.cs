@@ -18,7 +18,6 @@ using PicView.Avalonia.Wallpaper;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
-using PicView.Core.Gallery;
 using PicView.Core.IPlatform;
 using PicView.Core.Keybindings;
 using PicView.Core.Navigation;
@@ -58,6 +57,9 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
 
             "NextArchive" => NextArchive,
             "PrevArchive" => PrevArchive,
+            
+            "FileHistoryNext" => FileHistoryNext,
+            "FileHistoryPrev" => FileHistoryPrev,
             
             // Rotate
             "RotateLeft" => RotateLeft,
@@ -246,7 +248,13 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     /// <inheritdoc cref="Core.Navigation.Interfaces.INavigationService.NavigateByIncrementsAsync" />
     public async ValueTask Prev100() =>
         await vm.WindowTabs.Prev100().ConfigureAwait(false);
-    
+
+    public async ValueTask FileHistoryNext() =>
+        await UINavigationHelper.OpenNextFileHistoryEntry(mainWindow, vm).ConfigureAwait(false);
+
+    public async ValueTask FileHistoryPrev() =>
+        await UINavigationHelper.OpenPreviousFileHistoryEntry(mainWindow, vm).ConfigureAwait(false);
+
     public ValueTask StopRepeatedNavigation()
     {
         vm.WindowTabs.StopRepeatedNavigation();

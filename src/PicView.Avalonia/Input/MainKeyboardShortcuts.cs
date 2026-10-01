@@ -1,4 +1,3 @@
-﻿using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
@@ -25,9 +24,9 @@ public static class MainKeyboardShortcuts
     public static KeyModifiers CurrentModifiers { get; private set; }
 
     /// <summary>
-    /// Stores the current key gesture, including the key and its modifiers.
+    /// Stores the current keybind, including the key and its modifiers.
     /// </summary>
-    public static KeyGesture? CurrentKeys { get; private set; }
+    public static Keybind CurrentKeys { get; private set; }
 
     /// <summary>
     /// Gets or sets whether keyboard shortcuts are enabled.
@@ -39,7 +38,7 @@ public static class MainKeyboardShortcuts
     private static int _keyRepeatCount;
     private const int KeyRepeatThreshold = 1;
     
-    public static bool ShiftDown => (CurrentModifiers & KeyModifiers.Shift) == KeyModifiers.Shift;
+    public static bool ShiftDown => CurrentModifiers.HasFlag(KeyModifiers.Shift);
 
     /// <summary>
     /// Processes the KeyDown event for the main window.
@@ -68,7 +67,7 @@ public static class MainKeyboardShortcuts
         // or the modifier was pressed before the window had focus). This ensures that
         // a bare-key binding such as "S" (rotate) only fires when no modifiers are
         // actually held, so "Ctrl+S" (save) is never mistakenly dispatched as "S".
-        CurrentKeys = new KeyGesture(e.Key, e.KeyModifiers);
+        CurrentKeys = new Keybind(e.Key, e.KeyModifiers);
 
         // Track key repeat for held down state
         _keyRepeatCount++;
@@ -99,7 +98,7 @@ public static class MainKeyboardShortcuts
     {
         if (!OperatingSystem.IsMacOS())
         {
-            if (CurrentKeys?.Key is Key.LeftAlt or Key.RightAlt)
+            if (CurrentKeys.Key is Key.LeftAlt or Key.RightAlt)
             {
                 mainWindowViewModel.TopTitlebarViewModel.ToggleMenu();
             }
@@ -286,7 +285,7 @@ public static class MainKeyboardShortcuts
     {
         // Get the action string name quickly via dictionary lookup
         var actionName = KeybindingManager.GetActionName(CurrentKeys);
-        if (string.IsNullOrEmpty(actionName))
+        if (actionName is null)
         {
             // Pressed key(s) have no associated function
             return;
@@ -307,7 +306,7 @@ public static class MainKeyboardShortcuts
     {
         IsKeyHeldDown = false;
         IsEscKeyEnabled = true;
-        CurrentKeys = null;
+        CurrentKeys = default;
         _keyRepeatCount = 0;
         ClearKeyDownModifiers();
     }

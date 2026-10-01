@@ -77,6 +77,8 @@ public static class MacOsKeybindings
                                                 "Ctrl+Cmd+Right": "NextArchive",
                                                 "Ctrl+Cmd+Left": "PrevArchive",
                                                 "Cmd+Q": "Exit",
+                                                "XButton2": "FileHistoryNext",
+                                                "XButton1": "FileHistoryPrev"
                                               }
                                               """;
 }

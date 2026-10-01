@@ -195,6 +195,7 @@
                     Width="195"
                     Padding="8"
                     Background="{DynamicResource AccentColor}"
+                    BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                     Classes="accentHover"
                     CornerRadius="4">
                     <TextBlock

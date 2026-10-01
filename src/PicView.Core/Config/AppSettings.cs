@@ -1,5 +1,5 @@
 using PicView.Core.Gallery;
-using PicView.Core.Navigation;
+
 // ReSharper disable All
 
 namespace PicView.Core.Config;
@@ -460,13 +460,6 @@ public class Navigation
     /// The number of iterations to process in the backwards direction while navigating through items and preloading.
     /// </summary>
     public int NegativeIterations { get; set; } = 3;
-
-    /// <summary>
-    /// Defines the navigation behavior when using mouse side buttons.
-    /// Determines how the application handles interactions with side buttons
-    /// for tasks such as navigating files, directories, or other navigation contexts.
-    /// </summary>
-    public NavigationMode MouseSideButtonNavigationMode { get; set; }
     
     /// <summary>
     /// Determines if the file history should be saved.

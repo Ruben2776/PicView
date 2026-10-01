@@ -79,6 +79,8 @@ public static class WindowsKeybindings
                                                "Ctrl+PageDown": "PrevArchive",
                                                "Ctrl+T": "NewTab",
                                                "Ctrl+W": "CloseTab",
+                                               "XButton2": "FileHistoryNext",
+                                               "XButton1": "FileHistoryPrev"
                                              }
                                              """;
 }

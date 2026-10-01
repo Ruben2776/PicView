@@ -47,7 +47,6 @@ public class SettingsSearchData
     public string ZoomPreviewerSearchTags { get; }
     public string ZoomSpeedSearchTags { get; }
     public string MouseDoubleClickSearchTags { get; }
-    public string MouseNavigationSearchTags { get; }
     public string MouseWheelBehaviorSearchTags { get; }
     public string MouseScrollDirectionSearchTags { get; }
     public string MouseTouchpadSearchTags { get; }
@@ -444,15 +443,6 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append("Click");
         MouseDoubleClickSearchTags = sb.ToString();
-        
-        sb.Clear();
-        
-        sb.Append(TranslationManager.Translation.MouseSideButtons);
-        sb.Append(space);
-        sb.Append(TranslationManager.Translation.NavigateFileHistory);
-        sb.Append(space);
-        sb.Append(TranslationManager.Translation.NavigateBetweenDirectories);
-        MouseNavigationSearchTags = sb.ToString();
         
         sb.Clear();
         

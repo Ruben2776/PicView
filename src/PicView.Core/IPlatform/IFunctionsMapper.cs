@@ -18,6 +18,8 @@ public interface IFunctionsMapper
     ValueTask Next100();
     ValueTask Prev10();
     ValueTask Prev100();
+    ValueTask FileHistoryNext();
+    ValueTask FileHistoryPrev();
     ValueTask StopRepeatedNavigation();
     ValueTask Search();
     ValueTask ToggleLooping();

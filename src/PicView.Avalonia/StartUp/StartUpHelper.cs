@@ -248,7 +248,7 @@ public static class StartUpHelper
         // Using AddHandler fixes the first keydown event not firing properly
         w.AddHandler(InputElement.KeyDownEvent, MainWindow_KeysDownAsync, RoutingStrategies.Tunnel);
         w.AddHandler(InputElement.KeyUpEvent, MainWindow_KeyUpAsync, RoutingStrategies.Tunnel);
-        w.PointerPressed += async (_, e) => await MouseShortcuts.MainWindow_PointerPressed(e, w).ConfigureAwait(false);
+        w.AddHandler(InputElement.PointerPressedEvent, MainWindow_PointerPressed, RoutingStrategies.Tunnel);
 
         w.Deactivated += delegate
         {
@@ -270,5 +270,10 @@ public static class StartUpHelper
         // Extract the ViewModel from the window that received the key press
         var vm = (sender as Control)?.DataContext as MainWindowViewModel;
         await MainKeyboardShortcuts.MainWindow_KeysUpAsync(e, vm).ConfigureAwait(false);
+    }
+    
+    private static async ValueTask MainWindow_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        await MouseShortcuts.MainWindow_PointerPressed(e, sender as MainWindow).ConfigureAwait(false);
     }
 }

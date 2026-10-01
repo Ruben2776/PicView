@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using ObservableCollections;
 using PicView.Core.Config;
+using PicView.Core.DebugTools;
 using PicView.Core.Models;
 using R3;
 
@@ -13,7 +15,7 @@ public class KeybindingsViewModel : IDisposable
     
     public BindableReactiveProperty<string> FilterText { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
     public BindableReactiveProperty<bool> IsFiltering { get; } = new();
-    public BindableReactiveProperty<ObservableCollection<KeyBindingsModel>> FilteredKeys { get; } = new([]);
+    public BindableReactiveProperty<ObservableList<KeyBindingsModel>> FilteredKeys { get; } = new([]);
     public ReactiveCommand? ClearFilteringCommand { get; }
     
     public ReactiveCommand? ResetKeybindingsCommand { get; set; }
@@ -77,7 +79,7 @@ public class KeybindingsViewModel : IDisposable
                        }
                    }
                }
-           })
+           }, DebugHelper.LogError(nameof(KeybindingsViewModel), nameof(FilterText)))
            .AddTo(_disposables);
        
        ClearFilteringCommand = new ReactiveCommand(_ => { FilterText.Value = string.Empty; });
@@ -105,8 +107,6 @@ public class KeybindingsViewModel : IDisposable
                (binding.Key?.Contains(searchTerm, StringComparison.InvariantCultureIgnoreCase) ?? false) ||
                (binding.AltKey?.Contains(searchTerm, StringComparison.InvariantCultureIgnoreCase) ?? false);
     }
-
-    
     
     public void Dispose()
     {

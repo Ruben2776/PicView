@@ -281,7 +281,7 @@
             <DependentUpon>AboutView.axaml</DependentUpon>
         </Compile>
         <Compile Update="Views\Main\KeybindingsView.axaml.cs">
-            <DependentUpon>ShortcutsView.axaml</DependentUpon>
+            <DependentUpon>KeybindingsView.axaml</DependentUpon>
         </Compile>
         <Compile Update="Views\Config\GeneralSettingsView.axaml.cs">
             <DependentUpon>GeneralSettingsView.axaml</DependentUpon>

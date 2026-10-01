@@ -1,5 +1,3 @@
-using Avalonia;
-using Avalonia.Media;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Core.Config;
@@ -12,6 +10,7 @@ public partial class KeybindingsWindow : GenericWindow
     public KeybindingsWindow(KeybindingWindowConfig config)
     {
         InitializeComponent();
-        GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.ApplicationShortcuts, true, config.WindowProperties);
+        GenericWindowHelper.GenericWindowInitialize(this, TranslationManager.Translation.ApplicationShortcuts, false, config.WindowProperties, false);
+        KeyDown += (_, e) => KeybindingsView.Controller?.HandleKeyPressed(e);
     }
 }

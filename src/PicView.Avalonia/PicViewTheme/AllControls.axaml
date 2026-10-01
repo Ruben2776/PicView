@@ -36,6 +36,7 @@
                 <ResourceInclude Source="Controls/Menu.axaml" />
                 <ResourceInclude Source="Controls/MenuFlyoutPresenter.axaml" />
                 <ResourceInclude Source="Controls/MenuItem.axaml" />
+                <ResourceInclude Source="Controls/KeybindBox.axaml" />
                 <ResourceInclude Source="Controls/NavigateAbleItem.axaml" />
                 <ResourceInclude Source="Controls/NavigateAbleItemsViewer.axaml" />
                 <ResourceInclude Source="Controls/NumericUpDown.axaml" />
@@ -50,6 +51,7 @@
                 <ResourceInclude Source="Controls/SplitButton.axaml" />
                 <ResourceInclude Source="Controls/TabControl.axaml" />
                 <ResourceInclude Source="Controls/TabItem.axaml" />
+                <ResourceInclude Source="Controls/TagBox.axaml" />
                 <ResourceInclude Source="Controls/TextBlock.axaml" />
                 <ResourceInclude Source="Controls/TextBox.axaml" />
                 <ResourceInclude Source="Controls/TextToggleButton.axaml" />

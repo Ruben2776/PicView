@@ -42,28 +42,6 @@
             </StackPanel>
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MouseNavigationSearchTags}" Classes="searchBorder">
-            <StackPanel>
-                <TextBlock
-                    Margin="0,20,0,20"
-                    Classes="txt bold"
-                    Text="{CompiledBinding Translation.MouseSideButtons.Value,
-                                           Mode=OneWay}" />
-
-                <ComboBox
-                    x:Name="MouseSideButtonBox"
-                    Width="300"
-                    Margin="0,6,0,15"
-                    Padding="5,7,0,7"
-                    BorderThickness="1"
-                    FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
-                    Foreground="{DynamicResource MainTextColor}"
-                    ItemsSource="{Binding SettingsViewModel.MouseSideButtonBehaviors.Value}"
-                    SelectedIndex="{CompiledBinding SettingsViewModel.MouseSideButtonBehaviorIndex.Value,
-                                                    Mode=TwoWay}" />
-            </StackPanel>
-        </Border>
-
         <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MouseWheelBehaviorSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock
@@ -80,7 +58,7 @@
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    SelectedIndex="{CompiledBinding SettingsViewModel.MouseWheelBehavior.Value,
+                    SelectedIndex="{CompiledBinding GlobalSettings.MouseWheelBehavior.Value,
                                                     Mode=TwoWay}">
                     <ComboBoxItem Content="{CompiledBinding Translation.CtrlToZoom.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                     <ComboBoxItem Content="{CompiledBinding Translation.ScrollToZoom.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />

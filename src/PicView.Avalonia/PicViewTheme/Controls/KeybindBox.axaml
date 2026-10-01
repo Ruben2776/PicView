@@ -1,0 +1,37 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    x:ClassModifier="internal">
+
+    <ControlTheme x:Key="{x:Type customControls:KeybindBox}" TargetType="customControls:KeybindBox">
+        <Setter Property="Foreground" Value="{DynamicResource MainTextColorFaded}" />
+        <Setter Property="Background" Value="{DynamicResource TextBoxBackgroundColor}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TextBoxBorderColor}" />
+        <Setter Property="Height" Value="42" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <ControlTemplate TargetType="customControls:KeybindBox">
+                <DockPanel>
+                    <TextBlock
+                        MinWidth="220"
+                        Margin="0,0,5,0"
+                        Classes="txt"
+                        DockPanel.Dock="Left"
+                        Text="{TemplateBinding ActionName}" />
+                    <customControls:TagBox
+                        Name="PART_TagBox"
+                        Height="40"
+                        DockPanel.Dock="Right"
+                        MaxTags="{TemplateBinding MaxTags}"
+                        PlaceholderText="{TemplateBinding PlaceholderText}"
+                        Tags="{TemplateBinding Tags}" />
+                </DockPanel>
+            </ControlTemplate>
+        </Setter>
+
+    </ControlTheme>
+</ResourceDictionary>

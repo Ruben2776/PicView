@@ -181,6 +181,7 @@ public class LanguageModel
     public string? Fstop { get; set; }
     public string? FullPath { get; set; }
     public string? Fullscreen { get; set; }
+    public string? GalleryMouseWheel { get; set; }
     public string? GallerySettings { get; set; }
     public string? GalleryThumbnailStretch { get; set; }
     public string? Gamma { get; set; }
@@ -269,6 +270,7 @@ public class LanguageModel
     public string? NewTab { get; set; }
     public string? NewWindow { get; set; }
     public string? NextArchive { get; set; }
+    public string? NextFileInHistory { get; set; }
     public string? NextFolder { get; set; }
     public string? NextImage { get; set; }
     public string? NoChange { get; set; }
@@ -316,6 +318,7 @@ public class LanguageModel
     public string? PrevArchive { get; set; }
     public string? PrevFolder { get; set; }
     public string? PrevImage { get; set; }
+    public string? PreviousFileInHistory { get; set; }
     public string? Print { get; set; }
     public string? Printer { get; set; }
     public string? PrintSizeCm { get; set; }
@@ -355,6 +358,7 @@ public class LanguageModel
     public string? SaveAsPdf { get; set; }
     public string? SavingFileFailed { get; set; }
     public string? Scale { get; set; }
+    public string? Scroll { get; set; }
     public string? ScrollAndRotate { get; set; }
     public string? ScrollDirection { get; set; }
     public string? ScrollDown { get; set; }

@@ -225,6 +225,38 @@
             <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
         </Style>
 
+        <Style Selector="^.accentHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Style.Animations>
+                <Animation IterationCount="1" Duration="{StaticResource ButtonHoverAnimationDuration}">
+                    <KeyFrame>
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="{StaticResource SecondaryTextColor}" />
+                        </Setter>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource AccentColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource ToolWindowButtonBorderColor}" />
+                        </Setter>
+                    </KeyFrame>
+                    <KeyFrame Cue="1">
+                        <Setter Property="Foreground">
+                            <SolidColorBrush Color="#fff" />
+                        </Setter>
+                        <Setter Property="Background">
+                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
+                        </Setter>
+                        <Setter Property="BorderBrush">
+                            <SolidColorBrush Color="{DynamicResource SecondaryAccentColor}" />
+                        </Setter>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+            <Setter Property="Foreground" Value="#fff" />
+            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryAccentColor}" />
+        </Style>
+
         <!--  End of animations  -->
 
         <Style Selector="^.noAnimHover:pointerover /template/ ContentPresenter#PART_ContentPresenter">

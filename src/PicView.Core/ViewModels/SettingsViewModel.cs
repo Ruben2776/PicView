@@ -2,9 +2,7 @@ using PicView.Core.Config;
 using PicView.Core.Localization;
 using PicView.Core.ColorHandling;
 using PicView.Core.DebugTools;
-using PicView.Core.Gallery;
 using PicView.Core.ISettings;
-using PicView.Core.Navigation;
 using PicView.Core.SettingsSearch;
 using R3;
 
@@ -44,15 +42,6 @@ public class SettingsViewModel : IDisposable
             new SettingsCategoryItem(translation.Language, "LanguageSettingsImage", SettingsCategory.Language),
             new SettingsCategoryItem(translation.FileAssociations, "FileAssociationImage", SettingsCategory.FileAssociations)
         ];
-
-        MouseSideButtonBehaviors = new BindableReactiveProperty<string[]>(
-        [
-            TranslationManager.Translation.None!,
-            TranslationManager.Translation.Navigate!,
-            TranslationManager.Translation.NavigateFileHistory!,
-            TranslationManager.Translation.NavigateBetweenDirectories!,
-            TranslationManager.Translation.Archives!
-        ]);
         
         MouseDoubleClickBehaviors = new BindableReactiveProperty<string[]>(
         [
@@ -196,18 +185,10 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<bool> IsAutoPlayingMotionPhotos { get; } = new(Settings.UIProperties.AutoPlayMotionPhotos);
 
     // Zoom
-    public BindableReactiveProperty<bool> CtrlZoom { get; } = new(Settings.Zoom.CtrlZoom);
     public BindableReactiveProperty<bool> HorizontalReverseScroll { get; } = new(Settings.Zoom.HorizontalReverseScroll);
     public BindableReactiveProperty<int> ScrollDirectionIndex { get; } = new(Settings.Zoom.HorizontalReverseScroll ? 0 : 1);
 
     // Mouse
-    public BindableReactiveProperty<string[]> MouseSideButtonBehaviors { get; }
-    public BindableReactiveProperty<int> MouseSideButtonBehaviorIndex { get; } = new((int)Settings.Navigation.MouseSideButtonNavigationMode);
-    
-    public BindableReactiveProperty<int> GalleryMouseWheelBehavior { get; } = new((int)Settings.Gallery.GalleryMouseWheelBehavior);
-    
-    public BindableReactiveProperty<int> MouseWheelBehavior { get; } = new(Settings.Zoom.CtrlZoom ? 0 : 1);
-    
     public BindableReactiveProperty<string[]> MouseDoubleClickBehaviors { get; }
     public BindableReactiveProperty<int> MouseDoubleClickBehaviorIndex { get; }
 
@@ -321,12 +302,8 @@ public class SettingsViewModel : IDisposable
             IsScalingSetToNearestNeighbor,
             ImageScalingIndex,
             IsAutoPlayingMotionPhotos,
-            CtrlZoom,
             HorizontalReverseScroll,
             ScrollDirectionIndex,
-            MouseSideButtonBehaviors,
-            MouseSideButtonBehaviorIndex,
-            MouseWheelBehavior,
             UserLanguage,
             IsIncludingSubdirectories,
             IsShowingTaskbarProgress,
@@ -479,15 +456,6 @@ public class SettingsViewModel : IDisposable
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
             
-        // Zoom
-        Observable.EveryValueChanged(this, x => x.CtrlZoom.CurrentValue)
-            .SubscribeAwait(async (x, _) => {
-                Settings.Zoom.CtrlZoom = x;
-                // Sync MouseWheelBehavior if needed
-                MouseWheelBehavior.Value = x ? 0 : 1;
-                await SaveSettingsAsync().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
-            .AddTo(ref _disposables);
 
         Observable.EveryValueChanged(this, x => x.ScrollDirectionIndex.CurrentValue)
             .SubscribeAwait(async (x, _) => {
@@ -497,23 +465,8 @@ public class SettingsViewModel : IDisposable
                  await SaveSettingsAsync().ConfigureAwait(false);
              }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
-             
-        // Mouse
-        Observable.EveryValueChanged(this, x => x.MouseSideButtonBehaviorIndex.CurrentValue)
-            .SubscribeAwait(async (x, _) => {
-                Settings.Navigation.MouseSideButtonNavigationMode = (NavigationMode)x;
-                await SaveSettingsAsync().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
-            .AddTo(ref _disposables);
 
-        Observable.EveryValueChanged(this, x => x.MouseWheelBehavior.CurrentValue)
-            .SubscribeAwait(async (x, _) => {
-                var ctrlZoom = x == 0;
-                Settings.Zoom.CtrlZoom = ctrlZoom;
-                if (CtrlZoom.Value != ctrlZoom) CtrlZoom.Value = ctrlZoom;
-                await SaveSettingsAsync().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
-            .AddTo(ref _disposables);
+
             
         // Language
         Observable.EveryValueChanged(this, x => x.UserLanguage.CurrentValue)
@@ -526,12 +479,6 @@ public class SettingsViewModel : IDisposable
                         await _languageService.UpdateLanguageAsync(x).ConfigureAwait(false);
                     }
                 }
-            }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
-            .AddTo(ref _disposables);
-        
-        GalleryMouseWheelBehavior
-            .Subscribe(x => {
-                Settings.Gallery.GalleryMouseWheelBehavior = (GalleryMouseWheel)x;
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
     }
