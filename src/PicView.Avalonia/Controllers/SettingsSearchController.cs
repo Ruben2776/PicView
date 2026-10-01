@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -40,7 +39,7 @@ public class SettingsSearchController(SettingsView view) : IDisposable
 
         view.FilterBox.TextChanged += OnSearchTextChanged;
         
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (OperatingSystem.IsMacOS())
         {
             // Keydown events are interrupted on macOS because of the Accent Menu
             view.FilterBox.KeyUp += OnFilterBoxKeyDown;
@@ -63,7 +62,7 @@ public class SettingsSearchController(SettingsView view) : IDisposable
     public void Dispose()
     {
         view.FilterBox.TextChanged -= OnSearchTextChanged;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (OperatingSystem.IsMacOS())
         {
             view.FilterBox.KeyUp -= OnFilterBoxKeyDown;
         }
@@ -216,7 +215,7 @@ public class SettingsSearchController(SettingsView view) : IDisposable
         }
 
         // Handle Ctrl+F or '?' to focus search
-        var isCtrl = RuntimeInformation.IsOSPlatform(OSPlatform.OSX)
+        var isCtrl = OperatingSystem.IsMacOS()
             ? e.KeyModifiers.HasFlag(KeyModifiers.Meta)
             : e.KeyModifiers.HasFlag(KeyModifiers.Control);
 

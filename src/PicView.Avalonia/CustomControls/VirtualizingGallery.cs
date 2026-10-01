@@ -484,7 +484,7 @@ public class VirtualizingGallery : VirtualizingPanel
                         var realized = _realizedItems[i];
                         if (realized.Index >= e.NewStartingIndex)
                         {
-                            _realizedItems[i] = new RealizedGalleryItem(realized.Index + count, realized.Element);
+                            _realizedItems[i] = realized with { Index = realized.Index + count };
                         }
                     }
                 }
@@ -506,7 +506,7 @@ public class VirtualizingGallery : VirtualizingPanel
                         }
                         else if (realized.Index >= oldEndIndex)
                         {
-                            _realizedItems[i] = new RealizedGalleryItem(realized.Index - count, realized.Element);
+                            _realizedItems[i] = realized with { Index = realized.Index - count };
                         }
                     }
                 }
@@ -524,12 +524,14 @@ public class VirtualizingGallery : VirtualizingPanel
                     for (var i = _realizedItems.Count - 1; i >= 0; i--)
                     {
                         var realized = _realizedItems[i];
-                        if (realized.Index >= e.NewStartingIndex && realized.Index < replaceEndIndex)
+                        if (realized.Index < e.NewStartingIndex || realized.Index >= replaceEndIndex)
                         {
-                            ItemContainerGenerator?.ClearItemContainer(realized.Element);
-                            RemoveInternalChild(realized.Element);
-                            _realizedItems.RemoveAt(i);
+                            continue;
                         }
+
+                        ItemContainerGenerator?.ClearItemContainer(realized.Element);
+                        RemoveInternalChild(realized.Element);
+                        _realizedItems.RemoveAt(i);
                     }
                 }
                 else

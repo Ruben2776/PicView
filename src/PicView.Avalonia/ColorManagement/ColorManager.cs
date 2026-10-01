@@ -105,23 +105,8 @@ public static class ColorManager
     /// <summary>
     /// Gets the color set for the current theme
     /// </summary>
-    private static ThemeColors GetThemeColors()
-    {
-        var themeIndex = Settings.Theme.ColorTheme;
-
-        if (ThemeColorMap.TryGetValue(themeIndex, out var colors))
-        {
-            return colors;
-        }
-
-        if (themeIndex is 1)
-        {
-            return ThemeColorMap[0];
-        }
-
-        throw new ArgumentOutOfRangeException(nameof(Settings.Theme.ColorTheme),
-            $"Color theme index {themeIndex} is not supported");
-    }
+    private static ThemeColors GetThemeColors() =>
+        ThemeColorMap.TryGetValue(Settings.Theme.ColorTheme, out var colors) ? colors : ThemeColorMap[0];
 
     /// <summary>
     /// Updates the accent colors in the application resources based on the selected color theme.
