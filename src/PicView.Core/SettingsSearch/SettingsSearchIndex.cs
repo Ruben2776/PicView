@@ -158,10 +158,6 @@ public static class SettingsSearchIndex
         if (t.DoubleClick != null)
             list.Add(new SettingsSearchItem(t.DoubleClick, data.MouseDoubleClickSearchTags));
         if (t.NavigateFileHistory != null)
-            list.Add(new SettingsSearchItem(t.NavigateFileHistory, data.MouseNavigationSearchTags));
-        if (t.NavigateBetweenDirectories != null)
-            list.Add(new SettingsSearchItem(t.NavigateBetweenDirectories, data.MouseNavigationSearchTags));
-        if (t.MouseWheel != null)
             list.Add(new SettingsSearchItem(t.MouseWheel, data.MouseWheelBehaviorSearchTags));
         if (t.ScrollDirection != null)
             list.Add(new SettingsSearchItem(t.ScrollDirection, data.MouseScrollDirectionSearchTags));

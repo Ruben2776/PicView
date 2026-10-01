@@ -125,7 +125,7 @@
             </StackPanel>
         </Border>
 
-        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MouseNavigationSearchTags}" Classes="searchBorder">
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.MouseWheelBehaviorSearchTags}" Classes="searchBorder">
             <StackPanel>
                 <TextBlock
                     Margin="0,20,0,20"

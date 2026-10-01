@@ -18,6 +18,9 @@
             <Setter Property="Margin" Value="10,20" />
             <Setter Property="Spacing" Value="10" />
         </Style>
+        <Style Selector="StackPanel.mouseBindHeader">
+            <Setter Property="Margin" Value="10,10,10,40" />
+        </Style>
 
     </UserControl.Styles>
 
@@ -87,6 +90,34 @@
                         Text="{CompiledBinding Translation.ChangeKeybindingText.Value,
                                                Mode=OneWay}"
                         TextAlignment="Center" />
+                </StackPanel>
+
+                <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.Mouse.Value, Mode=OneWay}" />
+
+                <!--  Mouse wheel  -->
+                <StackPanel
+                    Classes="mouseBindHeader"
+                    IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        MinWidth="220"
+                        Margin="0,0,5,0"
+                        Classes="txt"
+                        Text="{CompiledBinding Translation.MouseWheel.Value,
+                                               Mode=OneWay}" />
+
+                    <ComboBox
+                        x:Name="MouseWheelBox"
+                        Width="300"
+                        Padding="5,7,0,7"
+                        BorderThickness="1"
+                        FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
+                        Foreground="{DynamicResource MainTextColor}"
+                        SelectedIndex="{CompiledBinding GlobalSettings.MouseWheelBehavior.Value,
+                                                        Mode=TwoWay}">
+                        <ComboBoxItem Content="{CompiledBinding Translation.CtrlToZoom.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+                        <ComboBoxItem Content="{CompiledBinding Translation.ScrollToZoom.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
+                    </ComboBox>
                 </StackPanel>
 
                 <!--  Navigation  -->

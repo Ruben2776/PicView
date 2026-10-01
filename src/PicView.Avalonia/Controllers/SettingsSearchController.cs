@@ -53,10 +53,13 @@ public class SettingsSearchController(SettingsView view) : IDisposable
         view.CategoriesListBox.SelectionChanged += OnListBoxSelectionChanged;
         view.SuggestionsPopup.Closed += OnPopupClosed;
 
-        if (view.DataContext is CoreViewModel core)
+        if (view.DataContext is not CoreViewModel core)
         {
-            _subscription = core.SettingsViewModel.SelectedCategory.Subscribe(OnViewModelCategoryChanged);
+            return;
         }
+
+        _subscription = core.SettingsViewModel.SelectedCategory.Subscribe(OnViewModelCategoryChanged);
+        core.GlobalSettings.Initialize();
     }
 
     public void Dispose()

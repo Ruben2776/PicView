@@ -35,6 +35,8 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         {
             return;
         }
+        
+        core.GlobalSettings.Initialize();
 
         _filterSubscription?.Dispose();
         _filterSubscription = core.Keybindings.FilterText.Subscribe(ApplyFilter);
