@@ -42,7 +42,6 @@ public class NavigationService(
             // Show image quickly to make it feel fast
             ImageModel model;
             ImageModel? secondaryModel = null;
-            int index;
             var secondaryIndex = 0;
             if (cache.TryGet(fileInfo, out var preLoadValue))
             {
@@ -52,9 +51,20 @@ public class NavigationService(
             {
                 model = await imageModelLoader.GetImageModelAsync(fileInfo, ct.Token).ConfigureAwait(false);
             }
+
+            if (!Settings.ImageScaling.ShowImageSideBySide)
+            {
+                ShowModel(model);
+                tab.SecondaryModel = null;
+                tab.SecondaryImage.Value = null;
+                tab.SecondaryImageType.Value = null;
+                tab.SecondaryFileInfo.Value = null;
+            }
+
+            await Task.Yield();
             tab.ImageIterator.Files = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
-            index = FindIndex(fileInfo, tab);
-            if (index < 0 && tab.ImageIterator.Files.Count > 0)
+            var index = FindIndex(fileInfo, tab);
+            if (index < 0)
             {
                 index = 0;
             }
@@ -62,7 +72,7 @@ public class NavigationService(
 
             if (Settings.ImageScaling.ShowImageSideBySide)
             {
-                if (tab.ImageIterator.Files.Count > 0 && index >= 0)
+                if (tab.ImageIterator.Files.Count > 0)
                 {
                     var (_, nextIteration, _) = IterationHelper.GetIterations(index, tab.ImageIterator.Files.Count, NavigateTo.Next, SkipAmount.None);
                     if (nextIteration >= 0 && nextIteration < tab.ImageIterator.Files.Count)
@@ -90,16 +100,8 @@ public class NavigationService(
                         tab.SecondaryFileInfo.Value = null;
                     }
                 }
+                ShowModel(model);
             }
-            else
-            {
-                tab.SecondaryModel = null;
-                tab.SecondaryImage.Value = null;
-                tab.SecondaryImageType.Value = null;
-                tab.SecondaryFileInfo.Value = null;
-            }
-
-            ShowModel(model);
 
             tab.UpdateTabTitle();
             fileWatcherService.Watch(tab, fileInfo.DirectoryName);

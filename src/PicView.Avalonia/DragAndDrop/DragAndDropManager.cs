@@ -33,7 +33,7 @@ public static class DragAndDropManager
         var files = e.DataTransfer.TryGetFiles();
         if (files == null)  
         {
-            await HandleDropFromUrl(e, tabOverview, mainWindow);
+            await HandleDropFromUrl(e, tabOverview, mainWindow).ConfigureAwait(false);
             return;
         }
 
@@ -56,23 +56,20 @@ public static class DragAndDropManager
         
         SwitchToImageViewerIfNecessary();
         var path = firstFile.Path.LocalPath;
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
+        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         if (path.IsSupported())
         {
-            await LoadSupportedFile(mainWindow, path, tabOverview);
+            await LoadSupportedFile(mainWindow, path, tabOverview, core).ConfigureAwait(false);
         }
         else if (Directory.Exists(path))
         {
             if (tabOverview.ActiveTab.CurrentValue.IsInitialized)
             {
-                await tabOverview.LoadFromDirectoryAsync(path);
+                await tabOverview.LoadFromDirectoryAsync(path).ConfigureAwait(false);
             }
             else
             {
-                await QuickLoad.QuickLoadAsync(mainWindow, core, path, continueFromLeftOff: false);
+                await QuickLoad.QuickLoadAsync(mainWindow, core, path, continueFromLeftOff: false).ConfigureAwait(false);
             }
         }
         else if (path.IsArchive())
@@ -83,7 +80,7 @@ public static class DragAndDropManager
                 vm.IsLoadingIndicatorShown.Value = true;
                 try
                 {
-                    await tabOverview.LoadFromArchiveAsync(path);
+                    await tabOverview.LoadFromArchiveAsync(path).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -92,7 +89,7 @@ public static class DragAndDropManager
             }
             else
             {
-                await QuickLoad.QuickLoadAsync(mainWindow, core, path, continueFromLeftOff: false);
+                await QuickLoad.QuickLoadAsync(mainWindow, core, path, continueFromLeftOff: false).ConfigureAwait(false);
             }
         }
         else
@@ -106,7 +103,7 @@ public static class DragAndDropManager
         var files = e.DataTransfer.TryGetFiles();
         if (files != null)
         {
-            await HandleDragEnterWithFiles(files, mainWindow);
+            await HandleDragEnterWithFiles(files, mainWindow).ConfigureAwait(true);
         }
         else
         {
@@ -116,7 +113,10 @@ public static class DragAndDropManager
             var handled = HandleDragEnterFromUrl(value, mainWindow);
             if (!handled)
             {
-                RemoveDragDropView(mainWindow);
+                Dispatcher.UIThread.Post(() =>
+                {
+                    RemoveDragDropView(mainWindow);
+                });
             }
         }
     }
@@ -149,7 +149,7 @@ public static class DragAndDropManager
     
     private static void SwitchToImageViewerIfNecessary()
     {
-        Dispatcher.UIThread.Invoke(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             if (Application.Current.DataContext is not CoreViewModel core)
             {
@@ -216,7 +216,7 @@ public static class DragAndDropManager
         var url = dataStr.Split((char)10).FirstOrDefault();
         if (url != null)
         {
-            await LoadFromUrl(url, tabOverview, mainWindow);
+            await LoadFromUrl(url, tabOverview, mainWindow).ConfigureAwait(false);
         }
     }
 
@@ -227,10 +227,10 @@ public static class DragAndDropManager
         
         var tab = tabOverview.ActiveTab.Value;
         
-        if (url.StartsWith("file://"))
+        if (url.StartsWith("file://", StringComparison.OrdinalIgnoreCase))
         {
             var file = url[7..];
-            if (file.StartsWith('/'))
+            if (file.StartsWith('/', StringComparison.Ordinal))
             {
                 file = file[1..];
             }
@@ -241,14 +241,14 @@ public static class DragAndDropManager
             }
 
             var vm = mainWindow.DataContext as MainWindowViewModel;
-            if (vm != null) vm.IsLoadingIndicatorShown.Value = true;
+            vm.IsLoadingIndicatorShown.Value = true;
             try
             {
-                await tabOverview.LoadFromFileAsync(file);
+                await tabOverview.LoadFromFileAsync(file).ConfigureAwait(false);
             }
             finally
             {
-                if (vm != null) vm.IsLoadingIndicatorShown.Value = false;
+                vm.IsLoadingIndicatorShown.Value = false;
             }
         }
         else
@@ -257,7 +257,7 @@ public static class DragAndDropManager
             {
                 tab.CurrentView.Value = new ImageViewer();
             }
-            await tabOverview.LoadFromUrlAsync(url);
+            await tabOverview.LoadFromUrlAsync(url).ConfigureAwait(false);
         }
     }
 
@@ -269,7 +269,7 @@ public static class DragAndDropManager
             return;
         }
 
-        await EnsureDragDropViewCreated(mainWindow);
+        EnsureDragDropViewCreated(mainWindow);
 
         var firstFile = fileArray[0];
         var path = firstFile.Path.LocalPath;
@@ -284,13 +284,13 @@ public static class DragAndDropManager
         }
         else if (path.IsSupported())
         {
-            await ShowFilePreview(new FileInfo(path), mainWindow);
+            await ShowFilePreview(new FileInfo(path), mainWindow).ConfigureAwait(false);
         }
     }
 
     private static void ShowDirectoryIcon(Control control)
     {
-        Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+        Dispatcher.CurrentDispatcher.Post(() =>
         {
             if (!control.IsPointerOver)
             {
@@ -316,26 +316,23 @@ public static class DragAndDropManager
         if (ext.Equals(".svg", StringComparison.InvariantCultureIgnoreCase) ||
             ext.Equals(".svgz", StringComparison.InvariantCultureIgnoreCase))
         {
-            Dispatcher.CurrentDispatcher.Invoke(() => _dragDropView?.UpdateSvgThumbnail(fileInfo.FullName, mainWindow));
+            await Dispatcher.UIThread.InvokeAsync(() => _dragDropView?.UpdateSvgThumbnail(fileInfo.FullName, mainWindow));
             return;
         }
 
-        await LoadAndShowThumbnail(fileInfo, mainWindow);
+        await LoadAndShowThumbnail(fileInfo, mainWindow).ConfigureAwait(false);
     }
 
     private static async Task LoadAndShowThumbnail(FileInfo fileInfo, MainWindow mainWindow)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
+        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         Bitmap? thumb;
         // Try to get preloaded image first
         var preload = core.SharedCache.TryGet(fileInfo, out var preLoadValue);
         if (preload && preLoadValue?.ImageModel?.Image is Bitmap bmp)
         {
             thumb = bmp;
-            Dispatcher.UIThread.Invoke(() => _dragDropView.UpdateThumbnail(thumb, mainWindow));
+            await Dispatcher.UIThread.InvokeAsync(() => _dragDropView.UpdateThumbnail(thumb, mainWindow));
         }
         else
         {
@@ -347,7 +344,7 @@ public static class DragAndDropManager
             // Load full image in background
             await Task.Run(async () =>
             {
-                var model = await GetImageModel.GetImageModelAsync(fileInfo);
+                var model = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     if (model is null || _dragDropView is null)
@@ -366,11 +363,15 @@ public static class DragAndDropManager
     {
         if (urlObject is null)
         {
-            _dragDropView?.RemoveThumbnail();
+            Dispatcher.UIThread.Post(() =>
+            {
+                _dragDropView?.RemoveThumbnail();
+            });
+
             return false;
         }
 
-        Dispatcher.CurrentDispatcher.Invoke(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             _dragDropView ??= new DragDropView(mainWindow);
             if (!_dragDropView.IsLinkChainVisible)
@@ -387,9 +388,9 @@ public static class DragAndDropManager
         return true;
     }
 
-    private static async Task EnsureDragDropViewCreated(MainWindow mainWindow)
+    private static void EnsureDragDropViewCreated(MainWindow mainWindow)
     {
-        await Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+        Dispatcher.UIThread.Post(() =>
         {
             if (_dragDropView == null)
             {
@@ -406,52 +407,16 @@ public static class DragAndDropManager
         });
     }
 
-    private static async ValueTask LoadSupportedFile(MainWindow mainWindow, string path, TabOverviewViewModel tabOverview)
+    private static async ValueTask LoadSupportedFile(MainWindow mainWindow, string path, TabOverviewViewModel tabOverview,
+        CoreViewModel core)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-        
         var tab = tabOverview.ActiveTab.CurrentValue;
         if (!tab.IsInitialized)
         {
             await QuickLoad.QuickLoadAsync(mainWindow, core, path, continueFromLeftOff: false).ConfigureAwait(false);
             return;
         }
-        var droppedFileInfo = new FileInfo(path);
-        
-        var droppedDir = droppedFileInfo.DirectoryName ?? string.Empty;
-        var currentDir = tab.ImageIterator?.CurrentDirectory ?? string.Empty;
-
-        IReadOnlyList<FileInfo> files;
-        bool isSameDir;
-        if (string.Equals(droppedDir, currentDir, StringComparison.OrdinalIgnoreCase))
-        {
-            files = tab.ImageIterator?.Files ?? [];
-            isSameDir = true;
-        }
-        else
-        {
-            files = FileListRetriever.RetrieveFiles(droppedFileInfo, core.PlatformService.CompareStrings);
-            isSameDir = false;
-        }
-
-        var index = files.FindIndex(x => x.FullName.AsSpan().Equals(droppedFileInfo.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase));
-
-        if (_preLoadValue is not null)
-        {
-            core.SharedCache.Add(tab.Id, index, _preLoadValue, files.Count, false);
-        }
-        
-        if (isSameDir)
-        {
-            await tabOverview.LoadFromIndexAsync(index, tab).ConfigureAwait(false);
-        }
-        else
-        {
-            await tabOverview.LoadFromFileAsync(path).ConfigureAwait(false);
-        }
+        await tabOverview.LoadFromFileAsync(path).ConfigureAwait(false);
     }
 
     #endregion

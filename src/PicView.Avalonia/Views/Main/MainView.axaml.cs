@@ -23,7 +23,7 @@ public partial class MainView : UserControl
     {
         InitializeComponent();
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (OperatingSystem.IsMacOS())
         {
             // Move alt hover to left side on macOS and switch button order
             DockPanel.SetDock(AltClose, Dock.Left);
@@ -235,12 +235,12 @@ public partial class MainView : UserControl
             return;
         }
         
-        await DragAndDropManager.Drop(e, vm.WindowTabs, TopLevel.GetTopLevel(this) as MainWindow);
+        await DragAndDropManager.Drop(e, vm.WindowTabs, TopLevel.GetTopLevel(this) as MainWindow).ConfigureAwait(false);
     }
     
     private async ValueTask DragEnter(object? sender, DragEventArgs e)
     {
-        await DragAndDropManager.DragEnter(e, TopLevel.GetTopLevel(this) as MainWindow);
+        await DragAndDropManager.DragEnter(e, TopLevel.GetTopLevel(this) as MainWindow).ConfigureAwait(false);
     }
     
     private void DragLeave(object? sender, DragEventArgs e)
