@@ -6,4 +6,5 @@ public enum SingleImageType
     Clipboard,
     Url,
     Base64,
+    TempFile
 }

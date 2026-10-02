@@ -7,15 +7,15 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.Views.UC;
-using PicView.Core.Extensions;
 using PicView.Core.FileHandling;
 using PicView.Core.Preloading;
 using PicView.Core.ProcessHandling;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
-using PicView.Core.FileSorting;
+using PicView.Core.Models;
 
 namespace PicView.Avalonia.DragAndDrop;
 
@@ -332,14 +332,14 @@ public static class DragAndDropManager
         if (preload && preLoadValue?.ImageModel?.Image is Bitmap bmp)
         {
             thumb = bmp;
-            await Dispatcher.UIThread.InvokeAsync(() => _dragDropView.UpdateThumbnail(thumb, mainWindow));
+            await Dispatcher.UIThread.InvokeAsync(() => _dragDropView?.UpdateThumbnail(thumb, mainWindow));
         }
         else
         {
             // Generate thumbnail
             thumb = await GetThumbnails.GetThumbAsync(fileInfo, SizeDefaults.WindowMinSize - 30)
                 .ConfigureAwait(false);
-            await Dispatcher.UIThread.InvokeAsync(() => _dragDropView.UpdateThumbnail(thumb, mainWindow));
+            await Dispatcher.UIThread.InvokeAsync(() => _dragDropView?.UpdateThumbnail(thumb, mainWindow));
             
             // Load full image in background
             await Task.Run(async () =>
@@ -411,6 +411,22 @@ public static class DragAndDropManager
         CoreViewModel core)
     {
         var tab = tabOverview.ActiveTab.CurrentValue;
+        if (OperatingSystem.IsWindows())
+        {
+            // We need to determine if the path is a temporary file, since it might be deleted shortly after
+            // Normalize paths by removing trailing slashes
+            var tempPath = Path.GetTempPath().TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            var dirName = Path.GetDirectoryName(path)?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            // Use OrdinalIgnoreCase for Windows paths
+            if (dirName is not null && dirName.StartsWith(tempPath, StringComparison.OrdinalIgnoreCase))
+            {
+                var fileInfo = new FileInfo(path);
+                var image = await GetImage.GetNonStandardBitmapAsync(fileInfo).ConfigureAwait(false);
+                UpdateImage.SetSingleImage(mainWindow.DataContext as MainWindowViewModel, mainWindow, image, SingleImageType.TempFile, fileInfo.Name);
+                return;
+            }
+        }
         if (!tab.IsInitialized)
         {
             await QuickLoad.QuickLoadAsync(mainWindow, core, path, continueFromLeftOff: false).ConfigureAwait(false);
