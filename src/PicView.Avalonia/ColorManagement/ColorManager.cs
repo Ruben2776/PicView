@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Media;
 using PicView.Core.ColorHandling;
 
@@ -151,6 +152,7 @@ public static class ColorManager
     /// <summary>
     /// Represents a set of colors for a theme
     /// </summary>
+    [StructLayout(LayoutKind.Auto)]
     private readonly struct ThemeColors(
         Color logoLight,
         Color logoDark,
