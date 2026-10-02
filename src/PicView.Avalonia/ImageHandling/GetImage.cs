@@ -18,12 +18,15 @@ public static class GetImage
             DebugHelper.LogDebug(nameof(GetImage), nameof(GetSkBitmapAsync), $"{nameof(fileInfo)} is null");
             return null;
         }
-        await using var stream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
-        var bitmap = new Bitmap(stream);
-        return bitmap;
+        var stream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
+        await using (stream.ConfigureAwait(false))
+        {
+            var bitmap = new Bitmap(stream);
+            return bitmap;
+        }
     }
-    
-    public static async ValueTask<Bitmap?> GetNonStandardBitmapAsync(FileInfo fileInfo, MagickImage? magickImage)
+
+    public static async ValueTask<Bitmap?> GetNonStandardBitmapAsync(FileInfo fileInfo, MagickImage? magickImage = null)
     {
         var shouldDisposeMagickImage = magickImage is null;
         if (shouldDisposeMagickImage)
@@ -33,7 +36,7 @@ public static class GetImage
 
         try
         {
-            magickImage = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magickImage);
+            magickImage = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magickImage).ConfigureAwait(false);
         }
         catch (Exception e)
         {
@@ -86,7 +89,7 @@ public static class GetImage
         try
         {
             var base64String = await File.ReadAllTextAsync(fileInfo.FullName, ct).ConfigureAwait(false);
-            return await GetBase64ImageAsync(base64String, ct);
+            return await GetBase64ImageAsync(base64String, ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
