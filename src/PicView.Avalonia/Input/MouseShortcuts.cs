@@ -206,11 +206,16 @@ public static class MouseShortcuts
         // left-button double-click behavior such as toggling fullscreen)
         if (e.ClickCount is 2 && prop.IsLeftButtonPressed)
         {
+            // Prevent unintended behavior when double-clicking
             if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
             {
                 if (imageViewer.GalleryView.IsPointerOver)
                 {
-                    // Prevent unintended behavior when double-clicking on the gallery view
+                    return;
+                }
+
+                if (imageViewer.ClickArrowLeft.IsPointerOver || imageViewer.ClickArrowRight.IsPointerOver)
+                {
                     return;
                 }
             }
