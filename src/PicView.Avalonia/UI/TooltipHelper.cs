@@ -44,27 +44,27 @@ public static class TooltipHelper
 
         // 2. Create and run the fade-in animation
         var fadeIn = AnimationsHelper.OpacityAnimation(0, 1, Speed);
-        await fadeIn.RunAsync(mainWindow.UIHelper.GetToolTipMessage, cancellationToken);
+        await fadeIn.RunAsync(mainWindow.UIHelper.GetToolTipMessage, cancellationToken).ConfigureAwait(true);
 
         // Exit if a new message cancelled this task
         if (cancellationToken.IsCancellationRequested) return;
 
         // 3. Wait for a few seconds
-        await Task.Delay(interval, cancellationToken);
+        await Task.Delay(interval, cancellationToken).ConfigureAwait(true);
 
         // Exit if a new message cancelled this task
         if (cancellationToken.IsCancellationRequested)
         {
             // If cancelled here, we still want to fade out smoothly
             var instantFadeOut = AnimationsHelper.OpacityAnimation(mainWindow.UIHelper.GetToolTipMessage.Opacity, 0, Speed);
-            await instantFadeOut.RunAsync(mainWindow.UIHelper.GetToolTipMessage, cancellationToken);
+            await instantFadeOut.RunAsync(mainWindow.UIHelper.GetToolTipMessage, cancellationToken).ConfigureAwait(true);
             mainWindow.UIHelper.GetToolTipMessage.IsVisible = false;
             return;
         }
 
         // 4. Create and run the fade-out animation
         var fadeOut = AnimationsHelper.OpacityAnimation(1, 0, 0.3);
-        await fadeOut.RunAsync(mainWindow.UIHelper.GetToolTipMessage, cancellationToken);
+        await fadeOut.RunAsync(mainWindow.UIHelper.GetToolTipMessage, cancellationToken).ConfigureAwait(true);
             
         // 5. Hide the control
         mainWindow.UIHelper.GetToolTipMessage.IsVisible = false;
@@ -109,8 +109,8 @@ public static class TooltipHelper
                 {
                     mainWindow.UIHelper.GetToolTipMessage.Opacity = 1;
                 }, DispatcherPriority.Normal, _cancellationTokenSource.Token);
-                await Task.Delay(interval, _cancellationTokenSource.Token);
-                await endAnimation.RunAsync(mainWindow.UIHelper.GetToolTipMessage, _cancellationTokenSource.Token);
+                await Task.Delay(interval, _cancellationTokenSource.Token).ConfigureAwait(true);
+                await endAnimation.RunAsync(mainWindow.UIHelper.GetToolTipMessage, _cancellationTokenSource.Token).ConfigureAwait(true);
             }
         }
         catch (TaskCanceledException)

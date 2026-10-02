@@ -84,7 +84,7 @@ public partial class EffectsView : UserControl
         PointerPressed += OnPointerPressed;
 
         // Footer buttons
-        ResetButton.Click += async (_, _) => await RemoveEffects();
+        ResetButton.Click += async (_, _) => await RemoveEffects().ConfigureAwait(false);
         CancelButton.Click += (_, _) =>
         {
             if (TopLevel.GetTopLevel(this) is Window window)
@@ -266,7 +266,7 @@ public partial class EffectsView : UserControl
                 var magick = await ImageEffectsHelper.ApplyEffects(
                     core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo,
                     state.Config,
-                    ct);
+                    ct).ConfigureAwait(false);
         
                 return (Magick: magick, state.Vm);
             })
@@ -562,7 +562,7 @@ public partial class EffectsView : UserControl
         }
         finally
         {
-            await Task.Delay(_debounceTime);
+            await Task.Delay(_debounceTime).ConfigureAwait(false);
             _reloading = false;
         }
     }

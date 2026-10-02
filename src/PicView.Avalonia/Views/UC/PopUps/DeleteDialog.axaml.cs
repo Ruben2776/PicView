@@ -23,11 +23,11 @@ public partial class DeleteDialog : AnimatedPopUp
 
             PromptText.Text = prompt;
             PromptFileName.Text = Path.GetFileName(file) + "?";
-            CancelButton.Click += async delegate { await AnimatedClosing(); };
+            CancelButton.Click += async delegate { await AnimatedClosing().ConfigureAwait(true); };
             ConfirmButton.Click += async delegate
             {
-                await core.PlatformService.DeleteFile(file, recycle);
-                await AnimatedClosing();
+                await core.PlatformService.DeleteFile(file, recycle).ConfigureAwait(true);
+                await AnimatedClosing().ConfigureAwait(true);
             };
 
             Focus();

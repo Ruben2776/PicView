@@ -40,7 +40,7 @@ public partial class MotionPhotoView : UserControl, IDisposable
     /// </summary>
     private const double BadgeTopInsetBelowAltBar = 45;
 
-    private static readonly double BadgeTopInsetBelowAltBarMultiTab = 45 + SizeDefaults.TabHeight;
+    private const double BadgeTopInsetBelowAltBarMultiTab = 45 + SizeDefaults.TabHeight;
 
     private Stream? _videoStream;
     private MotionPhotoDecoder? _decoder;
@@ -330,7 +330,10 @@ public partial class MotionPhotoView : UserControl, IDisposable
         }
     }
 
-    private async void OnPlayBadgeClicked(object? sender, RoutedEventArgs e) => await PlayAsync();
+    private void OnPlayBadgeClicked(object? sender, RoutedEventArgs e)
+    {
+        _ = PlayAsync().ConfigureAwait(false);
+    }
 
     private void OnPlaybackEnded(object? sender, EventArgs e) =>
         Dispatcher.UIThread.Post(FreezeBackToCover);
