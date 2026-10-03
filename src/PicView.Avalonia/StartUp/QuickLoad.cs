@@ -5,7 +5,6 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
@@ -333,7 +332,10 @@ public static class QuickLoad
         
         if (isGalleryEnabled)
         {
-            await GalleryHelper.LoadGalleryAsync(core).ConfigureAwait(false);
+            if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
+            {
+                await tab.GalleryCoordinator.LoadGalleryAsync(tab.ImageIterator.Files).ConfigureAwait(false);
+            }
         }
     }
     
@@ -357,7 +359,10 @@ public static class QuickLoad
         ShowHoverBarIfNeeded(core);
         if (isGalleryEnabled)
         {
-            await GalleryHelper.LoadGalleryAsync(core).ConfigureAwait(false);
+            if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
+            {
+                await tab.GalleryCoordinator.LoadGalleryAsync(tab.ImageIterator.Files).ConfigureAwait(false);
+            }
         }
 
         if (Settings.WindowProperties.AutoFit)

@@ -35,26 +35,25 @@ public static class NavigationSubscriptions
                 .Skip(1)
                 .SubscribeAwait(async (mode, _) =>
                 {
-                    if (Application.Current.DataContext is not CoreViewModel core)
-                    {
-                        return;
-                    }
                     if (mode is GalleryMode.Docked or GalleryMode.Expanded)
                     {
-                        if (tabViewModel.Gallery.LoadingState is GalleryLoadingState.NotLoaded)
+                        if (tabViewModel.Gallery.LoadingState is GalleryLoadingState.NotLoaded && tabViewModel is { GalleryCoordinator: not null, ImageIterator: not null })
                         {
-                            await GalleryHelper.LoadGalleryAsync(core).ConfigureAwait(false);
+                            await tabViewModel.GalleryCoordinator.LoadGalleryAsync(tabViewModel.ImageIterator.Files).ConfigureAwait(false);
                         }
                     }
-                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(GalleryLoader.LoadGallery)))
+                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(tabViewModel.GalleryCoordinator.LoadGalleryAsync)))
                 .AddTo(tabViewModel.Disposables);
             
             tabViewModel.Gallery.OpenSelectedItemCommand
                 .Skip(1)
                 .SubscribeAwait(async (index, _) =>
                 {
-                    await GalleryLoader.ToggleGalleryAndLoadItem(tabViewModel, index).ConfigureAwait(false);
-                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(GalleryLoader.ToggleGalleryAndLoadItem)))
+                    if (tabViewModel is { GalleryCoordinator: not null })
+                    {
+                        await tabViewModel.GalleryCoordinator.ToggleGalleryAndLoadItem(index).ConfigureAwait(false);
+                    }
+                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(tabViewModel.GalleryCoordinator.ToggleGalleryAndLoadItem)))
                 .AddTo(tabViewModel.Disposables);
         });
     }

@@ -1,8 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Gallery;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
@@ -81,15 +79,12 @@ public static class ToggleUIVisibility
             {
                 if (tab.ImageIterator.Files.Count > 0)
                 {
-                    if (Application.Current.DataContext is not CoreViewModel core)
-                    {
-                        return;
-
-                    }
-
                     if (tab.Gallery.LoadingState is GalleryLoadingState.NotLoaded)
                     {
-                       await GalleryHelper.LoadGalleryAsync(core).ConfigureAwait(false);
+                        if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
+                        {
+                            await tab.GalleryCoordinator.LoadGalleryAsync(tab.ImageIterator.Files).ConfigureAwait(false);
+                        }
                     }
                 }
 

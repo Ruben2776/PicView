@@ -59,6 +59,8 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
     public CropViewModel? Crop { get; set; }
     public ICropService? CropService { get; set; }
     
+    public Gallery.GalleryCoordinator? GalleryCoordinator { get; private set; }
+    
     #endregion
     
     #region Image properties
@@ -264,6 +266,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
             ThumbnailCache = thumbnailCache;
         }
         ImageIterator = new ImageIterator(cache, thumbCache, thumbnailLoader, this);
+        GalleryCoordinator = new Gallery.GalleryCoordinator(this, thumbnailLoader, ThumbnailCache ?? thumbCache);
     }
 
     public void InitializeImageIterator(IReadOnlyList<FileInfo> files, IImageCache cache, IThumbnailCache thumbCache,  IThumbnailLoader thumbnailLoader, IFileWatcherService? fileWatcherService = null, IThumbnailCache? thumbnailCache = null)
@@ -277,6 +280,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
             ThumbnailCache = thumbnailCache;
         }
         ImageIterator ??= new ImageIterator(cache, thumbCache, thumbnailLoader, this);
+        GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, thumbnailLoader, ThumbnailCache ?? thumbCache);
         if (Model?.FileInfo is null)
         {
 #if DEBUG
@@ -361,6 +365,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
 
         ImageIterator?.Dispose();
         ArchiveExtractionService.Cleanup();
+        GalleryCoordinator?.Dispose();
 
         NavigationCts.Dispose();
         Disposables.Dispose();

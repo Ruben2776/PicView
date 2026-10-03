@@ -5,7 +5,6 @@ using Avalonia.Threading;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Functions;
-using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Navigation.Services;
 using PicView.Avalonia.UI;
@@ -101,11 +100,10 @@ public static class SettingsUpdater
 
             if (gallery.LoadingState is GalleryLoadingState.NotLoaded)
             {
-                if (Application.Current.DataContext is not CoreViewModel core)
+                if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
                 {
-                    return;
+                    await tab.GalleryCoordinator.LoadGalleryAsync(tab.ImageIterator.Files).ConfigureAwait(false);
                 }
-                await GalleryHelper.LoadGalleryAsync(core).ConfigureAwait(false);
             }
         }
 

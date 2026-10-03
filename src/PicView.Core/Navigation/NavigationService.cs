@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using PicView.Core.ArchiveHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.FileHandling;
@@ -8,7 +7,6 @@ using PicView.Core.FileSearch;
 using PicView.Core.FileSorting;
 using PicView.Core.Gallery;
 using PicView.Core.Http;
-using PicView.Core.ImageDecoding;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
@@ -124,11 +122,11 @@ public class NavigationService(
                     ct.Cancel();
 #pragma warning restore MA0042
                     tab.ResetNavigationCts();
-                    GalleryLoader.ReloadGallery(tab, tab.ImageIterator.Files, thumbnailLoader, tab.ThumbnailCache, tab.GetTabCancellation().Token);
+                    tab.GalleryCoordinator?.ReloadGallery(tab.ImageIterator.Files);
                     return;
                 }
                 tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
-                GalleryLoader.LoadGallery(tab, tab.ImageIterator.Files, thumbnailLoader, tab.ThumbnailCache, ct.Token);
+                await tab.GalleryCoordinator.LoadGalleryAsync(tab.ImageIterator.Files).ConfigureAwait(false);
             }
         }
         catch (Exception e)
@@ -662,7 +660,7 @@ public class NavigationService(
             // Update title
             tab.UpdateTabTitle();
             
-            GalleryLoader.SortLoadedGallery(tab, newFiles);
+            tab.GalleryCoordinator?.SortLoadedGallery(newFiles);
         }
         catch (Exception e)
         {

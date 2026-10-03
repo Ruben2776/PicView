@@ -6,12 +6,16 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Core.Gallery;
 
-public static class GalleryLoader
+public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache)
+    : IDisposable
 {
-    private static CancellationTokenSource? _cts;
+    private CancellationTokenSource? _cts;
 
-    public static void LoadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files,
-        IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
+#pragma warning disable MA0042
+    public Task LoadGalleryAsync(IReadOnlyList<FileInfo> files) => Task.Run(() => LoadGallery(files), _cts.Token);
+#pragma warning restore MA0042
+
+    public void LoadGallery(IReadOnlyList<FileInfo> files)
     {
         if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
         {
@@ -24,8 +28,10 @@ public static class GalleryLoader
         }
 
         tab.Gallery.LoadingState = GalleryLoadingState.Loading;
-        _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        _cts = new CancellationTokenSource();
 
+        var ct = _cts.Token;
+        
         var dockedHeight = Settings.Gallery.DockedGalleryItemSize;
         var expandedHeight = Settings.Gallery.ExpandedGalleryItemSize;
         var maxHeight = Math.Max(dockedHeight, expandedHeight);
@@ -36,7 +42,7 @@ public static class GalleryLoader
 
         var parallelOptions = new ParallelOptions
         {
-            CancellationToken = _cts.Token,
+            CancellationToken = ct,
             MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount - 1)
         };
 
@@ -46,7 +52,7 @@ public static class GalleryLoader
         {
             for (var i = 0; i < files.Count; i += batchSize)
             {
-                _cts.Token.ThrowIfCancellationRequested();
+                ct.ThrowIfCancellationRequested();
 
                 var currentBatchSize = Math.Min(batchSize, files.Count - i);
                 var batchVms = new GalleryItemViewModel[currentBatchSize];
@@ -70,7 +76,7 @@ public static class GalleryLoader
                     catch (Exception ex)
                     {
 #if DEBUG
-                        DebugHelper.LogDebug(nameof(GalleryLoader), nameof(LoadGallery), ex);
+                        DebugHelper.LogDebug(nameof(GalleryCoordinator), nameof(LoadGallery), ex);
 #endif
                     }
 
@@ -127,31 +133,28 @@ public static class GalleryLoader
         tab.Gallery.LoadingState = GalleryLoadingState.Loaded;
     }
 
-    public static void ReloadGallery(TabViewModel tab, IReadOnlyList<FileInfo> files,
-        IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache, CancellationToken ct)
+    public void ReloadGallery(IReadOnlyList<FileInfo> files)
     {
         tab.Gallery.LoadingState = GalleryLoadingState.Restarting;
         tab.Gallery.GalleryItems.Clear();
-        _cts?.Cancel();
-        _cts?.Dispose();
-        _cts = null;
-        LoadGallery(tab, files, thumbnailLoader, thumbnailCache, ct);
+        Cancel();
+        LoadGallery(files);
     }
 
-    public static async ValueTask ToggleGalleryAndLoadItem(TabViewModel tabViewModel, int index)
+    public async ValueTask ToggleGalleryAndLoadItem(int index)
     {
-        var gallery = tabViewModel.Gallery;
+        var gallery = tab.Gallery;
         gallery.SelectedGalleryItemIndex.Value = -1;
         if (gallery.IsGalleryExpanded.Value)
         {
             GalleryManager.ToggleGallery(gallery);
         }
 
-        await tabViewModel.ImageIterator.SkipToIndexAsync(index, tabViewModel.GetTabCancellation())
+        await tab.ImageIterator!.SkipToIndexAsync(index, tab.GetTabCancellation())
             .ConfigureAwait(false);
     }
 
-    public static void SortLoadedGallery(TabViewModel tab, IReadOnlyList<FileInfo> files)
+    public void SortLoadedGallery(IReadOnlyList<FileInfo> files)
     {
         if (tab.Gallery.GalleryItems is null || tab.Gallery.GalleryItems.Count <= 1 || files is null ||
             files.Count is 0)
@@ -199,5 +202,20 @@ public static class GalleryLoader
         });
 
         tab.Gallery.GalleryItems.Sort(comparer);
+    }
+
+    public void Cancel()
+    {
+        if (_cts != null)
+        {
+            _cts.Cancel();
+            _cts.Dispose();
+            _cts = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        Cancel();
     }
 }

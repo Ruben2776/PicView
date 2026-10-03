@@ -265,7 +265,7 @@ public class NavigationServiceTests : IDisposable
         var targetOrder = new List<FileInfo> { fileC, fileA, fileD, fileB };
 
         // Act
-        GalleryLoader.SortLoadedGallery(tab, targetOrder);
+        tab.GalleryCoordinator?.SortLoadedGallery(targetOrder);
 
         // Assert
         Assert.Equal(4, tab.Gallery.GalleryItems.Count);
@@ -284,12 +284,12 @@ public class NavigationServiceTests : IDisposable
         var item = new GalleryItemViewModel { FileInfo = file };
 
         // Act & Assert - Empty
-        GalleryLoader.SortLoadedGallery(tab, new List<FileInfo> { file });
+        tab.GalleryCoordinator?.SortLoadedGallery(new List<FileInfo> { file });
         Assert.Empty(tab.Gallery.GalleryItems);
 
         // Act & Assert - Single item
         tab.Gallery.GalleryItems.Add(item);
-        GalleryLoader.SortLoadedGallery(tab, new List<FileInfo> { file });
+        tab.GalleryCoordinator?.SortLoadedGallery(new List<FileInfo> { file });
         Assert.Single(tab.Gallery.GalleryItems);
         Assert.Same(item, tab.Gallery.GalleryItems[0]);
     }
