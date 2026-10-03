@@ -1,9 +1,14 @@
 ﻿using PicView.Core.Config;
+using PicView.Core.Conversion;
+using PicView.Core.Exif;
+using PicView.Core.Models;
+using PicView.Core.Sizing;
+using PicView.Core.Titles;
 using R3;
 
 namespace PicView.Core.ViewModels;
 
-public class ImageInfoWindowViewModel : IDisposable
+public class ImageInfoWindowViewModel(MainWindowViewModel vm) : IDisposable
 {
     public ImageInfoWindowConfig? ImageInfoWindowConfig { get; set; }
     
@@ -79,6 +84,70 @@ public class ImageInfoWindowViewModel : IDisposable
         {
             HalfLineWidth.Value = width / 2 - (scrollBarThickness + padding);
         }
+    }
+
+    public async ValueTask UpdateValuesAsync(ImageModel imageModel, CancellationToken cancellationToken)
+    {
+        if (vm.Exif == null) return;
+        
+        await Task.Run(() =>
+        {
+            vm.Exif.UpdateExifValues(imageModel);
+        }, cancellationToken).ConfigureAwait(false);
+
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.ShouldOptimizeImageBeEnabled.Value = ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(tab.Model.FileInfo);
+        vm.Exif.IsExifAvailable.Value = vm.Exif.ImageFormat.CurrentValue.IsExifImage();
+    }
+
+    public async Task ResizeImageAsync(bool isWidth, string widthText, string heightText)
+    {
+        IsLoading.Value = true;
+        try
+        {
+            var widthValue = double.TryParse(widthText, out var w) ? w : 0;
+            var heightValue = double.TryParse(heightText, out var h) ? h : 0;
+
+            if (isWidth && widthValue > 0)
+            {
+                var success = await ConversionHelper.ResizeByWidth(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, widthValue).ConfigureAwait(false);
+                if (success)
+                {
+                    await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
+                }
+            }
+            else if (!isWidth && heightValue > 0)
+            {
+                var success = await ConversionHelper.ResizeByHeight(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, heightValue).ConfigureAwait(false);
+                if (success)
+                {
+                    await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
+                }
+            }
+        }
+        finally
+        {
+            IsLoading.Value = false;
+        }
+    }
+
+    public void UpdatePrintSizes(uint width, uint height)
+    {
+        if (vm.Exif == null) return;
+
+        var printSizes = PrintSizing.GetPrintSizes(width, height, vm.Exif.DpiX.CurrentValue, vm.Exif.DpiY.CurrentValue);
+        vm.Exif.PrintSizeInch.Value = printSizes.PrintSizeInch;
+        vm.Exif.PrintSizeCm.Value = printSizes.PrintSizeCm;
+        vm.Exif.SizeMp.Value = printSizes.SizeMp;
+
+        var gcd = AspectRatioFormatter.GCD(width, height);
+        vm.Exif.AspectRatio.Value = AspectRatioFormatter.GetFormattedAspectRatio(gcd, vm.WindowTabs.ActiveTab.Value.Model.PixelWidth,
+                vm.WindowTabs.ActiveTab.Value.Model.PixelHeight);
+    }
+
+    public async Task AddExifPropertyAsync<T>(Func<FileInfo?, T, Task<bool>> addAction, T value)
+    {
+        await addAction(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, value).ConfigureAwait(false);
     }
     
     public void Dispose()

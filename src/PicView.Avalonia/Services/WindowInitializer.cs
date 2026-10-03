@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -109,7 +109,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
     {
         if (_imageInfoWindow is null)
         {
-            vm.InfoWindow ??= new ImageInfoWindowViewModel();
+            vm.InfoWindow ??= new ImageInfoWindowViewModel(vm);
             if (vm.InfoWindow.ImageInfoWindowConfig?.WindowProperties is null)
             {
                 vm.InfoWindow.ImageInfoWindowConfig = new ImageInfoWindowConfig();

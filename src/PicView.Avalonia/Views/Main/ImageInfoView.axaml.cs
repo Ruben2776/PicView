@@ -6,13 +6,8 @@ using Avalonia.Threading;
 using PicView.Avalonia.Resizing;
 using PicView.Avalonia.UI;
 using PicView.Core.ViewModels;
-using PicView.Core.Conversion;
 using PicView.Core.Exif;
 using PicView.Core.Extensions;
-using PicView.Core.FileHandling;
-using PicView.Core.Models;
-using PicView.Core.Sizing;
-using PicView.Core.Titles;
 using R3;
 
 namespace PicView.Avalonia.Views.Main;
@@ -31,7 +26,7 @@ public partial class ImageInfoView : UserControl
     {
         Dispatcher.UIThread.Post(() =>
         {
-            if (DataContext is not MainWindowViewModel vm)
+            if (DataContext is not MainWindowViewModel vm || vm.InfoWindow is null)
             {
                 return;
             }
@@ -66,7 +61,6 @@ public partial class ImageInfoView : UserControl
                     return;
                 }
 
-                // Context menu doesn't want to be opened normally
                 MainContextMenu.Open();
             };
 
@@ -78,97 +72,136 @@ public partial class ImageInfoView : UserControl
                 }
             };
 
-            PixelWidthTextBox.KeyDown += async (s, e) => await ResizeImageOnEnter(s, e).ConfigureAwait(false);
-            PixelHeightTextBox.KeyDown += async (s, e) => await ResizeImageOnEnter(s, e).ConfigureAwait(false);
+            PixelWidthTextBox.KeyDown += async (s, e) => 
+            {
+                if (e.Key == Key.Enter)
+                {
+                    await vm.InfoWindow.ResizeImageAsync(true, PixelWidthTextBox.Text, PixelHeightTextBox.Text).ConfigureAwait(false);
+                }
+            };
+            PixelHeightTextBox.KeyDown += async (s, e) => 
+            {
+                if (e.Key == Key.Enter)
+                {
+                    await vm.InfoWindow.ResizeImageAsync(false, PixelWidthTextBox.Text, PixelHeightTextBox.Text).ConfigureAwait(false);
+                }
+            };
 
             PixelWidthTextBox.KeyUp += delegate { AdjustAspectRatio(PixelWidthTextBox); };
             PixelHeightTextBox.KeyUp += delegate { AdjustAspectRatio(PixelHeightTextBox); };
 
-            vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.SubscribeAwait(FileInfoAsyncSubscription)
-                .AddTo(ref _disposables);
+            vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.SubscribeAwait(async (fileInfo, ct) => 
+            {
+                if (fileInfo != null) 
+                {
+                    var model = vm.WindowTabs.ActiveTab.CurrentValue.Model;
+                    await vm.InfoWindow.UpdateValuesAsync(model, ct).ConfigureAwait(false);
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        if (!string.Equals(DirectoryNameTextBox.Text, model.FileInfo.DirectoryName, StringComparison.Ordinal))
+                        {
+                            DirectoryNameTextBox.Text = model.FileInfo.DirectoryName;
+                        }
+                        FileSizeBox.Text = model.FileInfo?.Length.GetReadableFileSize();
+                        GoogleLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif?.GoogleLink?.CurrentValue);
+                        BingLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif?.BingLink?.CurrentValue);
+                    });
+                }
+            }).AddTo(ref _disposables);
 
             SizeChanged += (_, _) => ResponsiveResizeUpdate(vm);
             
             FileNameTextBox.KeyDown += async (_, e) =>
-                await HandleRenameOnEnterAsync(e, () =>
-                    Path.Combine(vm.WindowTabs.ActiveTab.Value.Model.FileInfo.DirectoryName!, FileNameTextBox.Text)).ConfigureAwait(false);
+            {
+                if (e.Key == Key.Enter)
+                {
+                    var newPath = Path.Combine(vm.WindowTabs.ActiveTab.Value.Model.FileInfo.DirectoryName!, FileNameTextBox.Text);
+                    await HandleRename(vm, newPath).ConfigureAwait(false);
+                }
+            };
 
             FullPathTextBox.KeyDown += async (_, e) =>
-                await HandleRenameOnEnterAsync(e, () => FullPathTextBox.Text ?? string.Empty).ConfigureAwait(false);
+            {
+                if (e.Key == Key.Enter)
+                {
+                    await HandleRename(vm, FullPathTextBox.Text ?? string.Empty).ConfigureAwait(false);
+                }
+            };
 
             DirectoryNameTextBox.KeyDown += async (_, e) =>
-                await HandleRenameOnEnterAsync(e, () =>
-                    Path.Combine(DirectoryNameTextBox.Text, vm.WindowTabs.ActiveTab.Value.Model.FileInfo.Name)).ConfigureAwait(false);
+            {
+                if (e.Key == Key.Enter)
+                {
+                    var newPath = Path.Combine(DirectoryNameTextBox.Text, vm.WindowTabs.ActiveTab.Value.Model.FileInfo.Name);
+                    await HandleRename(vm, newPath).ConfigureAwait(false);
+                }
+            };
 
-            // Orientation is for display only atm
             OrientationBox.DropDownClosed += (_, _) =>
             {
-                OrientationBox.SelectedIndex = vm.Exif.Orientation.Value!;
+                if (vm.Exif?.Orientation.Value != null)
+                {
+                    OrientationBox.SelectedIndex = vm.Exif.Orientation.Value;
+                }
             };
             
-            // Resolution Units are for display only atm
             ResolutionUnitBox.DropDownClosed += (_, _) =>
             {
-                ResolutionUnitBox.SelectedIndex = (int)vm.Exif.ResolutionUnit.Value!;
+                if (vm.Exif?.ResolutionUnit.Value != null)
+                {
+                    ResolutionUnitBox.SelectedIndex = (int)vm.Exif.ResolutionUnit.Value;
+                }
             };
 
             ColorRepresentationBox.DropDownClosed += async (_, _) =>
             {
-                await AddExifPropertyAsync(ExifWriter.AddColorSpace, vm.Exif.ColorRepresentation.CurrentValue).ConfigureAwait(false);
+                await vm.InfoWindow.AddExifPropertyAsync(ExifWriter.AddColorSpace, vm.Exif.ColorRepresentation.CurrentValue).ConfigureAwait(false);
             };
             
             CompressionBox.DropDownClosed  += async (_, _) =>
             {
-                await AddExifPropertyAsync(ExifWriter.AddCompression, vm.Exif.Compression.CurrentValue).ConfigureAwait(false);
+                await vm.InfoWindow.AddExifPropertyAsync(ExifWriter.AddCompression, vm.Exif.Compression.CurrentValue).ConfigureAwait(false);
             };
 
             vm.InfoWindow.IsLoading.Value = false;
         }, DispatcherPriority.Background);
     }
-
-    private async ValueTask FileInfoAsyncSubscription(FileInfo? fileInfo, CancellationToken ct)
+    
+    private void SetLoadingState(bool isLoading)
     {
-        if (fileInfo is null || DataContext  is not MainWindowViewModel vm)
-        {
-            return;
-        }
-        
-        var model = vm.WindowTabs.ActiveTab.CurrentValue.Model;
-        await UpdateValuesAsync(model, ct).ConfigureAwait(false);
+        ParentPanel.Opacity = isLoading ? 0.1 : 1;
+        ParentPanel.IsHitTestVisible = !isLoading;
+        SpinWaiter.IsVisible = isLoading;
     }
 
-    private async Task HandleRenameOnEnterAsync(KeyEventArgs e, Func<string> getNewPath)
+    private async Task HandleRename(MainWindowViewModel vm, string newPath)
     {
-        if (e.Key is not Key.Enter || DataContext is not MainWindowViewModel vm)
+        if (string.IsNullOrWhiteSpace(newPath))
         {
             return;
         }
-        
+
+        var oldPath = vm.WindowTabs.ActiveTab.Value.FileInfo.CurrentValue.FullName;
+        if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase)) return;
+
+        await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(true));
+        vm.IsLoadingIndicatorShown.Value = true;
         try
         {
-            var newPath = getNewPath();
-            if (string.IsNullOrWhiteSpace(newPath))
-            {
-                return;
-            }
-        
-            await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(true));
-            vm.IsLoadingIndicatorShown.Value = true;
-        
-            var oldPath = vm.WindowTabs.ActiveTab.Value.FileInfo.CurrentValue.FullName;
-        
-            // Avoid renaming if the path hasn't changed
-            if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
-            {
-                return;
-            }
-            
             var isRenamed = await RenameHelper.RenameAction(vm, newPath).ConfigureAwait(false);
             if (isRenamed)
             {
-                await UpdateValuesAsync(vm.WindowTabs.ActiveTab.Value.Model, CancellationToken.None).ConfigureAwait(false);
+                await vm.InfoWindow!.UpdateValuesAsync(vm.WindowTabs.ActiveTab.Value.Model, CancellationToken.None).ConfigureAwait(false);
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    var model = vm.WindowTabs.ActiveTab.Value.Model;
+                    if (!string.Equals(DirectoryNameTextBox.Text, model.FileInfo.DirectoryName, StringComparison.Ordinal))
+                    {
+                        DirectoryNameTextBox.Text = model.FileInfo.DirectoryName;
+                    }
+                    FileSizeBox.Text = model.FileInfo?.Length.GetReadableFileSize();
+                });
             }
-            
         }
         finally
         {
@@ -176,7 +209,6 @@ public partial class ImageInfoView : UserControl
             vm.IsLoadingIndicatorShown.Value = false;
         }
     }
-
 
     private void ResponsiveResizeUpdate(MainWindowViewModel vm)
     {
@@ -194,48 +226,12 @@ public partial class ImageInfoView : UserControl
         var panelWidth = double.IsNaN(ParentPanel.Width) ? ParentPanel.Bounds.Width : ParentPanel.Width;
         panelWidth = panelWidth is 0 ? MinWidth : panelWidth;
 
-        vm.InfoWindow.ResponsiveResizeUpdate(panelWidth, scrollBarThickness);
-    }
-
-    private async ValueTask UpdateValuesAsync(ImageModel imageModel, CancellationToken cancellationToken)
-    {
-        if (DataContext is not MainWindowViewModel vm)
-        {
-            return;
-        }
-
-        await Task.Run(() =>
-        {
-            vm.Exif.UpdateExifValues(imageModel);
-        }, cancellationToken).ConfigureAwait(false);
-        var tab = vm.WindowTabs.ActiveTab.Value;
-        await Dispatcher.InvokeAsync(() =>
-        {
-            if (!string.Equals(DirectoryNameTextBox.Text, imageModel.FileInfo.DirectoryName, StringComparison.Ordinal))
-            {
-                DirectoryNameTextBox.Text = imageModel.FileInfo.DirectoryName;
-            }
-            FileSizeBox.Text = tab.Model.FileInfo?.Length.GetReadableFileSize();
-            GoogleLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif?.GoogleLink?.CurrentValue);
-            BingLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif?.BingLink?.CurrentValue);
-        });
-
-        tab.ShouldOptimizeImageBeEnabled.Value = ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(tab.Model.FileInfo);
-
-
-        vm.Exif.IsExifAvailable.Value = vm.Exif.ImageFormat.CurrentValue.IsExifImage();
-    }
-    
-    private void SetLoadingState(bool isLoading)
-    {
-        ParentPanel.Opacity = isLoading ? 0.1 : 1;
-        ParentPanel.IsHitTestVisible = !isLoading;
-        SpinWaiter.IsVisible = isLoading;
+        vm.InfoWindow?.ResponsiveResizeUpdate(panelWidth, scrollBarThickness);
     }
 
     private void AdjustAspectRatio(TextBox sender)
     {
-        if (DataContext is not MainWindowViewModel vm)
+        if (DataContext is not MainWindowViewModel vm || vm.InfoWindow is null)
         {
             return;
         }
@@ -256,77 +252,8 @@ public partial class ImageInfoView : UserControl
         {
             return;
         }
-
-        var printSizes =
-            PrintSizing.GetPrintSizes(width, height, vm.Exif.DpiX.CurrentValue, vm.Exif.DpiY.CurrentValue);
-        PrintSizeInchTextBox.Text = printSizes.PrintSizeInch;
-        PrintSizeCmTextBox.Text = printSizes.PrintSizeCm;
-        SizeMpTextBox.Text = printSizes.SizeMp;
-
-        var gcd = AspectRatioFormatter.GCD(width, height);
-        AspectRatioTextBox.Text =
-            AspectRatioFormatter.GetFormattedAspectRatio(gcd, vm.WindowTabs.ActiveTab.Value.Model.PixelWidth,
-                vm.WindowTabs.ActiveTab.Value.Model.PixelHeight);
-    }
-
-    private static async Task DoResize(MainWindowViewModel vm, bool isWidth, object width, object height)
-    {
-        if (isWidth)
-        {
-            if (!double.TryParse((string?)width, out var widthValue))
-            {
-                return;
-            }
-
-            if (widthValue > 0)
-            {
-                var success = await ConversionHelper.ResizeByWidth(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, widthValue)
-                    .ConfigureAwait(false);
-                if (success)
-                {
-                    await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
-                }
-            }
-        }
-        else
-        {
-            if (!double.TryParse((string?)height, out var heightValue))
-            {
-                return;
-            }
-
-            if (heightValue > 0)
-            {
-                var success = await ConversionHelper.ResizeByHeight(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, heightValue)
-                    .ConfigureAwait(false);
-                if (success)
-                {
-                    await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
-                }
-            }
-        }
-    }
-
-    private async Task ResizeImageOnEnter(object? sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter)
-        {
-            if (DataContext is not MainWindowViewModel vm)
-            {
-                return;
-            }
-
-            await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(true));
-            try
-            {
-                await DoResize(vm, Equals(sender, PixelWidthTextBox), PixelWidthTextBox.Text, PixelHeightTextBox.Text)
-                    .ConfigureAwait(false);
-            }
-            finally
-            {
-                await Dispatcher.UIThread.InvokeAsync(() => SetLoadingState(false));
-            }
-        }
+        
+        vm.InfoWindow.UpdatePrintSizes(width, height);
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -334,12 +261,5 @@ public partial class ImageInfoView : UserControl
         base.OnDetachedFromVisualTree(e);
         _disposables.Dispose();
     }
-
-    private async Task AddExifPropertyAsync<T>(Func<FileInfo?, T, Task<bool>> addAction, T value)
-    {
-        if (DataContext is MainWindowViewModel vm)
-        {
-            await addAction(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, value).ConfigureAwait(false);
-        }
-    }
 }
+
