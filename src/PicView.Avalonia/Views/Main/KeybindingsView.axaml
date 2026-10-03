@@ -92,22 +92,20 @@
                 <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.Mouse.Value, Mode=OneWay}" />
 
                 <!--  Mouse wheel  -->
-                <StackPanel
-                    Margin="10,20"
-                    IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}"
-                    Orientation="Horizontal">
+                <DockPanel Margin="10,20" IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}">
                     <TextBlock
                         MinWidth="220"
                         Margin="0,0,5,0"
                         Classes="txt"
+                        DockPanel.Dock="Left"
                         Text="{CompiledBinding Translation.MouseWheel.Value,
                                                Mode=OneWay}" />
 
                     <ComboBox
                         x:Name="MouseWheelBox"
-                        Width="300"
                         Padding="5,7,0,7"
                         BorderThickness="1"
+                        DockPanel.Dock="Right"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                         Foreground="{DynamicResource MainTextColor}"
                         SelectedIndex="{CompiledBinding GlobalSettings.MouseWheelBehavior.Value,
@@ -115,25 +113,23 @@
                         <ComboBoxItem Content="{CompiledBinding Translation.CtrlToZoom.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                         <ComboBoxItem Content="{CompiledBinding Translation.ScrollToZoom.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                     </ComboBox>
-                </StackPanel>
+                </DockPanel>
 
                 <!--  Gallery Mouse wheel  -->
-                <StackPanel
-                    Margin="10,0,10,50"
-                    IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}"
-                    Orientation="Horizontal">
+                <DockPanel Margin="10,0,10,50" IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}">
                     <TextBlock
                         MinWidth="220"
                         Margin="0,0,5,0"
                         Classes="txt"
+                        DockPanel.Dock="Left"
                         Text="{CompiledBinding Translation.GalleryMouseWheel.Value,
                                                Mode=OneWay}" />
 
                     <ComboBox
                         x:Name="GalleryMouseWheelBox"
-                        Width="300"
                         Padding="5,7,0,7"
                         BorderThickness="1"
+                        DockPanel.Dock="Right"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                         Foreground="{DynamicResource MainTextColor}"
                         SelectedIndex="{CompiledBinding GlobalSettings.GalleryMouseWheelBehavior.Value,
@@ -141,7 +137,7 @@
                         <ComboBoxItem Content="{CompiledBinding Translation.Scroll.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                         <ComboBoxItem Content="{CompiledBinding Translation.Navigate.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                     </ComboBox>
-                </StackPanel>
+                </DockPanel>
 
                 <!--  Navigation  -->
                 <TextBlock
