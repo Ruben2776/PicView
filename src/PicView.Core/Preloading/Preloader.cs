@@ -136,25 +136,24 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
         {
             if (positive)
             {
-                await Parallel.ForAsync(0, PreLoaderConfig.PositiveIterations, parallelOptions, async (i, _) =>
+                await Parallel.ForAsync(0, PreLoaderConfig.PositiveIterations, parallelOptions, async (i, x) =>
                 {
-                    await AddAddition((nextStartingIndex + i) % count).ConfigureAwait(false);
+                    await AddAddition((nextStartingIndex + i) % count, x).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
             else
             {
-                await Parallel.ForAsync(0, PreLoaderConfig.NegativeIterations, parallelOptions, async (i, _) =>
+                await Parallel.ForAsync(0, PreLoaderConfig.NegativeIterations, parallelOptions, async (i, x) =>
                 {
-                    await AddAddition((prevStartingIndex - i + count) % count).ConfigureAwait(false);
+                    await AddAddition((prevStartingIndex - i + count) % count, x).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             }
         }
 
-        async Task AddAddition(int index)
+        async Task AddAddition(int index, CancellationToken x)
         {
-            token.ThrowIfCancellationRequested();
             // Double check cancellation after waiting
-            if (token.IsCancellationRequested)
+            if (token.IsCancellationRequested || x.IsCancellationRequested)
             {
                 return;
             }
@@ -165,7 +164,8 @@ public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, I
                 return;
             }
 
-            await AddAsync(ownerId, index, list, reversed, token).ConfigureAwait(false);
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(token, x);
+            await AddAsync(ownerId, index, list, reversed, cts.Token).ConfigureAwait(false);
         }
     }
 }

@@ -67,25 +67,31 @@ public class KeyBindingsService
     {
         try
         {
-            var keybind = Keybind.Parse(kvp.Key);
             if (kvp.Value is null)
             {
                 return null;
             }
+            var keybind = Keybind.Parse(kvp.Key);
+            if (!keybind.HasValue)
+            {
+                return null;
+            }
+
+            var value = keybind.Value;
             if (string.Equals(kvp.Key, nameof(MouseButton.Middle), StringComparison.OrdinalIgnoreCase)) 
             {
-                return new Keybind(MouseButton.Middle, keybind.Modifiers);
+                return new Keybind(MouseButton.Middle, value.Modifiers);
             }
             if (string.Equals(kvp.Key, nameof(MouseButton.XButton1), StringComparison.OrdinalIgnoreCase))
             {
-                return new Keybind(MouseButton.XButton1, keybind.Modifiers);
+                return new Keybind(MouseButton.XButton1, value.Modifiers);
             }
             if (string.Equals(kvp.Key, nameof(MouseButton.XButton2), StringComparison.OrdinalIgnoreCase))
             {
-                return new Keybind(MouseButton.XButton2, keybind.Modifiers);
+                return new Keybind(MouseButton.XButton2, value.Modifiers);
             }
 
-            return keybind;
+            return value;
         }
         catch (Exception exception)
         {

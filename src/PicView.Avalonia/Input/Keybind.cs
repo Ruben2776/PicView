@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using Avalonia.Input;
+using PicView.Core.DebugTools;
 
 namespace PicView.Avalonia.Input;
 
@@ -24,7 +25,6 @@ public readonly struct Keybind : IEquatable<Keybind>
     /// </summary>
     public Keybind(Key key, KeyModifiers modifiers = KeyModifiers.None)
     {
-        ValidateModifiers(modifiers);
         Key = key;
         MouseButton = MouseButton.None;
         Modifiers = modifiers;
@@ -35,49 +35,20 @@ public readonly struct Keybind : IEquatable<Keybind>
     /// </summary>
     public Keybind(MouseButton mouseButton, KeyModifiers modifiers = KeyModifiers.None)
     {
-        ValidateModifiers(modifiers);
         Key = Key.None;
         MouseButton = mouseButton;
         Modifiers = modifiers;
     }
 
-    private static void ValidateModifiers(KeyModifiers modifiers)
-    {
-        var count = 0;
-        if (modifiers.HasFlag(KeyModifiers.Control))
-        {
-            count++;
-        }
-
-        if (modifiers.HasFlag(KeyModifiers.Shift))
-        {
-            count++;
-        }
-
-        if (modifiers.HasFlag(KeyModifiers.Alt))
-        {
-            count++;
-        }
-
-        if (modifiers.HasFlag(KeyModifiers.Meta))
-        {
-            count++;
-        }
-
-        if (count > 2)
-        {
-            throw new ArgumentException("A maximum of two modifier keys are allowed.");
-        }
-    }
-
     /// <summary>
     /// Parses a string into a Keybind struct without allocating intermediate strings.
     /// </summary>
-    public static Keybind Parse(string s)
+    public static Keybind? Parse(string s)
     {
         if (string.IsNullOrWhiteSpace(s))
         {
-            throw new ArgumentException("Keybind string cannot be null or empty.");
+            DebugHelper.LogDebug(nameof(Keybind), nameof(Parse), "Keybind string cannot be null or empty.");
+            return null;
         }
 
         var mods = KeyModifiers.None;

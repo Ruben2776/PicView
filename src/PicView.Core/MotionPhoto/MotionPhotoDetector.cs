@@ -15,9 +15,9 @@ namespace PicView.Core.MotionPhoto;
 /// </summary>
 public static class MotionPhotoDetector
 {
-    private static readonly byte[] SamsungMarkerBytes = Encoding.ASCII.GetBytes("MotionPhoto_Data");
-    private static readonly byte[] XmpMetaStartBytes = Encoding.ASCII.GetBytes("<x:xmpmeta");
-    private static readonly byte[] XmpEndTagBytes = Encoding.ASCII.GetBytes("</x:xmpmeta>");
+    private static readonly byte[] SamsungMarkerBytes = [.. "MotionPhoto_Data"u8];
+    private static readonly byte[] XmpMetaStartBytes = [.. "<x:xmpmeta"u8];
+    private static readonly byte[] XmpEndTagBytes = [.. "</x:xmpmeta>"u8];
 
     /// <summary>Scan up to 32 MB from the file tail when searching for the Samsung trailer marker.</summary>
     private const int SamsungScanWindowBytes = 32 * 1024 * 1024;

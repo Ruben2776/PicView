@@ -197,22 +197,24 @@ public class NavigationService(
 
         return;
 
-        async ValueTask Repopulate()
+        async Task Repopulate()
         {
-            await RepopulateIterator(fileInfo, tab, ct).ConfigureAwait(false);
+            await Task.Run(() => RepopulateIterator(fileInfo, tab, ct).ConfigureAwait(false), ct.Token).ConfigureAwait(false);
         }
     }
 
-    public async ValueTask LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct)
+    public async Task LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct)
     {
-        var files = await Task.Run(() => FileListRetriever.RetrieveFiles(source, stringComparer), ct.Token).ConfigureAwait(false);
-        if (files.Count is 0)
+        var files = await Task.Run(() =>
+        {
+            var files = FileListRetriever.RetrieveFiles(source, stringComparer);
+            return files.Count is 0 ? null : files;
+        }, ct.Token).ConfigureAwait(false);
+        if (files is null)
         {
             return;
         }
-
-        var first = files[0];
-        await RepopulateIterator(first, tab, ct, files).ConfigureAwait(false);
+        await RepopulateIterator(files[0], tab, ct, files).ConfigureAwait(false);
         tab.ArchiveExtractionService.Cleanup();
     }
 

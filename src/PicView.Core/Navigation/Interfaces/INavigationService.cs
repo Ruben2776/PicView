@@ -12,7 +12,7 @@ public interface INavigationService
     
     ValueTask LoadFromFileAsync(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct);
     
-    ValueTask LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct);
+    Task LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct);
 
     ValueTask<bool> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct);
     ReactiveCommand<string>? LoadFromStringCommand { get; set; }

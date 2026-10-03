@@ -35,6 +35,12 @@ public static class DebugHelper
     [Conditional("DEBUG")]
     public static void LogDebug(string className, string methodName, Exception exception)
     {
+        if (exception is null)
+        {
+            Debug.WriteLine(
+                $"\n[{DateTime.Now.ToString("T", CultureInfo.CurrentCulture)}] {className}.{methodName} invalid exception");
+            return;
+        }
         Debug.WriteLine(
             $"\n[{DateTime.Now.ToString("T", CultureInfo.CurrentCulture)}] {className}.{methodName} exception: {exception.Message}");
         Debug.WriteLine(exception.StackTrace + Environment.NewLine);

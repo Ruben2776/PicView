@@ -297,7 +297,10 @@ public class KeybindBox : TemplatedControl
                                 break;
                             }
                             var keybind = Keybind.Parse(tag);
-                            Keybinds.Add(keybind);
+                            if (keybind is not null)
+                            {
+                                Keybinds.Add(keybind.Value);
+                            }
                         }
                     }
                     break;
@@ -556,16 +559,18 @@ public class KeybindBox : TemplatedControl
 
         if (TryGetBindableMouseButton(e, this, out var mouseButton))
         {
-            if (isFocused)
+            if (!isFocused)
             {
-                var modifiers = e.KeyModifiers | _lastModifiers;
-                if (!HasTooManyModifiers(modifiers))
-                {
-                    var keybind = new Keybind(mouseButton, modifiers);
-                    TryAddKeybind(keybind);
-                }
-                e.Handled = true;
+                return;
             }
+
+            var modifiers = e.KeyModifiers | _lastModifiers;
+            if (!HasTooManyModifiers(modifiers))
+            {
+                var keybind = new Keybind(mouseButton, modifiers);
+                TryAddKeybind(keybind);
+            }
+            e.Handled = true;
             return;
         }
 
