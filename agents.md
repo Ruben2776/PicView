@@ -3,11 +3,11 @@
 ## Build & Configuration
 
 - **Solution**: `PicView.slnx` in the `src/` root.
-- **Target framework**: `net11.0` (with `net10.0-windows11.0.22621` for Win32 project). Language version set to `preview`.
+- **Target framework**: `net11.0` (with `net11.0-windows10.0.22621` for Win32 project). Language version set to `preview`.
 - **Platforms**: `x64` and `arm64` only — all projects specify `<Platforms>x64;arm64</Platforms>`.
 - **AOT**: `PicView.Core` is configured for Native AOT (`PublishAot`, `Trimming=full`, `IsAotCompatible`). Keep new Core code AOT-compatible (no reflection-heavy patterns).
 - **Directory.Build.props** (solution root) sets shared properties: `Nullable=enable`, and version info.
-- **MacOS project has pre-existing build errors on Windows** — the test project already excludes its reference. When building the full solution on Windows, MacOS build failures are expected and unrelated to your changes.
+- **Linux W.I.P** Linux version has not been released or tested yet.
 
 ### Building the test project only (recommended on Windows)
 
