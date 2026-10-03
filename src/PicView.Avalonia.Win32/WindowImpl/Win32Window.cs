@@ -3,9 +3,9 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Win32.Views;
 using PicView.Avalonia.WindowBehavior;
-using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Win32.WindowImpl;
@@ -37,6 +37,11 @@ public static class Win32Window
         }
         
         ToggleUIVisibility.FullscreenHideInterface(vm);
+
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+        {
+            imageViewer.ResetZoomSlim();
+        }
         
         WindowResizing.SetSize(window, WindowResizeReason.Application);
         Dispatcher.UIThread.Post(() => window.IsChangingWindowState = false, DispatcherPriority.SystemIdle);
@@ -107,6 +112,10 @@ public static class Win32Window
         window.WindowState = WindowState.Normal;
         
         WindowResizing.SetSize(window, WindowResizeReason.Application);
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+        {
+            imageViewer.ResetZoomSlim();
+        }
         
         Dispatcher.UIThread.Post(() =>
         {

@@ -3,6 +3,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.MacOS.Views;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.UI;
+using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.ViewModels;
 
@@ -68,6 +69,10 @@ public static class MacOSWindow
         window.WindowState = WindowState.Normal;
         
         WindowResizing.SetSize(window, WindowResizeReason.Application);
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+        {
+            imageViewer.ResetZoomSlim();
+        }
         
         Dispatcher.UIThread.Post(() =>
         {
@@ -117,6 +122,11 @@ public static class MacOSWindow
         }
         
         ToggleUIVisibility.FullscreenHideInterface(vm);
+        
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+        {
+            imageViewer.ResetZoomSlim();
+        }
         
         WindowResizing.SetSize(window, WindowResizeReason.Application);
         Dispatcher.UIThread.Post(() => window.IsChangingWindowState = false, DispatcherPriority.SystemIdle);
