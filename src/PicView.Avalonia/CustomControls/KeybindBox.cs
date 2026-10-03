@@ -128,7 +128,7 @@ public class KeybindBox : TemplatedControl
         {
             if (MaxTags > 0 && newCollection.Count > MaxTags)
             {
-                throw new ArgumentException($"A maximum of {MaxTags} keybinds are allowed.", nameof(Keybinds));
+                return;
             }
 
             newCollection.CollectionChanged += OnKeybindsCollectionChanged;
@@ -273,7 +273,7 @@ public class KeybindBox : TemplatedControl
                         {
                             for (var i = 0; i < Keybinds.Count; i++)
                             {
-                                if (Keybinds[i].ToString() == tag)
+                                if (string.Equals(Keybinds[i].ToString(), tag, StringComparison.OrdinalIgnoreCase))
                                 {
                                     Keybinds.RemoveAt(i);
                                     break;
@@ -605,10 +605,7 @@ public class KeybindBox : TemplatedControl
 
     private void TryAddKeybind(Keybind keybind)
     {
-        if (Keybinds is null)
-        {
-            Keybinds = [];
-        }
+        Keybinds ??= [];
 
         if (TagBox is not null && TagBox.IsAtMax)
         {
