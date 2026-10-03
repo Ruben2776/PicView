@@ -155,30 +155,6 @@ public static class UIHelper
         return textColor as SolidColorBrush ?? null;
     }
 
-    public static void SetButtonHover(Control button, SolidColorBrush brush)
-    {
-        button.PointerEntered += (_, _) =>
-        {
-            brush.Color = GetColor("SecondaryTextColor");
-        };
-        button.PointerExited += (s, e) =>
-        {
-            brush.Color = GetColor("MainTextColor");
-        };
-    }
-
-    public static void SwitchHoverClass(Control control)
-    {
-        control.Classes.Remove("altHover");
-        control.Classes.Add("hover");
-    }
-    
-    public static void SwitchAccentHoverClass(Control control)
-    {
-        control.Classes.Remove("altHover");
-        control.Classes.Add("accentHover");
-    }
-
     public static void SwitchHoverBorderClass(Control control)
     {
         control.Classes.Remove("noBorderHover");

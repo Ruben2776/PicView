@@ -7,16 +7,11 @@ namespace PicView.Avalonia.CustomControls;
 /// </summary>
 public class TagCollection : ObservableCollection<string>
 {
-    private TagBox? _owner;
-    private int _maxTags;
-
-    public TagCollection()
-    {
-    }
+    private readonly int _maxTags;
 
     public TagCollection(TagBox owner)
     {
-        _owner = owner;
+        Owner = owner;
     }
 
     public TagCollection(int maxTags)
@@ -33,17 +28,9 @@ public class TagCollection : ObservableCollection<string>
         }
     }
 
-    public TagBox? Owner
-    {
-        get => _owner;
-        internal set => _owner = value;
-    }
+    public TagBox? Owner { get; internal set; }
 
-    public int MaxTags
-    {
-        get => _owner?.MaxTags ?? _maxTags;
-        set => _maxTags = value;
-    }
+    public int MaxTags => Owner?.MaxTags ?? _maxTags;
 
     protected override void InsertItem(int index, string item)
     {
