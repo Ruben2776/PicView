@@ -105,7 +105,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
         }
     }
 
-    public async Task ShowImageInfoWindow(MainWindowViewModel vm)
+    public void ShowImageInfoWindow(MainWindowViewModel vm)
     {
         if (_imageInfoWindow is null)
         {
@@ -113,10 +113,10 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             if (vm.InfoWindow.ImageInfoWindowConfig?.WindowProperties is null)
             {
                 vm.InfoWindow.ImageInfoWindowConfig = new ImageInfoWindowConfig();
-                await vm.InfoWindow.ImageInfoWindowConfig.LoadAsync().ConfigureAwait(false);
+                vm.InfoWindow.ImageInfoWindowConfig.Load();
             }
 
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            Dispatcher.UIThread.Post(() =>
             {
                 vm.Exif ??= new ExifViewModel();
                 _imageInfoWindow = provider.CreateImageInfoWindow(vm);
@@ -141,7 +141,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
         }
         else
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            Dispatcher.UIThread.Post(() =>
             {
                 if (_imageInfoWindow.WindowState == WindowState.Minimized)
                 {

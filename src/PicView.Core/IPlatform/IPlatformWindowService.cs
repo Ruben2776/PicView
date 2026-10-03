@@ -35,7 +35,7 @@ public interface IPlatformWindowService
     
     void ShowAboutWindow();
 
-    Task ShowImageInfoWindow();
+    void ShowImageInfoWindow();
 
     void ShowKeybindingsWindow();
 

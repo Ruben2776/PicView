@@ -109,7 +109,7 @@ public class GalleryItemBadgeTests
         public Task ToggleFullscreen(bool saveSettings = true) => Task.CompletedTask;
         public Task Restore() => Task.CompletedTask;
         public void ShowAboutWindow() { }
-        public Task ShowImageInfoWindow() => Task.CompletedTask;
+        public void ShowImageInfoWindow() { }
         public void ShowKeybindingsWindow() { }
         public ValueTask ShowSettingsWindow() => ValueTask.CompletedTask;
         public void ShowEffectsWindow() { }

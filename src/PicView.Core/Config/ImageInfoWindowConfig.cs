@@ -11,14 +11,14 @@ public class ImageInfoWindowConfig() : ConfigFile("ImageInfoWindow.json")
 {
     public ImageInfoWindowProperties? WindowProperties { get; private set;  }
 
-    public async Task LoadAsync()
+    public void Load()
     {
         CorrectPath ??= ConfigFileManager.ResolveDefaultConfigPath(this);
         try
         {
             if (File.Exists(CorrectPath))
             {
-                var jsonString = await File.ReadAllTextAsync(CorrectPath).ConfigureAwait(false);
+                var jsonString = File.ReadAllBytes(CorrectPath);
                 if (JsonSerializer.Deserialize(
                         jsonString, typeof(ImageInfoWindowProperties), ImageInfoWindowGenerationContext.Default) is ImageInfoWindowProperties settings)
                 {

@@ -459,9 +459,7 @@ public class ExifViewModel : IDisposable
         }
     }
 
-#pragma warning disable MA0051
     public void UpdateExifValues(ImageModel model, MagickImage? magick = null)
-#pragma warning restore MA0051
     {
         _fileInfo = model.FileInfo;
         var shouldDispose = magick != null;

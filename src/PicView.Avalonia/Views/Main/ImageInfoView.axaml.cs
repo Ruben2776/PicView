@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using PicView.Avalonia.Resizing;
 using PicView.Avalonia.UI;
@@ -23,7 +24,12 @@ public partial class ImageInfoView : UserControl
     public ImageInfoView()
     {
         InitializeComponent();
-        Loaded += (_, _) =>
+        Loaded += HandleLoaded;
+    }
+    
+    private void HandleLoaded(object? sender, RoutedEventArgs e)
+    {
+        Dispatcher.UIThread.Post(() =>
         {
             if (DataContext is not MainWindowViewModel vm)
             {
@@ -117,7 +123,7 @@ public partial class ImageInfoView : UserControl
             };
 
             vm.InfoWindow.IsLoading.Value = false;
-        };
+        }, DispatcherPriority.Background);
     }
 
     private async ValueTask FileInfoAsyncSubscription(FileInfo? fileInfo, CancellationToken ct)
@@ -202,16 +208,20 @@ public partial class ImageInfoView : UserControl
         {
             vm.Exif.UpdateExifValues(imageModel);
         }, cancellationToken).ConfigureAwait(false);
-        if (!string.Equals(DirectoryNameTextBox.Text, imageModel.FileInfo.DirectoryName, StringComparison.Ordinal))
-        {
-            DirectoryNameTextBox.Text = imageModel.FileInfo.DirectoryName;
-        }
-
         var tab = vm.WindowTabs.ActiveTab.Value;
-        FileSizeBox.Text = tab.Model.FileInfo?.Length.GetReadableFileSize();
+        await Dispatcher.InvokeAsync(() =>
+        {
+            if (!string.Equals(DirectoryNameTextBox.Text, imageModel.FileInfo.DirectoryName, StringComparison.Ordinal))
+            {
+                DirectoryNameTextBox.Text = imageModel.FileInfo.DirectoryName;
+            }
+            FileSizeBox.Text = tab.Model.FileInfo?.Length.GetReadableFileSize();
+            GoogleLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif?.GoogleLink?.CurrentValue);
+            BingLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif?.BingLink?.CurrentValue);
+        });
+
         tab.ShouldOptimizeImageBeEnabled.Value = ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(tab.Model.FileInfo);
-        GoogleLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif.GoogleLink.CurrentValue);
-        BingLinkButton.IsEnabled = !string.IsNullOrWhiteSpace(vm.Exif.BingLink.CurrentValue);
+
 
         vm.Exif.IsExifAvailable.Value = vm.Exif.ImageFormat.CurrentValue.IsExifImage();
     }
