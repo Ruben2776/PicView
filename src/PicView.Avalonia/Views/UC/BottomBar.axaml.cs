@@ -282,14 +282,16 @@ public partial class BottomBar : UserControl, IDisposable
             return;
         }
 
-        if (DataContext is MainWindowViewModel vm)
+        if (DataContext is not MainWindowViewModel vm)
         {
-            vm.TopTitlebarViewModel.CloseDropDownMenu();
+            return;
         }
-
+        
+        vm.TopTitlebarViewModel.CloseDropDownMenu();
+        
         if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {
-            WindowFunctions.WindowDragBehavior(mainWindow, e);
+            WindowFunctions.WindowDragAndDoubleClickBehavior(mainWindow, e, vm.PlatformWindowService);
         }
     }
 

@@ -187,7 +187,7 @@ public static class MouseShortcuts
         }
     }
     
-    public static async Task MainWindow_PointerPressed(PointerPressedEventArgs e, Window window)
+    public static async Task MainWindow_PointerPressed(PointerPressedEventArgs e, MainWindow window)
     {
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -219,6 +219,12 @@ public static class MouseShortcuts
                     return;
                 }
             }
+
+            if (window.SharedBottomBar.IsPointerOver || window.SharedTitleBar.IsPointerOver)
+            {
+                return;
+            }
+            
             switch (Settings.UIProperties.DoubleClickBehavior)
             {
                 case 1:
