@@ -1,6 +1,5 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Text.Json;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -184,14 +183,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             KeybindingManager.CustomShortcuts.Clear();
         }
         KeybindingManager.PopulateCustomShortcuts(keyValues);
-
-        // Serialize and save to file
-        var json = JsonSerializer.Serialize(
-            keyValues,
-            typeof(Dictionary<string, string>),
-            SourceGenerationContext.Default).Replace("\\u002B", "+", StringComparison.Ordinal);
-
-        await KeybindingFunctions.SaveKeyBindingsFile(json).ConfigureAwait(false);
+        await KeybindingManager.UpdateKeyBindingsFile().ConfigureAwait(false);
 
         // Update saved snapshot on UI thread
         Dispatcher.UIThread.Post(() =>
@@ -295,7 +287,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             return false;
         }
 
-        var defaultsByFunction = KeyBindingsService.GetDefaultsByFunction(core);
+        var defaultsByFunction = KeybindingManager.GetDefaultsByFunction(core);
 
         foreach (var category in _categories)
         {
@@ -356,7 +348,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             return;
         }
 
-        var defaultsByFunction = KeyBindingsService.GetDefaultsByFunction(core);
+        var defaultsByFunction = KeybindingManager.GetDefaultsByFunction(core);
 
         // Push current state for undo
         _undoStack.Add(new KeybindSnapshot(_categories));
