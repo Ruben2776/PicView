@@ -31,7 +31,7 @@ public static class FileAssociationProcessor
         
         {
             // If we're on Windows, check for admin permissions
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !IsAdministrator())
+            if (OperatingSystem.IsWindows() && !IsAdministrator())
             {
                 return await HandleNonAdminWindowsAssociations(groups).ConfigureAwait(false);
             }

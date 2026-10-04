@@ -44,7 +44,6 @@ public class NavigationServiceTests : IDisposable
             _mockCache,
             _mockFileWatcherService,
             new MockPlatformSpecificService(),
-            _mockThumbnailLoader,
             string.CompareOrdinal);
     }
 

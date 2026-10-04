@@ -27,10 +27,6 @@ public class App : Application, IPlatformSpecificService
      
     public override void Initialize()
     {
-#if DEBUG
-        ProfileOptimization.SetProfileRoot(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/"));
-        ProfileOptimization.StartProfile("ProfileOptimization");
-#endif
         AvaloniaXamlLoader.Load(this);
 #if DEBUG
         // If this cannot be resolved, run dotnet restore PicView.Avalonia.Win32.csproj --force

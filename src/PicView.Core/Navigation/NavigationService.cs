@@ -22,7 +22,6 @@ public class NavigationService(
     IImageCache cache,
     IFileWatcherService fileWatcherService,
     IPlatformSpecificService platformService,
-    IThumbnailLoader thumbnailLoader,
     Func<string, string, int> stringComparer)
     : INavigationService
 {

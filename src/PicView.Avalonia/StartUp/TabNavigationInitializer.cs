@@ -36,7 +36,7 @@ public static class TabNavigationInitializer
         var fileWatcher = new FileWatcherService(core.PlatformService.CompareStrings, sharedCache, thumbnailCache, thumbnailService);
 
         // 3. Create NavigationService (Core)
-        core.SharedNavigationService ??= new NavigationService(imageLoader, sharedCache, fileWatcher, core.PlatformService, thumbnailService, core.PlatformService.CompareStrings);
+        core.SharedNavigationService ??= new NavigationService(imageLoader, sharedCache, fileWatcher, core.PlatformService, core.PlatformService.CompareStrings);
 
         // 4. Initialize ViewModel
         Debug.Assert(core.MainWindows.ActiveWindow.CurrentValue != null);
