@@ -16,7 +16,7 @@ public static class ImageOptimizer
     public static async Task OptimizeImageAsync(MainWindowViewModel vm)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(tab.FileInfo?.CurrentValue))
+        if (!ConversionHelper.DetermineIfOptimizeImageShouldBeEnabled(tab.FileInfo?.CurrentValue))
         {
             return;
         }
@@ -41,7 +41,5 @@ public static class ImageOptimizer
         tab.ImageIterator.Cache.DeleteFromCache(tab.FileInfo.CurrentValue.FullName);
         await tab.ImageIterator.ReloadAsync(clearCache:false).ConfigureAwait(false);
         vm.IsLoadingIndicatorShown.Value = false;
-        
-        // TODO: have to create a new loading view, that blocks navigation until finished. With a cancel button.
     }
 }
