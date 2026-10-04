@@ -21,8 +21,8 @@ $coreProjectPath = Join-Path -Path $PSScriptRoot -ChildPath "..\src\PicView.Core
 [xml]$coreCsproj = Get-Content $coreProjectPath
 
 # Define the package reference to replace
-$packageRefX64 = "Magick.NET-x64"
-$packageRefArm64 = "Magick.NET-arm64"
+$packageRefX64 = "Magick.NET-Q8-x64"
+$packageRefArm64 = "Magick.NET-Q8-arm64"
 
 # Find the Magick.NET package reference and update it based on the platform
 $packageNodes = $coreCsproj.Project.ItemGroup.PackageReference | Where-Object { $_.Include -eq $packageRefX64 -or $_.Include -eq $packageRefArm64 }
