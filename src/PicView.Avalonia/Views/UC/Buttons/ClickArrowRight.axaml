@@ -19,7 +19,7 @@
         Classes="hover"
         Command="{CompiledBinding Next}"
         CornerRadius="2,0,0,2"
-        IsVisible="{CompiledBinding CanNavigateForwards.Value,
+        IsEnabled="{CompiledBinding CanNavigateForwards.Value,
                                     FallbackValue=False}">
         <Polygon
             x:Name="ArrowPolygon"
