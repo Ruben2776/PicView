@@ -105,7 +105,7 @@ jobs:
             echo "After copying, MacOS directory contains:"
             ls -la "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-arm64/PicView.app/Contents/MacOS/"
           else
-            echo "WARNING: Could not find Magick.Native-arm64.dylib file to copy"
+            echo "WARNING: Could not find Magick.Native-Q8-arm64.dylib file to copy"
             echo "Checking in the nuget cache directory:"
             find ~/.nuget -name "Magick.Native*arm64*.dylib" 2>/dev/null || echo "Not found in nuget cache"
           fi
@@ -160,7 +160,7 @@ jobs:
             echo "After copying, MacOS directory contains:"
             ls -la "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-x64/PicView.app/Contents/MacOS/"
           else
-            echo "WARNING: Could not find Magick.Native-x64.dylib file to copy"
+            echo "WARNING: Could not find Magick.Native-Q8-x64.dylib file to copy"
             echo "Checking in the nuget cache directory:"
             find ~/.nuget -name "Magick.Native*x64*.dylib" 2>/dev/null || echo "Not found in nuget cache"
           fi
