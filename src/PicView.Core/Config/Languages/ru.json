@@ -46,7 +46,6 @@
   "Centimeters": "сантиметров",
   "ChangeBackground": "Сменить фон",
   "ChangeBackgroundTooltip": "Изменение цвета фона приложения",
-  "ChangeKeybindingText": "Нажмите на текстовом поле, чтобы изменить сочетание клавиш. Нажатие Esc снимает привязку клавиши.",
   "ChangeKeybindingTooltip": "Щелкните, чтобы изменить назначение клавиши",
   "ChangingThemeRequiresRestart": "* Для изменения темы требуется перезапуск",
   "CheckForUpdates": "Проверить наличие обновлений",

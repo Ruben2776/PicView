@@ -46,7 +46,6 @@
   "Centimeters": "centimeters",
   "ChangeBackground": "Change background",
   "ChangeBackgroundTooltip": "Change the application's background color",
-  "ChangeKeybindingText": "Click on a textbox to change keybinding. Pressing Esc unbinds key.",
   "ChangeKeybindingTooltip": "Click to change keybinding",
   "ChangingThemeRequiresRestart": "* Changing theme requires restart",
   "CheckForUpdates": "Check for updates",

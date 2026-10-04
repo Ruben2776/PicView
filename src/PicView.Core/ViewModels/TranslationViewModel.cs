@@ -57,7 +57,6 @@ public class TranslationViewModel
         CenterWindow.Value = t.CenterWindow;
         Centimeters.Value = t.Centimeters;
         ChangeBackground.Value = t.ChangeBackground;
-        ChangeKeybindingText.Value = t.ChangeKeybindingText;
         ChangeKeybindingTooltip.Value = t.ChangeKeybindingTooltip;
         ChangingThemeRequiresRestart.Value = t.ChangingThemeRequiresRestart;
         CheckForUpdates.Value = t.CheckForUpdates;
@@ -454,7 +453,6 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> CenterWindow { get; } = new();
     public BindableReactiveProperty<string?> Centimeters { get; } = new();
     public BindableReactiveProperty<string?> ChangeBackground { get; } = new();
-    public BindableReactiveProperty<string?> ChangeKeybindingText { get; } = new();
     public BindableReactiveProperty<string?> ChangeKeybindingTooltip { get; } = new();
     public BindableReactiveProperty<string?> ChangingThemeRequiresRestart { get; } = new();
     public BindableReactiveProperty<string?> CheckForUpdates { get; } = new();

@@ -149,7 +149,7 @@ public class UIProperties
     /// Represents the navigation speed, determining the seconds interval at which navigation operations occur,
     /// where the corresponding key or button is held down.
     /// </summary>
-    public double NavSpeed { get; set; } = 0.3;
+    public double NavSpeed { get; set; } = 0.22000000000000003;
 
     /// <summary>
     /// Specifies whether looping functionality is enabled or disabled in the application.

@@ -46,7 +46,6 @@
   "Centimeters": "centimeters",
   "ChangeBackground": "Achtergrond wijzigen",
   "ChangeBackgroundTooltip": "Wissel tussen achtergrondkleur voor afbeeldingen met transparante achtergrond",
-  "ChangeKeybindingText": "Klik op een tekstvak om de toetsbinding te wijzigen. Druk op Esc om de toetsbinding op te heffen.",
   "ChangeKeybindingTooltip": "Klik om de toetsbinding te wijzigen",
   "ChangingThemeRequiresRestart": "* Thema wijzigen vereist herstart",
   "CheckForUpdates": "Controleren op updates",

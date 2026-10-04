@@ -46,7 +46,6 @@
   "Centimeters": "cm",
   "ChangeBackground": "切换背景",
   "ChangeBackgroundTooltip": "在透明背景的图像中改变背景颜色",
-  "ChangeKeybindingText": "点击文本框以更改按键绑定。按 Esc 键取消绑定。",
   "ChangeKeybindingTooltip": "点击更改键绑定",
   "ChangingThemeRequiresRestart": "* 切换主题需要重新启动应用程序",
   "CheckForUpdates": "检查更新",

@@ -46,7 +46,6 @@
   "Centimeters": "centímetres",
   "ChangeBackground": "Canviar fons",
   "ChangeBackgroundTooltip": "Canviar el color de fons de l'aplicació",
-  "ChangeKeybindingText": "Feu clic en un quadre de text per canviar la assignació de tecles. Premeu Esc per desassociar la tecla.",
   "ChangeKeybindingTooltip": "Feu clic per canviar la assignació de tecles",
   "ChangingThemeRequiresRestart": "* El canvi de tema requereix reiniciar",
   "CheckForUpdates": "Buscar actualitzacions",

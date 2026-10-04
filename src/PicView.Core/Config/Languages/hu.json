@@ -46,7 +46,6 @@
   "Centimeters": "centiméter",
   "ChangeBackground": "Háttér módosítása",
   "ChangeBackgroundTooltip": "Változtassa meg az átlátszó háttérrel rendelkező képek háttérszínét",
-  "ChangeKeybindingText": "Kattintson egy szövegmezőre a billentyűkombináció megváltoztatásához. Az Esc billentyű lenyomása feloldja a billentyűt.",
   "ChangeKeybindingTooltip": "Kattintson a billentyűkombináció módosításához",
   "ChangingThemeRequiresRestart": "* A téma megváltoztatásához újra kell indítani",
   "CheckForUpdates": "Frissítések keresése",

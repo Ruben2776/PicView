@@ -46,7 +46,6 @@
   "Centimeters": "센티미터",
   "ChangeBackground": "배경 변경",
   "ChangeBackgroundTooltip": "배경이 투명한 이미지의 배경색 변경",
-  "ChangeKeybindingText": "키 바인딩을 변경하려면 텍스트 상자를 클릭합니다. Esc 키를 누르면 키 바인딩이 해제됩니다.",
   "ChangeKeybindingTooltip": "키 바인딩을 변경하려면 클릭",
   "ChangingThemeRequiresRestart": "* 테마 변경 시 재시작 필요",
   "CheckForUpdates": "업데이트 확인",

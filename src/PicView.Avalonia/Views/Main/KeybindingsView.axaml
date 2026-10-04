@@ -76,29 +76,6 @@
             <customControls:AutoScrollViewer Margin="0,0,0,65" DockPanel.Dock="Top">
                 <StackPanel Margin="15,5">
 
-                    <!--  Description  -->
-                    <StackPanel
-                        x:Name="DescriptionPanel"
-                        Margin="5,0,2,25"
-                        IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}">
-                        <TextBlock
-                            x:Name="ApplicationShortcutsTextBlock"
-                            Margin="10,20,10,15"
-                            Classes="txt"
-                            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                            FontSize="16"
-                            Text="{CompiledBinding Translation.ApplicationShortcuts.Value,
-                                                   Mode=OneWay}"
-                            TextAlignment="Center" />
-                        <TextBlock
-                            x:Name="ChangeKeybindingTextBlock"
-                            Classes="txt"
-                            FontFamily="/Assets/Fonts/Roboto-Bold.ttf#Roboto"
-                            Text="{CompiledBinding Translation.ChangeKeybindingText.Value,
-                                                   Mode=OneWay}"
-                            TextAlignment="Center" />
-                    </StackPanel>
-
                     <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.Mouse.Value, Mode=OneWay}" />
 
                     <!--  Mouse wheel  -->
@@ -233,20 +210,6 @@
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
 
-                    <!--  Sort files by  -->
-                    <TextBlock
-                        x:Name="SortFilesByHeader"
-                        Classes="txt bold keyBindHeader"
-                        Text="{CompiledBinding Translation.SortFilesBy.Value,
-                                               Mode=OneWay}" />
-                    <ItemsControl x:Name="SortFilesByItems">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Classes="keyBindHeader" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-
                     <!--  Copy  -->
                     <TextBlock
                         x:Name="CopyHeader"
@@ -310,6 +273,20 @@
                         Text="{CompiledBinding Translation.WindowScaling.Value,
                                                Mode=OneWay}" />
                     <ItemsControl x:Name="WindowScalingItems">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Classes="keyBindHeader" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+
+                    <!--  Sort files by  -->
+                    <TextBlock
+                        x:Name="SortFilesByHeader"
+                        Classes="txt bold keyBindHeader"
+                        Text="{CompiledBinding Translation.SortFilesBy.Value,
+                                               Mode=OneWay}" />
+                    <ItemsControl x:Name="SortFilesByItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Classes="keyBindHeader" />

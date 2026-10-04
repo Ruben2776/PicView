@@ -46,7 +46,6 @@
   "Centimeters": "センチメートル",
   "ChangeBackground": "背景の変更",
   "ChangeBackgroundTooltip": "透明な背景の画像の背景色を変更",
-  "ChangeKeybindingText": "キーバインドを変更するには、テキスト ボックスをクリックします。Esc キーを押すとキーのバインドが解除されます。",
   "ChangeKeybindingTooltip": "クリックしてキーバインドを変更",
   "ChangingThemeRequiresRestart": "* テーマを変更するには再起動が必要です",
   "CheckForUpdates": "更新の確認",

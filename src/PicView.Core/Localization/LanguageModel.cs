@@ -4,7 +4,7 @@ namespace PicView.Core.Localization;
 
 public class LanguageModel
 {
-#region Translations
+    #region Translations
 
     public string? _1Star { get; set; }
     public string? _2Star { get; set; }
@@ -58,7 +58,6 @@ public class LanguageModel
     public string? Centimeters { get; set; }
     public string? ChangeBackground { get; set; }
     public string? ChangeBackgroundTooltip { get; set; }
-    public string? ChangeKeybindingText { get; set; }
     public string? ChangeKeybindingTooltip { get; set; }
     public string? ChangingThemeRequiresRestart { get; set; }
     public string? CheckForUpdates { get; set; }

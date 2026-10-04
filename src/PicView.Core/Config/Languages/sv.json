@@ -46,7 +46,6 @@
   "Centimeters": "centimeter",
   "ChangeBackground": "Ändra bakgrund",
   "ChangeBackgroundTooltip": "Ändra mellan bakgrundsfärger för bilder med genomskinlig bakgrund",
-  "ChangeKeybindingText": "Klicka i textrutan för att associera tangent. Esc tar bort ändringen.",
   "ChangeKeybindingTooltip": "Klicka för att associera tangent",
   "ChangingThemeRequiresRestart": "* Ändring av tema kräver omstart av programmet",
   "CheckForUpdates": "Sök efter uppdateringar",

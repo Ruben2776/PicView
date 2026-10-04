@@ -46,7 +46,6 @@
   "Centimeters": "Santimetre",
   "ChangeBackground": "Arka planı değiştir",
   "ChangeBackgroundTooltip": "Şeffaf arka plana sahip görüntüler için arka plan rengini değiştir",
-  "ChangeKeybindingText": "Kısayolu değiştirmek için bir metin kutusuna tıkla. Esc tuşuna basmak kısayolu kaldırır.",
   "ChangeKeybindingTooltip": "Kısayolu değiştirmek için tıkla",
   "ChangingThemeRequiresRestart": "* Tema değişikliği yeniden başlatmayı gerektirir",
   "CheckForUpdates": "Güncellemeleri kontrol et",
