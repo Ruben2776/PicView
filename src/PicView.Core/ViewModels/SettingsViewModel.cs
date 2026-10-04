@@ -473,7 +473,6 @@ public class SettingsViewModel : IDisposable
             .SubscribeAwait(async (x, _) => {
                 if (!string.Equals(Settings.UIProperties.UserLanguage, x, StringComparison.OrdinalIgnoreCase))
                 {
-                    Settings.UIProperties.UserLanguage = x;
                     if (_languageService != null)
                     {
                         await _languageService.UpdateLanguageAsync(x).ConfigureAwait(false);

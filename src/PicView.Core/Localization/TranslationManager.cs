@@ -54,13 +54,13 @@ public static class TranslationManager
     /// </summary>
     /// <param name="isoLanguageCode">The ISO language code (e.g., 'en', 'da').</param>
     /// <returns>Returns true if the language file was successfully loaded; false if an error occurred.</returns>
-    public static async ValueTask<bool> LoadLanguage(string isoLanguageCode)
+    public static bool LoadLanguage(string isoLanguageCode)
     {
         var jsonLanguageFile = DetermineLanguageFilePath(isoLanguageCode);
 
         try
         {
-            await LoadLanguageFromFileAsync(jsonLanguageFile).ConfigureAwait(false);
+            LoadLanguageFromFile(jsonLanguageFile);
             return true;
         }
         catch (FileNotFoundException fnfEx)
@@ -78,11 +78,11 @@ public static class TranslationManager
     /// <summary>
     /// Determines the correct language based on the system's current culture and loads the corresponding language file.
     /// </summary>
-    public static async ValueTask DetermineAndLoadLanguage()
+    public static void DetermineAndLoadLanguage()
     {
         var isoLanguageCode = DetermineCorrectLanguage();
         Settings.UIProperties.UserLanguage = isoLanguageCode;
-        await LoadLanguage(isoLanguageCode).ConfigureAwait(false);
+        LoadLanguage(isoLanguageCode);
     }
 
     /// <summary>
@@ -110,23 +110,33 @@ public static class TranslationManager
     /// Loads a language from the specified file path.
     /// </summary>
     /// <param name="filePath">The path to the language JSON file.</param>
-    /// <returns>A task that completes once the language is loaded.</returns>
     /// <exception cref="FileNotFoundException">Thrown when the language file is not found.</exception>
-    private static async ValueTask LoadLanguageFromFileAsync(string filePath)
+    private static void LoadLanguageFromFile(string filePath)
     {
-        var jsonString = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
-        var language = JsonSerializer.Deserialize(jsonString, typeof(LanguageModel), LanguageSourceGenerationContext.Default) as LanguageModel;
-        if (language is not null)
+        var jsonString = File.ReadAllBytes(filePath);
+        if (JsonSerializer.Deserialize(jsonString, typeof(LanguageModel), LanguageSourceGenerationContext.Default) is LanguageModel language)
         {
             Translation = language;
         }
+    }
+    
+    public static LanguageModel GetLanguageModel(CultureInfo cultureInfo)
+    {
+        var isoLanguageCode = DetermineCorrectLanguage(cultureInfo);
+        var jsonLanguageFile = DetermineLanguageFilePath(isoLanguageCode);
+        var bytes = File.ReadAllBytes(jsonLanguageFile);
+        if (JsonSerializer.Deserialize(bytes, typeof(LanguageModel), LanguageSourceGenerationContext.Default) is LanguageModel language)
+        {
+            Translation = language;
+        }
+        return Translation;
     }
 
     /// <summary>
     /// Retrieves the directory path where language files are stored.
     /// </summary>
     /// <returns>The path to the language files directory.</returns>
-    private static string GetLanguagesDirectory => 
+    public static string GetLanguagesDirectory => 
         Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config/Languages/");
 
     /// <summary>

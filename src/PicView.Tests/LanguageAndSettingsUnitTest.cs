@@ -76,18 +76,30 @@ public class LanguageAndSettingsUnitTest
     }
 
     [Fact]
-    public async Task ChangeLanguage()
+    public void ChangeLanguage()
     {
         LoadSettings();
         Assert.NotNull(Settings);
 
-        var loadedEn = await TranslationManager.LoadLanguage("en");
+        var loadedEn = TranslationManager.LoadLanguage("en");
         Assert.True(loadedEn);
         Assert.Equal("Image", TranslationManager.Translation.Image);
 
-        var loadedDa = await TranslationManager.LoadLanguage("da");
+        var loadedDa = TranslationManager.LoadLanguage("da");
         Assert.True(loadedDa);
         Assert.Equal("Billede", TranslationManager.Translation.Image);
+    }
+
+    [Fact]
+    public void GetLanguageModel_LoadsExpectedTranslations()
+    {
+        var enModel = TranslationManager.GetLanguageModel(new CultureInfo("en-US"));
+        Assert.NotNull(enModel);
+        Assert.Equal("Image", enModel.Image);
+
+        var daModel = TranslationManager.GetLanguageModel(new CultureInfo("da-DK"));
+        Assert.NotNull(daModel);
+        Assert.Equal("Billede", daModel.Image);
     }
 
     [Fact]
@@ -226,7 +238,7 @@ public class LanguageAndSettingsUnitTest
     [InlineData("pt-BR", "pt-br")]
     [InlineData("sr-Latn-RS", "sr-Latn")]
     [InlineData("fi-FI", "en")]
-    public async Task DetermineAndLoadLanguage_UponStartup_SetsUserLanguageAndLoadsTranslations(
+    public void DetermineAndLoadLanguage_UponStartup_SetsUserLanguageAndLoadsTranslations(
         string cultureName,
         string expectedLanguageCode)
     {
@@ -238,7 +250,7 @@ public class LanguageAndSettingsUnitTest
         {
             CultureInfo.CurrentUICulture = new CultureInfo(cultureName);
 
-            await TranslationManager.DetermineAndLoadLanguage();
+            TranslationManager.DetermineAndLoadLanguage();
 
             Assert.Equal(expectedLanguageCode, Settings.UIProperties.UserLanguage);
             Assert.NotNull(TranslationManager.Translation);

@@ -11,12 +11,12 @@ namespace PicView.Tests.Exif;
 public class ExifViewModelTests
 {
     [Fact]
-    public async Task UpdateExifValues_LegacyBigEndianComment_DecodesBeforeOtherExifTags()
+    public void UpdateExifValues_LegacyBigEndianComment_DecodesBeforeOtherExifTags()
     {
         var path = Path.Combine(Path.GetTempPath(), $"picview-exif-{Guid.NewGuid():N}.jpg");
         try
         {
-            await TranslationManager.LoadLanguage("en");
+            TranslationManager.LoadLanguage("en");
             using (var image = new MagickImage(MagickColors.White, 1, 1))
             {
                 image.Format = MagickFormat.Jpeg;
@@ -48,7 +48,7 @@ public class ExifViewModelTests
         var path = Path.Combine(Path.GetTempPath(), $"picview-exif-{Guid.NewGuid():N}.jpg");
         try
         {
-            await TranslationManager.LoadLanguage("en");
+            TranslationManager.LoadLanguage("en");
             using (var image = new MagickImage(MagickColors.White, 1, 1))
             {
                 image.Format = MagickFormat.Jpeg;
@@ -74,7 +74,7 @@ public class ExifViewModelTests
     [Fact]
     public async Task SetExifRatingCommand_MissingFile_DoesNotUpdateProperty()
     {
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
         using var viewModel = new ExifViewModel();
         var fileInfo = new FileInfo(Path.Combine(Path.GetTempPath(), $"picview-missing-{Guid.NewGuid():N}.jpg"));
         var rated = WaitForRating(viewModel, 4, TimeSpan.FromSeconds(2));
@@ -116,9 +116,9 @@ public class ExifViewModelTests
     }
 
     [Fact]
-    public async Task UpdateExifValues_NullFileInfo_DoesNotThrow()
+    public void UpdateExifValues_NullFileInfo_DoesNotThrow()
     {
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
         using var viewModel = new ExifViewModel();
         var model = new ImageModel { FileInfo = null, PixelWidth = 800, PixelHeight = 600 };
         
@@ -129,12 +129,12 @@ public class ExifViewModelTests
     }
 
     [Fact]
-    public async Task UpdateExifValues_ImageWithoutExif_SetsDefaultValues()
+    public void UpdateExifValues_ImageWithoutExif_SetsDefaultValues()
     {
         var path = Path.Combine(Path.GetTempPath(), $"picview-noexif-{Guid.NewGuid():N}.jpg");
         try
         {
-            await TranslationManager.LoadLanguage("en");
+            TranslationManager.LoadLanguage("en");
             using (var image = new MagickImage(MagickColors.White, 10, 20))
             {
                 image.Format = MagickFormat.Jpeg;
@@ -154,17 +154,20 @@ public class ExifViewModelTests
         }
         finally
         {
-            if (File.Exists(path)) File.Delete(path);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
         }
     }
 
     [Fact]
-    public async Task UpdateExifValues_WithValidExifProfile_PopulatesProperties()
+    public void UpdateExifValues_WithValidExifProfile_PopulatesProperties()
     {
         var path = Path.Combine(Path.GetTempPath(), $"picview-exif-full-{Guid.NewGuid():N}.jpg");
         try
         {
-            await TranslationManager.LoadLanguage("en");
+            TranslationManager.LoadLanguage("en");
             using (var image = new MagickImage(MagickColors.White, 100, 100))
             {
                 image.Format = MagickFormat.Jpeg;
@@ -179,7 +182,7 @@ public class ExifViewModelTests
                 profile.SetValue(ExifTag.Rating, (ushort)3);
 
                 image.SetProfile(profile);
-                await image.WriteAsync(path, TestContext.Current.CancellationToken);
+                image.Write(path);
             }
 
             var model = new ImageModel { FileInfo = new FileInfo(path), PixelWidth = 100, PixelHeight = 100 };
@@ -207,7 +210,7 @@ public class ExifViewModelTests
         var path = Path.Combine(Path.GetTempPath(), $"picview-removeexif-{Guid.NewGuid():N}.jpg");
         try
         {
-            await TranslationManager.LoadLanguage("en");
+            TranslationManager.LoadLanguage("en");
             using (var image = new MagickImage(MagickColors.White, 10, 10))
             {
                 image.Format = MagickFormat.Jpeg;
@@ -235,22 +238,25 @@ public class ExifViewModelTests
         }
         finally
         {
-            if (File.Exists(path)) File.Delete(path);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
         }
     }
 
     [Fact]
-    public async Task OpenGoogleLinkCommand_IsInitialized()
+    public void OpenGoogleLinkCommand_IsInitialized()
     {
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
         using var viewModel = new ExifViewModel();
         Assert.NotNull(viewModel.OpenGoogleLinkCommand);
     }
 
     [Fact]
-    public async Task OpenBingLinkCommand_IsInitialized()
+    public void OpenBingLinkCommand_IsInitialized()
     {
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
         using var viewModel = new ExifViewModel();
         Assert.NotNull(viewModel.OpenBingLinkCommand);
     }
@@ -266,9 +272,9 @@ public class ExifViewModelTests
     }
 
     [Fact]
-    public async Task UpdateImageFormatDisplay_StandardFormat_SetsFormatWithoutSuffix()
+    public void UpdateImageFormatDisplay_StandardFormat_SetsFormatWithoutSuffix()
     {
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
         using var viewModel = new ExifViewModel();
         viewModel.ImageFormat.Value = MagickFormat.Jpeg;
         viewModel.IsMotionPhoto.Value = false;
@@ -278,9 +284,9 @@ public class ExifViewModelTests
     }
 
     [Fact]
-    public async Task UpdateImageFormatDisplay_MotionPhoto_SetsFormatWithSuffix()
+    public void UpdateImageFormatDisplay_MotionPhoto_SetsFormatWithSuffix()
     {
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
         using var viewModel = new ExifViewModel();
         viewModel.ImageFormat.Value = MagickFormat.Jpeg;
         viewModel.IsMotionPhoto.Value = true;

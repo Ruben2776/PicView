@@ -99,7 +99,7 @@ public class BatchResizeViewModelTests
     public async Task StartBatchResizeAsync_ProcessesAllFiles_UpdatesProgressAndLog()
     {
         SetDefaults();
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
         
         // Arrange temporary folders
         var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
@@ -161,7 +161,7 @@ public class BatchResizeViewModelTests
     public async Task StartBatchResizeAsync_CompressionModes_AffectFileSize()
     {
         SetDefaults();
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
 
         var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
         var outNone = Path.Combine(Path.GetTempPath(), $"BatchResizeOutNone_{Guid.NewGuid():N}");
@@ -208,7 +208,7 @@ public class BatchResizeViewModelTests
     public async Task StartBatchResizeAsync_QualityIgnored_WhenDisabled()
     {
         SetDefaults();
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
 
         var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
         var outLow = Path.Combine(Path.GetTempPath(), $"BatchResizeOutLow_{Guid.NewGuid():N}");
@@ -247,7 +247,7 @@ public class BatchResizeViewModelTests
     public async Task StartBatchResizeAsync_QualityApplied_WhenEnabled_ForJpeg()
     {
         SetDefaults();
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
 
         var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
         var outLow = Path.Combine(Path.GetTempPath(), $"BatchResizeOutLow_{Guid.NewGuid():N}");
@@ -286,7 +286,7 @@ public class BatchResizeViewModelTests
     public async Task StartBatchResizeAsync_Conversion_ConvertsToSelectedTarget()
     {
         SetDefaults();
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
 
         var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
         var outputDir = Path.Combine(Path.GetTempPath(), $"BatchResizeOutput_{Guid.NewGuid():N}");
@@ -318,7 +318,7 @@ public class BatchResizeViewModelTests
     public async Task StartBatchResizeAsync_PercentageResize_ResizesByPercentage()
     {
         SetDefaults();
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
 
         var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
         var outputDir = Path.Combine(Path.GetTempPath(), $"BatchResizeOutput_{Guid.NewGuid():N}");
@@ -349,7 +349,7 @@ public class BatchResizeViewModelTests
     public async Task StartBatchResizeAsync_WidthAndHeight_WithAndWithoutAspectRatio_WorksAsExpected()
     {
         SetDefaults();
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
 
         var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
         var keepAspectOutput = Path.Combine(Path.GetTempPath(), $"BatchResizeKeepAspect_{Guid.NewGuid():N}");
@@ -396,7 +396,7 @@ public class BatchResizeViewModelTests
     public async Task StartBatchResizeAsync_WidthAndHeightSingleAxisModes_ApplyTargetAxis()
     {
         SetDefaults();
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
 
         var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
         var widthOutput = Path.Combine(Path.GetTempPath(), $"BatchResizeWidth_{Guid.NewGuid():N}");
@@ -436,7 +436,7 @@ public class BatchResizeViewModelTests
     public async Task StartBatchResizeAsync_WithThumbnails_GeneratesExpectedThumbnailCount()
     {
         SetDefaults();
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
 
         var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
         var outputDir = Path.Combine(Path.GetTempPath(), $"BatchResizeOutput_{Guid.NewGuid():N}");
@@ -478,7 +478,7 @@ public class BatchResizeViewModelTests
     public async Task StartBatchResizeAsync_WithThumbnailParameters_AppliesBatchThumbConfiguration()
     {
         SetDefaults();
-        await TranslationManager.LoadLanguage("en");
+        TranslationManager.LoadLanguage("en");
 
         var sourceDir = Path.Combine(Path.GetTempPath(), $"BatchResizeSource_{Guid.NewGuid():N}");
         var outputPercentage = Path.Combine(Path.GetTempPath(), $"BatchResizeThumbPercent_{Guid.NewGuid():N}");

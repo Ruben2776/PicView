@@ -28,7 +28,7 @@ public class NavigationServiceTests : IDisposable
     {
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
-        TranslationManager.LoadLanguage("en").AsTask().GetAwaiter().GetResult();
+        TranslationManager.LoadLanguage("en");
         FileHistoryManager.Initialize();
 
         _testDirectory = Path.Combine(Path.GetTempPath(), "PicViewTests_" + Guid.NewGuid());

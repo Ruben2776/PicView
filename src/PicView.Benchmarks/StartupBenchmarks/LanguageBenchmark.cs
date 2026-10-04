@@ -1,10 +1,14 @@
-﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes;
 using ZLinq;
 using ZLinq.Linq;
 using ZLinq.Traversables;
 
 namespace PicView.Benchmarks.StartupBenchmarks;
 
+/// <summary>
+/// Benchmarks determining language file paths.
+/// For LanguageModel file loading and deserialization benchmarks (bytes vs lines/text, sync vs async), see <see cref="TranslationBenchmarks"/>.
+/// </summary>
 [MemoryDiagnoser] // track allocations
 public class LanguageBenchmark
 {
