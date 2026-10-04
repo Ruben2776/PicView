@@ -79,36 +79,6 @@ jobs:
             -appVersion "${{steps.get-version.outputs.version}}"
         shell: pwsh
       
-      # Add debug step to check the build output directories for arm64
-      - name: Debug - List build output directories for arm64
-        run: |
-          echo "Contents of build output directory:"
-          ls -la "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-arm64"
-          echo "Contents of .app/Contents/MacOS:"
-          ls -la "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-arm64/PicView.app/Contents/MacOS"
-          echo "Finding Magick.Native files in the repository:"
-          find "${{ github.workspace }}" -name "Magick.Native*arm64*.dylib" 2>/dev/null || echo "No Magick.Native arm64 dylib found"
-      
-      # Add step to ensure Magick.Native libs are in the app bundle for arm64
-      - name: Copy Magick.Native libraries for arm64
-        run: |
-          # Find the Magick.Native dylibs
-          MAGICK_NATIVE_PATH=$(find "${{ github.workspace }}" -name "Magick.Native*arm64*.dylib" | head -n 1)
-          
-          if [ ! -z "$MAGICK_NATIVE_PATH" ]; then
-            echo "Found Magick.Native dylib at: $MAGICK_NATIVE_PATH"
-          
-            # Copy to the app's MacOS directory
-            cp "$MAGICK_NATIVE_PATH" "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-arm64/PicView.app/Contents/MacOS/"
-          
-            # Verify the copy
-            echo "After copying, MacOS directory contains:"
-            ls -la "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-arm64/PicView.app/Contents/MacOS/"
-          else
-            echo "WARNING: Could not find Magick.Native-Q8-arm64.dylib file to copy"
-            echo "Checking in the nuget cache directory:"
-            find ~/.nuget -name "Magick.Native*arm64*.dylib" 2>/dev/null || echo "Not found in nuget cache"
-          fi
       
       # Step 6: Create DMG for arm64
       - name: Create DMG for arm64
@@ -134,36 +104,6 @@ jobs:
             -appVersion "${{steps.get-version.outputs.version}}"
         shell: pwsh
       
-      # Add debug step to check the build output directories for x64
-      - name: Debug - List build output directories for x64
-        run: |
-          echo "Contents of build output directory:"
-          ls -la "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-x64"
-          echo "Contents of .app/Contents/MacOS:"
-          ls -la "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-x64/PicView.app/Contents/MacOS"
-          echo "Finding Magick.Native files in the repository:"
-          find "${{ github.workspace }}" -name "Magick.Native*x64*.dylib" 2>/dev/null || echo "No Magick.Native x64 dylib found"
-      
-      # Add step to ensure Magick.Native libs are in the app bundle for x64
-      - name: Copy Magick.Native libraries for x64
-        run: |
-          # Find the Magick.Native dylibs
-          MAGICK_NATIVE_PATH=$(find "${{ github.workspace }}" -name "Magick.Native*x64*.dylib" | head -n 1)
-          
-          if [ ! -z "$MAGICK_NATIVE_PATH" ]; then
-            echo "Found Magick.Native dylib at: $MAGICK_NATIVE_PATH"
-          
-            # Copy to the app's MacOS directory
-            cp "$MAGICK_NATIVE_PATH" "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-x64/PicView.app/Contents/MacOS/"
-          
-            # Verify the copy
-            echo "After copying, MacOS directory contains:"
-            ls -la "${{ github.workspace }}/Build/PicView-v${{steps.get-version.outputs.version}}-osx-x64/PicView.app/Contents/MacOS/"
-          else
-            echo "WARNING: Could not find Magick.Native-Q8-x64.dylib file to copy"
-            echo "Checking in the nuget cache directory:"
-            find ~/.nuget -name "Magick.Native*x64*.dylib" 2>/dev/null || echo "Not found in nuget cache"
-          fi
       
       # Step 9: Create DMG for x64
       - name: Create DMG for x64
