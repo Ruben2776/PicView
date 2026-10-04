@@ -2,9 +2,9 @@ using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.Threading;
 using ObservableCollections;
+using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
 using PicView.Core.DebugTools;
@@ -96,6 +96,8 @@ public partial class DropDownMenu : AnimatedMenu
                     vm.TopTitlebarViewModel.DropDownMenu.CloseMenus(Unit.Default);
                     MaxHeight = _mainWindow.UIHelper.GetMainView.Bounds.Height - 1;
                     vm.FileHistory.UpdateHistory();
+                    vm.WindowTabs.ActiveTab.CurrentValue.ShouldCropBeEnabled.Value =
+                        CropManager.SetIfCropEnabled(_mainWindow);
                 }
                 else
                 {
