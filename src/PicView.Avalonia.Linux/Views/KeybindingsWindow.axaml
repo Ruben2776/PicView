@@ -9,8 +9,7 @@
     MinWidth="575"
     MinHeight="200"
     x:DataType="viewModels:CoreViewModel"
-    CanResize="True"
-    SizeToContent="Width">
+    CanResize="True">
 
     <Border
         x:Name="ParentBorder"

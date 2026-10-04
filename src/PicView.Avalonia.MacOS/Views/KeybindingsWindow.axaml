@@ -9,8 +9,7 @@
     x:DataType="viewModels:CoreViewModel"
     CanResize="True"
     ExtendClientAreaTitleBarHeightHint="-1"
-    ExtendClientAreaToDecorationsHint="True"
-    SizeToContent="Width">
+    ExtendClientAreaToDecorationsHint="True">
 
     <Border
         BorderBrush="{DynamicResource WindowBorderColor}"
