@@ -126,7 +126,7 @@ public class NavigationService(
                     return;
                 }
                 tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
-                await tab.GalleryCoordinator.LoadGalleryAsync(tab.ImageIterator.Files).ConfigureAwait(false);
+                await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files), ct.Token).ConfigureAwait(false);
             }
         }
         catch (Exception e)

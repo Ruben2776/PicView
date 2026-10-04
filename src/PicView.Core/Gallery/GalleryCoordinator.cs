@@ -11,10 +11,6 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
 {
     private CancellationTokenSource? _cts;
 
-#pragma warning disable MA0042
-    public Task LoadGalleryAsync(IReadOnlyList<FileInfo> files) => Task.Run(() => LoadGallery(files), _cts.Token);
-#pragma warning restore MA0042
-
     public void LoadGallery(IReadOnlyList<FileInfo> files)
     {
         if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)

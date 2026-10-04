@@ -334,7 +334,7 @@ public static class QuickLoad
         {
             if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
             {
-                await tab.GalleryCoordinator.LoadGalleryAsync(tab.ImageIterator.Files).ConfigureAwait(false);
+                await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files)).ConfigureAwait(false);
             }
         }
     }
@@ -357,20 +357,21 @@ public static class QuickLoad
             return;
         }
         ShowHoverBarIfNeeded(core);
-        if (isGalleryEnabled)
-        {
-            if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
-            {
-                await tab.GalleryCoordinator.LoadGalleryAsync(tab.ImageIterator.Files).ConfigureAwait(false);
-            }
-        }
-
+        
         if (Settings.WindowProperties.AutoFit)
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 WindowResizing.FastCenterWindow(mainWindow);
             }, DispatcherPriority.Send);
+        }
+        
+        if (isGalleryEnabled)
+        {
+            if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
+            {
+                await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files)).ConfigureAwait(false);
+            }
         }
     }
 

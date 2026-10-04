@@ -33,16 +33,16 @@ public static class NavigationSubscriptions
 
             Observable.EveryValueChanged(tabViewModel, tab => tab.Gallery.ActiveGalleryMode.Value, mainWindow.FrameProvider)
                 .Skip(1)
-                .SubscribeAwait(async (mode, _) =>
+                .SubscribeAwait(async (mode, ct) =>
                 {
                     if (mode is GalleryMode.Docked or GalleryMode.Expanded)
                     {
                         if (tabViewModel.Gallery.LoadingState is GalleryLoadingState.NotLoaded && tabViewModel is { GalleryCoordinator: not null, ImageIterator: not null })
                         {
-                            await tabViewModel.GalleryCoordinator.LoadGalleryAsync(tabViewModel.ImageIterator.Files).ConfigureAwait(false);
+                            await Task.Run(() => tabViewModel.GalleryCoordinator.LoadGallery(tabViewModel.ImageIterator.Files), ct).ConfigureAwait(false);
                         }
                     }
-                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(tabViewModel.GalleryCoordinator.LoadGalleryAsync)))
+                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(tabViewModel.GalleryCoordinator.LoadGallery)))
                 .AddTo(tabViewModel.Disposables);
             
             tabViewModel.Gallery.OpenSelectedItemCommand
