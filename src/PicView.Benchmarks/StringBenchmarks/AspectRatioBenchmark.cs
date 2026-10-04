@@ -15,10 +15,10 @@ public class AspectRatioBenchmark
     private List<DummySize>? _dummySizes;
     
     [GlobalSetup]
-    public async Task Setup()
+    public void Setup()
     {
         SetDefaults();
-        await TranslationManager.LoadLanguage(Settings.UIProperties.UserLanguage);
+        TranslationManager.LoadLanguage(Settings.UIProperties.UserLanguage);
         var picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
         _fileInfos = new DirectoryInfo(picturesPath)
             .DescendantsAndSelf()
@@ -30,7 +30,7 @@ public class AspectRatioBenchmark
         for (var i = 0; i < MaxSize; i++)
         {
             using var magickImage = new MagickImage();
-            await magickImage.PingAsync(_fileInfos[i]);
+            magickImage.Ping(_fileInfos[i]);
             _dummySizes.Add(new DummySize(magickImage.Width, magickImage.Height));
         }
     }
