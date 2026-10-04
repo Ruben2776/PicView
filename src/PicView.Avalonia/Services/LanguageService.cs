@@ -13,7 +13,7 @@ public class LanguageService : ILanguageService
     {
         Settings.UIProperties.UserLanguage = languageCode;
         var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-        await LanguageUpdater.UpdateLanguageAsync(core.Translation, false).ConfigureAwait(false);
+        await LanguageUpdater.UpdateLanguageAsync(core.Translation, true).ConfigureAwait(false);
     }
 
     public IEnumerable<(string Code, string DisplayName)> GetAvailableLanguages()
