@@ -163,7 +163,7 @@ public class TranslationViewModel
         Inches.Value = t.Inches;
         InterfaceConfiguration.Value = t.InterfaceConfiguration;
         ISOSpeed.Value = t.ISOSpeed;
-        ItemSpacing.Value = t.ItemSpacing ?? "Item Spacing";
+        ItemSpacing.Value = t.ItemSpacing;
         Language.Value = t.Language;
         LastAccessTime.Value = t.LastAccessTime;
         LastImage.Value = t.LastImage;
@@ -174,7 +174,7 @@ public class TranslationViewModel
         Lighting.Value = t.Lighting;
         LightSource.Value = t.LightSource;
         LightTheme.Value = t.LightTheme;
-        LineSpacing.Value = t.LineSpacing ?? "Line Spacing";
+        LineSpacing.Value = t.LineSpacing;
         Longitude.Value = t.Longitude;
         Lossless.Value = t.Lossless;
         Lossy.Value = t.Lossy;
