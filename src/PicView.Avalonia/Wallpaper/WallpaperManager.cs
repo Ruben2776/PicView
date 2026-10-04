@@ -43,57 +43,57 @@ public static class WallpaperManager
         switch (style)
         {
             case WallpaperStyle.Tile:
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                if (OperatingSystem.IsMacOS())
                 {
                     return 5; 
                 }
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (OperatingSystem.IsWindows())
                 {
                     return 0;
                 }
                 break;
             case WallpaperStyle.Center:
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                if (OperatingSystem.IsMacOS())
                 {
                     return 4; 
                 }
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (OperatingSystem.IsWindows())
                 {
                     return 1;
                 }
                 break;
             case WallpaperStyle.Stretch:
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                if (OperatingSystem.IsMacOS())
                 {
                     return 3; 
                 }
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (OperatingSystem.IsWindows())
                 {
                     return 2;
                 }
                 break;
             case WallpaperStyle.Fit:
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                if (OperatingSystem.IsMacOS())
                 {
                     return 2; 
                 }
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (OperatingSystem.IsWindows())
                 {
                     return 3;
                 }
                 break;
             case WallpaperStyle.Fill:
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                if (OperatingSystem.IsMacOS())
                 {
                     return 1;
                 }
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (OperatingSystem.IsWindows())
                 {
                     return 4;
                 }
                 break;
             default:
-                return RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 1 : 3;
+                return OperatingSystem.IsMacOS() ? 1 : 3;
         }
         return 0;
     }

@@ -133,7 +133,7 @@ public class DraggableTabControl : TabControl
 
         if (item is TabViewModel { IsClosing: false })
         {
-            TabCreated?.Invoke(tabItem, new TabCreatedEventArgs(item, index));
+            TabCreated?.Invoke(this, new TabCreatedEventArgs(item, index));
         }
         
         tabItem.AddHandler(PointerPressedEvent, OnItemPointerPressed,
@@ -361,12 +361,12 @@ public class DraggableTabControl : TabControl
                 if (item != null)
                 {
                     var screenPos = _pressedTab.PointToScreen(e.GetPosition(_pressedTab));
-                    TabDetached?.Invoke(sender, new TabDetachEventArgs(item, screenPos));
+                    TabDetached?.Invoke(this, new TabDetachEventArgs(item, screenPos));
                 }
             }
             else
             {
-                PerformDetach(sender, e);
+                PerformDetach(e);
             }
         }
         else if (_isDragging && _currentTargetIndex >= 0)
@@ -524,7 +524,7 @@ public class DraggableTabControl : TabControl
         }
     }
 
-    private void PerformDetach(object? sender, PointerReleasedEventArgs e)
+    private void PerformDetach(PointerReleasedEventArgs e)
     {
         if (_pressedTab == null)
         {
@@ -544,7 +544,7 @@ public class DraggableTabControl : TabControl
             list.RemoveAt(_sourceIndex);
         }
 
-        TabDetached?.Invoke(sender, new TabDetachEventArgs(item, screenPos));
+        TabDetached?.Invoke(this, new TabDetachEventArgs(item, screenPos));
     }
 
     private void EndDrag()
@@ -790,7 +790,7 @@ public class DraggableTabControl : TabControl
         var windowWidth = window?.Width ?? double.NaN;
         var windowHeight = window?.Height ?? double.NaN;
         var cornerRadius = new CornerRadius(16);
-        var isMacOs = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+        var isMacOs = OperatingSystem.IsMacOS();
 
         _ghostWindow = new Window
         {

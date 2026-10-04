@@ -18,7 +18,7 @@ public partial class SettingsMenuButton : UserControl
         
         Loaded += OnLoaded;
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (OperatingSystem.IsMacOS())
         {
             SettingsButton.CornerRadius = new CornerRadius(6,10,0,6);
         }

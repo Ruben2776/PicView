@@ -32,7 +32,7 @@ public static class IPC
     
     public static void SendWithArgs(string[] args)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (OperatingSystem.IsMacOS())
         {
             return;
         }
@@ -48,12 +48,12 @@ public static class IPC
     {
         if (args.Length > 1)
         {
-            Task.Run(async () =>
+            _ = Task.Run(async () =>
             {
                 var retries = 0;
-                while (!await SendArgumentToRunningInstance(args[1]))
+                while (!await SendArgumentToRunningInstance(args[1]).ConfigureAwait(false))
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(1000).ConfigureAwait(false);
                     if (++retries > 20)
                     {
                         break;
@@ -78,30 +78,38 @@ public static class IPC
     /// </remarks>
     public static async Task<bool> SendArgumentToRunningInstance(string arg)
     {
-        await using var pipeClient = new NamedPipeClientStream(PipeName);
-        try
+        var pipeClient = new NamedPipeClientStream(PipeName);
+        await using (pipeClient.ConfigureAwait(false))
         {
-            // Try to connect to the running instance
-            await pipeClient.ConnectAsync(2750).ConfigureAwait(false);
+            try
+            {
+                // Try to connect to the running instance
+                await pipeClient.ConnectAsync(2750).ConfigureAwait(false);
 
-            // Send the argument
-            await using var writer = new StreamWriter(pipeClient);
-            await writer.WriteLineAsync(arg).ConfigureAwait(false);
-        }
-        catch (TimeoutException)
-        {
-            // Log the timeout if in debug mode
+                // Send the argument
+                var writer = new StreamWriter(pipeClient);
+
+                // Send the argument
+                await using (writer.ConfigureAwait(false))
+                {
+                    await writer.WriteLineAsync(arg).ConfigureAwait(false);
+                }
+            }
+            catch (TimeoutException)
+            {
+                // Log the timeout if in debug mode
 #if DEBUG
-            Trace.WriteLine($"{nameof(SendArgumentToRunningInstance)} timeout");
+                Trace.WriteLine($"{nameof(SendArgumentToRunningInstance)} timeout");
 #endif
-            return false;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                DebugHelper.LogDebug(nameof(IPC), nameof(SendArgumentToRunningInstance), ex);
+                return false;
+            }
+            return true;
         }
-        catch (Exception ex)
-        {
-            DebugHelper.LogDebug(nameof(IPC), nameof(SendArgumentToRunningInstance), ex);
-            return false;
-        }
-        return true;
     }
 
     /// <summary>
@@ -127,15 +135,17 @@ public static class IPC
         {
             try
             {
-                await using var pipeServer = new NamedPipeServerStream(PipeName);
-                
-                // Wait for a connection from another instance
-                await pipeServer.WaitForConnectionAsync();
+                var pipeServer = new NamedPipeServerStream(PipeName);
+                await using (pipeServer.ConfigureAwait(false))
+                {
+
+                    // Wait for a connection from another instance
+                    await pipeServer.WaitForConnectionAsync().ConfigureAwait(false);
 
                 using var reader = new StreamReader(pipeServer);
 
                 // Read and process incoming arguments
-                while (await reader.ReadLineAsync() is { } line)
+                while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line)
                 {
                     if (!_isRunning.Value)
                     {
@@ -179,6 +189,7 @@ public static class IPC
                     {
                         desktop?.MainWindow.Activate();
                     });
+                }
                 }
             }
             catch (Exception ex)

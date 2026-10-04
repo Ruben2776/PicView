@@ -1,6 +1,9 @@
+using System.Runtime.InteropServices;
+
 namespace PicView.Avalonia.AnimatedImage.Decoding;
 
-public readonly struct GifRect(int x, int y, int width, int height)
+[StructLayout(LayoutKind.Auto)]
+public readonly struct GifRect(int x, int y, int width, int height) : IEquatable<GifRect>
 {
     public int X { get; } = x;
     public int Y { get; } = y;
@@ -29,5 +32,10 @@ public readonly struct GifRect(int x, int y, int width, int height)
     public override int GetHashCode()
     {
         return X.GetHashCode() ^ Y.GetHashCode() | Width.GetHashCode() ^ Height.GetHashCode();
+    }
+
+    public bool Equals(GifRect other)
+    {
+        return X == other.X && Y == other.Y && Width == other.Width && Height == other.Height && TotalPixels == other.TotalPixels;
     }
 }

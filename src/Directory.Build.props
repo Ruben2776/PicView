@@ -6,4 +6,8 @@
         <AssemblyVersion>5.1.4.0</AssemblyVersion>
         <FileVersion>5.1.4</FileVersion>
     </PropertyGroup>
+
+    <PropertyGroup>
+        <NoWarn>$(NoWarn);AVLN3001</NoWarn>
+    </PropertyGroup>
 </Project>

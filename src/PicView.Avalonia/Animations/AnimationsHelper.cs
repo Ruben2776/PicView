@@ -183,9 +183,9 @@ public static class AnimationsHelper
             mainWindow.UIHelper.GetMainView.MainPanel.Children.Add(rectangle);
         });
 
-        await startOpacityAnimation.RunAsync(rectangle);
-        await endOpacityAnimation.RunAsync(rectangle);
-        await Task.Delay(200);
+        await startOpacityAnimation.RunAsync(rectangle).ConfigureAwait(true);
+        await endOpacityAnimation.RunAsync(rectangle).ConfigureAwait(true);
+        await Task.Delay(200).ConfigureAwait(true);
 
         await Dispatcher.UIThread.InvokeAsync(() => { mainWindow.UIHelper.GetMainView.MainPanel.Children.Remove(rectangle); });
     }

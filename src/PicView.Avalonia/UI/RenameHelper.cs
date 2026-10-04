@@ -28,7 +28,7 @@ public static class RenameHelper
         
         var isRenamed = await Task.Run(async () =>
         {
-            if (newPath == oldPath)
+            if (string.Equals(newPath, oldPath, StringComparison.Ordinal))
             {
                 // TODO
                 //ShowFileExistsError(vm);
@@ -44,7 +44,7 @@ public static class RenameHelper
             else
             {
                 using var magick = new MagickImage(oldPath);
-                await magick.WriteAsync(newPath);
+                await magick.WriteAsync(newPath).ConfigureAwait(false);
                 vm.WindowTabs.ActiveTab.CurrentValue.IsFileWatcherNavigationEnabled = false;
                 File.Delete(oldPath);
                 await vm.WindowTabs.LoadFromFileAsync(newPath).ConfigureAwait(false);
@@ -57,7 +57,7 @@ public static class RenameHelper
             tab.UpdateTabTitle();
             vm.IsLoadingIndicatorShown.Value = false;
             return true;
-        });
+        }).ConfigureAwait(false);
 
         if (isRenamed)
         {

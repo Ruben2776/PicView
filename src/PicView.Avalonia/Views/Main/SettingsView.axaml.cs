@@ -20,7 +20,7 @@ public partial class SettingsView : UserControl
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!OperatingSystem.IsWindows())
         {
             FileAssociationsListBoxItem.IsVisible = FileAssociationsListBoxItem.IsVisible = false;
             FileAssociationsSection.IsVisible = false;

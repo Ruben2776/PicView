@@ -105,23 +105,32 @@ public class ImageInfoWindowViewModel(MainWindowViewModel vm) : IDisposable
         IsLoading.Value = true;
         try
         {
-            var widthValue = double.TryParse(widthText, out var w) ? w : 0;
-            var heightValue = double.TryParse(heightText, out var h) ? h : 0;
-
-            if (isWidth && widthValue > 0)
+            if (!double.TryParse(widthText, out var w) && w > 0 || !double.TryParse(heightText, out var h) && h > 0)
             {
-                var success = await ConversionHelper.ResizeByWidth(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, widthValue).ConfigureAwait(false);
-                if (success)
-                {
-                    await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
-                }
+                return;
             }
-            else if (!isWidth && heightValue > 0)
+
+            switch (isWidth)
             {
-                var success = await ConversionHelper.ResizeByHeight(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, heightValue).ConfigureAwait(false);
-                if (success)
+                case true when w > 0:
                 {
-                    await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
+                    var success = await ConversionHelper.ResizeByWidth(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, w).ConfigureAwait(false);
+                    if (success)
+                    {
+                        await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
+                    }
+
+                    break;
+                }
+                case false when h > 0:
+                {
+                    var success = await ConversionHelper.ResizeByHeight(vm.WindowTabs.ActiveTab.Value.Model.FileInfo, h).ConfigureAwait(false);
+                    if (success)
+                    {
+                        await vm.WindowTabs.ActiveTab.CurrentValue.ImageIterator.ReloadAsync().ConfigureAwait(false);
+                    }
+
+                    break;
                 }
             }
         }

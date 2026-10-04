@@ -39,7 +39,7 @@ public partial class FileHistoryItem : UserControl
             {
                 return;
             }
-            await QuickLoad.QuickLoadAsync(mainWindow, core, path, true);
+            await QuickLoad.QuickLoadAsync(mainWindow, core, path, true).ConfigureAwait(false);
             return;
         }
 
@@ -50,7 +50,7 @@ public partial class FileHistoryItem : UserControl
             isViewStartUpMenu = true;
         }
         
-        var isLoadedSuccessfully = await tabs.LoadFromStringAsync(path);
+        var isLoadedSuccessfully = await tabs.LoadFromStringAsync(path).ConfigureAwait(true);
         if (!isLoadedSuccessfully && isViewStartUpMenu)
         {
             tab.CurrentView.Value = new StartUpMenu();

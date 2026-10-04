@@ -30,7 +30,7 @@ public partial class QuickSettingsDialog : AnimatedPopUp
                     return;
                 }
 
-                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.SettingsWindow();
+                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.SettingsWindow().ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickSettingsDialog), nameof(FunctionsMapper.SettingsWindow)))
             .AddTo(ref _disposables);
         
@@ -44,7 +44,7 @@ public partial class QuickSettingsDialog : AnimatedPopUp
                     return;
                 }
 
-                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.AboutWindow();
+                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.AboutWindow().ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickSettingsDialog), nameof(FunctionsMapper.AboutWindow)))
             .AddTo(ref _disposables);
     }

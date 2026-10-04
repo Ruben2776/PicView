@@ -121,6 +121,7 @@ public static class PrintCore
 
 public record PaperInfo(string Name, double WidthMm, double HeightMm);
 
+[StructLayout(LayoutKind.Sequential)]
 public readonly struct PrintLayout(
     double dx,
     double dy,

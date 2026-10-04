@@ -20,7 +20,7 @@ public static class PrintInitialization
         if (vm.PrintPreview.PrintWindowConfig is null)
         {
             vm.PrintPreview.PrintWindowConfig = new PrintWindowConfig();
-            await vm.PrintPreview.PrintWindowConfig.LoadAsync();
+            await vm.PrintPreview.PrintWindowConfig.LoadAsync().ConfigureAwait(false);
         }
 
         var configProps = vm.PrintPreview.PrintWindowConfig.WindowProperties;
@@ -71,11 +71,11 @@ public static class PrintInitialization
         // Printer change
         ps.PrinterName
             .AsObservable()
-            .DistinctUntilChanged()
+            .DistinctUntilChanged(StringComparer.OrdinalIgnoreCase)
             .ObserveOnThreadPool()
             .SubscribeAwait(async (_, _) =>
             {
-                await printEngine.UpdatePreviewAsync(vm.WindowTabs.ActiveTab.CurrentValue, vm.PrintPreview);
+                await printEngine.UpdatePreviewAsync(vm.WindowTabs.ActiveTab.CurrentValue, vm.PrintPreview).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(PrintInitialization), nameof(InitializeAsync)))
             .AddTo(vm.PrintPreview.Disposables);
         
@@ -95,21 +95,21 @@ public static class PrintInitialization
             .ObserveOnThreadPool()
             .SubscribeAwait(async (_, _) =>
             {
-                await printEngine.UpdatePreviewAsync(vm.WindowTabs.ActiveTab.CurrentValue, vm.PrintPreview);
+                await printEngine.UpdatePreviewAsync(vm.WindowTabs.ActiveTab.CurrentValue, vm.PrintPreview).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(PrintInitialization), nameof(InitializeAsync)))
             .AddTo(vm.PrintPreview.Disposables);
 
-        await printEngine.UpdatePreviewAsync(vm.WindowTabs.ActiveTab.CurrentValue, vm.PrintPreview);
+        await printEngine.UpdatePreviewAsync(vm.WindowTabs.ActiveTab.CurrentValue, vm.PrintPreview).ConfigureAwait(false);
         
         vm.PrintPreview.PrintCommand.SubscribeAwait(async (_, _) =>
         {
-            await printEngine.RunPrintAsync(vm.WindowTabs.ActiveTab.CurrentValue, vm.PrintPreview);
+            await printEngine.RunPrintAsync(vm.WindowTabs.ActiveTab.CurrentValue, vm.PrintPreview).ConfigureAwait(false);
         }, DebugHelper.LogError(nameof(PrintInitialization), nameof(InitializeAsync)))
         .AddTo(vm.PrintPreview.Disposables);
         
         vm.WindowTabs.ActiveTab.CurrentValue.Image.Skip(1).SubscribeAwait(async (_, _) =>
         {
-            await printEngine.UpdatePreviewAsync(vm.WindowTabs.ActiveTab.CurrentValue, vm.PrintPreview);
+            await printEngine.UpdatePreviewAsync(vm.WindowTabs.ActiveTab.CurrentValue, vm.PrintPreview).ConfigureAwait(false);
         }, DebugHelper.LogError(nameof(PrintInitialization), nameof(InitializeAsync)))
         .AddTo(vm.PrintPreview.Disposables);
     }

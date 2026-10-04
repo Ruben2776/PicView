@@ -22,7 +22,7 @@ public static class SetExifRatingHelper
             return;
         }
         
-        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 0);
+        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 0).ConfigureAwait(false);
         SetValue(vm.Exif, 0);
     }
 
@@ -33,7 +33,7 @@ public static class SetExifRatingHelper
             return;
         }
 
-        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 1);
+        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 1).ConfigureAwait(false);
         SetValue(vm.Exif, 1);
     }
 
@@ -44,7 +44,7 @@ public static class SetExifRatingHelper
             return;
         }
 
-        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 2);
+        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 2).ConfigureAwait(false);
         SetValue(vm.Exif, 2);
     }
 
@@ -55,7 +55,7 @@ public static class SetExifRatingHelper
             return;
         }
 
-        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 3);
+        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 3).ConfigureAwait(false);
         SetValue(vm.Exif, 3);
     }
 
@@ -66,7 +66,7 @@ public static class SetExifRatingHelper
             return;
         }
 
-        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 4);
+        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 4).ConfigureAwait(false);
         SetValue(vm.Exif, 4);
     }
 
@@ -77,7 +77,7 @@ public static class SetExifRatingHelper
             return;
         }
 
-        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 5);
+        await ExifWriter.SetExifRatingAsync(vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue, 5).ConfigureAwait(false);
         SetValue(vm.Exif, 5);
     }
 }

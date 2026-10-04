@@ -51,7 +51,7 @@ public partial class SingleImageResizeView : UserControl
     }
     
     private static async ValueTask<string?> SafePickAsync(string file, string extension) 
-        => await FilePicker.PickFileForSavingAsync(file, extension);
+        => await FilePicker.PickFileForSavingAsync(file, extension).ConfigureAwait(false);
 
     private void OnUnloaded(object? sender, EventArgs e)
     {
@@ -77,8 +77,8 @@ public partial class SingleImageResizeView : UserControl
         vm.IsKeepingAspectRatio.Subscribe(ToggleLinkChain).AddTo(ref _disposables);
 
         // Button clicks
-        SaveButton.Click += async (_, _) => await vm.SaveImage();
-        SaveAsButton.Click += async (_, _) => await vm.SaveImageAs();
+        SaveButton.Click += async (_, _) => await vm.SaveImage().ConfigureAwait(false);
+        SaveAsButton.Click += async (_, _) => await vm.SaveImageAs().ConfigureAwait(false);
         ResetButton.Click += (_, _) => vm.ResetSettings();
         CancelButton.Click += (_, _) => vm.CloseAction?.Invoke();
         LinkChainButton.Click += (_, _) => vm.ToggleAspectRatio();

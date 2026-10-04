@@ -46,13 +46,19 @@ public class BlurMask : Control
         {
             var leaseFeature = context.TryGetFeature<ISkiaSharpApiLeaseFeature>();
             using var skia = leaseFeature.Lease();
-            if (!skia.SkCanvas.TotalMatrix.TryInvert(out var currentInvertedTransform)) return;
+            if (!skia.SkCanvas.TotalMatrix.TryInvert(out var currentInvertedTransform))
+            {
+                return;
+            }
             
             using var backgroundSnapshot = skia.SkSurface.Snapshot();
             using var backdropShader = SKShader.CreateImage(backgroundSnapshot, SKShaderTileMode.Clamp,
                 SKShaderTileMode.Clamp, currentInvertedTransform);
 
-            if (skia.GrContext == null) throw new NullReferenceException();
+            if (skia.GrContext is null)
+            {
+                return;
+            }
             
             using var filter = SKImageFilter.CreateBlur(blurRadius, blurRadius, SKShaderTileMode.Clamp);
             using var tmp = new SKPaint();
