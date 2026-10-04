@@ -93,7 +93,7 @@ jobs:
       - name: Copy Magick.Native libraries for arm64
         run: |
           # Find the Magick.Native dylibs
-          MAGICK_NATIVE_PATH=$(find "${{ github.workspace }}" -name "Magick.Native*arm64*.dylib" 2>/dev/null || echo "")
+          MAGICK_NATIVE_PATH=$(find "${{ github.workspace }}" -name "Magick.Native*arm64*.dylib" | head -n 1)
           
           if [ ! -z "$MAGICK_NATIVE_PATH" ]; then
             echo "Found Magick.Native dylib at: $MAGICK_NATIVE_PATH"
@@ -148,7 +148,7 @@ jobs:
       - name: Copy Magick.Native libraries for x64
         run: |
           # Find the Magick.Native dylibs
-          MAGICK_NATIVE_PATH=$(find "${{ github.workspace }}" -name "Magick.Native*x64*.dylib" 2>/dev/null || echo "")
+          MAGICK_NATIVE_PATH=$(find "${{ github.workspace }}" -name "Magick.Native*x64*.dylib" | head -n 1)
           
           if [ ! -z "$MAGICK_NATIVE_PATH" ]; then
             echo "Found Magick.Native dylib at: $MAGICK_NATIVE_PATH"
