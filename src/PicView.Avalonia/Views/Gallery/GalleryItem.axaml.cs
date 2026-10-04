@@ -11,6 +11,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
+using PicView.Avalonia.Gallery;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
@@ -170,10 +171,10 @@ public partial class GalleryItem : NavigateAbleItem
         }
 
         viewer.SelectedItemIndex = index;
-
+        
         if (viewer.DataContext is TabViewModel tab)
         {
-            tab.Gallery.OpenSelectedItemCommand.Execute(index);
+            _ = GalleryHelper.GalleryClick(tab.ParentWindowContext).ConfigureAwait(false);
         }
     }
 

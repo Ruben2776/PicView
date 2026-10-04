@@ -33,7 +33,7 @@ public static class GalleryHelper
         imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
     }
 
-    public static async ValueTask GalleryClick(MainWindowViewModel vm)
+    public static async Task GalleryClick(MainWindowViewModel vm)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         var index = tab.Gallery.SelectedGalleryItemIndex.Value;
