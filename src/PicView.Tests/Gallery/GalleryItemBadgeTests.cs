@@ -47,7 +47,7 @@ public class GalleryItemBadgeTests
         RunWithDispatcher(Dispatcher.UIThread.InvokeAsync<bool>(() =>
         {
             _gallerySettings = new GallerySharedSettingsViewModel();
-            var mainVm = new MainWindowViewModel(new TranslationViewModel(),
+            var mainVm = new MainWindowViewModel(null!, new TranslationViewModel(),
                 new StubPlatformWindowService(), new GlobalSettingsViewModel(), _gallerySettings);
             _itemVm = new GalleryItemViewModel { IsMotionPhoto = { Value = true } };
 

@@ -258,10 +258,10 @@ public class FileWatcherServiceTests : IDisposable
 
     private class MockThumbnailLoader : IThumbnailLoader
     {
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file) => ValueTask.FromResult<object?>(null);
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
+        public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) => ValueTask.FromResult<object?>(null);
+        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) => ValueTask.FromResult<object?>(null);
         public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file) => null;
+        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
     }
     
     private class MockThumbnailCache : IThumbnailCache

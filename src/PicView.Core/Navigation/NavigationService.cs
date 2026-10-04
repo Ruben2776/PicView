@@ -122,11 +122,11 @@ public class NavigationService(
                     ct.Cancel();
 #pragma warning restore MA0042
                     tab.ResetNavigationCts();
-                    tab.GalleryCoordinator?.ReloadGallery(tab.ImageIterator.Files);
+                    tab.GalleryCoordinator?.ReloadGallery(tab.ImageIterator.Files, tab.ParentWindowContext.Core);
                     return;
                 }
                 tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
-                await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files), ct.Token).ConfigureAwait(false);
+                await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files, tab.ParentWindowContext.Core), ct.Token).ConfigureAwait(false);
             }
         }
         catch (Exception e)

@@ -25,7 +25,7 @@ public partial class WinMainWindow : MainWindow, IPlatformWindowService
         }
 
         Debug.Assert(core.GlobalSettings != null);
-        var mainWindowViewModel = new MainWindowViewModel(core.Translation, this, core.GlobalSettings, core.GallerySettings);
+        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, this, core.GlobalSettings, core.GallerySettings);
         DataContext = mainWindowViewModel;
 
         InitializeComponent();
@@ -196,7 +196,7 @@ public partial class WinMainWindow : MainWindow, IPlatformWindowService
 
                 desktop.MainWindow = newWindow;
                 
-                TabNavigationInitializer.InitializeDetachedWindow(this, parentVm, newVm, tab);
+                TabNavigationInitializer.InitializeDetachedWindow(this, parentVm, newVm, tab, core);
             }, DispatcherPriority.Send);
         });
     }

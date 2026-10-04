@@ -26,7 +26,7 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
         {
             return;
         }
-        var mainWindowViewModel = new MainWindowViewModel(core.Translation, this, core.GlobalSettings, core.GallerySettings);
+        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, this, core.GlobalSettings, core.GallerySettings);
         DataContext = mainWindowViewModel;
         
         // initialize RenderingFrameProvider
@@ -193,7 +193,7 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
                 desktop.MainWindow = newWindow;
             }, DispatcherPriority.Send);
 
-            TabNavigationInitializer.InitializeDetachedWindow(this, parentVm, newVm, tab);
+            TabNavigationInitializer.InitializeDetachedWindow(this, parentVm, newVm, tab, parentVm.Core);
         });
     }
     

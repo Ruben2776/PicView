@@ -1,7 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Gallery;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 using PicView.Core.Gallery;
@@ -11,7 +9,7 @@ namespace PicView.Avalonia.Navigation;
 
 public static class NavigationSubscriptions
 {
-    public static void ModelSubscription(TabViewModel tabViewModel, MainWindowViewModel mainWindowViewModel, MainWindow mainWindow)
+    public static void ModelSubscription(TabViewModel tabViewModel, MainWindowViewModel mainWindowViewModel, MainWindow mainWindow, CoreViewModel core)
     {
         // Subscribing with AvaloniaRenderingFrameProvider is faster and fixes not being able to navigate while gallery is loading
         Dispatcher.UIThread.Invoke(() =>
@@ -39,7 +37,7 @@ public static class NavigationSubscriptions
                     {
                         if (tabViewModel.Gallery.LoadingState is GalleryLoadingState.NotLoaded && tabViewModel is { GalleryCoordinator: not null, ImageIterator: not null })
                         {
-                            await Task.Run(() => tabViewModel.GalleryCoordinator.LoadGallery(tabViewModel.ImageIterator.Files), ct).ConfigureAwait(false);
+                            await Task.Run(() => tabViewModel.GalleryCoordinator.LoadGallery(tabViewModel.ImageIterator.Files, core), ct).ConfigureAwait(false);
                         }
                     }
                 }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(tabViewModel.GalleryCoordinator.LoadGallery)))

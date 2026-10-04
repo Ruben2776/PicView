@@ -7,6 +7,7 @@ namespace PicView.Core.ViewModels;
 public class MainWindowViewModel : IDisposable
 {
     #region Properties
+    public CoreViewModel Core { get; }
     public IFunctionsMapper? Mapper { get; set; }
     public IPlatformWindowService? PlatformWindowService { get; }
     public FileHistoryViewModel? FileHistory { get; set; }
@@ -526,8 +527,9 @@ public class MainWindowViewModel : IDisposable
     
     #endregion
 
-    public MainWindowViewModel(TranslationViewModel translations, IPlatformWindowService windowService, GlobalSettingsViewModel globalSettings, GallerySharedSettingsViewModel gallerySettings)
+    public MainWindowViewModel(CoreViewModel core, TranslationViewModel translations, IPlatformWindowService windowService, GlobalSettingsViewModel globalSettings, GallerySharedSettingsViewModel gallerySettings)
     {
+        Core = core;
         Translation = translations;
         PlatformWindowService = windowService;
         GlobalSettings = globalSettings;

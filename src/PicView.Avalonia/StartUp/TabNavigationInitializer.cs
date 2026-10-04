@@ -44,19 +44,19 @@ public static class TabNavigationInitializer
         var tab = tabOverView.ActiveTab.CurrentValue;
         tabOverView.LoadAndInitializeFromPath(files, core.SharedNavigationService, sharedCache, thumbnailCache, thumbnailService, fileWatcher);
         tabOverView.SetParentContext(core.MainWindows.ActiveWindow.CurrentValue);
-        InitializeNewTab(tab, core.MainWindows.ActiveWindow.CurrentValue, mainWindow);
+        InitializeNewTab(tab, core.MainWindows.ActiveWindow.CurrentValue, mainWindow, core);
         tab.Gallery.Initialize();
         core.GallerySettings.Initialize();
     }
     
     public static void InitializeConsecutiveTab(CoreViewModel core, MainWindow mainWindow, TabViewModel tab)
     {
-        InitializeNewTab(tab, core.MainWindows.ActiveWindow.CurrentValue, mainWindow);
+        InitializeNewTab(tab, core.MainWindows.ActiveWindow.CurrentValue, mainWindow, core);
         tab.Gallery.Initialize();
         core.GallerySettings.Initialize();
     }
     
-    public static void InitializeDetachedWindow(MainWindow mainWindow, MainWindowViewModel parentVm, MainWindowViewModel newVm, TabViewModel tab)
+    public static void InitializeDetachedWindow(MainWindow mainWindow, MainWindowViewModel parentVm, MainWindowViewModel newVm, TabViewModel tab, CoreViewModel core)
     {
         newVm.WindowTabs.Tabs.Value[0] = tab;
         
@@ -88,7 +88,7 @@ public static class TabNavigationInitializer
         
         // Unsubscribe from the old and start listening to a new one
         tab.Disposables.Clear();
-        NavigationSubscriptions.ModelSubscription(tab, newVm, mainWindow);
+        NavigationSubscriptions.ModelSubscription(tab, newVm, mainWindow, core);
         
         // Need to properly remove it from the previous location
         parentVm.WindowTabs.RemoveTab(tab);
@@ -99,7 +99,7 @@ public static class TabNavigationInitializer
         }
     }
     
-    private static void InitializeNewTab(TabViewModel newTab, MainWindowViewModel mainWindowViewModel, MainWindow mainWindow)
+    private static void InitializeNewTab(TabViewModel newTab, MainWindowViewModel mainWindowViewModel, MainWindow mainWindow, CoreViewModel core)
     {
         if (newTab is null)
         {
@@ -113,7 +113,7 @@ public static class TabNavigationInitializer
             return;
         }
 
-        NavigationSubscriptions.ModelSubscription(newTab, mainWindowViewModel, mainWindow);
+        NavigationSubscriptions.ModelSubscription(newTab, mainWindowViewModel, mainWindow, core);
         newTab.IsInitialized = true;
     }
 }

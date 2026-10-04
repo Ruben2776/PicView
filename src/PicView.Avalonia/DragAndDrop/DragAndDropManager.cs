@@ -337,7 +337,7 @@ public static class DragAndDropManager
         else
         {
             // Generate thumbnail
-            thumb = await GetThumbnails.GetThumbAsync(fileInfo, SizeDefaults.WindowMinSize - 30)
+            thumb = await GetThumbnails.GetThumbAsync(fileInfo, SizeDefaults.WindowMinSize - 30, core)
                 .ConfigureAwait(false);
             await Dispatcher.UIThread.InvokeAsync(() => _dragDropView?.UpdateThumbnail(thumb, mainWindow));
             

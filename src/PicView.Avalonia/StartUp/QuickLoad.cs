@@ -332,7 +332,7 @@ public static class QuickLoad
         {
             if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
             {
-                await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files)).ConfigureAwait(false);
+                await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files, vm.Core)).ConfigureAwait(false);
             }
         }
     }
@@ -368,7 +368,7 @@ public static class QuickLoad
         {
             if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
             {
-                await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files)).ConfigureAwait(false);
+                await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files, core)).ConfigureAwait(false);
             }
         }
     }

@@ -28,7 +28,7 @@ public partial class MacMainWindow : MainWindow, IPlatformWindowService
         {
             return;
         }
-        var mainWindowViewModel = new MainWindowViewModel(core.Translation, this, core.GlobalSettings, core.GallerySettings);
+        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, this, core.GlobalSettings, core.GallerySettings);
         DataContext = mainWindowViewModel;
 
         InitializeComponent();
@@ -224,7 +224,7 @@ public partial class MacMainWindow : MainWindow, IPlatformWindowService
                 }
             }, DispatcherPriority.Send);
 
-            TabNavigationInitializer.InitializeDetachedWindow(this, parentVm, newVm, tab);
+            TabNavigationInitializer.InitializeDetachedWindow(this, parentVm, newVm, tab, tab.ParentWindowContext.Core);
         });
     }
     

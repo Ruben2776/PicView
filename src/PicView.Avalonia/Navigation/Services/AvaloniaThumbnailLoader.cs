@@ -1,4 +1,3 @@
-using Avalonia;
 using ImageMagick;
 using PicView.Avalonia.ImageHandling;
 using PicView.Core.Gallery;
@@ -9,28 +8,23 @@ namespace PicView.Avalonia.Navigation.Services;
 
 public class AvaloniaThumbnailLoader : IThumbnailLoader
 {
-    public async ValueTask<object?> GetThumbnailAsync(FileInfo file)
+    public async ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return null;
-        }
-
         var defaultItemHeight = core.GallerySettings.ItemHeight.Value > 0
             ? core.GallerySettings.ItemHeight.Value
             : GalleryDefaults.DefaultExpandedGalleryHeight;
         
-        return await GetThumbnails.GetThumbAsync(file, (uint)defaultItemHeight).ConfigureAwait(false);
+        return await GetThumbnails.GetThumbAsync(file, (uint)defaultItemHeight, core).ConfigureAwait(false);
     }
 
-    public async ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, MagickImage? magickImage = null)
+    public async ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magickImage = null)
     {
-        return await GetThumbnails.GetThumbAsync(file, size, magickImage).ConfigureAwait(false);
+        return await GetThumbnails.GetThumbAsync(file, size, core, magickImage).ConfigureAwait(false);
     }
 
     public object? GetExifThumbnail(FileInfo file) =>
         GetThumbnails.GetExifThumb(file.FullName);
 
-    public object? GetThumbQuick(FileInfo file) =>
-        GetThumbnails.GetThumbQuick(file);
+    public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) =>
+        GetThumbnails.GetThumbQuick(file, core);
 }

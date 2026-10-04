@@ -2,7 +2,6 @@ using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Avalonia.Threading;
 using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
@@ -13,7 +12,7 @@ namespace PicView.Avalonia.ImageHandling;
 
 public static class GetThumbnails
 {
-    public static async ValueTask<Bitmap?> GetThumbAsync(FileInfo fileInfo, uint height, MagickImage? magick = null)
+    public static async ValueTask<Bitmap?> GetThumbAsync(FileInfo fileInfo, uint height, CoreViewModel? core = null, MagickImage? magick = null)
     {
         try
         {
@@ -22,9 +21,9 @@ public static class GetThumbnails
                 return null;
             }
 
-            if (fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
+            if (core is not null && fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
             {
-                var shellThumb = GetShellThumb(fileInfo.FullName, 0, (int)height);
+                var shellThumb = GetShellThumb(fileInfo.FullName, 0, (int)height, core);
                 if (shellThumb is not null)
                 {
                     return shellThumb;
@@ -89,17 +88,13 @@ public static class GetThumbnails
     /// <summary>
     /// Tries to get shell thumbnail or exif thumbnail if available, otherwise returns null.
     /// </summary>
-    public static Bitmap? GetThumbQuick(FileInfo fileInfo)
+    public static Bitmap? GetThumbQuick(FileInfo fileInfo, CoreViewModel? core = null)
     {
-        if (fileInfo is null)
-        {
-            return null;
-        }
         var height = Settings.Gallery.DockedGalleryItemSize > Settings.Gallery.ExpandedGalleryItemSize ?
             Settings.Gallery.DockedGalleryItemSize : Settings.Gallery.ExpandedGalleryItemSize;
-        if (fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
+        if (core is not null && fileInfo.IsCommon() && (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()))
         {
-            return GetShellThumb(fileInfo.FullName, 0, (int)height) ?? GetExifThumb(fileInfo.FullName);
+            return GetShellThumb(fileInfo.FullName, 0, (int)height, core) ?? GetExifThumb(fileInfo.FullName);
         }
         return GetExifThumb(fileInfo.FullName);
     }
@@ -138,17 +133,11 @@ public static class GetThumbnails
     /// On macOS, this uses ImageIO (CGImageSource).
     /// Returns null on unsupported platforms or on failure.
     /// </summary>
-    public static WriteableBitmap? GetShellThumb(string path, int width, int height)
+    public static WriteableBitmap? GetShellThumb(string path, int width, int height, CoreViewModel core)
     {
         try
         {
-            var core = Dispatcher.UIThread.Invoke(() => Application.Current?.DataContext as CoreViewModel);
-
-            var platformService = core?.PlatformService;
-            if (platformService is null)
-            {
-                return null;
-            }
+            var platformService = core.PlatformService;
 
             var pixels = platformService.GetShellThumbnail(path, width, height,
                 out var pixelWidth, out var pixelHeight);

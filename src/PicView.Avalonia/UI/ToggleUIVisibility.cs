@@ -83,7 +83,7 @@ public static class ToggleUIVisibility
                     {
                         if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
                         {
-                            _ = Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files)).ConfigureAwait(false);
+                            _ = Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files, vm.Core)).ConfigureAwait(false);
                         }
                     }
                 }

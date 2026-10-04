@@ -39,7 +39,7 @@ public class ResizeImageViewModelTests
         var globalSettings = new GlobalSettingsViewModel();
         var gallerySettings = new GallerySharedSettingsViewModel();
         var translations = new TranslationViewModel();
-        var mainVm = new MainWindowViewModel(translations, null!, globalSettings, gallerySettings);
+        var mainVm = new MainWindowViewModel(null!, translations, null!, globalSettings, gallerySettings);
 
         var resizeVm = new ResizeImageViewModel();
         resizeVm.Initialize(mainVm);

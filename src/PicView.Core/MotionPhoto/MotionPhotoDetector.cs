@@ -33,8 +33,12 @@ public static class MotionPhotoDetector
     /// Optional XMP packet text (e.g. from Magick.NET). When null, a lightweight byte scan
     /// of the file head is used as fallback.
     /// </param>
+    /// <param name="fastMode">
+    /// When true, significantly limits the backward scan size for Samsung motion photo trailers
+    /// (to 512 KB) to prevent disk I/O thrashing during heavy operations like gallery loading.
+    /// </param>
     /// <returns>A <see cref="MotionPhotoInfo"/> describing the video location, or null if not a motion photo.</returns>
-    public static MotionPhotoInfo? TryDetect(FileInfo fileInfo, string? xmpPacket)
+    public static MotionPhotoInfo? TryDetect(FileInfo fileInfo, string? xmpPacket, bool fastMode = false)
     {
         try
         {
@@ -72,7 +76,7 @@ public static class MotionPhotoDetector
 
             // Samsung motion photos carry a "MotionPhoto_Data" trailer marker in both
             // JPEG and HEIC/HEIF files (HEIC samples without any XMP exist in the wild).
-            var samsung = TryDetectSamsungTrailer(fileInfo);
+            var samsung = TryDetectSamsungTrailer(fileInfo, fastMode);
             if (samsung is not null)
             {
                 return samsung;
@@ -187,7 +191,12 @@ public static class MotionPhotoDetector
     /// Scans the tail of the file for the legacy Samsung "MotionPhoto_Data" trailer marker.
     /// The video starts immediately after the marker.
     /// </summary>
-    internal static MotionPhotoInfo? TryDetectSamsungTrailer(FileInfo fileInfo)
+    /// <param name="fileInfo">The image file to inspect.</param>
+    /// <param name="fastMode">
+    /// When true, scans only the last 512 KB instead of 32 MB, optimizing for gallery loading performance
+    /// at the risk of missing very large trailers.
+    /// </param>
+    internal static MotionPhotoInfo? TryDetectSamsungTrailer(FileInfo fileInfo, bool fastMode = false)
     {
         var fileLength = fileInfo.Length;
         var minimumSize = SamsungMarkerBytes.Length + 16;
@@ -197,7 +206,7 @@ public static class MotionPhotoDetector
         }
 
         const int chunkSize = 64 * 1024;
-        var windowLength = (int)Math.Min(fileLength, SamsungScanWindowBytes);
+        var maxScan = fastMode ? 512 * 1024 : SamsungScanWindowBytes; var windowLength = (int)Math.Min(fileLength, maxScan);
         var scanStart = fileLength - windowLength;
         var buffer = ArrayPool<byte>.Shared.Rent(chunkSize);
         try

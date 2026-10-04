@@ -11,7 +11,7 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
 {
     private CancellationTokenSource? _cts;
 
-    public void LoadGallery(IReadOnlyList<FileInfo> files)
+    public void LoadGallery(IReadOnlyList<FileInfo> files, CoreViewModel core)
     {
         if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
         {
@@ -58,6 +58,7 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
                 {
                     var file = files[i + j];
                     var item = new GalleryItemViewModel { FileInfo = file };
+                    string? xmpPacket = null;
 
                     try
                     {
@@ -68,6 +69,16 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
 #pragma warning restore MA0042
                         item.PixelWidth = magick.Width;
                         item.PixelHeight = magick.Height;
+
+                        var profile = magick.GetProfile("xmp");
+                        if (profile is not null)
+                        {
+                            var data = profile.ToByteArray();
+                            if (data is not null)
+                            {
+                                xmpPacket = System.Text.Encoding.UTF8.GetString(data);
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -94,14 +105,14 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
 
                         return await Task.Run(async () =>
                         {
-                            var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight)
+                            var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight, core)
                                 .ConfigureAwait(false);
                             if (thumb is not null)
                             {
                                 thumbnailCache.Add(tab.Id, file.FullName, thumb);
                             }
 
-                            item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, null) is not null;
+                            item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, xmpPacket, fastMode: true) is not null;
 
                             return thumb;
                         }, cancellationToken).ConfigureAwait(false);
@@ -129,12 +140,12 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
         tab.Gallery.LoadingState = GalleryLoadingState.Loaded;
     }
 
-    public void ReloadGallery(IReadOnlyList<FileInfo> files)
+    public void ReloadGallery(IReadOnlyList<FileInfo> files, CoreViewModel core)
     {
         tab.Gallery.LoadingState = GalleryLoadingState.Restarting;
         tab.Gallery.GalleryItems.Clear();
         Cancel();
-        LoadGallery(files);
+        LoadGallery(files, core);
     }
 
     public async ValueTask ToggleGalleryAndLoadItem(int index)

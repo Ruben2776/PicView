@@ -364,20 +364,20 @@ public class NavigationServiceTests : IDisposable
     {
         public int GetThumbnailAsyncCalledCount { get; private set; }
 
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file) 
+        public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) 
         {
             GetThumbnailAsyncCalledCount++;
             return ValueTask.FromResult<object?>(null);
         }
 
-        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, MagickImage? magick = null) 
+        public ValueTask<object?> GetThumbnailAsync(FileInfo file, uint size, CoreViewModel? core = null, MagickImage? magick = null) 
         {
             GetThumbnailAsyncCalledCount++;
             return ValueTask.FromResult<object?>(null);
         }
 
         public object? GetExifThumbnail(FileInfo file) => null;
-        public object? GetThumbQuick(FileInfo file) => null;
+        public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
     }
 
     private class MockTempFileService : ITempFileService

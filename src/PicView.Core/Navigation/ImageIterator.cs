@@ -133,7 +133,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
                 {
                     var thumb = !_thumbCache.IsEmpty && _thumbCache.TryGet(targetFile.FullName, out var cachedThumb)
                         ? cachedThumb
-                        : _thumbnailLoader.GetThumbQuick(targetFile);
+                        : _thumbnailLoader.GetThumbQuick(targetFile, _tab.ParentWindowContext.Core);
                     if (!IsTargetActive(targetFile, index))
                     {
                         return;
