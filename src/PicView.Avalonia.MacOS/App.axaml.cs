@@ -41,6 +41,7 @@ public class App : Application, IPlatformSpecificService
         AvaloniaXamlLoader.Load(this);
 
 #if DEBUG
+        // If this cannot be resolved, run dotnet restore PicView.Avalonia.MacOS.csproj --force
         this.AttachDeveloperTools();
 #endif
     }

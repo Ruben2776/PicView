@@ -33,6 +33,7 @@ public class App : Application, IPlatformSpecificService
 #endif
         AvaloniaXamlLoader.Load(this);
 #if DEBUG
+        // If this cannot be resolved, run dotnet restore PicView.Avalonia.Win32.csproj --force
         this.AttachDeveloperTools();
 #endif
     }
