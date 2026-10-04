@@ -45,9 +45,11 @@
                             CornerRadius="0,8,0,0"
                             Data="{StaticResource FilledArrowRightGeometry}"
                             DockPanel.Dock="Right"
+                            Focusable="True"
                             Foreground="{DynamicResource DropDownMenuButtonForeground}"
                             IconHeight="12"
-                            IconWidth="12" />
+                            IconWidth="12"
+                            IsTabStop="True" />
 
                         <customControls:TextIconButton
                             x:Name="MainGalleryButton"
@@ -57,11 +59,13 @@
                             Click="Close_OnClick"
                             Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.ToggleGalleryCommand}"
                             CornerRadius="8,0,0,0"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource GalleryImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
+                            IsTabStop="True"
                             Text="{CompiledBinding Translation.ShowImageGallery.Value}" />
                     </DockPanel>
                     <StackPanel VerticalAlignment="Top">
@@ -77,9 +81,11 @@
                                 Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseGalleryOptions}"
                                 CornerRadius="8,0,0,0"
                                 Data="{StaticResource FilledArrowLeftGeometry}"
+                                Focusable="True"
                                 Foreground="{DynamicResource DropDownMenuButtonForeground}"
                                 IconHeight="12"
-                                IconWidth="12" />
+                                IconWidth="12"
+                                IsTabStop="True" />
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 Classes="txt"
@@ -98,12 +104,14 @@
                             Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
                             DockPanel.Dock="Top"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource GalleryImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
                             IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsBottomDocked.Value}"
+                            IsTabStop="True"
                             Text="{CompiledBinding Translation.ShowDockedGalleryAtBottom.Value}" />
                         <customControls:TextIconButton
                             x:Name="TopDockButton"
@@ -112,12 +120,14 @@
                             Classes="hover"
                             Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Top}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource GalleryImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
                             IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsTopDocked.Value}"
+                            IsTabStop="True"
                             Text="{CompiledBinding Translation.ShowDockedGalleryAtTop.Value}" />
                         <customControls:TextIconButton
                             x:Name="RightDockButton"
@@ -126,12 +136,14 @@
                             Classes="hover"
                             Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Right}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource GalleryImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
                             IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsRightDocked.Value}"
+                            IsTabStop="True"
                             Text="{CompiledBinding Translation.ShowDockedGalleryToTheRight.Value}" />
                         <customControls:TextIconButton
                             x:Name="LeftDockButton"
@@ -140,12 +152,14 @@
                             Classes="hover"
                             Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Left}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource GalleryImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
                             IsEnabled="{CompiledBinding !WindowTabs.ActiveTab.Value.Gallery.IsLeftDocked.Value}"
+                            IsTabStop="True"
                             Text="{CompiledBinding Translation.ShowDockedGalleryToTheLeft.Value}" />
                         <customControls:TextIconButton
                             Padding="15,7,15,7"
@@ -155,11 +169,13 @@
                             CornerRadius="0,0,8,8"
                             Data="{StaticResource CloseGeometry}"
                             DockPanel.Dock="Top"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             IconHeight="12"
                             IconMargin="0,0,7,0"
                             IconWidth="12"
                             IsEnabled="{Binding WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}"
+                            IsTabStop="True"
                             Text="{CompiledBinding Translation.HideDockedGallery.Value}" />
                     </StackPanel>
                 </Carousel.Items>
@@ -175,11 +191,13 @@
                 CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
                 CornerRadius="8,0,0,0"
                 DockPanel.Dock="Top"
+                Focusable="True"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource GalleryImage}"
                 IconHeight="14"
                 IconMargin="0,0,7,0"
                 IconWidth="14"
+                IsTabStop="True"
                 Text="{CompiledBinding Translation.ShowDockedGalleryAtBottom.Value}">
                 <customControls:TextIconButton.IsVisible>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
@@ -199,10 +217,12 @@
                 CornerRadius="8,0,0,0"
                 Data="{StaticResource CloseGeometry}"
                 DockPanel.Dock="Top"
+                Focusable="True"
                 Foreground="{DynamicResource MainTextColor}"
                 IconHeight="12"
                 IconMargin="0,0,7,0"
                 IconWidth="12"
+                IsTabStop="True"
                 Text="{CompiledBinding Translation.HideDockedGallery.Value}">
                 <customControls:TextIconButton.IsVisible>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
@@ -245,9 +265,11 @@
                             Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenSlideshowOptions}"
                             Data="{StaticResource FilledArrowRightGeometry}"
                             DockPanel.Dock="Right"
+                            Focusable="True"
                             Foreground="{DynamicResource DropDownMenuButtonForeground}"
                             IconHeight="12"
-                            IconWidth="12" />
+                            IconWidth="12"
+                            IsTabStop="True" />
 
                         <customControls:TextIconButton
                             x:Name="MainSlideshowButton"
@@ -257,11 +279,13 @@
                             Click="Close_OnClick"
                             ClickMode="Release"
                             Command="{Binding SlideshowCommand}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource SlideshowImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
+                            IsTabStop="True"
                             Text="{CompiledBinding Translation.Slideshow.Value}" />
                     </DockPanel>
                     <StackPanel VerticalAlignment="Top">
@@ -277,9 +301,11 @@
                                 Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseSlideshowOptions}"
                                 CornerRadius="8,0,0,0"
                                 Data="{StaticResource FilledArrowLeftGeometry}"
+                                Focusable="True"
                                 Foreground="{DynamicResource MainTextColor}"
                                 IconHeight="12"
-                                IconWidth="12" />
+                                IconWidth="12"
+                                IsTabStop="True" />
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 Classes="txt"
@@ -296,77 +322,91 @@
                             Background="Transparent"
                             Classes="hover"
                             CommandParameter="2000"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
-                            IconWidth="14" />
+                            IconWidth="14"
+                            IsTabStop="True" />
                         <customControls:TextIconButton
                             x:Name="SlideShow5Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="hover"
                             CommandParameter="5000"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
-                            IconWidth="14" />
+                            IconWidth="14"
+                            IsTabStop="True" />
                         <customControls:TextIconButton
                             x:Name="SlideShow10Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="hover"
                             CommandParameter="10000"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
-                            IconWidth="14" />
+                            IconWidth="14"
+                            IsTabStop="True" />
                         <customControls:TextIconButton
                             x:Name="SlideShow20Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="hover"
                             CommandParameter="20000"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
-                            IconWidth="14" />
+                            IconWidth="14"
+                            IsTabStop="True" />
                         <customControls:TextIconButton
                             x:Name="SlideShow30Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="hover"
                             CommandParameter="30000"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
-                            IconWidth="14" />
+                            IconWidth="14"
+                            IsTabStop="True" />
                         <customControls:TextIconButton
                             x:Name="SlideShow60Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="hover"
                             CommandParameter="60000"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
-                            IconWidth="14" />
+                            IconWidth="14"
+                            IsTabStop="True" />
                         <customControls:TextIconButton
                             x:Name="SlideShow90Sec"
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="hover"
                             CommandParameter="90000"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
-                            IconWidth="14" />
+                            IconWidth="14"
+                            IsTabStop="True" />
                         <customControls:TextIconButton
                             x:Name="SlideShow120Sec"
                             Padding="15,7,15,7"
@@ -374,11 +414,13 @@
                             Classes="hover"
                             CommandParameter="120000"
                             CornerRadius="0,0,8,8"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource TimerImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
-                            IconWidth="14" />
+                            IconWidth="14"
+                            IsTabStop="True" />
                     </StackPanel>
                 </Carousel.Items>
             </Carousel>
@@ -398,11 +440,13 @@
                 Click="Close_OnClick"
                 Command="{Binding EffectsWindowCommand}"
                 DockPanel.Dock="Top"
+                Focusable="True"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource SparklesImage}"
                 IconHeight="14"
                 IconMargin="0,0,7,0"
                 IconWidth="14"
+                IsTabStop="True"
                 IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
                 Text="{Binding Translation.Effects.Value}"
                 ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
@@ -417,11 +461,13 @@
                 Click="Close_OnClick"
                 Command="{Binding ResizeWindowCommand}"
                 DockPanel.Dock="Top"
+                Focusable="True"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource BatchResizeImage}"
                 IconHeight="14"
                 IconMargin="0,0,7,0"
                 IconWidth="14"
+                IsTabStop="True"
                 IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
                 Text="{Binding Translation.ResizeImage.Value}" />
 
@@ -434,11 +480,13 @@
                 Click="Close_OnClick"
                 Command="{Binding BatchResizeWindowCommand}"
                 DockPanel.Dock="Top"
+                Focusable="True"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource BatchResizeImage}"
                 IconHeight="14"
                 IconMargin="0,0,7,0"
                 IconWidth="14"
+                IsTabStop="True"
                 IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
                 Text="{Binding Translation.BatchResize.Value}" />
 
@@ -451,11 +499,13 @@
                 Click="Close_OnClick"
                 Command="{Binding ImageInfoWindowCommand}"
                 DockPanel.Dock="Top"
+                Focusable="True"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource CameraImage}"
                 IconHeight="14"
                 IconMargin="0,0,7,0"
                 IconWidth="14"
+                IsTabStop="True"
                 IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
                 Text="{Binding Translation.ImageInfo.Value}" />
 
@@ -468,12 +518,14 @@
                 Click="Close_OnClick"
                 Command="{Binding CropCommand}"
                 DockPanel.Dock="Top"
+                Focusable="True"
                 Foreground="{DynamicResource MainTextColor}"
                 Icon="{StaticResource CropImage}"
                 IconHeight="14"
                 IconMargin="0,0,7,0"
                 IconWidth="14"
                 IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldCropBeEnabled.Value}"
+                IsTabStop="True"
                 IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
                 Text="{Binding Translation.Crop.Value}" />
 
@@ -507,9 +559,11 @@
                             Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.OpenSettingsOptions}"
                             Data="{StaticResource FilledArrowRightGeometry}"
                             DockPanel.Dock="Right"
+                            Focusable="True"
                             Foreground="{DynamicResource DropDownMenuButtonForeground}"
                             IconHeight="12"
-                            IconWidth="12" />
+                            IconWidth="12"
+                            IsTabStop="True" />
 
                         <!--  Main settings button  -->
                         <customControls:TextIconButton
@@ -520,11 +574,13 @@
                             Click="Close_OnClick"
                             ClickMode="Release"
                             Command="{CompiledBinding SettingsWindowCommand}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource CogImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
+                            IsTabStop="True"
                             Text="{CompiledBinding Translation.Settings.Value}" />
                     </DockPanel>
                     <StackPanel VerticalAlignment="Top">
@@ -542,9 +598,11 @@
                                 Command="{CompiledBinding TopTitlebarViewModel.DropDownMenu.CloseSettingsOptions}"
                                 CornerRadius="8,0,0,0"
                                 Data="{StaticResource FilledArrowLeftGeometry}"
+                                Focusable="True"
                                 Foreground="{DynamicResource MainTextColor}"
                                 IconHeight="14"
-                                IconWidth="14" />
+                                IconWidth="14"
+                                IsTabStop="True" />
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 Classes="txt"
@@ -563,8 +621,10 @@
                             Background="Transparent"
                             Classes="hover"
                             Command="{Binding AutoFitWindowCommand}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding IsAutoFit.Value, Mode=TwoWay}"
+                            IsTabStop="True"
                             Text="{Binding Translation.AutoFitWindow.Value}"
                             TextMargin="0,0,7,0"
                             ToolTip.Tip="{CompiledBinding Translation.AutoFitWindow.Value,
@@ -577,8 +637,10 @@
                             Background="Transparent"
                             Classes="hover"
                             Command="{Binding SetTopMostCommand}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding IsTopMost.Value, Mode=TwoWay}"
+                            IsTabStop="True"
                             Text="{Binding Translation.StayTopMost.Value}"
                             TextMargin="0,0,7,0"
                             ToolTip.Tip="{CompiledBinding Translation.StayTopMost.Value,
@@ -591,8 +653,10 @@
                             Background="Transparent"
                             Classes="hover"
                             Command="{Binding ToggleLoopingCommand}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=TwoWay}"
+                            IsTabStop="True"
                             Text="{Binding Translation.ToggleLooping.Value}"
                             TextMargin="0,0,7,0"
                             ToolTip.Tip="{CompiledBinding Translation.ToggleLooping.Value,
@@ -605,8 +669,10 @@
                             Background="Transparent"
                             Classes="hover"
                             Command="{Binding ToggleScrollCommand}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding IsScrollingEnabled.Value, Mode=TwoWay}"
+                            IsTabStop="True"
                             Text="{Binding Translation.IsScrolling.Value}"
                             TextMargin="0,0,7,0"
                             ToolTip.Tip="{CompiledBinding Translation.ToggleScroll.Value,
@@ -619,8 +685,10 @@
                             Background="Transparent"
                             Classes="hover"
                             Command="{Binding ZoomToFitCommand}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding IsZoomedToFit.Value, Mode=TwoWay}"
+                            IsTabStop="True"
                             Text="{Binding Translation.ZoomToFit.Value}"
                             TextMargin="0,0,7,0"
                             ToolTip.Tip="{CompiledBinding Translation.ZoomToFit.Value,
@@ -633,8 +701,10 @@
                             Background="Transparent"
                             Classes="hover"
                             Command="{Binding SideBySideCommand}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             IsChecked="{Binding IsSideBySide.Value, Mode=TwoWay}"
+                            IsTabStop="True"
                             Text="{Binding Translation.SideBySide.Value}"
                             TextMargin="0,0,7,0"
                             ToolTip.Tip="{CompiledBinding Translation.SideBySideTooltip.Value,
@@ -652,11 +722,13 @@
                             Background="Transparent"
                             Classes="hover"
                             Command="{Binding AboutWindowCommand}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource AboutImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
+                            IsTabStop="True"
                             Text="{Binding Translation.About.Value}"
                             ToolTip.Tip="{Binding Translation.AboutWindow.Value}" />
 
@@ -668,11 +740,13 @@
                             Background="Transparent"
                             Classes="hover"
                             Command="{Binding KeybindingsWindowCommand}"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource KeyImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
+                            IsTabStop="True"
                             Text="{Binding Translation.ApplicationShortcuts.Value}"
                             ToolTip.Tip="{Binding Translation.ApplicationShortcuts.Value}" />
 
@@ -684,11 +758,13 @@
                             Classes="hover"
                             Command="{Binding SettingsWindowCommand}"
                             CornerRadius="0,0,8,8"
+                            Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
                             Icon="{StaticResource CogImage}"
                             IconHeight="14"
                             IconMargin="0,0,7,0"
                             IconWidth="14"
+                            IsTabStop="True"
                             Text="{Binding Translation.ShowAllSettingsWindow.Value}"
                             ToolTip.Tip="{Binding Translation.ShowAllSettingsWindow.Value}" />
                     </StackPanel>
@@ -719,10 +795,12 @@
                         Classes="hover"
                         Command="{Binding FileHistory.ToggleSortCommand}"
                         DockPanel.Dock="Right"
+                        Focusable="True"
                         Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource SortDescImage}"
                         IconHeight="14"
-                        IconWidth="14" />
+                        IconWidth="14"
+                        IsTabStop="True" />
 
                     <customControls:IconButton
                         x:Name="HistoryClearButton"
@@ -732,9 +810,11 @@
                         Command="{Binding FileHistory.ClearHistoryCommand}"
                         Data="{StaticResource RecycleGeometry}"
                         DockPanel.Dock="Right"
+                        Focusable="True"
                         Foreground="{DynamicResource MainTextColor}"
                         IconHeight="14"
                         IconWidth="14"
+                        IsTabStop="True"
                         ToolTip.Tip="{CompiledBinding Translation.Clear.Value,
                                                       Mode=OneWay}" />
 
@@ -746,10 +826,12 @@
                         ClickMode="Release"
                         Command="{Binding FileHistory.OpenFileHistoryCommand}"
                         DockPanel.Dock="Right"
+                        Focusable="True"
                         Foreground="{DynamicResource MainTextColor}"
                         Icon="{StaticResource SquareLibrary}"
                         IconHeight="14"
                         IconWidth="14"
+                        IsTabStop="True"
                         ToolTip.Tip="{CompiledBinding Translation.OpenFileHistory.Value,
                                                       Mode=OneWay}" />
 
@@ -783,7 +865,7 @@
                             </ListBox.Styles>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <uc:FileHistoryItem />
+                                    <uc:FileHistoryItem Focusable="True" IsTabStop="True" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>

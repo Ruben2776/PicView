@@ -88,6 +88,7 @@ public partial class DropDownMenu : AnimatedMenu
         vm.FileHistory.Entries.CollectionChanged += EntriesOnCollectionChanged;
 
         _menuVisibilitySubscription = Observable.EveryValueChanged(this, x => x.IsVisible)
+            .Skip(1)
             .SubscribeOn(_mainWindow.FrameProvider).Subscribe(isVisible =>
             {
                 if (isVisible)
@@ -212,7 +213,7 @@ public partial class DropDownMenu : AnimatedMenu
         UpdateCollection(e, UnPinnedEntriesCollection);
     }
 
-    private void UpdateCollection(in NotifyCollectionChangedEventArgs<FileHistoryEntryViewModel> e, ItemsControl collection)
+    private static void UpdateCollection(in NotifyCollectionChangedEventArgs<FileHistoryEntryViewModel> e, ItemsControl collection)
     {
         switch (e.Action)
         {
@@ -255,8 +256,6 @@ public partial class DropDownMenu : AnimatedMenu
             case NotifyCollectionChangedAction.Reset:
                 collection.Items.Clear();
                 break;
-            default:
-                throw new ArgumentOutOfRangeException();
         }
     }
 

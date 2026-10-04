@@ -23,7 +23,7 @@ public class AnimatedPopUp : ContentControl
     
     protected AnimatedPopUp()
     {
-        Loaded += async delegate { await AnimatedOpening(); };
+        Loaded += async delegate { await AnimatedOpening().ConfigureAwait(false); };
     }
 
     public bool ClickingOutsideCloses
@@ -43,26 +43,9 @@ public class AnimatedPopUp : ContentControl
         _partOverlay?.Opacity = 0;
         _partBorder?.Opacity = 0;
 
-        ApplyGlassThemeBackground();
-
         if (_partOverlay != null)
         {
-            _partOverlay.PointerPressed += async (_, _) => await OnOverlayPointerPressed();
-        }
-    }
-
-    private void ApplyGlassThemeBackground()
-    {
-        if (!Settings.Theme.GlassTheme || _partBorder == null)
-        {
-            return;
-        }
-
-        if (Application.Current.TryGetResource("MenuBackgroundColor",
-                Application.Current.RequestedThemeVariant, out var bgColor)
-            && bgColor is Color color)
-        {
-            _partBorder.Background = new SolidColorBrush(color);
+            _partOverlay.PointerPressed += async (_, _) => await OnOverlayPointerPressed().ConfigureAwait(false);
         }
     }
 
@@ -75,7 +58,7 @@ public class AnimatedPopUp : ContentControl
 
         if (_partBorder is { IsPointerOver: false })
         {
-            await AnimatedClosing();
+            await AnimatedClosing().ConfigureAwait(false);
         }
     }
 
@@ -100,7 +83,7 @@ public class AnimatedPopUp : ContentControl
             fadeIn.RunAsync(_partOverlay),
             fadeIn.RunAsync(_partBorder),
             centering.RunAsync(_partBorder)
-        );
+        ).ConfigureAwait(false);
     }
 
     public async Task AnimatedClosing(bool remove = true)
@@ -137,7 +120,7 @@ public class AnimatedPopUp : ContentControl
             fadeIn.RunAsync(_partOverlay),
             fadeIn.RunAsync(_partBorder),
             centering.RunAsync(_partBorder)
-        );
+        ).ConfigureAwait(true);
         if (remove)
         {
             mainWindow.UIHelper.GetMainView.MainPanel.Children.Remove(this);

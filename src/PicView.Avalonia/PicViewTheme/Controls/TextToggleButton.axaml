@@ -202,6 +202,16 @@
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
         </Style>
 
+
+        <Style Selector="^:focus-within /template/ Border#border">
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style Selector="^.PrimaryBtnHover:focus-within /template/ Border#border">
+            <Setter Property="BorderBrush" Value="{DynamicResource TextBoxHoverBorderColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
         <Style Selector="^:disabled">
             <Setter Property="Opacity" Value="{DynamicResource ThemeDisabledOpacity}" />
         </Style>
