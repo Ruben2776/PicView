@@ -85,7 +85,7 @@ public static class CropManager
             activeTab.CropService = service = new CropService(activeTab, mainWindow);
         }
 
-        await service.StartCropControlAsync();
+        await service.StartCropControlAsync().ConfigureAwait(false);
     }
 
     public static void CloseCropControl(MainWindowViewModel vm)
