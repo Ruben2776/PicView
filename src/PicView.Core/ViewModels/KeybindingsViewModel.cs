@@ -13,11 +13,13 @@ public class KeybindingsViewModel : IDisposable
     
     private readonly CompositeDisposable _disposables = new();
     
+    public BindableReactiveProperty<bool> IsLoading { get; } = new(true);
+    
     public BindableReactiveProperty<string> FilterText { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
     public BindableReactiveProperty<bool> IsFiltering { get; } = new();
     public BindableReactiveProperty<ObservableList<KeyBindingsModel>> FilteredKeys { get; } = new([]);
-    public ReactiveCommand? ClearFilteringCommand { get; }
     
+    public ReactiveCommand? ClearFilteringCommand { get; }
     public ReactiveCommand? ResetKeybindingsCommand { get; set; }
     
     

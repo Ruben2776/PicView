@@ -28,12 +28,12 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
     public void Initialize()
     {
-        PopulateCategories();
-
         if (view.DataContext is not CoreViewModel core)
         {
             return;
         }
+        
+        PopulateCategories();
         
         core.GlobalSettings.Initialize();
 
@@ -41,7 +41,11 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         _filterSubscription = core.Keybindings.FilterText.Subscribe(ApplyFilter);
 
         // Defer button setup until after the window has been shown
-        Dispatcher.UIThread.Post(InitializeButtons, DispatcherPriority.Background);
+        Dispatcher.UIThread.Post(() =>
+        {
+            InitializeButtons();
+            core.Keybindings.IsLoading.Value = false;
+        }, DispatcherPriority.Background);
     }
 
     public void HandleKeyPressed(KeyEventArgs e)
