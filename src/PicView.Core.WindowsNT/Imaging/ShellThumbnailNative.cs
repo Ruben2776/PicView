@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 
-namespace PicView.Core.WindowsNT;
+namespace PicView.Core.WindowsNT.Imaging;
 
 /// <summary>
 /// AOT-compatible Windows Shell thumbnail extraction via IShellItemImageFactory.

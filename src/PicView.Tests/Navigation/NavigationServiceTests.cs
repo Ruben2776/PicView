@@ -425,6 +425,12 @@ public class NavigationServiceTests : IDisposable
             pixelHeight = 0;
             return null;
         }
+        public byte[]? GetPixelsFromNativeImagingComponent(string path, out int pixelWidth, out int pixelHeight)
+        {
+            pixelWidth = 0;
+            pixelHeight = 0;
+            return null;
+        }
     }
 
     private class MockFrameProvider : FrameProvider

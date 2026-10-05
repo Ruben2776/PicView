@@ -1,8 +1,12 @@
-﻿using Avalonia.Media.Imaging;
+using System.Runtime.InteropServices;
+using Avalonia;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageReading;
+using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.ImageHandling;
 
@@ -161,6 +165,36 @@ public static class GetImage
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(GetImage), nameof(TransformToSrgbIfNeeded), e);
+        }
+    }
+    
+    public static WriteableBitmap? GetShellBitmap(string path, CoreViewModel core)
+    {
+        try
+        {
+            var platformService = core.PlatformService;
+
+            var pixels = platformService.GetPixelsFromNativeImagingComponent(path, out var pixelWidth, out var pixelHeight);
+
+            if (pixels is null || pixelWidth <= 0 || pixelHeight <= 0)
+            {
+                return null;
+            }
+
+            var pixelSize = new PixelSize(pixelWidth, pixelHeight);
+            var bitmap = new WriteableBitmap(pixelSize, new Vector(96, 96),
+                PixelFormat.Bgra8888, AlphaFormat.Premul);
+
+            using var framebuffer = bitmap.Lock();
+            Marshal.Copy(pixels, 0, framebuffer.Address,
+                Math.Min(pixels.Length, framebuffer.RowBytes * pixelHeight));
+
+            return bitmap;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetImage), nameof(GetShellBitmap), e);
+            return null;
         }
     }
 }

@@ -1,6 +1,8 @@
 using System.Text;
+using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
+using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.AnimatedImage.Decoding;
 using PicView.Avalonia.Svg;
@@ -10,6 +12,7 @@ using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation.Tiff;
+using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.ImageHandling;
 
@@ -25,7 +28,7 @@ public static class GetImageModel
     /// <param name="fileInfo">The file information of the image to process.</param>
     /// <param name="magickImage">An optional <see cref="MagickImage"/> instance. If null, a new instance will be created internally.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the constructed <see cref="ImageModel"/>.</returns>
-    public static async ValueTask<ImageModel?> GetImageModelAsync(FileInfo fileInfo, MagickImage? magickImage, CancellationToken ct = default)
+    public static async ValueTask<ImageModel?> GetImageModelAsync(FileInfo fileInfo, MagickImage? magickImage, CoreViewModel? core = null, CancellationToken ct = default)
     {
         if (fileInfo is null)
         {
@@ -74,7 +77,7 @@ public static class GetImageModel
                     }
                     else
                     {
-                        await ProcessSkBitmapAsync(fileInfo, magickImage.Format, imageModel).ConfigureAwait(false);
+                        await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
                     }
 
                     if (ImageAnalyzer.IsAnimated(fileInfo))
@@ -91,7 +94,7 @@ public static class GetImageModel
                     }
                     else
                     {
-                        await ProcessSkBitmapAsync(fileInfo, magickImage.Format, imageModel).ConfigureAwait(false);
+                        await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
                     }
 
                     if (IsAnimatedGif(fileInfo))
@@ -121,7 +124,22 @@ public static class GetImageModel
                     }
                     else
                     {
-                        await ProcessSkBitmapAsync(fileInfo, magickImage.Format, imageModel).ConfigureAwait(false);
+                        if (OperatingSystem.IsWindows())
+                        {
+                            core ??= await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
+                            var bitmap = GetImage.GetShellBitmap(fileInfo.FullName, core);
+                            if (bitmap is not null)
+                            {
+                                imageModel.Image = bitmap;
+                                imageModel.ImageType = ImageType.Bitmap;
+                                imageModel.FileInfo = fileInfo;
+                                imageModel.PixelWidth = (uint)bitmap.PixelSize.Width;
+                                imageModel.PixelHeight = (uint)bitmap.PixelSize.Height;
+                            }
+
+                            return imageModel;
+                        }
+                        await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
                     }
                     break;
                 
@@ -136,12 +154,12 @@ public static class GetImageModel
 
                 case MagickFormat.Tif:
                 case MagickFormat.Tiff:
-                    await ProcessTiff(fileInfo, imageModel, magickImage);
+                    await ProcessTiff(fileInfo, imageModel, magickImage).ConfigureAwait(false);
                     break;
 
                 case MagickFormat.Svg:
                 case MagickFormat.Svgz:
-                    await ProcessSvg(fileInfo, imageModel, magickImage);
+                    await ProcessSvg(fileInfo, imageModel, magickImage).ConfigureAwait(false);
                     break;
                 
                 case MagickFormat.Arw:
@@ -334,7 +352,7 @@ public static class GetImageModel
 
     #region Image Processing Methods
 
-    private static async ValueTask ProcessSkBitmapAsync(FileInfo fileInfo, MagickFormat format, ImageModel imageModel)
+    private static async ValueTask ProcessSkBitmapAsync(FileInfo fileInfo, ImageModel imageModel)
     {
         var bitmap = await GetImage.GetSkBitmapAsync(fileInfo).ConfigureAwait(false);
         SetBitmapProperties(bitmap, imageModel);
@@ -342,7 +360,7 @@ public static class GetImageModel
 
     private static async Task ProcessSvg(FileInfo fileInfo, ImageModel imageModel, MagickImage magickImage)
     {
-        var svgData = await SvgLoader.GetContentFromSvgFileAsync(fileInfo.FullName);
+        var svgData = await SvgLoader.GetContentFromSvgFileAsync(fileInfo.FullName).ConfigureAwait(false);
         imageModel.PixelWidth = magickImage.Width;
         imageModel.PixelHeight = magickImage.Height;
         imageModel.ImageType = ImageType.Svg;
@@ -366,7 +384,7 @@ public static class GetImageModel
         using var tempMagickImage = GetImage.CreateAndPingMagickImage(tempFileInfo);
         if (tempMagickImage.Format is MagickFormat.Jpe or MagickFormat.Jpeg or MagickFormat.Pjpeg)
         {
-            await ProcessSkBitmapAsync(tempFileInfo, tempMagickImage.Format, imageModel).ConfigureAwait(false);
+            await ProcessSkBitmapAsync(tempFileInfo, imageModel).ConfigureAwait(false);
         }
         else
         {

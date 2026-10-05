@@ -13,8 +13,10 @@ using PicView.Core.ViewModels;
 using PicView.Core.WindowsNT;
 using PicView.Core.WindowsNT.FileAssociation;
 using PicView.Core.WindowsNT.FileHandling;
+using PicView.Core.WindowsNT.Imaging;
 using PicView.Core.WindowsNT.Taskbar;
 using PicView.Core.WindowsNT.Wallpaper;
+using ShellThumbnailNative = PicView.Core.WindowsNT.Imaging.ShellThumbnailNative;
 
 namespace PicView.Avalonia.Win32;
 
@@ -180,6 +182,11 @@ public class App : Application, IPlatformSpecificService
     public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
     {
         return ShellThumbnailNative.GetShellThumbnailBytes(path, width, height, out pixelWidth, out pixelHeight);
+    }
+
+    public byte[]? GetPixelsFromNativeImagingComponent(string path, out int pixelWidth, out int pixelHeight)
+    {
+        return Win32Image.GetPixelsFromNativeImagingComponent(path, out pixelWidth, out pixelHeight);
     }
 
     #endregion

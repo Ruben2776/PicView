@@ -38,4 +38,6 @@ public interface IPlatformSpecificService
     /// Implemented on Windows and macOS, returns null on unsupported platforms or on failure.
     /// </summary>
     byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight);
+    
+    byte[]? GetPixelsFromNativeImagingComponent(string path, out int pixelWidth, out int pixelHeight);
 }

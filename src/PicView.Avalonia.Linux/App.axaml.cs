@@ -164,5 +164,12 @@ public class App : Application, IPlatformSpecificService
         return null;
     }
 
+    public byte[]? GetPixelsFromNativeImagingComponent(string path, out int pixelWidth, out int pixelHeight)
+    {
+        pixelWidth = 0;
+        pixelHeight = 0;
+        return null;
+    }
+
     #endregion
 }

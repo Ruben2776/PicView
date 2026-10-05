@@ -23,7 +23,7 @@ public static class SettingsUpdater
 {
     public static void InitializeSettings(MainWindowViewModel vm, bool settingsExists)
     {
-        ServiceHelper.SetAvaloniaImageLoader();
+        ServiceHelper.SetAvaloniaImageLoader(vm.Core);
         ServiceHelper.SetGalleryLoader();
         _ = Task.Run(() =>
         {
