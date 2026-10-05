@@ -109,7 +109,8 @@ public class NavigationServiceTests : IDisposable
 
     private TabViewModel CreateTab(string directory, MainWindowViewModel? parentVm = null)
     {
-        var tab = new TabViewModel(null!, parentVm!);
+        var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var tab = new TabViewModel(null!, dummyParent);
         // Initialize with mocks to avoid null refs
         var thumbCache = new MockThumbnailCache();
         tab.Initialize(_mockCache, thumbCache, _mockThumbnailLoader, null, thumbCache);
