@@ -25,7 +25,7 @@ public static class SettingsUpdater
     {
         ServiceHelper.SetAvaloniaImageLoader();
         ServiceHelper.SetGalleryLoader();
-        _ = Task.Run(async () =>
+        _ = Task.Run(() =>
         {
             vm.TitlebarHeight.Value = Settings.WindowProperties.Fullscreen
                                       || !Settings.UIProperties.ShowInterface
@@ -42,7 +42,9 @@ public static class SettingsUpdater
                                               Settings.UIProperties.ShowInterface;
             vm.IsFullscreen.Value  = Settings.WindowProperties.Fullscreen;
             vm.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
-            await LanguageUpdater.UpdateLanguageAsync(vm.Translation, settingsExists).ConfigureAwait(false);
+#pragma warning disable MA0042
+            LanguageUpdater.UpdateLanguage(vm.Translation, settingsExists);
+#pragma warning restore MA0042
             vm.WindowTabs.ActiveTab.CurrentValue.SetLoading();
         });
     }
