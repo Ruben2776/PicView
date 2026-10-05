@@ -105,7 +105,7 @@ public abstract class AbstractPrintEngine : IPrintEngine
 
         try
         {
-            await RunPrintJob(settings, GetBitmap(tab));
+            await RunPrintJob(settings, GetBitmap(tab)).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
