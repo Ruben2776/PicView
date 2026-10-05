@@ -506,6 +506,10 @@ public class SharedImageCache : IImageCache
     {
         lock (_disposalLock)
         {
+            if (_disposalQueue.Count is 0)
+            {
+                return;
+            }
             _disposalQueue.Clear();
             
             foreach (var kvp in _pathLookup)
