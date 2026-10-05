@@ -25,6 +25,15 @@ public static class MotionPhotoDetector
     /// <summary>Scan up to 1 MB from the file start when searching for an XMP packet.</summary>
     private const int XmpScanWindowBytes = 1024 * 1024;
 
+    // Motion photo videos only exist in these containers. The gate lives here (rather
+    // than in each caller) so every detection path behaves identically - e.g. a PNG
+    // with a same-named video file must never be flagged as a motion photo.
+    public static bool IsMotionPhotoExtension(string extension) =>
+        extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+        extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+        extension.Equals(".heic", StringComparison.OrdinalIgnoreCase) ||
+        extension.Equals(".heif", StringComparison.OrdinalIgnoreCase);
+
     /// <summary>
     /// Attempts to detect motion photo data for the given file.
     /// </summary>
@@ -52,14 +61,8 @@ public static class MotionPhotoDetector
             {
                 return new MotionPhotoInfo { Source = MotionPhotoSource.LivpContainer };
             }
-
-            // Motion photo videos only exist in these containers. The gate lives here (rather
-            // than in each caller) so every detection path behaves identically - e.g. a PNG
-            // with a same-named video file must never be flagged as a motion photo.
-            if (!extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) &&
-                !extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) &&
-                !extension.Equals(".heic", StringComparison.OrdinalIgnoreCase) &&
-                !extension.Equals(".heif", StringComparison.OrdinalIgnoreCase))
+            
+            if (!IsMotionPhotoExtension(extension))
             {
                 return null;
             }

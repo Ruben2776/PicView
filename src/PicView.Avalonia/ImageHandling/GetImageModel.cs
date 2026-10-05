@@ -18,23 +18,31 @@ namespace PicView.Avalonia.ImageHandling;
 
 public static class GetImageModel
 {
-    /// <inheritdoc cref="GetImageModelAsync(System.IO.FileInfo, MagickImage)"/>
+    /// <inheritdoc cref="GetImageModelAsync(FileInfo, MagickImage?, CoreViewModel?, CancellationToken)"/>
     public static async ValueTask<ImageModel> GetImageModelAsync(FileInfo fileInfo) =>
-        await GetImageModelAsync(fileInfo, null).ConfigureAwait(false) ?? CreateErrorImageModel(fileInfo);
+        await GetImageModelAsync(fileInfo, magickImage: null).ConfigureAwait(false) ?? CreateErrorImageModel(fileInfo);
 
     /// <summary>
     /// Asynchronously retrieves an <see cref="ImageModel"/> instance based on the provided file and optional <see cref="MagickImage"/>.
     /// </summary>
     /// <param name="fileInfo">The file information of the image to process.</param>
     /// <param name="magickImage">An optional <see cref="MagickImage"/> instance. If null, a new instance will be created internally.</param>
+    /// <param name="core">Optional core view model used for shell-based decoders.</param>
+    /// <param name="ct">The token to monitor for cancellation requests.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the constructed <see cref="ImageModel"/>.</returns>
-    public static async ValueTask<ImageModel?> GetImageModelAsync(FileInfo fileInfo, MagickImage? magickImage, CoreViewModel? core = null, CancellationToken ct = default)
+    public static async ValueTask<ImageModel?> GetImageModelAsync(
+        FileInfo fileInfo,
+        MagickImage? magickImage = null,
+        CoreViewModel? core = null,
+        CancellationToken ct = default)
     {
         if (fileInfo is null)
         {
-            DebugHelper.LogDebug(nameof(GetImageModel), nameof(GetImageModelAsync), "fileInfo is null");
+            DebugHelper.LogDebug(nameof(GetImageModel), nameof(GetImageModelAsync), $"{nameof(fileInfo)} is null");
             return CreateErrorImageModel(null);
         }
+
+        ct.ThrowIfCancellationRequested();
 
         var imageModel = new ImageModel { FileInfo = fileInfo };
         var shouldDisposeMagickImage = magickImage is null;
@@ -43,43 +51,36 @@ public static class GetImageModel
         {
             // .livp is a zip container that cannot be pinged by Magick, so it must be
             // handled before the MagickImage is initialized.
-            if (fileInfo.Extension.Equals(".livp", StringComparison.InvariantCultureIgnoreCase))
+            if (fileInfo.Extension.Equals(".livp", StringComparison.OrdinalIgnoreCase))
             {
                 await ProcessLivpAsync(fileInfo, imageModel).ConfigureAwait(false);
                 return imageModel;
             }
 
+            // .b64 is a text file containing base64 data, handled separately without Magick ping.
+            if (fileInfo.Extension.Equals(".b64", StringComparison.OrdinalIgnoreCase))
+            {
+                return await GetBase64ImageModelAsync(fileInfo, ct).ConfigureAwait(false) ?? CreateErrorImageModel(fileInfo);
+            }
+
             // Initialize MagickImage if not provided
             magickImage ??= GetImage.CreateAndPingMagickImage(fileInfo);
 
-            // Extract metadata
-            // Check if rotation is needed
+            ct.ThrowIfCancellationRequested();
+
+            // Extract metadata and check orientation / color profile
             var orientation = ExifOrientationHelper.GetImageOrientation(magickImage);
             var shouldAutoOrient = orientation is not (ExifOrientation.None or ExifOrientation.Horizontal);
             var shouldColorManage = HasNonSrgbColorProfile(magickImage);
-            
-            if (fileInfo.Extension.Equals(".b64", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return await GetBase64ImageModelAsync(fileInfo, ct).ConfigureAwait(false);
-            }
+            var requiresMagickFallback = shouldAutoOrient || shouldColorManage;
 
             // Process the image based on type
             // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (magickImage.Format)
             {
-                case MagickFormat.WebP: 
+                case MagickFormat.WebP:
                 case MagickFormat.WebM:
-                    // If rotation is needed, we use the Magick path (NonStandard) to apply AutoOrient.
-                    // Otherwise we use the faster SkBitmap (Avalonia native) path.
-                    if (shouldAutoOrient)
-                    {
-                        await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
-                    }
-
+                    await ProcessStandardOrNonStandardAsync(fileInfo, imageModel, magickImage, requiresMagickFallback).ConfigureAwait(false);
                     if (ImageAnalyzer.IsAnimated(fileInfo))
                     {
                         imageModel.ImageType = ImageType.AnimatedWebp;
@@ -88,15 +89,7 @@ public static class GetImageModel
 
                 case MagickFormat.Gif:
                 case MagickFormat.Gif87:
-                    if (shouldAutoOrient)
-                    {
-                        await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
-                    }
-
+                    await ProcessStandardOrNonStandardAsync(fileInfo, imageModel, magickImage, shouldAutoOrient).ConfigureAwait(false);
                     if (IsAnimatedGif(fileInfo))
                     {
                         imageModel.ImageType = ImageType.AnimatedGif;
@@ -110,32 +103,14 @@ public static class GetImageModel
                 case MagickFormat.Png32:
                 case MagickFormat.Png48:
                 case MagickFormat.Png64:
-                {
-                    var is8BitGrayPng = magickImage.ColorSpace is ColorSpace.Gray && magickImage.Depth is 8;
-                    if (is8BitGrayPng && OperatingSystem.IsWindows())
+                    if (await TryProcess8BitGrayPngAsync(fileInfo, imageModel, magickImage, core).ConfigureAwait(false))
                     {
-                        core ??= await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-                        var bitmap = GetImage.GetShellBitmap(fileInfo.FullName, core);
-                        if (bitmap is not null)
-                        {
-                            imageModel.Image = bitmap;
-                            imageModel.ImageType = ImageType.Bitmap;
-                            imageModel.FileInfo = fileInfo;
-                            imageModel.PixelWidth = (uint)bitmap.PixelSize.Width;
-                            imageModel.PixelHeight = (uint)bitmap.PixelSize.Height;
-                            return imageModel;
-                        }
+                        return imageModel;
                     }
-                    if (shouldAutoOrient || shouldColorManage)
-                    {
-                        await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
-                    }
+
+                    await ProcessStandardOrNonStandardAsync(fileInfo, imageModel, magickImage, requiresMagickFallback).ConfigureAwait(false);
                     break;
-                }
+
                 case MagickFormat.APng: // TODO add animation one day
                 case MagickFormat.Jpe:
                 case MagickFormat.Jpeg:
@@ -144,19 +119,11 @@ public static class GetImageModel
                 case MagickFormat.Ico:
                 case MagickFormat.Icon:
                 case MagickFormat.Wbmp:
-                    if (shouldAutoOrient || shouldColorManage)
-                    {
-                        await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
-                    }
+                    await ProcessStandardOrNonStandardAsync(fileInfo, imageModel, magickImage, requiresMagickFallback).ConfigureAwait(false);
                     break;
-                
+
                 case MagickFormat.Avif:
                     await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
-
                     if (ImageAnalyzer.IsAnimated(fileInfo))
                     {
                         imageModel.ImageType = ImageType.AnimatedAvif;
@@ -165,14 +132,14 @@ public static class GetImageModel
 
                 case MagickFormat.Tif:
                 case MagickFormat.Tiff:
-                    await ProcessTiff(fileInfo, imageModel, magickImage).ConfigureAwait(false);
+                    await ProcessTiffAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
                     break;
 
                 case MagickFormat.Svg:
                 case MagickFormat.Svgz:
-                    await ProcessSvg(fileInfo, imageModel, magickImage).ConfigureAwait(false);
+                    await ProcessSvgAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
                     break;
-                
+
                 case MagickFormat.Arw:
                 case MagickFormat.Nef:
                 case MagickFormat.Dng:
@@ -190,6 +157,10 @@ public static class GetImageModel
 
             return imageModel;
         }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(GetImageModel), nameof(GetImageModelAsync), e);
@@ -203,13 +174,18 @@ public static class GetImageModel
             }
         }
     }
-    
+
     public static async ValueTask<ImageModel?> GetBase64ImageModelAsync(FileInfo fileInfo, CancellationToken ct)
     {
+        if (fileInfo is null)
+        {
+            return null;
+        }
+
         try
         {
             var base64DataImage = await GetImage.GetBase64ImageAsync(fileInfo, ct).ConfigureAwait(false);
-            var model = new ImageModel();
+            var model = new ImageModel { FileInfo = fileInfo };
             SetBitmapProperties(base64DataImage, model);
             return model;
         }
@@ -219,13 +195,18 @@ public static class GetImageModel
         }
         catch (Exception e)
         {
-            DebugHelper.LogDebug(nameof(GetImage), nameof(GetBase64ImageModelAsync), e);
+            DebugHelper.LogDebug(nameof(GetImageModel), nameof(GetBase64ImageModelAsync), e);
             return null;
         }
     }
-    
+
     public static async ValueTask<ImageModel?> GetBase64ImageModelAsync(string base64String, CancellationToken ct)
     {
+        if (string.IsNullOrEmpty(base64String))
+        {
+            return null;
+        }
+
         try
         {
             var base64DataImage = await GetImage.GetBase64ImageAsync(base64String, ct).ConfigureAwait(false);
@@ -239,7 +220,7 @@ public static class GetImageModel
         }
         catch (Exception e)
         {
-            DebugHelper.LogDebug(nameof(GetImage), nameof(GetBase64ImageModelAsync), e);
+            DebugHelper.LogDebug(nameof(GetImageModel), nameof(GetBase64ImageModelAsync), e);
             return null;
         }
     }
@@ -254,14 +235,14 @@ public static class GetImageModel
             imageModel.ImageType = ImageType.Invalid;
             return;
         }
+
         imageModel.PixelWidth = (uint)bitmap.PixelSize.Width;
         imageModel.PixelHeight = (uint)bitmap.PixelSize.Height;
         imageModel.ImageType = imageType;
     }
 
-    private static ImageModel CreateErrorImageModel(FileInfo? fileInfo)
-    {
-        return new ImageModel
+    private static ImageModel CreateErrorImageModel(FileInfo? fileInfo) =>
+        new()
         {
             FileInfo = fileInfo,
             ImageType = ImageType.Invalid,
@@ -269,17 +250,24 @@ public static class GetImageModel
             PixelHeight = 0,
             PixelWidth = 0
         };
-    }
 
     private static bool HasNonSrgbColorProfile(MagickImage magickImage)
     {
-        var colorProfile = magickImage.GetColorProfile();
-        if (colorProfile is null)
+        try
         {
+            var colorProfile = magickImage.GetColorProfile();
+            if (colorProfile is null)
+            {
+                return false;
+            }
+
+            return colorProfile.Description?.Contains("sRGB", StringComparison.OrdinalIgnoreCase) != true;
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetImageModel), nameof(HasNonSrgbColorProfile), e);
             return false;
         }
-
-        return colorProfile.Description?.Contains("sRGB", StringComparison.OrdinalIgnoreCase) != true;
     }
 
     internal static bool IsAnimatedGif(FileInfo fileInfo)
@@ -328,11 +316,7 @@ public static class GetImageModel
             return;
         }
 
-        var extension = fileInfo.Extension;
-        if (!extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) &&
-            !extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) &&
-            !extension.Equals(".heic", StringComparison.OrdinalIgnoreCase) &&
-            !extension.Equals(".heif", StringComparison.OrdinalIgnoreCase))
+        if (!MotionPhotoDetector.IsMotionPhotoExtension(fileInfo.Extension))
         {
             return;
         }
@@ -363,21 +347,61 @@ public static class GetImageModel
 
     #region Image Processing Methods
 
+    private static async ValueTask<bool> TryProcess8BitGrayPngAsync(
+        FileInfo fileInfo,
+        ImageModel imageModel,
+        MagickImage magickImage,
+        CoreViewModel? core)
+    {
+        if (!OperatingSystem.IsWindows() || magickImage.ColorSpace is not ColorSpace.Gray || magickImage.Depth is not 8)
+        {
+            return false;
+        }
+
+        core ??= await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
+        var bitmap = GetImage.GetShellBitmap(fileInfo.FullName, core);
+        if (bitmap is null)
+        {
+            return false;
+        }
+
+        SetBitmapProperties(bitmap, imageModel);
+        return true;
+    }
+
+    private static async ValueTask ProcessStandardOrNonStandardAsync(
+        FileInfo fileInfo,
+        ImageModel imageModel,
+        MagickImage magickImage,
+        bool forceNonStandard)
+    {
+        if (forceNonStandard)
+        {
+            await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
+        }
+        else
+        {
+            await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
+        }
+    }
+
     private static async ValueTask ProcessSkBitmapAsync(FileInfo fileInfo, ImageModel imageModel)
     {
         var bitmap = await GetImage.GetSkBitmapAsync(fileInfo).ConfigureAwait(false);
         SetBitmapProperties(bitmap, imageModel);
     }
 
-    private static async Task ProcessSvg(FileInfo fileInfo, ImageModel imageModel, MagickImage magickImage)
+    private static async ValueTask ProcessSvgAsync(FileInfo fileInfo, ImageModel imageModel, MagickImage magickImage)
     {
         var svgData = await SvgLoader.GetContentFromSvgFileAsync(fileInfo.FullName).ConfigureAwait(false);
+        var svgSource = SvgSource.LoadFromSvg(svgData);
         imageModel.PixelWidth = magickImage.Width;
         imageModel.PixelHeight = magickImage.Height;
-        imageModel.ImageType = ImageType.Svg;
-        imageModel.Image = SvgSource.LoadFromSvg(svgData);
+        imageModel.Image = svgSource;
+        imageModel.ImageType = svgSource is not null ? ImageType.Svg : ImageType.Invalid;
     }
-/// <summary>
+
+    /// <summary>
     /// Handles Apple .livp containers (a zip holding a still image plus a video).
     /// The cover image is extracted to a temporary file and decoded through the regular
     /// pipeline, while the model keeps pointing at the original .livp file.
@@ -393,14 +417,17 @@ public static class GetImageModel
 
         var tempFileInfo = new FileInfo(tempImagePath);
         using var tempMagickImage = GetImage.CreateAndPingMagickImage(tempFileInfo);
-        if (tempMagickImage.Format is MagickFormat.Jpe or MagickFormat.Jpeg or MagickFormat.Pjpeg)
-        {
-            await ProcessSkBitmapAsync(tempFileInfo, imageModel).ConfigureAwait(false);
-        }
-        else
-        {
-            await ProcessNonStandardImageAsync(tempFileInfo, imageModel, tempMagickImage).ConfigureAwait(false);
-        }
+
+        var orientation = ExifOrientationHelper.GetImageOrientation(tempMagickImage);
+        var shouldAutoOrient = orientation is not (ExifOrientation.None or ExifOrientation.Horizontal);
+        var shouldColorManage = HasNonSrgbColorProfile(tempMagickImage);
+        var isJpeg = tempMagickImage.Format is MagickFormat.Jpe or MagickFormat.Jpeg or MagickFormat.Pjpeg;
+
+        await ProcessStandardOrNonStandardAsync(
+            tempFileInfo,
+            imageModel,
+            tempMagickImage,
+            forceNonStandard: !isJpeg || shouldAutoOrient || shouldColorManage).ConfigureAwait(false);
 
         imageModel.FileInfo = fileInfo;
         if (imageModel.ImageType is ImageType.Bitmap)
@@ -409,7 +436,7 @@ public static class GetImageModel
             imageModel.MotionPhoto = new MotionPhotoInfo { Source = MotionPhotoSource.LivpContainer };
         }
     }
-    
+
     private static async ValueTask ProcessRawImageAsync(FileInfo fileInfo, ImageModel imageModel, MagickImage magickImage)
     {
         var bitmap = await GetImage.GetRawBitmapAsync(fileInfo, magickImage).ConfigureAwait(false);
@@ -421,28 +448,28 @@ public static class GetImageModel
         var bitmap = await GetImage.GetNonStandardBitmapAsync(fileInfo, magickImage).ConfigureAwait(false);
         SetBitmapProperties(bitmap, imageModel);
     }
-    
-    private static async ValueTask ProcessTiff(FileInfo fileInfo, ImageModel imageModel, MagickImage magickImage)
+
+    private static async ValueTask ProcessTiffAsync(FileInfo fileInfo, ImageModel imageModel, MagickImage magickImage)
     {
         var bitmap = await GetImage.GetNonStandardBitmapAsync(fileInfo, magickImage).ConfigureAwait(false);
         SetBitmapProperties(bitmap, imageModel);
         var pages = TiffManager.LoadTiffPages(fileInfo.FullName);
         if (pages.Count > 0)
         {
-            imageModel.TiffNavigation = new TiffNavigationInfo
-            {
-                CurrentPage = 0,
-                PageCount = pages.Count
-            };
             var bitmapPages = new object[pages.Count];
             for (var i = 0; i < pages.Count; i++)
             {
                 bitmapPages[i] = pages[i].ToWriteableBitmap();
             }
-            imageModel.TiffNavigation.Pages = bitmapPages;
+
+            imageModel.TiffNavigation = new TiffNavigationInfo
+            {
+                CurrentPage = 0,
+                PageCount = pages.Count,
+                Pages = bitmapPages
+            };
         }
     }
-    
 
     #endregion
 }
