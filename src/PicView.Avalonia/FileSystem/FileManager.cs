@@ -103,7 +103,7 @@ public static class FileManager
 
         try
         {
-            await Task.Run(() => core.PlatformService.LocateOnDisk(path));
+            await Task.Run(() => core.PlatformService.LocateOnDisk(path)).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -123,7 +123,7 @@ public static class FileManager
         }
         try
         {
-            await Task.Run(() => core.PlatformService!.OpenWith(path));
+            await Task.Run(() => core.PlatformService!.OpenWith(path)).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
