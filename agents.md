@@ -104,3 +104,14 @@ public class TempFileTests
 | `PicView.Core.MacOS`      | macOS-specific core utilities.                                                                                                 |
 | `PicView.Benchmarks`      | BenchmarkDotNet performance benchmarks.                                                                                        |
 | `PicView.Tests`           | xUnit.v3 test project.                                                                                                         |
+
+
+## Agent skills
+
+### Triage labels
+
+Canonical triage label vocabulary. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout (`GLOSSARY.md` and `docs/adr/`). See `docs/agents/domain.md`.
