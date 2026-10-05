@@ -110,6 +110,32 @@ public static class GetImageModel
                 case MagickFormat.Png32:
                 case MagickFormat.Png48:
                 case MagickFormat.Png64:
+                {
+                    var is8BitGrayPng = magickImage.ColorSpace is ColorSpace.Gray && magickImage.Depth is 8;
+                    if (is8BitGrayPng && OperatingSystem.IsWindows())
+                    {
+                        core ??= await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
+                        var bitmap = GetImage.GetShellBitmap(fileInfo.FullName, core);
+                        if (bitmap is not null)
+                        {
+                            imageModel.Image = bitmap;
+                            imageModel.ImageType = ImageType.Bitmap;
+                            imageModel.FileInfo = fileInfo;
+                            imageModel.PixelWidth = (uint)bitmap.PixelSize.Width;
+                            imageModel.PixelHeight = (uint)bitmap.PixelSize.Height;
+                            return imageModel;
+                        }
+                    }
+                    if (shouldAutoOrient || shouldColorManage)
+                    {
+                        await ProcessNonStandardImageAsync(fileInfo, imageModel, magickImage).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
+                    }
+                    break;
+                }
                 case MagickFormat.APng: // TODO add animation one day
                 case MagickFormat.Jpe:
                 case MagickFormat.Jpeg:
@@ -124,20 +150,6 @@ public static class GetImageModel
                     }
                     else
                     {
-                        if (OperatingSystem.IsWindows())
-                        {
-                            core ??= await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-                            var bitmap = GetImage.GetShellBitmap(fileInfo.FullName, core);
-                            if (bitmap is not null)
-                            {
-                                imageModel.Image = bitmap;
-                                imageModel.ImageType = ImageType.Bitmap;
-                                imageModel.FileInfo = fileInfo;
-                                imageModel.PixelWidth = (uint)bitmap.PixelSize.Width;
-                                imageModel.PixelHeight = (uint)bitmap.PixelSize.Height;
-                                return imageModel;
-                            }
-                        }
                         await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
                     }
                     break;
