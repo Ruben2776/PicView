@@ -43,7 +43,7 @@ public static class ImageFormatConverter
         else if (tab.ImageIterator.Files.Count <= 0 && !string.IsNullOrEmpty(path))
         {
             // Handle effects for the current file
-            if (core.Effects?.EffectConfig?.Value is not null && tab.FileInfo?.CurrentValue.FullName == path)
+            if (core.Effects?.EffectConfig?.Value is not null && string.Equals(tab.FileInfo?.CurrentValue.FullName, path, StringComparison.Ordinal))
             {
                 if (tab.Image.CurrentValue is Bitmap bmp)
                 {
@@ -51,7 +51,7 @@ public static class ImageFormatConverter
                 }
             }
             // Current path that's already in common format
-            else if (path == tab.FileInfo?.CurrentValue.FullName)
+            else if (string.Equals(path, tab.FileInfo?.CurrentValue.FullName, StringComparison.Ordinal))
             {
                 if (path.IsCommon())
                 {
@@ -85,12 +85,12 @@ public static class ImageFormatConverter
         var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
         if (source is not null)
         {
-            await Task.Run(() => source.Save(tempPath, PngBitmapEncoderOptions.Default));
+            await Task.Run(() => source.Save(tempPath, PngBitmapEncoderOptions.Default)).ConfigureAwait(false);
             return tempPath;
         }
 
         // Cleanup file:/// prefixes
-        if (path?.StartsWith("file:///") == true)
+        if (path?.StartsWith("file:///", StringComparison.Ordinal) == true)
         {
             path = path.Replace("file:///", "");
             path = path.Replace("%20", " ");
@@ -102,7 +102,7 @@ public static class ImageFormatConverter
         }
 
         // Convert using SaveImageFileHelper as a fallback
-        var success = await SaveImageFileHelper.SaveImageAsync(null, path, tempPath, null, null, null, ".png");
+        var success = await SaveImageFileHelper.SaveImageAsync(null, path, tempPath, null, null, null, ".png").ConfigureAwait(false);
         return success ? tempPath : string.Empty;
     }
 }

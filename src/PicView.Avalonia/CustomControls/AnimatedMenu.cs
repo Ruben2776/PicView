@@ -11,7 +11,7 @@ public class AnimatedMenu : UserControl, IDisposable
     public static readonly AvaloniaProperty<bool> IsOpenProperty =
         AvaloniaProperty.Register<AnimatedMenu, bool>(nameof(IsOpen));
 
-    private IDisposable _disposable;
+    private readonly IDisposable _disposable;
 
     public bool IsOpen
     {
@@ -32,7 +32,7 @@ public class AnimatedMenu : UserControl, IDisposable
                     IsVisible = true;
                 }
 
-                await DoAnimation(isOpen);
+                await DoAnimation(isOpen).ConfigureAwait(true);
 
                 // Set the visibility so that it is not interactable while closed
                 if (!isOpen)
@@ -54,7 +54,7 @@ public class AnimatedMenu : UserControl, IDisposable
         var to = isOpen ? 1 : 0;
         const double speed = 0.3;
         var anim = AnimationsHelper.OpacityAnimation(from, to, speed);
-        await anim.RunAsync(this);
+        await anim.RunAsync(this).ConfigureAwait(true);
     }
     
     public virtual void Dispose()

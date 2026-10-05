@@ -66,8 +66,8 @@ public partial class AnalogClock : UserControl
 
             EnsureProperSize();
 
-            CancelButton.Click += async (_, _) => await Cancel();
-            AcceptButton.Click += async (_, _) => await Accept();
+            CancelButton.Click += async (_, _) => await Cancel().ConfigureAwait(true);
+            AcceptButton.Click += async (_, _) => await Accept().ConfigureAwait(true);
 
             AmBtn.Click += (_, _) => SetMeridiem(false);
             PmBtn.Click += (_, _) => SetMeridiem(true);
@@ -573,9 +573,9 @@ public partial class AnalogClock : UserControl
     {
         const double speed = .3;
         var closeAnimation = AnimationsHelper.OpacityAnimation(1, 0, speed);
-        await closeAnimation.RunAsync(this);
+        await closeAnimation.RunAsync(this).ConfigureAwait(true);
         Accepted?.Invoke(this, EventArgs.Empty);
-        await Task.Delay(TimeSpan.FromSeconds(speed * 3));
+        await Task.Delay(TimeSpan.FromSeconds(speed * 3)).ConfigureAwait(true);
         IsVisible = false; // Hide the control
     }
 
@@ -583,7 +583,7 @@ public partial class AnalogClock : UserControl
     {
         SelectedTime = _initialTime; // Reset to the original time
         var closeAnimation = AnimationsHelper.OpacityAnimation(1, 0, .3);
-        await closeAnimation.RunAsync(this);
+        await closeAnimation.RunAsync(this).ConfigureAwait(true);
         IsVisible = false; // Hide the control
         Cancelled?.Invoke(this, EventArgs.Empty);
     }

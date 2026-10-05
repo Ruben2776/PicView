@@ -135,9 +135,8 @@ public static class GetImageModel
                                 imageModel.FileInfo = fileInfo;
                                 imageModel.PixelWidth = (uint)bitmap.PixelSize.Width;
                                 imageModel.PixelHeight = (uint)bitmap.PixelSize.Height;
+                                return imageModel;
                             }
-
-                            return imageModel;
                         }
                         await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
                     }

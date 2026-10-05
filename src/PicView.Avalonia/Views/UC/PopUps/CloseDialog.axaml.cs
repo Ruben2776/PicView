@@ -14,7 +14,7 @@ public partial class CloseDialog : AnimatedPopUp
         InitializeComponent();
         CancelButton.Click += async delegate
         {
-            await AnimatedClosing();
+            await AnimatedClosing().ConfigureAwait(true);
         };
         CloseButton.Click += delegate
         {

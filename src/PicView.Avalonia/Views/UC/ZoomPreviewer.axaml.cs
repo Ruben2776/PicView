@@ -6,7 +6,6 @@ using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.UI;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Views.UC;
@@ -239,16 +238,18 @@ public partial class ZoomPreviewer : UserControl
         _hideTimer?.Dispose();
         _hideTimer = new Timer(_ =>
         {
-            Dispatcher.UIThread.Invoke(async () =>
+#pragma warning disable MA0134
+            Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 // Only hide if we're not dragging
                 if (!_isDragging && !IsPointerOver)
                 {
                     var opacityAnim = AnimationsHelper.OpacityAnimation(1, 0, TimeSpan.FromSeconds(0.5));
-                    await opacityAnim.RunAsync(this);
+                    await opacityAnim.RunAsync(this).ConfigureAwait(true);
                     IsVisible = false;
                 }
             });
+#pragma warning restore MA0134
         }, null, TimeSpan.FromSeconds(2.5), Timeout.InfiniteTimeSpan);
     }
 

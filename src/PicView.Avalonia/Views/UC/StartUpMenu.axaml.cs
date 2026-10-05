@@ -65,7 +65,7 @@ public partial class StartUpMenu : UserControl
         }
 
         tab.CurrentView.Value = new ImageViewer();
-        var isPastedSuccessfully = await ClipboardPasteOperations.Paste(core.MainWindows.ActiveWindow.CurrentValue, mainWindow);
+        var isPastedSuccessfully = await ClipboardPasteOperations.Paste(core.MainWindows.ActiveWindow.CurrentValue, mainWindow).ConfigureAwait(true);
         if (!isPastedSuccessfully)
         {
             tab.CurrentView.Value = new StartUpMenu();
@@ -141,8 +141,8 @@ public partial class StartUpMenu : UserControl
         if (Application.Current.DataContext is not CoreViewModel core || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
-        }
-        FilePicker.SelectAndLoadFile(mainWindow, core.MainWindows.ActiveWindow.CurrentValue).ConfigureAwait(false);
+        } 
+        _ = FilePicker.SelectAndLoadFile(mainWindow, core.MainWindows.ActiveWindow.CurrentValue).ConfigureAwait(false);
     }
 
     private void SelectFileButtonOnPointerExited(object? sender, PointerEventArgs e)
@@ -229,7 +229,7 @@ public partial class StartUpMenu : UserControl
         }
     }
     
-    ~StartUpMenu()
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
     {
         SelectFileButton.PointerEntered -= SelectFileButtonOnPointerEntered;
         SelectFileButton.PointerExited -= SelectFileButtonOnPointerExited;

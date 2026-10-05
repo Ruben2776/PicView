@@ -13,7 +13,7 @@ public static class GenericWindowHelper
 {
     public static void AboutWindowInitialize(Window window)
     {
-        if (Settings.UIProperties?.UserLanguage?.StartsWith("ja") is true)
+        if (Settings.UIProperties?.UserLanguage?.StartsWith("ja", StringComparison.OrdinalIgnoreCase) is true)
         {
             // Japanese already contains PicView in translation
             GenericWindowInitialize(window, TranslationManager.Translation.About);
