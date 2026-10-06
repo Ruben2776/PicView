@@ -82,13 +82,13 @@ public static class WindowFunctions
 
     public static async Task WindowClosingBehavior()
     {
-        var desktop = Dispatcher.UIThread.Invoke(() => Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
+        var desktop = await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
         if (desktop is null)
         {
             return;
         }
 
-        await WindowClosingBehavior(desktop.MainWindow);
+        await WindowClosingBehavior(desktop.MainWindow).ConfigureAwait(true);
     }
 
     public static async Task WindowClosingBehavior(Window window)
@@ -106,8 +106,8 @@ public static class WindowFunctions
         {
             return;
         }
-        
-        Dispatcher.UIThread.Invoke(window.Hide);
+
+        await Dispatcher.UIThread.InvokeAsync(window.Hide);
         
         string? lastFile;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
@@ -155,7 +155,7 @@ public static class WindowFunctions
 
         if (core.SettingsViewModel?.SettingsWindowConfig is not null)
         {
-            await core.SettingsViewModel.SettingsWindowConfig.SaveAsync();
+            await core.SettingsViewModel.SettingsWindowConfig.SaveAsync().ConfigureAwait(false);
         }
 
         if (core.MainWindows.MainWindows.Count <= 0)

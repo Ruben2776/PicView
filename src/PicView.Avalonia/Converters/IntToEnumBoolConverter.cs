@@ -15,7 +15,7 @@ public class IntToEnumBoolConverter : IValueConverter
 
         try
         {
-            return intVal == System.Convert.ToInt32(parameter);
+            return intVal == System.Convert.ToInt32(parameter, CultureInfo.InvariantCulture);
         }
         catch
         {
@@ -27,7 +27,7 @@ public class IntToEnumBoolConverter : IValueConverter
     {
         if (value is true && parameter != null)
         {
-            return System.Convert.ToInt32(parameter);
+            return System.Convert.ToInt32(parameter, CultureInfo.InvariantCulture);
         }
         return BindingOperations.DoNothing;
     }

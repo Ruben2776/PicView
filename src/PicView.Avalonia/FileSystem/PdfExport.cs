@@ -32,7 +32,7 @@ public static class PdfExport
         else
         {
             printWindowConfig = new PrintWindowConfig();
-            await printWindowConfig.LoadAsync();
+            await printWindowConfig.LoadAsync().ConfigureAwait(false);
         }
         
         var preview = vm.PrintPreview;
@@ -59,7 +59,7 @@ public static class PdfExport
             var dest = new Rect(layout.DrawX, layout.DrawY, layout.DrawWidth, layout.DrawHeight);
             ctx.DrawImage(avaloniaBmp, new Rect(0, 0, avaloniaBmp.PixelSize.Width, avaloniaBmp.PixelSize.Height), dest);
         });
-        await SavePdfWithFilePicker(suggestedFileName, rtb);
+        await SavePdfWithFilePicker(suggestedFileName, rtb).ConfigureAwait(false);
     }
     
     public static async Task SavePdfWithFilePicker(string outputFilename, RenderTargetBitmap bitmap)
@@ -84,7 +84,7 @@ public static class PdfExport
             ]
         };
         
-        var chosenFile = await Dispatcher.UIThread.InvokeAsync(() => provider.SaveFilePickerAsync(options));
+        var chosenFile = await Dispatcher.UIThread.InvokeAsync(() => provider.SaveFilePickerAsync(options)).ConfigureAwait(false);
         if (chosenFile is null)
         {
             return;

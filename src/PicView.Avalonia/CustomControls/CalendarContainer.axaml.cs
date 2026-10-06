@@ -27,15 +27,15 @@ public partial class CalendarContainer : UserControl
         
         Loaded += (_, _) => { InitialDate = SelectedDate; };
 
-        AcceptButton.Click += async (_, _) => await Accept();
-        CancelButton.Click += async (_, _) => await Cancel();
+        AcceptButton.Click += async (_, _) => await Accept().ConfigureAwait(true);
+        CancelButton.Click += async (_, _) => await Cancel().ConfigureAwait(true);
     }
     
     private async Task Accept()
     {
         Accepted?.Invoke(this, EventArgs.Empty);
         var closeAnimation = AnimationsHelper.OpacityAnimation(1, 0, .3);
-        await closeAnimation.RunAsync(this);
+        await closeAnimation.RunAsync(this).ConfigureAwait(true);
         IsVisible = false;      // Hide the control
     }
 
@@ -43,7 +43,7 @@ public partial class CalendarContainer : UserControl
     {
         SelectedDate = InitialDate; // Reset to the original time
         var closeAnimation = AnimationsHelper.OpacityAnimation(1, 0, .3);
-        await closeAnimation.RunAsync(this);
+        await closeAnimation.RunAsync(this).ConfigureAwait(true);
         IsVisible = false;      // Hide the control
         Cancelled?.Invoke(this, EventArgs.Empty);
     }

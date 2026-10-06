@@ -49,7 +49,7 @@ public partial class AnalogClock : UserControl
         InitializeComponent();
         _initialTime = SelectedTime;
         _isPM = SelectedTime.Hour >= 12;
-        _is24Hour = !DateTimeFormatInfo.CurrentInfo.ShortTimePattern.Contains("tt");
+        _is24Hour = !DateTimeFormatInfo.CurrentInfo.ShortTimePattern.Contains("tt", StringComparison.Ordinal);
 
         // The AM/PM toggle is meaningless when the culture formats time on a 24-hour clock
         AmBtn.IsVisible = PmBtn.IsVisible = !_is24Hour;
