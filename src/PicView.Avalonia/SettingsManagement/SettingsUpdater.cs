@@ -75,7 +75,7 @@ public static class SettingsUpdater
 
         async Task SetAndSave()
         {
-            SetDefaults();
+            ResetDefaults();
             await SaveSettingsAsync().ConfigureAwait(false);
         }
     }
