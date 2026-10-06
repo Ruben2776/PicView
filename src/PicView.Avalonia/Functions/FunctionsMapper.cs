@@ -757,32 +757,75 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     #region Copy and Paste functions
 
     /// <inheritdoc cref="ClipboardFileOperations.CopyFileToClipboard(string, MainWindow)" />
-    public async ValueTask CopyFile() =>
-        await ClipboardFileOperations.CopyFileToClipboard(vm.WindowTabs.ActiveTab.CurrentValue.Model
-            .FileInfo?.FullName, mainWindow).ConfigureAwait(false);
+    public async ValueTask CopyFile()
+    {
+        if (mainWindow.ClipboardCopyService is null)
+        {
+            return;
+        }
+        await mainWindow.ClipboardCopyService
+            .CopyFileAsync(vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName)
+            .ConfigureAwait(false);
+    }
 
     /// <inheritdoc cref="ClipboardTextOperations.CopyTextToClipboard(string, MainWindow)" />
-    public async ValueTask CopyFilePath() =>
-        await ClipboardTextOperations.CopyTextToClipboard(vm.WindowTabs.ActiveTab.CurrentValue.Model
-            .FileInfo?.FullName, mainWindow).ConfigureAwait(false);
+    public async ValueTask CopyFilePath()
+    {
+        if (mainWindow.ClipboardCopyService is null)
+        {
+            return;
+        }
+        await mainWindow.ClipboardCopyService
+            .CopyTextAsync(vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName)
+            .ConfigureAwait(false);
+    }
 
     /// <inheritdoc cref="ClipboardImageOperations.CopyImageToClipboard(MainWindowViewModel, MainWindow)" />
-    public async ValueTask CopyImage() =>
-        await ClipboardImageOperations.CopyImageToClipboard(vm, mainWindow).ConfigureAwait(false);
+    public async ValueTask CopyImage()
+    {
+        if (mainWindow.ClipboardCopyService is null)
+        {
+            return;
+        }
+        await mainWindow.ClipboardCopyService
+            .CopyImageAsync(vm.WindowTabs.ActiveTab.CurrentValue?.Image?.CurrentValue)
+            .ConfigureAwait(false);
+    }
 
     /// <inheritdoc cref="ClipboardImageOperations.CopyBase64ToClipboard(string, MainWindow)" />
-    public async ValueTask CopyBase64() => 
-        await ClipboardImageOperations.CopyBase64ToClipboard(vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName, mainWindow).ConfigureAwait(false);
+    public async ValueTask CopyBase64()
+    {
+        if (mainWindow.ClipboardCopyService is null)
+        {
+            return;
+        }
+        await mainWindow.ClipboardCopyService
+            .CopyBase64Async(vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName)
+            .ConfigureAwait(false);
+    }
 
     /// <inheritdoc cref="ClipboardFileOperations.Duplicate(string, MainWindowViewModel, MainWindow)" />
-    public async ValueTask DuplicateFile() =>
-        await ClipboardFileOperations.Duplicate(vm.WindowTabs.ActiveTab.CurrentValue.Model
-            .FileInfo?.FullName, vm, mainWindow).ConfigureAwait(false);
+    public async ValueTask DuplicateFile()
+    {
+        if (mainWindow.ClipboardCopyService is null)
+        {
+            return;
+        }
+        await mainWindow.ClipboardCopyService
+            .DuplicateFileAsync(vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName, vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName, vm)
+            .ConfigureAwait(false);
+    }
 
     /// <inheritdoc cref="ClipboardFileOperations.CutFile(string)" />
-    public async ValueTask CutFile() =>
+    public async ValueTask CutFile()
+    {
+        if (mainWindow.ClipboardCopyService is null)
+        {
+            return;
+        }
         await ClipboardFileOperations.CutFile(vm.WindowTabs.ActiveTab.CurrentValue.Model
             .FileInfo?.FullName).ConfigureAwait(false);
+    }
 
     /// <inheritdoc cref="ClipboardPasteOperations.Paste(MainWindowViewModel, MainWindow)" />
     public async ValueTask Paste() =>
@@ -1007,3 +1050,5 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     
     #endregion
 }
+
+

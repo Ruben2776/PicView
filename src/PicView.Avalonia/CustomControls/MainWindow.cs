@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.Interfaces;
@@ -39,6 +39,8 @@ public class MainWindow : Window, IMainWindow
     public MainView? SharedMainView { get; set; }
     public AvaloniaRenderingFrameProvider FrameProvider { get; set; }
     public UIControlHelper UIHelper { get; }
+    public ClipboardCopyService? ClipboardCopyService { get; private set; }
+
 
     protected MainWindow()
     {
@@ -66,6 +68,11 @@ public class MainWindow : Window, IMainWindow
         PointerExited += (_, _) => { DragAndDropManager.RemoveDragDropView(this); };
         
         Deactivated += OnDeactivated;
+    }
+    
+    public void SetClipboardCopyService()
+    {
+        ClipboardCopyService = new ClipboardCopyService(this);
     }
 
     private void OnDeactivated(object? sender, EventArgs e)
@@ -100,7 +107,7 @@ public class MainWindow : Window, IMainWindow
     {
         try
         {
-            await WindowFunctions.WindowClosingBehavior(this);
+            await WindowFunctions.WindowClosingBehavior(this).ConfigureAwait(true);
             base.OnClosing(e);
         }
         catch (Exception ex)

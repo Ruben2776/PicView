@@ -413,7 +413,7 @@ public class NavigationServiceTests : IDisposable
         public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;
         public bool SetAsLockScreen(string path) => false;
         public bool CopyFile(string path) => false;
-        public bool CutFile(string path) => false;
+        public Task<bool> CutFile(string path) => throw new NotImplementedException();
         public Task CopyImageToClipboard(object bitmap) => Task.CompletedTask;
         public Task<object?> GetImageFromClipboard() => Task.FromResult<object?>(null);
         public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory) => Task.FromResult(false);

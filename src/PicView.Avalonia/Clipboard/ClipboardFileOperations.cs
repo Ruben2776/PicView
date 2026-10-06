@@ -1,15 +1,10 @@
 using Avalonia;
-using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
-using PicView.Avalonia.Animations;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.StartUp;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
-using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
-using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Clipboard;
@@ -19,124 +14,6 @@ namespace PicView.Avalonia.Clipboard;
 /// </summary>
 public static class ClipboardFileOperations
 {
-    /// <summary>
-    /// Duplicates the specified file, either the current file or another one specified by path.
-    /// If the current file is being duplicated, the view model will navigate to the duplicated file.
-    /// </summary>
-    /// <param name="path">Path to the file to duplicate, or null to duplicate the current file.</param>
-    /// <param name="vm">The main window view model</param>
-    /// <param name="mainWindow"></param>
-    public static async Task Duplicate(string? path, MainWindowViewModel vm, MainWindow mainWindow)
-    {
-        var currentFile = vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName;
-        
-        // If path is null/empty, we assume we want to duplicate the current file
-        var targetPath = string.IsNullOrWhiteSpace(path) ? currentFile : path;
-
-        if (string.IsNullOrWhiteSpace(targetPath))
-        {
-            return;
-        }
-        
-        try
-        {
-            vm.IsLoadingIndicatorShown.Value = true;
-            
-            // If we are duplicating the currently viewing file, we want to perform navigation to the new file
-            if (string.Equals(targetPath, currentFile, StringComparison.Ordinal))
-            {
-                await DuplicateCurrentFile(vm, mainWindow).ConfigureAwait(false);
-            }
-            else
-            {
-                await DuplicateFile(targetPath, mainWindow).ConfigureAwait(false);
-            }
-        }
-        catch (Exception ex)
-        {
-            DebugHelper.LogDebug(nameof(ClipboardFileOperations), nameof(Duplicate), ex);
-            TooltipHelper.ShowTooltipMessage(TranslationManager.Translation?.UnexpectedError);
-        }
-        finally
-        {
-            vm.IsLoadingIndicatorShown.Value = false;
-        }
-    }
-
-    /// <summary>
-    /// Duplicates the current file and navigates to it
-    /// </summary>
-    private static async Task DuplicateCurrentFile(MainWindowViewModel vm, MainWindow mainWindow)
-    {
-        var activeTab = vm.WindowTabs.ActiveTab.CurrentValue;
-        
-        if (activeTab.ImageIterator is null || vm.WindowTabs.SharedNavigation is null)
-        {
-            return;
-        }
-
-        try
-        {
-            var currentPath = activeTab.Model.FileInfo?.FullName;
-            if (string.IsNullOrWhiteSpace(currentPath))
-            {
-                return;
-            }
-
-            var duplicatedPath =
-                await FileHelper.DuplicateAndReturnFileNameAsync(currentPath).ConfigureAwait(false);
-
-            if (string.IsNullOrWhiteSpace(duplicatedPath) || !File.Exists(duplicatedPath))
-            {
-                return;
-            }
-            
-            _ = AnimationsHelper.CopyAnimation(mainWindow);
-            await vm.WindowTabs.SharedNavigation.LoadFromFileAsync(duplicatedPath, activeTab, activeTab.GetTabCancellation()).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            DebugHelper.LogDebug(nameof(ClipboardFileOperations), nameof(DuplicateCurrentFile), ex);
-        }
-    }
-    
-    /// <summary>
-    /// Duplicates the specified file and plays a copy animation when done. The original file is not navigated away from.
-    /// </summary>
-    private static async Task DuplicateFile(string path, MainWindow mainWindow)
-    {
-        var duplicatedPath = await FileHelper.DuplicateAndReturnFileNameAsync(path).ConfigureAwait(false);
-        if (!string.IsNullOrWhiteSpace(duplicatedPath))
-        {
-            await AnimationsHelper.CopyAnimation(mainWindow).ConfigureAwait(false);
-        }
-    }
-
-    /// <summary>
-    /// Copies a file to the clipboard
-    /// </summary>
-    public static async Task CopyFileToClipboard(string? filePath, MainWindow mainWindow)
-    {
-        if (string.IsNullOrWhiteSpace(filePath))
-        {
-            return;
-        }
-
-        var clipboard = ClipboardService.GetClipboard(mainWindow);
-        if (clipboard == null)
-        {
-            return;
-        }
-        
-        var animTask = AnimationsHelper.CopyAnimation(mainWindow);
-        var storageFile = await mainWindow.StorageProvider.TryGetFileFromPathAsync(Path.GetFullPath(filePath)).ConfigureAwait(false);
-        
-        if (storageFile != null)
-        {
-             var fileTask = clipboard.SetFileAsync(storageFile);
-             await Task.WhenAll(animTask, fileTask).ConfigureAwait(false);
-        }
-    }
 
     /// <summary>
     /// Cuts a file to the clipboard (copy + mark for deletion on paste)

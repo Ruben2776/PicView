@@ -57,6 +57,9 @@ public class App : Application, IPlatformSpecificService
 
     #region Interface Implementations
     
+    public async Task<bool> CutFile(string filePath) =>
+        await Task.Run(() => Win32Clipboard.CutFile(filePath)).ConfigureAwait(false);
+    
     public Task<bool> DeleteFile(string path, bool recycle) =>
         Task.Run(() => WinFileHelper.DeleteFile(path, recycle));
 

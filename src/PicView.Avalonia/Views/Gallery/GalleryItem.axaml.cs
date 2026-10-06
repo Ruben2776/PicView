@@ -252,12 +252,13 @@ public partial class GalleryItem : NavigateAbleItem
 
     private void CopyFile_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is not GalleryItemViewModel item || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        if (DataContext is not GalleryItemViewModel item ||
+            TopLevel.GetTopLevel(this) is not MainWindow { DataContext: MainWindowViewModel vm } mainWindow)
         {
             return;
         }
         var fileName = item.FileLocation.CurrentValue;
-        _ = ClipboardFileOperations.CopyFileToClipboard(fileName, mainWindow);
+        _ = mainWindow.ClipboardCopyService.CopyFileAsync(fileName);
     }
 
     private void CopyImage_OnClick(object? sender, RoutedEventArgs e)
@@ -267,9 +268,9 @@ public partial class GalleryItem : NavigateAbleItem
             return;
         }
 
-        if (item.Image.CurrentValue is Bitmap image)
+        if (item.Image.CurrentValue is Bitmap image && TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {
-            _ = ClipboardImageOperations.CopyImageToClipboard(image);
+            _ = mainWindow.ClipboardCopyService.CopyImageAsync(image).ConfigureAwait(false);
         }
     }
 
@@ -279,18 +280,20 @@ public partial class GalleryItem : NavigateAbleItem
         {
             return;
         }
-        _ = ClipboardImageOperations.CopyBase64ToClipboard(item.FileLocation.CurrentValue, mainWindow);
+        _ = mainWindow.ClipboardCopyService.CopyBase64Async(item.FileLocation.CurrentValue).ConfigureAwait(false);
     }
 
     private void DuplicateFile_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item
-            || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        if (DataContext is not GalleryItemViewModel item ||
+            TopLevel.GetTopLevel(this) is not MainWindow { DataContext: MainWindowViewModel vm } mainWindow)
         {
             return;
         }
-        var fileName = item.FileLocation.CurrentValue;
-        _ = ClipboardFileOperations.Duplicate(fileName, core.MainWindows.ActiveWindow.CurrentValue, mainWindow).ConfigureAwait(false);
+        var sourcePath = item.FileLocation.CurrentValue;
+        var currentActiveFilePath = vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue.FullName;
+        _ = mainWindow.ClipboardCopyService.DuplicateFileAsync(sourcePath, currentActiveFilePath, vm)
+            .ConfigureAwait(false);
     }
 
     private void DeleteFile_OnClick(object? sender, RoutedEventArgs e)

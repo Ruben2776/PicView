@@ -102,8 +102,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     {
         if (GetCroppedImage() is Bitmap bitmap)
         {
-            await Task.WhenAll(ClipboardImageOperations.CopyImageToClipboard(bitmap),
-                AnimationsHelper.CopyAnimation(mainWindow)).ConfigureAwait(false);
+            await mainWindow.ClipboardCopyService.CopyImageAsync(bitmap).ConfigureAwait(false);
         }
     }
 

@@ -116,6 +116,7 @@ public static class StartUpHelper
         SetWindowEventHandlers(mainWindow);
         Dispatcher.UIThread.Post(() =>
         {
+            mainWindow.SetClipboardCopyService();
             mainWindow.UIHelper.AddDropDownMenu(mainWindow);
             mainWindow.UIHelper.AddFileMenu(vm);
             mainWindow.UIHelper.AddSettingsMenu(vm);

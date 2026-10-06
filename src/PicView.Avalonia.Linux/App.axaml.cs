@@ -53,8 +53,13 @@ public class App : Application, IPlatformSpecificService
         desktop.MainWindow = _mainWindow;
     }
 
- #region Interface Implementations
-    
+    #region Interface Implementations
+
+    Task<bool> IPlatformSpecificService.CutFile(string path)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<bool> DeleteFile(string path, bool recycle) =>
         throw new NotImplementedException();
 

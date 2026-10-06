@@ -138,6 +138,9 @@ public class App : Application, IPlatformSpecificService
     }
 
    #region Interface implementations
+   
+   public Task<bool> CutFile(string filePath) =>
+       Task.FromResult(false);
 
    public byte[]? GetPixelsFromNativeImagingComponent(string path, out int pixelWidth, out int pixelHeight)
    {

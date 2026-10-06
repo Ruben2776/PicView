@@ -32,6 +32,8 @@ public interface IPlatformSpecificService
     void InitiateFileAssociationService();
     
     Task<bool> DeleteFile(string path, bool recycle);
+    
+    Task<bool> CutFile(string path);
 
     /// <summary>
     /// Gets an OS-level thumbnail as raw BGRA pixel data.
