@@ -756,7 +756,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
 
     #region Copy and Paste functions
 
-    /// <inheritdoc cref="ClipboardFileOperations.CopyFileToClipboard(string, MainWindow)" />
+    /// <inheritdoc cref="ICopyClipboard.CopyFileAsync(string)" />
     public async ValueTask CopyFile()
     {
         if (mainWindow.ClipboardCopyService is null)
@@ -780,7 +780,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             .ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="ClipboardImageOperations.CopyImageToClipboard(MainWindowViewModel, MainWindow)" />
+    /// <inheritdoc cref="ICopyClipboard.CopyImageAsync(object)" />
     public async ValueTask CopyImage()
     {
         if (mainWindow.ClipboardCopyService is null)
@@ -792,7 +792,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             .ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="ClipboardImageOperations.CopyBase64ToClipboard(string, MainWindow)" />
+    /// <inheritdoc cref="ICopyClipboard.CopyBase64Async(string)" />
     public async ValueTask CopyBase64()
     {
         if (mainWindow.ClipboardCopyService is null)
@@ -826,9 +826,15 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             .ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="ClipboardPasteOperations.Paste(MainWindowViewModel, MainWindow)" />
-    public async ValueTask Paste() =>
-        await ClipboardPasteOperations.Paste(vm, mainWindow).ConfigureAwait(false);
+    /// <inheritdoc cref="IPasteClipboard.PasteAsync(MainWindowViewModel)" />
+    public async ValueTask Paste()
+    {
+        if (mainWindow.ClipboardPasteService is null)
+        {
+            return;
+        }
+        await mainWindow.ClipboardPasteService.PasteAsync(vm).ConfigureAwait(false);
+    }
     
     #endregion
 

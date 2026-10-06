@@ -42,6 +42,7 @@ public class MainWindow : Window, IMainWindow
     public AvaloniaRenderingFrameProvider FrameProvider { get; set; }
     public UIControlHelper UIHelper { get; }
     public ClipboardCopyService? ClipboardCopyService { get; private set; }
+    public ClipboardPasteService? ClipboardPasteService { get; private set; }
 
 
     protected MainWindow()
@@ -72,15 +73,25 @@ public class MainWindow : Window, IMainWindow
         Deactivated += OnDeactivated;
     }
     
-    public void SetClipboardCopyService(IPlatformSpecificService? platformService = null)
+    public void SetClipboardServices(IPlatformSpecificService? platformService = null, CoreViewModel? core = null)
     {
-        platformService ??= (Application.Current?.DataContext as CoreViewModel)?.PlatformService;
+        core ??= Application.Current?.DataContext as CoreViewModel;
+        platformService ??= core?.PlatformService;
+
         ClipboardCopyService = new ClipboardCopyService(
             Clipboard,
             StorageProvider,
             platformService,
             () => _ = AnimationsHelper.CopyAnimation(this));
+
+        ClipboardPasteService = new ClipboardPasteService(
+            Clipboard,
+            this,
+            core);
     }
+
+    public void SetClipboardCopyService(IPlatformSpecificService? platformService = null) =>
+        SetClipboardServices(platformService);
 
     private void OnDeactivated(object? sender, EventArgs e)
     {

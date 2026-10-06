@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -65,7 +65,8 @@ public partial class StartUpMenu : UserControl
         }
 
         tab.CurrentView.Value = new ImageViewer();
-        var isPastedSuccessfully = await ClipboardPasteOperations.Paste(core.MainWindows.ActiveWindow.CurrentValue, mainWindow).ConfigureAwait(true);
+        var isPastedSuccessfully = mainWindow.ClipboardPasteService is not null
+            && await mainWindow.ClipboardPasteService.PasteAsync(core.MainWindows.ActiveWindow.CurrentValue).ConfigureAwait(true);
         if (!isPastedSuccessfully)
         {
             tab.CurrentView.Value = new StartUpMenu();

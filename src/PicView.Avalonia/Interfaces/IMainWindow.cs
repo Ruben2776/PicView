@@ -1,4 +1,3 @@
-using Avalonia.Controls;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Views.UC;
@@ -20,4 +19,6 @@ public interface IMainWindow
     AvaloniaRenderingFrameProvider FrameProvider { get; set; }
     
     ClipboardCopyService? ClipboardCopyService { get; }
+
+    ClipboardPasteService? ClipboardPasteService { get; }
 }
