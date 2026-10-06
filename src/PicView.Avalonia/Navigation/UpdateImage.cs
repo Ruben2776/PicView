@@ -223,7 +223,7 @@ public static class UpdateImage
         tabViewModel.Title.Value = windowTitles.BaseTitle;
         tabViewModel.TitleTooltip.Value = windowTitles.FilePathTitle;
         tabViewModel.TabTitle.Value = name;
-        
+        tabViewModel.IsInitialized = false; // We will need to initialize this again when browsing files
         tabViewModel.DisposeImageIterator();
     }
 
