@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
@@ -804,27 +804,26 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             .ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="ClipboardFileOperations.Duplicate(string, MainWindowViewModel, MainWindow)" />
+    /// <inheritdoc cref="FileManager.DuplicateFileAsync(string, string, MainWindowViewModel, MainWindow)" />
     public async ValueTask DuplicateFile()
     {
-        if (mainWindow.ClipboardCopyService is null)
-        {
-            return;
-        }
-        await mainWindow.ClipboardCopyService
-            .DuplicateFileAsync(vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName, vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName, vm)
-            .ConfigureAwait(false);
+        await FileManager.DuplicateFileAsync(
+            vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName,
+            vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName,
+            vm,
+            mainWindow).ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="ClipboardFileOperations.CutFile(string)" />
+    /// <inheritdoc cref="ICopyClipboard.CutFileAsync(string)" />
     public async ValueTask CutFile()
     {
         if (mainWindow.ClipboardCopyService is null)
         {
             return;
         }
-        await ClipboardFileOperations.CutFile(vm.WindowTabs.ActiveTab.CurrentValue.Model
-            .FileInfo?.FullName).ConfigureAwait(false);
+        await mainWindow.ClipboardCopyService
+            .CutFileAsync(vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue?.FullName)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="ClipboardPasteOperations.Paste(MainWindowViewModel, MainWindow)" />

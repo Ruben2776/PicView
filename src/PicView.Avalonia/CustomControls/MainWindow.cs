@@ -1,10 +1,11 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using PicView.Avalonia.Animations;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.DragAndDrop;
@@ -19,6 +20,7 @@ using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHistory;
+using PicView.Core.IPlatform;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using R3;
@@ -70,9 +72,14 @@ public class MainWindow : Window, IMainWindow
         Deactivated += OnDeactivated;
     }
     
-    public void SetClipboardCopyService()
+    public void SetClipboardCopyService(IPlatformSpecificService? platformService = null)
     {
-        ClipboardCopyService = new ClipboardCopyService(this);
+        platformService ??= (Application.Current?.DataContext as CoreViewModel)?.PlatformService;
+        ClipboardCopyService = new ClipboardCopyService(
+            Clipboard,
+            StorageProvider,
+            platformService,
+            () => _ = AnimationsHelper.CopyAnimation(this));
     }
 
     private void OnDeactivated(object? sender, EventArgs e)

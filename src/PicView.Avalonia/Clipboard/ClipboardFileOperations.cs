@@ -14,23 +14,6 @@ namespace PicView.Avalonia.Clipboard;
 /// </summary>
 public static class ClipboardFileOperations
 {
-
-    /// <summary>
-    /// Cuts a file to the clipboard (copy + mark for deletion on paste)
-    /// </summary>
-    /// <param name="filePath">Path to the file</param>
-    /// <returns>A task representing the asynchronous operation</returns>
-    public static Task<bool> CutFile(string filePath)
-    {
-        if (string.IsNullOrWhiteSpace(filePath))
-        {
-            return Task.FromResult(false);
-        }
-
-        // TODO implement cut
-        return Task.FromResult(false);
-    }
-    
     public static async ValueTask ProcessStorageItems(IStorageItem[] storageItems, MainWindowViewModel vm, MainWindow mainWindow)
     {
         if (storageItems.Length is 0 || Application.Current.DataContext is not CoreViewModel core)

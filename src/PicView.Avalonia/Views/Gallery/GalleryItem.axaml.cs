@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Primitives;
@@ -292,7 +292,7 @@ public partial class GalleryItem : NavigateAbleItem
         }
         var sourcePath = item.FileLocation.CurrentValue;
         var currentActiveFilePath = vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue.FullName;
-        _ = mainWindow.ClipboardCopyService.DuplicateFileAsync(sourcePath, currentActiveFilePath, vm)
+        _ = FileManager.DuplicateFileAsync(sourcePath, currentActiveFilePath, vm, mainWindow)
             .ConfigureAwait(false);
     }
 

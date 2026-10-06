@@ -1,9 +1,11 @@
 ﻿using Avalonia;
 using Avalonia.Threading;
+using PicView.Avalonia.Animations;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Core.DebugTools;
+using PicView.Core.FileHandling;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
@@ -128,6 +130,52 @@ public static class FileManager
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(FileManager), nameof(OpenWith), ex);
+        }
+    }
+
+    /// <summary>
+    /// Duplicates a file and loads it into the active tab if it matches the current file.
+    /// </summary>
+    public static async Task DuplicateFileAsync(string? sourcePath, string? currentActiveFilePath, MainWindowViewModel vm, MainWindow? mainWindow)
+    {
+        var targetPath = string.IsNullOrWhiteSpace(sourcePath) ? currentActiveFilePath : sourcePath;
+
+        if (string.IsNullOrWhiteSpace(targetPath))
+        {
+            return;
+        }
+
+        try
+        {
+            vm.IsLoadingIndicatorShown.Value = true;
+
+            if (string.Equals(targetPath, currentActiveFilePath, StringComparison.Ordinal))
+            {
+                var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+                var duplicatedPath = await FileHelper.DuplicateAndReturnFileNameAsync(targetPath).ConfigureAwait(false);
+                if (!string.IsNullOrWhiteSpace(duplicatedPath) && File.Exists(duplicatedPath))
+                {
+                    _ = AnimationsHelper.CopyAnimation(mainWindow);
+                    await vm.WindowTabs.SharedNavigation.LoadFromFileAsync(duplicatedPath, tab, tab.GetTabCancellation()).ConfigureAwait(false);
+                }
+            }
+            else
+            {
+                var duplicatedPath = await FileHelper.DuplicateAndReturnFileNameAsync(targetPath).ConfigureAwait(false);
+                if (!string.IsNullOrWhiteSpace(duplicatedPath))
+                {
+                    await AnimationsHelper.CopyAnimation(mainWindow).ConfigureAwait(false);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(FileManager), nameof(DuplicateFileAsync), ex);
+            TooltipHelper.ShowTooltipMessage(TranslationManager.Translation?.UnexpectedError);
+        }
+        finally
+        {
+            vm.IsLoadingIndicatorShown.Value = false;
         }
     }
 }
