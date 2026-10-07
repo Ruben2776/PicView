@@ -94,4 +94,21 @@ public class KeybindCategoryDefinitionTests
         var base64Entry = entries.First(e => e.FunctionName == "CopyBase64");
         Assert.Equal("Copy base64", base64Entry.DisplayName);
     }
+
+    [Fact]
+    public void GetCopyEntries_PlatformSpecificCutFile()
+    {
+        var languageModel = TranslationManager.GetLanguageModel(new CultureInfo("en-US"));
+        var entries = KeybindCategoryDefinition.GetCopyEntries(languageModel);
+        var functionNames = entries.Select(e => e.FunctionName).ToList();
+
+        if (OperatingSystem.IsMacOS())
+        {
+            Assert.DoesNotContain("CutFile", functionNames);
+        }
+        else
+        {
+            Assert.Contains("CutFile", functionNames);
+        }
+    }
 }

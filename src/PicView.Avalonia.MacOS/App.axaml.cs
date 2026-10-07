@@ -138,9 +138,13 @@ public class App : Application, IPlatformSpecificService
     }
 
    #region Interface implementations
-   
-   public Task<bool> CutFile(string filePath) =>
-       Task.FromResult(false);
+
+   public async Task<bool> CutFile(string filePath)
+   {
+       // Cut isn't a supported operation on macOS
+       await _coreViewModel.MainWindows.ActiveWindow.CurrentValue.Mapper.CopyFile();
+       return true;
+   }
 
    public byte[]? GetPixelsFromNativeImagingComponent(string path, out int pixelWidth, out int pixelHeight)
    {

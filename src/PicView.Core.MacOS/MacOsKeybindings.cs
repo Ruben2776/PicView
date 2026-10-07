@@ -60,7 +60,6 @@ public static class MacOsKeybindings
                                                 "Cmd+C": "CopyFile",
                                                 "Alt+Cmd+V": "CopyFilePath",
                                                 "Shift+Cmd+C": "CopyImage",
-                                                "Cmd+X": "CutFile",
                                                 "Cmd+V": "Paste",
                                                 "Cmd+P": "Print",
                                                 "Alt+Z": "ToggleInterface",

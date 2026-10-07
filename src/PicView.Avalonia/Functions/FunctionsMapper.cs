@@ -1,7 +1,5 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Threading;
-using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
