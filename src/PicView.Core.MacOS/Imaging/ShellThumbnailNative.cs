@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using PicView.Core.DebugTools;
 
-namespace PicView.Core.MacOS.Thumbnails;
+namespace PicView.Core.MacOS.Imaging;
 
 /// <summary>
 /// AOT-compatible macOS thumbnail extraction via ImageIO (CGImageSource).

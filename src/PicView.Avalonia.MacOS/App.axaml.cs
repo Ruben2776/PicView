@@ -6,9 +6,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.MacOS.Views;
-using PicView.Avalonia.SettingsManagement;
 using PicView.Avalonia.StartUp;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
@@ -17,11 +15,12 @@ using PicView.Core.MacOS;
 using PicView.Core.MacOS.Cursor;
 using PicView.Core.MacOS.FileAssociation;
 using PicView.Core.MacOS.FileFunctions;
-using PicView.Core.MacOS.Thumbnails;
+using PicView.Core.MacOS.Imaging;
 using PicView.Core.MacOS.Wallpaper;
 using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
 using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
+using ShellThumbnailNative = PicView.Core.MacOS.Imaging.ShellThumbnailNative;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 
@@ -145,13 +144,6 @@ public class App : Application, IPlatformSpecificService
        await _coreViewModel.MainWindows.ActiveWindow.CurrentValue.Mapper.CopyFile();
        return true;
    }
-
-   public byte[]? GetPixelsFromNativeImagingComponent(string path, out int pixelWidth, out int pixelHeight)
-   {
-       pixelWidth = 0;
-       pixelHeight = 0;
-       return null;
-   }
     
     public void SetTaskbarProgress(ulong progress, ulong maximum)
     {
@@ -259,6 +251,11 @@ public class App : Application, IPlatformSpecificService
     public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
     {
         return ShellThumbnailNative.GetShellThumbnailBytes(path, width, height, out pixelWidth, out pixelHeight);
+    }
+    
+    public byte[]? GetPixelsFromNativeImagingComponent(string path, out int pixelWidth, out int pixelHeight)
+    {
+        return MacOSImage.GetPixelsFromNativeImagingComponent(path, out pixelWidth, out pixelHeight);
     }
     
     #endregion

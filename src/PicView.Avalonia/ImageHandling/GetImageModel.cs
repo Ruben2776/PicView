@@ -353,7 +353,7 @@ public static class GetImageModel
         MagickImage magickImage,
         CoreViewModel? core)
     {
-        if (!OperatingSystem.IsWindows() || magickImage.ColorSpace is not ColorSpace.Gray || magickImage.Depth is not 8)
+        if (magickImage.ColorSpace is not ColorSpace.Gray || magickImage.Depth is not 8)
         {
             return false;
         }
