@@ -1,3 +1,4 @@
+#if WINDOWS
 using System.Runtime.InteropServices;
 using ImageMagick;
 using PicView.Core.WindowsNT.Imaging;
@@ -64,3 +65,4 @@ public class Win32ImageTests(ITestOutputHelper output)
         }
     }
 }
+#endif
