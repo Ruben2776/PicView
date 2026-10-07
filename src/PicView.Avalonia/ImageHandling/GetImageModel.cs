@@ -30,7 +30,7 @@ public static class GetImageModel
     /// <param name="core">Optional core view model used for shell-based decoders.</param>
     /// <param name="ct">The token to monitor for cancellation requests.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the constructed <see cref="ImageModel"/>.</returns>
-    public static async ValueTask<ImageModel?> GetImageModelAsync(
+    public static async ValueTask<ImageModel> GetImageModelAsync(
         FileInfo fileInfo,
         MagickImage? magickImage = null,
         CoreViewModel? core = null,

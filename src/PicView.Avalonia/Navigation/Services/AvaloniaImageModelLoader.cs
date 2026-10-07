@@ -7,7 +7,7 @@ namespace PicView.Avalonia.Navigation.Services;
 
 public class AvaloniaImageModelLoader(CoreViewModel core) : IImageModelLoader
 {
-    public async ValueTask<ImageModel?> GetImageModelAsync(FileInfo file, CancellationToken ct) => 
+    public async ValueTask<ImageModel> GetImageModelAsync(FileInfo file, CancellationToken ct) => 
         await GetImageModel.GetImageModelAsync(file, null, core, ct).ConfigureAwait(false);
     
     public async ValueTask<ImageModel?> GetBase64ImageAsync(FileInfo file, CancellationToken ct) => 
