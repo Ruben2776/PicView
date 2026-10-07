@@ -95,7 +95,7 @@ public static class KeybindingManager
         }
         catch (Exception exception)
         {
-            DebugHelper.LogDebug(nameof(KeybindingManager), nameof(PopulateCustomShortcuts), exception);
+            DebugHelper.LogDebug(nameof(KeybindingManager), nameof(ParseToKeybind), exception);
         }
 
         return null;

@@ -95,6 +95,7 @@ public static class KeybindCategoryDefinition
     public static List<(string FunctionName, string DisplayName)> GetCopyEntries(LanguageModel t) =>
     [
         ("CopyFile", t.CopyFile ?? string.Empty),
+        ("CutFile", t.Cut ?? string.Empty),
         ("CopyFilePath", t.FileCopyPath ?? string.Empty),
         ("CopyImage", t.CopyImage ?? string.Empty),
         ("CopyBase64", (t.Copy ?? "Copy") + " base64"),
