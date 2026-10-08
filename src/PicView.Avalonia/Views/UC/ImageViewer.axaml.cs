@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -62,7 +63,12 @@ public partial class ImageViewer : UserControl, IDisposable
         // while the control's own properties already hold the target values.
         // The frame provider ticks with the render loop, so this only runs while
         // frames are actually being rendered (i.e. while something visually moves)
-        var frameProvider = (TopLevel.GetTopLevel(this) as MainWindow)?.FrameProvider;
+        //var frameProvider = (TopLevel.GetTopLevel(this) as MainWindow)?.FrameProvider;
+        if (Application.Current.ApplicationLifetime is not ClassicDesktopStyleApplicationLifetime 
+                { MainWindow: MainWindow mainWindow })
+        {
+            return;
+        }
         Observable.EveryValueChanged(ZoomPanControl, zoom =>
             {
                 if (zoom.Child?.RenderTransform is TransformGroup group &&
@@ -74,7 +80,7 @@ public partial class ImageViewer : UserControl, IDisposable
                 }
 
                 return (X: zoom.Scale, Y: zoom.TranslateX, Z: zoom.TranslateY);
-            }, frameProvider)
+            }, mainWindow.FrameProvider)
             .Subscribe(_ => UpdateMotionPhotoBadgePositions(),
                 DebugHelper.LogError(nameof(ImageViewer), nameof(OnLoaded)))
             .AddTo(ref _disposables);
@@ -82,7 +88,7 @@ public partial class ImageViewer : UserControl, IDisposable
         // The flip animates the RenderTransform of MainTransform without triggering layout
         Observable.EveryValueChanged(MainTransform,
                 transform => (transform.RenderTransform as ScaleTransform)?.ScaleX ?? 1d,
-                frameProvider)
+                mainWindow.FrameProvider)
             .Subscribe(_ => UpdateMotionPhotoBadgePositions(),
                 DebugHelper.LogError(nameof(ImageViewer), nameof(OnLoaded)))
             .AddTo(ref _disposables);
