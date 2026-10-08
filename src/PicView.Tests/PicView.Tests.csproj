@@ -8,6 +8,8 @@
 
         <EnablePreviewFeatures>true</EnablePreviewFeatures>
 
+        <DefineConstants Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(DefineConstants);MACOS</DefineConstants>
+
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <Platforms>arm64;x64</Platforms>
