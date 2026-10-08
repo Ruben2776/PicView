@@ -15,12 +15,6 @@ public readonly struct Keybind : IEquatable<Keybind>
     public const string WinModifier = "Win";
     public const string MetaModifier = "Meta";
     public const string CmdModifier = "Cmd";
-    public const string CommandModifier = "Command";
-
-    public const string ControlSymbol = "⌃";
-    public const string OptionSymbol = "⌥";
-    public const string ShiftSymbol = "⇧";
-    public const string CmdSymbol = "⌘";
 
     public const string MacCtrlModifier = "⌃ Ctrl";
     public const string MacShiftModifier = "⇧ Shift";
@@ -73,38 +67,6 @@ public readonly struct Keybind : IEquatable<Keybind>
             var part = plusIndex == -1 ? span : span.Slice(0, plusIndex);
             part = part.Trim();
 
-            if (part.StartsWith('⌃'))
-            {
-                mods |= KeyModifiers.Control;
-                part = part[1..].Trim();
-            }
-            if (part.StartsWith('⇧'))
-            {
-                mods |= KeyModifiers.Shift;
-                part = part[1..].Trim();
-            }
-            if (part.StartsWith('⌥'))
-            {
-                mods |= KeyModifiers.Alt;
-                part = part[1..].Trim();
-            }
-            if (part.StartsWith('⌘'))
-            {
-                mods |= KeyModifiers.Meta;
-                part = part[1..].Trim();
-            }
-
-            if (part.IsEmpty)
-            {
-                if (plusIndex == -1)
-                {
-                    break;
-                }
-
-                span = span.Slice(plusIndex + 1);
-                continue;
-            }
-
             if (part.Equals(CtrlModifier, StringComparison.OrdinalIgnoreCase) ||
                 part.Equals(ControlModifier, StringComparison.OrdinalIgnoreCase))
             {
@@ -121,8 +83,7 @@ public readonly struct Keybind : IEquatable<Keybind>
             }
             else if (part.Equals(WinModifier, StringComparison.OrdinalIgnoreCase) ||
                      part.Equals(MetaModifier, StringComparison.OrdinalIgnoreCase) ||
-                     part.Equals(CmdModifier, StringComparison.OrdinalIgnoreCase) ||
-                     part.Equals(CommandModifier, StringComparison.OrdinalIgnoreCase))
+                     part.Equals(CmdModifier, StringComparison.OrdinalIgnoreCase))
             {
                 mods |= KeyModifiers.Meta;
             }
@@ -147,46 +108,62 @@ public readonly struct Keybind : IEquatable<Keybind>
     }
 
     /// <summary>
-    /// Formats the keybind, automatically accounting for OS-specific modifier names.
+    /// Formats the keybind with platform-specific modifier icons for UI display.
     /// </summary>
-    public override string ToString()
+    public string GetFormattedWithIcon() => Format(withIcon: true);
+
+    /// <summary>
+    /// Formats the keybind with standard modifier names suitable for JSON serialization and parsing.
+    /// </summary>
+    public string GetFormattedForJSON() => Format(withIcon: false);
+
+    /// <summary>
+    /// Formats the keybind for display.
+    /// </summary>
+    public override string ToString() => GetFormattedWithIcon();
+
+    private string Format(bool withIcon)
     {
         string? p0 = null;
         string? p1 = null;
         string? p2 = null;
-        string? p3 = null;
         var index = 0;
 
         var isMac = OperatingSystem.IsMacOS();
 
         if (Modifiers.HasFlag(KeyModifiers.Control))
         {
-            AddPart(isMac ? MacCtrlModifier : CtrlModifier, ref p0, ref p1, ref p2, ref p3, ref index);
+            AddPart(withIcon && isMac ? MacCtrlModifier : CtrlModifier, ref p0, ref p1, ref p2, ref index);
         }
 
         if (Modifiers.HasFlag(KeyModifiers.Shift))
         {
-            AddPart(isMac ? MacShiftModifier : ShiftModifier, ref p0, ref p1, ref p2, ref p3, ref index);
+            AddPart(withIcon && isMac ? MacShiftModifier : ShiftModifier, ref p0, ref p1, ref p2, ref index);
         }
 
         if (Modifiers.HasFlag(KeyModifiers.Alt))
         {
-            // Translates Alt to Option for macOS displays and configurations
-            AddPart(isMac ? MacOptionModifier : AltModifier, ref p0, ref p1, ref p2, ref p3, ref index);
+            var altName = isMac
+                ? withIcon ? MacOptionModifier : OptionModifier
+                : AltModifier;
+            AddPart(altName, ref p0, ref p1, ref p2, ref index);
         }
 
         if (Modifiers.HasFlag(KeyModifiers.Meta))
         {
-            AddPart(isMac ? MacCmdModifier : WinModifier, ref p0, ref p1, ref p2, ref p3, ref index);
+            var metaName = isMac
+                ? withIcon ? MacCmdModifier : CmdModifier
+                : WinModifier;
+            AddPart(metaName, ref p0, ref p1, ref p2, ref index);
         }
 
         if (Key != Key.None)
         {
-            AddPart(Key.ToString(), ref p0, ref p1, ref p2, ref p3, ref index);
+            AddPart(Key.ToString(), ref p0, ref p1, ref p2, ref index);
         }
         else if (MouseButton != MouseButton.None)
         {
-            AddPart(MouseButton.ToString(), ref p0, ref p1, ref p2, ref p3, ref index);
+            AddPart(MouseButton.ToString(), ref p0, ref p1, ref p2, ref index);
         }
 
         return index switch
@@ -216,30 +193,10 @@ public readonly struct Keybind : IEquatable<Keybind>
                 destination[offset++] = ' ';
                 third.AsSpan().CopyTo(destination[offset..]);
             }),
-            4 => string.Create(p0!.Length + 3 + p1!.Length + 3 + p2!.Length + 3 + p3!.Length, (p0, p1, p2, p3), static (destination, state) =>
-            {
-                var (first, second, third, fourth) = state;
-                first.AsSpan().CopyTo(destination);
-                var offset = first.Length;
-                destination[offset++] = ' ';
-                destination[offset++] = '+';
-                destination[offset++] = ' ';
-                second.AsSpan().CopyTo(destination[offset..]);
-                offset += second.Length;
-                destination[offset++] = ' ';
-                destination[offset++] = '+';
-                destination[offset++] = ' ';
-                third.AsSpan().CopyTo(destination[offset..]);
-                offset += third.Length;
-                destination[offset++] = ' ';
-                destination[offset++] = '+';
-                destination[offset++] = ' ';
-                fourth.AsSpan().CopyTo(destination[offset..]);
-            }),
             _ => string.Empty
         };
 
-        static void AddPart(string part, ref string? p0, ref string? p1, ref string? p2, ref string? p3, ref int index)
+        static void AddPart(string part, ref string? p0, ref string? p1, ref string? p2, ref int index)
         {
             switch (index)
             {
@@ -251,9 +208,6 @@ public readonly struct Keybind : IEquatable<Keybind>
                     break;
                 case 2:
                     p2 = part;
-                    break;
-                case 3:
-                    p3 = part;
                     break;
             }
             index++;

@@ -180,7 +180,7 @@ public class KeybindBox : TemplatedControl
                         {
                             try
                             {
-                                Tags.Insert(targetIndex++, item.ToString());
+                                Tags.Insert(targetIndex++, item.GetFormattedWithIcon());
                             }
                             catch
                             {
@@ -196,7 +196,7 @@ public class KeybindBox : TemplatedControl
                     {
                         foreach (Keybind item in e.OldItems)
                         {
-                            var tag = item.ToString();
+                            var tag = item.GetFormattedWithIcon();
                             Tags.Remove(tag);
                         }
                     }
@@ -211,15 +211,15 @@ public class KeybindBox : TemplatedControl
                             var newKeybind = (Keybind)e.NewItems[i]!;
                             if (replaceIndex >= 0 && replaceIndex < Tags.Count)
                             {
-                                Tags[replaceIndex] = newKeybind.ToString();
+                                Tags[replaceIndex] = newKeybind.GetFormattedWithIcon();
                             }
                             else
                             {
-                                var oldTag = ((Keybind)e.OldItems[i]!).ToString();
+                                var oldTag = ((Keybind)e.OldItems[i]!).GetFormattedWithIcon();
                                 var idx = Tags.IndexOf(oldTag);
                                 if (idx >= 0)
                                 {
-                                    Tags[idx] = newKeybind.ToString();
+                                    Tags[idx] = newKeybind.GetFormattedWithIcon();
                                 }
                             }
                         }
@@ -230,7 +230,7 @@ public class KeybindBox : TemplatedControl
                     Tags.Clear();
                     for (var i = 0; i < Keybinds.Count; i++)
                     {
-                        Tags.Add(Keybinds[i].ToString());
+                        Tags.Add(Keybinds[i].GetFormattedWithIcon());
                     }
                     break;
 
@@ -273,7 +273,7 @@ public class KeybindBox : TemplatedControl
                         {
                             for (var i = 0; i < Keybinds.Count; i++)
                             {
-                                if (string.Equals(Keybinds[i].ToString(), tag, StringComparison.OrdinalIgnoreCase))
+                                if (string.Equals(Keybinds[i].GetFormattedWithIcon(), tag, StringComparison.OrdinalIgnoreCase))
                                 {
                                     Keybinds.RemoveAt(i);
                                     break;
@@ -332,7 +332,7 @@ public class KeybindBox : TemplatedControl
             {
                 for (var i = 0; i < Keybinds.Count; i++)
                 {
-                    Tags.Add(Keybinds[i].ToString());
+                    Tags.Add(Keybinds[i].GetFormattedWithIcon());
                 }
             }
         }

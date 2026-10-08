@@ -176,7 +176,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
                 foreach (var kb in box.Keybinds)
                 {
-                    keyValues[kb.ToString()] = functionName;
+                    keyValues[kb.GetFormattedForJSON()] = functionName;
                 }
             }
         }

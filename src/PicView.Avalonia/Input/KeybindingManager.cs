@@ -51,7 +51,7 @@ public static class KeybindingManager
         try
         {
             var json = JsonSerializer.Serialize(
-                CustomShortcuts.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value, StringComparer.OrdinalIgnoreCase),
+                CustomShortcuts.ToDictionary(kvp => kvp.Key.GetFormattedForJSON(), kvp => kvp.Value, StringComparer.OrdinalIgnoreCase),
                 typeof(Dictionary<string, string>),
                 SourceGenerationContext.Default).Replace("\\u002B", "+", StringComparison.Ordinal); // Fix plus sign encoded to Unicode
 
