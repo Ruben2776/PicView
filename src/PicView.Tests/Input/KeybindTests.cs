@@ -24,28 +24,33 @@ public class KeybindTests
     [Fact]
     public void ToString_ModifierAndKey_ReturnsCombinedString()
     {
+        var isMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+        var ctrlName = isMac ? Keybind.MacCtrlModifier : Keybind.CtrlModifier;
+
         var keybind = new Keybind(Key.A, KeyModifiers.Control);
-        Assert.Equal("Ctrl + A", keybind.ToString());
+        Assert.Equal($"{ctrlName} + A", keybind.ToString());
     }
 
     [Fact]
     public void ToString_TwoModifiersAndKey_ReturnsCombinedString()
     {
         var isMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-        var altName = isMac ? "Option" : "Alt";
+        var ctrlName = isMac ? Keybind.MacCtrlModifier : Keybind.CtrlModifier;
+        var altName = isMac ? Keybind.MacOptionModifier : Keybind.AltModifier;
 
         var keybind = new Keybind(Key.O, KeyModifiers.Control | KeyModifiers.Alt);
-        Assert.Equal($"Ctrl + {altName} + O", keybind.ToString());
+        Assert.Equal($"{ctrlName} + {altName} + O", keybind.ToString());
     }
 
     [Fact]
     public void ToString_TwoModifiersAndMouseButton_ReturnsCombinedString()
     {
         var isMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-        var altName = isMac ? "Option" : "Alt";
+        var shiftName = isMac ? Keybind.MacShiftModifier : Keybind.ShiftModifier;
+        var altName = isMac ? Keybind.MacOptionModifier : Keybind.AltModifier;
 
         var keybind = new Keybind(MouseButton.XButton1, KeyModifiers.Shift | KeyModifiers.Alt);
-        Assert.Equal($"Shift + {altName} + XButton1", keybind.ToString());
+        Assert.Equal($"{shiftName} + {altName} + XButton1", keybind.ToString());
     }
 
     [Fact]
@@ -59,7 +64,7 @@ public class KeybindTests
     public void ToString_MetaModifier_ReturnsCorrectPlatformName()
     {
         var isMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-        var metaName = isMac ? "Cmd" : "Win";
+        var metaName = isMac ? Keybind.MacCmdModifier : Keybind.WinModifier;
 
         var keybind = new Keybind(Key.S, KeyModifiers.Meta);
         Assert.Equal($"{metaName} + S", keybind.ToString());
@@ -72,16 +77,51 @@ public class KeybindTests
         Assert.Equal(string.Empty, keybind.ToString());
     }
 
+    [Fact]
+    public void ToString_OnMac_UsesModifierSymbols()
+    {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            return;
+        }
+
+        Assert.Equal("⌃ Ctrl + A", new Keybind(Key.A, KeyModifiers.Control).ToString());
+        Assert.Equal("⇧ Shift + A", new Keybind(Key.A, KeyModifiers.Shift).ToString());
+        Assert.Equal("⌥ Option + A", new Keybind(Key.A, KeyModifiers.Alt).ToString());
+        Assert.Equal("⌘ Cmd + A", new Keybind(Key.A, KeyModifiers.Meta).ToString());
+    }
+
     [Theory]
-    [InlineData("Ctrl+A", "Ctrl + A")]
-    [InlineData("Shift+Delete", "Shift + Delete")]
-    [InlineData("Ctrl+Shift+Z", "Ctrl + Shift + Z")]
-    [InlineData("Ctrl + A", "Ctrl + A")]
-    [InlineData("Shift + Delete", "Shift + Delete")]
-    [InlineData("Ctrl + Shift + Z", "Ctrl + Shift + Z")]
-    public void Parse_And_ToString_Roundtrips(string input, string expected)
+    [InlineData("Ctrl+A")]
+    [InlineData("Shift+Delete")]
+    [InlineData("Ctrl+Shift+Z")]
+    [InlineData("Ctrl + A")]
+    [InlineData("Shift + Delete")]
+    [InlineData("Ctrl + Shift + Z")]
+    public void Parse_And_ToString_Roundtrips(string input)
     {
         var parsed = Keybind.Parse(input);
-        Assert.Equal(expected, parsed.ToString());
+        Assert.NotNull(parsed);
+        var str = parsed.Value.ToString();
+        var reparsed = Keybind.Parse(str);
+        Assert.Equal(parsed, reparsed);
+    }
+
+    [Theory]
+    [InlineData("⌃ Ctrl + A", Key.A, KeyModifiers.Control)]
+    [InlineData("⇧ Shift + Delete", Key.Delete, KeyModifiers.Shift)]
+    [InlineData("⌥ Option + O", Key.O, KeyModifiers.Alt)]
+    [InlineData("⌘ Cmd + S", Key.S, KeyModifiers.Meta)]
+    [InlineData("⌘ Cmd + ⇧ Shift + Z", Key.Z, KeyModifiers.Meta | KeyModifiers.Shift)]
+    [InlineData("⌃ + A", Key.A, KeyModifiers.Control)]
+    [InlineData("⌥ + O", Key.O, KeyModifiers.Alt)]
+    [InlineData("⇧ + Delete", Key.Delete, KeyModifiers.Shift)]
+    [InlineData("⌘ + S", Key.S, KeyModifiers.Meta)]
+    public void Parse_MacModifierPrefixes_ParsesCorrectly(string input, Key expectedKey, KeyModifiers expectedModifiers)
+    {
+        var parsed = Keybind.Parse(input);
+        Assert.NotNull(parsed);
+        Assert.Equal(expectedKey, parsed.Value.Key);
+        Assert.Equal(expectedModifiers, parsed.Value.Modifiers);
     }
 }
