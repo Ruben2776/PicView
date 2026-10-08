@@ -19,6 +19,11 @@ public partial class BottomBar : UserControl, IDisposable
         InitializeComponent();
 
         Loaded += OnLoaded;
+
+        if (OperatingSystem.IsMacOS())
+        {
+            ResizeGrip.Margin = new Thickness(0, 0, 9, 8);
+        }
     }
 
     private void OnLoaded(object? sender, RoutedEventArgs e)

@@ -35,6 +35,11 @@ public static class MouseShortcuts
         var shift = e.KeyModifiers is KeyModifiers.Shift;
         var reverse = e.Delta.Y < 0;
 
+        if (!ctrl && OperatingSystem.IsMacOS())
+        {
+            ctrl = e.KeyModifiers is KeyModifiers.Meta;
+        }
+
         if (Settings.Zoom.ScrollEnabled)
         {
             if (!shift)
