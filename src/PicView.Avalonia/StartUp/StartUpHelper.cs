@@ -26,8 +26,7 @@ namespace PicView.Avalonia.StartUp;
 
 public static class StartUpHelper
 {
-    public static void StartWithArguments(CoreViewModel vm, bool settingsExists,
-        IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
+    public static void StartWithArguments(CoreViewModel vm, bool settingsExists, MainWindow window)
     {
         var args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
@@ -59,7 +58,7 @@ public static class StartUpHelper
             {
                 if (!ProcessHelper.CheckIfAnotherInstanceIsRunning())
                 {
-                    WindowFunctions.ImageStartUp(arg, vm, settingsExists, desktop, window);
+                    WindowFunctions.ImageStartUp(arg, vm, settingsExists, window);
                 }
                 else
                 {
@@ -68,12 +67,12 @@ public static class StartUpHelper
             }
             else
             {
-                WindowFunctions.ImageStartUp(arg, vm, settingsExists, desktop, window);
+                WindowFunctions.ImageStartUp(arg, vm, settingsExists, window);
             }
         }
         else
         {
-            WindowFunctions.RegularWindowStartUp(vm, settingsExists, desktop, window);
+            WindowFunctions.RegularWindowStartUp(vm, settingsExists, window);
         }
     }
     
@@ -106,7 +105,7 @@ public static class StartUpHelper
                 ScreenHelper.UpdateScreenSize(mainWindow);
                 WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
                 WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
-            },DispatcherPriority.ContextIdle);
+            },DispatcherPriority.ApplicationIdle);
         }
         
         SetMemorySettings();

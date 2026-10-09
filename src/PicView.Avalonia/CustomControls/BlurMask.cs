@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Platform;
 using Avalonia.Rendering.SceneGraph;
 using Avalonia.Skia;
 using SkiaSharp;
@@ -36,9 +35,7 @@ public class BlurMask : Control
     {
         private readonly Rect _bounds = bounds;
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         public bool HitTest(Point p) => _bounds.Contains(p);
         

@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using Avalonia.Media.Imaging;
+using PicView.Core.DebugTools;
 using static PicView.Avalonia.AnimatedImage.Extensions.StreamExtensions;
 
 namespace PicView.Avalonia.AnimatedImage.Decoding;
@@ -584,7 +585,11 @@ public sealed class GifDecoder : IDisposable
 
             // Break the loop when the stream is not valid anymore.
             if ((_fileStream.Position >= _fileStream.Length) & !terminate)
-                throw new InvalidProgramException("Reach the end of the filestream without trailer block.");
+            {
+                DebugHelper.LogDebug(nameof(GifDecoder), nameof(ProcessFrameData), 
+                    "Reach the end of the filestream without trailer block.");
+                return;
+            }
         } while (!terminate);
 
         ArrayPool<byte>.Shared.Return(tempBuf);

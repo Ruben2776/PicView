@@ -182,7 +182,7 @@ public partial class LinuxMainWindow : MainWindow, IPlatformWindowService
                 newVm = newWindow.DataContext as MainWindowViewModel;
                 core.MainWindows.MainWindows.Add(newVm);
                 core.MainWindows.ActiveWindow.Value = newVm;
-                WindowFunctions.DetachedWindowStartup(core, desktop, newWindow);
+                WindowFunctions.DetachedWindowStartup(core, newWindow);
 
                 // Fix null DataContext
                 if (tab.CurrentView.CurrentValue is Control control)

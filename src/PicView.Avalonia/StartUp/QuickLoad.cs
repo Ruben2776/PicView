@@ -220,12 +220,6 @@ public static class QuickLoad
                     // Predict window size and center beforehand for pleasant opening when double-clicking a file
                     Dispatcher.UIThread.Post(() =>
                     {
-                        if (OperatingSystem.IsMacOS())
-                        {
-                            // This fixes issue with multi-monitor setup for macOS,
-                            // since the previous fetched screen size could be from another monitor.
-                            ScreenHelper.UpdateScreenSize(mainWindow);
-                        }
                         var size = WindowResizing.GetSize(tab.Model.PixelWidth, tab.Model.PixelHeight,
                             0, 0, 0, mainWindow, vm);
                         if (!size.HasValue)

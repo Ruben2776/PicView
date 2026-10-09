@@ -28,7 +28,7 @@ public static class WindowFunctions
     {
         if (Application.Current.DataContext is not CoreViewModel core ||
             mainWindow.MainWindowInitializer is null ||
-            Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+            Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime)
         {
             return;
         }
@@ -47,7 +47,7 @@ public static class WindowFunctions
         StartUpHelper.HandlePostWindowUpdates(core, window);
     }
 
-    public static void DetachedWindowStartup(CoreViewModel core, IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
+    public static void DetachedWindowStartup(CoreViewModel core, MainWindow window)
     {
         HandleWindowScalingMode(core, window, false);
         window.Show();
@@ -55,8 +55,7 @@ public static class WindowFunctions
         StartUpHelper.HandlePostWindowUpdates(core, window);
     }
     
-    public static void RegularWindowStartUp(CoreViewModel core, bool settingsExists,
-        IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
+    public static void RegularWindowStartUp(CoreViewModel core, bool settingsExists, MainWindow window)
     {
         StartUpHelper.HandleWindowStartUpSettings(core, settingsExists, window);
 
@@ -66,8 +65,7 @@ public static class WindowFunctions
 
     }
     
-    public static void ImageStartUp(string filePath, CoreViewModel core, bool settingsExists,
-        IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
+    public static void ImageStartUp(string filePath, CoreViewModel core, bool settingsExists, MainWindow window)
     {
         StartUpHelper.HandleWindowStartUpSettings(core, settingsExists, window);
 

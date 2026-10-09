@@ -78,7 +78,7 @@ public static partial class SvgLoader
         });
     }
 
-    [GeneratedRegex(@"(-?\d*\.?\d+)(em|rem|pt|pc|in|cm|mm)", RegexOptions.IgnoreCase, "en-US")]
+    [GeneratedRegex(@"(-?\d*\.?\d+)(em|rem|pt|pc|in|cm|mm)", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "en-US")]
     private static partial Regex UnitWithNumberRegex();
 
     [GeneratedRegex(CurrentColorKeyword, RegexOptions.IgnoreCase, "en-US")]
