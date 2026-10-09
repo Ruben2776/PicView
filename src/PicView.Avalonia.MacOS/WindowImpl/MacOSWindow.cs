@@ -42,7 +42,7 @@ public static class MacOSWindow
         window.IsChangingWindowState = true;
         
         var wasFullscreen = window.WindowState == WindowState.FullScreen || Settings.WindowProperties.Fullscreen;
-        
+        ScreenHelper.UpdateScreenSize(window);
         if (Settings.WindowProperties.AutoFit)
         {
             window.SizeToContent = SizeToContent.WidthAndHeight;
@@ -106,7 +106,7 @@ public static class MacOSWindow
             // Don't save the user setting when entering fullscreen from slideshow
             Settings.WindowProperties.Fullscreen = true;
         }
-
+        ScreenHelper.UpdateScreenSize(window);
         Settings.WindowProperties.Maximized = false;
         vm.IsMaximized.Value = false;
         vm.IsFullscreen.Value = true;

@@ -106,12 +106,7 @@ public class App : Application, IPlatformSpecificService
             }, DispatcherPriority.Background);
         }
         
-        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        
-        StartUpHelper.HandlePostWindowUpdates(_coreViewModel, desktop, _mainWindow);
+        StartUpHelper.HandlePostWindowUpdates(_coreViewModel, _mainWindow);
         
         return;
 

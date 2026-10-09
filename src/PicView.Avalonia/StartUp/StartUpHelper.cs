@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Runtime;
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -88,7 +87,7 @@ public static class StartUpHelper
         HandleThemeUpdates(core.MainWindows.ActiveWindow.CurrentValue);
     }
 
-    public static void HandlePostWindowUpdates(CoreViewModel core, IClassicDesktopStyleApplicationLifetime desktop, MainWindow mainWindow)
+    public static void HandlePostWindowUpdates(CoreViewModel core, MainWindow mainWindow)
     {
         var vm = core.MainWindows.ActiveWindow.CurrentValue;
         if (Settings.WindowProperties.Maximized && !Settings.WindowProperties.Fullscreen)
@@ -104,6 +103,7 @@ public static class StartUpHelper
                 {
                     ToggleUIVisibility.FullscreenHideInterface(vm);
                 }
+                ScreenHelper.UpdateScreenSize(mainWindow);
                 WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
                 WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
             },DispatcherPriority.ContextIdle);

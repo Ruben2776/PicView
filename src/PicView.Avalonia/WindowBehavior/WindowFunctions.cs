@@ -44,7 +44,7 @@ public static class WindowFunctions
         };
         vm.WindowTabs.ActiveTab.Value.CurrentView.Value = startUpMenu;
         window.Show();
-        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
+        StartUpHelper.HandlePostWindowUpdates(core, window);
     }
 
     public static void DetachedWindowStartup(CoreViewModel core, IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
@@ -52,7 +52,7 @@ public static class WindowFunctions
         HandleWindowScalingMode(core, window, false);
         window.Show();
         
-        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
+        StartUpHelper.HandlePostWindowUpdates(core, window);
     }
     
     public static void RegularWindowStartUp(CoreViewModel core, bool settingsExists,
@@ -62,7 +62,7 @@ public static class WindowFunctions
 
         StartUpHelper.StartUpMenuOrLastFile(window, core);
 
-        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
+        StartUpHelper.HandlePostWindowUpdates(core, window);
 
     }
     
@@ -73,7 +73,7 @@ public static class WindowFunctions
 
         StartUpHelper.HandleStartImage(window, core, filePath);
 
-        StartUpHelper.HandlePostWindowUpdates(core, desktop, window);
+        StartUpHelper.HandlePostWindowUpdates(core, window);
     }
 
     #endregion
