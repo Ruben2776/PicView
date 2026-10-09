@@ -1,76 +1,69 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net11.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <Platforms>x64;arm64</Platforms>
-        <LangVersion>preview</LangVersion>
-
-        <!-- AOT -->
-        <PublishAot>true</PublishAot>
-        <Trimming>full</Trimming>
-        <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
-        <OptimizationPreference>Speed</OptimizationPreference>
-        <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
-        <IsAotCompatible>True</IsAotCompatible>
-        <IsTrimmable>True</IsTrimmable>
-        <EventSourceSupport>false</EventSourceSupport>
-        <StackTraceSupport>true</StackTraceSupport>
-        <EventSourceSupport>false</EventSourceSupport>
-        <IlcTrimMetadata>true</IlcTrimMetadata>
-
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug*'">
-        <IsAotCompatible>True</IsAotCompatible>
-        <IsTrimmable>True</IsTrimmable>
-        <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
-        <DebugSymbols>True</DebugSymbols>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release*'">
-        <IsAotCompatible>True</IsAotCompatible>
-        <IsTrimmable>True</IsTrimmable>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <DebugType>none</DebugType>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Platform)' == 'x64'">
-        <PlatformTarget>x64</PlatformTarget>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Platform)' == 'arm64'">
-        <PlatformTarget>ARM64</PlatformTarget>
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <EnablePreviewFeatures>true</EnablePreviewFeatures>
-        <Features>$(Features);runtime-async=on</Features>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Magick.NET-Q8-x64" Version="14.17.2" />
-        <PackageReference Include="Meziantou.Analyzer" Version="3.0.294">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="ObservableCollections" Version="3.3.4" />
-        <PackageReference Include="ObservableCollections.R3" Version="3.3.4" />
-        <PackageReference Include="R3" Version="1.3.1" />
-        <PackageReference Include="SharpCompress" Version="0.50.4" />
-        <PackageReference Include="ZLinq" Version="1.5.6" />
-        <PackageReference Include="ZLinq.FileSystem" Version="1.5.6" />
-        <PackageReference Include="ZString" Version="2.6.0"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Update="Config\Languages\*.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Licenses\LICENSE.txt">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-    
-    <ItemGroup>
-        <InternalsVisibleTo Include="PicView.Tests"/>
-        <InternalsVisibleTo Include="PicView.Benchmarks"/>
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>x64;arm64</Platforms>
+    <LangVersion>preview</LangVersion>
+    <!-- AOT -->
+    <PublishAot>true</PublishAot>
+    <Trimming>full</Trimming>
+    <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+    <OptimizationPreference>Speed</OptimizationPreference>
+    <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+    <IsAotCompatible>True</IsAotCompatible>
+    <IsTrimmable>True</IsTrimmable>
+    <EventSourceSupport>false</EventSourceSupport>
+    <StackTraceSupport>true</StackTraceSupport>
+    <EventSourceSupport>false</EventSourceSupport>
+    <IlcTrimMetadata>true</IlcTrimMetadata>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug*'">
+    <IsAotCompatible>True</IsAotCompatible>
+    <IsTrimmable>True</IsTrimmable>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <DebugSymbols>True</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release*'">
+    <IsAotCompatible>True</IsAotCompatible>
+    <IsTrimmable>True</IsTrimmable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' == 'x64'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' == 'arm64'">
+    <PlatformTarget>ARM64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EnablePreviewFeatures>true</EnablePreviewFeatures>
+    <Features>$(Features);runtime-async=on</Features>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Magick.NET-Q8-x64" Version="14.17.2" />
+    <PackageReference Include="Meziantou.Analyzer" Version="3.0.296">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ObservableCollections" Version="3.3.4" />
+    <PackageReference Include="ObservableCollections.R3" Version="3.3.4" />
+    <PackageReference Include="R3" Version="1.3.1" />
+    <PackageReference Include="SharpCompress" Version="0.50.4" />
+    <PackageReference Include="ZLinq" Version="1.5.6" />
+    <PackageReference Include="ZLinq.FileSystem" Version="1.5.6" />
+    <PackageReference Include="ZString" Version="2.6.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Config\Languages\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Licenses\LICENSE.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="PicView.Tests" />
+    <InternalsVisibleTo Include="PicView.Benchmarks" />
+  </ItemGroup>
 </Project>
