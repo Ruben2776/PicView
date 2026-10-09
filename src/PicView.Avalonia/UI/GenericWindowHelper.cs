@@ -41,17 +41,27 @@ public static class GenericWindowHelper
         else
         { 
             window.WindowState = WindowState.Normal;
-            if (windowConfig.Height.HasValue && windowConfig.Height.Value > window.MinHeight)
+            if (windowConfig is { Height: not null, Width: not null })
             {
-                window.Height = windowConfig.Height.Value;
+                if (windowConfig.Height.Value > window.MinHeight)
+                {
+                    window.Height = windowConfig.Height.Value;
+                }
+                if (!isWidthLocked && windowConfig.Width.Value > window.MinWidth)
+                {
+                    window.Width = windowConfig.Width.Value;
+                }
             }
-            if (!isWidthLocked && windowConfig.Width.HasValue && windowConfig.Width.Value > window.MinWidth)
-            {
-                window.Width = windowConfig.Width.Value;
-            }
-            if (windowConfig.Top is not null && windowConfig.Left is not null)
+            if (windowConfig is { Top: not null, Left: not null })
             {
                 window.Position = new PixelPoint(windowConfig.Left.Value, windowConfig.Top.Value);
+            }
+            else
+            {
+                window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                var screenSize = ScreenHelper.ScreenSize;
+                var centerPixelPoint = new PixelPoint((int)(screenSize.Width / 2), (int)(screenSize.Height / 2));
+                window.Position = centerPixelPoint;
             }
         }
             
