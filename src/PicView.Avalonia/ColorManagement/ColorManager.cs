@@ -124,11 +124,6 @@ public static class ColorManager
         // Calculate the contrasting text color based on the PrimaryAccentColor
         var accentForegroundBrush = new SolidColorBrush(GetContrastingForegroundColor(PrimaryAccentColor));
 
-        if (Settings.Theme.GlassTheme)
-        {
-            GlassThemeHelper.GlassThemeUpdates();
-        }
-
         // Update application resources with the new brushes
         UpdateResourceIfExists("AccentColor", primaryBrush);
         UpdateResourceIfExists("SecondaryAccentColor", secondaryBrush);

@@ -83,6 +83,7 @@ public static class StartUpHelper
         WindowFunctions.HandleWindowScalingMode(core, window);
         
         ThemeManager.DetermineTheme(Application.Current, settingsExists);
+        ColorManager.UpdateAccentColors(Settings.Theme.ColorTheme);
     }
 
     public static void HandlePostWindowUpdates(CoreViewModel core, MainWindow mainWindow)

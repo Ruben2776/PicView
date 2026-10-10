@@ -34,7 +34,6 @@ public static class ThemeManager
             case Theme.Glass:
                 Settings.Theme.GlassTheme = true;
                 application.RequestedThemeVariant = ThemeVariant.Light;
-                GlassThemeHelper.GlassThemeUpdates();
                 break;
         }
         
