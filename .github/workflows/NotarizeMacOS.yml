@@ -70,7 +70,7 @@ jobs:
           APPLE_ID: ${{ secrets.AppleID || secrets.APPLE_ID }}
           APP_PASSWORD: ${{ secrets.AppPassword || secrets.APP_PASSWORD }}
           TEAM_ID: ${{ secrets.TeamID || secrets.TEAM_ID || 'VR9BBW77YF' }}
-          SIGNING_IDENTITY: ${{ secrets.SigningIdentity || secrets.SIGNING_IDENTITY || 'Developer ID Application: Ruben Hyldgaard Negendahl (VR9BBW77YF)' }}
+          SIGNING_IDENTITY: ${{ secrets.SigningIdentity || secrets.SIGNING_IDENTITY }}
         run: |
           $repoRoot = "${{ github.workspace }}"
           $outputRoot = Join-Path $repoRoot "Build/output"
