@@ -326,25 +326,12 @@ public class Zoom
     public bool IsZoomAnimated { get; set; } = false;
 
     /// <summary>
-    /// Determines whether the Ctrl key must be held while using the mouse wheel to zoom.
-    /// If set to true, holding the Ctrl key enables zoom functionality with the mouse wheel.
-    /// Otherwise, the mouse wheel will be used for navigation.
-    /// </summary>
-    public bool CtrlZoom { get; set; } = true;
-
-    /// <summary>
     /// Indicates whether the zoom percentage popup is displayed when adjusting the zoom level.
     /// This setting can be changed dynamically during application runtime.
     /// </summary>
     public bool IsShowingZoomPercentagePopup { get; set; } = false;
 
     public bool IsShowingZoomPreviewer { get; set; } = true;
-
-    /// <summary>
-    /// Determines whether to reverse the horizontal scrolling direction for navigation.
-    /// When set to true, the horizontal scroll behavior is reversed, I.E, enable "Natural scroll".
-    /// </summary>
-    public bool HorizontalReverseScroll { get; set; } = true;
 
     /// <summary>
     /// A property that determines whether scrolling functionality is enabled for images. Does not work for zoom operations.

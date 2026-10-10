@@ -90,6 +90,14 @@ public static class KeybindingManager
             {
                 return new Keybind(MouseButton.XButton2, value.Modifiers);
             }
+            if (string.Equals(kvp.Key, nameof(MouseButton.WheelUp), StringComparison.OrdinalIgnoreCase)) 
+            {
+                return new Keybind(MouseButton.WheelUp, value.Modifiers);
+            }
+            if (string.Equals(kvp.Key, nameof(MouseButton.WheelDown), StringComparison.OrdinalIgnoreCase)) 
+            {
+                return new Keybind(MouseButton.WheelDown, value.Modifiers);
+            }
 
             return value;
         }
@@ -166,29 +174,5 @@ public static class KeybindingManager
         }
 
         return defaults;
-    }
-
-    public static Dictionary<string, List<Keybind>> GetDefaultsByFunction(CoreViewModel core)
-    {
-        var defaultsByFunction = new Dictionary<string, List<Keybind>>(StringComparer.OrdinalIgnoreCase);
-        var defaults = GetDefaultShortcuts(core.PlatformService);
-
-        if (defaults is null)
-        {
-            return defaultsByFunction;
-        }
-
-        foreach (var kvp in defaults)
-        {
-            if (!defaultsByFunction.TryGetValue(kvp.Value, out var list))
-            {
-                list = [];
-                defaultsByFunction[kvp.Value] = list;
-            }
-
-            list.Add(kvp.Key);
-        }
-
-        return defaultsByFunction;
     }
 }

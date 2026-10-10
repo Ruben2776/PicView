@@ -33,10 +33,6 @@ public static class LanguageUpdater
             ? TranslationManager.Translation.LoopingEnabled
             : TranslationManager.Translation.LoopingDisabled;
     
-        translationViewModel.IsCtrlToZoom.Value = Settings.Zoom.CtrlZoom
-            ? TranslationManager.Translation.CtrlToZoom
-            : TranslationManager.Translation.ScrollToZoom;
-    
         translationViewModel.IsShowingBottomToolbar.Value = Settings.UIProperties.ShowBottomNavBar
             ? TranslationManager.Translation.HideBottomToolbar
             : TranslationManager.Translation.ShowBottomToolbar;

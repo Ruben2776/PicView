@@ -363,16 +363,6 @@
                 IsChecked="{CompiledBinding IsAutoFit.Value}"
                 ToggleType="CheckBox" />
 
-            <!--  Toggle ctrl zoom  -->
-            <customControls:StyledMenuItem Command="{CompiledBinding ChangeCtrlZoomCommand}" Header="{CompiledBinding Translation.IsCtrlToZoom.Value, Mode=OneWay}">
-                <MenuItem.Icon>
-                    <Image
-                        Height="12"
-                        Source="{CompiledBinding ChangeCtrlZoomImage.Value}"
-                        Width="12" />
-                </MenuItem.Icon>
-            </customControls:StyledMenuItem>
-
             <Separator />
 
             <!--  Application shortcuts  -->

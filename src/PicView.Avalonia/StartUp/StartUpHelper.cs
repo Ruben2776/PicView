@@ -83,7 +83,6 @@ public static class StartUpHelper
         WindowFunctions.HandleWindowScalingMode(core, window);
         
         ThemeManager.DetermineTheme(Application.Current, settingsExists);
-        HandleThemeUpdates(core.MainWindows.ActiveWindow.CurrentValue);
     }
 
     public static void HandlePostWindowUpdates(CoreViewModel core, MainWindow mainWindow)
@@ -156,13 +155,6 @@ public static class StartUpHelper
     {
         ResourceLimits.LimitMemory(new Percentage(80));
         GCSettings.LatencyMode = GCLatencyMode.LowLatency;
-    }
-
-    private static void HandleThemeUpdates(MainWindowViewModel vm)
-    {
-        BackgroundManager.SetBackground(Settings.UIProperties.BgColorChoice);
-        ColorManager.UpdateAccentColors(Settings.Theme.ColorTheme);
-        UIHelper.SetCtrlToZoomImage(vm);
     }
 
     private static void HandleWindowControlSettings(CoreViewModel vm, MainWindow mainWindow)

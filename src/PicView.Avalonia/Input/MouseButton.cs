@@ -5,5 +5,7 @@ public enum MouseButton
     None = 0,
     Middle,
     XButton1,
-    XButton2
+    XButton2,
+    WheelUp,
+    WheelDown
 }

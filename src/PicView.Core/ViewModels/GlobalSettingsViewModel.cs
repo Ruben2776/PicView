@@ -13,8 +13,6 @@ public class GlobalSettingsViewModel
     public BindableReactiveProperty<bool> IsLooping { get; } = new(Settings.UIProperties.Looping);
 
     public BindableReactiveProperty<bool> IsFileHistoryEnabled { get; } = new(Settings.Navigation.IsFileHistoryEnabled);
-
-    public BindableReactiveProperty<bool> IsShowingTaskbarProgress { get; } = new(Settings.UIProperties.IsTaskbarProgressEnabled);
     
     public BindableReactiveProperty<bool> ShowSetAsWallpaper { get; } = new(Settings.UIProperties.ShowSetAsWallpaper);
     
@@ -24,10 +22,7 @@ public class GlobalSettingsViewModel
     
     public BindableReactiveProperty<int> BackgroundChoice { get; } = new();
     
-    public BindableReactiveProperty<int> MouseWheelBehavior { get; } = new(Settings.Zoom.CtrlZoom ? 0 : 1);
     public BindableReactiveProperty<int> GalleryMouseWheelBehavior { get; } = new((int)Settings.Gallery.GalleryMouseWheelBehavior);
-    
-    public BindableReactiveProperty<bool> CtrlZoom { get; } = new(Settings.Zoom.CtrlZoom);
     
     public void Initialize()
     {
@@ -36,24 +31,6 @@ public class GlobalSettingsViewModel
             return;
         }
         _isInitialized = true;
-        
-        Observable.EveryValueChanged(this, x => x.MouseWheelBehavior.CurrentValue)
-            .SubscribeAwait(async (x, _) =>
-            {
-                var ctrlZoom = x == 0;
-                Settings.Zoom.CtrlZoom = ctrlZoom;
-                if (CtrlZoom.Value != ctrlZoom) CtrlZoom.Value = ctrlZoom;
-                await SaveSettingsAsync().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(GlobalSettingsViewModel), nameof(MouseWheelBehavior)));
-
-        Observable.EveryValueChanged(this, x => x.MouseWheelBehavior.CurrentValue)
-            .SubscribeAwait(async (x, _) =>
-            {
-                var ctrlZoom = x == 0;
-                Settings.Zoom.CtrlZoom = ctrlZoom;
-                if (CtrlZoom.Value != ctrlZoom) CtrlZoom.Value = ctrlZoom;
-                await SaveSettingsAsync().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(GlobalSettingsViewModel), nameof(MouseWheelBehavior)));
         
         GalleryMouseWheelBehavior
             .Subscribe(x => {

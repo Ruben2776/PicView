@@ -80,7 +80,11 @@ public static class WindowsKeybindings
                                                "Ctrl+T": "NewTab",
                                                "Ctrl+W": "CloseTab",
                                                "XButton2": "FileHistoryNext",
-                                               "XButton1": "FileHistoryPrev"
+                                               "XButton1": "FileHistoryPrev",
+                                               "WheelUp": "Next",
+                                               "WheelDown": "Prev",
+                                               "Cmd+WheelUp": "ZoomIn",
+                                               "Cmd+WheelDown": "ZoomOut",
                                              }
                                              """;
 }

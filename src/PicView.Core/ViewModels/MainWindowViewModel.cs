@@ -184,9 +184,6 @@ public class MainWindowViewModel : IDisposable
     public ReactiveCommand ToggleScrollCommand { get; }
     private async ValueTask ToggleScroll(Unit unit, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.ToggleScroll().ConfigureAwait(false); }
 
-    public ReactiveCommand ChangeCtrlZoomCommand { get; }
-    private async ValueTask ChangeCtrlZoom(Unit unit, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.ChangeCtrlZoom().ConfigureAwait(false); }
-
     #endregion
 
     #region Interface Toggles
@@ -569,7 +566,6 @@ public class MainWindowViewModel : IDisposable
         ResetZoomCommand = new ReactiveCommand(ResetZoom);
         ResetZoomAndRotationsCommand = new ReactiveCommand(ResetZoomAndRotations);
         ToggleScrollCommand = new ReactiveCommand(ToggleScroll);
-        ChangeCtrlZoomCommand = new ReactiveCommand(ChangeCtrlZoom);
 
         // Interface Toggles
         ToggleLoopingCommand = new ReactiveCommand(ToggleLooping);
@@ -742,7 +738,6 @@ public class MainWindowViewModel : IDisposable
             ResetZoomCommand,
             ResetZoomAndRotationsCommand,
             ToggleScrollCommand,
-            ChangeCtrlZoomCommand,
             ToggleLoopingCommand,
             ToggleInterfaceCommand,
             ToggleHoverBarCommand,

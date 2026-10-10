@@ -19,15 +19,7 @@ public class CustomSlider : Slider
             return;
         }
 
-        double indexChange;
-        if (Settings.Zoom.HorizontalReverseScroll)
-        {
-            indexChange = e.Delta.Y > 0 ? -TickFrequency : TickFrequency;
-        }
-        else
-        {
-            indexChange = e.Delta.Y < 0 ? -TickFrequency : TickFrequency;
-        }
+        var indexChange = e.Delta.Y < 0 ? -TickFrequency : TickFrequency;
         Value += indexChange;
     }
 }

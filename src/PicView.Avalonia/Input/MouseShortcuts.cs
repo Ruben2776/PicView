@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.IPlatform;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
@@ -30,96 +31,45 @@ public static class MouseShortcuts
         }
         
         e.Handled = true;
-
-        var ctrl = e.KeyModifiers is KeyModifiers.Control;
-        var shift = e.KeyModifiers is KeyModifiers.Shift;
         var reverse = e.Delta.Y < 0;
 
-        if (!ctrl && OperatingSystem.IsMacOS())
-        {
-            ctrl = e.KeyModifiers is KeyModifiers.Meta;
-        }
-
+        var keybind = new Keybind(reverse ? MouseButton.WheelUp : MouseButton.WheelDown, e.KeyModifiers);
         if (Settings.Zoom.ScrollEnabled)
         {
-            if (!shift)
+            if (IsVerticalScrollBarVisible(imageScrollViewer))
             {
-                if (ctrl && !Settings.Zoom.CtrlZoom)
-                {
-                    if (IsTouchPadOrTouch(e))
-                    {
-                        return;
-                    }
-
-                    await LoadNextPicAsync(reverse, mainViewModel).ConfigureAwait(false);
-                    return;
-                }
-
-                if (IsVerticalScrollBarVisible(imageScrollViewer))
-                {
-                    ScrollVertically(reverse, imageScrollViewer);
-                }
-                else
-                {
-                    await LoadNextPicAsync(reverse, mainViewModel).ConfigureAwait(false);
-                }
-
+                ScrollVertically(reverse, imageScrollViewer);
                 return;
             }
         }
-
-        if (Settings.Zoom.CtrlZoom)
+        
+        var actionName = KeybindingManager.GetActionName(keybind);
+        if (actionName is null)
         {
-            if (ctrl)
-            {
-                if (IsTouchPadOrTouch(e))
-                {
-                    return;
-                }
-
-                if (reverse)
-                {
-                    if (zoomOut is not null)
-                    {
-                        await zoomOut(e).ConfigureAwait(false);
-                    }
-                }
-                else
-                {
-                    if (zoomIn is not null)
-                    {
-                        await zoomIn(e).ConfigureAwait(false);
-                    }
-                }
-            }
-            else
-            {
-                await ScrollOrNavigateAsync(e, reverse, mainViewModel, imageScrollViewer).ConfigureAwait(false);
-            }
+            // Pressed key(s) have no associated function
+            return;
         }
-        else
+        
+        var function = mainViewModel.Mapper.GetFunctionByName(actionName);
+        if (function is null)
         {
-            if (ctrl)
-            {
-                await ScrollOrNavigateAsync(e, reverse, mainViewModel, imageScrollViewer).ConfigureAwait(false);
-            }
-            else
-            {
-                if (reverse)
-                {
-                    if (zoomOut is not null)
-                    {
-                        await zoomOut(e).ConfigureAwait(false);
-                    }
-                }
-                else
-                {
-                    if (zoomIn is not null)
-                    {
-                        await zoomIn(e).ConfigureAwait(false);
-                    }
-                }
-            }
+            return;
+        }
+
+        if (string.Equals(function.Method.Name, nameof(IFunctionsMapper.ZoomIn), StringComparison.Ordinal))
+        {
+            await zoomIn(e).ConfigureAwait(false);
+            return;
+        }
+        if (string.Equals(function.Method.Name, nameof(IFunctionsMapper.ZoomOut), StringComparison.Ordinal))
+        {
+            await zoomOut(e).ConfigureAwait(false);
+            return;
+        }
+
+        if (!IsTouchPadOrTouch(e))
+        {
+            await function.Invoke().ConfigureAwait(false);
         }
     }
 
@@ -138,57 +88,6 @@ public static class MouseShortcuts
         else
         {
             imageScrollViewer.LineUp();
-        }
-    }
-
-    private static async ValueTask ScrollOrNavigateAsync(
-        PointerWheelEventArgs e,
-        bool reverse,
-        MainWindowViewModel mainViewModel,
-        AutoScrollViewer imageScrollViewer)
-    {
-        if (!Settings.Zoom.ScrollEnabled || e.KeyModifiers is KeyModifiers.Shift)
-        {
-            if (IsTouchPadOrTouch(e))
-            {
-                if (e.KeyModifiers is KeyModifiers.Control)
-                {
-                    await LoadNextPicAsync(reverse, mainViewModel, force: true).ConfigureAwait(false); //#379
-                }
-                return;
-            }
-
-            await LoadNextPicAsync(reverse, mainViewModel).ConfigureAwait(false);
-        }
-        else
-        {
-            if (IsVerticalScrollBarVisible(imageScrollViewer))
-            {
-                ScrollVertically(reverse, imageScrollViewer);
-            }
-            else
-            {
-                await LoadNextPicAsync(reverse, mainViewModel).ConfigureAwait(false);
-            }
-        }
-    }
-
-    private static async ValueTask LoadNextPicAsync(bool reverse, MainWindowViewModel mainViewModel, bool force = false)
-    {
-        if (Settings.Zoom.IsUsingTouchPad && !force)
-        {
-            return;
-        }
-
-        var next = reverse ? Settings.Zoom.HorizontalReverseScroll : !Settings.Zoom.HorizontalReverseScroll;
-        if (next)
-        {
-            await mainViewModel.WindowTabs.NextFile().ConfigureAwait(false);
-        }
-        else
-        {
-            await mainViewModel.WindowTabs.PrevFile().ConfigureAwait(false);
-
         }
     }
     

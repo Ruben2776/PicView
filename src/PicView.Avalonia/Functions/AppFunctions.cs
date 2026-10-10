@@ -35,6 +35,5 @@ public static class AppFunctions
         
         ProcessHelper.StartCurrentAppWithArgs(openFile);
         Environment.Exit(0);
-
     }
 }

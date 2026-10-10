@@ -184,10 +184,6 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<int> ImageScalingIndex { get; } = new(Settings.ImageScaling.IsScalingSetToNearestNeighbor ? 1 : 0);
     public BindableReactiveProperty<bool> IsAutoPlayingMotionPhotos { get; } = new(Settings.UIProperties.AutoPlayMotionPhotos);
 
-    // Zoom
-    public BindableReactiveProperty<bool> HorizontalReverseScroll { get; } = new(Settings.Zoom.HorizontalReverseScroll);
-    public BindableReactiveProperty<int> ScrollDirectionIndex { get; } = new(Settings.Zoom.HorizontalReverseScroll ? 0 : 1);
-
     // Mouse
     public BindableReactiveProperty<string[]> MouseDoubleClickBehaviors { get; }
     public BindableReactiveProperty<int> MouseDoubleClickBehaviorIndex { get; }
@@ -302,8 +298,6 @@ public class SettingsViewModel : IDisposable
             IsScalingSetToNearestNeighbor,
             ImageScalingIndex,
             IsAutoPlayingMotionPhotos,
-            HorizontalReverseScroll,
-            ScrollDirectionIndex,
             UserLanguage,
             IsIncludingSubdirectories,
             IsShowingTaskbarProgress,
@@ -454,16 +448,6 @@ public class SettingsViewModel : IDisposable
                 Settings.UIProperties.AutoPlayMotionPhotos = x;
                 await SaveSettingsAsync().ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
-            .AddTo(ref _disposables);
-            
-
-        Observable.EveryValueChanged(this, x => x.ScrollDirectionIndex.CurrentValue)
-            .SubscribeAwait(async (x, _) => {
-                 var reverse = x == 0;
-                 HorizontalReverseScroll.Value = reverse;
-                 Settings.Zoom.HorizontalReverseScroll = reverse;
-                 await SaveSettingsAsync().ConfigureAwait(false);
-             }, DebugHelper.LogError(nameof(SettingsViewModel), nameof(SubscriptionSettingsUpdate)))
             .AddTo(ref _disposables);
 
 

@@ -78,7 +78,6 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             "ZoomOut" => ZoomOut,
             "ResetZoom" => ResetZoom,
             "ResetZoomAndRotations" => ResetZoomAndRotations,
-            "ChangeCtrlZoom" => ChangeCtrlZoom,
 
             // Toggles
             "ToggleScroll" => ToggleScroll,
@@ -420,12 +419,6 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     public async ValueTask ToggleScroll()
     {
         await SettingsUpdater.ToggleScroll(vm, mainWindow).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc cref="SettingsUpdater.ToggleCtrlZoom(MainWindowViewModel)" />
-    public async ValueTask ChangeCtrlZoom()
-    {
-        await SettingsUpdater.ToggleCtrlZoom(vm).ConfigureAwait(false);
     }
 
     /// <inheritdoc cref="SettingsUpdater.ToggleLooping(MainWindowViewModel)" />

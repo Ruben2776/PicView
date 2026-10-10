@@ -11,6 +11,7 @@ using PicView.Core.Keybindings;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
+using ZLinq;
 
 namespace PicView.Avalonia.Controllers;
 
@@ -291,35 +292,36 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             return false;
         }
 
-        var defaultsByFunction = KeybindingManager.GetDefaultsByFunction(core);
+        return false;
+        //var defaultsByFunction = KeybindingManager.GetDefaultsByFunction(core);
 
-        foreach (var category in _categories)
-        {
-            foreach (var (box, functionName) in category.Entries)
-            {
-                defaultsByFunction.TryGetValue(functionName, out var defaultBinds);
-                var defaultCount = defaultBinds?.Count ?? 0;
-                var currentCount = box.Keybinds?.Count ?? 0;
-
-                if (currentCount != defaultCount)
-                {
-                    return false;
-                }
-
-                if (defaultBinds is null || box.Keybinds is null)
-                {
-                    continue;
-                }
-
-                for (var i = 0; i < defaultBinds.Count; i++)
-                {
-                    if (box.Keybinds[i] != defaultBinds[i])
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
+        // foreach (var category in _categories)
+        // {
+        //     foreach (var (box, functionName) in category.Entries)
+        //     {
+        //         defaultsByFunction.TryGetValue(functionName, out var defaultBinds);
+        //         var defaultCount = defaultBinds?.Count ?? 0;
+        //         var currentCount = box.Keybinds?.Count ?? 0;
+        //
+        //         if (currentCount != defaultCount)
+        //         {
+        //             return false;
+        //         }
+        //
+        //         if (defaultBinds is null || box.Keybinds is null)
+        //         {
+        //             continue;
+        //         }
+        //
+        //         for (var i = 0; i < defaultBinds.Count; i++)
+        //         {
+        //             if (box.Keybinds[i] != defaultBinds[i])
+        //             {
+        //                 return false;
+        //             }
+        //         }
+        //     }
+        // }
 
         return true;
     }
@@ -352,7 +354,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             return;
         }
 
-        var defaultsByFunction = KeybindingManager.GetDefaultsByFunction(core);
+        var defaults = KeybindingManager.GetDefaultShortcuts(core.PlatformService);
 
         // Push current state for undo
         _undoStack.Add(new KeybindSnapshot(_categories));
@@ -367,14 +369,11 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                 foreach (var (box, functionName) in category.Entries)
                 {
                     box.Keybinds.Clear();
-                    if (!defaultsByFunction.TryGetValue(functionName, out var defaultBinds))
+                    var matches = defaults.Where(x => string.Equals(x.Value, functionName, StringComparison.Ordinal))
+                        .AsValueEnumerable();
+                    foreach (var match in matches.Where(x => x.Value is not null))
                     {
-                        continue;
-                    }
-
-                    foreach (var keybind in defaultBinds)
-                    {
-                        box.Keybinds.Add(keybind);
+                        box.Keybinds.Add(match.Key);
                     }
                 }
             }

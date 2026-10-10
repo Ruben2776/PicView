@@ -53,7 +53,7 @@ public class KeybindBox : TemplatedControl
     /// Defines the <see cref="MaxTags"/> property.
     /// </summary>
     public static readonly StyledProperty<int> MaxTagsProperty =
-        TagBox.MaxTagsProperty.AddOwner<KeybindBox>(new StyledPropertyMetadata<int>(defaultValue: 2));
+        TagBox.MaxTagsProperty.AddOwner<KeybindBox>(new StyledPropertyMetadata<int>(defaultValue: 3));
 
     /// <summary>
     /// Gets or sets the maximum number of keybind tags allowed.
@@ -103,7 +103,7 @@ public class KeybindBox : TemplatedControl
 
     public KeybindBox()
     {
-        TagBox = new TagBox { MaxTags = 2 };
+        TagBox = new TagBox { MaxTags = 3 };
         Tags = TagBox.Tags;
         Keybinds = [];
         SubscribeToTagBox(TagBox);

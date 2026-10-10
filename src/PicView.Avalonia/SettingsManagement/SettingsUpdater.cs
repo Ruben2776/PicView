@@ -346,17 +346,6 @@ public static class SettingsUpdater
         Settings.Zoom.ScrollEnabled = true;
     }
     
-    public static async Task ToggleCtrlZoom(MainWindowViewModel vm)
-    {
-        Settings.Zoom.CtrlZoom = !Settings.Zoom.CtrlZoom;
-        vm.Translation.IsCtrlToZoom.Value = Settings.Zoom.CtrlZoom
-            ? TranslationManager.Translation.CtrlToZoom
-            : TranslationManager.Translation.ScrollToZoom;
-        
-        UIHelper.SetCtrlToZoomImage(vm);
-        await SaveSettingsAsync().ConfigureAwait(false);
-    }
-    
     public static async Task ToggleLooping(MainWindowViewModel vm)
     {
         var value = !Settings.UIProperties.Looping;
