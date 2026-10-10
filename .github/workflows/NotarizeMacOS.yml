@@ -1,0 +1,349 @@
+name: Notarize PicView macOS
+run-name: workflow release signing and notarization on macOS
+
+on: workflow_dispatch
+
+jobs:
+  build-and-notarize:
+    runs-on: macos-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # Step 2: Setup .NET 11 SDK
+      - name: Setup .NET 11 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '11.x'
+
+      # Step 3: Get version from Directory.Build.props using PowerShell
+      - name: Get version from Directory.Build.props
+        id: get-version
+        run: pwsh -File "${{ github.workspace }}/Build/Get-VersionInfo.ps1"
+
+      # Step 4: Restore or build picview-ffmpeg (osx-arm64)
+      - name: Cache picview-ffmpeg (osx-arm64)
+        id: cache-ffmpeg-osx-arm64
+        uses: actions/cache@v4
+        with:
+          path: Build/ffmpeg-native/osx-arm64
+          key: picview-ffmpeg-osx-arm64-${{ hashFiles('Build/Build-FFmpegNative.ps1', 'Build/ffmpeg/**', 'Native/ffmpeg/**') }}
+
+      - name: Setup zig
+        if: steps.cache-ffmpeg-osx-arm64.outputs.cache-hit != 'true'
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+
+      - name: Build picview-ffmpeg (osx-arm64)
+        if: steps.cache-ffmpeg-osx-arm64.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          brew install nasm make
+
+          # FFmpeg needs GNU make; brew installs it keg-only as gmake, so expose
+          # the directory containing it as 'make' to the build script
+          $env:PV_EXTRA_PATH = Join-Path (brew --prefix make) 'libexec/gnubin'
+
+          & "${{ github.workspace }}/Build/Build-FFmpegNative.ps1" -Targets @('osx-arm64')
+
+      # Step 5: Import Developer ID Certificate into Keychain (when running on GitHub-hosted runners)
+      - name: Import Code-Signing Certificates
+        if: env.MACOS_CERTIFICATE != ''
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.MACOS_CERTIFICATE }}
+          p12-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+
+      # Step 6: Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore src/PicView.Avalonia.MacOS/PicView.Avalonia.MacOS.csproj
+
+      # Step 7: Build, Sign, Notarize, and Create DMG for arm64
+      - name: Build, Sign, Notarize, and Create DMG (arm64)
+        shell: pwsh
+        env:
+          APPLE_ID: ${{ secrets.AppleID || secrets.APPLE_ID }}
+          APP_PASSWORD: ${{ secrets.AppPassword || secrets.APP_PASSWORD }}
+          TEAM_ID: ${{ secrets.TeamID || secrets.TEAM_ID || 'VR9BBW77YF' }}
+          SIGNING_IDENTITY: ${{ secrets.SigningIdentity || secrets.SIGNING_IDENTITY || 'Developer ID Application: Ruben Hyldgaard Negendahl (VR9BBW77YF)' }}
+        run: |
+          $repoRoot = "${{ github.workspace }}"
+          $outputRoot = Join-Path $repoRoot "Build/output"
+          $version = "${{ steps.get-version.outputs.version }}"
+          $platform = "arm64"
+          $macOSArchitecture = "arm64"
+          $targetPackage = "Magick.NET-Q8-arm64"
+          $entitlementsPath = Join-Path $repoRoot "src/PicView.Core.MacOS/entitlements.plist"
+          $signingIdentity = $env:SIGNING_IDENTITY
+          $appleID = $env:APPLE_ID
+          $appPassword = $env:APP_PASSWORD
+          $teamID = $env:TEAM_ID
+
+          if ([string]::IsNullOrWhiteSpace($appleID) -or [string]::IsNullOrWhiteSpace($appPassword)) {
+              Write-Error "AppleID and AppPassword secrets are required for notarization."
+              exit 1
+          }
+
+          Write-Host "Building PicView v$version for macOS ($platform)..."
+
+          # --- 1. Ensure Magick.NET-Q8-arm64 is referenced in PicView.Core.csproj ---
+          $coreProjectPath = Join-Path $repoRoot "src/PicView.Core/PicView.Core.csproj"
+          [xml]$coreCsproj = Get-Content $coreProjectPath
+          $packageNodes = $coreCsproj.Project.ItemGroup.PackageReference | Where-Object { $_.Include -match "^Magick\.NET-Q8-" }
+
+          $needsSave = $false
+          if ($packageNodes) {
+              foreach ($packageNode in $packageNodes) {
+                  if ($packageNode.Include -ne $targetPackage) {
+                      $packageNode.Include = $targetPackage
+                      $needsSave = $true
+                  }
+              }
+          }
+
+          if ($needsSave) {
+              $coreCsproj.Save($coreProjectPath)
+              Write-Host "Updated Magick.NET package to $targetPackage."
+          }
+
+          # --- 2. Prepare output directories ---
+          $platformFolder = "PicView-v$version-osx-$platform"
+          $platformOutput = Join-Path $outputRoot $platformFolder
+
+          if (Test-Path $platformOutput) {
+              Remove-Item -Recurse -Force $platformOutput
+          }
+          New-Item -ItemType Directory -Force -Path $platformOutput | Out-Null
+
+          $tempBuildPath = Join-Path $platformOutput "temp"
+          New-Item -ItemType Directory -Force -Path $tempBuildPath | Out-Null
+
+          # --- 3. Publish PicView.Avalonia.MacOS ---
+          $avaloniaProjectPath = Join-Path $repoRoot "src/PicView.Avalonia.MacOS/PicView.Avalonia.MacOS.csproj"
+
+          dotnet publish $avaloniaProjectPath `
+              --runtime "osx-$platform" `
+              --self-contained true `
+              --configuration Release `
+              -p:UseAppHost=true `
+              -p:PublishSingleFile=false `
+              --output $tempBuildPath
+
+          if ($LASTEXITCODE -ne 0) {
+              Write-Error "dotnet publish failed with exit code $LASTEXITCODE"
+              exit 1
+          }
+
+          # --- 4. Assemble PicView.app bundle ---
+          $appBundlePath = Join-Path $platformOutput "PicView.app"
+          $contentsPath = Join-Path $appBundlePath "Contents"
+          $macOSPath = Join-Path $contentsPath "MacOS"
+          $resourcesPath = Join-Path $contentsPath "Resources"
+
+          New-Item -ItemType Directory -Force -Path $macOSPath | Out-Null
+          New-Item -ItemType Directory -Force -Path $resourcesPath | Out-Null
+
+          $infoPlistTemplatePath = Join-Path $repoRoot "src/PicView.Core.MacOS/Info.plist"
+          $infoPlistPath = Join-Path $contentsPath "Info.plist"
+
+          $infoPlistContent = Get-Content $infoPlistTemplatePath -Raw
+          $infoPlistContent = $infoPlistContent -replace "{{appVersion}}", $version
+          $infoPlistContent = $infoPlistContent -replace "{{platform}}", $macOSArchitecture
+
+          $utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $false
+          [System.IO.File]::WriteAllText($infoPlistPath, $infoPlistContent, $utf8NoBomEncoding)
+
+          Copy-Item -Path "$tempBuildPath/*" -Destination $macOSPath -Recurse
+
+          $iconSource = Join-Path $repoRoot "src/PicView.Avalonia.MacOS/Assets/AppIcon.icns"
+          if (Test-Path $iconSource) {
+              Copy-Item -Path $iconSource -Destination $resourcesPath
+          }
+
+          Get-ChildItem -Path $macOSPath -Filter "*.pdb" -Recurse | Remove-Item -Force
+          Remove-Item -Path $tempBuildPath -Recurse -Force
+          Get-ChildItem -Path $platformOutput | Where-Object { $_.Name -ne "PicView.app" } | Remove-Item -Recurse -Force
+
+          Get-ChildItem -Path $macOSPath -File -Recurse | ForEach-Object {
+              if ($_.Extension -in @('.dylib', '') -or $_.Name -eq 'PicView.Avalonia.MacOS' -or $_.Name -eq 'PicView') {
+                  & chmod +x $_.FullName
+              }
+          }
+          & chmod -R 755 $appBundlePath
+
+          Write-Host "Build complete: $appBundlePath"
+
+          # --- 5. Code Signing ---
+          Write-Host "[INFO] Signing ARM64 app: $appBundlePath"
+          Write-Host "[INFO] Using entitlements: $entitlementsPath"
+          Write-Host "[INFO] Using signing identity: $signingIdentity"
+
+          Get-ChildItem -Path $macOSPath -File -Recurse | ForEach-Object {
+              Write-Host "[INFO] Signing $($_.FullName)"
+              & codesign --force --timestamp --options=runtime --entitlements "$entitlementsPath" --sign "$signingIdentity" "$($_.FullName)"
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Failed to sign file: $($_.FullName)"
+                  exit 1
+              }
+          }
+
+          Write-Host "[INFO] Signing ARM64 app bundle"
+          & codesign --force --timestamp --options=runtime --entitlements "$entitlementsPath" --sign "$signingIdentity" "$appBundlePath"
+          if ($LASTEXITCODE -ne 0) {
+              Write-Error "App bundle signing failed with exit code $LASTEXITCODE"
+              exit 1
+          }
+
+          & codesign --verify --verbose "$appBundlePath"
+          if ($LASTEXITCODE -ne 0) {
+              Write-Error "App bundle signature verification failed with exit code $LASTEXITCODE"
+              exit 1
+          }
+
+          Write-Host "App signing completed successfully."
+
+          # --- 6. App Notarization & Stapling ---
+          $tempNotarizeDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.Guid]::NewGuid().ToString())
+          New-Item -ItemType Directory -Path $tempNotarizeDir | Out-Null
+
+          $appZip = Join-Path $tempNotarizeDir "PicView-$version-arm64.zip"
+          $notarizeResultFile = Join-Path $tempNotarizeDir "arm64-notarization-result.txt"
+
+          Write-Host "[INFO] Creating zip archive for ARM64 app notarization..."
+          & ditto -c -k --keepParent "$appBundlePath" "$appZip"
+
+          Write-Host "[INFO] Uploading $appZip to Apple notary service..."
+          & xcrun notarytool submit "$appZip" `
+              --apple-id "$appleID" `
+              --password "$appPassword" `
+              --team-id "$teamID" `
+              --wait *>&1 | Out-File -FilePath $notarizeResultFile
+
+          if ($LASTEXITCODE -ne 0) {
+              Write-Error "Failed to submit ARM64 app for notarization."
+              Get-Content -Path $notarizeResultFile | Write-Host
+              Remove-Item -Path $tempNotarizeDir -Recurse -Force
+              exit 1
+          }
+
+          $resultContent = Get-Content -Path $notarizeResultFile -Raw
+          if ($resultContent -match "status:\s*Accepted") {
+              Write-Host "[INFO] Notarization successful for ARM64 app."
+          } else {
+              Write-Error "Notarization failed or incomplete for ARM64 app."
+              Write-Host $resultContent
+
+              if ($resultContent -match "([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})") {
+                  $submissionId = $Matches[1]
+                  $logFile = Join-Path $tempNotarizeDir "arm64-notarization-log.json"
+                  & xcrun notarytool log "$submissionId" `
+                      --apple-id "$appleID" `
+                      --password "$appPassword" `
+                      --team-id "$teamID" `
+                      "$logFile"
+                  if (Test-Path $logFile) {
+                      Get-Content -Path $logFile | Write-Host
+                  }
+              }
+
+              Remove-Item -Path $tempNotarizeDir -Recurse -Force
+              exit 1
+          }
+
+          Remove-Item -Path $tempNotarizeDir -Recurse -Force
+
+          Write-Host "[INFO] Stapling notarization ticket to $appBundlePath"
+          & xcrun stapler staple "$appBundlePath"
+          if ($LASTEXITCODE -ne 0) {
+              Write-Error "Failed to staple notarization ticket to ARM64 app."
+              exit 1
+          }
+
+          Write-Host "[INFO] Verifying ARM64 app with spctl"
+          & spctl --assess --type exec "$appBundlePath"
+          Write-Host "App notarization and stapling completed successfully."
+
+          # --- 7. Create, Sign, Notarize & Staple DMG ---
+          $dmgName = "PicView-$version-macOS-arm64"
+          $dmgOutputPath = Join-Path $outputRoot "$dmgName.dmg"
+
+          $tempDmgDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.Guid]::NewGuid().ToString())
+          New-Item -ItemType Directory -Path $tempDmgDir | Out-Null
+
+          Write-Host "Preparing DMG contents in temporary directory: $tempDmgDir"
+          Copy-Item -Path $appBundlePath -Destination $tempDmgDir -Recurse
+          & ln -s /Applications "$tempDmgDir/Applications"
+
+          Write-Host "Creating DMG file: $dmgOutputPath"
+          & hdiutil create -volname $dmgName -srcfolder $tempDmgDir -ov -format UDZO $dmgOutputPath
+
+          if ($LASTEXITCODE -ne 0) {
+              Write-Error "Failed to create DMG file: $dmgOutputPath"
+              Remove-Item -Path $tempDmgDir -Recurse -Force
+              exit 1
+          }
+
+          Remove-Item -Path $tempDmgDir -Recurse -Force
+
+          Write-Host "Signing DMG with identity: $signingIdentity"
+          & codesign --force --sign "$signingIdentity" "$dmgOutputPath"
+          if ($LASTEXITCODE -ne 0) {
+              Write-Error "Failed to sign DMG file: $dmgOutputPath"
+              exit 1
+          }
+
+          Write-Host "Submitting DMG for notarization: $dmgOutputPath"
+          $dmgNotarizeOutput = [System.IO.Path]::GetTempFileName()
+
+          & xcrun notarytool submit "$dmgOutputPath" `
+              --apple-id "$appleID" `
+              --password "$appPassword" `
+              --team-id "$teamID" `
+              --wait *>&1 | Out-File -FilePath $dmgNotarizeOutput
+
+          if ($LASTEXITCODE -ne 0) {
+              Write-Error "Failed to submit DMG for notarization: $dmgOutputPath"
+              Get-Content -Path $dmgNotarizeOutput | Write-Host
+              Remove-Item -Path $dmgNotarizeOutput -Force
+              exit 1
+          }
+
+          $dmgStatus = Get-Content -Path $dmgNotarizeOutput | Select-String "status:" | Select-Object -First 1
+          if ($dmgStatus -match "status:\s*Accepted") {
+              Write-Host "DMG notarization successful: $dmgOutputPath"
+
+              Write-Host "Stapling notarization ticket to DMG"
+              & xcrun stapler staple "$dmgOutputPath"
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Error "Failed to staple notarization ticket to DMG: $dmgOutputPath"
+                  Remove-Item -Path $dmgNotarizeOutput -Force
+                  exit 1
+              }
+
+              Write-Host "Successfully stapled notarization ticket to DMG: $dmgOutputPath"
+              & xcrun stapler validate "$dmgOutputPath"
+          } else {
+              Write-Error "DMG notarization failed: $dmgOutputPath"
+              Get-Content -Path $dmgNotarizeOutput | Write-Host
+              Remove-Item -Path $dmgNotarizeOutput -Force
+              exit 1
+          }
+
+          Remove-Item -Path $dmgNotarizeOutput -Force
+          Write-Host "All processes completed successfully! DMG at: $dmgOutputPath"
+
+      # Step 8: Upload signed and notarized artifacts
+      - name: Upload notarized arm64 artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PicView-v${{ steps.get-version.outputs.version }}-macOS-arm64-notarized
+          if-no-files-found: error
+          path: |
+            ${{ github.workspace }}/Build/output/PicView-v${{ steps.get-version.outputs.version }}-osx-arm64/PicView.app
+            ${{ github.workspace }}/Build/output/PicView-${{ steps.get-version.outputs.version }}-macOS-arm64.dmg
+          retention-days: 14
