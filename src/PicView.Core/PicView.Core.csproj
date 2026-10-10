@@ -41,8 +41,8 @@
     <Features>$(Features);runtime-async=on</Features>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q8-x64" Version="14.17.2" />
-    <PackageReference Include="Meziantou.Analyzer" Version="3.0.296">
+    <PackageReference Include="Magick.NET-Q8-x64" Version="15.0.0" />
+    <PackageReference Include="Meziantou.Analyzer" Version="3.0.297">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

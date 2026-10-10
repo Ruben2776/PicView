@@ -233,7 +233,7 @@ public static class ImageEffectsHelper
 
     private static void CompositeWithMask(MagickImage target, MagickImage src, MagickImage mask)
     {
-        src.Alpha(AlphaOption.On);
+        src.Alpha(AlphaAction.On);
         src.Composite(mask, CompositeOperator.CopyAlpha);
         target.Composite(src, CompositeOperator.Over);
     }
@@ -271,7 +271,7 @@ public static class ImageEffectsHelper
         });
 
         using var overlay = new MagickImage(MagickColors.Black, img.Width, img.Height);
-        overlay.Alpha(AlphaOption.On);
+        overlay.Alpha(AlphaAction.On);
         overlay.Composite(mask, CompositeOperator.CopyAlpha);
         img.Composite(overlay, CompositeOperator.Multiply);
     }

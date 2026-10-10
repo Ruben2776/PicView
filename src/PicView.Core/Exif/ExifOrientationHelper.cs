@@ -6,18 +6,18 @@ public static class ExifOrientationHelper
 {
     public static ExifOrientation GetImageOrientation(MagickImage magickImage)
     {
-        if (magickImage.Orientation is not OrientationType.Undefined)
+        if (magickImage.Orientation is not Orientation.Undefined)
         {
             return magickImage.Orientation switch
             {
-                OrientationType.BottomLeft => ExifOrientation.MirrorVertical,
-                OrientationType.BottomRight => ExifOrientation.Rotate180,
-                OrientationType.TopLeft => ExifOrientation.Horizontal,
-                OrientationType.TopRight => ExifOrientation.MirrorHorizontal,
-                OrientationType.RightBottom => ExifOrientation.MirrorHorizontalRotate90Cw,
-                OrientationType.RightTop => ExifOrientation.Rotate90Cw,
-                OrientationType.LeftBottom => ExifOrientation.Rotated270Cw,
-                OrientationType.LeftTop => ExifOrientation.MirrorHorizontalRotate270Cw,
+                Orientation.BottomLeft => ExifOrientation.MirrorVertical,
+                Orientation.BottomRight => ExifOrientation.Rotate180,
+                Orientation.TopLeft => ExifOrientation.Horizontal,
+                Orientation.TopRight => ExifOrientation.MirrorHorizontal,
+                Orientation.RightBottom => ExifOrientation.MirrorHorizontalRotate90Cw,
+                Orientation.RightTop => ExifOrientation.Rotate90Cw,
+                Orientation.LeftBottom => ExifOrientation.Rotated270Cw,
+                Orientation.LeftTop => ExifOrientation.MirrorHorizontalRotate270Cw,
                 _ => ExifOrientation.None
             };
         }

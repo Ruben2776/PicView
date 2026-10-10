@@ -168,7 +168,7 @@ public class AvifInstance : IGifInstance
     {
         if (!frame.HasAlpha)
         {
-            frame.Alpha(AlphaOption.Opaque);
+            frame.Alpha(AlphaAction.Opaque);
         }
 
         using var pixels = frame.GetPixels();

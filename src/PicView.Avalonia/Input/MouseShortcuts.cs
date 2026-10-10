@@ -74,7 +74,7 @@ public static class MouseShortcuts
     }
 
     private static bool IsTouchPadOrTouch(PointerEventArgs e)
-        => Settings.Zoom.IsUsingTouchPad || e.Pointer.Type == PointerType.Touch;
+        => Settings.Zoom.IsUsingTouchPad || e.Pointer.Type is PointerType.Touch;
 
     private static bool IsVerticalScrollBarVisible(AutoScrollViewer imageScrollViewer)
         => imageScrollViewer.VerticalScrollBarVisibility is ScrollBarVisibility.Visible or ScrollBarVisibility.Auto;
