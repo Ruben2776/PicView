@@ -291,39 +291,50 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         {
             return false;
         }
+    
+        var defaults = KeybindingManager.GetDefaultShortcuts(core.PlatformService);
+        if (defaults is null)
+        {
+            return false;
+        }
 
-        return false;
-        //var defaultsByFunction = KeybindingManager.GetDefaultsByFunction(core);
+        var viewCount = 0;
+        var expectedDefaultsCount = 0;
 
-        // foreach (var category in _categories)
-        // {
-        //     foreach (var (box, functionName) in category.Entries)
-        //     {
-        //         defaultsByFunction.TryGetValue(functionName, out var defaultBinds);
-        //         var defaultCount = defaultBinds?.Count ?? 0;
-        //         var currentCount = box.Keybinds?.Count ?? 0;
-        //
-        //         if (currentCount != defaultCount)
-        //         {
-        //             return false;
-        //         }
-        //
-        //         if (defaultBinds is null || box.Keybinds is null)
-        //         {
-        //             continue;
-        //         }
-        //
-        //         for (var i = 0; i < defaultBinds.Count; i++)
-        //         {
-        //             if (box.Keybinds[i] != defaultBinds[i])
-        //             {
-        //                 return false;
-        //             }
-        //         }
-        //     }
-        // }
+        foreach (var category in _categories)
+        {
+            foreach (var (box, functionName) in category.Entries)
+            {
+                // Count how many default keybindings map to this specific UI function
+                foreach (var kvp in defaults)
+                {
+                    if (string.Equals(kvp.Value, functionName, StringComparison.Ordinal))
+                    {
+                        expectedDefaultsCount++;
+                    }
+                }
 
-        return true;
+                if (box.Keybinds is null)
+                {
+                    continue;
+                }
+
+                foreach (var kb in box.Keybinds)
+                {
+                    viewCount++;
+
+                    // If the keybind doesn't exist in defaults, or maps to a different function, it's not default
+                    if (!defaults.TryGetValue(kb, out var defaultFuncName) || 
+                        !string.Equals(defaultFuncName, functionName, StringComparison.Ordinal))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        // Ensure there aren't missing default bindings for the functions exposed in the UI
+        return viewCount == expectedDefaultsCount;
     }
 
     private void OnCancelClicked(object? sender, RoutedEventArgs e)
@@ -369,9 +380,10 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                 foreach (var (box, functionName) in category.Entries)
                 {
                     box.Keybinds.Clear();
-                    var matches = defaults.Where(x => string.Equals(x.Value, functionName, StringComparison.Ordinal))
-                        .AsValueEnumerable();
-                    foreach (var match in matches.Where(x => x.Value is not null))
+                    var matches = defaults.Where(x =>
+                            string.Equals(x.Value, functionName, StringComparison.Ordinal))
+                        .AsValueEnumerable().Where(x => x.Value is not null);
+                    foreach (var match in matches)
                     {
                         box.Keybinds.Add(match.Key);
                     }
@@ -518,7 +530,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                     continue;
                 }
 
-                var matches = MatchesFilter(box, functionName, filterText!);
+                var matches = MatchesFilter(box, functionName, filterText);
                 box.IsVisible = matches;
                 if (matches)
                 {

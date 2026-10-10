@@ -421,10 +421,11 @@ public class KeybindBox : TemplatedControl
             return;
         }
 
-        tagBox.AddHandler(KeyDownEvent, OnTagBoxKeyDown, RoutingStrategies.Bubble);
-        tagBox.AddHandler(KeyUpEvent, OnTagBoxKeyUp, RoutingStrategies.Bubble);
-        tagBox.AddHandler(PointerPressedEvent, OnTagBoxPointerPressed, RoutingStrategies.Bubble);
-        tagBox.AddHandler(PointerReleasedEvent, OnTagBoxPointerReleased, RoutingStrategies.Bubble);
+        tagBox.AddHandler(KeyDownEvent, OnTagBoxKeyDown);
+        tagBox.AddHandler(KeyUpEvent, OnTagBoxKeyUp);
+        tagBox.AddHandler(PointerPressedEvent, OnTagBoxPointerPressed);
+        tagBox.AddHandler(PointerReleasedEvent, OnTagBoxPointerReleased);
+        tagBox.AddHandler(PointerWheelChangedEvent, OnTagBoxPointerWheelChanged);
         tagBox.GotFocus += OnTagBoxGotFocus;
         tagBox.LostFocus += OnTagBoxLostFocus;
     }
@@ -440,6 +441,7 @@ public class KeybindBox : TemplatedControl
         tagBox.RemoveHandler(KeyUpEvent, OnTagBoxKeyUp);
         tagBox.RemoveHandler(PointerPressedEvent, OnTagBoxPointerPressed);
         tagBox.RemoveHandler(PointerReleasedEvent, OnTagBoxPointerReleased);
+        tagBox.RemoveHandler(PointerWheelChangedEvent, OnTagBoxPointerWheelChanged);
         tagBox.GotFocus -= OnTagBoxGotFocus;
         tagBox.LostFocus -= OnTagBoxLostFocus;
     }
@@ -485,6 +487,14 @@ public class KeybindBox : TemplatedControl
         if (!e.Handled)
         {
             HandlePointerReleased(e);
+        }
+    }
+
+    private void OnTagBoxPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    {
+        if (!e.Handled)
+        {
+            HandlePointerWheelChanged(e);
         }
     }
 
@@ -591,16 +601,40 @@ public class KeybindBox : TemplatedControl
         }
 
         var isFocused = TagBox.IsFocused || TagBox.IsKeyboardFocusWithin;
-        if (isFocused && TryGetBindableMouseButton(e, this, out var mouseButton))
+        if (!isFocused || !TryGetBindableMouseButton(e, this, out var mouseButton))
         {
-            var modifiers = e.KeyModifiers | _lastModifiers;
-            if (!HasTooManyModifiers(modifiers))
-            {
-                var keybind = new Keybind(mouseButton, modifiers);
-                TryAddKeybind(keybind);
-            }
-            e.Handled = true;
+            return;
         }
+
+        var modifiers = e.KeyModifiers | _lastModifiers;
+        if (!HasTooManyModifiers(modifiers))
+        {
+            var keybind = new Keybind(mouseButton, modifiers);
+            TryAddKeybind(keybind);
+        }
+        e.Handled = true;
+    }
+
+    private void HandlePointerWheelChanged(PointerWheelEventArgs e)
+    {
+        if (TagBox is null || TagBox.IsAtMax)
+        {
+            return;
+        }
+        
+        var isFocused = TagBox.IsFocused || TagBox.IsKeyboardFocusWithin;
+        if (!isFocused)
+        {
+            return;
+        }
+        
+        var modifiers = e.KeyModifiers | _lastModifiers;
+        if (!HasTooManyModifiers(modifiers))
+        {
+            var keyBind = new Keybind(e.Delta.Y > 0 ? MouseButton.WheelUp : MouseButton.WheelDown, modifiers);
+            TryAddKeybind(keyBind);
+        }
+        e.Handled = true;
     }
 
     private void TryAddKeybind(Keybind keybind)
