@@ -79,10 +79,10 @@ jobs:
           $macOSArchitecture = "arm64"
           $targetPackage = "Magick.NET-Q8-arm64"
           $entitlementsPath = Join-Path $repoRoot "src/PicView.Core.MacOS/entitlements.plist"
-          $signingIdentity = $env:SIGNING_IDENTITY?.Trim()
-          $appleID = $env:APPLE_ID?.Trim()
-          $appPassword = $env:APP_PASSWORD?.Trim()
-          $teamID = $env:TEAM_ID?.Trim()
+          $signingIdentity = $env:SIGNING_IDENTITY
+          $appleID = $env:APPLE_ID
+          $appPassword = $env:APP_PASSWORD
+          $teamID = $env:TEAM_ID
 
           # Auto-detect signing identity from keychain if not explicitly provided via secret
           if ([string]::IsNullOrWhiteSpace($signingIdentity)) {
