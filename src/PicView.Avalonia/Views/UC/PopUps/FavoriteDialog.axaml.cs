@@ -3,13 +3,17 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.UI;
+using PicView.Avalonia.FileSystem;
+using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.Views.UC.PopUps;
 
 public partial class FavoriteDialog : AnimatedPopUp
 {
+    private DisposableBag _disposables;
+
     public FavoriteDialog()
     {
         InitializeComponent();
@@ -18,7 +22,26 @@ public partial class FavoriteDialog : AnimatedPopUp
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
-        
+        if (DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+
+        vm.Favorites.AddFromFolderCommand.SubscribeAwait(async (_, _) =>
+        {
+            var directory = await FilePicker.SelectDirectory().ConfigureAwait(false);
+            if (directory is null)
+            {
+                return;
+            }
+
+            await Dispatcher.InvokeAsync(() =>
+            {
+                PathBox.Text = directory;
+            });
+        }, DebugHelper.LogError(nameof(FavoriteDialog), nameof(vm.Favorites.AddFromFolderCommand))
+            , AwaitOperation.Drop).AddTo(ref _disposables);
+
         CancelButton.Click += CloseMenu;
         CloseButton.Click += CloseMenu;
         SaveButton.Click += ApplyButtonOnClick;
@@ -54,6 +77,7 @@ public partial class FavoriteDialog : AnimatedPopUp
         KeyDown -= OnKeyDown;
         CloseButton.Click -= CloseMenu;
         CancelButton.Click -= CloseMenu;
+        _disposables.Dispose();
     }
 
     private void CloseMenu(object? sender, RoutedEventArgs e)
