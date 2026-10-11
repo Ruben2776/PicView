@@ -171,5 +171,6 @@ public interface IFunctionsMapper
     ValueTask ShowSettingsFile();
     ValueTask ShowKeybindingsFile();
     ValueTask ShowRecentHistoryFile();
+    ValueTask ShowFavoritesFile();
     ValueTask ToggleOpeningInSameWindow();
 }
