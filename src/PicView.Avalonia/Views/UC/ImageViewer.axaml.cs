@@ -39,10 +39,12 @@ public partial class ImageViewer : UserControl, IDisposable
         AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         AddHandler(PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
+        MainPanel.PointerMoved += OnPointerMoved;
+        MainPanel.PointerExited += OnPointerExited;
 
         Dispatcher.UIThread.Post(InitializeMotionPhoto, DispatcherPriority.ApplicationIdle);
     }
-    
+
     private void InitializeMotionPhoto()
     {
         // Float the badges above the transformed image container, so they stay upright
@@ -246,7 +248,7 @@ public partial class ImageViewer : UserControl, IDisposable
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e) =>
         ZoomPanControl.ZoomWithPointerWheelCore(e.Delta.Y > 0, e.GetPosition(this));
 
-    public async ValueTask PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    private async ValueTask PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
         if (GalleryView.IsPointerOver)
         {
@@ -266,7 +268,31 @@ public partial class ImageViewer : UserControl, IDisposable
             async args => await Dispatcher.UIThread.InvokeAsync(() => ZoomIn(args)),
             async args => await Dispatcher.UIThread.InvokeAsync(() => ZoomOut(args))).ConfigureAwait(false);
     }
-        
+    
+    private void OnPointerExited(object? sender, PointerEventArgs e)
+    {
+        Cursor = new Cursor(StandardCursorType.Arrow);
+    }
+
+    private void OnPointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (!Settings.Navigation.IsNavigatingByClicking)
+        {
+            return;
+        }
+        var point = e.GetPosition(this);
+        var isLeftSide = point.X < Bounds.Width / 2;
+        var isRightSide = point.X >= Bounds.Width / 2;
+        if (isLeftSide)
+        {
+            Cursor = new Cursor(StandardCursorType.LeftSide);
+        }
+        else if (isRightSide)
+        {
+            Cursor = new Cursor(StandardCursorType.RightSide);
+        }
+    }
+    
 
     private void InitializeImageTransformer()
     {
@@ -402,5 +428,7 @@ public partial class ImageViewer : UserControl, IDisposable
         SecondaryMotionPhotoView.Dispose();
         _disposables.Dispose();
         HoverBar.Dispose();
+        MainPanel.PointerEntered -= OnPointerMoved;
+        MainPanel.PointerExited -= OnPointerExited;
     }
 }

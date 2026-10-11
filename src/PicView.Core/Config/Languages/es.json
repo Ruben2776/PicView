@@ -250,6 +250,7 @@
   "MoveWindow": "Mover ventana",
   "Navigate": "Navegar",
   "NavigateBackwards": "Navegar hacia atrás",
+  "NavigateByClicking": "Navegue por las imágenes haciendo clic en la mitad izquierda o derecha del área de la imagen",
   "NavigateBetweenDirectories": "Navegar entre directorios",
   "NavigateFileHistory": "Navegar por el historial de archivos",
   "NavigateForwards": "Navegar hacia adelante",

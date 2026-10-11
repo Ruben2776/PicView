@@ -250,6 +250,7 @@
   "MoveWindow": "Pomeri prozor",
   "Navigate": "Navigiraj",
   "NavigateBackwards": "Idi unazad",
+  "NavigateByClicking": "Krećite se kroz slike klikom na levu ili desnu polovinu oblasti slike",
   "NavigateBetweenDirectories": "Navigacija između direktorijuma",
   "NavigateFileHistory": "Navigacija kroz istorijat fajlova",
   "NavigateForwards": "Idi napred",

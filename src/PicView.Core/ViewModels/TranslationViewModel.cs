@@ -197,6 +197,7 @@ public class TranslationViewModel
         MoveWindow.Value = t.MoveWindow;
         Navigate.Value = t.Navigate;
         NavigateBackwards.Value = t.NavigateBackwards;
+        NavigateByClicking.Value = t.NavigateByClicking;
         NavigateBetweenDirectories.Value = t.NavigateBetweenDirectories;
         NavigateFileHistory.Value = t.NavigateFileHistory;
         NavigateForwards.Value = t.NavigateForwards;
@@ -596,6 +597,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> MoveWindow { get; } = new();
     public BindableReactiveProperty<string?> Navigate { get; } = new();
     public BindableReactiveProperty<string?> NavigateBackwards { get; } = new();
+    public BindableReactiveProperty<string?> NavigateByClicking { get; } = new();
     public BindableReactiveProperty<string?> NavigateBetweenDirectories { get; } = new();
     public BindableReactiveProperty<string?> NavigateFileHistory { get; } = new();
     public BindableReactiveProperty<string?> NavigateForwards { get; } = new();

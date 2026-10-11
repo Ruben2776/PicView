@@ -250,6 +250,7 @@
   "MoveWindow": "ウィンドウの移動",
   "Navigate": "ナビゲート",
   "NavigateBackwards": "前の画像へ移動",
+  "NavigateByClicking": "画像領域の左半分または右半分をクリックして、画像間をナビゲートします",
   "NavigateBetweenDirectories": "ディレクトリ間を移動",
   "NavigateFileHistory": "ファイル履歴をナビゲート",
   "NavigateForwards": "次の画像へ移動",

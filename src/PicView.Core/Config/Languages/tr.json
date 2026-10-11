@@ -250,6 +250,7 @@
   "MoveWindow": "Pencereyi taşı",
   "Navigate": "Gezin",
   "NavigateBackwards": "Geriye git",
+  "NavigateByClicking": "Görüntü alanının sol veya sağ yarısına tıklayarak resimler arasında gezinin",
   "NavigateBetweenDirectories": "Dizinler arasında gez",
   "NavigateFileHistory": "Dosya geçmişinde gez",
   "NavigateForwards": "İleriye git",

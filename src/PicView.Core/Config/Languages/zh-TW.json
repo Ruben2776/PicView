@@ -250,6 +250,7 @@
   "MoveWindow": "移動視窗",
   "Navigate": "導覽",
   "NavigateBackwards": "向後導覽",
+  "NavigateByClicking": "透過按一下影像區域的左半部或右半部來瀏覽影像",
   "NavigateBetweenDirectories": "在目錄間瀏覽",
   "NavigateFileHistory": "瀏覽檔案歷史",
   "NavigateForwards": "向前導覽",

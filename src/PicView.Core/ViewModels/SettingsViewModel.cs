@@ -198,6 +198,8 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<bool> IsFileHistoryEnabled { get; } = new(Settings.Navigation.IsFileHistoryEnabled);
     public BindableReactiveProperty<bool> IsUncompressingEntireArchive { get; } = new(Settings.Navigation.AlwaysUncompressEntireArchive);
     public BindableReactiveProperty<bool> IsShowingFullPathInTitleBar { get; } = new(Settings.UIProperties.ShowFullPathInTitleBar);
+    public BindableReactiveProperty<bool> IsNavigatingByClicking { get; } =
+        new(Settings.Navigation.IsNavigatingByClicking);
 
     public BindableReactiveProperty<bool> IsShowingRecycleDialog { get; } =
         new(Settings.UIProperties.ShowRecycleConfirmation);
@@ -309,7 +311,8 @@ public class SettingsViewModel : IDisposable
             SearchQuery,
             IsSearchVisible,
             ClearSearchCommand,
-            ToggleFadeButtonsCommand
+            ToggleFadeButtonsCommand,
+            IsNavigatingByClicking
             );
     }
 
@@ -391,6 +394,9 @@ public class SettingsViewModel : IDisposable
 
         Observable.EveryValueChanged(this, x => x.MouseDoubleClickBehaviorIndex.CurrentValue)
             .Subscribe(x => Settings.UIProperties.DoubleClickBehavior = x).AddTo(ref _disposables);
+        
+        Observable.EveryValueChanged(this, x => x.IsNavigatingByClicking.CurrentValue)
+            .Subscribe(x => Settings.Navigation.IsNavigatingByClicking = x).AddTo(ref _disposables);
         
         // General
         Observable.EveryValueChanged(this, x => x.StartUpIndex.CurrentValue)

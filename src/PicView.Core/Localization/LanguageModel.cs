@@ -263,6 +263,7 @@ public class LanguageModel
     public string? MoveWindow { get; set; }
     public string? Navigate { get; set; }
     public string? NavigateBackwards { get; set; }
+    public string? NavigateByClicking { get; set; }
     public string? NavigateBetweenDirectories { get; set; }
     public string? NavigateFileHistory { get; set; }
     public string? NavigateForwards { get; set; }

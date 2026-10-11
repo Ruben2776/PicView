@@ -250,6 +250,7 @@
   "MoveWindow": "Flyt vinduet",
   "Navigate": "Naviger",
   "NavigateBackwards": "Naviger baglæns",
+  "NavigateByClicking": "Naviger gennem billeder ved at klikke på venstre eller højre halvdel af billedområdet",
   "NavigateBetweenDirectories": "Navigér mellem mapper",
   "NavigateFileHistory": "Navigér i filhistorik",
   "NavigateForwards": "Naviger fremad",

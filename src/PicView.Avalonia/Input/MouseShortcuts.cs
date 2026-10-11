@@ -93,6 +93,10 @@ public static class MouseShortcuts
     
     public static async Task MainWindow_PointerPressed(PointerPressedEventArgs e, MainWindow window)
     {
+        if (window.IsDialogOpen)
+        {
+            return;
+        }
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
@@ -104,41 +108,72 @@ public static class MouseShortcuts
         {
             return;
         }
-        
-        // Handle double click (only for the left mouse button, so that rapid
-        // double-clicks of the side buttons don't fall through and trigger the
-        // left-button double-click behavior such as toggling fullscreen)
-        if (e.ClickCount is 2 && prop.IsLeftButtonPressed)
+
+        if (prop.IsLeftButtonPressed)
         {
-            // Prevent unintended behavior when double-clicking
-            if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+            // Handle double click (only for the left mouse button, so that rapid
+            // double-clicks of the side buttons don't fall through and trigger the
+            // left-button double-click behavior such as toggling fullscreen)
+            if (e.ClickCount is 2)
             {
-                if (imageViewer.GalleryView.IsPointerOver)
+                // Prevent unintended behavior when double-clicking
+                if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+                {
+                    if (imageViewer.GalleryView.IsPointerOver)
+                    {
+                        return;
+                    }
+
+                    if (imageViewer.ClickArrowLeft.IsPointerOver || imageViewer.ClickArrowRight.IsPointerOver)
+                    {
+                        return;
+                    }
+                }
+
+                if (window.SharedBottomBar.IsPointerOver || window.SharedTitleBar.IsPointerOver)
                 {
                     return;
                 }
-
-                if (imageViewer.ClickArrowLeft.IsPointerOver || imageViewer.ClickArrowRight.IsPointerOver)
-                {
-                    return;
-                }
-            }
-
-            if (window.SharedBottomBar.IsPointerOver || window.SharedTitleBar.IsPointerOver)
-            {
-                return;
-            }
             
-            switch (Settings.UIProperties.DoubleClickBehavior)
+                switch (Settings.UIProperties.DoubleClickBehavior)
+                {
+                    case 1:
+                        await vm.Mapper.ResetZoom().ConfigureAwait(false);
+                        return;
+                    case 2:
+                        await vm.Mapper.ToggleFullscreen().ConfigureAwait(false);
+                        return;
+                }
+            }
+            else if (Settings.Navigation.IsNavigatingByClicking)
             {
-                case 1:
-                    await vm.Mapper.ResetZoom().ConfigureAwait(false);
-                    return;
-                case 2:
-                    await vm.Mapper.ToggleFullscreen().ConfigureAwait(false);
-                    return;
+                if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer && imageViewer.MainPanel.IsPointerOver)
+                {
+                    if (imageViewer.GalleryView.IsPointerOver)
+                    {
+                        return;
+                    }
+
+                    if (imageViewer.ClickArrowLeft.IsPointerOver || imageViewer.ClickArrowRight.IsPointerOver)
+                    {
+                        return;
+                    }
+                    var point = e.GetPosition(imageViewer);
+                    var isLeftSide = point.X < imageViewer.Bounds.Width / 2;
+                    var isRightSide = point.X >= imageViewer.Bounds.Width / 2;
+                    if (isLeftSide)
+                    {
+                        imageViewer.Cursor = new Cursor(StandardCursorType.LeftSide);
+                        await vm.Mapper.Prev().ConfigureAwait(false);
+                    }
+                    else if (isRightSide)
+                    {
+                        await vm.Mapper.Next().ConfigureAwait(false);
+                    }
+                }
             }
         }
+
 
         Keybind? currentKeys;
         if (prop.IsMiddleButtonPressed)

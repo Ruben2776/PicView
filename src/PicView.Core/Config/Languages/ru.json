@@ -250,6 +250,7 @@
   "MoveWindow": "Переместить окно",
   "Navigate": "Навигация",
   "NavigateBackwards": "Перейти назад",
+  "NavigateByClicking": "Перемещайтесь по изображениям, щелкая левую или правую половину области изображения",
   "NavigateBetweenDirectories": "Переход между каталогами",
   "NavigateFileHistory": "Просмотр истории файлов",
   "NavigateForwards": "Перейти вперёд",
