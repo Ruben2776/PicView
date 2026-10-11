@@ -14,7 +14,7 @@ jobs:
 
       # Step 2: Setup .NET 11 SDK
       - name: Setup .NET 11 SDK
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '11.x'
 
@@ -26,7 +26,7 @@ jobs:
       # Step 4: Restore or build picview-ffmpeg (osx-arm64)
       - name: Cache picview-ffmpeg (osx-arm64)
         id: cache-ffmpeg-osx-arm64
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: Build/ffmpeg-native/osx-arm64
           key: picview-ffmpeg-osx-arm64-${{ hashFiles('Build/Build-FFmpegNative.ps1', 'Build/ffmpeg/**', 'Native/ffmpeg/**') }}
