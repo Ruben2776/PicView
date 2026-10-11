@@ -247,7 +247,7 @@
   "MoveWindow": "창 이동",
   "Navigate": "탐색",
   "NavigateBackwards": "뒤로 탐색",
-  "NavigateByClicking": "이미지 영역의 왼쪽 또는 오른쪽 절반을 클릭하여 이미지를 탐색합니다.",
+  "NavigateByClicking": "이미지 영역의 왼쪽 또는 오른쪽 절반을 클릭하여 이미지를 탐색합니다",
   "NavigateBetweenDirectories": "디렉터리 간 탐색",
   "NavigateFileHistory": "파일 기록 탐색",
   "NavigateForwards": "앞으로 탐색",
