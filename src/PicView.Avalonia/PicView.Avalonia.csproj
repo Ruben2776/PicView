@@ -242,6 +242,10 @@
           <DependentUpon>MotionPhotoView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\UC\PopUps\FavoriteDialog.axaml.cs">
+          <DependentUpon>FavoriteDialog.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 

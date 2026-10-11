@@ -11,6 +11,7 @@ public class MainWindowViewModel : IDisposable
     public IFunctionsMapper? Mapper { get; set; }
     public IPlatformWindowService? PlatformWindowService { get; }
     public FileHistoryViewModel? FileHistory { get; set; }
+    public FavoritesViewModel? Favorites { get; set; }
     public TranslationViewModel Translation { get;  } 
     public GallerySharedSettingsViewModel GallerySettings { get; }
     public GlobalSettingsViewModel GlobalSettings { get; }

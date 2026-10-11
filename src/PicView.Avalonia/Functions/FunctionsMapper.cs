@@ -138,6 +138,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             "ShowSettingsFile" => ShowSettingsFile,
             "ShowKeybindingsFile" => ShowKeybindingsFile,
             "ShowRecentHistoryFile" => ShowRecentHistoryFile,
+            "ShowFavoritesFile" => ShowFavoritesFile,
             
             // Sorting functions
             "SortFilesByName" => SortFilesByName,
@@ -1030,6 +1031,16 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             return ValueTask.CompletedTask;
         }
         core.PlatformService.OpenWith(FileHistoryManager.CurrentFileHistoryFile);
+        return ValueTask.CompletedTask;
+    }
+    
+    public ValueTask ShowFavoritesFile()
+    {
+        if (Application.Current.DataContext is not CoreViewModel core)
+        {
+            return ValueTask.CompletedTask;
+        }
+        core.PlatformService.OpenWith(FavoritesManager.CurrentFavoritesFile);
         return ValueTask.CompletedTask;
     }
     

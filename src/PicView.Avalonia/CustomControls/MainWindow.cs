@@ -266,6 +266,17 @@ public class MainWindow : Window, IMainWindow
         vm.TopTitlebarViewModel.CloseDropDownMenu();
         UIHelper.GetMainView.MainPanel.Children.Add(new GalleryItemSizeSlider());
     }
+    
+    public void AddFavoriteDialog()
+    {
+        if (UIHelper.GetMainView.DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+
+        vm.TopTitlebarViewModel.CloseDropDownMenu();
+        UIHelper.GetMainView.MainPanel.Children.Add(new FavoriteDialog());
+    }
 
     #endregion
 

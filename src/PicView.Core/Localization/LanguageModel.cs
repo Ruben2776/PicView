@@ -15,6 +15,7 @@ public class LanguageModel
     public string? ActionProgram { get; set; }
     public string? AddedToClipboard { get; set; }
     public string? AddFiles { get; set; }
+    public string? AddFavorite { get; set; }
     public string? AddFolder { get; set; }
     public string? AdditionalFunctions { get; set; }
     public string? AdjustNavSpeed { get; set; }
@@ -111,6 +112,7 @@ public class LanguageModel
     public string? Dehaze { get; set; }
     public string? Del { get; set; }
     public string? DeletedFile { get; set; }
+    public string? DeleteFavorite { get; set; }
     public string? DeleteFile { get; set; }
     public string? DeleteFilePermanently { get; set; }
     public string? Descending { get; set; }
@@ -139,6 +141,7 @@ public class LanguageModel
     public string? ExposureBias { get; set; }
     public string? ExposureProgram { get; set; }
     public string? ExposureTime { get; set; }
+    public string? Favorites { get; set; }
     public string? File { get; set; }
     public string? FileAssociations { get; set; }
     public string? FileConversion { get; set; }

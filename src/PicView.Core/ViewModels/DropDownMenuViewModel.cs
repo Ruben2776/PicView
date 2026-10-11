@@ -4,14 +4,30 @@ namespace PicView.Core.ViewModels;
 
 public class DropDownMenuViewModel : IDisposable
 {
+    public BindableReactiveProperty<bool> IsFileMenuVisible { get; } = new(false);
+    public BindableReactiveProperty<bool> IsSettingsMenuVisible { get; } = new(false);
+    public BindableReactiveProperty<bool> IsDropDownMenuVisible { get; } = new(false);
+    public BindableReactiveProperty<bool> IsExpandedOptionsOpened { get; } = new(false);
+    
+    public BindableReactiveProperty<int> GalleryCarouselIndex { get; } = new(0);
+    public BindableReactiveProperty<bool> IsGalleryCarouselVisible { get; } = new(true);
+
+    public BindableReactiveProperty<int> SlideshowCarouselIndex { get; } = new(0);
+    public BindableReactiveProperty<bool> IsSlideshowCarouselVisible { get; } = new(true);
+    
+    public BindableReactiveProperty<int> SettingsCarouselIndex { get; } = new(0);
+    public BindableReactiveProperty<bool> IsSettingsCarouselVisible { get; } = new(true);
+    
+    public BindableReactiveProperty<bool> IsFileHistoryVisible { get; } = new(false);
+    
+    public BindableReactiveProperty<bool> IsExtraButtonsVisible { get; } = new(true);
+    
+    public ReactiveCommand CloseMenuCommand { get; }
+    
     public DropDownMenuViewModel()
     {
         CloseMenuCommand = new ReactiveCommand(CloseMenus);
     }
-
-    public BindableReactiveProperty<bool> IsFileMenuVisible { get; } = new(false);
-    public BindableReactiveProperty<bool> IsSettingsMenuVisible { get; } = new(false);
-    public ReactiveCommand CloseMenuCommand { get; }
 
     public void ToggleFileMenu()
     {
@@ -34,22 +50,6 @@ public class DropDownMenuViewModel : IDisposable
         IsFileMenuVisible.Value = false;
         IsSettingsMenuVisible.Value = false;
     }
-    
-    public BindableReactiveProperty<bool> IsDropDownMenuVisible { get; } = new(false);
-    public BindableReactiveProperty<bool> IsExpandedOptionsOpened { get; } = new(false);
-    
-    public BindableReactiveProperty<int> GalleryCarouselIndex { get; } = new(0);
-    public BindableReactiveProperty<bool> IsGalleryCarouselVisible { get; } = new(true);
-
-    public BindableReactiveProperty<int> SlideshowCarouselIndex { get; } = new(0);
-    public BindableReactiveProperty<bool> IsSlideshowCarouselVisible { get; } = new(true);
-    
-    public BindableReactiveProperty<int> SettingsCarouselIndex { get; } = new(0);
-    public BindableReactiveProperty<bool> IsSettingsCarouselVisible { get; } = new(true);
-    
-    public BindableReactiveProperty<bool> IsFileHistoryVisible { get; } = new(false);
-    
-    public BindableReactiveProperty<bool> IsExtraButtonsVisible { get; } = new(true);
 
     private const int DefaultDelay = 95;
     public void OpenGalleryOptions()

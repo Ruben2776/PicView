@@ -29,6 +29,11 @@ public partial class DropDownMenu : AnimatedMenu
         }
 
         vm.FileHistory ??= new FileHistoryViewModel(vm);
+        if (vm.Favorites is null)
+        {
+            vm.Favorites = new FavoritesViewModel(vm);
+            vm.Favorites.AddFavoritesDialogCommand.Subscribe(_ => _mainWindow.AddFavoriteDialog());
+        }
         DataContext = vm;
         InitializeComponent();
         Loaded += OnLoaded;

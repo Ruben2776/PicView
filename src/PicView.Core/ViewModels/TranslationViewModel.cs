@@ -21,6 +21,7 @@ public class TranslationViewModel
         _5Star.Value = t._5Star;
         About.Value = t.About;
         AddFiles.Value = t.AddFiles;
+        AddFavorite.Value = t.AddFavorite;
         AddFolder.Value = t.AddFolder;
         AdditionalFunctions.Value = t.AdditionalFunctions;
         AboutWindow.Value = t.InfoWindow;
@@ -91,6 +92,7 @@ public class TranslationViewModel
         DarkTheme.Value = t.DarkTheme;
         DateTaken.Value = t.DateTaken;
         Dehaze.Value = t.Dehaze;
+        DeleteFavorite.Value = t.DeleteFavorite;
         DeleteFile.Value = t.DeleteFile;
         Descending.Value = t.Descending;
         DigitalZoom.Value = t.DigitalZoom;
@@ -106,6 +108,7 @@ public class TranslationViewModel
         ExposureBias.Value = t.ExposureBias;
         ExposureProgram.Value = t.ExposureProgram;
         ExposureTime.Value = t.ExposureTime;
+        Favorites.Value = t.Favorites;
         File.Value = string.Concat(t.File[0].ToString().ToUpper(CultureInfo.CurrentCulture), t.File.AsSpan(1));
         Files.Value = string.Concat(t.File[0].ToString().ToLower(CultureInfo.CurrentCulture), t.File.AsSpan(1));
         FileAssociations.Value = t.FileAssociations;
@@ -419,6 +422,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> About { get; } = new();
     public BindableReactiveProperty<string?> AboutWindow { get; } = new();
     public BindableReactiveProperty<string?> AddFiles { get; } = new();
+    public BindableReactiveProperty<string?> AddFavorite { get; } = new();
     public BindableReactiveProperty<string?> AddFolder { get; } = new();
     public BindableReactiveProperty<string?> AdditionalFunctions { get; } = new();
     public BindableReactiveProperty<string?> AdjustNavSpeed { get; } = new();
@@ -488,6 +492,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> DarkTheme { get; } = new();
     public BindableReactiveProperty<string?> DateTaken { get; } = new();
     public BindableReactiveProperty<string?> Dehaze { get; } = new();
+    public BindableReactiveProperty<string?> DeleteFavorite { get; } = new();
     public BindableReactiveProperty<string?> DeleteFile { get; } = new();
     public BindableReactiveProperty<string?> Descending { get; } = new();
     public BindableReactiveProperty<string?> DigitalZoom { get; } = new();
@@ -503,6 +508,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> ExposureBias { get; } = new();
     public BindableReactiveProperty<string?> ExposureProgram { get; } = new();
     public BindableReactiveProperty<string?> ExposureTime { get; } = new();
+    public BindableReactiveProperty<string?> Favorites { get; } = new();
     public BindableReactiveProperty<string?> File { get; } = new();
     public BindableReactiveProperty<string?> FileAssociations { get; } = new();
     public BindableReactiveProperty<string?> FileConversion { get; } = new();
