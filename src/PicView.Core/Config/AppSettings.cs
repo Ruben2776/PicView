@@ -430,14 +430,6 @@ public class StartUp
 
 public class Navigation
 {
-    /// <summary>
-    /// Indicates whether the file watcher feature is enabled.
-    /// </summary>
-    /// <remarks>
-    /// Experimental feature, it is recommended not to turn off.
-    /// </remarks>
-    public bool IsFileWatcherEnabled { get; set; } = true;
-    
     public bool IsNavigatingByClicking { get; set; } = false;
 
     /// <summary>
