@@ -13,6 +13,7 @@ public class FavoritesViewModel
     public ReactiveCommand ClearFavoritesCommand { get; }
     public ReactiveCommand OpenFavoritesFileCommand { get; }
     public ReactiveCommand AddFavoritesDialogCommand { get; }
+    public ReactiveCommand AddFromFolderCommand { get; }
 
     public FavoritesViewModel(MainWindowViewModel vm)
     {
@@ -20,6 +21,7 @@ public class FavoritesViewModel
         ClearFavoritesCommand = new ReactiveCommand(ClearFavorites);
         OpenFavoritesFileCommand = new ReactiveCommand(OpenFavoritesFile);
         AddFavoritesDialogCommand = new ReactiveCommand();
+        AddFromFolderCommand = new ReactiveCommand();
     }
 
     private async ValueTask OpenFavoritesFile(Unit arg1, CancellationToken arg2)
