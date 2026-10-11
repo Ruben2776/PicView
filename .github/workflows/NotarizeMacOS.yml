@@ -74,15 +74,25 @@ jobs:
         run: |
           $repoRoot = "${{ github.workspace }}"
           $outputRoot = Join-Path $repoRoot "Build/output"
-          $version = "${{ steps.get-version.outputs.version }}"
+          $version = "${{ steps.get-version.outputs.version }}".Trim()
           $platform = "arm64"
           $macOSArchitecture = "arm64"
           $targetPackage = "Magick.NET-Q8-arm64"
           $entitlementsPath = Join-Path $repoRoot "src/PicView.Core.MacOS/entitlements.plist"
-          $signingIdentity = $env:SIGNING_IDENTITY
-          $appleID = $env:APPLE_ID
-          $appPassword = $env:APP_PASSWORD
-          $teamID = $env:TEAM_ID
+          $signingIdentity = $env:SIGNING_IDENTITY?.Trim()
+          $appleID = $env:APPLE_ID?.Trim()
+          $appPassword = $env:APP_PASSWORD?.Trim()
+          $teamID = $env:TEAM_ID?.Trim()
+
+          # Auto-detect signing identity from keychain if not explicitly provided via secret
+          if ([string]::IsNullOrWhiteSpace($signingIdentity)) {
+              $identitiesOutput = & security find-identity -v -p codesigning | Out-String
+              if ($identitiesOutput -match '"(Developer ID Application:[^"]+)"') {
+                  $signingIdentity = $Matches[1]
+              } else {
+                  $signingIdentity = "Developer ID Application: Ruben Hyldgaard Negendahl (VR9BBW77YF)"
+              }
+          }
 
           if ([string]::IsNullOrWhiteSpace($appleID) -or [string]::IsNullOrWhiteSpace($appPassword)) {
               Write-Error "AppleID and AppPassword secrets are required for notarization."
@@ -339,7 +349,7 @@ jobs:
 
       # Step 8: Upload signed and notarized artifacts
       - name: Upload notarized arm64 artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: PicView-v${{ steps.get-version.outputs.version }}-macOS-arm64-notarized
           if-no-files-found: error

@@ -4,9 +4,9 @@
 [xml]$xml = Get-Content "$PSScriptRoot/../src/Directory.Build.props"
 
 # Extract VersionPrefix, VersionSuffix, and FileVersion
-$versionPrefix = $xml.Project.PropertyGroup.VersionPrefix
-$versionSuffix = $xml.Project.PropertyGroup.VersionSuffix
-$fileVersion = $xml.Project.PropertyGroup.FileVersion
+$versionPrefix = $xml.SelectSingleNode("//VersionPrefix")?.InnerText?.Trim()
+$versionSuffix = $xml.SelectSingleNode("//VersionSuffix")?.InnerText?.Trim()
+$fileVersion = $xml.SelectSingleNode("//FileVersion")?.InnerText?.Trim()
 
 # Combine VersionPrefix and VersionSuffix only if VersionSuffix is not empty
 if ([string]::IsNullOrWhiteSpace($versionSuffix)) {
@@ -16,6 +16,6 @@ if ([string]::IsNullOrWhiteSpace($versionSuffix)) {
 }
 
 # Output the results for GitHub Actions
-echo "version=$fullVersion" >> $env:GITHUB_OUTPUT
-echo "file-version=$fileVersion" >> $env:GITHUB_OUTPUT
-echo "clean-version=$versionPrefix" >> $env:GITHUB_OUTPUT
+"version=$fullVersion" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+"file-version=$fileVersion" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+"clean-version=$versionPrefix" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
