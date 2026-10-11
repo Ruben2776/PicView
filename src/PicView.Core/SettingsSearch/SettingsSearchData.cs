@@ -51,6 +51,7 @@ public class SettingsSearchData
     public string LanguageSearchTags { get; }
     public string KeybindingsSearchTags { get; }
     public string FileAssociationSearchTags { get; }
+    public string IsNavigatingByClickingSearchTags { get; }
     
     public SettingsSearchData()
     {
@@ -265,6 +266,15 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append("Speed Time");
         NavigationSpeedSearchTags = sb.ToString();
+        
+        sb.Clear();
+        
+        sb.Append(TranslationManager.Translation.Navigation);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.NavigateByClicking);
+        sb.Append(space);
+        sb.Append("Clicking");
+        IsNavigatingByClickingSearchTags = sb.ToString();
         
         sb.Clear();
         

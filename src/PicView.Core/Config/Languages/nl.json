@@ -247,6 +247,7 @@
   "MoveWindow": "Venster verplaatsen",
   "Navigate": "Navigeren",
   "NavigateBackwards": "Achteruit navigeren",
+  "NavigateByClicking": "Navigeer door afbeeldingen door op de linker- of rechterhelft van het afbeeldingsgebied te klikken.",
   "NavigateBetweenDirectories": "Navigeren tussen mappen",
   "NavigateFileHistory": "Bestandsgeschiedenis navigeren",
   "NavigateForwards": "Vooruit navigeren",

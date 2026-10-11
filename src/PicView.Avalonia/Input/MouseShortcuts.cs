@@ -93,6 +93,10 @@ public static class MouseShortcuts
     
     public static async Task MainWindow_PointerPressed(PointerPressedEventArgs e, MainWindow window)
     {
+        if (window.IsDialogOpen)
+        {
+            return;
+        }
         if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
@@ -141,15 +145,25 @@ public static class MouseShortcuts
                         return;
                 }
             }
-            else
+            else if (Settings.Navigation.IsNavigatingByClicking)
             {
-                if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+                if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer && imageViewer.MainPanel.IsPointerOver)
                 {
+                    if (imageViewer.GalleryView.IsPointerOver)
+                    {
+                        return;
+                    }
+
+                    if (imageViewer.ClickArrowLeft.IsPointerOver || imageViewer.ClickArrowRight.IsPointerOver)
+                    {
+                        return;
+                    }
                     var point = e.GetPosition(imageViewer);
                     var isLeftSide = point.X < imageViewer.Bounds.Width / 2;
                     var isRightSide = point.X >= imageViewer.Bounds.Width / 2;
                     if (isLeftSide)
                     {
+                        imageViewer.Cursor = new Cursor(StandardCursorType.LeftSide);
                         await vm.Mapper.Prev().ConfigureAwait(false);
                     }
                     else if (isRightSide)
