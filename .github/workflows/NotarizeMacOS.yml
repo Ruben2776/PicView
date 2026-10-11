@@ -49,15 +49,26 @@ jobs:
 
           & "${{ github.workspace }}/Build/Build-FFmpegNative.ps1" -Targets @('osx-arm64')
 
-      # Step 5: Import Developer ID Certificate into Keychain (when running on GitHub-hosted runners)
-      - name: Import Code-Signing Certificates
-        if: env.MACOS_CERTIFICATE != ''
+      # Step 5: Decode MACOS_CERTIFICATE and configure build.keychain
+      - name: Setup Keychain and Import Code-Signing Certificate
         env:
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-        uses: apple-actions/import-codesign-certs@v3
-        with:
-          p12-file-base64: ${{ secrets.MACOS_CERTIFICATE }}
-          p12-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+        run: |
+          KEYCHAIN_PWD="temp_keychain_pwd"
+          CERTIFICATE_PATH="${RUNNER_TEMP}/certificate.p12"
+
+          echo "$MACOS_CERTIFICATE" | base64 --decode > "$CERTIFICATE_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PWD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PWD" build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
+          security import "$CERTIFICATE_PATH" -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PWD" build.keychain
+          security list-keychains -d user -s build.keychain login.keychain
+
+          rm -f "$CERTIFICATE_PATH"
 
       # Step 6: Restore dependencies
       - name: Restore dependencies
@@ -86,7 +97,7 @@ jobs:
 
           # Auto-detect signing identity from keychain if not explicitly provided via secret
           if ([string]::IsNullOrWhiteSpace($signingIdentity)) {
-              $identitiesOutput = & security find-identity -v -p codesigning | Out-String
+              $identitiesOutput = & /usr/bin/security find-identity -v -p codesigning build.keychain | Out-String
               if ($identitiesOutput -match '"(Developer ID Application:[^"]+)"') {
                   $signingIdentity = $Matches[1]
               } else {
@@ -188,28 +199,34 @@ jobs:
 
           Write-Host "Build complete: $appBundlePath"
 
-          # --- 5. Code Signing ---
+          # --- 5. Code Signing (inside-out: sign subcomponents before main executable and app bundle) ---
           Write-Host "[INFO] Signing ARM64 app: $appBundlePath"
           Write-Host "[INFO] Using entitlements: $entitlementsPath"
           Write-Host "[INFO] Using signing identity: $signingIdentity"
 
-          Get-ChildItem -Path $macOSPath -File -Recurse | ForEach-Object {
-              Write-Host "[INFO] Signing $($_.FullName)"
-              & codesign --force --timestamp --options=runtime --entitlements "$entitlementsPath" --sign "$signingIdentity" "$($_.FullName)"
-              if ($LASTEXITCODE -ne 0) {
-                  Write-Error "Failed to sign file: $($_.FullName)"
-                  exit 1
+          # Sign all nested subcomponents first (excluding the CFBundleExecutable 'PicView',
+          # because signing 'PicView' validates the entire bundle and requires all subcomponents
+          # such as Config/Languages/*.json and plugins/ffmpeg/* to already be signed).
+          Get-ChildItem -Path $macOSPath -File -Recurse |
+              Where-Object { $_.Name -ne 'PicView' } |
+              ForEach-Object {
+                  Write-Host "[INFO] Signing $($_.FullName)"
+                  & /usr/bin/codesign --force --timestamp --options=runtime --entitlements "$entitlementsPath" --sign "$signingIdentity" "$($_.FullName)"
+                  if ($LASTEXITCODE -ne 0) {
+                      Write-Error "Failed to sign file: $($_.FullName)"
+                      exit 1
+                  }
               }
-          }
 
+          # Now sign the main executable and the .app bundle itself
           Write-Host "[INFO] Signing ARM64 app bundle"
-          & codesign --force --timestamp --options=runtime --entitlements "$entitlementsPath" --sign "$signingIdentity" "$appBundlePath"
+          & /usr/bin/codesign --force --timestamp --options=runtime --entitlements "$entitlementsPath" --sign "$signingIdentity" "$appBundlePath" -v
           if ($LASTEXITCODE -ne 0) {
               Write-Error "App bundle signing failed with exit code $LASTEXITCODE"
               exit 1
           }
 
-          & codesign --verify --verbose "$appBundlePath"
+          & /usr/bin/codesign --verify --deep --strict --verbose=2 "$appBundlePath"
           if ($LASTEXITCODE -ne 0) {
               Write-Error "App bundle signature verification failed with exit code $LASTEXITCODE"
               exit 1
