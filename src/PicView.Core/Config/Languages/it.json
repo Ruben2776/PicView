@@ -247,6 +247,7 @@
   "MoveWindow": "Sposta la finestra",
   "Navigate": "Gezin",
   "NavigateBackwards": "Naviga indietro",
+  "NavigateByClicking": "Naviga tra le immagini facendo clic sulla metà sinistra o destra dell'area dell'immagine.",
   "NavigateBetweenDirectories": "Naviga tra le directory",
   "NavigateFileHistory": "Naviga nella cronologia dei file",
   "NavigateForwards": "Naviga avanti",

@@ -247,6 +247,7 @@
   "MoveWindow": "Flytta fönster",
   "Navigate": "Navigera",
   "NavigateBackwards": "Navigera bakåt",
+  "NavigateByClicking": "Navigera genom bilder genom att klicka på vänster eller höger halva av bildområdet.",
   "NavigateBetweenDirectories": "Navigera mellan kataloger",
   "NavigateFileHistory": "Navigera filhistorik",
   "NavigateForwards": "Navigera framåt",

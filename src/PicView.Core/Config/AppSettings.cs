@@ -437,6 +437,8 @@ public class Navigation
     /// Experimental feature, it is recommended not to turn off.
     /// </remarks>
     public bool IsFileWatcherEnabled { get; set; } = true;
+    
+    public bool IsNavigatingByClicking { get; set; } = false;
 
     /// <summary>
     /// The number of iterations to process in the forward direction while navigating through items and preloading.

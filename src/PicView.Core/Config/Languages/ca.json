@@ -247,6 +247,7 @@
   "MoveWindow": "Moure finestra",
   "Navigate": "Navegar",
   "NavigateBackwards": "Navegar cap enrere",
+  "NavigateByClicking": "Navegueu per les imatges fent clic a la meitat esquerra o dreta de l'àrea de la imatge.",
   "NavigateBetweenDirectories": "Navegar entre directoris",
   "NavigateFileHistory": "Navegar per l'historial de fitxers",
   "NavigateForwards": "Navegar cap endavant",

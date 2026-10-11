@@ -247,6 +247,7 @@
   "MoveWindow": "移动窗口",
   "Navigate": "导航",
   "NavigateBackwards": "向后导航",
+  "NavigateByClicking": "通过单击图像区域的左半部分或右半部分来浏览图像。",
   "NavigateBetweenDirectories": "在目录间导航",
   "NavigateFileHistory": "浏览文件历史",
   "NavigateForwards": "向前导航",

@@ -247,6 +247,7 @@
   "MoveWindow": "Ablak áthelyezése",
   "Navigate": "Navigálás",
   "NavigateBackwards": "Visszalépés",
+  "NavigateByClicking": "Navigáljon a képek között a képterület bal vagy jobb felére kattintva.",
   "NavigateBetweenDirectories": "Könyvtárak közötti navigáció",
   "NavigateFileHistory": "Fájl előzmények böngészése",
   "NavigateForwards": "Előrelépés",

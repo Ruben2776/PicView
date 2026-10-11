@@ -247,6 +247,7 @@
   "MoveWindow": "הזז חלון",
   "Navigate": "ניווט",
   "NavigateBackwards": "נווט אחורה",
+  "NavigateByClicking": "נווט בין תמונות על ידי לחיצה על החצי השמאלי או הימני של אזור התמונה.",
   "NavigateBetweenDirectories": "ניווט בין תיקיות",
   "NavigateFileHistory": "ניווט בהיסטוריית קבצים",
   "NavigateForwards": "נווט קדימה",
