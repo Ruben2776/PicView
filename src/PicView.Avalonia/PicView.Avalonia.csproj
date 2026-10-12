@@ -246,6 +246,10 @@
           <DependentUpon>FavoriteDialog.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\UC\FavoriteItem.axaml.cs">
+          <DependentUpon>FavoriteItem.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
 
