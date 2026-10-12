@@ -22,7 +22,7 @@ public partial class FavoriteItem : UserControl
 
     private async ValueTask MainButtonOnClick(object? sender, RoutedEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not FileHistoryEntryViewModel entry)
+        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not FavoritesEntryViewModel entry)
         {
             return;
         }
