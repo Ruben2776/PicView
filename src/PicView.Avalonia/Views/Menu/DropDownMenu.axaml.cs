@@ -11,7 +11,6 @@ using PicView.Core.DebugTools;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
-using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 
 namespace PicView.Avalonia.Views.Menu;
 
@@ -91,6 +90,18 @@ public partial class DropDownMenu : AnimatedMenu
 
         vm.FileHistory.PinnedEntries.CollectionChanged += PinnedEntriesOnCollectionChanged;
         vm.FileHistory.Entries.CollectionChanged += EntriesOnCollectionChanged;
+        if (vm.Favorites is not null)
+        {
+            vm.Favorites.Entries.CollectionChanged += FavoritesOnCollectionChanged;
+            if (vm.Favorites.Entries.Count > 0)
+            {
+                FavoritesCollection.Items.Clear();
+                foreach (var item in vm.Favorites.Entries)
+                {
+                    FavoritesCollection.Items.Add(item);
+                }
+            }
+        }
 
         _menuVisibilitySubscription = Observable.EveryValueChanged(this, x => x.IsVisible)
             .Skip(1)
@@ -101,9 +112,10 @@ public partial class DropDownMenu : AnimatedMenu
                     _mainWindow.IsDialogOpen = true;
                     vm.TopTitlebarViewModel.DropDownMenu.CloseMenus(Unit.Default);
                     MaxHeight = _mainWindow.UIHelper.GetMainView.Bounds.Height - 1;
-                    vm.FileHistory.UpdateHistory();
                     vm.WindowTabs.ActiveTab.CurrentValue.ShouldCropBeEnabled.Value =
                         CropManager.SetIfCropEnabled(_mainWindow);
+                    vm.FileHistory.UpdateHistory();
+                    vm.Favorites.UpdateFavorites();
                 }
                 else
                 {
@@ -218,7 +230,12 @@ public partial class DropDownMenu : AnimatedMenu
         UpdateCollection(e, UnPinnedEntriesCollection);
     }
 
-    private static void UpdateCollection(in NotifyCollectionChangedEventArgs<FileHistoryEntryViewModel> e, ItemsControl collection)
+    private void FavoritesOnCollectionChanged(in NotifyCollectionChangedEventArgs<FavoritesEntryViewModel> e)
+    {
+        UpdateCollection(e, FavoritesCollection);
+    }
+
+    private static void UpdateCollection<T>(in NotifyCollectionChangedEventArgs<T> e, ItemsControl collection)
     {
         switch (e.Action)
         {
@@ -259,7 +276,8 @@ public partial class DropDownMenu : AnimatedMenu
             case NotifyCollectionChangedAction.Move:
                 break;
             case NotifyCollectionChangedAction.Reset:
-                collection.Items.Clear();
+                Dispatcher.CurrentDispatcher.Post(() => { collection.Items.Clear(); },
+                    DispatcherPriority.Background);
                 break;
         }
     }
@@ -272,6 +290,11 @@ public partial class DropDownMenu : AnimatedMenu
         if (_mainWindow.DataContext is not MainWindowViewModel vm)
         {
             return;
+        }
+
+        if (vm.Favorites is not null)
+        {
+            vm.Favorites.Entries.CollectionChanged -= FavoritesOnCollectionChanged;
         }
         
         vm.FileHistory.PinnedEntries.CollectionChanged -= PinnedEntriesOnCollectionChanged;

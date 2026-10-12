@@ -53,19 +53,33 @@ public static class FavoritesManager
     /// </summary>
     public static async Task AddAsync(string filePath, string hotKey = "")
     {
-        if (_entries is null || string.IsNullOrWhiteSpace(filePath))
+        if (_entries is null)
+        {
+            Initialize();
+        }
+
+        if (string.IsNullOrWhiteSpace(filePath))
         {
             return;
         }
 
-        if (_entries.Any(x => string.Equals(x.FilePath, filePath, StringComparison.OrdinalIgnoreCase)))
+        var existingIndex = _entries.FindIndex(x => string.Equals(x.FilePath, filePath, StringComparison.OrdinalIgnoreCase));
+        if (existingIndex >= 0)
         {
-            return;
+            _entries[existingIndex] = new FavoriteEntry(filePath, hotKey);
+        }
+        else
+        {
+            _entries.Add(new FavoriteEntry(filePath, hotKey));
         }
 
-        _entries.Add(new FavoriteEntry(filePath, hotKey));
         await SaveToFileAsync().ConfigureAwait(false);
     }
+
+    /// <summary>
+    ///     Adds an entry to the favorites.
+    /// </summary>
+    public static Task AddAsync(FavoriteEntry entry) => AddAsync(entry.FilePath, entry.HotKey);
 
     /// <summary>
     ///     Removes a specific entry from favorites.
@@ -119,13 +133,13 @@ public static class FavoritesManager
         {
             if (string.IsNullOrWhiteSpace(_favoritesConfiguration?.CorrectPath))
             {
-                _favoritesConfiguration = _favoritesConfiguration ?? new FavoritesConfiguration();
+                _favoritesConfiguration ??= new FavoritesConfiguration();
                 _favoritesConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(_favoritesConfiguration);
             }
 
             var favoritesEntries = new FavoritesEntries
             {
-                Entries = _entries ?? new List<FavoriteEntry>()
+                Entries = _entries ?? []
             };
             _favoritesConfiguration.CorrectPath =
                 await ConfigFileManager.SaveConfigFileAndReturnPathAsync(_favoritesConfiguration,

@@ -1,6 +1,6 @@
 <UserControl
     x:Class="PicView.Avalonia.Views.UC.FavoriteItem"
-    x:DataType="vm:CoreViewModel"
+    x:DataType="vm:FavoritesEntryViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
@@ -51,6 +51,7 @@
                     Background="{DynamicResource AccentColor}"
                     Classes="errorHover"
                     ClickMode="Release"
+                    Command="{CompiledBinding RemoveCommand}"
                     Data="{StaticResource CloseGeometry}"
                     Foreground="{StaticResource SecondaryTextColor}"
                     HorizontalAlignment="Right"
@@ -67,7 +68,7 @@
                     Classes="txt"
                     DockPanel.Dock="Right"
                     Padding="10,0"
-                    Text="Alt+1" />
+                    Text="{CompiledBinding HotKey.Value}" />
 
                 <customControls:TextIconButton
                     Classes.isCurrent=""
@@ -78,8 +79,8 @@
                     IconMargin="10,0,5,0"
                     IconWidth="12"
                     Padding="5,6"
-                    Text="Pictures"
-                    ToolTip.Tip="C:/Users/UserName/Pictures/"
+                    Text="{CompiledBinding FolderName.Value}"
+                    ToolTip.Tip="{CompiledBinding FilePath.Value}"
                     x:Name="MainButton" />
 
             </DockPanel>

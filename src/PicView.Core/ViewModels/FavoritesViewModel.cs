@@ -35,9 +35,15 @@ public class FavoritesViewModel
         UpdateFavorites();
     }
 
-    public async ValueTask AddFavorite(string path)
+    public async ValueTask AddFavorite(string path, string hotKey = "")
     {
-        await FavoritesManager.AddAsync(path).ConfigureAwait(false);
+        await FavoritesManager.AddAsync(path, hotKey).ConfigureAwait(false);
+        UpdateFavorites();
+    }
+
+    public async ValueTask AddFavorite(FavoriteEntry entry)
+    {
+        await FavoritesManager.AddAsync(entry).ConfigureAwait(false);
         UpdateFavorites();
     }
 

@@ -813,11 +813,13 @@
                 </DockPanel>
 
                 <customControls:AutoScrollViewer DockPanel.Dock="Top">
-                    <StackPanel>
-                        <uc:FavoriteItem />
-                        <uc:FavoriteItem />
-                        <uc:FavoriteItem />
-                    </StackPanel>
+                    <ItemsControl x:Name="FavoritesCollection">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="viewModels:FavoritesEntryViewModel">
+                                <uc:FavoriteItem />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </customControls:AutoScrollViewer>
 
             </DockPanel>

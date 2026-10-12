@@ -1,10 +1,11 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Core.DebugTools;
+using PicView.Core.FileHistory;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -27,6 +28,7 @@ public partial class FavoriteDialog : AnimatedPopUp
             return;
         }
 
+        vm.Favorites ??= new FavoritesViewModel(vm);
         vm.Favorites.AddFromFolderCommand.SubscribeAwait(async (_, _) =>
         {
             var directory = await FilePicker.SelectDirectory().ConfigureAwait(false);
@@ -53,7 +55,7 @@ public partial class FavoriteDialog : AnimatedPopUp
         switch (e.Key)
         {
             case Key.Enter:
-                //
+                ApplyButtonOnClick(sender, e);
                 e.Handled = true;
                 break;
             case Key.Escape:
@@ -63,10 +65,31 @@ public partial class FavoriteDialog : AnimatedPopUp
         }
     }
 
-    private void ApplyButtonOnClick(object? sender, RoutedEventArgs e)
+    private async void ApplyButtonOnClick(object? sender, RoutedEventArgs e)
     {
-        //
-        _ = AnimatedClosing();
+        var path = PathBox.Text;
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        var keybind = KeyBox.Keybinds is { Count: > 0 }
+            ? KeyBox.Keybinds[0].GetFormattedForJSON()
+            : (KeyBox.Tags is { Count: > 0 } ? KeyBox.Tags[0] : string.Empty);
+
+        var entry = new FavoriteEntry(path, keybind);
+
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.Favorites ??= new FavoritesViewModel(vm);
+            await vm.Favorites.AddFavorite(entry).ConfigureAwait(true);
+        }
+        else
+        {
+            await FavoritesManager.AddAsync(entry).ConfigureAwait(true);
+        }
+
+        await AnimatedClosing().ConfigureAwait(true);
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
