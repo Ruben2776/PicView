@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using PicView.Core.Config.ConfigFileManagement;
 using PicView.Core.DebugTools;
 
-namespace PicView.Core.FileHistory;
+namespace PicView.Core.Favorites;
 
 /// <summary>
 ///     JSON context for favorites serialization.
@@ -15,7 +15,7 @@ namespace PicView.Core.FileHistory;
 internal partial class FavoritesGenerationContext : JsonSerializerContext;
 
 /// <summary>
-///     Manages the list of favorite files.
+///     Manages the list of favorite folders.
 /// </summary>
 public static class FavoritesManager
 {
@@ -33,23 +33,79 @@ public static class FavoritesManager
     public static IReadOnlyList<FavoriteEntry> AllEntries => _entries?.AsReadOnly() ?? (IReadOnlyList<FavoriteEntry>)[];
 
     /// <summary>
-    /// Gets the favorites file path with normalized slashes.
+    ///     Gets the favorites file path with normalized slashes.
     /// </summary>
-    public static string CurrentFavoritesFile => _favoritesConfiguration?.TryGetCurrentUserConfigPath.Replace("/", "\\") ?? string.Empty;
+    public static string CurrentFavoritesFile =>
+        (_favoritesConfiguration?.TryGetCurrentUserConfigPath is { Length: > 0 } userPath
+            ? userPath
+            : _favoritesConfiguration?.CorrectPath ?? string.Empty).Replace("/", "\\");
 
     /// <summary>
-    ///     Initializes the favorites by loading entries from the favorites file.
+    ///     Initializes the favorites by loading entries from the default favorites configuration file.
     /// </summary>
     public static void Initialize()
     {
         _favoritesConfiguration = new FavoritesConfiguration();
         _favoritesConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(_favoritesConfiguration);
-        _entries = new List<FavoriteEntry>();
-        LoadFromFile();
+        _entries = [];
+        LoadFromFile(_favoritesConfiguration.TryGetCurrentUserConfigPath);
     }
 
     /// <summary>
-    ///     Adds an entry to the favorites.
+    ///     Initializes the favorites using an explicit configuration file path (local-substitutable seam for testing).
+    /// </summary>
+    internal static void Initialize(string configPath)
+    {
+        _favoritesConfiguration = new FavoritesConfiguration
+        {
+            CorrectPath = configPath
+        };
+        _entries = [];
+        if (File.Exists(configPath))
+        {
+            LoadFromFile(configPath);
+        }
+    }
+
+    /// <summary>
+    ///     Normalizes a path into an existing directory path without trailing directory separators.
+    ///     If a file path is provided, resolves its parent directory.
+    ///     Returns <c>null</c> if the path is empty or the resolved directory does not exist on disk.
+    /// </summary>
+    public static string? NormalizeDirectoryPath(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return null;
+        }
+
+        var trimmed = path.Trim();
+        try
+        {
+            if (Directory.Exists(trimmed))
+            {
+                return Path.TrimEndingDirectorySeparator(Path.GetFullPath(trimmed));
+            }
+
+            if (File.Exists(trimmed))
+            {
+                var parentDir = Path.GetDirectoryName(Path.GetFullPath(trimmed));
+                if (!string.IsNullOrWhiteSpace(parentDir) && Directory.Exists(parentDir))
+                {
+                    return Path.TrimEndingDirectorySeparator(parentDir);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(FavoritesManager), nameof(NormalizeDirectoryPath), ex);
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    ///     Adds a folder entry to the favorites.
     /// </summary>
     public static async Task AddAsync(string filePath, string hotKey = "")
     {
@@ -58,19 +114,20 @@ public static class FavoritesManager
             Initialize();
         }
 
-        if (string.IsNullOrWhiteSpace(filePath))
+        var normalizedPath = NormalizeDirectoryPath(filePath);
+        if (string.IsNullOrWhiteSpace(normalizedPath))
         {
             return;
         }
 
-        var existingIndex = _entries.FindIndex(x => string.Equals(x.FilePath, filePath, StringComparison.OrdinalIgnoreCase));
+        var existingIndex = _entries!.FindIndex(x => string.Equals(x.FilePath, normalizedPath, StringComparison.Ordinal));
         if (existingIndex >= 0)
         {
-            _entries[existingIndex] = new FavoriteEntry(filePath, hotKey);
+            _entries[existingIndex] = new FavoriteEntry(normalizedPath, hotKey);
         }
         else
         {
-            _entries.Add(new FavoriteEntry(filePath, hotKey));
+            _entries.Add(new FavoriteEntry(normalizedPath, hotKey));
         }
 
         await SaveToFileAsync().ConfigureAwait(false);
@@ -86,12 +143,13 @@ public static class FavoritesManager
     /// </summary>
     public static async Task<bool> RemoveAsync(string path)
     {
-        if (_entries is null)
+        if (_entries is null || string.IsNullOrWhiteSpace(path))
         {
             return false;
         }
 
-        var index = _entries.FindIndex(e => string.Equals(e.FilePath, path, StringComparison.OrdinalIgnoreCase));
+        var targetPath = NormalizeDirectoryPath(path) ?? Path.TrimEndingDirectorySeparator(path.Trim());
+        var index = _entries.FindIndex(e => string.Equals(e.FilePath, targetPath, StringComparison.Ordinal));
         if (index < 0)
         {
             return false;
@@ -112,7 +170,7 @@ public static class FavoritesManager
     }
 
     /// <summary>
-    ///     Checks if a path is in the favorites.
+    ///     Checks if a folder path is in the favorites.
     /// </summary>
     public static bool Contains(string path)
     {
@@ -121,7 +179,8 @@ public static class FavoritesManager
             return false;
         }
 
-        return _entries.Exists(e => string.Equals(e.FilePath, path, StringComparison.Ordinal));
+        var targetPath = NormalizeDirectoryPath(path) ?? Path.TrimEndingDirectorySeparator(path.Trim());
+        return _entries.Exists(e => string.Equals(e.FilePath, targetPath, StringComparison.Ordinal));
     }
 
     /// <summary>
@@ -153,14 +212,13 @@ public static class FavoritesManager
     }
 
     /// <summary>
-    ///     Loads the favorites from the favorites file.
+    ///     Loads the favorites from the specified favorites file path.
     /// </summary>
-    private static void LoadFromFile()
+    private static void LoadFromFile(string? configPath)
     {
         try
         {
-            var configPath = _favoritesConfiguration?.TryGetCurrentUserConfigPath;
-            if (string.IsNullOrEmpty(configPath))
+            if (string.IsNullOrEmpty(configPath) || !File.Exists(configPath))
             {
                 return;
             }
@@ -176,9 +234,19 @@ public static class FavoritesManager
             }
 
             _entries?.Clear();
-            if (entries.Entries != null)
+            if (entries.Entries is not null && _entries is not null)
             {
-                _entries?.AddRange(entries.Entries);
+                foreach (var entry in entries.Entries)
+                {
+                    if (string.IsNullOrWhiteSpace(entry.FilePath))
+                    {
+                        continue;
+                    }
+
+                    var normalized = NormalizeDirectoryPath(entry.FilePath)
+                                     ?? Path.TrimEndingDirectorySeparator(entry.FilePath.Trim());
+                    _entries.Add(new FavoriteEntry(normalized, entry.HotKey));
+                }
             }
         }
         catch (Exception ex)

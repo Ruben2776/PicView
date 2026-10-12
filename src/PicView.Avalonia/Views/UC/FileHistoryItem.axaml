@@ -93,6 +93,7 @@
                 x:Name="MainButton"
                 Padding="5,6"
                 Classes.isCurrent="{Binding IsCurrentItem.Value}"
+                Command="{CompiledBinding OpenCommand}"
                 DockPanel.Dock="Left"
                 Foreground="{DynamicResource MainTextColor}">
                 <ToolTip.Tip>

@@ -5,7 +5,7 @@ using Avalonia.Interactivity;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Core.DebugTools;
-using PicView.Core.FileHistory;
+using PicView.Core.Favorites;
 using PicView.Core.ViewModels;
 using R3;
 

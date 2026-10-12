@@ -71,7 +71,8 @@
                     Text="{CompiledBinding HotKey.Value}" />
 
                 <customControls:TextIconButton
-                    Classes.isCurrent=""
+                    Classes.isCurrent="{CompiledBinding IsCurrentItem.Value}"
+                    Command="{CompiledBinding OpenCommand}"
                     Data="{StaticResource FolderGeometry}"
                     DockPanel.Dock="Left"
                     Foreground="{DynamicResource MainTextColor}"

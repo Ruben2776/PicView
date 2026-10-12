@@ -1,7 +1,10 @@
-﻿using Avalonia;
+using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.StartUp;
+using PicView.Avalonia.Views.UC;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileHistory;
 using PicView.Core.ViewModels;
 
@@ -9,70 +12,75 @@ namespace PicView.Avalonia.Navigation;
 
 public static class UINavigationHelper
 {
-    public static async ValueTask OpenNextFileHistoryEntry(MainWindow mainWindow, MainWindowViewModel vm)
+    public static async ValueTask OpenPathAsync(MainWindow mainWindow, MainWindowViewModel vm, string? path)
     {
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
+
+        var tabs = vm.WindowTabs;
+        var tab = tabs.ActiveTab.CurrentValue;
         if (!tab.IsInitialized)
         {
-            var nextEntry = FileHistoryManager.GetNextEntry();
-            var lastFile = string.IsNullOrWhiteSpace(nextEntry) ? nextEntry : Settings.StartUp.LastFile;
-            if (string.IsNullOrWhiteSpace(lastFile))
+            var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
+            if (core is null)
             {
                 return;
             }
 
-            var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-            await QuickLoad.QuickLoadAsync(mainWindow, core, lastFile, true).ConfigureAwait(false);
+            await QuickLoad.QuickLoadAsync(mainWindow, core, path, true).ConfigureAwait(false);
             return;
         }
+
+        var isViewStartUpMenu = false;
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (tab.CurrentView.CurrentValue is StartUpMenu)
+            {
+                tab.CurrentView.Value = new ImageViewer();
+                isViewStartUpMenu = true;
+            }
+        });
+
         vm.IsLoadingIndicatorShown.Value = true;
-        await vm.WindowTabs.LoadFromStringAsync(FileHistoryManager.GetNextEntry()).ConfigureAwait(false);
+        var isLoadedSuccessfully = await tabs.LoadFromStringAsync(path).ConfigureAwait(false);
         vm.IsLoadingIndicatorShown.Value = false;
-        vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
+
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (!isLoadedSuccessfully && isViewStartUpMenu)
+            {
+                tab.CurrentView.Value = new StartUpMenu();
+            }
+            else if (isLoadedSuccessfully)
+            {
+                tab.UpdateTabTitle();
+                WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+            }
+        });
+    }
+
+    public static async ValueTask OpenNextFileHistoryEntry(MainWindow mainWindow, MainWindowViewModel vm)
+    {
+        var nextEntry = FileHistoryManager.GetNextEntry();
+        var pathToLoad = !string.IsNullOrWhiteSpace(nextEntry) ? nextEntry : Settings.StartUp.LastFile;
+        await OpenPathAsync(mainWindow, vm, pathToLoad).ConfigureAwait(false);
     }
     
     public static async ValueTask OpenPreviousFileHistoryEntry(MainWindow mainWindow, MainWindowViewModel vm)
     {
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (!tab.IsInitialized)
-        {
-            var prevEntry = FileHistoryManager.GetPreviousEntry();
-            var lastFile = string.IsNullOrWhiteSpace(prevEntry) ? prevEntry : Settings.StartUp.LastFile;
-            if (string.IsNullOrWhiteSpace(lastFile))
-            {
-                return;
-            }
-
-            var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-            await QuickLoad.QuickLoadAsync(mainWindow, core, lastFile, true).ConfigureAwait(false);
-            return;
-        }
-        vm.IsLoadingIndicatorShown.Value = true;
-        await vm.WindowTabs.LoadFromStringAsync(FileHistoryManager.GetPreviousEntry()).ConfigureAwait(false);
-        vm.IsLoadingIndicatorShown.Value = false;
-        vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
+        var prevEntry = FileHistoryManager.GetPreviousEntry();
+        var pathToLoad = !string.IsNullOrWhiteSpace(prevEntry) ? prevEntry : Settings.StartUp.LastFile;
+        await OpenPathAsync(mainWindow, vm, pathToLoad).ConfigureAwait(false);
     }
     
     public static async Task OpenLastFile(MainWindow mainWindow, MainWindowViewModel vm)
     {
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (!tab.IsInitialized)
-        {
-            var lastEntry = FileHistoryManager.GetLastEntry();
-            var lastFile = string.IsNullOrWhiteSpace(lastEntry) ? lastEntry : Settings.StartUp.LastFile;
-            if (string.IsNullOrWhiteSpace(lastFile))
-            {
-                return;
-            }
-
-            var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-            await QuickLoad.QuickLoadAsync(mainWindow, core, lastFile, true).ConfigureAwait(false);
-            return;
-        }
-        vm.IsLoadingIndicatorShown.Value = true;
-        await vm.WindowTabs.LoadLastFileAsync().ConfigureAwait(false);
-        vm.WindowTabs.ActiveTab.CurrentValue.UpdateTabTitle();
-        vm.IsLoadingIndicatorShown.Value = false;
-        vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
+        var lastEntry = FileHistoryManager.GetLastEntry();
+        var pathToLoad = !string.IsNullOrWhiteSpace(lastEntry) ? lastEntry : Settings.StartUp.LastFile;
+        await OpenPathAsync(mainWindow, vm, pathToLoad).ConfigureAwait(false);
     }
 }

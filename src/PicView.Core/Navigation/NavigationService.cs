@@ -544,8 +544,8 @@ public class NavigationService(
         var lastEntry = FileHistoryManager.GetLastEntry();
 
         // determine which file source to use (prioritize LastFile, fallback to History)
-        var fileToLoad = !string.IsNullOrEmpty(lastFile) ? lastFile : lastEntry;
-        if (string.IsNullOrEmpty(lastEntry))
+        var fileToLoad = !string.IsNullOrWhiteSpace(lastFile) ? lastFile : lastEntry;
+        if (string.IsNullOrWhiteSpace(fileToLoad))
         {
             return false;
         }
