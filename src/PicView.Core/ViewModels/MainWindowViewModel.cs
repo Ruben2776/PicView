@@ -82,8 +82,6 @@ public class MainWindowViewModel : IDisposable
     
     public BindableReactiveProperty<bool> IsTopMost { get; } = new(Settings.WindowProperties.TopMost);
     
-    public BindableReactiveProperty<object?> ChangeCtrlZoomImage { get; } = new();
-    
     #endregion
     
     #endregion
