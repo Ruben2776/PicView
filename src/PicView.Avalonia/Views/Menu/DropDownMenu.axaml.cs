@@ -89,7 +89,25 @@ public partial class DropDownMenu : AnimatedMenu
         }
 
         vm.FileHistory.PinnedEntries.CollectionChanged += PinnedEntriesOnCollectionChanged;
+        if (vm.FileHistory.PinnedEntries.Count > 0)
+        {
+            PinnedEntriesCollection.Items.Clear();
+            foreach (var item in vm.FileHistory.PinnedEntries)
+            {
+                PinnedEntriesCollection.Items.Add(item);
+            }
+        }
+
         vm.FileHistory.Entries.CollectionChanged += EntriesOnCollectionChanged;
+        if (vm.FileHistory.Entries.Count > 0)
+        {
+            UnPinnedEntriesCollection.Items.Clear();
+            foreach (var item in vm.FileHistory.Entries)
+            {
+                UnPinnedEntriesCollection.Items.Add(item);
+            }
+        }
+
         if (vm.Favorites is not null)
         {
             vm.Favorites.Entries.CollectionChanged += FavoritesOnCollectionChanged;

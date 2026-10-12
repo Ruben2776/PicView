@@ -97,6 +97,7 @@ public interface IFunctionsMapper
     ValueTask ShowStartUpMenu();
 
     // File Operations
+    ValueTask OpenPathAsync(string path);
     ValueTask OpenLastFile();
     ValueTask OpenPreviousFileHistoryEntry();
     ValueTask OpenNextFileHistoryEntry();

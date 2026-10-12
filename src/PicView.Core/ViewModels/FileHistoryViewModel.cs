@@ -44,11 +44,21 @@ public class FileHistoryViewModel
 
     public void UpdateHistory()
     {
+        foreach (var existing in Entries)
+        {
+            existing.Dispose();
+        }
         Entries.Clear();
+
+        foreach (var existing in PinnedEntries)
+        {
+            existing.Dispose();
+        }
         PinnedEntries.Clear();
         
         if (!Settings.Navigation.IsFileHistoryEnabled)
         {
+            HasPinnedEntries.Value = false;
             return;
         }
 
@@ -57,13 +67,13 @@ public class FileHistoryViewModel
         
         HasPinnedEntries.Value = pinnedEntries.Any();
         
-        var currentFilePath = _vm.WindowTabs.ActiveTab.Value?.Model?.FileInfo?.FullName;
+        var currentFilePath = _vm.WindowTabs?.ActiveTab?.Value?.Model?.FileInfo?.FullName;
         
         foreach (var entry in pinnedEntries)
         {
             var fileName = Path.GetFileName(entry.Path);
             var pinnedEntry = new FileHistoryEntryViewModel();
-            var isCurrentItem = currentFilePath is not null && string.Equals(entry.Path, currentFilePath, StringComparison.OrdinalIgnoreCase);
+            var isCurrentItem = currentFilePath is not null && string.Equals(entry.Path, currentFilePath, StringComparison.Ordinal);
             pinnedEntry.Initialize(
                 entry.Path, 
                 fileName, 
@@ -83,7 +93,7 @@ public class FileHistoryViewModel
                 var index = i + 1;
                 var fileName = Path.GetFileName(path);
                 var entry = new FileHistoryEntryViewModel();
-                var isCurrentItem = currentFilePath is not null && string.Equals(path, currentFilePath, StringComparison.OrdinalIgnoreCase);
+                var isCurrentItem = currentFilePath is not null && string.Equals(path, currentFilePath, StringComparison.Ordinal);
                 entry.Initialize(
                     path, 
                     fileName, 
@@ -103,7 +113,7 @@ public class FileHistoryViewModel
                 var fileName = Path.GetFileName(entry.Path);
                 var unpinnedEntry = new FileHistoryEntryViewModel();
                 
-                var isCurrentItem = currentFilePath is not null && string.Equals(entry.Path, currentFilePath, StringComparison.OrdinalIgnoreCase);
+                var isCurrentItem = currentFilePath is not null && string.Equals(entry.Path, currentFilePath, StringComparison.Ordinal);
                 unpinnedEntry.Initialize(
                     entry.Path, 
                     fileName, 

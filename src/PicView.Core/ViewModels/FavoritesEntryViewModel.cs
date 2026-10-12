@@ -1,4 +1,4 @@
-using PicView.Core.FileHistory;
+using PicView.Core.Favorites;
 using R3;
 
 namespace PicView.Core.ViewModels;
@@ -9,18 +9,30 @@ public class FavoritesEntryViewModel : IDisposable
     public BindableReactiveProperty<string> FilePath { get; } = new();
     public BindableReactiveProperty<string> FolderName { get; } = new();
     public BindableReactiveProperty<string> HotKey { get; } = new();
+    public BindableReactiveProperty<bool> IsCurrentItem { get; } = new(false);
     
+    public ReactiveCommand<Unit> OpenCommand { get; } = new();
     public ReactiveCommand<Unit> RemoveCommand { get; } = new();
     
-    public void Initialize(string path, string folderName, string hotKey, MainWindowViewModel vm)
+    public void Initialize(string path, string folderName, string hotKey, bool isCurrentItem, MainWindowViewModel vm)
     {
         _vm = vm;
         
         FilePath.Value = path;
         FolderName.Value = folderName;
         HotKey.Value = hotKey;
+        IsCurrentItem.Value = isCurrentItem;
 
+        OpenCommand.SubscribeAwait(Open);
         RemoveCommand.SubscribeAwait(Remove);
+    }
+
+    private async ValueTask Open(Unit unit, CancellationToken cancellationToken)
+    {
+        if (_vm.Mapper is not null)
+        {
+            await _vm.Mapper.OpenPathAsync(FilePath.CurrentValue).ConfigureAwait(false);
+        }
     }
 
     private async ValueTask Remove(Unit unit, CancellationToken cancellationToken)
@@ -31,11 +43,13 @@ public class FavoritesEntryViewModel : IDisposable
     
     public void Dispose()
     {
+        OpenCommand.Dispose();
         RemoveCommand.Dispose();
         
         FilePath.Dispose();
         FolderName.Dispose();
         HotKey.Dispose();
+        IsCurrentItem.Dispose();
         
         GC.SuppressFinalize(this);
     }

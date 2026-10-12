@@ -14,6 +14,7 @@ using PicView.Avalonia.Input;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Wallpaper;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Favorites;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
@@ -25,6 +26,11 @@ using R3;
 
 namespace PicView.Avalonia.Functions;
 
+/// <summary>
+/// A pure functions map.
+/// </summary>
+/// <remarks>It is intentionally restricted to a pure dispatch table that performs only null checks
+/// and delegates all orchestration and UI workflow logic to dedicated helper modules.</remarks>
 public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IFunctionsMapper
 {
     public Func<ValueTask>? GetFunctionByName(string functionName)
@@ -642,6 +648,10 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     #endregion
 
     #region File funnctions
+
+    /// <inheritdoc cref="UINavigationHelper.OpenPathAsync(MainWindow, MainWindowViewModel, string?)" />
+    public async ValueTask OpenPathAsync(string path) =>
+        await UINavigationHelper.OpenPathAsync(mainWindow, vm, path).ConfigureAwait(false);
 
     /// <inheritdoc cref=" UINavigationHelper.OpenLastFile(MainWindowViewModel)" />
     public async ValueTask OpenLastFile() =>

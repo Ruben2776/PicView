@@ -1,4 +1,4 @@
-﻿# PicView
+# PicView
 
 A lightweight, fast image viewer with tabs, image preloading, editing, and gallery navigation.
 
@@ -15,3 +15,11 @@ _Avoid_: Clipboard duplicate, copy-paste in place
 **Paste Pipeline**:
 The ordered ingestion sequence (Files -> Text/URLs/Base64 -> Bitmap) that decodes and routes clipboard contents into the viewer or tab model.
 _Avoid_: Paste handler, multi-format paste, clipboard reader
+
+**Favorite**:
+A user-curated bookmark to a folder on disk, optionally bound to a shortcut key for instant navigation.
+_Avoid_: Pinned history entry, favorite file, file bookmark
+
+**File History**:
+The chronological record of recently opened image files, archives, and web URLs, supporting forward/backward traversal and entry pinning.
+_Avoid_: Favorites, folder bookmarks

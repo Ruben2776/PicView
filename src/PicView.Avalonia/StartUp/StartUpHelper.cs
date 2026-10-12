@@ -145,6 +145,7 @@ public static class StartUpHelper
                 Debug.Assert(core.PlatformService != null);
                 core.MainWindows.ActiveWindow.Value?.Mapper = new FunctionsMapper(vm, mainWindow);
                 FileHistoryManager.Initialize();
+                Core.Favorites.FavoritesManager.Initialize();
                 HandleWindowControlSettings(core, mainWindow);
                 vm.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);
             });

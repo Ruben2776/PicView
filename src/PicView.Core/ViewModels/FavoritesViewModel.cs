@@ -1,5 +1,5 @@
 using ObservableCollections;
-using PicView.Core.FileHistory;
+using PicView.Core.Favorites;
 using R3;
 
 namespace PicView.Core.ViewModels;
@@ -55,17 +55,36 @@ public class FavoritesViewModel
 
     public void UpdateFavorites()
     {
+        foreach (var existing in Entries)
+        {
+            existing.Dispose();
+        }
         Entries.Clear();
 
         var entries = FavoritesManager.AllEntries;
+        var currentDirectoryPath = _vm.WindowTabs?.ActiveTab?.Value?.Model?.FileInfo?.DirectoryName;
+        var normalizedCurrentDir = !string.IsNullOrWhiteSpace(currentDirectoryPath)
+            ? Path.TrimEndingDirectorySeparator(currentDirectoryPath)
+            : null;
 
         foreach (var entry in entries)
         {
+            var normalizedEntryPath = Path.TrimEndingDirectorySeparator(entry.FilePath);
+            var folderName = Path.GetFileName(normalizedEntryPath);
+            if (string.IsNullOrEmpty(folderName))
+            {
+                folderName = normalizedEntryPath;
+            }
+
+            var isCurrentItem = normalizedCurrentDir is not null &&
+                                string.Equals(normalizedEntryPath, normalizedCurrentDir, StringComparison.Ordinal);
+
             var entryVm = new FavoritesEntryViewModel();
             entryVm.Initialize(
-                entry.FilePath,
-                Path.GetFileName(entry.FilePath),
+                normalizedEntryPath,
+                folderName,
                 entry.HotKey,
+                isCurrentItem,
                 _vm);
             Entries.Add(entryVm);
         }

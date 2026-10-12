@@ -14,6 +14,7 @@ public class FileHistoryEntryViewModel : IDisposable
     public BindableReactiveProperty<bool> IsCurrentItem { get; } = new(false);
     public BindableReactiveProperty<int> Index { get;  } = new();
     
+    public ReactiveCommand<Unit> OpenCommand { get; } = new();
     public ReactiveCommand<Unit> PinCommand { get; } = new();
     public ReactiveCommand<Unit> UnpinCommand { get; } = new();
     public ReactiveCommand<Unit> RemoveCommand { get; } = new();
@@ -30,9 +31,18 @@ public class FileHistoryEntryViewModel : IDisposable
         IsCurrentItem.Value = isCurrentItem;
         Index.Value = index;
 
+        OpenCommand.SubscribeAwait(Open);
         PinCommand.Subscribe(Pin);
         UnpinCommand.Subscribe(Unpin);
         RemoveCommand.Subscribe(Remove);
+    }
+
+    private async ValueTask Open(Unit unit, CancellationToken cancellationToken)
+    {
+        if (_vm.Mapper is not null)
+        {
+            await _vm.Mapper.OpenPathAsync(FilePath.CurrentValue).ConfigureAwait(false);
+        }
     }
 
     private void Pin(Unit unit)
@@ -57,6 +67,7 @@ public class FileHistoryEntryViewModel : IDisposable
     
     public void Dispose()
     {
+        OpenCommand.Dispose();
         PinCommand.Dispose();
         UnpinCommand.Dispose();
         RemoveCommand.Dispose();
