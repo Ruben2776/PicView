@@ -1,0 +1,89 @@
+<UserControl
+    x:Class="PicView.Avalonia.Views.UC.FavoriteItem"
+    x:DataType="vm:CoreViewModel"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Styles>
+
+        <!--  Style for current item  -->
+        <Style Selector="Button#MainButton.isCurrent">
+            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
+        </Style>
+        <Style Selector="Button#MainButton.isCurrent TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+        </Style>
+        <Style Selector="Button#MainButton:not(.isCurrent)">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+
+        <!--  Style for hovering over items  -->
+        <Style Selector="Border#AppBorder">
+            <Setter Property="Background" Value="Transparent" />
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource AccentColor}" />
+            </Style>
+        </Style>
+        <Style Selector="Border#AppBorder:pointerover TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+        </Style>
+
+        <!--  Show buttons on hover  -->
+        <Style Selector=":pointerover &gt; Border#AppBorder">
+            <Setter Property="IsVisible" Value="True" />
+        </Style>
+
+
+    </UserControl.Styles>
+    <Border x:Name="AppBorder">
+        <DockPanel LastChildFill="True">
+
+            <StackPanel
+                Background="Transparent"
+                DockPanel.Dock="Right"
+                HorizontalAlignment="Right"
+                IsVisible="False"
+                Orientation="Horizontal"
+                x:Name="ButtonPanel">
+
+                <customControls:IconButton
+                    Background="{DynamicResource AccentColor}"
+                    Classes="errorHover"
+                    ClickMode="Release"
+                    Data="{StaticResource CloseGeometry}"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    HorizontalAlignment="Right"
+                    IconHeight="12"
+                    IconWidth="12"
+                    Padding="7,0"
+                    ToolTip.Tip="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.Remove.Value}" />
+
+            </StackPanel>
+
+            <DockPanel DockPanel.Dock="Left">
+
+                <TextBlock
+                    Classes="txt"
+                    DockPanel.Dock="Right"
+                    Padding="10,0"
+                    Text="Alt+1" />
+
+                <customControls:TextIconButton
+                    Classes.isCurrent=""
+                    Data="{StaticResource FolderGeometry}"
+                    DockPanel.Dock="Left"
+                    Foreground="{DynamicResource MainTextColor}"
+                    IconHeight="12"
+                    IconMargin="10,0,5,0"
+                    IconWidth="12"
+                    Padding="5,6"
+                    Text="Pictures"
+                    ToolTip.Tip="C:/Users/UserName/Pictures/"
+                    x:Name="MainButton" />
+
+            </DockPanel>
+
+        </DockPanel>
+    </Border>
+</UserControl>

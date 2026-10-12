@@ -1,7 +1,7 @@
 <Styles
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls">
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style Selector="TextBlock.txt">
         <Setter Property="FontSize" Value="12" />
@@ -25,8 +25,8 @@
         <Setter Property="FontSize" Value="14" />
     </Style>
 
-    <Style Selector="TextBlock.regular">
-        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Regular.ttf#Roboto" />
+    <Style Selector="TextBlock.medium">
+        <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Medium.ttf#Roboto" />
     </Style>
 
     <Style Selector="Button.hover, customControls|CopyButton:hover">
@@ -120,7 +120,7 @@
         <Setter Property="Margin" Value="0" />
         <Setter Property="Transitions">
             <Transitions>
-                <BrushTransition Property="BorderBrush" Duration="0:0:0.4" />
+                <BrushTransition Duration="0:0:0.4" Property="BorderBrush" />
             </Transitions>
         </Setter>
     </Style>

@@ -775,8 +775,7 @@
             <DockPanel
                 DockPanel.Dock="Top"
                 IsVisible="{CompiledBinding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
-                LastChildFill="False"
-                Margin="0,0,0,5">
+                LastChildFill="False">
 
                 <Rectangle
                     DockPanel.Dock="Top"
@@ -805,31 +804,19 @@
                         x:Name="AddFavoriteButton" />
 
                     <TextBlock
-                        Classes="txt bold"
+                        Classes="txt medium"
                         DockPanel.Dock="Left"
                         FontSize="12"
-                        Padding="15,0,0,5"
+                        Padding="15,5,0,5"
                         Text="{CompiledBinding Translation.Favorites.Value}" />
 
                 </DockPanel>
 
                 <customControls:AutoScrollViewer DockPanel.Dock="Top">
                     <StackPanel>
-                        <customControls:TextIconButton
-                            Icon="{StaticResource OpenFolderImage}"
-                            IconHeight="12"
-                            IconWidth="12"
-                            Text="Test1" />
-                        <customControls:TextIconButton
-                            Icon="{StaticResource OpenFolderImage}"
-                            IconHeight="12"
-                            IconWidth="12"
-                            Text="Test2" />
-                        <customControls:TextIconButton
-                            Icon="{StaticResource OpenFolderImage}"
-                            IconHeight="12"
-                            IconWidth="12"
-                            Text="Test3" />
+                        <uc:FavoriteItem />
+                        <uc:FavoriteItem />
+                        <uc:FavoriteItem />
                     </StackPanel>
                 </customControls:AutoScrollViewer>
 
@@ -900,7 +887,7 @@
                         x:Name="HistoryFileButton" />
 
                     <TextBlock
-                        Classes="txt bold"
+                        Classes="txt medium"
                         DockPanel.Dock="Left"
                         FontSize="12"
                         Padding="15,5,0,5"
