@@ -38,7 +38,6 @@ public static class KeybindCategoryDefinition
         ("ScrollToTop", t.ScrollToTop ?? string.Empty),
         ("ScrollToBottom", t.ScrollToBottom ?? string.Empty),
         ("ToggleScroll", t.ToggleScroll ?? string.Empty),
-        ("ChangeCtrlZoom", t.CtrlToZoom ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetZoomEntries(LanguageModel t) =>
