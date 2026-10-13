@@ -7,6 +7,7 @@ using PicView.Avalonia.Controllers;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Views.Main;
+using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Core.Favorites;
 using PicView.Core.Localization;
 using PicView.Core.Models;
@@ -221,5 +222,24 @@ public class KeybindingsFavoritesTests : IDisposable
             LastOpenedPath = path;
             return ValueTask.CompletedTask;
         }
+    }
+
+    [Fact]
+    public void FavoriteDialog_WithInitialValues_PreselectsValues()
+    {
+        var testPath = Path.Combine(_tempRoot, "PreselectedFolder");
+        var testHotKey = "Ctrl + D1";
+
+        FavoriteDialog dialog = null!;
+        RunWithDispatcher(Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            dialog = new FavoriteDialog(testPath, testHotKey);
+        }).GetTask());
+
+        Assert.Equal(testPath, dialog.PathBox.Text);
+        Assert.NotNull(dialog.KeyBox.Keybinds);
+        Assert.Single(dialog.KeyBox.Keybinds);
+        Assert.Equal(Key.D1, dialog.KeyBox.Keybinds[0].Key);
+        Assert.Equal(KeyModifiers.Control, dialog.KeyBox.Keybinds[0].Modifiers);
     }
 }

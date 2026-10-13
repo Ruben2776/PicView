@@ -13,6 +13,7 @@ public class FavoritesEntryViewModel : IDisposable
     
     public ReactiveCommand<Unit> OpenCommand { get; } = new();
     public ReactiveCommand<Unit> RemoveCommand { get; } = new();
+    public ReactiveCommand<Unit> EditCommand { get; } = new();
     
     public void Initialize(string path, string folderName, string hotKey, bool isCurrentItem, MainWindowViewModel vm)
     {
@@ -25,6 +26,17 @@ public class FavoritesEntryViewModel : IDisposable
 
         OpenCommand.SubscribeAwait(Open);
         RemoveCommand.SubscribeAwait(Remove);
+        EditCommand.Subscribe(Edit);
+    }
+
+    private void Edit(Unit unit)
+    {
+        if (_vm is null)
+        {
+            return;
+        }
+
+        (_vm.Favorites ??= new FavoritesViewModel(_vm)).EditFavoritesDialogCommand.Execute(new FavoriteEntry(FilePath.CurrentValue, HotKey.CurrentValue));
     }
 
     private async ValueTask Open(Unit unit, CancellationToken cancellationToken)
@@ -45,6 +57,7 @@ public class FavoritesEntryViewModel : IDisposable
     {
         OpenCommand.Dispose();
         RemoveCommand.Dispose();
+        EditCommand.Dispose();
         
         FilePath.Dispose();
         FolderName.Dispose();
