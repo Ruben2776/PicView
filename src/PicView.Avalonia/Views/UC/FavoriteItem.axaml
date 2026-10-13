@@ -9,17 +9,17 @@
 
         <!--  Style for current item  -->
         <Style Selector="Border#AppBorder.isCurrent">
-            <Setter Property="Background" Value="{DynamicResource DropDownMenuButtonBorderColor}" />
+            <Setter Property="Background" Value="#0AFFFFFF" />
         </Style>
-        <Style Selector="Button#MainButton.isCurrent TextBlock">
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
+        <Style Selector="Border#AppBorder.isCurrent TextBlock">
+            <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Bold.ttf#Roboto" />
         </Style>
-        <Style Selector="Button#MainButton:not(.isCurrent)">
-            <Setter Property="Background" Value="Transparent" />
+        <Style Selector="Border#AppBorder.isCurrent customControls|TextIconButton">
+            <Setter Property="FontFamily" Value="/Assets/Fonts/Roboto-Bold.ttf#Roboto" />
         </Style>
 
         <!--  Style for hovering over items  -->
-        <Style Selector="Border#AppBorder:not(.isCurrent)">
+        <Style Selector="Border#AppBorder">
             <Setter Property="Background" Value="Transparent" />
             <Style Selector="^:pointerover">
                 <Setter Property="Background" Value="{DynamicResource AccentColor}" />
@@ -49,6 +49,19 @@
 
                 <customControls:IconButton
                     Background="{DynamicResource AccentColor}"
+                    Classes="accentHover"
+                    ClickMode="Release"
+                    Command="{CompiledBinding EditCommand}"
+                    Foreground="{StaticResource SecondaryTextColor}"
+                    HorizontalAlignment="Right"
+                    Icon="{StaticResource CogImage}"
+                    IconHeight="12"
+                    IconWidth="12"
+                    Padding="7,0"
+                    ToolTip.Tip="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.Edit.Value}" />
+
+                <customControls:IconButton
+                    Background="{DynamicResource AccentColor}"
                     Classes="errorHover"
                     ClickMode="Release"
                     Command="{CompiledBinding RemoveCommand}"
@@ -71,6 +84,7 @@
                     Text="{CompiledBinding HotKey.Value}" />
 
                 <customControls:TextIconButton
+                    Background="Transparent"
                     Command="{CompiledBinding OpenCommand}"
                     Data="{StaticResource FolderGeometry}"
                     DockPanel.Dock="Left"

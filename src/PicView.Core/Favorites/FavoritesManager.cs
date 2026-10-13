@@ -146,7 +146,12 @@ public static class FavoritesManager
     /// </summary>
     public static void SetHotKey(string filePath, string hotKey)
     {
-        if (_entries is null || string.IsNullOrWhiteSpace(filePath))
+        if (_entries is null)
+        {
+            Initialize();
+        }
+
+        if (string.IsNullOrWhiteSpace(filePath))
         {
             return;
         }
@@ -199,7 +204,12 @@ public static class FavoritesManager
     /// </summary>
     public static bool Contains(string path)
     {
-        if (_entries is null || string.IsNullOrWhiteSpace(path))
+        if (_entries is null)
+        {
+            Initialize();
+        }
+
+        if (string.IsNullOrWhiteSpace(path))
         {
             return false;
         }

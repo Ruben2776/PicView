@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Avalonia;
 using Avalonia.Controls;
@@ -200,6 +200,8 @@ public class MainWindow : Window, IMainWindow
         UIHelper.GetMainView.MainPanel.Children.OfType<QuickEditingDialog>().Any();
     public bool ContainsQuickSettingsDialog() =>
         UIHelper.GetMainView.MainPanel.Children.OfType<QuickSettingsDialog>().Any();
+    public bool ContainsFavoriteDialog() =>
+        UIHelper.GetMainView.MainPanel.Children.OfType<FavoriteDialog>().Any();
 
     public void AddFileSearchDialog()
     {
@@ -267,15 +269,15 @@ public class MainWindow : Window, IMainWindow
         UIHelper.GetMainView.MainPanel.Children.Add(new GalleryItemSizeSlider());
     }
     
-    public void AddFavoriteDialog()
+    public void AddFavoriteDialog(string? initialPath = null, string? initialHotKey = null)
     {
-        if (UIHelper.GetMainView.DataContext is not MainWindowViewModel vm)
+        if (ContainsFavoriteDialog() || UIHelper.GetMainView.DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
         vm.TopTitlebarViewModel.CloseDropDownMenu();
-        UIHelper.GetMainView.MainPanel.Children.Add(new FavoriteDialog());
+        UIHelper.GetMainView.MainPanel.Children.Add(new FavoriteDialog(initialPath, initialHotKey));
     }
 
     #endregion

@@ -4,7 +4,7 @@ using R3;
 
 namespace PicView.Core.ViewModels;
 
-public class FavoritesViewModel
+public class FavoritesViewModel : IDisposable
 {
     private readonly MainWindowViewModel _vm;
 
@@ -14,6 +14,8 @@ public class FavoritesViewModel
     public ReactiveCommand OpenFavoritesFileCommand { get; }
     public ReactiveCommand AddFavoritesDialogCommand { get; }
     public ReactiveCommand AddFromFolderCommand { get; }
+    public ReactiveCommand<FavoriteEntry> AddOrEditCommand { get; }
+    public ReactiveCommand<FavoriteEntry> EditFavoritesDialogCommand { get; } = new();
 
     public FavoritesViewModel(MainWindowViewModel vm)
     {
@@ -22,6 +24,14 @@ public class FavoritesViewModel
         OpenFavoritesFileCommand = new ReactiveCommand(OpenFavoritesFile);
         AddFavoritesDialogCommand = new ReactiveCommand();
         AddFromFolderCommand = new ReactiveCommand();
+        AddOrEditCommand = new ReactiveCommand<FavoriteEntry>();
+        AddOrEditCommand.SubscribeAwait(async (entry, _) =>
+        {
+            if (!string.IsNullOrWhiteSpace(entry.FilePath))
+            {
+                await AddOrEditAsync(entry).ConfigureAwait(false);
+            }
+        });
     }
 
     private async ValueTask OpenFavoritesFile(Unit arg1, CancellationToken arg2)
@@ -45,6 +55,43 @@ public class FavoritesViewModel
     {
         await FavoritesManager.AddAsync(entry).ConfigureAwait(false);
         UpdateFavorites();
+    }
+
+    public async ValueTask AddOrEditAsync(FavoriteEntry entry)
+    {
+        await AddOrEditAsync(entry.FilePath, entry.HotKey).ConfigureAwait(false);
+    }
+
+    public async ValueTask AddOrEditAsync(string path, string hotKey = "")
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return;
+        }
+
+        var normalizedPath = FavoritesManager.NormalizeDirectoryPath(path) ?? Path.TrimEndingDirectorySeparator(path.Trim());
+
+        if (FavoritesManager.Contains(normalizedPath))
+        {
+            FavoritesManager.SetHotKey(normalizedPath, hotKey);
+            await FavoritesManager.SaveToFileAsync().ConfigureAwait(false);
+            UpdateFavorites();
+        }
+        else
+        {
+            await FavoritesManager.AddAsync(path, hotKey).ConfigureAwait(false);
+            UpdateFavorites();
+        }
+    }
+
+    public void OpenEditDialog(string path, string hotKey = "")
+    {
+        EditFavoritesDialogCommand.Execute(new FavoriteEntry(path, hotKey));
+    }
+
+    public void OpenEditDialog(FavoriteEntry entry)
+    {
+        EditFavoritesDialogCommand.Execute(entry);
     }
 
     public async ValueTask RemoveFavorite(string path)
@@ -88,5 +135,23 @@ public class FavoritesViewModel
                 _vm);
             Entries.Add(entryVm);
         }
+    }
+
+    public void Dispose()
+    {
+        ClearFavoritesCommand.Dispose();
+        OpenFavoritesFileCommand.Dispose();
+        AddFavoritesDialogCommand.Dispose();
+        AddFromFolderCommand.Dispose();
+        AddOrEditCommand.Dispose();
+        EditFavoritesDialogCommand.Dispose();
+
+        foreach (var existing in Entries)
+        {
+            existing.Dispose();
+        }
+        Entries.Clear();
+
+        GC.SuppressFinalize(this);
     }
 }

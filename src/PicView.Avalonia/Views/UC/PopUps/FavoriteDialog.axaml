@@ -112,6 +112,7 @@
                 <Button
                     Background="{DynamicResource AccentColor}"
                     Classes="ToolWindowBorderStyle PrimaryBtnHover"
+                    Command="{Binding Favorites.AddOrEditCommand}"
                     Focusable="True"
                     HotKey="Enter"
                     IsDefault="True"

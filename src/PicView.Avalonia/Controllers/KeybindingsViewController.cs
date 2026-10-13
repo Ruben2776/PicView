@@ -25,7 +25,6 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
     private readonly Dictionary<KeybindBox, long> _boxModificationOrder = [];
     private readonly Dictionary<KeybindBox, NotifyCollectionChangedEventHandler> _collectionChangedHandlers = [];
 
-    private KeybindCategoryGroup? _favoritesCategory;
     private KeybindSnapshot? _savedSnapshot;
     private IDisposable? _filterSubscription;
     private long _modificationSequence;
@@ -34,8 +33,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
     private bool _isApplyingSnapshot;
     private bool _isDisposed;
 
-    internal IReadOnlyList<KeybindCategoryGroup> Categories => _categories;
-    internal KeybindCategoryGroup? FavoritesCategory => _favoritesCategory;
+    internal KeybindCategoryGroup? FavoritesCategory { get; private set; }
 
     public void Initialize()
     {
@@ -58,10 +56,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         Dispatcher.UIThread.Post(() =>
         {
             InitializeButtons();
-            if (core.Keybindings is not null)
-            {
-                core.Keybindings.IsLoading.Value = false;
-            }
+            core.Keybindings.IsLoading.Value = false;
         }, DispatcherPriority.Background);
     }
 
@@ -184,7 +179,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         var keyValues = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var category in _categories)
         {
-            if (ReferenceEquals(category, _favoritesCategory))
+            if (ReferenceEquals(category, FavoritesCategory))
             {
                 continue;
             }
@@ -210,13 +205,13 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         }
         KeybindingManager.PopulateCustomShortcuts(keyValues);
 
-        var hasFavoritesCategory = _favoritesCategory is { Entries.Count: > 0 };
+        var hasFavoritesCategory = FavoritesCategory is { Entries.Count: > 0 };
         if (hasFavoritesCategory)
         {
-            var resolvedFavoriteHotKeys = ResolveDeduplicatedFavoriteHotKeys(_favoritesCategory!.Entries);
-            for (var i = 0; i < _favoritesCategory.Entries.Count; i++)
+            var resolvedFavoriteHotKeys = ResolveDeduplicatedFavoriteHotKeys(FavoritesCategory!.Entries);
+            for (var i = 0; i < FavoritesCategory.Entries.Count; i++)
             {
-                var (_, filePath) = _favoritesCategory.Entries[i];
+                var (_, filePath) = FavoritesCategory.Entries[i];
                 FavoritesManager.SetHotKey(filePath, resolvedFavoriteHotKeys[i]);
             }
 
@@ -284,14 +279,14 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
     private void FinalizeSaveOnUIThread(string[]? resolvedFavoriteHotKeys)
     {
-        if (_favoritesCategory is not null && resolvedFavoriteHotKeys is not null)
+        if (FavoritesCategory is not null && resolvedFavoriteHotKeys is not null)
         {
             _isApplyingSnapshot = true;
             try
             {
-                for (var i = 0; i < _favoritesCategory.Entries.Count && i < resolvedFavoriteHotKeys.Length; i++)
+                for (var i = 0; i < FavoritesCategory.Entries.Count && i < resolvedFavoriteHotKeys.Length; i++)
                 {
-                    var (box, _) = _favoritesCategory.Entries[i];
+                    var (box, _) = FavoritesCategory.Entries[i];
                     var expectedHotKey = resolvedFavoriteHotKeys[i];
                     if (string.IsNullOrWhiteSpace(expectedHotKey))
                     {
@@ -325,9 +320,9 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                 }
                 else
                 {
-                    for (var i = 0; i < _favoritesCategory.Entries.Count && i < resolvedFavoriteHotKeys.Length; i++)
+                    for (var i = 0; i < FavoritesCategory.Entries.Count && i < resolvedFavoriteHotKeys.Length; i++)
                     {
-                        var (_, filePath) = _favoritesCategory.Entries[i];
+                        var (_, filePath) = FavoritesCategory.Entries[i];
                         var entryVm = favoritesVm.Entries.FirstOrDefault(e =>
                             string.Equals(e.FilePath.CurrentValue, filePath, StringComparison.Ordinal));
                         if (entryVm is not null)
@@ -465,7 +460,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
         foreach (var category in _categories)
         {
-            if (ReferenceEquals(category, _favoritesCategory))
+            if (ReferenceEquals(category, FavoritesCategory))
             {
                 continue;
             }
@@ -548,7 +543,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         {
             foreach (var category in _categories)
             {
-                if (ReferenceEquals(category, _favoritesCategory))
+                if (ReferenceEquals(category, FavoritesCategory))
                 {
                     continue;
                 }
@@ -659,7 +654,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             view.FavoritesHeader.IsVisible = false;
             view.FavoritesItems.IsVisible = false;
             view.FavoritesItems.Items.Clear();
-            _favoritesCategory = null;
+            FavoritesCategory = null;
             return;
         }
 
@@ -692,8 +687,8 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             boxEntries.Add((keybindBox, entry.FilePath.CurrentValue));
         }
 
-        _favoritesCategory = new KeybindCategoryGroup(view.FavoritesHeader, view.FavoritesItems, boxEntries);
-        _categories.Add(_favoritesCategory);
+        FavoritesCategory = new KeybindCategoryGroup(view.FavoritesHeader, view.FavoritesItems, boxEntries);
+        _categories.Add(FavoritesCategory);
     }
 
     private FavoritesViewModel? ResolveFavoritesViewModel()
@@ -852,7 +847,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         _collectionChangedHandlers.Clear();
         _boxModificationOrder.Clear();
         _categories.Clear();
-        _favoritesCategory = null;
+        FavoritesCategory = null;
         _undoStack.Clear();
         _redoStack.Clear();
         _savedSnapshot = null;

@@ -17,6 +17,8 @@ namespace PicView.Avalonia.Views.Menu;
 public partial class DropDownMenu : AnimatedMenu
 {
     private IDisposable? _menuVisibilitySubscription;
+    private IDisposable? _favoritesAddSubscription;
+    private IDisposable? _favoritesEditSubscription;
     private readonly MainWindow _mainWindow;
 
     public DropDownMenu(MainWindow mainWindow)
@@ -28,11 +30,9 @@ public partial class DropDownMenu : AnimatedMenu
         }
 
         vm.FileHistory ??= new FileHistoryViewModel(vm);
-        if (vm.Favorites is null)
-        {
-            vm.Favorites = new FavoritesViewModel(vm);
-            vm.Favorites.AddFavoritesDialogCommand.Subscribe(_ => _mainWindow.AddFavoriteDialog());
-        }
+        vm.Favorites ??= new FavoritesViewModel(vm);
+        _favoritesAddSubscription = vm.Favorites.AddFavoritesDialogCommand.Subscribe(_ => _mainWindow.AddFavoriteDialog());
+        _favoritesEditSubscription = vm.Favorites.EditFavoritesDialogCommand.Subscribe(entry => _mainWindow.AddFavoriteDialog(entry.FilePath, entry.HotKey));
         DataContext = vm;
         InitializeComponent();
         Loaded += OnLoaded;
@@ -305,6 +305,8 @@ public partial class DropDownMenu : AnimatedMenu
         base.Dispose();
         Loaded -= OnLoaded;
         _menuVisibilitySubscription?.Dispose();
+        _favoritesAddSubscription?.Dispose();
+        _favoritesEditSubscription?.Dispose();
         if (_mainWindow.DataContext is not MainWindowViewModel vm)
         {
             return;
