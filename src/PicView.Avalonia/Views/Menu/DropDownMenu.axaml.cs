@@ -16,9 +16,7 @@ namespace PicView.Avalonia.Views.Menu;
 
 public partial class DropDownMenu : AnimatedMenu
 {
-    private IDisposable? _menuVisibilitySubscription;
-    private IDisposable? _favoritesAddSubscription;
-    private IDisposable? _favoritesEditSubscription;
+    private DisposableBag _disposables;
     private readonly MainWindow _mainWindow;
 
     public DropDownMenu(MainWindow mainWindow)
@@ -31,8 +29,17 @@ public partial class DropDownMenu : AnimatedMenu
 
         vm.FileHistory ??= new FileHistoryViewModel(vm);
         vm.Favorites ??= new FavoritesViewModel(vm);
-        _favoritesAddSubscription = vm.Favorites.AddFavoritesDialogCommand.Subscribe(_ => _mainWindow.AddFavoriteDialog());
-        _favoritesEditSubscription = vm.Favorites.EditFavoritesDialogCommand.Subscribe(entry => _mainWindow.AddFavoriteDialog(entry.FilePath, entry.HotKey));
+        vm.Favorites.AddFavoritesDialogCommand.Subscribe(
+        _ =>
+        {
+            _mainWindow.AddFavoriteDialog();
+        }, DebugHelper.LogError(nameof(DropDownMenu), nameof(vm.Favorites.AddFavoritesDialogCommand)))
+        .AddTo(ref _disposables);
+        vm.Favorites.EditFavoritesDialogCommand.Subscribe(entry =>
+        {
+            _mainWindow.AddFavoriteDialog(entry.FilePath, entry.HotKey);
+        }, DebugHelper.LogError(nameof(DropDownMenu), nameof(vm.Favorites.EditFavoritesDialogCommand)))
+        .AddTo(ref _disposables);
         DataContext = vm;
         InitializeComponent();
         Loaded += OnLoaded;
@@ -121,7 +128,7 @@ public partial class DropDownMenu : AnimatedMenu
             }
         }
 
-        _menuVisibilitySubscription = Observable.EveryValueChanged(this, x => x.IsVisible)
+        Observable.EveryValueChanged(this, x => x.IsVisible)
             .Skip(1)
             .SubscribeOn(_mainWindow.FrameProvider).Subscribe(isVisible =>
             {
@@ -141,7 +148,8 @@ public partial class DropDownMenu : AnimatedMenu
                     // Reset it, so that it opens in default state the next time it opens
                     vm.TopTitlebarViewModel.DropDownMenu.CloseToDefault();
                 }
-            }, DebugHelper.LogError(nameof(DropDownMenu), nameof(_menuVisibilitySubscription)));
+            }, DebugHelper.LogError(nameof(DropDownMenu), nameof(IsVisible)))
+            .AddTo(ref _disposables);
     }
 
     private void SlideShow120SecOnClick(object? sender, RoutedEventArgs e)
@@ -304,9 +312,7 @@ public partial class DropDownMenu : AnimatedMenu
     {
         base.Dispose();
         Loaded -= OnLoaded;
-        _menuVisibilitySubscription?.Dispose();
-        _favoritesAddSubscription?.Dispose();
-        _favoritesEditSubscription?.Dispose();
+        _disposables.Dispose();
         if (_mainWindow.DataContext is not MainWindowViewModel vm)
         {
             return;
