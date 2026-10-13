@@ -4,6 +4,7 @@ using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views.UC;
+using PicView.Core.Favorites;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
@@ -26,7 +27,7 @@ public static class MainKeyboardShortcuts
     /// <summary>
     /// Stores the current keybind, including the key and its modifiers.
     /// </summary>
-    public static Keybind CurrentKeys { get; private set; }
+    public static Keybind CurrentKeys { get; internal set; }
 
     /// <summary>
     /// Gets or sets whether keyboard shortcuts are enabled.
@@ -45,7 +46,7 @@ public static class MainKeyboardShortcuts
     /// </summary>
     public static async ValueTask MainWindow_KeysDownAsync(KeyEventArgs e, MainWindowViewModel? mainWindowViewModel, MainWindow mainWindow)
     {
-        if (KeybindingManager.CustomShortcuts is null || !IsKeysEnabled)
+        if ((KeybindingManager.CustomShortcuts is null && FavoritesManager.Count == 0) || !IsKeysEnabled)
         {
             return;
         }
@@ -281,8 +282,20 @@ public static class MainKeyboardShortcuts
     /// <summary>
     /// Executes the registered shortcut action for the current key combination.
     /// </summary>
-    private static async ValueTask ExecuteShortcutIfRegistered(MainWindowViewModel vm)
+    internal static async ValueTask ExecuteShortcutIfRegistered(MainWindowViewModel? vm)
     {
+        if (vm?.Mapper is null)
+        {
+            return;
+        }
+
+        var favoritePath = KeybindingManager.GetFavoritePath(CurrentKeys);
+        if (!string.IsNullOrWhiteSpace(favoritePath))
+        {
+            await vm.Mapper.OpenPathAsync(favoritePath).ConfigureAwait(false);
+            return;
+        }
+
         // Get the action string name quickly via dictionary lookup
         var actionName = KeybindingManager.GetActionName(CurrentKeys);
         if (actionName is null)

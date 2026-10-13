@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
@@ -43,6 +43,16 @@ public static class MouseShortcuts
             }
         }
         
+        var favoritePath = KeybindingManager.GetFavoritePath(keybind);
+        if (!string.IsNullOrWhiteSpace(favoritePath))
+        {
+            if (!IsTouchPadOrTouch(e) && mainViewModel.Mapper is not null)
+            {
+                await mainViewModel.Mapper.OpenPathAsync(favoritePath).ConfigureAwait(false);
+            }
+            return;
+        }
+
         var actionName = KeybindingManager.GetActionName(keybind);
         if (actionName is null)
         {
@@ -192,8 +202,26 @@ public static class MouseShortcuts
         {
             return;
         }
+
+        await ExecuteMouseShortcutIfRegistered(currentKeys.Value, vm).ConfigureAwait(false);
+    }
+
+    internal static async ValueTask ExecuteMouseShortcutIfRegistered(Keybind keybind, MainWindowViewModel? vm)
+    {
+        if (vm?.Mapper is null)
+        {
+            return;
+        }
+
+        var favoritePath = KeybindingManager.GetFavoritePath(keybind);
+        if (!string.IsNullOrWhiteSpace(favoritePath))
+        {
+            await vm.Mapper.OpenPathAsync(favoritePath).ConfigureAwait(false);
+            return;
+        }
+
         // Get the action string name quickly via dictionary lookup
-        var actionName = KeybindingManager.GetActionName(currentKeys.Value);
+        var actionName = KeybindingManager.GetActionName(keybind);
         if (actionName is null)
         {
             // Pressed key(s) have no associated function

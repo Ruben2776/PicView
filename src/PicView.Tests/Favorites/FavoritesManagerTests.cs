@@ -137,4 +137,44 @@ public class FavoritesManagerTests : IDisposable
         Assert.Equal("FolderB", favoritesVm.Entries[1].FolderName.CurrentValue);
         Assert.True(favoritesVm.Entries[1].IsCurrentItem.CurrentValue);
     }
+
+    [Fact]
+    public async Task AddAsync_WithDuplicateHotKeyAcrossDifferentFolders_EvictsPreviousHotKey()
+    {
+        var folderA = Path.Combine(_tempRoot, "FolderA");
+        var folderB = Path.Combine(_tempRoot, "FolderB");
+        Directory.CreateDirectory(folderA);
+        Directory.CreateDirectory(folderB);
+
+        await FavoritesManager.AddAsync(folderA, "Ctrl + D1");
+        await FavoritesManager.AddAsync(folderB, "Ctrl + D1");
+
+        Assert.Equal(2, FavoritesManager.Count);
+        Assert.Equal(string.Empty, FavoritesManager.AllEntries[0].HotKey);
+        Assert.Equal("Ctrl + D1", FavoritesManager.AllEntries[1].HotKey);
+
+        // Re-initialize from disk to verify persistence of evicted hotkey
+        FavoritesManager.Initialize(_configPath);
+        Assert.Equal(2, FavoritesManager.Count);
+        Assert.Equal(string.Empty, FavoritesManager.AllEntries[0].HotKey);
+        Assert.Equal("Ctrl + D1", FavoritesManager.AllEntries[1].HotKey);
+    }
+
+    [Fact]
+    public async Task SetHotKey_WhenAssigningExistingHotKeyToEarlierEntry_EvictsLaterEntryOnSave()
+    {
+        var folderA = Path.Combine(_tempRoot, "FolderA");
+        var folderB = Path.Combine(_tempRoot, "FolderB");
+        Directory.CreateDirectory(folderA);
+        Directory.CreateDirectory(folderB);
+
+        await FavoritesManager.AddAsync(folderA, string.Empty);
+        await FavoritesManager.AddAsync(folderB, "F9");
+
+        FavoritesManager.SetHotKey(folderA, "F9");
+        await FavoritesManager.SaveToFileAsync();
+
+        Assert.Equal("F9", FavoritesManager.AllEntries[0].HotKey);
+        Assert.Equal(string.Empty, FavoritesManager.AllEntries[1].HotKey);
+    }
 }

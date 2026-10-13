@@ -1,4 +1,4 @@
-﻿<customControls:AnimatedPopUp
+<customControls:AnimatedPopUp
     ClickingOutsideCloses="False"
     x:Class="PicView.Avalonia.Views.UC.PopUps.FavoriteDialog"
     x:DataType="viewModels:MainWindowViewModel"
@@ -84,6 +84,7 @@
                 Focusable="True"
                 IsTabStop="True"
                 Margin="7,7,10,0"
+                MaxTags="1"
                 Theme="{StaticResource Detached}"
                 Width="NaN"
                 x:Name="KeyBox" />

@@ -39,13 +39,11 @@ public class KeybindingsViewModel : IDisposable
 
     public KeybindingsViewModel()
     {
-       Observable.EveryValueChanged(FilterText, _ => IsFiltering.Value = !string.IsNullOrWhiteSpace(FilterText.Value))
-           .Subscribe(x => { }).AddTo(_disposables);
-       
-       // Subscribe to FilterText changes to update FilteredKeys
+       // Subscribe to FilterText changes to update IsFiltering and FilteredKeys
        FilterText
            .Subscribe(filterText =>
            {
+               IsFiltering.Value = !string.IsNullOrWhiteSpace(filterText);
                FilteredKeys.Value.Clear();
                
                if (string.IsNullOrWhiteSpace(filterText))

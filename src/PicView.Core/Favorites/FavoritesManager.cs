@@ -105,7 +105,7 @@ public static class FavoritesManager
     }
 
     /// <summary>
-    ///     Adds a folder entry to the favorites.
+    ///     Adds a folder entry to the favorites, evicting any duplicate hotkey across other entries.
     /// </summary>
     public static async Task AddAsync(string filePath, string hotKey = "")
     {
@@ -120,14 +120,17 @@ public static class FavoritesManager
             return;
         }
 
+        var normalizedHotKey = hotKey?.Trim() ?? string.Empty;
+        EvictDuplicateHotKey(normalizedPath, normalizedHotKey);
+
         var existingIndex = _entries!.FindIndex(x => string.Equals(x.FilePath, normalizedPath, StringComparison.Ordinal));
         if (existingIndex >= 0)
         {
-            _entries[existingIndex] = new FavoriteEntry(normalizedPath, hotKey);
+            _entries[existingIndex] = new FavoriteEntry(normalizedPath, normalizedHotKey);
         }
         else
         {
-            _entries.Add(new FavoriteEntry(normalizedPath, hotKey));
+            _entries.Add(new FavoriteEntry(normalizedPath, normalizedHotKey));
         }
 
         await SaveToFileAsync().ConfigureAwait(false);
@@ -137,6 +140,28 @@ public static class FavoritesManager
     ///     Adds an entry to the favorites.
     /// </summary>
     public static Task AddAsync(FavoriteEntry entry) => AddAsync(entry.FilePath, entry.HotKey);
+
+    /// <summary>
+    ///     Sets the hotkey for an existing favorite entry and evicts any duplicate hotkey across other entries.
+    /// </summary>
+    public static void SetHotKey(string filePath, string hotKey)
+    {
+        if (_entries is null || string.IsNullOrWhiteSpace(filePath))
+        {
+            return;
+        }
+
+        var targetPath = NormalizeDirectoryPath(filePath) ?? Path.TrimEndingDirectorySeparator(filePath.Trim());
+        var existingIndex = _entries.FindIndex(x => string.Equals(x.FilePath, targetPath, StringComparison.Ordinal));
+        if (existingIndex < 0)
+        {
+            return;
+        }
+
+        var normalizedHotKey = hotKey?.Trim() ?? string.Empty;
+        EvictDuplicateHotKey(targetPath, normalizedHotKey);
+        _entries[existingIndex] = new FavoriteEntry(_entries[existingIndex].FilePath, normalizedHotKey);
+    }
 
     /// <summary>
     ///     Removes a specific entry from favorites.
@@ -184,12 +209,14 @@ public static class FavoritesManager
     }
 
     /// <summary>
-    ///     Saves the favorites to the favorites file.
+    ///     Saves the favorites to the favorites file, evicting duplicate hotkeys first.
     /// </summary>
     public static async Task SaveToFileAsync()
     {
         try
         {
+            DeduplicateHotKeys();
+
             if (string.IsNullOrWhiteSpace(_favoritesConfiguration?.CorrectPath))
             {
                 _favoritesConfiguration ??= new FavoritesConfiguration();
@@ -208,6 +235,47 @@ public static class FavoritesManager
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(FavoritesManager), nameof(SaveToFileAsync), ex);
+        }
+    }
+
+    private static void EvictDuplicateHotKey(string targetFilePath, string hotKey)
+    {
+        if (_entries is null || string.IsNullOrWhiteSpace(hotKey))
+        {
+            return;
+        }
+
+        for (var i = 0; i < _entries.Count; i++)
+        {
+            var entry = _entries[i];
+            if (!string.Equals(entry.FilePath, targetFilePath, StringComparison.Ordinal) &&
+                string.Equals(entry.HotKey, hotKey, StringComparison.Ordinal))
+            {
+                _entries[i] = new FavoriteEntry(entry.FilePath, string.Empty);
+            }
+        }
+    }
+
+    private static void DeduplicateHotKeys()
+    {
+        if (_entries is not { Count: > 1 })
+        {
+            return;
+        }
+
+        var seenHotKeys = new HashSet<string>(StringComparer.Ordinal);
+        for (var i = _entries.Count - 1; i >= 0; i--)
+        {
+            var entry = _entries[i];
+            if (string.IsNullOrWhiteSpace(entry.HotKey))
+            {
+                continue;
+            }
+
+            if (!seenHotKeys.Add(entry.HotKey))
+            {
+                _entries[i] = new FavoriteEntry(entry.FilePath, string.Empty);
+            }
         }
     }
 
