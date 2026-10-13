@@ -96,6 +96,7 @@
                 VerticalAlignment="Bottom">
                 <Button
                     Classes="ToolWindowBorderStyle ToolButtonHover"
+                    Click="CloseMenu"
                     Focusable="True"
                     HotKey="Escape"
                     IsCancel="True"
@@ -112,7 +113,6 @@
                 <Button
                     Background="{DynamicResource AccentColor}"
                     Classes="ToolWindowBorderStyle PrimaryBtnHover"
-                    Command="{Binding Favorites.AddOrEditCommand}"
                     Focusable="True"
                     HotKey="Enter"
                     IsDefault="True"

@@ -83,23 +83,7 @@ public class FavoritesViewModel : IDisposable
             UpdateFavorites();
         }
     }
-
-    public void OpenEditDialog(string path, string hotKey = "")
-    {
-        EditFavoritesDialogCommand.Execute(new FavoriteEntry(path, hotKey));
-    }
-
-    public void OpenEditDialog(FavoriteEntry entry)
-    {
-        EditFavoritesDialogCommand.Execute(entry);
-    }
-
-    public async ValueTask RemoveFavorite(string path)
-    {
-        await FavoritesManager.RemoveAsync(path).ConfigureAwait(false);
-        UpdateFavorites();
-    }
-
+    
     public void UpdateFavorites()
     {
         foreach (var existing in Entries)

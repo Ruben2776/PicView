@@ -20,10 +20,6 @@ public partial class FavoriteDialog : AnimatedPopUp
     private readonly string? _initialHotKey;
     private bool _isSaving;
 
-    public FavoriteDialog() : this(null, null)
-    {
-    }
-
     public FavoriteDialog(string? initialPath, string? initialHotKey)
     {
         _initialPath = initialPath;
@@ -38,7 +34,7 @@ public partial class FavoriteDialog : AnimatedPopUp
         if (!string.IsNullOrWhiteSpace(_initialHotKey))
         {
             var parsed = Keybind.Parse(_initialHotKey);
-            if (parsed.HasValue && (parsed.Value.Key != Key.None || parsed.Value.MouseButton != MouseButton.None))
+            if (parsed.HasValue && (parsed.Value.Key is not Key.None || parsed.Value.MouseButton is not MouseButton.None))
             {
                 KeyBox.Keybinds = [parsed.Value];
             }
@@ -84,9 +80,7 @@ public partial class FavoriteDialog : AnimatedPopUp
         }, DebugHelper.LogError(nameof(FavoriteDialog), nameof(vm.Favorites.AddFromFolderCommand))
             , AwaitOperation.Drop).AddTo(ref _disposables);
 
-        CancelButton.Click += CloseMenu;
-        CloseButton.Click += CloseMenu;
-        SaveButton.Click += ApplyButtonOnClick;
+        SaveButton.AddHandler(Button.ClickEvent, ApplyButtonOnClick);
         KeyDown += OnKeyDown;
     }
 
@@ -95,7 +89,7 @@ public partial class FavoriteDialog : AnimatedPopUp
         switch (e.Key)
         {
             case Key.Enter:
-                ApplyButtonOnClick(sender, e);
+                _ = ApplyButtonOnClick(sender, e);
                 e.Handled = true;
                 break;
             case Key.Escape:
@@ -105,7 +99,7 @@ public partial class FavoriteDialog : AnimatedPopUp
         }
     }
 
-    private async void ApplyButtonOnClick(object? sender, RoutedEventArgs e)
+    private async Task ApplyButtonOnClick(object? sender, RoutedEventArgs e)
     {
         if (_isSaving)
         {
@@ -123,7 +117,7 @@ public partial class FavoriteDialog : AnimatedPopUp
         {
             var keybind = KeyBox.Keybinds is { Count: > 0 }
                 ? KeyBox.Keybinds[0].GetFormattedForJSON()
-                : (KeyBox.Tags is { Count: > 0 } ? KeyBox.Tags[0] : string.Empty);
+                : KeyBox.Tags is { Count: > 0 } ? KeyBox.Tags[0] : string.Empty;
 
             var entry = new FavoriteEntry(path, keybind);
 
@@ -149,10 +143,8 @@ public partial class FavoriteDialog : AnimatedPopUp
     {
         base.OnDetachedFromVisualTree(e);
         Loaded -= OnLoaded;
-        SaveButton.Click -= ApplyButtonOnClick;
+        SaveButton.RemoveHandler(Button.ClickEvent, ApplyButtonOnClick);
         KeyDown -= OnKeyDown;
-        CloseButton.Click -= CloseMenu;
-        CancelButton.Click -= CloseMenu;
         _disposables.Dispose();
     }
 

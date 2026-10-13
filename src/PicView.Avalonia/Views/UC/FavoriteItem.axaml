@@ -51,7 +51,7 @@
                     Background="{DynamicResource AccentColor}"
                     Classes="accentHover"
                     ClickMode="Release"
-                    Command="{CompiledBinding EditCommand}"
+                    Command="{CompiledBinding OpenEditDialogCommand}"
                     Foreground="{StaticResource SecondaryTextColor}"
                     HorizontalAlignment="Right"
                     Icon="{StaticResource CogImage}"
@@ -71,7 +71,8 @@
                     IconHeight="12"
                     IconWidth="12"
                     Padding="7,0"
-                    ToolTip.Tip="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.Remove.Value}" />
+                    ToolTip.Tip="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.Remove.Value}"
+                    x:Name="RemoveButton" />
 
             </StackPanel>
 
