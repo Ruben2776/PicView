@@ -1,5 +1,4 @@
 using PicView.Core.FileHistory;
-using PicView.Core.Gallery;
 using PicView.Core.Thumbnails;
 using R3;
 

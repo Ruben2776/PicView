@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Threading;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Crop;
@@ -650,7 +650,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     #region File funnctions
 
     /// <inheritdoc cref="UINavigationHelper.OpenPathAsync(MainWindow, MainWindowViewModel, string?)" />
-    public async ValueTask OpenPathAsync(string path) =>
+    public virtual async ValueTask OpenPathAsync(string path) =>
         await UINavigationHelper.OpenPathAsync(mainWindow, vm, path).ConfigureAwait(false);
 
     /// <inheritdoc cref=" UINavigationHelper.OpenLastFile(MainWindowViewModel)" />

@@ -284,6 +284,21 @@
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
 
+                    <!--  Favorites  -->
+                    <TextBlock
+                        Classes="txt bold keyBindHeader"
+                        IsVisible="False"
+                        Text="{CompiledBinding Translation.Favorites.Value,
+                                               Mode=OneWay}"
+                        x:Name="FavoritesHeader" />
+                    <ItemsControl IsVisible="False" x:Name="FavoritesItems">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Classes="keyBindHeader" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+
                 </StackPanel>
             </customControls:AutoScrollViewer>
 

@@ -1,9 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using PicView.Core.DebugTools;
+using PicView.Core.Favorites;
 using PicView.Core.IPlatform;
 using PicView.Core.Keybindings;
-using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
 
@@ -147,6 +147,30 @@ public static class KeybindingManager
 
     public static string? GetActionName(Keybind keybind) =>
         CustomShortcuts?.GetValueOrDefault(keybind);
+
+    /// <summary>
+    ///     Returns the favorite folder path bound to the specified <paramref name="keybind"/>, or <c>null</c> if none matches.
+    /// </summary>
+    public static string? GetFavoritePath(Keybind keybind)
+    {
+        var entries = FavoritesManager.AllEntries;
+        for (var i = 0; i < entries.Count; i++)
+        {
+            var entry = entries[i];
+            if (string.IsNullOrWhiteSpace(entry.HotKey))
+            {
+                continue;
+            }
+
+            var parsed = Keybind.Parse(entry.HotKey);
+            if (parsed.HasValue && parsed.Value == keybind)
+            {
+                return entry.FilePath;
+            }
+        }
+
+        return null;
+    }
 
     /// <summary>
     /// Builds and returns a dictionary of default keybindings for the current platform.
