@@ -8,8 +8,8 @@
     <UserControl.Styles>
 
         <!--  Style for current item  -->
-        <Style Selector="Button#MainButton.isCurrent">
-            <Setter Property="Background" Value="{DynamicResource SecondaryAccentColor}" />
+        <Style Selector="Border#AppBorder.isCurrent">
+            <Setter Property="Background" Value="{DynamicResource DropDownMenuButtonBorderColor}" />
         </Style>
         <Style Selector="Button#MainButton.isCurrent TextBlock">
             <Setter Property="Foreground" Value="{StaticResource SecondaryTextColor}" />
@@ -19,7 +19,7 @@
         </Style>
 
         <!--  Style for hovering over items  -->
-        <Style Selector="Border#AppBorder">
+        <Style Selector="Border#AppBorder:not(.isCurrent)">
             <Setter Property="Background" Value="Transparent" />
             <Style Selector="^:pointerover">
                 <Setter Property="Background" Value="{DynamicResource AccentColor}" />
@@ -34,9 +34,9 @@
             <Setter Property="IsVisible" Value="True" />
         </Style>
 
-
     </UserControl.Styles>
-    <Border x:Name="AppBorder">
+
+    <Border Classes.isCurrent="{CompiledBinding IsCurrentItem.Value}" x:Name="AppBorder">
         <DockPanel LastChildFill="True">
 
             <StackPanel
@@ -71,7 +71,6 @@
                     Text="{CompiledBinding HotKey.Value}" />
 
                 <customControls:TextIconButton
-                    Classes.isCurrent="{CompiledBinding IsCurrentItem.Value}"
                     Command="{CompiledBinding OpenCommand}"
                     Data="{StaticResource FolderGeometry}"
                     DockPanel.Dock="Left"
