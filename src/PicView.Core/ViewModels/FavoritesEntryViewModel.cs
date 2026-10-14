@@ -8,20 +8,20 @@ public class FavoritesEntryViewModel : IDisposable
     private MainWindowViewModel _vm = null!;
     public BindableReactiveProperty<string> FilePath { get; } = new();
     public BindableReactiveProperty<string> FolderName { get; } = new();
-    public BindableReactiveProperty<string> HotKey { get; } = new();
+    public BindableReactiveProperty<string> Keybind { get; } = new();
     public BindableReactiveProperty<bool> IsCurrentItem { get; } = new(false);
     
     public ReactiveCommand<Unit> OpenCommand { get; } = new();
     public ReactiveCommand<Unit> RemoveCommand { get; } = new();
     public ReactiveCommand<Unit> OpenEditDialogCommand { get; } = new();
     
-    public void Initialize(string path, string folderName, string hotKey, bool isCurrentItem, MainWindowViewModel vm)
+    public void Initialize(string path, string folderName, string keybind, bool isCurrentItem, MainWindowViewModel vm)
     {
         _vm = vm;
         
         FilePath.Value = path;
         FolderName.Value = folderName;
-        HotKey.Value = hotKey;
+        Keybind.Value = keybind;
         IsCurrentItem.Value = isCurrentItem;
 
         OpenCommand.SubscribeAwait(Open);
@@ -37,7 +37,7 @@ public class FavoritesEntryViewModel : IDisposable
         }
 
         (_vm.Favorites ??= new FavoritesViewModel(_vm)).EditFavoritesDialogCommand.Execute(
-            new FavoriteEntry(FilePath.CurrentValue, HotKey.CurrentValue));
+            new FavoriteEntry(FilePath.CurrentValue, Keybind.CurrentValue));
     }
 
     private async ValueTask Open(Unit unit, CancellationToken cancellationToken)
@@ -62,7 +62,7 @@ public class FavoritesEntryViewModel : IDisposable
         
         FilePath.Dispose();
         FolderName.Dispose();
-        HotKey.Dispose();
+        Keybind.Dispose();
         IsCurrentItem.Dispose();
         
         GC.SuppressFinalize(this);

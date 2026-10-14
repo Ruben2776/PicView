@@ -37,7 +37,7 @@ public partial class DropDownMenu : AnimatedMenu
         .AddTo(ref _disposables);
         vm.Favorites.EditFavoritesDialogCommand.Subscribe(entry =>
         {
-            _mainWindow.AddFavoriteDialog(entry.FilePath, entry.HotKey);
+            _mainWindow.AddFavoriteDialog(entry.FilePath, entry.Keybind);
         }, DebugHelper.LogError(nameof(DropDownMenu), nameof(vm.Favorites.EditFavoritesDialogCommand)))
         .AddTo(ref _disposables);
         DataContext = vm;

@@ -105,9 +105,9 @@ public static class FavoritesManager
     }
 
     /// <summary>
-    ///     Adds a folder entry to the favorites, evicting any duplicate hotkey across other entries.
+    ///     Adds a folder entry to the favorites, evicting any duplicate Keybind across other entries.
     /// </summary>
-    public static async Task AddAsync(string filePath, string hotKey = "")
+    public static async Task AddAsync(string filePath, string keybind = "")
     {
         if (_entries is null)
         {
@@ -120,17 +120,17 @@ public static class FavoritesManager
             return;
         }
 
-        var normalizedHotKey = hotKey?.Trim() ?? string.Empty;
-        EvictDuplicateHotKey(normalizedPath, normalizedHotKey);
+        var normalizedKeybind = keybind?.Trim() ?? string.Empty;
+        EvictDuplicateKeybind(normalizedPath, normalizedKeybind);
 
         var existingIndex = _entries!.FindIndex(x => string.Equals(x.FilePath, normalizedPath, StringComparison.Ordinal));
         if (existingIndex >= 0)
         {
-            _entries[existingIndex] = new FavoriteEntry(normalizedPath, normalizedHotKey);
+            _entries[existingIndex] = new FavoriteEntry(normalizedPath, normalizedKeybind);
         }
         else
         {
-            _entries.Add(new FavoriteEntry(normalizedPath, normalizedHotKey));
+            _entries.Add(new FavoriteEntry(normalizedPath, normalizedKeybind));
         }
 
         await SaveToFileAsync().ConfigureAwait(false);
@@ -139,12 +139,12 @@ public static class FavoritesManager
     /// <summary>
     ///     Adds an entry to the favorites.
     /// </summary>
-    public static Task AddAsync(FavoriteEntry entry) => AddAsync(entry.FilePath, entry.HotKey);
+    public static Task AddAsync(FavoriteEntry entry) => AddAsync(entry.FilePath, entry.Keybind);
 
     /// <summary>
-    ///     Sets the hotkey for an existing favorite entry and evicts any duplicate hotkey across other entries.
+    ///     Sets the Keybind for an existing favorite entry and evicts any duplicate Keybind across other entries.
     /// </summary>
-    public static void SetHotKey(string filePath, string hotKey)
+    public static void SetKeybind(string filePath, string keybind)
     {
         if (_entries is null)
         {
@@ -163,9 +163,9 @@ public static class FavoritesManager
             return;
         }
 
-        var normalizedHotKey = hotKey?.Trim() ?? string.Empty;
-        EvictDuplicateHotKey(targetPath, normalizedHotKey);
-        _entries[existingIndex] = new FavoriteEntry(_entries[existingIndex].FilePath, normalizedHotKey);
+        var normalizedKeybind = keybind?.Trim() ?? string.Empty;
+        EvictDuplicateKeybind(targetPath, normalizedKeybind);
+        _entries[existingIndex] = new FavoriteEntry(_entries[existingIndex].FilePath, normalizedKeybind);
     }
 
     /// <summary>
@@ -219,13 +219,13 @@ public static class FavoritesManager
     }
 
     /// <summary>
-    ///     Saves the favorites to the favorites file, evicting duplicate hotkeys first.
+    ///     Saves the favorites to the favorites file, evicting duplicate Keybinds first.
     /// </summary>
     public static async Task SaveToFileAsync()
     {
         try
         {
-            DeduplicateHotKeys();
+            DeduplicateKeybinds();
 
             if (string.IsNullOrWhiteSpace(_favoritesConfiguration?.CorrectPath))
             {
@@ -248,9 +248,9 @@ public static class FavoritesManager
         }
     }
 
-    private static void EvictDuplicateHotKey(string targetFilePath, string hotKey)
+    private static void EvictDuplicateKeybind(string targetFilePath, string keybind)
     {
-        if (_entries is null || string.IsNullOrWhiteSpace(hotKey))
+        if (_entries is null || string.IsNullOrWhiteSpace(keybind))
         {
             return;
         }
@@ -259,30 +259,30 @@ public static class FavoritesManager
         {
             var entry = _entries[i];
             if (!string.Equals(entry.FilePath, targetFilePath, StringComparison.Ordinal) &&
-                string.Equals(entry.HotKey, hotKey, StringComparison.Ordinal))
+                string.Equals(entry.Keybind, keybind, StringComparison.Ordinal))
             {
                 _entries[i] = new FavoriteEntry(entry.FilePath, string.Empty);
             }
         }
     }
 
-    private static void DeduplicateHotKeys()
+    private static void DeduplicateKeybinds()
     {
         if (_entries is not { Count: > 1 })
         {
             return;
         }
 
-        var seenHotKeys = new HashSet<string>(StringComparer.Ordinal);
+        var seenKeybinds = new HashSet<string>(StringComparer.Ordinal);
         for (var i = _entries.Count - 1; i >= 0; i--)
         {
             var entry = _entries[i];
-            if (string.IsNullOrWhiteSpace(entry.HotKey))
+            if (string.IsNullOrWhiteSpace(entry.Keybind))
             {
                 continue;
             }
 
-            if (!seenHotKeys.Add(entry.HotKey))
+            if (!seenKeybinds.Add(entry.Keybind))
             {
                 _entries[i] = new FavoriteEntry(entry.FilePath, string.Empty);
             }
@@ -323,7 +323,7 @@ public static class FavoritesManager
 
                     var normalized = NormalizeDirectoryPath(entry.FilePath)
                                      ?? Path.TrimEndingDirectorySeparator(entry.FilePath.Trim());
-                    _entries.Add(new FavoriteEntry(normalized, entry.HotKey));
+                    _entries.Add(new FavoriteEntry(normalized, entry.Keybind));
                 }
             }
         }

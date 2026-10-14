@@ -79,12 +79,12 @@ public static class Keymaps
         for (var i = 0; i < entries.Count; i++)
         {
             var entry = entries[i];
-            if (string.IsNullOrWhiteSpace(entry.HotKey))
+            if (string.IsNullOrWhiteSpace(entry.Keybind))
             {
                 continue;
             }
 
-            var parsed = Keybind.Parse(entry.HotKey);
+            var parsed = Keybind.Parse(entry.Keybind);
             if (parsed.HasValue && parsed.Value == keybind)
             {
                 return entry.FilePath;

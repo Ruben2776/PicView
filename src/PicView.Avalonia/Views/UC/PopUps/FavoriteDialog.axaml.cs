@@ -17,13 +17,13 @@ public partial class FavoriteDialog : AnimatedPopUp
 {
     private DisposableBag _disposables;
     private readonly string? _initialPath;
-    private readonly string? _initialHotKey;
+    private readonly string? _initialKeybind;
     private bool _isSaving;
 
-    public FavoriteDialog(string? initialPath, string? initialHotKey)
+    public FavoriteDialog(string? initialPath, string? initialKeybind)
     {
         _initialPath = initialPath;
-        _initialHotKey = initialHotKey;
+        _initialKeybind = initialKeybind;
         InitializeComponent();
 
         if (!string.IsNullOrWhiteSpace(_initialPath))
@@ -31,9 +31,9 @@ public partial class FavoriteDialog : AnimatedPopUp
             PathBox.Text = _initialPath;
         }
 
-        if (!string.IsNullOrWhiteSpace(_initialHotKey))
+        if (!string.IsNullOrWhiteSpace(_initialKeybind))
         {
-            var parsed = Keybind.Parse(_initialHotKey);
+            var parsed = Keybind.Parse(_initialKeybind);
             if (parsed.HasValue && (parsed.Value.Key is not Key.None || parsed.Value.MouseButton is not MouseButton.None))
             {
                 KeyBox.Keybinds = [parsed.Value];
@@ -50,9 +50,9 @@ public partial class FavoriteDialog : AnimatedPopUp
             PathBox.Text = _initialPath;
         }
 
-        if (!string.IsNullOrWhiteSpace(_initialHotKey) && (KeyBox.Keybinds is null || KeyBox.Keybinds.Count == 0))
+        if (!string.IsNullOrWhiteSpace(_initialKeybind) && (KeyBox.Keybinds is null || KeyBox.Keybinds.Count == 0))
         {
-            var parsed = Keybind.Parse(_initialHotKey);
+            var parsed = Keybind.Parse(_initialKeybind);
             if (parsed.HasValue && (parsed.Value.Key != Key.None || parsed.Value.MouseButton != MouseButton.None))
             {
                 KeyBox.Keybinds = [parsed.Value];

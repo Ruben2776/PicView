@@ -147,7 +147,7 @@ public class KeybindingsFavoritesTests : IDisposable
     }
 
     [Fact]
-    public void SaveKeybindings_WhenDuplicateHotKeyAssignedAcrossFavorites_EvictsPreviousFavoriteHotKey()
+    public void SaveKeybindings_WhenDuplicateKeybindAssignedAcrossFavorites_EvictsPreviousFavoriteKeybind()
     {
         var folderA = Path.Combine(_tempRoot, "Alpha");
         var folderB = Path.Combine(_tempRoot, "Beta");
@@ -177,15 +177,15 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal(new Keybind(Key.F8), boxA.Keybinds[0]);
         Assert.Empty(boxB.Keybinds);
 
-        Assert.Equal("F8", FavoritesManager.AllEntries[0].HotKey);
-        Assert.Equal(string.Empty, FavoritesManager.AllEntries[1].HotKey);
+        Assert.Equal("F8", FavoritesManager.AllEntries[0].Keybind);
+        Assert.Equal(string.Empty, FavoritesManager.AllEntries[1].Keybind);
 
-        Assert.Equal("F8", mainWindowVm.Favorites.Entries[0].HotKey.CurrentValue);
-        Assert.Equal(string.Empty, mainWindowVm.Favorites.Entries[1].HotKey.CurrentValue);
+        Assert.Equal("F8", mainWindowVm.Favorites.Entries[0].Keybind.CurrentValue);
+        Assert.Equal(string.Empty, mainWindowVm.Favorites.Entries[1].Keybind.CurrentValue);
     }
 
     [Fact]
-    public void ShortcutHandling_WhenFavoriteKeyboardOrMouseHotKeyMatches_DispatchesOpenPathAsync()
+    public void ShortcutHandling_WhenFavoriteKeyboardOrMouseKeybindMatches_DispatchesOpenPathAsync()
     {
         var folderA = Path.Combine(_tempRoot, "KeyboardFolder");
         var folderB = Path.Combine(_tempRoot, "MouseFolder");
@@ -228,12 +228,12 @@ public class KeybindingsFavoritesTests : IDisposable
     public void FavoriteDialog_WithInitialValues_PreselectsValues()
     {
         var testPath = Path.Combine(_tempRoot, "PreselectedFolder");
-        var testHotKey = "Ctrl + D1";
+        var testKeybind = "Ctrl + D1";
 
         FavoriteDialog dialog = null!;
         RunWithDispatcher(Dispatcher.UIThread.InvokeAsync(() =>
         {
-            dialog = new FavoriteDialog(testPath, testHotKey);
+            dialog = new FavoriteDialog(testPath, testKeybind);
         }).GetTask());
 
         Assert.Equal(testPath, dialog.PathBox.Text);
