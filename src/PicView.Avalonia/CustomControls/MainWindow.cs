@@ -12,6 +12,7 @@ using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
+using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Avalonia.Views.Main;
@@ -28,7 +29,12 @@ using R3.Avalonia;
 
 namespace PicView.Avalonia.CustomControls;
 
-public class MainWindow : Window, IMainWindow
+/// <summary>
+/// The main window shared by every platform. It owns window-state handling, tab detaching and opening the
+/// secondary windows; a platform subclass supplies its <see cref="IWindowProvider"/> and how the window
+/// maximizes, enters fullscreen, restores and minimizes.
+/// </summary>
+public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 {
     [SuppressMessage("Usage", "CA2211:Non-constant fields should not be visible")] 
     public WindowInitializer? MainWindowInitializer;
@@ -69,10 +75,257 @@ public class MainWindow : Window, IMainWindow
         ScalingChanged += OnScalingChanged;
         
         PointerExited += (_, _) => { DragAndDropManager.RemoveDragDropView(this); };
-        
+
         Deactivated += OnDeactivated;
+
+        MainWindowInitializer ??= new WindowInitializer(CreateWindowProvider());
+        if (DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+
+        var windowStates = Observable.EveryValueChanged(this, x => x.WindowState, FrameProvider);
+        if (SkipsInitialWindowState)
+        {
+            windowStates = windowStates.Skip(1);
+        }
+        windowStates
+            .SubscribeAwait(async (state, _) => await OnWindowStateChangedAsync(state).ConfigureAwait(true),
+                DebugHelper.LogError(nameof(MainWindow), nameof(WindowState)))
+            .AddTo(Disposables);
+
+        // Close the editable title bar and the dropdown menu when clicking outside of them
+        PointerPressed += (_, _) =>
+        {
+            if (vm.IsEditableTitlebarOpen.Value && SharedTitleBar is { IsPointerOver: false })
+            {
+                SharedTitleBar.SharedEditableTitlebar?.CloseTitlebar();
+            }
+
+            if (!UIHelper.GetDropDownMenu?.IsPointerOver ?? false)
+            {
+                vm.TopTitlebarViewModel.CloseDropDownMenu();
+            }
+        };
+        UIHelper.GetMainTabControl?.TabDetached += OnTabDetached;
     }
-    
+
+    #region Platform adapter
+
+    /// <summary>
+    /// Creates the provider for this platform's windows.
+    /// </summary>
+    protected abstract IWindowProvider CreateWindowProvider();
+
+    /// <summary>
+    /// Whether the initial <see cref="WindowState"/> is ignored, so only later changes reach
+    /// <see cref="OnWindowStateChangedAsync"/>.
+    /// </summary>
+    protected virtual bool SkipsInitialWindowState => false;
+
+    /// <summary>
+    /// Brings the settings in line with a window state the user changed outside the UI, such as with the
+    /// operating system's own window controls.
+    /// </summary>
+    protected virtual async Task OnWindowStateChangedAsync(WindowState state)
+    {
+        switch (state)
+        {
+            case WindowState.FullScreen:
+                if (!Settings.WindowProperties.Fullscreen)
+                {
+                    await Fullscreen().ConfigureAwait(true);
+                }
+                break;
+            case WindowState.Maximized:
+                if (!Settings.WindowProperties.Maximized)
+                {
+                    await Maximize().ConfigureAwait(true);
+                }
+                break;
+            case WindowState.Normal:
+                if (Settings.WindowProperties.Fullscreen || Settings.WindowProperties.Maximized)
+                {
+                    await Restore().ConfigureAwait(true);
+                }
+                break;
+        }
+    }
+
+    /// <inheritdoc />
+    public virtual int CombinedTitleButtonsWidth
+    {
+        get => (int)(Settings.WindowProperties.Maximized && !Settings.WindowProperties.Fullscreen
+            ? OffScreenMargin.Left + OffScreenMargin.Right + field : field);
+        set;
+    } = 185;
+
+    /// <inheritdoc />
+    public abstract Task Maximize(bool saveSetting = true);
+
+    /// <inheritdoc />
+    public abstract Task MaximizeRestore(bool saveSetting = true);
+
+    /// <inheritdoc />
+    public abstract Task Fullscreen(bool saveSetting = true);
+
+    /// <inheritdoc />
+    public abstract Task ToggleFullscreen(bool saveSetting = true);
+
+    /// <inheritdoc />
+    public abstract Task Restore();
+
+    /// <inheritdoc />
+    public abstract void Minimize();
+
+    #endregion
+
+    #region Secondary windows
+
+    public void ShowAboutWindow() =>
+        MainWindowInitializer?.ShowAboutWindow();
+
+    public void ShowImageInfoWindow() =>
+        MainWindowInitializer?.ShowImageInfoWindow(DataContext as MainWindowViewModel);
+
+    public void ShowKeybindingsWindow() =>
+        MainWindowInitializer?.ShowKeybindingsWindow();
+
+    public async ValueTask ShowSettingsWindow()
+    {
+        if (MainWindowInitializer is null)
+        {
+            return;
+        }
+        await MainWindowInitializer.ShowSettingsWindow().ConfigureAwait(true);
+    }
+
+    public void ShowSingleImageResizeWindow() =>
+        MainWindowInitializer?.ShowSingleImageResizeWindow();
+
+    public async ValueTask ShowBatchResizeWindow()
+    {
+        if (MainWindowInitializer is null)
+        {
+            return;
+        }
+        await MainWindowInitializer.ShowBatchResizeWindow().ConfigureAwait(true);
+    }
+
+    public void ShowFileAssociationsWindow() =>
+        MainWindowInitializer?.ShowFileAssociationsWindow();
+
+    public void ShowEffectsWindow() =>
+        _ = MainWindowInitializer?.ShowEffectsWindow();
+
+    public void ShowConvertWindow() =>
+        MainWindowInitializer?.ShowConvertWindow();
+
+    public async Task ShowPrintWindow(string path)
+    {
+        if (MainWindowInitializer is null)
+        {
+            return;
+        }
+        var vm = Dispatcher.UIThread.Invoke(() => DataContext as MainWindowViewModel);
+        await MainWindowInitializer.ShowPrintWindow(path, vm).ConfigureAwait(true);
+    }
+
+    #endregion
+
+    #region Tab detaching
+
+    private void OnTabDetached(object? sender, TabDetachEventArgs e)
+    {
+        if (e.DetachedItem is not TabViewModel tab || DataContext is not MainWindowViewModel parentVm)
+        {
+            return;
+        }
+
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            return;
+        }
+
+        // Dropped on another main window: move the tab there
+        var targetWindow = desktop.Windows
+            .OfType<MainWindow>()
+            .FirstOrDefault(window => window != this && window.ContainsScreenPoint(e.ScreenPosition));
+        if (targetWindow?.DataContext is MainWindowViewModel targetVm)
+        {
+            MoveTab(tab, parentVm, targetVm);
+            return;
+        }
+
+        if (targetWindow is not null)
+        {
+            return;
+        }
+
+        // Dropped elsewhere: open the tab in a new window
+        _ = Task.Run(() =>
+        {
+            Dispatcher.UIThread.Invoke(() =>
+            {
+                if (MainWindowInitializer is null || Application.Current.DataContext is not CoreViewModel core)
+                {
+                    return;
+                }
+
+                var newWindow = MainWindowInitializer.CreateMainWindow();
+                if (newWindow.DataContext is not MainWindowViewModel newVm)
+                {
+                    return;
+                }
+                newWindow.Position = new PixelPoint(e.ScreenPosition.X - 100, e.ScreenPosition.Y - 50);
+                newWindow.Width = Width;
+                newWindow.Height = Height;
+                WindowFunctions.DetachedWindowStartup(core, newWindow);
+
+                // Fix null DataContext
+                if (tab.CurrentView.CurrentValue is Control control)
+                {
+                    control.DataContext = tab;
+                }
+
+                desktop.MainWindow = newWindow;
+
+                TabNavigationInitializer.InitializeDetachedWindow(this, parentVm, newVm, tab, core);
+            }, DispatcherPriority.Send);
+        });
+    }
+
+    private bool ContainsScreenPoint(PixelPoint screenPosition)
+    {
+        var clientPoint = this.PointToClient(screenPosition);
+        return new Rect(0, 0, ClientSize.Width, ClientSize.Height).Contains(clientPoint);
+    }
+
+    /// <summary>
+    /// Moves a tab from one main window to another and selects it there.
+    /// </summary>
+    internal static void MoveTab(TabViewModel tab, MainWindowViewModel source, MainWindowViewModel target)
+    {
+        source.WindowTabs.RemoveTab(tab);
+
+        // The drag preview may already have added it
+        if (!target.WindowTabs.Tabs.Value.Contains(tab))
+        {
+            target.WindowTabs.Tabs.Value.Add(tab);
+        }
+
+        target.WindowTabs.SelectTab(tab);
+        tab.ParentWindowContext = target;
+
+        // Refresh bindings
+        if (tab.CurrentView.CurrentValue is Control control)
+        {
+            control.DataContext = tab;
+        }
+    }
+
+    #endregion
+
     public void SetClipboardServices(IPlatformSpecificService? platformService = null, CoreViewModel? core = null)
     {
         core ??= Application.Current?.DataContext as CoreViewModel;
