@@ -1,5 +1,6 @@
 namespace PicView.Tests.Navigation;
 
+[Collection("Sequential")]
 public class ArchiveNavigatorTests
 {
     [Fact]

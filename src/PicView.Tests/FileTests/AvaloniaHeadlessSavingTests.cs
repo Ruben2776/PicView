@@ -1,10 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Threading;
 using ImageMagick;
-using PicView.Avalonia;
-
 using PicView.Avalonia.FileSystem;
 using PicView.Core.ViewModels;
 
@@ -21,10 +18,6 @@ public class AvaloniaHeadlessSavingTests
 
         if (!_setupDone)
         {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-            
             Core.Localization.TranslationManager.Init();
             if (Core.Localization.TranslationManager.Translation != null)
             {
@@ -54,7 +47,7 @@ public class AvaloniaHeadlessSavingTests
         return new MainWindowViewModel(null!, null!, null!, null!, null!);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void ConvertJpgToWebp_SavesSuccessFully_AndReducesFileSize()
     {
         var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());

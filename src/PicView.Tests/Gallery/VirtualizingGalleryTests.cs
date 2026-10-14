@@ -1,10 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using Avalonia.Headless;
 using Avalonia.Layout;
 using Avalonia.Threading;
-using PicView.Avalonia;
 using PicView.Avalonia.CustomControls;
 using System.Linq;
 using Xunit;
@@ -14,19 +12,6 @@ namespace PicView.Tests.Gallery;
 [Collection("Sequential")]
 public class VirtualizingGalleryTests
 {
-    public VirtualizingGalleryTests()
-    {
-        try
-        {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-        }
-        catch (InvalidOperationException)
-        {
-        }
-    }
-
     private static void RunWithDispatcher(DispatcherOperation operation)
     {
         while (operation.Status is not DispatcherOperationStatus.Completed and not DispatcherOperationStatus.Aborted)
@@ -37,7 +22,7 @@ public class VirtualizingGalleryTests
         operation.GetAwaiter().GetResult();
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void PropertiesHaveCorrectDefaults()
     {
         var gallery = new VirtualizingGallery();
@@ -47,7 +32,7 @@ public class VirtualizingGalleryTests
         Assert.Equal(0, gallery.LineSpacing);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void MeasureOverrideCalculatesPanelSizeWithItems()
     {
         var gallery = new VirtualizingGallery
@@ -72,7 +57,7 @@ public class VirtualizingGalleryTests
         Assert.Equal(5, gallery.LineSpacing);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void RealizesOnlyVisibleContainersWhenMeasured()
     {
         var gallery = new VirtualizingGallery
@@ -94,7 +79,7 @@ public class VirtualizingGalleryTests
         // Assert.True(realized.Count() < 100, $"Expected fewer than 100 realized items, got {realized.Count()}");
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void ExpandedMode_UsesAvailableHeight_ToWrapColumns()
     {
         RunWithDispatcher(Dispatcher.UIThread.InvokeAsync(() =>
@@ -140,7 +125,7 @@ public class VirtualizingGalleryTests
         }));
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void ExpandedMode_UsesWrapHeightOverride_WhenSpecified_AndRestoresWhenCleared()
     {
         RunWithDispatcher(Dispatcher.UIThread.InvokeAsync(() =>
@@ -186,7 +171,7 @@ public class VirtualizingGalleryTests
         }));
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void ResetOrItemReplacement_UpdatesFirstItemContainer()
     {
         RunWithDispatcher(Dispatcher.UIThread.InvokeAsync(() =>

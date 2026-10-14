@@ -1,8 +1,5 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Headless;
+﻿using Avalonia.Controls;
 using Avalonia.Input.Platform;
-using PicView.Avalonia;
 using PicView.Avalonia.Clipboard;
 using PicView.Core.IPlatform;
 using Xunit;
@@ -12,19 +9,6 @@ namespace PicView.Tests.Clipboard;
 [Collection("Sequential")]
 public class ClipboardCopyServiceTests
 {
-    public ClipboardCopyServiceTests()
-    {
-        try
-        {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-        }
-        catch (InvalidOperationException)
-        {
-        }
-    }
-
     private class TestPlatformService : IPlatformSpecificService
     {
         public bool CutFileResult { get; set; } = true;
@@ -70,7 +54,7 @@ public class ClipboardCopyServiceTests
         }
     }
 
-    [Fact]
+    [AvaloniaFact]
     public async Task CopyTextAsync_WithValidText_SetsClipboardAndInvokesOnCopied()
     {
         var window = new Window();
@@ -84,7 +68,7 @@ public class ClipboardCopyServiceTests
         Assert.True(copiedInvoked);
     }
 
-    [Theory]
+    [AvaloniaTheory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
@@ -101,7 +85,7 @@ public class ClipboardCopyServiceTests
         Assert.False(copiedInvoked);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public async Task CopyImageAsync_WithNonBitmap_ReturnsFalse()
     {
         var window = new Window();
@@ -115,7 +99,7 @@ public class ClipboardCopyServiceTests
         Assert.False(copiedInvoked);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public async Task CutFileAsync_WithValidPath_DelegatesToPlatformServiceAndInvokesOnCopied()
     {
         var platform = new TestPlatformService { CutFileResult = true };
@@ -129,7 +113,7 @@ public class ClipboardCopyServiceTests
         Assert.True(copiedInvoked);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public async Task CutFileAsync_WhenPlatformServiceFails_ReturnsFalseAndDoesNotInvokeOnCopied()
     {
         var platform = new TestPlatformService { CutFileResult = false };
@@ -142,7 +126,7 @@ public class ClipboardCopyServiceTests
         Assert.False(copiedInvoked);
     }
 
-    [Theory]
+    [AvaloniaTheory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]

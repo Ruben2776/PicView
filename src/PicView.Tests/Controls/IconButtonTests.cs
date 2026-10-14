@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia;
@@ -14,16 +13,6 @@ public class IconButtonTests
 {
     public IconButtonTests()
     {
-        try
-        {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-        }
-        catch (InvalidOperationException)
-        {
-        }
-
         SetDefaults();
     }
 
@@ -45,7 +34,7 @@ public class IconButtonTests
         return new DrawingImage { Drawing = group };
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void IconButton_WithSharedIcon_CreatesPrivateLocalIconCopies()
     {
         var initialBrush = Brushes.Red;
@@ -76,7 +65,7 @@ public class IconButtonTests
         Assert.NotSame(geom1.Pen, geom2.Pen);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void IconButton_PointerEntered_DoesNotMutateSharedIconOrOtherButton()
     {
         var initialBrush = Brushes.Red;
@@ -125,7 +114,7 @@ public class IconButtonTests
         Assert.Equal(initialBrush, sharedPen.Brush);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TextIconButton_WithSharedIcon_CreatesPrivateLocalIconCopies()
     {
         var initialBrush = Brushes.Red;
@@ -142,7 +131,7 @@ public class IconButtonTests
         Assert.NotSame(button1.LocalIconCopy, button2.LocalIconCopy);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void IconButton_WithPathData_DisplaysCorrectly()
     {
         var geometry = StreamGeometry.Parse("M 0 0 L 10 10");

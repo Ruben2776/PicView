@@ -3,6 +3,7 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Tests.Print;
 
+[Collection("Sequential")]
 public class PrintPreviewModelTests
 {
     public PrintPreviewModelTests()

@@ -1,11 +1,10 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless;
-using PicView.Avalonia;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
+using PicView.Core.Config;
 using PicView.Core.Localization;
 using PicView.Core.Models;
+using PicView.Core.Update;
 using PicView.Core.ViewModels;
 
 namespace PicView.Tests.WindowBehavior;
@@ -13,23 +12,13 @@ namespace PicView.Tests.WindowBehavior;
 [Collection("Sequential")]
 public class MainWindowTests
 {
-    static MainWindowTests()
-    {
-        if (Application.Current == null)
-        {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-        }
-    }
-
     public MainWindowTests()
     {
         SetDefaults();
         TranslationManager.Init();
     }
 
-    [Theory]
+    [AvaloniaTheory]
     [InlineData(WindowState.Maximized, nameof(TestMainWindow.Maximize))]
     [InlineData(WindowState.FullScreen, nameof(TestMainWindow.Fullscreen))]
     public async Task WindowStateChanged_WhenSettingsDoNotMatch_AppliesState(WindowState state, string expectedCall)
@@ -41,7 +30,7 @@ public class MainWindowTests
         Assert.Equal([expectedCall], window.Calls);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public async Task WindowStateChanged_ToMaximizedWhenAlreadyMaximized_DoesNothing()
     {
         Settings.WindowProperties.Maximized = true;
@@ -52,7 +41,7 @@ public class MainWindowTests
         Assert.Empty(window.Calls);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public async Task WindowStateChanged_ToFullScreenWhenAlreadyFullscreen_DoesNothing()
     {
         Settings.WindowProperties.Fullscreen = true;
@@ -63,7 +52,7 @@ public class MainWindowTests
         Assert.Empty(window.Calls);
     }
 
-    [Theory]
+    [AvaloniaTheory]
     [InlineData(true, false)]
     [InlineData(false, true)]
     public async Task WindowStateChanged_ToNormalWhenMaximizedOrFullscreen_Restores(bool maximized, bool fullscreen)
@@ -77,7 +66,7 @@ public class MainWindowTests
         Assert.Equal([nameof(TestMainWindow.Restore)], window.Calls);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public async Task WindowStateChanged_ToNormalWhenAlreadyNormal_DoesNothing()
     {
         var window = new TestMainWindow();
@@ -87,7 +76,7 @@ public class MainWindowTests
         Assert.Empty(window.Calls);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void MoveTab_ToAnotherWindow_RemovesItFromSourceAndSelectsItInTarget()
     {
         var core = CreateCore();
@@ -107,7 +96,7 @@ public class MainWindowTests
         Assert.Same(target, tab.ParentWindowContext);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void MoveTab_WhenDragPreviewAlreadyAddedIt_DoesNotDuplicateIt()
     {
         var core = CreateCore();
@@ -135,7 +124,8 @@ public class MainWindowTests
 
         public Task ChangeWindowStateAsync(WindowState state) => OnWindowStateChangedAsync(state);
 
-        protected override IWindowProvider CreateWindowProvider() => throw new NotSupportedException();
+        // The window is loaded when the headless dispatcher drains its queue, which creates the initializer
+        protected override IWindowProvider CreateWindowProvider() => new UnsupportedWindowProvider();
 
         public override Task Maximize(bool saveSetting = true) => Record(nameof(Maximize));
 
@@ -154,5 +144,25 @@ public class MainWindowTests
             Calls.Add(call);
             return Task.CompletedTask;
         }
+    }
+
+    private sealed class UnsupportedWindowProvider : IWindowProvider
+    {
+        public MainWindow CreateMainWindow() => throw new NotSupportedException();
+        public Window CreateAboutWindow() => throw new NotSupportedException();
+        public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => throw new NotSupportedException();
+        public Window CreateFileAssociationsWindow() => throw new NotSupportedException();
+        public Window CreateConvertWindow() => throw new NotSupportedException();
+        public Window CreateEffectsWindow(EffectsWindowConfig config) => throw new NotSupportedException();
+        public Window CreateImageInfoWindow(MainWindowViewModel vm) => throw new NotSupportedException();
+        public Window CreateKeybindingsWindow(KeybindingWindowConfig config) => throw new NotSupportedException();
+        public Window CreateSettingsWindow(SettingsWindowConfig config) => throw new NotSupportedException();
+        public Window CreateSingleImageResizeWindow(MainWindowViewModel vm) => throw new NotSupportedException();
+        public Window CreatePrintPreviewWindow(PrintWindowConfig config) => throw new NotSupportedException();
+
+        public ValueTask InitializePrintAsync(MainWindowViewModel vm, string path, Window printPreviewWindow) =>
+            throw new NotSupportedException();
+
+        public Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath) => throw new NotSupportedException();
     }
 }

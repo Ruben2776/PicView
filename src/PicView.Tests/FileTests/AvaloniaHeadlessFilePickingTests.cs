@@ -1,8 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Threading;
-using PicView.Avalonia;
 using PicView.Avalonia.FileSystem;
 using PicView.Core.Localization;
 
@@ -13,10 +10,6 @@ public class AvaloniaHeadlessFilePickingTests
 {
     public AvaloniaHeadlessFilePickingTests()
     {
-        AppBuilder.Configure<App>()
-            .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-            .SetupWithoutStarting();
-        
         TranslationManager.Init();
         TranslationManager.Translation.Folder = "Folder";
         TranslationManager.Translation.SaveAs = "SaveAs";
@@ -33,7 +26,7 @@ public class AvaloniaHeadlessFilePickingTests
         return task.GetAwaiter().GetResult();
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void SelectFile_HeadlessNoopProvider_ShouldReturnNull()
     {
         var window = new Window();
@@ -45,7 +38,7 @@ public class AvaloniaHeadlessFilePickingTests
         Assert.Null(result);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void SelectDirectory_HeadlessNoopProvider_ShouldReturnEmptyString()
     {
         var window = new Window();
@@ -57,7 +50,7 @@ public class AvaloniaHeadlessFilePickingTests
         Assert.Equal(string.Empty, result);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void PickFileForSavingAsync_HeadlessNoopProvider_ShouldReturnNull()
     {
         var window = new Window();

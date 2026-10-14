@@ -1,10 +1,7 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
-using Avalonia.Headless;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using PicView.Avalonia;
 using PicView.Core.ViewModels;
 
 namespace PicView.Tests.Controls;
@@ -12,17 +9,7 @@ namespace PicView.Tests.Controls;
 [Collection("Sequential")]
 public class ComboBoxTests
 {
-    static ComboBoxTests()
-    {
-        if (Application.Current == null)
-        {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-        }
-    }
-
-    [Fact]
+    [AvaloniaFact]
     public void ComboBox_WithDisplayMemberBinding_RendersDisplayNameInSelectionBox()
     {
         var items = new List<LanguageItem>

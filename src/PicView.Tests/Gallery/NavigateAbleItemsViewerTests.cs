@@ -1,11 +1,8 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Controls.Templates;
-using Avalonia.Headless;
 using Avalonia.Layout;
 using Avalonia.Threading;
-using PicView.Avalonia;
 using PicView.Avalonia.CustomControls;
 
 namespace PicView.Tests.Gallery;
@@ -15,20 +12,10 @@ public class NavigateAbleItemsViewerTests
 {
     public NavigateAbleItemsViewerTests()
     {
-        try
-        {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-        }
-        catch (InvalidOperationException)
-        {
-        }
-
         SetDefaults();
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void CurrentItemIndex_DoesNotModify_SelectedItemIndex()
     {
         var viewer = new NavigateAbleItemsViewer();
@@ -41,7 +28,7 @@ public class NavigateAbleItemsViewerTests
         Assert.Equal(-1, viewer.SelectedItemIndex);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void SelectedItemIndex_DoesNotModify_CurrentItemIndex()
     {
         var viewer = new NavigateAbleItemsViewer();
@@ -54,7 +41,7 @@ public class NavigateAbleItemsViewerTests
         Assert.Equal(4, viewer.SelectedItemIndex);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void Viewer_EnforcesSingleCurrentAndSingleSelected()
     {
         RunWithDispatcher(Dispatcher.UIThread.InvokeAsync(() =>
