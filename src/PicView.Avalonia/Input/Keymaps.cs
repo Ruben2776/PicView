@@ -11,11 +11,31 @@ namespace PicView.Avalonia.Input;
 /// </summary>
 public static class Keymaps
 {
-    private static Keymap _current = Keymap.Empty;
+    private const int FavoritesStale = int.MinValue;
 
-    public static Keymap Current => Volatile.Read(ref _current);
+    private static State _state = new(Keymap.Empty, FavoritesStale);
 
-    public static void Replace(Keymap keymap) => Volatile.Write(ref _current, keymap);
+    /// <summary>
+    /// The current keymap, including the Keybinds of the current favorites.
+    /// </summary>
+    public static Keymap Current
+    {
+        get
+        {
+            var state = Volatile.Read(ref _state);
+            var favoritesVersion = FavoritesManager.Version;
+            if (state.FavoritesVersion == favoritesVersion)
+            {
+                return state.Keymap;
+            }
+
+            var keymap = state.Keymap.WithFavorites(FavoritesManager.AllEntries);
+            Interlocked.CompareExchange(ref _state, new State(keymap, favoritesVersion), state);
+            return keymap;
+        }
+    }
+
+    public static void Replace(Keymap keymap) => Volatile.Write(ref _state, new State(keymap, FavoritesStale));
 
     /// <summary>
     /// Loads the user's keybindings file, falling back to the platform defaults when it is missing or unreadable.
@@ -41,16 +61,7 @@ public static class Keymaps
         }
     }
 
-    /// <summary>
-    /// Returns the owner of <paramref name="keybind"/>. Favorites are checked before actions.
-    /// </summary>
-    public static KeymapResolution Resolve(Keybind keybind)
-    {
-        var favoritePath = GetFavoritePath(keybind);
-        return string.IsNullOrWhiteSpace(favoritePath)
-            ? Current.Resolve(keybind)
-            : KeymapResolution.Favorite(favoritePath);
-    }
+    public static KeymapResolution Resolve(Keybind keybind) => Current.Resolve(keybind);
 
     /// <summary>
     /// Runs what <paramref name="resolution"/> points at. Does nothing until the mapper is available.
@@ -73,27 +84,6 @@ public static class Keymaps
         }
     }
 
-    private static string? GetFavoritePath(Keybind keybind)
-    {
-        var entries = FavoritesManager.AllEntries;
-        for (var i = 0; i < entries.Count; i++)
-        {
-            var entry = entries[i];
-            if (string.IsNullOrWhiteSpace(entry.Keybind))
-            {
-                continue;
-            }
-
-            var parsed = Keybind.Parse(entry.Keybind);
-            if (parsed.HasValue && parsed.Value == keybind)
-            {
-                return entry.FilePath;
-            }
-        }
-
-        return null;
-    }
-
     private static string DefaultJson(IPlatformSpecificService? platform) =>
         platform?.DefaultJsonKeyMap() ?? "{}";
 
@@ -103,4 +93,6 @@ public static class Keymaps
         var span = bytes.AsSpan();
         return Encoding.UTF8.GetString(span.StartsWith(preamble) ? span[preamble.Length..] : span);
     }
+
+    private sealed record State(Keymap Keymap, int FavoritesVersion);
 }

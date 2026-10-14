@@ -36,6 +36,27 @@ public class FavoritesManagerTests : IDisposable
     }
 
     [Fact]
+    public async Task Version_ChangesOnEveryMutation()
+    {
+        var folderPath = Path.Combine(_tempRoot, "Photos");
+        Directory.CreateDirectory(folderPath);
+        var versions = new List<int> { FavoritesManager.Version };
+
+        await FavoritesManager.AddAsync(folderPath, "Ctrl+D1");
+        versions.Add(FavoritesManager.Version);
+        FavoritesManager.SetKeybind(folderPath, "Ctrl+D2");
+        versions.Add(FavoritesManager.Version);
+        await FavoritesManager.RemoveAsync(folderPath);
+        versions.Add(FavoritesManager.Version);
+        await FavoritesManager.ClearAsync();
+        versions.Add(FavoritesManager.Version);
+        FavoritesManager.Initialize(_configPath);
+        versions.Add(FavoritesManager.Version);
+
+        Assert.Equal(versions.Count, versions.Distinct().Count());
+    }
+
+    [Fact]
     public async Task AddAsync_WithExistingDirectoryAndTrailingSeparator_NormalizesAndPersists()
     {
         var folderPath = Path.Combine(_tempRoot, "Photos");
