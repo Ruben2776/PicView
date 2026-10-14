@@ -183,7 +183,8 @@ public static class MainKeyboardShortcuts
                         await vm.WindowTabs.ActiveTab.CurrentValue.CropService.SaveCropAsync().ConfigureAwait(false);
                         break;
                     case Key.C:
-                        if (e.KeyModifiers is KeyModifiers.Control)
+                        // Cmd+C on macOS, Ctrl+C elsewhere
+                        if (e.KeyModifiers == (OperatingSystem.IsMacOS() ? KeyModifiers.Meta : KeyModifiers.Control))
                         {
                             await vm.WindowTabs.ActiveTab.CurrentValue.CropService.CopyCroppedImageAsync().ConfigureAwait(false);
                         }

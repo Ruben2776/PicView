@@ -83,8 +83,8 @@ public static class WindowsKeybindings
                                                "XButton1": "FileHistoryPrev",
                                                "WheelUp": "Prev",
                                                "WheelDown": "Next",
-                                               "Cmd+WheelUp": "ZoomIn",
-                                               "Cmd+WheelDown": "ZoomOut",
+                                               "Ctrl+WheelUp": "ZoomIn",
+                                               "Ctrl+WheelDown": "ZoomOut",
                                              }
                                              """;
 }
