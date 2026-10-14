@@ -2,6 +2,7 @@ using System.Collections.Frozen;
 using System.Text.Json;
 using Avalonia.Input;
 using PicView.Core.DebugTools;
+using PicView.Core.Favorites;
 using PicView.Core.Keybindings;
 
 namespace PicView.Avalonia.Input;
@@ -12,17 +13,20 @@ namespace PicView.Avalonia.Input;
 public sealed class Keymap
 {
     private readonly FrozenDictionary<Keybind, string> _actions;
+    private readonly FrozenDictionary<Keybind, string> _favorites;
 
-    public static Keymap Empty { get; } = new(FrozenDictionary<Keybind, string>.Empty);
+    public static Keymap Empty { get; } =
+        new(FrozenDictionary<Keybind, string>.Empty, FrozenDictionary<Keybind, string>.Empty);
 
     /// <summary>
     /// The action bound to each Keybind.
     /// </summary>
     public IReadOnlyDictionary<Keybind, string> Bindings => _actions;
 
-    private Keymap(FrozenDictionary<Keybind, string> actions)
+    private Keymap(FrozenDictionary<Keybind, string> actions, FrozenDictionary<Keybind, string> favorites)
     {
         _actions = actions;
+        _favorites = favorites;
     }
 
     /// <summary>
@@ -46,7 +50,7 @@ public sealed class Keymap
             actions[parsed] = KeybindCategoryDefinition.Canonicalize(action);
         }
 
-        return new Keymap(actions.ToFrozenDictionary());
+        return new Keymap(actions.ToFrozenDictionary(), FrozenDictionary<Keybind, string>.Empty);
     }
 
     private static Dictionary<string, string>? Deserialize(string? json)
@@ -67,10 +71,40 @@ public sealed class Keymap
         }
     }
 
-    public KeymapResolution Resolve(Keybind keybind) =>
-        _actions.TryGetValue(keybind, out var action)
+    public KeymapResolution Resolve(Keybind keybind)
+    {
+        if (_favorites.TryGetValue(keybind, out var path))
+        {
+            return KeymapResolution.Favorite(path);
+        }
+
+        return _actions.TryGetValue(keybind, out var action)
             ? KeymapResolution.Action(action)
             : KeymapResolution.None;
+    }
+
+    /// <summary>
+    /// Returns a keymap whose favorite Keybinds are exactly those of <paramref name="favorites"/>.
+    /// A favorite takes its Keybind from any action that holds it.
+    /// </summary>
+    public Keymap WithFavorites(IReadOnlyList<FavoriteEntry> favorites)
+    {
+        var favoriteKeybinds = new Dictionary<Keybind, string>();
+        foreach (var favorite in favorites)
+        {
+            if (string.IsNullOrWhiteSpace(favorite.Keybind) || Keybind.Parse(favorite.Keybind) is not { } keybind)
+            {
+                continue;
+            }
+
+            favoriteKeybinds[keybind] = favorite.FilePath;
+        }
+
+        var actions = _actions
+            .Where(kvp => !favoriteKeybinds.ContainsKey(kvp.Key))
+            .ToFrozenDictionary();
+        return new Keymap(actions, favoriteKeybinds.ToFrozenDictionary());
+    }
 
     /// <summary>
     /// Returns the Keybinds bound to <paramref name="action"/>.
@@ -91,7 +125,7 @@ public sealed class Keymap
         {
             [keybind] = KeybindCategoryDefinition.Canonicalize(action)
         };
-        return new Keymap(actions.ToFrozenDictionary());
+        return new Keymap(actions.ToFrozenDictionary(), WithoutFavorite(keybind));
     }
 
     /// <summary>
@@ -101,8 +135,13 @@ public sealed class Keymap
     {
         var actions = new Dictionary<Keybind, string>(_actions);
         actions.Remove(keybind);
-        return new Keymap(actions.ToFrozenDictionary());
+        return new Keymap(actions.ToFrozenDictionary(), WithoutFavorite(keybind));
     }
+
+    private FrozenDictionary<Keybind, string> WithoutFavorite(Keybind keybind) =>
+        _favorites.ContainsKey(keybind)
+            ? _favorites.Where(kvp => kvp.Key != keybind).ToFrozenDictionary()
+            : _favorites;
 
     /// <summary>
     /// Serializes the action bindings in the keybindings file format.

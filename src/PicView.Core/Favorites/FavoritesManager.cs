@@ -21,6 +21,12 @@ public static class FavoritesManager
 {
     private static List<FavoriteEntry>? _entries;
     private static FavoritesConfiguration? _favoritesConfiguration;
+    private static int _version;
+
+    /// <summary>
+    ///     Changes whenever the favorites change, so readers can tell when to rebuild what they derive from them.
+    /// </summary>
+    public static int Version => Volatile.Read(ref _version);
 
     /// <summary>
     ///     Gets the number of entries in the favorites list.
@@ -49,6 +55,7 @@ public static class FavoritesManager
         _favoritesConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(_favoritesConfiguration);
         _entries = [];
         LoadFromFile(_favoritesConfiguration.TryGetCurrentUserConfigPath);
+        OnChanged();
     }
 
     /// <summary>
@@ -65,6 +72,8 @@ public static class FavoritesManager
         {
             LoadFromFile(configPath);
         }
+
+        OnChanged();
     }
 
     /// <summary>
@@ -133,6 +142,7 @@ public static class FavoritesManager
             _entries.Add(new FavoriteEntry(normalizedPath, normalizedKeybind));
         }
 
+        OnChanged();
         await SaveToFileAsync().ConfigureAwait(false);
     }
 
@@ -166,6 +176,7 @@ public static class FavoritesManager
         var normalizedKeybind = keybind?.Trim() ?? string.Empty;
         EvictDuplicateKeybind(targetPath, normalizedKeybind);
         _entries[existingIndex] = new FavoriteEntry(_entries[existingIndex].FilePath, normalizedKeybind);
+        OnChanged();
     }
 
     /// <summary>
@@ -186,6 +197,7 @@ public static class FavoritesManager
         }
 
         _entries.RemoveAt(index);
+        OnChanged();
         await SaveToFileAsync().ConfigureAwait(false);
         return true;
     }
@@ -196,6 +208,7 @@ public static class FavoritesManager
     public static async Task ClearAsync()
     {
         _entries?.Clear();
+        OnChanged();
         await SaveToFileAsync().ConfigureAwait(false);
     }
 
@@ -248,6 +261,8 @@ public static class FavoritesManager
         }
     }
 
+    private static void OnChanged() => Interlocked.Increment(ref _version);
+
     private static void EvictDuplicateKeybind(string targetFilePath, string keybind)
     {
         if (_entries is null || string.IsNullOrWhiteSpace(keybind))
@@ -285,6 +300,7 @@ public static class FavoritesManager
             if (!seenKeybinds.Add(entry.Keybind))
             {
                 _entries[i] = new FavoriteEntry(entry.FilePath, string.Empty);
+                OnChanged();
             }
         }
     }
