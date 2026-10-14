@@ -83,9 +83,6 @@
     <Compile Update="Views\WinMainWindow.axaml.cs">
       <DependentUpon>WinMainWindow.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\WinTitleBar.axaml.cs">
-      <DependentUpon>WinTitleBar.axaml</DependentUpon>
-    </Compile>
     <Compile Update="Views\BatchResizeResizeWindow.axaml.cs">
       <DependentUpon>BatchResizeResizeWindow.axaml</DependentUpon>
       <SubType>Code</SubType>

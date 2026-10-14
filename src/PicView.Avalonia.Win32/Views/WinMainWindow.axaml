@@ -16,7 +16,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border BorderBrush="{DynamicResource WindowBorderColor}" BorderThickness="1">
         <DockPanel LastChildFill="True">
-            <views:WinTitleBar DockPanel.Dock="Top" x:Name="Titlebar" />
+            <main:CustomTitleBar DockPanel.Dock="Top" x:Name="Titlebar" />
             <uc:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />
             <main:MainView x:Name="MainView" />
         </DockPanel>

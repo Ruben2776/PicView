@@ -82,7 +82,7 @@ public partial class WinMainWindow : MainWindow, IPlatformWindowService
             {
                 if (windowViewModel.IsEditableTitlebarOpen.Value && !Titlebar.IsPointerOver)
                 {
-                    Titlebar.EditableTitlebar.CloseTitlebar();
+                    Titlebar.SharedEditableTitlebar?.CloseTitlebar();
                 }
 
                 if (!UIHelper.GetDropDownMenu?.IsPointerOver ?? false)

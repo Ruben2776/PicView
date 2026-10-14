@@ -12,6 +12,7 @@ public partial class MacOSTitlebar : MainTitleBar
         InitializeComponent();
         SharedDropDownMenuButton = DropDownMenuButton;
         SharedSearchButton = SearchButton;
+        SharedEditableTitlebar = EditableTitlebar;
         
         Loaded += (_, _) =>
         {

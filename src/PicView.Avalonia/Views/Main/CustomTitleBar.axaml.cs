@@ -8,15 +8,16 @@ using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using R3;
 
-namespace PicView.Avalonia.Win32.Views;
+namespace PicView.Avalonia.Views.Main;
 
-public partial class WinTitleBar : MainTitleBar
+public partial class CustomTitleBar : MainTitleBar
 {
-    public WinTitleBar()
+    public CustomTitleBar()
     {
         InitializeComponent();
         SharedDropDownMenuButton = DropDownMenuButton;
         SharedSearchButton = SearchButton;
+        SharedEditableTitlebar = EditableTitlebar;
         
         Loaded += (_, _) =>
         {
@@ -54,7 +55,7 @@ public partial class WinTitleBar : MainTitleBar
                 {
                     ClosedMenu(vm);
                 }
-            }, DebugHelper.LogError(nameof(WinTitleBar), nameof(InitializeEventHandlers)))
+            }, DebugHelper.LogError(nameof(CustomTitleBar), nameof(InitializeEventHandlers)))
             .AddTo(mainWindow.Disposables);
     }
 
