@@ -219,14 +219,14 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         var hasFavoritesCategory = FavoritesCategory is { Entries.Count: > 0 };
         if (hasFavoritesCategory)
         {
-            var resolvedFavoriteHotKeys = ResolveDeduplicatedFavoriteHotKeys(FavoritesCategory!.Entries);
+            var resolvedFavoriteKeybinds = ResolveDeduplicatedFavoriteKeybinds(FavoritesCategory!.Entries);
             for (var i = 0; i < FavoritesCategory.Entries.Count; i++)
             {
                 var (_, filePath) = FavoritesCategory.Entries[i];
-                FavoritesManager.SetHotKey(filePath, resolvedFavoriteHotKeys[i]);
+                FavoritesManager.SetKeybind(filePath, resolvedFavoriteKeybinds[i]);
             }
 
-            FinalizeSaveOnUIThread(resolvedFavoriteHotKeys);
+            FinalizeSaveOnUIThread(resolvedFavoriteKeybinds);
         }
         else
         {
@@ -240,16 +240,16 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         }
     }
 
-    private string[] ResolveDeduplicatedFavoriteHotKeys(List<(KeybindBox Box, string FunctionName)> entries)
+    private string[] ResolveDeduplicatedFavoriteKeybinds(List<(KeybindBox Box, string FunctionName)> entries)
     {
         var count = entries.Count;
-        var rawHotKeys = new string[count];
+        var rawKeybinds = new string[count];
         var orderIndices = new int[count];
 
         for (var i = 0; i < count; i++)
         {
             var box = entries[i].Box;
-            rawHotKeys[i] = box.Keybinds is { Count: > 0 }
+            rawKeybinds[i] = box.Keybinds is { Count: > 0 }
                 ? box.Keybinds[^1].GetFormattedForJSON()
                 : string.Empty;
             orderIndices[i] = i;
@@ -269,37 +269,37 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         for (var i = 0; i < count; i++)
         {
             var idx = orderIndices[i];
-            var hotKey = rawHotKeys[idx];
-            if (string.IsNullOrWhiteSpace(hotKey))
+            var keybind = rawKeybinds[idx];
+            if (string.IsNullOrWhiteSpace(keybind))
             {
                 resolved[idx] = string.Empty;
                 continue;
             }
 
-            if (activeOwners.TryGetValue(hotKey, out var previousIdx))
+            if (activeOwners.TryGetValue(keybind, out var previousIdx))
             {
                 resolved[previousIdx] = string.Empty;
             }
 
-            activeOwners[hotKey] = idx;
-            resolved[idx] = hotKey;
+            activeOwners[keybind] = idx;
+            resolved[idx] = keybind;
         }
 
         return resolved;
     }
 
-    private void FinalizeSaveOnUIThread(string[]? resolvedFavoriteHotKeys)
+    private void FinalizeSaveOnUIThread(string[]? resolvedFavoriteKeybinds)
     {
-        if (FavoritesCategory is not null && resolvedFavoriteHotKeys is not null)
+        if (FavoritesCategory is not null && resolvedFavoriteKeybinds is not null)
         {
             _isApplyingSnapshot = true;
             try
             {
-                for (var i = 0; i < FavoritesCategory.Entries.Count && i < resolvedFavoriteHotKeys.Length; i++)
+                for (var i = 0; i < FavoritesCategory.Entries.Count && i < resolvedFavoriteKeybinds.Length; i++)
                 {
                     var (box, _) = FavoritesCategory.Entries[i];
-                    var expectedHotKey = resolvedFavoriteHotKeys[i];
-                    if (string.IsNullOrWhiteSpace(expectedHotKey))
+                    var expectedKeybind = resolvedFavoriteKeybinds[i];
+                    if (string.IsNullOrWhiteSpace(expectedKeybind))
                     {
                         if (box.Keybinds.Count > 0)
                         {
@@ -308,7 +308,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                     }
                     else
                     {
-                        var parsed = Keybind.Parse(expectedHotKey);
+                        var parsed = Keybind.Parse(expectedKeybind);
                         if (parsed.HasValue && (box.Keybinds.Count != 1 || box.Keybinds[0] != parsed.Value))
                         {
                             box.Keybinds.Clear();
@@ -331,14 +331,14 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                 }
                 else
                 {
-                    for (var i = 0; i < FavoritesCategory.Entries.Count && i < resolvedFavoriteHotKeys.Length; i++)
+                    for (var i = 0; i < FavoritesCategory.Entries.Count && i < resolvedFavoriteKeybinds.Length; i++)
                     {
                         var (_, filePath) = FavoritesCategory.Entries[i];
                         var entryVm = favoritesVm.Entries.FirstOrDefault(e =>
                             string.Equals(e.FilePath.CurrentValue, filePath, StringComparison.Ordinal));
                         if (entryVm is not null)
                         {
-                            entryVm.HotKey.Value = resolvedFavoriteHotKeys[i];
+                            entryVm.Keybind.Value = resolvedFavoriteKeybinds[i];
                         }
                     }
                 }
@@ -684,10 +684,10 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                 MaxTags = 1
             };
 
-            var hotKey = entry.HotKey.CurrentValue;
-            if (!string.IsNullOrWhiteSpace(hotKey))
+            var keybind = entry.Keybind.CurrentValue;
+            if (!string.IsNullOrWhiteSpace(keybind))
             {
-                var parsed = Keybind.Parse(hotKey);
+                var parsed = Keybind.Parse(keybind);
                 if (parsed.HasValue && (parsed.Value.Key != Key.None || parsed.Value.MouseButton != MouseButton.None))
                 {
                     keybindBox.Keybinds = [parsed.Value];

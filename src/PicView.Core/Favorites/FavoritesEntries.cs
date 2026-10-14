@@ -2,12 +2,12 @@ using System.Text.Json.Serialization;
 
 namespace PicView.Core.Favorites;
 
-public struct FavoriteEntry(string filePath, string hotKey)
+public struct FavoriteEntry(string filePath, string keybind)
 {
     [JsonPropertyName("FilePath")]
     public string FilePath { get; set; } = filePath;
 
-    public string HotKey { get; set; } = hotKey;
+    public string Keybind { get; set; } = keybind;
 }
 
 public class FavoritesEntries

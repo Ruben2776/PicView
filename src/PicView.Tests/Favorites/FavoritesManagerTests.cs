@@ -45,7 +45,7 @@ public class FavoritesManagerTests : IDisposable
 
         Assert.Equal(1, FavoritesManager.Count);
         Assert.Equal(folderPath, FavoritesManager.AllEntries[0].FilePath);
-        Assert.Equal("Ctrl+1", FavoritesManager.AllEntries[0].HotKey);
+        Assert.Equal("Ctrl+1", FavoritesManager.AllEntries[0].Keybind);
         Assert.True(FavoritesManager.Contains(folderPath));
         Assert.True(FavoritesManager.Contains(folderPath + Path.DirectorySeparatorChar));
 
@@ -53,7 +53,7 @@ public class FavoritesManagerTests : IDisposable
         FavoritesManager.Initialize(_configPath);
         Assert.Equal(1, FavoritesManager.Count);
         Assert.Equal(folderPath, FavoritesManager.AllEntries[0].FilePath);
-        Assert.Equal("Ctrl+1", FavoritesManager.AllEntries[0].HotKey);
+        Assert.Equal("Ctrl+1", FavoritesManager.AllEntries[0].Keybind);
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class FavoritesManagerTests : IDisposable
 
         Assert.Equal(1, FavoritesManager.Count);
         Assert.Equal(folderPath, FavoritesManager.AllEntries[0].FilePath);
-        Assert.Equal("Alt+W", FavoritesManager.AllEntries[0].HotKey);
+        Assert.Equal("Alt+W", FavoritesManager.AllEntries[0].Keybind);
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class FavoritesManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task AddAsync_DuplicateDirectory_UpdatesHotKeyInPlace()
+    public async Task AddAsync_DuplicateDirectory_UpdatesKeybindInPlace()
     {
         var folderPath = Path.Combine(_tempRoot, "Albums");
         Directory.CreateDirectory(folderPath);
@@ -92,7 +92,7 @@ public class FavoritesManagerTests : IDisposable
         await FavoritesManager.AddAsync(folderPath + Path.DirectorySeparatorChar, "Ctrl+9");
 
         Assert.Equal(1, FavoritesManager.Count);
-        Assert.Equal("Ctrl+9", FavoritesManager.AllEntries[0].HotKey);
+        Assert.Equal("Ctrl+9", FavoritesManager.AllEntries[0].Keybind);
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public class FavoritesManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task AddAsync_WithDuplicateHotKeyAcrossDifferentFolders_EvictsPreviousHotKey()
+    public async Task AddAsync_WithDuplicateKeybindAcrossDifferentFolders_EvictsPreviousKeybind()
     {
         var folderA = Path.Combine(_tempRoot, "FolderA");
         var folderB = Path.Combine(_tempRoot, "FolderB");
@@ -151,18 +151,18 @@ public class FavoritesManagerTests : IDisposable
         await FavoritesManager.AddAsync(folderB, "Ctrl + D1");
 
         Assert.Equal(2, FavoritesManager.Count);
-        Assert.Equal(string.Empty, FavoritesManager.AllEntries[0].HotKey);
-        Assert.Equal("Ctrl + D1", FavoritesManager.AllEntries[1].HotKey);
+        Assert.Equal(string.Empty, FavoritesManager.AllEntries[0].Keybind);
+        Assert.Equal("Ctrl + D1", FavoritesManager.AllEntries[1].Keybind);
 
-        // Re-initialize from disk to verify persistence of evicted hotkey
+        // Re-initialize from disk to verify persistence of evicted Keybind
         FavoritesManager.Initialize(_configPath);
         Assert.Equal(2, FavoritesManager.Count);
-        Assert.Equal(string.Empty, FavoritesManager.AllEntries[0].HotKey);
-        Assert.Equal("Ctrl + D1", FavoritesManager.AllEntries[1].HotKey);
+        Assert.Equal(string.Empty, FavoritesManager.AllEntries[0].Keybind);
+        Assert.Equal("Ctrl + D1", FavoritesManager.AllEntries[1].Keybind);
     }
 
     [Fact]
-    public async Task SetHotKey_WhenAssigningExistingHotKeyToEarlierEntry_EvictsLaterEntryOnSave()
+    public async Task SetKeybind_WhenAssigningExistingKeybindToEarlierEntry_EvictsLaterEntryOnSave()
     {
         var folderA = Path.Combine(_tempRoot, "FolderA");
         var folderB = Path.Combine(_tempRoot, "FolderB");
@@ -172,11 +172,11 @@ public class FavoritesManagerTests : IDisposable
         await FavoritesManager.AddAsync(folderA, string.Empty);
         await FavoritesManager.AddAsync(folderB, "F9");
 
-        FavoritesManager.SetHotKey(folderA, "F9");
+        FavoritesManager.SetKeybind(folderA, "F9");
         await FavoritesManager.SaveToFileAsync();
 
-        Assert.Equal("F9", FavoritesManager.AllEntries[0].HotKey);
-        Assert.Equal(string.Empty, FavoritesManager.AllEntries[1].HotKey);
+        Assert.Equal("F9", FavoritesManager.AllEntries[0].Keybind);
+        Assert.Equal(string.Empty, FavoritesManager.AllEntries[1].Keybind);
     }
 
     [Fact]
@@ -197,11 +197,11 @@ public class FavoritesManagerTests : IDisposable
 
         Assert.NotNull(editedEntry);
         Assert.Equal(folderPath, editedEntry.Value.FilePath);
-        Assert.Equal("Ctrl + F", editedEntry.Value.HotKey);
+        Assert.Equal("Ctrl + F", editedEntry.Value.Keybind);
     }
 
     [Fact]
-    public async Task AddOrEditAsync_WithExistingFilePath_UpdatesHotKeyInPlaceAndEvictsDuplicates()
+    public async Task AddOrEditAsync_WithExistingFilePath_UpdatesKeybindInPlaceAndEvictsDuplicates()
     {
         var folderA = Path.Combine(_tempRoot, "FolderA");
         var folderB = Path.Combine(_tempRoot, "FolderB");
@@ -216,19 +216,19 @@ public class FavoritesManagerTests : IDisposable
         await favoritesVm.AddFavorite(folderB, "Ctrl+2");
 
         Assert.Equal(2, favoritesVm.Entries.Count);
-        Assert.Equal("Ctrl+1", favoritesVm.Entries[0].HotKey.CurrentValue);
-        Assert.Equal("Ctrl+2", favoritesVm.Entries[1].HotKey.CurrentValue);
+        Assert.Equal("Ctrl+1", favoritesVm.Entries[0].Keybind.CurrentValue);
+        Assert.Equal("Ctrl+2", favoritesVm.Entries[1].Keybind.CurrentValue);
 
         // Edit folderA to take Ctrl+2 (which should update folderA and evict duplicate from folderB)
         await favoritesVm.AddOrEditAsync(new FavoriteEntry(folderA, "Ctrl+2"));
 
         Assert.Equal(2, favoritesVm.Entries.Count);
-        Assert.Equal("Ctrl+2", favoritesVm.Entries[0].HotKey.CurrentValue);
-        Assert.Equal(string.Empty, favoritesVm.Entries[1].HotKey.CurrentValue);
+        Assert.Equal("Ctrl+2", favoritesVm.Entries[0].Keybind.CurrentValue);
+        Assert.Equal(string.Empty, favoritesVm.Entries[1].Keybind.CurrentValue);
 
         // Verify persistence in FavoritesManager
-        Assert.Equal("Ctrl+2", FavoritesManager.AllEntries[0].HotKey);
-        Assert.Equal(string.Empty, FavoritesManager.AllEntries[1].HotKey);
+        Assert.Equal("Ctrl+2", FavoritesManager.AllEntries[0].Keybind);
+        Assert.Equal(string.Empty, FavoritesManager.AllEntries[1].Keybind);
     }
 
     [Fact]
@@ -247,7 +247,7 @@ public class FavoritesManagerTests : IDisposable
 
         Assert.Single(favoritesVm.Entries);
         Assert.Equal(folder, favoritesVm.Entries[0].FilePath.CurrentValue);
-        Assert.Equal("Alt+N", favoritesVm.Entries[0].HotKey.CurrentValue);
+        Assert.Equal("Alt+N", favoritesVm.Entries[0].Keybind.CurrentValue);
         Assert.True(FavoritesManager.Contains(folder));
     }
 
@@ -266,6 +266,6 @@ public class FavoritesManagerTests : IDisposable
         var spun = SpinWait.SpinUntil(() => favoritesVm.Entries.Count == 1, 3000);
         Assert.True(spun);
         Assert.Equal(folder, favoritesVm.Entries[0].FilePath.CurrentValue);
-        Assert.Equal("Ctrl+U", favoritesVm.Entries[0].HotKey.CurrentValue);
+        Assert.Equal("Ctrl+U", favoritesVm.Entries[0].Keybind.CurrentValue);
     }
 }

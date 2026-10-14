@@ -45,9 +45,9 @@ public class FavoritesViewModel : IDisposable
         UpdateFavorites();
     }
 
-    public async ValueTask AddFavorite(string path, string hotKey = "")
+    public async ValueTask AddFavorite(string path, string keybind = "")
     {
-        await FavoritesManager.AddAsync(path, hotKey).ConfigureAwait(false);
+        await FavoritesManager.AddAsync(path, keybind).ConfigureAwait(false);
         UpdateFavorites();
     }
 
@@ -59,10 +59,10 @@ public class FavoritesViewModel : IDisposable
 
     public async ValueTask AddOrEditAsync(FavoriteEntry entry)
     {
-        await AddOrEditAsync(entry.FilePath, entry.HotKey).ConfigureAwait(false);
+        await AddOrEditAsync(entry.FilePath, entry.Keybind).ConfigureAwait(false);
     }
 
-    public async ValueTask AddOrEditAsync(string path, string hotKey = "")
+    public async ValueTask AddOrEditAsync(string path, string keybind = "")
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -73,13 +73,13 @@ public class FavoritesViewModel : IDisposable
 
         if (FavoritesManager.Contains(normalizedPath))
         {
-            FavoritesManager.SetHotKey(normalizedPath, hotKey);
+            FavoritesManager.SetKeybind(normalizedPath, keybind);
             await FavoritesManager.SaveToFileAsync().ConfigureAwait(false);
             UpdateFavorites();
         }
         else
         {
-            await FavoritesManager.AddAsync(path, hotKey).ConfigureAwait(false);
+            await FavoritesManager.AddAsync(path, keybind).ConfigureAwait(false);
             UpdateFavorites();
         }
     }
@@ -114,7 +114,7 @@ public class FavoritesViewModel : IDisposable
             entryVm.Initialize(
                 normalizedEntryPath,
                 folderName,
-                entry.HotKey,
+                entry.Keybind,
                 isCurrentItem,
                 _vm);
             Entries.Add(entryVm);

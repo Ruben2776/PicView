@@ -82,7 +82,7 @@
                     Classes="txt"
                     DockPanel.Dock="Right"
                     Padding="10,0"
-                    Text="{CompiledBinding HotKey.Value}" />
+                    Text="{CompiledBinding Keybind.Value}" />
 
                 <customControls:TextIconButton
                     Background="Transparent"
