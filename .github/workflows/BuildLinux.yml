@@ -1,0 +1,31 @@
+name: Build PicView Linux
+
+# Build-only check that keeps the Linux project compiling while it is not released.
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        platform: [x64, arm64]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup .NET 11 SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '11.x'
+
+      - name: Build
+        run: dotnet build src/PicView.Avalonia.Linux/PicView.Avalonia.Linux.csproj -c Release -p:Platform=${{ matrix.platform }}
