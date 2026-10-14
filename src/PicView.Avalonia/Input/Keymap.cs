@@ -1,5 +1,6 @@
 using System.Collections.Frozen;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Avalonia.Input;
 using PicView.Core.DebugTools;
 using PicView.Core.Favorites;
@@ -7,10 +8,14 @@ using PicView.Core.Keybindings;
 
 namespace PicView.Avalonia.Input;
 
+[JsonSourceGenerationOptions(AllowTrailingCommas = true, WriteIndented = true)]
+[JsonSerializable(typeof(Dictionary<string, string>))]
+internal partial class SourceGenerationContext : JsonSerializerContext;
+
 /// <summary>
 /// The immutable assignment of <see cref="Keybind"/>s to owners. Each Keybind has at most one owner.
 /// </summary>
-public sealed class Keymap
+public sealed class Keymap : IEquatable<Keymap>
 {
     private readonly FrozenDictionary<Keybind, string> _actions;
     private readonly FrozenDictionary<Keybind, string> _favorites;
@@ -129,6 +134,39 @@ public sealed class Keymap
     }
 
     /// <summary>
+    /// Returns a keymap where <paramref name="keybind"/> is the only Keybind of the favorite at
+    /// <paramref name="path"/>, taking it from any previous owner.
+    /// </summary>
+    public Keymap AssignToFavorite(Keybind keybind, string path)
+    {
+        var favorites = _favorites
+            .Where(kvp => kvp.Key != keybind && !string.Equals(kvp.Value, path, StringComparison.Ordinal))
+            .ToDictionary();
+        favorites[keybind] = path;
+
+        var actions = _actions.ContainsKey(keybind)
+            ? _actions.Where(kvp => kvp.Key != keybind).ToFrozenDictionary()
+            : _actions;
+        return new Keymap(actions, favorites.ToFrozenDictionary());
+    }
+
+    /// <summary>
+    /// Returns the Keybind of the favorite at <paramref name="path"/>, or <c>null</c> if it has none.
+    /// </summary>
+    public Keybind? FavoriteKeybind(string path)
+    {
+        foreach (var (keybind, favoritePath) in _favorites)
+        {
+            if (string.Equals(favoritePath, path, StringComparison.Ordinal))
+            {
+                return keybind;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
     /// Returns a keymap where <paramref name="keybind"/> has no owner.
     /// </summary>
     public Keymap Unassign(Keybind keybind)
@@ -151,4 +189,34 @@ public sealed class Keymap
                 _actions.ToDictionary(kvp => kvp.Key.GetFormattedForJSON(), kvp => kvp.Value, StringComparer.OrdinalIgnoreCase),
                 SourceGenerationContext.Default.DictionaryStringString)
             .Replace("\\u002B", "+", StringComparison.Ordinal); // Fix plus sign encoded to Unicode
+
+    #region IEquatable
+
+    public bool Equals(Keymap? other) =>
+        other is not null &&
+        (ReferenceEquals(this, other) || (SameEntries(_actions, other._actions) && SameEntries(_favorites, other._favorites)));
+
+    public override bool Equals(object? obj) => obj is Keymap other && Equals(other);
+
+    public override int GetHashCode() => HashCode.Combine(_actions.Count, _favorites.Count);
+
+    private static bool SameEntries(FrozenDictionary<Keybind, string> left, FrozenDictionary<Keybind, string> right)
+    {
+        if (left.Count != right.Count)
+        {
+            return false;
+        }
+
+        foreach (var (keybind, owner) in left)
+        {
+            if (!right.TryGetValue(keybind, out var otherOwner) || !string.Equals(owner, otherOwner, StringComparison.Ordinal))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    #endregion
 }

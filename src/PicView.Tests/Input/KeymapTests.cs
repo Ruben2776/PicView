@@ -112,6 +112,35 @@ public class KeymapTests
     }
 
     [Fact]
+    public void AssignToFavorite_TakesKeybindFromActionAndReplacesFavoritesPreviousKeybind()
+    {
+        var right = new Keybind(Key.Right);
+        var keymap = Keymap.FromJson(null, Defaults).WithFavorites([new FavoriteEntry("/pics", "F7")]);
+
+        var updated = keymap.AssignToFavorite(right, "/pics");
+
+        Assert.Equal(KeymapResolution.Favorite("/pics"), updated.Resolve(right));
+        Assert.Equal(right, updated.FavoriteKeybind("/pics"));
+        Assert.Equal(KeymapResolution.None, updated.Resolve(new Keybind(Key.F7)));
+        Assert.Empty(updated.KeybindsFor("Next"));
+    }
+
+    [Fact]
+    public void Equals_ComparesBindingsNotHistory()
+    {
+        var right = new Keybind(Key.Right);
+        var original = Keymap.FromJson(null, Defaults).WithFavorites([new FavoriteEntry("/pics", "F7")]);
+
+        var roundTrip = original.Assign(right, "Last").Assign(right, "Next");
+        var changed = original.Assign(right, "Last");
+        var favoriteMoved = original.AssignToFavorite(new Keybind(Key.F8), "/pics");
+
+        Assert.Equal(original, roundTrip);
+        Assert.NotEqual(original, changed);
+        Assert.NotEqual(original, favoriteMoved);
+    }
+
+    [Fact]
     public void ToJson_RoundTripsAllBindings_IncludingUnknownActions()
     {
         var keymap = Keymap.FromJson(
