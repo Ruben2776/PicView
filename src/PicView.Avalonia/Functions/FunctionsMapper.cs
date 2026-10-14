@@ -521,13 +521,13 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         return ValueTask.CompletedTask;
     }
 
-    /// <inheritdoc cref="Interfaces.IPlatformWindowService.MaximizeRestore" />
+    /// <inheritdoc cref="PicView.Core.IPlatform.IPlatformWindowService.MaximizeRestore" />
     public async ValueTask Maximize()
     {
         await vm.PlatformWindowService.MaximizeRestore().ConfigureAwait(false);
     }
     
-    /// <inheritdoc cref="Interfaces.IPlatformWindowService.Restore" />
+    /// <inheritdoc cref="PicView.Core.IPlatform.IPlatformWindowService.Restore" />
     public async ValueTask Restore()
     {
         await vm.PlatformWindowService.Restore().ConfigureAwait(false);
@@ -634,7 +634,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         return ValueTask.CompletedTask;
     }
 
-    /// <inheritdoc cref="Interfaces.IPlatformWindowService.ToggleFullscreen" />
+    /// <inheritdoc cref="PicView.Core.IPlatform.IPlatformWindowService.ToggleFullscreen" />
     public async ValueTask ToggleFullscreen() =>
         await vm.PlatformWindowService.ToggleFullscreen().ConfigureAwait(false);
     
