@@ -3,11 +3,9 @@ using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
-using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using PicView.Avalonia;
 using PicView.Avalonia.CustomControls;
 
 namespace PicView.Tests.Controls;
@@ -15,16 +13,6 @@ namespace PicView.Tests.Controls;
 [Collection("Sequential")]
 public class TagBoxTests
 {
-    static TagBoxTests()
-    {
-        if (Application.Current == null)
-        {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-        }
-    }
-
     public TagBoxTests()
     {
         SetDefaults();
@@ -41,7 +29,7 @@ public class TagBoxTests
         return timerField?.GetValue(presenter) as DispatcherTimer;
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TagBox_WithTags_ShowsTagsAndRemovesTag()
     {
         var tagBox = new TagBox
@@ -63,7 +51,7 @@ public class TagBoxTests
         Assert.DoesNotContain("Shift", tagBox.Tags);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TagBox_EmptyPseudoClass_UpdatesCorrectly()
     {
         var tagBox = new TagBox();
@@ -84,7 +72,7 @@ public class TagBoxTests
         Assert.Contains(TagBox.Empty, tagBox.Classes);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TagBox_WhenFocused_StartsCaretBlinking_AndStopsOnLostFocus()
     {
         var tagBox = new TagBox { PlaceholderText = "Press key..." };
@@ -122,7 +110,7 @@ public class TagBoxTests
         Assert.False(timer.IsEnabled);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TagBox_OnPointerPressed_FocusesAndShowsCaret()
     {
         var tagBox = new TagBox { PlaceholderText = "Press key..." };
@@ -161,7 +149,7 @@ public class TagBoxTests
         Assert.True(timer.IsEnabled);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_OnPointerPressed_FocusesTagBoxAndShowsCaret()
     {
         var keybindBox = new KeybindBox { PlaceholderText = "Press key..." };
@@ -201,7 +189,7 @@ public class TagBoxTests
         Assert.True(timer.IsEnabled);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TagBox_MaxTags_ReachingMax_SetsMaxPseudoClass()
     {
         var tagBox = new TagBox { MaxTags = 2 };
@@ -228,7 +216,7 @@ public class TagBoxTests
         Assert.DoesNotContain(TagBox.Max, tagBox.Classes);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TagBox_WhenAtMax_CursorIsNo_AndPresenterIsHidden()
     {
         var tagBox = new TagBox { MaxTags = 2, PlaceholderText = "Press key..." };
@@ -256,7 +244,7 @@ public class TagBoxTests
         Assert.Equal("No", border.Cursor?.ToString());
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TagBox_WhenAtMax_PointerPressedDoesNotShowPresenterOrCaret()
     {
         var tagBox = new TagBox { MaxTags = 2, PlaceholderText = "Press key..." };
@@ -294,7 +282,7 @@ public class TagBoxTests
         Assert.True(timer is null || !timer.IsEnabled);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TagBox_AddMoreThanMaxTags_ThrowsInvalidOperationException()
     {
         var tagBox = new TagBox { MaxTags = 2 };
@@ -309,7 +297,7 @@ public class TagBoxTests
         Assert.Equal(2, tagBox.Tags.Count);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TagCollection_EnforcesMaxTags_ThrowsInvalidOperationException()
     {
         var collection = new TagCollection(2)
@@ -326,7 +314,7 @@ public class TagBoxTests
         Assert.Equal(2, collection.Count);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TagCollection_ConstructorWithCollectionExceedingMax_ThrowsArgumentException()
     {
         Assert.Throws<ArgumentException>(() =>
@@ -335,7 +323,7 @@ public class TagBoxTests
         });
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void TagCollection_AllowsModificationsWithinLimit()
     {
         var collection = new TagCollection(2);

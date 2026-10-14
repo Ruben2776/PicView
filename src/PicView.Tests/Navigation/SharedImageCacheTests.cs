@@ -4,6 +4,7 @@ using PicView.Core.Preloading;
 
 namespace PicView.Tests.Navigation;
 
+[Collection("Sequential")]
 public class SharedImageCacheTests
 {
     private readonly SharedImageCache _cache;

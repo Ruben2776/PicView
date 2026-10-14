@@ -4,6 +4,7 @@ using PicView.Core.Config;
 
 namespace PicView.Tests.Navigation;
 
+[Collection("Sequential")]
 public class ImageIteratorGetIterationsTests
 {
     public ImageIteratorGetIterationsTests()

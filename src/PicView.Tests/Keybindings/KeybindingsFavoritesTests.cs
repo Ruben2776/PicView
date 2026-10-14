@@ -1,8 +1,5 @@
-using Avalonia;
-using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Threading;
-using PicView.Avalonia;
 using PicView.Avalonia.Controllers;
 using PicView.Avalonia.Functions;
 using PicView.Avalonia.Input;
@@ -23,16 +20,6 @@ public class KeybindingsFavoritesTests : IDisposable
     private readonly string _tempRoot;
     private readonly string _configPath;
 
-    static KeybindingsFavoritesTests()
-    {
-        if (Application.Current == null)
-        {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-        }
-    }
-
     public KeybindingsFavoritesTests()
     {
         SetDefaults();
@@ -47,7 +34,6 @@ public class KeybindingsFavoritesTests : IDisposable
     public void Dispose()
     {
         MainKeyboardShortcuts.Reset();
-        SynchronizationContext.SetSynchronizationContext(null);
         if (Directory.Exists(_tempRoot))
         {
             try
@@ -96,7 +82,7 @@ public class KeybindingsFavoritesTests : IDisposable
         return core;
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void Initialize_WhenFavoritesEntriesIsEmpty_SkipsFavoritesCategory()
     {
         var core = CreateCoreWithMainWindow(out var mainWindowVm);
@@ -112,7 +98,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Empty(view.FavoritesItems.Items);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void Initialize_WhenFavoritesEntriesHasItems_PopulatesHeaderAndFolderNameActions()
     {
         var folderA = Path.Combine(_tempRoot, "VacationPhotos");
@@ -148,7 +134,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Empty(boxB.Keybinds);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void SaveKeybindings_WhenDuplicateKeybindAssignedAcrossFavorites_EvictsPreviousFavoriteKeybind()
     {
         var folderA = Path.Combine(_tempRoot, "Alpha");
@@ -186,7 +172,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal(string.Empty, mainWindowVm.Favorites.Entries[1].Keybind.CurrentValue);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void ShortcutHandling_WhenFavoriteKeyboardOrMouseKeybindMatches_DispatchesOpenPathAsync()
     {
         var folderA = Path.Combine(_tempRoot, "KeyboardFolder");
@@ -227,7 +213,7 @@ public class KeybindingsFavoritesTests : IDisposable
         return controller;
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void EditingActionBox_WithKeybindOfAnotherAction_TakesItImmediately()
     {
         Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}"));
@@ -238,7 +224,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Empty(controller.ActionBox("Next")!.Keybinds);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void Undo_AfterTakingKeybind_RestoresBothActions()
     {
         Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}"));
@@ -251,7 +237,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal([new Keybind(Key.Left)], controller.ActionBox("Prev")!.Keybinds);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void SaveKeybindings_ActionTakesFavoritesKeybind_ClearsFavoriteAndResolvesToAction()
     {
         var folder = Path.Combine(_tempRoot, "Gamma");
@@ -269,7 +255,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal(KeymapResolution.Action("Prev"), Keymaps.Resolve(new Keybind(Key.F7)));
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void SaveKeybindings_KeepsBindingsOfActionsNotShownInCategories()
     {
         Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}"));
@@ -293,7 +279,7 @@ public class KeybindingsFavoritesTests : IDisposable
         }
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void FavoriteDialog_WithInitialValues_PreselectsValues()
     {
         var testPath = Path.Combine(_tempRoot, "PreselectedFolder");

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Preloading;
@@ -5,12 +6,14 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Tests.Preload;
 
+[Collection("Sequential")]
 public class PreloaderTests
 {
     private class FakeImageCache : IImageCache
     {
-        public Dictionary<int, PreLoadValue> Items { get; } = new();
-        public Dictionary<string, PreLoadValue> ItemsByFile { get; } = new();
+        // Preloader adds items from parallel background tasks
+        public ConcurrentDictionary<int, PreLoadValue> Items { get; } = new();
+        public ConcurrentDictionary<string, PreLoadValue> ItemsByFile { get; } = new();
         
         public bool TryGet(FileInfo f, out PreLoadValue? value)
         {

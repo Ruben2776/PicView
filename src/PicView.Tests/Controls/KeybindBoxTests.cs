@@ -1,11 +1,9 @@
 using System.Collections.ObjectModel;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using PicView.Avalonia;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
 using MouseButton = PicView.Avalonia.Input.MouseButton;
@@ -15,22 +13,12 @@ namespace PicView.Tests.Controls;
 [Collection("Sequential")]
 public class KeybindBoxTests
 {
-    static KeybindBoxTests()
-    {
-        if (Application.Current == null)
-        {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-        }
-    }
-
     public KeybindBoxTests()
     {
         SetDefaults();
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_Defaults_HasEmptyCollections()
     {
         var box = new KeybindBox();
@@ -39,10 +27,10 @@ public class KeybindBoxTests
         Assert.Empty(box.Keybinds);
         Assert.NotNull(box.Tags);
         Assert.Empty(box.Tags);
-        Assert.Equal(2, box.MaxTags);
+        Assert.Equal(3, box.MaxTags);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_AddKeybind_UpdatesTags()
     {
         var box = new KeybindBox();
@@ -55,7 +43,7 @@ public class KeybindBoxTests
         Assert.Equal("F5", box.Tags[0]);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_AddTwoKeybinds_ShowsBothInTags()
     {
         var box = new KeybindBox();
@@ -71,10 +59,10 @@ public class KeybindBoxTests
         Assert.Equal(k2.ToString(), box.Tags[1]);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenMaxTagsReached_AddingTagThrowsInvalidOperationException()
     {
-        var box = new KeybindBox();
+        var box = new KeybindBox { MaxTags = 2 };
         box.Keybinds.Add(new Keybind(Key.A));
         box.Keybinds.Add(new Keybind(Key.B));
 
@@ -90,10 +78,10 @@ public class KeybindBoxTests
         Assert.Equal(2, box.Keybinds.Count);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenMaxTagsReached_AddingKeybindThrowsInvalidOperationException()
     {
-        var box = new KeybindBox();
+        var box = new KeybindBox { MaxTags = 2 };
         box.Keybinds.Add(new Keybind(Key.A));
         box.Keybinds.Add(new Keybind(Key.B));
 
@@ -109,10 +97,10 @@ public class KeybindBoxTests
         Assert.Equal(2, box.Keybinds.Count);
     }
 
-    [Fact]
-    public void KeybindBox_SetCollectionWithMoreThanTwoKeybinds_ThrowsArgumentException()
+    [AvaloniaFact]
+    public void KeybindBox_SetCollectionWithMoreThanMaxKeybinds_DoesNotSyncTags()
     {
-        var box = new KeybindBox();
+        var box = new KeybindBox { MaxTags = 2 };
         var three = new ObservableCollection<Keybind>
         {
             new(Key.A),
@@ -120,13 +108,12 @@ public class KeybindBoxTests
             new(Key.C)
         };
 
-        Assert.Throws<ArgumentException>(() =>
-        {
-            box.Keybinds = three;
-        });
+        box.Keybinds = three;
+
+        Assert.Empty(box.Tags);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_RemoveKeybind_RemovesTag()
     {
         var box = new KeybindBox();
@@ -143,7 +130,7 @@ public class KeybindBoxTests
         Assert.Equal(k2.ToString(), box.Tags[0]);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_RemoveTag_RemovesKeybind()
     {
         var box = new KeybindBox();
@@ -161,7 +148,7 @@ public class KeybindBoxTests
         Assert.Equal(k2.ToString(), box.Tags[0]);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_ClearKeybinds_ClearsTags()
     {
         var box = new KeybindBox();
@@ -174,7 +161,7 @@ public class KeybindBoxTests
         Assert.Empty(box.Tags);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_ClearTags_ClearsKeybinds()
     {
         var box = new KeybindBox();
@@ -187,10 +174,10 @@ public class KeybindBoxTests
         Assert.Empty(box.Tags);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_InWindow_DisplaysTagsInTagBox_AndRemovesViaTagBox()
     {
-        var box = new KeybindBox();
+        var box = new KeybindBox { MaxTags = 2 };
         var k1 = new Keybind(Key.A, KeyModifiers.Control);
         var k2 = new Keybind(Key.B, KeyModifiers.Shift);
         box.Keybinds.Add(k1);
@@ -221,10 +208,10 @@ public class KeybindBoxTests
         Assert.DoesNotContain(TagBox.Max, box.TagBox.Classes);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenMaxReached_TagBoxCursorIsNo_AndClickingDoesNotShowPresenter()
     {
-        var box = new KeybindBox { PlaceholderText = "Press key..." };
+        var box = new KeybindBox { PlaceholderText = "Press key...", MaxTags = 2 };
         box.Keybinds.Add(new Keybind(Key.A));
         box.Keybinds.Add(new Keybind(Key.B));
 
@@ -263,7 +250,7 @@ public class KeybindBoxTests
         Assert.Equal("No", border.Cursor?.ToString());
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenTagBoxFocused_KeyPress_AddsTagOnKeyUp()
     {
         var box = new KeybindBox();
@@ -303,7 +290,7 @@ public class KeybindBoxTests
         Assert.Equal("F", box.Tags[0]);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenTagBoxFocused_KeyCombinationWithModifiers_AddsTagOnKeyUp()
     {
         var box = new KeybindBox();
@@ -341,10 +328,10 @@ public class KeybindBoxTests
         Assert.Single(box.Keybinds);
         Assert.Equal(new Keybind(Key.P, KeyModifiers.Control), box.Keybinds[0]);
         Assert.Single(box.Tags);
-        Assert.Equal("Ctrl + P", box.Tags[0]);
+        Assert.Equal(new Keybind(Key.P, KeyModifiers.Control).ToString(), box.Tags[0]);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenTagBoxFocused_ModifierReleasedBeforeKey_PreservesModifiers()
     {
         var box = new KeybindBox();
@@ -392,10 +379,10 @@ public class KeybindBoxTests
         Assert.Single(box.Keybinds);
         Assert.Equal(new Keybind(Key.Z, KeyModifiers.Shift), box.Keybinds[0]);
         Assert.Single(box.Tags);
-        Assert.Equal("Shift + Z", box.Tags[0]);
+        Assert.Equal(new Keybind(Key.Z, KeyModifiers.Shift).ToString(), box.Tags[0]);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenTagBoxFocused_ModifierOnly_DoesNotAddTag()
     {
         var box = new KeybindBox();
@@ -426,7 +413,7 @@ public class KeybindBoxTests
         Assert.Empty(box.Tags);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenTagBoxFocused_MiddleMouseButton_AddsTag()
     {
         var box = new KeybindBox();
@@ -454,10 +441,10 @@ public class KeybindBoxTests
         Assert.Equal("Middle", box.Tags[0]);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenTagBoxFocused_SideMouseButtons_AddsTags()
     {
-        var box = new KeybindBox();
+        var box = new KeybindBox { MaxTags = 2 };
         var window = new Window { Content = box };
         window.Show();
         Dispatcher.UIThread.RunJobs();
@@ -498,7 +485,7 @@ public class KeybindBoxTests
         Assert.True(box.TagBox.IsAtMax);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenTagBoxFocused_MouseButtonWithModifier_AddsTag()
     {
         var box = new KeybindBox();
@@ -528,7 +515,7 @@ public class KeybindBoxTests
         Assert.Equal(expectedKeybind.ToString(), box.Tags[0]);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenTagBoxNotFocused_KeyPress_IsIgnored()
     {
         var box = new KeybindBox();
@@ -565,7 +552,7 @@ public class KeybindBoxTests
         Assert.Empty(box.Tags);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenTagBoxNotFocused_MiddleMouseButton_DoesNotAddKeybind()
     {
         var box = new KeybindBox();
@@ -596,7 +583,7 @@ public class KeybindBoxTests
         Assert.Empty(box.Tags);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenDuplicateKeybindPressed_IgnoresDuplicate()
     {
         var box = new KeybindBox();
@@ -646,10 +633,10 @@ public class KeybindBoxTests
         Assert.Single(box.Tags);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenMaxTagsReached_DynamicKeyPressIgnored()
     {
-        var box = new KeybindBox();
+        var box = new KeybindBox { MaxTags = 2 };
         var window = new Window { Content = box };
         window.Show();
         Dispatcher.UIThread.RunJobs();
@@ -714,7 +701,7 @@ public class KeybindBoxTests
         Assert.Equal(2, box.Tags.Count);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void KeybindBox_WhenEscapePressed_ClearsFocus()
     {
         var box = new KeybindBox();

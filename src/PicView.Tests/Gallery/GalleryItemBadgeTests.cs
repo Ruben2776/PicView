@@ -1,9 +1,6 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using PicView.Avalonia;
 using PicView.Avalonia.Views.Gallery;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
@@ -26,22 +23,11 @@ public class GalleryItemBadgeTests
 
     public GalleryItemBadgeTests()
     {
-        try
-        {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-        }
-        catch (InvalidOperationException)
-        {
-            // Another headless test class has already configured the app in this process
-        }
-
         TranslationManager.Init();
         SetDefaults();
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void MotionPhotoBadge_Visibility_FollowsDetectionAndSetting()
     {
         RunWithDispatcher(Dispatcher.UIThread.InvokeAsync<bool>(() =>

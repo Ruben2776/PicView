@@ -1,8 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Headless;
 using Avalonia.Threading;
-using PicView.Avalonia;
 using PicView.Avalonia.CustomControls;
 
 namespace PicView.Tests.Controls;
@@ -10,17 +7,7 @@ namespace PicView.Tests.Controls;
 [Collection("Sequential")]
 public class DateTimeInputTests
 {
-    static DateTimeInputTests()
-    {
-        if (Application.Current == null)
-        {
-            AppBuilder.Configure<App>()
-                .UseHeadless(new AvaloniaHeadlessPlatformOptions())
-                .SetupWithoutStarting();
-        }
-    }
-
-    [Fact]
+    [AvaloniaFact]
     public void ValidationTextBox_SetEmpty_ShouldToggleEmptyPseudoClass()
     {
         var box = new ValidationTextBox();
@@ -34,7 +21,7 @@ public class DateTimeInputTests
         Assert.Contains(ValidationTextBox.Empty, box.Classes);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void ValidationTextBox_SetError_ShouldToggleErrorPseudoClass()
     {
         var box = new ValidationTextBox();
@@ -47,7 +34,7 @@ public class DateTimeInputTests
         Assert.DoesNotContain(ValidationTextBox.Error, box.Classes);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void DateTimeInput_InitialState_ShouldHaveEmptyPseudoClass()
     {
         var input = new DateTimeInput();
@@ -55,7 +42,7 @@ public class DateTimeInputTests
         Assert.DoesNotContain(DateTimeInput.Error, input.Classes);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void DateTimeInput_WhenBoxesEmpty_ShouldHaveEmptyAndNotError()
     {
         var input = new DateTimeInput();
@@ -79,7 +66,7 @@ public class DateTimeInputTests
         Assert.DoesNotContain(ValidationTextBox.Error, input.MonthBox.Classes);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void DateTimeInput_WhenValidDateTimeSet_ShouldClearEmptyAndError()
     {
         var input = new DateTimeInput();
@@ -102,7 +89,7 @@ public class DateTimeInputTests
         Assert.Equal("09", input.MonthBox.Text);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void DateTimeInput_WhenCleared_ShouldSetEmptyAndNotError()
     {
         var input = new DateTimeInput();
@@ -124,7 +111,7 @@ public class DateTimeInputTests
         Assert.Empty(input.YearBox.Text ?? string.Empty);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void DateTimeInput_WhenInvalidMonthEntered_ShouldSetErrorAndNotOverallEmpty()
     {
         var input = new DateTimeInput();
@@ -148,7 +135,7 @@ public class DateTimeInputTests
         Assert.Null(input.SelectedDateTime);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void DateTimeInput_WhenNonNumericEntered_ShouldSetError()
     {
         var input = new DateTimeInput();
@@ -170,7 +157,7 @@ public class DateTimeInputTests
         Assert.Null(input.SelectedDateTime);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void DateTimeInput_WhenInvalidDateCombinationEntered_ShouldSetError()
     {
         var input = new DateTimeInput();
@@ -191,7 +178,7 @@ public class DateTimeInputTests
         Assert.Null(input.SelectedDateTime);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void DateTimeInput_WhenValueErased_ShouldBeEmptyInsteadOfError()
     {
         var input = new DateTimeInput();
@@ -215,7 +202,7 @@ public class DateTimeInputTests
         Assert.Null(input.SelectedDateTime);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void DateTimeInput_GetEnteredDateTime_ShouldReturnValidDateTime()
     {
         var input = new DateTimeInput();
