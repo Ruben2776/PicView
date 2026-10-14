@@ -138,4 +138,27 @@ public class KeybindTests
         Assert.NotNull(reparsed);
         Assert.Equal(expected, reparsed.Value);
     }
+
+    [Theory]
+    [InlineData(true, "⌃ Ctrl + ⌥ Option + ⌘ Cmd + S", "Ctrl + Option + Cmd + S")]
+    [InlineData(false, "Ctrl + Alt + Win + S", "Ctrl + Alt + Win + S")]
+    public void Format_WithExplicitPlatform_UsesThatPlatformsModifierNames(
+        bool isMac, string expectedDisplay, string expectedJson)
+    {
+        var keybind = new Keybind(Key.S, KeyModifiers.Control | KeyModifiers.Alt | KeyModifiers.Meta);
+
+        Assert.Equal(expectedDisplay, keybind.GetFormattedWithIcon(isMac));
+        Assert.Equal(expectedJson, keybind.GetFormattedForJSON(isMac));
+    }
+
+    [Fact]
+    public void GetFormattedForJSON_ThreeModifiersAndKey_KeepsAllParts()
+    {
+        var keybind = new Keybind(Key.A, KeyModifiers.Control | KeyModifiers.Shift | KeyModifiers.Alt);
+
+        var formatted = keybind.GetFormattedForJSON(isMac: false);
+
+        Assert.Equal("Ctrl + Shift + Alt + A", formatted);
+        Assert.Equal(keybind, Keybind.Parse(formatted));
+    }
 }

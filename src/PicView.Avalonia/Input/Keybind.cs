@@ -110,108 +110,64 @@ public readonly struct Keybind : IEquatable<Keybind>
     /// <summary>
     /// Formats the keybind with platform-specific modifier icons for UI display.
     /// </summary>
-    public string GetFormattedWithIcon() => Format(withIcon: true);
+    public string GetFormattedWithIcon() => Format(withIcon: true, OperatingSystem.IsMacOS());
+
+    /// <inheritdoc cref="GetFormattedWithIcon()" />
+    public string GetFormattedWithIcon(bool isMac) => Format(withIcon: true, isMac);
 
     /// <summary>
     /// Formats the keybind with standard modifier names suitable for JSON serialization and parsing.
     /// </summary>
-    public string GetFormattedForJSON() => Format(withIcon: false);
+    public string GetFormattedForJSON() => Format(withIcon: false, OperatingSystem.IsMacOS());
+
+    /// <inheritdoc cref="GetFormattedForJSON()" />
+    public string GetFormattedForJSON(bool isMac) => Format(withIcon: false, isMac);
 
     /// <summary>
     /// Formats the keybind for display.
     /// </summary>
     public override string ToString() => GetFormattedWithIcon();
 
-    private string Format(bool withIcon)
+    private string Format(bool withIcon, bool isMac)
     {
-        string? p0 = null;
-        string? p1 = null;
-        string? p2 = null;
-        var index = 0;
-
-        var isMac = OperatingSystem.IsMacOS();
+        // Up to four modifiers plus a key or mouse button
+        var parts = new string[5];
+        var count = 0;
 
         if (Modifiers.HasFlag(KeyModifiers.Control))
         {
-            AddPart(withIcon && isMac ? MacCtrlModifier : CtrlModifier, ref p0, ref p1, ref p2, ref index);
+            parts[count++] = withIcon && isMac ? MacCtrlModifier : CtrlModifier;
         }
 
         if (Modifiers.HasFlag(KeyModifiers.Shift))
         {
-            AddPart(withIcon && isMac ? MacShiftModifier : ShiftModifier, ref p0, ref p1, ref p2, ref index);
+            parts[count++] = withIcon && isMac ? MacShiftModifier : ShiftModifier;
         }
 
         if (Modifiers.HasFlag(KeyModifiers.Alt))
         {
-            var altName = isMac
+            parts[count++] = isMac
                 ? withIcon ? MacOptionModifier : OptionModifier
                 : AltModifier;
-            AddPart(altName, ref p0, ref p1, ref p2, ref index);
         }
 
         if (Modifiers.HasFlag(KeyModifiers.Meta))
         {
-            var metaName = isMac
+            parts[count++] = isMac
                 ? withIcon ? MacCmdModifier : CmdModifier
                 : WinModifier;
-            AddPart(metaName, ref p0, ref p1, ref p2, ref index);
         }
 
         if (Key != Key.None)
         {
-            AddPart(Key.ToString(), ref p0, ref p1, ref p2, ref index);
+            parts[count++] = Key.ToString();
         }
         else if (MouseButton != MouseButton.None)
         {
-            AddPart(MouseButton.ToString(), ref p0, ref p1, ref p2, ref index);
+            parts[count++] = MouseButton.ToString();
         }
 
-        return index switch
-        {
-            1 => p0 ?? string.Empty,
-            2 => string.Create(p0!.Length + 3 + p1!.Length, (p0, p1), static (destination, state) =>
-            {
-                var (first, second) = state;
-                first.AsSpan().CopyTo(destination);
-                destination[first.Length] = ' ';
-                destination[first.Length + 1] = '+';
-                destination[first.Length + 2] = ' ';
-                second.AsSpan().CopyTo(destination[(first.Length + 3)..]);
-            }),
-            3 => string.Create(p0!.Length + 3 + p1!.Length + 3 + p2!.Length, (p0, p1, p2), static (destination, state) =>
-            {
-                var (first, second, third) = state;
-                first.AsSpan().CopyTo(destination);
-                var offset = first.Length;
-                destination[offset++] = ' ';
-                destination[offset++] = '+';
-                destination[offset++] = ' ';
-                second.AsSpan().CopyTo(destination[offset..]);
-                offset += second.Length;
-                destination[offset++] = ' ';
-                destination[offset++] = '+';
-                destination[offset++] = ' ';
-                third.AsSpan().CopyTo(destination[offset..]);
-            }),
-            _ => string.Empty
-        };
-
-        static void AddPart(string part, ref string? p0, ref string? p1, ref string? p2, ref int index)
-        {
-            switch (index)
-            {
-                case 0:
-                    p0 = part;
-                    break;
-                case 1:
-                    p1 = part;
-                    break;
-                case 2:
-                    p2 = part;
-                    break;
-            }
-            index++;
-        }
+        return string.Join(" + ", parts, 0, count);
     }
 
     #region IEquatable
