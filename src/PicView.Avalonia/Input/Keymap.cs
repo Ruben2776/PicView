@@ -1,0 +1,91 @@
+using System.Collections.Frozen;
+using System.Text.Json;
+using Avalonia.Input;
+using PicView.Core.DebugTools;
+using PicView.Core.Keybindings;
+
+namespace PicView.Avalonia.Input;
+
+/// <summary>
+/// The immutable assignment of <see cref="Keybind"/>s to owners. Each Keybind has at most one owner.
+/// </summary>
+public sealed class Keymap
+{
+    private readonly FrozenDictionary<Keybind, string> _actions;
+
+    private Keymap(FrozenDictionary<Keybind, string> actions)
+    {
+        _actions = actions;
+    }
+
+    /// <summary>
+    /// Builds a keymap from the user's keybindings JSON, or from <paramref name="defaultJson"/> when there is none.
+    /// </summary>
+    public static Keymap FromJson(string? userJson, string defaultJson)
+    {
+        var json = userJson ?? defaultJson;
+        var entries = JsonSerializer.Deserialize(json, SourceGenerationContext.Default.DictionaryStringString)
+                      ?? new Dictionary<string, string>();
+
+        var actions = new Dictionary<Keybind, string>(entries.Count);
+        foreach (var (key, action) in entries)
+        {
+            var keybind = Keybind.Parse(key);
+            if (keybind is not { } parsed || (parsed.Key is Key.None && parsed.MouseButton is MouseButton.None))
+            {
+                DebugHelper.LogDebug(nameof(Keymap), nameof(FromJson), $"Skipping unparsable keybind '{key}'");
+                continue;
+            }
+
+            actions[parsed] = KeybindCategoryDefinition.Canonicalize(action);
+        }
+
+        return new Keymap(actions.ToFrozenDictionary());
+    }
+
+    public KeymapResolution Resolve(Keybind keybind) =>
+        _actions.TryGetValue(keybind, out var action)
+            ? KeymapResolution.Action(action)
+            : KeymapResolution.None;
+
+    /// <summary>
+    /// Returns the Keybinds bound to <paramref name="action"/>.
+    /// </summary>
+    public IReadOnlyList<Keybind> KeybindsFor(string action)
+    {
+        var canonical = KeybindCategoryDefinition.Canonicalize(action);
+        return _actions.Where(kvp => kvp.Value == canonical).Select(kvp => kvp.Key).ToList();
+    }
+
+    /// <summary>
+    /// Returns a keymap where <paramref name="keybind"/> is owned by <paramref name="action"/>,
+    /// taking it from any previous owner.
+    /// </summary>
+    public Keymap Assign(Keybind keybind, string action)
+    {
+        var actions = new Dictionary<Keybind, string>(_actions)
+        {
+            [keybind] = KeybindCategoryDefinition.Canonicalize(action)
+        };
+        return new Keymap(actions.ToFrozenDictionary());
+    }
+
+    /// <summary>
+    /// Returns a keymap where <paramref name="keybind"/> has no owner.
+    /// </summary>
+    public Keymap Unassign(Keybind keybind)
+    {
+        var actions = new Dictionary<Keybind, string>(_actions);
+        actions.Remove(keybind);
+        return new Keymap(actions.ToFrozenDictionary());
+    }
+
+    /// <summary>
+    /// Serializes the action bindings in the keybindings file format.
+    /// </summary>
+    public string ToJson() =>
+        JsonSerializer.Serialize(
+                _actions.ToDictionary(kvp => kvp.Key.GetFormattedForJSON(), kvp => kvp.Value, StringComparer.OrdinalIgnoreCase),
+                SourceGenerationContext.Default.DictionaryStringString)
+            .Replace("\\u002B", "+", StringComparison.Ordinal); // Fix plus sign encoded to Unicode
+}
