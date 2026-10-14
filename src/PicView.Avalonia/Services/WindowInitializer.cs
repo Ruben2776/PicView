@@ -177,12 +177,12 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     core.MainWindows.ActiveWindow.CurrentValue.IsLoadingIndicatorShown.Value = true;
                     await Task.Run(() =>
                     {
-                        KeybindingManager.SetDefaultKeybindings(core.PlatformService);
+                        Keymaps.ResetToDefaults(core.PlatformService);
                     }, ct).ConfigureAwait(false);
                     core.MainWindows.ActiveWindow.CurrentValue.IsLoadingIndicatorShown.Value = false;
                 });
                 
-                KeybindingManager.LoadKeybindings(core.PlatformService);
+                Keymaps.Load(core.PlatformService);
             }
 
             if (core.Keybindings.WindowConfig?.WindowProperties is null)

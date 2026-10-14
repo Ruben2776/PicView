@@ -75,11 +75,10 @@ public static class MacOsKeybindings
                                                 "Cmd+W": "CloseTab",
                                                 "Ctrl+Cmd+Right": "NextArchive",
                                                 "Ctrl+Cmd+Left": "PrevArchive",
-                                                "Cmd+Q": "Exit",
                                                 "XButton2": "FileHistoryNext",
                                                 "XButton1": "FileHistoryPrev",
-                                                "WheelUp": "Next",
-                                                "WheelDown": "Prev",
+                                                "WheelUp": "Prev",
+                                                "WheelDown": "Next",
                                                 "Cmd+WheelUp": "ZoomIn",
                                                 "Cmd+WheelDown": "ZoomOut",
                                               }

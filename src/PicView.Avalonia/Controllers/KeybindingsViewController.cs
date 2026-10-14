@@ -175,8 +175,24 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
     public async Task SaveKeybindings()
     {
-        // Build key-value dictionary from standard UI categories
-        var keyValues = new Dictionary<string, string>(StringComparer.Ordinal);
+        // Rebind the actions shown in the UI categories, keeping bindings for actions not shown there
+        var keymap = Keymaps.Current;
+        foreach (var category in _categories)
+        {
+            if (ReferenceEquals(category, FavoritesCategory))
+            {
+                continue;
+            }
+
+            foreach (var (_, functionName) in category.Entries)
+            {
+                foreach (var kb in keymap.KeybindsFor(functionName))
+                {
+                    keymap = keymap.Unassign(kb);
+                }
+            }
+        }
+
         foreach (var category in _categories)
         {
             if (ReferenceEquals(category, FavoritesCategory))
@@ -193,17 +209,12 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
                 foreach (var kb in box.Keybinds)
                 {
-                    keyValues[kb.GetFormattedForJSON()] = functionName;
+                    keymap = keymap.Assign(kb, functionName);
                 }
             }
         }
 
-        // Update KeybindingManager's live shortcuts
-        if (KeybindingManager.CustomShortcuts is not null)
-        {
-            KeybindingManager.CustomShortcuts.Clear();
-        }
-        KeybindingManager.PopulateCustomShortcuts(keyValues);
+        Keymaps.Replace(keymap);
 
         var hasFavoritesCategory = FavoritesCategory is { Entries.Count: > 0 };
         if (hasFavoritesCategory)
@@ -222,7 +233,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             FinalizeSaveOnUIThread(null);
         }
 
-        await KeybindingManager.UpdateKeyBindingsFile().ConfigureAwait(false);
+        await Keymaps.SaveAsync().ConfigureAwait(false);
         if (hasFavoritesCategory)
         {
             await FavoritesManager.SaveToFileAsync().ConfigureAwait(false);
@@ -737,22 +748,10 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                 PlaceholderText = pressKeyText,
             };
 
-            // Look up current keybinds from KeybindingManager
-            if (KeybindingManager.CustomShortcuts is not null)
+            var currentBinds = Keymaps.Current.KeybindsFor(functionName);
+            if (currentBinds.Count > 0)
             {
-                var currentBinds = new ObservableCollection<Keybind>();
-                foreach (var kvp in KeybindingManager.CustomShortcuts)
-                {
-                    if (string.Equals(kvp.Value, functionName, StringComparison.Ordinal))
-                    {
-                        currentBinds.Add(kvp.Key);
-                    }
-                }
-
-                if (currentBinds.Count > 0)
-                {
-                    keybindBox.Keybinds = currentBinds;
-                }
+                keybindBox.Keybinds = new ObservableCollection<Keybind>(currentBinds);
             }
 
             container.Items.Add(keybindBox);

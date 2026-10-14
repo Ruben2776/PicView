@@ -46,7 +46,7 @@ public static class MainKeyboardShortcuts
     /// </summary>
     public static async ValueTask MainWindow_KeysDownAsync(KeyEventArgs e, MainWindowViewModel? mainWindowViewModel, MainWindow mainWindow)
     {
-        if ((KeybindingManager.CustomShortcuts is null && FavoritesManager.Count == 0) || !IsKeysEnabled)
+        if ((Keymaps.Current.Bindings.Count == 0 && FavoritesManager.Count == 0) || !IsKeysEnabled)
         {
             return;
         }
@@ -282,35 +282,8 @@ public static class MainKeyboardShortcuts
     /// <summary>
     /// Executes the registered shortcut action for the current key combination.
     /// </summary>
-    internal static async ValueTask ExecuteShortcutIfRegistered(MainWindowViewModel? vm)
-    {
-        if (vm?.Mapper is null)
-        {
-            return;
-        }
-
-        var favoritePath = KeybindingManager.GetFavoritePath(CurrentKeys);
-        if (!string.IsNullOrWhiteSpace(favoritePath))
-        {
-            await vm.Mapper.OpenPathAsync(favoritePath).ConfigureAwait(false);
-            return;
-        }
-
-        // Get the action string name quickly via dictionary lookup
-        var actionName = KeybindingManager.GetActionName(CurrentKeys);
-        if (actionName is null)
-        {
-            // Pressed key(s) have no associated function
-            return;
-        }
-
-        // Map the string to the instance-specific function using the view model's mapper
-        var function = vm.Mapper.GetFunctionByName(actionName);
-        if (function is not null)
-        {
-            await function.Invoke().ConfigureAwait(false);
-        }
-    }
+    internal static ValueTask ExecuteShortcutIfRegistered(MainWindowViewModel? vm) =>
+        Keymaps.ExecuteAsync(Keymaps.Resolve(CurrentKeys), vm?.Mapper);
 
     /// <summary>
     /// Resets the keyboard state tracking.

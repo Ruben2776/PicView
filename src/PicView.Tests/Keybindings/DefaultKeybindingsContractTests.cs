@@ -1,5 +1,7 @@
 #if MACOS || WINDOWS
 using System.Text.Json;
+using Avalonia.Input;
+using PicView.Avalonia.Input;
 using PicView.Core.Keybindings;
 
 namespace PicView.Tests.Keybindings;
@@ -8,13 +10,8 @@ public class DefaultKeybindingsContractTests
 {
 #if MACOS
     private const string DefaultKeybindings = PicView.Core.MacOS.MacOsKeybindings.DefaultKeybindings;
-
-    // Cmd+Q is bound to "Exit", which the mapper does not know. Out of scope for now.
-    private static readonly string[] KnownUnresolved = ["Exit"];
 #else
     private const string DefaultKeybindings = PicView.Core.WindowsNT.WindowsKeybindings.DefaultKeybindings;
-
-    private static readonly string[] KnownUnresolved = [];
 #endif
 
     [Fact]
@@ -27,10 +24,20 @@ public class DefaultKeybindingsContractTests
         var unknown = defaults.Values
             .Select(KeybindCategoryDefinition.Canonicalize)
             .Where(name => !KeybindCategoryDefinition.ActionNames.Contains(name))
-            .Except(KnownUnresolved)
             .ToList();
 
         Assert.Empty(unknown);
+    }
+
+    [Theory]
+    [InlineData(-1.0, "Next")]
+    [InlineData(1.0, "Prev")]
+    public void DefaultKeybindings_WheelWithoutModifiers_Navigates(double deltaY, string expectedAction)
+    {
+        var keymap = Keymap.FromJson(null, DefaultKeybindings);
+
+        Assert.Equal(KeymapResolution.Action(expectedAction),
+            keymap.Resolve(Keybind.FromWheel(deltaY, KeyModifiers.None)));
     }
 }
 #endif

@@ -132,7 +132,7 @@ public static class WindowFunctions
         try
         {
             await SaveSettingsAsync().ConfigureAwait(true);
-            await KeybindingManager.UpdateKeyBindingsFile().ConfigureAwait(true);
+            await Keymaps.SaveAsync().ConfigureAwait(true);
             TempFileManager.Cleanup();
             await FileHistoryManager.SaveToFileAsync().ConfigureAwait(true);
             foreach (var tabViewModel in vm.WindowTabs.Tabs.CurrentValue)

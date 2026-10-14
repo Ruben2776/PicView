@@ -151,6 +151,14 @@ public class KeybindTests
         Assert.Equal(expectedJson, keybind.GetFormattedForJSON(isMac));
     }
 
+    [Theory]
+    [InlineData(1.0, MouseButton.WheelUp)]
+    [InlineData(-1.0, MouseButton.WheelDown)]
+    public void FromWheel_NamesThePhysicalWheelDirection(double deltaY, MouseButton expected)
+    {
+        Assert.Equal(new Keybind(expected, KeyModifiers.Control), Keybind.FromWheel(deltaY, KeyModifiers.Control));
+    }
+
     [Fact]
     public void GetFormattedForJSON_ThreeModifiersAndKey_KeepsAllParts()
     {

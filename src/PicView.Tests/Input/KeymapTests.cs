@@ -34,6 +34,14 @@ public class KeymapTests
     }
 
     [Fact]
+    public void FromJson_MalformedUserFile_FallsBackToDefaults()
+    {
+        var keymap = Keymap.FromJson("""{ "Right": "Next" """, Defaults);
+
+        Assert.Equal(KeymapResolution.Action("Prev"), keymap.Resolve(new Keybind(Key.Left)));
+    }
+
+    [Fact]
     public void FromJson_UnparsableKeys_AreSkipped()
     {
         var keymap = Keymap.FromJson("""{ "Nonsense": "Next", "Ctrl+Nonsense": "Last", "Right": "Prev" }""", Defaults);

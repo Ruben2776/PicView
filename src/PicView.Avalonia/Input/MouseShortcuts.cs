@@ -33,7 +33,6 @@ public static class MouseShortcuts
         e.Handled = true;
         var reverse = e.Delta.Y < 0;
 
-        var keybind = new Keybind(reverse ? MouseButton.WheelUp : MouseButton.WheelDown, e.KeyModifiers);
         if (Settings.Zoom.ScrollEnabled)
         {
             if (IsVerticalScrollBarVisible(imageScrollViewer))
@@ -43,43 +42,29 @@ public static class MouseShortcuts
             }
         }
         
-        var favoritePath = KeybindingManager.GetFavoritePath(keybind);
-        if (!string.IsNullOrWhiteSpace(favoritePath))
+        var resolution = Keymaps.Resolve(Keybind.FromWheel(e.Delta.Y, e.KeyModifiers));
+
+        // Wheel zoom needs the event to zoom towards the pointer, and is allowed on touchpads
+        if (resolution is { Owner: KeymapOwner.Action, Value: nameof(IFunctionsMapper.ZoomIn) })
         {
-            if (!IsTouchPadOrTouch(e) && mainViewModel.Mapper is not null)
+            if (zoomIn is not null)
             {
-                await mainViewModel.Mapper.OpenPathAsync(favoritePath).ConfigureAwait(false);
+                await zoomIn(e).ConfigureAwait(false);
             }
             return;
         }
-
-        var actionName = KeybindingManager.GetActionName(keybind);
-        if (actionName is null)
+        if (resolution is { Owner: KeymapOwner.Action, Value: nameof(IFunctionsMapper.ZoomOut) })
         {
-            // Pressed key(s) have no associated function
-            return;
-        }
-        
-        var function = mainViewModel.Mapper.GetFunctionByName(actionName);
-        if (function is null)
-        {
-            return;
-        }
-
-        if (string.Equals(function.Method.Name, nameof(IFunctionsMapper.ZoomIn), StringComparison.Ordinal))
-        {
-            await zoomIn(e).ConfigureAwait(false);
-            return;
-        }
-        if (string.Equals(function.Method.Name, nameof(IFunctionsMapper.ZoomOut), StringComparison.Ordinal))
-        {
-            await zoomOut(e).ConfigureAwait(false);
+            if (zoomOut is not null)
+            {
+                await zoomOut(e).ConfigureAwait(false);
+            }
             return;
         }
 
         if (!IsTouchPadOrTouch(e))
         {
-            await function.Invoke().ConfigureAwait(false);
+            await Keymaps.ExecuteAsync(resolution, mainViewModel.Mapper).ConfigureAwait(false);
         }
     }
 
@@ -206,33 +191,6 @@ public static class MouseShortcuts
         await ExecuteMouseShortcutIfRegistered(currentKeys.Value, vm).ConfigureAwait(false);
     }
 
-    internal static async ValueTask ExecuteMouseShortcutIfRegistered(Keybind keybind, MainWindowViewModel? vm)
-    {
-        if (vm?.Mapper is null)
-        {
-            return;
-        }
-
-        var favoritePath = KeybindingManager.GetFavoritePath(keybind);
-        if (!string.IsNullOrWhiteSpace(favoritePath))
-        {
-            await vm.Mapper.OpenPathAsync(favoritePath).ConfigureAwait(false);
-            return;
-        }
-
-        // Get the action string name quickly via dictionary lookup
-        var actionName = KeybindingManager.GetActionName(keybind);
-        if (actionName is null)
-        {
-            // Pressed key(s) have no associated function
-            return;
-        }
-
-        // Map the string to the instance-specific function using the view model's mapper
-        var function = vm.Mapper.GetFunctionByName(actionName);
-        if (function is not null)
-        {
-            await function.Invoke().ConfigureAwait(false);
-        }
-    }
+    internal static ValueTask ExecuteMouseShortcutIfRegistered(Keybind keybind, MainWindowViewModel? vm) =>
+        Keymaps.ExecuteAsync(Keymaps.Resolve(keybind), vm?.Mapper);
 }
