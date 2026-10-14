@@ -149,7 +149,7 @@ public static class StartUpHelper
                 HandleWindowControlSettings(core, mainWindow);
                 vm.WindowTabs.SetSortOrder((SortFilesBy)Settings.Sorting.SortPreference);
             });
-            _ = Task.Run(() => KeybindingManager.LoadKeybindings(core.PlatformService));
+            _ = Task.Run(() => Keymaps.Load(core.PlatformService));
         }
     }
 

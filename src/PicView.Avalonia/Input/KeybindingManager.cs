@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using PicView.Core.DebugTools;
-using PicView.Core.Favorites;
 using PicView.Core.IPlatform;
 using PicView.Core.Keybindings;
 
@@ -11,58 +10,11 @@ namespace PicView.Avalonia.Input;
 [JsonSerializable(typeof(Dictionary<string, string>))]
 internal partial class SourceGenerationContext : JsonSerializerContext;
 
+/// <summary>
+/// Default keybinding lookups for the keybindings view. Live keybindings are held by <see cref="Keymaps"/>.
+/// </summary>
 public static class KeybindingManager
 {
-    public static Dictionary<Keybind, string>? CustomShortcuts { get; private set; }
-
-    public static void LoadKeybindings(IPlatformSpecificService? platform)
-    {
-        var keybindingsBytes = KeybindingFunctions.SetKeyBindingsFileAndReturnBytes();
-        if (keybindingsBytes is null)
-        {
-            SetDefaultKeybindings(platform);
-        }
-        else
-        {
-            UpdateKeybindings(keybindingsBytes);
-        }
-    }
-
-    public static void UpdateKeybindings(byte[] bytes)
-    {
-        var keyValues = JsonSerializer.Deserialize(
-                bytes, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
-            as Dictionary<string, string>;
-
-        CustomShortcuts ??= new Dictionary<Keybind, string>();
-        if (keyValues != null)
-        {
-            PopulateCustomShortcuts(keyValues);
-        }
-    }
-
-    public static async ValueTask UpdateKeyBindingsFile()
-    {
-        if (CustomShortcuts is null)
-        {
-            return;
-        }
-
-        try
-        {
-            var json = JsonSerializer.Serialize(
-                CustomShortcuts.ToDictionary(kvp => kvp.Key.GetFormattedForJSON(), kvp => kvp.Value, StringComparer.OrdinalIgnoreCase),
-                typeof(Dictionary<string, string>),
-                SourceGenerationContext.Default).Replace("\\u002B", "+", StringComparison.Ordinal); // Fix plus sign encoded to Unicode
-
-            await KeybindingFunctions.SaveKeyBindingsFile(json).ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            DebugHelper.LogDebug(nameof(KeybindingManager), nameof(UpdateKeyBindingsFile), exception);
-        }
-    }
-
     private static Keybind? ParseToKeybind(KeyValuePair<string, string> kvp)
     {
         try
@@ -109,69 +61,6 @@ public static class KeybindingManager
         return null;
     }
 
-    public static void PopulateCustomShortcuts(Dictionary<string, string> keyValues)
-    {
-        CustomShortcuts ??= new Dictionary<Keybind, string>(keyValues.Count);
-        foreach (var kvp in keyValues)
-        {
-            var parsedKey = ParseToKeybind(kvp);
-            if (parsedKey.HasValue)
-            {
-                CustomShortcuts[parsedKey.Value] = KeybindCategoryDefinition.Canonicalize(kvp.Value);
-            }
-        }
-    }
-
-    public static void SetDefaultKeybindings(IPlatformSpecificService? platform)
-    {
-        if (CustomShortcuts is not null)
-        {
-            CustomShortcuts.Clear();
-        }
-        else
-        {
-            CustomShortcuts = new Dictionary<Keybind, string>();
-        }
-
-        if (platform is null) return;
-
-        var defaultKeybindings = platform.DefaultJsonKeyMap();
-
-        if (JsonSerializer.Deserialize(
-                defaultKeybindings, typeof(Dictionary<string, string>), SourceGenerationContext.Default)
-            is Dictionary<string, string> keyValues)
-        {
-            PopulateCustomShortcuts(keyValues);
-        }
-    }
-
-    public static string? GetActionName(Keybind keybind) =>
-        CustomShortcuts?.GetValueOrDefault(keybind);
-
-    /// <summary>
-    ///     Returns the favorite folder path bound to the specified <paramref name="keybind"/>, or <c>null</c> if none matches.
-    /// </summary>
-    public static string? GetFavoritePath(Keybind keybind)
-    {
-        var entries = FavoritesManager.AllEntries;
-        for (var i = 0; i < entries.Count; i++)
-        {
-            var entry = entries[i];
-            if (string.IsNullOrWhiteSpace(entry.HotKey))
-            {
-                continue;
-            }
-
-            var parsed = Keybind.Parse(entry.HotKey);
-            if (parsed.HasValue && parsed.Value == keybind)
-            {
-                return entry.FilePath;
-            }
-        }
-
-        return null;
-    }
-
     /// <summary>
     /// Builds and returns a dictionary of default keybindings for the current platform.
     /// </summary>
@@ -193,7 +82,7 @@ public static class KeybindingManager
             var parsedKey = ParseToKeybind(kvp);
             if (parsedKey.HasValue)
             {
-                defaults[parsedKey.Value] = kvp.Value;
+                defaults[parsedKey.Value] = KeybindCategoryDefinition.Canonicalize(kvp.Value);
             }
         }
 

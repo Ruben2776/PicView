@@ -13,19 +13,25 @@ public sealed class Keymap
 {
     private readonly FrozenDictionary<Keybind, string> _actions;
 
+    public static Keymap Empty { get; } = new(FrozenDictionary<Keybind, string>.Empty);
+
+    /// <summary>
+    /// The action bound to each Keybind.
+    /// </summary>
+    public IReadOnlyDictionary<Keybind, string> Bindings => _actions;
+
     private Keymap(FrozenDictionary<Keybind, string> actions)
     {
         _actions = actions;
     }
 
     /// <summary>
-    /// Builds a keymap from the user's keybindings JSON, or from <paramref name="defaultJson"/> when there is none.
+    /// Builds a keymap from the user's keybindings JSON, or from <paramref name="defaultJson"/> when there is none
+    /// or it cannot be read.
     /// </summary>
     public static Keymap FromJson(string? userJson, string defaultJson)
     {
-        var json = userJson ?? defaultJson;
-        var entries = JsonSerializer.Deserialize(json, SourceGenerationContext.Default.DictionaryStringString)
-                      ?? new Dictionary<string, string>();
+        var entries = Deserialize(userJson) ?? Deserialize(defaultJson) ?? new Dictionary<string, string>();
 
         var actions = new Dictionary<Keybind, string>(entries.Count);
         foreach (var (key, action) in entries)
@@ -41,6 +47,24 @@ public sealed class Keymap
         }
 
         return new Keymap(actions.ToFrozenDictionary());
+    }
+
+    private static Dictionary<string, string>? Deserialize(string? json)
+    {
+        if (json is null)
+        {
+            return null;
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize(json, SourceGenerationContext.Default.DictionaryStringString);
+        }
+        catch (JsonException exception)
+        {
+            DebugHelper.LogDebug(nameof(Keymap), nameof(Deserialize), exception);
+            return null;
+        }
     }
 
     public KeymapResolution Resolve(Keybind keybind) =>

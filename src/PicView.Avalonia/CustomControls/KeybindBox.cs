@@ -631,7 +631,7 @@ public class KeybindBox : TemplatedControl
         var modifiers = e.KeyModifiers | _lastModifiers;
         if (!HasTooManyModifiers(modifiers))
         {
-            var keyBind = new Keybind(e.Delta.Y > 0 ? MouseButton.WheelUp : MouseButton.WheelDown, modifiers);
+            var keyBind = Keybind.FromWheel(e.Delta.Y, modifiers);
             TryAddKeybind(keyBind);
         }
         e.Handled = true;

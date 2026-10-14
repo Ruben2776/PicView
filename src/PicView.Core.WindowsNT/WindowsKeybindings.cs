@@ -81,8 +81,8 @@ public static class WindowsKeybindings
                                                "Ctrl+W": "CloseTab",
                                                "XButton2": "FileHistoryNext",
                                                "XButton1": "FileHistoryPrev",
-                                               "WheelUp": "Next",
-                                               "WheelDown": "Prev",
+                                               "WheelUp": "Prev",
+                                               "WheelDown": "Next",
                                                "Cmd+WheelUp": "ZoomIn",
                                                "Cmd+WheelDown": "ZoomOut",
                                              }

@@ -46,6 +46,12 @@ public readonly struct Keybind : IEquatable<Keybind>
     }
 
     /// <summary>
+    /// Creates a wheel Keybind named after the physical wheel direction: a positive <paramref name="deltaY"/> is up.
+    /// </summary>
+    public static Keybind FromWheel(double deltaY, KeyModifiers modifiers) =>
+        new(deltaY > 0 ? MouseButton.WheelUp : MouseButton.WheelDown, modifiers);
+
+    /// <summary>
     /// Parses a string into a Keybind struct without allocating intermediate strings.
     /// </summary>
     public static Keybind? Parse(string s)
