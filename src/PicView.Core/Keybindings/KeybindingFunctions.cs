@@ -4,9 +4,20 @@ namespace PicView.Core.Keybindings;
 
 public static class KeybindingFunctions
 {
+    private static string? _configPathOverride;
+
     public static KeyBindingsConfiguration? KeyBindingsConfiguration { get; private set; }
     public static string CurrentKeybindingsPath => KeyBindingsConfiguration?.CorrectPath ?? string.Empty;
-    
+
+    /// <summary>
+    /// Reads and writes keybindings at an explicit file path (local-substitutable seam for testing).
+    /// </summary>
+    internal static void UseConfigPath(string configPath)
+    {
+        _configPathOverride = configPath;
+        KeyBindingsConfiguration = new KeyBindingsConfiguration { CorrectPath = configPath };
+    }
+
     public static async Task SaveKeyBindingsFile(string json)
     {
         try
@@ -34,7 +45,9 @@ public static class KeybindingFunctions
 
     public static byte[]? SetKeyBindingsFileAndReturnBytes()
     {
-        var path = ConfigFileManager.ResolveDefaultConfigPath(KeyBindingsConfiguration ??= new KeyBindingsConfiguration());
+        var path = _configPathOverride
+                   ?? ConfigFileManager.ResolveDefaultConfigPath(KeyBindingsConfiguration ??= new KeyBindingsConfiguration());
+        KeyBindingsConfiguration ??= new KeyBindingsConfiguration();
         if (!File.Exists(path))
         {
             return null;

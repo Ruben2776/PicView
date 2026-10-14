@@ -9,6 +9,7 @@ using PicView.Avalonia.Input;
 using PicView.Avalonia.Views.Main;
 using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Core.Favorites;
+using PicView.Core.Keybindings;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
@@ -40,6 +41,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Directory.CreateDirectory(_tempRoot);
         _configPath = Path.Combine(_tempRoot, "Favorites.json");
         FavoritesManager.Initialize(_configPath);
+        KeybindingFunctions.UseConfigPath(Path.Combine(_tempRoot, "keybindings.json"));
     }
 
     public void Dispose()
