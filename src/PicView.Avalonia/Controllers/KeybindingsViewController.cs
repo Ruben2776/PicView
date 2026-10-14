@@ -12,28 +12,53 @@ using PicView.Core.Keybindings;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
-using ZLinq;
-using MouseButton = PicView.Avalonia.Input.MouseButton;
 
 namespace PicView.Avalonia.Controllers;
 
+/// <summary>
+/// Edits a draft <see cref="Keymap"/> through the keybindings view. The boxes show the draft;
+/// every box edit produces a new draft, and undo/redo step through previous drafts.
+/// </summary>
 public class KeybindingsViewController(KeybindingsView view) : IDisposable
 {
     private readonly List<KeybindCategoryGroup> _categories = [];
-    private readonly List<KeybindSnapshot> _undoStack = [];
-    private readonly List<KeybindSnapshot> _redoStack = [];
-    private readonly Dictionary<KeybindBox, long> _boxModificationOrder = [];
+    private readonly List<Keymap> _undoStack = [];
+    private readonly List<Keymap> _redoStack = [];
     private readonly Dictionary<KeybindBox, NotifyCollectionChangedEventHandler> _collectionChangedHandlers = [];
 
-    private KeybindSnapshot? _savedSnapshot;
+    private Keymap _saved = Keymap.Empty;
+    private Keymap _draft = Keymap.Empty;
     private IDisposable? _filterSubscription;
-    private long _modificationSequence;
     private bool _boxesSubscribed;
     private bool _buttonsInitialized;
-    private bool _isApplyingSnapshot;
+    private bool _isShowingDraft;
     private bool _isDisposed;
 
     internal KeybindCategoryGroup? FavoritesCategory { get; private set; }
+
+    /// <summary>
+    /// Returns the box editing the Keybinds of <paramref name="action"/>, if it is shown in a category.
+    /// </summary>
+    internal KeybindBox? ActionBox(string action)
+    {
+        foreach (var category in _categories)
+        {
+            if (ReferenceEquals(category, FavoritesCategory))
+            {
+                continue;
+            }
+
+            foreach (var (box, functionName) in category.Entries)
+            {
+                if (string.Equals(functionName, action, StringComparison.Ordinal))
+                {
+                    return box;
+                }
+            }
+        }
+
+        return null;
+    }
 
     public void Initialize()
     {
@@ -117,14 +142,10 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             return;
         }
 
-        // Save current state to redo stack
-        var current = new KeybindSnapshot(_categories);
-        _redoStack.Add(current);
-
-        // Pop and apply the previous state
-        var previous = _undoStack[^1];
+        _redoStack.Add(_draft);
+        _draft = _undoStack[^1];
         _undoStack.RemoveAt(_undoStack.Count - 1);
-        ApplySnapshot(previous);
+        ShowDraft();
         UpdateButtonStates();
     }
 
@@ -135,27 +156,14 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             return;
         }
 
-        // Save current state to undo stack
-        var current = new KeybindSnapshot(_categories);
-        _undoStack.Add(current);
-
-        // Pop and apply the next state
-        var next = _redoStack[^1];
+        _undoStack.Add(_draft);
+        _draft = _redoStack[^1];
         _redoStack.RemoveAt(_redoStack.Count - 1);
-        ApplySnapshot(next);
+        ShowDraft();
         UpdateButtonStates();
     }
 
-    public bool HasUnsavedChanges()
-    {
-        if (_savedSnapshot is null)
-        {
-            return false;
-        }
-
-        var current = new KeybindSnapshot(_categories);
-        return !current.Equals(_savedSnapshot);
-    }
+    public bool HasUnsavedChanges() => !_draft.Equals(_saved);
 
     public void UpdateButtonStates()
     {
@@ -166,191 +174,45 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         }
 
         var hasChanges = HasUnsavedChanges();
-        var isDefault = AreCurrentBindingsDefault();
 
         view.ApplyButton.IsEnabled = hasChanges;
         view.SaveButton.IsEnabled = hasChanges;
-        view.DefaultButton.IsEnabled = !isDefault;
+        view.DefaultButton.IsEnabled = !_draft.Equals(DefaultsKeepingFavorites());
     }
 
     public async Task SaveKeybindings()
     {
-        // Rebind the actions shown in the UI categories, keeping bindings for actions not shown there
-        var keymap = Keymaps.Current;
-        foreach (var category in _categories)
-        {
-            if (ReferenceEquals(category, FavoritesCategory))
-            {
-                continue;
-            }
+        var draft = _draft;
+        Keymaps.Replace(draft);
 
-            foreach (var (_, functionName) in category.Entries)
+        var favoritesVm = FavoritesCategory is null ? null : ResolveFavoritesViewModel();
+        if (FavoritesCategory is not null)
+        {
+            foreach (var (_, filePath) in FavoritesCategory.Entries)
             {
-                foreach (var kb in keymap.KeybindsFor(functionName))
-                {
-                    keymap = keymap.Unassign(kb);
-                }
+                var keybind = FavoriteKeybindText(draft, filePath);
+                FavoritesManager.SetKeybind(filePath, keybind);
+
+                var entryVm = favoritesVm?.Entries.FirstOrDefault(e =>
+                    string.Equals(e.FilePath.CurrentValue, filePath, StringComparison.Ordinal));
+                entryVm?.Keybind.Value = keybind;
             }
         }
 
-        foreach (var category in _categories)
-        {
-            if (ReferenceEquals(category, FavoritesCategory))
-            {
-                continue;
-            }
-
-            foreach (var (box, functionName) in category.Entries)
-            {
-                if (box.Keybinds is null)
-                {
-                    continue;
-                }
-
-                foreach (var kb in box.Keybinds)
-                {
-                    keymap = keymap.Assign(kb, functionName);
-                }
-            }
-        }
-
-        Keymaps.Replace(keymap);
-
-        var hasFavoritesCategory = FavoritesCategory is { Entries.Count: > 0 };
-        if (hasFavoritesCategory)
-        {
-            var resolvedFavoriteKeybinds = ResolveDeduplicatedFavoriteKeybinds(FavoritesCategory!.Entries);
-            for (var i = 0; i < FavoritesCategory.Entries.Count; i++)
-            {
-                var (_, filePath) = FavoritesCategory.Entries[i];
-                FavoritesManager.SetKeybind(filePath, resolvedFavoriteKeybinds[i]);
-            }
-
-            FinalizeSaveOnUIThread(resolvedFavoriteKeybinds);
-        }
-        else
-        {
-            FinalizeSaveOnUIThread(null);
-        }
+        _saved = draft;
+        _undoStack.Clear();
+        _redoStack.Clear();
+        UpdateButtonStates();
 
         await Keymaps.SaveAsync().ConfigureAwait(false);
-        if (hasFavoritesCategory)
+        if (FavoritesCategory is not null)
         {
             await FavoritesManager.SaveToFileAsync().ConfigureAwait(false);
         }
     }
 
-    private string[] ResolveDeduplicatedFavoriteKeybinds(List<(KeybindBox Box, string FunctionName)> entries)
-    {
-        var count = entries.Count;
-        var rawKeybinds = new string[count];
-        var orderIndices = new int[count];
-
-        for (var i = 0; i < count; i++)
-        {
-            var box = entries[i].Box;
-            rawKeybinds[i] = box.Keybinds is { Count: > 0 }
-                ? box.Keybinds[^1].GetFormattedForJSON()
-                : string.Empty;
-            orderIndices[i] = i;
-        }
-
-        Array.Sort(orderIndices, (a, b) =>
-        {
-            var orderA = _boxModificationOrder.GetValueOrDefault(entries[a].Box, 0L);
-            var orderB = _boxModificationOrder.GetValueOrDefault(entries[b].Box, 0L);
-            var cmp = orderA.CompareTo(orderB);
-            return cmp != 0 ? cmp : a.CompareTo(b);
-        });
-
-        var resolved = new string[count];
-        var activeOwners = new Dictionary<string, int>(StringComparer.Ordinal);
-
-        for (var i = 0; i < count; i++)
-        {
-            var idx = orderIndices[i];
-            var keybind = rawKeybinds[idx];
-            if (string.IsNullOrWhiteSpace(keybind))
-            {
-                resolved[idx] = string.Empty;
-                continue;
-            }
-
-            if (activeOwners.TryGetValue(keybind, out var previousIdx))
-            {
-                resolved[previousIdx] = string.Empty;
-            }
-
-            activeOwners[keybind] = idx;
-            resolved[idx] = keybind;
-        }
-
-        return resolved;
-    }
-
-    private void FinalizeSaveOnUIThread(string[]? resolvedFavoriteKeybinds)
-    {
-        if (FavoritesCategory is not null && resolvedFavoriteKeybinds is not null)
-        {
-            _isApplyingSnapshot = true;
-            try
-            {
-                for (var i = 0; i < FavoritesCategory.Entries.Count && i < resolvedFavoriteKeybinds.Length; i++)
-                {
-                    var (box, _) = FavoritesCategory.Entries[i];
-                    var expectedKeybind = resolvedFavoriteKeybinds[i];
-                    if (string.IsNullOrWhiteSpace(expectedKeybind))
-                    {
-                        if (box.Keybinds.Count > 0)
-                        {
-                            box.Keybinds.Clear();
-                        }
-                    }
-                    else
-                    {
-                        var parsed = Keybind.Parse(expectedKeybind);
-                        if (parsed.HasValue && (box.Keybinds.Count != 1 || box.Keybinds[0] != parsed.Value))
-                        {
-                            box.Keybinds.Clear();
-                            box.Keybinds.Add(parsed.Value);
-                        }
-                    }
-                }
-            }
-            finally
-            {
-                _isApplyingSnapshot = false;
-            }
-
-            var favoritesVm = ResolveFavoritesViewModel();
-            if (favoritesVm is not null)
-            {
-                if (FavoritesManager.Count > 0)
-                {
-                    favoritesVm.UpdateFavorites();
-                }
-                else
-                {
-                    for (var i = 0; i < FavoritesCategory.Entries.Count && i < resolvedFavoriteKeybinds.Length; i++)
-                    {
-                        var (_, filePath) = FavoritesCategory.Entries[i];
-                        var entryVm = favoritesVm.Entries.FirstOrDefault(e =>
-                            string.Equals(e.FilePath.CurrentValue, filePath, StringComparison.Ordinal));
-                        if (entryVm is not null)
-                        {
-                            entryVm.Keybind.Value = resolvedFavoriteKeybinds[i];
-                        }
-                    }
-                }
-            }
-        }
-
-        _boxModificationOrder.Clear();
-        _savedSnapshot = new KeybindSnapshot(_categories);
-        _undoStack.Clear();
-        _redoStack.Clear();
-        UpdateButtonStates();
-    }
+    private static string FavoriteKeybindText(Keymap keymap, string filePath) =>
+        keymap.FavoriteKeybind(filePath)?.GetFormattedForJSON() ?? string.Empty;
 
     private void SubscribeKeybindBoxes()
     {
@@ -360,13 +222,13 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         }
 
         _boxesSubscribed = true;
-        _savedSnapshot = new KeybindSnapshot(_categories);
 
         foreach (var category in _categories)
         {
-            foreach (var (box, _) in category.Entries)
+            var isFavorite = ReferenceEquals(category, FavoritesCategory);
+            foreach (var (box, owner) in category.Entries)
             {
-                NotifyCollectionChangedEventHandler handler = (_, _) => OnBoxKeybindChanged(box);
+                NotifyCollectionChangedEventHandler handler = (_, _) => OnBoxEdited(box, owner, isFavorite);
                 _collectionChangedHandlers[box] = handler;
                 box.Keybinds.CollectionChanged += handler;
             }
@@ -392,138 +254,134 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         UpdateButtonStates();
     }
 
-    private void OnBoxKeybindChanged(KeybindBox box)
+    private void OnBoxEdited(KeybindBox box, string owner, bool isFavorite)
     {
-        if (_isApplyingSnapshot || _isDisposed)
+        if (_isShowingDraft || _isDisposed)
         {
             return;
         }
 
-        _boxModificationOrder[box] = ++_modificationSequence;
-        OnKeybindChanged();
-    }
-
-    private void OnKeybindChanged()
-    {
-        if (_isApplyingSnapshot || _isDisposed)
+        var next = isFavorite ? WithFavoriteBox(_draft, box, owner) : WithActionBox(_draft, box, owner);
+        if (next.Equals(_draft))
         {
             return;
         }
 
-        var current = new KeybindSnapshot(_categories);
-
-        // Only push to undo if actually different from the last snapshot
-        if (_undoStack.Count > 0 && _undoStack[^1].Equals(current))
-        {
-            return;
-        }
-
-        _undoStack.Add(current);
+        _undoStack.Add(_draft);
         _redoStack.Clear();
+        _draft = next;
+
+        // The edit may have taken Keybinds from other boxes
+        ShowDraft();
         UpdateButtonStates();
     }
 
-    private void ApplySnapshot(KeybindSnapshot snapshot)
+    private static Keymap WithActionBox(Keymap keymap, KeybindBox box, string action)
     {
-        _isApplyingSnapshot = true;
+        foreach (var keybind in keymap.KeybindsFor(action))
+        {
+            if (!box.Keybinds.Contains(keybind))
+            {
+                keymap = keymap.Unassign(keybind);
+            }
+        }
+
+        foreach (var keybind in box.Keybinds)
+        {
+            keymap = keymap.Assign(keybind, action);
+        }
+
+        return keymap;
+    }
+
+    private static Keymap WithFavoriteBox(Keymap keymap, KeybindBox box, string filePath)
+    {
+        if (box.Keybinds.Count > 0)
+        {
+            return keymap.AssignToFavorite(box.Keybinds[^1], filePath);
+        }
+
+        return keymap.FavoriteKeybind(filePath) is { } previous ? keymap.Unassign(previous) : keymap;
+    }
+
+    /// <summary>
+    /// Updates every box whose Keybinds differ from the draft.
+    /// </summary>
+    private void ShowDraft()
+    {
+        _isShowingDraft = true;
         try
         {
             foreach (var category in _categories)
             {
-                foreach (var (box, functionName) in category.Entries)
+                var isFavorite = ReferenceEquals(category, FavoritesCategory);
+                foreach (var (box, owner) in category.Entries)
                 {
-                    if (!snapshot.Bindings.TryGetValue(functionName, out var keybinds))
+                    IReadOnlyList<Keybind> keybinds = isFavorite
+                        ? _draft.FavoriteKeybind(owner) is { } favoriteKeybind ? [favoriteKeybind] : []
+                        : _draft.KeybindsFor(owner);
+
+                    if (box.Keybinds.Count == keybinds.Count && keybinds.All(box.Keybinds.Contains))
                     {
-                        box.Keybinds.Clear();
                         continue;
                     }
 
-                    // Clear and repopulate
                     box.Keybinds.Clear();
-                    foreach (var kb in keybinds)
+                    foreach (var keybind in keybinds)
                     {
-                        box.Keybinds.Add(kb);
+                        box.Keybinds.Add(keybind);
                     }
                 }
             }
         }
         finally
         {
-            _isApplyingSnapshot = false;
+            _isShowingDraft = false;
         }
     }
 
-    private bool AreCurrentBindingsDefault()
+    /// <summary>
+    /// The platform defaults, with the draft's favorite Keybinds taking precedence.
+    /// </summary>
+    private Keymap DefaultsKeepingFavorites()
     {
-        if (view.DataContext is not CoreViewModel core)
+        var core = view.DataContext as CoreViewModel;
+        var defaults = Keymaps.Defaults(core?.PlatformService);
+        if (FavoritesCategory is null)
         {
-            return false;
-        }
-    
-        var defaults = KeybindingManager.GetDefaultShortcuts(core.PlatformService);
-        if (defaults is null)
-        {
-            return false;
+            return defaults;
         }
 
-        var viewCount = 0;
-        var expectedDefaultsCount = 0;
-
-        foreach (var category in _categories)
+        foreach (var (_, filePath) in FavoritesCategory.Entries)
         {
-            if (ReferenceEquals(category, FavoritesCategory))
+            if (_draft.FavoriteKeybind(filePath) is { } keybind)
             {
-                continue;
-            }
-
-            foreach (var (box, functionName) in category.Entries)
-            {
-                // Count how many default keybindings map to this specific UI function
-                foreach (var kvp in defaults)
-                {
-                    if (string.Equals(kvp.Value, functionName, StringComparison.Ordinal))
-                    {
-                        expectedDefaultsCount++;
-                    }
-                }
-
-                if (box.Keybinds is null)
-                {
-                    continue;
-                }
-
-                foreach (var kb in box.Keybinds)
-                {
-                    viewCount++;
-
-                    // If the keybind doesn't exist in defaults, or maps to a different function, it's not default
-                    if (!defaults.TryGetValue(kb, out var defaultFuncName) || 
-                        !string.Equals(defaultFuncName, functionName, StringComparison.Ordinal))
-                    {
-                        return false;
-                    }
-                }
+                defaults = defaults.AssignToFavorite(keybind, filePath);
             }
         }
 
-        // Ensure there aren't missing default bindings for the functions exposed in the UI
-        return viewCount == expectedDefaultsCount;
+        return defaults;
+    }
+
+    private void ReplaceDraft(Keymap keymap)
+    {
+        if (keymap.Equals(_draft))
+        {
+            return;
+        }
+
+        _undoStack.Add(_draft);
+        _redoStack.Clear();
+        _draft = keymap;
+        ShowDraft();
+        UpdateButtonStates();
     }
 
     private void OnCancelClicked(object? sender, RoutedEventArgs e)
     {
         if (HasUnsavedChanges())
         {
-            // Reset to saved state
-            if (_savedSnapshot is null)
-            {
-                return;
-            }
-
-            _undoStack.Add(new KeybindSnapshot(_categories));
-            _redoStack.Clear();
-            ApplySnapshot(_savedSnapshot);
-            UpdateButtonStates();
+            ReplaceDraft(_saved);
         }
         else
         {
@@ -531,54 +389,8 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         }
     }
 
-    private void OnResetClicked(object? sender, RoutedEventArgs e)
-    {
-        if (view.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-
-        var defaults = KeybindingManager.GetDefaultShortcuts(core.PlatformService);
-        if (defaults is null)
-        {
-            return;
-        }
-
-        // Push current state for undo
-        _undoStack.Add(new KeybindSnapshot(_categories));
-        _redoStack.Clear();
-
-        // Apply default bindings to all standard boxes
-        _isApplyingSnapshot = true;
-        try
-        {
-            foreach (var category in _categories)
-            {
-                if (ReferenceEquals(category, FavoritesCategory))
-                {
-                    continue;
-                }
-
-                foreach (var (box, functionName) in category.Entries)
-                {
-                    box.Keybinds.Clear();
-                    var matches = defaults.Where(x =>
-                            string.Equals(x.Value, functionName, StringComparison.Ordinal))
-                        .AsValueEnumerable().Where(x => x.Value is not null);
-                    foreach (var match in matches)
-                    {
-                        box.Keybinds.Add(match.Key);
-                    }
-                }
-            }
-        }
-        finally
-        {
-            _isApplyingSnapshot = false;
-        }
-
-        UpdateButtonStates();
-    }
+    private void OnResetClicked(object? sender, RoutedEventArgs e) =>
+        ReplaceDraft(DefaultsKeepingFavorites());
 
     private void OnApplyClicked(object? sender, RoutedEventArgs e)
     {
@@ -609,6 +421,8 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         {
             return;
         }
+
+        _saved = _draft = Keymaps.Current;
 
         var translation = TranslationManager.Translation;
         var pressKeyText = translation.PressKey;
@@ -684,14 +498,9 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                 MaxTags = 1
             };
 
-            var keybind = entry.Keybind.CurrentValue;
-            if (!string.IsNullOrWhiteSpace(keybind))
+            if (_draft.FavoriteKeybind(entry.FilePath.CurrentValue) is { } keybind)
             {
-                var parsed = Keybind.Parse(keybind);
-                if (parsed.HasValue && (parsed.Value.Key != Key.None || parsed.Value.MouseButton != MouseButton.None))
-                {
-                    keybindBox.Keybinds = [parsed.Value];
-                }
+                keybindBox.Keybinds = [keybind];
             }
 
             view.FavoritesItems.Items.Add(keybindBox);
@@ -748,7 +557,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                 PlaceholderText = pressKeyText,
             };
 
-            var currentBinds = Keymaps.Current.KeybindsFor(functionName);
+            var currentBinds = _draft.KeybindsFor(functionName);
             if (currentBinds.Count > 0)
             {
                 keybindBox.Keybinds = new ObservableCollection<Keybind>(currentBinds);
@@ -844,12 +653,10 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         }
 
         _collectionChangedHandlers.Clear();
-        _boxModificationOrder.Clear();
         _categories.Clear();
         FavoritesCategory = null;
         _undoStack.Clear();
         _redoStack.Clear();
-        _savedSnapshot = null;
 
         GC.SuppressFinalize(this);
     }

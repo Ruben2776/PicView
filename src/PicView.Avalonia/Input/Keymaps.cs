@@ -47,7 +47,13 @@ public static class Keymaps
     }
 
     public static void ResetToDefaults(IPlatformSpecificService? platform) =>
-        Replace(Keymap.FromJson(null, DefaultJson(platform)));
+        Replace(Defaults(platform));
+
+    /// <summary>
+    /// The platform's default keymap, without favorites.
+    /// </summary>
+    public static Keymap Defaults(IPlatformSpecificService? platform) =>
+        Keymap.FromJson(null, DefaultJson(platform));
 
     public static async ValueTask SaveAsync()
     {

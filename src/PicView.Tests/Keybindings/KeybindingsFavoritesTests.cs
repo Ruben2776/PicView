@@ -215,6 +215,73 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal(folderB, spyMapper.LastOpenedPath);
     }
 
+    private const string ViewTestKeybindings = """{ "Right": "Next", "Left": "Prev", "F9": "Rotate90" }""";
+
+    private KeybindingsViewController CreateController(out MainWindowViewModel mainWindowVm)
+    {
+        var core = CreateCoreWithMainWindow(out mainWindowVm);
+        mainWindowVm.Favorites = new FavoritesViewModel(mainWindowVm);
+        var view = new KeybindingsView { DataContext = core };
+        var controller = new KeybindingsViewController(view);
+        controller.Initialize();
+        return controller;
+    }
+
+    [Fact]
+    public void EditingActionBox_WithKeybindOfAnotherAction_TakesItImmediately()
+    {
+        Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}"));
+        using var controller = CreateController(out _);
+
+        controller.ActionBox("Prev")!.Keybinds.Add(new Keybind(Key.Right));
+
+        Assert.Empty(controller.ActionBox("Next")!.Keybinds);
+    }
+
+    [Fact]
+    public void Undo_AfterTakingKeybind_RestoresBothActions()
+    {
+        Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}"));
+        using var controller = CreateController(out _);
+        controller.ActionBox("Prev")!.Keybinds.Add(new Keybind(Key.Right));
+
+        controller.Undo();
+
+        Assert.Equal([new Keybind(Key.Right)], controller.ActionBox("Next")!.Keybinds);
+        Assert.Equal([new Keybind(Key.Left)], controller.ActionBox("Prev")!.Keybinds);
+    }
+
+    [Fact]
+    public void SaveKeybindings_ActionTakesFavoritesKeybind_ClearsFavoriteAndResolvesToAction()
+    {
+        var folder = Path.Combine(_tempRoot, "Gamma");
+        Directory.CreateDirectory(folder);
+        RunWithDispatcher(FavoritesManager.AddAsync(folder, "F7"));
+        Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}"));
+        using var controller = CreateController(out _);
+        var (favoriteBox, _) = controller.FavoritesCategory!.Entries[0];
+
+        controller.ActionBox("Prev")!.Keybinds.Add(new Keybind(Key.F7));
+        RunWithDispatcher(controller.SaveKeybindings());
+
+        Assert.Empty(favoriteBox.Keybinds);
+        Assert.Equal(string.Empty, FavoritesManager.AllEntries[0].Keybind);
+        Assert.Equal(KeymapResolution.Action("Prev"), Keymaps.Resolve(new Keybind(Key.F7)));
+    }
+
+    [Fact]
+    public void SaveKeybindings_KeepsBindingsOfActionsNotShownInCategories()
+    {
+        Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}"));
+        using var controller = CreateController(out _);
+
+        controller.ActionBox("Prev")!.Keybinds.Add(new Keybind(Key.Up));
+        RunWithDispatcher(controller.SaveKeybindings());
+
+        Assert.Equal(KeymapResolution.Action("Rotate90"), Keymaps.Resolve(new Keybind(Key.F9)));
+        Assert.Equal(KeymapResolution.Action("Prev"), Keymaps.Resolve(new Keybind(Key.Up)));
+    }
+
     private sealed class SpyFunctionsMapper(MainWindowViewModel vm) : FunctionsMapper(vm, null!)
     {
         public string? LastOpenedPath { get; private set; }
