@@ -1,0 +1,3 @@
+# Separate Favorites and File History Modules
+
+Favorites and File History look structurally similar (both persist path lists to JSON and render in the dropdown menu), but they represent distinct domain concepts: a **Favorite** bookmarks a folder on disk with an optional shortcut key, whereas **File History** is a chronological stream of recently opened files, archives, and web URLs with forward/backward traversal and entry pinning. We keep `PicView.Core.Favorites` and `PicView.Core.FileHistory` as separate deep modules rather than merging them into a single bookmark module, sharing only the path-opening seam.
