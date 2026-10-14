@@ -3,6 +3,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.ViewModels;
 
@@ -12,6 +13,7 @@ public class MainTitleBar : UserControl, ITitleBar
 {
     public Button? SharedDropDownMenuButton { get; protected init; }
     public Button? SharedSearchButton { get; protected init; }
+    public EditableTitlebar? SharedEditableTitlebar { get; protected init; }
     protected MainTitleBar()
     {
         Loaded += OnLoaded;

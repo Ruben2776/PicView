@@ -35,3 +35,7 @@ _Avoid_: Shortcuts, custom shortcuts, keybindings dictionary
 **File History**:
 The chronological record of recently opened image files, archives, and web URLs, supporting forward/backward traversal and entry pinning.
 _Avoid_: Favorites, folder bookmarks
+
+**Custom Title Bar**:
+The title bar PicView draws itself (tabs, menus, address bar, window caption buttons) on platforms without a native menu bar. It is identical on Windows and Linux, and Windows is its reference. macOS uses the native menu bar instead.
+_Avoid_: Win title bar, Linux titlebar, platform title bar
