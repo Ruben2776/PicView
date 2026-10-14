@@ -17,8 +17,20 @@ The ordered ingestion sequence (Files -> Text/URLs/Base64 -> Bitmap) that decode
 _Avoid_: Paste handler, multi-format paste, clipboard reader
 
 **Favorite**:
-A user-curated bookmark to a folder on disk, optionally bound to a shortcut key for instant navigation.
+A user-curated bookmark to a folder on disk, optionally owning a **Keybind** in the **Keymap** for instant navigation.
 _Avoid_: Pinned history entry, favorite file, file bookmark
+
+**Keybind**:
+A single input chord: a key, mouse button, or wheel direction, plus modifiers. Wheel directions name the physical movement of the wheel.
+_Avoid_: Shortcut, hotkey, binding
+
+**Action**:
+A canonical, bindable name for something the viewer can do (e.g. `ToggleFullscreen`), possibly reachable through aliases.
+_Avoid_: Command, function
+
+**Keymap**:
+The complete assignment of **Keybinds** to owners, where an owner is either an **Action** or a **Favorite**. Each Keybind has at most one owner; assigning a Keybind takes it from its previous owner.
+_Avoid_: Shortcuts, custom shortcuts, keybindings dictionary
 
 **File History**:
 The chronological record of recently opened image files, archives, and web URLs, supporting forward/backward traversal and entry pinning.

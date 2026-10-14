@@ -193,7 +193,7 @@ public class FavoritesManagerTests : IDisposable
         var folderPath = Path.Combine(_tempRoot, "MyFavoritesFolder");
         entryVm.Initialize(folderPath, "MyFavoritesFolder", "Ctrl + F", false, vm);
 
-        entryVm.EditCommand.Execute(Unit.Default);
+        entryVm.OpenEditDialogCommand.Execute(Unit.Default);
 
         Assert.NotNull(editedEntry);
         Assert.Equal(folderPath, editedEntry.Value.FilePath);

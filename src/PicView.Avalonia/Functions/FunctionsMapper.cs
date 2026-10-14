@@ -163,6 +163,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             "Crop" => Crop,
             "Flip" => Flip,
             "OptimizeImage" => OptimizeImage,
+            "ZoomToFit" => ZoomToFit,
             "Stretch" => ZoomToFit,
 
             // Set stars

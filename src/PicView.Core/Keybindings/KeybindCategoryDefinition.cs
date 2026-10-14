@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using PicView.Core.Localization;
 
 namespace PicView.Core.Keybindings;
@@ -8,6 +9,43 @@ namespace PicView.Core.Keybindings;
 /// </summary>
 public static class KeybindCategoryDefinition
 {
+    /// <summary>
+    /// Legacy action names kept for backwards compatibility, mapped to their canonical name.
+    /// </summary>
+    private static readonly Dictionary<string, string> Aliases = new(StringComparer.Ordinal)
+    {
+        ["Fullscreen"] = "ToggleFullscreen",
+        ["Stretch"] = "ZoomToFit",
+    };
+
+    /// <summary>
+    /// Bindable actions that are not shown in any category of the keybindings view.
+    /// </summary>
+    private static readonly string[] HiddenActionNames =
+    [
+        "CheckForUpdates", "ColorPicker", "CutFile", "FileAssociationsWindow", "ResetZoomAndRotations",
+        "ResizeImage", "Restart", "Restore", "Rotate0", "Rotate90", "Rotate180", "Rotate270", "RotateLeft",
+        "RotateRight", "SaveAsPDF", "SetAsLockScreen", "SetAsLockscreenCentered", "SetAsWallpaper",
+        "SetAsWallpaperCentered", "SetAsWallpaperFilled", "SetAsWallpaperFitted", "SetAsWallpaperStretched",
+        "SetAsWallpaperTiled", "ShowFavoritesFile", "ShowKeybindingsFile", "ShowRecentHistoryFile",
+        "ShowSettingsFile", "SortFilesByLastWriteTime",
+    ];
+
+    /// <summary>
+    /// Every canonical action name, including actions hidden from the keybindings view.
+    /// </summary>
+    public static FrozenSet<string> ActionNames { get; } = GetAllCategories(new LanguageModel())
+        .SelectMany(c => c.Entries)
+        .Select(e => e.FunctionName)
+        .Concat(HiddenActionNames)
+        .ToFrozenSet(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Returns the canonical action name for <paramref name="name"/>. Unknown names are returned unchanged.
+    /// </summary>
+    public static string Canonicalize(string name) =>
+        Aliases.GetValueOrDefault(name, name);
+
     public static List<(string FunctionName, string DisplayName)> GetNavigationEntries(LanguageModel t) =>
     [
         ("Next", t.NextImage ?? string.Empty),
@@ -137,7 +175,7 @@ public static class KeybindCategoryDefinition
         ("NewWindow", t.NewWindow ?? string.Empty),
         ("Center", t.CenterWindow ?? string.Empty),
         ("SetTopMost", t.StayTopMost ?? string.Empty),
-        ("Fullscreen", t.ToggleFullscreen ?? string.Empty),
+        ("ToggleFullscreen", t.ToggleFullscreen ?? string.Empty),
         ("Maximize", t.Maximize ?? string.Empty),
     ];
 

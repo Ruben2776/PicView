@@ -117,7 +117,7 @@ public static class KeybindingManager
             var parsedKey = ParseToKeybind(kvp);
             if (parsedKey.HasValue)
             {
-                CustomShortcuts[parsedKey.Value] = kvp.Value;
+                CustomShortcuts[parsedKey.Value] = KeybindCategoryDefinition.Canonicalize(kvp.Value);
             }
         }
     }
