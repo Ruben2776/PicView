@@ -70,7 +70,13 @@ public static class LinuxKeybindings
                                                 "Alt+Ctrl+I": "ResizeWindow",
                                                 "Ctrl+F": "Search",
                                                 "Ctrl+PageUp": "NextArchive",
-                                                "Ctrl+PageDown": "PrevArchive"
+                                                "Ctrl+PageDown": "PrevArchive",
+                                                "Contextual": {
+                                                  "Return": "Confirm",
+                                                  "Escape": "Cancel",
+                                                  "Space": "PlayPause",
+                                                  "Ctrl+C": "Copy"
+                                                }
                                               }
                                               """;
 }

@@ -17,16 +17,26 @@ public class DefaultKeybindingsContractTests
     [Fact]
     public void DefaultKeybindings_AllActionsCanonicalizeToKnownActions()
     {
-        var defaults = JsonSerializer.Deserialize<Dictionary<string, string>>(
-            DefaultKeybindings, new JsonSerializerOptions { AllowTrailingCommas = true });
-        Assert.NotNull(defaults);
+        using var defaults = JsonDocument.Parse(DefaultKeybindings,
+            new JsonDocumentOptions { AllowTrailingCommas = true });
 
-        var unknown = defaults.Values
-            .Select(KeybindCategoryDefinition.Canonicalize)
+        var unknown = defaults.RootElement.EnumerateObject()
+            .Where(entry => entry.Value.ValueKind is JsonValueKind.String)
+            .Select(entry => KeybindCategoryDefinition.Canonicalize(entry.Value.GetString()!))
             .Where(name => !KeybindCategoryDefinition.ActionNames.Contains(name))
             .ToList();
 
         Assert.Empty(unknown);
+    }
+
+    [Fact]
+    public void DefaultKeybindings_BindEveryContextualActionInTheContextualSection()
+    {
+        var keymap = Keymap.FromJson(null, DefaultKeybindings);
+
+        Assert.All(KeybindCategoryDefinition.ContextualActionNames,
+            name => Assert.NotEmpty(keymap.KeybindsFor(name)));
+        Assert.Equal(KeybindCategoryDefinition.ContextualActionNames.Count, keymap.ContextualBindings.Count);
     }
 
     [Theory]
