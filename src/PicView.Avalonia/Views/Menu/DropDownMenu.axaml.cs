@@ -134,7 +134,6 @@ public partial class DropDownMenu : AnimatedMenu
             {
                 if (isVisible)
                 {
-                    _mainWindow.IsDialogOpen = true;
                     vm.TopTitlebarViewModel.DropDownMenu.CloseMenus(Unit.Default);
                     MaxHeight = _mainWindow.UIHelper.GetMainView.Bounds.Height - 1;
                     vm.WindowTabs.ActiveTab.CurrentValue.ShouldCropBeEnabled.Value =
@@ -144,7 +143,6 @@ public partial class DropDownMenu : AnimatedMenu
                 }
                 else
                 {
-                    _mainWindow.IsDialogOpen = false;
                     // Reset it, so that it opens in default state the next time it opens
                     vm.TopTitlebarViewModel.DropDownMenu.CloseToDefault();
                 }

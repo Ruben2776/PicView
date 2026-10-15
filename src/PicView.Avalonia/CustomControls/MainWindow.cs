@@ -402,9 +402,6 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 
     #region Dialog
 
-    
-    public bool IsDialogOpen { get; set; }
-    
     /// <summary>
     /// Handles close action based on current application state
     /// </summary>
