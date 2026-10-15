@@ -148,4 +148,23 @@ public class KeymapTests
 
         Assert.Equal(KeymapResolution.Action("Next"), keymap.Resolve(new Keybind(Key.Right), mode));
     }
+
+    [Theory]
+    [InlineData(InputMode.MotionPhoto)]
+    [InlineData(InputMode.Slideshow)]
+    public void Resolve_InNonBlockingMode_DisallowsActionsThatNeedAStillImage(InputMode mode)
+    {
+        var keymap = Keymap.FromJson(null, Defaults).Assign(new Keybind(Key.C), "Crop").Assign(new Keybind(Key.R), "RotateRight");
+
+        Assert.Equal(KeymapResolution.None, keymap.Resolve(new Keybind(Key.C), mode));
+        Assert.Equal(KeymapResolution.Action("RotateRight"), keymap.Resolve(new Keybind(Key.R), mode));
+    }
+
+    [Fact]
+    public void Resolve_InNormal_AllowsActionsThatNeedAStillImage()
+    {
+        var keymap = Keymap.FromJson(null, Defaults).Assign(new Keybind(Key.C), "Crop");
+
+        Assert.Equal(KeymapResolution.Action("Crop"), keymap.Resolve(new Keybind(Key.C), InputMode.Normal));
+    }
 }

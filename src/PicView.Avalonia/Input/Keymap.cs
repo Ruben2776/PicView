@@ -136,11 +136,21 @@ public sealed class Keymap : IEquatable<Keymap>
         List<KeyValuePair<string, string>>? Contextual);
 
     /// <summary>
-    /// Resolves <paramref name="keybind"/> as it acts in <paramref name="mode"/>:
-    /// a blocking Input Mode lets no ordinary Keybind run.
+    /// Resolves <paramref name="keybind"/> as it acts in <paramref name="mode"/>: a blocking Input Mode lets no
+    /// ordinary Keybind run, and a non-blocking one disallows Actions that need a still image.
     /// </summary>
-    public KeymapResolution Resolve(Keybind keybind, InputMode mode) =>
-        mode.IsBlocking() ? KeymapResolution.None : Resolve(keybind);
+    public KeymapResolution Resolve(Keybind keybind, InputMode mode)
+    {
+        if (mode.IsBlocking())
+        {
+            return KeymapResolution.None;
+        }
+
+        var resolution = Resolve(keybind);
+        return mode.DisallowsStillImageActions() && KeybindCategoryDefinition.NeedsStillImage(resolution.Value ?? string.Empty)
+            ? KeymapResolution.None
+            : resolution;
+    }
 
     public KeymapResolution Resolve(Keybind keybind) =>
         _actions.TryGetValue(keybind, out var action)
