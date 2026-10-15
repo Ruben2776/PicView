@@ -16,18 +16,15 @@ using R3;
 namespace PicView.Avalonia.Controllers;
 
 /// <summary>
-/// Edits a draft <see cref="Keymap"/> through the keybindings view. The boxes show the draft;
-/// every box edit produces a new draft, and undo/redo step through previous drafts.
+/// Edits a <see cref="KeymapDraft"/> through the keybindings view. The boxes show the draft,
+/// and every box edit and button press is passed on to it.
 /// </summary>
 public class KeybindingsViewController(KeybindingsView view) : IDisposable
 {
     private readonly List<KeybindCategoryGroup> _categories = [];
-    private readonly List<Keymap> _undoStack = [];
-    private readonly List<Keymap> _redoStack = [];
     private readonly Dictionary<KeybindBox, NotifyCollectionChangedEventHandler> _collectionChangedHandlers = [];
 
-    private Keymap _saved = Keymap.Empty;
-    private Keymap _draft = Keymap.Empty;
+    private KeymapDraft _draft = new(Keymap.Empty, Keymap.Empty);
     private IDisposable? _filterSubscription;
     private bool _boxesSubscribed;
     private bool _buttonsInitialized;
@@ -135,35 +132,11 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         }
     }
 
-    public void Undo()
-    {
-        if (_undoStack.Count == 0)
-        {
-            return;
-        }
+    public void Undo() => Apply(_draft.Undo());
 
-        _redoStack.Add(_draft);
-        _draft = _undoStack[^1];
-        _undoStack.RemoveAt(_undoStack.Count - 1);
-        ShowDraft();
-        UpdateButtonStates();
-    }
+    public void Redo() => Apply(_draft.Redo());
 
-    public void Redo()
-    {
-        if (_redoStack.Count == 0)
-        {
-            return;
-        }
-
-        _undoStack.Add(_draft);
-        _draft = _redoStack[^1];
-        _redoStack.RemoveAt(_redoStack.Count - 1);
-        ShowDraft();
-        UpdateButtonStates();
-    }
-
-    public bool HasUnsavedChanges() => !_draft.Equals(_saved);
+    public bool HasUnsavedChanges() => _draft.IsDirty;
 
     public void UpdateButtonStates()
     {
@@ -173,24 +146,18 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             return;
         }
 
-        var hasChanges = HasUnsavedChanges();
-
-        view.ApplyButton.IsEnabled = hasChanges;
-        view.SaveButton.IsEnabled = hasChanges;
-        view.DefaultButton.IsEnabled = !_draft.Equals(DefaultsKeepingFavorites());
+        view.ApplyButton.IsEnabled = _draft.IsDirty;
+        view.SaveButton.IsEnabled = _draft.IsDirty;
+        view.DefaultButton.IsEnabled = !_draft.IsDefault;
     }
 
     public async Task SaveKeybindings()
     {
-        var draft = _draft;
-        Keymaps.Replace(draft);
+        Keymaps.Replace(_draft.Current);
+        _draft.MarkSaved();
 
         // The favorites menu shows each favorite's Keybind
         ResolveFavoritesViewModel()?.UpdateFavorites();
-
-        _saved = draft;
-        _undoStack.Clear();
-        _redoStack.Clear();
         UpdateButtonStates();
 
         await Keymaps.SaveAsync().ConfigureAwait(false);
@@ -242,19 +209,23 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             return;
         }
 
-        var next = _draft.WithKeybinds(action, box.Keybinds);
-        if (next.Equals(_draft))
+        // The edit may have taken Keybinds from other boxes, which Apply shows
+        Apply(_draft.SetKeybinds(action, box.Keybinds));
+    }
+
+    /// <summary>
+    /// Shows the draft after a draft operation that changed it, and updates the buttons.
+    /// </summary>
+    /// <returns><paramref name="changed"/>.</returns>
+    private bool Apply(bool changed)
+    {
+        if (changed)
         {
-            return;
+            ShowDraft();
         }
 
-        _undoStack.Add(_draft);
-        _redoStack.Clear();
-        _draft = next;
-
-        // The edit may have taken Keybinds from other boxes
-        ShowDraft();
         UpdateButtonStates();
+        return changed;
     }
 
     /// <summary>
@@ -269,7 +240,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             {
                 foreach (var (box, action) in category.Entries)
                 {
-                    var keybinds = _draft.KeybindsFor(action);
+                    var keybinds = _draft.Current.KeybindsFor(action);
 
                     if (box.Keybinds.Count == keybinds.Count && keybinds.All(box.Keybinds.Contains))
                     {
@@ -290,49 +261,16 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         }
     }
 
-    /// <summary>
-    /// The platform defaults, with the draft's favorite Keybinds taking precedence.
-    /// </summary>
-    private Keymap DefaultsKeepingFavorites()
-    {
-        var core = view.DataContext as CoreViewModel;
-        var defaults = Keymaps.Defaults(core?.PlatformService);
-        foreach (var action in KeybindCategoryDefinition.FavoriteActionNames)
-        {
-            defaults = defaults.WithKeybinds(action, _draft.KeybindsFor(action));
-        }
-
-        return defaults;
-    }
-
-    private void ReplaceDraft(Keymap keymap)
-    {
-        if (keymap.Equals(_draft))
-        {
-            return;
-        }
-
-        _undoStack.Add(_draft);
-        _redoStack.Clear();
-        _draft = keymap;
-        ShowDraft();
-        UpdateButtonStates();
-    }
-
     private void OnCancelClicked(object? sender, RoutedEventArgs e)
     {
-        if (HasUnsavedChanges())
-        {
-            ReplaceDraft(_saved);
-        }
-        else
+        if (!Apply(_draft.Revert()))
         {
             SafeClose();
         }
     }
 
     private void OnResetClicked(object? sender, RoutedEventArgs e) =>
-        ReplaceDraft(DefaultsKeepingFavorites());
+        Apply(_draft.ResetToDefaults());
 
     private void OnApplyClicked(object? sender, RoutedEventArgs e)
     {
@@ -364,7 +302,8 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             return;
         }
 
-        _saved = _draft = Keymaps.Current;
+        var core = view.DataContext as CoreViewModel;
+        _draft = new KeymapDraft(Keymaps.Current, Keymaps.Defaults(core?.PlatformService));
 
         var translation = TranslationManager.Translation;
         var pressKeyText = translation.PressKey;
@@ -436,7 +375,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                 MaxTags = 1
             };
 
-            var currentBinds = _draft.KeybindsFor(action);
+            var currentBinds = _draft.Current.KeybindsFor(action);
             if (currentBinds.Count > 0)
             {
                 keybindBox.Keybinds = new ObservableCollection<Keybind>(currentBinds);
@@ -489,7 +428,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                 PlaceholderText = pressKeyText,
             };
 
-            var currentBinds = _draft.KeybindsFor(functionName);
+            var currentBinds = _draft.Current.KeybindsFor(functionName);
             if (currentBinds.Count > 0)
             {
                 keybindBox.Keybinds = new ObservableCollection<Keybind>(currentBinds);
@@ -587,8 +526,6 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         _collectionChangedHandlers.Clear();
         _categories.Clear();
         FavoritesCategory = null;
-        _undoStack.Clear();
-        _redoStack.Clear();
 
         GC.SuppressFinalize(this);
     }

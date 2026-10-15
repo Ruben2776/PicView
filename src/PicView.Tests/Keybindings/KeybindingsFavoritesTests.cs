@@ -110,7 +110,7 @@ public class KeybindingsFavoritesTests : IDisposable
         return path;
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void Initialize_WhenFavoritesHaveSlots_ShowsFolderNamesWithSlotKeybinds()
     {
         var folderA = CreateFolder("VacationPhotos");
@@ -136,7 +136,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Empty(boxB.Keybinds);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void Initialize_ShowsOnlyFavoritesWithSlots()
     {
         for (var i = 0; i <= FavoritesManager.MaxSlots; i++)
@@ -149,7 +149,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal(FavoritesManager.MaxSlots, controller.FavoritesCategory!.Entries.Count);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void SaveKeybindings_FavoriteTakesKeybindOfAnotherFavorite_BindsItToTheSlot()
     {
         RunWithDispatcher(FavoritesManager.AddAsync(CreateFolder("Alpha")));
@@ -167,7 +167,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal(KeymapResolution.Action("OpenFavorite1"), Keymaps.Resolve(new Keybind(Key.F8)));
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void ShortcutHandling_WhenFavoriteKeyboardOrMouseKeybindMatches_OpensTheSlotsFolder()
     {
         var folderA = CreateFolder("KeyboardFolder");
@@ -196,7 +196,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal(folderB, spyMapper.LastOpenedPath);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void ShortcutHandling_WhenSlotIsEmpty_DoesNothing()
     {
         Keymaps.Replace(Keymap.Empty.Assign(new Keybind(Key.F7), "OpenFavorite3"));
@@ -274,7 +274,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal(KeymapResolution.Action("Prev"), Keymaps.Resolve(new Keybind(Key.Up)));
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void ResetThenCancel_LeavesLiveKeymapUnchanged()
     {
         RunWithDispatcher(FavoritesManager.AddAsync(CreateFolder("Delta")));
@@ -323,7 +323,7 @@ public class KeybindingsFavoritesTests : IDisposable
         return dialog;
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void FavoriteDialog_ForFavoriteWithSlot_ShowsPathAndSlotsKeybind()
     {
         var folder = CreateFolder("Preselected");
@@ -339,7 +339,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal([keybind], dialog.KeyBox.Keybinds);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void FavoriteDialog_ForNewFavorite_ShowsKeybindLeftOnNextFreeSlot()
     {
         Keymaps.Replace(Keymap.Empty.Assign(new Keybind(Key.F7), "OpenFavorite1"));
@@ -350,7 +350,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal([new Keybind(Key.F7)], dialog.KeyBox.Keybinds);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void FavoriteDialog_WhenNoSlotIsFree_DisablesKeyBox()
     {
         for (var i = 0; i < FavoritesManager.MaxSlots; i++)
@@ -363,7 +363,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.False(dialog.KeyBox.IsEnabled);
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void SetFavoriteKeybindAsync_ReplacesSlotsKeybindAndTakesItFromOtherActions()
     {
         Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}").Assign(new Keybind(Key.F7), "OpenFavorite1"));
@@ -375,7 +375,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Empty(Keymaps.Current.KeybindsFor("Next"));
     }
 
-    [Fact]
+    [AvaloniaFact]
     public void SetFavoriteKeybindAsync_WithNoKeybind_UnbindsSlot()
     {
         Keymaps.Replace(Keymap.Empty.Assign(new Keybind(Key.F7), "OpenFavorite1"));

@@ -65,18 +65,17 @@ public class KeybindBoxTests
         var box = new KeybindBox { MaxTags = 2 };
         box.Keybinds.Add(new Keybind(Key.A));
         box.Keybinds.Add(new Keybind(Key.B));
-        box.Keybinds.Add(new Keybind(Key.C));
 
         Assert.NotNull(box.TagBox);
         Assert.True(box.TagBox.IsAtMax);
 
         Assert.Throws<InvalidOperationException>(() =>
         {
-            box.Tags.Add("D");
+            box.Tags.Add("C");
         });
 
-        Assert.Equal(3, box.Tags.Count);
-        Assert.Equal(3, box.Keybinds.Count);
+        Assert.Equal(2, box.Tags.Count);
+        Assert.Equal(2, box.Keybinds.Count);
     }
 
     [AvaloniaFact]
@@ -85,18 +84,17 @@ public class KeybindBoxTests
         var box = new KeybindBox { MaxTags = 2 };
         box.Keybinds.Add(new Keybind(Key.A));
         box.Keybinds.Add(new Keybind(Key.B));
-        box.Keybinds.Add(new Keybind(Key.C));
 
         Assert.NotNull(box.TagBox);
         Assert.True(box.TagBox.IsAtMax);
 
         Assert.Throws<InvalidOperationException>(() =>
         {
-            box.Keybinds.Add(new Keybind(Key.D));
+            box.Keybinds.Add(new Keybind(Key.C));
         });
 
-        Assert.Equal(3, box.Tags.Count);
-        Assert.Equal(3, box.Keybinds.Count);
+        Assert.Equal(2, box.Tags.Count);
+        Assert.Equal(2, box.Keybinds.Count);
     }
 
     [AvaloniaFact]
@@ -182,10 +180,8 @@ public class KeybindBoxTests
         var box = new KeybindBox { MaxTags = 2 };
         var k1 = new Keybind(Key.A, KeyModifiers.Control);
         var k2 = new Keybind(Key.B, KeyModifiers.Shift);
-        var k3 = new Keybind(Key.C, KeyModifiers.Alt);
         box.Keybinds.Add(k1);
         box.Keybinds.Add(k2);
-        box.Keybinds.Add(k3);
 
         var window = new Window { Content = box };
         window.Show();
@@ -193,11 +189,10 @@ public class KeybindBoxTests
 
         Assert.NotNull(box.TagBox);
         Assert.NotNull(box.TagBox.Tags);
-        Assert.Equal(3, box.TagBox.Tags.Count);
+        Assert.Equal(2, box.TagBox.Tags.Count);
         Assert.Equal(k1.ToString(), box.TagBox.Tags[0]);
         Assert.Equal(k2.ToString(), box.TagBox.Tags[1]);
-        Assert.Equal(k3.ToString(), box.TagBox.Tags[2]);
-        Assert.Equal(3, box.TagBox.MaxTags);
+        Assert.Equal(2, box.TagBox.MaxTags);
         Assert.True(box.TagBox.IsAtMax);
         Assert.Contains(TagBox.Max, box.TagBox.Classes);
 
@@ -205,8 +200,10 @@ public class KeybindBoxTests
         box.TagBox.RemoveTag(k1.ToString());
         Dispatcher.UIThread.RunJobs();
 
-        Assert.Equal([k2.ToString(), k3.ToString()], box.TagBox.Tags);
-        Assert.Equal([k2, k3], box.Keybinds);
+        Assert.Single(box.TagBox.Tags);
+        Assert.Equal(k2.ToString(), box.TagBox.Tags[0]);
+        Assert.Single(box.Keybinds);
+        Assert.Equal(k2, box.Keybinds[0]);
         Assert.False(box.TagBox.IsAtMax);
         Assert.DoesNotContain(TagBox.Max, box.TagBox.Classes);
     }
@@ -217,7 +214,6 @@ public class KeybindBoxTests
         var box = new KeybindBox { PlaceholderText = "Press key...", MaxTags = 2 };
         box.Keybinds.Add(new Keybind(Key.A));
         box.Keybinds.Add(new Keybind(Key.B));
-        box.Keybinds.Add(new Keybind(Key.C));
 
         var button = new Button { Content = "Other" };
         var panel = new StackPanel();
@@ -486,7 +482,7 @@ public class KeybindBoxTests
         Assert.Equal(2, box.Keybinds.Count);
         Assert.Equal(new Keybind(MouseButton.XButton2), box.Keybinds[1]);
         Assert.Equal("XButton2", box.Tags[1]);
-        Assert.False(box.TagBox.IsAtMax);
+        Assert.True(box.TagBox.IsAtMax);
     }
 
     [AvaloniaFact]
@@ -679,46 +675,30 @@ public class KeybindBoxTests
             KeyModifiers = KeyModifiers.None,
             Source = box.TagBox
         });
-
-        // Add 3rd key
-        box.TagBox.RaiseEvent(new KeyEventArgs
-        {
-            RoutedEvent = InputElement.KeyDownEvent,
-            Key = Key.C,
-            KeyModifiers = KeyModifiers.None,
-            Source = box.TagBox
-        });
-        box.TagBox.RaiseEvent(new KeyEventArgs
-        {
-            RoutedEvent = InputElement.KeyUpEvent,
-            Key = Key.C,
-            KeyModifiers = KeyModifiers.None,
-            Source = box.TagBox
-        });
         Dispatcher.UIThread.RunJobs();
 
-        Assert.Equal(3, box.Keybinds.Count);
+        Assert.Equal(2, box.Keybinds.Count);
         Assert.True(box.TagBox.IsAtMax);
 
-        // Attempt 4th key
+        // Attempt 3rd key
         box.TagBox.RaiseEvent(new KeyEventArgs
         {
             RoutedEvent = InputElement.KeyDownEvent,
-            Key = Key.D,
+            Key = Key.C,
             KeyModifiers = KeyModifiers.None,
             Source = box.TagBox
         });
         box.TagBox.RaiseEvent(new KeyEventArgs
         {
             RoutedEvent = InputElement.KeyUpEvent,
-            Key = Key.D,
+            Key = Key.C,
             KeyModifiers = KeyModifiers.None,
             Source = box.TagBox
         });
         Dispatcher.UIThread.RunJobs();
 
-        Assert.Equal(3, box.Keybinds.Count);
-        Assert.Equal(3, box.Tags.Count);
+        Assert.Equal(2, box.Keybinds.Count);
+        Assert.Equal(2, box.Tags.Count);
     }
 
     [AvaloniaFact]
