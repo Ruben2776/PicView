@@ -163,83 +163,65 @@ public static class MainKeyboardShortcuts
     }
 
     /// <summary>
-    /// Handles special cases like cropping, dialog handling, and escape key.
+    /// Handles the keys of the window's <see cref="InputMode"/>, and the escape key.
     /// </summary>
     /// <returns>True if the key event was handled by a special case handler.</returns>
     private static async ValueTask<bool> HandleSpecialCases(KeyEventArgs e, MainWindowViewModel? vm, MainWindow mainWindow)
     {
-        // Handle cropping mode
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CropService is not null)
+        var activeTab = vm.WindowTabs.ActiveTab.CurrentValue;
+        switch (InputModes.Of(mainWindow))
         {
-            if (vm.WindowTabs.ActiveTab.CurrentValue.CropService.IsCropping)
-            {
+            case InputMode.Dialog:
+                if (e.Key is Key.Escape)
+                {
+                    await CloseTopDialogAsync(vm, mainWindow).ConfigureAwait(false);
+                }
+
+                return true;
+
+            case InputMode.Renaming:
+                return true;
+
+            case InputMode.Crop:
                 switch (e.Key)
                 {
                     case Key.Escape:
-                        vm.WindowTabs.ActiveTab.CurrentValue.CropService.CloseCropControl();
+                        activeTab.CropService.CloseCropControl();
                         break;
                     case Key.Enter:
-                        await vm.WindowTabs.ActiveTab.CurrentValue.CropService.SaveCropAsync().ConfigureAwait(false);
+                        await activeTab.CropService.SaveCropAsync().ConfigureAwait(false);
                         break;
                     case Key.C:
                         // Cmd+C on macOS, Ctrl+C elsewhere
                         if (e.KeyModifiers == (OperatingSystem.IsMacOS() ? KeyModifiers.Meta : KeyModifiers.Control))
                         {
-                            await vm.WindowTabs.ActiveTab.CurrentValue.CropService.CopyCroppedImageAsync().ConfigureAwait(false);
+                            await activeTab.CropService.CopyCroppedImageAsync().ConfigureAwait(false);
                         }
                         break;
                 }
-                return true;
-            }
-        }
-        
-        if (vm.IsEditableTitlebarOpen.CurrentValue)
-        {
-            return true;
-        }
 
-        // Motion photo playback: Space plays/pauses, Escape stops an active playback
-        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer &&
-            imageViewer.IsMotionPhotoActive)
-        {
-            if (e.Key is Key.Space)
-            {
-                imageViewer.ToggleMotionPhotoPlayPause();
                 return true;
-            }
 
-            if (e.Key is Key.Escape && imageViewer.StopMotionPhotoIfPlaying())
-            {
-                return true;
-            }
+            // Motion photo playback: Space plays/pauses, Escape stops an active playback
+            case InputMode.MotionPhoto when activeTab.CurrentView.CurrentValue is ImageViewer imageViewer:
+                if (e.Key is Key.Space)
+                {
+                    imageViewer.ToggleMotionPhotoPlayPause();
+                    return true;
+                }
+
+                if (e.Key is Key.Escape && imageViewer.StopMotionPhotoIfPlaying())
+                {
+                    return true;
+                }
+
+                break;
         }
 
-        // Handle open dialog
-        if (mainWindow.IsDialogOpen)
-        {
-            if (e.Key is not Key.Escape)
-            {
-                return true;
-            }
-
-            if (vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.CurrentValue)
-            {
-                vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
-                return true;
-            }
-                
-            var animatedPopUp = mainWindow.UIHelper.GetMainView.MainPanel.Children.OfType<AnimatedPopUp>().FirstOrDefault();
-            if (animatedPopUp is not null)
-            {
-                await animatedPopUp.AnimatedClosing().ConfigureAwait(false);
-            }
-
-            return true;
-        }
-        
         // Handle escape key
         if (e.Key == Key.Escape)
         {
+            // With the UI hidden the main menu is not a dialog, but Escape still closes it
             if (vm.TopTitlebarViewModel.IsMainMenuVisible.CurrentValue)
             {
                 vm.TopTitlebarViewModel.CloseMenu();
@@ -270,13 +252,30 @@ public static class MainKeyboardShortcuts
                 }
             }
         }
-        // Don't interrupt navigating main menu with keyboard
-        else if (vm.IsUIShown.CurrentValue && vm.TopTitlebarViewModel.IsMainMenuVisible.CurrentValue)
-        {
-            return true;
-        }
 
         return false;
+    }
+
+    /// <summary>
+    /// Closes the drop-down menu, else the open pop-up, else the main menu.
+    /// </summary>
+    private static async ValueTask CloseTopDialogAsync(MainWindowViewModel vm, MainWindow mainWindow)
+    {
+        if (vm.TopTitlebarViewModel.DropDownMenu?.IsDropDownMenuVisible.CurrentValue ?? false)
+        {
+            vm.TopTitlebarViewModel.CloseDropDownMenu();
+            return;
+        }
+
+        var animatedPopUp = mainWindow.UIHelper.GetMainView?.MainPanel.Children.OfType<AnimatedPopUp>()
+            .FirstOrDefault(popUp => popUp.IsVisible);
+        if (animatedPopUp is not null)
+        {
+            await animatedPopUp.AnimatedClosing().ConfigureAwait(false);
+            return;
+        }
+
+        vm.TopTitlebarViewModel.CloseMenu();
     }
 
     /// <summary>

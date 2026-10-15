@@ -24,7 +24,8 @@ public static class MouseShortcuts
         // Don't handle mouse wheel if the view is not the image viewer
         // or a dialog is opened
         var shouldReturn = await Dispatcher.UIThread.InvokeAsync(() =>
-            mainViewModel.WindowTabs.ActiveTab.Value.CurrentView.Value is not ImageViewer || mainWindow.IsDialogOpen);
+            mainViewModel.WindowTabs.ActiveTab.Value.CurrentView.Value is not ImageViewer ||
+            InputModes.Of(mainWindow) is InputMode.Dialog);
         if (shouldReturn)
         {
             return;
@@ -88,7 +89,7 @@ public static class MouseShortcuts
     
     public static async Task MainWindow_PointerPressed(PointerPressedEventArgs e, MainWindow window)
     {
-        if (window.IsDialogOpen)
+        if (InputModes.Of(window) is InputMode.Dialog)
         {
             return;
         }

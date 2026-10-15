@@ -68,7 +68,12 @@ public class AnimatedPopUp : ContentControl
             return;
         }
         
-        mainWindow.IsDialogOpen = true;
+        // A dialog replaces the drop-down menu
+        if (mainWindow.DataContext is MainWindowViewModel vm)
+        {
+            vm.TopTitlebarViewModel.CloseDropDownMenu();
+        }
+
         IsHitTestVisible = true;
         IsVisible = true;
         
@@ -102,11 +107,6 @@ public class AnimatedPopUp : ContentControl
                 return;
             }
             mainWindow = desktopMainWindow;
-        }
-        
-        if (mainWindow.DataContext is MainWindowViewModel vm)
-        {
-            mainWindow.IsDialogOpen = vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.CurrentValue;
         }
         
         const int fromX = 0;
