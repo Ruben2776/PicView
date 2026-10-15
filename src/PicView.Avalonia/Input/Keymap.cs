@@ -83,7 +83,11 @@ public sealed class Keymap : IEquatable<Keymap>
     public IReadOnlyList<Keybind> KeybindsFor(string action)
     {
         var canonical = KeybindCategoryDefinition.Canonicalize(action);
-        return _actions.Where(kvp => kvp.Value == canonical).Select(kvp => kvp.Key).ToList();
+        return
+        [
+            .. _actions.Where(kvp => string.Equals(kvp.Value, canonical, StringComparison.Ordinal))
+                .Select(kvp => kvp.Key)
+        ];
     }
 
     /// <summary>

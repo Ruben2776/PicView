@@ -86,6 +86,4 @@ public static class Keymaps
         var span = bytes.AsSpan();
         return Encoding.UTF8.GetString(span.StartsWith(preamble) ? span[preamble.Length..] : span);
     }
-
-    private sealed record State(Keymap Keymap, int FavoritesVersion);
 }
