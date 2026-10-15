@@ -93,7 +93,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
             
             tabViewModel.Crop.CropImageCommand.SubscribeAwait(async (_, _) =>
             {
-                await PickAndSaveImage().ConfigureAwait(false);
+                await SaveCropAsAsync().ConfigureAwait(false);
             },DebugHelper.LogError(nameof(CropService), nameof(CloseCropControl)));
         }
     }
@@ -148,13 +148,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
     }
 
-    public async Task SaveCropAsync()
-    {
-        var (fileName, fileInfo, bitmap) = PrepareCropData();
-        await SaveCroppedImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
-    }
-
-    private async ValueTask PickAndSaveImage()
+    public async Task SaveCropAsAsync()
     {
         if (tabViewModel.Crop is null)
         {

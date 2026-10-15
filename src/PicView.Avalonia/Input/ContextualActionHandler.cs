@@ -26,7 +26,7 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
                 return true;
 
             case (InputMode.Crop, Confirm):
-                await activeTab.CropService.SaveCropAsync().ConfigureAwait(false);
+                await activeTab.CropService.SaveCropAsAsync().ConfigureAwait(false);
                 return true;
             case (InputMode.Crop, Cancel):
                 activeTab.CropService.CloseCropControl();
