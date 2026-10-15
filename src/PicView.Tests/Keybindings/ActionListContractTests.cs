@@ -1,5 +1,6 @@
 using System.Globalization;
 using PicView.Avalonia.Functions;
+using PicView.Core.Favorites;
 using PicView.Core.Keybindings;
 using PicView.Core.Localization;
 
@@ -74,5 +75,26 @@ public class ActionListContractTests
     public void Canonicalize_MapsAliasesAndPassesOtherNamesThrough(string name, string expected)
     {
         Assert.Equal(expected, KeybindCategoryDefinition.Canonicalize(name));
+    }
+
+    [Fact]
+    public void FavoriteActions_AreOneActionPerSlot()
+    {
+        var expected = Enumerable.Range(1, FavoritesManager.MaxSlots).Select(slot => $"OpenFavorite{slot}");
+
+        Assert.Equal(expected, KeybindCategoryDefinition.FavoriteActionNames);
+        Assert.All(expected, name => Assert.True(KeybindCategoryDefinition.ActionNames.Contains(name), name));
+    }
+
+    [Theory]
+    [InlineData("OpenFavorite1", 1)]
+    [InlineData("OpenFavorite10", 10)]
+    [InlineData("OpenFavorite0", null)]
+    [InlineData("OpenFavorite11", null)]
+    [InlineData("OpenFavorite", null)]
+    [InlineData("Next", null)]
+    public void FavoriteSlot_ParsesOnlyFavoriteActions(string action, int? expected)
+    {
+        Assert.Equal(expected, KeybindCategoryDefinition.FavoriteSlot(action));
     }
 }

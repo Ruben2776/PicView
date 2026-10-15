@@ -7,23 +7,25 @@ using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Input;
 using PicView.Core.DebugTools;
 using PicView.Core.Favorites;
+using PicView.Core.Keybindings;
 using PicView.Core.ViewModels;
 using R3;
-using MouseButton = PicView.Avalonia.Input.MouseButton;
 
 namespace PicView.Avalonia.Views.UC.PopUps;
 
+/// <summary>
+/// Adds or edits a favorite. The KeyBox edits the Keybind of the favorite's slot; it is disabled when the
+/// favorite has no slot, or when a new favorite would get none.
+/// </summary>
 public partial class FavoriteDialog : AnimatedPopUp
 {
     private DisposableBag _disposables;
     private readonly string? _initialPath;
-    private readonly string? _initialKeybind;
     private bool _isSaving;
 
-    public FavoriteDialog(string? initialPath, string? initialKeybind)
+    public FavoriteDialog(string? initialPath)
     {
         _initialPath = initialPath;
-        _initialKeybind = initialKeybind;
         InitializeComponent();
 
         if (!string.IsNullOrWhiteSpace(_initialPath))
@@ -31,13 +33,22 @@ public partial class FavoriteDialog : AnimatedPopUp
             PathBox.Text = _initialPath;
         }
 
-        if (!string.IsNullOrWhiteSpace(_initialKeybind))
+        var slot1 = !string.IsNullOrWhiteSpace(initialPath) && FavoritesManager.Contains(initialPath)
+            ? FavoritesManager.SlotOf(initialPath)
+            : FavoritesManager.NextFreeSlot();
+
+        if (slot1 is { } slot)
         {
-            var parsed = Keybind.Parse(_initialKeybind);
-            if (parsed.HasValue && (parsed.Value.Key is not Key.None || parsed.Value.MouseButton is not MouseButton.None))
+            var keybinds = Keymaps.Current.KeybindsFor(KeybindCategoryDefinition.FavoriteAction(slot));
+            if (keybinds.Count > 0)
             {
-                KeyBox.Keybinds = [parsed.Value];
+                KeyBox.Keybinds = [keybinds[0]];
             }
+        }
+        else
+        {
+            KeyBox.IsEnabled = false;
+            KeyBox.Cursor = new Cursor(StandardCursorType.No);
         }
 
         Loaded += OnLoaded;
@@ -48,15 +59,6 @@ public partial class FavoriteDialog : AnimatedPopUp
         if (!string.IsNullOrWhiteSpace(_initialPath) && string.IsNullOrWhiteSpace(PathBox.Text))
         {
             PathBox.Text = _initialPath;
-        }
-
-        if (!string.IsNullOrWhiteSpace(_initialKeybind) && (KeyBox.Keybinds is null || KeyBox.Keybinds.Count == 0))
-        {
-            var parsed = Keybind.Parse(_initialKeybind);
-            if (parsed.HasValue && (parsed.Value.Key != Key.None || parsed.Value.MouseButton != MouseButton.None))
-            {
-                KeyBox.Keybinds = [parsed.Value];
-            }
         }
 
         if (DataContext is not MainWindowViewModel vm)
@@ -115,20 +117,24 @@ public partial class FavoriteDialog : AnimatedPopUp
         _isSaving = true;
         try
         {
-            var keybind = KeyBox.Keybinds is { Count: > 0 }
-                ? KeyBox.Keybinds[0].GetFormattedForJSON()
-                : KeyBox.Tags is { Count: > 0 } ? KeyBox.Tags[0] : string.Empty;
-
-            var entry = new FavoriteEntry(path, keybind);
-
-            if (DataContext is MainWindowViewModel vm)
+            int? slot;
+            var favoritesVm = DataContext is MainWindowViewModel vm ? vm.Favorites ??= new FavoritesViewModel(vm) : null;
+            if (favoritesVm is not null)
             {
-                vm.Favorites ??= new FavoritesViewModel(vm);
-                await vm.Favorites.AddOrEditAsync(entry).ConfigureAwait(true);
+                slot = await favoritesVm.AddFavorite(path).ConfigureAwait(true);
             }
             else
             {
-                await FavoritesManager.AddAsync(entry).ConfigureAwait(true);
+                slot = await FavoritesManager.AddAsync(path).ConfigureAwait(true);
+            }
+
+            if (KeyBox.IsEnabled && slot is { } favoriteSlot)
+            {
+                Keybind? keybind = KeyBox.Keybinds is { Count: > 0 } ? KeyBox.Keybinds[0] : null;
+                await Keymaps.SetFavoriteKeybindAsync(favoriteSlot, keybind).ConfigureAwait(true);
+
+                // The favorites menu shows each favorite's Keybind
+                favoritesVm?.UpdateFavorites();
             }
 
             await AnimatedClosing().ConfigureAwait(true);

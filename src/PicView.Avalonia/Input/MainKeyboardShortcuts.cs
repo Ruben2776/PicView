@@ -4,7 +4,6 @@ using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Views.UC;
-using PicView.Core.Favorites;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
@@ -46,7 +45,7 @@ public static class MainKeyboardShortcuts
     /// </summary>
     public static async ValueTask MainWindow_KeysDownAsync(KeyEventArgs e, MainWindowViewModel? mainWindowViewModel, MainWindow mainWindow)
     {
-        if ((Keymaps.Current.Bindings.Count == 0 && FavoritesManager.Count == 0) || !IsKeysEnabled)
+        if (Keymaps.Current.Bindings.Count is 0 || !IsKeysEnabled)
         {
             return;
         }

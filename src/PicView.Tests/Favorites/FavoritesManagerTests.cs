@@ -35,38 +35,35 @@ public class FavoritesManagerTests : IDisposable
         }
     }
 
-    [Fact]
-    public async Task Version_ChangesOnEveryMutation()
+    private string CreateFolder(string name)
     {
-        var folderPath = Path.Combine(_tempRoot, "Photos");
-        Directory.CreateDirectory(folderPath);
-        var versions = new List<int> { FavoritesManager.Version };
+        var path = Path.Combine(_tempRoot, name);
+        Directory.CreateDirectory(path);
+        return path;
+    }
 
-        await FavoritesManager.AddAsync(folderPath, "Ctrl+D1");
-        versions.Add(FavoritesManager.Version);
-        FavoritesManager.SetKeybind(folderPath, "Ctrl+D2");
-        versions.Add(FavoritesManager.Version);
-        await FavoritesManager.RemoveAsync(folderPath);
-        versions.Add(FavoritesManager.Version);
-        await FavoritesManager.ClearAsync();
-        versions.Add(FavoritesManager.Version);
-        FavoritesManager.Initialize(_configPath);
-        versions.Add(FavoritesManager.Version);
+    private async Task<List<string>> AddFolders(int count)
+    {
+        var folders = new List<string>(count);
+        for (var i = 1; i <= count; i++)
+        {
+            var folder = CreateFolder($"Folder{i}");
+            await FavoritesManager.AddAsync(folder);
+            folders.Add(folder);
+        }
 
-        Assert.Equal(versions.Count, versions.Distinct().Count());
+        return folders;
     }
 
     [Fact]
     public async Task AddAsync_WithExistingDirectoryAndTrailingSeparator_NormalizesAndPersists()
     {
-        var folderPath = Path.Combine(_tempRoot, "Photos");
-        Directory.CreateDirectory(folderPath);
+        var folderPath = CreateFolder("Photos");
 
-        await FavoritesManager.AddAsync(folderPath + Path.DirectorySeparatorChar, "Ctrl+1");
+        await FavoritesManager.AddAsync(folderPath + Path.DirectorySeparatorChar);
 
         Assert.Equal(1, FavoritesManager.Count);
         Assert.Equal(folderPath, FavoritesManager.AllEntries[0].FilePath);
-        Assert.Equal("Ctrl+1", FavoritesManager.AllEntries[0].Keybind);
         Assert.True(FavoritesManager.Contains(folderPath));
         Assert.True(FavoritesManager.Contains(folderPath + Path.DirectorySeparatorChar));
 
@@ -74,22 +71,20 @@ public class FavoritesManagerTests : IDisposable
         FavoritesManager.Initialize(_configPath);
         Assert.Equal(1, FavoritesManager.Count);
         Assert.Equal(folderPath, FavoritesManager.AllEntries[0].FilePath);
-        Assert.Equal("Ctrl+1", FavoritesManager.AllEntries[0].Keybind);
+        Assert.Equal(1, FavoritesManager.AllEntries[0].Slot);
     }
 
     [Fact]
     public async Task AddAsync_WithExistingFilePath_BookmarksParentFolder()
     {
-        var folderPath = Path.Combine(_tempRoot, "Wallpapers");
-        Directory.CreateDirectory(folderPath);
+        var folderPath = CreateFolder("Wallpapers");
         var imageFile = Path.Combine(folderPath, "sunset.jpg");
         await File.WriteAllTextAsync(imageFile, "dummy", TestContext.Current.CancellationToken);
 
-        await FavoritesManager.AddAsync(imageFile, "Alt+W");
+        await FavoritesManager.AddAsync(imageFile);
 
         Assert.Equal(1, FavoritesManager.Count);
         Assert.Equal(folderPath, FavoritesManager.AllEntries[0].FilePath);
-        Assert.Equal("Alt+W", FavoritesManager.AllEntries[0].Keybind);
     }
 
     [Fact]
@@ -97,30 +92,105 @@ public class FavoritesManagerTests : IDisposable
     {
         var missingPath = Path.Combine(_tempRoot, "DoesNotExist");
 
-        await FavoritesManager.AddAsync(missingPath, "Ctrl+2");
+        var slot = await FavoritesManager.AddAsync(missingPath);
 
+        Assert.Null(slot);
         Assert.Equal(0, FavoritesManager.Count);
         Assert.False(FavoritesManager.Contains(missingPath));
     }
 
     [Fact]
-    public async Task AddAsync_DuplicateDirectory_UpdatesKeybindInPlace()
+    public async Task AddAsync_TakesLowestFreeSlot()
     {
-        var folderPath = Path.Combine(_tempRoot, "Albums");
-        Directory.CreateDirectory(folderPath);
+        var folders = await AddFolders(3);
+        await FavoritesManager.RemoveAsync(folders[1]);
 
-        await FavoritesManager.AddAsync(folderPath, "Ctrl+1");
-        await FavoritesManager.AddAsync(folderPath + Path.DirectorySeparatorChar, "Ctrl+9");
+        var slot = await FavoritesManager.AddAsync(CreateFolder("Newcomer"));
 
-        Assert.Equal(1, FavoritesManager.Count);
-        Assert.Equal("Ctrl+9", FavoritesManager.AllEntries[0].Keybind);
+        Assert.Equal(2, slot);
+        Assert.Equal([1, 3, 2], FavoritesManager.AllEntries.Select(e => e.Slot));
     }
+
+    [Fact]
+    public async Task AddAsync_WhenAllSlotsAreUsed_AddsFavoriteWithoutSlot()
+    {
+        await AddFolders(FavoritesManager.MaxSlots);
+
+        var slot = await FavoritesManager.AddAsync(CreateFolder("Extra"));
+
+        Assert.Null(slot);
+        Assert.Equal(FavoritesManager.MaxSlots + 1, FavoritesManager.Count);
+        Assert.Null(FavoritesManager.AllEntries[^1].Slot);
+        Assert.Null(FavoritesManager.NextFreeSlot());
+    }
+
+    [Fact]
+    public async Task AddAsync_DuplicateDirectory_KeepsExistingSlotAndPosition()
+    {
+        var folders = await AddFolders(2);
+
+        var slot = await FavoritesManager.AddAsync(folders[0] + Path.DirectorySeparatorChar);
+
+        Assert.Equal(1, slot);
+        Assert.Equal(2, FavoritesManager.Count);
+        Assert.Equal(folders, FavoritesManager.AllEntries.Select(e => e.FilePath));
+    }
+
+    [Fact]
+    public async Task RemoveAsync_SlotFreed_DoesNotPromoteFavoriteWithoutSlot()
+    {
+        var folders = await AddFolders(FavoritesManager.MaxSlots + 1);
+
+        await FavoritesManager.RemoveAsync(folders[2]);
+
+        Assert.Null(FavoritesManager.SlotOf(folders[^1]));
+        Assert.Null(FavoritesManager.PathForSlot(3));
+        Assert.Equal(3, FavoritesManager.NextFreeSlot());
+    }
+
+    [Fact]
+    public async Task PathForSlot_And_SlotOf_FindEachOther()
+    {
+        var folders = await AddFolders(2);
+
+        Assert.Equal(folders[1], FavoritesManager.PathForSlot(2));
+        Assert.Equal(2, FavoritesManager.SlotOf(folders[1] + Path.DirectorySeparatorChar));
+        Assert.Null(FavoritesManager.PathForSlot(3));
+        Assert.Null(FavoritesManager.SlotOf(Path.Combine(_tempRoot, "NotAFavorite")));
+    }
+
+    [Fact]
+    public async Task Initialize_WithInvalidOrDuplicateSlots_ClearsThem()
+    {
+        var a = CreateFolder("A");
+        var b = CreateFolder("B");
+        var c = CreateFolder("C");
+        var d = CreateFolder("D");
+        var json = $$"""
+                     { "Entries": [
+                       { "Slot": 0, "FilePath": {{JsonString(a)}} },
+                       { "Slot": 2, "FilePath": {{JsonString(b)}}, "Keybind": "Ctrl+D1" },
+                       { "Slot": 2, "FilePath": {{JsonString(c)}} },
+                       { "Slot": 11, "FilePath": {{JsonString(d)}} }
+                     ] }
+                     """;
+        await File.WriteAllTextAsync(_configPath, json, TestContext.Current.CancellationToken);
+
+        FavoritesManager.Initialize(_configPath);
+        await FavoritesManager.SaveToFileAsync();
+
+        Assert.Equal([null, 2, null, null], FavoritesManager.AllEntries.Select(e => e.Slot));
+        var saved = await File.ReadAllTextAsync(_configPath, TestContext.Current.CancellationToken);
+        Assert.DoesNotContain("Keybind", saved, StringComparison.Ordinal);
+    }
+
+    private static string JsonString(string value) =>
+        System.Text.Json.JsonSerializer.Serialize(value, FavoritesTestJson.Default.String);
 
     [Fact]
     public async Task RemoveAsync_ExistingAndDeletedFolder_RemovesEntry()
     {
-        var folderPath = Path.Combine(_tempRoot, "ToRemove");
-        Directory.CreateDirectory(folderPath);
+        var folderPath = CreateFolder("ToRemove");
 
         await FavoritesManager.AddAsync(folderPath);
         Assert.Equal(1, FavoritesManager.Count);
@@ -134,12 +204,10 @@ public class FavoritesManagerTests : IDisposable
     }
 
     [Fact]
-    public async Task FavoritesViewModel_UpdateFavorites_SetsFolderNameAndIsCurrentItem()
+    public async Task FavoritesViewModel_UpdateFavorites_SetsFolderNameSlotAndIsCurrentItem()
     {
-        var folderA = Path.Combine(_tempRoot, "FolderA");
-        var folderB = Path.Combine(_tempRoot, "FolderB");
-        Directory.CreateDirectory(folderA);
-        Directory.CreateDirectory(folderB);
+        var folderA = CreateFolder("FolderA");
+        var folderB = CreateFolder("FolderB");
         var activeFile = Path.Combine(folderB, "pic.png");
         await File.WriteAllTextAsync(activeFile, "img", TestContext.Current.CancellationToken);
 
@@ -149,59 +217,21 @@ public class FavoritesManagerTests : IDisposable
         vm.WindowTabs.ActiveTab.Value = tab;
 
         var favoritesVm = new FavoritesViewModel(vm);
-        await favoritesVm.AddFavorite(folderA, "F1");
-        await favoritesVm.AddFavorite(folderB + Path.DirectorySeparatorChar, "F2");
+        await favoritesVm.AddFavorite(folderA);
+        await favoritesVm.AddFavorite(folderB + Path.DirectorySeparatorChar);
 
         Assert.Equal(2, favoritesVm.Entries.Count);
         Assert.Equal("FolderA", favoritesVm.Entries[0].FolderName.CurrentValue);
+        Assert.Equal(1, favoritesVm.Entries[0].Slot.CurrentValue);
         Assert.False(favoritesVm.Entries[0].IsCurrentItem.CurrentValue);
 
         Assert.Equal("FolderB", favoritesVm.Entries[1].FolderName.CurrentValue);
+        Assert.Equal(2, favoritesVm.Entries[1].Slot.CurrentValue);
         Assert.True(favoritesVm.Entries[1].IsCurrentItem.CurrentValue);
     }
 
     [Fact]
-    public async Task AddAsync_WithDuplicateKeybindAcrossDifferentFolders_EvictsPreviousKeybind()
-    {
-        var folderA = Path.Combine(_tempRoot, "FolderA");
-        var folderB = Path.Combine(_tempRoot, "FolderB");
-        Directory.CreateDirectory(folderA);
-        Directory.CreateDirectory(folderB);
-
-        await FavoritesManager.AddAsync(folderA, "Ctrl + D1");
-        await FavoritesManager.AddAsync(folderB, "Ctrl + D1");
-
-        Assert.Equal(2, FavoritesManager.Count);
-        Assert.Equal(string.Empty, FavoritesManager.AllEntries[0].Keybind);
-        Assert.Equal("Ctrl + D1", FavoritesManager.AllEntries[1].Keybind);
-
-        // Re-initialize from disk to verify persistence of evicted Keybind
-        FavoritesManager.Initialize(_configPath);
-        Assert.Equal(2, FavoritesManager.Count);
-        Assert.Equal(string.Empty, FavoritesManager.AllEntries[0].Keybind);
-        Assert.Equal("Ctrl + D1", FavoritesManager.AllEntries[1].Keybind);
-    }
-
-    [Fact]
-    public async Task SetKeybind_WhenAssigningExistingKeybindToEarlierEntry_EvictsLaterEntryOnSave()
-    {
-        var folderA = Path.Combine(_tempRoot, "FolderA");
-        var folderB = Path.Combine(_tempRoot, "FolderB");
-        Directory.CreateDirectory(folderA);
-        Directory.CreateDirectory(folderB);
-
-        await FavoritesManager.AddAsync(folderA, string.Empty);
-        await FavoritesManager.AddAsync(folderB, "F9");
-
-        FavoritesManager.SetKeybind(folderA, "F9");
-        await FavoritesManager.SaveToFileAsync();
-
-        Assert.Equal("F9", FavoritesManager.AllEntries[0].Keybind);
-        Assert.Equal(string.Empty, FavoritesManager.AllEntries[1].Keybind);
-    }
-
-    [Fact]
-    public void EditCommand_OnFavoritesEntryViewModel_ExecutesEditFavoritesDialogCommandWithPreselectedValues()
+    public void EditCommand_OnFavoritesEntryViewModel_ExecutesEditFavoritesDialogCommandWithEntry()
     {
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
         var favoritesVm = new FavoritesViewModel(vm);
@@ -212,81 +242,15 @@ public class FavoritesManagerTests : IDisposable
 
         var entryVm = new FavoritesEntryViewModel();
         var folderPath = Path.Combine(_tempRoot, "MyFavoritesFolder");
-        entryVm.Initialize(folderPath, "MyFavoritesFolder", "Ctrl + F", false, vm);
+        entryVm.Initialize(folderPath, "MyFavoritesFolder", 4, false, vm);
 
         entryVm.OpenEditDialogCommand.Execute(Unit.Default);
 
         Assert.NotNull(editedEntry);
         Assert.Equal(folderPath, editedEntry.Value.FilePath);
-        Assert.Equal("Ctrl + F", editedEntry.Value.Keybind);
-    }
-
-    [Fact]
-    public async Task AddOrEditAsync_WithExistingFilePath_UpdatesKeybindInPlaceAndEvictsDuplicates()
-    {
-        var folderA = Path.Combine(_tempRoot, "FolderA");
-        var folderB = Path.Combine(_tempRoot, "FolderB");
-        Directory.CreateDirectory(folderA);
-        Directory.CreateDirectory(folderB);
-
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var favoritesVm = new FavoritesViewModel(vm);
-        vm.Favorites = favoritesVm;
-
-        await favoritesVm.AddFavorite(folderA, "Ctrl+1");
-        await favoritesVm.AddFavorite(folderB, "Ctrl+2");
-
-        Assert.Equal(2, favoritesVm.Entries.Count);
-        Assert.Equal("Ctrl+1", favoritesVm.Entries[0].Keybind.CurrentValue);
-        Assert.Equal("Ctrl+2", favoritesVm.Entries[1].Keybind.CurrentValue);
-
-        // Edit folderA to take Ctrl+2 (which should update folderA and evict duplicate from folderB)
-        await favoritesVm.AddOrEditAsync(new FavoriteEntry(folderA, "Ctrl+2"));
-
-        Assert.Equal(2, favoritesVm.Entries.Count);
-        Assert.Equal("Ctrl+2", favoritesVm.Entries[0].Keybind.CurrentValue);
-        Assert.Equal(string.Empty, favoritesVm.Entries[1].Keybind.CurrentValue);
-
-        // Verify persistence in FavoritesManager
-        Assert.Equal("Ctrl+2", FavoritesManager.AllEntries[0].Keybind);
-        Assert.Equal(string.Empty, FavoritesManager.AllEntries[1].Keybind);
-    }
-
-    [Fact]
-    public async Task AddOrEditAsync_WithNewFilePath_AddsNewFavoriteEntry()
-    {
-        var folder = Path.Combine(_tempRoot, "NewFolder");
-        Directory.CreateDirectory(folder);
-
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var favoritesVm = new FavoritesViewModel(vm);
-        vm.Favorites = favoritesVm;
-
-        Assert.Empty(favoritesVm.Entries);
-
-        await favoritesVm.AddOrEditAsync(folder, "Alt+N");
-
-        Assert.Single(favoritesVm.Entries);
-        Assert.Equal(folder, favoritesVm.Entries[0].FilePath.CurrentValue);
-        Assert.Equal("Alt+N", favoritesVm.Entries[0].Keybind.CurrentValue);
-        Assert.True(FavoritesManager.Contains(folder));
-    }
-
-    [Fact]
-    public void AddOrEditCommand_ExecutesAndUpsertsFavorite()
-    {
-        var folder = Path.Combine(_tempRoot, "UpsertFolder");
-        Directory.CreateDirectory(folder);
-
-        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var favoritesVm = new FavoritesViewModel(vm);
-        vm.Favorites = favoritesVm;
-
-        favoritesVm.AddOrEditCommand.Execute(new FavoriteEntry(folder, "Ctrl+U"));
-
-        var spun = SpinWait.SpinUntil(() => favoritesVm.Entries.Count == 1, 3000);
-        Assert.True(spun);
-        Assert.Equal(folder, favoritesVm.Entries[0].FilePath.CurrentValue);
-        Assert.Equal("Ctrl+U", favoritesVm.Entries[0].Keybind.CurrentValue);
+        Assert.Equal(4, editedEntry.Value.Slot);
     }
 }
+
+[System.Text.Json.Serialization.JsonSerializable(typeof(string))]
+internal partial class FavoritesTestJson : System.Text.Json.Serialization.JsonSerializerContext;

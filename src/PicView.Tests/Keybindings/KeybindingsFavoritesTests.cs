@@ -1,4 +1,8 @@
-using Avalonia.Headless.XUnit;
+using Avalonia;
+using Avalonia.Automation.Peers;
+using Avalonia.Automation.Provider;
+using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.Controllers;
@@ -99,90 +103,80 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Empty(view.FavoritesItems.Items);
     }
 
-    [AvaloniaFact]
-    public void Initialize_WhenFavoritesEntriesHasItems_PopulatesHeaderAndFolderNameActions()
+    private string CreateFolder(string name)
     {
-        var folderA = Path.Combine(_tempRoot, "VacationPhotos");
-        var folderB = Path.Combine(_tempRoot, "DesignAssets");
-        Directory.CreateDirectory(folderA);
-        Directory.CreateDirectory(folderB);
+        var path = Path.Combine(_tempRoot, name);
+        Directory.CreateDirectory(path);
+        return path;
+    }
 
-        var core = CreateCoreWithMainWindow(out var mainWindowVm);
-        mainWindowVm.Favorites = new FavoritesViewModel(mainWindowVm);
-        RunWithDispatcher(mainWindowVm.Favorites.AddFavorite(folderA, "F7"));
-        RunWithDispatcher(mainWindowVm.Favorites.AddFavorite(folderB, string.Empty));
+    [Fact]
+    public void Initialize_WhenFavoritesHaveSlots_ShowsFolderNamesWithSlotKeybinds()
+    {
+        var folderA = CreateFolder("VacationPhotos");
+        var folderB = CreateFolder("DesignAssets");
+        RunWithDispatcher(FavoritesManager.AddAsync(folderA));
+        RunWithDispatcher(FavoritesManager.AddAsync(folderB));
+        Keymaps.Replace(Keymap.Empty.Assign(new Keybind(Key.F7), "OpenFavorite1"));
 
-        var view = new KeybindingsView { DataContext = core };
-        using var controller = new KeybindingsViewController(view);
-        controller.Initialize();
+        using var controller = CreateController(out _);
 
         Assert.NotNull(controller.FavoritesCategory);
-        Assert.True(view.FavoritesHeader.IsVisible);
-        Assert.True(view.FavoritesItems.IsVisible);
-        Assert.Equal(TranslationManager.Translation.Favorites, view.FavoritesHeader.Text);
-
-        Assert.Equal(2, controller.FavoritesCategory!.Entries.Count);
-        var (boxA, pathA) = controller.FavoritesCategory.Entries[0];
-        var (boxB, pathB) = controller.FavoritesCategory.Entries[1];
+        Assert.Equal(TranslationManager.Translation.Favorites, controller.FavoritesCategory!.Header.Text);
+        Assert.Equal(2, controller.FavoritesCategory.Entries.Count);
+        var (boxA, ownerA) = controller.FavoritesCategory.Entries[0];
+        var (boxB, ownerB) = controller.FavoritesCategory.Entries[1];
 
         Assert.Equal("VacationPhotos", boxA.ActionName);
-        Assert.Equal(folderA, pathA);
-        Assert.Single(boxA.Keybinds);
-        Assert.Equal(new Keybind(Key.F7), boxA.Keybinds[0]);
+        Assert.Equal("OpenFavorite1", ownerA);
+        Assert.Equal([new Keybind(Key.F7)], boxA.Keybinds);
 
         Assert.Equal("DesignAssets", boxB.ActionName);
-        Assert.Equal(folderB, pathB);
+        Assert.Equal("OpenFavorite2", ownerB);
         Assert.Empty(boxB.Keybinds);
     }
 
-    [AvaloniaFact]
-    public void SaveKeybindings_WhenDuplicateKeybindAssignedAcrossFavorites_EvictsPreviousFavoriteKeybind()
+    [Fact]
+    public void Initialize_ShowsOnlyFavoritesWithSlots()
     {
-        var folderA = Path.Combine(_tempRoot, "Alpha");
-        var folderB = Path.Combine(_tempRoot, "Beta");
-        Directory.CreateDirectory(folderA);
-        Directory.CreateDirectory(folderB);
+        for (var i = 0; i <= FavoritesManager.MaxSlots; i++)
+        {
+            RunWithDispatcher(FavoritesManager.AddAsync(CreateFolder($"Folder{i}")));
+        }
 
-        var core = CreateCoreWithMainWindow(out var mainWindowVm);
-        mainWindowVm.Favorites = new FavoritesViewModel(mainWindowVm);
-        RunWithDispatcher(mainWindowVm.Favorites.AddFavorite(folderA, string.Empty));
-        RunWithDispatcher(mainWindowVm.Favorites.AddFavorite(folderB, "F8"));
+        using var controller = CreateController(out _);
 
-        var view = new KeybindingsView { DataContext = core };
-        using var controller = new KeybindingsViewController(view);
-        controller.Initialize();
+        Assert.Equal(FavoritesManager.MaxSlots, controller.FavoritesCategory!.Entries.Count);
+    }
 
-        Assert.NotNull(controller.FavoritesCategory);
+    [Fact]
+    public void SaveKeybindings_FavoriteTakesKeybindOfAnotherFavorite_BindsItToTheSlot()
+    {
+        RunWithDispatcher(FavoritesManager.AddAsync(CreateFolder("Alpha")));
+        RunWithDispatcher(FavoritesManager.AddAsync(CreateFolder("Beta")));
+        Keymaps.Replace(Keymap.Empty.Assign(new Keybind(Key.F8), "OpenFavorite2"));
+        using var controller = CreateController(out _);
         var (boxA, _) = controller.FavoritesCategory!.Entries[0];
         var (boxB, _) = controller.FavoritesCategory.Entries[1];
 
-        // Assign F8 to the first favorite without manually clearing the second favorite
         boxA.Keybinds.Add(new Keybind(Key.F8));
-
         RunWithDispatcher(controller.SaveKeybindings());
 
-        // First favorite (newly edited) keeps F8; second favorite has its duplicate F8 evicted
-        Assert.Single(boxA.Keybinds);
-        Assert.Equal(new Keybind(Key.F8), boxA.Keybinds[0]);
+        Assert.Equal([new Keybind(Key.F8)], boxA.Keybinds);
         Assert.Empty(boxB.Keybinds);
-
-        Assert.Equal("F8", FavoritesManager.AllEntries[0].Keybind);
-        Assert.Equal(string.Empty, FavoritesManager.AllEntries[1].Keybind);
-
-        Assert.Equal("F8", mainWindowVm.Favorites.Entries[0].Keybind.CurrentValue);
-        Assert.Equal(string.Empty, mainWindowVm.Favorites.Entries[1].Keybind.CurrentValue);
+        Assert.Equal(KeymapResolution.Action("OpenFavorite1"), Keymaps.Resolve(new Keybind(Key.F8)));
     }
 
-    [AvaloniaFact]
-    public void ShortcutHandling_WhenFavoriteKeyboardOrMouseKeybindMatches_DispatchesOpenPathAsync()
+    [Fact]
+    public void ShortcutHandling_WhenFavoriteKeyboardOrMouseKeybindMatches_OpensTheSlotsFolder()
     {
-        var folderA = Path.Combine(_tempRoot, "KeyboardFolder");
-        var folderB = Path.Combine(_tempRoot, "MouseFolder");
-        Directory.CreateDirectory(folderA);
-        Directory.CreateDirectory(folderB);
-
-        RunWithDispatcher(FavoritesManager.AddAsync(folderA, new Keybind(Key.D1, KeyModifiers.Control).GetFormattedForJSON()));
-        RunWithDispatcher(FavoritesManager.AddAsync(folderB, new Keybind(MouseButton.XButton1, KeyModifiers.Alt).GetFormattedForJSON()));
+        var folderA = CreateFolder("KeyboardFolder");
+        var folderB = CreateFolder("MouseFolder");
+        RunWithDispatcher(FavoritesManager.AddAsync(folderA));
+        RunWithDispatcher(FavoritesManager.AddAsync(folderB));
+        Keymaps.Replace(Keymap.Empty
+            .Assign(new Keybind(Key.D1, KeyModifiers.Control), "OpenFavorite1")
+            .Assign(new Keybind(MouseButton.XButton1, KeyModifiers.Alt), "OpenFavorite2"));
 
         _ = CreateCoreWithMainWindow(out var mainWindowVm);
         var spyMapper = new SpyFunctionsMapper(mainWindowVm);
@@ -200,6 +194,20 @@ public class KeybindingsFavoritesTests : IDisposable
             mainWindowVm));
 
         Assert.Equal(folderB, spyMapper.LastOpenedPath);
+    }
+
+    [Fact]
+    public void ShortcutHandling_WhenSlotIsEmpty_DoesNothing()
+    {
+        Keymaps.Replace(Keymap.Empty.Assign(new Keybind(Key.F7), "OpenFavorite3"));
+        _ = CreateCoreWithMainWindow(out var mainWindowVm);
+        var spyMapper = new SpyFunctionsMapper(mainWindowVm);
+        mainWindowVm.Mapper = spyMapper;
+
+        MainKeyboardShortcuts.CurrentKeys = new Keybind(Key.F7);
+        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm));
+
+        Assert.Null(spyMapper.LastOpenedPath);
     }
 
     private const string ViewTestKeybindings = """{ "Right": "Next", "Left": "Prev", "F9": "Rotate90" }""";
@@ -241,10 +249,8 @@ public class KeybindingsFavoritesTests : IDisposable
     [AvaloniaFact]
     public void SaveKeybindings_ActionTakesFavoritesKeybind_ClearsFavoriteAndResolvesToAction()
     {
-        var folder = Path.Combine(_tempRoot, "Gamma");
-        Directory.CreateDirectory(folder);
-        RunWithDispatcher(FavoritesManager.AddAsync(folder, "F7"));
-        Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}"));
+        RunWithDispatcher(FavoritesManager.AddAsync(CreateFolder("Gamma")));
+        Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}").Assign(new Keybind(Key.F7), "OpenFavorite1"));
         using var controller = CreateController(out _);
         var (favoriteBox, _) = controller.FavoritesCategory!.Entries[0];
 
@@ -252,7 +258,6 @@ public class KeybindingsFavoritesTests : IDisposable
         RunWithDispatcher(controller.SaveKeybindings());
 
         Assert.Empty(favoriteBox.Keybinds);
-        Assert.Equal(string.Empty, FavoritesManager.AllEntries[0].Keybind);
         Assert.Equal(KeymapResolution.Action("Prev"), Keymaps.Resolve(new Keybind(Key.F7)));
     }
 
@@ -269,6 +274,34 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal(KeymapResolution.Action("Prev"), Keymaps.Resolve(new Keybind(Key.Up)));
     }
 
+    [Fact]
+    public void ResetThenCancel_LeavesLiveKeymapUnchanged()
+    {
+        RunWithDispatcher(FavoritesManager.AddAsync(CreateFolder("Delta")));
+        var live = Keymap.FromJson(ViewTestKeybindings, "{}").Assign(new Keybind(Key.F7), "OpenFavorite1");
+        Keymaps.Replace(live);
+        var core = CreateCoreWithMainWindow(out var mainWindowVm);
+        mainWindowVm.Favorites = new FavoritesViewModel(mainWindowVm);
+        var view = new KeybindingsView { DataContext = core };
+        using var controller = new KeybindingsViewController(view);
+        var window = new Window { Content = view };
+        window.Show();
+        controller.Initialize();
+        Dispatcher.UIThread.RunJobs();
+
+        // Click through the automation peer so a bound Command runs too, as with a real click
+        Click(view.DefaultButton);
+        Assert.Empty(controller.ActionBox("Next")!.Keybinds);
+        Assert.Equal([new Keybind(Key.F7)], controller.FavoritesCategory!.Entries[0].Box.Keybinds);
+        Click(view.CancelButton);
+
+        Assert.Equal([new Keybind(Key.Right)], controller.ActionBox("Next")!.Keybinds);
+        Assert.Equal(live, Keymaps.Current);
+    }
+
+    private static void Click(Button button) =>
+        ((IInvokeProvider)ControlAutomationPeer.CreatePeerForElement(button)).Invoke();
+
     private sealed class SpyFunctionsMapper(MainWindowViewModel vm) : FunctionsMapper(vm, null!)
     {
         public string? LastOpenedPath { get; private set; }
@@ -280,22 +313,75 @@ public class KeybindingsFavoritesTests : IDisposable
         }
     }
 
-    [AvaloniaFact]
-    public void FavoriteDialog_WithInitialValues_PreselectsValues()
+    private static FavoriteDialog CreateDialog(string? path)
     {
-        var testPath = Path.Combine(_tempRoot, "PreselectedFolder");
-        var testKeybind = "Ctrl + D1";
-
         FavoriteDialog dialog = null!;
         RunWithDispatcher(Dispatcher.UIThread.InvokeAsync(() =>
         {
-            dialog = new FavoriteDialog(testPath, testKeybind);
+            dialog = new FavoriteDialog(path);
         }).GetTask());
+        return dialog;
+    }
 
-        Assert.Equal(testPath, dialog.PathBox.Text);
-        Assert.NotNull(dialog.KeyBox.Keybinds);
-        Assert.Single(dialog.KeyBox.Keybinds);
-        Assert.Equal(Key.D1, dialog.KeyBox.Keybinds[0].Key);
-        Assert.Equal(KeyModifiers.Control, dialog.KeyBox.Keybinds[0].Modifiers);
+    [Fact]
+    public void FavoriteDialog_ForFavoriteWithSlot_ShowsPathAndSlotsKeybind()
+    {
+        var folder = CreateFolder("Preselected");
+        RunWithDispatcher(FavoritesManager.AddAsync(CreateFolder("First")));
+        RunWithDispatcher(FavoritesManager.AddAsync(folder));
+        var keybind = new Keybind(Key.D1, KeyModifiers.Control);
+        Keymaps.Replace(Keymap.Empty.Assign(keybind, "OpenFavorite2"));
+
+        var dialog = CreateDialog(folder);
+
+        Assert.Equal(folder, dialog.PathBox.Text);
+        Assert.True(dialog.KeyBox.IsEnabled);
+        Assert.Equal([keybind], dialog.KeyBox.Keybinds);
+    }
+
+    [Fact]
+    public void FavoriteDialog_ForNewFavorite_ShowsKeybindLeftOnNextFreeSlot()
+    {
+        Keymaps.Replace(Keymap.Empty.Assign(new Keybind(Key.F7), "OpenFavorite1"));
+
+        var dialog = CreateDialog(null);
+
+        Assert.True(dialog.KeyBox.IsEnabled);
+        Assert.Equal([new Keybind(Key.F7)], dialog.KeyBox.Keybinds);
+    }
+
+    [Fact]
+    public void FavoriteDialog_WhenNoSlotIsFree_DisablesKeyBox()
+    {
+        for (var i = 0; i < FavoritesManager.MaxSlots; i++)
+        {
+            RunWithDispatcher(FavoritesManager.AddAsync(CreateFolder($"Folder{i}")));
+        }
+
+        var dialog = CreateDialog(null);
+
+        Assert.False(dialog.KeyBox.IsEnabled);
+    }
+
+    [Fact]
+    public void SetFavoriteKeybindAsync_ReplacesSlotsKeybindAndTakesItFromOtherActions()
+    {
+        Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}").Assign(new Keybind(Key.F7), "OpenFavorite1"));
+
+        RunWithDispatcher(Keymaps.SetFavoriteKeybindAsync(1, new Keybind(Key.Right)));
+
+        Assert.Equal(KeymapResolution.Action("OpenFavorite1"), Keymaps.Resolve(new Keybind(Key.Right)));
+        Assert.Equal(KeymapResolution.None, Keymaps.Resolve(new Keybind(Key.F7)));
+        Assert.Empty(Keymaps.Current.KeybindsFor("Next"));
+    }
+
+    [Fact]
+    public void SetFavoriteKeybindAsync_WithNoKeybind_UnbindsSlot()
+    {
+        Keymaps.Replace(Keymap.Empty.Assign(new Keybind(Key.F7), "OpenFavorite1"));
+
+        RunWithDispatcher(Keymaps.SetFavoriteKeybindAsync(1, null));
+
+        Assert.Empty(Keymaps.Current.KeybindsFor("OpenFavorite1"));
     }
 }

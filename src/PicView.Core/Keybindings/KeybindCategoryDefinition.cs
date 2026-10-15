@@ -1,4 +1,6 @@
 using System.Collections.Frozen;
+using System.Globalization;
+using PicView.Core.Favorites;
 using PicView.Core.Localization;
 
 namespace PicView.Core.Keybindings;
@@ -31,6 +33,14 @@ public static class KeybindCategoryDefinition
         "ShowSettingsFile", "SortFilesByLastWriteTime",
     ];
 
+    private const string FavoriteActionPrefix = "OpenFavorite";
+
+    /// <summary>
+    /// The action opening the favorite in each slot, in slot order.
+    /// </summary>
+    public static IReadOnlyList<string> FavoriteActionNames { get; } =
+        [.. Enumerable.Range(1, FavoritesManager.MaxSlots).Select(FavoriteAction)];
+
     /// <summary>
     /// Every canonical action name, including actions hidden from the keybindings view.
     /// </summary>
@@ -38,7 +48,30 @@ public static class KeybindCategoryDefinition
         .SelectMany(c => c.Entries)
         .Select(e => e.FunctionName)
         .Concat(HiddenActionNames)
+        .Concat(FavoriteActionNames)
         .ToFrozenSet(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Returns the action opening the favorite in <paramref name="slot"/>.
+    /// </summary>
+    public static string FavoriteAction(int slot) =>
+        FavoriteActionPrefix + slot.ToString(CultureInfo.InvariantCulture);
+
+    /// <summary>
+    /// Returns the slot that <paramref name="action"/> opens, or <c>null</c> when it is not a favorite action.
+    /// </summary>
+    public static int? FavoriteSlot(string action)
+    {
+        if (!action.StartsWith(FavoriteActionPrefix, StringComparison.Ordinal) ||
+            !int.TryParse(action.AsSpan(FavoriteActionPrefix.Length), NumberStyles.None, CultureInfo.InvariantCulture, out var slot) ||
+            slot < 1 || slot > FavoritesManager.MaxSlots)
+        {
+            return null;
+        }
+
+        // Reject non-canonical spellings such as "OpenFavorite01"
+        return string.Equals(FavoriteAction(slot), action, StringComparison.Ordinal) ? slot : null;
+    }
 
     /// <summary>
     /// Returns the canonical action name for <paramref name="name"/>. Unknown names are returned unchanged.

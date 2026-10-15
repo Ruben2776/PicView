@@ -19,15 +19,13 @@ internal partial class FavoritesGenerationContext : JsonSerializerContext;
 /// </summary>
 public static class FavoritesManager
 {
+    /// <summary>
+    ///     The number of favorite slots. Only favorites with a slot have an OpenFavorite action.
+    /// </summary>
+    public const int MaxSlots = 10;
+
     private static List<FavoriteEntry>? _entries;
     private static FavoritesConfiguration? _favoritesConfiguration;
-    private static int _version;
-
-    /// <summary>
-    ///     Changes whenever the favorites change, so readers can tell when to rebuild what they derive from them.
-    /// </summary>
-    public static int Version => Volatile.Read(ref _version);
-
     /// <summary>
     ///     Gets the number of entries in the favorites list.
     /// </summary>
@@ -44,7 +42,7 @@ public static class FavoritesManager
     public static string CurrentFavoritesFile =>
         (_favoritesConfiguration?.TryGetCurrentUserConfigPath is { Length: > 0 } userPath
             ? userPath
-            : _favoritesConfiguration?.CorrectPath ?? string.Empty).Replace("/", "\\");
+            : _favoritesConfiguration?.CorrectPath ?? string.Empty).Replace('/', '\\');
 
     /// <summary>
     ///     Initializes the favorites by loading entries from the default favorites configuration file.
@@ -55,7 +53,6 @@ public static class FavoritesManager
         _favoritesConfiguration.CorrectPath = ConfigFileManager.ResolveDefaultConfigPath(_favoritesConfiguration);
         _entries = [];
         LoadFromFile(_favoritesConfiguration.TryGetCurrentUserConfigPath);
-        OnChanged();
     }
 
     /// <summary>
@@ -72,8 +69,6 @@ public static class FavoritesManager
         {
             LoadFromFile(configPath);
         }
-
-        OnChanged();
     }
 
     /// <summary>
@@ -114,9 +109,11 @@ public static class FavoritesManager
     }
 
     /// <summary>
-    ///     Adds a folder entry to the favorites, evicting any duplicate Keybind across other entries.
+    ///     Adds a folder to the favorites in the lowest free slot, or without a slot when all are used.
+    ///     A folder that is already a favorite is left as it is.
     /// </summary>
-    public static async Task AddAsync(string filePath, string keybind = "")
+    /// <returns>The favorite's slot, or <c>null</c> when it has none or the path is not a folder.</returns>
+    public static async Task<int?> AddAsync(string filePath)
     {
         if (_entries is null)
         {
@@ -126,61 +123,75 @@ public static class FavoritesManager
         var normalizedPath = NormalizeDirectoryPath(filePath);
         if (string.IsNullOrWhiteSpace(normalizedPath))
         {
-            return;
+            return null;
         }
 
-        var normalizedKeybind = keybind?.Trim() ?? string.Empty;
-        EvictDuplicateKeybind(normalizedPath, normalizedKeybind);
-
-        var existingIndex = _entries!.FindIndex(x => string.Equals(x.FilePath, normalizedPath, StringComparison.Ordinal));
+        var existingIndex = IndexOf(normalizedPath);
         if (existingIndex >= 0)
         {
-            _entries[existingIndex] = new FavoriteEntry(normalizedPath, normalizedKeybind);
-        }
-        else
-        {
-            _entries.Add(new FavoriteEntry(normalizedPath, normalizedKeybind));
+            return _entries![existingIndex].Slot;
         }
 
-        OnChanged();
+        var slot = NextFreeSlot();
+        _entries!.Add(new FavoriteEntry(normalizedPath, slot));
         await SaveToFileAsync().ConfigureAwait(false);
+        return slot;
     }
 
     /// <summary>
-    ///     Adds an entry to the favorites.
+    ///     Returns the lowest slot no favorite has, or <c>null</c> when all are used.
     /// </summary>
-    public static Task AddAsync(FavoriteEntry entry) => AddAsync(entry.FilePath, entry.Keybind);
+    public static int? NextFreeSlot()
+    {
+        for (var slot = 1; slot <= MaxSlots; slot++)
+        {
+            if (PathForSlot(slot) is null)
+            {
+                return slot;
+            }
+        }
+
+        return null;
+    }
 
     /// <summary>
-    ///     Sets the Keybind for an existing favorite entry and evicts any duplicate Keybind across other entries.
+    ///     Returns the folder of the favorite in <paramref name="slot"/>, or <c>null</c> when the slot is free.
     /// </summary>
-    public static void SetKeybind(string filePath, string keybind)
+    public static string? PathForSlot(int slot)
     {
         if (_entries is null)
         {
-            Initialize();
+            return null;
         }
 
-        if (string.IsNullOrWhiteSpace(filePath))
+        foreach (var entry in _entries)
         {
-            return;
+            if (entry.Slot == slot)
+            {
+                return entry.FilePath;
+            }
         }
 
-        var targetPath = NormalizeDirectoryPath(filePath) ?? Path.TrimEndingDirectorySeparator(filePath.Trim());
-        var existingIndex = _entries.FindIndex(x => string.Equals(x.FilePath, targetPath, StringComparison.Ordinal));
-        if (existingIndex < 0)
-        {
-            return;
-        }
-
-        var normalizedKeybind = keybind?.Trim() ?? string.Empty;
-        EvictDuplicateKeybind(targetPath, normalizedKeybind);
-        _entries[existingIndex] = new FavoriteEntry(_entries[existingIndex].FilePath, normalizedKeybind);
-        OnChanged();
+        return null;
     }
 
     /// <summary>
-    ///     Removes a specific entry from favorites.
+    ///     Returns the slot of the favorite at <paramref name="path"/>, or <c>null</c> when it has none
+    ///     or is not a favorite.
+    /// </summary>
+    public static int? SlotOf(string? path)
+    {
+        if (_entries is null || string.IsNullOrWhiteSpace(path))
+        {
+            return null;
+        }
+
+        var index = IndexOf(NormalizeDirectoryPath(path) ?? Path.TrimEndingDirectorySeparator(path.Trim()));
+        return index >= 0 ? _entries[index].Slot : null;
+    }
+
+    /// <summary>
+    ///     Removes a specific entry from favorites. Its slot stays free until a favorite is added.
     /// </summary>
     public static async Task<bool> RemoveAsync(string path)
     {
@@ -189,15 +200,13 @@ public static class FavoritesManager
             return false;
         }
 
-        var targetPath = NormalizeDirectoryPath(path) ?? Path.TrimEndingDirectorySeparator(path.Trim());
-        var index = _entries.FindIndex(e => string.Equals(e.FilePath, targetPath, StringComparison.Ordinal));
+        var index = IndexOf(NormalizeDirectoryPath(path) ?? Path.TrimEndingDirectorySeparator(path.Trim()));
         if (index < 0)
         {
             return false;
         }
 
         _entries.RemoveAt(index);
-        OnChanged();
         await SaveToFileAsync().ConfigureAwait(false);
         return true;
     }
@@ -208,7 +217,6 @@ public static class FavoritesManager
     public static async Task ClearAsync()
     {
         _entries?.Clear();
-        OnChanged();
         await SaveToFileAsync().ConfigureAwait(false);
     }
 
@@ -227,19 +235,16 @@ public static class FavoritesManager
             return false;
         }
 
-        var targetPath = NormalizeDirectoryPath(path) ?? Path.TrimEndingDirectorySeparator(path.Trim());
-        return _entries.Exists(e => string.Equals(e.FilePath, targetPath, StringComparison.Ordinal));
+        return IndexOf(NormalizeDirectoryPath(path) ?? Path.TrimEndingDirectorySeparator(path.Trim())) >= 0;
     }
 
     /// <summary>
-    ///     Saves the favorites to the favorites file, evicting duplicate Keybinds first.
+    ///     Saves the favorites to the favorites file.
     /// </summary>
     public static async Task SaveToFileAsync()
     {
         try
         {
-            DeduplicateKeybinds();
-
             if (string.IsNullOrWhiteSpace(_favoritesConfiguration?.CorrectPath))
             {
                 _favoritesConfiguration ??= new FavoritesConfiguration();
@@ -261,52 +266,12 @@ public static class FavoritesManager
         }
     }
 
-    private static void OnChanged() => Interlocked.Increment(ref _version);
-
-    private static void EvictDuplicateKeybind(string targetFilePath, string keybind)
-    {
-        if (_entries is null || string.IsNullOrWhiteSpace(keybind))
-        {
-            return;
-        }
-
-        for (var i = 0; i < _entries.Count; i++)
-        {
-            var entry = _entries[i];
-            if (!string.Equals(entry.FilePath, targetFilePath, StringComparison.Ordinal) &&
-                string.Equals(entry.Keybind, keybind, StringComparison.Ordinal))
-            {
-                _entries[i] = new FavoriteEntry(entry.FilePath, string.Empty);
-            }
-        }
-    }
-
-    private static void DeduplicateKeybinds()
-    {
-        if (_entries is not { Count: > 1 })
-        {
-            return;
-        }
-
-        var seenKeybinds = new HashSet<string>(StringComparer.Ordinal);
-        for (var i = _entries.Count - 1; i >= 0; i--)
-        {
-            var entry = _entries[i];
-            if (string.IsNullOrWhiteSpace(entry.Keybind))
-            {
-                continue;
-            }
-
-            if (!seenKeybinds.Add(entry.Keybind))
-            {
-                _entries[i] = new FavoriteEntry(entry.FilePath, string.Empty);
-                OnChanged();
-            }
-        }
-    }
+    private static int IndexOf(string normalizedPath) =>
+        _entries?.FindIndex(e => string.Equals(e.FilePath, normalizedPath, StringComparison.Ordinal)) ?? -1;
 
     /// <summary>
-    ///     Loads the favorites from the specified favorites file path.
+    ///     Loads the favorites from the specified favorites file path. Slots outside 1..<see cref="MaxSlots"/>
+    ///     or already taken by an earlier entry are cleared.
     /// </summary>
     private static void LoadFromFile(string? configPath)
     {
@@ -328,19 +293,30 @@ public static class FavoritesManager
             }
 
             _entries?.Clear();
-            if (entries.Entries is not null && _entries is not null)
+            if (entries.Entries is null || _entries is null)
             {
-                foreach (var entry in entries.Entries)
-                {
-                    if (string.IsNullOrWhiteSpace(entry.FilePath))
-                    {
-                        continue;
-                    }
+                return;
+            }
 
-                    var normalized = NormalizeDirectoryPath(entry.FilePath)
-                                     ?? Path.TrimEndingDirectorySeparator(entry.FilePath.Trim());
-                    _entries.Add(new FavoriteEntry(normalized, entry.Keybind));
+            var usedSlots = new HashSet<int>();
+            foreach (var entry in entries.Entries)
+            {
+                if (string.IsNullOrWhiteSpace(entry.FilePath))
+                {
+                    continue;
                 }
+
+                var normalized = NormalizeDirectoryPath(entry.FilePath)
+                                 ?? Path.TrimEndingDirectorySeparator(entry.FilePath.Trim());
+                var slot = entry.Slot;
+                if (slot is { } number && (number < 1 || number > MaxSlots || !usedSlots.Add(number)))
+                {
+                    DebugHelper.LogDebug(nameof(FavoritesManager), nameof(LoadFromFile),
+                        $"Clearing invalid slot {number} of '{normalized}'");
+                    slot = null;
+                }
+
+                _entries.Add(new FavoriteEntry(normalized, slot));
             }
         }
         catch (Exception ex)

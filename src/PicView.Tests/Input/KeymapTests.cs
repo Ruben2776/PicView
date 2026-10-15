@@ -1,6 +1,5 @@
 using Avalonia.Input;
 using PicView.Avalonia.Input;
-using PicView.Core.Favorites;
 using MouseButton = PicView.Avalonia.Input.MouseButton;
 
 namespace PicView.Tests.Input;
@@ -78,66 +77,40 @@ public class KeymapTests
     }
 
     [Fact]
-    public void WithFavorites_ResolvesFavoriteKeybindToItsFolder()
-    {
-        var keymap = Keymap.FromJson(null, Defaults)
-            .WithFavorites([new FavoriteEntry("/pics", "Ctrl+D1"), new FavoriteEntry("/docs", "")]);
-
-        Assert.Equal(KeymapResolution.Favorite("/pics"),
-            keymap.Resolve(new Keybind(Key.D1, KeyModifiers.Control)));
-        Assert.Equal(KeymapResolution.Action("Next"), keymap.Resolve(new Keybind(Key.Right)));
-    }
-
-    [Fact]
-    public void WithFavorites_FavoriteKeybindOwnedByAction_TakesItFromTheAction()
+    public void WithKeybinds_ReplacesActionsKeybindsAndTakesThemFromOtherActions()
     {
         var right = new Keybind(Key.Right);
+        var f7 = new Keybind(Key.F7);
+        var keymap = Keymap.FromJson(null, Defaults).Assign(f7, "Prev");
 
-        var keymap = Keymap.FromJson(null, Defaults).WithFavorites([new FavoriteEntry("/pics", "Right")]);
+        var updated = keymap.WithKeybinds("Prev", [right]);
 
-        Assert.Equal(KeymapResolution.Favorite("/pics"), keymap.Resolve(right));
-        Assert.Empty(keymap.KeybindsFor("Next"));
-        Assert.Equal(KeymapResolution.None, Keymap.FromJson(keymap.ToJson(), Defaults).Resolve(right));
-    }
-
-    [Fact]
-    public void Assign_KeybindOwnedByFavorite_TakesItFromTheFavorite()
-    {
-        var right = new Keybind(Key.Right);
-        var keymap = Keymap.FromJson(null, Defaults).WithFavorites([new FavoriteEntry("/pics", "Right")]);
-
-        var updated = keymap.Assign(right, "Last");
-
-        Assert.Equal(KeymapResolution.Action("Last"), updated.Resolve(right));
-    }
-
-    [Fact]
-    public void AssignToFavorite_TakesKeybindFromActionAndReplacesFavoritesPreviousKeybind()
-    {
-        var right = new Keybind(Key.Right);
-        var keymap = Keymap.FromJson(null, Defaults).WithFavorites([new FavoriteEntry("/pics", "F7")]);
-
-        var updated = keymap.AssignToFavorite(right, "/pics");
-
-        Assert.Equal(KeymapResolution.Favorite("/pics"), updated.Resolve(right));
-        Assert.Equal(right, updated.FavoriteKeybind("/pics"));
-        Assert.Equal(KeymapResolution.None, updated.Resolve(new Keybind(Key.F7)));
+        Assert.Equal([right], updated.KeybindsFor("Prev"));
         Assert.Empty(updated.KeybindsFor("Next"));
+        Assert.Equal(KeymapResolution.None, updated.Resolve(new Keybind(Key.Left)));
+        Assert.Equal(KeymapResolution.None, updated.Resolve(f7));
+    }
+
+    [Fact]
+    public void WithKeybinds_Empty_UnassignsEveryKeybindOfAction()
+    {
+        var updated = Keymap.FromJson(null, Defaults).WithKeybinds("Next", []);
+
+        Assert.Empty(updated.KeybindsFor("Next"));
+        Assert.Equal(KeymapResolution.Action("Prev"), updated.Resolve(new Keybind(Key.Left)));
     }
 
     [Fact]
     public void Equals_ComparesBindingsNotHistory()
     {
         var right = new Keybind(Key.Right);
-        var original = Keymap.FromJson(null, Defaults).WithFavorites([new FavoriteEntry("/pics", "F7")]);
+        var original = Keymap.FromJson(null, Defaults);
 
         var roundTrip = original.Assign(right, "Last").Assign(right, "Next");
         var changed = original.Assign(right, "Last");
-        var favoriteMoved = original.AssignToFavorite(new Keybind(Key.F8), "/pics");
 
         Assert.Equal(original, roundTrip);
         Assert.NotEqual(original, changed);
-        Assert.NotEqual(original, favoriteMoved);
     }
 
     [Fact]

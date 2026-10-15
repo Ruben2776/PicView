@@ -4,4 +4,4 @@ The **Keymap** (resolution, conflict rules, defaults, persistence) and the `Keyb
 
 ## Consequences
 
-Core cannot call the Keymap, so favorites changes reach it by pull: `FavoritesManager` exposes a version counter that the Keymap checks before resolving, and on rebuild a **Favorite**'s Keybind takes the chord from any **Action** holding it.
+Core cannot call the Keymap, so the Keymap knows nothing of favorites. Instead each of the first ten **Favorite** slots has an **Action** (`OpenFavorite1`–`OpenFavorite10`) whose Keybinds the Keymap stores like any other; `FavoritesManager` in Core owns which folder is in which slot, and `FunctionsMapper` opens the folder of the slot when the Action runs.

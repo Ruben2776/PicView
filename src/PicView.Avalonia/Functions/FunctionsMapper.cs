@@ -196,6 +196,8 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             "ColorPicker" => ColorPicker,
             "Restart" => Restart,
 
+            _ when KeybindCategoryDefinition.FavoriteSlot(functionName) is { } slot => () => OpenFavorite(slot),
+
             _ => null
         };
     }
@@ -653,6 +655,12 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     /// <inheritdoc cref="UINavigationHelper.OpenPathAsync(MainWindow, MainWindowViewModel, string?)" />
     public virtual async ValueTask OpenPathAsync(string path) =>
         await UINavigationHelper.OpenPathAsync(mainWindow, vm, path).ConfigureAwait(false);
+
+    /// <summary>
+    /// Opens the folder of the favorite in <paramref name="slot"/>. Does nothing when the slot is free.
+    /// </summary>
+    public ValueTask OpenFavorite(int slot) =>
+        FavoritesManager.PathForSlot(slot) is { } path ? OpenPathAsync(path) : ValueTask.CompletedTask;
 
     /// <inheritdoc cref=" UINavigationHelper.OpenLastFile(MainWindowViewModel)" />
     public async ValueTask OpenLastFile() =>

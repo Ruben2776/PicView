@@ -8,20 +8,24 @@ public class FavoritesEntryViewModel : IDisposable
     private MainWindowViewModel _vm = null!;
     public BindableReactiveProperty<string> FilePath { get; } = new();
     public BindableReactiveProperty<string> FolderName { get; } = new();
-    public BindableReactiveProperty<string> Keybind { get; } = new();
+
+    /// <summary>
+    /// The favorite's slot, or <c>null</c> when it has none.
+    /// </summary>
+    public BindableReactiveProperty<int?> Slot { get; } = new();
     public BindableReactiveProperty<bool> IsCurrentItem { get; } = new(false);
     
     public ReactiveCommand<Unit> OpenCommand { get; } = new();
     public ReactiveCommand<Unit> RemoveCommand { get; } = new();
     public ReactiveCommand<Unit> OpenEditDialogCommand { get; } = new();
     
-    public void Initialize(string path, string folderName, string keybind, bool isCurrentItem, MainWindowViewModel vm)
+    public void Initialize(string path, string folderName, int? slot, bool isCurrentItem, MainWindowViewModel vm)
     {
         _vm = vm;
         
         FilePath.Value = path;
         FolderName.Value = folderName;
-        Keybind.Value = keybind;
+        Slot.Value = slot;
         IsCurrentItem.Value = isCurrentItem;
 
         OpenCommand.SubscribeAwait(Open);
@@ -37,7 +41,7 @@ public class FavoritesEntryViewModel : IDisposable
         }
 
         (_vm.Favorites ??= new FavoritesViewModel(_vm)).EditFavoritesDialogCommand.Execute(
-            new FavoriteEntry(FilePath.CurrentValue, Keybind.CurrentValue));
+            new FavoriteEntry(FilePath.CurrentValue, Slot.CurrentValue));
     }
 
     private async ValueTask Open(Unit unit, CancellationToken cancellationToken)
@@ -62,7 +66,7 @@ public class FavoritesEntryViewModel : IDisposable
         
         FilePath.Dispose();
         FolderName.Dispose();
-        Keybind.Dispose();
+        Slot.Dispose();
         IsCurrentItem.Dispose();
         
         GC.SuppressFinalize(this);

@@ -185,19 +185,8 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         var draft = _draft;
         Keymaps.Replace(draft);
 
-        var favoritesVm = FavoritesCategory is null ? null : ResolveFavoritesViewModel();
-        if (FavoritesCategory is not null)
-        {
-            foreach (var (_, filePath) in FavoritesCategory.Entries)
-            {
-                var keybind = FavoriteKeybindText(draft, filePath);
-                FavoritesManager.SetKeybind(filePath, keybind);
-
-                var entryVm = favoritesVm?.Entries.FirstOrDefault(e =>
-                    string.Equals(e.FilePath.CurrentValue, filePath, StringComparison.Ordinal));
-                entryVm?.Keybind.Value = keybind;
-            }
-        }
+        // The favorites menu shows each favorite's Keybind
+        ResolveFavoritesViewModel()?.UpdateFavorites();
 
         _saved = draft;
         _undoStack.Clear();
@@ -205,14 +194,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         UpdateButtonStates();
 
         await Keymaps.SaveAsync().ConfigureAwait(false);
-        if (FavoritesCategory is not null)
-        {
-            await FavoritesManager.SaveToFileAsync().ConfigureAwait(false);
-        }
     }
-
-    private static string FavoriteKeybindText(Keymap keymap, string filePath) =>
-        keymap.FavoriteKeybind(filePath)?.GetFormattedForJSON() ?? string.Empty;
 
     private void SubscribeKeybindBoxes()
     {
@@ -225,10 +207,9 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
         foreach (var category in _categories)
         {
-            var isFavorite = ReferenceEquals(category, FavoritesCategory);
-            foreach (var (box, owner) in category.Entries)
+            foreach (var (box, action) in category.Entries)
             {
-                NotifyCollectionChangedEventHandler handler = (_, _) => OnBoxEdited(box, owner, isFavorite);
+                NotifyCollectionChangedEventHandler handler = (_, _) => OnBoxEdited(box, action);
                 _collectionChangedHandlers[box] = handler;
                 box.Keybinds.CollectionChanged += handler;
             }
@@ -254,14 +235,14 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         UpdateButtonStates();
     }
 
-    private void OnBoxEdited(KeybindBox box, string owner, bool isFavorite)
+    private void OnBoxEdited(KeybindBox box, string action)
     {
         if (_isShowingDraft || _isDisposed)
         {
             return;
         }
 
-        var next = isFavorite ? WithFavoriteBox(_draft, box, owner) : WithActionBox(_draft, box, owner);
+        var next = _draft.WithKeybinds(action, box.Keybinds);
         if (next.Equals(_draft))
         {
             return;
@@ -276,34 +257,6 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         UpdateButtonStates();
     }
 
-    private static Keymap WithActionBox(Keymap keymap, KeybindBox box, string action)
-    {
-        foreach (var keybind in keymap.KeybindsFor(action))
-        {
-            if (!box.Keybinds.Contains(keybind))
-            {
-                keymap = keymap.Unassign(keybind);
-            }
-        }
-
-        foreach (var keybind in box.Keybinds)
-        {
-            keymap = keymap.Assign(keybind, action);
-        }
-
-        return keymap;
-    }
-
-    private static Keymap WithFavoriteBox(Keymap keymap, KeybindBox box, string filePath)
-    {
-        if (box.Keybinds.Count > 0)
-        {
-            return keymap.AssignToFavorite(box.Keybinds[^1], filePath);
-        }
-
-        return keymap.FavoriteKeybind(filePath) is { } previous ? keymap.Unassign(previous) : keymap;
-    }
-
     /// <summary>
     /// Updates every box whose Keybinds differ from the draft.
     /// </summary>
@@ -314,12 +267,9 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         {
             foreach (var category in _categories)
             {
-                var isFavorite = ReferenceEquals(category, FavoritesCategory);
-                foreach (var (box, owner) in category.Entries)
+                foreach (var (box, action) in category.Entries)
                 {
-                    IReadOnlyList<Keybind> keybinds = isFavorite
-                        ? _draft.FavoriteKeybind(owner) is { } favoriteKeybind ? [favoriteKeybind] : []
-                        : _draft.KeybindsFor(owner);
+                    var keybinds = _draft.KeybindsFor(action);
 
                     if (box.Keybinds.Count == keybinds.Count && keybinds.All(box.Keybinds.Contains))
                     {
@@ -347,17 +297,9 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
     {
         var core = view.DataContext as CoreViewModel;
         var defaults = Keymaps.Defaults(core?.PlatformService);
-        if (FavoritesCategory is null)
+        foreach (var action in KeybindCategoryDefinition.FavoriteActionNames)
         {
-            return defaults;
-        }
-
-        foreach (var (_, filePath) in FavoritesCategory.Entries)
-        {
-            if (_draft.FavoriteKeybind(filePath) is { } keybind)
-            {
-                defaults = defaults.AssignToFavorite(keybind, filePath);
-            }
+            defaults = defaults.WithKeybinds(action, _draft.KeybindsFor(action));
         }
 
         return defaults;
@@ -471,42 +413,49 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         SubscribeKeybindBoxes();
     }
 
+    /// <summary>
+    /// Shows a box for each favorite with a slot, editing the Keybind of that slot's action.
+    /// </summary>
     private void PopulateFavoritesCategory(LanguageModel translation, string? pressKeyText)
     {
-        var favoritesVm = ResolveFavoritesViewModel();
-        if (favoritesVm is null || favoritesVm.Entries.Count == 0)
+        view.FavoritesItems.Items.Clear();
+        var boxEntries = new List<(KeybindBox Box, string FunctionName)>();
+        foreach (var entry in FavoritesManager.AllEntries)
         {
-            view.FavoritesHeader.IsVisible = false;
-            view.FavoritesItems.IsVisible = false;
-            view.FavoritesItems.Items.Clear();
+            if (entry.Slot is not { } slot)
+            {
+                continue;
+            }
+
+            var action = KeybindCategoryDefinition.FavoriteAction(slot);
+            var folderName = Path.GetFileName(Path.TrimEndingDirectorySeparator(entry.FilePath));
+            var keybindBox = new KeybindBox
+            {
+                ActionName = string.IsNullOrEmpty(folderName) ? entry.FilePath : folderName,
+                PlaceholderText = pressKeyText,
+                MaxTags = 1
+            };
+
+            var currentBinds = _draft.KeybindsFor(action);
+            if (currentBinds.Count > 0)
+            {
+                keybindBox.Keybinds = new ObservableCollection<Keybind>(currentBinds);
+            }
+
+            view.FavoritesItems.Items.Add(keybindBox);
+            boxEntries.Add((keybindBox, action));
+        }
+
+        var hasFavorites = boxEntries.Count > 0;
+        view.FavoritesHeader.IsVisible = hasFavorites;
+        view.FavoritesItems.IsVisible = hasFavorites;
+        if (!hasFavorites)
+        {
             FavoritesCategory = null;
             return;
         }
 
         view.FavoritesHeader.Text = translation.Favorites;
-        view.FavoritesHeader.IsVisible = true;
-        view.FavoritesItems.IsVisible = true;
-        view.FavoritesItems.Items.Clear();
-
-        var boxEntries = new List<(KeybindBox Box, string FunctionName)>(favoritesVm.Entries.Count);
-        foreach (var entry in favoritesVm.Entries)
-        {
-            var keybindBox = new KeybindBox
-            {
-                ActionName = entry.FolderName.CurrentValue,
-                PlaceholderText = pressKeyText,
-                MaxTags = 1
-            };
-
-            if (_draft.FavoriteKeybind(entry.FilePath.CurrentValue) is { } keybind)
-            {
-                keybindBox.Keybinds = [keybind];
-            }
-
-            view.FavoritesItems.Items.Add(keybindBox);
-            boxEntries.Add((keybindBox, entry.FilePath.CurrentValue));
-        }
-
         FavoritesCategory = new KeybindCategoryGroup(view.FavoritesHeader, view.FavoritesItems, boxEntries);
         _categories.Add(FavoritesCategory);
     }
@@ -520,24 +469,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
         var mainWindowVm = core.MainWindows.ActiveWindow.CurrentValue
                            ?? (core.MainWindows.MainWindows.Count > 0 ? core.MainWindows.MainWindows[0] : null);
-        if (mainWindowVm is null)
-        {
-            return null;
-        }
-
-        if (mainWindowVm.Favorites is null && FavoritesManager.Count > 0)
-        {
-            mainWindowVm.Favorites = new FavoritesViewModel(mainWindowVm);
-        }
-
-        if (mainWindowVm.Favorites is not null &&
-            mainWindowVm.Favorites.Entries.Count == 0 &&
-            FavoritesManager.Count > 0)
-        {
-            mainWindowVm.Favorites.UpdateFavorites();
-        }
-
-        return mainWindowVm.Favorites;
+        return mainWindowVm?.Favorites;
     }
 
     private void PopulateCategory(

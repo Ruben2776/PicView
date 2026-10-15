@@ -2,9 +2,13 @@
     x:Class="PicView.Avalonia.Views.UC.FavoriteItem"
     x:DataType="vm:FavoritesEntryViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <converters:FavoriteSlotKeybindConverter x:Key="FavoriteSlotKeybindConverter" />
+    </UserControl.Resources>
     <UserControl.Styles>
 
         <!--  Style for current item  -->
@@ -82,7 +86,7 @@
                     Classes="txt"
                     DockPanel.Dock="Right"
                     Padding="10,0"
-                    Text="{CompiledBinding Keybind.Value}" />
+                    Text="{CompiledBinding Slot.Value, Converter={StaticResource FavoriteSlotKeybindConverter}}" />
 
                 <customControls:TextIconButton
                     Background="Transparent"

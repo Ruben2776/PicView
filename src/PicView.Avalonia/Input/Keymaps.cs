@@ -1,6 +1,5 @@
 using System.Text;
 using PicView.Core.DebugTools;
-using PicView.Core.Favorites;
 using PicView.Core.IPlatform;
 using PicView.Core.Keybindings;
 
@@ -11,31 +10,16 @@ namespace PicView.Avalonia.Input;
 /// </summary>
 public static class Keymaps
 {
-    private const int FavoritesStale = int.MinValue;
-
-    private static State _state = new(Keymap.Empty, FavoritesStale);
+    private static Keymap _current = Keymap.Empty;
 
     /// <summary>
-    /// The current keymap, including the Keybinds of the current favorites.
+    /// The current keymap.
     /// </summary>
-    public static Keymap Current
-    {
-        get
-        {
-            var state = Volatile.Read(ref _state);
-            var favoritesVersion = FavoritesManager.Version;
-            if (state.FavoritesVersion == favoritesVersion)
-            {
-                return state.Keymap;
-            }
+    public static Keymap Current => 
+        Volatile.Read(ref _current);
 
-            var keymap = state.Keymap.WithFavorites(FavoritesManager.AllEntries);
-            Interlocked.CompareExchange(ref _state, new State(keymap, favoritesVersion), state);
-            return keymap;
-        }
-    }
-
-    public static void Replace(Keymap keymap) => Volatile.Write(ref _state, new State(keymap, FavoritesStale));
+    public static void Replace(Keymap keymap) => 
+        Volatile.Write(ref _current, keymap);
 
     /// <summary>
     /// Loads the user's keybindings file, falling back to the platform defaults when it is missing or unreadable.
@@ -47,7 +31,7 @@ public static class Keymaps
     }
 
     /// <summary>
-    /// The platform's default keymap, without favorites.
+    /// The platform's default keymap.
     /// </summary>
     public static Keymap Defaults(IPlatformSpecificService? platform) =>
         Keymap.FromJson(null, DefaultJson(platform));
@@ -67,6 +51,17 @@ public static class Keymaps
     public static KeymapResolution Resolve(Keybind keybind) => Current.Resolve(keybind);
 
     /// <summary>
+    /// Makes <paramref name="keybind"/> the only Keybind of the favorite action for <paramref name="slot"/>,
+    /// taking it from any other action, and saves the keybindings file. <c>null</c> unbinds the slot.
+    /// </summary>
+    public static async ValueTask SetFavoriteKeybindAsync(int slot, Keybind? keybind)
+    {
+        var action = KeybindCategoryDefinition.FavoriteAction(slot);
+        Replace(Current.WithKeybinds(action, keybind is { } bound ? [bound] : []));
+        await SaveAsync().ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Runs what <paramref name="resolution"/> points at. Does nothing until the mapper is available.
     /// </summary>
     public static async ValueTask ExecuteAsync(KeymapResolution resolution, IFunctionsMapper? mapper)
@@ -76,14 +71,9 @@ public static class Keymaps
             return;
         }
 
-        switch (resolution.Owner)
+        if (resolution.Owner is KeymapOwner.Action && mapper.GetFunctionByName(resolution.Value) is { } function)
         {
-            case KeymapOwner.Favorite:
-                await mapper.OpenPathAsync(resolution.Value).ConfigureAwait(false);
-                break;
-            case KeymapOwner.Action when mapper.GetFunctionByName(resolution.Value) is { } function:
-                await function.Invoke().ConfigureAwait(false);
-                break;
+            await function.Invoke().ConfigureAwait(false);
         }
     }
 

@@ -522,7 +522,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         UIHelper.GetMainView.MainPanel.Children.Add(new GalleryItemSizeSlider());
     }
     
-    public void AddFavoriteDialog(string? initialPath = null, string? initialKeybind = null)
+    public void AddFavoriteDialog(string? initialPath = null)
     {
         if (ContainsFavoriteDialog() || UIHelper.GetMainView.DataContext is not MainWindowViewModel vm)
         {
@@ -530,7 +530,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         }
 
         vm.TopTitlebarViewModel.CloseDropDownMenu();
-        UIHelper.GetMainView.MainPanel.Children.Add(new FavoriteDialog(initialPath, initialKeybind));
+        UIHelper.GetMainView.MainPanel.Children.Add(new FavoriteDialog(initialPath));
     }
 
     #endregion
