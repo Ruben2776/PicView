@@ -23,9 +23,12 @@ public static class MouseShortcuts
     {
         // Don't handle mouse wheel if the view is not the image viewer
         // or a dialog is opened
-        var shouldReturn = await Dispatcher.UIThread.InvokeAsync(() =>
-            mainViewModel.WindowTabs.ActiveTab.Value.CurrentView.Value is not ImageViewer ||
-            InputModes.Of(mainWindow) is InputMode.Dialog);
+        var (shouldReturn, mode) = await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var inputMode = InputModes.Of(mainWindow);
+            return (mainViewModel.WindowTabs.ActiveTab.Value.CurrentView.Value is not ImageViewer ||
+                    inputMode is InputMode.Dialog, inputMode);
+        });
         if (shouldReturn)
         {
             return;
@@ -43,7 +46,7 @@ public static class MouseShortcuts
             }
         }
         
-        var resolution = Keymaps.Resolve(Keybind.FromWheel(e.Delta.Y, e.KeyModifiers));
+        var resolution = Keymaps.Resolve(Keybind.FromWheel(e.Delta.Y, e.KeyModifiers), mode);
 
         // Wheel zoom needs the event to zoom towards the pointer, and is allowed on touchpads
         if (resolution is { Owner: KeymapOwner.Action, Value: nameof(IFunctionsMapper.ZoomIn) })
@@ -89,7 +92,8 @@ public static class MouseShortcuts
     
     public static async Task MainWindow_PointerPressed(PointerPressedEventArgs e, MainWindow window)
     {
-        if (InputModes.Of(window) is InputMode.Dialog)
+        var mode = InputModes.Of(window);
+        if (mode is InputMode.Dialog)
         {
             return;
         }
@@ -189,9 +193,9 @@ public static class MouseShortcuts
             return;
         }
 
-        await ExecuteMouseShortcutIfRegistered(currentKeys.Value, vm).ConfigureAwait(false);
+        await ExecuteMouseShortcutIfRegistered(currentKeys.Value, vm, mode).ConfigureAwait(false);
     }
 
-    internal static ValueTask ExecuteMouseShortcutIfRegistered(Keybind keybind, MainWindowViewModel? vm) =>
-        Keymaps.ExecuteAsync(Keymaps.Resolve(keybind), vm?.Mapper);
+    internal static ValueTask ExecuteMouseShortcutIfRegistered(Keybind keybind, MainWindowViewModel? vm, InputMode mode) =>
+        Keymaps.ExecuteAsync(Keymaps.Resolve(keybind, mode), vm?.Mapper);
 }

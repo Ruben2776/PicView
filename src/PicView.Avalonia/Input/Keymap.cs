@@ -72,6 +72,13 @@ public sealed class Keymap : IEquatable<Keymap>
         }
     }
 
+    /// <summary>
+    /// Resolves <paramref name="keybind"/> as it acts in <paramref name="mode"/>:
+    /// a blocking Input Mode lets no ordinary Keybind run.
+    /// </summary>
+    public KeymapResolution Resolve(Keybind keybind, InputMode mode) =>
+        mode.IsBlocking() ? KeymapResolution.None : Resolve(keybind);
+
     public KeymapResolution Resolve(Keybind keybind) =>
         _actions.TryGetValue(keybind, out var action)
             ? KeymapResolution.Action(action)
