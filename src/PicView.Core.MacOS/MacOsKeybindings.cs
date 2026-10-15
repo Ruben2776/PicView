@@ -38,8 +38,6 @@ public static class MacOsKeybindings
                                                 "F": "Flip",
                                                 "L": "ToggleLooping",
                                                 "C": "Crop",
-                                                "Return": "GalleryClick",
-                                                "E": "GalleryClick",
                                                 "Cmd+I": "ImageInfoWindow",
                                                 "I": "ImageInfoWindow",
                                                 "Cmd+Shift+E": "EffectsWindow",
@@ -83,6 +81,7 @@ public static class MacOsKeybindings
                                                 "Cmd+WheelDown": "ZoomOut",
                                                 "Contextual": {
                                                   "Return": "Confirm",
+                                                  "E": "Confirm",
                                                   "Escape": "Cancel",
                                                   "Space": "PlayPause",
                                                   "Cmd+C": "Copy"

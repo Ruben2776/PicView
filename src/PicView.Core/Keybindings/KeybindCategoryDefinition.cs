@@ -18,6 +18,7 @@ public static class KeybindCategoryDefinition
     {
         ["Fullscreen"] = "ToggleFullscreen",
         ["Stretch"] = "ZoomToFit",
+        ["GalleryClick"] = "Confirm",
     };
 
     /// <summary>
@@ -108,7 +109,6 @@ public static class KeybindCategoryDefinition
         ("FileHistoryNext", t.NextFileInHistory ?? string.Empty),
         ("FileHistoryPrev", t.PreviousFileInHistory ?? string.Empty),
         ("Search", t.Search ?? string.Empty),
-        ("GalleryClick", t.SelectGalleryThumb ?? string.Empty),
         ("ToggleLooping", t.ToggleLooping ?? string.Empty),
     ];
 

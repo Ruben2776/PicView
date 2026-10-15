@@ -21,7 +21,7 @@ public class KeybindCategoryDefinitionTests
         Assert.Contains("Last", functionNames);
         Assert.Contains("First", functionNames);
         Assert.Contains("NextFolder", functionNames);
-        Assert.Contains("GalleryClick", functionNames);
+        Assert.DoesNotContain("GalleryClick", functionNames);
     }
 
     [Fact]

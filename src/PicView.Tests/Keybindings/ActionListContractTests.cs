@@ -69,6 +69,7 @@ public class ActionListContractTests
     [Theory]
     [InlineData("Fullscreen", "ToggleFullscreen")]
     [InlineData("Stretch", "ZoomToFit")]
+    [InlineData("GalleryClick", "Confirm")]
     [InlineData("ToggleFullscreen", "ToggleFullscreen")]
     [InlineData("Next", "Next")]
     [InlineData("NotAnAction", "NotAnAction")]

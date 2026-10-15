@@ -191,7 +191,6 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             // Misc
             "ChangeBackground" => ChangeBackground,
             "SideBySide" => SideBySide,
-            "GalleryClick" => GalleryClick,
             "Slideshow" => Slideshow,
             "ColorPicker" => ColorPicker,
             "Restart" => Restart,

@@ -35,8 +35,6 @@ public static class LinuxKeybindings
                                                 "F": "Flip",
                                                 "L": "ToggleLooping",
                                                 "C": "Crop",
-                                                "E": "GalleryClick",
-                                                "Return": "GalleryClick",
                                                 "I": "ImageInfoWindow",
                                                 "F6": "EffectsWindow",
                                                 "F1": "AboutWindow",
@@ -73,6 +71,7 @@ public static class LinuxKeybindings
                                                 "Ctrl+PageDown": "PrevArchive",
                                                 "Contextual": {
                                                   "Return": "Confirm",
+                                                  "E": "Confirm",
                                                   "Escape": "Cancel",
                                                   "Space": "PlayPause",
                                                   "Ctrl+C": "Copy"
