@@ -169,4 +169,56 @@ public class KeybindTests
         Assert.Equal("Ctrl + Shift + Alt + A", formatted);
         Assert.Equal(keybind, Keybind.Parse(formatted));
     }
+
+    [Theory]
+    [InlineData(Key.D0, "0")]
+    [InlineData(Key.D1, "1")]
+    [InlineData(Key.D9, "9")]
+    public void GetFormattedWithIcon_DigitKey_ShowsDigitWithoutD(Key key, string expected)
+    {
+        Assert.Equal(expected, new Keybind(key).GetFormattedWithIcon(isMac: false));
+        Assert.Equal(expected, new Keybind(key).GetFormattedWithIcon(isMac: true));
+    }
+
+    [Fact]
+    public void GetFormattedWithIcon_DigitKeyWithModifier_ShowsDigitWithoutD()
+    {
+        var keybind = new Keybind(Key.D1, KeyModifiers.Control);
+
+        Assert.Equal($"{Keybind.CtrlModifier} + 1", keybind.GetFormattedWithIcon(isMac: false));
+        Assert.Equal($"{Keybind.MacCtrlModifier} + 1", keybind.GetFormattedWithIcon(isMac: true));
+    }
+
+    [Fact]
+    public void GetFormattedWithIcon_NumPadKey_KeepsName()
+    {
+        Assert.Equal("NumPad1", new Keybind(Key.NumPad1).GetFormattedWithIcon(isMac: false));
+    }
+
+    [Fact]
+    public void GetFormattedForJSON_DigitKey_KeepsD()
+    {
+        var keybind = new Keybind(Key.D1, KeyModifiers.Control);
+
+        Assert.Equal($"{Keybind.CtrlModifier} + D1", keybind.GetFormattedForJSON(isMac: false));
+        Assert.Equal($"{Keybind.CtrlModifier} + D1", keybind.GetFormattedForJSON(isMac: true));
+    }
+
+    [Theory]
+    [InlineData("1", Key.D1, KeyModifiers.None)]
+    [InlineData("0", Key.D0, KeyModifiers.None)]
+    [InlineData("Ctrl + 1", Key.D1, KeyModifiers.Control)]
+    [InlineData("Ctrl+D1", Key.D1, KeyModifiers.Control)]
+    public void Parse_Digit_ParsesAsDigitKey(string text, Key expectedKey, KeyModifiers expectedModifiers)
+    {
+        Assert.Equal(new Keybind(expectedKey, expectedModifiers), Keybind.Parse(text));
+    }
+
+    [Fact]
+    public void Parse_DisplayTextOfDigitKey_RoundTrips()
+    {
+        var keybind = new Keybind(Key.D5, KeyModifiers.Shift);
+
+        Assert.Equal(keybind, Keybind.Parse(keybind.GetFormattedWithIcon(isMac: false)));
+    }
 }

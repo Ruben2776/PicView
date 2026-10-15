@@ -93,6 +93,12 @@ public readonly struct Keybind : IEquatable<Keybind>
             {
                 mods |= KeyModifiers.Meta;
             }
+            else if (part.Length == 1 && char.IsAsciiDigit(part[0]))
+            {
+                // Digits are displayed without the "D" of their Key name. Checked before the enums,
+                // which would read a digit as a numeric enum value.
+                key = Key.D0 + (part[0] - '0');
+            }
             else if (Enum.TryParse<MouseButton>(part, true, out var mb) && mb != MouseButton.None)
             {
                 mouseButton = mb;
@@ -115,6 +121,7 @@ public readonly struct Keybind : IEquatable<Keybind>
 
     /// <summary>
     /// Formats the keybind with platform-specific modifier icons for UI display.
+    /// Digit keys are shown as the digit alone, such as "1" for <see cref="Key.D1"/>.
     /// </summary>
     public string GetFormattedWithIcon() => Format(withIcon: true, OperatingSystem.IsMacOS());
 
@@ -166,7 +173,9 @@ public readonly struct Keybind : IEquatable<Keybind>
 
         if (Key != Key.None)
         {
-            parts[count++] = Key.ToString();
+            parts[count++] = withIcon && Key is >= Key.D0 and <= Key.D9
+                ? ((char)('0' + (Key - Key.D0))).ToString()
+                : Key.ToString();
         }
         else if (MouseButton != MouseButton.None)
         {
