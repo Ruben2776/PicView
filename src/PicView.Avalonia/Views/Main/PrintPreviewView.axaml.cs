@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Input;
-using PicView.Avalonia.CustomControls;
 
 namespace PicView.Avalonia.Views.Main;
 

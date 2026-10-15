@@ -57,33 +57,25 @@ public class MacPrintEngine : AbstractPrintEngine
                 dest);
         });
 
-        try
-        {
-            // 6. Handle PDF exporting or printing
-            var printerName = settings.PrinterName.Value ?? "";
-            var saveAsPdf = TranslationManager.Translation.SaveAsPdf;
+        // 6. Handle PDF exporting or printing
+        var printerName = settings.PrinterName.Value ?? "";
+        var saveAsPdf = TranslationManager.Translation.SaveAsPdf;
 
-            switch (string.IsNullOrWhiteSpace(printerName))
+        switch (string.IsNullOrWhiteSpace(printerName))
+        {
+            case false
+                when string.Equals(printerName, saveAsPdf, StringComparison.Ordinal):
+                var outputFilename = Path.GetFileNameWithoutExtension(settings.ImagePath.Value) + ".pdf";
+                await PdfExport.SavePdfWithFilePicker(outputFilename, rtb);
+                break;
+            case false:
             {
-                case false
-                    when string.Equals(printerName, saveAsPdf, StringComparison.Ordinal):
-                    var outputFilename = Path.GetFileNameWithoutExtension(settings.ImagePath.Value) + ".pdf";
-                    await PdfExport.SavePdfWithFilePicker(outputFilename, rtb);
-                    break;
-                case false:
-                {
-                    var title = Path.GetFileName(settings.ImagePath.Value) ?? "PicView";
-                    var copies = settings.Copies.Value;
+                var title = Path.GetFileName(settings.ImagePath.Value) ?? "PicView";
+                var copies = settings.Copies.Value;
 
-                    MacOSPrint.Print(printerName, settings.ImagePath.Value, title, copies);
-                    break;
-                }
+                MacOSPrint.Print(printerName, settings.ImagePath.Value, title, copies);
+                break;
             }
-        }
-        finally
-        {
-            // 7. Cleanup, delete temporary file
-            try { File.Delete(settings.ImagePath.Value); } catch { /* ignore */ }
         }
     }
 

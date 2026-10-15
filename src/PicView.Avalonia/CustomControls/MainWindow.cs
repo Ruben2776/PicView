@@ -227,7 +227,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         {
             return;
         }
-        var vm = Dispatcher.UIThread.Invoke(() => DataContext as MainWindowViewModel);
+        var vm = await Dispatcher.UIThread.InvokeAsync(() => DataContext as MainWindowViewModel);
         await MainWindowInitializer.ShowPrintWindow(path, vm).ConfigureAwait(true);
     }
 
