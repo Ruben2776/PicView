@@ -107,4 +107,14 @@ public class ActionListContractTests
             name => Assert.True(KeybindCategoryDefinition.IsContextualAction(name), name));
         Assert.False(KeybindCategoryDefinition.IsContextualAction("Next"));
     }
+
+    [Theory]
+    [InlineData("Crop", true)]
+    [InlineData("RotateRight", false)]
+    [InlineData("DeleteFile", false)]
+    [InlineData("EffectsWindow", false)]
+    public void NeedsStillImage_OnlyCrop(string action, bool expected)
+    {
+        Assert.Equal(expected, KeybindCategoryDefinition.NeedsStillImage(action));
+    }
 }

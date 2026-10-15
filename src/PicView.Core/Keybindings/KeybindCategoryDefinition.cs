@@ -43,6 +43,18 @@ public static class KeybindCategoryDefinition
     public static IReadOnlyList<string> ContextualActionNames { get; } = ["Confirm", "Cancel", "PlayPause", "Copy"];
 
     /// <summary>
+    /// Actions that need a still image, which non-blocking Input Modes such as a playing motion photo disallow.
+    /// Tool windows are not among them, since they follow the current image as it changes.
+    /// </summary>
+    private static readonly string[] StillImageActionNames = ["Crop"];
+
+    /// <summary>
+    /// Whether <paramref name="action"/> needs a still image.
+    /// </summary>
+    public static bool NeedsStillImage(string action) =>
+        StillImageActionNames.Contains(Canonicalize(action), StringComparer.Ordinal);
+
+    /// <summary>
     /// Whether <paramref name="action"/> is a Contextual Action.
     /// </summary>
     public static bool IsContextualAction(string action) =>

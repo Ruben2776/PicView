@@ -88,4 +88,11 @@ public static class InputModeExtensions
     /// </summary>
     public static bool IsBlocking(this InputMode mode) =>
         mode is InputMode.Dialog or InputMode.Renaming or InputMode.Crop;
+
+    /// <summary>
+    /// Whether <paramref name="mode"/> is a non-blocking mode other than Normal, which disallows Actions
+    /// that need a still image.
+    /// </summary>
+    public static bool DisallowsStillImageActions(this InputMode mode) =>
+        mode is InputMode.MotionPhoto or InputMode.Slideshow;
 }
