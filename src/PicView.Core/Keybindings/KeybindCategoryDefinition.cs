@@ -36,6 +36,18 @@ public static class KeybindCategoryDefinition
     private const string FavoriteActionPrefix = "OpenFavorite";
 
     /// <summary>
+    /// Contextual Actions: generic Actions whose meaning comes from the window's Input Mode. Their Keybinds
+    /// form a separate layer, so a Keybind can be bound to one of them and to an ordinary Action.
+    /// </summary>
+    public static IReadOnlyList<string> ContextualActionNames { get; } = ["Confirm", "Cancel", "PlayPause", "Copy"];
+
+    /// <summary>
+    /// Whether <paramref name="action"/> is a Contextual Action.
+    /// </summary>
+    public static bool IsContextualAction(string action) =>
+        ContextualActionNames.Contains(Canonicalize(action), StringComparer.Ordinal);
+
+    /// <summary>
     /// The action opening the favorite in each slot, in slot order.
     /// </summary>
     public static IReadOnlyList<string> FavoriteActionNames { get; } =

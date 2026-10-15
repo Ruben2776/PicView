@@ -85,6 +85,12 @@ public static class WindowsKeybindings
                                                "WheelDown": "Next",
                                                "Ctrl+WheelUp": "ZoomIn",
                                                "Ctrl+WheelDown": "ZoomOut",
+                                               "Contextual": {
+                                                 "Enter": "Confirm",
+                                                 "Escape": "Cancel",
+                                                 "Space": "PlayPause",
+                                                 "Ctrl+C": "Copy"
+                                               }
                                              }
                                              """;
 }

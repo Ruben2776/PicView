@@ -81,6 +81,12 @@ public static class MacOsKeybindings
                                                 "WheelDown": "Next",
                                                 "Cmd+WheelUp": "ZoomIn",
                                                 "Cmd+WheelDown": "ZoomOut",
+                                                "Contextual": {
+                                                  "Return": "Confirm",
+                                                  "Escape": "Cancel",
+                                                  "Space": "PlayPause",
+                                                  "Cmd+C": "Copy"
+                                                }
                                               }
                                               """;
 }

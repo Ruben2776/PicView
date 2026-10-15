@@ -1,45 +1,70 @@
 using System.Collections.Frozen;
+using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Avalonia.Input;
 using PicView.Core.DebugTools;
 using PicView.Core.Keybindings;
 
 namespace PicView.Avalonia.Input;
 
-[JsonSourceGenerationOptions(AllowTrailingCommas = true, WriteIndented = true)]
-[JsonSerializable(typeof(Dictionary<string, string>))]
-internal partial class SourceGenerationContext : JsonSerializerContext;
-
 /// <summary>
-/// The immutable assignment of <see cref="Keybind"/>s to actions. Each Keybind has at most one action.
+/// The immutable assignment of <see cref="Keybind"/>s to actions, in two layers. Ordinary Keybinds have at most one
+/// ordinary action each. Contextual Keybinds have at most one Contextual Action each, and a Keybind may be in both
+/// layers. Which layer a binding is in follows from its action.
 /// </summary>
 public sealed class Keymap : IEquatable<Keymap>
 {
-    private readonly FrozenDictionary<Keybind, string> _actions;
+    /// <summary>
+    /// The keybindings file property holding the contextual layer. The ordinary layer is every other property.
+    /// </summary>
+    private const string ContextualSection = "Contextual";
 
-    public static Keymap Empty { get; } = new(FrozenDictionary<Keybind, string>.Empty);
+    private static readonly JsonDocumentOptions ReadOptions = new() { AllowTrailingCommas = true };
+
+    private static readonly JsonWriterOptions WriteOptions = new()
+    {
+        Indented = true,
+        // Keep "+" in Keybinds such as "Ctrl+C" readable
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    };
+
+    private readonly FrozenDictionary<Keybind, string> _actions;
+    private readonly FrozenDictionary<Keybind, string> _contextual;
+
+    public static Keymap Empty { get; } =
+        new(FrozenDictionary<Keybind, string>.Empty, FrozenDictionary<Keybind, string>.Empty);
 
     /// <summary>
-    /// The action bound to each Keybind.
+    /// The ordinary action bound to each Keybind.
     /// </summary>
     public IReadOnlyDictionary<Keybind, string> Bindings => _actions;
 
-    private Keymap(FrozenDictionary<Keybind, string> actions)
+    /// <summary>
+    /// The Contextual Action bound to each contextual Keybind.
+    /// </summary>
+    public IReadOnlyDictionary<Keybind, string> ContextualBindings => _contextual;
+
+    private Keymap(FrozenDictionary<Keybind, string> actions, FrozenDictionary<Keybind, string> contextual)
     {
         _actions = actions;
+        _contextual = contextual;
     }
 
     /// <summary>
     /// Builds a keymap from the user's keybindings JSON, or from <paramref name="defaultJson"/> when there is none
-    /// or it cannot be read.
+    /// or it cannot be read. A user file without a contextual section keeps the default contextual Keybinds.
     /// </summary>
     public static Keymap FromJson(string? userJson, string defaultJson)
     {
-        var entries = Deserialize(userJson) ?? Deserialize(defaultJson) ?? new Dictionary<string, string>();
+        var defaults = Read(defaultJson);
+        var user = Read(userJson);
 
-        var actions = new Dictionary<Keybind, string>(entries.Count);
-        foreach (var (key, action) in entries)
+        var ordinary = user?.Ordinary ?? defaults?.Ordinary ?? [];
+        var contextual = user is not null ? user.Value.Contextual ?? defaults?.Contextual ?? [] : defaults?.Contextual ?? [];
+
+        var actions = new Dictionary<Keybind, string>();
+        var contextualActions = new Dictionary<Keybind, string>();
+        foreach (var (key, action) in contextual.Concat(ordinary))
         {
             var keybind = Keybind.Parse(key);
             if (keybind is not { } parsed || (parsed.Key is Key.None && parsed.MouseButton is MouseButton.None))
@@ -48,13 +73,19 @@ public sealed class Keymap : IEquatable<Keymap>
                 continue;
             }
 
-            actions[parsed] = KeybindCategoryDefinition.Canonicalize(action);
+            var canonical = KeybindCategoryDefinition.Canonicalize(action);
+            var layer = KeybindCategoryDefinition.IsContextualAction(canonical) ? contextualActions : actions;
+            layer[parsed] = canonical;
         }
 
-        return new Keymap(actions.ToFrozenDictionary());
+        return new Keymap(actions.ToFrozenDictionary(), contextualActions.ToFrozenDictionary());
     }
 
-    private static Dictionary<string, string>? Deserialize(string? json)
+    /// <summary>
+    /// Reads the entries of a keybindings file. <see cref="KeymapFile.Contextual"/> is <c>null</c> when the file
+    /// has no contextual section; the result is <c>null</c> when there is no file or it cannot be read.
+    /// </summary>
+    private static KeymapFile? Read(string? json)
     {
         if (json is null)
         {
@@ -63,14 +94,46 @@ public sealed class Keymap : IEquatable<Keymap>
 
         try
         {
-            return JsonSerializer.Deserialize(json, SourceGenerationContext.Default.DictionaryStringString);
+            using var document = JsonDocument.Parse(json, ReadOptions);
+            if (document.RootElement.ValueKind is not JsonValueKind.Object)
+            {
+                return null;
+            }
+
+            var ordinary = new List<KeyValuePair<string, string>>();
+            List<KeyValuePair<string, string>>? contextual = null;
+            foreach (var property in document.RootElement.EnumerateObject())
+            {
+                if (property.Value.ValueKind is JsonValueKind.String)
+                {
+                    ordinary.Add(new(property.Name, property.Value.GetString()!));
+                }
+                else if (property.Value.ValueKind is JsonValueKind.Object &&
+                         string.Equals(property.Name, ContextualSection, StringComparison.OrdinalIgnoreCase))
+                {
+                    contextual = [];
+                    foreach (var entry in property.Value.EnumerateObject())
+                    {
+                        if (entry.Value.ValueKind is JsonValueKind.String)
+                        {
+                            contextual.Add(new(entry.Name, entry.Value.GetString()!));
+                        }
+                    }
+                }
+            }
+
+            return new KeymapFile(ordinary, contextual);
         }
         catch (JsonException exception)
         {
-            DebugHelper.LogDebug(nameof(Keymap), nameof(Deserialize), exception);
+            DebugHelper.LogDebug(nameof(Keymap), nameof(Read), exception);
             return null;
         }
     }
+
+    private readonly record struct KeymapFile(
+        List<KeyValuePair<string, string>> Ordinary,
+        List<KeyValuePair<string, string>>? Contextual);
 
     /// <summary>
     /// Resolves <paramref name="keybind"/> as it acts in <paramref name="mode"/>:
@@ -85,6 +148,11 @@ public sealed class Keymap : IEquatable<Keymap>
             : KeymapResolution.None;
 
     /// <summary>
+    /// Returns the Contextual Action bound to <paramref name="keybind"/>, or <c>null</c> when it has none.
+    /// </summary>
+    public string? ResolveContextual(Keybind keybind) => _contextual.GetValueOrDefault(keybind);
+
+    /// <summary>
     /// Returns the Keybinds bound to <paramref name="action"/>.
     /// </summary>
     public IReadOnlyList<Keybind> KeybindsFor(string action)
@@ -92,51 +160,55 @@ public sealed class Keymap : IEquatable<Keymap>
         var canonical = KeybindCategoryDefinition.Canonicalize(action);
         return
         [
-            .. _actions.Where(kvp => string.Equals(kvp.Value, canonical, StringComparison.Ordinal))
+            .. LayerOf(canonical).Where(kvp => string.Equals(kvp.Value, canonical, StringComparison.Ordinal))
                 .Select(kvp => kvp.Key)
         ];
     }
 
     /// <summary>
     /// Returns a keymap where <paramref name="keybind"/> is owned by <paramref name="action"/>,
-    /// taking it from any previous owner.
+    /// taking it from any previous owner in the same layer.
     /// </summary>
     public Keymap Assign(Keybind keybind, string action)
     {
-        var actions = new Dictionary<Keybind, string>(_actions)
+        var canonical = KeybindCategoryDefinition.Canonicalize(action);
+        var layer = new Dictionary<Keybind, string>(LayerOf(canonical))
         {
-            [keybind] = KeybindCategoryDefinition.Canonicalize(action)
+            [keybind] = canonical
         };
-        return new Keymap(actions.ToFrozenDictionary());
+        return WithLayer(canonical, layer.ToFrozenDictionary());
     }
 
     /// <summary>
-    /// Returns a keymap where <paramref name="keybind"/> has no owner.
+    /// Returns a keymap where <paramref name="keybind"/> has no ordinary owner.
     /// </summary>
-    public Keymap Unassign(Keybind keybind)
+    public Keymap Unassign(Keybind keybind) => Unassign(keybind, contextual: false);
+
+    private Keymap Unassign(Keybind keybind, bool contextual)
     {
-        if (!_actions.ContainsKey(keybind))
+        var layer = contextual ? _contextual : _actions;
+        if (!layer.ContainsKey(keybind))
         {
             return this;
         }
 
-        var actions = new Dictionary<Keybind, string>(_actions);
-        actions.Remove(keybind);
-        return new Keymap(actions.ToFrozenDictionary());
+        var remaining = layer.Where(kvp => kvp.Key != keybind).ToFrozenDictionary();
+        return contextual ? new Keymap(_actions, remaining) : new Keymap(remaining, _contextual);
     }
 
     /// <summary>
     /// Returns a keymap where <paramref name="action"/> has exactly <paramref name="keybinds"/>,
-    /// taking them from any previous owners.
+    /// taking them from any previous owners in the same layer.
     /// </summary>
     public Keymap WithKeybinds(string action, IReadOnlyCollection<Keybind> keybinds)
     {
+        var contextual = KeybindCategoryDefinition.IsContextualAction(action);
         var keymap = this;
         foreach (var keybind in KeybindsFor(action))
         {
             if (!keybinds.Contains(keybind))
             {
-                keymap = keymap.Unassign(keybind);
+                keymap = keymap.Unassign(keybind, contextual);
             }
         }
 
@@ -148,24 +220,58 @@ public sealed class Keymap : IEquatable<Keymap>
         return keymap;
     }
 
+    private FrozenDictionary<Keybind, string> LayerOf(string canonicalAction) =>
+        KeybindCategoryDefinition.IsContextualAction(canonicalAction) ? _contextual : _actions;
+
+    private Keymap WithLayer(string canonicalAction, FrozenDictionary<Keybind, string> layer) =>
+        KeybindCategoryDefinition.IsContextualAction(canonicalAction)
+            ? new Keymap(_actions, layer)
+            : new Keymap(layer, _contextual);
+
     /// <summary>
-    /// Serializes the action bindings in the keybindings file format.
+    /// Serializes the bindings in the keybindings file format: the ordinary Keybinds as properties, and the
+    /// contextual Keybinds in a <c>"Contextual"</c> object.
     /// </summary>
-    public string ToJson() =>
-        JsonSerializer.Serialize(
-                _actions.ToDictionary(kvp => kvp.Key.GetFormattedForJSON(), kvp => kvp.Value, StringComparer.OrdinalIgnoreCase),
-                SourceGenerationContext.Default.DictionaryStringString)
-            .Replace("\\u002B", "+", StringComparison.Ordinal); // Fix plus sign encoded to Unicode
+    public string ToJson()
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream, WriteOptions))
+        {
+            writer.WriteStartObject();
+            WriteEntries(writer, _actions);
+            writer.WriteStartObject(ContextualSection);
+            WriteEntries(writer, _contextual);
+            writer.WriteEndObject();
+            writer.WriteEndObject();
+        }
+
+        return System.Text.Encoding.UTF8.GetString(stream.ToArray());
+    }
+
+    private static void WriteEntries(Utf8JsonWriter writer, FrozenDictionary<Keybind, string> layer)
+    {
+        // Keybinds are read back case-insensitively, so write each formatted Keybind once
+        var written = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var (keybind, action) in layer)
+        {
+            var key = keybind.GetFormattedForJSON();
+            if (written.Add(key))
+            {
+                writer.WriteString(key, action);
+            }
+        }
+    }
 
     #region IEquatable
 
     public bool Equals(Keymap? other) =>
         other is not null &&
-        (ReferenceEquals(this, other) || SameEntries(_actions, other._actions));
+        (ReferenceEquals(this, other) ||
+         (SameEntries(_actions, other._actions) && SameEntries(_contextual, other._contextual)));
 
     public override bool Equals(object? obj) => obj is Keymap other && Equals(other);
 
-    public override int GetHashCode() => _actions.Count;
+    public override int GetHashCode() => HashCode.Combine(_actions.Count, _contextual.Count);
 
     private static bool SameEntries(FrozenDictionary<Keybind, string> left, FrozenDictionary<Keybind, string> right)
     {

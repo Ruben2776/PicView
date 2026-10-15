@@ -97,4 +97,13 @@ public class ActionListContractTests
     {
         Assert.Equal(expected, KeybindCategoryDefinition.FavoriteSlot(action));
     }
+
+    [Fact]
+    public void ContextualActions_AreConfirmCancelPlayPauseAndCopy()
+    {
+        Assert.Equal(["Confirm", "Cancel", "PlayPause", "Copy"], KeybindCategoryDefinition.ContextualActionNames);
+        Assert.All(KeybindCategoryDefinition.ContextualActionNames,
+            name => Assert.True(KeybindCategoryDefinition.IsContextualAction(name), name));
+        Assert.False(KeybindCategoryDefinition.IsContextualAction("Next"));
+    }
 }
