@@ -15,8 +15,6 @@ public static class WindowsKeybindings
                                                "F10": "ToggleInterface",
                                                "F11": "ToggleFullscreen",
                                                "W": "Up",
-                                               "E": "GalleryClick",
-                                               "Enter": "GalleryClick",
                                                "Ctrl+E": "OpenWith",
                                                "R": "ResetZoom",
                                                "Ctrl+R": "Reload",
@@ -87,6 +85,7 @@ public static class WindowsKeybindings
                                                "Ctrl+WheelDown": "ZoomOut",
                                                "Contextual": {
                                                  "Enter": "Confirm",
+                                                 "E": "Confirm",
                                                  "Escape": "Cancel",
                                                  "Space": "PlayPause",
                                                  "Ctrl+C": "Copy"

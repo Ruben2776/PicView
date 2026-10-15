@@ -184,7 +184,7 @@ public class KeybindingsFavoritesTests : IDisposable
 
         // Dispatch keyboard shortcut
         MainKeyboardShortcuts.CurrentKeys = new Keybind(Key.D1, KeyModifiers.Control);
-        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm, InputMode.Normal));
+        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm, new InputModeState(), NoContextualActions.Instance));
 
         Assert.Equal(folderA, spyMapper.LastOpenedPath);
 
@@ -192,17 +192,20 @@ public class KeybindingsFavoritesTests : IDisposable
         RunWithDispatcher(MouseShortcuts.ExecuteMouseShortcutIfRegistered(
             new Keybind(MouseButton.XButton1, KeyModifiers.Alt),
             mainWindowVm,
-            InputMode.Normal));
+            new InputModeState(),
+            NoContextualActions.Instance));
 
         Assert.Equal(folderB, spyMapper.LastOpenedPath);
     }
 
     [AvaloniaTheory]
-    [InlineData(InputMode.Dialog)]
-    [InlineData(InputMode.Renaming)]
-    [InlineData(InputMode.Crop)]
-    public void ShortcutHandling_InBlockingMode_RunsNoKeyboardOrMouseKeybind(InputMode mode)
+    [InlineData(true, false, false)]
+    [InlineData(false, true, false)]
+    [InlineData(false, false, true)]
+    public void ShortcutHandling_InBlockingMode_RunsNoKeyboardOrMouseKeybind(
+        bool isDialogOpen, bool isRenaming, bool isCropping)
     {
+        var state = new InputModeState(isDialogOpen, isRenaming, isCropping);
         var folder = CreateFolder("Blocked");
         RunWithDispatcher(FavoritesManager.AddAsync(folder));
         Keymaps.Replace(Keymap.Empty
@@ -213,9 +216,10 @@ public class KeybindingsFavoritesTests : IDisposable
         mainWindowVm.Mapper = spyMapper;
 
         MainKeyboardShortcuts.CurrentKeys = new Keybind(Key.F7);
-        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm, mode));
+        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(
+            mainWindowVm, state, NoContextualActions.Instance));
         RunWithDispatcher(MouseShortcuts.ExecuteMouseShortcutIfRegistered(
-            new Keybind(MouseButton.XButton1), mainWindowVm, mode));
+            new Keybind(MouseButton.XButton1), mainWindowVm, state, NoContextualActions.Instance));
 
         Assert.Null(spyMapper.LastOpenedPath);
     }
@@ -229,7 +233,7 @@ public class KeybindingsFavoritesTests : IDisposable
         mainWindowVm.Mapper = spyMapper;
 
         MainKeyboardShortcuts.CurrentKeys = new Keybind(Key.F7);
-        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm, InputMode.Normal));
+        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm, new InputModeState(), NoContextualActions.Instance));
 
         Assert.Null(spyMapper.LastOpenedPath);
     }
@@ -325,6 +329,13 @@ public class KeybindingsFavoritesTests : IDisposable
 
     private static void Click(Button button) =>
         ((IInvokeProvider)ControlAutomationPeer.CreatePeerForElement(button)).Invoke();
+
+    private sealed class NoContextualActions : IContextualActionHandler
+    {
+        public static NoContextualActions Instance { get; } = new();
+
+        public ValueTask<bool> TryRunAsync(InputMode mode, string contextualAction) => ValueTask.FromResult(false);
+    }
 
     private sealed class SpyFunctionsMapper(MainWindowViewModel vm) : FunctionsMapper(vm, null!)
     {

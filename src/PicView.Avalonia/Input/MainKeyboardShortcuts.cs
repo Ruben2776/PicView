@@ -2,8 +2,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Navigation;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
@@ -45,7 +43,7 @@ public static class MainKeyboardShortcuts
             return;
         }
 
-        var mode = InputModes.Of(mainWindow);
+        var state = InputModes.StateOf(mainWindow);
 
         UpdateModifierState(e.Key, true);
         
@@ -70,20 +68,14 @@ public static class MainKeyboardShortcuts
         _keyRepeatCount++;
         IsKeyHeldDown = _keyRepeatCount > KeyRepeatThreshold;
 
-        // Handle special cases before processing shortcuts
-        if (await HandleSpecialCases(e, mode, mainWindowViewModel, mainWindow).ConfigureAwait(false))
-        {
-            return;
-        }
-        
         // If it's a modifier key only, nothing more to do
-        if (IsModifierKey(e.Key))
+        if (IsModifierKey(e.Key) || mainWindowViewModel is null)
         {
             return;
         }
 
-        // Handle registered shortcuts
-        await ExecuteShortcutIfRegistered(mainWindowViewModel, mode).ConfigureAwait(false);
+        await ExecuteShortcutIfRegistered(mainWindowViewModel, state,
+            new ContextualActionHandler(mainWindow, mainWindowViewModel)).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -160,127 +152,40 @@ public static class MainKeyboardShortcuts
     }
 
     /// <summary>
-    /// Handles the keys of the window's <see cref="InputMode"/>, and the escape key.
+    /// What Escape does when nothing else claims it: closes the main menu (open while the UI is hidden),
+    /// else the newest secondary window, else this window unless Escape is held down or disabled.
     /// </summary>
-    /// <returns>True if the key event was handled by a special case handler.</returns>
-    private static async ValueTask<bool> HandleSpecialCases(KeyEventArgs e, InputMode mode, MainWindowViewModel? vm,
-        MainWindow mainWindow)
+    internal static async ValueTask CloseOnEscapeAsync(MainWindowViewModel vm)
     {
-        var activeTab = vm.WindowTabs.ActiveTab.CurrentValue;
-        switch (mode)
+        if (vm.TopTitlebarViewModel.IsMainMenuVisible.CurrentValue)
         {
-            case InputMode.Dialog:
-                if (e.Key is Key.Escape)
-                {
-                    await CloseTopDialogAsync(vm, mainWindow).ConfigureAwait(false);
-                }
-
-                return true;
-
-            case InputMode.Renaming:
-                return true;
-
-            case InputMode.Crop:
-                switch (e.Key)
-                {
-                    case Key.Escape:
-                        activeTab.CropService.CloseCropControl();
-                        break;
-                    case Key.Enter:
-                        await activeTab.CropService.SaveCropAsync().ConfigureAwait(false);
-                        break;
-                    case Key.C:
-                        // Cmd+C on macOS, Ctrl+C elsewhere
-                        if (e.KeyModifiers == (OperatingSystem.IsMacOS() ? KeyModifiers.Meta : KeyModifiers.Control))
-                        {
-                            await activeTab.CropService.CopyCroppedImageAsync().ConfigureAwait(false);
-                        }
-                        break;
-                }
-
-                return true;
-
-            // Motion photo playback: Space plays/pauses, Escape stops an active playback
-            case InputMode.MotionPhoto when activeTab.CurrentView.CurrentValue is ImageViewer imageViewer:
-                if (e.Key is Key.Space)
-                {
-                    imageViewer.ToggleMotionPhotoPlayPause();
-                    return true;
-                }
-
-                if (e.Key is Key.Escape && imageViewer.StopMotionPhotoIfPlaying())
-                {
-                    return true;
-                }
-
-                break;
-        }
-
-        // Handle escape key
-        if (e.Key == Key.Escape)
-        {
-            // With the UI hidden the main menu is not a dialog, but Escape still closes it
-            if (vm.TopTitlebarViewModel.IsMainMenuVisible.CurrentValue)
-            {
-                vm.TopTitlebarViewModel.CloseMenu();
-                return true;
-            }
-            
-            if (Slideshow.IsRunning)
-            {
-                Slideshow.StopSlideshow(vm);
-                return true;
-            }
-            
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { Windows.Count: > 1 } desktop)
-            {
-                 // Check if the current window (associated with vm) is one of the secondary windows
-                 // This logic might need refinement to identify WHICH window is closing
-                 // For now, mirroring legacy behavior of checking count
-                desktop.Windows[^1].Close();
-                IsKeyHeldDown = true; // If closing the last window, make sure not to call Close()
-                return true;
-            }
-
-            if (!IsKeyHeldDown && IsEscKeyEnabled)
-            {
-                if (vm.Mapper != null)
-                {
-                    await vm.Mapper.Close().ConfigureAwait(false);
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Closes the drop-down menu, else the open pop-up, else the main menu.
-    /// </summary>
-    private static async ValueTask CloseTopDialogAsync(MainWindowViewModel vm, MainWindow mainWindow)
-    {
-        if (vm.TopTitlebarViewModel.DropDownMenu?.IsDropDownMenuVisible.CurrentValue ?? false)
-        {
-            vm.TopTitlebarViewModel.CloseDropDownMenu();
+            vm.TopTitlebarViewModel.CloseMenu();
             return;
         }
 
-        var animatedPopUp = mainWindow.UIHelper.GetMainView?.MainPanel.Children.OfType<AnimatedPopUp>()
-            .FirstOrDefault(popUp => popUp.IsVisible);
-        if (animatedPopUp is not null)
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { Windows.Count: > 1 } desktop)
         {
-            await animatedPopUp.AnimatedClosing().ConfigureAwait(false);
+            // Check if the current window (associated with vm) is one of the secondary windows
+            // This logic might need refinement to identify WHICH window is closing
+            // For now, mirroring legacy behavior of checking count
+            desktop.Windows[^1].Close();
+            IsKeyHeldDown = true; // If closing the last window, make sure not to call Close()
             return;
         }
 
-        vm.TopTitlebarViewModel.CloseMenu();
+        if (!IsKeyHeldDown && IsEscKeyEnabled && vm.Mapper is not null)
+        {
+            await vm.Mapper.Close().ConfigureAwait(false);
+        }
     }
 
     /// <summary>
-    /// Executes the registered shortcut action for the current key combination, as it acts in <paramref name="mode"/>.
+    /// Runs what the current key combination does in a window in <paramref name="state"/>.
     /// </summary>
-    internal static ValueTask ExecuteShortcutIfRegistered(MainWindowViewModel? vm, InputMode mode) =>
-        Keymaps.ExecuteAsync(Keymaps.Resolve(CurrentKeys, mode), vm?.Mapper);
+    internal static ValueTask ExecuteShortcutIfRegistered(MainWindowViewModel? vm, InputModeState state,
+        IContextualActionHandler handler) =>
+        InputDispatch.DispatchAsync(CurrentKeys, state, Keymaps.Current, handler,
+            resolution => Keymaps.ExecuteAsync(resolution, vm?.Mapper));
 
     /// <summary>
     /// Resets the keyboard state tracking.

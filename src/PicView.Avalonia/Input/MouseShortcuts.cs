@@ -23,11 +23,11 @@ public static class MouseShortcuts
     {
         // Don't handle mouse wheel if the view is not the image viewer
         // or a dialog is opened
-        var (shouldReturn, mode) = await Dispatcher.UIThread.InvokeAsync(() =>
+        var (shouldReturn, state) = await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            var inputMode = InputModes.Of(mainWindow);
+            var inputState = InputModes.StateOf(mainWindow);
             return (mainViewModel.WindowTabs.ActiveTab.Value.CurrentView.Value is not ImageViewer ||
-                    inputMode is InputMode.Dialog, inputMode);
+                    inputState.Resolve() is InputMode.Dialog, inputState);
         });
         if (shouldReturn)
         {
@@ -46,30 +46,29 @@ public static class MouseShortcuts
             }
         }
         
-        var resolution = Keymaps.Resolve(Keybind.FromWheel(e.Delta.Y, e.KeyModifiers), mode);
-
-        // Wheel zoom needs the event to zoom towards the pointer, and is allowed on touchpads
-        if (resolution is { Owner: KeymapOwner.Action, Value: nameof(IFunctionsMapper.ZoomIn) })
-        {
-            if (zoomIn is not null)
+        await InputDispatch.DispatchAsync(Keybind.FromWheel(e.Delta.Y, e.KeyModifiers), state, Keymaps.Current,
+            new ContextualActionHandler(mainWindow, mainViewModel), async resolution =>
             {
-                await zoomIn(e).ConfigureAwait(false);
-            }
-            return;
-        }
-        if (resolution is { Owner: KeymapOwner.Action, Value: nameof(IFunctionsMapper.ZoomOut) })
-        {
-            if (zoomOut is not null)
-            {
-                await zoomOut(e).ConfigureAwait(false);
-            }
-            return;
-        }
-
-        if (!IsTouchPadOrTouch(e))
-        {
-            await Keymaps.ExecuteAsync(resolution, mainViewModel.Mapper).ConfigureAwait(false);
-        }
+                // Wheel zoom needs the event to zoom towards the pointer, and is allowed on touchpads
+                if (resolution.Value is nameof(IFunctionsMapper.ZoomIn))
+                {
+                    if (zoomIn is not null)
+                    {
+                        await zoomIn(e).ConfigureAwait(false);
+                    }
+                }
+                else if (resolution.Value is nameof(IFunctionsMapper.ZoomOut))
+                {
+                    if (zoomOut is not null)
+                    {
+                        await zoomOut(e).ConfigureAwait(false);
+                    }
+                }
+                else if (!IsTouchPadOrTouch(e))
+                {
+                    await Keymaps.ExecuteAsync(resolution, mainViewModel.Mapper).ConfigureAwait(false);
+                }
+            }).ConfigureAwait(false);
     }
 
     private static bool IsTouchPadOrTouch(PointerEventArgs e)
@@ -92,8 +91,8 @@ public static class MouseShortcuts
     
     public static async Task MainWindow_PointerPressed(PointerPressedEventArgs e, MainWindow window)
     {
-        var mode = InputModes.Of(window);
-        if (mode is InputMode.Dialog)
+        var state = InputModes.StateOf(window);
+        if (state.Resolve() is InputMode.Dialog)
         {
             return;
         }
@@ -193,9 +192,15 @@ public static class MouseShortcuts
             return;
         }
 
-        await ExecuteMouseShortcutIfRegistered(currentKeys.Value, vm, mode).ConfigureAwait(false);
+        await ExecuteMouseShortcutIfRegistered(currentKeys.Value, vm, state, new ContextualActionHandler(window, vm))
+            .ConfigureAwait(false);
     }
 
-    internal static ValueTask ExecuteMouseShortcutIfRegistered(Keybind keybind, MainWindowViewModel? vm, InputMode mode) =>
-        Keymaps.ExecuteAsync(Keymaps.Resolve(keybind, mode), vm?.Mapper);
+    /// <summary>
+    /// Runs what <paramref name="keybind"/> does in a window in <paramref name="state"/>.
+    /// </summary>
+    internal static ValueTask ExecuteMouseShortcutIfRegistered(Keybind keybind, MainWindowViewModel? vm,
+        InputModeState state, IContextualActionHandler handler) =>
+        InputDispatch.DispatchAsync(keybind, state, Keymaps.Current, handler,
+            resolution => Keymaps.ExecuteAsync(resolution, vm?.Mapper));
 }

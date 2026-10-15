@@ -36,7 +36,8 @@ public class DefaultKeybindingsContractTests
 
         Assert.All(KeybindCategoryDefinition.ContextualActionNames,
             name => Assert.NotEmpty(keymap.KeybindsFor(name)));
-        Assert.Equal(KeybindCategoryDefinition.ContextualActionNames.Count, keymap.ContextualBindings.Count);
+        Assert.All(keymap.ContextualBindings.Values,
+            name => Assert.True(KeybindCategoryDefinition.IsContextualAction(name), name));
     }
 
     [Theory]
