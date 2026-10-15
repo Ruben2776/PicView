@@ -289,6 +289,48 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal(KeymapResolution.Action("Prev"), Keymaps.Resolve(new Keybind(Key.F7)));
     }
 
+    private const string ViewTestContextualKeybindings =
+        """{ "Right": "Next", "Enter": "ToggleFullscreen", "Contextual": { "Enter": "Confirm", "Escape": "Cancel" } }""";
+
+    [AvaloniaFact]
+    public void Initialize_ShowsContextualActionsInTheirOwnCategory()
+    {
+        Keymaps.Replace(Keymap.FromJson(ViewTestContextualKeybindings, "{}"));
+        using var controller = CreateController(out _);
+
+        Assert.NotNull(controller.ContextualCategory);
+        Assert.Equal(KeybindCategoryDefinition.ContextualActionNames,
+            controller.ContextualCategory!.Entries.Select(e => e.FunctionName));
+        Assert.Equal([new Keybind(Key.Enter)], controller.ActionBox("Confirm")!.Keybinds);
+        Assert.Equal([new Keybind(Key.Escape)], controller.ActionBox("Cancel")!.Keybinds);
+    }
+
+    [AvaloniaFact]
+    public void SaveKeybindings_ContextualActionSharingOrdinaryKeybind_KeepsBoth()
+    {
+        Keymaps.Replace(Keymap.FromJson(ViewTestContextualKeybindings, "{}"));
+        using var controller = CreateController(out _);
+
+        controller.ActionBox("PlayPause")!.Keybinds.Add(new Keybind(Key.Right));
+        RunWithDispatcher(controller.SaveKeybindings());
+
+        Assert.Equal([new Keybind(Key.Right)], controller.ActionBox("Next")!.Keybinds);
+        Assert.Equal(KeymapResolution.Action("Next"), Keymaps.Resolve(new Keybind(Key.Right)));
+        Assert.Equal("PlayPause", Keymaps.Current.ResolveContextual(new Keybind(Key.Right)));
+    }
+
+    [AvaloniaFact]
+    public void EditingContextualBox_WithKeybindOfAnotherContextualAction_TakesIt()
+    {
+        Keymaps.Replace(Keymap.FromJson(ViewTestContextualKeybindings, "{}"));
+        using var controller = CreateController(out _);
+
+        controller.ActionBox("Confirm")!.Keybinds.Add(new Keybind(Key.Escape));
+
+        Assert.Empty(controller.ActionBox("Cancel")!.Keybinds);
+        Assert.Equal([new Keybind(Key.Enter), new Keybind(Key.Escape)], controller.ActionBox("Confirm")!.Keybinds);
+    }
+
     [AvaloniaFact]
     public void SaveKeybindings_KeepsBindingsOfActionsNotShownInCategories()
     {

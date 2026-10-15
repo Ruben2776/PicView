@@ -111,4 +111,27 @@ public class KeybindCategoryDefinitionTests
             Assert.Contains("CutFile", functionNames);
         }
     }
+
+    [Fact]
+    public void GetContextualEntries_ListsEveryContextualActionWithTranslatedNames()
+    {
+        var languageModel = TranslationManager.GetLanguageModel(new CultureInfo("en-US"));
+
+        var entries = KeybindCategoryDefinition.GetContextualEntries(languageModel);
+
+        Assert.Equal(KeybindCategoryDefinition.ContextualActionNames, entries.Select(e => e.FunctionName));
+        Assert.Equal(["Confirm", "Cancel", "Play / pause", "Copy"], entries.Select(e => e.DisplayName));
+    }
+
+    [Fact]
+    public void GetAllCategories_LeavesOutContextualActions()
+    {
+        var languageModel = TranslationManager.GetLanguageModel(new CultureInfo("en-US"));
+
+        var functionNames = KeybindCategoryDefinition.GetAllCategories(languageModel)
+            .SelectMany(c => c.Entries)
+            .Select(e => e.FunctionName);
+
+        Assert.DoesNotContain(functionNames, KeybindCategoryDefinition.IsContextualAction);
+    }
 }

@@ -284,6 +284,20 @@
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
 
+                    <!--  Contextual actions  -->
+                    <TextBlock
+                        Classes="txt bold keyBindHeader"
+                        Text="{CompiledBinding Translation.ContextualActions.Value,
+                                               Mode=OneWay}"
+                        x:Name="ContextualHeader" />
+                    <ItemsControl x:Name="ContextualItems">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Classes="keyBindHeader" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+
                     <!--  Favorites  -->
                     <TextBlock
                         Classes="txt bold keyBindHeader"
