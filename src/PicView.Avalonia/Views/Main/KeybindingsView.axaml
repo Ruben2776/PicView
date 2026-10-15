@@ -338,7 +338,6 @@
                             BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                             BorderThickness="1"
                             Classes="MenuItemHover"
-                            Command="{Binding Keybindings.ResetKeybindingsCommand}"
                             CornerRadius="4"
                             Height="35"
                             HorizontalAlignment="Left"

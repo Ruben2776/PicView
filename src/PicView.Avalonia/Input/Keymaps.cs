@@ -46,9 +46,6 @@ public static class Keymaps
         Replace(Keymap.FromJson(bytes is null ? null : DecodeUtf8(bytes), DefaultJson(platform)));
     }
 
-    public static void ResetToDefaults(IPlatformSpecificService? platform) =>
-        Replace(Defaults(platform));
-
     /// <summary>
     /// The platform's default keymap, without favorites.
     /// </summary>

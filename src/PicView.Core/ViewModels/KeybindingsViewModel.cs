@@ -20,7 +20,6 @@ public class KeybindingsViewModel : IDisposable
     public BindableReactiveProperty<ObservableList<KeyBindingsModel>> FilteredKeys { get; } = new([]);
     
     public ReactiveCommand? ClearFilteringCommand { get; }
-    public ReactiveCommand? ResetKeybindingsCommand { get; set; }
     
     
     public BindableReactiveProperty<ObservableCollection<KeyBindingsModel>> NavigationKeys { get; } = new([]);
