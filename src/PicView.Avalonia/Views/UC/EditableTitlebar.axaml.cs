@@ -59,7 +59,6 @@ public partial class EditableTitlebar : UserControl
 
         core.MainWindows.ActiveWindow.CurrentValue.IsEditableTitlebarOpen.Value = false;
         Cursor = new Cursor(StandardCursorType.Arrow);
-        MainKeyboardShortcuts.IsKeysEnabled = true;
         TextBlock.Text = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Title
             .CurrentValue;
     }
@@ -85,7 +84,6 @@ public partial class EditableTitlebar : UserControl
             return;
         }
 
-        MainKeyboardShortcuts.IsKeysEnabled = false;
         base.OnKeyDown(e);
     }
 
@@ -116,7 +114,6 @@ public partial class EditableTitlebar : UserControl
                 break;
             case Key.Escape:
                 mainWindow.UIHelper.GetMainView.Focus();
-                MainKeyboardShortcuts.IsKeysEnabled = true;
                 break;
         }
     }

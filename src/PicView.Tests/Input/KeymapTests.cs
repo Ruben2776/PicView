@@ -126,4 +126,26 @@ public class KeymapTests
             reloaded.Resolve(new Keybind(Key.A, KeyModifiers.Control | KeyModifiers.Shift | KeyModifiers.Alt)));
         Assert.Equal(KeymapResolution.Action("Prev"), reloaded.Resolve(new Keybind(MouseButton.WheelDown)));
     }
+
+    [Theory]
+    [InlineData(InputMode.Dialog)]
+    [InlineData(InputMode.Renaming)]
+    [InlineData(InputMode.Crop)]
+    public void Resolve_InBlockingMode_ResolvesNothing(InputMode mode)
+    {
+        var keymap = Keymap.FromJson(null, Defaults);
+
+        Assert.Equal(KeymapResolution.None, keymap.Resolve(new Keybind(Key.Right), mode));
+    }
+
+    [Theory]
+    [InlineData(InputMode.Normal)]
+    [InlineData(InputMode.MotionPhoto)]
+    [InlineData(InputMode.Slideshow)]
+    public void Resolve_InNonBlockingMode_ResolvesAction(InputMode mode)
+    {
+        var keymap = Keymap.FromJson(null, Defaults);
+
+        Assert.Equal(KeymapResolution.Action("Next"), keymap.Resolve(new Keybind(Key.Right), mode));
+    }
 }

@@ -28,11 +28,6 @@ public static class MainKeyboardShortcuts
     /// </summary>
     public static Keybind CurrentKeys { get; internal set; }
 
-    /// <summary>
-    /// Gets or sets whether keyboard shortcuts are enabled.
-    /// </summary>
-    public static bool IsKeysEnabled { get; set; } = true;
-    
     public static bool IsEscKeyEnabled { get; set; } = true;
 
     private static int _keyRepeatCount;
@@ -45,10 +40,12 @@ public static class MainKeyboardShortcuts
     /// </summary>
     public static async ValueTask MainWindow_KeysDownAsync(KeyEventArgs e, MainWindowViewModel? mainWindowViewModel, MainWindow mainWindow)
     {
-        if (Keymaps.Current.Bindings.Count is 0 || !IsKeysEnabled)
+        if (Keymaps.Current.Bindings.Count is 0)
         {
             return;
         }
+
+        var mode = InputModes.Of(mainWindow);
 
         UpdateModifierState(e.Key, true);
         
@@ -74,7 +71,7 @@ public static class MainKeyboardShortcuts
         IsKeyHeldDown = _keyRepeatCount > KeyRepeatThreshold;
 
         // Handle special cases before processing shortcuts
-        if (await HandleSpecialCases(e, mainWindowViewModel, mainWindow).ConfigureAwait(false))
+        if (await HandleSpecialCases(e, mode, mainWindowViewModel, mainWindow).ConfigureAwait(false))
         {
             return;
         }
@@ -86,7 +83,7 @@ public static class MainKeyboardShortcuts
         }
 
         // Handle registered shortcuts
-        await ExecuteShortcutIfRegistered(mainWindowViewModel).ConfigureAwait(false);
+        await ExecuteShortcutIfRegistered(mainWindowViewModel, mode).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -166,10 +163,11 @@ public static class MainKeyboardShortcuts
     /// Handles the keys of the window's <see cref="InputMode"/>, and the escape key.
     /// </summary>
     /// <returns>True if the key event was handled by a special case handler.</returns>
-    private static async ValueTask<bool> HandleSpecialCases(KeyEventArgs e, MainWindowViewModel? vm, MainWindow mainWindow)
+    private static async ValueTask<bool> HandleSpecialCases(KeyEventArgs e, InputMode mode, MainWindowViewModel? vm,
+        MainWindow mainWindow)
     {
         var activeTab = vm.WindowTabs.ActiveTab.CurrentValue;
-        switch (InputModes.Of(mainWindow))
+        switch (mode)
         {
             case InputMode.Dialog:
                 if (e.Key is Key.Escape)
@@ -279,10 +277,10 @@ public static class MainKeyboardShortcuts
     }
 
     /// <summary>
-    /// Executes the registered shortcut action for the current key combination.
+    /// Executes the registered shortcut action for the current key combination, as it acts in <paramref name="mode"/>.
     /// </summary>
-    internal static ValueTask ExecuteShortcutIfRegistered(MainWindowViewModel? vm) =>
-        Keymaps.ExecuteAsync(Keymaps.Resolve(CurrentKeys), vm?.Mapper);
+    internal static ValueTask ExecuteShortcutIfRegistered(MainWindowViewModel? vm, InputMode mode) =>
+        Keymaps.ExecuteAsync(Keymaps.Resolve(CurrentKeys, mode), vm?.Mapper);
 
     /// <summary>
     /// Resets the keyboard state tracking.

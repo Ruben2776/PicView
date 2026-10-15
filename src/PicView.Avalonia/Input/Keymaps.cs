@@ -50,6 +50,9 @@ public static class Keymaps
 
     public static KeymapResolution Resolve(Keybind keybind) => Current.Resolve(keybind);
 
+    /// <inheritdoc cref="Keymap.Resolve(Keybind, InputMode)" />
+    public static KeymapResolution Resolve(Keybind keybind, InputMode mode) => Current.Resolve(keybind, mode);
+
     /// <summary>
     /// Makes <paramref name="keybind"/> the only Keybind of the favorite action for <paramref name="slot"/>,
     /// taking it from any other action, and saves the keybindings file. <c>null</c> unbinds the slot.

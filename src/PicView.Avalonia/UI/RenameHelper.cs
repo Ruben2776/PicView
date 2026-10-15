@@ -1,6 +1,5 @@
 ﻿using ImageMagick;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Input;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
 using PicView.Core.ViewModels;
@@ -65,7 +64,6 @@ public static class RenameHelper
         }
         
         mainWindow?.UIHelper.GetMainView.Focus();
-        MainKeyboardShortcuts.IsKeysEnabled = true;
         return isRenamed;
     }
 }

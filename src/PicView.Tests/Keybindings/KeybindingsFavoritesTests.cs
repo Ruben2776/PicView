@@ -184,16 +184,40 @@ public class KeybindingsFavoritesTests : IDisposable
 
         // Dispatch keyboard shortcut
         MainKeyboardShortcuts.CurrentKeys = new Keybind(Key.D1, KeyModifiers.Control);
-        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm));
+        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm, InputMode.Normal));
 
         Assert.Equal(folderA, spyMapper.LastOpenedPath);
 
         // Dispatch mouse shortcut
         RunWithDispatcher(MouseShortcuts.ExecuteMouseShortcutIfRegistered(
             new Keybind(MouseButton.XButton1, KeyModifiers.Alt),
-            mainWindowVm));
+            mainWindowVm,
+            InputMode.Normal));
 
         Assert.Equal(folderB, spyMapper.LastOpenedPath);
+    }
+
+    [AvaloniaTheory]
+    [InlineData(InputMode.Dialog)]
+    [InlineData(InputMode.Renaming)]
+    [InlineData(InputMode.Crop)]
+    public void ShortcutHandling_InBlockingMode_RunsNoKeyboardOrMouseKeybind(InputMode mode)
+    {
+        var folder = CreateFolder("Blocked");
+        RunWithDispatcher(FavoritesManager.AddAsync(folder));
+        Keymaps.Replace(Keymap.Empty
+            .Assign(new Keybind(Key.F7), "OpenFavorite1")
+            .Assign(new Keybind(MouseButton.XButton1), "OpenFavorite1"));
+        _ = CreateCoreWithMainWindow(out var mainWindowVm);
+        var spyMapper = new SpyFunctionsMapper(mainWindowVm);
+        mainWindowVm.Mapper = spyMapper;
+
+        MainKeyboardShortcuts.CurrentKeys = new Keybind(Key.F7);
+        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm, mode));
+        RunWithDispatcher(MouseShortcuts.ExecuteMouseShortcutIfRegistered(
+            new Keybind(MouseButton.XButton1), mainWindowVm, mode));
+
+        Assert.Null(spyMapper.LastOpenedPath);
     }
 
     [AvaloniaFact]
@@ -205,7 +229,7 @@ public class KeybindingsFavoritesTests : IDisposable
         mainWindowVm.Mapper = spyMapper;
 
         MainKeyboardShortcuts.CurrentKeys = new Keybind(Key.F7);
-        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm));
+        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm, InputMode.Normal));
 
         Assert.Null(spyMapper.LastOpenedPath);
     }
