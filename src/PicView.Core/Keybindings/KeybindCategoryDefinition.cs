@@ -256,6 +256,18 @@ public static class KeybindCategoryDefinition
     /// Returns all categories with their entries in display order.
     /// Each tuple contains (CategoryName, Entries) where CategoryName is the internal identifier.
     /// </summary>
+    /// <summary>
+    /// The Contextual Actions, in their own category: they are bound in a separate layer and are left out of
+    /// <see cref="GetAllCategories"/>.
+    /// </summary>
+    public static List<(string FunctionName, string DisplayName)> GetContextualEntries(LanguageModel t) =>
+    [
+        ("Confirm", t.Confirm ?? string.Empty),
+        ("Cancel", t.Cancel ?? string.Empty),
+        ("PlayPause", t.PlayPause ?? string.Empty),
+        ("Copy", t.Copy ?? string.Empty),
+    ];
+
     public static List<(string CategoryName, List<(string FunctionName, string DisplayName)> Entries)> GetAllCategories(
         LanguageModel t) =>
     [

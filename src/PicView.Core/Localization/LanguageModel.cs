@@ -82,6 +82,8 @@ public class LanguageModel
     public string? CompressedBitsPixel { get; set; }
     public string? Compression { get; set; }
     public string? ConstrainBackgroundToImage { get; set; }
+    public string? Confirm { get; set; }
+    public string? ContextualActions { get; set; }
     public string? Contrast { get; set; }
     public string? ConvertedToBase64 { get; set; }
     public string? ConvertTo { get; set; }
@@ -312,6 +314,7 @@ public class LanguageModel
     public string? Pin { get; set; }
     public string? Pinned { get; set; }
     public string? Pixels { get; set; }
+    public string? PlayPause { get; set; }
     public string? Portrait { get; set; }
     public string? PortraitSoft { get; set; }
     public string? Posterize { get; set; }

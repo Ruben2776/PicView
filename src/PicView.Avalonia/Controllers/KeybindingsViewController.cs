@@ -34,6 +34,11 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
     internal KeybindCategoryGroup? FavoritesCategory { get; private set; }
 
     /// <summary>
+    /// The Contextual Actions. Their Keybinds are a separate layer, so they only conflict with each other.
+    /// </summary>
+    internal KeybindCategoryGroup? ContextualCategory { get; private set; }
+
+    /// <summary>
     /// Returns the box editing the Keybinds of <paramref name="action"/>, if it is shown in a category.
     /// </summary>
     internal KeybindBox? ActionBox(string action)
@@ -347,6 +352,10 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         PopulateCategory(view.SetStarRatingHeader, view.SetStarRatingItems,
             KeybindCategoryDefinition.GetStarRatingEntries(translation), pressKeyText);
 
+        PopulateCategory(view.ContextualHeader, view.ContextualItems,
+            KeybindCategoryDefinition.GetContextualEntries(translation), pressKeyText);
+        ContextualCategory = _categories[^1];
+
         PopulateFavoritesCategory(translation, pressKeyText);
 
         SubscribeKeybindBoxes();
@@ -526,6 +535,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         _collectionChangedHandlers.Clear();
         _categories.Clear();
         FavoritesCategory = null;
+        ContextualCategory = null;
 
         GC.SuppressFinalize(this);
     }

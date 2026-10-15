@@ -77,6 +77,8 @@ public class TranslationViewModel
         CompressedBitsPixel.Value = t.CompressedBitsPixel;
         Compression.Value = t.Compression;
         ConstrainBackgroundToImage.Value = t.ConstrainBackgroundToImage;
+        Confirm.Value = t.Confirm;
+        ContextualActions.Value = t.ContextualActions;
         Contrast.Value = t.Contrast;
         ConvertTo.Value = t.ConvertTo;
         Copies.Value = t.Copies;
@@ -236,6 +238,7 @@ public class TranslationViewModel
         Pin.Value = t.Pin;
         Pinned.Value = t.Pinned;
         Pixels.Value = t.Pixels;
+        PlayPause.Value = t.PlayPause;
         PresetDescription.Value = t.PresetDescription;
         Presets.Value = t.Presets;
         PressKey.Value = t.PressKey;
@@ -477,6 +480,8 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> CompressedBitsPixel { get; } = new();
     public BindableReactiveProperty<string?> Compression { get; } = new();
     public BindableReactiveProperty<string?> ConstrainBackgroundToImage { get; } = new();
+    public BindableReactiveProperty<string?> Confirm { get; } = new();
+    public BindableReactiveProperty<string?> ContextualActions { get; } = new();
     public BindableReactiveProperty<string?> Contrast { get; } = new();
     public BindableReactiveProperty<string?> ConvertTo { get; } = new();
     public BindableReactiveProperty<string?> Copies { get; } = new();
@@ -636,6 +641,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Pin { get; } = new();
     public BindableReactiveProperty<string?> Pinned { get; } = new();
     public BindableReactiveProperty<string?> Pixels { get; } = new();
+    public BindableReactiveProperty<string?> PlayPause { get; } = new();
     public BindableReactiveProperty<string?> Posterize { get; } = new();
     public BindableReactiveProperty<string?> PresetDescription { get; } = new();
     public BindableReactiveProperty<string?> Presets { get; } = new();
