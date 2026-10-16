@@ -33,6 +33,12 @@ public class AnimatedPopUp : ContentControl
 
     protected override Type StyleKeyOverride => typeof(AnimatedPopUp);
 
+    /// <summary>
+    /// Runs the pop-up's default action, which <see cref="Input.ContextualActionHandler.Confirm"/> means in a dialog.
+    /// </summary>
+    /// <returns><c>false</c> when the pop-up has no default action.</returns>
+    public virtual ValueTask<bool> ConfirmAsync() => ValueTask.FromResult(false);
+
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);

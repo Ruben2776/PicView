@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.UI;
@@ -27,28 +26,21 @@ public partial class RenameDialog : AnimatedPopUp
         CancelButton.Click += CloseMenu;
         CloseButton.Click += CloseMenu;
         ApplyButton.Click += ApplyButtonOnClick;
-        KeyDown += OnKeyDown;
-    }
-
-    private void OnKeyDown(object? sender, KeyEventArgs e)
-    {
-        switch (e.Key)
-        {
-            case Key.Enter:
-                _ = RenameHelper.RenameAction(DataContext as MainWindowViewModel, RenameBox.Text, TopLevel.GetTopLevel(this) as MainWindow);
-                e.Handled = true;
-                break;
-            case Key.Escape:
-                CancelButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                e.Handled = true;
-                break;
-        }
     }
 
     private void ApplyButtonOnClick(object? sender, RoutedEventArgs e)
     {
+        _ = ConfirmAsync();
+    }
+
+    /// <summary>
+    /// Renames the file and closes, as the Apply button does.
+    /// </summary>
+    public override async ValueTask<bool> ConfirmAsync()
+    {
         _ = RenameHelper.RenameAction(DataContext as MainWindowViewModel, RenameBox.Text, TopLevel.GetTopLevel(this) as MainWindow);
-        _ = AnimatedClosing();
+        await AnimatedClosing().ConfigureAwait(true);
+        return true;
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -56,7 +48,6 @@ public partial class RenameDialog : AnimatedPopUp
         base.OnDetachedFromVisualTree(e);
         Loaded -= OnLoaded;
         ApplyButton.Click -= ApplyButtonOnClick;
-        KeyDown -= OnKeyDown;
         CloseButton.Click -= CloseMenu;
         CancelButton.Click -= CloseMenu;
     }

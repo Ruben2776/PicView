@@ -74,6 +74,13 @@ public static class MainKeyboardShortcuts
             return;
         }
 
+        // A text box or Keybind box in a dialog keeps the keys it edits with, such as a Confirm bound to a letter
+        if (state.Resolve() is InputMode.Dialog &&
+            FocusedInput.OwnsKeybind(mainWindow.FocusManager?.GetFocusedElement(), CurrentKeys))
+        {
+            return;
+        }
+
         await ExecuteShortcutIfRegistered(mainWindowViewModel, state,
             new ContextualActionHandler(mainWindow, mainWindowViewModel)).ConfigureAwait(false);
     }

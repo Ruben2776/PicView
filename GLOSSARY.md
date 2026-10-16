@@ -28,6 +28,10 @@ _Avoid_: Mode action, special key
 An Input Mode in which only the Actions it handles run; every other Keybind does nothing. Dialog, Renaming and Crop are blocking.
 _Avoid_: Modal mode, exclusive mode
 
+**Default Action**:
+What `Confirm` does in the Dialog Input Mode: the top dialog's main button, such as saving a favorite or renaming a file. A dialog without one ignores `Confirm`. While a text box or a recording Keybind box in the dialog has focus, the keys it edits with stay with it instead of acting as Keybinds.
+_Avoid_: Enter action, OK button
+
 **Non-blocking Input Mode**:
 An Input Mode that overrides specific Actions, disallows Actions that need a still image (such as `Crop`), and lets every other Keybind work as usual. Slideshow, Motion Photo and Animated Image are non-blocking.
 _Avoid_: Overlay mode, passive mode

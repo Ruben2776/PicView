@@ -83,25 +83,20 @@ public partial class FavoriteDialog : AnimatedPopUp
             , AwaitOperation.Drop).AddTo(ref _disposables);
 
         SaveButton.AddHandler(Button.ClickEvent, ApplyButtonOnClick);
-        KeyDown += OnKeyDown;
     }
 
-    private void OnKeyDown(object? sender, KeyEventArgs e)
+    private async Task ApplyButtonOnClick(object? sender, RoutedEventArgs e) => await SaveAsync().ConfigureAwait(true);
+
+    /// <summary>
+    /// Saves the favorite, as the Save button does.
+    /// </summary>
+    public override async ValueTask<bool> ConfirmAsync()
     {
-        switch (e.Key)
-        {
-            case Key.Enter:
-                _ = ApplyButtonOnClick(sender, e);
-                e.Handled = true;
-                break;
-            case Key.Escape:
-                CancelButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                e.Handled = true;
-                break;
-        }
+        await SaveAsync().ConfigureAwait(true);
+        return true;
     }
 
-    private async Task ApplyButtonOnClick(object? sender, RoutedEventArgs e)
+    private async Task SaveAsync()
     {
         if (_isSaving)
         {
@@ -150,7 +145,6 @@ public partial class FavoriteDialog : AnimatedPopUp
         base.OnDetachedFromVisualTree(e);
         Loaded -= OnLoaded;
         SaveButton.RemoveHandler(Button.ClickEvent, ApplyButtonOnClick);
-        KeyDown -= OnKeyDown;
         _disposables.Dispose();
     }
 
