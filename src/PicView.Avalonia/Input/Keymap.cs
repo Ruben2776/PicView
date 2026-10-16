@@ -64,21 +64,39 @@ public sealed class Keymap : IEquatable<Keymap>
 
         var actions = new Dictionary<Keybind, string>();
         var contextualActions = new Dictionary<Keybind, string>();
-        foreach (var (key, action) in contextual.Concat(ordinary))
+        foreach (var (key, action) in contextual)
+        {
+            Add(key, action, fromContextualSection: true);
+        }
+
+        foreach (var (key, action) in ordinary)
+        {
+            Add(key, action, fromContextualSection: false);
+        }
+
+        return new Keymap(actions.ToFrozenDictionary(), contextualActions.ToFrozenDictionary());
+
+        void Add(string key, string action, bool fromContextualSection)
         {
             var keybind = Keybind.Parse(key);
             if (keybind is not { } parsed || (parsed.Key is Key.None && parsed.MouseButton is MouseButton.None))
             {
                 DebugHelper.LogDebug(nameof(Keymap), nameof(FromJson), $"Skipping unparsable keybind '{key}'");
-                continue;
+                return;
             }
 
             var canonical = KeybindCategoryDefinition.Canonicalize(action);
-            var layer = KeybindCategoryDefinition.IsContextualAction(canonical) ? contextualActions : actions;
-            layer[parsed] = canonical;
-        }
+            var isContextual = KeybindCategoryDefinition.IsContextualAction(canonical);
+            if (fromContextualSection && !isContextual)
+            {
+                // The contextual section only binds Contextual Actions
+                DebugHelper.LogDebug(nameof(Keymap), nameof(FromJson),
+                    $"Skipping '{key}': '{action}' is not a Contextual Action");
+                return;
+            }
 
-        return new Keymap(actions.ToFrozenDictionary(), contextualActions.ToFrozenDictionary());
+            (isContextual ? contextualActions : actions)[parsed] = canonical;
+        }
     }
 
     /// <summary>

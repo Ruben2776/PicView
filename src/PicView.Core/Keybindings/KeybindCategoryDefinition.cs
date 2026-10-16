@@ -40,7 +40,7 @@ public static class KeybindCategoryDefinition
     /// Contextual Actions: generic Actions whose meaning comes from the window's Input Mode. Their Keybinds
     /// form a separate layer, so a Keybind can be bound to one of them and to an ordinary Action.
     /// </summary>
-    public static IReadOnlyList<string> ContextualActionNames { get; } = ["Confirm", "Cancel", "PlayPause", "Copy"];
+    public static IReadOnlyList<string> ContextualActionNames { get; } = ["Confirm", "PlayPause"];
 
     /// <summary>
     /// Actions that need a still image, which non-blocking Input Modes such as a playing motion photo disallow.
@@ -263,9 +263,7 @@ public static class KeybindCategoryDefinition
     public static List<(string FunctionName, string DisplayName)> GetContextualEntries(LanguageModel t) =>
     [
         ("Confirm", t.Confirm ?? string.Empty),
-        ("Cancel", t.Cancel ?? string.Empty),
         ("PlayPause", t.PlayPause ?? string.Empty),
-        ("Copy", t.Copy ?? string.Empty),
     ];
 
     public static List<(string CategoryName, List<(string FunctionName, string DisplayName)> Entries)> GetAllCategories(

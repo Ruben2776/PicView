@@ -12,8 +12,16 @@ namespace PicView.Avalonia.Input;
 public sealed class ContextualActionHandler(MainWindow window, MainWindowViewModel vm) : IContextualActionHandler
 {
     public const string Confirm = "Confirm";
+
+    /// <summary>
+    /// Not a bindable Contextual Action: dispatch gives it to the fixed <see cref="InputDispatch.CancelKeybind"/>.
+    /// </summary>
     public const string Cancel = "Cancel";
     public const string PlayPause = "PlayPause";
+
+    /// <summary>
+    /// Not a bindable Contextual Action: dispatch gives it to the fixed <see cref="InputDispatch.CopyKeybind"/>.
+    /// </summary>
     public const string Copy = "Copy";
 
     public async ValueTask<bool> TryRunAsync(InputMode mode, string contextualAction)

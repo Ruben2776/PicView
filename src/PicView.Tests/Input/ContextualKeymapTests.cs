@@ -15,7 +15,7 @@ public class ContextualKeymapTests
                                       "Enter": "ToggleFullscreen",
                                       "Contextual": {
                                         "Enter": "Confirm",
-                                        "Escape": "Cancel"
+                                        "Space": "PlayPause"
                                       }
                                     }
                                     """;
@@ -26,7 +26,7 @@ public class ContextualKeymapTests
         var keymap = Keymap.FromJson(null, Defaults);
 
         Assert.Equal("Confirm", keymap.ResolveContextual(Enter));
-        Assert.Equal("Cancel", keymap.ResolveContextual(Escape));
+        Assert.Equal("PlayPause", keymap.ResolveContextual(Space));
         Assert.Null(keymap.ResolveContextual(new Keybind(Key.Right)));
     }
 
@@ -78,10 +78,10 @@ public class ContextualKeymapTests
     [Fact]
     public void Assign_OrdinaryAction_DoesNotTakeContextualKeybind()
     {
-        var keymap = Keymap.FromJson(null, Defaults).Assign(Escape, "Close");
+        var keymap = Keymap.FromJson(null, Defaults).Assign(Space, "Center");
 
-        Assert.Equal(KeymapResolution.Action("Close"), keymap.Resolve(Escape));
-        Assert.Equal("Cancel", keymap.ResolveContextual(Escape));
+        Assert.Equal(KeymapResolution.Action("Center"), keymap.Resolve(Space));
+        Assert.Equal("PlayPause", keymap.ResolveContextual(Space));
     }
 
     [Fact]
@@ -121,6 +121,19 @@ public class ContextualKeymapTests
     {
         var keymap = Keymap.FromJson(null, Defaults);
 
-        Assert.NotEqual(keymap, keymap.Assign(Space, "PlayPause"));
+        Assert.NotEqual(keymap, keymap.Assign(new Keybind(Key.P), "PlayPause"));
+    }
+
+    [Fact]
+    public void FromJson_ContextualSection_IgnoresActionsThatAreNotContextual()
+    {
+        var keymap = Keymap.FromJson(
+            """{ "Contextual": { "Ctrl+C": "Copy", "Escape": "Cancel", "Enter": "Confirm" } }""", "{}");
+
+        Assert.Equal(KeymapResolution.None, keymap.Resolve(new Keybind(Key.C, KeyModifiers.Control)));
+        Assert.Null(keymap.ResolveContextual(new Keybind(Key.C, KeyModifiers.Control)));
+        Assert.Equal(KeymapResolution.None, keymap.Resolve(Escape));
+        Assert.Null(keymap.ResolveContextual(Escape));
+        Assert.Equal("Confirm", keymap.ResolveContextual(Enter));
     }
 }

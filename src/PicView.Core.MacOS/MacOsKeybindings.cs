@@ -82,9 +82,7 @@ public static class MacOsKeybindings
                                                 "Contextual": {
                                                   "Return": "Confirm",
                                                   "E": "Confirm",
-                                                  "Escape": "Cancel",
-                                                  "Space": "PlayPause",
-                                                  "Cmd+C": "Copy"
+                                                  "Space": "PlayPause"
                                                 }
                                               }
                                               """;

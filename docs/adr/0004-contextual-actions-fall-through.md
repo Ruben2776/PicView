@@ -1,6 +1,6 @@
 # Contextual Actions Fall Through to Ordinary Keybinds
 
-The **Keymap** has two layers: ordinary Keybinds, where each Keybind has one **Action**, and contextual Keybinds bound to **Contextual Actions** (`Confirm`, `Cancel`, `PlayPause`, `Copy`), whose meaning comes from the window's **Input Mode**. A Keybind may be in both layers: the Contextual Action runs when the current Input Mode (or, among non-blocking modes, the next-ranked one) gives it a meaning, and otherwise the Keybind falls through to its ordinary Action. This is why Enter can be both `Confirm` and `ToggleFullscreen`, and why Esc stops a motion photo, then a slideshow, then reaches `Close`.
+The **Keymap** has two layers: ordinary Keybinds, where each Keybind has one **Action**, and contextual Keybinds bound to **Contextual Actions** (`Confirm`, `PlayPause`), whose meaning comes from the window's **Input Mode**. A Keybind may be in both layers: the Contextual Action runs when the current Input Mode (or, among non-blocking modes, the next-ranked one) gives it a meaning, and otherwise the Keybind falls through to its ordinary Action. This is why Enter can be both `Confirm` and `ToggleFullscreen`, and why Esc stops a motion photo, then a slideshow, then reaches `Close`.
 
 ## Considered Options
 
@@ -11,3 +11,4 @@ The **Keymap** has two layers: ordinary Keybinds, where each Keybind has one **A
 
 - `keybindings.json` gains a section for contextual Keybinds alongside the ordinary ones.
 - The keybindings window shows Contextual Actions in their own category, and its conflict check only compares them with each other.
+- `Cancel` and `Copy` are fixed to Escape and the platform's copy chord (Ctrl+C, Cmd+C on macOS) instead of being bound in the Keymap. A bindable `Copy` read as a duplicate of the ordinary copy Actions, and Escape is universal enough not to need rebinding. They still work like Contextual Actions: Crop claims `Copy`, the modes claim `Cancel`, and an unclaimed chord falls through to its ordinary Action.

@@ -4,7 +4,6 @@ public static class WindowsKeybindings
 {
     public const string DefaultKeybindings = """
                                              {
-                                               "Esc": "Close",
                                                "F1": "AboutWindow",
                                                "F2": "Rename",
                                                "F3": "OpenInExplorer",
@@ -86,9 +85,7 @@ public static class WindowsKeybindings
                                                "Contextual": {
                                                  "Enter": "Confirm",
                                                  "E": "Confirm",
-                                                 "Escape": "Cancel",
-                                                 "Space": "PlayPause",
-                                                 "Ctrl+C": "Copy"
+                                                 "Space": "PlayPause"
                                                }
                                              }
                                              """;

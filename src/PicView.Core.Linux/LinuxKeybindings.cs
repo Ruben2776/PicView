@@ -72,9 +72,7 @@ public static class LinuxKeybindings
                                                 "Contextual": {
                                                   "Return": "Confirm",
                                                   "E": "Confirm",
-                                                  "Escape": "Cancel",
-                                                  "Space": "PlayPause",
-                                                  "Ctrl+C": "Copy"
+                                                  "Space": "PlayPause"
                                                 }
                                               }
                                               """;
