@@ -83,16 +83,19 @@ public readonly record struct InputModeState(
 
 public static class InputModeExtensions
 {
-    /// <summary>
-    /// Whether only the Actions <paramref name="mode"/> handles may run, with every other Keybind doing nothing.
-    /// </summary>
-    public static bool IsBlocking(this InputMode mode) =>
-        mode is InputMode.Dialog or InputMode.Renaming or InputMode.Crop;
+    extension(InputMode mode)
+    {
+        /// <summary>
+        /// Whether only the Actions <paramref name="mode"/> handles may run, with every other Keybind doing nothing.
+        /// </summary>
+        public bool IsBlocking() =>
+            mode is InputMode.Dialog or InputMode.Renaming or InputMode.Crop;
 
-    /// <summary>
-    /// Whether <paramref name="mode"/> is a non-blocking mode other than Normal, which disallows Actions
-    /// that need a still image.
-    /// </summary>
-    public static bool DisallowsStillImageActions(this InputMode mode) =>
-        mode is InputMode.MotionPhoto or InputMode.Slideshow;
+        /// <summary>
+        /// Whether <paramref name="mode"/> is a non-blocking mode other than Normal, which disallows Actions
+        /// that need a still image.
+        /// </summary>
+        public bool DisallowsStillImageActions() =>
+            mode is InputMode.MotionPhoto or InputMode.Slideshow;
+    }
 }

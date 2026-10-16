@@ -11,8 +11,6 @@ namespace PicView.Avalonia.Input;
 /// </summary>
 public static class InputModes
 {
-    public static InputMode Of(MainWindow window) => StateOf(window).Resolve();
-
     public static InputModeState StateOf(MainWindow window)
     {
         if (window.DataContext is not MainWindowViewModel vm)
