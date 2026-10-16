@@ -8,6 +8,9 @@ public enum InputMode
 {
     Normal = 0,
     Slideshow,
+
+    // An image is a motion photo or an animated image, never both
+    AnimatedImage,
     MotionPhoto,
     Crop,
     Renaming,
@@ -18,12 +21,14 @@ public enum InputMode
 /// What is active in a window and its active tab, from which its <see cref="InputMode"/> follows.
 /// </summary>
 /// <param name="IsDialogOpen">A pop-up, the drop-down menu or the main menu is open.</param>
+/// <param name="IsAnimatedImageActive">The active tab shows an animated image.</param>
 public readonly record struct InputModeState(
     bool IsDialogOpen = false,
     bool IsRenaming = false,
     bool IsCropping = false,
     bool IsMotionPhotoActive = false,
-    bool IsSlideshowRunning = false)
+    bool IsSlideshowRunning = false,
+    bool IsAnimatedImageActive = false)
 {
     /// <summary>
     /// Returns the highest-ranked Input Mode that applies.
@@ -50,6 +55,11 @@ public readonly record struct InputModeState(
             return InputMode.MotionPhoto;
         }
 
+        if (IsAnimatedImageActive)
+        {
+            return InputMode.AnimatedImage;
+        }
+
         return IsSlideshowRunning ? InputMode.Slideshow : InputMode.Normal;
     }
 
@@ -69,6 +79,11 @@ public readonly record struct InputModeState(
         if (IsMotionPhotoActive)
         {
             chain.Add(InputMode.MotionPhoto);
+        }
+
+        if (IsAnimatedImageActive)
+        {
+            chain.Add(InputMode.AnimatedImage);
         }
 
         if (IsSlideshowRunning)
@@ -96,6 +111,6 @@ public static class InputModeExtensions
         /// that need a still image.
         /// </summary>
         public bool DisallowsStillImageActions() =>
-            mode is InputMode.MotionPhoto or InputMode.Slideshow;
+            mode is InputMode.MotionPhoto or InputMode.AnimatedImage or InputMode.Slideshow;
     }
 }

@@ -50,6 +50,9 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
                 // A stopped motion photo leaves Cancel to the next mode
                 return imageViewer.StopMotionPhotoIfPlaying();
 
+            // TODO: Give the animated image keybinds their meanings here, such as PlayPause and frame stepping.
+            // Until then an animated image claims nothing, so its Keybinds fall through as usual.
+
             case (InputMode.Slideshow, Cancel):
                 Slideshow.StopSlideshow(vm);
                 return true;
