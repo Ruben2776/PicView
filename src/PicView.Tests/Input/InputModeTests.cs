@@ -53,4 +53,33 @@ public class InputModeTests
     {
         Assert.Equal(expected, mode.IsBlocking());
     }
+
+    [Theory]
+    [InlineData(false, false, InputMode.AnimatedImage)]
+    // A slideshow reaching an animated image: the animated image ranks higher
+    [InlineData(true, false, InputMode.AnimatedImage)]
+    [InlineData(true, true, InputMode.Crop)]
+    public void Resolve_AnimatedImage_RanksAboveSlideshowAndBelowBlockingModes(
+        bool isSlideshowRunning, bool isCropping, InputMode expected)
+    {
+        var state = new InputModeState(IsCropping: isCropping, IsSlideshowRunning: isSlideshowRunning,
+            IsAnimatedImageActive: true);
+
+        Assert.Equal(expected, state.Resolve());
+    }
+
+    [Fact]
+    public void AnimatedImage_IsNonBlockingAndDisallowsStillImageActions()
+    {
+        Assert.False(InputMode.AnimatedImage.IsBlocking());
+        Assert.True(InputMode.AnimatedImage.DisallowsStillImageActions());
+    }
+
+    [Fact]
+    public void ContextualChain_AnimatedImageInSlideshow_AsksAnimatedImageThenSlideshowThenNormal()
+    {
+        var state = new InputModeState(IsSlideshowRunning: true, IsAnimatedImageActive: true);
+
+        Assert.Equal([InputMode.AnimatedImage, InputMode.Slideshow, InputMode.Normal], state.ContextualChain());
+    }
 }

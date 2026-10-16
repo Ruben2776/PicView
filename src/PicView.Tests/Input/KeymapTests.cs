@@ -151,6 +151,7 @@ public class KeymapTests
 
     [Theory]
     [InlineData(InputMode.MotionPhoto)]
+    [InlineData(InputMode.AnimatedImage)]
     [InlineData(InputMode.Slideshow)]
     public void Resolve_InNonBlockingMode_DisallowsActionsThatNeedAStillImage(InputMode mode)
     {
