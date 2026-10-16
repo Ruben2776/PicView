@@ -21,7 +21,7 @@ The single mode a window is in, which decides what its Keybinds do. It follows f
 _Avoid_: Context, state, focus, dialog mode
 
 **Contextual Action**:
-A generic Action, such as `Confirm`, `Cancel`, `PlayPause` or `Copy`, whose meaning comes from the current Input Mode. When the mode gives it no meaning, its Keybind falls through to the ordinary Action bound to the same Keybind.
+A generic Action, such as `Confirm`, `Cancel` or `PlayPause`, whose meaning comes from the current Input Mode. When the mode gives it no meaning, its Keybind falls through to the ordinary Action bound to the same Keybind. `Cancel` (Escape) and `Copy` (the platform's copy keys) are fixed to their keys; the others can be rebound.
 _Avoid_: Mode action, special key
 
 **Blocking Input Mode**:

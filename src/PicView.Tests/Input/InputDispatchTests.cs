@@ -9,13 +9,13 @@ public class InputDispatchTests
     private static readonly Keybind Escape = new(Key.Escape);
     private static readonly Keybind Right = new(Key.Right);
 
-    // Enter is both Confirm and ToggleFullscreen; Escape is Cancel and Close
+    // Enter is both Confirm and ToggleFullscreen; Escape is the fixed Cancel and also bound to Close
     private static readonly Keymap Keymap = Keymap.FromJson(null, """
         {
           "Right": "Next",
           "Enter": "ToggleFullscreen",
           "Escape": "Close",
-          "Contextual": { "Enter": "Confirm", "Escape": "Cancel" }
+          "Contextual": { "Enter": "Confirm" }
         }
         """);
 
@@ -120,6 +120,40 @@ public class InputDispatchTests
         var (_, ordinary) = await Dispatch(Right, Dialog);
 
         Assert.Null(ordinary);
+    }
+
+    private static readonly Keymap CopyKeymap = Keymap.FromJson(null,
+        $$"""{ "{{InputDispatch.CopyKeybind.GetFormattedForJSON()}}": "CopyImage" }""");
+
+    [Fact]
+    public async Task CopyChord_InCrop_IsTheFixedCopyAction()
+    {
+        var handler = new FakeHandler((InputMode.Crop, ContextualActionHandler.Copy));
+        KeymapResolution? ordinary = null;
+
+        await InputDispatch.DispatchAsync(InputDispatch.CopyKeybind, Crop, CopyKeymap, handler, resolution =>
+        {
+            ordinary = resolution;
+            return ValueTask.CompletedTask;
+        });
+
+        Assert.Equal([(InputMode.Crop, ContextualActionHandler.Copy)], handler.Asked);
+        Assert.Null(ordinary);
+    }
+
+    [Fact]
+    public async Task CopyChord_InNormal_FallsThroughToItsOrdinaryAction()
+    {
+        var handler = new FakeHandler();
+        KeymapResolution? ordinary = null;
+
+        await InputDispatch.DispatchAsync(InputDispatch.CopyKeybind, Normal, CopyKeymap, handler, resolution =>
+        {
+            ordinary = resolution;
+            return ValueTask.CompletedTask;
+        });
+
+        Assert.Equal(KeymapResolution.Action("CopyImage"), ordinary);
     }
 
     [Theory]

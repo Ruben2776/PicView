@@ -290,7 +290,7 @@ public class KeybindingsFavoritesTests : IDisposable
     }
 
     private const string ViewTestContextualKeybindings =
-        """{ "Right": "Next", "Enter": "ToggleFullscreen", "Contextual": { "Enter": "Confirm", "Escape": "Cancel" } }""";
+        """{ "Right": "Next", "Enter": "ToggleFullscreen", "Contextual": { "Enter": "Confirm", "Space": "PlayPause" } }""";
 
     [AvaloniaFact]
     public void Initialize_ShowsContextualActionsInTheirOwnCategory()
@@ -302,7 +302,8 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal(KeybindCategoryDefinition.ContextualActionNames,
             controller.ContextualCategory!.Entries.Select(e => e.FunctionName));
         Assert.Equal([new Keybind(Key.Enter)], controller.ActionBox("Confirm")!.Keybinds);
-        Assert.Equal([new Keybind(Key.Escape)], controller.ActionBox("Cancel")!.Keybinds);
+        Assert.Equal([new Keybind(Key.Space)], controller.ActionBox("PlayPause")!.Keybinds);
+        Assert.Null(controller.ActionBox("Cancel"));
     }
 
     [AvaloniaFact]
@@ -311,6 +312,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Keymaps.Replace(Keymap.FromJson(ViewTestContextualKeybindings, "{}"));
         using var controller = CreateController(out _);
 
+        controller.ActionBox("PlayPause")!.Keybinds.Clear();
         controller.ActionBox("PlayPause")!.Keybinds.Add(new Keybind(Key.Right));
         RunWithDispatcher(controller.SaveKeybindings());
 
@@ -325,10 +327,10 @@ public class KeybindingsFavoritesTests : IDisposable
         Keymaps.Replace(Keymap.FromJson(ViewTestContextualKeybindings, "{}"));
         using var controller = CreateController(out _);
 
-        controller.ActionBox("Confirm")!.Keybinds.Add(new Keybind(Key.Escape));
+        controller.ActionBox("Confirm")!.Keybinds.Add(new Keybind(Key.Space));
 
-        Assert.Empty(controller.ActionBox("Cancel")!.Keybinds);
-        Assert.Equal([new Keybind(Key.Enter), new Keybind(Key.Escape)], controller.ActionBox("Confirm")!.Keybinds);
+        Assert.Empty(controller.ActionBox("PlayPause")!.Keybinds);
+        Assert.Equal([new Keybind(Key.Enter), new Keybind(Key.Space)], controller.ActionBox("Confirm")!.Keybinds);
     }
 
     [AvaloniaFact]

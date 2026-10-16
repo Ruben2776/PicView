@@ -120,7 +120,7 @@ public class KeybindCategoryDefinitionTests
         var entries = KeybindCategoryDefinition.GetContextualEntries(languageModel);
 
         Assert.Equal(KeybindCategoryDefinition.ContextualActionNames, entries.Select(e => e.FunctionName));
-        Assert.Equal(["Confirm", "Cancel", "Play / pause", "Copy"], entries.Select(e => e.DisplayName));
+        Assert.Equal(["Confirm", "Play / pause"], entries.Select(e => e.DisplayName));
     }
 
     [Fact]
