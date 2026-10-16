@@ -498,9 +498,14 @@ public class KeybindBox : TemplatedControl
         }
     }
 
+    /// <summary>
+    /// Whether the box has focus and room for another Keybind, so the keys pressed are recorded.
+    /// </summary>
+    internal bool IsRecording => TagBox is not null && (TagBox.IsFocused || TagBox.IsKeyboardFocusWithin) && !TagBox.IsAtMax;
+
     private void HandleKeyDown(KeyEventArgs e)
     {
-        if (TagBox is null || (!TagBox.IsFocused && !TagBox.IsKeyboardFocusWithin) || TagBox.IsAtMax)
+        if (!IsRecording)
         {
             return;
         }

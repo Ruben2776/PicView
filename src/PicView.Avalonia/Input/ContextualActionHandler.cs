@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
 using PicView.Avalonia.Navigation;
@@ -29,6 +30,9 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
         var activeTab = vm.WindowTabs.ActiveTab.CurrentValue;
         switch (mode, contextualAction)
         {
+            case (InputMode.Dialog, Confirm):
+                return TopPopUp(window.UIHelper.GetMainView?.MainPanel) is { } popUp &&
+                       await popUp.ConfirmAsync().ConfigureAwait(false);
             case (InputMode.Dialog, Cancel):
                 await CloseTopDialogAsync().ConfigureAwait(false);
                 return true;
@@ -85,8 +89,7 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
             return;
         }
 
-        var animatedPopUp = window.UIHelper.GetMainView?.MainPanel.Children.OfType<AnimatedPopUp>()
-            .FirstOrDefault(popUp => popUp.IsVisible);
+        var animatedPopUp = TopPopUp(window.UIHelper.GetMainView?.MainPanel);
         if (animatedPopUp is not null)
         {
             await animatedPopUp.AnimatedClosing().ConfigureAwait(false);
@@ -95,4 +98,10 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
 
         vm.TopTitlebarViewModel.CloseMenu();
     }
+
+    /// <summary>
+    /// Returns the visible pop-up drawn on top in <paramref name="mainPanel"/>, if any.
+    /// </summary>
+    internal static AnimatedPopUp? TopPopUp(Panel? mainPanel) =>
+        mainPanel?.Children.OfType<AnimatedPopUp>().LastOrDefault(popUp => popUp.IsVisible);
 }
