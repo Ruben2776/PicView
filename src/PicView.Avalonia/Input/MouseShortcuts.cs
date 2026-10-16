@@ -49,24 +49,33 @@ public static class MouseShortcuts
         await InputDispatch.DispatchAsync(Keybind.FromWheel(e.Delta.Y, e.KeyModifiers), state, Keymaps.Current,
             new ContextualActionHandler(mainWindow, mainViewModel), async resolution =>
             {
-                // Wheel zoom needs the event to zoom towards the pointer, and is allowed on touchpads
-                if (resolution.Value is nameof(IFunctionsMapper.ZoomIn))
+                switch (resolution.Value)
                 {
-                    if (zoomIn is not null)
+                    // Wheel zoom needs the event to zoom towards the pointer, and is allowed on touchpads
+                    case nameof(IFunctionsMapper.ZoomIn):
                     {
-                        await zoomIn(e).ConfigureAwait(false);
+                        if (zoomIn is not null)
+                        {
+                            await zoomIn(e).ConfigureAwait(false);
+                        }
+                        break;
                     }
-                }
-                else if (resolution.Value is nameof(IFunctionsMapper.ZoomOut))
-                {
-                    if (zoomOut is not null)
+                    case nameof(IFunctionsMapper.ZoomOut):
                     {
-                        await zoomOut(e).ConfigureAwait(false);
+                        if (zoomOut is not null)
+                        {
+                            await zoomOut(e).ConfigureAwait(false);
+                        }
+                        break;
                     }
-                }
-                else if (!IsTouchPadOrTouch(e))
-                {
-                    await Keymaps.ExecuteAsync(resolution, mainViewModel.Mapper).ConfigureAwait(false);
+                    default:
+                    {
+                        if (!IsTouchPadOrTouch(e))
+                        {
+                            await Keymaps.ExecuteAsync(resolution, mainViewModel.Mapper).ConfigureAwait(false);
+                        }
+                        break;
+                    }
                 }
             }).ConfigureAwait(false);
     }

@@ -38,6 +38,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
     /// </summary>
     internal KeybindCategoryGroup? ContextualCategory { get; private set; }
 
+    #if DEBUG
     /// <summary>
     /// Returns the box editing the Keybinds of <paramref name="action"/>, if it is shown in a category.
     /// </summary>
@@ -61,6 +62,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
         return null;
     }
+    #endif
 
     public void Initialize()
     {
