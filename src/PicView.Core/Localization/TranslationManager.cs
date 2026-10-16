@@ -34,22 +34,6 @@ public static class TranslationManager
     }
 
     /// <summary>
-    /// Retrieves the translated string for the given key.
-    /// </summary>
-    /// <param name="key">The key representing the translation string.</param>
-    /// <returns>The translated string, or the key itself if no translation is found.</returns>
-    public static string GetTranslation(string key)
-    {
-        if (Translation == null)
-        {
-            return key;
-        }
-
-        var propertyInfo = typeof(LanguageModel).GetProperty(key);
-        return propertyInfo?.GetValue(Translation) as string ?? key;
-    }
-
-    /// <summary>
     /// Loads the language file based on the provided ISO language code.
     /// </summary>
     /// <param name="isoLanguageCode">The ISO language code (e.g., 'en', 'da').</param>

@@ -48,7 +48,7 @@ public static class GetFilePickerFileTypes
         MimeTypes = ["image/jpeg"]
     };
 
-    public static FilePickerFileType ArchiveFileType { get; } = new(TranslationManager.GetTranslation("Archives"))
+    public static FilePickerFileType ArchiveFileType { get; } = new(TranslationManager.Translation.Archives)
     {
         Patterns = SupportedFiles.ConvertArchivesToGlobFormat(),
         AppleUniformTypeIdentifiers = ["public.archive"],

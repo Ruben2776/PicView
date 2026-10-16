@@ -82,7 +82,7 @@ public class ExifViewModel : IDisposable
 
         Compressions = new BindableReactiveProperty<string[]>([
             string.Empty,
-            TranslationManager.GetTranslation("Uncompressed"),
+            TranslationManager.Translation.None ?? string.Empty,
             "CCITT 1D",
             "T4/Group 3 Fax",
             "T6/Group 4 Fax",
