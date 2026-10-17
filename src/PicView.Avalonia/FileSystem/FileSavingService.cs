@@ -42,7 +42,7 @@ public class FileSavingService(FilePickerService? filePickerService = null)
             return true;
         }
 
-        tab.ImageIterator.Cache.DeleteFromCache(tab.FileInfo.CurrentValue.FullName);
+        tab.ImageIterator.Cache.Invalidate(tab.FileInfo.CurrentValue.FullName);
 
         return true;
     }

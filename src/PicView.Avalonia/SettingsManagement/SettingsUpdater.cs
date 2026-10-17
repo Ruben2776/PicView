@@ -292,8 +292,12 @@ public static class SettingsUpdater
             if (tab.CurrentView.CurrentValue is ImageViewer imageViewer)
             {
                 await tab.ImageIterator.ReloadAsync(false).ConfigureAwait(false);
-                var imageModel = await core.SharedCache.LoadAsync(tab.Id, tab.ImageIterator.SecondaryCurrentIndex, tab.ImageIterator.Files).ConfigureAwait(false);
-                imageViewer.SecondaryImage.Source = imageModel.Image;
+                var secondaryIndex = tab.ImageIterator.SecondaryCurrentIndex;
+                if (secondaryIndex >= 0 && secondaryIndex < tab.ImageIterator.Files.Count)
+                {
+                    var imageModel = await core.SharedCache.GetAsync(tab.Id, tab.ImageIterator.Files[secondaryIndex]).ConfigureAwait(false);
+                    imageViewer.SecondaryImage.Source = imageModel?.Image;
+                }
             }
         }
         else

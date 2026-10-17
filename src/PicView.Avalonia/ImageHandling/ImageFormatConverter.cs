@@ -68,15 +68,14 @@ public static class ImageFormatConverter
             else
             {
                 var file = new FileInfo(path);
-                if (core.SharedCache.TryGet(file, out var value))
+                if (core.SharedCache.TryGetReady(file, out var ready))
                 {
-                    source = value.ImageModel.Image as Bitmap;
+                    source = ready.Image as Bitmap;
                 }
                 else
                 {
-                    await core.SharedCache.LoadAsync(tab.Id, tab.ImageIterator.CurrentIndex, tab.ImageIterator.Files, tab.GetTabCancellation().Token).ConfigureAwait(false);
-                    core.SharedCache.TryGet(file, out var preloadValue);
-                    source = preloadValue?.ImageModel.Image as Bitmap;
+                    var model = await core.SharedCache.GetAsync(tab.Id, file, tab.GetTabCancellation().Token).ConfigureAwait(false);
+                    source = model?.Image as Bitmap;
                 }
             }
         }

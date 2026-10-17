@@ -8,7 +8,6 @@ using PicView.Core.IPlatform;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
-using PicView.Core.Preloading;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -18,7 +17,7 @@ namespace PicView.Tests.Navigation;
 public class NavigationServiceTests : IDisposable
 {
     private readonly MockImageModelLoader _mockImageModelLoader;
-    private readonly MockImageCache _mockCache;
+    private readonly SharedImageCache _cache;
     private readonly MockFileWatcherService _mockFileWatcherService;
     private readonly MockThumbnailLoader _mockThumbnailLoader;
     private readonly NavigationService _navigationService;
@@ -35,13 +34,13 @@ public class NavigationServiceTests : IDisposable
         Directory.CreateDirectory(_testDirectory);
 
         _mockImageModelLoader = new MockImageModelLoader();
-        _mockCache = new MockImageCache();
+        _cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
         _mockFileWatcherService = new MockFileWatcherService();
         _mockThumbnailLoader = new MockThumbnailLoader();
 
         _navigationService = new NavigationService(
             _mockImageModelLoader,
-            _mockCache,
+            _cache,
             _mockFileWatcherService,
             new MockPlatformSpecificService(),
             string.CompareOrdinal);
@@ -113,7 +112,7 @@ public class NavigationServiceTests : IDisposable
         var tab = new TabViewModel(null!, dummyParent);
         // Initialize with mocks to avoid null refs
         var thumbCache = new MockThumbnailCache();
-        tab.Initialize(_mockCache, thumbCache, _mockThumbnailLoader, null, thumbCache);
+        tab.Initialize(_cache, thumbCache, _mockThumbnailLoader, null, thumbCache);
         tab.ImageIterator.Files = new List<FileInfo>();
         return tab;
     }
@@ -340,26 +339,6 @@ public class NavigationServiceTests : IDisposable
         }
     }
 
-    private class MockImageCache : IImageCache
-    {
-        public Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => Task.FromResult<ImageModel?>(null);
-        public bool TryGet(FileInfo f, out PreLoadValue? value) { value = null; return false; }
-        public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value) { value = null; return false; }
-        public bool Contains(PreLoadValue value) => false;
-        public bool Contains(string fileName) => false;
-        public bool Contains(FileInfo fileInfo) => false;
-        public void Clear(uint ownerId) { }
-        public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse) { }
-        public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value) { value = null; return false; }
-        public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) { }
-        public void RemoveOwner(uint ownerId) { }
-        public void RegisterOwner(uint ownerId) { }
-        public void Clear(TabViewModel tab, string directory) { }
-        public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files) { }
-        public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => ValueTask.FromResult(false);
-        public void DeleteFromCache(string fileName) { }
-    }
-    
     private class MockThumbnailLoader : IThumbnailLoader
     {
         public int GetThumbnailAsyncCalledCount { get; private set; }

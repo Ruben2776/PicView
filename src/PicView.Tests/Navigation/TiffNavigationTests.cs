@@ -4,7 +4,6 @@ using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Navigation.Tiff;
 using PicView.Core.Localization;
-using PicView.Core.Preloading;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -14,7 +13,8 @@ namespace PicView.Tests.Navigation;
 public class TiffNavigationTests : IDisposable
 {
     private readonly ImageIterator _iterator;
-    private readonly MockImageCache _cache;
+    private readonly SharedImageCache _cache;
+    private readonly Dictionary<string, ImageModel> _models = new();
     private readonly TabViewModel _tab;
     private readonly List<FileInfo> _files;
     private readonly MockThumbnailCache _mockThumbnailCache;
@@ -34,7 +34,8 @@ public class TiffNavigationTests : IDisposable
             new FileInfo("file2.png")
         ];
 
-        _cache = new MockImageCache();
+        _cache = new SharedImageCache(f =>
+            ValueTask.FromResult(_models.TryGetValue(f.FullName, out var model) ? model : new ImageModel { FileInfo = f }));
         _mockThumbnailCache = new MockThumbnailCache();
         _tab = new TabViewModel(_ => { }, null!);
         _iterator = new ImageIterator(_cache, _mockThumbnailCache, new MockThumbnailLoader(), _tab);
@@ -49,7 +50,7 @@ public class TiffNavigationTests : IDisposable
         
         // Mock the TIFF model for Index 1
         var tiffModel = CreateTiffModel(_files[1], 3); // 3 pages
-        _cache.SetModel(1, tiffModel);
+        SetModel(1, tiffModel);
         _tab.Model = new ImageModel();
 
         // Act: Navigate Next (0 -> 1)
@@ -70,7 +71,7 @@ public class TiffNavigationTests : IDisposable
 
         // Target: file1 (Index 1) is a TIFF.
         var tiffModel = CreateTiffModel(_files[1], 3);
-        _cache.SetModel(1, tiffModel);
+        SetModel(1, tiffModel);
 
         // Act: Navigate Prev (2 -> 1)
         await _iterator.NavigateAsync(NavigateTo.Previous, SkipAmount.One, new CancellationTokenSource());
@@ -90,7 +91,7 @@ public class TiffNavigationTests : IDisposable
         
         _iterator.SetCurrentIndex(1);
         _tab.Model = tiffModel;
-        _cache.SetModel(1, tiffModel); // Cache should return same model
+        SetModel(1, tiffModel); // Cache should return same model
 
         // Act: Navigate Next (Target would be 2 normally)
         await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource());
@@ -111,7 +112,7 @@ public class TiffNavigationTests : IDisposable
         _tab.Model = tiffModel;
         
         var nextModel = new ImageModel { FileInfo = _files[2] };
-        _cache.SetModel(2, nextModel);
+        SetModel(2, nextModel);
 
         // Act: Navigate Next (Target 2)
         await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource());
@@ -130,7 +131,7 @@ public class TiffNavigationTests : IDisposable
         
         _iterator.SetCurrentIndex(1);
         _tab.Model = tiffModel;
-        _cache.SetModel(1, tiffModel);
+        SetModel(1, tiffModel);
 
         // Act: Navigate Prev (Target 0)
         await _iterator.NavigateAsync(NavigateTo.Previous, SkipAmount.One, new CancellationTokenSource());
@@ -151,7 +152,7 @@ public class TiffNavigationTests : IDisposable
         _tab.Model = tiffModel;
         
         var prevModel = new ImageModel { FileInfo = _files[0] };
-        _cache.SetModel(0, prevModel);
+        SetModel(0, prevModel);
 
         // Act: Navigate Prev (Target 0)
         await _iterator.NavigateAsync(NavigateTo.Previous, SkipAmount.One, new CancellationTokenSource());
@@ -187,36 +188,8 @@ public class TiffNavigationTests : IDisposable
 
     // Mocks
 
-    private class MockImageCache : IImageCache
-    {
-        private readonly Dictionary<int, ImageModel> _models = new();
+    private void SetModel(int index, ImageModel model) => _models[_files[index].FullName] = model;
 
-        public void SetModel(int index, ImageModel model) => _models[index] = model;
-
-        public Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
-        {
-            if (_models.TryGetValue(index, out var model))
-                return Task.FromResult<ImageModel?>(model);
-            return Task.FromResult<ImageModel?>(new ImageModel { FileInfo = list[index] });
-        }
-
-        public bool TryGet(FileInfo f, out PreLoadValue? value) { value = null; return false; }
-        public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value) { value = null; return false; }
-        public bool Contains(PreLoadValue value) => false;
-        public bool Contains(string fileName) => false;
-        public bool Contains(FileInfo fileInfo) => false;
-        public void Clear(uint ownerId) { }
-        public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse) { }
-        public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value) { value = null; return false; }
-        public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) { }
-        public void RemoveOwner(uint ownerId) { }
-        public void RegisterOwner(uint ownerId) { }
-        public void Clear(TabViewModel tab, string directory) { }
-        public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files) { }
-        public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => ValueTask.FromResult(true);
-        public void DeleteFromCache(string fileName) { }
-    }
-    
     private class MockThumbnailLoader : IThumbnailLoader
     {
         public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) => ValueTask.FromResult<object?>(null);

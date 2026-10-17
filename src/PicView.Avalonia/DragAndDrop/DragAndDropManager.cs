@@ -22,7 +22,6 @@ namespace PicView.Avalonia.DragAndDrop;
 public static class DragAndDropManager
 {
     private static DragDropView? _dragDropView;
-    private static PreLoadValue? _preLoadValue;
 
     #region Public Entry Points
 
@@ -129,7 +128,6 @@ public static class DragAndDropManager
         }
 
         RemoveDragDropView(mainWindow);
-        _preLoadValue = null;
     }
 
     public static void RemoveDragDropView(MainWindow mainWindow)
@@ -328,8 +326,7 @@ public static class DragAndDropManager
         var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         Bitmap? thumb;
         // Try to get preloaded image first
-        var preload = core.SharedCache.TryGet(fileInfo, out var preLoadValue);
-        if (preload && preLoadValue?.ImageModel?.Image is Bitmap bmp)
+        if (core.SharedCache.TryGetReady(fileInfo, out var ready) && ready.Image is Bitmap bmp)
         {
             thumb = bmp;
             await Dispatcher.UIThread.InvokeAsync(() => _dragDropView?.UpdateThumbnail(thumb, mainWindow));
@@ -353,7 +350,6 @@ public static class DragAndDropManager
                     }
                     _dragDropView.UpdateThumbnail(model.Image as Bitmap, mainWindow);
                 });
-                _preLoadValue = new PreLoadValue(model);
             }).ConfigureAwait(false);
         }
     }

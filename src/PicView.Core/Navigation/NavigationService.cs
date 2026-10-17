@@ -19,7 +19,7 @@ namespace PicView.Core.Navigation;
 
 public class NavigationService(
     IImageModelLoader imageModelLoader,
-    IImageCache cache,
+    SharedImageCache cache,
     IFileWatcherService fileWatcherService,
     IPlatformSpecificService platformService,
     Func<string, string, int> stringComparer)
@@ -37,16 +37,12 @@ public class NavigationService(
             fileWatcherService.Unwatch(tab);
 
             // Show image quickly to make it feel fast
-            ImageModel model;
             ImageModel? secondaryModel = null;
             var secondaryIndex = 0;
-            if (cache.TryGet(fileInfo, out var preLoadValue))
+            var model = await cache.GetAsync(tab.Id, fileInfo, ct.Token).ConfigureAwait(false);
+            if (model is null)
             {
-                model = preLoadValue.ImageModel;
-            }
-            else
-            {
-                model = await imageModelLoader.GetImageModelAsync(fileInfo, ct.Token).ConfigureAwait(false);
+                return;
             }
 
             if (!Settings.ImageScaling.ShowImageSideBySide)
@@ -75,13 +71,10 @@ public class NavigationService(
                     if (nextIteration >= 0 && nextIteration < tab.ImageIterator.Files.Count)
                     {
                         var secondaryFileInfo = tab.ImageIterator.Files[nextIteration];
-                        if (cache.TryGet(secondaryFileInfo, out var secondaryPreLoadValue))
+                        secondaryModel = await cache.GetAsync(tab.Id, secondaryFileInfo, ct.Token).ConfigureAwait(false);
+                        if (secondaryModel is null)
                         {
-                            secondaryModel = secondaryPreLoadValue.ImageModel;
-                        }
-                        else
-                        {
-                            secondaryModel = await imageModelLoader.GetImageModelAsync(secondaryFileInfo, ct.Token).ConfigureAwait(false);
+                            return;
                         }
                         tab.SecondaryModel = secondaryModel;
                         tab.SecondaryImage.Value = secondaryModel.Image;
@@ -102,13 +95,17 @@ public class NavigationService(
 
             tab.UpdateTabTitle();
             fileWatcherService.Watch(tab, fileInfo.DirectoryName);
-            cache.Clear(tab.Id);
-            cache.Add(tab.Id, index, new PreLoadValue(model), tab.ImageIterator.Files.Count, false);
-            if (secondaryModel is not null)
+            cache.ReleaseImages(tab.Id);
+            if (tab.ImageIterator.Files.Count > 0)
             {
-                cache.Add(tab.Id, secondaryIndex, new PreLoadValue(secondaryModel), tab.ImageIterator.Files.Count, false);
+                var currentFile = tab.ImageIterator.Files[index];
+                cache.Put(tab.Id, currentFile, model);
+                if (secondaryModel is not null)
+                {
+                    cache.Put(tab.Id, tab.ImageIterator.Files[secondaryIndex], secondaryModel);
+                }
+                cache.Preload(tab.Id, currentFile, false, tab.GetTabCancellation().Token);
             }
-            cache.Preload(tab.Id, index, false, tab.ImageIterator.Files, tab.GetTabCancellation().Token);
             FileHistoryManager.Add(fileInfo.FullName);
 
             if ((tab.Gallery.IsDockedGalleryVisible.CurrentValue || tab.Gallery.IsGalleryExpanded.CurrentValue) && tab.ThumbnailCache is not null)
@@ -652,9 +649,6 @@ public class NavigationService(
             // Find new index of current file
             var newIndex = FindIndex(currentFile, tab);
             tab.ImageIterator.SetCurrentIndex(newIndex);
-            
-            // Update cache mapping
-            cache.Resynchronize(tab.Id, newFiles);
             
             // Update title
             tab.UpdateTabTitle();

@@ -19,9 +19,9 @@ public static class ThumbnailHelper
         var tabs = vm.WindowTabs;
         var cache = tabs.SharedCache;
         var thumbnailLoader = tabs.SharedThumbnailLoader;
-        if (cache.TryGet(fileInfo.FullName, out var cached) && cached is not null)
+        if (cache?.TryGetReady(fileInfo, out var ready) ?? false)
         {
-            return cached.ImageModel.Image;
+            return ready.Image;
         }
 
         var thumb = await thumbnailLoader.GetThumbnailAsync(fileInfo, size)

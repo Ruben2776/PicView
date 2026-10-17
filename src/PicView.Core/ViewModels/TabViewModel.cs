@@ -255,7 +255,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
 
     #region Initialization
 
-    public void Initialize(IImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, IFileWatcherService? fileWatcherService = null, IThumbnailCache? thumbnailCache = null)
+    public void Initialize(SharedImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, IFileWatcherService? fileWatcherService = null, IThumbnailCache? thumbnailCache = null)
     {
         if (fileWatcherService != null)
         {
@@ -269,7 +269,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
         GalleryCoordinator = new Gallery.GalleryCoordinator(this, thumbnailLoader, ThumbnailCache ?? thumbCache);
     }
 
-    public void InitializeImageIterator(IReadOnlyList<FileInfo> files, IImageCache cache, IThumbnailCache thumbCache,  IThumbnailLoader thumbnailLoader, IFileWatcherService? fileWatcherService = null, IThumbnailCache? thumbnailCache = null)
+    public void InitializeImageIterator(IReadOnlyList<FileInfo> files, SharedImageCache cache, IThumbnailCache thumbCache,  IThumbnailLoader thumbnailLoader, IFileWatcherService? fileWatcherService = null, IThumbnailCache? thumbnailCache = null)
     {
         if (fileWatcherService != null)
         {
@@ -293,7 +293,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
 
         if (index > -1 && index < files.Count)
         {
-            cache.TryAdd(Id, index, new PreLoadValue(Model), files.Count, false, out _);
+            cache.Put(Id, files[index], Model);
         }
         
         var directory = files.Count > 0 ? files[0].DirectoryName : null;

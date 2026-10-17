@@ -2,7 +2,6 @@ using ImageMagick;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
-using PicView.Core.Preloading;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -12,7 +11,7 @@ namespace PicView.Tests.Navigation;
 public class FileWatcherServiceTests : IDisposable
 {
     private readonly FileWatcherService _service;
-    private readonly MockImageCache _mockCache;
+    private readonly SharedImageCache _cache;
     private readonly MockThumbnailCache _mockThumbnailCache;
     private readonly string _testDirectory;
 
@@ -26,10 +25,10 @@ public class FileWatcherServiceTests : IDisposable
         _testDirectory = Path.Combine(Path.GetTempPath(), "PicViewTests_" + Guid.NewGuid());
         Directory.CreateDirectory(_testDirectory);
 
-        _mockCache = new MockImageCache();
+        _cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
         _mockThumbnailCache = new MockThumbnailCache();
         // Use default ordinal comparison for tests
-        _service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _mockCache, _mockThumbnailCache, new MockThumbnailLoader());
+        _service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache, _mockThumbnailCache, new MockThumbnailLoader());
     }
 
     [Fact]
@@ -51,7 +50,7 @@ public class FileWatcherServiceTests : IDisposable
 
         var tab = CreateTab(_testDirectory);
         var files = new List<FileInfo> { new(existingFilePath) };
-        tab.InitializeImageIterator(files, _mockCache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
+        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
         tab.Model = new ImageModel { FileInfo = files[0] };
 
         _service.Watch(tab);
@@ -69,7 +68,6 @@ public class FileWatcherServiceTests : IDisposable
         // Assert
         Assert.Equal(2, tab.ImageIterator.Files.Count);
         Assert.Contains(tab.ImageIterator.Files, f => f.FullName == filePath);
-        Assert.True(_mockCache.Resynchronized);
     }
 
     [Fact]
@@ -80,7 +78,7 @@ public class FileWatcherServiceTests : IDisposable
 
         var tab = CreateTab(_testDirectory);
         var files = new List<FileInfo> { new(existingFilePath) };
-        tab.InitializeImageIterator(files, _mockCache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
+        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
         tab.Model = new ImageModel { FileInfo = files[0] };
 
         _service.Watch(tab);
@@ -97,7 +95,6 @@ public class FileWatcherServiceTests : IDisposable
         // Assert: No duplicates should be inserted
         Assert.Single(tab.ImageIterator.Files);
         Assert.Equal(existingFilePath, tab.ImageIterator.Files[0].FullName);
-        Assert.True(_mockCache.Resynchronized);
     }
 
     [Fact]
@@ -109,10 +106,11 @@ public class FileWatcherServiceTests : IDisposable
 
         var tab = CreateTab(_testDirectory);
         var files = new List<FileInfo> { new(filePath) };
-        tab.InitializeImageIterator(files, _mockCache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
+        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
         tab.Model = new ImageModel { FileInfo = files[0] };
 
         _service.Watch(tab);
+        _cache.Put(tab.Id, files[0], new ImageModel { FileInfo = files[0] });
 
         // Act: Modify the file (triggers Changed event)
         await File.WriteAllTextAsync(filePath, "dummy content modified", TestContext.Current.CancellationToken);
@@ -120,7 +118,7 @@ public class FileWatcherServiceTests : IDisposable
 
         // Assert
         Assert.Single(tab.ImageIterator.Files);
-        Assert.True(_mockCache.Resynchronized);
+        Assert.False(_cache.TryGetReady(new FileInfo(filePath), out _), "The stale image should no longer be served");
         Assert.Contains(filePath, _mockThumbnailCache.RemovedPaths);
     }
 
@@ -139,10 +137,11 @@ public class FileWatcherServiceTests : IDisposable
         
         // Manually initialize tab with files
         var files = new List<FileInfo> { new(filePath), new(filePath2), new(filePath3) };
-        tab.InitializeImageIterator(files, _mockCache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
+        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
         tab.Model = new ImageModel { FileInfo = files[0] };
         
         _service.Watch(tab);
+        _cache.Put(tab.Id, files[0], new ImageModel { FileInfo = files[0] });
 
         // Act: Delete file
         File.Delete(filePath);
@@ -151,7 +150,7 @@ public class FileWatcherServiceTests : IDisposable
         // Assert
         Assert.Equal(2, tab.ImageIterator.Files.Count);
         Assert.DoesNotContain(tab.ImageIterator.Files, f => f.FullName == filePath);
-        Assert.True(_mockCache.Resynchronized);
+        Assert.False(_cache.TryGetReady(new FileInfo(filePath), out _), "The stale image should no longer be served");
         Assert.Contains(filePath, _mockThumbnailCache.RemovedPaths);
         
         File.Delete(filePath2);
@@ -168,10 +167,11 @@ public class FileWatcherServiceTests : IDisposable
         
         var tab = CreateTab(_testDirectory);
         var files = new List<FileInfo> { new(oldPath) };
-        tab.InitializeImageIterator(files, _mockCache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
+        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
         tab.Model = new ImageModel { FileInfo = files[0] };
         
         _service.Watch(tab);
+        _cache.Put(tab.Id, files[0], new ImageModel { FileInfo = files[0] });
 
         // Act
         File.Move(oldPath, newPath);
@@ -182,7 +182,7 @@ public class FileWatcherServiceTests : IDisposable
         Assert.Equal(newPath, tab.ImageIterator.Files[0].FullName);
         // Verify model update if it was current file
         Assert.Equal(newPath, tab.Model.FileInfo.FullName);
-        Assert.True(_mockCache.Resynchronized);
+        Assert.False(_cache.TryGetReady(new FileInfo(oldPath), out _), "The stale image should no longer be served");
         Assert.Contains(oldPath, _mockThumbnailCache.RemovedPaths);
     }
 
@@ -196,7 +196,7 @@ public class FileWatcherServiceTests : IDisposable
         var dummyFile = new FileInfo(Path.Combine(directory, "placeholder.png"));
         tab.Model = new ImageModel { FileInfo = dummyFile };
         
-        tab.Initialize(_mockCache, _mockThumbnailCache, new MockThumbnailLoader(), _service, _mockThumbnailCache);
+        tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), _service, _mockThumbnailCache);
         return tab;
     }
 
@@ -214,48 +214,6 @@ public class FileWatcherServiceTests : IDisposable
     }
     
     // Mocks
-    private class MockImageCache : IImageCache
-    {
-        public bool Resynchronized { get; private set; }
-        public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files) => Resynchronized = true;
-        public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        // Stub other methods
-        public Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) => Task.FromResult<ImageModel?>(null);
-        public void RegisterOwner(uint ownerId) { }
-        public void RemoveOwner(uint ownerId) { }
-        public bool TryGet(FileInfo f, out PreLoadValue? value) { value = null; return false; }
-        public bool TryGet(uint ownerId, int index, out PreLoadValue? value) { value = null; return false; }
-        public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value) { value = null; return false; }
-        public void Clear() { }
-        public bool Contains(FileInfo fileInfo)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Clear(uint ownerId) { }
-        public bool Contains(PreLoadValue value) => false;
-        public bool Contains(string fileName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse)
-        {
-            
-        }
-
-        public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value) { value = null; return false; }
-        public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) { }
-        public void Clear(TabViewModel tab, string directory) { }
-        public void TryRemove(uint ownerId, int index) { }
-        public ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index) => ValueTask.FromResult(false);
-        public void DeleteFromCache(string fileName) { }
-    }
-
     private class MockThumbnailLoader : IThumbnailLoader
     {
         public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) => ValueTask.FromResult<object?>(null);
