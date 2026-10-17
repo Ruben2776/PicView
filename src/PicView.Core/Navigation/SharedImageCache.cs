@@ -29,7 +29,6 @@ public sealed class SharedImageCache
     private const int DisposalDelayInSeconds = 15;
 
     private readonly Func<FileInfo, ValueTask<ImageModel>> _imageLoader;
-    private readonly StringComparer _pathComparer;
 
     /// <summary>
     /// Every cached or loading image by full path, whether or not an owner references it.
@@ -51,8 +50,7 @@ public sealed class SharedImageCache
     public SharedImageCache(Func<FileInfo, ValueTask<ImageModel>> imageLoader)
     {
         _imageLoader = imageLoader;
-        _pathComparer = StringComparer.Ordinal;
-        _pathLookup = new ConcurrentDictionary<string, PreLoadValue>(_pathComparer);
+        _pathLookup = new ConcurrentDictionary<string, PreLoadValue>(StringComparer.Ordinal);
         // Waiting without a token keeps the preloader's degree of parallelism honest; the load is not cancelled anyway.
         _preloader = new Preloader((ownerId, file) => Acquire(ownerId, file).WaitForLoadingCompleteAsync());
     }
@@ -147,7 +145,7 @@ public sealed class SharedImageCache
     public void SetFiles(uint ownerId, IReadOnlyList<FileInfo> files)
     {
         var owner = _owners.GetOrAdd(ownerId, static _ => new Owner());
-        var positions = new Dictionary<string, int>(files.Count, _pathComparer);
+        var positions = new Dictionary<string, int>(files.Count, StringComparer.Ordinal);
         for (var i = 0; i < files.Count; i++)
         {
             positions[files[i].FullName] = i;

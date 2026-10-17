@@ -446,7 +446,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         }
         if (CurrentIndex >= 0 && CurrentIndex < Files.Count)
         {
-            return string.Equals(Files[CurrentIndex].FullName, targetFile.FullName, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(Files[CurrentIndex].FullName, targetFile.FullName, StringComparison.Ordinal);
         }
         return false;
     }
