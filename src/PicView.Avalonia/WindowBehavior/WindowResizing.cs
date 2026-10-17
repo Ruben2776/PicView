@@ -247,10 +247,10 @@ public static class WindowResizing
                 width = bitmap.PixelSize.Width;
                 height = bitmap.PixelSize.Height;
             }
-            else if (vm.WindowTabs.SharedCache?.TryGet(tab.Model.FileInfo, out var preloadValue) ?? false)
+            else if (vm.WindowTabs.SharedCache?.TryGetReady(tab.Model.FileInfo, out var ready) ?? false)
             {
-                width = preloadValue.ImageModel.PixelWidth;
-                height = preloadValue.ImageModel.PixelHeight;
+                width = ready.PixelWidth;
+                height = ready.PixelHeight;
             }
             else
             {
@@ -269,10 +269,10 @@ public static class WindowResizing
 
         if (Settings.ImageScaling.ShowImageSideBySide)
         {
-            if (vm.WindowTabs.SharedCache?.TryGet(tab.SecondaryModel.FileInfo, out var secondaryPreloadValue) ?? false)
+            if (vm.WindowTabs.SharedCache?.TryGetReady(tab.SecondaryModel.FileInfo, out var secondaryReady) ?? false)
             {
-                secondaryWidth = secondaryPreloadValue.ImageModel.PixelWidth;
-                secondaryHeight = secondaryPreloadValue.ImageModel.PixelHeight;
+                secondaryWidth = secondaryReady.PixelWidth;
+                secondaryHeight = secondaryReady.PixelHeight;
             }
             else
             {

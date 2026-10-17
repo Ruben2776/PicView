@@ -3,15 +3,21 @@
 namespace PicView.Core.Preloading;
 
 /// <summary>
-/// Represents a preloaded image value.
+/// Represents a preloaded image value. Private to <see cref="PicView.Core.Navigation.SharedImageCache"/>.
 /// </summary>
-public class PreLoadValue
+internal sealed class PreLoadValue
 {
     private readonly Lock _loadingLock = new();
     private bool _isLoading;
     private TaskCompletionSource<bool>? _loadingCompletionSource;
     private int _referenceCount;
     public int ReferenceCount => Volatile.Read(ref _referenceCount);
+    private int _isDisposed;
+
+    /// <summary>
+    /// Marks the value disposed, returning <see langword="false"/> if it already was.
+    /// </summary>
+    public bool TryMarkDisposed() => Interlocked.Exchange(ref _isDisposed, 1) is 0;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="PreLoadValue"/> class.

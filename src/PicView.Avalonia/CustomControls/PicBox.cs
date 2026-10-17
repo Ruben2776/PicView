@@ -271,7 +271,7 @@ public class PicBox : Control
         {
             if (Application.Current.DataContext is CoreViewModel core)
             {
-                core.SharedCache.Clear();
+                core.SharedCache.ReleaseAll();
             }
             if (DataContext is TabViewModel tab)
             {
@@ -408,15 +408,9 @@ public class PicBox : Control
             return new Size();
         }
 
-        if (tabs.SharedCache is SharedImageCache sharedCache)
+        if (tabs.SharedCache?.TryGetReady(model.FileInfo, out var ready) ?? false)
         {
-            if (sharedCache.TryGet(model.FileInfo, out var preloadValue))
-            {
-                if (preloadValue?.ImageModel != null)
-                {
-                    return new Size(preloadValue.ImageModel.PixelWidth, preloadValue.ImageModel.PixelHeight);
-                }
-            }
+            return new Size(ready.PixelWidth, ready.PixelHeight);
         }
 
         try

@@ -1,171 +1,91 @@
-﻿using PicView.Core.DebugTools;
-using PicView.Core.Models;
-using PicView.Core.Navigation.Interfaces;
+using System.Collections.Concurrent;
+using PicView.Core.DebugTools;
 
 namespace PicView.Core.Preloading;
 
 /// <summary>
-/// Defines the contract for the background worker.
+/// Background worker of <see cref="PicView.Core.Navigation.SharedImageCache"/>.
 /// <para>
-/// Responsible for calculating predictive indices (look-ahead) and executing the physical loading of images into the cache.
+/// Responsible for calculating predictive indices (look-ahead) and loading them, ahead in the direction of travel
+/// first, while at most one preload per owner runs.
 /// </para>
 /// </summary>
-public class Preloader(Func<FileInfo, ValueTask<ImageModel>> imageModelLoader, IImageCache cache)
+/// <param name="load">Loads a file for an owner and completes when the image is loaded.</param>
+internal sealed class Preloader(Func<uint, FileInfo, Task> load)
 {
-    private readonly Lock _lock = new();
-    private uint _currentOwner;
-    private bool _isRunning;
+    private readonly ConcurrentDictionary<uint, byte> _running = new();
 
-    public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files,
-        CancellationToken token)
+    /// <summary>
+    /// Loads the files around <paramref name="currentIndex"/> in the background.
+    /// Does nothing while a preload for the same owner is still running.
+    /// </summary>
+    public void Preload(uint ownerId, FileInfo[] files, int currentIndex, bool reversed, CancellationToken ct)
     {
-        lock (_lock)
+        if (!_running.TryAdd(ownerId, 0))
         {
-            if (_isRunning)
-            {
-                if (ownerId == _currentOwner)
-                {
-                    return; // Already running
-                }
-                // Currently, it is intended to be able to have multiple different preloaders running at the same time,
-                // but if adding features like "Restore Previous Session" this might require a rework.
-            }
-        
-            _isRunning = true; // Mark running immediately so that the next caller (of the same id) is blocked
-            _currentOwner = ownerId;
+            return;
         }
 
-        _ = Task.Run(() => PreLoadInternalAsync(_currentOwner, currentIndex, files, reversed, token), token);
-        lock (_lock)
+        // Not passing ct to Task.Run: a task cancelled before it starts would never clear the running flag.
+        _ = Task.Run(async () =>
         {
-            _currentOwner = ownerId;
-        }
+            try
+            {
+                await PreloadAroundAsync(ownerId, files, currentIndex, reversed, ct).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // Navigated elsewhere
+            }
+            catch (Exception ex)
+            {
+                DebugHelper.LogDebug(nameof(Preloader), nameof(Preload), ex);
+            }
+            finally
+            {
+                _running.TryRemove(ownerId, out _);
+            }
+        }, CancellationToken.None);
     }
 
-    // --- Core Loading Logic (AddAsync) ---
-
-    public async ValueTask<ImageModel?> AddAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list,
-        bool isReverse = false, CancellationToken ct = default)
+    private async Task PreloadAroundAsync(uint ownerId, FileInfo[] files, int currentIndex, bool reversed,
+        CancellationToken ct)
     {
-        if (list == null || index < 0 || index >= list.Count)
+        var count = files.Length;
+        if (count is 0)
         {
-            return null;
+            return;
         }
-
-        var fileInfo = list[index];
-
-        // Check if it is already cached
-        if (cache.TryGet(fileInfo, out var cachedValue) && cachedValue is not null)
-        {
-            if (cachedValue.IsLoading)
-            {
-                // Piggyback on the existing load
-                await cachedValue.WaitForLoadingCompleteAsync().ConfigureAwait(false);
-            }
-            
-            // Ensure the requesting owner has a reference to this value in its dictionary
-            cache.Add(ownerId, index, cachedValue, list.Count, isReverse);
-
-            return cachedValue.ImageModel;
-        }
-
-        if (ct.IsCancellationRequested)
-        {
-            return null;
-        }
-
-        // Load from disk
-        var preloadValue = new PreLoadValue(new ImageModel
-        {
-            FileInfo = fileInfo
-        }, isLoading: true);
-            
-        cache.TryAdd(ownerId, index, preloadValue, list.Count, isReverse, out _);
-        // Check cancel before IO
-        if (ct.IsCancellationRequested)
-        {
-            return null;
-        }
-        var imageModel = await imageModelLoader(fileInfo).ConfigureAwait(false);
-        preloadValue.ImageModel = imageModel;
-        preloadValue.IsLoading = false;
-        return imageModel;
-    }
-
-    public async Task PreLoadInternalAsync(uint ownerId, int currentIndex, IReadOnlyList<FileInfo> list,
-        bool reversed, CancellationToken token)
-    {
-        var count = list.Count;
-        var nextStartingIndex = (currentIndex + 1) % count;
-        var prevStartingIndex = (currentIndex - 1 + count) % count;
 
         var options = new ParallelOptions
         {
             MaxDegreeOfParallelism = PreLoaderConfig.MaxParallelism,
-            CancellationToken = token
+            CancellationToken = ct
         };
 
-        try
+        if (reversed)
         {
-            if (reversed)
-            {
-                await LoopAsync(options, false).ConfigureAwait(false);
-                await LoopAsync(options, true).ConfigureAwait(false);
-            }
-            else
-            {
-                await LoopAsync(options, true).ConfigureAwait(false);
-                await LoopAsync(options, false).ConfigureAwait(false);
-            }
+            await LoopAsync(forwards: false).ConfigureAwait(false);
+            await LoopAsync(forwards: true).ConfigureAwait(false);
         }
-        catch (Exception ex)
+        else
         {
-            DebugHelper.LogDebug(nameof(Preloader), nameof(PreLoadInternalAsync), ex);
-        }
-        finally
-        {
-            lock (_lock)
-            {
-                _isRunning = false;
-            }
+            await LoopAsync(forwards: true).ConfigureAwait(false);
+            await LoopAsync(forwards: false).ConfigureAwait(false);
         }
 
         return;
 
-        async Task LoopAsync(ParallelOptions parallelOptions, bool positive)
+        async Task LoopAsync(bool forwards)
         {
-            if (positive)
+            var iterations = forwards ? PreLoaderConfig.PositiveIterations : PreLoaderConfig.NegativeIterations;
+            await Parallel.ForAsync(0, iterations, options, async (i, _) =>
             {
-                await Parallel.ForAsync(0, PreLoaderConfig.PositiveIterations, parallelOptions, async (i, x) =>
-                {
-                    await AddAddition((nextStartingIndex + i) % count, x).ConfigureAwait(false);
-                }).ConfigureAwait(false);
-            }
-            else
-            {
-                await Parallel.ForAsync(0, PreLoaderConfig.NegativeIterations, parallelOptions, async (i, x) =>
-                {
-                    await AddAddition((prevStartingIndex - i + count) % count, x).ConfigureAwait(false);
-                }).ConfigureAwait(false);
-            }
-        }
-
-        async Task AddAddition(int index, CancellationToken x)
-        {
-            // Double check cancellation after waiting
-            if (token.IsCancellationRequested || x.IsCancellationRequested)
-            {
-                return;
-            }
-
-            if (cache.Contains(list[index]))
-            {
-                // Return early if cached
-                return;
-            }
-
-            using var cts = CancellationTokenSource.CreateLinkedTokenSource(token, x);
-            await AddAsync(ownerId, index, list, reversed, cts.Token).ConfigureAwait(false);
+                var index = forwards
+                    ? (currentIndex + 1 + i) % count
+                    : ((currentIndex - 1 - i) % count + count) % count;
+                await load(ownerId, files[index]).ConfigureAwait(false);
+            }).ConfigureAwait(false);
         }
     }
 }

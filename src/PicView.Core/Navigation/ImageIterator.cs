@@ -5,9 +5,9 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Core.Navigation;
 
-public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, TabViewModel tab) : IImageIterator
+public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, TabViewModel tab) : IImageIterator
 {
-    public IImageCache Cache { get; } = cache ?? throw new ArgumentNullException(nameof(cache));
+    public SharedImageCache Cache { get; } = cache ?? throw new ArgumentNullException(nameof(cache));
     public string? CurrentDirectory => Files.Count > 0 ? Files[0].DirectoryName : null;
 
     private readonly IThumbnailCache _thumbCache = thumbCache ?? throw new ArgumentNullException(nameof(thumbCache));
@@ -15,7 +15,20 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
     private readonly IThumbnailLoader _thumbnailLoader = thumbnailLoader ?? throw new ArgumentNullException(nameof(thumbnailLoader));
     private DateTime _lastRepeatTime = DateTime.MinValue;
 
-    public IReadOnlyList<FileInfo> Files { get; set; } = [];
+    private IReadOnlyList<FileInfo> _files = [];
+
+    /// <summary>
+    /// The files being iterated. Setting it tells the cache, so set it again after changing the list in place.
+    /// </summary>
+    public IReadOnlyList<FileInfo> Files
+    {
+        get => _files;
+        set
+        {
+            _files = value ?? [];
+            Cache.SetFiles(_tab.Id, _files);
+        }
+    }
     public int CurrentIndex { get; private set; } = -1;
     public int SecondaryCurrentIndex { get; private set; } = -1;
     public bool IsReversed { get; private set; }
@@ -117,68 +130,31 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
         CurrentIndex = index;
         var targetFile = Files[index];
-        if (Cache.TryGet(targetFile, out var preLoadValue))
+        var request = Cache.GetAsync(_tab.Id, targetFile, ct.Token);
+        if (!request.IsCompleted)
         {
-            if (preLoadValue is { IsLoading: false, ImageModel.Image: not null })
+            // Still loading, show thumbnail while waiting
+            _tab.SetLoading();
+            await Task.Run(() =>
             {
-                // Is in cache
-                UpdateModel(preLoadValue.ImageModel);
-            }
-            else
-            {
-                _tab.SetLoading();
-                
-                // Is loading in cache, show thumbnail while loading
-                await Task.Run(async () =>
+                var thumb = GetThumbnail(targetFile);
+                if (IsTargetActive(targetFile, index))
                 {
-                    var thumb = !_thumbCache.IsEmpty && _thumbCache.TryGet(targetFile.FullName, out var cachedThumb)
-                        ? cachedThumb
-                        : _thumbnailLoader.GetThumbQuick(targetFile, _tab.ParentWindowContext.Core);
-                    if (!IsTargetActive(targetFile, index))
-                    {
-                        return;
-                    }
                     _tab.Image.Value = thumb;
-                    
-                    // Wait for loading complete
-                    var successfullyLoaded = await Cache
-                        .WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token)
-                        .ConfigureAwait(false);
-                    if (successfullyLoaded && IsTargetActive(targetFile, index))
-                    {
-                        if (preLoadValue.ImageModel.Image is null)
-                        {
-                            await AttemptManualLoad().ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            UpdateModel(preLoadValue.ImageModel);
-                        }
-                    }
-                }, ct.Token).ConfigureAwait(false);
-            }
+                }
+            }).ConfigureAwait(false);
         }
-        else
+
+        var model = await request.ConfigureAwait(false);
+        if (model is not null && IsTargetActive(targetFile, index))
         {
-            // Not in cache
-            await Task.Run(AttemptManualLoad, ct.Token).ConfigureAwait(false);
-        }
-        
-        return;
-        
-        async Task AttemptManualLoad()
-        {
-            var manuallyLoaded = await Cache.LoadAsync(_tab.Id, index, Files, ct.Token).ConfigureAwait(false);
-            if (IsTargetActive(targetFile, index) && manuallyLoaded is not null)
-            {
-                UpdateModel(manuallyLoaded);
-            }
+            UpdateModel(model);
         }
     }
     
     public async ValueTask IterateToIndicesAsync(int index, int secondaryIndex, CancellationTokenSource ct)
     {
-        if (index < 0 || index >= Files.Count)
+        if (index < 0 || index >= Files.Count || secondaryIndex < 0 || secondaryIndex >= Files.Count)
         {
             return;
         }
@@ -194,86 +170,27 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
         SecondaryCurrentIndex = secondaryIndex;
         var firstFile = Files[index];
         var secondaryFile = Files[secondaryIndex];
-        ImageModel? firstModel = null, secondModel = null;
-        if (Cache.TryGet(firstFile, out var preLoadValue))
+        var firstRequest = Cache.GetAsync(_tab.Id, firstFile, ct.Token);
+        var secondRequest = Cache.GetAsync(_tab.Id, secondaryFile, ct.Token);
+        if (!firstRequest.IsCompleted || !secondRequest.IsCompleted)
         {
-            if (preLoadValue is { IsLoading: false, ImageModel.Image: not null })
+            // Still loading, show thumbnail while waiting
+            _tab.SetLoading();
+            await Task.Run(() =>
             {
-                // Is in cache
-                firstModel = preLoadValue.ImageModel;
-            }
-            else
-            {
-                // Wait for loading complete
-                await Task.Run(LoadFirstModelAsync, ct.Token).ConfigureAwait(false);
-            }
-        }
-        else
-        {
-            // Not in cache
-            var manuallyLoaded = await Cache.LoadAsync(_tab.Id, index, Files, ct.Token).ConfigureAwait(false);
-            if (index == CurrentIndex && manuallyLoaded is not null)
-            {
-                firstModel = manuallyLoaded;
-            }
-            else
-            {
-                TriggerPreload();
-                return;
-            }
-        }
-        
-        if (Cache.TryGet(secondaryFile, out var secondaryPreLoadValue))
-        {
-            if (secondaryPreLoadValue is { IsLoading: false, ImageModel.Image: not null })
-            {
-                // Is in cache
-                secondModel = secondaryPreLoadValue.ImageModel;
-            }
-            else
-            {
-                // Wait for loading complete
-                await Task.Run(LoadSecondModelAsync, ct.Token).ConfigureAwait(false);
-            }
-        }
-        else
-        {
-            // Not in cache
-            var manuallyLoaded = await Cache.LoadAsync(_tab.Id, secondaryIndex, Files, ct.Token).ConfigureAwait(false);
-            if (index == CurrentIndex && manuallyLoaded is not null)
-            {
-                secondModel = manuallyLoaded;
-            }
-            else
-            {
-                TriggerPreload();
-                return;
-            }
+                var thumb = GetThumbnail(firstRequest.IsCompleted ? secondaryFile : firstFile);
+                if (IsCurrent())
+                {
+                    _tab.Image.Value = thumb;
+                }
+            }).ConfigureAwait(false);
         }
 
-        if (firstModel is null)
+        var firstModel = await firstRequest.ConfigureAwait(false);
+        var secondModel = await secondRequest.ConfigureAwait(false);
+        if (firstModel is null || secondModel is null || !IsCurrent())
         {
-            if (index != CurrentIndex || secondaryIndex != SecondaryCurrentIndex)
-            {
-                return;
-            }
-            await Task.Run(LoadFirstModelAsync, ct.Token).ConfigureAwait(false);
-            if (firstModel is null)
-            {
-                return;
-            }
-        }
-        if (secondModel is null)
-        {
-            if (index != CurrentIndex || secondaryIndex != SecondaryCurrentIndex)
-            {
-                return;
-            }
-            await Task.Run(LoadSecondModelAsync, ct.Token).ConfigureAwait(false);
-            if (secondModel is null)
-            {
-                return;
-            }
+            return;
         }
 
         // We need to update the secondary model first, because updating the first model will trigger reactive subscription,
@@ -288,79 +205,10 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
             FileHistoryManager.Add(firstModel.FileInfo.FullName);
             FileHistoryManager.Add(secondModel.FileInfo.FullName);
         }
-        
+
         return;
-        
-        async Task LoadFirstModelAsync()
-        {
-            var thumb = _thumbCache.TryGet(firstFile.FullName, out var cachedThumb) ? cachedThumb 
-                : _thumbnailLoader.GetThumbQuick(firstFile);
-                
-            _tab.Image.Value = thumb;
-            _tab.SetLoading();
 
-            // Wait for loading complete
-            var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, index, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
-            if (successfullyLoaded && index == CurrentIndex && secondaryIndex == SecondaryCurrentIndex)
-            {
-                if (preLoadValue.ImageModel.Image is null)
-                {
-                    var manuallyLoaded = await Cache.LoadAsync(_tab.Id, index, Files, ct.Token).ConfigureAwait(false);
-                    if (index == CurrentIndex && secondaryIndex == SecondaryCurrentIndex && manuallyLoaded is not null)
-                    {
-                        firstModel = manuallyLoaded;
-                    }
-                    else
-                    {
-                        _tab.UpdateTabTitle();
-                    }
-                }
-                else
-                {
-                    firstModel = preLoadValue.ImageModel;
-                }
-            }
-            else
-            {
-                _tab.UpdateTabTitle();
-            }
-        }
-
-        async Task LoadSecondModelAsync()
-        {
-            var thumb = _thumbCache.TryGet(secondaryFile.FullName, out var cachedThumb) ? cachedThumb 
-                : _thumbnailLoader.GetThumbQuick(secondaryFile);
-                
-            _tab.Image.Value = thumb;
-            _tab.SetLoading();
-
-            // Wait for loading complete
-            var successfullyLoaded = await Cache.WaitForLoadingCompleteAsync(_tab.Id, secondaryIndex, _tab.ImageIterator.Files, ct.Token).ConfigureAwait(false);
-            if (successfullyLoaded && index == CurrentIndex && secondaryIndex == SecondaryCurrentIndex)
-            {
-                if (secondaryPreLoadValue.ImageModel.Image is null)
-                {
-                    var manuallyLoaded = await Cache.LoadAsync(_tab.Id, secondaryIndex, Files, ct.Token).ConfigureAwait(false);
-                    if (index == CurrentIndex && secondaryIndex == SecondaryCurrentIndex && manuallyLoaded is not null)
-                    {
-                        secondModel = manuallyLoaded;
-                    }
-                    else
-                    {
-                        _tab.UpdateTabTitle();
-                    }
-                }
-                else
-                {
-                    secondModel = secondaryPreLoadValue.ImageModel;
-                }
-            }
-            else
-            {
-                _tab.UpdateTabTitle();
-            }
-        }
-        
+        bool IsCurrent() => index == CurrentIndex && secondaryIndex == SecondaryCurrentIndex;
     }
 
     public async ValueTask SkipToIndexAsync(int index, CancellationTokenSource ct)
@@ -369,9 +217,10 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
         var file = Files[index];
 
-        if (!Cache.TryGet(file, out var preLoadValue) || preLoadValue?.ImageModel?.Image == null)
+        if (!Cache.TryGetReady(file, out _))
         {
-            Cache.Clear(_tab.Id);
+            // Jumping out of the preloaded range, free the images around the old position
+            Cache.ReleaseImages(_tab.Id);
         }
 
         await IterateToIndexAsync(index, ct).ConfigureAwait(false);
@@ -394,7 +243,7 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
     {
         if (clearCache)
         {
-            Cache.Clear(_tab.Id);
+            Cache.ReleaseImages(_tab.Id);
         }
         var ct = _tab.GetTabCancellation();
         if (Settings.ImageScaling.ShowImageSideBySide)
@@ -526,8 +375,17 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
     private void TriggerPreload()
     {
-        Cache.Preload(_tab.Id, CurrentIndex, IsReversed, Files, _tab.GetTabCancellation().Token);
+        if (CurrentIndex < 0 || CurrentIndex >= Files.Count)
+        {
+            return;
+        }
+        Cache.Preload(_tab.Id, Files[CurrentIndex], IsReversed, _tab.GetTabCancellation().Token);
     }
+
+    private object? GetThumbnail(FileInfo file) =>
+        !_thumbCache.IsEmpty && _thumbCache.TryGet(file.FullName, out var cachedThumb)
+            ? cachedThumb
+            : _thumbnailLoader.GetThumbQuick(file, _tab.ParentWindowContext?.Core);
 
     #endregion
 
@@ -577,8 +435,8 @@ public class ImageIterator(IImageCache cache, IThumbnailCache thumbCache, IThumb
 
     public void Dispose()
     {
-        Cache.Clear(_tab, CurrentDirectory);
-        Files = [];
+        Cache.ReleaseOwner(_tab.Id);
+        _files = [];
         GC.SuppressFinalize(this);
     }
 

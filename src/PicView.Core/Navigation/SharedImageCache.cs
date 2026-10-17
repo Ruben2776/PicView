@@ -1,506 +1,450 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
+using PicView.Core.DebugTools;
 using PicView.Core.Models;
-using PicView.Core.Navigation.Interfaces;
 using PicView.Core.Preloading;
-using PicView.Core.ViewModels;
 
 namespace PicView.Core.Navigation;
 
-/// <inheritdoc />
-public class SharedImageCache : IImageCache
+/// <summary>
+/// The image cache shared by every tab. An owner (a tab) asks for the <see cref="ImageModel"/> of a file and gets it
+/// from memory, from a load already in flight, or from a new load. The cache keeps the images near each owner's
+/// position, preloads around it in the direction of travel, and disposes images no owner references anymore.
+/// </summary>
+/// <remarks>
+/// <list type="bullet">
+/// <item>An owner is registered by its first <see cref="SetFiles"/> and forgotten by <see cref="ReleaseOwner"/>.</item>
+/// <item>A failed decode yields the loader's error model; <see cref="GetAsync"/> returns <see langword="null"/> only
+/// when cancelled.</item>
+/// <item>Cancelling a request only abandons that wait: the load completes and stays cached for other owners.</item>
+/// <item>Images no owner references are disposed after <see cref="DisposalDelayInSeconds"/>, so a file that is
+/// asked for again shortly after is served from memory.</item>
+/// </list>
+/// </remarks>
+public sealed class SharedImageCache
 {
     /// <summary>
-    /// A private dictionary that maps an owner identifier (<see cref="uint"/>) to an instance
-    /// of <see cref="EvictingDictionary{TValue}"/> containing preloaded image data.
-    /// </summary>
-    /// <remarks>
-    /// This dictionary is used to store image cache data for individual owners,
-    /// enabling separate and efficient management of cached data for different contexts.
-    /// Each owner is associated with an instance of <see cref="EvictingDictionary{TValue}"/>
-    /// which provides eviction capabilities to limit memory usage.
-    /// </remarks>
-    private readonly ConcurrentDictionary<uint, EvictingDictionary<PreLoadValue>> _ownerDictionaries = new();
-
-    /// <summary>
-    /// Tracks context information (Directory, Files list, and CurrentIndex) for each active owner tab.
-    /// Used to resolve transfer eligibility when tabs are closed.
-    /// </summary>
-    private readonly ConcurrentDictionary<uint, (string Directory, IReadOnlyList<FileInfo> Files, int CurrentIndex)> _ownerContexts = new();
-    
-    /// <summary>
-    /// Fast lookup by full file path (using OS-specific string comparer).
-    /// Acts as the unified global reference map for both active and expiring preloaded items.
-    /// </summary>
-    private readonly ConcurrentDictionary<string, PreLoadValue> _pathLookup;
-
-    /// <summary>
-    /// Priority queue used for lazy disposal, ordering file paths by their scheduled expiration timestamp.
-    /// </summary>
-    private readonly PriorityQueue<string, DateTime> _disposalQueue = new();
-
-    /// <summary>
-    /// Time delay in seconds before an evicted 0-reference image is fully disposed.
+    /// Time delay in seconds before an image no owner references is disposed.
     /// </summary>
     private const int DisposalDelayInSeconds = 15;
 
+    private readonly Func<FileInfo, ValueTask<ImageModel>> _imageLoader;
+    private readonly StringComparer _pathComparer;
+
     /// <summary>
-    /// Synchronization lock object protecting thread-safe operations on <see cref="_disposalQueue"/>.
+    /// Every cached or loading image by full path, whether or not an owner references it.
     /// </summary>
+    private readonly ConcurrentDictionary<string, PreLoadValue> _pathLookup;
+
+    private readonly ConcurrentDictionary<uint, Owner> _owners = new();
+
+    /// <summary>
+    /// Images whose last reference was released, ordered by when they may be disposed.
+    /// </summary>
+    private readonly PriorityQueue<PreLoadValue, DateTime> _disposalQueue = new();
+
     private readonly Lock _disposalLock = new();
 
-    /// <summary>
-    /// Background worker responsible for look-ahead calculation and image loading.
-    /// </summary>
-    private readonly Preloader _preLoader;
+    private readonly Preloader _preloader;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SharedImageCache"/> class.
-    /// </summary>
-    /// <param name="imageLoader">The function used to load an <see cref="ImageModel"/> asynchronously from a <see cref="FileInfo"/>.</param>
+    /// <param name="imageLoader">Loads an <see cref="ImageModel"/> from disk; returns an error model on failure.</param>
     public SharedImageCache(Func<FileInfo, ValueTask<ImageModel>> imageLoader)
     {
-        var pathComparer = OperatingSystem.IsWindows()
-            ? StringComparer.OrdinalIgnoreCase
-            : StringComparer.Ordinal;
-            
-        _pathLookup = new ConcurrentDictionary<string, PreLoadValue>(pathComparer);
-        _preLoader = new Preloader(imageLoader, this);
+        _imageLoader = imageLoader;
+        _pathComparer = StringComparer.Ordinal;
+        _pathLookup = new ConcurrentDictionary<string, PreLoadValue>(_pathComparer);
+        // Waiting without a token keeps the preloader's degree of parallelism honest; the load is not cancelled anyway.
+        _preloader = new Preloader((ownerId, file) => Acquire(ownerId, file).WaitForLoadingCompleteAsync());
     }
 
-    #region Resynchronize and owner registration
-    
-    /// <summary>
-    /// Registers a new owner ID (tab) into the cache and initializes its dedicated <see cref="EvictingDictionary{TValue}"/>.
-    /// </summary>
-    /// <param name="ownerId">The unique owner identifier.</param>
-    public void RegisterOwner(uint ownerId)
-    {
-        _ownerDictionaries.TryAdd(ownerId, new EvictingDictionary<PreLoadValue>(PreLoaderConfig.MaxCount));
-    }
+    #region Requests
 
     /// <summary>
-    /// Removes an owner ID (tab) and its associated context from cache tracking.
+    /// Gets the model of <paramref name="file"/> for <paramref name="ownerId"/>: from memory, by joining a load
+    /// already in flight, or by starting a new load. The owner holds a reference to it while the file is in its list.
     /// </summary>
-    /// <param name="ownerId">The unique owner identifier to unregister.</param>
-    public void RemoveOwner(uint ownerId)
+    /// <returns>The model, or <see langword="null"/> if <paramref name="ct"/> was cancelled first.</returns>
+    public async Task<ImageModel?> GetAsync(uint ownerId, FileInfo file, CancellationToken ct = default)
     {
-        _ownerDictionaries.TryRemove(ownerId, out _);
-        _ownerContexts.TryRemove(ownerId, out _);
-    }
-
-    /// <summary>
-    /// Resynchronizes cached items for a specific owner when its file list or sorting order changes.
-    /// Maps existing cached items to their new list indices and evicts items no longer present.
-    /// </summary>
-    /// <param name="ownerId">The unique owner identifier.</param>
-    /// <param name="files">The new file list to resynchronize against.</param>
-    public void Resynchronize(uint ownerId, IReadOnlyList<FileInfo> files)
-    {
-        if (!_ownerDictionaries.TryGetValue(ownerId, out var dict))
+        if (ct.IsCancellationRequested)
         {
-            return;
-        }
-        
-        var oldItems = dict.GetEnumerator();
-        using IDisposable oldItems1 = oldItems;
-        var currentItems = new List<KeyValuePair<int, PreLoadValue>>();
-        while (oldItems.MoveNext())
-        {
-            currentItems.Add(oldItems.Current);
-        }
-        var newFileMap = new Dictionary<string, int>(_pathLookup.Comparer);
-        for (var i = 0; i < files.Count; i++)
-        {
-            newFileMap[files[i].FullName] = i;
+            return null;
         }
 
-        // Fast-path: if no existing cached item's index shifted and none were removed, avoid clearing the cache
-        var anyIndexChanged = false;
-        foreach (var item in currentItems)
+        var value = Acquire(ownerId, file);
+        try
         {
-            if (!newFileMap.TryGetValue(item.Value.ImageModel.FileInfo.FullName, out var newIndex) || newIndex != item.Key)
-            {
-                anyIndexChanged = true;
-                break;
-            }
+            await value.WaitForLoadingCompleteAsync().WaitAsync(ct).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
         }
 
-        if (!anyIndexChanged)
-        {
-            if (files.Count > 0 && _ownerContexts.TryGetValue(ownerId, out var existingCtx))
-            {
-                _ownerContexts[ownerId] = (files[0].DirectoryName ?? string.Empty, files, existingCtx.CurrentIndex);
-            }
-            return;
-        }
-
-        dict.Clear();
-
-        foreach (var item in currentItems)
-        {
-            if (newFileMap.TryGetValue(item.Value.ImageModel.FileInfo.FullName, out var newIndex))
-            {
-                // We do not care if it's a new reference here, because we are moving it 
-                // from the cleared dictionary back into the same dictionary. 
-                // The single reference count stays valid.
-                dict.TryAdd(newIndex, item.Value, files.Count, false, out var evicted, out _);
-                if (evicted != null)
-                {
-                    ProcessDisposalLogic(evicted);
-                }
-            }
-            else
-            {
-                ProcessDisposalLogic(item.Value);
-            }
-        }
-        
-        if (files.Count > 0 && _ownerContexts.TryGetValue(ownerId, out var ctx))
-        {
-            _ownerContexts[ownerId] = (files[0].DirectoryName ?? string.Empty, files, ctx.CurrentIndex);
-        }
-    }
-    
-    #endregion
-
-    #region Add, Get, Remove, and Clear
-    
-    /// <inheritdoc />
-    public void Add(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse) =>
-        TryAdd(ownerId, index, preLoadValue, listCount, isReverse, out _);
-
-    /// <inheritdoc />
-    public bool TryAdd(uint ownerId, int index, PreLoadValue preLoadValue, int listCount, bool isReverse, out PreLoadValue? value)
-    {
-        value = null;
-        if (!_ownerDictionaries.TryGetValue(ownerId, out var dict)) return false;
-
-        dict.TryAdd(index, preLoadValue, listCount, isReverse, out var evictedValue, out bool isNewReference);
-
-        if (isNewReference)
-        {
-            preLoadValue.AddReference();
-            // Using the indexer forces the lookup to point to the newest wrapper instance 
-            // if a duplicate was accidentally created.
-            _pathLookup[preLoadValue.ImageModel.FileInfo.FullName] = preLoadValue; 
-        }
-
-        if (evictedValue is not null)
-        {
-            ProcessDisposalLogic(evictedValue);
-            value = evictedValue;
-        }
-
-        return true;
-    }
-    
-    /// <inheritdoc />
-    public bool Contains(string fileName) =>
-        _pathLookup.ContainsKey(fileName);
-
-    /// <inheritdoc />
-    public bool Contains(FileInfo fileInfo) =>
-        _pathLookup.ContainsKey(fileInfo.FullName);
-
-    /// <inheritdoc />
-    public bool Contains(PreLoadValue value) =>
-        _pathLookup.ContainsKey(value.ImageModel.FileInfo.FullName);
-    
-    /// <inheritdoc />
-    public bool TryGet(FileInfo f, out PreLoadValue? value) =>
-        _pathLookup.TryGetValue(f.FullName, out value);
-
-    /// <inheritdoc />
-    public bool TryGet(ReadOnlySpan<char> f, out PreLoadValue? value) =>
-        _pathLookup.GetAlternateLookup<ReadOnlySpan<char>>().TryGetValue(f, out value);
-
-    /// <summary>
-    /// Removes an item at a specific index from an owner's dictionary and releases its reference.
-    /// </summary>
-    /// <param name="ownerId">The unique owner identifier.</param>
-    /// <param name="index">The position index to remove.</param>
-    public void TryRemove(uint ownerId, int index)
-    {
-        if (!_ownerDictionaries.TryGetValue(ownerId, out var dict))
-        {
-            return;
-        }
-        if (!dict.Remove(index, out var removedValue) || removedValue is null)
-        {
-            return;
-        }
-
-        ProcessDisposalLogic(removedValue);
+        return value.ImageModel;
     }
 
     /// <summary>
-    /// Clears all owner dictionaries and releases reference counts for all cached items.
+    /// Gets the model of <paramref name="file"/> if it is in memory and finished loading, without loading it or
+    /// taking a reference.
     /// </summary>
-    public void Clear()
+    public bool TryGetReady(FileInfo file, [NotNullWhen(true)] out ImageModel? model)
     {
-        var allValues = new List<PreLoadValue>();
-        foreach (var dict in _ownerDictionaries.Values)
+        if (_pathLookup.TryGetValue(file.FullName, out var value) && !value.IsLoading)
         {
-            allValues.AddRange(dict.Values);
-            dict.Clear();
-        }
-    
-        foreach(var value in allValues)
-        {
-            ProcessDisposalLogic(value);
-        }
-    }
-
-    /// <summary>
-    /// Clears all cached items for a specific owner ID and releases their reference counts.
-    /// </summary>
-    /// <param name="ownerId">The unique owner identifier to clear.</param>
-    public void Clear(uint ownerId)
-    {
-        if (!_ownerDictionaries.TryGetValue(ownerId, out var dict))
-        {
-            return;
-        }
-
-        var values = dict.Values.ToList();
-        dict.Clear();
-        
-        foreach (var value in values)
-        {
-            ProcessDisposalLogic(value);
-        }
-    }
-
-    public void DeleteFromCache(string fileName)
-    {
-        if (!_pathLookup.TryGetValue(fileName, out var cachedValue))
-        {
-            return;
-        }
-
-        // Remove from all active owner dictionaries
-        foreach (var dict in _ownerDictionaries.Values)
-        {
-            int? indexToRemove = null;
-            foreach (var kvp in dict)
-            {
-                if (ReferenceEquals(kvp.Value, cachedValue))
-                {
-                    indexToRemove = kvp.Key;
-                    break;
-                }
-            }
-
-            if (indexToRemove.HasValue && dict.Remove(indexToRemove.Value, out var removedValue) && removedValue != null)
-            {
-                removedValue.ReleaseReference();
-            }
-        }
-
-        // If it was removed from any dictionary, its reference count should have dropped.
-        // But regardless, we want to completely obliterate it from the cache instantly.
-        if (_pathLookup.TryRemove(cachedValue.ImageModel.FileInfo.FullName, out var lookupValue))
-        {
-            // Reset reference to 0 just in case and dispose
-            while (lookupValue.ReferenceCount > 0)
-            {
-                lookupValue.ReleaseReference();
-            }
-            lookupValue.ImageModel.Dispose();
-        }
-    }
-
-    /// <summary>
-    /// Clears cache items for a closing tab, attempting to transfer eligible nearby cached images 
-    /// to another tab browsing the same directory before unregistering the owner.
-    /// </summary>
-    /// <param name="tab">The view model of the closing tab.</param>
-    /// <param name="directory">The active directory path of the closing tab.</param>
-    public void Clear(TabViewModel tab, string directory)
-    {
-        var id = tab.Id;
-        
-        if (_ownerDictionaries.TryGetValue(id, out var dict))
-        {
-            var closingItems = dict.Values.ToList();
-            dict.Clear();
-            
-            uint targetOwnerId = 0;
-            IReadOnlyList<FileInfo>? targetFiles = null;
-            var targetCurrentIndex = 0;
-            
-            foreach (var kvp in _ownerContexts)
-            {
-                if (kvp.Key == id || !string.Equals(kvp.Value.Directory, directory, StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                targetOwnerId = kvp.Key;
-                targetFiles = kvp.Value.Files;
-                targetCurrentIndex = kvp.Value.CurrentIndex;
-                break;
-            }
-            
-            if (targetFiles is not null && _ownerDictionaries.TryGetValue(targetOwnerId, out var targetDict))
-            {
-                var fileIndexMap = new Dictionary<string, int>(_pathLookup.Comparer);
-                for (var i = 0; i < targetFiles.Count; i++)
-                {
-                    fileIndexMap[targetFiles[i].FullName] = i;
-                }
-                
-                var count = targetFiles.Count;
-                
-                foreach (var item in closingItems)
-                {
-                    if (fileIndexMap.TryGetValue(item.ImageModel.FileInfo.FullName, out var targetIndex))
-                    {
-                        var distForward = (targetIndex - targetCurrentIndex + count) % count;
-                        var distBackward = (targetCurrentIndex - targetIndex + count) % count;
-                        
-                        if (distForward <= PreLoaderConfig.PositiveIterations || distBackward <= PreLoaderConfig.NegativeIterations)
-                        {
-                            targetDict.TryAdd(targetIndex, item, count, false, out var evictedTargetItem, out bool isNewReference);
-                            
-                            if (isNewReference)
-                            {
-                                item.AddReference();
-                                _pathLookup[item.ImageModel.FileInfo.FullName] = item;
-                            }
-                            
-                            // We just removed it from the closing tab's dictionary, so we MUST 
-                            // decrement its reference to represent the loss of the closing tab!
-                            ProcessDisposalLogic(item);
-
-                            if (evictedTargetItem != null)
-                            {
-                                ProcessDisposalLogic(evictedTargetItem);
-                            }
-                            continue;
-                        }
-                    }
-                    ProcessDisposalLogic(item);
-                }
-            }
-            else
-            {
-                foreach (var item in closingItems)
-                {
-                    ProcessDisposalLogic(item);
-                }
-            }
-        }
-        
-        RemoveOwner(id);
-    }
-
-    #endregion
-
-    #region Loading, preloading and wait for loading
-
-    /// <summary>
-    /// Loads an image asynchronously for an owner or returns it if cached via the background worker.
-    /// </summary>
-    /// <param name="ownerId">The unique owner identifier.</param>
-    /// <param name="index">The index in the file list.</param>
-    /// <param name="list">The list of files.</param>
-    /// <param name="ct">Token to monitor for cancellation requests.</param>
-    /// <returns>A task returning the loaded <see cref="ImageModel"/>, or <see langword="null"/> if failed.</returns>
-    public async Task<ImageModel?> LoadAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default) =>
-        await _preLoader.AddAsync(ownerId, index, list, false, ct).ConfigureAwait(false);
-
-    /// <summary>
-    /// Triggers predictive pre-fetching around the specified current index in the background.
-    /// </summary>
-    /// <param name="ownerId">The unique owner identifier.</param>
-    /// <param name="currentIndex">The active index being viewed.</param>
-    /// <param name="reversed">Indicates if iteration is moving backward.</param>
-    /// <param name="files">The list of files to pre-fetch around.</param>
-    /// <param name="token">Token to monitor for cancellation requests.</param>
-    public void Preload(uint ownerId, int currentIndex, bool reversed, IReadOnlyList<FileInfo> files, CancellationToken token) =>
-        _preLoader.Preload(ownerId, currentIndex, reversed, files, token);
-
-    /// <summary>
-    /// Waits for an image at a specific index to complete its background loading process.
-    /// </summary>
-    /// <param name="ownerId">The unique owner identifier.</param>
-    /// <param name="index">The position index in the list.</param>
-    /// <param name="list">The list of files.</param>
-    /// <param name="ct">Token to monitor for cancellation requests.</param>
-    /// <returns>A task completing with <see langword="true"/> if successfully loaded/awaited; otherwise, <see langword="false"/>.</returns>
-    public async ValueTask<bool> WaitForLoadingCompleteAsync(uint ownerId, int index, IReadOnlyList<FileInfo> list, CancellationToken ct = default)
-    {
-        if (!TryGet(list[index], out var value))
-        {
-            return false;
-        }
-
-        if (value is null)
-        {
-            // The item is securely added to the cache internally during LoadAsync -> Preloader.AddAsync.
-            // Do NOT create a duplicate wrapper wrapper here.
-            await LoadAsync(ownerId, index, list, ct).ConfigureAwait(false);
+            model = value.ImageModel;
             return true;
         }
 
-        await value.WaitForLoadingCompleteAsync().ConfigureAwait(false);
-        return true;
+        model = null;
+        return false;
     }
 
-    #endregion
+    /// <summary>
+    /// Stores an already loaded <paramref name="model"/> for <paramref name="file"/>, replacing any cached image of
+    /// the file, and gives <paramref name="ownerId"/> a reference to it.
+    /// </summary>
+    public void Put(uint ownerId, FileInfo file, ImageModel model)
+    {
+        var path = file.FullName;
+        if (_pathLookup.TryGetValue(path, out var existing))
+        {
+            if (ReferenceEquals(existing.ImageModel, model))
+            {
+                AddReference(ownerId, path, existing);
+                return;
+            }
+            Detach(existing);
+        }
 
-    #region Disposal logic
+        var value = new PreLoadValue(model);
+        _pathLookup[path] = value;
+        AddReference(ownerId, path, value);
+    }
 
     /// <summary>
-    /// Decrements the reference count of a <see cref="PreLoadValue"/>. If references hit 0,
-    /// enqueues the item for delayed lazy disposal and sweeps expired items.
+    /// Drops the cached image of a file, e.g., after it was changed on disk, so the next request loads it again.
     /// </summary>
-    /// <param name="item">The preloaded value to process.</param>
-    internal void ProcessDisposalLogic(PreLoadValue item)
+    public void Invalidate(string path)
     {
-        if (item.ReleaseReference() > 0)
+        if (!_pathLookup.TryRemove(path, out var value))
         {
             return;
         }
 
-        var path = item.ImageModel.FileInfo.FullName;
+        Detach(value);
+    }
+
+    #endregion
+
+    #region Owners
+
+    /// <summary>
+    /// Sets the file list of <paramref name="ownerId"/>, registering the owner on first use. Cached images keep their
+    /// reference when their file is still in the list and are released otherwise. Call again after every change to
+    /// the list; the cache keeps its own copy.
+    /// </summary>
+    public void SetFiles(uint ownerId, IReadOnlyList<FileInfo> files)
+    {
+        var owner = _owners.GetOrAdd(ownerId, static _ => new Owner());
+        var positions = new Dictionary<string, int>(files.Count, _pathComparer);
+        for (var i = 0; i < files.Count; i++)
+        {
+            positions[files[i].FullName] = i;
+        }
+        var list = new FileList(files.ToArray(), positions);
+
+        var released = new List<PreLoadValue>();
+        lock (owner.Gate)
+        {
+            owner.Files = list;
+            var items = owner.Images.ToArray();
+            var anyMoved = Array.Exists(items, item =>
+                !positions.TryGetValue(item.Value.ImageModel.FileInfo!.FullName, out var index) || index != item.Key);
+            if (anyMoved)
+            {
+                owner.Images.Clear();
+                foreach (var item in items)
+                {
+                    if (positions.TryGetValue(item.Value.ImageModel.FileInfo!.FullName, out var index))
+                    {
+                        // Moving within the same owner keeps its single reference.
+                        owner.Images.TryAdd(index, item.Value, files.Count, owner.IsReversed, out var evicted, out _);
+                        if (evicted is not null)
+                        {
+                            released.Add(evicted);
+                        }
+                    }
+                    else
+                    {
+                        released.Add(item.Value);
+                    }
+                }
+            }
+        }
+
+        foreach (var value in released)
+        {
+            Release(value);
+        }
+    }
+
+    /// <summary>
+    /// Releases every image <paramref name="ownerId"/> references, keeping the owner and its file list.
+    /// </summary>
+    public void ReleaseImages(uint ownerId)
+    {
+        if (_owners.TryGetValue(ownerId, out var owner))
+        {
+            ReleaseImages(owner);
+        }
+    }
+
+    /// <summary>
+    /// Releases every image <paramref name="ownerId"/> references and forgets the owner. Call when a tab closes.
+    /// </summary>
+    public void ReleaseOwner(uint ownerId)
+    {
+        if (_owners.TryRemove(ownerId, out var owner))
+        {
+            ReleaseImages(owner);
+        }
+    }
+
+    /// <summary>
+    /// Releases every image of every owner, keeping the owners and their file lists.
+    /// </summary>
+    public void ReleaseAll()
+    {
+        foreach (var owner in _owners.Values)
+        {
+            ReleaseImages(owner);
+        }
+    }
+
+    #endregion
+
+    #region Preloading
+
+    /// <summary>
+    /// Loads the images around <paramref name="file"/> in the background, ahead in the direction of travel first.
+    /// Does nothing while a preload for the same owner is still running.
+    /// </summary>
+    public void Preload(uint ownerId, FileInfo file, bool reversed, CancellationToken ct)
+    {
+        if (!_owners.TryGetValue(ownerId, out var owner))
+        {
+            return;
+        }
+
+        owner.IsReversed = reversed;
+        var list = owner.Files;
+        if (list.Positions.TryGetValue(file.FullName, out var index))
+        {
+            _preloader.Preload(ownerId, list.Files, index, reversed, ct);
+        }
+    }
+
+    #endregion
+
+    #region Loading and references
+
+    /// <summary>
+    /// Returns the cached or loading value of <paramref name="file"/>, starting a load if there is none, and gives
+    /// <paramref name="ownerId"/> a reference to it.
+    /// </summary>
+    private PreLoadValue Acquire(uint ownerId, FileInfo file)
+    {
+        var path = file.FullName;
+        if (!_pathLookup.TryGetValue(path, out var value))
+        {
+            var pending = new PreLoadValue(new ImageModel { FileInfo = file }, isLoading: true);
+            value = _pathLookup.GetOrAdd(path, pending);
+            if (ReferenceEquals(value, pending))
+            {
+                _ = LoadAsync(file, pending);
+            }
+        }
+
+        AddReference(ownerId, path, value);
+        return value;
+    }
+
+    private async Task LoadAsync(FileInfo file, PreLoadValue pending)
+    {
+        ImageModel model;
+        try
+        {
+            model = await _imageLoader(file).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.LogDebug(nameof(SharedImageCache), nameof(LoadAsync), ex);
+            model = new ImageModel { FileInfo = file };
+        }
+
+        pending.ImageModel = model;
+        pending.IsLoading = false;
+
+        // A load nobody holds (or one invalidated while loading) was not queued while loading; queue it now.
+        if (pending.ReferenceCount is 0)
+        {
+            ScheduleDisposal(pending);
+        }
+    }
+
+    /// <summary>
+    /// Gives <paramref name="ownerId"/> a reference to <paramref name="value"/> at the file's position in its list.
+    /// A file outside the owner's list stays unreferenced and is queued for disposal.
+    /// </summary>
+    private void AddReference(uint ownerId, string path, PreLoadValue value)
+    {
+        if (_owners.TryGetValue(ownerId, out var owner))
+        {
+            PreLoadValue? evicted = null;
+            var added = false;
+            lock (owner.Gate)
+            {
+                var list = owner.Files;
+                if (list.Positions.TryGetValue(path, out var index))
+                {
+                    owner.Images.TryAdd(index, value, list.Files.Length, owner.IsReversed, out evicted, out var isNewReference);
+                    if (isNewReference)
+                    {
+                        value.AddReference();
+                    }
+                    added = true;
+                }
+            }
+
+            if (evicted is not null)
+            {
+                Release(evicted);
+            }
+            if (added)
+            {
+                return;
+            }
+        }
+
+        if (value.ReferenceCount is 0 && !value.IsLoading)
+        {
+            ScheduleDisposal(value);
+        }
+    }
+
+    /// <summary>
+    /// Removes <paramref name="value"/> from every owner, releasing their references.
+    /// </summary>
+    private void Detach(PreLoadValue value)
+    {
+        var released = 0;
+        foreach (var owner in _owners.Values)
+        {
+            lock (owner.Gate)
+            {
+                foreach (var item in owner.Images)
+                {
+                    if (ReferenceEquals(item.Value, value) && owner.Images.Remove(item.Key))
+                    {
+                        released++;
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (var i = 0; i < released; i++)
+        {
+            Release(value);
+        }
+        if (released is 0 && value.ReferenceCount is 0 && !value.IsLoading)
+        {
+            ScheduleDisposal(value);
+        }
+    }
+
+    private void ReleaseImages(Owner owner)
+    {
+        PreLoadValue[] values;
+        lock (owner.Gate)
+        {
+            values = owner.Images.Values.ToArray();
+            owner.Images.Clear();
+        }
+
+        foreach (var value in values)
+        {
+            Release(value);
+        }
+    }
+
+    private void Release(PreLoadValue value)
+    {
+        if (value.ReleaseReference() > 0)
+        {
+            return;
+        }
+
+        ScheduleDisposal(value);
+    }
+
+    #endregion
+
+    #region Disposal
+
+    private void ScheduleDisposal(PreLoadValue value)
+    {
         lock (_disposalLock)
         {
-            _disposalQueue.Enqueue(path, DateTime.UtcNow.AddSeconds(DisposalDelayInSeconds));
+            _disposalQueue.Enqueue(value, DateTime.UtcNow.AddSeconds(DisposalDelayInSeconds));
         }
 
         SweepExpiredDisposals();
     }
 
-    /// <summary>
-    /// Inspects the priority queue and disposes of all images whose 0-reference hold 
-    /// duration has exceeded <see cref="DisposalDelayInSeconds"/>.
-    /// </summary>
     private void SweepExpiredDisposals()
     {
         var now = DateTime.UtcNow;
         lock (_disposalLock)
         {
-            while (_disposalQueue.TryPeek(out var path, out var expiration) && expiration <= now)
+            while (_disposalQueue.TryPeek(out var value, out var expiration) && expiration <= now)
             {
                 _disposalQueue.Dequeue();
-
-                if (!_pathLookup.TryGetValue(path, out var value) || value.ReferenceCount is not 0)
-                {
-                    continue;
-                }
-                if (_pathLookup.TryRemove(path, out _))
-                {
-                    value.ImageModel.Dispose();
-                }
+                TryDispose(value);
             }
         }
     }
 
     /// <summary>
-    /// Immediately clears the disposal queue, removes all 0-reference orphan images 
-    /// from the lookup table, disposes of them, and triggers a full Garbage Collection sweep.
+    /// Disposes <paramref name="value"/> if nothing references it anymore, removing it from the lookup unless a newer
+    /// image of the same file took its place.
+    /// </summary>
+    private void TryDispose(PreLoadValue value)
+    {
+        if (value.ReferenceCount is not 0 || value.IsLoading)
+        {
+            return;
+        }
+
+        var path = value.ImageModel.FileInfo?.FullName;
+        if (path is not null)
+        {
+            _pathLookup.TryRemove(new KeyValuePair<string, PreLoadValue>(path, value));
+            if (_pathLookup.TryGetValue(path, out var current) && ReferenceEquals(current, value))
+            {
+                return;
+            }
+        }
+
+        if (value.TryMarkDisposed())
+        {
+            value.ImageModel.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Immediately disposes every image no owner references, then runs a full garbage collection.
     /// </summary>
     public void ForceDisposalQueue()
     {
@@ -510,18 +454,27 @@ public class SharedImageCache : IImageCache
             {
                 return;
             }
-            _disposalQueue.Clear();
-            
-            foreach (var kvp in _pathLookup)
+
+            while (_disposalQueue.TryDequeue(out var value, out _))
             {
-                if (kvp.Value.ReferenceCount is 0 && _pathLookup.TryRemove(kvp.Key, out var removed))
-                {
-                    removed.ImageModel.Dispose();
-                }
+                TryDispose(value);
             }
         }
         GC.Collect();
     }
 
     #endregion
+
+    private sealed class Owner
+    {
+        public Lock Gate { get; } = new();
+        public EvictingDictionary<PreLoadValue> Images { get; } = new(PreLoaderConfig.MaxCount);
+        public FileList Files { get; set; } = FileList.Empty;
+        public bool IsReversed { get; set; }
+    }
+
+    private sealed record FileList(FileInfo[] Files, Dictionary<string, int> Positions)
+    {
+        public static FileList Empty { get; } = new([], new Dictionary<string, int>(StringComparer.Ordinal));
+    }
 }

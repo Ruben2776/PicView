@@ -15,12 +15,12 @@ namespace PicView.Core.Navigation;
 
 public class FileWatcherService(
     Func<string, string, int> stringComparer,
-    IImageCache cache,
+    SharedImageCache cache,
     IThumbnailCache? thumbnailCache = null,
     IThumbnailLoader? thumbnailLoader = null)
     : IFileWatcherService, IDisposable
 {
-    private readonly IImageCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+    private readonly SharedImageCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
     private readonly Lock _lock = new();
     private readonly Func<string, string, int> _stringComparer = stringComparer ?? throw new ArgumentNullException(nameof(stringComparer));
 
@@ -235,7 +235,7 @@ public class FileWatcherService(
             }
 
             thumbnailCache?.Remove(newFile.FullName);
-            _cache.DeleteFromCache(newFile.FullName);
+            _cache.Invalidate(newFile.FullName);
 
             var isCurrentFile = string.Equals(e.FullPath, tab.FileInfo?.CurrentValue?.FullName, StringComparison.OrdinalIgnoreCase);
             if (isCurrentFile)
@@ -245,7 +245,7 @@ public class FileWatcherService(
                 tab.UpdateTabTitle();
             }
 
-            _cache.Resynchronize(tab.Id, files);
+            _cache.SetFiles(tab.Id, files);
 
             if (tab.Gallery.IsGalleryDocked.CurrentValue && existingIndex < tab.Gallery.GalleryItems.Count)
             {
@@ -295,6 +295,7 @@ public class FileWatcherService(
         {
             insertionIndex = FileSortOrder.InsertSorted(files, newFile, _stringComparer);
         }
+        _cache.SetFiles(tab.Id, files);
         
         if (insertionIndex <= tab.ImageIterator.CurrentIndex)
         {
@@ -306,7 +307,6 @@ public class FileWatcherService(
         }
 
         tab.ImageIterator.NotifyFileAdded();
-        _cache.Resynchronize(tab.Id, files);
         tab.UpdateTabTitle();
 
         if (insertionIndex >= 0 && tab.Gallery.IsGalleryDocked.CurrentValue)
@@ -364,7 +364,7 @@ public class FileWatcherService(
         var fullPath = e.FullPath;
 
         thumbnailCache?.Remove(fullPath);
-        _cache.DeleteFromCache(fullPath);
+        _cache.Invalidate(fullPath);
         
         var oldIndex = tab.ImageIterator.CurrentIndex;
         var currentFile = tab.Model.FileInfo;
@@ -384,6 +384,7 @@ public class FileWatcherService(
             return;
         }
         files.RemoveAt(removeIndex);
+        _cache.SetFiles(tab.Id, files);
         
         if (files.Count is 0)
         {
@@ -419,7 +420,6 @@ public class FileWatcherService(
             }
         }
 
-        _cache.Resynchronize(tab.Id, files);
         tab.UpdateTabTitle();
         
         if (tab.Gallery.GalleryItems.Count > removeIndex)
@@ -436,7 +436,7 @@ public class FileWatcherService(
         }
 
         thumbnailCache?.Remove(e.OldFullPath);
-        _cache.DeleteFromCache(e.OldFullPath);
+        _cache.Invalidate(e.OldFullPath);
 
         var newFileInfo = new FileInfo(e.FullPath);
 
@@ -459,6 +459,7 @@ public class FileWatcherService(
             }
         }
         var insertionIndex = FileSortOrder.InsertSorted(files, newFileInfo, _stringComparer);
+        _cache.SetFiles(tab.Id, files);
 
         if (insertionIndex >= 0 && tab.Gallery.IsGalleryDocked.CurrentValue && insertionIndex <= tab.Gallery.GalleryItems.Count)
         {
@@ -532,7 +533,6 @@ public class FileWatcherService(
             }
         }
 
-        _cache.Resynchronize(tab.Id, files);
         tab.UpdateTabTitle();
         
         FileHistoryManager.Rename(e.OldFullPath, e.FullPath);
@@ -560,8 +560,8 @@ public class FileWatcherService(
         var isCurrentFile = string.Equals(e.FullPath, tab.FileInfo?.CurrentValue?.FullName, StringComparison.OrdinalIgnoreCase);
 
         thumbnailCache?.Remove(newFile.FullName);
-        _cache.DeleteFromCache(newFile.FullName);
-        _cache.Resynchronize(tab.Id, files);
+        _cache.Invalidate(newFile.FullName);
+        _cache.SetFiles(tab.Id, files);
 
         try
         {

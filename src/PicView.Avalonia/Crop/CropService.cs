@@ -176,9 +176,8 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         var newlyCroppedImage = await SaveImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
         if (string.Equals(tabViewModel.FileInfo.Value.FullName, fileName, StringComparison.Ordinal))
         {
-            tabViewModel.ImageIterator.Cache.DeleteFromCache(fileName);
             var newModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
-            tabViewModel.ImageIterator.Cache.TryAdd(tabViewModel.Id, tabViewModel.ImageIterator.CurrentIndex, new PreLoadValue(newModel), tabViewModel.ImageIterator.Files.Count, false, out _);
+            tabViewModel.ImageIterator.Cache.Put(tabViewModel.Id, fileInfo, newModel);
             tabViewModel.FileInfo.Value = fileInfo;
             tabViewModel.Image.Value = newlyCroppedImage;
         }

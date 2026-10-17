@@ -38,7 +38,7 @@ public static class ImageOptimizer
                 DebugHelper.LogDebug(nameof(ImageOptimizer), nameof(OptimizeImageAsync), ex);
             }
         }).ConfigureAwait(false);
-        tab.ImageIterator.Cache.DeleteFromCache(tab.FileInfo.CurrentValue.FullName);
+        tab.ImageIterator.Cache.Invalidate(tab.FileInfo.CurrentValue.FullName);
         await tab.ImageIterator.ReloadAsync(clearCache:false).ConfigureAwait(false);
         vm.IsLoadingIndicatorShown.Value = false;
     }

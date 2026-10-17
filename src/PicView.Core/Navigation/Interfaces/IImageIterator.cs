@@ -1,3 +1,5 @@
+using PicView.Core.Navigation;
+
 namespace PicView.Core.Navigation.Interfaces;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace PicView.Core.Navigation.Interfaces;
 /// </summary>
 public interface IImageIterator : IDisposable
 {
-    public IImageCache Cache { get; }
+    public SharedImageCache Cache { get; }
     public string? CurrentDirectory { get; }
 
     /// <summary>

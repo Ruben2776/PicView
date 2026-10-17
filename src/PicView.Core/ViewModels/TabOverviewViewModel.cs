@@ -23,7 +23,7 @@ public class TabOverviewViewModel
     public BindableReactiveProperty<TabViewModel> ActiveTab { get; }
     
     public INavigationService? SharedNavigation { get; private set; }
-    public IImageCache? SharedCache { get; private set; }
+    public SharedImageCache? SharedCache { get; private set; }
     public IThumbnailCache? SharedThumbnailCache { get; private set; }
     public IThumbnailLoader? SharedThumbnailLoader { get; private set; }
     public IFileWatcherService? SharedFileWatcher { get; private set; }
@@ -47,25 +47,28 @@ public class TabOverviewViewModel
     /// <param name="thumbnailLoader">The thumbnail loader to use for preloading images</param>
     /// <param name="fileWatcherService">The service that watches for file changes in the directory</param>
     /// <param name="thumbnailCache">The shared thumbnail cache</param>
-    private void Initialize(INavigationService navigationService, IImageCache cache, IThumbnailLoader thumbnailLoader, IFileWatcherService fileWatcherService, IThumbnailCache thumbnailCache)
+    private void Initialize(INavigationService navigationService, SharedImageCache cache, IThumbnailLoader thumbnailLoader, IFileWatcherService fileWatcherService, IThumbnailCache thumbnailCache)
     {
         SharedCache = cache;
         SharedNavigation = navigationService;
         SharedThumbnailLoader = thumbnailLoader;
         SharedFileWatcher = fileWatcherService;
         SharedThumbnailCache = thumbnailCache;
-        SharedCache.RegisterOwner(ActiveTab.Value.Id);
     }
     
-    /// <inheritdoc cref="Initialize(INavigationService, IImageCache, IThumbnailLoader, IFileWatcherService, IThumbnailCache)"/>>
-    public void LoadAndInitializeFromPath(IReadOnlyList<FileInfo> files, INavigationService navigationService, IImageCache cache, IThumbnailCache thumbCache,  IThumbnailLoader thumbnailLoader, IFileWatcherService fileWatcherService)
+    /// <inheritdoc cref="Initialize(INavigationService, SharedImageCache, IThumbnailLoader, IFileWatcherService, IThumbnailCache)"/>>
+    public void LoadAndInitializeFromPath(IReadOnlyList<FileInfo> files, INavigationService navigationService, SharedImageCache cache, IThumbnailCache thumbCache,  IThumbnailLoader thumbnailLoader, IFileWatcherService fileWatcherService)
     {
         Initialize(navigationService, cache, thumbnailLoader, fileWatcherService, thumbCache);
         ActiveTab.Value.InitializeImageIterator(files, cache, thumbCache, thumbnailLoader, fileWatcherService, thumbCache);
-        SharedCache.Preload(ActiveTab.Value.Id, ActiveTab.Value.ImageIterator.CurrentIndex, false, files, ActiveTab.CurrentValue.GetTabCancellation().Token);
+        var currentIndex = ActiveTab.Value.ImageIterator.CurrentIndex;
+        if (currentIndex >= 0 && currentIndex < files.Count)
+        {
+            SharedCache.Preload(ActiveTab.Value.Id, files[currentIndex], false, ActiveTab.CurrentValue.GetTabCancellation().Token);
+        }
     }
-    /// <inheritdoc cref="Initialize(INavigationService, IImageCache, IThumbnailLoader, IFileWatcherService, IThumbnailCache)"/>>
-    public void LoadAndInitialize(INavigationService navigationService, IImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, IFileWatcherService fileWatcherService)
+    /// <inheritdoc cref="Initialize(INavigationService, SharedImageCache, IThumbnailLoader, IFileWatcherService, IThumbnailCache)"/>>
+    public void LoadAndInitialize(INavigationService navigationService, SharedImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, IFileWatcherService fileWatcherService)
     {
         Initialize(navigationService, cache, thumbnailLoader, fileWatcherService, thumbCache);
         ActiveTab.Value.InitializeImageIterator([], cache, thumbCache, thumbnailLoader, fileWatcherService, thumbCache);
@@ -102,7 +105,6 @@ public class TabOverviewViewModel
         {
             tab.Initialize(SharedCache, SharedThumbnailCache, SharedThumbnailLoader, SharedFileWatcher, SharedThumbnailCache);
         }
-        SharedCache!.RegisterOwner(tab.Id);
         SelectTab(tab);
         return tab;
     }
@@ -156,7 +158,7 @@ public class TabOverviewViewModel
             SelectTab(Tabs.Value[newIndex]);
         }
 
-        SharedCache?.RemoveOwner(tab.Id);
+        SharedCache?.ReleaseOwner(tab.Id);
         SharedThumbnailCache?.RemoveOwner(tab.Id);
         tab.Dispose();
     }
@@ -528,22 +530,18 @@ public class TabOverviewViewModel
 
     public object? GetSourceFromFile(FileInfo fileInfo)
     {
-        if (SharedCache.TryGet(fileInfo, out var preLoadValue))
-        {
-            if (!preLoadValue.IsLoading && preLoadValue.ImageModel?.Image is not null)
-            {
-                return preLoadValue.ImageModel.Image;
-            }
-        }
-
-        if (ActiveTab.CurrentValue.ImageIterator is null || ActiveTab.CurrentValue.ImageIterator.CurrentIndex < 0 
-            || ActiveTab.CurrentValue.ImageIterator.CurrentIndex >= ActiveTab.CurrentValue.ImageIterator.Files.Count)
+        if (SharedCache is null || fileInfo is null)
         {
             return null;
         }
 
-        return SharedCache.LoadAsync(ActiveTab.CurrentValue.Id, ActiveTab.CurrentValue.ImageIterator.CurrentIndex,
-            ActiveTab.CurrentValue.ImageIterator.Files, ActiveTab.CurrentValue.GetTabCancellation().Token)?.Result?.Image;
+        if (SharedCache.TryGetReady(fileInfo, out var ready) && ready.Image is not null)
+        {
+            return ready.Image;
+        }
+
+        var tab = ActiveTab.CurrentValue;
+        return SharedCache.GetAsync(tab.Id, fileInfo, tab.GetTabCancellation().Token).Result?.Image;
     }
 
     
