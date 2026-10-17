@@ -4,6 +4,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Navigation.Services;
 using PicView.Core.DebugTools;
+using PicView.Core.Gallery;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 
@@ -49,6 +50,34 @@ public static class TabNavigationInitializer
         core.GallerySettings.Initialize();
     }
     
+    /// <summary>
+    /// Applies the docked-gallery settings to a tab before it is initialized: undocks when the interface is hidden and
+    /// the docked gallery should not show then, and opens a docked gallery without animation.
+    /// </summary>
+    /// <remarks>Call before <see cref="Initialize(CoreViewModel, List{FileInfo}, MainWindow)"/>, which subscribes to
+    /// the gallery mode; changing it afterwards would hide the docked gallery.</remarks>
+    /// <returns>Whether the docked gallery is shown and needs loading.</returns>
+    public static bool PrepareDockedGallery(TabViewModel tab)
+    {
+        var gallery = tab.Gallery;
+        if (Settings.Gallery.IsGalleryDocked)
+        {
+            if (!Settings.UIProperties.ShowInterface && !Settings.Gallery.ShowDockedGalleryInHiddenUI)
+            {
+                gallery.IsGalleryDocked.Value = false;
+                return false;
+            }
+            if (Settings.Gallery.DockPosition is GalleryDockPosition.Closed)
+            {
+                Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
+            }
+            gallery.ActiveGalleryMode.Value = GalleryMode.DockedNoAnimation;
+            return true;
+        }
+        Settings.Gallery.DockPosition = GalleryDockPosition.Closed;
+        return false;
+    }
+
     public static void InitializeConsecutiveTab(CoreViewModel core, MainWindow mainWindow, TabViewModel tab)
     {
         InitializeNewTab(tab, core.MainWindows.ActiveWindow.CurrentValue, mainWindow, core);

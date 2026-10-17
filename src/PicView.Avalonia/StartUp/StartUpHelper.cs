@@ -171,7 +171,7 @@ public static class StartUpHelper
 
     public static void HandleStartImage(MainWindow mainWindow, CoreViewModel core, string arg)
     {
-        _ = Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, core, arg, continueFromLeftOff: false, isStartup: true));
+        _ = Task.Run(() => SourceOpener.OpenAsync(mainWindow, core, arg, new OpenOptions(IsStartup: true)).AsTask());
         if (Settings.WindowProperties.AutoFit)
         {
             Dispatcher.UIThread.Post(() =>
@@ -191,7 +191,7 @@ public static class StartUpHelper
             }
             else
             {
-                _ = Task.Run(() => QuickLoad.QuickLoadAsync(mainWindow, core, Settings.StartUp.LastFile, continueFromLeftOff: true, isStartup: true));
+                _ = Task.Run(() => SourceOpener.OpenAsync(mainWindow, core, Settings.StartUp.LastFile, new OpenOptions(IsStartup: true, ContinueFromLeftOff: true)).AsTask());
                 if (Settings.WindowProperties.AutoFit)
                 {
                     Dispatcher.UIThread.Post(() =>

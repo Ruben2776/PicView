@@ -7,7 +7,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.StartUp;
 using PicView.Core.DebugTools;
 using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
@@ -168,23 +167,12 @@ public static class IPC
                     core.PlatformService.StopTaskbarProgress();
                     var desktop = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
                     var activeWindow = core.MainWindows.ActiveWindow.CurrentValue;
-                    var tabs = activeWindow.WindowTabs;
-                    var tab = tabs.ActiveTab.CurrentValue;
-                    activeWindow.IsLoadingIndicatorShown.Value = true;
-                    if (!tab.IsInitialized)
+                    var mainWindow = await Dispatcher.UIThread.InvokeAsync(() => desktop?.MainWindow as MainWindow);
+                    if (mainWindow is null)
                     {
-                        var mainWindow = await Dispatcher.UIThread.InvokeAsync(() => desktop?.MainWindow as MainWindow);
-                        if (mainWindow is null)
-                        {
-                            return;
-                        }
-                        await QuickLoad.QuickLoadAsync(mainWindow, core, line, continueFromLeftOff: false).ConfigureAwait(false);
+                        return;
                     }
-                    else
-                    {
-                        await tabs.LoadFromStringAsync(line).ConfigureAwait(false);
-                    }
-                    activeWindow.IsLoadingIndicatorShown.Value = false;
+                    await SourceOpener.OpenAsync(mainWindow, core, line).ConfigureAwait(false);
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         desktop?.MainWindow.Activate();

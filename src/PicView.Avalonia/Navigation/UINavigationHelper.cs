@@ -2,9 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.StartUp;
-using PicView.Avalonia.Views.UC;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.FileHistory;
 using PicView.Core.ViewModels;
 
@@ -21,46 +18,15 @@ public static class UINavigationHelper
 
         vm.TopTitlebarViewModel.DropDownMenu.IsDropDownMenuVisible.Value = false;
 
-        var tabs = vm.WindowTabs;
-        var tab = tabs.ActiveTab.CurrentValue;
-        if (!tab.IsInitialized)
+        var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
+        if (core is null)
         {
-            var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
-            if (core is null)
-            {
-                return;
-            }
-
-            await QuickLoad.QuickLoadAsync(mainWindow, core, path, true).ConfigureAwait(false);
             return;
         }
 
-        var isViewStartUpMenu = false;
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            if (tab.CurrentView.CurrentValue is StartUpMenu)
-            {
-                tab.CurrentView.Value = new ImageViewer();
-                isViewStartUpMenu = true;
-            }
-        });
-
-        vm.IsLoadingIndicatorShown.Value = true;
-        var isLoadedSuccessfully = (await tabs.LoadFromStringAsync(path).ConfigureAwait(false)).IsLoaded;
-        vm.IsLoadingIndicatorShown.Value = false;
-
-        await Dispatcher.UIThread.InvokeAsync(() =>
-        {
-            if (!isLoadedSuccessfully && isViewStartUpMenu)
-            {
-                tab.CurrentView.Value = new StartUpMenu();
-            }
-            else if (isLoadedSuccessfully)
-            {
-                tab.UpdateTabTitle();
-                WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
-            }
-        });
+        // Continue from the remembered start-up directory only when opening into a fresh tab
+        var isFreshTab = !vm.WindowTabs.ActiveTab.CurrentValue.IsInitialized;
+        await SourceOpener.OpenAsync(mainWindow, core, path, new OpenOptions(ContinueFromLeftOff: isFreshTab)).ConfigureAwait(false);
     }
 
     public static async ValueTask OpenNextFileHistoryEntry(MainWindow mainWindow, MainWindowViewModel vm)
