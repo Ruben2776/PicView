@@ -303,10 +303,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             return;
         }
 
-        // We need to update the secondary model first, because updating the first model will trigger reactive subscription,
-        // where the secondary model need to be valid beforehand.
-        _tab.SecondaryModel = secondModel;
-        _tab.Model = firstModel;
+        _tab.Display(firstModel, secondModel);
         UpdateNavigationProperties();
         TriggerPreload();
 
@@ -470,9 +467,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             UpdateImageFromPage(newModel);
         }
 
-        _tab.Image.Value = newModel.Image;
-        _tab.FileInfo.Value = newModel.FileInfo;
-        _tab.Model = newModel;
+        // Keep the secondary when side by side: this path only moves the primary (e.g., repeated navigation)
+        _tab.Display(newModel, Settings.ImageScaling.ShowImageSideBySide ? _tab.SecondaryModel : null);
         UpdateNavigationProperties();
         TriggerPreload();
 

@@ -261,9 +261,7 @@ public static class QuickLoad
         }
         
         var imageModel = await GetImageModel.GetImageModelAsync(fileInfo, magickImage).ConfigureAwait(false);
-        tab.Image.Value = imageModel.Image;
-        tab.FileInfo.Value = fileInfo;
-        tab.Model = imageModel;
+        tab.Display(imageModel);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             core.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
@@ -280,7 +278,7 @@ public static class QuickLoad
             var (_, nextIndex, _) = IterationHelper.GetIterations(index, files.Count, NavigateTo.Next, SkipAmount.None);
             var nextFileInfo = files[nextIndex];
             var secondImageModel = await GetImageModel.GetImageModelAsync(nextFileInfo).ConfigureAwait(false);
-            tab.SecondaryModel = secondImageModel;
+            tab.Display(imageModel, secondImageModel);
             TabNavigationInitializer.Initialize(core, files, mainWindow);
             UpdateImage.ChangeImage(mainWindow, tab, core.MainWindows.ActiveWindow.CurrentValue);
             UpdateImage.UpdateTabSideBySideTitles(tab, index, nextIndex, fileInfo, nextFileInfo, files);

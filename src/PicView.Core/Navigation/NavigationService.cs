@@ -47,11 +47,7 @@ public class NavigationService(
 
             if (!Settings.ImageScaling.ShowImageSideBySide)
             {
-                ShowModel(model);
-                tab.SecondaryModel = null;
-                tab.SecondaryImage.Value = null;
-                tab.SecondaryImageType.Value = null;
-                tab.SecondaryFileInfo.Value = null;
+                tab.Display(model);
             }
 
             await Task.Yield();
@@ -72,21 +68,10 @@ public class NavigationService(
                         {
                             return;
                         }
-                        tab.SecondaryModel = secondaryModel;
-                        tab.SecondaryImage.Value = secondaryModel.Image;
-                        tab.SecondaryImageType.Value = secondaryModel.ImageType;
-                        tab.SecondaryFileInfo.Value = secondaryFileInfo;
                         secondaryIndex = nextIteration;
                     }
-                    else
-                    {
-                        tab.SecondaryModel = null;
-                        tab.SecondaryImage.Value = null;
-                        tab.SecondaryImageType.Value = null;
-                        tab.SecondaryFileInfo.Value = null;
-                    }
                 }
-                ShowModel(model);
+                tab.Display(model, secondaryModel);
             }
 
             tab.UpdateTabTitle();
@@ -124,16 +109,6 @@ public class NavigationService(
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(NavigationService), nameof(RepopulateIterator), e);
-        }
-        
-        return;
-
-        void ShowModel(ImageModel model)
-        {
-            tab.Model = model; // Image updated via reactive subscription
-            tab.FileInfo.Value = model.FileInfo;
-            tab.Image.Value = model.Image;
-            tab.ImageType.Value = model.ImageType;
         }
     }
 
@@ -494,8 +469,7 @@ public class NavigationService(
             }
             
             var model = await imageModelLoader.GetImageModelAsync(new FileInfo(destPath), ct.Token).ConfigureAwait(false);
-            tab.Model = model;
-            tab.SecondaryModel = null;
+            tab.Display(model);
             
             // Set titles to filename after successful load
             tab.SourceURL = url;
