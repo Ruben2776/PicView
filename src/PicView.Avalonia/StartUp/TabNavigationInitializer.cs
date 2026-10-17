@@ -78,6 +78,22 @@ public static class TabNavigationInitializer
         return false;
     }
 
+    /// <summary>
+    /// Gives an initialized tab a new, empty image iterator from the window's shared services, for a tab whose
+    /// iterator was disposed to show a single image. Does not subscribe to the tab again.
+    /// </summary>
+    public static void RecreateImageIterator(TabOverviewViewModel tabs, TabViewModel tab)
+    {
+        if (tabs.SharedCache is not { } cache ||
+            tabs.SharedThumbnailCache is not { } thumbCache ||
+            tabs.SharedThumbnailLoader is not { } thumbLoader)
+        {
+            return;
+        }
+
+        tab.InitializeImageIterator([], cache, thumbCache, thumbLoader, tabs.SharedFileWatcher, thumbCache);
+    }
+
     public static void InitializeConsecutiveTab(CoreViewModel core, MainWindow mainWindow, TabViewModel tab)
     {
         InitializeNewTab(tab, core.MainWindows.ActiveWindow.CurrentValue, mainWindow, core);

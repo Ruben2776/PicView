@@ -12,7 +12,7 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.FileSystem;
 
-public class FilePickerService(IStorageProvider? storageProvider = null)
+public class FilePickerService(IStorageProvider? storageProvider = null) : ISavePathPicker
 {
     public async Task SelectAndLoadFile(MainWindow mainWindow, MainWindowViewModel vm)
     {
@@ -79,17 +79,10 @@ public class FilePickerService(IStorageProvider? storageProvider = null)
         return null;
     }
 
-    public async ValueTask<bool> PickAndSaveFileAsAsync(string? fileName, MainWindowViewModel vm)
-    {
-        var file = await PickFileForSavingAsync(fileName).ConfigureAwait(false);
-        if (file is null)
-        {
-            return false;
-        }
+    /// <inheritdoc />
+    public Task<string?> PickSavePathAsync(string? suggestedName, string? ext = null) =>
+        PickFileForSavingAsync(suggestedName, ext);
 
-        return await FileSaver.SaveFileAsync(fileName, file, vm).ConfigureAwait(false);
-    }
-    
     public async Task<string?> PickFileForSavingAsync(string? fileName, string? ext = null)
     {
         try

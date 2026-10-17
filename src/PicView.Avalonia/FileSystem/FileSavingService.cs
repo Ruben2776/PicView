@@ -1,187 +1,153 @@
-using Avalonia;
 using Avalonia.Media.Imaging;
-using Avalonia.Threading;
+using ImageMagick;
 using PicView.Core.DebugTools;
-using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.FileSystem;
 
-public class FileSavingService(FilePickerService? filePickerService = null)
+/// <summary>
+/// Saves what a tab shows, with its rotation and flip applied. It decides what the save source is: the image with
+/// effects applied, the file on disk, or the in-memory bitmap of a single image (clipboard, base64).
+/// </summary>
+/// <param name="pathPicker">Asks the user where to save, for Save As.</param>
+/// <param name="getEffects">The effects view model, if the effects window has been opened.</param>
+public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel?> getEffects)
 {
-    private readonly FilePickerService _filePickerService = filePickerService ?? new FilePickerService();
+    private const string PngExtension = ".png";
+    private static readonly char[] InvalidFileNameChars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*'];
 
-    public async ValueTask<bool> SaveCurrentFile(MainWindowViewModel vm)
+    /// <summary>
+    /// Saves the tab's image over its file, or asks where to save it when it is not a file.
+    /// </summary>
+    public async ValueTask<bool> SaveAsync(TabViewModel tab)
     {
-        bool isSaved;
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        bool isCurrentImage;
-        if (tab.FileInfo?.CurrentValue is null)
+        if (tab.FileInfo.CurrentValue is not { } file)
         {
-            // If the viewed pic is not a file, open file picker
-            isSaved = await SaveFileAs(vm).ConfigureAwait(false);
-            isCurrentImage = false;
-        }
-        else
-        {
-            isSaved = await SaveFileAsync(tab.FileInfo.CurrentValue.FullName,
-                tab.FileInfo.CurrentValue.FullName, vm).ConfigureAwait(false);
-            isCurrentImage = true;
+            return await SaveAsAsync(tab).ConfigureAwait(false);
         }
 
-        if (!isSaved)
+        return await SaveToAsync(tab, file.FullName).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Asks the user where to save the tab's image, then saves it there.
+    /// </summary>
+    public async ValueTask<bool> SaveAsAsync(TabViewModel tab)
+    {
+        var destination = await pathPicker.PickSavePathAsync(GetSuggestedFileName(tab, DateTime.Now))
+            .ConfigureAwait(false);
+        if (string.IsNullOrWhiteSpace(destination))
         {
             return false;
         }
-        
-        // TODO: Add visual design to tell whether file was saved
-        
-        if (!isCurrentImage)
-        {
-            return true;
-        }
 
-        tab.ImageIterator.Cache.Invalidate(tab.FileInfo.CurrentValue.FullName);
-
-        return true;
+        return await SaveToAsync(tab, destination).ConfigureAwait(false);
     }
 
-    public async ValueTask<bool> SaveFileAs(MainWindowViewModel vm)
+    /// <summary>
+    /// Saves the tab's image to <paramref name="destination"/>, converted to the format of its extension.
+    /// </summary>
+    public async ValueTask<bool> SaveToAsync(TabViewModel tab, string destination)
     {
-        // Suggest random filename for saving, if it is not an existing file
-        var fileName = vm.WindowTabs.ActiveTab.CurrentValue?.FileInfo?.CurrentValue is null
-            ? Path.GetRandomFileName()
-            : vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue.Name;
-        
-        var isSaved = await _filePickerService.PickAndSaveFileAsAsync(fileName, vm).ConfigureAwait(false);
-        if (isSaved)
+        var angle = tab.RotationAngle.CurrentValue;
+        var isFlipped = tab.ScaleX.CurrentValue is -1;
+        var file = tab.FileInfo.CurrentValue;
+
+        bool isSaved;
+        try
         {
-            // TODO: Add visual design to tell whether file was saved
+            if (getEffects()?.ProcessedImage is { } processed && tab.ImageType.CurrentValue is not ImageType.Svg)
+            {
+                isSaved = await SaveProcessedImageAsync(processed, destination, angle, isFlipped).ConfigureAwait(false);
+            }
+            else if (file is not null)
+            {
+                isSaved = await SaveImageFileHelper.SaveImageAsync(null, file.FullName, destination,
+                    ext: Path.GetExtension(destination), rotationAngle: angle, flipImage: isFlipped).ConfigureAwait(false);
+            }
+            else if (tab.Image.CurrentValue is Bitmap bitmap)
+            {
+                isSaved = await SaveBitmapAsync(bitmap, destination, angle, isFlipped).ConfigureAwait(false);
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(FileSavingService), nameof(SaveToAsync), e);
+            return false;
+        }
+
+        if (isSaved && file is not null && file.FullName.Equals(destination, StringComparison.Ordinal))
+        {
+            tab.ImageIterator?.Cache.Invalidate(file.FullName);
         }
 
         return isSaved;
     }
 
-    public async ValueTask<bool> SaveFileAsync(string? filename, string destination, MainWindowViewModel vm)
-    { 
-        var core = Dispatcher.UIThread.CheckAccess()
-            ? Application.Current.DataContext as CoreViewModel
-            : await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-        
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        var angle = tab.RotationAngle.CurrentValue;
-        var isFlipped = tab.ScaleX.CurrentValue is -1;
-        if (core.Effects?.ProcessedImage is { } magick)
+    /// <summary>
+    /// The file name to suggest when saving: the file's own name, or the tab title with the date for an image that is
+    /// not a file.
+    /// </summary>
+    internal static string GetSuggestedFileName(TabViewModel tab, DateTime now)
+    {
+        if (tab.FileInfo.CurrentValue is { } file)
         {
-            return await SaveProcessedMagickImage().ConfigureAwait(false);
+            return file.Name;
         }
-        
-        if (!string.IsNullOrWhiteSpace(filename))
-        {
-            return await SaveImageFromFile().ConfigureAwait(false);
-        }
-        
-        return await SaveBitmap().ConfigureAwait(false);
-        
-        async ValueTask<bool> SaveImageFromFile()
-        {
-            var isSaved = await SaveImageFileHelper.SaveImageAsync(null,
-                filename,
-                destination,
-                null,
-                null,
-                null,
-                Path.GetExtension(destination),
-                angle,
-                null,
-                false,
-                false,
-                true,
-                isFlipped).ConfigureAwait(false);
-            return isSaved;
-        }
-        
-        async ValueTask<bool> SaveBitmap()
-        {
-            try
-            {
-                switch (vm.WindowTabs.ActiveTab.CurrentValue.ImageType.CurrentValue)
-                {
-                    case ImageType.AnimatedGif: // TODO: Add animated GIF support
-                    case ImageType.AnimatedWebp: // TODO: Add animated WebP support
-                    case ImageType.AnimatedAvif: // TODO: Add animated AVIF support
-                    case ImageType.MotionPhoto: // Saves the still cover; the embedded video is only kept via the file-copy path
-                    case ImageType.Bitmap:
-                    {
-                        if (tab.Image.CurrentValue is not Bitmap bitmap)
-                        {
-                            return false;
-                        }
 
-                        if (string.IsNullOrWhiteSpace(filename)) return false;
+        var title = string.Concat((tab.TabTitle.CurrentValue ?? string.Empty)
+            .Where(c => !char.IsControl(c) && Array.IndexOf(InvalidFileNameChars, c) < 0)).Trim();
+        if (string.IsNullOrEmpty(title))
+        {
+            title = "PicView";
+        }
 
-                        var stream = FileStreamUtils.GetOptimizedFileStream(new FileInfo(filename), true);
-                        await using (stream.ConfigureAwait(false))
-                        {
-                            bitmap.Save(stream, PngBitmapEncoderOptions.Default);
-                        }
-                        break;
-                    }
-                    case ImageType.Svg:
-                        // TODO convert svg to bitmap and save
-                        return await SaveImageFromFile().ConfigureAwait(false);
-                    default:
-                        throw new InvalidOperationException("No bitmap available for saving.");
-                }
-            }
-            catch (Exception e)
+        return $"{title} {now:yyyy-MM-dd HHmmss}{PngExtension}";
+    }
+
+    private static async ValueTask<bool> SaveProcessedImageAsync(MagickImage processed, string destination, int angle,
+        bool isFlipped)
+    {
+        // Transform a copy, so saving twice does not rotate or flip the processed image twice
+        using var image = (MagickImage)processed.Clone();
+        if (angle is not 0)
+        {
+            image.Rotate(angle);
+        }
+
+        if (isFlipped)
+        {
+            image.Flop();
+        }
+
+        await image.WriteAsync(destination).ConfigureAwait(false);
+        return true;
+    }
+
+    private static async ValueTask<bool> SaveBitmapAsync(Bitmap bitmap, string destination, int angle, bool isFlipped)
+    {
+        var ext = Path.GetExtension(destination);
+        if (ext.Equals(PngExtension, StringComparison.OrdinalIgnoreCase) && angle is 0 && !isFlipped)
+        {
+            var fileStream = File.Create(destination);
+            await using (fileStream.ConfigureAwait(false))
             {
-                DebugHelper.LogDebug(nameof(FileSavingService), nameof(SaveFileAsync), e);
-                return false;
+                bitmap.Save(fileStream, PngBitmapEncoderOptions.Default);
             }
-        
+
             return true;
         }
-        
-        async ValueTask<bool> SaveProcessedMagickImage()
-        {
-            try
-            {
-                switch (vm.WindowTabs.ActiveTab.CurrentValue.ImageType.CurrentValue)
-                {
-                    case ImageType.AnimatedGif: // TODO: Add animated GIF support
-                    case ImageType.AnimatedWebp: // TODO: Add animated WebP support
-                    case ImageType.AnimatedAvif: // TODO: Add animated AVIF support
-                    case ImageType.MotionPhoto: // Saving a processed image drops the embedded video, keep the still only
-                    case ImageType.Bitmap:
-                    {
-                        if (angle is not 0)
-                        {
-                            magick.Rotate(angle);
-                        }
 
-                        if (isFlipped)
-                        {
-                            magick.Flop();
-                        }
-                        await magick.WriteAsync(destination).ConfigureAwait(false);
-                        break;
-                    }
-                    case ImageType.Svg:
-                        // TODO convert svg to bitmap and save
-                        return await SaveImageFromFile().ConfigureAwait(false);
-                    default:
-                        throw new InvalidOperationException("No bitmap available for saving.");
-                }
-            }
-            catch (Exception e)
-            {
-                DebugHelper.LogDebug(nameof(FileSavingService), nameof(SaveFileAsync), e);
-                return false;
-            }
-        
-            return true;
-        }
+        // Convert with Magick to the destination's format, and to apply the rotation and flip
+        using var pngStream = new MemoryStream();
+        bitmap.Save(pngStream, PngBitmapEncoderOptions.Default);
+        pngStream.Position = 0;
+        return await SaveImageFileHelper.SaveImageAsync(pngStream, null, destination, ext: ext,
+            rotationAngle: angle, flipImage: isFlipped).ConfigureAwait(false);
     }
 }

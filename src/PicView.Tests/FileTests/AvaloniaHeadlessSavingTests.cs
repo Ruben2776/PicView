@@ -1,5 +1,3 @@
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Threading;
 using ImageMagick;
 using PicView.Avalonia.FileSystem;
@@ -70,17 +68,14 @@ public class AvaloniaHeadlessSavingTests
             var originalSize = new FileInfo(sourceJpg).Length;
             Assert.True(originalSize > 0, "Original JPEG size should be greater than 0");
 
-            // 2. Initialize CoreViewModel and assign to Application.Current.DataContext
-            var core = new CoreViewModel(null, _ => new ValueTask<Core.Models.ImageModel>((Core.Models.ImageModel)null!));
-            Application.Current.DataContext = core;
-
+            // 2. Show the JPEG in a tab
             var vm = CreateDummyVm();
-            var window = new Window();
-            var pickerService = new FilePickerService(window.StorageProvider);
-            var savingService = new FileSavingService(pickerService);
+            var tab = new TabViewModel(null!, vm);
+            tab.FileInfo.Value = new FileInfo(sourceJpg);
+            var savingService = new FileSavingService(new StubSavePathPicker(null), () => null);
 
             // 3. Save file again as test.webp
-            var result = RunWithDispatcher(savingService.SaveFileAsync(sourceJpg, destWebp, vm));
+            var result = RunWithDispatcher(savingService.SaveToAsync(tab, destWebp));
 
             // 4. Assert it was saved successfully and file size is lower
             Assert.True(result, "SaveFileAsync should return true");
@@ -93,7 +88,6 @@ public class AvaloniaHeadlessSavingTests
         }
         finally
         {
-            Application.Current.DataContext = null;
             // Cleanup
             if (Directory.Exists(tempDir))
             {

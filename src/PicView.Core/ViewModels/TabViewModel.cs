@@ -78,8 +78,27 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
     /// Without a secondary, any previous one is cleared. This is the one way to change the shown models: it sets
     /// <see cref="SecondaryModel"/> before <see cref="Model"/>, because the UI reacts to <see cref="Model"/> changing
     /// and reads the secondary model then, and sets the bindable properties so they never lag behind the models.
+    /// Showing models from files means the tab no longer shows a single image, so <see cref="SingleImageType"/> is
+    /// reset.
     /// </summary>
     public void Display(ImageModel primary, ImageModel? secondary = null)
+    {
+        SingleImageType = SingleImageType.None;
+        ShowModels(primary, secondary);
+    }
+
+    /// <summary>
+    /// Shows a single image that is not browsed with the tab's files, such as a clipboard image, in its own
+    /// <paramref name="model"/>. Sets <see cref="SingleImageType"/> before the model, because the UI reads it when
+    /// the model changes.
+    /// </summary>
+    public void DisplaySingleImage(ImageModel model, SingleImageType type)
+    {
+        SingleImageType = type;
+        ShowModels(model, null);
+    }
+
+    private void ShowModels(ImageModel primary, ImageModel? secondary)
     {
         SecondaryModel = secondary;
         SecondaryImage.Value = secondary?.Image;
@@ -237,7 +256,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
                     nameTitle = SourceURL ?? string.Empty;
                     break;
                 default:
-                    nameTitle = Model?.FileInfo?.FullName ?? string.Empty;
+                    nameTitle = Model?.FileInfo?.FullName ?? TabTitle.CurrentValue ?? string.Empty;
                     break;
             }
             var zoom = ZoomLevel.CurrentValue;

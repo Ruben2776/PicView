@@ -74,6 +74,32 @@ public class TabDisplayTests
         Assert.Same(secondary.Image, secondaryImageWhenPrimaryChanged);
     }
 
+    [Fact]
+    public void Display_AfterSingleImage_EndsSingleImage()
+    {
+        _tab.DisplaySingleImage(new ImageModel { Image = new object() }, SingleImageType.Clipboard);
+
+        _tab.Display(Model("a.jpg"));
+
+        Assert.Equal(SingleImageType.None, _tab.SingleImageType);
+    }
+
+    [Fact]
+    public void DisplaySingleImage_AfterFile_ShowsOwnModelWithoutFile()
+    {
+        var file = Model("a.jpg");
+        file.PixelWidth = 100;
+        _tab.Display(file);
+        var single = new ImageModel { Image = new object(), PixelWidth = 8 };
+
+        _tab.DisplaySingleImage(single, SingleImageType.Clipboard);
+
+        Assert.Same(single, _tab.Model);
+        Assert.Null(_tab.FileInfo.Value);
+        Assert.Equal(SingleImageType.Clipboard, _tab.SingleImageType);
+        Assert.Equal(100u, file.PixelWidth);
+    }
+
     private static ImageModel Model(string name, ImageType type = ImageType.Bitmap) => new()
     {
         FileInfo = new FileInfo(name),

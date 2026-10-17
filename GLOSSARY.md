@@ -1,6 +1,6 @@
 # PicView
 
-An image viewer. This glossary covers the language of input: how key presses, mouse buttons and the wheel become things the viewer does.
+An image viewer. This glossary covers the language of input (how key presses, mouse buttons and the wheel become things the viewer does), of tabs, and of saving.
 
 ## Input
 
@@ -35,3 +35,19 @@ _Avoid_: Enter action, OK button
 **Non-blocking Input Mode**:
 An Input Mode that overrides specific Actions, disallows Actions that need a still image (such as `Crop`), and lets every other Keybind work as usual. Slideshow, Motion Photo and Animated Image are non-blocking.
 _Avoid_: Overlay mode, passive mode
+
+## Tabs
+
+**Fresh Tab**:
+A tab that has never browsed files. Opening a file into one continues from the remembered start-up directory when browsing subdirectories; showing a Single Image does not make a tab fresh again.
+_Avoid_: New tab, uninitialized tab
+
+**Single Image**:
+An image a tab shows on its own, without the files around it to browse: a clipboard image, a base64 image, a temporary file or a URL download. It has its own model, and showing a file again ends it.
+_Avoid_: Standalone image, loose image
+
+## Saving
+
+**Save Source**:
+What a save writes out, decided by the save module rather than the caller: the shown file's image with effects applied when the effects window has one, else the file on disk, else the in-memory bitmap of a Single Image. The tab's rotation and flip are applied to each.
+_Avoid_: Source file, input path

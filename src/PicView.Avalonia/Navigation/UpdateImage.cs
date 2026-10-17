@@ -179,18 +179,19 @@ public static class UpdateImage
     public static void SetSingleImage(MainWindowViewModel vm, MainWindow mainWindow, Bitmap image, SingleImageType type, string name)
     {
         var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
-        tabViewModel.Image.Value = image;
-        tabViewModel.ImageType.Value = ImageType.Bitmap;
-
         tabViewModel.Gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
 
         var width = (uint)image.PixelSize.Width;
         var height = (uint)image.PixelSize.Height;
 
-        tabViewModel.Model.PixelWidth = width;
-        tabViewModel.Model.PixelHeight = height;
-
-        tabViewModel.SingleImageType = type;
+        // Its own model, so the previous file's cached model keeps its own size
+        tabViewModel.DisplaySingleImage(new ImageModel
+        {
+            Image = image,
+            PixelWidth = width,
+            PixelHeight = height,
+            ImageType = ImageType.Bitmap
+        }, type);
         
         if (Settings.WindowProperties.AutoFit)
         {
@@ -220,8 +221,8 @@ public static class UpdateImage
         tabViewModel.Title.Value = windowTitles.BaseTitle;
         tabViewModel.TitleTooltip.Value = windowTitles.FilePathTitle;
         tabViewModel.TabTitle.Value = name;
-        tabViewModel.IsInitialized = false; // We will need to initialize this again when browsing files
-        tabViewModel.DisposeImageIterator();
+        tabViewModel.DisposeImageIterator(); // SourceOpener creates a new one when browsing files again
+        vm.Core.Effects?.ProcessedImage = null; // Not a file, so saving uses the bitmap
     }
 
     public static async ValueTask SetSingeBase64ImageAsync(string base64, MainWindowViewModel vm, MainWindow mainWindow, CancellationToken ct)

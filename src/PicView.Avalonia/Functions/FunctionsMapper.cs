@@ -711,11 +711,11 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         return ValueTask.CompletedTask;
     }
 
-    /// <inheritdoc cref="FileSavingService.SaveCurrentFile(MainWindowViewModel)" />
+    /// <inheritdoc cref="FileSavingService.SaveAsync(TabViewModel)" />
     public async ValueTask Save() =>
         await FileSaver.SaveCurrentFile(vm).ConfigureAwait(false);
 
-    /// <inheritdoc cref="FileSavingService.SaveFileAs(MainWindowViewModel)" />
+    /// <inheritdoc cref="FileSavingService.SaveAsAsync(TabViewModel)" />
     public async ValueTask SaveAs() =>
         await FileSaver.SaveFileAs(vm).ConfigureAwait(false);
 

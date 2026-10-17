@@ -8,6 +8,8 @@ namespace PicView.Tests;
 
 public class TestAppBuilder
 {
+    // Skia instead of headless drawing, so bitmaps can be encoded (saving a clipboard image)
     public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>()
-        .UseHeadless(new AvaloniaHeadlessPlatformOptions());
+        .UseSkia()
+        .UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false });
 }

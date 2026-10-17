@@ -133,6 +133,9 @@ public static class SaveImageFileHelper
                     ".avif" => MagickFormat.Avif,
                     ".heic" => MagickFormat.Heic,
                     ".heif" => MagickFormat.Heif,
+                    ".bmp" => MagickFormat.Bmp,
+                    ".gif" => MagickFormat.Gif,
+                    ".tif" or ".tiff" => MagickFormat.Tiff,
                     _ => magickImage.Format
                 };
             }

@@ -21,7 +21,7 @@ public readonly record struct OpenOptions(bool IsStartup = false, bool ContinueF
 
 /// <summary>
 /// The one way the UI opens a file, directory, archive or URL in the active tab of a window: at startup, into a tab
-/// that has not been initialized yet, or into one already browsing.
+/// that has not been initialized yet, into one showing a single image, or into one already browsing.
 /// </summary>
 /// <remarks>
 /// Loading itself is Core's (<see cref="TabOverviewViewModel.LoadFromStringAsync"/>); this module owns what the UI
@@ -46,6 +46,12 @@ public static class SourceOpener
             // Prepare the gallery before initializing, so the docked gallery stays visible and loads with the files
             TabNavigationInitializer.PrepareDockedGallery(tab);
             TabNavigationInitializer.Initialize(core, [], mainWindow);
+        }
+        else if (tab.ImageIterator is null)
+        {
+            // Showing a single image (clipboard, base64) disposed the iterator, browse files with a new one
+            TabNavigationInitializer.PrepareDockedGallery(tab);
+            TabNavigationInitializer.RecreateImageIterator(tabs, tab);
         }
 
         var wasStartUpMenu = await Dispatcher.UIThread.InvokeAsync(() =>

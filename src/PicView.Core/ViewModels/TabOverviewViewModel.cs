@@ -355,7 +355,6 @@ public class TabOverviewViewModel
         var tab = senderTab ?? ActiveTab.Value;
         var ct = tab.GetTabCancellation();
         await SharedNavigation.LoadFromFileAsync(file, tab, ct).ConfigureAwait(false);
-        tab.SingleImageType = SingleImageType.None;
     }
     
     public async ValueTask LoadFromFileAsync(string file, TabViewModel? senderTab = null) => 
@@ -370,7 +369,6 @@ public class TabOverviewViewModel
         var tab = senderTab ?? ActiveTab.Value;
         var ct = tab.GetTabCancellation();
         await SharedNavigation.LoadFromDirectoryAsync(new FileInfo(file), tab, ct).ConfigureAwait(false);
-        tab.SingleImageType = SingleImageType.None;
     }
     
     public async ValueTask LoadFromIndexAsync(int index, TabViewModel? senderTab = null)
@@ -378,7 +376,6 @@ public class TabOverviewViewModel
         var tab = senderTab ?? ActiveTab.Value;
         var ct = tab.GetTabCancellation();
         await tab.ImageIterator.IterateToIndexAsync(index, ct).ConfigureAwait(false);
-        tab.SingleImageType = SingleImageType.None;
     }
     
     public async ValueTask<bool> LoadLastFileAsync()
@@ -389,13 +386,7 @@ public class TabOverviewViewModel
         }
         var tab = ActiveTab.Value;
         var ct = tab.GetTabCancellation();
-        var lastFileExists = await SharedNavigation.LoadLastFileAsync(tab, ct).ConfigureAwait(false);
-        if (lastFileExists)
-        {
-            return true;
-        }
-        tab.SingleImageType = SingleImageType.None;
-        return false;
+        return await SharedNavigation.LoadLastFileAsync(tab, ct).ConfigureAwait(false);
     }
 
     public async ValueTask<bool> LoadFromArchiveAsync(string source, TabViewModel? senderTab = null)

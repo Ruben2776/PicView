@@ -16,7 +16,11 @@ public class EffectsViewModel : IDisposable
     public ObservableCollection<EffectPreset> Presets { get; } = [];
     public BindableReactiveProperty<EffectPreset?> SelectedPreset { get; } = new();
     public BindableReactiveProperty<bool> IsResetVisible { get; } = new(false);
-    public MagickImage ProcessedImage { get; set; } = new();
+    /// <summary>
+    /// The shown file's image, with effects applied once there are any. <see langword="null"/> when the shown image
+    /// is not a file, such as a clipboard image.
+    /// </summary>
+    public MagickImage? ProcessedImage { get; set; }
     public BindableReactiveProperty<bool> IsLoading { get; } = new(true);
     public EffectsWindowConfig? WindowConfig { get; set; }
 
@@ -129,6 +133,11 @@ public class EffectsViewModel : IDisposable
 
     private void ApplyEffects(Unit unit)
     {
+        if (ProcessedImage is null)
+        {
+            return;
+        }
+
         IsLoading.Value = true;
         UpdateConfigFromProperties();
         
@@ -476,7 +485,7 @@ public class EffectsViewModel : IDisposable
 
         SelectedPreset.Dispose();
         IsResetVisible.Dispose();
-        ProcessedImage.Dispose();
+        ProcessedImage?.Dispose();
     }
 }
 
