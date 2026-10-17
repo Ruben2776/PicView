@@ -168,7 +168,7 @@ public class NavigationService(
         }
     }
 
-    public async Task LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct)
+    public async Task<bool> LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct)
     {
         var files = await Task.Run(() =>
         {
@@ -177,42 +177,54 @@ public class NavigationService(
         }, ct.Token).ConfigureAwait(false);
         if (files is null)
         {
-            return;
+            return false;
         }
         await RepopulateIterator(files[0], tab, ct, files).ConfigureAwait(false);
         tab.ArchiveExtractionService.Cleanup();
+        return true;
     }
 
-    public async ValueTask<bool> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct)
+    public async ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct,
+        string? rootDirectory = null)
     {
         if (string.IsNullOrWhiteSpace(source))
         {
-            return false;
+            return LoadResult.Failed();
         }
 
         var check = FileTypeResolver.CheckIfLoadableString(source);
         if (check is null)
         {
-            return false;
+            return LoadResult.Failed();
         }
 
         switch (check.Value.Type)
         {
             case FileTypeResolver.LoadAbleFileType.File:
-                await LoadFromFileAsync(check.Value.Data, tab, ct).ConfigureAwait(false);
-                return true;
+                if (rootDirectory is null)
+                {
+                    await LoadFromFileAsync(check.Value.Data, tab, ct).ConfigureAwait(false);
+                }
+                else
+                {
+                    var files = await Task.Run(() => FileListRetriever.RetrieveFiles(new FileInfo(rootDirectory), stringComparer), ct.Token)
+                        .ConfigureAwait(false);
+                    await RepopulateIterator(new FileInfo(check.Value.Data), tab, ct, files.Count > 0 ? files : null).ConfigureAwait(false);
+                    tab.ArchiveExtractionService.Cleanup();
+                }
+                return LoadResult.Loaded;
             case FileTypeResolver.LoadAbleFileType.Directory:
-            {
-                await LoadFromDirectoryAsync(new FileInfo(check.Value.Data), tab, ct).ConfigureAwait(false);
-                return true;
-            }
+                return await LoadFromDirectoryAsync(new FileInfo(check.Value.Data), tab, ct).ConfigureAwait(false)
+                    ? LoadResult.Loaded
+                    : LoadResult.Failed();
             case FileTypeResolver.LoadAbleFileType.Web:
-                await LoadFromUrlAsync(check.Value.Data, tab, ct).ConfigureAwait(false);
-                return true;
+                return await LoadFromUrlAsync(check.Value.Data, tab, ct).ConfigureAwait(false);
             case FileTypeResolver.LoadAbleFileType.Zip:
-                return await LoadFromArchiveAsync(check.Value.Data, tab, ct).ConfigureAwait(false);
+                return await LoadFromArchiveAsync(check.Value.Data, tab, ct).ConfigureAwait(false)
+                    ? LoadResult.Loaded
+                    : LoadResult.Failed();
             default:
-                return false;
+                return LoadResult.Failed();
         }
     }
 
@@ -419,7 +431,7 @@ public class NavigationService(
         }
     }
 
-    public async ValueTask LoadFromUrlAsync(string url, TabViewModel tab, CancellationTokenSource ct)
+    public async ValueTask<LoadResult> LoadFromUrlAsync(string url, TabViewModel tab, CancellationTokenSource ct)
     {
         tab.ImageIterator?.Dispose();
 
@@ -451,7 +463,7 @@ public class NavigationService(
                 tab.TitleTooltip.Value = title;
             }
 
-            if (totalBytesDownloaded.HasValue && totalFileSize.HasValue)
+            if (Settings.UIProperties.IsTaskbarProgressEnabled && totalBytesDownloaded.HasValue && totalFileSize.HasValue)
             {
                 platformService.SetTaskbarProgress((ulong)totalBytesDownloaded.Value, (ulong)totalFileSize.Value);
             }
@@ -465,7 +477,7 @@ public class NavigationService(
 
             if (ct.IsCancellationRequested)
             {
-                return;
+                return LoadResult.Failed();
             }
             
             var model = await imageModelLoader.GetImageModelAsync(new FileInfo(destPath), ct.Token).ConfigureAwait(false);
@@ -482,13 +494,19 @@ public class NavigationService(
 
             FileHistoryManager.Add(url);
             tab.ArchiveExtractionService.Cleanup();
+            return LoadResult.Loaded;
+        }
+        catch (OperationCanceledException)
+        {
+            platformService.StopTaskbarProgress();
+            return LoadResult.Failed();
         }
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(NavigationService), nameof(LoadFromUrlAsync), e);
             platformService.StopTaskbarProgress();
-            // Revert or show error state if needed
             tab.TabTitle.Value = TranslationManager.Translation?.ErrorLoadingImage ?? "Error";
+            return LoadResult.Failed(e.Message);
         }
     }
 

@@ -46,7 +46,7 @@ public static class UINavigationHelper
         });
 
         vm.IsLoadingIndicatorShown.Value = true;
-        var isLoadedSuccessfully = await tabs.LoadFromStringAsync(path).ConfigureAwait(false);
+        var isLoadedSuccessfully = (await tabs.LoadFromStringAsync(path).ConfigureAwait(false)).IsLoaded;
         vm.IsLoadingIndicatorShown.Value = false;
 
         await Dispatcher.UIThread.InvokeAsync(() =>
