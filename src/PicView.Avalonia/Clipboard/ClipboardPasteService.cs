@@ -81,21 +81,7 @@ public class ClipboardPasteService(
 
         var firstItem = filePaths[0];
 
-        if (!vm.WindowTabs.ActiveTab.Value.IsInitialized)
-        {
-            await QuickLoad.QuickLoadAsync(mainWindow, activeCore, firstItem, continueFromLeftOff: false).ConfigureAwait(false);
-        }
-        else
-        {
-            if (firstItem.IsArchive())
-            {
-                await vm.WindowTabs.LoadFromArchiveAsync(firstItem).ConfigureAwait(false);
-            }
-            else
-            {
-                await vm.WindowTabs.LoadFromFileAsync(firstItem).ConfigureAwait(false);
-            }
-        }
+        await SourceOpener.OpenAsync(mainWindow, activeCore, firstItem).ConfigureAwait(false);
 
         if (vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked.CurrentValue)
         {
@@ -141,19 +127,13 @@ public class ClipboardPasteService(
             return true;
         }
 
-        if (tab.IsInitialized)
-        {
-            return (await vm.WindowTabs.LoadFromStringAsync(text).ConfigureAwait(false)).IsLoaded;
-        }
-
         var activeCore = core ?? vm.Core;
         if (activeCore is null)
         {
             return false;
         }
 
-        await QuickLoad.QuickLoadAsync(mainWindow, activeCore, text, false).ConfigureAwait(false);
-        return true;
+        return (await SourceOpener.OpenAsync(mainWindow, activeCore, text).ConfigureAwait(false)).IsLoaded;
     }
 
     public async ValueTask<bool> PasteImageAsync(MainWindowViewModel vm)

@@ -1,11 +1,10 @@
+using PicView.Avalonia.Navigation;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.Localization;
@@ -28,44 +27,12 @@ public class FilePickerService(IStorageProvider? storageProvider = null)
             return;
         }
         var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current?.DataContext as CoreViewModel);
-        if (core is not null)
+        if (core is null)
         {
-            UIHelper.CloseMenus(core);
-        }
-
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        if (!tab.IsInitialized)
-        {
-            if (core is not null)
-            {
-                await QuickLoad.QuickLoadAsync(mainWindow, core, file, continueFromLeftOff: false).ConfigureAwait(false);
-            }
             return;
         }
-        
-        Dispatcher.UIThread.Invoke(() =>
-        {
-            if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is not StartUpMenu)
-            {
-                return;
-            }
-
-            vm.WindowTabs.ActiveTab.Value.CurrentView.Value = new ImageViewer();
-        });
-
-
-        if (!tab.Gallery.IsGalleryDocked.CurrentValue)
-        {
-            vm.IsLoadingIndicatorShown.Value = true;
-        }
-        try
-        {
-            await vm.WindowTabs.LoadFromFileAsync(file).ConfigureAwait(false);
-        }
-        finally
-        {
-            vm.IsLoadingIndicatorShown.Value = false;
-        }
+        UIHelper.CloseMenus(core);
+        await SourceOpener.OpenAsync(mainWindow, core, file).ConfigureAwait(false);
     }
 
     public async Task<string?> SelectFile()

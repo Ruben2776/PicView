@@ -1,3 +1,4 @@
+using PicView.Avalonia.Navigation;
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -93,7 +94,7 @@ public class App : Application, IPlatformSpecificService
         var arg = Environment.GetCommandLineArgs();
         if (arg.Length > 1 && startUpFilePath is null)
         {
-            Task.Run(() => QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, arg[1], false, true));
+            Task.Run(() => SourceOpener.OpenAsync(_mainWindow, _coreViewModel, arg[1], new OpenOptions(IsStartup: true)).AsTask());
         }
         else
         {
@@ -115,14 +116,14 @@ public class App : Application, IPlatformSpecificService
             if (!_isInitialLoad)
             {
                 _isInitialLoad = true;
-                await QuickLoad.QuickLoadAsync(_mainWindow, _coreViewModel, startUpFilePath, true, true).ConfigureAwait(false);
+                await SourceOpener.OpenAsync(_mainWindow, _coreViewModel, startUpFilePath, new OpenOptions(IsStartup: true, ContinueFromLeftOff: true)).ConfigureAwait(false);
                 Dispatcher.UIThread.Invoke(() => { _mainWindow.Activate(); }, DispatcherPriority.Send);
                 return;
             }
             if (Settings.UIProperties.OpenInSameWindow)
             {
                 Dispatcher.UIThread.Invoke(() => { _mainWindow.Activate(); }, DispatcherPriority.Send);
-                await _coreViewModel.MainWindows.ActiveWindow.CurrentValue.WindowTabs.LoadFromStringAsync(startUpFilePath).ConfigureAwait(false);
+                await SourceOpener.OpenAsync(_mainWindow, _coreViewModel, startUpFilePath).ConfigureAwait(false);
             }
             else
             {

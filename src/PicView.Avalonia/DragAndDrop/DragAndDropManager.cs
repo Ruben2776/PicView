@@ -60,36 +60,9 @@ public static class DragAndDropManager
         {
             await LoadSupportedFile(mainWindow, path, tabOverview, core).ConfigureAwait(false);
         }
-        else if (Directory.Exists(path))
+        else if (Directory.Exists(path) || path.IsArchive())
         {
-            if (tabOverview.ActiveTab.CurrentValue.IsInitialized)
-            {
-                await tabOverview.LoadFromDirectoryAsync(path).ConfigureAwait(false);
-            }
-            else
-            {
-                await QuickLoad.QuickLoadAsync(mainWindow, core, path, continueFromLeftOff: false).ConfigureAwait(false);
-            }
-        }
-        else if (path.IsArchive())
-        {
-            if (tabOverview.ActiveTab.CurrentValue.IsInitialized)
-            {
-                var vm = core.MainWindows.ActiveWindow.CurrentValue;
-                vm.IsLoadingIndicatorShown.Value = true;
-                try
-                {
-                    await tabOverview.LoadFromArchiveAsync(path).ConfigureAwait(false);
-                }
-                finally
-                {
-                    vm.IsLoadingIndicatorShown.Value = false;
-                }
-            }
-            else
-            {
-                await QuickLoad.QuickLoadAsync(mainWindow, core, path, continueFromLeftOff: false).ConfigureAwait(false);
-            }
+            await SourceOpener.OpenAsync(mainWindow, core, path).ConfigureAwait(false);
         }
         else
         {
@@ -423,12 +396,7 @@ public static class DragAndDropManager
                 return;
             }
         }
-        if (!tab.IsInitialized)
-        {
-            await QuickLoad.QuickLoadAsync(mainWindow, core, path, continueFromLeftOff: false).ConfigureAwait(false);
-            return;
-        }
-        await tabOverview.LoadFromFileAsync(path).ConfigureAwait(false);
+        await SourceOpener.OpenAsync(mainWindow, core, path).ConfigureAwait(false);
     }
 
     #endregion
