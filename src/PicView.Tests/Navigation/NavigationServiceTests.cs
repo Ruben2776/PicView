@@ -113,7 +113,7 @@ public class NavigationServiceTests : IDisposable
         // Initialize with mocks to avoid null refs
         var thumbCache = new MockThumbnailCache();
         tab.Initialize(_cache, thumbCache, _mockThumbnailLoader, null, thumbCache);
-        tab.ImageIterator.Files = new List<FileInfo>();
+        tab.ImageIterator.Initialize([]);
         return tab;
     }
 
@@ -210,8 +210,7 @@ public class NavigationServiceTests : IDisposable
         await File.Create(file3.FullName).DisposeAsync();
 
         tab.Model = new ImageModel { FileInfo = file1 };
-        tab.ImageIterator.Files = new List<FileInfo> { file1, file2, file3 };
-        tab.ImageIterator.SetCurrentIndex(0);
+        tab.ImageIterator.Initialize([file1, file2, file3]);
 
         var item1 = new GalleryItemViewModel { FileInfo = file1 };
         var item2 = new GalleryItemViewModel { FileInfo = file2 };

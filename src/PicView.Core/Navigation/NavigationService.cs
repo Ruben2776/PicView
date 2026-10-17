@@ -55,13 +55,9 @@ public class NavigationService(
             }
 
             await Task.Yield();
-            tab.ImageIterator.Files = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
-            var index = FindIndex(fileInfo, tab);
-            if (index < 0)
-            {
-                index = 0;
-            }
-            tab.ImageIterator.Initialize(tab.ImageIterator.Files, index);
+            IReadOnlyList<FileInfo> retrieved = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
+            var index = Math.Max(0, FindIndex(fileInfo, retrieved));
+            tab.ImageIterator.Initialize(retrieved, index);
 
             if (Settings.ImageScaling.ShowImageSideBySide)
             {
@@ -169,7 +165,7 @@ public class NavigationService(
             return;
         }
 
-        var index = FindIndex(fileInfo, tab);
+        var index = FindIndex(fileInfo, tab.ImageIterator.Files);
         if (index is not -1)
         {
             if (Settings.ImageScaling.ShowImageSideBySide)
@@ -643,12 +639,8 @@ public class NavigationService(
                 return;
             }
 
-            // Update files in iterator
-            tab.ImageIterator.Files = newFiles;
-
-            // Find new index of current file
-            var newIndex = FindIndex(currentFile, tab);
-            tab.ImageIterator.SetCurrentIndex(newIndex);
+            // Update files in iterator, keeping the position on the current file
+            tab.ImageIterator.Initialize(newFiles, FindIndex(currentFile, newFiles));
             
             // Update title
             tab.UpdateTabTitle();
@@ -661,7 +653,7 @@ public class NavigationService(
         }
     }
 
-    private static int FindIndex(FileInfo fileInfo, TabViewModel tab) =>
-        tab.ImageIterator.Files.FindIndex(x =>
+    private static int FindIndex(FileInfo fileInfo, IReadOnlyList<FileInfo> files) =>
+        files.FindIndex(x =>
             x.FullName.AsSpan().Equals(fileInfo.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase));
 }

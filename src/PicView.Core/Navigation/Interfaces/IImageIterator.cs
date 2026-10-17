@@ -11,9 +11,11 @@ public interface IImageIterator : IDisposable
     public string? CurrentDirectory { get; }
 
     /// <summary>
-    /// The list of files currently being iterated.
+    /// The files being iterated. The iterator is the only writer: change the list through <see cref="Initialize"/>,
+    /// <see cref="Insert"/>, <see cref="Remove"/>, <see cref="Replace"/> and <see cref="Move"/>, which keep
+    /// <see cref="CurrentIndex"/> on the same file and tell the cache. Each change publishes a new snapshot.
     /// </summary>
-    IReadOnlyList<FileInfo> Files { get; internal set; }
+    IReadOnlyList<FileInfo> Files { get; }
 
     /// <summary>
     /// Gets the current position in the file list.
@@ -36,6 +38,34 @@ public interface IImageIterator : IDisposable
     /// Initializes the iterator with a new list of files and a starting position.
     /// </summary>
     void Initialize(IReadOnlyList<FileInfo> files, int initialIndex = 0);
+
+    /// <summary>
+    /// Inserts <paramref name="file"/> at its sorted position, keeping <see cref="CurrentIndex"/> on the same file.
+    /// </summary>
+    /// <returns>The position the file was inserted at.</returns>
+    int Insert(FileInfo file, Func<string, string, int> compareNames);
+
+    /// <summary>
+    /// Removes the file at <paramref name="path"/>, keeping <see cref="CurrentIndex"/> on the same file. When the
+    /// current file itself is removed, <see cref="CurrentIndex"/> stays at its position (clamped to the list), and
+    /// navigating from there is the caller's choice.
+    /// </summary>
+    /// <returns>The position the file was removed from, or -1 if it was not in the list.</returns>
+    int Remove(string path);
+
+    /// <summary>
+    /// Replaces the entry with the same path as <paramref name="file"/>, e.g., to refresh its size after a change.
+    /// </summary>
+    /// <returns>The position of the file, or -1 if it was not in the list.</returns>
+    int Replace(FileInfo file);
+
+    /// <summary>
+    /// Moves the file at <paramref name="oldPath"/> to <paramref name="newFile"/>'s sorted position, e.g., after a
+    /// rename. Inserts <paramref name="newFile"/> even if <paramref name="oldPath"/> was not in the list.
+    /// <see cref="CurrentIndex"/> follows the current file, under its new name if it was the one moved.
+    /// </summary>
+    /// <returns>The position removed from (-1 if none) and the position inserted at.</returns>
+    (int Removed, int Inserted) Move(string oldPath, FileInfo newFile, Func<string, string, int> compareNames);
 
     /// <summary>
     /// Asynchronously navigates the image collection based on the specified navigation direction and skip amount.

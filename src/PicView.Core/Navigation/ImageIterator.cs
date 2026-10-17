@@ -1,3 +1,4 @@
+using PicView.Core.FileSorting;
 using PicView.Core.FileHistory;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Interfaces;
@@ -15,30 +16,139 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     private readonly IThumbnailLoader _thumbnailLoader = thumbnailLoader ?? throw new ArgumentNullException(nameof(thumbnailLoader));
     private DateTime _lastRepeatTime = DateTime.MinValue;
 
-    private IReadOnlyList<FileInfo> _files = [];
+    private readonly Lock _filesLock = new();
+    private FileInfo[] _files = [];
 
-    /// <summary>
-    /// The files being iterated. Setting it tells the cache, so set it again after changing the list in place.
-    /// </summary>
-    public IReadOnlyList<FileInfo> Files
-    {
-        get => _files;
-        set
-        {
-            _files = value ?? [];
-            Cache.SetFiles(_tab.Id, _files);
-        }
-    }
+    /// <inheritdoc />
+    public IReadOnlyList<FileInfo> Files => Volatile.Read(ref _files);
     public int CurrentIndex { get; private set; } = -1;
     public int SecondaryCurrentIndex { get; private set; } = -1;
     public bool IsReversed { get; private set; }
 
     public void Initialize(IReadOnlyList<FileInfo> files, int initialIndex = 0)
     {
-        Files = files ?? [];
-        CurrentIndex = initialIndex;
+        lock (_filesLock)
+        {
+            CurrentIndex = initialIndex;
+            Publish(files?.ToArray() ?? []);
+        }
         UpdateNavigationProperties();
     }
+
+    #region File list changes
+
+    /// <inheritdoc />
+    public int Insert(FileInfo file, Func<string, string, int> compareNames)
+    {
+        int index;
+        lock (_filesLock)
+        {
+            var list = new List<FileInfo>(_files);
+            index = FileSortOrder.InsertSorted(list, file, compareNames);
+            if (CurrentIndex >= 0 && index <= CurrentIndex)
+            {
+                CurrentIndex++;
+            }
+            Publish(list.ToArray());
+        }
+        UpdateNavigationProperties();
+        return index;
+    }
+
+    /// <inheritdoc />
+    public int Remove(string path)
+    {
+        int index;
+        lock (_filesLock)
+        {
+            index = IndexOf(_files, path);
+            if (index < 0)
+            {
+                return -1;
+            }
+
+            var remaining = new FileInfo[_files.Length - 1];
+            Array.Copy(_files, 0, remaining, 0, index);
+            Array.Copy(_files, index + 1, remaining, index, remaining.Length - index);
+            if (index < CurrentIndex)
+            {
+                CurrentIndex--;
+            }
+            else if (CurrentIndex >= remaining.Length)
+            {
+                CurrentIndex = remaining.Length - 1;
+            }
+            Publish(remaining);
+        }
+        UpdateNavigationProperties();
+        return index;
+    }
+
+    /// <inheritdoc />
+    public int Replace(FileInfo file)
+    {
+        lock (_filesLock)
+        {
+            var index = IndexOf(_files, file.FullName);
+            if (index < 0)
+            {
+                return -1;
+            }
+
+            var files = (FileInfo[])_files.Clone();
+            files[index] = file;
+            Publish(files);
+            return index;
+        }
+    }
+
+    /// <inheritdoc />
+    public (int Removed, int Inserted) Move(string oldPath, FileInfo newFile, Func<string, string, int> compareNames)
+    {
+        int removed, inserted;
+        lock (_filesLock)
+        {
+            var currentPath = CurrentIndex >= 0 && CurrentIndex < _files.Length ? _files[CurrentIndex].FullName : null;
+            var list = new List<FileInfo>(_files);
+            removed = IndexOf(_files, oldPath);
+            if (removed >= 0)
+            {
+                list.RemoveAt(removed);
+            }
+            inserted = FileSortOrder.InsertSorted(list, newFile, compareNames);
+
+            if (currentPath is not null)
+            {
+                // Follow the current file, under its new name if it was the one moved
+                var followed = IsSamePath(currentPath, oldPath) ? newFile.FullName : currentPath;
+                var index = list.FindIndex(x => IsSamePath(x.FullName, followed));
+                if (index >= 0)
+                {
+                    CurrentIndex = index;
+                }
+            }
+            Publish(list.ToArray());
+        }
+        UpdateNavigationProperties();
+        return (removed, inserted);
+    }
+
+    /// <summary>
+    /// Makes <paramref name="files"/> the current list and tells the cache. Callers hold <see cref="_filesLock"/>.
+    /// </summary>
+    private void Publish(FileInfo[] files)
+    {
+        Volatile.Write(ref _files, files);
+        Cache.SetFiles(_tab.Id, files);
+    }
+
+    private static int IndexOf(FileInfo[] files, string path) =>
+        Array.FindIndex(files, x => IsSamePath(x.FullName, path));
+
+    private static bool IsSamePath(string a, string b) =>
+        a.AsSpan().Equals(b.AsSpan(), StringComparison.OrdinalIgnoreCase);
+
+    #endregion
     
     #region Core Navigation Logic
     
@@ -436,7 +546,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     public void Dispose()
     {
         Cache.ReleaseOwner(_tab.Id);
-        _files = [];
+        Volatile.Write(ref _files, []);
         GC.SuppressFinalize(this);
     }
 
