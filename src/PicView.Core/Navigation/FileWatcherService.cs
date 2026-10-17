@@ -472,7 +472,7 @@ public class FileWatcherService(
                     Image = currentModel.Image,
                     ImageType = currentModel.ImageType
                 };
-                tab.Model = newModel;
+                tab.Display(newModel, tab.SecondaryModel);
             }
         }
 

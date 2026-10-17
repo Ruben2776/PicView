@@ -173,13 +173,12 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
             return;
         }
         vm.IsLoadingIndicatorShown.Value = true;
-        var newlyCroppedImage = await SaveImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
+        await SaveImage(fileName, fileInfo, bitmap).ConfigureAwait(false);
         if (string.Equals(tabViewModel.FileInfo.Value.FullName, fileName, StringComparison.Ordinal))
         {
             var newModel = await GetImageModel.GetImageModelAsync(fileInfo).ConfigureAwait(false);
             tabViewModel.ImageIterator.Cache.Put(tabViewModel.Id, fileInfo, newModel);
-            tabViewModel.FileInfo.Value = fileInfo;
-            tabViewModel.Image.Value = newlyCroppedImage;
+            tabViewModel.Display(newModel, tabViewModel.SecondaryModel);
         }
         
         await Dispatcher.UIThread.InvokeAsync(CloseCropControl);

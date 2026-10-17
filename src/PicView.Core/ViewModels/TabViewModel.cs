@@ -72,6 +72,25 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
     public BindableReactiveProperty<object?> SecondaryImage { get; } = new(null);
     public BindableReactiveProperty<ImageType?> SecondaryImageType { get; } = new(null);
     public BindableReactiveProperty<FileInfo?> SecondaryFileInfo { get; } = new(null);
+
+    /// <summary>
+    /// Shows <paramref name="primary"/>, and <paramref name="secondary"/> beside it when viewing side by side.
+    /// Without a secondary, any previous one is cleared. This is the one way to change the shown models: it sets
+    /// <see cref="SecondaryModel"/> before <see cref="Model"/>, because the UI reacts to <see cref="Model"/> changing
+    /// and reads the secondary model then, and sets the bindable properties so they never lag behind the models.
+    /// </summary>
+    public void Display(ImageModel primary, ImageModel? secondary = null)
+    {
+        SecondaryModel = secondary;
+        SecondaryImage.Value = secondary?.Image;
+        SecondaryImageType.Value = secondary?.ImageType;
+        SecondaryFileInfo.Value = secondary?.FileInfo;
+
+        Model = primary;
+        FileInfo.Value = primary.FileInfo;
+        Image.Value = primary.Image;
+        ImageType.Value = primary.ImageType;
+    }
     public BindableReactiveProperty<int> RotationAngle { get; } = new(0);
     public BindableReactiveProperty<bool> IsRotated0 { get; } = new(true);
     public BindableReactiveProperty<bool> IsRotated90 { get; } = new(false);
