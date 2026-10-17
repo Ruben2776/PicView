@@ -12,12 +12,20 @@ public interface INavigationService
     
     ValueTask LoadFromFileAsync(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct);
     
-    Task LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct);
+    /// <returns><see langword="false"/> if the directory has no supported files.</returns>
+    Task<bool> LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct);
 
-    ValueTask<bool> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct);
+    /// <summary>
+    /// Loads a file, directory, archive or URL into <paramref name="tab"/>.
+    /// </summary>
+    /// <param name="rootDirectory">
+    /// For a file, the directory to list files from instead of the file's own, e.g., the remembered start-up directory
+    /// when browsing subdirectories.
+    /// </param>
+    ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct, string? rootDirectory = null);
     ReactiveCommand<string>? LoadFromStringCommand { get; set; }
     
-    ValueTask LoadFromUrlAsync(string source, TabViewModel tab, CancellationTokenSource ct);
+    ValueTask<LoadResult> LoadFromUrlAsync(string source, TabViewModel tab, CancellationTokenSource ct);
 
     ValueTask<bool> LoadFromArchiveAsync(string archivePath, TabViewModel tab, CancellationTokenSource ct);
 

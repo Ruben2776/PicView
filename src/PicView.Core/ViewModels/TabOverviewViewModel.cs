@@ -308,41 +308,42 @@ public class TabOverviewViewModel
     }
 
 
-    public async ValueTask<bool> LoadFromStringAsync(string source, TabViewModel? senderTab = null)
+    /// <inheritdoc cref="INavigationService.LoadFromStringAsync"/>
+    public async ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel? senderTab = null, string? rootDirectory = null)
     {
         if (SharedNavigation is null)
         {
             DebugHelper.LogDebug(nameof(TabOverviewViewModel), nameof(LoadFromStringAsync), 
                 $"{nameof(SharedNavigation)} is null, make sure to initialize it before use");
-            return false;
+            return LoadResult.Failed();
         }
         var tab = senderTab ?? ActiveTab.Value;
         var ct = tab.GetTabCancellation();
         
-        var success = await SharedNavigation.LoadFromStringAsync(source, tab, ct)
+        var result = await SharedNavigation.LoadFromStringAsync(source, tab, ct, rootDirectory)
             .ConfigureAwait(false);
-        if (!success)
+        if (result.IsLoaded)
         {
-            return false;
+            ActiveTab.Value = tab;
         }
-
-        ActiveTab.Value = tab;
-        return true;
+        return result;
     }
     
-    public async ValueTask<bool> LoadFromUrlAsync(string source, TabViewModel? senderTab = null)
+    public async ValueTask<LoadResult> LoadFromUrlAsync(string source, TabViewModel? senderTab = null)
     {
         if (SharedNavigation is null)
         {
-            return false;
+            return LoadResult.Failed();
         }
         var tab = senderTab ?? ActiveTab.Value;
         var ct = tab.GetTabCancellation();
 
-        await SharedNavigation.LoadFromUrlAsync(source, tab, ct).ConfigureAwait(false);
-
-        ActiveTab.Value = tab;
-        return true;
+        var result = await SharedNavigation.LoadFromUrlAsync(source, tab, ct).ConfigureAwait(false);
+        if (result.IsLoaded)
+        {
+            ActiveTab.Value = tab;
+        }
+        return result;
     }
     
     public async ValueTask LoadFromFileAsync(FileInfo file, TabViewModel? senderTab = null)

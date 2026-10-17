@@ -106,6 +106,66 @@ public class NavigationServiceTests : IDisposable
         Assert.True(_mockThumbnailLoader.GetThumbnailAsyncCalledCount > 0, "Gallery should be reloaded (GetThumbnailAsync called)");
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData("not a path, url or base64 ¤")]
+    public async Task LoadFromStringAsync_UnloadableSource_Fails(string source)
+    {
+        var tab = CreateTab(_testDirectory);
+
+        var result = await _navigationService.LoadFromStringAsync(source, tab, new CancellationTokenSource());
+
+        Assert.False(result.IsLoaded);
+    }
+
+    [Fact]
+    public async Task LoadFromStringAsync_DirectoryWithoutImages_Fails()
+    {
+        var tab = CreateTab(_testDirectory);
+        var empty = Directory.CreateDirectory(Path.Combine(_testDirectory, "empty")).FullName;
+
+        var result = await _navigationService.LoadFromStringAsync(empty, tab, new CancellationTokenSource());
+
+        Assert.False(result.IsLoaded);
+    }
+
+    [Fact]
+    public async Task LoadFromStringAsync_UnreachableUrl_FailsWithMessage()
+    {
+        var tab = CreateTab(_testDirectory);
+
+        // Port 9 (discard) refuses connections on a machine without that service
+        var result = await _navigationService.LoadFromStringAsync("http://127.0.0.1:9/image.jpg", tab, new CancellationTokenSource());
+
+        Assert.False(result.IsLoaded);
+        Assert.False(string.IsNullOrWhiteSpace(result.Error));
+    }
+
+    [Fact]
+    public async Task LoadFromStringAsync_FileWithRootDirectory_ListsFilesFromRoot()
+    {
+        Settings.Sorting.IncludeSubDirectories = true;
+        try
+        {
+            var sub = Directory.CreateDirectory(Path.Combine(_testDirectory, "sub")).FullName;
+            var inRoot = Path.Combine(_testDirectory, "a.jpg");
+            var inSub = Path.Combine(sub, "b.jpg");
+            await File.WriteAllTextAsync(inRoot, "x", TestContext.Current.CancellationToken);
+            await File.WriteAllTextAsync(inSub, "x", TestContext.Current.CancellationToken);
+            var tab = CreateTab(sub);
+
+            var result = await _navigationService.LoadFromStringAsync(inSub, tab, new CancellationTokenSource(), _testDirectory);
+
+            Assert.True(result.IsLoaded);
+            Assert.Contains(tab.ImageIterator.Files, f => f.FullName == inRoot);
+            Assert.Equal(inSub, tab.ImageIterator.Files[tab.ImageIterator.CurrentIndex].FullName);
+        }
+        finally
+        {
+            Settings.Sorting.IncludeSubDirectories = false;
+        }
+    }
+
     private TabViewModel CreateTab(string directory, MainWindowViewModel? parentVm = null)
     {
         var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!, null!);

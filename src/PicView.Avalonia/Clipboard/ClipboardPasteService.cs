@@ -143,7 +143,7 @@ public class ClipboardPasteService(
 
         if (tab.IsInitialized)
         {
-            return await vm.WindowTabs.LoadFromStringAsync(text).ConfigureAwait(false);
+            return (await vm.WindowTabs.LoadFromStringAsync(text).ConfigureAwait(false)).IsLoaded;
         }
 
         var activeCore = core ?? vm.Core;
