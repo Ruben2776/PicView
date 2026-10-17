@@ -252,7 +252,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 {
                     _tab.Image.Value = thumb;
                 }
-            }).ConfigureAwait(false);
+            }, ct.Token).ConfigureAwait(false);
         }
 
         var model = await request.ConfigureAwait(false);
@@ -286,14 +286,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         {
             // Still loading, show thumbnail while waiting
             _tab.SetLoading();
-            await Task.Run(() =>
-            {
-                var thumb = GetThumbnail(firstRequest.IsCompleted ? secondaryFile : firstFile);
-                if (IsCurrent())
-                {
-                    _tab.Image.Value = thumb;
-                }
-            }).ConfigureAwait(false);
+            _tab.Image.Value = null;
+            _tab.SecondaryImage.Value = null;
         }
 
         var firstModel = await firstRequest.ConfigureAwait(false);
@@ -423,19 +417,21 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                 tcs = _fileAddedTcs;
             }
 
-            using var reg = ct.Register(() => tcs.TrySetCanceled(ct));
-
-            try
+            var reg = ct.Register(() => tcs.TrySetCanceled(ct));
+            await using (reg.ConfigureAwait(false))
             {
-                var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(3000, ct)).ConfigureAwait(false);
-                if (completedTask != tcs.Task)
+                try
                 {
-                    break;
+                    var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(3000, ct)).ConfigureAwait(false);
+                    if (completedTask != tcs.Task)
+                    {
+                        break;
+                    }
                 }
-            }
-            catch (OperationCanceledException)
-            {
-                return false;
+                catch (OperationCanceledException)
+                {
+                    return false;
+                }
             }
         }
 
