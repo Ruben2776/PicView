@@ -10,6 +10,7 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
+using PicView.Core.ImageEffects;
 using PicView.Core.IPlatform;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
@@ -310,7 +311,10 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
 
         if (_effectsWindow is null)
         {
-            core.Effects ??= new EffectsViewModel();
+            core.Effects ??= new EffectsViewModel((config, ct) => ImageEffectsHelper.ApplyEffects(
+                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo,
+                config,
+                ct));
             if (core.Effects.WindowConfig is null)
             {
                 core.Effects.WindowConfig = new EffectsWindowConfig();

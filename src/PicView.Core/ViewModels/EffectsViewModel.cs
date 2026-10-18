@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using ImageMagick;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
@@ -12,8 +11,12 @@ public class EffectsViewModel : IDisposable
 {
     private DisposableBag _disposables;
     private readonly TimeSpan _debounceTime = TimeSpan.FromMilliseconds(60);
+    private readonly Func<ImageEffectConfig, CancellationToken, Task<MagickImage?>> _render;
+    private readonly Subject<MagickImage> _rendered = new();
+    private int _discards;
+    private bool _isDiscarding;
     public BindableReactiveProperty<ImageEffectConfig?> EffectConfig { get; } = new();
-    public ObservableCollection<EffectPreset> Presets { get; } = [];
+    public EffectPreset[] Presets { get; }
     public BindableReactiveProperty<EffectPreset?> SelectedPreset { get; } = new();
     public BindableReactiveProperty<bool> IsResetVisible { get; } = new(false);
     /// <summary>
@@ -21,7 +24,12 @@ public class EffectsViewModel : IDisposable
     /// is not a file, such as a clipboard image.
     /// </summary>
     public MagickImage? ProcessedImage { get; set; }
-    public BindableReactiveProperty<bool> IsLoading { get; } = new(true);
+    public BindableReactiveProperty<bool> IsLoading { get; } = new(false);
+
+    /// <summary>
+    /// Emits each image rendered with the current effects, on a background thread.
+    /// </summary>
+    public Observable<MagickImage> Rendered => _rendered;
     public EffectsWindowConfig? WindowConfig { get; set; }
 
     #region Properties
@@ -77,80 +85,89 @@ public class EffectsViewModel : IDisposable
 
     #endregion
 
-    public void Initialize(FileInfo file)
+    public EffectsViewModel(Func<ImageEffectConfig, CancellationToken, Task<MagickImage?>> render)
     {
-        EffectConfig.Value = new ImageEffectConfig();
-        ProcessedImage = new MagickImage(file);
-        InitPresets();
+        _render = render;
+        Presets = CreatePresets();
+        SelectedPreset.Value = Presets[0];
+        SelectedPreset
+            .Skip(1)
+            .WhereNotNull()
+            .Subscribe(preset => preset.Apply())
+            .AddTo(ref _disposables);
         InitPipeline();
     }
 
+    private Observable<Unit> ValueChanges() =>
+        Observable.Merge(
+            HueDegrees.Skip(1).AsUnitObservable(),
+            Saturation.Skip(1).AsUnitObservable(),
+            Temperature.Skip(1).AsUnitObservable(),
+            Tint.Skip(1).AsUnitObservable(),
+            Vibrance.Skip(1).AsUnitObservable(),
+            ExposureStops.Skip(1).AsUnitObservable(),
+            Brightness.Skip(1).AsUnitObservable(),
+            Contrast.Skip(1).AsUnitObservable(),
+            Gamma.Skip(1).AsUnitObservable(),
+            Highlights.Skip(1).AsUnitObservable(),
+            Shadows.Skip(1).AsUnitObservable(),
+            Blacks.Skip(1).AsUnitObservable(),
+            Whites.Skip(1).AsUnitObservable(),
+            Dehaze.Skip(1).AsUnitObservable(),
+            Clarity.Skip(1).AsUnitObservable(),
+            Grain.Skip(1).AsUnitObservable(),
+            Sharpen.Skip(1).AsUnitObservable(),
+            Vignette.Skip(1).AsUnitObservable(),
+            BlurLevel.Skip(1).AsUnitObservable(),
+            SketchStrokeWidth.Skip(1).AsUnitObservable(),
+            PosterizeLevel.Skip(1).AsUnitObservable(),
+            Solarize.Skip(1).AsUnitObservable(),
+            BlackAndWhite.Skip(1).AsUnitObservable(),
+            Negative.Skip(1).AsUnitObservable(),
+            OldMovie.Skip(1).AsUnitObservable(),
+            CBShadowsCR.Skip(1).AsUnitObservable(),
+            CBShadowsMG.Skip(1).AsUnitObservable(),
+            CBShadowsYB.Skip(1).AsUnitObservable(),
+            CBMidCR.Skip(1).AsUnitObservable(),
+            CBMidMG.Skip(1).AsUnitObservable(),
+            CBMidYB.Skip(1).AsUnitObservable(),
+            CBHighCR.Skip(1).AsUnitObservable(),
+            CBHighMG.Skip(1).AsUnitObservable(),
+            CBHighYB.Skip(1).AsUnitObservable());
+
     private void InitPipeline()
     {
-        Observable.Merge(
-            HueDegrees.Select(_ => Unit.Default),
-            Saturation.Select(_ => Unit.Default),
-            Temperature.Select(_ => Unit.Default),
-            Tint.Select(_ => Unit.Default),
-            Vibrance.Select(_ => Unit.Default),
-            ExposureStops.Select(_ => Unit.Default),
-            Brightness.Select(_ => Unit.Default),
-            Contrast.Select(_ => Unit.Default),
-            Gamma.Select(_ => Unit.Default),
-            Highlights.Select(_ => Unit.Default),
-            Shadows.Select(_ => Unit.Default),
-            Blacks.Select(_ => Unit.Default),
-            Whites.Select(_ => Unit.Default),
-            Dehaze.Select(_ => Unit.Default),
-            Clarity.Select(_ => Unit.Default),
-            Grain.Select(_ => Unit.Default),
-            Sharpen.Select(_ => Unit.Default),
-            Vignette.Select(_ => Unit.Default),
-            BlurLevel.Select(_ => Unit.Default),
-            SketchStrokeWidth.Select(_ => Unit.Default),
-            PosterizeLevel.Select(_ => Unit.Default),
-            Solarize.Select(_ => Unit.Default),
-            BlackAndWhite.Select(_ => Unit.Default),
-            Negative.Select(_ => Unit.Default),
-            OldMovie.Select(_ => Unit.Default),
-            CBShadowsCR.Select(_ => Unit.Default),
-            CBShadowsMG.Select(_ => Unit.Default),
-            CBShadowsYB.Select(_ => Unit.Default),
-            CBMidCR.Select(_ => Unit.Default),
-            CBMidMG.Select(_ => Unit.Default),
-            CBMidYB.Select(_ => Unit.Default),
-            CBHighCR.Select(_ => Unit.Default),
-            CBHighMG.Select(_ => Unit.Default),
-            CBHighYB.Select(_ => Unit.Default)
-        )
-        .Skip(1)
-        .ObserveOnThreadPool()
-        .Debounce(_debounceTime)
-        .Subscribe(ApplyEffects, DebugHelper.LogError(nameof(EffectsViewModel), nameof(InitPipeline)))
-        .AddTo(ref _disposables);
-        IsLoading.Value = false;
-    }
+        ValueChanges()
+            .Subscribe(_ => IsResetVisible.Value = !IsDefault())
+            .AddTo(ref _disposables);
 
-    private void ApplyEffects(Unit unit)
-    {
-        if (ProcessedImage is null)
-        {
-            return;
-        }
-
-        IsLoading.Value = true;
-        UpdateConfigFromProperties();
-        
-        var magick = ImageEffectsHelper.ApplyImageEffects(
-            ProcessedImage,
-            EffectConfig.CurrentValue,
-            CancellationToken.None);
-        if (magick is not null)
-        {
-            ProcessedImage = magick;
-        }
-        IsLoading.Value = false;
-        IsResetVisible.Value = !IsDefault();
+        ValueChanges()
+            .Where(_ => !_isDiscarding)
+            .Select(_ => Volatile.Read(ref _discards))
+            .Debounce(_debounceTime)
+            .Where(discards => discards == Volatile.Read(ref _discards))
+            .SelectAwait(async (discards, ct) =>
+            {
+                IsLoading.Value = true;
+                var config = ToConfig();
+                EffectConfig.Value = config;
+                var magick = await _render(config, ct).ConfigureAwait(false);
+                return (Magick: magick, Discards: discards);
+            }, AwaitOperation.Switch)
+            .Subscribe(result =>
+            {
+                if (result.Discards != Volatile.Read(ref _discards))
+                {
+                    result.Magick?.Dispose();
+                }
+                else if (result.Magick is not null)
+                {
+                    ProcessedImage = result.Magick;
+                    _rendered.OnNext(result.Magick);
+                }
+                IsLoading.Value = false;
+            }, DebugHelper.LogError(nameof(EffectsViewModel), nameof(InitPipeline)))
+            .AddTo(ref _disposables);
     }
 
     public bool IsDefault()
@@ -190,185 +207,147 @@ public class EffectsViewModel : IDisposable
                CBHighCR.Value == 0 && CBHighMG.Value == 0 && CBHighYB.Value == 0;
     }
 
-    private void UpdateConfigFromProperties()
+    private ImageEffectConfig ToConfig()
     {
-        EffectConfig.Value.HueDegrees = HueDegrees.Value;
-        EffectConfig.Value.Saturation = new Percentage(Saturation.Value);
-        EffectConfig.Value.Temperature = Temperature.Value;
-        EffectConfig.Value.Tint = Tint.Value;
-        EffectConfig.Value.Vibrance = Vibrance.Value;
+        var c = new ImageEffectConfig();
+        c.HueDegrees = HueDegrees.Value;
+        c.Saturation = new Percentage(Saturation.Value);
+        c.Temperature = Temperature.Value;
+        c.Tint = Tint.Value;
+        c.Vibrance = Vibrance.Value;
 
-        EffectConfig.Value.ExposureStops = ExposureStops.Value;
-        EffectConfig.Value.Brightness = new Percentage(Brightness.Value);
-        EffectConfig.Value.Contrast = new Percentage(Contrast.Value);
-        EffectConfig.Value.Gamma = Gamma.Value;
+        c.ExposureStops = ExposureStops.Value;
+        c.Brightness = new Percentage(Brightness.Value);
+        c.Contrast = new Percentage(Contrast.Value);
+        c.Gamma = Gamma.Value;
 
-        EffectConfig.Value.Highlights = Highlights.Value;
-        EffectConfig.Value.Shadows = Shadows.Value;
-        EffectConfig.Value.Blacks = Blacks.Value;
-        EffectConfig.Value.Whites = Whites.Value;
+        c.Highlights = Highlights.Value;
+        c.Shadows = Shadows.Value;
+        c.Blacks = Blacks.Value;
+        c.Whites = Whites.Value;
 
-        EffectConfig.Value.Dehaze = Dehaze.Value;
-        EffectConfig.Value.Clarity = Clarity.Value;
-        EffectConfig.Value.Grain = Grain.Value;
-        EffectConfig.Value.Sharpen = Sharpen.Value;
-        EffectConfig.Value.Vignette = Vignette.Value;
+        c.Dehaze = Dehaze.Value;
+        c.Clarity = Clarity.Value;
+        c.Grain = Grain.Value;
+        c.Sharpen = Sharpen.Value;
+        c.Vignette = Vignette.Value;
 
-        EffectConfig.Value.BlurLevel = BlurLevel.Value;
-        EffectConfig.Value.SketchStrokeWidth = SketchStrokeWidth.Value;
-        EffectConfig.Value.PosterizeLevel = PosterizeLevel.Value == 1 ? 2 : PosterizeLevel.Value;
-        EffectConfig.Value.Solarize = new Percentage(Solarize.Value);
+        c.BlurLevel = BlurLevel.Value;
+        c.SketchStrokeWidth = SketchStrokeWidth.Value;
+        c.PosterizeLevel = PosterizeLevel.Value == 1 ? 2 : PosterizeLevel.Value;
+        c.Solarize = new Percentage(Solarize.Value);
 
-        EffectConfig.Value.BlackAndWhite = BlackAndWhite.Value;
-        EffectConfig.Value.Negative = Negative.Value;
-        EffectConfig.Value.OldMovie = OldMovie.Value;
+        c.BlackAndWhite = BlackAndWhite.Value;
+        c.Negative = Negative.Value;
+        c.OldMovie = OldMovie.Value;
 
-        EffectConfig.Value.CBShadows = new ColorBalanceTriplet(CBShadowsCR.Value, CBShadowsMG.Value, CBShadowsYB.Value);
-        EffectConfig.Value.CBMidtones = new ColorBalanceTriplet(CBMidCR.Value, CBMidMG.Value, CBMidYB.Value);
-        EffectConfig.Value.CBHighlights = new ColorBalanceTriplet(CBHighCR.Value, CBHighMG.Value, CBHighYB.Value);
+        c.CBShadows = new ColorBalanceTriplet(CBShadowsCR.Value, CBShadowsMG.Value, CBShadowsYB.Value);
+        c.CBMidtones = new ColorBalanceTriplet(CBMidCR.Value, CBMidMG.Value, CBMidYB.Value);
+        c.CBHighlights = new ColorBalanceTriplet(CBHighCR.Value, CBHighMG.Value, CBHighYB.Value);
+        return c;
     }
 
-    public void ApplyConfig(ImageEffectConfig c)
+    private EffectPreset[] CreatePresets()
     {
-        IsLoading.Value = true;
+        var t = TranslationManager.Translation;
+        return
+        [
+            new EffectPreset(t.Normal, ResetAll),
+            new EffectPreset(t.VividPop, () =>
+            {
+                ResetAll();
+                Vibrance.Value = 25;
+                Saturation.Value = 10;
+                Contrast.Value = 10;
+                Clarity.Value = 12;
+                Dehaze.Value = 8;
+            }),
+            new EffectPreset(t.SoftMatte, () =>
+            {
+                ResetAll();
+                Contrast.Value = -12;
+                Gamma.Value = 1.12;
+                Blacks.Value = 8;
+                Highlights.Value = -10;
+                Vignette.Value = 10;
+                Grain.Value = 10;
+            }),
+            new EffectPreset(t.HighContrastBW, () =>
+            {
+                ResetAll();
+                BlackAndWhite.Value = true;
+                Contrast.Value = 28;
+                ExposureStops.Value = 0.25;
+                Highlights.Value = -15;
+                Shadows.Value = 15;
+                Clarity.Value = 15;
+                Vignette.Value = 12;
+            }),
+            new EffectPreset(t.OldMovie, () =>
+            {
+                ResetAll();
+                OldMovie.Value = true;
+                Contrast.Value = 8;
+                Grain.Value = 25;
+                Vignette.Value = 15;
+            }),
+            new EffectPreset(t.PortraitSoft, () =>
+            {
+                ResetAll();
+                ExposureStops.Value = 0.15;
+                Highlights.Value = -10;
+                Shadows.Value = 12;
+                Clarity.Value = 6;
+                Sharpen.Value = 6;
+                Vibrance.Value = 8;
+            }),
+            new EffectPreset(t.LandscapeCrisp, () =>
+            {
+                ResetAll();
+                Dehaze.Value = 12;
+                Clarity.Value = 18;
+                Sharpen.Value = 14;
+                Vibrance.Value = 18;
+                Highlights.Value = -10;
+                Shadows.Value = 10;
+            }),
+        ];
+    }
+
+    /// <summary>
+    /// Resets every value without rendering, and drops any render still pending, such as when the shown image
+    /// changes or is reloaded without effects.
+    /// </summary>
+    public void DiscardEffects()
+    {
+        Interlocked.Increment(ref _discards);
+        _isDiscarding = true;
         try
         {
-            HueDegrees.Value = c.HueDegrees;
-            Saturation.Value = c.Saturation.ToDouble();
-            Temperature.Value = c.Temperature;
-            Tint.Value = c.Tint;
-            Vibrance.Value = c.Vibrance;
-
-            ExposureStops.Value = c.ExposureStops;
-            Brightness.Value = c.Brightness.ToDouble();
-            Contrast.Value = c.Contrast.ToDouble();
-            Gamma.Value = c.Gamma <= 0 ? 1 : c.Gamma;
-
-            Highlights.Value = c.Highlights;
-            Shadows.Value = c.Shadows;
-            Blacks.Value = c.Blacks;
-            Whites.Value = c.Whites;
-
-            Dehaze.Value = c.Dehaze;
-            Clarity.Value = c.Clarity;
-            Grain.Value = c.Grain;
-            Sharpen.Value = c.Sharpen;
-            Vignette.Value = c.Vignette;
-
-            BlurLevel.Value = c.BlurLevel;
-            SketchStrokeWidth.Value = c.SketchStrokeWidth;
-            PosterizeLevel.Value = c.PosterizeLevel;
-            Solarize.Value = c.Solarize.ToDouble();
-
-            BlackAndWhite.Value = c.BlackAndWhite;
-            Negative.Value = c.Negative;
-            OldMovie.Value = c.OldMovie;
-
-            CBShadowsCR.Value = c.CBShadows.CyanRed;
-            CBShadowsMG.Value = c.CBShadows.MagentaGreen;
-            CBShadowsYB.Value = c.CBShadows.YellowBlue;
-
-            CBMidCR.Value = c.CBMidtones.CyanRed;
-            CBMidMG.Value = c.CBMidtones.MagentaGreen;
-            CBMidYB.Value = c.CBMidtones.YellowBlue;
-
-            CBHighCR.Value = c.CBHighlights.CyanRed;
-            CBHighMG.Value = c.CBHighlights.MagentaGreen;
-            CBHighYB.Value = c.CBHighlights.YellowBlue;
+            ResetAll();
         }
         finally
         {
-            IsLoading.Value = false;
+            _isDiscarding = false;
         }
-    }
-
-    private void InitPresets()
-    {
-        Presets.Clear();
-        var t = TranslationManager.Translation;
-        Presets.Add(new EffectPreset(t.Normal, ResetAll));
-        Presets.Add(new EffectPreset(t.VividPop, () =>
-        {
-            ResetAll();
-            Vibrance.Value = 25;
-            Saturation.Value = 10;
-            Contrast.Value = 10;
-            Clarity.Value = 12;
-            Dehaze.Value = 8;
-        }));
-        Presets.Add(new EffectPreset(t.SoftMatte, () =>
-        {
-            ResetAll();
-            Contrast.Value = -12;
-            Gamma.Value = 1.12;
-            Blacks.Value = 8;
-            Highlights.Value = -10;
-            Vignette.Value = 10;
-            Grain.Value = 10;
-        }));
-        Presets.Add(new EffectPreset(t.HighContrastBW, () =>
-        {
-            ResetAll();
-            BlackAndWhite.Value = true;
-            Contrast.Value = 28;
-            ExposureStops.Value = 0.25;
-            Highlights.Value = -15;
-            Shadows.Value = 15;
-            Clarity.Value = 15;
-            Vignette.Value = 12;
-        }));
-        Presets.Add(new EffectPreset(t.OldMovie, () =>
-        {
-            ResetAll();
-            OldMovie.Value = true;
-            Contrast.Value = 8;
-            Grain.Value = 25;
-            Vignette.Value = 15;
-        }));
-        Presets.Add(new EffectPreset(t.PortraitSoft, () =>
-        {
-            ResetAll();
-            ExposureStops.Value = 0.15;
-            Highlights.Value = -10;
-            Shadows.Value = 12;
-            Clarity.Value = 6;
-            Sharpen.Value = 6;
-            Vibrance.Value = 8;
-        }));
-        Presets.Add(new EffectPreset(t.LandscapeCrisp, () =>
-        {
-            ResetAll();
-            Dehaze.Value = 12;
-            Clarity.Value = 18;
-            Sharpen.Value = 14;
-            Vibrance.Value = 18;
-            Highlights.Value = -10;
-            Shadows.Value = 10;
-        }));
+        EffectConfig.Value = new ImageEffectConfig();
     }
 
     public void ResetAll()
     {
-        IsLoading.Value = true;
-        try
-        {
-            ResetColor();
-            ResetLighting();
-            ResetEffects();
+        ResetColor();
+        ResetLighting();
+        ResetEffects();
 
-            BlurLevel.Value = 0;
-            SketchStrokeWidth.Value = 0;
-            PosterizeLevel.Value = 0;
-            Solarize.Value = 0;
+        BlurLevel.Value = 0;
+        SketchStrokeWidth.Value = 0;
+        PosterizeLevel.Value = 0;
+        Solarize.Value = 0;
 
-            BlackAndWhite.Value = false;
-            Negative.Value = false;
-            OldMovie.Value = false;
-        }
-        finally
-        {
-            IsLoading.Value = false;
-        }
+        BlackAndWhite.Value = false;
+        Negative.Value = false;
+        OldMovie.Value = false;
+        SelectedPreset.Value = Presets[0];
     }
 
     public void ResetColor()
@@ -379,9 +358,9 @@ public class EffectsViewModel : IDisposable
         Tint.Value = 0;
         Vibrance.Value = 0;
 
-        CBShadowsCR.Value = 0; CBShadowsMG.Value = 0; CBShadowsYB.Value = 0;
-        CBMidCR.Value = 0; CBMidMG.Value = 0; CBMidYB.Value = 0;
-        CBHighCR.Value = 0; CBHighMG.Value = 0; CBHighYB.Value = 0;
+        ResetCBShadows();
+        ResetCBMidtones();
+        ResetCBHighlights();
     }
 
     public void ResetLighting()
@@ -433,6 +412,39 @@ public class EffectsViewModel : IDisposable
     public void ResetPencilSketch() => SketchStrokeWidth.Value = 0;
     public void ResetPosterize() => PosterizeLevel.Value = 0;
     public void ResetSolarize() => Solarize.Value = 0;
+    
+    public void ResetCBShadowsCR() => CBShadowsCR.Value = 0;
+    public void ResetCBShadowsMG() => CBShadowsMG.Value = 0;
+    public void ResetCBShadowsYB() => CBShadowsYB.Value = 0;
+    
+    public void ResetCBHighCR() => CBHighCR.Value = 0;
+    public void ResetCBHighMG() => CBHighMG.Value = 0;
+    public void ResetCBHighYB() => CBHighYB.Value = 0;
+    
+    public void ResetCBMidMG() => CBMidMG.Value = 0;
+    public void ResetCBMidYB() => CBMidYB.Value = 0;
+    public void ResetCBMidCR() => CBMidCR.Value = 0;
+
+    public void ResetCBShadows()
+    {
+        CBShadowsCR.Value = 0;
+        CBShadowsMG.Value = 0;
+        CBShadowsYB.Value = 0;
+    }
+
+    public void ResetCBMidtones()
+    {
+        CBMidCR.Value = 0;
+        CBMidMG.Value = 0;
+        CBMidYB.Value = 0;
+    }
+
+    public void ResetCBHighlights()
+    {
+        CBHighCR.Value = 0;
+        CBHighMG.Value = 0;
+        CBHighYB.Value = 0;
+    }
 
     public void Dispose()
     {
@@ -483,6 +495,7 @@ public class EffectsViewModel : IDisposable
         CBHighMG.Dispose();
         CBHighYB.Dispose();
 
+        _rendered.Dispose();
         SelectedPreset.Dispose();
         IsResetVisible.Dispose();
         ProcessedImage?.Dispose();

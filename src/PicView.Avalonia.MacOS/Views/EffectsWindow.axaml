@@ -31,7 +31,6 @@
             <main:EffectsView
                 Background="{DynamicResource WindowMainBackgroundColor}"
                 Margin="0,28,0,0"
-                PointerPressed="MoveWindow"
                 x:Name="XEffectsView" />
         </Panel>
     </Border>

@@ -155,7 +155,7 @@ public class FileSavingServiceTests : IDisposable
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
         var tab = new TabViewModel(null!, vm);
         tab.FileInfo.Value = new FileInfo(source);
-        var effects = new EffectsViewModel();
+        var effects = new EffectsViewModel((_, _) => Task.FromResult<MagickImage?>(null));
         var service = new FileSavingService(new StubSavePathPicker(null), () => effects);
 
         var isSaved = RunWithDispatcher(service.SaveToAsync(tab, destination));
