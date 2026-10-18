@@ -62,14 +62,26 @@ public sealed class SharedImageCache
     /// already in flight, or by starting a new load. The owner holds a reference to it while the file is in its list.
     /// </summary>
     /// <returns>The model, or <see langword="null"/> if <paramref name="ct"/> was cancelled first.</returns>
-    public async Task<ImageModel?> GetAsync(uint ownerId, FileInfo file, CancellationToken ct = default)
+    /// <remarks>
+    /// Completes synchronously, without allocating, when the image is already loaded, so a caller on the UI thread
+    /// can check <see cref="ValueTask{TResult}.IsCompleted"/> and show it straight away. A load is never run on the
+    /// caller's thread.
+    /// </remarks>
+    public ValueTask<ImageModel?> GetAsync(uint ownerId, FileInfo file, CancellationToken ct = default)
     {
         if (ct.IsCancellationRequested)
         {
-            return null;
+            return new ValueTask<ImageModel?>((ImageModel?)null);
         }
 
         var value = Acquire(ownerId, file);
+        return value.IsLoading
+            ? WaitForLoadAsync(value, ct)
+            : new ValueTask<ImageModel?>(value.ImageModel);
+    }
+
+    private static async ValueTask<ImageModel?> WaitForLoadAsync(PreLoadValue value, CancellationToken ct)
+    {
         try
         {
             await value.WaitForLoadingCompleteAsync().WaitAsync(ct).ConfigureAwait(false);
@@ -260,7 +272,8 @@ public sealed class SharedImageCache
             value = _pathLookup.GetOrAdd(path, pending);
             if (ReferenceEquals(value, pending))
             {
-                _ = LoadAsync(file, pending);
+                // Never decode on the caller's thread, which may be the UI thread
+                _ = Task.Run(() => LoadAsync(file, pending));
             }
         }
 

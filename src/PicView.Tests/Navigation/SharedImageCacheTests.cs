@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 
@@ -29,6 +30,41 @@ public class SharedImageCacheTests
 
         Assert.NotNull(model);
         Assert.Equal(files[1].FullName, model.FileInfo!.FullName);
+    }
+
+    [Fact]
+    public async Task GetAsync_ImageReady_CompletesSynchronously()
+    {
+        var files = Files(1);
+        _cache.SetFiles(Owner, files);
+        var model = await _cache.GetAsync(Owner, files[0], TestContext.Current.CancellationToken);
+
+        var again = _cache.GetAsync(Owner, files[0], TestContext.Current.CancellationToken);
+
+        Assert.True(again.IsCompletedSuccessfully, "A cached image should be returned without awaiting");
+        Assert.Same(model, again.Result);
+    }
+
+    [Fact]
+    public async Task GetAsync_NotCached_DoesNotRunTheLoadOnTheCallersThread()
+    {
+        using var gate = new ManualResetEventSlim();
+        // A loader that blocks synchronously: run on the caller's thread, it would hold up GetAsync itself
+        var cache = new SharedImageCache(f =>
+        {
+            gate.Wait(TimeSpan.FromSeconds(5));
+            return ValueTask.FromResult(new ImageModel { FileInfo = f });
+        });
+        var files = Files(1);
+        cache.SetFiles(Owner, files);
+
+        var stopwatch = Stopwatch.StartNew();
+        var request = cache.GetAsync(Owner, files[0], TestContext.Current.CancellationToken);
+        stopwatch.Stop();
+        gate.Set();
+        await request;
+
+        Assert.True(stopwatch.Elapsed < TimeSpan.FromSeconds(2), "GetAsync waited for a load run on the caller's thread");
     }
 
     [Fact]

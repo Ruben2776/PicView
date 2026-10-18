@@ -533,7 +533,9 @@ public class TabOverviewViewModel
         }
 
         var tab = ActiveTab.CurrentValue;
-        return SharedCache.GetAsync(tab.Id, fileInfo, tab.GetTabCancellation().Token).Result?.Image;
+        var request = SharedCache.GetAsync(tab.Id, fileInfo, tab.GetTabCancellation().Token);
+        // A pending ValueTask cannot be blocked on directly
+        return (request.IsCompleted ? request.Result : request.AsTask().Result)?.Image;
     }
 
     
