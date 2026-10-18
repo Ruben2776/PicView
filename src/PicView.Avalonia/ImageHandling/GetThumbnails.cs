@@ -7,6 +7,7 @@ using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageReading;
 using PicView.Core.ViewModels;
+using SkiaSharp;
 
 namespace PicView.Avalonia.ImageHandling;
 
@@ -49,14 +50,14 @@ public static class GetThumbnails
                     return await CreateThumbAsync(magick, fileInfo, height).ConfigureAwait(false);
                 }
 
-                var thumbnail = profile.CreateThumbnail();
+                using var thumbnail = profile.CreateThumbnail();
                 if (thumbnail is null || thumbnail.Height < height)
                 {
                     return await CreateThumbAsync(magick, fileInfo, height).ConfigureAwait(false);
                 }
 
                 thumbnail.AutoOrient();
-                return thumbnail.ToWriteableBitmap();
+                return MagickBitmapConverter.ToBgraWriteableBitmap(thumbnail);
             }
             finally
             {
@@ -75,7 +76,7 @@ public static class GetThumbnails
             }
             try
             {
-                return await GetSkBitmapThumbAsync(fileInfo, height).ConfigureAwait(false);
+                return GetSkBitmapThumb(fileInfo, height);
             }
             catch (Exception exception)
             {
@@ -118,13 +119,13 @@ public static class GetThumbnails
         {
             return null;
         }
-        var thumbnail = profile.CreateThumbnail();
+        using var thumbnail = profile.CreateThumbnail();
         if (thumbnail is null)
         {
             return null;
         }
         thumbnail.AutoOrient();
-        return thumbnail.ToWriteableBitmap();
+        return MagickBitmapConverter.ToBgraWriteableBitmap(thumbnail);
     }
 
     /// <summary>
@@ -190,7 +191,7 @@ public static class GetThumbnails
             case MagickFormat.Icon:
             case MagickFormat.Wbmp:
             {
-                return await GetSkBitmapThumbAsync(fileInfo, height).ConfigureAwait(false);
+                return GetSkBitmapThumb(fileInfo, height);
             }
         
             case MagickFormat.Svg:
@@ -203,22 +204,77 @@ public static class GetThumbnails
                 var geometry = new MagickGeometry(0, height);
                 magick.AutoOrient();
                 magick.Thumbnail(geometry);
-                return magick.ToWriteableBitmap();
+                return MagickBitmapConverter.ToBgraWriteableBitmap(magick);
             }
         }
     }
 
-    private static async ValueTask<Bitmap?> GetSkBitmapThumbAsync(FileInfo fileInfo, uint height)
+    /// <summary>
+    /// Decodes a common format to <paramref name="height"/> with Skia, reading the file natively.
+    /// The codec decodes at a reduced size where the format supports it (JPEG DCT scaling, WebP),
+    /// and the result lands straight in the <see cref="WriteableBitmap"/> framebuffer without managed buffers.
+    /// </summary>
+    private static Bitmap? GetSkBitmapThumb(FileInfo fileInfo, uint height)
     {
         if (fileInfo is null || !fileInfo.Exists)
         {
             return null;
         }
-        var stream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
-        await using (stream.ConfigureAwait(false))
+
+        using var codec = SKCodec.Create(fileInfo.FullName);
+        if (codec is null || codec.Info.Width <= 0 || codec.Info.Height <= 0)
         {
-            var thumb = Bitmap.DecodeToHeight(stream, (int)height);
-            return thumb;
+            return GetSkBitmapThumbFromStream(fileInfo, height);
         }
+
+        // Same target size as Bitmap.DecodeToHeight
+        var aspectRatio = codec.Info.Width / (double)codec.Info.Height;
+        var target = new SKImageInfo(Math.Max(1, (int)(aspectRatio * height)), (int)height,
+            SKColorType.Bgra8888, SKAlphaType.Premul);
+        var scaled = codec.GetScaledDimensions((float)height / codec.Info.Height);
+
+        var bitmap = new WriteableBitmap(new PixelSize(target.Width, target.Height), new Vector(96, 96),
+            PixelFormat.Bgra8888, AlphaFormat.Premul);
+        bool decoded;
+        using (var framebuffer = bitmap.Lock())
+        {
+            decoded = scaled.Width == target.Width && scaled.Height == target.Height && framebuffer.RowBytes == target.RowBytes
+                ? IsDecoded(codec.GetPixels(target, framebuffer.Address))
+                : DecodeAndResize(codec, scaled, target, framebuffer);
+        }
+
+        if (decoded)
+        {
+            return bitmap;
+        }
+
+        bitmap.Dispose();
+        return GetSkBitmapThumbFromStream(fileInfo, height);
+    }
+
+    private static bool DecodeAndResize(SKCodec codec, SKSizeI scaled, SKImageInfo target, ILockedFramebuffer framebuffer)
+    {
+        using var source = new SKBitmap(new SKImageInfo(scaled.Width, scaled.Height, SKColorType.Bgra8888, SKAlphaType.Premul));
+        if (!IsDecoded(codec.GetPixels(source.Info, source.GetPixels())))
+        {
+            return false;
+        }
+
+        // Matches BitmapInterpolationMode.HighQuality, the DecodeToHeight default
+        var sampling = target.Height > scaled.Height
+            ? new SKSamplingOptions(SKCubicResampler.Mitchell)
+            : new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.Linear);
+        using var destination = new SKPixmap(target, framebuffer.Address, framebuffer.RowBytes);
+        return source.ScalePixels(destination, sampling);
+    }
+
+    // Truncated files still show what could be decoded, matching SKBitmap.Decode
+    private static bool IsDecoded(SKCodecResult result) =>
+        result is SKCodecResult.Success or SKCodecResult.IncompleteInput;
+
+    private static Bitmap GetSkBitmapThumbFromStream(FileInfo fileInfo, uint height)
+    {
+        using var stream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
+        return Bitmap.DecodeToHeight(stream, (int)height);
     }
 }

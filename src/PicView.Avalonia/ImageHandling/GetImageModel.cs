@@ -381,13 +381,13 @@ public static class GetImageModel
         }
         else
         {
-            await ProcessSkBitmapAsync(fileInfo, imageModel).ConfigureAwait(false);
+            ProcessSkBitmap(fileInfo, imageModel);
         }
     }
 
-    private static async ValueTask ProcessSkBitmapAsync(FileInfo fileInfo, ImageModel imageModel)
+    private static void ProcessSkBitmap(FileInfo fileInfo, ImageModel imageModel)
     {
-        var bitmap = await GetImage.GetSkBitmapAsync(fileInfo).ConfigureAwait(false);
+        var bitmap = GetImage.GetSkBitmap(fileInfo);
         SetBitmapProperties(bitmap, imageModel);
     }
 

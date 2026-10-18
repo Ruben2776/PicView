@@ -7,27 +7,64 @@ using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageReading;
 using PicView.Core.ViewModels;
+using SkiaSharp;
 
 namespace PicView.Avalonia.ImageHandling;
 
 public static class GetImage
 {
-    public static async ValueTask<Bitmap?> GetSkBitmapAsync(string file) =>
-        await GetSkBitmapAsync(new FileInfo(file)).ConfigureAwait(false);
-
-    public static async ValueTask<Bitmap?> GetSkBitmapAsync(FileInfo fileInfo)
+    /// <summary>
+    /// Decodes a common format (JPEG, PNG, WebP, ...) with Skia.
+    /// Skia reads the file itself through native, memory-mapped I/O and decodes straight into the
+    /// <see cref="WriteableBitmap"/> framebuffer, so no managed buffers or extra pixel copies are made.
+    /// </summary>
+    public static Bitmap? GetSkBitmap(FileInfo fileInfo)
     {
         if (fileInfo is null)
         {
-            DebugHelper.LogDebug(nameof(GetImage), nameof(GetSkBitmapAsync), $"{nameof(fileInfo)} is null");
+            DebugHelper.LogDebug(nameof(GetImage), nameof(GetSkBitmap), $"{nameof(fileInfo)} is null");
             return null;
         }
-        var stream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
-        await using (stream.ConfigureAwait(false))
+
+        using var codec = SKCodec.Create(fileInfo.FullName);
+        if (codec is null)
         {
-            var bitmap = new Bitmap(stream);
+            // Skia could not open or recognize the file natively, let Avalonia try the stream
+            return GetSkBitmapFromStream(fileInfo);
+        }
+
+        var info = new SKImageInfo(codec.Info.Width, codec.Info.Height, SKColorType.Bgra8888, SKAlphaType.Premul);
+        if (info.Width <= 0 || info.Height <= 0)
+        {
+            return null;
+        }
+
+        var bitmap = new WriteableBitmap(new PixelSize(info.Width, info.Height), new Vector(96, 96),
+            PixelFormat.Bgra8888, AlphaFormat.Premul);
+
+        SKCodecResult result;
+        using (var framebuffer = bitmap.Lock())
+        {
+            result = framebuffer.RowBytes == info.RowBytes
+                ? codec.GetPixels(info, framebuffer.Address)
+                : SKCodecResult.InvalidParameters;
+        }
+
+        // Truncated files still show what could be decoded, matching SKBitmap.Decode
+        if (result is SKCodecResult.Success or SKCodecResult.IncompleteInput)
+        {
             return bitmap;
         }
+
+        bitmap.Dispose();
+        DebugHelper.LogDebug(nameof(GetImage), nameof(GetSkBitmap), $"{fileInfo.FullName}: {result}");
+        return GetSkBitmapFromStream(fileInfo);
+    }
+
+    private static Bitmap? GetSkBitmapFromStream(FileInfo fileInfo)
+    {
+        using var stream = FileStreamUtils.GetOptimizedFileStream(fileInfo);
+        return new Bitmap(stream);
     }
 
     public static async ValueTask<Bitmap?> GetNonStandardBitmapAsync(FileInfo fileInfo, MagickImage? magickImage = null)
@@ -46,18 +83,14 @@ public static class GetImage
         {
             magickImage?.Dispose();
             DebugHelper.LogDebug(nameof(GetImage), nameof(GetNonStandardBitmapAsync), e);
-            if (fileInfo.IsCommon())
-            {
-                return await GetSkBitmapAsync(fileInfo).ConfigureAwait(false);
-            }
-            return null;
+            return fileInfo.IsCommon() ? GetSkBitmap(fileInfo) : null;
         }
 
         // Rotate image according to EXIF orientation
         magickImage.AutoOrient();
         TransformToSrgbIfNeeded(magickImage);
 
-        var bitmap = magickImage.ToWriteableBitmap();
+        var bitmap = MagickBitmapConverter.ToBgraWriteableBitmap(magickImage);
         if (shouldDisposeMagickImage)
         {
             magickImage.Dispose();
@@ -80,7 +113,7 @@ public static class GetImage
         magickImage.AutoOrient();
         TransformToSrgbIfNeeded(magickImage);
 
-        var bitmap = magickImage.ToWriteableBitmap();
+        var bitmap = MagickBitmapConverter.ToBgraWriteableBitmap(magickImage);
         if (shouldDisposeMagickImage)
         {
             magickImage.Dispose();
@@ -129,7 +162,7 @@ public static class GetImage
             magickImage.AutoOrient();
             TransformToSrgbIfNeeded(magickImage);
 
-            var bitmap = magickImage.ToWriteableBitmap();
+            var bitmap = MagickBitmapConverter.ToBgraWriteableBitmap(magickImage);
             magickImage.Dispose();
             return bitmap;
         }
