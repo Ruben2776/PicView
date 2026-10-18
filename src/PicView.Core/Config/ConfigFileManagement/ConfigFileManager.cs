@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 
@@ -22,6 +22,19 @@ public static class ConfigFileManager
     public static async Task<string?> SaveConfigFileAndReturnPathAsync(ConfigFile file, string? path, object? value,
         Type inputType, JsonSerializerContext context)
     {
+        if (value is IWindowProperties windowProps)
+        {
+            if (windowProps.Width.HasValue && !double.IsFinite(windowProps.Width.Value))
+            {
+                windowProps.Width = null;
+            }
+
+            if (windowProps.Height.HasValue && !double.IsFinite(windowProps.Height.Value))
+            {
+                windowProps.Height = null;
+            }
+        }
+
         // If null, try to get the current user file, if exist
         path ??= GetConfigPath(file);
 

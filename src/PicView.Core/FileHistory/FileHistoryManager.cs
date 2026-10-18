@@ -171,14 +171,14 @@ public static class FileHistoryManager
         }
 
         // Count unpinned entries
-        var unpinnedCount = _entries.Count(e => !e.IsPinned);
+        var unpinnedCount = _entries.Count(e => e?.IsPinned == false);
 
         // If we'll exceed the maximum unpinned entries, remove the oldest unpinned entry
         if (unpinnedCount >= FileHistoryConfiguration.MaxHistoryEntries)
         {
             for (var i = 0; i < _entries.Count; i++)
             {
-                if (_entries[i].IsPinned)
+                if (_entries[i]?.IsPinned == true)
                 {
                     continue;
                 }

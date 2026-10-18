@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
@@ -26,6 +26,15 @@ public static class GenericWindowHelper
     
     public static void GenericWindowInitialize(Window window, string title, bool isWidthLocked, IWindowProperties windowConfig, bool closeOnEsc = true)
     {
+        if (windowConfig.Width.HasValue && !double.IsFinite(windowConfig.Width.Value))
+        {
+            windowConfig.Width = null;
+        }
+        if (windowConfig.Height.HasValue && !double.IsFinite(windowConfig.Height.Value))
+        {
+            windowConfig.Height = null;
+        }
+
         if (isWidthLocked)
         {
             if (!double.IsNaN(window.Width))
@@ -41,15 +50,15 @@ public static class GenericWindowHelper
         else
         { 
             window.WindowState = WindowState.Normal;
-            if (windowConfig is { Height: not null, Width: not null })
+            if (window.CanResize)
             {
-                if (windowConfig.Height.Value > window.MinHeight)
+                if (windowConfig.Height is { } h && double.IsFinite(h) && h > window.MinHeight)
                 {
-                    window.Height = windowConfig.Height.Value;
+                    window.Height = h;
                 }
-                if (!isWidthLocked && windowConfig.Width.Value > window.MinWidth)
+                if (!isWidthLocked && windowConfig.Width is { } w && double.IsFinite(w) && w > window.MinWidth)
                 {
-                    window.Width = windowConfig.Width.Value;
+                    window.Width = w;
                 }
             }
             if (windowConfig is { Top: not null, Left: not null })
@@ -88,8 +97,37 @@ public static class GenericWindowHelper
         
         window.Closing += (_, _) =>
         {
-            windowConfig.Width = window.Width;
-            windowConfig.Height = window.Height;
+            if (window.CanResize && window.WindowState is not WindowState.Maximized)
+            {
+                if (!isWidthLocked)
+                {
+                    var width = double.IsFinite(window.Bounds.Width) && window.Bounds.Width > 0
+                        ? window.Bounds.Width
+                        : window.Width;
+                    if (double.IsFinite(width))
+                    {
+                        windowConfig.Width = width;
+                    }
+                }
+
+                var height = double.IsFinite(window.Bounds.Height) && window.Bounds.Height > 0
+                    ? window.Bounds.Height
+                    : window.Height;
+                if (double.IsFinite(height))
+                {
+                    windowConfig.Height = height;
+                }
+            }
+
+            if (windowConfig.Width.HasValue && !double.IsFinite(windowConfig.Width.Value))
+            {
+                windowConfig.Width = null;
+            }
+            if (windowConfig.Height.HasValue && !double.IsFinite(windowConfig.Height.Value))
+            {
+                windowConfig.Height = null;
+            }
+
             windowConfig.Maximized = window.WindowState is WindowState.Maximized;
             windowConfig.Top = window.Position.Y;
             windowConfig.Left = window.Position.X;

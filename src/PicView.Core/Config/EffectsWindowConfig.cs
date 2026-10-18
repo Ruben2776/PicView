@@ -23,6 +23,14 @@ public class EffectsWindowConfig() : ConfigFile("EffectsWindow.json")
                 if (JsonSerializer.Deserialize(
                         jsonString, typeof(EffectsWindowProperties), EffectsWindowGenerationContext.Default) is EffectsWindowProperties settings)
                 {
+                    if (settings.Width.HasValue && !double.IsFinite(settings.Width.Value))
+                    {
+                        settings.Width = null;
+                    }
+                    if (settings.Height.HasValue && !double.IsFinite(settings.Height.Value))
+                    {
+                        settings.Height = null;
+                    }
                     WindowProperties = settings;
                 }
                 else
@@ -43,6 +51,18 @@ public class EffectsWindowConfig() : ConfigFile("EffectsWindow.json")
 
     public async Task SaveAsync()
     {
+        if (WindowProperties is not null)
+        {
+            if (WindowProperties.Width.HasValue && !double.IsFinite(WindowProperties.Width.Value))
+            {
+                WindowProperties.Width = null;
+            }
+            if (WindowProperties.Height.HasValue && !double.IsFinite(WindowProperties.Height.Value))
+            {
+                WindowProperties.Height = null;
+            }
+        }
+
         CorrectPath = await ConfigFileManager.SaveConfigFileAndReturnPathAsync(this,
             CorrectPath, WindowProperties, typeof(EffectsWindowProperties), EffectsWindowGenerationContext.Default).ConfigureAwait(false);
     }
