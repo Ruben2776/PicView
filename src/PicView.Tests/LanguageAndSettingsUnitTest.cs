@@ -96,10 +96,12 @@ public class LanguageAndSettingsUnitTest
         var enModel = TranslationManager.GetLanguageModel(new CultureInfo("en-US"));
         Assert.NotNull(enModel);
         Assert.Equal("Image", enModel.Image);
+        Assert.Equal("Hotkey", enModel.Hotkey);
 
         var daModel = TranslationManager.GetLanguageModel(new CultureInfo("da-DK"));
         Assert.NotNull(daModel);
         Assert.Equal("Billede", daModel.Image);
+        Assert.Equal("Genvejstast", daModel.Hotkey);
     }
 
     [Fact]

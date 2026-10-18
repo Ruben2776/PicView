@@ -78,7 +78,7 @@
             </DockPanel>
 
             <customControls:KeybindBox
-                ActionName="Key:"
+                ActionName="{Binding Translation.Hotkey.Value}"
                 Classes="TStyle"
                 DockPanel.Dock="Right"
                 Focusable="True"

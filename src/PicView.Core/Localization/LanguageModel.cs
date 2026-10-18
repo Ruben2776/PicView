@@ -209,6 +209,7 @@ public class LanguageModel
     public string? HighlightColor { get; set; }
     public string? Highlights { get; set; }
     public string? HighQuality { get; set; }
+    public string? Hotkey { get; set; }
     public string? Hue { get; set; }
     public string? Image { get; set; }
     public string? ImageAliasing { get; set; }

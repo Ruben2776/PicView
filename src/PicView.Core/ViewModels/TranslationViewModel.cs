@@ -159,6 +159,7 @@ public class TranslationViewModel
         Highlights.Value = t.Highlights;
         HighlightColor.Value = t.HighlightColor;
         HighQuality.Value = t.HighQuality;
+        Hotkey.Value = t.Hotkey;
         Hue.Value = t.Hue;
         Image.Value = t.Image;
         ImageAliasing.Value = t.ImageAliasing;
@@ -562,6 +563,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> HighlightColor { get; } = new();
     public BindableReactiveProperty<string?> Highlights { get; } = new();
     public BindableReactiveProperty<string?> HighQuality { get; } = new();
+    public BindableReactiveProperty<string?> Hotkey { get; } = new();
     public BindableReactiveProperty<string?> Hue { get; } = new();
     public BindableReactiveProperty<string?> Image { get; } = new();
     public BindableReactiveProperty<string?> ImageAliasing { get; } = new();
