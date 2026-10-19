@@ -267,24 +267,23 @@ public static class WindowResizing
             return null;
         }
 
-        if (Settings.ImageScaling.ShowImageSideBySide)
+        if (Settings.ImageScaling.ShowImageSideBySide && tab.SecondaryModel is { } secondary)
         {
-            if (vm.WindowTabs.SharedCache?.TryGetReady(tab.SecondaryModel.FileInfo, out var secondaryReady) ?? false)
+            if (secondary.PixelWidth is not 0 && secondary.PixelHeight is not 0)
+            {
+                secondaryWidth = secondary.PixelWidth;
+                secondaryHeight = secondary.PixelHeight;
+            }
+            else if (secondary.FileInfo is not null &&
+                     (vm.WindowTabs.SharedCache?.TryGetReady(secondary.FileInfo, out var secondaryReady) ?? false))
             {
                 secondaryWidth = secondaryReady.PixelWidth;
                 secondaryHeight = secondaryReady.PixelHeight;
             }
             else
             {
-                if (tab.Model.Image is Bitmap bitmap)
-                {
-                    secondaryWidth = bitmap.PixelSize.Width;
-                    secondaryHeight = bitmap.PixelSize.Height;
-                }
-                else
-                {
-                    return null;
-                }
+                // Wait for the second image instead of resizing for a guessed pair and again once it arrives
+                return null;
             }
         }
         else
