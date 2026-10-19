@@ -65,72 +65,24 @@ public static class ImageFitter
 
     private static Fit FitPair(FitInput input)
     {
-        var (width, height) = (input.ImageWidth, input.ImageHeight);
-        var (secondaryWidth, secondaryHeight) = (input.SecondImageWidth, input.SecondImageHeight);
-        if (width <= 0 || height <= 0)
+        if (input.ImageWidth <= 0 || input.ImageHeight <= 0)
         {
             return default;
         }
 
-        var reserved = input.ReservedSpace;
+        // Scale both images to the taller height, then fit the pair as one image made of both
+        var largestHeight = Math.Max(input.ImageHeight, input.SecondImageHeight);
+        var combinedWidth = input.ImageWidth * (largestHeight / input.ImageHeight)
+                            + input.SecondImageWidth * (largestHeight / input.SecondImageHeight);
 
-        // Normalize the widths so both images share the largest height and scale evenly
-        var largestHeight = Math.Max(height, secondaryHeight);
-        var normalizedWidth = width * (largestHeight / height);
-        var normalizedSecondaryWidth = secondaryWidth * (largestHeight / secondaryHeight);
-        var combinedWidth = normalizedWidth + normalizedSecondaryWidth;
-
-        double maxAvailableWidth, maxAvailableHeight;
-        if (input.Mode is FitMode.AutoFit)
+        return FitSingle(input with
         {
-            (maxAvailableWidth, maxAvailableHeight) = GetAvailableArea(input);
-        }
-        else
-        {
-            maxAvailableWidth = input.WindowContentWidth;
-            maxAvailableHeight = input.WindowContentHeight;
-        }
-
-        var isTurned = input.QuarterTurns % 2 != 0;
-        double scale, calculatedCombinedWidth, calculatedLargestHeight;
-        double scrollWidth, scrollHeight, windowWidth, windowHeight;
-
-        if (input.ScrollEnabled)
-        {
-            scale = CalculateScale(isTurned, maxAvailableWidth, double.PositiveInfinity, combinedWidth, largestHeight);
-
-            calculatedCombinedWidth = combinedWidth * scale;
-            calculatedLargestHeight = largestHeight * scale;
-
-            scrollWidth = Math.Min(calculatedCombinedWidth, maxAvailableWidth);
-            scrollHeight = Math.Min(calculatedLargestHeight, maxAvailableHeight);
-
-            windowWidth = scrollWidth + reserved.GalleryWidth;
-            windowHeight = scrollHeight + reserved.Bottom + reserved.Top + reserved.GalleryHeight;
-        }
-        else
-        {
-            scale = CalculateScale(isTurned, maxAvailableWidth, maxAvailableHeight, combinedWidth, largestHeight);
-
-            calculatedCombinedWidth = combinedWidth * scale;
-            calculatedLargestHeight = largestHeight * scale;
-
-            scrollWidth = double.NaN;
-            scrollHeight = double.NaN;
-
-            windowWidth = calculatedCombinedWidth + reserved.GalleryWidth;
-            windowHeight = calculatedLargestHeight + reserved.Bottom + reserved.Top + reserved.GalleryHeight;
-        }
-
-        return new Fit(windowWidth, windowHeight, calculatedCombinedWidth, calculatedLargestHeight,
-            scrollWidth, scrollHeight, scale);
+            ImageWidth = combinedWidth,
+            ImageHeight = largestHeight,
+            SecondImageWidth = 0,
+            SecondImageHeight = 0
+        });
     }
-
-    private static double CalculateScale(bool isTurned, double maxWidth, double maxHeight, double width,
-        double height) =>
-        isTurned
-            ? Math.Min(maxWidth / height, maxHeight / width)
-            : Math.Min(maxWidth / width, maxHeight / height);
 
     private static (double Width, double Height) GetAvailableArea(FitInput input)
     {
