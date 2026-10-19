@@ -42,10 +42,4 @@ public readonly record struct ScreenSize
     /// Gets the DPI scaling factor of the screen.
     /// </summary>
     public double Scaling { get; init; }
-
-    /// <summary>
-    /// Gets the margin setting for the screen, adjusted for the current scaling factor. If the margin
-    /// specified in the application settings is zero, this property returns zero.
-    /// </summary>
-    public double Margin => Settings.WindowProperties.Margin is 0 ? 0 : Settings.WindowProperties.Margin / Scaling;
 }
