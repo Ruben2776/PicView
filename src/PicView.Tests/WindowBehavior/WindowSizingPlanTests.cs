@@ -18,14 +18,14 @@ public class WindowSizingPlanTests
     private static readonly Fit Fit = new(WindowWidth: 1000, WindowHeight: 558, Width: 1000, Height: 500,
         ScrollViewerWidth: double.NaN, ScrollViewerHeight: double.NaN, Scale: 1);
 
-    private static WindowSizingPlan Plan(WindowMode mode,
+    private static WindowSizingPlan Plan(WindowMode mode, bool autoFit = false,
         WindowResizeReason reason = WindowResizeReason.Application, bool isShown = true) =>
-        WindowSizingPlan.For(mode, reason, isShown, Fit, Screen);
+        WindowSizingPlan.For(mode, autoFit, reason, isShown, Fit, Screen);
 
     [Fact]
-    public void For_Manual_KeepsTheUsersSizeWithNoLimit()
+    public void For_NormalWithoutAutoFit_KeepsTheUsersSizeWithNoLimit()
     {
-        var plan = Plan(WindowMode.Manual);
+        var plan = Plan(WindowMode.Normal);
 
         Assert.Equal(SizeToContent.Manual, plan.SizeToContent);
         Assert.True(double.IsNaN(plan.MaxWidth));
@@ -53,7 +53,7 @@ public class WindowSizingPlanTests
     [Fact]
     public void For_AutoFitShownWindow_GrowsToContentUpToTheFit()
     {
-        var plan = Plan(WindowMode.AutoFit);
+        var plan = Plan(WindowMode.Normal, autoFit: true);
 
         Assert.Equal(SizeToContent.WidthAndHeight, plan.SizeToContent);
         Assert.Equal(1000, plan.MaxWidth);
@@ -66,7 +66,7 @@ public class WindowSizingPlanTests
     [Fact]
     public void For_AutoFitWindowNotShownYet_SetsTheFitAsExplicitSize()
     {
-        var plan = Plan(WindowMode.AutoFit, isShown: false);
+        var plan = Plan(WindowMode.Normal, autoFit: true, isShown: false);
 
         Assert.Equal(SizeToContent.Manual, plan.SizeToContent);
         Assert.Equal(1000, plan.MaxWidth);
@@ -77,10 +77,10 @@ public class WindowSizingPlanTests
     }
 
     [Fact]
-    public void For_AutoFitResizedByUser_KeepsTheUsersSizeLikeManual()
+    public void For_AutoFitResizedByUser_KeepsTheUsersSizeLikeWithoutAutoFit()
     {
-        var plan = Plan(WindowMode.AutoFit, WindowResizeReason.User);
+        var plan = Plan(WindowMode.Normal, autoFit: true, WindowResizeReason.User);
 
-        Assert.Equal(Plan(WindowMode.Manual), plan);
+        Assert.Equal(Plan(WindowMode.Normal), plan);
     }
 }

@@ -55,12 +55,12 @@ _Avoid_: Source file, input path
 ## Sizing
 
 **AutoFit**:
-The window setting where the window takes its size from the shown image, worked out before the window resizes so it never visibly resizes twice. With it off, the image fits inside whatever size the window already has.
-_Avoid_: Auto-size, auto resize
+The setting of a Normal window where the window takes its size from the shown image, worked out before the window resizes so it never visibly resizes twice. With it off, the window keeps the size the user gave it and the image fits inside it. Turning AutoFit on or off applies to every window, while resizing a window by hand turns it off for only that window.
+_Avoid_: Auto-size, auto resize, Manual
 
 **Window Mode**:
-Who owns a window's size, one at a time: Fullscreen covers the screen, Maximized fills the work area, AutoFit follows the shown image, and Manual keeps the size the user gave it. When several settings apply, Fullscreen wins over Maximized and Maximized over AutoFit. A maximized window fits the image to itself, as Manual does.
-_Avoid_: Window state, scaling mode, sizing mode
+The state a window is in, exactly one at a time: Normal, Minimized, Maximized or Fullscreen. Fullscreen covers the screen, Maximized fills the work area, and a Normal window follows the shown image with AutoFit, else keeps the size the user gave it. A maximized window fits the image to itself, as a Normal window without AutoFit does. Leaving Fullscreen or Minimized gives back the mode the window had before it, so a maximized window that went fullscreen is maximized again; leaving Maximized gives back Normal. Nothing is resized while a window is minimized. Each window has its own Window Mode, whether the user changes it in PicView or through the operating system's window controls. The settings only remember the mode a new window starts in, which is the last one the user chose in any window; they never remember Minimized, nor Fullscreen and Maximized together. A window opened while PicView is running never starts fullscreen. A slideshow shows its window fullscreen without changing the remembered mode, and stopping it gives back the mode the window had.
+_Avoid_: Scaling mode, sizing mode, Manual
 
 **Zoom to Fit**:
 The setting that lets an image scale past its native pixel size to fill the Available Area. With it off, an image is never shown larger than 100%.

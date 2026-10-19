@@ -226,9 +226,9 @@ public static class WindowResizing
     {
         var mode = WindowModes.From(
             Settings.WindowProperties.Fullscreen || mainWindow.WindowState is WindowState.FullScreen,
-            Settings.WindowProperties.Maximized || mainWindow.WindowState is WindowState.Maximized,
-            Settings.WindowProperties.AutoFit);
-        var plan = WindowSizingPlan.For(mode, reason, mainWindow.IsVisible, size, ScreenHelper.ScreenSize);
+            Settings.WindowProperties.Maximized || mainWindow.WindowState is WindowState.Maximized);
+        var plan = WindowSizingPlan.For(mode, Settings.WindowProperties.AutoFit, reason, mainWindow.IsVisible, size,
+            ScreenHelper.ScreenSize);
 
         mainWindow.SizeToContent = plan.SizeToContent;
         vm.WindowMaxWidth.Value = plan.MaxWidth;
@@ -362,8 +362,8 @@ public static class WindowResizing
     }
 
     private static FitMode GetFitMode() =>
-        WindowModes.From(Settings.WindowProperties.Fullscreen, Settings.WindowProperties.Maximized,
-            Settings.WindowProperties.AutoFit).ToFitMode();
+        WindowModes.From(Settings.WindowProperties.Fullscreen, Settings.WindowProperties.Maximized)
+            .ToFitMode(Settings.WindowProperties.AutoFit);
 
     private static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
     {

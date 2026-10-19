@@ -24,17 +24,17 @@ public readonly record struct WindowSizingPlan(
     double? Height,
     bool SettleToContentAfterRender)
 {
-    public static WindowSizingPlan For(WindowMode mode, WindowResizeReason reason, bool isShown, Fit fit,
-        ScreenSize screen) => mode switch
+    public static WindowSizingPlan For(WindowMode mode, bool autoFit, WindowResizeReason reason, bool isShown,
+        Fit fit, ScreenSize screen) => mode switch
     {
         WindowMode.Fullscreen => Limited(screen.Width, screen.Height),
         WindowMode.Maximized => Limited(screen.WorkingAreaWidth, screen.WorkingAreaHeight),
         // A user resize ends AutoFit, so the window keeps the size the user gave it
-        WindowMode.AutoFit when reason is WindowResizeReason.User => Limited(double.NaN, double.NaN),
+        WindowMode.Normal when !autoFit || reason is WindowResizeReason.User => Limited(double.NaN, double.NaN),
         // Before it is shown, the window gets the Fit as its size so the image never appears in a resizing window
-        WindowMode.AutoFit when !isShown => new(SizeToContent.Manual, fit.WindowWidth, fit.WindowHeight,
+        WindowMode.Normal when !isShown => new(SizeToContent.Manual, fit.WindowWidth, fit.WindowHeight,
             fit.WindowWidth, fit.WindowHeight, true),
-        WindowMode.AutoFit => new(SizeToContent.WidthAndHeight, fit.WindowWidth, fit.WindowHeight, null, null, true),
+        WindowMode.Normal => new(SizeToContent.WidthAndHeight, fit.WindowWidth, fit.WindowHeight, null, null, true),
         _ => Limited(double.NaN, double.NaN)
     };
 

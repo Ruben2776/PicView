@@ -1,12 +1,13 @@
 namespace PicView.Core.Sizing;
 
 /// <summary>
-/// Who owns a window's size: the screen, the work area, the shown image, or the user.
+/// The state a window is in, exactly one at a time. A Normal window follows the shown image with AutoFit,
+/// else keeps the size the user gave it.
 /// </summary>
 public enum WindowMode
 {
-    Manual,
-    AutoFit,
+    Normal,
+    Minimized,
     Maximized,
     Fullscreen
 }
@@ -14,30 +15,26 @@ public enum WindowMode
 public static class WindowModes
 {
     /// <summary>
-    /// Fullscreen wins over Maximized, and Maximized over AutoFit.
+    /// Fullscreen wins over Maximized.
     /// </summary>
-    public static WindowMode From(bool fullscreen, bool maximized, bool autoFit)
+    public static WindowMode From(bool fullscreen, bool maximized)
     {
         if (fullscreen)
         {
             return WindowMode.Fullscreen;
         }
 
-        if (maximized)
-        {
-            return WindowMode.Maximized;
-        }
-
-        return autoFit ? WindowMode.AutoFit : WindowMode.Manual;
+        return maximized ? WindowMode.Maximized : WindowMode.Normal;
     }
 
     /// <summary>
-    /// Where the image is fitted in this mode. A maximized window fits the image to itself, as a manual one does.
+    /// Where the image is fitted in this mode. A maximized window fits the image to itself, as a Normal window
+    /// without AutoFit does.
     /// </summary>
-    public static FitMode ToFitMode(this WindowMode mode) => mode switch
+    public static FitMode ToFitMode(this WindowMode mode, bool autoFit) => mode switch
     {
         WindowMode.Fullscreen => FitMode.Fullscreen,
-        WindowMode.AutoFit => FitMode.AutoFit,
+        WindowMode.Normal when autoFit => FitMode.AutoFit,
         _ => FitMode.FixedWindow
     };
 }
