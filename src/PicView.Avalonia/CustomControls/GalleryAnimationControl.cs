@@ -675,7 +675,7 @@ public class GalleryAnimationControl : UserControl
         if (IsHorizontalDock(dock))
         {
             var targetHeight = GetDockedSize(dock);
-            if (Settings.WindowProperties.AutoFit)
+            if (TabViewModel?.ParentWindowContext.WindowModeState.CurrentValue.AutoFit is true)
             {
                 Height = startHeight;
                 var heightAnim = AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed);

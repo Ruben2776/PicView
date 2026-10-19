@@ -621,7 +621,7 @@
                             Command="{Binding AutoFitWindowCommand}"
                             Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
-                            IsChecked="{Binding IsAutoFit.Value, Mode=TwoWay}"
+                            IsChecked="{Binding IsAutoFit.Value, Mode=OneWay}"
                             IsTabStop="True"
                             Padding="7,0"
                             Text="{Binding Translation.AutoFitWindow.Value}"

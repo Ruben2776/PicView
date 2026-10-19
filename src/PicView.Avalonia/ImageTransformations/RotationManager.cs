@@ -16,7 +16,7 @@ public static class RotationManager
             imageViewer.Rotate(0);
         }
         
-        if (Settings.WindowProperties.AutoFit)
+        if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
         }
@@ -30,7 +30,7 @@ public static class RotationManager
         }
         
         imageViewer.ResetZoom(Settings.Zoom.IsZoomAnimated);
-        if (Settings.WindowProperties.AutoFit)
+        if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
         }
@@ -45,7 +45,7 @@ public static class RotationManager
         
         imageViewer.Rotate(angle);
         
-        if (Settings.WindowProperties.AutoFit)
+        if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
         }
@@ -60,7 +60,7 @@ public static class RotationManager
         
         imageViewer.Rotate(true);
         
-        if (Settings.WindowProperties.AutoFit)
+        if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
         }
@@ -75,7 +75,7 @@ public static class RotationManager
         
         imageViewer.Rotate(false);
         
-        if (Settings.WindowProperties.AutoFit)
+        if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
         }

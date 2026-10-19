@@ -6,6 +6,7 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Navigation;
+using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Navigation;
@@ -134,7 +135,8 @@ public static class SourceOpener
     internal static void ShowHoverBarIfNeeded(TabViewModel tab)
     {
         if (!Settings.UIProperties.ShowInterface && Settings.UIProperties.ShowAltInterfaceButtons
-            || Settings.UIProperties.ShowAltInterfaceButtons && Settings.WindowProperties.Fullscreen)
+            || Settings.UIProperties.ShowAltInterfaceButtons &&
+            tab.ParentWindowContext.WindowModeState.CurrentValue.Mode is WindowMode.Fullscreen)
         {
             tab.Hoverbar.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
         }

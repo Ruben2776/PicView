@@ -17,22 +17,22 @@ public sealed class MacWindowModeAdapter : IWindowModeAdapter
     /// </summary>
     public bool SkipsInitialNativeState => true;
 
-    public void EnterNativeState(MainWindow window, WindowMode mode)
+    public void EnterNativeState(MainWindow window, WindowModeState state)
     {
         ScreenHelper.UpdateScreenSize(window);
-        if (mode is not WindowMode.Normal)
+        if (state.Mode is not WindowMode.Normal)
         {
-            WindowModeSwitcher.SetNativeState(window, mode);
+            WindowModeSwitcher.SetNativeState(window, state.Mode);
             return;
         }
 
         // Disabling ExtendClientAreaToDecorationsHint and enabling it again fixes not being able to draw in title bar
         window.ExtendClientAreaToDecorationsHint = false;
-        WindowModeSwitcher.SetNativeState(window, mode);
+        WindowModeSwitcher.SetNativeState(window, state.Mode);
         Dispatcher.UIThread.Post(() =>
         {
             window.ExtendClientAreaToDecorationsHint = true;
-            if (Settings.WindowProperties.AutoFit)
+            if (state.AutoFit)
             {
                 WindowResizing.ResumeAutoFit(window);
                 WindowResizing.FastCenterWindow(window);

@@ -103,7 +103,7 @@ public partial class MainView : UserControl
         {
             var startUpMenu = new StartUpMenu();
             
-            if (Settings.WindowProperties.AutoFit)
+            if (vm.WindowModeState.CurrentValue.AutoFit)
             {
                 // Keep the StartUpMenu the same size when creating a new tab
                 startUpMenu.Width = Bounds.Width;

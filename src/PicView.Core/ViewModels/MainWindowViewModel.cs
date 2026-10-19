@@ -33,7 +33,6 @@ public class MainWindowViewModel : IDisposable
     public bool IsBottomToolbarRightRotationClicked { get; set; }
     public bool IsBottomToolbarLeftRotationClicked { get; set; }
     public BindableReactiveProperty<bool> IsBottomToolbarShown { get; } = new(Settings.UIProperties.ShowBottomNavBar);
-    public BindableReactiveProperty<bool> IsAutoFit { get; } = new(Settings.WindowProperties.AutoFit);
     public BindableReactiveProperty<bool> IsSideBySide { get; } = new(Settings.ImageScaling.ShowImageSideBySide);
     
     public BindableReactiveProperty<double> ScrollViewerWidth { get; } = new(double.NaN);
@@ -64,9 +63,12 @@ public class MainWindowViewModel : IDisposable
     /// <summary>
     /// This window's Window Mode, which only its <see cref="WindowModeSwitcher"/> changes.
     /// </summary>
-    public ReactiveProperty<WindowModeState> WindowModeState { get; } = new();
+    public ReactiveProperty<WindowModeState> WindowModeState { get; } =
+        new(Sizing.WindowModeState.Opening(Settings.WindowProperties.AutoFit));
 
     public IWindowModeSwitcher? WindowModeSwitcher { get; set; }
+
+    public IReadOnlyBindableReactiveProperty<bool> IsAutoFit { get; }
 
     public IReadOnlyBindableReactiveProperty<bool> IsFullscreen { get; }
 
@@ -540,6 +542,7 @@ public class MainWindowViewModel : IDisposable
         WindowTabs = new TabOverviewViewModel(this);
 
         // Window Mode
+        IsAutoFit = WindowModeState.Select(static state => state.AutoFit).ToReadOnlyBindableReactiveProperty();
         var mode = WindowModeState.Select(static state => state.Mode);
         IsFullscreen = mode.Select(static m => m is WindowMode.Fullscreen).ToReadOnlyBindableReactiveProperty();
         IsMaximized = mode.Select(static m => m is WindowMode.Maximized).ToReadOnlyBindableReactiveProperty();

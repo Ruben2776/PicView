@@ -80,7 +80,7 @@ public static class StartUpHelper
     {
         SettingsUpdater.InitializeSettings(core.MainWindows.ActiveWindow.CurrentValue, settingsExists);
 
-        WindowFunctions.HandleWindowScalingMode(core, window);
+        WindowFunctions.HandleWindowScalingMode(window, isAppStart: true);
         
         ThemeManager.DetermineTheme(Application.Current, settingsExists);
         ColorManager.UpdateAccentColors(Settings.Theme.ColorTheme);
@@ -169,7 +169,7 @@ public static class StartUpHelper
     public static void HandleStartImage(MainWindow mainWindow, CoreViewModel core, string arg)
     {
         _ = Task.Run(() => SourceOpener.OpenAsync(mainWindow, core, arg, new OpenOptions(IsStartup: true)).AsTask());
-        if (Settings.WindowProperties.AutoFit)
+        if (mainWindow.WindowModeState.AutoFit)
         {
             Dispatcher.UIThread.Post(() =>
             {
@@ -189,7 +189,7 @@ public static class StartUpHelper
             else
             {
                 _ = Task.Run(() => SourceOpener.OpenAsync(mainWindow, core, Settings.StartUp.LastFile, new OpenOptions(IsStartup: true, ContinueFromLeftOff: true)).AsTask());
-                if (Settings.WindowProperties.AutoFit)
+                if (mainWindow.WindowModeState.AutoFit)
                 {
                     Dispatcher.UIThread.Post(() =>
                     {
@@ -201,7 +201,7 @@ public static class StartUpHelper
         else
         {
             ShowStartUpMenu();
-            if (Settings.WindowProperties.AutoFit && OperatingSystem.IsMacOS())
+            if (mainWindow.WindowModeState.AutoFit && OperatingSystem.IsMacOS())
             {
                 WindowFunctions.CenterWindowOnScreen(mainWindow);
             }

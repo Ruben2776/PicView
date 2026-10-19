@@ -83,7 +83,7 @@ public static class QuickLoad
             mainWindow.Show();
             tab.CurrentView.Value = new ImageViewer();
         }, DispatcherPriority.Send);
-        if (Settings.WindowProperties.AutoFit)
+        if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             WindowFunctions.CenterWindowOnScreen(mainWindow);
         }
@@ -108,7 +108,7 @@ public static class QuickLoad
         }
 
         SourceOpener.ShowHoverBarIfNeeded(tab);
-        if (Settings.WindowProperties.AutoFit)
+        if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             await Dispatcher.UIThread.InvokeAsync(() => WindowResizing.FastCenterWindow(mainWindow), DispatcherPriority.Send);
         }
@@ -145,7 +145,7 @@ public static class QuickLoad
         vm.IsLoadingIndicatorShown.Value = false;
         UpdateImage.ChangeTabTitleToNewImage(tab);
 
-        if (Settings.WindowProperties.AutoFit)
+        if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             WindowFunctions.CenterWindowOnScreen(mainWindow);
         }
@@ -229,7 +229,7 @@ public static class QuickLoad
     private static async ValueTask LoadSideBySideAsync(MainWindow mainWindow, CoreViewModel core, MainWindowViewModel vm,
         TabViewModel tab, FileInfo fileInfo, List<FileInfo> files)
     {
-        if (!Settings.WindowProperties.AutoFit)
+        if (!vm.WindowModeState.CurrentValue.AutoFit)
         {
             ShowNow(mainWindow);
         }
@@ -242,7 +242,7 @@ public static class QuickLoad
         using var firstMagick = new MagickImage();
         using var secondMagick = new MagickImage();
         var isPinged = false;
-        if (Settings.WindowProperties.AutoFit)
+        if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             try
             {

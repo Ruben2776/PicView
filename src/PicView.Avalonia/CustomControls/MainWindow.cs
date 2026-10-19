@@ -55,6 +55,12 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     public WindowModeSwitcher WindowModeSwitcher =>
         field ??= new WindowModeSwitcher(this, CreateWindowProvider().CreateWindowModeAdapter());
 
+    /// <summary>
+    /// This window's Window Mode. Read on the UI thread.
+    /// </summary>
+    public WindowModeState WindowModeState =>
+        (DataContext as MainWindowViewModel)?.WindowModeState.CurrentValue ?? default;
+
     protected MainWindow()
     {
         UIHelper = new UIControlHelper();
@@ -567,8 +573,8 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
             // Don't reset when leaving fullscreen
             return;
         }
-        // User manually resized (not maximize or restore), reset to manual window
-        Dispatcher.CurrentDispatcher.Post(WindowFunctions.SetManualWindows);
+        // Resizing by hand turns AutoFit off for this window only
+        _ = WindowModeSwitcher.ResizedByHand();
         WindowResizing.SetSize(this, e.Reason);
     }
     

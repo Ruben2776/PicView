@@ -31,6 +31,10 @@ public sealed class WindowModeSwitcher(
 
     public ValueTask LeaveTopMode() => ChangeAsync(static state => state.LeaveTopMode());
 
+    public ValueTask SetAutoFit(bool autoFit) => ChangeAsync(state => state.SetAutoFit(autoFit));
+
+    public ValueTask ResizedByHand() => ChangeAsync(static state => state.ResizedByHand());
+
     public ValueTask EnterSlideshow() => ChangeAsync(static state => state.EnterSlideshow());
 
     public ValueTask LeaveSlideshow() => ChangeAsync(static state => state.LeaveSlideshow());
@@ -47,15 +51,19 @@ public sealed class WindowModeSwitcher(
     /// <param name="isAppStart">Whether this is the first window at app start, the only one that may start fullscreen.</param>
     public void Start(bool isAppStart)
     {
-        if (window.DataContext is not MainWindowViewModel vm)
+        if (window.DataContext is MainWindowViewModel vm)
         {
-            return;
+            Apply(vm, vm.WindowModeState.CurrentValue, Starting(isAppStart));
         }
-
-        var remembered = new RememberedWindowMode(Settings.WindowProperties.Fullscreen,
-            Settings.WindowProperties.Maximized, Settings.WindowProperties.AutoFit);
-        Apply(vm, vm.WindowModeState.CurrentValue, WindowModeState.Start(remembered, isAppStart));
     }
+
+    /// <summary>
+    /// The state <see cref="Start"/> gives the window, from the mode the settings remember.
+    /// </summary>
+    /// <inheritdoc cref="Start" path="/param"/>
+    public static WindowModeState Starting(bool isAppStart) =>
+        WindowModeState.Start(new RememberedWindowMode(Settings.WindowProperties.Fullscreen,
+            Settings.WindowProperties.Maximized, Settings.WindowProperties.AutoFit), isAppStart);
 
     /// <summary>
     /// Puts the window in the native state of <paramref name="mode"/>, unless it is already in it.
@@ -101,6 +109,7 @@ public sealed class WindowModeSwitcher(
         // The last change the user made in any window is the one remembered
         Settings.WindowProperties.Fullscreen = next.Remembered.Fullscreen;
         Settings.WindowProperties.Maximized = next.Remembered.Maximized;
+        Settings.WindowProperties.AutoFit = next.Remembered.AutoFit;
         return true;
     }
 
@@ -108,8 +117,18 @@ public sealed class WindowModeSwitcher(
     {
         vm.WindowModeState.Value = next;
 
+        if (next.Mode == previous.Mode)
+        {
+            // AutoFit only decides how a Normal window takes its size
+            if (next.Mode is WindowMode.Normal && next.AutoFit != previous.AutoFit)
+            {
+                ApplyAutoFit(vm, next.AutoFit);
+            }
+            return;
+        }
+
         // Nothing is resized while the window is minimized
-        if (next.Mode == previous.Mode || next.Mode is WindowMode.Minimized)
+        if (next.Mode is WindowMode.Minimized)
         {
             return;
         }
@@ -118,7 +137,7 @@ public sealed class WindowModeSwitcher(
         if (previous.Mode is WindowMode.Minimized)
         {
             // The window is shown again as it was, so only its native state and size need to catch up
-            adapter.EnterNativeState(window, next.Mode);
+            adapter.EnterNativeState(window, next);
         }
         else
         {
@@ -136,7 +155,7 @@ public sealed class WindowModeSwitcher(
                 ToggleUIVisibility.RestoreInterface(vm);
             }
 
-            adapter.EnterNativeState(window, next.Mode);
+            adapter.EnterNativeState(window, next);
 
             if (next.Mode is WindowMode.Fullscreen)
             {
@@ -159,6 +178,20 @@ public sealed class WindowModeSwitcher(
                 WindowResizing.ResumeAutoFit(window);
             }
         }, DispatcherPriority.SystemIdle);
+    }
+
+    private void ApplyAutoFit(MainWindowViewModel vm, bool autoFit)
+    {
+        if (autoFit)
+        {
+            WindowResizing.ResumeAutoFit(window);
+        }
+        else
+        {
+            WindowResizing.ReleaseSize(window, vm);
+        }
+
+        WindowResizing.SetSize(window, WindowResizeReason.Application);
     }
 
     private static WindowState ToWindowState(WindowMode mode) => mode switch

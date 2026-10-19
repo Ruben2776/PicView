@@ -60,6 +60,12 @@ public readonly record struct WindowModeState
     private WindowMode Shown => Mode is WindowMode.Minimized ? BeforeMinimized : Mode;
 
     /// <summary>
+    /// The state a window opens in, before <see cref="Start"/> gives it the remembered mode: Normal, following the
+    /// remembered AutoFit.
+    /// </summary>
+    public static WindowModeState Opening(bool autoFit) => new() { AutoFit = autoFit };
+
+    /// <summary>
     /// The state a window starts in from the remembered mode. Only the first window at app start may start
     /// fullscreen; a window opened while PicView is running never does.
     /// </summary>

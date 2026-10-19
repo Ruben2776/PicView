@@ -12,6 +12,6 @@ public sealed class LinuxWindowModeAdapter : IWindowModeAdapter
 {
     public bool SkipsInitialNativeState => false;
 
-    public void EnterNativeState(MainWindow window, WindowMode mode) =>
-        WindowModeSwitcher.SetNativeState(window, mode);
+    public void EnterNativeState(MainWindow window, WindowModeState state) =>
+        WindowModeSwitcher.SetNativeState(window, state.Mode);
 }

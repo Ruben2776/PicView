@@ -14,6 +14,7 @@ using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
 using PicView.Core.IPlatform;
 using PicView.Core.Models;
+using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -26,20 +27,18 @@ public static class WindowFunctions
 
     public static void NewWindow(MainWindow mainWindow)
     {
-        if (Application.Current.DataContext is not CoreViewModel core ||
-            mainWindow.MainWindowInitializer is null ||
-            Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime)
+        if (Application.Current.DataContext is not CoreViewModel core || mainWindow.MainWindowInitializer is null)
         {
             return;
         }
         var window = mainWindow.MainWindowInitializer.CreateMainWindow();
         var vm = window.DataContext as MainWindowViewModel;
-        HandleWindowScalingMode(core, window);
+        HandleWindowScalingMode(window, isAppStart: false);
         var startUpMenu = new StartUpMenu
         {
             Buttons =
             {
-                DataContext = vm
+                DataContext = vm.WindowTabs.ActiveTab.CurrentValue
             }
         };
         vm.WindowTabs.ActiveTab.Value.CurrentView.Value = startUpMenu;
@@ -49,7 +48,7 @@ public static class WindowFunctions
 
     public static void DetachedWindowStartup(CoreViewModel core, MainWindow window)
     {
-        HandleWindowScalingMode(core, window, false);
+        HandleWindowScalingMode(window, isAppStart: false, adjustPos: false);
         window.Show();
         
         StartUpHelper.HandlePostWindowUpdates(core, window, isAppStart: false);
@@ -167,7 +166,11 @@ public static class WindowFunctions
 
     #region Window State
     
-    public static void HandleWindowScalingMode(CoreViewModel vm, MainWindow window, bool adjustPos = true)
+    /// <summary>
+    /// Sizes and places a new window for the mode it is about to start in, before it is shown.
+    /// </summary>
+    /// <param name="isAppStart">Whether this is the first window at app start, the only one that may start fullscreen.</param>
+    public static void HandleWindowScalingMode(MainWindow window, bool isAppStart, bool adjustPos = true)
     {
         ScreenHelper.UpdateScreenSize(window);
 
@@ -176,18 +179,19 @@ public static class WindowFunctions
             Settings.WindowProperties.Margin = 45;
         }
 
-        if (Settings.WindowProperties.Maximized || Settings.WindowProperties.Fullscreen)
+        var starting = WindowModeSwitcher.Starting(isAppStart);
+        if (starting.Mode is not WindowMode.Normal)
         {
             InitializeWindowPosition(window);
         }
-        else if (Settings.WindowProperties.AutoFit)
+        else if (starting.AutoFit)
         {
             window.WindowStartupLocation = adjustPos ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
-            SetAutoFit(vm.MainWindows.ActiveWindow.CurrentValue, window);
+            WindowResizing.ResumeAutoFit(window);
         }
-        else 
+        else if (window.DataContext is MainWindowViewModel vm)
         {
-            SetSingleManualWindow(vm.MainWindows.ActiveWindow.CurrentValue, window);
+            WindowResizing.ReleaseSize(window, vm);
             if (adjustPos)
             {
                 InitializeWindowSizeAndPosition(window);
@@ -219,94 +223,35 @@ public static class WindowFunctions
     }
 
     /// <summary>
-    /// Toggles the AutoFit setting across all main application windows.
-    /// If AutoFit is enabled, adjusts the windows to automatically size to their content.
-    /// If AutoFit is disabled, allows manual resizing of windows.
-    /// Updates the application settings and persists the changes.
+    /// Turns AutoFit on or off in every main window, the opposite of what it is in <paramref name="vm"/>'s window.
     /// </summary>
-    public static async Task ToggleAutoFit()
+    public static Task ToggleAutoFit(MainWindowViewModel vm) =>
+        SetAutoFitInEveryWindow(!vm.WindowModeState.CurrentValue.AutoFit);
+
+    /// <summary>
+    /// Turns AutoFit on or off in every main window, and centers the windows that turn it on.
+    /// </summary>
+    public static async Task SetAutoFitInEveryWindow(bool autoFit)
     {
-        if (Application.Current.DataContext is not CoreViewModel core || Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
         }
 
-        var wasAutoFit = Settings.WindowProperties.AutoFit;
-        Settings.WindowProperties.AutoFit = !wasAutoFit;
-        foreach (var vm in core.MainWindows.MainWindows)
+        foreach (var window in desktop.Windows.OfType<MainWindow>().ToArray())
         {
-            var window = desktop.Windows.FirstOrDefault(w => w.DataContext == vm);
-            if (window is not MainWindow consecutiveMainWindow)
+            if (window.DataContext is not MainWindowViewModel windowVm)
             {
                 continue;
             }
-            Toggle(vm, consecutiveMainWindow);
-            if (!wasAutoFit)
+
+            var wasAutoFit = windowVm.WindowModeState.CurrentValue.AutoFit;
+            await window.WindowModeSwitcher.SetAutoFit(autoFit);
+            if (autoFit && !wasAutoFit)
             {
-                CenterWindowOnScreen(consecutiveMainWindow);
+                CenterWindowOnScreen(window);
             }
         }
-        
-        await SaveSettingsAsync().ConfigureAwait(false);
-        return;
-
-        void Toggle(MainWindowViewModel targetVm, MainWindow targetMainWindow)
-        {
-            if (wasAutoFit)
-            {
-                WindowResizing.ReleaseSize(targetMainWindow, targetVm);
-                targetVm.IsAutoFit.Value = false;
-            }
-            else
-            {
-                WindowResizing.ResumeAutoFit(targetMainWindow);
-                targetVm.IsAutoFit.Value = true;
-            }
-            WindowResizing.SetSize(targetMainWindow, WindowResizeReason.Application);
-        }
-    }
-
-    public static void SetAutoFit(MainWindowViewModel vm, Window window)
-    {
-        Settings.WindowProperties.AutoFit = true;
-        WindowResizing.ResumeAutoFit(window);
-        vm.IsAutoFit.Value = true;
-    }
-
-    /// <summary>
-    /// Configures all windows to use manual sizing and positioning.
-    /// This method updates the application state and modifies the behavior
-    /// of individual windows to no longer rely on automatic adjustments.
-    /// </summary>
-    public static void SetManualWindows()
-    {
-        if (Application.Current.DataContext is not CoreViewModel core || Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        
-        foreach (var vm in core.MainWindows.MainWindows)
-        {
-            var window = desktop.Windows.FirstOrDefault(w => w.DataContext == vm);
-            if (window is not MainWindow mainWindow)
-            {
-                continue;
-            }
-            SetSingleManualWindow(vm, mainWindow);
-        }
-        
-        Settings.WindowProperties.AutoFit = false;
-    }
-
-    /// <summary>
-    /// Configures a single window to operate in manual size mode and updates the associated view model properties.
-    /// </summary>
-    /// <param name="vm">The view model associated with the window, containing state and settings for the application.</param>
-    /// <param name="mainWindow">The main window to be configured for manual size adjustments.</param>
-    public static void SetSingleManualWindow(MainWindowViewModel vm, MainWindow mainWindow)
-    {
-        WindowResizing.ReleaseSize(mainWindow, vm);
-        vm.IsAutoFit.Value = false;
     }
 
     #endregion

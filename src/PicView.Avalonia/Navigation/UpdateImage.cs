@@ -190,7 +190,7 @@ public static class UpdateImage
             ImageType = ImageType.Bitmap
         }, type);
         
-        if (Settings.WindowProperties.AutoFit)
+        if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             WindowResizing.SetSize(width, height, 0,0,
                 WindowResizeReason.Application,

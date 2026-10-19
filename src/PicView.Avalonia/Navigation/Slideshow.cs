@@ -119,8 +119,8 @@ public static class Slideshow
 
         var before = vm.WindowModeState.CurrentValue.Mode;
         await vm.WindowModeSwitcher.LeaveSlideshow();
-        if (before is not WindowMode.Normal && vm.WindowModeState.CurrentValue.Mode is WindowMode.Normal &&
-            Settings.WindowProperties.AutoFit)
+        if (before is not WindowMode.Normal &&
+            vm.WindowModeState.CurrentValue is { Mode: WindowMode.Normal, AutoFit: true })
         {
             WindowFunctions.CenterWindowOnScreen();
         }

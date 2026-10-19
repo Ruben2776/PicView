@@ -25,13 +25,15 @@ public static class SettingsUpdater
     {
         ServiceHelper.SetAvaloniaImageLoader(vm.Core);
         ServiceHelper.SetGalleryLoader();
+        // The first window at app start, before it is given the remembered mode
+        var startsFullscreen = WindowModeSwitcher.Starting(isAppStart: true).Mode is WindowMode.Fullscreen;
         _ = Task.Run(() =>
         {
-            vm.TitlebarHeight.Value = Settings.WindowProperties.Fullscreen
+            vm.TitlebarHeight.Value = startsFullscreen
                                       || !Settings.UIProperties.ShowInterface
                 ? 0
                 : SizeDefaults.MainTitlebarHeight;
-            vm.BottombarHeight.Value = Settings.WindowProperties.Fullscreen
+            vm.BottombarHeight.Value = startsFullscreen
                                        || !Settings.UIProperties.ShowInterface
                 ? 0
                 : SizeDefaults.BottombarHeight;

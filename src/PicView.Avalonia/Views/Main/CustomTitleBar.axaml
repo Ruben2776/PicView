@@ -805,7 +805,7 @@
                         Command="{CompiledBinding AutoFitWindowCommand}"
                         Header="{CompiledBinding Translation.AutoFitWindow.Value,
                                                  Mode=OneWay}"
-                        IsChecked="{CompiledBinding IsAutoFit.Value}"
+                        IsChecked="{CompiledBinding IsAutoFit.Value, Mode=OneWay}"
                         Theme="{StaticResource MainBg}"
                         ToggleType="CheckBox" />
 

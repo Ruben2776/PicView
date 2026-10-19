@@ -34,7 +34,7 @@
                     x:Name="AutoFitToggleButton"
                     Classes="MenuItemHover settingsToggleButton"
                     Command="{CompiledBinding MainWindows.ActiveWindow.Value.AutoFitWindowCommand}"
-                    IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value}"
+                    IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value, Mode=OneWay}"
                     Text="{CompiledBinding Translation.AutoFitWindow.Value,
                                            Mode=OneWay}" />
 

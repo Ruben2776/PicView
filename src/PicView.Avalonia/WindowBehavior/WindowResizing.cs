@@ -54,7 +54,7 @@ public static class WindowResizing
 
     public static void HandleWindowResize(MainWindow mainWindow, AvaloniaPropertyChangedEventArgs<Size> size)
     {
-        if (!Settings.WindowProperties.AutoFit)
+        if (mainWindow.DataContext is not MainWindowViewModel { WindowModeState.CurrentValue.AutoFit: true } mainWindowVm)
         {
             return;
         }
@@ -70,11 +70,6 @@ public static class WindowResizing
             {
                 return;
             }
-        }
-        
-        if (mainWindow.DataContext is not MainWindowViewModel mainWindowVm)
-        {
-            return;
         }
         
         var nextNavX = size.NewValue.Value.Width > SizeDefaults.SearchResetAndRotateBtnBp ? 50 : 15;
@@ -202,7 +197,7 @@ public static class WindowResizing
     }
 
     /// <summary>
-    /// Stops the window from following its content, before it becomes fullscreen, maximized or manual.
+    /// Stops the window from following its content, before it becomes fullscreen or maximized, or turns AutoFit off.
     /// </summary>
     public static void ReleaseSize(MainWindow mainWindow, MainWindowViewModel vm)
     {
@@ -211,11 +206,11 @@ public static class WindowResizing
     }
 
     /// <summary>
-    /// Lets the window follow its content again when AutoFit is on, also when there is no image to fit.
+    /// Lets the window follow its content again when AutoFit is on for it, also when there is no image to fit.
     /// </summary>
     public static void ResumeAutoFit(Window window)
     {
-        if (Settings.WindowProperties.AutoFit)
+        if (window.DataContext is MainWindowViewModel { WindowModeState.CurrentValue.AutoFit: true })
         {
             window.SizeToContent = SizeToContent.WidthAndHeight;
         }
@@ -224,8 +219,9 @@ public static class WindowResizing
     private static void ApplyWindowSize(Fit size, WindowResizeReason reason, MainWindow mainWindow,
         MainWindowViewModel vm)
     {
-        var plan = WindowSizingPlan.For(vm.WindowModeState.CurrentValue.Mode, Settings.WindowProperties.AutoFit, reason,
-            mainWindow.IsVisible, size, ScreenHelper.ScreenSize);
+        var state = vm.WindowModeState.CurrentValue;
+        var plan = WindowSizingPlan.For(state.Mode, state.AutoFit, reason, mainWindow.IsVisible, size,
+            ScreenHelper.ScreenSize);
 
         mainWindow.SizeToContent = plan.SizeToContent;
         vm.WindowMaxWidth.Value = plan.MaxWidth;
@@ -337,7 +333,7 @@ public static class WindowResizing
             SecondImageWidth = isSideBySide ? secondWidth : 0,
             SecondImageHeight = isSideBySide ? secondHeight : 0,
             QuarterTurns = (int)Math.Round(rotation / 90),
-            Mode = vm.WindowModeState.CurrentValue.Mode.ToFitMode(Settings.WindowProperties.AutoFit),
+            Mode = vm.WindowModeState.CurrentValue.FitMode,
             ZoomToFit = Settings.ImageScaling.ZoomToFit,
             ScrollEnabled = Settings.Zoom.ScrollEnabled,
             Screen = ScreenHelper.ScreenSize,

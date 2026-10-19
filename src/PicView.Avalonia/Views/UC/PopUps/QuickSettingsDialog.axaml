@@ -128,7 +128,7 @@
                     Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).AutoFitWindowCommand}"
                     Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsAutoFit.Value,
-                                                Mode=TwoWay}"
+                                                Mode=OneWay}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.AutoFitWindow.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="145"

@@ -181,11 +181,13 @@ public partial class StartUpMenu : UserControl
 
         LogoViewbox.Height = double.NaN;
 
-        if (Settings.WindowProperties.Fullscreen || Settings.WindowProperties.Maximized)
+        var state = TopLevel.GetTopLevel(this) is MainWindow mainWindow ? mainWindow.WindowModeState : default;
+        var fillsScreen = state.Mode is WindowMode.Fullscreen or WindowMode.Maximized;
+        if (fillsScreen)
         {
             ShowFullLogo();
         }
-        else if (Settings.WindowProperties.AutoFit)
+        else if (state.AutoFit)
         {
             ShowIcon();
             return;
@@ -217,7 +219,7 @@ public partial class StartUpMenu : UserControl
             if (this.TryFindResource("LogoFullImage", Application.Current.RequestedThemeVariant, out var logo))
                 Logo.Source = logo as DrawingImage;
             LogoViewbox.Width = double.NaN;
-            if (Settings.WindowProperties.Fullscreen || Settings.WindowProperties.Maximized)
+            if (fillsScreen)
             {
                 Buttons.Margin = new Thickness(0, 0, 0, bottomMargin + SizeDefaults.WindowMinSize / 2);
                 Buttons.VerticalAlignment = VerticalAlignment.Bottom;

@@ -169,7 +169,7 @@
                         Classes="AltHover"
                         Command="{CompiledBinding AutoFitWindowCommand}"
                         Foreground="{DynamicResource MainTextColor}"
-                        IsChecked="{CompiledBinding IsAutoFit.Value}"
+                        IsChecked="{CompiledBinding IsAutoFit.Value, Mode=OneWay}"
                         Text="{CompiledBinding Translation.AutoFitWindow.Value,
                                                Mode=OneWay}"
                         TextMaxWidth="150"

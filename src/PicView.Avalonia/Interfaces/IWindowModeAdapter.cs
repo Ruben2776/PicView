@@ -15,7 +15,7 @@ public interface IWindowModeAdapter
     bool SkipsInitialNativeState { get; }
 
     /// <summary>
-    /// Puts the window in the native state of <paramref name="mode"/>. Never called with Minimized.
+    /// Puts the window in the native state of the mode of <paramref name="state"/>. Never called with Minimized.
     /// </summary>
-    void EnterNativeState(MainWindow window, WindowMode mode);
+    void EnterNativeState(MainWindow window, WindowModeState state);
 }
