@@ -19,7 +19,7 @@ using R3;
 
 namespace PicView.Avalonia.Views.UC;
 
-public partial class ImageViewer : UserControl, IDisposable
+public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 {
     private RotationTransformer? _imageTransformer;
     private DisposableBag _disposables;
@@ -255,19 +255,36 @@ public partial class ImageViewer : UserControl, IDisposable
             return;
         }
 
-        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        // The wheel only works on the image viewer the active tab shows
+        if (TopLevel.GetTopLevel(this) is not MainWindow
+            {
+                DataContext: MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue: ImageViewer }
+            } mainWindow)
         {
             return;
         }
-        
-        await MouseShortcuts.HandlePointerWheelChanged(
-            e,
-            mainWindow.DataContext as MainWindowViewModel,          
-            mainWindow,
-            ImageScrollViewer,
-            async args => await Dispatcher.UIThread.InvokeAsync(() => ZoomIn(args)),
-            async args => await Dispatcher.UIThread.InvokeAsync(() => ZoomOut(args))).ConfigureAwait(false);
+
+        e.Handled = await mainWindow.KeybindRouter.WheelAsync(Keybind.FromWheel(e.Delta.Y, e.KeyModifiers),
+            e.Pointer.Type is PointerType.Touch, e.GetPosition(ZoomPanControl), this).ConfigureAwait(true);
     }
+
+    bool IZoomScrollTarget.CanScrollVertically =>
+        ImageScrollViewer.VerticalScrollBarVisibility is ScrollBarVisibility.Visible or ScrollBarVisibility.Auto;
+
+    void IZoomScrollTarget.ScrollLine(bool down)
+    {
+        if (down)
+        {
+            ImageScrollViewer.LineDown();
+        }
+        else
+        {
+            ImageScrollViewer.LineUp();
+        }
+    }
+
+    void IZoomScrollTarget.ZoomAt(bool zoomIn, Point pointer) =>
+        ZoomPanControl.ZoomWithPointerWheelCore(zoomIn, pointer);
     
     private void OnPointerExited(object? sender, PointerEventArgs e)
     {
@@ -376,14 +393,6 @@ public partial class ImageViewer : UserControl, IDisposable
     }
 
     #region Zoom
-    /// <inheritdoc cref="Zoom.ZoomIn(ViewModels.MainViewModel)"/>
-    private void ZoomIn(PointerWheelEventArgs e) =>
-        ZoomPanControl.ZoomWithPointerWheel(e);
-
-    /// <inheritdoc cref="Zoom.ZoomOut(ViewModels.MainViewModel)"/>
-    private void ZoomOut(PointerWheelEventArgs e) =>
-        ZoomPanControl.ZoomWithPointerWheel(e);
-
     /// <inheritdoc cref="Zoom.ZoomIn(ViewModels.MainViewModel)"/>
     public void ZoomIn() =>
         ZoomPanControl.ZoomIn();

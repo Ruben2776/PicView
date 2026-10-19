@@ -366,7 +366,6 @@ public class KeybindBox : TemplatedControl
         base.OnDetachedFromVisualTree(e);
         _lastKeyDown = Key.None;
         _lastModifiers = KeyModifiers.None;
-        MainKeyboardShortcuts.IsEscKeyEnabled = true;
     }
 
     protected override void OnGotFocus(FocusChangedEventArgs e)
@@ -426,7 +425,6 @@ public class KeybindBox : TemplatedControl
         tagBox.AddHandler(PointerPressedEvent, OnTagBoxPointerPressed);
         tagBox.AddHandler(PointerReleasedEvent, OnTagBoxPointerReleased);
         tagBox.AddHandler(PointerWheelChangedEvent, OnTagBoxPointerWheelChanged);
-        tagBox.GotFocus += OnTagBoxGotFocus;
         tagBox.LostFocus += OnTagBoxLostFocus;
     }
 
@@ -442,20 +440,13 @@ public class KeybindBox : TemplatedControl
         tagBox.RemoveHandler(PointerPressedEvent, OnTagBoxPointerPressed);
         tagBox.RemoveHandler(PointerReleasedEvent, OnTagBoxPointerReleased);
         tagBox.RemoveHandler(PointerWheelChangedEvent, OnTagBoxPointerWheelChanged);
-        tagBox.GotFocus -= OnTagBoxGotFocus;
         tagBox.LostFocus -= OnTagBoxLostFocus;
-    }
-
-    private void OnTagBoxGotFocus(object? sender, FocusChangedEventArgs e)
-    {
-        MainKeyboardShortcuts.IsEscKeyEnabled = false;
     }
 
     private void OnTagBoxLostFocus(object? sender, RoutedEventArgs e)
     {
         _lastKeyDown = Key.None;
         _lastModifiers = KeyModifiers.None;
-        MainKeyboardShortcuts.IsEscKeyEnabled = true;
     }
 
     private void OnTagBoxKeyDown(object? sender, KeyEventArgs e)

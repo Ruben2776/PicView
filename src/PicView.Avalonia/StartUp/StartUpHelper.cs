@@ -241,30 +241,34 @@ public static class StartUpHelper
         w.AddHandler(InputElement.KeyUpEvent, MainWindow_KeyUpAsync, RoutingStrategies.Tunnel);
         w.AddHandler(InputElement.PointerPressedEvent, MainWindow_PointerPressed, RoutingStrategies.Tunnel);
 
-        w.Deactivated += delegate
+        if (w is MainWindow mainWindow)
         {
-            MainKeyboardShortcuts.Reset();
-            MainKeyboardShortcuts.ClearKeyDownModifiers();
-        };
+            w.Deactivated += delegate { mainWindow.KeybindRouter.Deactivated(); };
+        }
     }
 
     private static async ValueTask MainWindow_KeysDownAsync(object? sender, KeyEventArgs e)
     {
-        // Extract the ViewModel from the window that received the key press
-        var mainWindow = sender as MainWindow;
-        var vm = mainWindow.DataContext as MainWindowViewModel;
-        await MainKeyboardShortcuts.MainWindow_KeysDownAsync(e, vm, mainWindow).ConfigureAwait(false);
+        if (sender is MainWindow mainWindow)
+        {
+            await mainWindow.KeybindRouter.KeyDownAsync(new Keybind(e.Key, e.KeyModifiers),
+                mainWindow.FocusManager?.GetFocusedElement()).ConfigureAwait(false);
+        }
     }
 
     private static async ValueTask MainWindow_KeyUpAsync(object? sender, KeyEventArgs e)
     {
-        // Extract the ViewModel from the window that received the key press
-        var vm = (sender as Control)?.DataContext as MainWindowViewModel;
-        await MainKeyboardShortcuts.MainWindow_KeysUpAsync(e, vm).ConfigureAwait(false);
+        if (sender is MainWindow mainWindow)
+        {
+            await mainWindow.KeybindRouter.KeyUpAsync(e.Key).ConfigureAwait(false);
+        }
     }
     
     private static async ValueTask MainWindow_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        await MouseShortcuts.MainWindow_PointerPressed(e, sender as MainWindow).ConfigureAwait(false);
+        if (sender is MainWindow mainWindow)
+        {
+            await ImageViewerClickBehavior.PointerPressedAsync(e, mainWindow).ConfigureAwait(false);
+        }
     }
 }

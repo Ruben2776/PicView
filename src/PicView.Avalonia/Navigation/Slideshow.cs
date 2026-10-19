@@ -1,4 +1,6 @@
 using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Sizing;
@@ -83,7 +85,7 @@ public static class Slideshow
         }
         else if (_timer.Enabled)
         {
-            if (!MainKeyboardShortcuts.IsKeyHeldDown)
+            if (!IsKeyHeldDown(vm))
             {
                 _timer = null;
             }
@@ -93,6 +95,11 @@ public static class Slideshow
         
         return true;
     }
+
+    private static bool IsKeyHeldDown(MainWindowViewModel vm) =>
+        Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
+        desktop.Windows.OfType<MainWindow>().FirstOrDefault(window => window.DataContext == vm)?.KeybindRouter
+            .IsKeyHeldDown is true;
 
     private static async Task Start(MainWindowViewModel vm, double seconds)
     {

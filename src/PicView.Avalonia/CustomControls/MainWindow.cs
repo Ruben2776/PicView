@@ -9,6 +9,7 @@ using PicView.Avalonia.Animations;
 using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.DragAndDrop;
+using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Services;
@@ -56,6 +57,11 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         field ??= new WindowModeSwitcher(this, CreateWindowProvider().CreateWindowModeAdapter());
 
     /// <summary>
+    /// Turns this window's key presses, mouse buttons and wheel into Actions.
+    /// </summary>
+    public KeybindRouter KeybindRouter => field ??= new KeybindRouter(this);
+
+    /// <summary>
     /// Fits this window to what its active tab shows.
     /// </summary>
     public WindowFitter WindowFitter => field ??= new WindowFitter(this);
@@ -93,7 +99,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 
         Deactivated += OnDeactivated;
 
-        MainWindowInitializer ??= new WindowInitializer(CreateWindowProvider());
+        MainWindowInitializer ??= new WindowInitializer(CreateWindowProvider(), this);
         if (DataContext is not MainWindowViewModel vm)
         {
             return;

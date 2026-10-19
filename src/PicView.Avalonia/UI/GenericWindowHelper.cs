@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using System.Runtime.CompilerServices;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using PicView.Avalonia.Input;
@@ -11,6 +12,23 @@ namespace PicView.Avalonia.UI;
 
 public static class GenericWindowHelper
 {
+    private static readonly ConditionalWeakTable<Window, object> ClosedOnEscapePressWindows = new();
+
+    /// <summary>
+    /// Closes <paramref name="window"/> as Escape is pressed in it. The main window that opened it then ignores the
+    /// press, which is still held when it takes focus.
+    /// </summary>
+    public static void CloseOnEscapePress(Window window)
+    {
+        ClosedOnEscapePressWindows.AddOrUpdate(window, ClosedOnEscapePressWindows);
+        window.Close();
+    }
+
+    /// <summary>
+    /// Whether <paramref name="window"/> was closed with <see cref="CloseOnEscapePress"/>.
+    /// </summary>
+    public static bool ClosedOnEscapePress(Window window) => ClosedOnEscapePressWindows.TryGetValue(window, out _);
+
     public static void AboutWindowInitialize(Window window)
     {
         if (Settings.UIProperties?.UserLanguage?.StartsWith("ja", StringComparison.OrdinalIgnoreCase) is true)
@@ -85,12 +103,12 @@ public static class GenericWindowHelper
                     return;
                 }
 
-                if (!MainKeyboardShortcuts.IsEscKeyEnabled)
+                // A recording Keybind box records Escape instead
+                if (FocusedInput.OwnsKeybind(window.FocusManager?.GetFocusedElement(), InputDispatch.CancelKeybind))
                 {
                     return;
                 }
                 e.Handled = true;
-                MainKeyboardShortcuts.IsEscKeyEnabled = false;
                 window.Close();
             };
         }
@@ -131,16 +149,10 @@ public static class GenericWindowHelper
             windowConfig.Maximized = window.WindowState is WindowState.Maximized;
             windowConfig.Top = window.Position.Y;
             windowConfig.Left = window.Position.X;
-            MainKeyboardShortcuts.IsEscKeyEnabled = false;
 
             if (window is IDisposable disposable)
             {
                 disposable.Dispose();
-            }
-            
-            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                desktop.MainWindow?.Focus();
             }
         };
     }
@@ -159,8 +171,7 @@ public static class GenericWindowHelper
             }
 
             e.Handled = true;
-            MainKeyboardShortcuts.IsEscKeyEnabled = false;
-            window.Close();
+            CloseOnEscapePress(window);
         };
     }
 }

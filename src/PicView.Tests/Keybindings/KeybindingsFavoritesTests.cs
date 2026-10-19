@@ -38,7 +38,6 @@ public class KeybindingsFavoritesTests : IDisposable
 
     public void Dispose()
     {
-        MainKeyboardShortcuts.Reset();
         if (Directory.Exists(_tempRoot))
         {
             try
@@ -182,18 +181,15 @@ public class KeybindingsFavoritesTests : IDisposable
         var spyMapper = new SpyFunctionsMapper(mainWindowVm);
         mainWindowVm.Mapper = spyMapper;
 
+        var router = Router(mainWindowVm, new InputModeState());
+
         // Dispatch keyboard shortcut
-        MainKeyboardShortcuts.CurrentKeys = new Keybind(Key.D1, KeyModifiers.Control);
-        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm, new InputModeState(), NoContextualActions.Instance));
+        RunWithDispatcher(router.KeyDownAsync(new Keybind(Key.D1, KeyModifiers.Control), null));
 
         Assert.Equal(folderA, spyMapper.LastOpenedPath);
 
         // Dispatch mouse shortcut
-        RunWithDispatcher(MouseShortcuts.ExecuteMouseShortcutIfRegistered(
-            new Keybind(MouseButton.XButton1, KeyModifiers.Alt),
-            mainWindowVm,
-            new InputModeState(),
-            NoContextualActions.Instance));
+        RunWithDispatcher(router.MouseButtonAsync(new Keybind(MouseButton.XButton1, KeyModifiers.Alt)));
 
         Assert.Equal(folderB, spyMapper.LastOpenedPath);
     }
@@ -215,11 +211,9 @@ public class KeybindingsFavoritesTests : IDisposable
         var spyMapper = new SpyFunctionsMapper(mainWindowVm);
         mainWindowVm.Mapper = spyMapper;
 
-        MainKeyboardShortcuts.CurrentKeys = new Keybind(Key.F7);
-        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(
-            mainWindowVm, state, NoContextualActions.Instance));
-        RunWithDispatcher(MouseShortcuts.ExecuteMouseShortcutIfRegistered(
-            new Keybind(MouseButton.XButton1), mainWindowVm, state, NoContextualActions.Instance));
+        var router = Router(mainWindowVm, state);
+        RunWithDispatcher(router.KeyDownAsync(new Keybind(Key.F7), null));
+        RunWithDispatcher(router.MouseButtonAsync(new Keybind(MouseButton.XButton1)));
 
         Assert.Null(spyMapper.LastOpenedPath);
     }
@@ -232,8 +226,7 @@ public class KeybindingsFavoritesTests : IDisposable
         var spyMapper = new SpyFunctionsMapper(mainWindowVm);
         mainWindowVm.Mapper = spyMapper;
 
-        MainKeyboardShortcuts.CurrentKeys = new Keybind(Key.F7);
-        RunWithDispatcher(MainKeyboardShortcuts.ExecuteShortcutIfRegistered(mainWindowVm, new InputModeState(), NoContextualActions.Instance));
+        RunWithDispatcher(Router(mainWindowVm, new InputModeState()).KeyDownAsync(new Keybind(Key.F7), null));
 
         Assert.Null(spyMapper.LastOpenedPath);
     }
@@ -373,6 +366,9 @@ public class KeybindingsFavoritesTests : IDisposable
 
     private static void Click(Button button) =>
         ((IInvokeProvider)ControlAutomationPeer.CreatePeerForElement(button)).Invoke();
+
+    private static KeybindRouter Router(MainWindowViewModel vm, InputModeState state) =>
+        new(() => vm, () => state, () => Keymaps.Current, _ => NoContextualActions.Instance, () => null);
 
     private sealed class NoContextualActions : IContextualActionHandler
     {

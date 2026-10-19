@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
@@ -18,8 +19,16 @@ using R3;
 
 namespace PicView.Avalonia.Services;
 
-public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpdate
+/// <param name="mainWindow">The main window whose secondary windows this opens.</param>
+public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) : IPlatformSpecificUpdate
 {
+    private readonly List<Window> _openWindows = [];
+
+    /// <summary>
+    /// The secondary window this main window opened most recently that is still open.
+    /// </summary>
+    public Window? NewestOpenWindow => _openWindows.Count > 0 ? _openWindows[^1] : null;
+
     private Window? _aboutWindow;
     private Window? _batchResizeWindow;
     private Window? _convertWindow;
@@ -34,6 +43,24 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
     {
         await provider.HandlePlatformUpdate(updateInfo, tempPath).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Keeps track of a secondary window this main window opened, and gives the main window focus back when it closes.
+    /// </summary>
+    private void Track(Window window)
+    {
+        _openWindows.Add(window);
+        window.Closed += (_, _) =>
+        {
+            _openWindows.Remove(window);
+            mainWindow.Focus();
+            // Escape is still held as this window takes focus, and would go on to close it too
+            if (GenericWindowHelper.ClosedOnEscapePress(window))
+            {
+                mainWindow.KeybindRouter.IgnoreUntilReleased(Key.Escape);
+            }
+        };
     }
 
     public MainWindow CreateMainWindow()
@@ -75,6 +102,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             {
                 core.AboutView ??= new AboutViewModel(this);
                 _aboutWindow = provider.CreateAboutWindow();
+                Track(_aboutWindow);
                 _aboutWindow.DataContext = core;
                 _aboutWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
@@ -120,6 +148,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             {
                 vm.Exif ??= new ExifViewModel();
                 _imageInfoWindow = provider.CreateImageInfoWindow(vm);
+                Track(_imageInfoWindow);
                 WindowFunctions.InitializeWindowSizeAndPosition(_imageInfoWindow,
                     vm.InfoWindow.ImageInfoWindowConfig.WindowProperties);
                 _imageInfoWindow.Show();
@@ -185,6 +214,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             Dispatcher.UIThread.Invoke(() =>
             {
                 _keybindingsWindow = provider.CreateKeybindingsWindow(core.Keybindings.WindowConfig);
+                Track(_keybindingsWindow);
                 _keybindingsWindow.DataContext = core;
 
                 Show();
@@ -260,6 +290,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _settingsWindow = provider.CreateSettingsWindow(core.SettingsViewModel.SettingsWindowConfig);
+                Track(_settingsWindow);
                 _settingsWindow.DataContext = core;
 
                 Show();
@@ -327,6 +358,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _effectsWindow = provider.CreateEffectsWindow(core.Effects.WindowConfig);
+                Track(_effectsWindow);
                 _effectsWindow.DataContext = core;
                 WindowFunctions.InitializeWindowPosition(_effectsWindow, core.Effects.WindowConfig.WindowProperties);
                 if (OperatingSystem.IsMacOS())
@@ -390,6 +422,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                 var activeWindow = core.MainWindows.ActiveWindow.CurrentValue;
                 activeWindow.ResizeImageViewModel ??= new ResizeImageViewModel();
                 _singleImageResizeWindow = provider.CreateSingleImageResizeWindow(activeWindow);
+                Track(_singleImageResizeWindow);
                 _singleImageResizeWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
                 if (OperatingSystem.IsMacOS())
@@ -441,6 +474,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _batchResizeWindow = provider.CreateBatchResizeWindow(core.BatchResize.Config);
+                Track(_batchResizeWindow);
                 _batchResizeWindow.DataContext = core;
                 Show();
                 _batchResizeWindow.Closing += (_, _) =>
@@ -503,6 +537,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             if (_convertWindow is null)
             {
                 _convertWindow = provider.CreateConvertWindow();
+                Track(_convertWindow);
                 _convertWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 _convertWindow.DataContext = core.MainWindows.ActiveWindow.CurrentValue;
                 if (OperatingSystem.IsMacOS())
@@ -561,6 +596,8 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
                     return;
                 }
 
+                Track(_fileAssociationsWindow);
+
                 _fileAssociationsWindow.DataContext = core;
                 _fileAssociationsWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 _fileAssociationsWindow.Show(desktop.MainWindow);
@@ -599,6 +636,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 _printPreviewWindow = provider.CreatePrintPreviewWindow(vm.PrintPreview.PrintWindowConfig);
+                Track(_printPreviewWindow);
                 _printPreviewWindow.DataContext = vm;
                 if (OperatingSystem.IsMacOS())
                 {

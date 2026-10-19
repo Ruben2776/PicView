@@ -101,7 +101,8 @@ public partial class EditableTitlebar : UserControl
         {
             if (e.Key != Key.Escape)
             {
-                _ = MainKeyboardShortcuts.MainWindow_KeysDownAsync(e, vm, mainWindow).ConfigureAwait(false);
+                _ = mainWindow.KeybindRouter.KeyDownAsync(new Keybind(e.Key, e.KeyModifiers),
+                    mainWindow.FocusManager?.GetFocusedElement());
             }
         
             return;

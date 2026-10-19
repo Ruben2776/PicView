@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
 using PicView.Core.Config;
 using PicView.Core.Localization;
@@ -37,8 +36,7 @@ public partial class SettingsWindow : GenericWindow
             switch (e.Key)
             {
                 case Key.Escape:
-                    MainKeyboardShortcuts.IsEscKeyEnabled = false;
-                    Close();
+                    GenericWindowHelper.CloseOnEscapePress(this);
                     break;
                 case Key.F when ctrl:
                     FocusFilterBox();

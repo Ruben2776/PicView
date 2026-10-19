@@ -69,9 +69,7 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
             case (InputMode.Normal, Confirm) when activeTab.Gallery.IsGalleryExpanded.CurrentValue:
                 await GalleryHelper.GalleryClick(vm).ConfigureAwait(false);
                 return true;
-            case (InputMode.Normal, Cancel):
-                await MainKeyboardShortcuts.CloseOnEscapeAsync(vm).ConfigureAwait(false);
-                return true;
+            // Cancel in the Normal mode closes what Escape closes, which the KeybindRouter decides
 
             default:
                 return false;
