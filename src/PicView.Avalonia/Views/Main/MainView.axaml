@@ -11,7 +11,6 @@
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.Resources>
-        <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="Brush0" />
 
         <ContextMenu x:Key="MainContextMenu">
 
@@ -195,7 +194,7 @@
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource WrenchGeometry}"
-                        Fill="{StaticResource Brush0}"
+                        Fill="{DynamicResource MainTextColor}"
                         Height="12"
                         Stretch="Fill"
                         Width="12" />
@@ -262,8 +261,6 @@
                                              Mode=OneWay}"
                     IsChecked="{Binding IsAutoFit.Value, Mode=OneWay}"
                     ToggleType="CheckBox" />
-
-                <Separator />
 
                 <Separator />
 
@@ -810,8 +807,7 @@
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull},
                                             FallbackValue=False,
-                                            Mode=OneWay}"
-                x:Name="DeleteFileMenuItem">
+                                            Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path Classes="RecyclePath" />
                 </MenuItem.Icon>
@@ -831,7 +827,7 @@
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource CopyGeometry}"
-                        Fill="{StaticResource Brush0}"
+                        Fill="{DynamicResource MainTextColor}"
                         Height="12"
                         Stretch="Fill"
                         Width="12" />
@@ -934,13 +930,16 @@
             </customControls:StyledMenuItem>
 
             <!--  Close  -->
-            <customControls:StyledMenuItem Command="{CompiledBinding ExitCommand}" Header="{CompiledBinding Translation.Close.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem
+                Command="{CompiledBinding ExitCommand}"
+                Header="{CompiledBinding Translation.Close.Value,
+                                         Mode=OneWay}"
+                x:Name="CloseMenuItem">
                 <MenuItem.Icon>
-                    <Path
+                    <PathIcon
                         Data="{StaticResource CloseGeometry}"
-                        Fill="{StaticResource Brush0}"
+                        Foreground="{DynamicResource MainTextColor}"
                         Height="12"
-                        Stretch="Fill"
                         Width="12" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>

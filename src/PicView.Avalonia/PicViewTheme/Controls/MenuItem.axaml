@@ -1,14 +1,15 @@
 ﻿<ResourceDictionary
     xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sys="using:System">
+    xmlns:sys="using:System"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <ControlTheme x:Key="{x:Type MenuItem}" TargetType="MenuItem">
+    <ControlTheme TargetType="MenuItem" x:Key="{x:Type MenuItem}">
         <Setter Property="Background" Value="{DynamicResource ContextMenuBackgroundColor}" />
         <Setter Property="Foreground" Value="{DynamicResource ContextMenuForegroundColor}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="6" />
+        <Setter Property="MinHeight" Value="27" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Border Name="root">
@@ -17,34 +18,34 @@
                             <ColumnDefinition Width="20" />
                             <ColumnDefinition Width="5" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIGT" />
+                            <ColumnDefinition SharedSizeGroup="MenuItemIGT" Width="Auto" />
                             <ColumnDefinition Width="20" />
                         </Grid.ColumnDefinitions>
                         <ContentControl
-                            Name="icon"
-                            Width="16"
+                            Content="{TemplateBinding Icon}"
                             Height="16"
-                            Margin="5,0,0,0"
                             HorizontalAlignment="Center"
+                            Margin="5,0,0,0"
+                            Name="icon"
                             VerticalAlignment="Center"
-                            Content="{TemplateBinding Icon}" />
+                            Width="16" />
                         <ContentControl
-                            x:Name="PART_ToggleIconPresenter"
                             Grid.Column="0"
-                            Width="16"
                             Height="16"
+                            IsVisible="True"
                             Margin="5,0,0,0"
                             VerticalAlignment="Center"
-                            IsVisible="True" />
+                            Width="16"
+                            x:Name="PART_ToggleIconPresenter" />
                         <ContentPresenter
-                            Name="PART_HeaderPresenter"
-                            Grid.Column="2"
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                            VerticalAlignment="Center"
                             Content="{TemplateBinding Header}"
                             ContentTemplate="{TemplateBinding HeaderTemplate}"
-                            Foreground="{TemplateBinding Foreground}">
+                            Foreground="{TemplateBinding Foreground}"
+                            Grid.Column="2"
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            Margin="{TemplateBinding Padding}"
+                            Name="PART_HeaderPresenter"
+                            VerticalAlignment="Center">
                             <ContentPresenter.DataTemplates>
                                 <DataTemplate DataType="sys:String">
                                     <AccessText Text="{Binding}" />
@@ -52,21 +53,21 @@
                             </ContentPresenter.DataTemplates>
                         </ContentPresenter>
                         <Path
-                            Name="rightArrow"
-                            Grid.Column="4"
-                            Width="8"
-                            Height="8"
-                            Margin="6,0,4,0"
-                            VerticalAlignment="Center"
                             Data="F1M0.002,31.062L0,0 27.01,15.534z"
                             Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                            Grid.Column="4"
+                            Height="8"
+                            Margin="6,0,4,0"
+                            Name="rightArrow"
+                            Stretch="Fill"
+                            VerticalAlignment="Center"
+                            Width="8" />
                         <Popup
-                            Name="PART_Popup"
                             Grid.Column="0"
                             IsLightDismissEnabled="False"
                             IsOpen="{TemplateBinding IsSubMenuOpen,
                                                      Mode=TwoWay}"
+                            Name="PART_Popup"
                             Placement="RightEdgeAlignedTop">
                             <Border
                                 Background="{DynamicResource ContextMenuBackgroundColor}"
@@ -74,10 +75,10 @@
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="{TemplateBinding CornerRadius}">
                                 <ItemsPresenter
-                                    Name="PART_ItemsPresenter"
-                                    Margin="2"
                                     Grid.IsSharedSizeScope="True"
-                                    ItemsPanel="{TemplateBinding ItemsPanel}" />
+                                    ItemsPanel="{TemplateBinding ItemsPanel}"
+                                    Margin="2"
+                                    Name="PART_ItemsPresenter" />
                             </Border>
                         </Popup>
                     </Grid>
@@ -89,9 +90,9 @@
             <Setter Property="Content">
                 <Template>
                     <Path
-                        VerticalAlignment="Center"
                         Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z"
-                        Fill="{DynamicResource MainTextColor}" />
+                        Fill="{DynamicResource MainTextColor}"
+                        VerticalAlignment="Center" />
                 </Template>
             </Setter>
         </Style>
@@ -99,10 +100,10 @@
             <Setter Property="Content">
                 <Template>
                     <Ellipse
-                        Width="8"
+                        Fill="{DynamicResource MainTextColor}"
                         Height="8"
                         Margin="4"
-                        Fill="{DynamicResource MainTextColor}" />
+                        Width="8" />
                 </Template>
             </Setter>
         </Style>
@@ -151,7 +152,7 @@
 
     </ControlTheme>
 
-    <ControlTheme x:Key="Slim" TargetType="MenuItem">
+    <ControlTheme TargetType="MenuItem" x:Key="Slim">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Template">
@@ -159,12 +160,12 @@
                 <Border Name="root">
                     <Panel>
                         <ContentPresenter
-                            Name="PART_HeaderPresenter"
-                            Margin="{TemplateBinding Padding}"
-                            VerticalAlignment="Center"
                             Content="{TemplateBinding Header}"
                             ContentTemplate="{TemplateBinding HeaderTemplate}"
-                            Foreground="{DynamicResource ContextMenuForegroundColor}">
+                            Foreground="{DynamicResource ContextMenuForegroundColor}"
+                            Margin="{TemplateBinding Padding}"
+                            Name="PART_HeaderPresenter"
+                            VerticalAlignment="Center">
                             <ContentPresenter.DataTemplates>
                                 <DataTemplate DataType="sys:String">
                                     <AccessText Text="{Binding}" />
@@ -172,10 +173,10 @@
                             </ContentPresenter.DataTemplates>
                         </ContentPresenter>
                         <Popup
-                            Name="PART_Popup"
                             IsLightDismissEnabled="False"
                             IsOpen="{TemplateBinding IsSubMenuOpen,
                                                      Mode=TwoWay}"
+                            Name="PART_Popup"
                             Placement="RightEdgeAlignedTop">
                             <Border
                                 Background="{DynamicResource ContextMenuBackgroundColor}"
@@ -183,10 +184,10 @@
                                 BorderThickness="1"
                                 CornerRadius="8">
                                 <ItemsPresenter
-                                    Name="PART_ItemsPresenter"
-                                    Margin="2"
                                     Grid.IsSharedSizeScope="True"
-                                    ItemsPanel="{TemplateBinding ItemsPanel}" />
+                                    ItemsPanel="{TemplateBinding ItemsPanel}"
+                                    Margin="2"
+                                    Name="PART_ItemsPresenter" />
                             </Border>
                         </Popup>
                     </Panel>
@@ -196,44 +197,44 @@
 
     </ControlTheme>
 
-    <ControlTheme x:Key="MainBg" TargetType="MenuItem">
+    <ControlTheme TargetType="MenuItem" x:Key="MainBg">
         <Setter Property="Background" Value="{DynamicResource MenuBackgroundColor}" />
         <Setter Property="Foreground" Value="{DynamicResource MainTextColor}" />
         <Setter Property="Margin" Value="0" />
         <Setter Property="Padding" Value="6,8" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border Name="root" Background="{TemplateBinding Background}">
+                <Border Background="{TemplateBinding Background}" Name="root">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="20" />
                             <ColumnDefinition Width="5" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIGT" />
+                            <ColumnDefinition SharedSizeGroup="MenuItemIGT" Width="Auto" />
                             <ColumnDefinition Width="20" />
                         </Grid.ColumnDefinitions>
                         <ContentControl
-                            Name="icon"
-                            Margin="5,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
                             Content="{TemplateBinding Icon}"
-                            Foreground="{TemplateBinding Foreground}" />
+                            Foreground="{TemplateBinding Foreground}"
+                            HorizontalAlignment="Center"
+                            Margin="5,0,0,0"
+                            Name="icon"
+                            VerticalAlignment="Center" />
                         <ContentControl
-                            x:Name="PART_ToggleIconPresenter"
                             Grid.Column="0"
+                            IsVisible="True"
                             Margin="5,0,0,0"
                             VerticalAlignment="Center"
-                            IsVisible="True" />
+                            x:Name="PART_ToggleIconPresenter" />
                         <ContentPresenter
-                            Name="PART_HeaderPresenter"
-                            Grid.Column="2"
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                            VerticalAlignment="Center"
                             Content="{TemplateBinding Header}"
                             ContentTemplate="{TemplateBinding HeaderTemplate}"
-                            Foreground="{TemplateBinding Foreground}">
+                            Foreground="{TemplateBinding Foreground}"
+                            Grid.Column="2"
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            Margin="{TemplateBinding Padding}"
+                            Name="PART_HeaderPresenter"
+                            VerticalAlignment="Center">
                             <ContentPresenter.DataTemplates>
                                 <DataTemplate DataType="sys:String">
                                     <AccessText Text="{Binding}" />
@@ -241,21 +242,21 @@
                             </ContentPresenter.DataTemplates>
                         </ContentPresenter>
                         <Path
-                            Name="rightArrow"
-                            Grid.Column="4"
-                            Width="8"
-                            Height="8"
-                            Margin="6,0,4,0"
-                            VerticalAlignment="Center"
                             Data="F1M0.002,31.062L0,0 27.01,15.534z"
                             Fill="{DynamicResource MainTextColor}"
-                            Stretch="Fill" />
+                            Grid.Column="4"
+                            Height="8"
+                            Margin="6,0,4,0"
+                            Name="rightArrow"
+                            Stretch="Fill"
+                            VerticalAlignment="Center"
+                            Width="8" />
                         <Popup
-                            Name="PART_Popup"
                             Grid.Column="0"
                             IsLightDismissEnabled="False"
                             IsOpen="{TemplateBinding IsSubMenuOpen,
                                                      Mode=TwoWay}"
+                            Name="PART_Popup"
                             Placement="RightEdgeAlignedTop">
                             <Border
                                 Background="{TemplateBinding Background}"
@@ -263,9 +264,9 @@
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="{TemplateBinding CornerRadius}">
                                 <ItemsPresenter
-                                    Name="PART_ItemsPresenter"
                                     Grid.IsSharedSizeScope="True"
-                                    ItemsPanel="{TemplateBinding ItemsPanel}" />
+                                    ItemsPanel="{TemplateBinding ItemsPanel}"
+                                    Name="PART_ItemsPresenter" />
                             </Border>
                         </Popup>
                     </Grid>
@@ -277,9 +278,9 @@
             <Setter Property="Content">
                 <Template>
                     <Path
-                        VerticalAlignment="Center"
                         Data="F1M10,1.2L4.7,9.1 4.5,9.1 0,5.2 1.3,3.5 4.3,6.1 8.3,0 10,1.2z"
-                        Fill="{DynamicResource MainTextColor}" />
+                        Fill="{DynamicResource MainTextColor}"
+                        VerticalAlignment="Center" />
                 </Template>
             </Setter>
         </Style>
@@ -287,10 +288,10 @@
             <Setter Property="Content">
                 <Template>
                     <Ellipse
-                        Width="8"
+                        Fill="{DynamicResource MainTextColor}"
                         Height="8"
                         Margin="4"
-                        Fill="{DynamicResource MainTextColor}" />
+                        Width="8" />
                 </Template>
             </Setter>
         </Style>
