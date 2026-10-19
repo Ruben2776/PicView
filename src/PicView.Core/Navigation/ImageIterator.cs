@@ -245,21 +245,22 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         {
             // Still loading, show thumbnail while waiting
             _tab.SetLoading();
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 var thumb = GetThumbnail(targetFile);
                 if (IsTargetActive(targetFile, index))
                 {
                     _tab.Image.Value = thumb;
                 }
+                var model = await request.ConfigureAwait(false);
+                if (model is not null && IsTargetActive(targetFile, index))
+                {
+                    UpdateModel(model);
+                }
             }, ct.Token).ConfigureAwait(false);
+            return;
         }
-
-        var model = await request.ConfigureAwait(false);
-        if (model is not null && IsTargetActive(targetFile, index))
-        {
-            UpdateModel(model);
-        }
+        UpdateModel(await request.ConfigureAwait(false));
     }
     
     public async ValueTask IterateToIndicesAsync(int index, int secondaryIndex, CancellationTokenSource ct)
@@ -284,30 +285,39 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         var secondRequest = Cache.GetAsync(_tab.Id, secondaryFile, ct.Token);
         if (!firstRequest.IsCompleted || !secondRequest.IsCompleted)
         {
-            // Still loading, show thumbnail while waiting
             _tab.SetLoading();
             _tab.Image.Value = null;
             _tab.SecondaryImage.Value = null;
-        }
-
-        var firstModel = await firstRequest.ConfigureAwait(false);
-        var secondModel = await secondRequest.ConfigureAwait(false);
-        if (firstModel is null || secondModel is null || !IsCurrent())
-        {
+            
+            await Task.Run(async () =>
+            {
+                await UpdateModels().ConfigureAwait(false);
+            }, ct.Token).ConfigureAwait(false);
             return;
         }
-
-        _tab.Display(firstModel, secondModel);
-        UpdateNavigationProperties();
-        TriggerPreload();
-
-        if (!_tab.ArchiveExtractionService.IsArchived)
-        {
-            FileHistoryManager.Add(firstModel.FileInfo.FullName);
-            FileHistoryManager.Add(secondModel.FileInfo.FullName);
-        }
+        await UpdateModels().ConfigureAwait(false);
 
         return;
+
+        async ValueTask UpdateModels()
+        {
+            var firstModel = await firstRequest.ConfigureAwait(false);
+            var secondModel = await secondRequest.ConfigureAwait(false);
+            if (firstModel is null || secondModel is null || !IsCurrent())
+            {
+                return;
+            }
+
+            _tab.Display(firstModel, secondModel);
+            UpdateNavigationProperties();
+            TriggerPreload();
+
+            if (!_tab.ArchiveExtractionService.IsArchived)
+            {
+                FileHistoryManager.Add(firstModel.FileInfo.FullName);
+                FileHistoryManager.Add(secondModel.FileInfo.FullName);
+            }
+        }
 
         bool IsCurrent() => index == CurrentIndex && secondaryIndex == SecondaryCurrentIndex;
     }

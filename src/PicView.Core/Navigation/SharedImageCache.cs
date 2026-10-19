@@ -272,8 +272,7 @@ public sealed class SharedImageCache
             value = _pathLookup.GetOrAdd(path, pending);
             if (ReferenceEquals(value, pending))
             {
-                // Never decode on the caller's thread, which may be the UI thread
-                _ = Task.Run(() => LoadAsync(file, pending));
+                _ = LoadAsync(file, pending);
             }
         }
 
