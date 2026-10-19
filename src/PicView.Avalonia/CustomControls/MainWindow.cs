@@ -56,6 +56,11 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         field ??= new WindowModeSwitcher(this, CreateWindowProvider().CreateWindowModeAdapter());
 
     /// <summary>
+    /// Fits this window to what its active tab shows.
+    /// </summary>
+    public WindowFitter WindowFitter => field ??= new WindowFitter(this);
+
+    /// <summary>
     /// This window's Window Mode. Read on the UI thread.
     /// </summary>
     public WindowModeState WindowModeState =>
@@ -331,7 +336,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     private void OnScalingChanged(object? sender, EventArgs e)
     {
         ScreenHelper.UpdateScreenSize(this);
-        WindowResizing.SetSize(this, WindowResizeReason.DpiChange);
+        WindowFitter.Refit();
     }
 
     private void OnActivated(object? sender, EventArgs e)
@@ -575,7 +580,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         }
         // Resizing by hand turns AutoFit off for this window only
         _ = WindowModeSwitcher.ResizedByHand();
-        WindowResizing.SetSize(this, e.Reason);
+        WindowFitter.Refit();
     }
     
     // Window is being resized

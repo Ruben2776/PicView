@@ -100,7 +100,7 @@ public static class StartUpHelper
                     ToggleUIVisibility.FullscreenHideInterface(vm);
                 }
                 ScreenHelper.UpdateScreenSize(mainWindow);
-                WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+                mainWindow.WindowFitter.Refit();
                 WindowFunctions.CenterWindowOnScreen(true, true, mainWindow);
             },DispatcherPriority.ApplicationIdle);
         }

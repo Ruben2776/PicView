@@ -187,11 +187,11 @@ public static class WindowFunctions
         else if (starting.AutoFit)
         {
             window.WindowStartupLocation = adjustPos ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
-            WindowResizing.ResumeAutoFit(window);
+            window.WindowFitter.FollowContent();
         }
-        else if (window.DataContext is MainWindowViewModel vm)
+        else
         {
-            WindowResizing.ReleaseSize(window, vm);
+            window.WindowFitter.KeepSize();
             if (adjustPos)
             {
                 InitializeWindowSizeAndPosition(window);
@@ -447,7 +447,7 @@ public static class WindowFunctions
         }
 
         ScreenHelper.UpdateScreenSize(window);
-        WindowResizing.SetSize(window, WindowResizeReason.DpiChange);
+        window.WindowFitter.Refit();
     }
 
     public static void WindowDragBehavior(MainWindow window, PointerPressedEventArgs e)
@@ -467,7 +467,7 @@ public static class WindowFunctions
         }
 
         ScreenHelper.UpdateScreenSize(window);
-        WindowResizing.SetSize(window, WindowResizeReason.DpiChange);
+        window.WindowFitter.Refit();
     }
 
     #endregion

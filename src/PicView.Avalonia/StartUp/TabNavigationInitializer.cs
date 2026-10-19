@@ -139,7 +139,7 @@ public static class TabNavigationInitializer
         // Need to properly remove it from the previous location
         parentVm.WindowTabs.RemoveTab(tab);
 
-        WindowResizing.ResumeAutoFit(mainWindow);
+        mainWindow.WindowFitter.FollowContent();
     }
     
     private static void InitializeNewTab(TabViewModel newTab, MainWindowViewModel mainWindowViewModel, MainWindow mainWindow, CoreViewModel core)

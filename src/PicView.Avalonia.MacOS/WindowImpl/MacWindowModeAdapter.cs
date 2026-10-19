@@ -34,7 +34,7 @@ public sealed class MacWindowModeAdapter : IWindowModeAdapter
             window.ExtendClientAreaToDecorationsHint = true;
             if (state.AutoFit)
             {
-                WindowResizing.ResumeAutoFit(window);
+                window.WindowFitter.FollowContent();
                 WindowResizing.FastCenterWindow(window);
             }
         });

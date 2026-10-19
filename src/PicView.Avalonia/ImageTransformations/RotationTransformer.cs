@@ -42,7 +42,7 @@ public class RotationTransformer(LayoutTransformControl imageLayoutTransformCont
         var tab = vm.WindowTabs.ActiveTab.Value;
         tab.RotationAngle.Value = angle;
         
-        WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+        mainWindow.WindowFitter.Refit();
 
         if (OperatingSystem.IsMacOS() && vm.IsFullscreen.Value)
         {

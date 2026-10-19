@@ -18,9 +18,8 @@ public class WindowSizingPlanTests
     private static readonly Fit Fit = new(WindowWidth: 1000, WindowHeight: 558, Width: 1000, Height: 500,
         ScrollViewerWidth: double.NaN, ScrollViewerHeight: double.NaN, Scale: 1);
 
-    private static WindowSizingPlan Plan(WindowMode mode, bool autoFit = false,
-        WindowResizeReason reason = WindowResizeReason.Application, bool isShown = true) =>
-        WindowSizingPlan.For(mode, autoFit, reason, isShown, Fit, Screen);
+    private static WindowSizingPlan Plan(WindowMode mode, bool autoFit = false, bool isShown = true) =>
+        WindowSizingPlan.For(mode, autoFit, isShown, Fit, Screen);
 
     [Fact]
     public void For_NormalWithoutAutoFit_KeepsTheUsersSizeWithNoLimit()
@@ -84,13 +83,5 @@ public class WindowSizingPlanTests
         Assert.Equal(1000, plan.Width);
         Assert.Equal(558, plan.Height);
         Assert.True(plan.SettleToContentAfterRender);
-    }
-
-    [Fact]
-    public void For_AutoFitResizedByUser_KeepsTheUsersSizeLikeWithoutAutoFit()
-    {
-        var plan = Plan(WindowMode.Normal, autoFit: true, WindowResizeReason.User);
-
-        Assert.Equal(Plan(WindowMode.Normal), plan);
     }
 }

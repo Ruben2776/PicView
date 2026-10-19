@@ -190,13 +190,7 @@ public static class QuickLoad
             // Predict window size and center beforehand for pleasant opening when double-clicking a file
             Dispatcher.UIThread.Post(() =>
             {
-                var size = WindowResizing.GetSize(tab.Model.PixelWidth, tab.Model.PixelHeight,
-                    0, 0, 0, mainWindow, vm);
-                if (!size.HasValue)
-                {
-                    return;
-                }
-                ShowSized(mainWindow, vm, size.Value);
+                ShowSized(mainWindow, new PixelSizes(tab.Model.PixelWidth, tab.Model.PixelHeight));
             }, DispatcherPriority.Send);
         }
         catch (Exception e)
@@ -257,13 +251,9 @@ public static class QuickLoad
                 isPinged = true;
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    var size = WindowResizing.GetSize(firstMagick.Width, firstMagick.Height,
-                        secondMagick.Width, secondMagick.Height, 0, mainWindow, vm);
-                    if (size.HasValue)
-                    {
-                        ShowSized(mainWindow, vm, size.Value);
-                    }
-                    else
+                    var sizes = new PixelSizes(firstMagick.Width, firstMagick.Height, secondMagick.Width,
+                        secondMagick.Height);
+                    if (!ShowSized(mainWindow, sizes))
                     {
                         mainWindow.Show();
                     }
@@ -287,20 +277,27 @@ public static class QuickLoad
         Dispatcher.UIThread.Post(() =>
         {
             mainWindow.Show();
-            WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
+            mainWindow.WindowFitter.Refit();
             mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
         }, DispatcherPriority.Background);
     }
 
     /// <summary>
-    /// Sizes the window for the image and shows it. Call on the UI thread.
+    /// Sizes the window for the image, or side-by-side pair, of <paramref name="sizes"/> and shows it. Call on the UI
+    /// thread.
     /// </summary>
-    private static void ShowSized(MainWindow mainWindow, MainWindowViewModel vm, Fit size)
+    /// <returns>Whether the window could be sized; it is left hidden when it could not.</returns>
+    private static bool ShowSized(MainWindow mainWindow, PixelSizes sizes)
     {
         // Before it is shown, an AutoFit window is given the Fit as its size, then follows its content again
-        WindowResizing.SetSize(size, WindowResizeReason.Application, mainWindow, vm);
+        if (!mainWindow.WindowFitter.FitBeforeShowing(sizes))
+        {
+            return false;
+        }
+
         mainWindow.Show();
         mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
+        return true;
     }
 
     private static void ShowNow(MainWindow mainWindow) =>

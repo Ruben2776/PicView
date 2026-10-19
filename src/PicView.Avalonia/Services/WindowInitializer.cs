@@ -245,7 +245,7 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
             core.SettingsViewModel.Initialize(new ThemeService(), new LanguageService(), new ImageSettingsService());
             core.SettingsViewModel.WindowMargin.Skip(1).Subscribe(_ =>
             {
-                WindowResizing.SetSize(desktop.MainWindow as MainWindow, WindowResizeReason.Application);
+                (desktop.MainWindow as MainWindow)?.WindowFitter.Refit();
             }, DebugHelper.LogError(nameof(core.SettingsViewModel), nameof(core.SettingsViewModel.WindowMargin)));
         }
 

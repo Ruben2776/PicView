@@ -544,7 +544,7 @@ public class GalleryAnimationControl : UserControl
 
         if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {
-            WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+            mainWindow.WindowFitter.Refit();
         }
     }
 
@@ -591,7 +591,7 @@ public class GalleryAnimationControl : UserControl
 
         if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {
-            WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+            mainWindow.WindowFitter.Refit();
         }
     }
 
@@ -692,7 +692,7 @@ public class GalleryAnimationControl : UserControl
                 var ct = cts.Token;
                 Observable.EveryUpdate(mainWindow.FrameProvider, ct).Subscribe(_ =>
                 {
-                    WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+                    mainWindow.WindowFitter.Refit();
                 }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(ExpandedToDocked)));
                 var heightAnim =
                     AnimationsHelper.HeightAnimation(startHeight, targetHeight, GalleryDefaults.SlowAnimationSpeed);
@@ -783,7 +783,7 @@ public class GalleryAnimationControl : UserControl
 
         if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {
-            WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+            mainWindow.WindowFitter.Refit();
         }
     }
 

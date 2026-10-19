@@ -21,7 +21,7 @@ public static class ToggleUIVisibility
             vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverbarVisible.Value =
                 Settings.UIProperties.ShowHoverNavigationBar;
 
-            WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+            mainWindow.WindowFitter.Refit();
         }
         else
         {
@@ -31,7 +31,7 @@ public static class ToggleUIVisibility
             vm.Translation.IsShowingBottomToolbar.Value = TranslationManager.Translation.HideBottomToolbar;
             vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverbarVisible.Value = false;
 
-            WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+            mainWindow.WindowFitter.Refit();
 
             Dispatcher.UIThread.Post(() => mainWindow.SharedBottomBar.ResponsiveNavigationBtnSize(mainWindow.Bounds.Width));
         }
@@ -99,7 +99,7 @@ public static class ToggleUIVisibility
         vm.TopTitlebarViewModel.CloseDropDownMenu();
         Dispatcher.UIThread.Post(() =>
         {
-            WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+            mainWindow.WindowFitter.Refit();
             mainWindow.SharedBottomBar.ResponsiveNavigationBtnSize(mainWindow.Bounds.Width);
         }, DispatcherPriority.Render);
     }

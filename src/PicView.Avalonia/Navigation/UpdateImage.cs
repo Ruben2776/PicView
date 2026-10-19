@@ -129,14 +129,13 @@ public static class UpdateImage
         }
         tabViewModel.ImageType.Value = tabViewModel.Model.ImageType;
         
-        SetWindowAndImageSize(mainWindow, tabViewModel, vm);
+        SetWindowAndImageSize(mainWindow, tabViewModel);
 
         imageViewer.UpdateMotionPhoto(tabViewModel);
     }
 
-    public static void SetWindowAndImageSize(MainWindow mainWindow, TabViewModel tabViewModel, MainWindowViewModel vm)
+    public static void SetWindowAndImageSize(MainWindow mainWindow, TabViewModel tabViewModel)
     {
-        double secondaryWidth, secondaryHeight;
         if (Settings.ImageScaling.ShowImageSideBySide)
         {
             if (tabViewModel.SecondaryModel is null)
@@ -146,31 +145,19 @@ public static class UpdateImage
                     nameof(SetWindowAndImageSize),
                     "SecondaryModel.CurrentValue is null");
 #endif
-                secondaryWidth = 0;
-                secondaryHeight = 0;
                 tabViewModel.SecondaryImage.Value = null;
                 tabViewModel.SecondaryFileInfo.Value = null;
                 tabViewModel.SecondaryImageType.Value = null;
             }
             else
             {
-                secondaryWidth = tabViewModel.SecondaryModel.PixelWidth;
-                secondaryHeight = tabViewModel.SecondaryModel.PixelHeight;                
                 tabViewModel.SecondaryImage.Value = tabViewModel.SecondaryModel.Image;
                 tabViewModel.SecondaryImageType.Value = tabViewModel.SecondaryModel.ImageType;
                 tabViewModel.SecondaryFileInfo.Value = tabViewModel.SecondaryModel.FileInfo;
             }
         }
-        else
-        {
-            secondaryWidth = secondaryHeight = 0;
-        }
-        
-        WindowResizing.SetSize(tabViewModel.Model.PixelWidth,
-            tabViewModel.Model.PixelHeight, 
-            secondaryWidth, secondaryHeight,
-            WindowResizeReason.Application,
-            mainWindow, vm);
+
+        mainWindow.WindowFitter.Refit();
     }
 
     public static void SetSingleImage(MainWindowViewModel vm, MainWindow mainWindow, Bitmap image, SingleImageType type, string name)
@@ -192,18 +179,14 @@ public static class UpdateImage
         
         if (vm.WindowModeState.CurrentValue.AutoFit)
         {
-            WindowResizing.SetSize(width, height, 0,0,
-                WindowResizeReason.Application,
-                mainWindow, vm);
+            mainWindow.WindowFitter.Refit();
         }
         Dispatcher.UIThread.Invoke(() =>
         {
             if (tabViewModel.CurrentView?.CurrentValue is not ImageViewer imageViewer)
             {
                 tabViewModel.CurrentView.Value = new ImageViewer();
-                WindowResizing.SetSize(width, height, 0,0,
-                    WindowResizeReason.Application,
-                    mainWindow, vm);
+                mainWindow.WindowFitter.Refit();
                 return;
             }
 

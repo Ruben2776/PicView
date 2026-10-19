@@ -143,11 +143,11 @@ public sealed class WindowModeSwitcher(
         {
             if (next.Mode is WindowMode.Normal)
             {
-                WindowResizing.ResumeAutoFit(window);
+                window.WindowFitter.FollowContent();
             }
             else
             {
-                WindowResizing.ReleaseSize(window, vm);
+                window.WindowFitter.KeepSize();
             }
 
             if (previous.Mode is WindowMode.Fullscreen)
@@ -169,13 +169,13 @@ public sealed class WindowModeSwitcher(
             }
         }
 
-        WindowResizing.SetSize(window, WindowResizeReason.Application);
+        window.WindowFitter.Refit();
         Dispatcher.UIThread.Post(() =>
         {
             window.IsChangingWindowState = false;
             if (vm.WindowModeState.CurrentValue.Mode is WindowMode.Normal)
             {
-                WindowResizing.ResumeAutoFit(window);
+                window.WindowFitter.FollowContent();
             }
         }, DispatcherPriority.SystemIdle);
     }
@@ -184,14 +184,14 @@ public sealed class WindowModeSwitcher(
     {
         if (autoFit)
         {
-            WindowResizing.ResumeAutoFit(window);
+            window.WindowFitter.FollowContent();
         }
         else
         {
-            WindowResizing.ReleaseSize(window, vm);
+            window.WindowFitter.KeepSize();
         }
 
-        WindowResizing.SetSize(window, WindowResizeReason.Application);
+        window.WindowFitter.Refit();
     }
 
     private static WindowState ToWindowState(WindowMode mode) => mode switch

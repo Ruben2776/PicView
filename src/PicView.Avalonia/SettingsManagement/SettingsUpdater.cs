@@ -126,7 +126,7 @@ public static class SettingsUpdater
             vm.IsZoomedToFit.Value = true;
         }
 
-        WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+        mainWindow.WindowFitter.Refit();
 
         var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
         tabViewModel.ZoomLevel.Value = Convert.ToInt32(tabViewModel.InitialZoom.CurrentValue * 100);
@@ -311,7 +311,7 @@ public static class SettingsUpdater
             }
         }
         
-        WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
+        mainWindow.WindowFitter.Refit();
         tab.UpdateTabTitle();
         await SaveSettingsAsync().ConfigureAwait(false);
     }
@@ -332,7 +332,7 @@ public static class SettingsUpdater
             TurnOnScroll(vm);
         }
         
-        WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
+        mainWindow.WindowFitter.Refit();
         
         await SaveSettingsAsync().ConfigureAwait(false);
     }

@@ -46,7 +46,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         {
             // Reset setting before resizing
             Settings.Gallery.IsGalleryDocked = false;
-            WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
+            mainWindow.WindowFitter.Refit();
         }
         
         var size = new Size(vm.ImageWidth.CurrentValue, vm.ImageHeight.CurrentValue);
@@ -145,7 +145,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         Settings.Gallery.DockPosition = _previousDockPosition;
         Settings.Gallery.IsGalleryDocked = true;
         _wasGalleryDocked = false;
-        WindowResizing.SetSize(mainWindow, WindowResizeReason.Application);
+        mainWindow.WindowFitter.Refit();
     }
 
     public async Task SaveCropAsAsync()

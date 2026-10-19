@@ -98,7 +98,7 @@ public static class SourceOpener
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             tab.UpdateTabTitle();
-            WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
+            mainWindow.WindowFitter.Refit();
         });
         return result;
     }

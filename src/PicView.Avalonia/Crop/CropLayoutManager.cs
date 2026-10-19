@@ -32,14 +32,15 @@ public class CropLayoutManager(CropControl control)
             {
                 return;
             }
-            var size = WindowResizing.GetSize(mainWindow, vm);
-            if (!size.HasValue)
+
+            mainWindow.WindowFitter.Refit();
+            if (double.IsNaN(vm.ImageWidth.CurrentValue) || double.IsNaN(vm.ImageHeight.CurrentValue))
             {
                 return;
             }
 
-            imageWidth = size.Value.Width;
-            imageHeight = size.Value.Height;
+            imageWidth = vm.ImageWidth.CurrentValue;
+            imageHeight = vm.ImageHeight.CurrentValue;
         }
         else
         {
