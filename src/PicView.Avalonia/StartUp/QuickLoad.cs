@@ -297,24 +297,10 @@ public static class QuickLoad
     /// </summary>
     private static void ShowSized(MainWindow mainWindow, MainWindowViewModel vm, Fit size)
     {
+        // Before it is shown, an AutoFit window is given the Fit as its size, then follows its content again
         WindowResizing.SetSize(size, WindowResizeReason.Application, mainWindow, vm);
-
-        if (Settings.WindowProperties.AutoFit)
-        {
-            mainWindow.SizeToContent = SizeToContent.Manual;
-            mainWindow.Width = size.WindowWidth;
-            mainWindow.Height = size.WindowHeight;
-        }
         mainWindow.Show();
         mainWindow.SetLayoutSizeAndVisibility(mainWindow.Bounds.Width);
-        if (Settings.WindowProperties.AutoFit)
-        {
-            Dispatcher.UIThread.Post(() =>
-            {
-                mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-                mainWindow.Width = mainWindow.Height = double.NaN;
-            }, DispatcherPriority.Render);
-        }
     }
 
     private static void ShowNow(MainWindow mainWindow) =>
