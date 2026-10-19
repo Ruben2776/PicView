@@ -25,68 +25,41 @@ public static class ImageFitter
             return default;
         }
 
-        var reserved = input.ReservedSpace;
+        // Fit the image as it is shown on screen, after its quarter turns
+        var isTurned = input.QuarterTurns % 2 != 0;
+        var shownWidth = isTurned ? imageHeight : imageWidth;
+        var shownHeight = isTurned ? imageWidth : imageHeight;
+
         var (maxAvailableWidth, maxAvailableHeight) = GetAvailableArea(input);
         if (!input.ZoomToFit)
         {
             // Never scale the image beyond 100%
-            maxAvailableWidth = Math.Min(maxAvailableWidth, imageWidth);
-            maxAvailableHeight = Math.Min(maxAvailableHeight, imageHeight);
+            maxAvailableWidth = Math.Min(maxAvailableWidth, shownWidth);
+            maxAvailableHeight = Math.Min(maxAvailableHeight, shownHeight);
         }
 
-        var isTurned = IsTurned(input);
-        double scale, scrollWidth, scrollHeight, windowWidth, windowHeight;
-        double calculatedImageWidth, calculatedImageHeight;
-
+        double scale, viewWidth, viewHeight, scrollWidth, scrollHeight;
         if (input.ScrollEnabled)
         {
-            // Fit the image to the available width, but ignore the height constraint to allow for scrolling.
-            scale = CalculateScale(isTurned, maxAvailableWidth, double.PositiveInfinity, imageWidth, imageHeight);
-
-            calculatedImageWidth = imageWidth * scale;
-            calculatedImageHeight = imageHeight * scale;
-
-            scrollWidth = Math.Min(calculatedImageWidth, maxAvailableWidth);
-            scrollHeight = Math.Min(calculatedImageHeight, maxAvailableHeight);
-
-            if (isTurned)
-            {
-                windowWidth = Math.Max(scrollHeight + reserved.Bottom + reserved.Top + reserved.GalleryHeight,
-                    SizeDefaults.WindowMinSize);
-                windowHeight = Math.Max(scrollWidth + reserved.GalleryWidth, SizeDefaults.WindowMinSize);
-            }
-            else
-            {
-                windowWidth = Math.Max(scrollWidth + reserved.GalleryWidth, SizeDefaults.WindowMinSize);
-                windowHeight = Math.Max(scrollHeight + reserved.Bottom + reserved.Top + reserved.GalleryHeight,
-                    SizeDefaults.WindowMinSize);
-            }
+            // Fit the available width and scroll the rest of the height
+            scale = maxAvailableWidth / shownWidth;
+            scrollWidth = viewWidth = Math.Min(shownWidth * scale, maxAvailableWidth);
+            scrollHeight = viewHeight = Math.Min(shownHeight * scale, maxAvailableHeight);
         }
         else
         {
-            scale = CalculateScale(isTurned, maxAvailableWidth, maxAvailableHeight, imageWidth, imageHeight);
-
-            calculatedImageWidth = imageWidth * scale;
-            calculatedImageHeight = imageHeight * scale;
-
-            scrollWidth = double.NaN;
-            scrollHeight = double.NaN;
-
-            if (isTurned)
-            {
-                windowWidth = Math.Max(calculatedImageHeight + reserved.GalleryWidth, SizeDefaults.WindowMinSize);
-                windowHeight = Math.Max(calculatedImageWidth + reserved.Bottom + reserved.Top + reserved.GalleryHeight,
-                    SizeDefaults.WindowMinSize);
-            }
-            else
-            {
-                windowWidth = Math.Max(calculatedImageWidth + reserved.GalleryWidth, SizeDefaults.WindowMinSize);
-                windowHeight = Math.Max(calculatedImageHeight + reserved.Bottom + reserved.Top + reserved.GalleryHeight,
-                    SizeDefaults.WindowMinSize);
-            }
+            scale = Math.Min(maxAvailableWidth / shownWidth, maxAvailableHeight / shownHeight);
+            viewWidth = shownWidth * scale;
+            viewHeight = shownHeight * scale;
+            scrollWidth = scrollHeight = double.NaN;
         }
 
-        return new Fit(windowWidth, windowHeight, calculatedImageWidth, calculatedImageHeight,
+        var reserved = input.ReservedSpace;
+        var windowWidth = Math.Max(viewWidth + reserved.GalleryWidth, SizeDefaults.WindowMinSize);
+        var windowHeight = Math.Max(viewHeight + reserved.Top + reserved.Bottom + reserved.GalleryHeight,
+            SizeDefaults.WindowMinSize);
+
+        return new Fit(windowWidth, windowHeight, imageWidth * scale, imageHeight * scale,
             scrollWidth, scrollHeight, scale);
     }
 
@@ -118,7 +91,7 @@ public static class ImageFitter
             maxAvailableHeight = input.WindowContentHeight;
         }
 
-        var isTurned = IsTurned(input);
+        var isTurned = input.QuarterTurns % 2 != 0;
         double scale, calculatedCombinedWidth, calculatedLargestHeight;
         double scrollWidth, scrollHeight, windowWidth, windowHeight;
 
@@ -152,8 +125,6 @@ public static class ImageFitter
         return new Fit(windowWidth, windowHeight, calculatedCombinedWidth, calculatedLargestHeight,
             scrollWidth, scrollHeight, scale);
     }
-
-    private static bool IsTurned(FitInput input) => input.QuarterTurns % 2 != 0;
 
     private static double CalculateScale(bool isTurned, double maxWidth, double maxHeight, double width,
         double height) =>
