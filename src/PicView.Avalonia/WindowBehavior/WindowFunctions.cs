@@ -12,7 +12,6 @@ using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
-using PicView.Core.IPlatform;
 using PicView.Core.Models;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -90,7 +89,7 @@ public static class WindowFunctions
 
     public static async Task WindowClosingBehavior(Window window)
     {
-        WindowResizing.SaveSize(window);
+        SaveSize(window);
 
         var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         if (core is null)
@@ -257,6 +256,75 @@ public static class WindowFunctions
     #endregion
 
     #region Window Size and Position
+
+    /// <summary>
+    /// Keeps an AutoFit window centered while it changes size: on the screen with KeepCentered, else on where its
+    /// center was.
+    /// </summary>
+    /// <returns>Whether the window was kept centered.</returns>
+    public static bool KeepCenteredWhileResizing(Window window, AvaloniaPropertyChangedEventArgs<Size> size)
+    {
+        if (Settings.WindowProperties.KeepCentered)
+        {
+            FastCenterWindow(window);
+            return true;
+        }
+
+        var oldSize = size.OldValue.Value;
+        var newSize = size.NewValue.Value;
+        if (!size.OldValue.HasValue || !size.NewValue.HasValue ||
+            !Equals(size.Sender, window) || oldSize.Width is 0 || oldSize.Height is 0 ||
+            newSize.Width is 0 || newSize.Height is 0)
+        {
+            return false;
+        }
+
+        var x = (oldSize.Width - newSize.Width) / 2;
+        var y = (oldSize.Height - newSize.Height) / 2;
+        window.Position = new PixelPoint(window.Position.X + (int)x, window.Position.Y + (int)y);
+        return true;
+    }
+
+    /// <summary>
+    /// Centers the window in the work area of the screen, from its current size.
+    /// </summary>
+    public static void FastCenterWindow(Window window)
+    {
+        var screen = ScreenHelper.ScreenSize;
+        var windowSize = window.ClientSize;
+        var centeredX = screen.X + (screen.WorkingAreaWidth - windowSize.Width) / 2;
+        var centeredY = screen.Y + (screen.WorkingAreaHeight - windowSize.Height) / 2;
+        window.Position = new PixelPoint((int)centeredX, (int)centeredY);
+    }
+
+    /// <summary>
+    /// Remembers the window's position, and its size unless it is maximized or fullscreen.
+    /// </summary>
+    public static void SaveSize(Window window)
+    {
+        if (Dispatcher.CurrentDispatcher.CheckAccess())
+        {
+            Set();
+        }
+        else
+        {
+            Dispatcher.CurrentDispatcher.Invoke(Set);
+        }
+
+        return;
+
+        void Set()
+        {
+            Settings.WindowProperties.Top = window.Position.Y;
+            Settings.WindowProperties.Left = window.Position.X;
+            if (window.DataContext is MainWindowViewModel { WindowModeState.CurrentValue.Mode: not WindowMode.Normal })
+            {
+                return;
+            }
+            Settings.WindowProperties.Width = window.Bounds.Width;
+            Settings.WindowProperties.Height = window.Bounds.Height;
+        }
+    }
 
     public static void CenterWindowOnScreen(Window window)
     {

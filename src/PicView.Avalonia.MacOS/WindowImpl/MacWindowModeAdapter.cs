@@ -35,7 +35,7 @@ public sealed class MacWindowModeAdapter : IWindowModeAdapter
             if (state.AutoFit)
             {
                 window.WindowFitter.FollowContent();
-                WindowResizing.FastCenterWindow(window);
+                WindowFunctions.FastCenterWindow(window);
             }
         });
     }

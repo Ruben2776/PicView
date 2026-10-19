@@ -173,7 +173,7 @@ public static class StartUpHelper
         {
             Dispatcher.UIThread.Post(() =>
             {
-                WindowResizing.FastCenterWindow(mainWindow);
+                WindowFunctions.FastCenterWindow(mainWindow);
             }, DispatcherPriority.Input);
         }
     }
@@ -193,7 +193,7 @@ public static class StartUpHelper
                 {
                     Dispatcher.UIThread.Post(() =>
                     {
-                        WindowResizing.FastCenterWindow(mainWindow);
+                        WindowFunctions.FastCenterWindow(mainWindow);
                     }, DispatcherPriority.Input);
                 }
             }

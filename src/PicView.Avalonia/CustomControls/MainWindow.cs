@@ -591,10 +591,14 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
             return;
         }
         
-        WindowResizing.HandleWindowResize(this, size);
         if (DataContext is not MainWindowViewModel vm)
         {
             return;
+        }
+
+        if (vm.WindowModeState.CurrentValue.AutoFit && WindowFunctions.KeepCenteredWhileResizing(this, size))
+        {
+            SetCursorOnButton.AfterResize(this, vm, size.NewValue.Value.Width);
         }
         if (vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDockedGalleryVisible.CurrentValue
             && vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
