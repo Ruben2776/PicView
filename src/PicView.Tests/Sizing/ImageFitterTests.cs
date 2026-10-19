@@ -180,16 +180,25 @@ public class ImageFitterTests
     }
 
     [Fact]
-    public void Fit_PairWithoutZoomToFit_ScalesPastNativeSize()
+    public void Fit_PairWithoutZoomToFit_ShowsAtNativeSize()
     {
         var fit = Fit(Pair(1000, 500, 500, 500));
+
+        AssertSizes(fit, 1500, 558, 1500, 500);
+        Assert.Equal(1, fit.Scale, Precision);
+    }
+
+    [Fact]
+    public void Fit_PairWithZoomToFit_ScalesUpToAvailableWidth()
+    {
+        var fit = Fit(Pair(1000, 500, 500, 500) with { ZoomToFit = true });
 
         AssertSizes(fit, 1905, 693, 1905, 635);
         Assert.Equal(1.27, fit.Scale, Precision);
     }
 
     [Fact]
-    public void Fit_PairInFixedWindowWithDockedGallery_IgnoresGallery()
+    public void Fit_PairInFixedWindowWithDockedGallery_LeavesRoomForGallery()
     {
         var fit = Fit(Pair(1000, 500, 500, 500, FitMode.FixedWindow) with
         {
@@ -198,11 +207,11 @@ public class ImageFitterTests
             ReservedSpace = Bars with { GalleryWidth = 100 }
         });
 
-        AssertSizes(fit, 900, 324.666667, 800, 266.666667);
+        AssertSizes(fit, 800, SizeDefaults.WindowMinSize, 700, 233.333333);
     }
 
     [Fact]
-    public void Fit_SmallPair_WindowGoesBelowMinimumSize()
+    public void Fit_SmallPair_WindowKeepsMinimumSize()
     {
         var fit = Fit(Pair(100, 100, 100, 100, FitMode.FixedWindow) with
         {
@@ -210,28 +219,28 @@ public class ImageFitterTests
             WindowContentHeight = 200
         });
 
-        AssertSizes(fit, 200, 158, 200, 100);
+        AssertSizes(fit, SizeDefaults.WindowMinSize, SizeDefaults.WindowMinSize, 200, 100);
     }
 
     [Fact]
-    public void Fit_PairInFullscreen_FitsInsideCurrentContentSize()
+    public void Fit_PairInFullscreen_FillsWholeScreen()
     {
-        var fit = Fit(Pair(1000, 500, 500, 500, FitMode.Fullscreen) with
+        var fit = Fit(Pair(2000, 1000, 2000, 1000, FitMode.Fullscreen) with
         {
             WindowContentWidth = 1000,
             WindowContentHeight = 800
         });
 
-        AssertSizes(fit, 1000, 391.333333, 1000, 333.333333);
+        AssertSizes(fit, 1920, 538, 1920, 480);
     }
 
     [Fact]
-    public void Fit_PairWithQuarterTurn_KeepsWindowUnturned()
+    public void Fit_PairWithQuarterTurn_SwapsWindowWidthAndHeight()
     {
-        // Shown 500 wide and 1500 high, so the available height is the limit
+        // The 1500x500 pair is shown 500 wide and 1500 high, so the available height is the limit
         var fit = Fit(Pair(1000, 500, 500, 500) with { QuarterTurns = 1 });
 
-        AssertSizes(fit, 967, 380.333333, 967, 322.333333);
+        AssertSizes(fit, 322.333333, 1025, 967, 322.333333);
     }
 
     #endregion
