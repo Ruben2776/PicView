@@ -121,13 +121,13 @@ public class ImageFitterTests
     }
 
     [Fact]
-    public void Fit_QuarterTurnOfTallImage_IsLimitedByUnturnedWidth()
+    public void Fit_QuarterTurnOfTallImage_FillsAvailableWidth()
     {
-        // Shown 3000 wide and 1000 high, but the image's own 1000 width caps the available width,
-        // so it ends up 1000 wide and 333 high
+        // Shown 3000 wide and 1000 high, so it shrinks to 1905 wide and 635 high
         var fit = Fit(Input(1000, 3000) with { QuarterTurns = 1 });
 
-        AssertSizes(fit, 1000, 391.333333, 333.333333, 1000);
+        AssertSizes(fit, 1905, 693, 635, 1905);
+        Assert.Equal(0.635, fit.Scale, Precision);
     }
 
     [Fact]
@@ -141,14 +141,14 @@ public class ImageFitterTests
     }
 
     [Fact]
-    public void Fit_ScrollWithQuarterTurn_ScalesPastNativeSizeAndSwapsBars()
+    public void Fit_ScrollWithQuarterTurn_FitsShownWidthAndScrollsShownHeight()
     {
-        // Shown 1000 wide and 3000 high
+        // Shown 1000 wide and 3000 high, the same as an unturned 1000x3000 image
         var fit = Fit(Input(3000, 1000) with { ScrollEnabled = true, QuarterTurns = 1 });
 
-        AssertSizes(fit, 1025, 1905, 5715, 1905);
-        Assert.Equal(1.905, fit.Scale, Precision);
-        Assert.Equal(1905, fit.ScrollViewerWidth, Precision);
+        AssertSizes(fit, 1000, 1025, 3000, 1000);
+        Assert.Equal(1, fit.Scale, Precision);
+        Assert.Equal(1000, fit.ScrollViewerWidth, Precision);
         Assert.Equal(967, fit.ScrollViewerHeight, Precision);
     }
 
