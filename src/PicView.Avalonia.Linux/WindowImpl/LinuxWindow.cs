@@ -29,8 +29,7 @@ public static async Task Fullscreen(MainWindow window, MainWindowViewModel vm, b
         vm.ShouldMaximizeBeShown.Value = true;
         vm.ShouldRestoreBeShown.Value = true;
         
-        vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
-        window.SizeToContent = SizeToContent.Manual;
+        WindowResizing.ReleaseSize(window, vm);
         if (window.WindowState != WindowState.FullScreen)
         {
             window.WindowState = WindowState.FullScreen;
@@ -66,8 +65,7 @@ public static async Task Fullscreen(MainWindow window, MainWindowViewModel vm, b
         vm.ShouldMaximizeBeShown.Value = false;
         vm.ShouldRestoreBeShown.Value = true;
         
-        window.SizeToContent = SizeToContent.Manual;
-        vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
+        WindowResizing.ReleaseSize(window, vm);
         if (window.WindowState != WindowState.Maximized)
         {
             window.WindowState = WindowState.Maximized;
@@ -87,11 +85,7 @@ public static async Task Fullscreen(MainWindow window, MainWindowViewModel vm, b
         window.IsChangingWindowState = true;
         
         var wasFullscreen = window.WindowState == WindowState.FullScreen || Settings.WindowProperties.Fullscreen;
-        
-        if (Settings.WindowProperties.AutoFit)
-        {
-            window.SizeToContent = SizeToContent.WidthAndHeight;
-        }
+        WindowResizing.ResumeAutoFit(window);
         
         // Update settings
         Settings.WindowProperties.Maximized = false;
@@ -120,10 +114,7 @@ public static async Task Fullscreen(MainWindow window, MainWindowViewModel vm, b
         Dispatcher.UIThread.Post(() =>
         {
             window.IsChangingWindowState = false;
-            if (Settings.WindowProperties.AutoFit)
-            {
-                window.SizeToContent = SizeToContent.WidthAndHeight;
-            }
+            WindowResizing.ResumeAutoFit(window);
         }, DispatcherPriority.SystemIdle);
         
         if (saveSettings)

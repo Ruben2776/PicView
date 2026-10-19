@@ -191,41 +191,70 @@ public static class WindowResizing
         vm.ImageWidth.Value = size.Width;
         vm.ImageHeight.Value = size.Height;
 
-        if (Settings.WindowProperties.Fullscreen)
+        if (Dispatcher.UIThread.CheckAccess())
         {
-            vm.WindowMaxWidth.Value = ScreenHelper.ScreenSize.Width;
-            vm.WindowMaxHeight.Value = ScreenHelper.ScreenSize.Height;
-        }
-        else if (Settings.WindowProperties.Maximized)
-        {
-            vm.WindowMaxWidth.Value = ScreenHelper.ScreenSize.WorkingAreaWidth;
-            vm.WindowMaxHeight.Value = ScreenHelper.ScreenSize.WorkingAreaHeight;
-        }
-        else if (Settings.WindowProperties.AutoFit)
-        {
-            if (reason is WindowResizeReason.User)
-            {
-                vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
-            }
-            else
-            {
-                vm.WindowMaxWidth.Value = size.WindowWidth;
-                vm.WindowMaxHeight.Value = size.WindowHeight;
-            }
-            Dispatcher.UIThread.Post(() =>
-            {
-                // Fixes weird window size bug where the window width is at a fixed value
-                if (!double.IsNaN(mainWindow.Width))
-                {
-                    mainWindow.Width = mainWindow.Height = double.NaN;
-                }
-            }, DispatcherPriority.Render);
+            ApplyWindowSize(size, reason, mainWindow, vm);
         }
         else
         {
-            vm.WindowMaxWidth.Value =
-                vm.WindowMaxHeight.Value = double.NaN;
+            Dispatcher.UIThread.Post(() => ApplyWindowSize(size, reason, mainWindow, vm), DispatcherPriority.Send);
         }
+    }
+
+    /// <summary>
+    /// Stops the window from following its content, before it becomes fullscreen, maximized or manual.
+    /// </summary>
+    public static void ReleaseSize(MainWindow mainWindow, MainWindowViewModel vm)
+    {
+        mainWindow.SizeToContent = SizeToContent.Manual;
+        vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
+    }
+
+    /// <summary>
+    /// Lets the window follow its content again when AutoFit is on, also when there is no image to fit.
+    /// </summary>
+    public static void ResumeAutoFit(Window window)
+    {
+        if (Settings.WindowProperties.AutoFit)
+        {
+            window.SizeToContent = SizeToContent.WidthAndHeight;
+        }
+    }
+
+    private static void ApplyWindowSize(Fit size, WindowResizeReason reason, MainWindow mainWindow,
+        MainWindowViewModel vm)
+    {
+        var mode = WindowModes.From(
+            Settings.WindowProperties.Fullscreen || mainWindow.WindowState is WindowState.FullScreen,
+            Settings.WindowProperties.Maximized || mainWindow.WindowState is WindowState.Maximized,
+            Settings.WindowProperties.AutoFit);
+        var plan = WindowSizingPlan.For(mode, reason, mainWindow.IsVisible, size, ScreenHelper.ScreenSize);
+
+        mainWindow.SizeToContent = plan.SizeToContent;
+        vm.WindowMaxWidth.Value = plan.MaxWidth;
+        vm.WindowMaxHeight.Value = plan.MaxHeight;
+        if (plan.Width is { } width)
+        {
+            mainWindow.Width = width;
+        }
+        if (plan.Height is { } height)
+        {
+            mainWindow.Height = height;
+        }
+
+        if (!plan.SettleToContentAfterRender)
+        {
+            return;
+        }
+        Dispatcher.UIThread.Post(() =>
+        {
+            mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+            // Fixes weird window size bug where the window width is at a fixed value
+            if (!double.IsNaN(mainWindow.Width))
+            {
+                mainWindow.Width = mainWindow.Height = double.NaN;
+            }
+        }, DispatcherPriority.Render);
     }
 
     public static Fit? GetSize(MainWindow mainWindow, MainWindowViewModel vm)
