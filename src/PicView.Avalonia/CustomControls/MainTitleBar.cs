@@ -52,7 +52,7 @@ public class MainTitleBar : UserControl, ITitleBar
             return;
         }
 
-        WindowFunctions.WindowDragAndDoubleClickBehavior(mainWindow, e, vm.PlatformWindowService);
+        WindowFunctions.WindowDragAndDoubleClickBehavior(mainWindow, e);
     }
 
     protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)

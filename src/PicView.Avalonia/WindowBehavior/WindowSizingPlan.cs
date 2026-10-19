@@ -10,8 +10,8 @@ namespace PicView.Avalonia.WindowBehavior;
 /// <param name="SizeToContent">How the window sizes itself to its content.</param>
 /// <param name="MaxWidth">The window's largest width, or NaN for no limit.</param>
 /// <param name="MaxHeight">The window's largest height, or NaN for no limit.</param>
-/// <param name="Width">An explicit width to set now, or null to leave the window's width alone.</param>
-/// <param name="Height">An explicit height to set now, or null to leave the window's height alone.</param>
+/// <param name="Width">An explicit width to set now, NaN to clear it, or null to leave the window's width alone.</param>
+/// <param name="Height">An explicit height to set now, NaN to clear it, or null to leave the window's height alone.</param>
 /// <param name="SettleToContentAfterRender">
 /// Whether, after the next render, the window goes back to sizing itself to its content with no explicit size.
 /// </param>
@@ -27,8 +27,8 @@ public readonly record struct WindowSizingPlan(
     public static WindowSizingPlan For(WindowMode mode, bool autoFit, WindowResizeReason reason, bool isShown,
         Fit fit, ScreenSize screen) => mode switch
     {
-        WindowMode.Fullscreen => Limited(screen.Width, screen.Height),
-        WindowMode.Maximized => Limited(screen.WorkingAreaWidth, screen.WorkingAreaHeight),
+        WindowMode.Fullscreen => TakesScreenSize(screen.Width, screen.Height),
+        WindowMode.Maximized => TakesScreenSize(screen.WorkingAreaWidth, screen.WorkingAreaHeight),
         // A user resize ends AutoFit, so the window keeps the size the user gave it
         WindowMode.Normal when !autoFit || reason is WindowResizeReason.User => Limited(double.NaN, double.NaN),
         // Before it is shown, the window gets the Fit as its size so the image never appears in a resizing window
@@ -40,4 +40,11 @@ public readonly record struct WindowSizingPlan(
 
     private static WindowSizingPlan Limited(double maxWidth, double maxHeight) =>
         new(SizeToContent.Manual, maxWidth, maxHeight, null, null, false);
+
+    /// <summary>
+    /// The window takes its size from the screen or work area, so an explicit size it was given before is cleared.
+    /// On macOS, the green button resizes the window as the user first, which gives it one.
+    /// </summary>
+    private static WindowSizingPlan TakesScreenSize(double maxWidth, double maxHeight) =>
+        new(SizeToContent.Manual, maxWidth, maxHeight, double.NaN, double.NaN, false);
 }

@@ -30,9 +30,8 @@ using R3.Avalonia;
 namespace PicView.Avalonia.CustomControls;
 
 /// <summary>
-/// The main window shared by every platform. It owns window-state handling, tab detaching and opening the
-/// secondary windows; a platform subclass supplies its <see cref="IWindowProvider"/> and how the window
-/// maximizes, enters fullscreen, restores and minimizes.
+/// The main window shared by every platform. It owns its Window Mode, tab detaching and opening the secondary
+/// windows; a platform subclass supplies its <see cref="IWindowProvider"/>.
 /// </summary>
 public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 {
@@ -50,6 +49,11 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     public ClipboardCopyService? ClipboardCopyService { get; private set; }
     public ClipboardPasteService? ClipboardPasteService { get; private set; }
 
+    /// <summary>
+    /// Changes this window's Window Mode.
+    /// </summary>
+    public WindowModeSwitcher WindowModeSwitcher =>
+        field ??= new WindowModeSwitcher(this, CreateWindowProvider().CreateWindowModeAdapter());
 
     protected MainWindow()
     {
@@ -84,13 +88,14 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
             return;
         }
 
+        // Changes the user makes with the operating system's own window controls
         var windowStates = Observable.EveryValueChanged(this, x => x.WindowState, FrameProvider);
-        if (SkipsInitialWindowState)
+        if (WindowModeSwitcher.SkipsInitialNativeState)
         {
             windowStates = windowStates.Skip(1);
         }
         windowStates
-            .SubscribeAwait(async (state, _) => await OnWindowStateChangedAsync(state).ConfigureAwait(true),
+            .SubscribeAwait(async (state, _) => await WindowModeSwitcher.OnNativeStateAsync(state).ConfigureAwait(true),
                 DebugHelper.LogError(nameof(MainWindow), nameof(WindowState)))
             .AddTo(Disposables);
 
@@ -117,66 +122,25 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     /// </summary>
     protected abstract IWindowProvider CreateWindowProvider();
 
-    /// <summary>
-    /// Whether the initial <see cref="WindowState"/> is ignored, so only later changes reach
-    /// <see cref="OnWindowStateChangedAsync"/>.
-    /// </summary>
-    protected virtual bool SkipsInitialWindowState => false;
-
-    /// <summary>
-    /// Brings the settings in line with a window state the user changed outside the UI, such as with the
-    /// operating system's own window controls.
-    /// </summary>
-    protected virtual async Task OnWindowStateChangedAsync(WindowState state)
-    {
-        switch (state)
-        {
-            case WindowState.FullScreen:
-                if (!Settings.WindowProperties.Fullscreen)
-                {
-                    await Fullscreen().ConfigureAwait(true);
-                }
-                break;
-            case WindowState.Maximized:
-                if (!Settings.WindowProperties.Maximized)
-                {
-                    await Maximize().ConfigureAwait(true);
-                }
-                break;
-            case WindowState.Normal:
-                if (Settings.WindowProperties.Fullscreen || Settings.WindowProperties.Maximized)
-                {
-                    await Restore().ConfigureAwait(true);
-                }
-                break;
-        }
-    }
-
     /// <inheritdoc />
     public virtual int CombinedTitleButtonsWidth
     {
-        get => (int)(Settings.WindowProperties.Maximized && !Settings.WindowProperties.Fullscreen
+        get => (int)((DataContext as MainWindowViewModel)?.WindowModeState.CurrentValue.Mode is WindowMode.Maximized
             ? OffScreenMargin.Left + OffScreenMargin.Right + field : field);
         set;
     } = 185;
 
     /// <inheritdoc />
-    public abstract Task Maximize(bool saveSetting = true);
+    public void Minimize() => WindowState = WindowState.Minimized;
 
-    /// <inheritdoc />
-    public abstract Task MaximizeRestore(bool saveSetting = true);
-
-    /// <inheritdoc />
-    public abstract Task Fullscreen(bool saveSetting = true);
-
-    /// <inheritdoc />
-    public abstract Task ToggleFullscreen(bool saveSetting = true);
-
-    /// <inheritdoc />
-    public abstract Task Restore();
-
-    /// <inheritdoc />
-    public abstract void Minimize();
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        base.OnDataContextChanged(e);
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.WindowModeSwitcher = WindowModeSwitcher;
+        }
+    }
 
     #endregion
 

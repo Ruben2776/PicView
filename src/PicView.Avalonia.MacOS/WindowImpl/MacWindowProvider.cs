@@ -13,6 +13,9 @@ namespace PicView.Avalonia.MacOS.WindowImpl;
 public class MacWindowProvider : IWindowProvider
 {
     public MainWindow CreateMainWindow() => new MacMainWindow();
+
+    public IWindowModeAdapter CreateWindowModeAdapter() => new MacWindowModeAdapter();
+
     public Window CreateAboutWindow() => new AboutWindow();
 
     public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => new BatchResizeWindow(config);

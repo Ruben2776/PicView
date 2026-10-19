@@ -109,7 +109,7 @@ public static class ToggleUIVisibility
         var shouldShow = !Settings.UIProperties.ShowHoverNavigationBar;
         
         Settings.UIProperties.ShowHoverNavigationBar = shouldShow;
-        if (shouldShow && !vm.IsBottomToolbarShown.CurrentValue || shouldShow && vm.IsFullscreen.CurrentValue)
+        if (shouldShow && !vm.IsBottomToolbarShown.CurrentValue || shouldShow && vm.IsFullscreen.Value)
         {
             ShowHoverBar(vm);
         }

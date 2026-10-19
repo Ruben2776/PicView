@@ -295,7 +295,7 @@ public partial class BottomBar : UserControl, IDisposable
         
         if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
         {
-            WindowFunctions.WindowDragAndDoubleClickBehavior(mainWindow, e, vm.PlatformWindowService);
+            WindowFunctions.WindowDragAndDoubleClickBehavior(mainWindow, e);
         }
     }
 

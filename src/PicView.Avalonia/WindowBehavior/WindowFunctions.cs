@@ -44,7 +44,7 @@ public static class WindowFunctions
         };
         vm.WindowTabs.ActiveTab.Value.CurrentView.Value = startUpMenu;
         window.Show();
-        StartUpHelper.HandlePostWindowUpdates(core, window);
+        StartUpHelper.HandlePostWindowUpdates(core, window, isAppStart: false);
     }
 
     public static void DetachedWindowStartup(CoreViewModel core, MainWindow window)
@@ -52,7 +52,7 @@ public static class WindowFunctions
         HandleWindowScalingMode(core, window, false);
         window.Show();
         
-        StartUpHelper.HandlePostWindowUpdates(core, window);
+        StartUpHelper.HandlePostWindowUpdates(core, window, isAppStart: false);
     }
     
     public static void RegularWindowStartUp(CoreViewModel core, bool settingsExists, MainWindow window)
@@ -61,7 +61,7 @@ public static class WindowFunctions
 
         StartUpHelper.StartUpMenuOrLastFile(window, core);
 
-        StartUpHelper.HandlePostWindowUpdates(core, window);
+        StartUpHelper.HandlePostWindowUpdates(core, window, isAppStart: true);
 
     }
     
@@ -71,7 +71,7 @@ public static class WindowFunctions
 
         StartUpHelper.HandleStartImage(window, core, filePath);
 
-        StartUpHelper.HandlePostWindowUpdates(core, window);
+        StartUpHelper.HandlePostWindowUpdates(core, window, isAppStart: true);
     }
 
     #endregion
@@ -477,8 +477,7 @@ public static class WindowFunctions
 
     #region Window Drag and Behavior
 
-    public static void WindowDragAndDoubleClickBehavior(MainWindow window, PointerPressedEventArgs e,
-        IPlatformWindowService platformWindowService)
+    public static void WindowDragAndDoubleClickBehavior(MainWindow window, PointerPressedEventArgs e)
     {
         var currentScreen = ScreenHelper.ScreenSize;
 
@@ -490,7 +489,7 @@ public static class WindowFunctions
 
         if (e.ClickCount == 2 && e.GetCurrentPoint(window).Properties.IsLeftButtonPressed)
         {
-            _ = platformWindowService.MaximizeRestore();
+            _ = window.WindowModeSwitcher.ToggleMaximized();
             return;
         }
 

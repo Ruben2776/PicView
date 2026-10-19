@@ -46,8 +46,18 @@ public class WindowSizingPlanTests
         Assert.Equal(SizeToContent.Manual, plan.SizeToContent);
         Assert.Equal(maxWidth, plan.MaxWidth);
         Assert.Equal(maxHeight, plan.MaxHeight);
-        Assert.Null(plan.Width);
         Assert.False(plan.SettleToContentAfterRender);
+    }
+
+    [Theory]
+    [InlineData(WindowMode.Fullscreen)]
+    [InlineData(WindowMode.Maximized)]
+    public void For_FullscreenOrMaximized_ClearsAnExplicitSize(WindowMode mode)
+    {
+        var plan = Plan(mode, autoFit: true);
+
+        Assert.True(plan.Width is double.NaN);
+        Assert.True(plan.Height is double.NaN);
     }
 
     [Fact]

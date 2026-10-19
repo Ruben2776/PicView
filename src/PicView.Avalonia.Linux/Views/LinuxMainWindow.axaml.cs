@@ -29,27 +29,4 @@ public partial class LinuxMainWindow : MainWindow
     }
 
     protected override IWindowProvider CreateWindowProvider() => new LinuxWindowProvider();
-
-    /// <inheritdoc />
-    public override async Task Maximize(bool saveSetting = true) =>
-        await LinuxWindow.Maximize(this, (DataContext as MainWindowViewModel)!, saveSetting);
-    
-    /// <inheritdoc />
-    public override async Task MaximizeRestore(bool saveSetting = true) =>
-        await LinuxWindow.ToggleMaximize(this, (DataContext as MainWindowViewModel)!, saveSetting);
-
-    /// <inheritdoc />
-    public override async Task Fullscreen(bool saveSetting = true) =>
-        await LinuxWindow.Fullscreen(this, (DataContext as MainWindowViewModel)!, saveSetting);
-    
-    /// <inheritdoc />
-    public override async Task ToggleFullscreen(bool saveSetting = true) =>
-        await LinuxWindow.ToggleFullscreen(this, (DataContext as MainWindowViewModel)!, saveSetting);
-    
-    /// <inheritdoc />
-    public override async Task Restore() =>
-        await LinuxWindow.Restore(this, (DataContext as MainWindowViewModel)!);
-    
-    public override void Minimize() =>
-        LinuxWindow.Minimize(this);
 }

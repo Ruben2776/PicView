@@ -29,27 +29,4 @@ public partial class WinMainWindow : MainWindow
     }
 
     protected override IWindowProvider CreateWindowProvider() => new Win32WindowProvider();
-
-    /// <inheritdoc />
-    public override async Task Maximize(bool saveSetting = true) =>
-        await Win32Window.Maximize(this, (DataContext as MainWindowViewModel)!, saveSetting);
-    
-    /// <inheritdoc />
-    public override async Task MaximizeRestore(bool saveSetting = true) =>
-        await Win32Window.ToggleMaximize(this, (DataContext as MainWindowViewModel)!, saveSetting);
-
-    /// <inheritdoc />
-    public override async Task Fullscreen(bool saveSetting = true) =>
-        await Win32Window.Fullscreen(this, (DataContext as MainWindowViewModel)!, saveSetting);
-    
-    /// <inheritdoc />
-    public override async Task ToggleFullscreen(bool saveSetting = true) =>
-        await Win32Window.ToggleFullscreen(this, (DataContext as MainWindowViewModel)!, saveSetting);
-    
-    /// <inheritdoc />
-    public override async Task Restore() =>
-        await Win32Window.Restore(this, (DataContext as MainWindowViewModel)!);
-    
-    public override void Minimize() =>
-        Win32Window.Minimize(this);
 }

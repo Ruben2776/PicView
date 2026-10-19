@@ -13,6 +13,9 @@ namespace PicView.Avalonia.Win32.WindowImpl;
 public class Win32WindowProvider : IWindowProvider
 {
     public MainWindow CreateMainWindow() => new WinMainWindow();
+
+    public IWindowModeAdapter CreateWindowModeAdapter() => new Win32WindowModeAdapter();
+
     public Window CreateAboutWindow() => new AboutWindow();
 
     public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => new BatchResizeWindow(config);

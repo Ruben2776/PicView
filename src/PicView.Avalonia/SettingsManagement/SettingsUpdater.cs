@@ -40,7 +40,6 @@ public static class SettingsUpdater
             vm.IsTopToolbarShown.Value  = Settings.UIProperties.ShowInterface;
             vm.IsBottomToolbarShown.Value   = Settings.UIProperties.ShowBottomNavBar &&
                                               Settings.UIProperties.ShowInterface;
-            vm.IsFullscreen.Value  = Settings.WindowProperties.Fullscreen;
             vm.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
 #pragma warning disable MA0042
             LanguageUpdater.UpdateLanguage(vm.Translation, settingsExists);

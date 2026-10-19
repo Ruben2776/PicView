@@ -86,19 +86,16 @@ public static class StartUpHelper
         ColorManager.UpdateAccentColors(Settings.Theme.ColorTheme);
     }
 
-    public static void HandlePostWindowUpdates(CoreViewModel core, MainWindow mainWindow)
+    /// <param name="isAppStart">Whether this is the first window at app start, the only one that may start fullscreen.</param>
+    public static void HandlePostWindowUpdates(CoreViewModel core, MainWindow mainWindow, bool isAppStart)
     {
         var vm = core.MainWindows.ActiveWindow.CurrentValue;
-        if (Settings.WindowProperties.Maximized && !Settings.WindowProperties.Fullscreen)
+        mainWindow.WindowModeSwitcher.Start(isAppStart);
+        if (vm.IsFullscreen.Value)
         {
-            _ = vm.PlatformWindowService.Maximize(false);
-        }
-        else if (Settings.WindowProperties.Fullscreen)
-        {
-            _ = vm.PlatformWindowService.Fullscreen(false);
             Dispatcher.UIThread.Post(() =>
             {
-                if (Settings.WindowProperties.Fullscreen)
+                if (vm.IsFullscreen.Value)
                 {
                     ToggleUIVisibility.FullscreenHideInterface(vm);
                 }

@@ -1,6 +1,7 @@
 using Avalonia;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using Timer = System.Timers.Timer;
 
@@ -47,14 +48,7 @@ public static class Slideshow
             return;
         }
 
-        if (!Settings.WindowProperties.Fullscreen)
-        {
-            vm.PlatformWindowService.Restore();
-            if (Settings.WindowProperties.AutoFit)
-            {
-                WindowFunctions.CenterWindowOnScreen();
-            }
-        }
+        _ = LeaveSlideshowAsync(vm);
         
         _timer.Stop();
         _timer = null;
@@ -110,10 +104,25 @@ public static class Slideshow
             core.PlatformService.DisableScreensaver();
         }
 
-        if (!Settings.WindowProperties.Fullscreen)
+        if (vm.WindowModeSwitcher is not null)
         {
-            await vm.PlatformWindowService.ToggleFullscreen();
-            Settings.WindowProperties.Fullscreen = false;
+            await vm.WindowModeSwitcher.EnterSlideshow();
+        }
+    }
+
+    private static async Task LeaveSlideshowAsync(MainWindowViewModel vm)
+    {
+        if (vm.WindowModeSwitcher is null)
+        {
+            return;
+        }
+
+        var before = vm.WindowModeState.CurrentValue.Mode;
+        await vm.WindowModeSwitcher.LeaveSlideshow();
+        if (before is not WindowMode.Normal && vm.WindowModeState.CurrentValue.Mode is WindowMode.Normal &&
+            Settings.WindowProperties.AutoFit)
+        {
+            WindowFunctions.CenterWindowOnScreen();
         }
     }
 }

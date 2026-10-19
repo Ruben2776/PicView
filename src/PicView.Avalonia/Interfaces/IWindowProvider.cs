@@ -9,6 +9,11 @@ namespace PicView.Avalonia.Interfaces;
 public interface IWindowProvider
 {
     MainWindow CreateMainWindow();
+
+    /// <summary>
+    /// Creates what this platform does natively when a main window changes Window Mode.
+    /// </summary>
+    IWindowModeAdapter CreateWindowModeAdapter();
     Window CreateAboutWindow();
     Window CreateBatchResizeWindow(BatchResizeWindowConfig config);
     Window CreateFileAssociationsWindow();

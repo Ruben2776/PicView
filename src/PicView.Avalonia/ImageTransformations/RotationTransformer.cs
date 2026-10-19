@@ -44,7 +44,7 @@ public class RotationTransformer(LayoutTransformControl imageLayoutTransformCont
         
         WindowResizing.SetSize(mainWindow, WindowResizeReason.Layout);
 
-        if (OperatingSystem.IsMacOS() && Settings.WindowProperties.Fullscreen)
+        if (OperatingSystem.IsMacOS() && vm.IsFullscreen.Value)
         {
             // Sometimes the window is off-center after rotating on macOS fullscreen view
             WindowFunctions.CenterWindowOnScreen();

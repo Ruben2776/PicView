@@ -13,6 +13,9 @@ namespace PicView.Avalonia.Linux.WindowImpl;
 public class LinuxWindowProvider : IWindowProvider
 {
     public MainWindow CreateMainWindow() => new LinuxMainWindow();
+
+    public IWindowModeAdapter CreateWindowModeAdapter() => new LinuxWindowModeAdapter();
+
     public Window CreateAboutWindow() => new AboutWindow();
 
     public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => new BatchResizeWindow(config);

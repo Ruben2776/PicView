@@ -107,7 +107,7 @@ public class App : Application, IPlatformSpecificService
             }, DispatcherPriority.Background);
         }
         
-        StartUpHelper.HandlePostWindowUpdates(_coreViewModel, _mainWindow);
+        StartUpHelper.HandlePostWindowUpdates(_coreViewModel, _mainWindow, isAppStart: true);
         
         return;
 

@@ -224,11 +224,8 @@ public static class WindowResizing
     private static void ApplyWindowSize(Fit size, WindowResizeReason reason, MainWindow mainWindow,
         MainWindowViewModel vm)
     {
-        var mode = WindowModes.From(
-            Settings.WindowProperties.Fullscreen || mainWindow.WindowState is WindowState.FullScreen,
-            Settings.WindowProperties.Maximized || mainWindow.WindowState is WindowState.Maximized);
-        var plan = WindowSizingPlan.For(mode, Settings.WindowProperties.AutoFit, reason, mainWindow.IsVisible, size,
-            ScreenHelper.ScreenSize);
+        var plan = WindowSizingPlan.For(vm.WindowModeState.CurrentValue.Mode, Settings.WindowProperties.AutoFit, reason,
+            mainWindow.IsVisible, size, ScreenHelper.ScreenSize);
 
         mainWindow.SizeToContent = plan.SizeToContent;
         vm.WindowMaxWidth.Value = plan.MaxWidth;
@@ -340,7 +337,7 @@ public static class WindowResizing
             SecondImageWidth = isSideBySide ? secondWidth : 0,
             SecondImageHeight = isSideBySide ? secondHeight : 0,
             QuarterTurns = (int)Math.Round(rotation / 90),
-            Mode = GetFitMode(),
+            Mode = vm.WindowModeState.CurrentValue.Mode.ToFitMode(Settings.WindowProperties.AutoFit),
             ZoomToFit = Settings.ImageScaling.ZoomToFit,
             ScrollEnabled = Settings.Zoom.ScrollEnabled,
             Screen = ScreenHelper.ScreenSize,
@@ -360,10 +357,6 @@ public static class WindowResizing
             }
         }
     }
-
-    private static FitMode GetFitMode() =>
-        WindowModes.From(Settings.WindowProperties.Fullscreen, Settings.WindowProperties.Maximized)
-            .ToFitMode(Settings.WindowProperties.AutoFit);
 
     private static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
     {
@@ -405,7 +398,7 @@ public static class WindowResizing
             var left = window.Position.X;
             Settings.WindowProperties.Top = top;
             Settings.WindowProperties.Left = left;
-            if (Settings.WindowProperties.Maximized || Settings.WindowProperties.Fullscreen)
+            if (window.DataContext is MainWindowViewModel { WindowModeState.CurrentValue.Mode: not WindowMode.Normal })
             {
                 return;
             }

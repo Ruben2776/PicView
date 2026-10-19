@@ -61,13 +61,20 @@ public class MainWindowViewModel : IDisposable
 
     public BindableReactiveProperty<double> BottombarHeight { get; } = new();
 
-    public BindableReactiveProperty<bool> IsFullscreen { get; } = new();
+    /// <summary>
+    /// This window's Window Mode, which only its <see cref="WindowModeSwitcher"/> changes.
+    /// </summary>
+    public ReactiveProperty<WindowModeState> WindowModeState { get; } = new();
 
-    public BindableReactiveProperty<bool> IsMaximized { get; } = new();
+    public IWindowModeSwitcher? WindowModeSwitcher { get; set; }
 
-    public BindableReactiveProperty<bool> ShouldRestoreBeShown { get; } = new();
+    public IReadOnlyBindableReactiveProperty<bool> IsFullscreen { get; }
 
-    public BindableReactiveProperty<bool> ShouldMaximizeBeShown { get; } = new(true);
+    public IReadOnlyBindableReactiveProperty<bool> IsMaximized { get; }
+
+    public IReadOnlyBindableReactiveProperty<bool> ShouldRestoreBeShown { get; }
+
+    public IReadOnlyBindableReactiveProperty<bool> ShouldMaximizeBeShown { get; }
 
     public BindableReactiveProperty<bool> IsLoadingIndicatorShown { get; } = new();
 
@@ -531,6 +538,15 @@ public class MainWindowViewModel : IDisposable
         GlobalSettings = globalSettings;
         GallerySettings = gallerySettings;
         WindowTabs = new TabOverviewViewModel(this);
+
+        // Window Mode
+        var mode = WindowModeState.Select(static state => state.Mode);
+        IsFullscreen = mode.Select(static m => m is WindowMode.Fullscreen).ToReadOnlyBindableReactiveProperty();
+        IsMaximized = mode.Select(static m => m is WindowMode.Maximized).ToReadOnlyBindableReactiveProperty();
+        ShouldRestoreBeShown = mode.Select(static m => m is WindowMode.Fullscreen or WindowMode.Maximized)
+            .ToReadOnlyBindableReactiveProperty();
+        ShouldMaximizeBeShown = mode.Select(static m => m is not WindowMode.Maximized)
+            .ToReadOnlyBindableReactiveProperty();
         
         // Navigation
         NextCommand = new ReactiveCommand(Next);
@@ -699,6 +715,7 @@ public class MainWindowViewModel : IDisposable
             ImageHeight,
             TitlebarHeight,
             BottombarHeight,
+            WindowModeState,
             IsFullscreen,
             IsMaximized,
             ShouldRestoreBeShown,

@@ -1,0 +1,42 @@
+using Avalonia.Threading;
+using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.UI;
+using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Sizing;
+
+namespace PicView.Avalonia.MacOS.WindowImpl;
+
+/// <summary>
+/// What macOS does natively when a window changes Window Mode.
+/// </summary>
+public sealed class MacWindowModeAdapter : IWindowModeAdapter
+{
+    /// <summary>
+    /// macOS reports the window's state once as it opens, which is not a change the user made.
+    /// </summary>
+    public bool SkipsInitialNativeState => true;
+
+    public void EnterNativeState(MainWindow window, WindowMode mode)
+    {
+        ScreenHelper.UpdateScreenSize(window);
+        if (mode is not WindowMode.Normal)
+        {
+            WindowModeSwitcher.SetNativeState(window, mode);
+            return;
+        }
+
+        // Disabling ExtendClientAreaToDecorationsHint and enabling it again fixes not being able to draw in title bar
+        window.ExtendClientAreaToDecorationsHint = false;
+        WindowModeSwitcher.SetNativeState(window, mode);
+        Dispatcher.UIThread.Post(() =>
+        {
+            window.ExtendClientAreaToDecorationsHint = true;
+            if (Settings.WindowProperties.AutoFit)
+            {
+                WindowResizing.ResumeAutoFit(window);
+                WindowResizing.FastCenterWindow(window);
+            }
+        });
+    }
+}

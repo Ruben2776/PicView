@@ -522,17 +522,13 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         return ValueTask.CompletedTask;
     }
 
-    /// <inheritdoc cref="PicView.Core.IPlatform.IPlatformWindowService.MaximizeRestore" />
-    public async ValueTask Maximize()
-    {
-        await vm.PlatformWindowService.MaximizeRestore().ConfigureAwait(false);
-    }
+    /// <inheritdoc cref="WindowModeSwitcher.ToggleMaximized" />
+    public ValueTask Maximize() =>
+        mainWindow.WindowModeSwitcher.ToggleMaximized();
     
-    /// <inheritdoc cref="PicView.Core.IPlatform.IPlatformWindowService.Restore" />
-    public async ValueTask Restore()
-    {
-        await vm.PlatformWindowService.Restore().ConfigureAwait(false);
-    }
+    /// <inheritdoc cref="WindowModeSwitcher.LeaveTopMode" />
+    public ValueTask Restore() =>
+        mainWindow.WindowModeSwitcher.LeaveTopMode();
 
     public ValueTask Minimize()
     {
@@ -635,9 +631,9 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         return ValueTask.CompletedTask;
     }
 
-    /// <inheritdoc cref="PicView.Core.IPlatform.IPlatformWindowService.ToggleFullscreen" />
-    public async ValueTask ToggleFullscreen() =>
-        await vm.PlatformWindowService.ToggleFullscreen().ConfigureAwait(false);
+    /// <inheritdoc cref="WindowModeSwitcher.ToggleFullscreen" />
+    public ValueTask ToggleFullscreen() =>
+        mainWindow.WindowModeSwitcher.ToggleFullscreen();
     
     // This shouldn't be here, but keep as alias and backwards compatibility.
     public ValueTask Fullscreen() =>
