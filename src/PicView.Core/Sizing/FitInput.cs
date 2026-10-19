@@ -17,7 +17,35 @@ public enum FitMode
 /// The parts of the window that are not the image, taken away before the image is fitted.
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
-public readonly record struct ReservedSpace(double Top, double Bottom, double GalleryWidth, double GalleryHeight);
+public readonly record struct ReservedSpace(double Top, double Bottom, double GalleryWidth, double GalleryHeight)
+{
+    /// <param name="tabCount">With more than one tab, the tab strip is shown above the image with the titlebar.</param>
+    /// <param name="titlebarHeight">The titlebar's height as it is now.</param>
+    /// <param name="isTopToolbarShown">Whether the titlebar is shown.</param>
+    /// <param name="showBottomBar">Whether the bottom bar is shown.</param>
+    /// <param name="galleryWidth">The width of a gallery docked at the side, or 0.</param>
+    /// <param name="galleryHeight">The height of a gallery docked at the top or bottom, or 0.</param>
+    public static ReservedSpace For(int tabCount, double titlebarHeight, bool isTopToolbarShown, bool showBottomBar,
+        double galleryWidth, double galleryHeight)
+    {
+        double top;
+        if (tabCount > 1)
+        {
+            top = SizeDefaults.TabHeight + titlebarHeight + 2;
+        }
+        else if (isTopToolbarShown)
+        {
+            top = titlebarHeight + 2;
+        }
+        else
+        {
+            top = 0;
+        }
+
+        var bottom = showBottomBar ? SizeDefaults.BottombarHeight : 0;
+        return new ReservedSpace(top, bottom, galleryWidth, galleryHeight);
+    }
+}
 
 /// <summary>
 /// Everything a <see cref="Fit"/> is calculated from.

@@ -357,22 +357,8 @@ public static class WindowResizing
     private static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
     {
         var (galleryWidth, galleryHeight) = GalleryHelper.GetGallerySize(vm);
-        double top;
-        if (vm.WindowTabs.Tabs.CurrentValue.Count > 1)
-        {
-            top = SizeDefaults.TabHeight + vm.TitlebarHeight.CurrentValue + 2;
-        }
-        else if (vm.IsTopToolbarShown.Value)
-        {
-            top = vm.TitlebarHeight.CurrentValue + 2;
-        }
-        else
-        {
-            top = 0;
-        }
-
-        var bottom = Settings.UIProperties.ShowBottomNavBar ? SizeDefaults.BottombarHeight : 0;
-        return new ReservedSpace(top, bottom, galleryWidth, galleryHeight);
+        return ReservedSpace.For(vm.WindowTabs.Tabs.CurrentValue.Count, vm.TitlebarHeight.CurrentValue,
+            vm.IsTopToolbarShown.Value, Settings.UIProperties.ShowBottomNavBar, galleryWidth, galleryHeight);
     }
 
     public static void SaveSize(Window window)
