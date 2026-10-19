@@ -58,6 +58,10 @@ _Avoid_: Source file, input path
 The window setting where the window takes its size from the shown image, worked out before the window resizes so it never visibly resizes twice. With it off, the image fits inside whatever size the window already has.
 _Avoid_: Auto-size, auto resize
 
+**Window Mode**:
+Who owns a window's size, one at a time: Fullscreen covers the screen, Maximized fills the work area, AutoFit follows the shown image, and Manual keeps the size the user gave it. When several settings apply, Fullscreen wins over Maximized and Maximized over AutoFit. A maximized window fits the image to itself, as Manual does.
+_Avoid_: Window state, scaling mode, sizing mode
+
 **Zoom to Fit**:
 The setting that lets an image scale past its native pixel size to fill the Available Area. With it off, an image is never shown larger than 100%.
 _Avoid_: Stretch, upscale

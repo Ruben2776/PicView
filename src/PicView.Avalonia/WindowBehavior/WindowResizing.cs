@@ -332,15 +332,9 @@ public static class WindowResizing
         }
     }
 
-    private static FitMode GetFitMode()
-    {
-        if (Settings.WindowProperties.Fullscreen)
-        {
-            return FitMode.Fullscreen;
-        }
-
-        return Settings.WindowProperties.AutoFit ? FitMode.AutoFit : FitMode.FixedWindow;
-    }
+    private static FitMode GetFitMode() =>
+        WindowModes.From(Settings.WindowProperties.Fullscreen, Settings.WindowProperties.Maximized,
+            Settings.WindowProperties.AutoFit).ToFitMode();
 
     private static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
     {
