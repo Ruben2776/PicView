@@ -13,7 +13,6 @@ using PicView.Avalonia.AnimatedImage;
 using PicView.Avalonia.ImageHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.ImageDecoding;
-using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.CustomControls;
