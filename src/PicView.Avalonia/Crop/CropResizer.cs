@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using PicView.Avalonia.Input;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
@@ -69,7 +68,7 @@ public static class CropResizer
         }
     
         // Handle aspect ratio constraints (maintain square when Shift is pressed)
-        if (MainKeyboardShortcuts.ShiftDown && IsCornerMode(mode))
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Shift) && IsCornerMode(mode))
         {
             // Use the larger dimension to determine square size
             var size = Math.Max(newWidth, newHeight);

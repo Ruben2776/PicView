@@ -4,7 +4,6 @@ using Avalonia.Input;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.DragAndDrop;
-using PicView.Avalonia.Input;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
@@ -162,7 +161,7 @@ public partial class MainView : UserControl
         
         if (e.Properties.IsLeftButtonPressed)
         {
-            if (MainKeyboardShortcuts.ShiftDown && !CropManager.IsCropping(mainWindow))
+            if (e.KeyModifiers.HasFlag(KeyModifiers.Shift) && !CropManager.IsCropping(mainWindow))
             {
                 WindowFunctions.WindowDragBehavior(mainWindow, e);
             }
