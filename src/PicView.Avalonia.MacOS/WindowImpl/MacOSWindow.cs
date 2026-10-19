@@ -43,10 +43,7 @@ public static class MacOSWindow
         
         var wasFullscreen = window.WindowState == WindowState.FullScreen || Settings.WindowProperties.Fullscreen;
         ScreenHelper.UpdateScreenSize(window);
-        if (Settings.WindowProperties.AutoFit)
-        {
-            window.SizeToContent = SizeToContent.WidthAndHeight;
-        }
+        WindowResizing.ResumeAutoFit(window);
         
         window.ExtendClientAreaToDecorationsHint = false;
         
@@ -81,7 +78,7 @@ public static class MacOSWindow
             
             if (Settings.WindowProperties.AutoFit)
             {
-                window.SizeToContent = SizeToContent.WidthAndHeight;
+                WindowResizing.ResumeAutoFit(window);
                 WindowResizing.FastCenterWindow(window);
             }
         });
@@ -114,8 +111,7 @@ public static class MacOSWindow
         vm.ShouldMaximizeBeShown.Value = true;
         vm.ShouldRestoreBeShown.Value = true;
         
-        vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
-        window.SizeToContent = SizeToContent.Manual;
+        WindowResizing.ReleaseSize(window, vm);
         if (window.WindowState != WindowState.FullScreen)
         {
             window.WindowState = WindowState.FullScreen;
@@ -148,8 +144,7 @@ public static class MacOSWindow
         vm.ShouldMaximizeBeShown.Value = false;
         vm.ShouldRestoreBeShown.Value = true;
         
-        window.SizeToContent = SizeToContent.Manual;
-        vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
+        WindowResizing.ReleaseSize(window, vm);
         if (window.WindowState != WindowState.Maximized)
         {
             window.WindowState = WindowState.Maximized;

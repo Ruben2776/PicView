@@ -182,53 +182,82 @@ public static class WindowResizing
         SetSize(size.Value, reason, mainWindow, vm);
     }
 
-    public static void SetSize(ImageSize size, WindowResizeReason reason, MainWindow mainWindow, MainWindowViewModel vm)
+    public static void SetSize(Fit size, WindowResizeReason reason, MainWindow mainWindow, MainWindowViewModel vm)
     {
-        vm.WindowTabs.ActiveTab.CurrentValue.InitialZoom.Value = size.InitialZoom;
+        vm.WindowTabs.ActiveTab.CurrentValue.InitialZoom.Value = size.Scale;
         vm.ScrollViewerWidth.Value = size.ScrollViewerWidth;
         vm.ScrollViewerHeight.Value = size.ScrollViewerHeight;
         
         vm.ImageWidth.Value = size.Width;
         vm.ImageHeight.Value = size.Height;
 
-        if (Settings.WindowProperties.Fullscreen)
+        if (Dispatcher.UIThread.CheckAccess())
         {
-            vm.WindowMaxWidth.Value = ScreenHelper.ScreenSize.Width;
-            vm.WindowMaxHeight.Value = ScreenHelper.ScreenSize.Height;
-        }
-        else if (Settings.WindowProperties.Maximized)
-        {
-            vm.WindowMaxWidth.Value = ScreenHelper.ScreenSize.WorkingAreaWidth;
-            vm.WindowMaxHeight.Value = ScreenHelper.ScreenSize.WorkingAreaHeight;
-        }
-        else if (Settings.WindowProperties.AutoFit)
-        {
-            if (reason is WindowResizeReason.User)
-            {
-                vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
-            }
-            else
-            {
-                vm.WindowMaxWidth.Value = size.WindowWidth;
-                vm.WindowMaxHeight.Value = size.WindowHeight;
-            }
-            Dispatcher.UIThread.Post(() =>
-            {
-                // Fixes weird window size bug where the window width is at a fixed value
-                if (!double.IsNaN(mainWindow.Width))
-                {
-                    mainWindow.Width = mainWindow.Height = double.NaN;
-                }
-            }, DispatcherPriority.Render);
+            ApplyWindowSize(size, reason, mainWindow, vm);
         }
         else
         {
-            vm.WindowMaxWidth.Value =
-                vm.WindowMaxHeight.Value = double.NaN;
+            Dispatcher.UIThread.Post(() => ApplyWindowSize(size, reason, mainWindow, vm), DispatcherPriority.Send);
         }
     }
 
-    public static ImageSize? GetSize(MainWindow mainWindow, MainWindowViewModel vm)
+    /// <summary>
+    /// Stops the window from following its content, before it becomes fullscreen, maximized or manual.
+    /// </summary>
+    public static void ReleaseSize(MainWindow mainWindow, MainWindowViewModel vm)
+    {
+        mainWindow.SizeToContent = SizeToContent.Manual;
+        vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
+    }
+
+    /// <summary>
+    /// Lets the window follow its content again when AutoFit is on, also when there is no image to fit.
+    /// </summary>
+    public static void ResumeAutoFit(Window window)
+    {
+        if (Settings.WindowProperties.AutoFit)
+        {
+            window.SizeToContent = SizeToContent.WidthAndHeight;
+        }
+    }
+
+    private static void ApplyWindowSize(Fit size, WindowResizeReason reason, MainWindow mainWindow,
+        MainWindowViewModel vm)
+    {
+        var mode = WindowModes.From(
+            Settings.WindowProperties.Fullscreen || mainWindow.WindowState is WindowState.FullScreen,
+            Settings.WindowProperties.Maximized || mainWindow.WindowState is WindowState.Maximized,
+            Settings.WindowProperties.AutoFit);
+        var plan = WindowSizingPlan.For(mode, reason, mainWindow.IsVisible, size, ScreenHelper.ScreenSize);
+
+        mainWindow.SizeToContent = plan.SizeToContent;
+        vm.WindowMaxWidth.Value = plan.MaxWidth;
+        vm.WindowMaxHeight.Value = plan.MaxHeight;
+        if (plan.Width is { } width)
+        {
+            mainWindow.Width = width;
+        }
+        if (plan.Height is { } height)
+        {
+            mainWindow.Height = height;
+        }
+
+        if (!plan.SettleToContentAfterRender)
+        {
+            return;
+        }
+        Dispatcher.UIThread.Post(() =>
+        {
+            mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+            // Fixes weird window size bug where the window width is at a fixed value
+            if (!double.IsNaN(mainWindow.Width))
+            {
+                mainWindow.Width = mainWindow.Height = double.NaN;
+            }
+        }, DispatcherPriority.Render);
+    }
+
+    public static Fit? GetSize(MainWindow mainWindow, MainWindowViewModel vm)
     {
         if (vm?.WindowTabs.ActiveTab?.CurrentValue is not { } tab)
         {
@@ -267,24 +296,23 @@ public static class WindowResizing
             return null;
         }
 
-        if (Settings.ImageScaling.ShowImageSideBySide)
+        if (Settings.ImageScaling.ShowImageSideBySide && tab.SecondaryModel is { } secondary)
         {
-            if (vm.WindowTabs.SharedCache?.TryGetReady(tab.SecondaryModel.FileInfo, out var secondaryReady) ?? false)
+            if (secondary.PixelWidth is not 0 && secondary.PixelHeight is not 0)
+            {
+                secondaryWidth = secondary.PixelWidth;
+                secondaryHeight = secondary.PixelHeight;
+            }
+            else if (secondary.FileInfo is not null &&
+                     (vm.WindowTabs.SharedCache?.TryGetReady(secondary.FileInfo, out var secondaryReady) ?? false))
             {
                 secondaryWidth = secondaryReady.PixelWidth;
                 secondaryHeight = secondaryReady.PixelHeight;
             }
             else
             {
-                if (tab.Model.Image is Bitmap bitmap)
-                {
-                    secondaryWidth = bitmap.PixelSize.Width;
-                    secondaryHeight = bitmap.PixelSize.Height;
-                }
-                else
-                {
-                    return null;
-                }
+                // Wait for the second image instead of resizing for a guessed pair and again once it arrives
+                return null;
             }
         }
         else
@@ -295,69 +323,34 @@ public static class WindowResizing
         return GetSize(width, height, secondaryWidth, secondaryHeight, tab.RotationAngle.CurrentValue, mainWindow, vm);
     }
 
-    public static ImageSize? GetSize(double width, double height, double secondWidth, double secondHeight,
+    public static Fit? GetSize(double width, double height, double secondWidth, double secondHeight,
         double rotation, MainWindow mainWindow, MainWindowViewModel vm)
     {
-        var screenSize = ScreenHelper.ScreenSize;
-        var (uiBottomSize, uiTopSize, galleryWidth, galleryHeight) = GetContainerSize();
-
         if (double.IsNaN(width) || double.IsNaN(height))
         {
             return null;
         }
-        var (containerWidth, containerHeight) = GetWindowSize();
-        if (Settings.ImageScaling.ShowImageSideBySide && secondWidth > 0 && secondHeight > 0)
+
+        var isSideBySide = Settings.ImageScaling.ShowImageSideBySide && secondWidth > 0 && secondHeight > 0;
+        var (contentWidth, contentHeight) = GetWindowContentSize();
+        return ImageFitter.Fit(new FitInput
         {
-            return ImageSizeCalculationHelper.GetSideBySideImageSize(
-                width,
-                height,
-                secondWidth,
-                secondHeight,
-                screenSize,
-                containerWidth,
-                containerHeight,
-                rotation,
-                uiTopSize,
-                uiBottomSize,
-                galleryWidth,
-                galleryHeight);
-        }
-        return ImageSizeCalculationHelper.GetImageSize(
-                width,
-                height,
-                screenSize,
-                containerWidth,
-                containerHeight,
-                rotation,
-                uiTopSize,
-                uiBottomSize,
-                galleryWidth,
-                galleryHeight);
+            ImageWidth = width,
+            ImageHeight = height,
+            SecondImageWidth = isSideBySide ? secondWidth : 0,
+            SecondImageHeight = isSideBySide ? secondHeight : 0,
+            QuarterTurns = (int)Math.Round(rotation / 90),
+            Mode = GetFitMode(),
+            ZoomToFit = Settings.ImageScaling.ZoomToFit,
+            ScrollEnabled = Settings.Zoom.ScrollEnabled,
+            Screen = ScreenHelper.ScreenSize,
+            ScreenMargin = Settings.WindowProperties.Margin,
+            WindowContentWidth = contentWidth,
+            WindowContentHeight = contentHeight,
+            ReservedSpace = GetReservedSpace(vm)
+        });
 
-        (double, double, double, double) GetContainerSize()
-        {
-            var (gW, gH) = GalleryHelper.GetGallerySize(vm);
-            if (vm.WindowTabs.Tabs.CurrentValue.Count > 1)
-            {
-                uiTopSize = SizeDefaults.TabHeight + vm.TitlebarHeight.CurrentValue + 2;
-            }
-            else
-            {
-                if (vm.IsTopToolbarShown.Value)
-                {
-                    uiTopSize = vm.TitlebarHeight.CurrentValue + 2;
-                }
-                else
-                {
-                    uiTopSize = 0;
-                }
-            }
-
-            uiBottomSize = Settings.UIProperties.ShowBottomNavBar ? SizeDefaults.BottombarHeight : 0;
-            return (uiBottomSize, uiTopSize, gW, gH);
-        }
-
-        (double, double) GetWindowSize()
+        (double, double) GetWindowContentSize()
         {
             return Dispatcher.CurrentDispatcher.CheckAccess() ? Get() : Dispatcher.CurrentDispatcher.Invoke(Get, DispatcherPriority.Send);
 
@@ -366,6 +359,31 @@ public static class WindowResizing
                 return (mainWindow.UIHelper.GetMainView.Bounds.Width, mainWindow.UIHelper.GetMainView.Bounds.Height);
             }
         }
+    }
+
+    private static FitMode GetFitMode() =>
+        WindowModes.From(Settings.WindowProperties.Fullscreen, Settings.WindowProperties.Maximized,
+            Settings.WindowProperties.AutoFit).ToFitMode();
+
+    private static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
+    {
+        var (galleryWidth, galleryHeight) = GalleryHelper.GetGallerySize(vm);
+        double top;
+        if (vm.WindowTabs.Tabs.CurrentValue.Count > 1)
+        {
+            top = SizeDefaults.TabHeight + vm.TitlebarHeight.CurrentValue + 2;
+        }
+        else if (vm.IsTopToolbarShown.Value)
+        {
+            top = vm.TitlebarHeight.CurrentValue + 2;
+        }
+        else
+        {
+            top = 0;
+        }
+
+        var bottom = Settings.UIProperties.ShowBottomNavBar ? SizeDefaults.BottombarHeight : 0;
+        return new ReservedSpace(top, bottom, galleryWidth, galleryHeight);
     }
 
     public static void SaveSize(Window window)

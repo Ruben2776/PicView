@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Navigation.Services;
+using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.Navigation;
@@ -138,10 +139,7 @@ public static class TabNavigationInitializer
         // Need to properly remove it from the previous location
         parentVm.WindowTabs.RemoveTab(tab);
 
-        if (Settings.WindowProperties.AutoFit)
-        {
-            mainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-        }
+        WindowResizing.ResumeAutoFit(mainWindow);
     }
     
     private static void InitializeNewTab(TabViewModel newTab, MainWindowViewModel mainWindowViewModel, MainWindow mainWindow, CoreViewModel core)

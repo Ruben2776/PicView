@@ -254,13 +254,12 @@ public static class WindowFunctions
         {
             if (wasAutoFit)
             {
-                targetVm.WindowMaxWidth.Value = targetVm.WindowMaxHeight.Value = double.NaN;
-                targetMainWindow.SizeToContent = SizeToContent.Manual;
+                WindowResizing.ReleaseSize(targetMainWindow, targetVm);
                 targetVm.IsAutoFit.Value = false;
             }
             else
             {
-                targetMainWindow.SizeToContent = SizeToContent.WidthAndHeight;
+                WindowResizing.ResumeAutoFit(targetMainWindow);
                 targetVm.IsAutoFit.Value = true;
             }
             WindowResizing.SetSize(targetMainWindow, WindowResizeReason.Application);
@@ -269,8 +268,8 @@ public static class WindowFunctions
 
     public static void SetAutoFit(MainWindowViewModel vm, Window window)
     {
-        window.SizeToContent = SizeToContent.WidthAndHeight;
         Settings.WindowProperties.AutoFit = true;
+        WindowResizing.ResumeAutoFit(window);
         vm.IsAutoFit.Value = true;
     }
 
@@ -306,8 +305,7 @@ public static class WindowFunctions
     /// <param name="mainWindow">The main window to be configured for manual size adjustments.</param>
     public static void SetSingleManualWindow(MainWindowViewModel vm, MainWindow mainWindow)
     {
-        vm.WindowMaxWidth.Value = vm.WindowMaxHeight.Value = double.NaN;
-        mainWindow.SizeToContent = SizeToContent.Manual;
+        WindowResizing.ReleaseSize(mainWindow, vm);
         vm.IsAutoFit.Value = false;
     }
 
