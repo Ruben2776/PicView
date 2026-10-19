@@ -2,7 +2,6 @@ using PicView.Core.Sizing;
 
 namespace PicView.Tests.Sizing;
 
-[Collection("Sequential")]
 public class ImageFitterTests
 {
     private const int Precision = 6;
@@ -19,11 +18,6 @@ public class ImageFitterTests
     // Titlebar (30 + 2) on top and the bottom bar below, no docked gallery
     private static readonly ReservedSpace Bars = new(Top: 32, Bottom: 26, GalleryWidth: 0, GalleryHeight: 0);
 
-    public ImageFitterTests()
-    {
-        SetDefaults();
-    }
-
     private static FitInput Input(double width, double height, FitMode mode = FitMode.AutoFit) => new()
     {
         ImageWidth = width,
@@ -34,26 +28,7 @@ public class ImageFitterTests
         ReservedSpace = Bars
     };
 
-    private static Fit Fit(FitInput input)
-    {
-        Settings.WindowProperties.Fullscreen = input.Mode is FitMode.Fullscreen;
-        Settings.WindowProperties.AutoFit = input.Mode is FitMode.AutoFit;
-        Settings.WindowProperties.Margin = input.ScreenMargin;
-        Settings.ImageScaling.ZoomToFit = input.ZoomToFit;
-        Settings.Zoom.ScrollEnabled = input.ScrollEnabled;
-        var reserved = input.ReservedSpace;
-        if (input.SecondImageWidth > 0)
-        {
-            return ImageSizeCalculationHelper.GetSideBySideImageSize(input.ImageWidth, input.ImageHeight,
-                input.SecondImageWidth, input.SecondImageHeight, input.Screen, input.WindowContentWidth,
-                input.WindowContentHeight, input.QuarterTurns * 90, reserved.Top, reserved.Bottom,
-                reserved.GalleryWidth, reserved.GalleryHeight);
-        }
-
-        return ImageSizeCalculationHelper.GetImageSize(input.ImageWidth, input.ImageHeight, input.Screen,
-            input.WindowContentWidth, input.WindowContentHeight, input.QuarterTurns * 90, reserved.Top,
-            reserved.Bottom, reserved.GalleryWidth, reserved.GalleryHeight);
-    }
+    private static Fit Fit(FitInput input) => ImageFitter.Fit(input);
 
     private static void AssertSizes(Fit fit, double windowWidth, double windowHeight, double width, double height)
     {

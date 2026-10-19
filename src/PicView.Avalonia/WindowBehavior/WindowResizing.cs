@@ -298,66 +298,31 @@ public static class WindowResizing
     public static Fit? GetSize(double width, double height, double secondWidth, double secondHeight,
         double rotation, MainWindow mainWindow, MainWindowViewModel vm)
     {
-        var screenSize = ScreenHelper.ScreenSize;
-        var (uiBottomSize, uiTopSize, galleryWidth, galleryHeight) = GetContainerSize();
-
         if (double.IsNaN(width) || double.IsNaN(height))
         {
             return null;
         }
-        var (containerWidth, containerHeight) = GetWindowSize();
-        if (Settings.ImageScaling.ShowImageSideBySide && secondWidth > 0 && secondHeight > 0)
+
+        var isSideBySide = Settings.ImageScaling.ShowImageSideBySide && secondWidth > 0 && secondHeight > 0;
+        var (contentWidth, contentHeight) = GetWindowContentSize();
+        return ImageFitter.Fit(new FitInput
         {
-            return ImageSizeCalculationHelper.GetSideBySideImageSize(
-                width,
-                height,
-                secondWidth,
-                secondHeight,
-                screenSize,
-                containerWidth,
-                containerHeight,
-                rotation,
-                uiTopSize,
-                uiBottomSize,
-                galleryWidth,
-                galleryHeight);
-        }
-        return ImageSizeCalculationHelper.GetImageSize(
-                width,
-                height,
-                screenSize,
-                containerWidth,
-                containerHeight,
-                rotation,
-                uiTopSize,
-                uiBottomSize,
-                galleryWidth,
-                galleryHeight);
+            ImageWidth = width,
+            ImageHeight = height,
+            SecondImageWidth = isSideBySide ? secondWidth : 0,
+            SecondImageHeight = isSideBySide ? secondHeight : 0,
+            QuarterTurns = (int)Math.Round(rotation / 90),
+            Mode = GetFitMode(),
+            ZoomToFit = Settings.ImageScaling.ZoomToFit,
+            ScrollEnabled = Settings.Zoom.ScrollEnabled,
+            Screen = ScreenHelper.ScreenSize,
+            ScreenMargin = Settings.WindowProperties.Margin,
+            WindowContentWidth = contentWidth,
+            WindowContentHeight = contentHeight,
+            ReservedSpace = GetReservedSpace(vm)
+        });
 
-        (double, double, double, double) GetContainerSize()
-        {
-            var (gW, gH) = GalleryHelper.GetGallerySize(vm);
-            if (vm.WindowTabs.Tabs.CurrentValue.Count > 1)
-            {
-                uiTopSize = SizeDefaults.TabHeight + vm.TitlebarHeight.CurrentValue + 2;
-            }
-            else
-            {
-                if (vm.IsTopToolbarShown.Value)
-                {
-                    uiTopSize = vm.TitlebarHeight.CurrentValue + 2;
-                }
-                else
-                {
-                    uiTopSize = 0;
-                }
-            }
-
-            uiBottomSize = Settings.UIProperties.ShowBottomNavBar ? SizeDefaults.BottombarHeight : 0;
-            return (uiBottomSize, uiTopSize, gW, gH);
-        }
-
-        (double, double) GetWindowSize()
+        (double, double) GetWindowContentSize()
         {
             return Dispatcher.CurrentDispatcher.CheckAccess() ? Get() : Dispatcher.CurrentDispatcher.Invoke(Get, DispatcherPriority.Send);
 
@@ -366,6 +331,37 @@ public static class WindowResizing
                 return (mainWindow.UIHelper.GetMainView.Bounds.Width, mainWindow.UIHelper.GetMainView.Bounds.Height);
             }
         }
+    }
+
+    private static FitMode GetFitMode()
+    {
+        if (Settings.WindowProperties.Fullscreen)
+        {
+            return FitMode.Fullscreen;
+        }
+
+        return Settings.WindowProperties.AutoFit ? FitMode.AutoFit : FitMode.FixedWindow;
+    }
+
+    private static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
+    {
+        var (galleryWidth, galleryHeight) = GalleryHelper.GetGallerySize(vm);
+        double top;
+        if (vm.WindowTabs.Tabs.CurrentValue.Count > 1)
+        {
+            top = SizeDefaults.TabHeight + vm.TitlebarHeight.CurrentValue + 2;
+        }
+        else if (vm.IsTopToolbarShown.Value)
+        {
+            top = vm.TitlebarHeight.CurrentValue + 2;
+        }
+        else
+        {
+            top = 0;
+        }
+
+        var bottom = Settings.UIProperties.ShowBottomNavBar ? SizeDefaults.BottombarHeight : 0;
+        return new ReservedSpace(top, bottom, galleryWidth, galleryHeight);
     }
 
     public static void SaveSize(Window window)
