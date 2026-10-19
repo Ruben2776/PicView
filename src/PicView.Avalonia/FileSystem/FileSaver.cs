@@ -22,6 +22,13 @@ public static class FileSaver
         return await service.SaveAsAsync(vm.WindowTabs.ActiveTab.CurrentValue).ConfigureAwait(false);
     }
 
+    /// <inheritdoc cref="FileSavingService.ExportCommonFormatAsync(TabViewModel)" />
+    public static async ValueTask<string?> ExportCommonFormat(MainWindowViewModel vm)
+    {
+        var service = await GetServiceAsync().ConfigureAwait(false);
+        return await service.ExportCommonFormatAsync(vm.WindowTabs.ActiveTab.CurrentValue).ConfigureAwait(false);
+    }
+
     private static async ValueTask<FileSavingService> GetServiceAsync()
     {
         if (_fileSaverService is not null)

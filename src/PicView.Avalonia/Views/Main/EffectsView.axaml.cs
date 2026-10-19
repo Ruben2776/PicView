@@ -38,13 +38,6 @@ public partial class EffectsView : UserControl
                 core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.Value.Image.Value =
                     magick.ToWriteableBitmap(), DebugHelper.LogError(nameof(EffectsView), nameof(effects.Rendered)))
             .AddTo(ref _disposables);
-
-        // TODO: dynamically update Image effects upon image change
-        core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.FileInfo
-            .Skip(1)
-            .Subscribe(_ => effects.DiscardEffects(),
-                DebugHelper.LogError(nameof(EffectsView), nameof(effects.DiscardEffects)))
-            .AddTo(ref _disposables);
     }
 
     private void MoveWindow(object? sender, PointerPressedEventArgs e)

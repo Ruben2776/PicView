@@ -11,7 +11,8 @@ public class EffectsViewModel : IDisposable
 {
     private DisposableBag _disposables;
     private readonly TimeSpan _debounceTime = TimeSpan.FromMilliseconds(60);
-    private readonly Func<ImageEffectConfig, CancellationToken, Task<MagickImage?>> _render;
+    private readonly Func<FileInfo, ImageEffectConfig, CancellationToken, Task<MagickImage?>> _render;
+    private FileInfo? _target;
     private readonly Subject<MagickImage> _rendered = new();
     private int _discards;
     private bool _isDiscarding;
@@ -19,11 +20,9 @@ public class EffectsViewModel : IDisposable
     public EffectPreset[] Presets { get; }
     public BindableReactiveProperty<EffectPreset?> SelectedPreset { get; } = new();
     public BindableReactiveProperty<bool> IsResetVisible { get; } = new(false);
-    /// <summary>
-    /// The shown file's image, with effects applied once there are any. <see langword="null"/> when the shown image
-    /// is not a file, such as a clipboard image.
-    /// </summary>
-    public MagickImage? ProcessedImage { get; set; }
+    private readonly Lock _effectsRenderLock = new();
+    private MagickImage? _effectsRender;
+    private FileInfo? _effectsRenderFile;
     public BindableReactiveProperty<bool> IsLoading { get; } = new(false);
 
     /// <summary>
@@ -85,7 +84,11 @@ public class EffectsViewModel : IDisposable
 
     #endregion
 
-    public EffectsViewModel(Func<ImageEffectConfig, CancellationToken, Task<MagickImage?>> render)
+    /// <param name="target">The file the effects apply to: the active tab's file, or <see langword="null"/> when it
+    /// shows an image that is not a file.</param>
+    /// <param name="render">Renders a file with the given effects.</param>
+    public EffectsViewModel(Observable<FileInfo?> target,
+        Func<FileInfo, ImageEffectConfig, CancellationToken, Task<MagickImage?>> render)
     {
         _render = render;
         Presets = CreatePresets();
@@ -96,6 +99,14 @@ public class EffectsViewModel : IDisposable
             .Subscribe(preset => preset.Apply())
             .AddTo(ref _disposables);
         InitPipeline();
+        // TODO: add a setting to choose whether to warn with a popup before discarding effects
+        target
+            .Subscribe(file =>
+            {
+                _target = file;
+                DiscardEffects();
+            })
+            .AddTo(ref _disposables);
     }
 
     private Observable<Unit> ValueChanges() =>
@@ -148,11 +159,18 @@ public class EffectsViewModel : IDisposable
             .Where(discards => discards == Volatile.Read(ref _discards))
             .SelectAwait(async (discards, ct) =>
             {
-                IsLoading.Value = true;
                 var config = ToConfig();
                 EffectConfig.Value = config;
-                var magick = await _render(config, ct).ConfigureAwait(false);
-                return (Magick: magick, Discards: discards);
+                // TODO: support images that are not files, such as clipboard images
+                if (_target is not { } file)
+                {
+                    return (Magick: (MagickImage?)null, File: (FileInfo?)null, IsDefault: true, Discards: discards);
+                }
+
+                var isDefault = IsDefault();
+                IsLoading.Value = true;
+                var magick = await _render(file, config, ct).ConfigureAwait(false);
+                return (Magick: magick, File: (FileInfo?)file, IsDefault: isDefault, Discards: discards);
             }, AwaitOperation.Switch)
             .Subscribe(result =>
             {
@@ -162,12 +180,40 @@ public class EffectsViewModel : IDisposable
                 }
                 else if (result.Magick is not null)
                 {
-                    ProcessedImage = result.Magick;
-                    _rendered.OnNext(result.Magick);
+                    lock (_effectsRenderLock)
+                    {
+                        // Back at the defaults, the render only shows the file as it is, so it is not kept
+                        SetEffectsRender(result.IsDefault ? null : result.Magick, result.File);
+                        // Inside the lock, so a discard cannot dispose it while subscribers read it
+                        _rendered.OnNext(result.Magick);
+                    }
+
+                    if (result.IsDefault)
+                    {
+                        result.Magick.Dispose();
+                    }
                 }
                 IsLoading.Value = false;
             }, DebugHelper.LogError(nameof(EffectsViewModel), nameof(InitPipeline)))
             .AddTo(ref _disposables);
+    }
+
+    /// <summary>
+    /// A copy of the Effects Render of <paramref name="file"/>, which the caller disposes, or <see langword="null"/>
+    /// when there is none.
+    /// </summary>
+    public MagickImage? CloneRender(FileInfo file)
+    {
+        lock (_effectsRenderLock)
+        {
+            if (_effectsRender is null ||
+                !string.Equals(_effectsRenderFile?.FullName, file.FullName, StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            return (MagickImage)_effectsRender.Clone();
+        }
     }
 
     public bool IsDefault()
@@ -331,6 +377,24 @@ public class EffectsViewModel : IDisposable
             _isDiscarding = false;
         }
         EffectConfig.Value = new ImageEffectConfig();
+        SetEffectsRender(null, null);
+    }
+
+    /// <summary>
+    /// Replaces the Effects Render, disposing the one it replaces.
+    /// </summary>
+    private void SetEffectsRender(MagickImage? render, FileInfo? file)
+    {
+        lock (_effectsRenderLock)
+        {
+            if (!ReferenceEquals(_effectsRender, render))
+            {
+                _effectsRender?.Dispose();
+            }
+
+            _effectsRender = render;
+            _effectsRenderFile = file;
+        }
     }
 
     public void ResetAll()
@@ -498,7 +562,7 @@ public class EffectsViewModel : IDisposable
         _rendered.Dispose();
         SelectedPreset.Dispose();
         IsResetVisible.Dispose();
-        ProcessedImage?.Dispose();
+        SetEffectsRender(null, null);
     }
 }
 

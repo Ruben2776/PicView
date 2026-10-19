@@ -952,19 +952,19 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         await SetAsWallpaperFilled().ConfigureAwait(false);
 
     public async ValueTask SetAsWallpaperTiled() =>
-        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Tile, vm).ConfigureAwait(false);
+        await WallpaperManager.SetAsWallpaper(WallpaperStyle.Tile, vm).ConfigureAwait(false);
 
     public async ValueTask SetAsWallpaperCentered() =>
-        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Center, vm).ConfigureAwait(false);
+        await WallpaperManager.SetAsWallpaper(WallpaperStyle.Center, vm).ConfigureAwait(false);
 
     public async ValueTask SetAsWallpaperStretched() =>
-        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Stretch, vm).ConfigureAwait(false);
+        await WallpaperManager.SetAsWallpaper(WallpaperStyle.Stretch, vm).ConfigureAwait(false);
 
     public async ValueTask SetAsWallpaperFitted() =>
-        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Fit, vm).ConfigureAwait(false);
+        await WallpaperManager.SetAsWallpaper(WallpaperStyle.Fit, vm).ConfigureAwait(false);
 
     public async ValueTask SetAsWallpaperFilled() =>
-        await WallpaperManager.SetAsWallpaper(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo.FullName, WallpaperStyle.Fill, vm).ConfigureAwait(false);
+        await WallpaperManager.SetAsWallpaper(WallpaperStyle.Fill, vm).ConfigureAwait(false);
 
     public async ValueTask SetAsLockscreenCentered()
     {

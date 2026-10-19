@@ -7,6 +7,7 @@ using PicView.Avalonia.FileSystem;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Tests.FileTests;
 
@@ -143,19 +144,55 @@ public class FileSavingServiceTests : IDisposable
         Assert.Equal(6u, saved.Width);
     }
 
-    [AvaloniaFact]
-    public void SaveToAsync_EffectsWithoutProcessedImage_SavesFile()
+    /// <summary>
+    /// Effects whose Effects Render of <paramref name="file"/> is a 3x2 blue image.
+    /// </summary>
+    private static EffectsViewModel CreateEffectsWithRender(FileInfo file)
     {
-        var source = Path.Combine(_tempDir, "source.png");
-        var destination = Path.Combine(_tempDir, "copy.jpg");
-        using (var image = new MagickImage(MagickColors.Red, 8, 6))
-        {
-            image.Write(source);
-        }
+        var effects = new EffectsViewModel(new ReactiveProperty<FileInfo?>(file),
+            (_, _, _) => Task.FromResult<MagickImage?>(new MagickImage(MagickColors.Blue, 3, 2)));
+        var published = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var subscription = effects.Rendered.Subscribe(_ => published.TrySetResult());
+        effects.Sharpen.Value = 5;
+        published.Task.WaitAsync(TimeSpan.FromSeconds(5)).GetAwaiter().GetResult();
+        return effects;
+    }
+
+    private string WriteRedPng(string name)
+    {
+        var path = Path.Combine(_tempDir, name);
+        using var image = new MagickImage(MagickColors.Red, 8, 6);
+        image.Write(path);
+        return path;
+    }
+
+    [AvaloniaFact]
+    public void SaveToAsync_EffectsRenderOfTabFile_SavesEffectsRender()
+    {
+        var source = WriteRedPng("source.png");
+        var destination = Path.Combine(_tempDir, "copy.png");
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
         var tab = new TabViewModel(null!, vm);
         tab.FileInfo.Value = new FileInfo(source);
-        var effects = new EffectsViewModel((_, _) => Task.FromResult<MagickImage?>(null));
+        using var effects = CreateEffectsWithRender(new FileInfo(source));
+        var service = new FileSavingService(new StubSavePathPicker(null), () => effects);
+
+        var isSaved = RunWithDispatcher(service.SaveToAsync(tab, destination));
+
+        Assert.True(isSaved);
+        using var saved = new MagickImage(destination);
+        Assert.Equal(3u, saved.Width);
+    }
+
+    [AvaloniaFact]
+    public void SaveToAsync_EffectsRenderOfOtherFile_SavesFile()
+    {
+        var source = WriteRedPng("source.png");
+        var destination = Path.Combine(_tempDir, "copy.jpg");
+        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var tab = new TabViewModel(null!, vm);
+        tab.FileInfo.Value = new FileInfo(source);
+        using var effects = CreateEffectsWithRender(new FileInfo(Path.Combine(_tempDir, "other.png")));
         var service = new FileSavingService(new StubSavePathPicker(null), () => effects);
 
         var isSaved = RunWithDispatcher(service.SaveToAsync(tab, destination));
@@ -164,6 +201,46 @@ public class FileSavingServiceTests : IDisposable
         using var saved = new MagickImage(destination);
         Assert.Equal(MagickFormat.Jpeg, saved.Format);
         Assert.Equal(8u, saved.Width);
+    }
+
+    [AvaloniaFact]
+    public void ExportCommonFormatAsync_UntouchedPng_ReturnsFilePath()
+    {
+        var source = WriteRedPng("source.png");
+        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var tab = new TabViewModel(null!, vm);
+        tab.FileInfo.Value = new FileInfo(source);
+        var service = new FileSavingService(new StubSavePathPicker(null), () => null);
+
+        var exported = RunWithDispatcher(service.ExportCommonFormatAsync(tab));
+
+        Assert.Equal(source, exported);
+    }
+
+    [AvaloniaFact]
+    public void ExportCommonFormatAsync_RotatedTab_ExportsRotatedPng()
+    {
+        var source = WriteRedPng("source.png");
+        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var tab = new TabViewModel(null!, vm);
+        tab.FileInfo.Value = new FileInfo(source);
+        tab.RotationAngle.Value = 90;
+        var service = new FileSavingService(new StubSavePathPicker(null), () => null);
+
+        var exported = RunWithDispatcher(service.ExportCommonFormatAsync(tab));
+
+        try
+        {
+            Assert.NotNull(exported);
+            Assert.NotEqual(source, exported);
+            using var image = new MagickImage(exported);
+            Assert.Equal(MagickFormat.Png, image.Format);
+            Assert.Equal(6u, image.Width);
+        }
+        finally
+        {
+            File.Delete(exported!);
+        }
     }
 
     [Theory]

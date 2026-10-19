@@ -49,5 +49,11 @@ _Avoid_: Standalone image, loose image
 ## Saving
 
 **Save Source**:
-What a save writes out, decided by the save module rather than the caller: the shown file's image with effects applied when the effects window has one, else the file on disk, else the in-memory bitmap of a Single Image. The tab's rotation and flip are applied to each.
+What a save writes out, decided by the save module rather than the caller: the Effects Render when there is one for the shown file, else the file on disk, else the in-memory bitmap of a Single Image. The tab's rotation and flip are applied to each. Setting a wallpaper writes out the same Save Source.
 _Avoid_: Source file, input path
+
+## Effects
+
+**Effects Render**:
+One file rendered with the current effects. It exists only while some effect differs from its default, and belongs to the file it was rendered from in the active tab: navigating to another image, or switching to another tab, discards it.
+_Avoid_: Processed image, effected image, edited image

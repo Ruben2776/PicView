@@ -311,10 +311,13 @@ public class WindowInitializer(IWindowProvider provider) : IPlatformSpecificUpda
 
         if (_effectsWindow is null)
         {
-            core.Effects ??= new EffectsViewModel((config, ct) => ImageEffectsHelper.ApplyEffects(
-                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo,
-                config,
-                ct));
+            core.Effects ??= new EffectsViewModel(
+                core.MainWindows.ActiveWindow
+                    .Select(window => window?.WindowTabs.ActiveTab.AsObservable() ?? Observable.Return<TabViewModel>(null!))
+                    .Switch()
+                    .Select(tab => tab?.FileInfo.AsObservable() ?? Observable.Return<FileInfo?>(null))
+                    .Switch(),
+                ImageEffectsHelper.ApplyEffects);
             if (core.Effects.WindowConfig is null)
             {
                 core.Effects.WindowConfig = new EffectsWindowConfig();

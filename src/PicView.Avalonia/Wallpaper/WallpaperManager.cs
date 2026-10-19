@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Threading;
-using PicView.Avalonia.ImageHandling;
+using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.UI;
 using PicView.Core.ViewModels;
 
@@ -9,7 +9,10 @@ namespace PicView.Avalonia.Wallpaper;
 
 public static class WallpaperManager
 {
-    public static async Task SetAsWallpaper(string path, WallpaperStyle style, MainWindowViewModel vm)
+    /// <summary>
+    /// Sets the active tab's image as the wallpaper, as a save would write it.
+    /// </summary>
+    public static async Task SetAsWallpaper(WallpaperStyle style, MainWindowViewModel vm)
     {
         if (!vm.GlobalSettings.ShowSetAsWallpaper.Value)
         {
@@ -19,8 +22,11 @@ public static class WallpaperManager
         vm.IsLoadingIndicatorShown.Value = true;
         try
         {
-            var file = await ImageFormatConverter.ConvertToCommonSupportedFormatAsync(path, vm)
-                .ConfigureAwait(false);
+            var file = await FileSaver.ExportCommonFormat(vm).ConfigureAwait(false);
+            if (string.IsNullOrEmpty(file))
+            {
+                return;
+            }
 
             var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
             core?.PlatformService?.SetAsWallpaper(file, GetWallpaperStyle(style));

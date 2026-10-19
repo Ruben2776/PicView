@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
 using Avalonia.Threading;
-using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Views.UC;
@@ -51,8 +50,6 @@ public static class UpdateImage
         {
             core.PlatformService.SetTaskbarProgress((ulong)tabViewModel.ImageIterator.CurrentIndex, (ulong)tabViewModel.ImageIterator.Files.Count);
         }
-
-        core.Effects?.ProcessedImage = new MagickImage(file);
     }
     
     public static void UpdateTabSideBySideTitles(TabViewModel tabViewModel,
@@ -222,7 +219,6 @@ public static class UpdateImage
         tabViewModel.TitleTooltip.Value = windowTitles.FilePathTitle;
         tabViewModel.TabTitle.Value = name;
         tabViewModel.DisposeImageIterator(); // SourceOpener creates a new one when browsing files again
-        vm.Core.Effects?.ProcessedImage = null; // Not a file, so saving uses the bitmap
     }
 
     public static async ValueTask SetSingeBase64ImageAsync(string base64, MainWindowViewModel vm, MainWindow mainWindow, CancellationToken ct)

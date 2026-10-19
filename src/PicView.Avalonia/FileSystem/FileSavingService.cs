@@ -1,14 +1,15 @@
 using Avalonia.Media.Imaging;
 using ImageMagick;
 using PicView.Core.DebugTools;
+using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.FileSystem;
 
 /// <summary>
-/// Saves what a tab shows, with its rotation and flip applied. It decides what the save source is: the image with
-/// effects applied, the file on disk, or the in-memory bitmap of a single image (clipboard, base64).
+/// Saves what a tab shows, with its rotation and flip applied. It decides what the Save Source is: the Effects Render
+/// of the tab's file, the file on disk, or the in-memory bitmap of a single image (clipboard, base64).
 /// </summary>
 /// <param name="pathPicker">Asks the user where to save, for Save As.</param>
 /// <param name="getEffects">The effects view model, if the effects window has been opened.</param>
@@ -50,6 +51,37 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
     /// </summary>
     public async ValueTask<bool> SaveToAsync(TabViewModel tab, string destination)
     {
+        using var effectsRender = CloneEffectsRender(tab);
+        return await SaveToAsync(tab, destination, effectsRender).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// A file in a common format that shows the tab's image as a save would write it, such as for a wallpaper: the
+    /// file itself when it is already common and untouched, else a temporary PNG. <see langword="null"/> when it
+    /// could not be written.
+    /// </summary>
+    public async ValueTask<string?> ExportCommonFormatAsync(TabViewModel tab)
+    {
+        var file = tab.FileInfo.CurrentValue;
+        using var effectsRender = CloneEffectsRender(tab);
+        if (effectsRender is null && file is not null && file.IsCommon() && tab.RotationAngle.CurrentValue is 0 &&
+            tab.ScaleX.CurrentValue is not -1)
+        {
+            return file.FullName;
+        }
+
+        var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + PngExtension);
+        return await SaveToAsync(tab, tempPath, effectsRender).ConfigureAwait(false) ? tempPath : null;
+    }
+
+    private MagickImage? CloneEffectsRender(TabViewModel tab) =>
+        tab.FileInfo.CurrentValue is { } file && tab.ImageType.CurrentValue is not ImageType.Svg
+            ? getEffects()?.CloneRender(file)
+            : null;
+
+    /// <param name="effectsRender">A copy of the Effects Render of the tab's file, if it has one.</param>
+    private async ValueTask<bool> SaveToAsync(TabViewModel tab, string destination, MagickImage? effectsRender)
+    {
         var angle = tab.RotationAngle.CurrentValue;
         var isFlipped = tab.ScaleX.CurrentValue is -1;
         var file = tab.FileInfo.CurrentValue;
@@ -57,9 +89,9 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
         bool isSaved;
         try
         {
-            if (getEffects()?.ProcessedImage is { } processed && tab.ImageType.CurrentValue is not ImageType.Svg)
+            if (effectsRender is not null)
             {
-                isSaved = await SaveProcessedImageAsync(processed, destination, angle, isFlipped).ConfigureAwait(false);
+                isSaved = await SaveEffectsRenderAsync(effectsRender, destination, angle, isFlipped).ConfigureAwait(false);
             }
             else if (file is not null)
             {
@@ -110,22 +142,21 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
         return $"{title} {now:yyyy-MM-dd HHmmss}{PngExtension}";
     }
 
-    private static async ValueTask<bool> SaveProcessedImageAsync(MagickImage processed, string destination, int angle,
-        bool isFlipped)
+    /// <param name="effectsRender">A copy of the Effects Render, rotated and flipped in place.</param>
+    private static async ValueTask<bool> SaveEffectsRenderAsync(MagickImage effectsRender, string destination,
+        int angle, bool isFlipped)
     {
-        // Transform a copy, so saving twice does not rotate or flip the processed image twice
-        using var image = (MagickImage)processed.Clone();
         if (angle is not 0)
         {
-            image.Rotate(angle);
+            effectsRender.Rotate(angle);
         }
 
         if (isFlipped)
         {
-            image.Flop();
+            effectsRender.Flop();
         }
 
-        await image.WriteAsync(destination).ConfigureAwait(false);
+        await effectsRender.WriteAsync(destination).ConfigureAwait(false);
         return true;
     }
 

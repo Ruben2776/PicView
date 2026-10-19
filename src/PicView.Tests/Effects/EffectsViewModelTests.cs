@@ -9,25 +9,27 @@ public class EffectsViewModelTests : IDisposable
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
-    private readonly List<ImageEffectConfig> _renders = [];
-    private TaskCompletionSource<ImageEffectConfig> _nextRender = NewRender();
+    private static readonly FileInfo Photo = new(Path.Combine(Path.GetTempPath(), "photo.jpg"));
+    private static readonly FileInfo OtherPhoto = new(Path.Combine(Path.GetTempPath(), "other.jpg"));
+
+    private readonly List<(FileInfo File, ImageEffectConfig Config)> _renders = [];
+    private readonly TaskCompletionSource<(FileInfo File, ImageEffectConfig Config)> _nextRender =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly ReactiveProperty<FileInfo?> _target = new(Photo);
     private readonly EffectsViewModel _effects;
 
     public EffectsViewModelTests()
     {
-        _effects = new EffectsViewModel(Render);
+        _effects = new EffectsViewModel(_target, Render);
     }
 
-    private static TaskCompletionSource<ImageEffectConfig> NewRender() =>
-        new(TaskCreationOptions.RunContinuationsAsynchronously);
-
-    private Task<MagickImage?> Render(ImageEffectConfig config, CancellationToken ct)
+    private Task<MagickImage?> Render(FileInfo file, ImageEffectConfig config, CancellationToken ct)
     {
         lock (_renders)
         {
-            _renders.Add(config);
+            _renders.Add((file, config));
         }
-        _nextRender.TrySetResult(config);
+        _nextRender.TrySetResult((file, config));
         return Task.FromResult<MagickImage?>(null);
     }
 
@@ -38,7 +40,7 @@ public class EffectsViewModelTests : IDisposable
         _effects.Temperature.Value = -15;
         _effects.BlackAndWhite.Value = true;
 
-        var config = await _nextRender.Task.WaitAsync(Timeout, TestContext.Current.CancellationToken);
+        var (_, config) = await _nextRender.Task.WaitAsync(Timeout, TestContext.Current.CancellationToken);
         await Task.Delay(200, TestContext.Current.CancellationToken);
 
         Assert.Single(_renders);
@@ -49,17 +51,87 @@ public class EffectsViewModelTests : IDisposable
     }
 
     [Fact]
-    public async Task Rendering_PublishesTheImageAsProcessed()
+    public async Task ChangingAValue_RendersTheTargetFile()
+    {
+        _target.Value = OtherPhoto;
+
+        _effects.Contrast.Value = 20;
+
+        var (file, _) = await _nextRender.Task.WaitAsync(Timeout, TestContext.Current.CancellationToken);
+        Assert.Same(OtherPhoto, file);
+    }
+
+    [Fact]
+    public async Task Rendering_PublishesTheEffectsRender()
     {
         using var image = new MagickImage(MagickColors.Red, 4, 3);
-        using var effects = new EffectsViewModel((_, _) => Task.FromResult<MagickImage?>(image));
+        using var effects = new EffectsViewModel(_target, (_, _, _) => Task.FromResult<MagickImage?>(image));
         var published = new TaskCompletionSource<MagickImage>(TaskCreationOptions.RunContinuationsAsynchronously);
         using var subscription = effects.Rendered.Subscribe(published.SetResult);
 
         effects.Sharpen.Value = 5;
 
         Assert.Same(image, await published.Task.WaitAsync(Timeout, TestContext.Current.CancellationToken));
-        Assert.Same(image, effects.ProcessedImage);
+    }
+
+    [Fact]
+    public async Task CloneRender_TargetFile_ReturnsCopyOfEffectsRender()
+    {
+        using var effects = await RenderRedImageAsync();
+
+        using var render = effects.CloneRender(new FileInfo(Photo.FullName));
+
+        Assert.NotNull(render);
+        Assert.Equal(4u, render.Width);
+        Assert.Equal(3u, render.Height);
+    }
+
+    [Fact]
+    public async Task CloneRender_OtherFile_ReturnsNull()
+    {
+        using var effects = await RenderRedImageAsync();
+
+        using var render = effects.CloneRender(OtherPhoto);
+
+        Assert.Null(render);
+    }
+
+    [Fact]
+    public async Task ChangingTheTarget_DiscardsEffectsAndEffectsRender()
+    {
+        using var effects = await RenderRedImageAsync();
+
+        _target.Value = OtherPhoto;
+
+        Assert.Equal(0, effects.Sharpen.Value);
+        Assert.False(effects.IsResetVisible.Value);
+        using var render = effects.CloneRender(Photo);
+        Assert.Null(render);
+    }
+
+    [Fact]
+    public async Task ChangingAValue_NoTargetFile_DoesNotRender()
+    {
+        _target.Value = null;
+
+        _effects.Contrast.Value = 20;
+        await Task.Delay(300, TestContext.Current.CancellationToken);
+
+        Assert.Empty(_renders);
+    }
+
+    [Fact]
+    public async Task ReturningToDefaults_DropsEffectsRender()
+    {
+        using var effects = await RenderRedImageAsync();
+        var published = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var subscription = effects.Rendered.Subscribe(_ => published.TrySetResult());
+
+        effects.Sharpen.Value = 0;
+        await published.Task.WaitAsync(Timeout, TestContext.Current.CancellationToken);
+
+        using var render = effects.CloneRender(Photo);
+        Assert.Null(render);
     }
 
     [Fact]
@@ -173,5 +245,25 @@ public class EffectsViewModelTests : IDisposable
         Assert.False(_effects.IsResetVisible.Value);
     }
 
-    public void Dispose() => _effects.Dispose();
+    /// <summary>
+    /// Applies an effect to <see cref="Photo"/> and waits for its 4x3 red Effects Render.
+    /// </summary>
+    private async Task<EffectsViewModel> RenderRedImageAsync()
+    {
+        var effects = new EffectsViewModel(_target,
+            (_, _, _) => Task.FromResult<MagickImage?>(new MagickImage(MagickColors.Red, 4, 3)));
+        var published = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var subscription = effects.Rendered.Subscribe(_ => published.TrySetResult());
+
+        effects.Sharpen.Value = 5;
+
+        await published.Task.WaitAsync(Timeout, TestContext.Current.CancellationToken);
+        return effects;
+    }
+
+    public void Dispose()
+    {
+        _effects.Dispose();
+        _target.Dispose();
+    }
 }
