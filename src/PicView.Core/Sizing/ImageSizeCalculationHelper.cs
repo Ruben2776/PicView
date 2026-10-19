@@ -2,7 +2,7 @@ namespace PicView.Core.Sizing;
 
 public static class ImageSizeCalculationHelper
 {
-    public static ImageSize GetImageSize(
+    public static Fit GetImageSize(
         double imageWidth,
         double imageHeight,
         ScreenSize screenSize,
@@ -16,7 +16,7 @@ public static class ImageSizeCalculationHelper
     {
         if (imageWidth <= 0 || imageHeight <= 0)
         {
-            return new ImageSize(0, 0, 0, 0, 0,  0, 0);
+            return new Fit(0, 0, 0, 0, 0,  0, 0);
         }
         
         double maxAvailableWidth, maxAvailableHeight;
@@ -85,7 +85,7 @@ public static class ImageSizeCalculationHelper
             }
         }
 
-        return new ImageSize(windowWidth, windowHeight, calculatedImageWidth, calculatedImageHeight, 
+        return new Fit(windowWidth, windowHeight, calculatedImageWidth, calculatedImageHeight, 
             scrollWidth, scrollHeight, aspectRatio);
     }
 
@@ -147,7 +147,7 @@ public static class ImageSizeCalculationHelper
         return (maxAvailableWidth, maxAvailableHeight);
     }
 
-    public static ImageSize GetSideBySideImageSize(
+    public static Fit GetSideBySideImageSize(
         double width,
         double height,
         double secondaryWidth,
@@ -163,7 +163,7 @@ public static class ImageSizeCalculationHelper
     {
         if (width <= 0 || height <= 0 || secondaryWidth <= 0 || secondaryHeight <= 0)
         {
-            return new ImageSize(0, 0, 0, 0, 0, 0, 0);
+            return new Fit(0, 0, 0, 0, 0, 0, 0);
         }
 
         // 1. Normalize the widths so both images mathematically share the largest height.
@@ -221,7 +221,7 @@ public static class ImageSizeCalculationHelper
             windowHeight = calculatedLargestHeight + uiBottomSize + uiTopSize + galleryHeight;
         }
 
-        return new ImageSize(
+        return new Fit(
             windowWidth, 
             windowHeight, 
             calculatedCombinedWidth, 

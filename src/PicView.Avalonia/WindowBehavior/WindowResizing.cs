@@ -182,9 +182,9 @@ public static class WindowResizing
         SetSize(size.Value, reason, mainWindow, vm);
     }
 
-    public static void SetSize(ImageSize size, WindowResizeReason reason, MainWindow mainWindow, MainWindowViewModel vm)
+    public static void SetSize(Fit size, WindowResizeReason reason, MainWindow mainWindow, MainWindowViewModel vm)
     {
-        vm.WindowTabs.ActiveTab.CurrentValue.InitialZoom.Value = size.InitialZoom;
+        vm.WindowTabs.ActiveTab.CurrentValue.InitialZoom.Value = size.Scale;
         vm.ScrollViewerWidth.Value = size.ScrollViewerWidth;
         vm.ScrollViewerHeight.Value = size.ScrollViewerHeight;
         
@@ -228,7 +228,7 @@ public static class WindowResizing
         }
     }
 
-    public static ImageSize? GetSize(MainWindow mainWindow, MainWindowViewModel vm)
+    public static Fit? GetSize(MainWindow mainWindow, MainWindowViewModel vm)
     {
         if (vm?.WindowTabs.ActiveTab?.CurrentValue is not { } tab)
         {
@@ -295,7 +295,7 @@ public static class WindowResizing
         return GetSize(width, height, secondaryWidth, secondaryHeight, tab.RotationAngle.CurrentValue, mainWindow, vm);
     }
 
-    public static ImageSize? GetSize(double width, double height, double secondWidth, double secondHeight,
+    public static Fit? GetSize(double width, double height, double secondWidth, double secondHeight,
         double rotation, MainWindow mainWindow, MainWindowViewModel vm)
     {
         var screenSize = ScreenHelper.ScreenSize;
