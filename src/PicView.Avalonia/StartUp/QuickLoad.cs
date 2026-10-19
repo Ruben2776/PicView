@@ -295,7 +295,7 @@ public static class QuickLoad
     /// <summary>
     /// Sizes the window for the image and shows it. Call on the UI thread.
     /// </summary>
-    private static void ShowSized(MainWindow mainWindow, MainWindowViewModel vm, ImageSize size)
+    private static void ShowSized(MainWindow mainWindow, MainWindowViewModel vm, Fit size)
     {
         WindowResizing.SetSize(size, WindowResizeReason.Application, mainWindow, vm);
 
