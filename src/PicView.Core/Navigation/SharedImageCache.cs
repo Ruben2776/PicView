@@ -52,7 +52,9 @@ public sealed class SharedImageCache
         _imageLoader = imageLoader;
         _pathLookup = new ConcurrentDictionary<string, PreLoadValue>(StringComparer.Ordinal);
         // Waiting without a token keeps the preloader's degree of parallelism honest; the load is not cancelled anyway.
-        _preloader = new Preloader((ownerId, file) => Acquire(ownerId, file).WaitForLoadingCompleteAsync());
+        // The preloader is already on the thread pool, so its loads start inline.
+        _preloader = new Preloader((ownerId, file) =>
+            Acquire(ownerId, file, startLoadOnThreadPool: false).WaitForLoadingCompleteAsync());
     }
 
     #region Requests
@@ -74,7 +76,8 @@ public sealed class SharedImageCache
             return new ValueTask<ImageModel?>((ImageModel?)null);
         }
 
-        var value = Acquire(ownerId, file);
+        // The caller may be the UI thread, so a load this request starts goes to the thread pool
+        var value = Acquire(ownerId, file, startLoadOnThreadPool: true);
         return value.IsLoading
             ? WaitForLoadAsync(value, ct)
             : new ValueTask<ImageModel?>(value.ImageModel);
@@ -263,7 +266,9 @@ public sealed class SharedImageCache
     /// Returns the cached or loading value of <paramref name="file"/>, starting a load if there is none, and gives
     /// <paramref name="ownerId"/> a reference to it.
     /// </summary>
-    private PreLoadValue Acquire(uint ownerId, FileInfo file)
+    /// <param name="startLoadOnThreadPool">Start a new load on the thread pool instead of on the calling thread, where
+    /// the loader would run synchronously until its first await.</param>
+    private PreLoadValue Acquire(uint ownerId, FileInfo file, bool startLoadOnThreadPool)
     {
         var path = file.FullName;
         if (!_pathLookup.TryGetValue(path, out var value))
@@ -272,7 +277,9 @@ public sealed class SharedImageCache
             value = _pathLookup.GetOrAdd(path, pending);
             if (ReferenceEquals(value, pending))
             {
-                _ = LoadAsync(file, pending);
+                _ = startLoadOnThreadPool
+                    ? Task.Run(() => LoadAsync(file, pending))
+                    : LoadAsync(file, pending);
             }
         }
 
