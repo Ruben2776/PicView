@@ -1,45 +1,46 @@
 ﻿<UserControl
-    x:Class="PicView.Avalonia.Views.UC.EditableTitlebar"
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
-    xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     Height="{CompiledBinding TitlebarHeight.Value,
                              Mode=OneWay}"
+    ToolTip.Tip="{Binding WindowTabs.ActiveTab.Value.TitleTooltip.Value, Mode=OneWay}"
+    x:Class="PicView.Avalonia.Views.UC.EditableTitlebar"
     x:DataType="vm:MainWindowViewModel"
-    ToolTip.Tip="{Binding WindowTabs.ActiveTab.Value.TitleTooltip.Value, Mode=OneWay}">
+    xmlns="https://github.com/avaloniaui"
+    xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Panel>
         <TextBlock
-            x:Name="TextBlock"
-            Height="{CompiledBinding TitlebarHeight.Value,
-                                     Mode=OneWay}"
-            Padding="0,7,0,5"
-            VerticalAlignment="Center"
             FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
             FontSize="13"
             FontWeight="Medium"
+            Height="{CompiledBinding TitlebarHeight.Value,
+                                     Mode=OneWay}"
             IsTabStop="False"
             IsVisible="{CompiledBinding !IsEditableTitlebarOpen.Value}"
+            LineHeight="30"
             Text="{CompiledBinding WindowTabs.ActiveTab.Value.Title.Value,
                                    Mode=OneWay}"
             TextAlignment="Center"
-            TextTrimming="CharacterEllipsis" />
+            TextTrimming="CharacterEllipsis"
+            VerticalAlignment="Center"
+            x:Name="TextBlock" />
         <Border
             BorderBrush="{DynamicResource AccentColor}"
             BorderThickness="1"
             IsVisible="{CompiledBinding IsEditableTitlebarOpen.Value}">
             <customControls:FuncTextBox
-                x:Name="TextBox"
-                Height="{CompiledBinding TitlebarHeight.Value,
-                                         Mode=OneWay}"
-                Padding="0,7,0,5"
-                VerticalAlignment="Center"
                 FontFamily="avares://PicView.Avalonia/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                 FontSize="13"
                 FontWeight="Medium"
+                Height="{CompiledBinding TitlebarHeight.Value,
+                                         Mode=OneWay}"
                 IsTabStop="False"
+                LineHeight="28"
+                Padding="0"
                 SelectionForegroundBrush="{DynamicResource SecondaryTextColor}"
-                TextAlignment="Center" />
+                TextAlignment="Center"
+                VerticalAlignment="Center"
+                x:Name="TextBox" />
         </Border>
     </Panel>
 </UserControl>
