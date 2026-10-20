@@ -132,7 +132,7 @@
 
                     <!--  Close  -->
                     <customControls:StyledMenuItem
-                        Command="{CompiledBinding ExitCommand}"
+                        Command="{CompiledBinding CloseWindowCommand}"
                         Header="{CompiledBinding Translation.Close.Value,
                                                  Mode=OneWay}"
                         Theme="{StaticResource MainBg}">
@@ -947,7 +947,7 @@
                     Background="{DynamicResource TitleBarButtonBackground}"
                     Classes="hover"
                     ClickMode="Release"
-                    Command="{CompiledBinding ExitCommand}"
+                    Command="{CompiledBinding CloseWindowCommand}"
                     Data="{StaticResource CloseGeometry}"
                     Foreground="{DynamicResource TitleBarForeground}"
                     IconHeight="10"

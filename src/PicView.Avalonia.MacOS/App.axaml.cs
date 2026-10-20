@@ -7,6 +7,7 @@ using Avalonia.Threading;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.MacOS.Views;
+using PicView.Avalonia.MacOS.WindowImpl;
 using PicView.Avalonia.StartUp;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileSorting;
@@ -29,12 +30,8 @@ namespace PicView.Avalonia.MacOS;
 
 public class App : Application, IPlatformSpecificService
 {
-    private MacMainWindow? _mainWindow;
     private static CoreViewModel? _coreViewModel;
-    private static MainWindowViewModel? _mainWindowViewModel;
-    
-    ///  Flag to track if we are processing the initial startup file
-    private bool _isInitialLoad;
+    private AppLifecycle? _app;
 
     public override void Initialize()
     {
@@ -46,31 +43,32 @@ public class App : Application, IPlatformSpecificService
 #endif
     }
 
-    // The startup procedure for macOS is a bit different than Windows.
+    // macOS delivers the file PicView was launched with as an activation, which can arrive after App Start begins
     public override void OnFrameworkInitializationCompleted()
     {
-        string? startUpFilePath = null;
-
+        var launchFilesBeforeStart = new List<string>();
         if (this.TryGetFeature<IActivatableLifetime>() is { } activatableLifetime)
         {
             activatableLifetime.Activated += async (_, e) =>
             {
-                if (e is FileActivatedEventArgs fileArgs)
+                var path = e switch
                 {
-                    if (fileArgs.Files.Count <= 0)
-                    {
-                        return;
-                    }
-
-                    startUpFilePath = fileArgs.Files[0].Path.LocalPath;
-                    await HandleInitialLoadOrConsecutive();
-                }
-                else if (e is ProtocolActivatedEventArgs protocolArgs)
+                    FileActivatedEventArgs { Files.Count: > 0 } fileArgs => fileArgs.Files[0].Path.LocalPath,
+                    ProtocolActivatedEventArgs protocolArgs => protocolArgs.Uri.LocalPath,
+                    _ => null
+                };
+                if (path is null)
                 {
-                    startUpFilePath = protocolArgs.Uri.LocalPath;
-                    await HandleInitialLoadOrConsecutive();
+                    return;
                 }
 
+                if (_app is null)
+                {
+                    launchFilesBeforeStart.Add(path);
+                    return;
+                }
+
+                await _app.OpenLaunchFileAsync(path).ConfigureAwait(false);
             };
         }
         base.OnFrameworkInitializationCompleted();        
@@ -79,57 +77,15 @@ public class App : Application, IPlatformSpecificService
         TranslationManager.Init();
 
         _coreViewModel = new CoreViewModel(this, GetImageModel.GetImageModelAsync);
-
-        ThemeManager.DetermineTheme(Current, settingsExists);
-
-        _mainWindow = new MacMainWindow(_coreViewModel);
-        _mainWindowViewModel = _mainWindow.DataContext as MainWindowViewModel;
-        _coreViewModel.MainWindows.MainWindows.Add(_mainWindowViewModel);
-        _coreViewModel.MainWindows.ActiveWindow.Value = _mainWindowViewModel;
-
         DataContext = _coreViewModel;
-        
-        StartUpHelper.HandleWindowStartUpSettings(_coreViewModel, settingsExists, _mainWindow);
 
-        var arg = Environment.GetCommandLineArgs();
-        if (arg.Length > 1 && startUpFilePath is null)
+        _app = new AppLifecycle(_coreViewModel, new MacWindowProvider());
+        foreach (var path in launchFilesBeforeStart)
         {
-            Task.Run(() => SourceOpener.OpenAsync(_mainWindow, _coreViewModel, arg[1], new OpenOptions(IsStartup: true)).AsTask());
+            _ = _app.OpenLaunchFileAsync(path);
         }
-        else
-        {
-            Dispatcher.UIThread.Post(() =>
-            {
-                if (startUpFilePath is null)
-                {
-                    StartUpHelper.StartUpMenuOrLastFile(_mainWindow, _coreViewModel);
-                }
-            }, DispatcherPriority.Background);
-        }
-        
-        StartUpHelper.HandlePostWindowUpdates(_coreViewModel, _mainWindow, isAppStart: true);
-        
-        return;
 
-        async ValueTask HandleInitialLoadOrConsecutive()
-        {
-            if (!_isInitialLoad)
-            {
-                _isInitialLoad = true;
-                await SourceOpener.OpenAsync(_mainWindow, _coreViewModel, startUpFilePath, new OpenOptions(IsStartup: true, ContinueFromLeftOff: true)).ConfigureAwait(false);
-                Dispatcher.UIThread.Invoke(() => { _mainWindow.Activate(); }, DispatcherPriority.Send);
-                return;
-            }
-            if (Settings.UIProperties.OpenInSameWindow)
-            {
-                Dispatcher.UIThread.Invoke(() => { _mainWindow.Activate(); }, DispatcherPriority.Send);
-                await SourceOpener.OpenAsync(_mainWindow, _coreViewModel, startUpFilePath).ConfigureAwait(false);
-            }
-            else
-            {
-                ProcessHelper.StartNewProcess(startUpFilePath);
-            }
-        }
+        _ = _app.StartAsync(settingsExists, Environment.GetCommandLineArgs(), launchFileMayFollow: true);
     }
 
    #region Interface implementations
@@ -173,7 +129,7 @@ public class App : Application, IPlatformSpecificService
         {
             var openWithView = new OpenWithView(path)
             {
-                DataContext = _mainWindowViewModel
+                DataContext = _coreViewModel?.MainWindows.ActiveWindow.CurrentValue
             };
             openWithView.Show();
         }, DispatcherPriority.Input);
@@ -191,10 +147,7 @@ public class App : Application, IPlatformSpecificService
         // TODO: make interface async
     }
 
-    public async ValueTask Print(string path)
-    {
-        await _mainWindow.ShowPrintWindow(path);
-    }
+    public bool PrintWithoutPreview(string path) => false;
 
     public async Task SetAsWallpaper(string path, int wallpaperStyle)
     {

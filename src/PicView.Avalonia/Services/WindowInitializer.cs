@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Input;
@@ -16,33 +15,34 @@ using R3;
 
 namespace PicView.Avalonia.Services;
 
-/// <param name="mainWindow">The main window whose secondary windows this opens.</param>
+/// <summary>
+/// Opens a Main Window's Tool Windows, which belong to it, and the App Windows, which belong to the whole app.
+/// </summary>
+/// <param name="mainWindow">The Main Window whose Tool Windows this opens.</param>
 public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) : IPlatformSpecificUpdate
 {
-    private readonly SecondaryWindowOpener _opener = new(mainWindow, provider, OwnerWindow, CurrentCore);
+    private readonly SecondaryWindowOpener _toolWindows = new(() => mainWindow, provider, () => mainWindow,
+        () => (mainWindow.DataContext as MainWindowViewModel)?.Core);
 
     /// <summary>
-    /// The secondary window this main window opened most recently that is still open.
+    /// Opens the App Windows, shared by every Main Window. A window opened outside the lifecycle, as in some tests,
+    /// opens them as its own.
     /// </summary>
-    public Window? NewestOpenWindow => _opener.NewestOpenWindow;
+    private SecondaryWindowOpener AppWindows => mainWindow.Lifecycle?.AppWindows ?? _toolWindows;
+
+    /// <summary>
+    /// The Tool Window this main window opened most recently that is still open, else the newest App Window.
+    /// </summary>
+    public Window? NewestOpenWindow => _toolWindows.NewestOpenWindow ?? AppWindows.NewestOpenWindow;
+
+    /// <summary>
+    /// Closes this window's Tool Windows, as it closes.
+    /// </summary>
+    public void CloseToolWindows() => _toolWindows.CloseAll();
 
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
     {
         await provider.HandlePlatformUpdate(updateInfo, tempPath).ConfigureAwait(false);
-    }
-
-    public MainWindow CreateMainWindow()
-    {
-        var window = provider.CreateMainWindow();
-        if (Application.Current.DataContext is not CoreViewModel core ||
-            window.DataContext is not MainWindowViewModel vm)
-        {
-            return window;
-        }
-
-        core.MainWindows.MainWindows.Add(vm);
-        core.MainWindows.ActiveWindow.Value = vm;
-        return window;
     }
 
     public void ShowAboutWindow()
@@ -53,13 +53,13 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }
 
         core.AboutView ??= new AboutViewModel(this);
-        _ = _opener.OpenAsync(SecondaryWindowKind.About, new SecondaryWindowSpec(
-            factory => factory.CreateAboutWindow(), WindowOwner.MainWindow)
+        _ = AppWindows.OpenAsync(SecondaryWindowKind.About, new SecondaryWindowSpec(
+            factory => factory.CreateAboutWindow())
         {
             Configure = window =>
             {
                 window.DataContext = core;
-                window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
         });
     }
@@ -74,7 +74,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }
 
         vm.Exif ??= new ExifViewModel();
-        _ = _opener.OpenAsync(SecondaryWindowKind.ImageInfo, new SecondaryWindowSpec(
+        _ = _toolWindows.OpenAsync(SecondaryWindowKind.ImageInfo, new SecondaryWindowSpec(
             factory => factory.CreateImageInfoWindow(vm))
         {
             Configure = window => WindowFunctions.InitializeWindowSizeAndPosition(window,
@@ -109,9 +109,8 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             core.Keybindings.WindowConfig.Load();
         }
 
-        _ = _opener.OpenAsync(SecondaryWindowKind.Keybindings, new SecondaryWindowSpec(
-            factory => factory.CreateKeybindingsWindow(core.Keybindings.WindowConfig),
-            WindowOwner.MainWindowExceptMacOS)
+        _ = AppWindows.OpenAsync(SecondaryWindowKind.Keybindings, new SecondaryWindowSpec(
+            factory => factory.CreateKeybindingsWindow(core.Keybindings.WindowConfig))
         {
             Configure = window => window.DataContext = core,
             OnClosing = async window =>
@@ -139,7 +138,10 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             core.SettingsViewModel.Initialize(new ThemeService(), new LanguageService(), new ImageSettingsService());
             core.SettingsViewModel.WindowMargin.Skip(1).Subscribe(_ =>
             {
-                (OwnerWindow() as MainWindow)?.WindowFitter.Refit();
+                foreach (var window in mainWindow.Lifecycle?.Open ?? [mainWindow])
+                {
+                    window.WindowFitter.Refit();
+                }
             }, DebugHelper.LogError(nameof(core.SettingsViewModel), nameof(core.SettingsViewModel.WindowMargin)));
         }
 
@@ -150,7 +152,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }
 
         var config = core.SettingsViewModel.SettingsWindowConfig;
-        await _opener.OpenAsync(SecondaryWindowKind.Settings, new SecondaryWindowSpec(
+        await AppWindows.OpenAsync(SecondaryWindowKind.Settings, new SecondaryWindowSpec(
             factory => factory.CreateSettingsWindow(config))
         {
             Configure = window =>
@@ -189,7 +191,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }
 
         var config = core.Effects.WindowConfig;
-        await _opener.OpenAsync(SecondaryWindowKind.Effects, new SecondaryWindowSpec(
+        await _toolWindows.OpenAsync(SecondaryWindowKind.Effects, new SecondaryWindowSpec(
             factory => factory.CreateEffectsWindow(config), WindowOwner.MainWindowExceptMacOS)
         {
             Configure = window =>
@@ -210,7 +212,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
 
         var activeWindow = core.MainWindows.ActiveWindow.CurrentValue;
         activeWindow.ResizeImageViewModel ??= new ResizeImageViewModel();
-        _ = _opener.OpenAsync(SecondaryWindowKind.SingleImageResize, new SecondaryWindowSpec(
+        _ = _toolWindows.OpenAsync(SecondaryWindowKind.SingleImageResize, new SecondaryWindowSpec(
             factory => factory.CreateSingleImageResizeWindow(activeWindow), WindowOwner.MainWindowExceptMacOS)
         {
             Configure = window => window.WindowStartupLocation = WindowStartupLocation.CenterOwner
@@ -225,7 +227,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }
 
         // Reopening while the window is open must keep the config it is editing
-        if (!_opener.IsOpen(SecondaryWindowKind.BatchResize))
+        if (!_toolWindows.IsOpen(SecondaryWindowKind.BatchResize))
         {
             core.BatchResize ??= new BatchResizeViewModel(
                 FilePicker.SelectDirectory, FilePicker.SelectFile,
@@ -236,7 +238,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }
 
         var config = core.BatchResize.Config;
-        await _opener.OpenAsync(SecondaryWindowKind.BatchResize, new SecondaryWindowSpec(
+        await _toolWindows.OpenAsync(SecondaryWindowKind.BatchResize, new SecondaryWindowSpec(
             factory => factory.CreateBatchResizeWindow(config))
         {
             Configure = window => window.DataContext = core,
@@ -260,13 +262,13 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             return;
         }
 
-        _ = _opener.OpenAsync(SecondaryWindowKind.Convert, new SecondaryWindowSpec(
+        _ = _toolWindows.OpenAsync(SecondaryWindowKind.Convert, new SecondaryWindowSpec(
             factory => factory.CreateConvertWindow(), WindowOwner.MainWindowExceptMacOS)
         {
             Configure = window =>
             {
                 window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                window.DataContext = core.MainWindows.ActiveWindow.CurrentValue;
+                window.DataContext = mainWindow.DataContext;
             }
         });
     }
@@ -280,13 +282,13 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
 
         // The view model outlives the window, so reopening only creates the window again
         core.AssociationsViewModel ??= new FileAssociationsViewModel();
-        _ = _opener.OpenAsync(SecondaryWindowKind.FileAssociations, new SecondaryWindowSpec(
-            factory => factory.CreateFileAssociationsWindow(), WindowOwner.MainWindow)
+        _ = AppWindows.OpenAsync(SecondaryWindowKind.FileAssociations, new SecondaryWindowSpec(
+            factory => factory.CreateFileAssociationsWindow())
         {
             Configure = window =>
             {
                 window.DataContext = core;
-                window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             }
         });
     }
@@ -301,7 +303,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }
 
         var config = vm.PrintPreview.PrintWindowConfig;
-        await _opener.OpenAsync(SecondaryWindowKind.PrintPreview, new SecondaryWindowSpec(
+        await _toolWindows.OpenAsync(SecondaryWindowKind.PrintPreview, new SecondaryWindowSpec(
             factory => factory.CreatePrintPreviewWindow(config), WindowOwner.MainWindowExceptMacOS)
         {
             Configure = window => window.DataContext = vm,
@@ -314,8 +316,5 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }).ConfigureAwait(false);
     }
 
-    private static Window? OwnerWindow() =>
-        (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-
-    private static CoreViewModel? CurrentCore() => Application.Current?.DataContext as CoreViewModel;
+    private CoreViewModel? CurrentCore() => (mainWindow.DataContext as MainWindowViewModel)?.Core;
 }

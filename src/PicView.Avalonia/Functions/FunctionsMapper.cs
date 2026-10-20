@@ -20,7 +20,7 @@ using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 using PicView.Core.Keybindings;
 using PicView.Core.Navigation;
-using PicView.Core.ProcessHandling;
+using PicView.Avalonia.StartUp;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -499,7 +499,7 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         await mainWindow.HandleShouldClosing(vm).ConfigureAwait(false);
     }
     
-    public ValueTask Exit()
+    public ValueTask CloseWindow()
     {
         mainWindow.Close();
         return ValueTask.CompletedTask;
@@ -525,11 +525,13 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         return ValueTask.CompletedTask;
     }
 
-    /// <inheritdoc cref="ProcessHelper.StartNewProcess()" />
-    public ValueTask NewWindow()
+    /// <inheritdoc cref="MainWindowLifecycle.OpenNewAsync" />
+    public async ValueTask NewWindow()
     {
-        WindowFunctions.NewWindow(mainWindow);
-        return ValueTask.CompletedTask;
+        if (mainWindow.Lifecycle is { } lifecycle)
+        {
+            await Dispatcher.UIThread.InvokeAsync(lifecycle.OpenNewAsync).ConfigureAwait(false);
+        }
     }
 
     public ValueTask ShowStartUpMenu()
@@ -657,11 +659,15 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
 
     public async ValueTask Print()
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName is not { } path)
         {
             return;
         }
-        await core.PlatformService.Print(vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName).ConfigureAwait(false);
+
+        if (Settings.UIProperties.ShowPrintPreview || vm.Core.PlatformService?.PrintWithoutPreview(path) != true)
+        {
+            await mainWindow.ShowPrintWindow(path).ConfigureAwait(false);
+        }
     }
     
     public async ValueTask SaveAsPDF() =>

@@ -13,12 +13,12 @@ namespace PicView.Avalonia.Services;
 /// Opens each kind of secondary window at most once per main window. Opening one that is already open brings it to
 /// the front. It creates, tracks, owns and shows the window, and clears its slot when the window closes.
 /// </summary>
-/// <param name="mainWindow">The main window whose secondary windows these are.</param>
+/// <param name="mainWindow">The main window focus returns to when one of these windows closes.</param>
 /// <param name="provider">Creates the windows for this platform.</param>
 /// <param name="ownerWindow">The window a secondary window is owned by, when its spec asks for one.</param>
 /// <param name="core">Used to close the menus after an open. When it returns null, the menus are left alone.</param>
 public sealed class SecondaryWindowOpener(
-    MainWindow mainWindow,
+    Func<MainWindow?> mainWindow,
     IWindowProvider provider,
     Func<Window?> ownerWindow,
     Func<CoreViewModel?> core)
@@ -30,6 +30,17 @@ public sealed class SecondaryWindowOpener(
     /// The secondary window this opener opened most recently that is still open.
     /// </summary>
     public Window? NewestOpenWindow => _openWindows.Count > 0 ? _openWindows[^1] : null;
+
+    /// <summary>
+    /// Closes every window this opener opened that is still open.
+    /// </summary>
+    public void CloseAll()
+    {
+        foreach (var window in _openWindows.ToArray())
+        {
+            window.Close();
+        }
+    }
 
     /// <summary>
     /// Whether a window of this kind is open.
@@ -96,11 +107,16 @@ public sealed class SecondaryWindowOpener(
         window.Closed += (_, _) =>
         {
             _openWindows.Remove(window);
-            mainWindow.Focus();
+            if (mainWindow() is not { } focused)
+            {
+                return;
+            }
+
+            focused.Focus();
             // Escape is still held as this window takes focus, and would go on to close it too
             if (GenericWindowHelper.ClosedOnEscapePress(window))
             {
-                mainWindow.KeybindRouter.IgnoreUntilReleased(Key.Escape);
+                focused.KeybindRouter.IgnoreUntilReleased(Key.Escape);
             }
         };
     }

@@ -88,7 +88,7 @@ public interface IFunctionsMapper
     ValueTask Fullscreen();
     ValueTask SetTopMost();
     ValueTask Close();
-    ValueTask Exit();
+    ValueTask CloseWindow();
     ValueTask Center();
     ValueTask Maximize();
     ValueTask Minimize();

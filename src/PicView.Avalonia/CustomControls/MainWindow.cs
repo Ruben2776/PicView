@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -36,9 +35,16 @@ namespace PicView.Avalonia.CustomControls;
 /// </summary>
 public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 {
-    [SuppressMessage("Usage", "CA2211:Non-constant fields should not be visible")] 
-    public WindowInitializer? MainWindowInitializer;
+    /// <summary>
+    /// Opens this window's Tool Windows, and the App Windows from it.
+    /// </summary>
+    public WindowInitializer? MainWindowInitializer => field ??= new WindowInitializer(CreateWindowProvider(), this);
     
+    /// <summary>
+    /// Opened and closes this window, along with every other Main Window.
+    /// </summary>
+    public MainWindowLifecycle? Lifecycle { get; internal set; }
+
     public CompositeDisposable Disposables { get; set; } = new();
     /// Flag to prevent window state changes while resizing
     public bool IsChangingWindowState { get; set; }
@@ -99,7 +105,6 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 
         Deactivated += OnDeactivated;
 
-        MainWindowInitializer ??= new WindowInitializer(CreateWindowProvider(), this);
         if (DataContext is not MainWindowViewModel vm)
         {
             return;
@@ -244,36 +249,29 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         }
 
         // Dropped elsewhere: open the tab in a new window
-        _ = Task.Run(() =>
+        if (Lifecycle is null)
         {
-            Dispatcher.UIThread.Invoke(() =>
+            return;
+        }
+
+        var lifecycle = Lifecycle;
+        _ = Task.Run(() => Dispatcher.UIThread.InvokeAsync(async () =>
+        {
+            var newWindow = await lifecycle.OpenDetachedAsync(
+                new PixelPoint(e.ScreenPosition.X - 100, e.ScreenPosition.Y - 50), Width, Height).ConfigureAwait(true);
+            if (newWindow.DataContext is not MainWindowViewModel newVm)
             {
-                if (MainWindowInitializer is null || Application.Current.DataContext is not CoreViewModel core)
-                {
-                    return;
-                }
+                return;
+            }
 
-                var newWindow = MainWindowInitializer.CreateMainWindow();
-                if (newWindow.DataContext is not MainWindowViewModel newVm)
-                {
-                    return;
-                }
-                newWindow.Position = new PixelPoint(e.ScreenPosition.X - 100, e.ScreenPosition.Y - 50);
-                newWindow.Width = Width;
-                newWindow.Height = Height;
-                WindowFunctions.DetachedWindowStartup(core, newWindow);
+            // Fix null DataContext
+            if (tab.CurrentView.CurrentValue is Control control)
+            {
+                control.DataContext = tab;
+            }
 
-                // Fix null DataContext
-                if (tab.CurrentView.CurrentValue is Control control)
-                {
-                    control.DataContext = tab;
-                }
-
-                desktop.MainWindow = newWindow;
-
-                TabNavigationInitializer.InitializeDetachedWindow(this, parentVm, newVm, tab, core);
-            }, DispatcherPriority.Send);
-        });
+            TabNavigationInitializer.InitializeDetachedWindow(this, parentVm, newVm, tab, newVm.Core);
+        }, DispatcherPriority.Send));
     }
 
     private bool ContainsScreenPoint(PixelPoint screenPosition)
@@ -359,7 +357,10 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     {
         try
         {
-            await WindowFunctions.WindowClosingBehavior(this).ConfigureAwait(true);
+            if (Lifecycle is not null)
+            {
+                await Lifecycle.CloseAsync(this, closeNatively: false).ConfigureAwait(true);
+            }
             base.OnClosing(e);
         }
         catch (Exception ex)

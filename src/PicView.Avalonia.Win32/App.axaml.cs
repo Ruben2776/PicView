@@ -4,7 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.StartUp;
-using PicView.Avalonia.Win32.Views;
+using PicView.Avalonia.Win32.WindowImpl;
 using PicView.Core.FileAssociations;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
@@ -22,10 +22,9 @@ namespace PicView.Avalonia.Win32;
 
 public class App : Application, IPlatformSpecificService
 {
-    private static WinMainWindow? _mainWindow;
     private static CoreViewModel? _coreViewModel;
-    private static MainWindowViewModel? _mainWindowViewModel;
     private TaskbarProgress? _taskbarProgress;
+    private IntPtr _taskbarProgressHandle;
      
     public override void Initialize()
     {
@@ -40,7 +39,7 @@ public class App : Application, IPlatformSpecificService
     {
         base.OnFrameworkInitializationCompleted();
 
-        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime)
         {
             return;
         }
@@ -48,12 +47,15 @@ public class App : Application, IPlatformSpecificService
         _coreViewModel = new CoreViewModel(this, GetImageModel.GetImageModelAsync);
         DataContext = _coreViewModel;
 
-        _mainWindow = new WinMainWindow();
-        _mainWindowViewModel = _mainWindow.DataContext as MainWindowViewModel;
-        _coreViewModel.MainWindows.MainWindows.Add(_mainWindowViewModel);
-        _coreViewModel.MainWindows.ActiveWindow.Value = _mainWindowViewModel;
-        StartUpHelper.StartWithArguments(_coreViewModel, settingsExists, _mainWindow);
+        _ = new AppLifecycle(_coreViewModel, new Win32WindowProvider())
+            .StartAsync(settingsExists, Environment.GetCommandLineArgs());
     }
+
+    /// <summary>
+    /// The taskbar button of the Main Window the user activated last.
+    /// </summary>
+    private static IntPtr ActiveMainWindowHandle() =>
+        AppLifecycle.Current?.MainWindows.MostRecentlyActive?.TryGetPlatformHandle()?.Handle ?? IntPtr.Zero;
 
     #region Interface Implementations
     
@@ -67,17 +69,19 @@ public class App : Application, IPlatformSpecificService
     {
         Dispatcher.Invoke(() =>
         {
-            if (_taskbarProgress is null)
+            var handle = ActiveMainWindowHandle();
+
+            // Ensure the handle is valid before proceeding
+            if (handle == IntPtr.Zero)
             {
-                var handle = _mainWindow?.TryGetPlatformHandle()?.Handle;
+                return;
+            }
 
-                // Ensure the handle is valid before proceeding
-                if (handle == IntPtr.Zero || handle is null)
-                {
-                    return;
-                }
-
-                _taskbarProgress = new TaskbarProgress(handle.Value);
+            if (_taskbarProgress is null || _taskbarProgressHandle != handle)
+            {
+                _taskbarProgress?.StopProgress();
+                _taskbarProgress = new TaskbarProgress(handle);
+                _taskbarProgressHandle = handle;
             }
             _taskbarProgress.SetProgress(progress, maximum);
         });
@@ -85,10 +89,8 @@ public class App : Application, IPlatformSpecificService
 
     public void StopTaskbarProgress()
     {
-        var handle = _mainWindow?.TryGetPlatformHandle()?.Handle;
-
         // Ensure the handle is valid before proceeding
-        if (handle == IntPtr.Zero || handle is null)
+        if (ActiveMainWindowHandle() == IntPtr.Zero)
         {
             return;
         }
@@ -129,16 +131,10 @@ public class App : Application, IPlatformSpecificService
         FileExplorer.ShowFileProperties(path);
     }
 
-    public async ValueTask Print(string path)
+    public bool PrintWithoutPreview(string path)
     {
-        if (Settings.UIProperties.ShowPrintPreview)
-        {
-            await _mainWindow.ShowPrintWindow(path);
-        }
-        else
-        {
-            ProcessHelper.Print(path);
-        }
+        ProcessHelper.Print(path);
+        return true;
     }
 
     public async Task SetAsWallpaper(string path, int wallpaperStyle)

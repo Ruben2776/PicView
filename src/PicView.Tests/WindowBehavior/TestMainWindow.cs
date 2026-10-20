@@ -8,11 +8,12 @@ using PicView.Core.ViewModels;
 namespace PicView.Tests.WindowBehavior;
 
 /// <summary>
-/// A main window for headless tests, whose platform only supplies <paramref name="adapter"/>.
+/// A main window for headless tests, whose platform only supplies <paramref name="adapter"/>, or everything
+/// <paramref name="provider"/> creates when one is given.
 /// </summary>
-internal sealed class TestMainWindow(IWindowModeAdapter adapter) : MainWindow
+internal sealed class TestMainWindow(IWindowModeAdapter adapter, IWindowProvider? provider = null) : MainWindow
 {
-    protected override IWindowProvider CreateWindowProvider() => new TestWindowProvider(adapter);
+    protected override IWindowProvider CreateWindowProvider() => provider ?? new TestWindowProvider(adapter);
 
     private sealed class TestWindowProvider(IWindowModeAdapter adapter) : IWindowProvider
     {

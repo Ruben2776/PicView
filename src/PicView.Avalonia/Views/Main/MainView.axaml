@@ -931,7 +931,7 @@
 
             <!--  Close  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding ExitCommand}"
+                Command="{CompiledBinding CloseWindowCommand}"
                 Header="{CompiledBinding Translation.Close.Value,
                                          Mode=OneWay}"
                 x:Name="CloseMenuItem">

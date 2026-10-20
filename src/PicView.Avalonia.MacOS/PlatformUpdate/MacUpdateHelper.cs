@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Threading;
+using PicView.Avalonia.StartUp;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.Update;
@@ -65,7 +66,7 @@ public static class MacUpdateHelper
             await Task.Delay(1000);
             
             // Close the application
-            await WindowFunctions.WindowClosingBehavior();
+            await (AppLifecycle.Current?.ShutdownAsync() ?? Task.CompletedTask);
         }
         catch (Exception ex)
         {

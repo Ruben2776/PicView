@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using Avalonia;
 using Microsoft.Win32;
+using PicView.Avalonia.StartUp;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.Update;
@@ -77,7 +78,7 @@ public static class WinUpdateHelper
         };
 
         process.Start();
-        await WindowFunctions.WindowClosingBehavior();
+        await (AppLifecycle.Current?.ShutdownAsync() ?? Task.CompletedTask);
     }
 
     /// <summary>

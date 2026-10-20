@@ -447,7 +447,7 @@ public class NavigationServiceTests : IDisposable
         public void OpenWith(string path) { }
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }
-        public ValueTask Print(string path) { return ValueTask.CompletedTask; }
+        public bool PrintWithoutPreview(string path) => false;
         public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;
         public bool SetAsLockScreen(string path) => false;
         public bool CopyFile(string path) => false;

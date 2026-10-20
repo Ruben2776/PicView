@@ -16,7 +16,7 @@
         BorderThickness="1,0,0,1"
         Classes="hover"
         ClickMode="Release"
-        Command="{CompiledBinding ExitCommand}"
+        Command="{CompiledBinding CloseWindowCommand}"
         CornerRadius="0,0,0,0"
         IsVisible="{CompiledBinding !IsUIShown.Value}"
         ToolTip.Tip="{CompiledBinding Translation.Close.Value,

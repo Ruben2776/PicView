@@ -36,6 +36,28 @@ _Avoid_: Enter action, OK button
 An Input Mode that overrides specific Actions, disallows Actions that need a still image (such as `Crop`), and lets every other Keybind work as usual. Slideshow, Motion Photo and Animated Image are non-blocking.
 _Avoid_: Overlay mode, passive mode
 
+## Windows
+
+**Main Window**:
+A window that shows tabs of images. PicView can have several: one opens at App Start, and more open as a new window or when a tab is dragged out of one. Closing one that is not the last ends only that window; closing the last one is App Shutdown.
+_Avoid_: Viewer window, image window
+
+**Tool Window**:
+A window that works on what its Main Window shows: Print, Effects, Image Information, Resize Image, Batch Resize and Convert. A Main Window has at most one of each, and they close with it.
+_Avoid_: Secondary window, child window, dialog
+
+**App Window**:
+A window that belongs to PicView as a whole rather than to a Main Window: Settings, Keybindings, About and File Associations. There is at most one of each, opened from any Main Window, and it stays open until it is closed or App Shutdown.
+_Avoid_: Secondary window, global window, singleton window
+
+**App Start**:
+What runs once when the PicView process starts, around its first Main Window: loading the settings, the Keymap, file history and favorites. A Main Window opened later never repeats it.
+_Avoid_: Initialization, boot
+
+**App Shutdown**:
+What runs once when the PicView process ends, whether the last Main Window closes, the user quits, or an update is installed. It closes every Main Window, saves what they share and deletes the temp files. The most recently active Main Window is the one whose file and size are remembered.
+_Avoid_: Exit, quit, close
+
 ## Tabs
 
 **Fresh Tab**:

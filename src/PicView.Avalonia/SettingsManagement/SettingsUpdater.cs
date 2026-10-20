@@ -21,35 +21,6 @@ namespace PicView.Avalonia.SettingsManagement;
 
 public static class SettingsUpdater
 {
-    public static void InitializeSettings(MainWindowViewModel vm, bool settingsExists)
-    {
-        ServiceHelper.SetAvaloniaImageLoader(vm.Core);
-        ServiceHelper.SetGalleryLoader();
-        // The first window at app start, before it is given the remembered mode
-        var startsFullscreen = WindowModeSwitcher.Starting(isAppStart: true).Mode is WindowMode.Fullscreen;
-        _ = Task.Run(() =>
-        {
-            vm.TitlebarHeight.Value = startsFullscreen
-                                      || !Settings.UIProperties.ShowInterface
-                ? 0
-                : SizeDefaults.MainTitlebarHeight;
-            vm.BottombarHeight.Value = startsFullscreen
-                                       || !Settings.UIProperties.ShowInterface
-                ? 0
-                : SizeDefaults.BottombarHeight;
-            vm.IsSideBySide.Value = Settings.ImageScaling.ShowImageSideBySide;
-            vm.IsUIShown.Value  = Settings.UIProperties.ShowInterface;
-            vm.IsTopToolbarShown.Value  = Settings.UIProperties.ShowInterface;
-            vm.IsBottomToolbarShown.Value   = Settings.UIProperties.ShowBottomNavBar &&
-                                              Settings.UIProperties.ShowInterface;
-            vm.GlobalSettings.BackgroundChoice.Value = Settings.UIProperties.BgColorChoice;
-#pragma warning disable MA0042
-            LanguageUpdater.UpdateLanguage(vm.Translation, settingsExists);
-#pragma warning restore MA0042
-            vm.WindowTabs.ActiveTab.CurrentValue.SetLoading();
-        });
-    }
-    
     public static async Task ResetSettings()
     {
         var core = Application.Current.DataContext as CoreViewModel;

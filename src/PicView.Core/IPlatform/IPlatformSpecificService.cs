@@ -19,7 +19,11 @@ public interface IPlatformSpecificService
     
     void ShowFileProperties(string path);
     
-    ValueTask Print(string path);
+    /// <summary>
+    /// Prints the file without a preview, when this platform can.
+    /// </summary>
+    /// <returns>False when the platform cannot, so the print preview opens instead.</returns>
+    bool PrintWithoutPreview(string path);
     
     Task SetAsWallpaper(string path, int wallpaperStyle);
     

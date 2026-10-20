@@ -290,8 +290,8 @@ public class MainWindowViewModel : IDisposable
     public ReactiveCommand CloseCommand { get; }
     private async ValueTask Close(Unit unit, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.Close().ConfigureAwait(false); }
 
-    public ReactiveCommand ExitCommand { get; }
-    private async ValueTask Exit(Unit unit, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.Exit().ConfigureAwait(false); }
+    public ReactiveCommand CloseWindowCommand { get; }
+    private async ValueTask CloseWindow(Unit unit, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.CloseWindow().ConfigureAwait(false); }
 
     public ReactiveCommand CenterCommand { get; }
     private async ValueTask Center(Unit unit, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.Center().ConfigureAwait(false); }
@@ -619,7 +619,7 @@ public class MainWindowViewModel : IDisposable
         FullscreenCommand = new ReactiveCommand(Fullscreen);
         SetTopMostCommand = new ReactiveCommand(SetTopMost);
         CloseCommand = new ReactiveCommand(Close);
-        ExitCommand = new ReactiveCommand(Exit);
+        CloseWindowCommand = new ReactiveCommand(CloseWindow);
         CenterCommand = new ReactiveCommand(Center);
         MaximizeCommand = new ReactiveCommand(Maximize);
         MinimizeCommand = new ReactiveCommand(Minimize);
@@ -785,7 +785,7 @@ public class MainWindowViewModel : IDisposable
             FullscreenCommand,
             SetTopMostCommand,
             CloseCommand,
-            ExitCommand,
+            CloseWindowCommand,
             CenterCommand,
             MaximizeCommand,
             MinimizeCommand,

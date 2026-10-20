@@ -1,14 +1,12 @@
 using Avalonia;
 using Avalonia.Markup.Xaml;
 using Avalonia.Controls.ApplicationLifetimes;
-using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.ImageHandling;
-using PicView.Avalonia.Linux.Views;
+using PicView.Avalonia.Linux.WindowImpl;
 using PicView.Avalonia.StartUp;
 using PicView.Core.FileSorting;
 using PicView.Core.IPlatform;
 using PicView.Core.ViewModels;
-using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 
@@ -17,9 +15,7 @@ namespace PicView.Avalonia.Linux;
 
 public class App : Application, IPlatformSpecificService
 {
-    private LinuxMainWindow? _mainWindow;
     private static CoreViewModel? _coreViewModel;
-    private static MainWindowViewModel? _mainWindowViewModel;
 
     public override void Initialize()
     {
@@ -34,7 +30,7 @@ public class App : Application, IPlatformSpecificService
     {
         base.OnFrameworkInitializationCompleted();
 
-        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime)
         {
             return;
         }
@@ -42,15 +38,8 @@ public class App : Application, IPlatformSpecificService
         _coreViewModel = new CoreViewModel(this, GetImageModel.GetImageModelAsync);
         DataContext = _coreViewModel;
 
-        ThemeManager.DetermineTheme(Current, settingsExists);
-
-        _mainWindow = new LinuxMainWindow();
-        _mainWindowViewModel = _mainWindow.DataContext as MainWindowViewModel;
-        _coreViewModel.MainWindows.MainWindows.Add(_mainWindowViewModel);
-        _coreViewModel.MainWindows.ActiveWindow.Value = _mainWindowViewModel;
-        StartUpHelper.StartWithArguments(_coreViewModel, settingsExists, _mainWindow);
-
-        desktop.MainWindow = _mainWindow;
+        _ = new AppLifecycle(_coreViewModel, new LinuxWindowProvider())
+            .StartAsync(settingsExists, Environment.GetCommandLineArgs());
     }
 
     #region Interface Implementations
@@ -103,10 +92,7 @@ public class App : Application, IPlatformSpecificService
         throw new NotImplementedException();
     }
 
-    public async ValueTask Print(string path)
-    {
-        await _mainWindow.ShowPrintWindow(path);   
-    }
+    public bool PrintWithoutPreview(string path) => false;
 
     public async Task SetAsWallpaper(string path, int wallpaperStyle)
     {
