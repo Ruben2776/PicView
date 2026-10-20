@@ -1,13 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Input;
-using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
-using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
@@ -22,45 +19,16 @@ namespace PicView.Avalonia.Services;
 /// <param name="mainWindow">The main window whose secondary windows this opens.</param>
 public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) : IPlatformSpecificUpdate
 {
-    private readonly List<Window> _openWindows = [];
+    private readonly SecondaryWindowOpener _opener = new(mainWindow, provider, OwnerWindow, CurrentCore);
 
     /// <summary>
     /// The secondary window this main window opened most recently that is still open.
     /// </summary>
-    public Window? NewestOpenWindow => _openWindows.Count > 0 ? _openWindows[^1] : null;
-
-    private Window? _aboutWindow;
-    private Window? _batchResizeWindow;
-    private Window? _convertWindow;
-    private Window? _effectsWindow;
-    private Window? _imageInfoWindow;
-    private Window? _keybindingsWindow;
-    private Window? _settingsWindow;
-    private Window? _singleImageResizeWindow;
-    private Window? _printPreviewWindow;
-    private Window? _fileAssociationsWindow;
+    public Window? NewestOpenWindow => _opener.NewestOpenWindow;
 
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
     {
         await provider.HandlePlatformUpdate(updateInfo, tempPath).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    /// Keeps track of a secondary window this main window opened, and gives the main window focus back when it closes.
-    /// </summary>
-    private void Track(Window window)
-    {
-        _openWindows.Add(window);
-        window.Closed += (_, _) =>
-        {
-            _openWindows.Remove(window);
-            mainWindow.Focus();
-            // Escape is still held as this window takes focus, and would go on to close it too
-            if (GenericWindowHelper.ClosedOnEscapePress(window))
-            {
-                mainWindow.KeybindRouter.IgnoreUntilReleased(Key.Escape);
-            }
-        };
     }
 
     public MainWindow CreateMainWindow()
@@ -79,192 +47,88 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
 
     public void ShowAboutWindow()
     {
-        if (Dispatcher.UIThread.CheckAccess())
-        {
-            Set();
-        }
-        else
-        {
-            Dispatcher.UIThread.Post(Set);
-        }
-
-        return;
-
-        void Set()
-        {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-                Application.Current.DataContext is not CoreViewModel core)
-            {
-                return;
-            }
-
-            if (_aboutWindow is null)
-            {
-                core.AboutView ??= new AboutViewModel(this);
-                _aboutWindow = provider.CreateAboutWindow();
-                Track(_aboutWindow);
-                _aboutWindow.DataContext = core;
-                _aboutWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-                if (desktop.MainWindow is not null)
-                {
-                    _aboutWindow.Show(desktop.MainWindow);
-                }
-                else
-                {
-                    _aboutWindow.Show();
-                }
-
-                _aboutWindow.Closing += (_, _) => _aboutWindow = null;
-            }
-            else
-            {
-                if (_aboutWindow.WindowState == WindowState.Minimized)
-                {
-                    WindowFunctions.ShowMinimizedWindow(_aboutWindow);
-                }
-                else
-                {
-                    _aboutWindow.Activate();
-                }
-            }
-
-            UIHelper.CloseMenus(core);
-        }
-    }
-
-    public void ShowImageInfoWindow(MainWindowViewModel vm)
-    {
-        if (_imageInfoWindow is null)
-        {
-            vm.InfoWindow ??= new ImageInfoWindowViewModel(vm);
-            if (vm.InfoWindow.ImageInfoWindowConfig?.WindowProperties is null)
-            {
-                vm.InfoWindow.ImageInfoWindowConfig = new ImageInfoWindowConfig();
-                vm.InfoWindow.ImageInfoWindowConfig.Load();
-            }
-
-            Dispatcher.UIThread.Post(() =>
-            {
-                vm.Exif ??= new ExifViewModel();
-                _imageInfoWindow = provider.CreateImageInfoWindow(vm);
-                Track(_imageInfoWindow);
-                WindowFunctions.InitializeWindowSizeAndPosition(_imageInfoWindow,
-                    vm.InfoWindow.ImageInfoWindowConfig.WindowProperties);
-                _imageInfoWindow.Show();
-                _imageInfoWindow.Closing += async (_, _) =>
-                {
-                    _imageInfoWindow = null;
-                    vm.Exif?.Dispose();
-                    vm.Exif = null;
-                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                    {
-                        desktop.MainWindow?.Focus();
-                    }
-
-                    await vm.InfoWindow.ImageInfoWindowConfig.SaveAsync().ConfigureAwait(false);
-                    vm.InfoWindow.Dispose();
-                    vm.InfoWindow = null;
-                };
-            });
-        }
-        else
-        {
-            Dispatcher.UIThread.Post(() =>
-            {
-                if (_imageInfoWindow.WindowState == WindowState.Minimized)
-                {
-                    WindowFunctions.ShowMinimizedWindow(_imageInfoWindow);
-                }
-                else
-                {
-                    _imageInfoWindow.Activate();
-                }
-            });
-        }
-
-        if (Application.Current.DataContext is CoreViewModel core)
-        {
-            UIHelper.CloseMenus(core);
-        }
-    }
-
-    public void ShowKeybindingsWindow()
-    {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop
-            || Application.Current.DataContext is not CoreViewModel core)
+        if (CurrentCore() is not { } core)
         {
             return;
         }
 
-        if (_keybindingsWindow is null)
+        core.AboutView ??= new AboutViewModel(this);
+        _ = _opener.OpenAsync(SecondaryWindowKind.About, new SecondaryWindowSpec(
+            factory => factory.CreateAboutWindow(), WindowOwner.MainWindow)
         {
-            if (core.Keybindings is null)
+            Configure = window =>
             {
-                core.Keybindings = new KeybindingsViewModel();
-                Keymaps.Load(core.PlatformService);
+                window.DataContext = core;
+                window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             }
+        });
+    }
 
-            if (core.Keybindings.WindowConfig?.WindowProperties is null)
-            {
-                core.Keybindings.WindowConfig = new KeybindingWindowConfig();
-                core.Keybindings.WindowConfig.Load();
-            }
-
-            Dispatcher.UIThread.Invoke(() =>
-            {
-                _keybindingsWindow = provider.CreateKeybindingsWindow(core.Keybindings.WindowConfig);
-                Track(_keybindingsWindow);
-                _keybindingsWindow.DataContext = core;
-
-                Show();
-                _keybindingsWindow.Closing += async (_, _) =>
-                {
-                    if (_keybindingsWindow is IDisposable disposable)
-                    {
-                        disposable.Dispose();
-                    }
-                    await core.Keybindings.WindowConfig.SaveAsync().ConfigureAwait(false);
-                    _keybindingsWindow = null;
-                };
-            });
+    public void ShowImageInfoWindow(MainWindowViewModel vm)
+    {
+        vm.InfoWindow ??= new ImageInfoWindowViewModel(vm);
+        if (vm.InfoWindow.ImageInfoWindowConfig?.WindowProperties is null)
+        {
+            vm.InfoWindow.ImageInfoWindowConfig = new ImageInfoWindowConfig();
+            vm.InfoWindow.ImageInfoWindowConfig.Load();
         }
-        else
+
+        vm.Exif ??= new ExifViewModel();
+        _ = _opener.OpenAsync(SecondaryWindowKind.ImageInfo, new SecondaryWindowSpec(
+            factory => factory.CreateImageInfoWindow(vm))
         {
-            Dispatcher.UIThread.Invoke(() =>
+            Configure = window => WindowFunctions.InitializeWindowSizeAndPosition(window,
+                vm.InfoWindow.ImageInfoWindowConfig.WindowProperties),
+            OnClosing = async _ =>
             {
-                if (_keybindingsWindow.WindowState == WindowState.Minimized)
+                vm.Exif?.Dispose();
+                vm.Exif = null;
+                await vm.InfoWindow.ImageInfoWindowConfig.SaveAsync().ConfigureAwait(false);
+                vm.InfoWindow.Dispose();
+                vm.InfoWindow = null;
+            }
+        });
+    }
+
+    public void ShowKeybindingsWindow()
+    {
+        if (CurrentCore() is not { } core)
+        {
+            return;
+        }
+
+        if (core.Keybindings is null)
+        {
+            core.Keybindings = new KeybindingsViewModel();
+            Keymaps.Load(core.PlatformService);
+        }
+
+        if (core.Keybindings.WindowConfig?.WindowProperties is null)
+        {
+            core.Keybindings.WindowConfig = new KeybindingWindowConfig();
+            core.Keybindings.WindowConfig.Load();
+        }
+
+        _ = _opener.OpenAsync(SecondaryWindowKind.Keybindings, new SecondaryWindowSpec(
+            factory => factory.CreateKeybindingsWindow(core.Keybindings.WindowConfig),
+            WindowOwner.MainWindowExceptMacOS)
+        {
+            Configure = window => window.DataContext = core,
+            OnClosing = async window =>
+            {
+                if (window is IDisposable disposable)
                 {
-                    WindowFunctions.ShowMinimizedWindow(_keybindingsWindow);
+                    disposable.Dispose();
                 }
-                else
-                {
-                    _keybindingsWindow.Activate();
-                }
-            });
-        }
-        
-        UIHelper.CloseMenus(core);
 
-        return;
-
-        void Show()
-        {
-            if (OperatingSystem.IsMacOS())
-            {
-                _keybindingsWindow.Show();
+                await core.Keybindings.WindowConfig.SaveAsync().ConfigureAwait(false);
             }
-            else
-            {
-                _keybindingsWindow.Show(desktop.MainWindow);
-            }
-        }
+        });
     }
 
     public async ValueTask ShowSettingsWindow()
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-            Application.Current.DataContext is not CoreViewModel core)
+        if (CurrentCore() is not { } core)
         {
             return;
         }
@@ -275,7 +139,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             core.SettingsViewModel.Initialize(new ThemeService(), new LanguageService(), new ImageSettingsService());
             core.SettingsViewModel.WindowMargin.Skip(1).Subscribe(_ =>
             {
-                (desktop.MainWindow as MainWindow)?.WindowFitter.Refit();
+                (OwnerWindow() as MainWindow)?.WindowFitter.Refit();
             }, DebugHelper.LogError(nameof(core.SettingsViewModel), nameof(core.SettingsViewModel.WindowMargin)));
         }
 
@@ -285,400 +149,173 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             await core.SettingsViewModel.SettingsWindowConfig.LoadAsync().ConfigureAwait(false);
         }
 
-        if (_settingsWindow is null)
+        var config = core.SettingsViewModel.SettingsWindowConfig;
+        await _opener.OpenAsync(SecondaryWindowKind.Settings, new SecondaryWindowSpec(
+            factory => factory.CreateSettingsWindow(config))
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            Configure = window =>
             {
-                _settingsWindow = provider.CreateSettingsWindow(core.SettingsViewModel.SettingsWindowConfig);
-                Track(_settingsWindow);
-                _settingsWindow.DataContext = core;
-
-                Show();
-                _settingsWindow.Closing += async (_, _) =>
-                {
-                    _settingsWindow.Hide();
-                    core.SettingsViewModel.SettingsWindowConfig.WindowProperties.LastTab = core.SettingsViewModel.GetLastTabId();
-                    desktop.MainWindow?.Focus();   
-                    _settingsWindow = null;
-                    await core.SettingsViewModel.SettingsWindowConfig.SaveAsync().ConfigureAwait(false);
-                    await SaveSettingsAsync().ConfigureAwait(false);
-                };
-            });
-        }
-        else
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
+                window.DataContext = core;
+                WindowFunctions.InitializeWindowSizeAndPosition(window, config.WindowProperties);
+            },
+            OnClosing = async window =>
             {
-                if (_settingsWindow.WindowState == WindowState.Minimized)
-                {
-                    WindowFunctions.ShowMinimizedWindow(_settingsWindow);
-                }
-                else
-                {
-                    _settingsWindow.Activate();
-                }
-            });
-        }
-
-        UIHelper.CloseMenus(core);
-        
-        return;
-
-        void Show()
-        {
-            WindowFunctions.InitializeWindowSizeAndPosition(_settingsWindow,
-                core.SettingsViewModel.SettingsWindowConfig.WindowProperties);
-            _settingsWindow?.Show();
-        }
+                window.Hide();
+                config.WindowProperties.LastTab = core.SettingsViewModel.GetLastTabId();
+                await config.SaveAsync().ConfigureAwait(false);
+                await SaveSettingsAsync().ConfigureAwait(false);
+            }
+        }).ConfigureAwait(false);
     }
 
     public async Task ShowEffectsWindow()
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-            Application.Current.DataContext is not CoreViewModel core)
+        if (CurrentCore() is not { } core)
         {
             return;
         }
 
-        if (_effectsWindow is null)
+        core.Effects ??= new EffectsViewModel(
+            core.MainWindows.ActiveWindow
+                .Select(window => window?.WindowTabs.ActiveTab.AsObservable() ?? Observable.Return<TabViewModel>(null!))
+                .Switch()
+                .Select(tab => tab?.FileInfo.AsObservable() ?? Observable.Return<FileInfo?>(null))
+                .Switch(),
+            ImageEffectsHelper.ApplyEffects);
+        if (core.Effects.WindowConfig is null)
         {
-            core.Effects ??= new EffectsViewModel(
-                core.MainWindows.ActiveWindow
-                    .Select(window => window?.WindowTabs.ActiveTab.AsObservable() ?? Observable.Return<TabViewModel>(null!))
-                    .Switch()
-                    .Select(tab => tab?.FileInfo.AsObservable() ?? Observable.Return<FileInfo?>(null))
-                    .Switch(),
-                ImageEffectsHelper.ApplyEffects);
-            if (core.Effects.WindowConfig is null)
-            {
-                core.Effects.WindowConfig = new EffectsWindowConfig();
-                await core.Effects.WindowConfig.LoadAsync().ConfigureAwait(false);
-            }
+            core.Effects.WindowConfig = new EffectsWindowConfig();
+            await core.Effects.WindowConfig.LoadAsync().ConfigureAwait(false);
+        }
 
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                _effectsWindow = provider.CreateEffectsWindow(core.Effects.WindowConfig);
-                Track(_effectsWindow);
-                _effectsWindow.DataContext = core;
-                WindowFunctions.InitializeWindowPosition(_effectsWindow, core.Effects.WindowConfig.WindowProperties);
-                if (OperatingSystem.IsMacOS())
-                {
-                    _effectsWindow.Show();
-                }
-                else
-                {
-                    _effectsWindow.Show(desktop.MainWindow);
-                }
-                
-                _effectsWindow.Closing += async (_, _) =>
-                {
-                    desktop.MainWindow?.Focus();
-                    _effectsWindow = null;
-                    await core.Effects.WindowConfig.SaveAsync().ConfigureAwait(false);
-                };
-            });
-        }
-        else
+        var config = core.Effects.WindowConfig;
+        await _opener.OpenAsync(SecondaryWindowKind.Effects, new SecondaryWindowSpec(
+            factory => factory.CreateEffectsWindow(config), WindowOwner.MainWindowExceptMacOS)
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            Configure = window =>
             {
-                if (_effectsWindow.WindowState == WindowState.Minimized)
-                {
-                    WindowFunctions.ShowMinimizedWindow(_effectsWindow);
-                }
-                else
-                {
-                    _effectsWindow.Activate();
-                }
-            });
-        }
-        
-        UIHelper.CloseMenus(core);
+                window.DataContext = core;
+                WindowFunctions.InitializeWindowPosition(window, config.WindowProperties);
+            },
+            OnClosing = async _ => await config.SaveAsync().ConfigureAwait(false)
+        }).ConfigureAwait(false);
     }
 
     public void ShowSingleImageResizeWindow()
     {
-        if (Dispatcher.UIThread.CheckAccess())
+        if (CurrentCore() is not { } core)
         {
-            Set();
-        }
-        else
-        {
-            Dispatcher.UIThread.Post(Set);
+            return;
         }
 
-        return;
-
-        void Set()
+        var activeWindow = core.MainWindows.ActiveWindow.CurrentValue;
+        activeWindow.ResizeImageViewModel ??= new ResizeImageViewModel();
+        _ = _opener.OpenAsync(SecondaryWindowKind.SingleImageResize, new SecondaryWindowSpec(
+            factory => factory.CreateSingleImageResizeWindow(activeWindow), WindowOwner.MainWindowExceptMacOS)
         {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-                Application.Current.DataContext is not CoreViewModel core)
-            {
-                return;
-            }
-
-            if (_singleImageResizeWindow is null)
-            {
-                var activeWindow = core.MainWindows.ActiveWindow.CurrentValue;
-                activeWindow.ResizeImageViewModel ??= new ResizeImageViewModel();
-                _singleImageResizeWindow = provider.CreateSingleImageResizeWindow(activeWindow);
-                Track(_singleImageResizeWindow);
-                _singleImageResizeWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
-                if (OperatingSystem.IsMacOS())
-                {
-                    _singleImageResizeWindow.Show();
-                }
-                else
-                {
-                    _singleImageResizeWindow.Show(desktop.MainWindow);
-                }
-                
-                _singleImageResizeWindow.Closing += (_, _) =>
-                {
-                    desktop.MainWindow?.Focus();
-                    _singleImageResizeWindow = null;
-                };
-            }
-            else
-            {
-                if (_singleImageResizeWindow.WindowState == WindowState.Minimized)
-                {
-                    WindowFunctions.ShowMinimizedWindow(_singleImageResizeWindow);
-                }
-                else
-                {
-                    _singleImageResizeWindow.Activate();
-                }
-            }
-            UIHelper.CloseMenus(core);
-        }
+            Configure = window => window.WindowStartupLocation = WindowStartupLocation.CenterOwner
+        });
     }
 
     public async ValueTask ShowBatchResizeWindow()
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (CurrentCore() is not { } core)
         {
             return;
         }
-        
-        if (_batchResizeWindow is null)
+
+        // Reopening while the window is open must keep the config it is editing
+        if (!_opener.IsOpen(SecondaryWindowKind.BatchResize))
         {
             core.BatchResize ??= new BatchResizeViewModel(
-                FilePicker.SelectDirectory, FilePicker.SelectFile, 
+                FilePicker.SelectDirectory, FilePicker.SelectFile,
                 core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.FileInfo?.CurrentValue ?? null,
                 core.PlatformService.GetFiles);
             core.BatchResize.Config = new BatchResizeWindowConfig();
             await core.BatchResize.Config.LoadAsync().ConfigureAwait(false);
-        
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                _batchResizeWindow = provider.CreateBatchResizeWindow(core.BatchResize.Config);
-                Track(_batchResizeWindow);
-                _batchResizeWindow.DataContext = core;
-                Show();
-                _batchResizeWindow.Closing += (_, _) =>
-                {
-                    if (_batchResizeWindow is IDisposable disposable)
-                    {
-                        disposable.Dispose();
-                    }
-                    _ = core.BatchResize.Config.SaveAsync();
-                    _batchResizeWindow = null;
-                };
-            });
         }
-        else
+
+        var config = core.BatchResize.Config;
+        await _opener.OpenAsync(SecondaryWindowKind.BatchResize, new SecondaryWindowSpec(
+            factory => factory.CreateBatchResizeWindow(config))
         {
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            Configure = window => window.DataContext = core,
+            OnClosing = window =>
             {
-                if (_batchResizeWindow.WindowState == WindowState.Minimized)
+                if (window is IDisposable disposable)
                 {
-                    WindowFunctions.ShowMinimizedWindow(_batchResizeWindow);
+                    disposable.Dispose();
                 }
-                else
-                {
-                    _batchResizeWindow.Activate();
-                }
-            });
-        }
-        
-        UIHelper.CloseMenus(core);
-        
-        return;
-        
-        void Show()
-        {
-            _batchResizeWindow?.Show();
-        }
+
+                _ = config.SaveAsync();
+                return Task.CompletedTask;
+            }
+        }).ConfigureAwait(false);
     }
 
     public void ShowConvertWindow()
     {
-        if (Dispatcher.UIThread.CheckAccess())
-        {
-            Set();
-        }
-        else
-        {
-            Dispatcher.UIThread.Post(Set);
-        }
-
-        return;
-
-        void Set()
-        {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-                Application.Current.DataContext is not CoreViewModel core)
-            {
-                return;
-            }
-
-            if (_convertWindow is null)
-            {
-                _convertWindow = provider.CreateConvertWindow();
-                Track(_convertWindow);
-                _convertWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                _convertWindow.DataContext = core.MainWindows.ActiveWindow.CurrentValue;
-                if (OperatingSystem.IsMacOS())
-                {
-                    _convertWindow.Show();
-                }
-                else
-                {
-                    _convertWindow.Show(desktop.MainWindow);
-                }
-                _convertWindow.Closing += (_, _) => _convertWindow = null;
-            }
-            else
-            {
-                if (_convertWindow.WindowState == WindowState.Minimized)
-                {
-                    WindowFunctions.ShowMinimizedWindow(_convertWindow);
-                }
-                else
-                {
-                    _convertWindow.Activate();
-                }
-            }
-            
-            UIHelper.CloseMenus(core);
-        }
-    }
-
-    public void ShowFileAssociationsWindow()
-    {
-        if (Dispatcher.UIThread.CheckAccess())
-        {
-            Set();
-        }
-        else
-        {
-            Dispatcher.UIThread.Post(Set);
-        }
-
-        return;
-
-        void Set()
-        {
-            if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop ||
-                Application.Current.DataContext is not CoreViewModel core)
-            {
-                return;
-            }
-
-            if (core.AssociationsViewModel is null)
-            {
-                core.AssociationsViewModel = new FileAssociationsViewModel();
-                _fileAssociationsWindow = provider.CreateFileAssociationsWindow();
-                if (_fileAssociationsWindow is null)
-                {
-                    return;
-                }
-
-                Track(_fileAssociationsWindow);
-
-                _fileAssociationsWindow.DataContext = core;
-                _fileAssociationsWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                _fileAssociationsWindow.Show(desktop.MainWindow);
-            }
-            else
-            {
-                if (_fileAssociationsWindow.WindowState == WindowState.Minimized)
-                {
-                    WindowFunctions.ShowMinimizedWindow(_fileAssociationsWindow);
-                }
-                else
-                {
-                    _fileAssociationsWindow.Activate();
-                }
-            }
-        }
-    }
-
-    public async Task ShowPrintWindow(string path, MainWindowViewModel vm)
-    {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (CurrentCore() is not { } core)
         {
             return;
         }
 
-        if (_printPreviewWindow is null)
+        _ = _opener.OpenAsync(SecondaryWindowKind.Convert, new SecondaryWindowSpec(
+            factory => factory.CreateConvertWindow(), WindowOwner.MainWindowExceptMacOS)
         {
-            vm.PrintPreview ??= new PrintPreviewViewModel();
-            
-            if (vm.PrintPreview.PrintWindowConfig is null)
+            Configure = window =>
             {
-                vm.PrintPreview.PrintWindowConfig = new PrintWindowConfig();
-                await vm.PrintPreview.PrintWindowConfig.LoadAsync().ConfigureAwait(false);
+                window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                window.DataContext = core.MainWindows.ActiveWindow.CurrentValue;
             }
-
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                _printPreviewWindow = provider.CreatePrintPreviewWindow(vm.PrintPreview.PrintWindowConfig);
-                Track(_printPreviewWindow);
-                _printPreviewWindow.DataContext = vm;
-                if (OperatingSystem.IsMacOS())
-                {
-                    _printPreviewWindow.Show();
-                }
-                else
-                {
-                    _printPreviewWindow.Show(desktop.MainWindow);
-                }
-                
-                _printPreviewWindow.Closing += (_, _) =>
-                {
-                    desktop.MainWindow?.Focus();
-                    _printPreviewWindow = null;
-                };
-            });
-
-            vm.PrintPreview.CancelCommand.Subscribe( _ => 
-            {
-                _printPreviewWindow?.Close();
-            }).AddTo(vm.PrintPreview.Disposables);
-            
-            await provider.InitializePrintAsync(vm, path, _printPreviewWindow).ConfigureAwait(false);
-        }
-        else
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                if (_printPreviewWindow.WindowState == WindowState.Minimized)
-                {
-                    WindowFunctions.ShowMinimizedWindow(_printPreviewWindow);
-                }
-                else
-                {
-                    _printPreviewWindow.Activate();
-                }
-            });
-        }
-
-        if (Application.Current.DataContext is CoreViewModel core)
-        {
-            UIHelper.CloseMenus(core);
-        }
+        });
     }
+
+    public void ShowFileAssociationsWindow()
+    {
+        if (CurrentCore() is not { } core)
+        {
+            return;
+        }
+
+        // The view model outlives the window, so reopening only creates the window again
+        core.AssociationsViewModel ??= new FileAssociationsViewModel();
+        _ = _opener.OpenAsync(SecondaryWindowKind.FileAssociations, new SecondaryWindowSpec(
+            factory => factory.CreateFileAssociationsWindow(), WindowOwner.MainWindow)
+        {
+            Configure = window =>
+            {
+                window.DataContext = core;
+                window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            }
+        });
+    }
+
+    public async Task ShowPrintWindow(string path, MainWindowViewModel vm)
+    {
+        vm.PrintPreview ??= new PrintPreviewViewModel();
+        if (vm.PrintPreview.PrintWindowConfig is null)
+        {
+            vm.PrintPreview.PrintWindowConfig = new PrintWindowConfig();
+            await vm.PrintPreview.PrintWindowConfig.LoadAsync().ConfigureAwait(false);
+        }
+
+        var config = vm.PrintPreview.PrintWindowConfig;
+        await _opener.OpenAsync(SecondaryWindowKind.PrintPreview, new SecondaryWindowSpec(
+            factory => factory.CreatePrintPreviewWindow(config), WindowOwner.MainWindowExceptMacOS)
+        {
+            Configure = window => window.DataContext = vm,
+            OnOpened = async window =>
+            {
+                vm.PrintPreview.CancelCommand.Subscribe(_ => window.Close())
+                    .AddTo(vm.PrintPreview.Disposables);
+                await provider.InitializePrintAsync(vm, path, window).ConfigureAwait(false);
+            }
+        }).ConfigureAwait(false);
+    }
+
+    private static Window? OwnerWindow() =>
+        (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+
+    private static CoreViewModel? CurrentCore() => Application.Current?.DataContext as CoreViewModel;
 }
