@@ -22,19 +22,14 @@ public class MacPrintEngine : AbstractPrintEngine
             avaloniaBmp = PrintCore.ToGrayScale(avaloniaBmp, PrintDpi);
         }
 
-        // 2. Determine paper size (mm) using shared helper
-        var paperInfo = ResolvePaper(settings);
-
-        // 3. Compute final print layout (same logic as preview)
-        var layout = PrintCore.ComputeLayout(
-            paperInfo.WidthMm,
-            paperInfo.HeightMm,
+        // 2. Compute final print layout (same logic as preview)
+        var layout = PrintLayout.Compute(
             settings,
             avaloniaBmp.PixelSize.Width,
             avaloniaBmp.PixelSize.Height,
             PrintDpi);
 
-        // 4. Render the final image at print DPI
+        // 3. Render the final image at print DPI
         var pageSize = new PixelSize(
             (int)Math.Round(layout.PageWidthPx),
             (int)Math.Round(layout.PageHeightPx));
@@ -49,15 +44,10 @@ public class MacPrintEngine : AbstractPrintEngine
             ctx.FillRectangle(Brushes.White,
                 new Rect(0, 0, layout.PageWidthPx, layout.PageHeightPx));
 
-            var dest = new Rect(layout.DrawX, layout.DrawY, layout.DrawWidth, layout.DrawHeight);
-
-            ctx.DrawImage(
-                avaloniaBmp,
-                new Rect(0, 0, avaloniaBmp.PixelSize.Width, avaloniaBmp.PixelSize.Height),
-                dest);
+            ctx.DrawImage(avaloniaBmp, layout.Source.ToRect(), layout.Destination.ToRect());
         });
 
-        // 6. Handle PDF exporting or printing
+        // 4. Handle PDF exporting or printing
         var printerName = settings.PrinterName.Value ?? "";
         var saveAsPdf = TranslationManager.Translation.SaveAsPdf;
 
@@ -77,47 +67,6 @@ public class MacPrintEngine : AbstractPrintEngine
                 break;
             }
         }
-    }
-
-    public override PaperInfo ResolvePaper(PrintSettings settings)
-    {
-        var requestedName = settings.PaperSize.Value ?? "A4";
-
-        // Convert from CUPS naming patterns to PaperSizeHelper known names
-        // Examples:
-        //   "iso_a4_210x297mm"  → "A4"
-        //   "A4.Borderless"     → "A4"
-        //   "na_letter_8.5x11in"→ "Letter"
-
-        var normalized = NormalizePaperName(requestedName);
-
-        var (w, h) = PaperSizeHelper.GetMmSize(normalized);
-
-        var landscape = settings.Orientation.Value == (int)Orientations.Landscape;
-
-        return landscape
-            ? new PaperInfo(normalized, h, w)
-            : new PaperInfo(normalized, w, h);
-    }
-
-    private static string NormalizePaperName(string cupsName)
-    {
-        cupsName = cupsName.ToLowerInvariant();
-
-        return cupsName switch
-        {
-            _ when cupsName.Contains("a4") => "A4",
-            _ when cupsName.Contains("a3") => "A3",
-            _ when cupsName.Contains("a5") => "A5",
-            _ when cupsName.Contains("letter") => "Letter",
-            _ when cupsName.Contains("legal") => "Legal",
-            _ when cupsName.Contains("tabloid") => "Tabloid",
-            _ when cupsName.Contains("4x6") => "4x6",
-            _ when cupsName.Contains("5x7") => "5x7",
-            _ when cupsName.Contains("8x10") => "8x10",
-            // unknown → fallback
-            _ => cupsName
-        };
     }
 
     public static IEnumerable<string> GetPaperSizes(string printerName)

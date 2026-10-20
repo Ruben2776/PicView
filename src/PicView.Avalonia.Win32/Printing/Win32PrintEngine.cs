@@ -15,17 +15,6 @@ namespace PicView.Avalonia.Win32.Printing;
 
 public class Win32PrintEngine : AbstractPrintEngine
 {
-    public override PaperInfo ResolvePaper(PrintSettings settings)
-    {
-        var landscape = settings.Orientation.Value == (int)Orientations.Landscape;
-        var requestedName = settings.PaperSize.Value ?? "A4";
-        var (w, h) = PaperSizeHelper.GetMmSize(requestedName);
-
-        return landscape
-            ? new PaperInfo(requestedName, h, w)
-            : new PaperInfo(requestedName, w, h);
-    }
-
     protected override async ValueTask RunPrintJob(PrintSettings settings, Bitmap avaloniaBmp)
     {
         ArgumentNullException.ThrowIfNull(avaloniaBmp);
@@ -36,15 +25,11 @@ public class Win32PrintEngine : AbstractPrintEngine
             avaloniaBmp = PrintCore.ToGrayScale(avaloniaBmp, PrintDpi);
         }
 
-        // 2. Resolve paper size
-        var paperInfo = ResolvePaper(settings);
+        // 2. Compute layout
+        var layout = PrintLayout.Compute(
+            settings, avaloniaBmp.PixelSize.Width, avaloniaBmp.PixelSize.Height, PrintDpi);
 
-        // 3. Compute layout
-        var layout = PrintCore.ComputeLayout(
-            paperInfo.WidthMm, paperInfo.HeightMm, settings,
-            avaloniaBmp.PixelSize.Width, avaloniaBmp.PixelSize.Height, PrintDpi);
-
-        // 4. Render to RenderTargetBitmap
+        // 3. Render to RenderTargetBitmap
         var pageSize = new PixelSize((int)Math.Round(layout.PageWidthPx), (int)Math.Round(layout.PageHeightPx));
         var rtb = new RenderTargetBitmap(pageSize);
 
@@ -52,11 +37,10 @@ public class Win32PrintEngine : AbstractPrintEngine
         {
             using var ctx = rtb.CreateDrawingContext();
             ctx.FillRectangle(Brushes.White, new Rect(0, 0, layout.PageWidthPx, layout.PageHeightPx));
-            var dest = new Rect(layout.DrawX, layout.DrawY, layout.DrawWidth, layout.DrawHeight);
-            ctx.DrawImage(avaloniaBmp, new Rect(0, 0, avaloniaBmp.PixelSize.Width, avaloniaBmp.PixelSize.Height), dest);
+            ctx.DrawImage(avaloniaBmp, layout.Source.ToRect(), layout.Destination.ToRect());
         });
 
-        // 5. Handle Printing or PDF Export
+        // 4. Handle Printing or PDF Export
         var printerName = settings.PrinterName.Value ?? "";
         if (printerName == TranslationManager.Translation.SaveAsPdf)
         {

@@ -9,54 +9,7 @@ namespace PicView.Avalonia.Printing;
 
 public static class PrintCore
 {
-    private const double MmPerInch = 25.4;
-
-    public static PrintLayout ComputeLayout(
-        double pageWidthMm,
-        double pageHeightMm,
-        PrintSettings settings,
-        double imageWidthPx,
-        double imageHeightPx,
-        double dpi)
-    {
-        var mmToPx = dpi / MmPerInch;
-        var pageWpx = pageWidthMm * mmToPx;
-        var pageHpx = pageHeightMm * mmToPx;
-
-        // Margins (mm -> px)
-        var ml = settings.MarginLeft.Value * mmToPx;
-        var mr = settings.MarginRight.Value * mmToPx;
-        var mt = settings.MarginTop.Value * mmToPx;
-        var mb = settings.MarginBottom.Value * mmToPx;
-
-        var contentW = pageWpx - (ml + mr);
-        var contentH = pageHpx - (mt + mb);
-
-        // Scale
-        var sX = contentW / imageWidthPx;
-        var sY = contentH / imageHeightPx;
-        var s = settings.ScaleMode.Value switch
-        {
-            (int)ScaleModes.Fill => Math.Max(sX, sY),
-            (int)ScaleModes.Stretch => 1.0,
-            _ => Math.Min(sX, sY) // Fit / default
-        };
-
-        var drawW = settings.ScaleMode.Value == (int)ScaleModes.Stretch
-            ? contentW
-            : imageWidthPx * s;
-        var drawH = settings.ScaleMode.Value == (int)ScaleModes.Stretch
-            ? contentH
-            : imageHeightPx * s;
-
-        var dx = ml + (contentW - drawW) / 2;
-        var dy = mt + (contentH - drawH) / 2;
-
-        return new PrintLayout(
-            dx, dy, drawW, drawH,
-            pageWpx, pageHpx,
-            ml, mt, contentW, contentH);
-    }
+    public static Rect ToRect(this PrintRect rect) => new(rect.X, rect.Y, rect.Width, rect.Height);
 
     public static Bitmap ToGrayScale(Bitmap src, float dpi)
     {
@@ -117,31 +70,4 @@ public static class PrintCore
             }
         }
     }
-}
-
-public record PaperInfo(string Name, double WidthMm, double HeightMm);
-
-[StructLayout(LayoutKind.Sequential)]
-public readonly struct PrintLayout(
-    double dx,
-    double dy,
-    double dw,
-    double dh,
-    double pw,
-    double ph,
-    double cx,
-    double cy,
-    double cw,
-    double ch)
-{
-    public readonly double DrawX = dx;
-    public readonly double DrawY = dy;
-    public readonly double DrawWidth = dw;
-    public readonly double DrawHeight = dh;
-    public readonly double PageWidthPx = pw;
-    public readonly double PageHeightPx = ph;
-    public readonly double ContentX = cx;
-    public readonly double ContentY = cy;
-    public readonly double ContentWidth = cw;
-    public readonly double ContentHeight = ch;
 }

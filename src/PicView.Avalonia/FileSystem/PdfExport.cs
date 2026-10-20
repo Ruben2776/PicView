@@ -39,16 +39,12 @@ public static class PdfExport
         var printSettings = preview.PrintSettings.Value ?? new PrintSettings();
 
         var settings = printWindowConfig.WindowProperties;
-        var requestedName = settings.PaperSize ?? "A4";
-        var (w, h) = PaperSizeHelper.GetMmSize(requestedName);
-        var landscape = settings.Orientation is (int)Orientations.Landscape;
-        var paperInfo = landscape ? new PaperInfo(requestedName, h, w)
-            : new PaperInfo(requestedName, w, h);
-        
-        var layout = PrintCore.ComputeLayout(
-            paperInfo.WidthMm, paperInfo.HeightMm, printSettings,
-            avaloniaBmp.PixelSize.Width, avaloniaBmp.PixelSize.Height, 300f);
-            
+        var paper = PaperSizeHelper.Resolve(settings?.PaperSize, settings?.Orientation ?? (int)Orientations.Portrait);
+
+        var layout = PrintLayout.Compute(
+            paper, printSettings,
+            avaloniaBmp.PixelSize.Width, avaloniaBmp.PixelSize.Height, PrintLayout.PrintDpi);
+
         var pageSize = new PixelSize((int)Math.Round(layout.PageWidthPx), (int)Math.Round(layout.PageHeightPx));
         var suggestedFileName = vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.Name + ".pdf";
         var rtb = new RenderTargetBitmap(pageSize);
@@ -56,8 +52,7 @@ public static class PdfExport
         {
             using var ctx = rtb.CreateDrawingContext();
             ctx.FillRectangle(Brushes.White, new Rect(0, 0, layout.PageWidthPx, layout.PageHeightPx));
-            var dest = new Rect(layout.DrawX, layout.DrawY, layout.DrawWidth, layout.DrawHeight);
-            ctx.DrawImage(avaloniaBmp, new Rect(0, 0, avaloniaBmp.PixelSize.Width, avaloniaBmp.PixelSize.Height), dest);
+            ctx.DrawImage(avaloniaBmp, layout.Source.ToRect(), layout.Destination.ToRect());
         });
         await SavePdfWithFilePicker(suggestedFileName, rtb).ConfigureAwait(false);
     }

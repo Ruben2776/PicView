@@ -11,9 +11,7 @@ namespace PicView.Avalonia.Printing;
 public abstract class AbstractPrintEngine : IPrintEngine
 {
     protected const float PreviewDpi = 96f;
-    protected const float PrintDpi = 300f;
-
-    public abstract PaperInfo ResolvePaper(PrintSettings settings);
+    protected const float PrintDpi = PrintLayout.PrintDpi;
 
     public virtual async ValueTask UpdatePreviewAsync(TabViewModel tab, PrintPreviewViewModel previewVm)
     {
@@ -42,15 +40,8 @@ public abstract class AbstractPrintEngine : IPrintEngine
                 previewVm.GrayCache = null;
             }
 
-            var paperInfo = ResolvePaper(settings);
-            if (paperInfo is null)
-            {
-                return;
-            }
-
-            // Compute layout once
-            var layout = PrintCore.ComputeLayout(
-                paperInfo.WidthMm, paperInfo.HeightMm, settings,
+            var layout = PrintLayout.Compute(
+                settings,
                 avaloniaBmp.PixelSize.Width,
                 avaloniaBmp.PixelSize.Height,
                 PreviewDpi);
@@ -65,18 +56,13 @@ public abstract class AbstractPrintEngine : IPrintEngine
                 ctx.DrawRectangle(null, new Pen(Brushes.LightGray),
                     new Rect(0.5, 0.5, layout.PageWidthPx - 1, layout.PageHeightPx - 1));
 
-                var destRect = new Rect(layout.DrawX, layout.DrawY, layout.DrawWidth, layout.DrawHeight);
-
                 var dashPen = new Pen(Brushes.Gray, 2)
                 {
                     DashStyle = new DashStyle([4, 2], 0)
                 };
-                ctx.DrawRectangle(null, dashPen,
-                    new Rect(layout.ContentX, layout.ContentY, layout.ContentWidth, layout.ContentHeight));
+                ctx.DrawRectangle(null, dashPen, layout.Content.ToRect());
 
-                ctx.DrawImage(avaloniaBmp,
-                    new Rect(0, 0, avaloniaBmp.PixelSize.Width, avaloniaBmp.PixelSize.Height),
-                    destRect);
+                ctx.DrawImage(avaloniaBmp, layout.Source.ToRect(), layout.Destination.ToRect());
             });
 
             previewVm.PreviewImage.Value = rtb;
