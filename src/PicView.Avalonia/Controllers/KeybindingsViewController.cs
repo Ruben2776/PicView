@@ -51,7 +51,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                 continue;
             }
 
-            foreach (var (box, functionName) in category.Entries)
+            foreach (var (box, functionName, _) in category.Entries)
             {
                 if (string.Equals(functionName, action, StringComparison.Ordinal))
                 {
@@ -181,7 +181,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
         foreach (var category in _categories)
         {
-            foreach (var (box, action) in category.Entries)
+            foreach (var (box, action, _) in category.Entries)
             {
                 NotifyCollectionChangedEventHandler handler = (_, _) => OnBoxEdited(box, action);
                 _collectionChangedHandlers[box] = handler;
@@ -245,7 +245,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         {
             foreach (var category in _categories)
             {
-                foreach (var (box, action) in category.Entries)
+                foreach (var (box, action, _) in category.Entries)
                 {
                     var keybinds = _draft.Current.KeybindsFor(action);
 
@@ -369,7 +369,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
     private void PopulateFavoritesCategory(LanguageModel translation, string? pressKeyText)
     {
         view.FavoritesItems.Items.Clear();
-        var boxEntries = new List<(KeybindBox Box, string FunctionName)>();
+        var boxEntries = new List<(KeybindBox Box, string FunctionName, string DisplayName)>();
         foreach (var entry in FavoritesManager.AllEntries)
         {
             if (entry.Slot is not { } slot)
@@ -379,9 +379,10 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
 
             var action = KeybindCategoryDefinition.FavoriteAction(slot);
             var folderName = Path.GetFileName(Path.TrimEndingDirectorySeparator(entry.FilePath));
+            var displayName = string.IsNullOrEmpty(folderName) ? entry.FilePath : folderName;
             var keybindBox = new KeybindBox
             {
-                ActionName = string.IsNullOrEmpty(folderName) ? entry.FilePath : folderName,
+                ActionName = displayName,
                 PlaceholderText = pressKeyText,
                 MaxTags = 1
             };
@@ -393,7 +394,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             }
 
             view.FavoritesItems.Items.Add(keybindBox);
-            boxEntries.Add((keybindBox, action));
+            boxEntries.Add((keybindBox, action, displayName));
         }
 
         var hasFavorites = boxEntries.Count > 0;
@@ -429,7 +430,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         string? pressKeyText)
     {
         container.Items.Clear();
-        var boxEntries = new List<(KeybindBox Box, string FunctionName)>(entries.Count);
+        var boxEntries = new List<(KeybindBox Box, string FunctionName, string DisplayName)>(entries.Count);
 
         foreach (var (functionName, displayName) in entries)
         {
@@ -446,7 +447,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
             }
 
             container.Items.Add(keybindBox);
-            boxEntries.Add((keybindBox, functionName));
+            boxEntries.Add((keybindBox, functionName, displayName));
         }
 
         _categories.Add(new KeybindCategoryGroup(header, container, boxEntries));
@@ -460,7 +461,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         {
             var anyCategoryMatch = false;
 
-            foreach (var (box, functionName) in category.Entries)
+            foreach (var (box, functionName, displayName) in category.Entries)
             {
                 if (!hasFilter)
                 {
@@ -469,7 +470,7 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
                     continue;
                 }
 
-                var matches = MatchesFilter(box, functionName, filterText);
+                var matches = KeybindFilter.Matches(filterText, functionName, displayName, KeybindTexts(functionName));
                 box.IsVisible = matches;
                 if (matches)
                 {
@@ -482,37 +483,11 @@ public class KeybindingsViewController(KeybindingsView view) : IDisposable
         }
     }
 
-    private static bool MatchesFilter(KeybindBox box, string functionName, string filterText)
-    {
-        // Match against display name
-        if (box.ActionName is not null &&
-            box.ActionName.Contains(filterText, StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        // Match against function name
-        if (functionName.Contains(filterText, StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        // Match against keybind tag strings
-        if (box.Tags is null)
-        {
-            return false;
-        }
-
-        for (var i = 0; i < box.Tags.Count; i++)
-        {
-            if (box.Tags[i].Contains(filterText, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    /// <summary>
+    /// The text of each Keybind of an action, as the draft holds it, for the filter to match against.
+    /// </summary>
+    private IEnumerable<string> KeybindTexts(string functionName) =>
+        _draft.Current.KeybindsFor(functionName).Select(keybind => keybind.GetFormattedWithIcon());
     
     public void Dispose()
     {

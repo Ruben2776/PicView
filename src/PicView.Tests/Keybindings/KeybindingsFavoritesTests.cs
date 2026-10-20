@@ -123,8 +123,8 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.NotNull(controller.FavoritesCategory);
         Assert.Equal(TranslationManager.Translation.Favorites, controller.FavoritesCategory!.Header.Text);
         Assert.Equal(2, controller.FavoritesCategory.Entries.Count);
-        var (boxA, ownerA) = controller.FavoritesCategory.Entries[0];
-        var (boxB, ownerB) = controller.FavoritesCategory.Entries[1];
+        var (boxA, ownerA, _) = controller.FavoritesCategory.Entries[0];
+        var (boxB, ownerB, _) = controller.FavoritesCategory.Entries[1];
 
         Assert.Equal("VacationPhotos", boxA.ActionName);
         Assert.Equal("OpenFavorite1", ownerA);
@@ -155,8 +155,8 @@ public class KeybindingsFavoritesTests : IDisposable
         RunWithDispatcher(FavoritesManager.AddAsync(CreateFolder("Beta")));
         Keymaps.Replace(Keymap.Empty.Assign(new Keybind(Key.F8), "OpenFavorite2"));
         using var controller = CreateController(out _);
-        var (boxA, _) = controller.FavoritesCategory!.Entries[0];
-        var (boxB, _) = controller.FavoritesCategory.Entries[1];
+        var (boxA, _, _) = controller.FavoritesCategory!.Entries[0];
+        var (boxB, _, _) = controller.FavoritesCategory.Entries[1];
 
         boxA.Keybinds.Add(new Keybind(Key.F8));
         RunWithDispatcher(controller.SaveKeybindings());
@@ -273,7 +273,7 @@ public class KeybindingsFavoritesTests : IDisposable
         RunWithDispatcher(FavoritesManager.AddAsync(CreateFolder("Gamma")));
         Keymaps.Replace(Keymap.FromJson(ViewTestKeybindings, "{}").Assign(new Keybind(Key.F7), "OpenFavorite1"));
         using var controller = CreateController(out _);
-        var (favoriteBox, _) = controller.FavoritesCategory!.Entries[0];
+        var (favoriteBox, _, _) = controller.FavoritesCategory!.Entries[0];
 
         controller.ActionBox("Prev")!.Keybinds.Add(new Keybind(Key.F7));
         RunWithDispatcher(controller.SaveKeybindings());
