@@ -258,18 +258,11 @@ public static class WindowFunctions
     #region Window Size and Position
 
     /// <summary>
-    /// Keeps an AutoFit window centered while it changes size: on the screen with KeepCentered, else on where its
-    /// center was.
+    /// Keeps an AutoFit window on where its center was while it changes size.
     /// </summary>
     /// <returns>Whether the window was kept centered.</returns>
     public static bool KeepCenteredWhileResizing(Window window, AvaloniaPropertyChangedEventArgs<Size> size)
     {
-        if (Settings.WindowProperties.KeepCentered)
-        {
-            FastCenterWindow(window);
-            return true;
-        }
-
         var oldSize = size.OldValue.Value;
         var newSize = size.NewValue.Value;
         if (!size.OldValue.HasValue || !size.NewValue.HasValue ||

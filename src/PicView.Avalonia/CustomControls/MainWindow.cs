@@ -579,11 +579,25 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
             return;
         }
 
-        if (sender is MainWindow { WindowState: WindowState.FullScreen })
+        if (WindowState is WindowState.FullScreen)
         {
             // Don't reset when leaving fullscreen
             return;
         }
+
+        // macOS reports dragging the window to another monitor as a resize by the user, which must not turn AutoFit
+        // off: the window is fitted to the new monitor instead
+        if (ScreenHelper.IsOnAnotherScreen(this))
+        {
+            ScreenHelper.UpdateScreenSize(this);
+            if (WindowModeState.AutoFit && Settings.WindowProperties.KeepCentered)
+            {
+                WindowFunctions.FastCenterWindow(this);
+            }
+            WindowFitter.Refit();
+            return;
+        }
+
         // Resizing by hand turns AutoFit off for this window only
         _ = WindowModeSwitcher.ResizedByHand();
         WindowFitter.Refit();

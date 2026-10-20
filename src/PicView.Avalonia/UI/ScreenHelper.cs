@@ -67,4 +67,16 @@ public static class ScreenHelper
             };
         }
     }
+
+    /// <summary>
+    /// Whether <paramref name="window"/> is on another screen than <see cref="ScreenSize"/> describes, as after it was
+    /// dragged to another monitor.
+    /// </summary>
+    public static bool IsOnAnotherScreen(Window window)
+    {
+        var screen = window.Screens?.ScreenFromWindow(window);
+        var current = ScreenSize;
+        return screen is not null && (screen.Bounds.X != current.X || screen.Bounds.Y != current.Y ||
+                                      !screen.Scaling.Equals(current.Scaling));
+    }
 }
