@@ -76,7 +76,11 @@
             <customControls:AutoScrollViewer DockPanel.Dock="Top" Margin="0,0,0,65">
                 <StackPanel Margin="15,5">
 
-                    <TextBlock Classes="txt bold keyBindHeader" Text="{CompiledBinding Translation.Mouse.Value, Mode=OneWay}" />
+                    <TextBlock
+                        Classes="txt bold keyBindHeader"
+                        IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}"
+                        Text="{CompiledBinding Translation.Mouse.Value,
+                                               Mode=OneWay}" />
 
                     <!--  Gallery Mouse wheel  -->
                     <DockPanel IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}" Margin="10,0,10,50">
