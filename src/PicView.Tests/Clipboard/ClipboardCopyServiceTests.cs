@@ -40,6 +40,7 @@ public class ClipboardCopyServiceTests
         public string DefaultJsonKeyMap() => "{}";
         public void InitiateFileAssociationService() { }
         public Task<bool> DeleteFile(string path, bool recycle) => Task.FromResult(false);
+        public bool CanMoveToRecycleBin(string path) => true;
         public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
         {
             pixelWidth = 0;

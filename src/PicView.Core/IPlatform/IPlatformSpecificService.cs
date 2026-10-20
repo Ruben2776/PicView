@@ -32,6 +32,12 @@ public interface IPlatformSpecificService
     void InitiateFileAssociationService();
     
     Task<bool> DeleteFile(string path, bool recycle);
+
+    /// <summary>
+    /// Whether <see cref="DeleteFile"/> can move the file to the recycle bin. Drives without one, such as network
+    /// shares, get it deleted permanently instead.
+    /// </summary>
+    bool CanMoveToRecycleBin(string path);
     
     Task<bool> CutFile(string path);
 

@@ -31,6 +31,12 @@ public static class FileManager
 
         try
         {
+            // Without a recycle bin the file would be gone for good, so treat it as a permanent deletion
+            if (recycle && !platformService.CanMoveToRecycleBin(path))
+            {
+                recycle = false;
+            }
+
             if (recycle && Settings.UIProperties.ShowRecycleConfirmation ||
                 !recycle && Settings.UIProperties.ShowPermanentDeletionConfirmation)
             {
