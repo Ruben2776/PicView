@@ -138,6 +138,7 @@ public class LanguageModel
     public string? ErrorLoadingImage { get; set; }
     public string? Esc { get; set; }
     public string? EscCloseTooltip { get; set; }
+    public string? EscLeavesFullscreen { get; set; }
     public string? ExifVersion { get; set; }
     public string? ExpandedGalleryItemSize { get; set; }
     public string? ExposureBias { get; set; }

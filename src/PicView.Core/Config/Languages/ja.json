@@ -125,6 +125,7 @@
   "Enter": "Enter",
   "Esc": "Esc",
   "EscCloseTooltip": "現在開いているウィンドウ/メニューを閉じます",
+  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
   "ExifVersion": "Exif バージョン",
   "ExpandedGalleryItemSize": "サムネイルのサイズ",
   "ExposureBias": "露出バイアス",

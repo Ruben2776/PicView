@@ -90,6 +90,11 @@ public class WindowProperties
     public bool Fullscreen { get; set; } = false;
 
     /// <summary>
+    /// Determines whether pressing Escape in a fullscreen window leaves fullscreen instead of closing the window.
+    /// </summary>
+    public bool EscLeavesFullscreen { get; set; } = true;
+
+    /// <summary>
     /// Determines whether the window remains centered on the screen.
     /// </summary>
     /// <remarks>

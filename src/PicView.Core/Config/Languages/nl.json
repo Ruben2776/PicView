@@ -125,6 +125,7 @@
   "Enter": "Enter",
   "Esc": "Esc",
   "EscCloseTooltip": "Sluit momenteel geopend venster/menu",
+  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
   "ExifVersion": "Exif versie",
   "ExpandedGalleryItemSize": "Grootte van thumbnail",
   "ExposureBias": "Belichtingscompensatie",

@@ -40,6 +40,7 @@ public class SettingsSearchData
     public string WindowCenteredSearchTags { get; }
     public string WindowSameWindowSearchTags { get; }
     public string WindowEscSearchTags { get; }
+    public string WindowEscFullscreenSearchTags { get; }
     public string ZoomResetSearchTags { get; }
     public string ZoomOutSearchTags { get; }
     public string ZoomAnimationSearchTags { get; }
@@ -390,6 +391,17 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append("Escape Exit");
         WindowEscSearchTags = sb.ToString();
+
+        sb.Clear();
+
+        sb.Append(TranslationManager.Translation.WindowManagement);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.EscLeavesFullscreen);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.Fullscreen);
+        sb.Append(space);
+        sb.Append("Escape Exit Restore");
+        WindowEscFullscreenSearchTags = sb.ToString();
         
         sb.Clear();
 

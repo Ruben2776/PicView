@@ -105,6 +105,7 @@ public class TranslationViewModel
         Edit.Value = t.Edit;
         Effects.Value = t.Effects;
         EffectsTooltip.Value = t.EffectsTooltip;
+        EscLeavesFullscreen.Value = t.EscLeavesFullscreen;
         ExifVersion.Value = t.ExifVersion;
         ExpandedGalleryItemSize.Value = t.ExpandedGalleryItemSize;
         ExposureBias.Value = t.ExposureBias;
@@ -509,6 +510,7 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> Edit { get; } = new();
     public BindableReactiveProperty<string?> Effects { get; } = new();
     public BindableReactiveProperty<string?> EffectsTooltip { get; } = new();
+    public BindableReactiveProperty<string?> EscLeavesFullscreen { get; } = new();
     public BindableReactiveProperty<string?> ExifVersion { get; } = new();
     public BindableReactiveProperty<string?> ExpandedGalleryItemSize { get; } = new();
     public BindableReactiveProperty<string?> ExposureBias { get; } = new();

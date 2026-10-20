@@ -125,6 +125,7 @@
   "Enter": "Enter",
   "Esc": "Esc",
   "EscCloseTooltip": "Đóng Cửa sổ/menu Đang Mở",
+  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
   "ExifVersion": "Phiên bản Exif",
   "ExpandedGalleryItemSize": "Cỡ Hình ảnh thu nhỏ",
   "ExposureBias": "Bù trừ Phơi sáng",

@@ -125,6 +125,7 @@
   "Enter": "Enter",
   "Esc": "Esc",
   "EscCloseTooltip": "Zamyka obecnie otwarte okno/menu",
+  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
   "ExifVersion": "Wersja Exif",
   "ExpandedGalleryItemSize": "Rozszerzone elementy galerii",
   "ExposureBias": "Kompensacja ekspozycji",

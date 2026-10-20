@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 using PicView.Avalonia.SettingsManagement;
+using PicView.Core.Config;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
@@ -29,6 +30,28 @@ public class LanguageAndSettingsUnitTest
         Assert.NotNull(Settings);
         var testSave = await SaveSettingsAsync();
         Assert.True(testSave);
+    }
+
+    [Fact]
+    public void EscLeavesFullscreen_TurnedOff_StaysOffAfterSavingAndLoading()
+    {
+        var settings = GetDefaults();
+        settings.WindowProperties!.EscLeavesFullscreen = false;
+
+        var json = JsonSerializer.Serialize(settings, SettingsGenerationContext.Default.AppSettings);
+        var loaded = JsonSerializer.Deserialize(json, SettingsGenerationContext.Default.AppSettings);
+
+        Assert.False(loaded!.WindowProperties!.EscLeavesFullscreen);
+    }
+
+    [Fact]
+    public void EscLeavesFullscreen_MissingFromSavedSettings_IsOn()
+    {
+        const string json = """{ "WindowProperties": { "Fullscreen": true } }""";
+
+        var loaded = JsonSerializer.Deserialize(json, SettingsGenerationContext.Default.AppSettings);
+
+        Assert.True(EnsureSettings(loaded!).WindowProperties!.EscLeavesFullscreen);
     }
 
     [Fact]

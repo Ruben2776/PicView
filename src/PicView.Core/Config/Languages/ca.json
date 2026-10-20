@@ -125,6 +125,7 @@
   "Enter": "Retorn",
   "Esc": "Esc",
   "EscCloseTooltip": "Tanca la finestra/menú oberta actualment",
+  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
   "ExifVersion": "Versió d'Exif",
   "ExpandedGalleryItemSize": "Mida de les miniaturas",
   "ExposureBias": "Biaix d'exposició",

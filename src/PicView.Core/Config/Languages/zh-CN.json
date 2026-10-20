@@ -125,6 +125,7 @@
   "Enter": "Enter",
   "Esc": "Esc",
   "EscCloseTooltip": "关闭当前打开的窗口和菜单",
+  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
   "ExifVersion": "Exif 版本",
   "ExpandedGalleryItemSize": "展开的图库项目",
   "ExposureBias": "曝光补偿",

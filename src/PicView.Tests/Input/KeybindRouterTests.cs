@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using PicView.Avalonia.Input;
 using PicView.Core.IPlatform;
+using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using MouseButton = PicView.Avalonia.Input.MouseButton;
 
@@ -17,6 +18,7 @@ public class KeybindRouterTests
 
     private readonly MainWindowViewModel _vm;
     private readonly List<string> _calls;
+    private readonly List<string> _windowModeCalls;
     private InputModeState _state = Normal;
     private Keymap _keymap = Keymap.Empty.Assign(new Keybind(Key.Right), "Next");
     private Window? _secondaryWindow;
@@ -28,6 +30,9 @@ public class KeybindRouterTests
         var mapper = DispatchProxy.Create<IFunctionsMapper, RecordingMapper>();
         _calls = ((RecordingMapper)(object)mapper).Calls;
         _vm.Mapper = mapper;
+        var switcher = DispatchProxy.Create<IWindowModeSwitcher, RecordingMapper>();
+        _windowModeCalls = ((RecordingMapper)(object)switcher).Calls;
+        _vm.WindowModeSwitcher = switcher;
     }
 
     [Fact]
@@ -93,6 +98,71 @@ public class KeybindRouterTests
         await router.KeyDownAsync(InputDispatch.CancelKeybind, null);
 
         Assert.DoesNotContain(nameof(IFunctionsMapper.Close), _calls);
+    }
+
+    [Fact]
+    public async Task Escape_FullscreenAndEscLeavesFullscreen_LeavesFullscreenInsteadOfClosing()
+    {
+        Settings.WindowProperties.EscLeavesFullscreen = true;
+        _vm.WindowModeState.Value = WindowModeState.Opening(autoFit: false).ToggleFullscreen();
+
+        await Router().KeyDownAsync(InputDispatch.CancelKeybind, null);
+
+        Assert.Equal([nameof(IWindowModeSwitcher.LeaveTopMode)], _windowModeCalls);
+        Assert.Empty(_calls);
+    }
+
+    [Fact]
+    public async Task Escape_FullscreenWithoutEscLeavesFullscreen_ClosesTheWindow()
+    {
+        Settings.WindowProperties.EscLeavesFullscreen = false;
+        _vm.WindowModeState.Value = WindowModeState.Opening(autoFit: false).ToggleFullscreen();
+
+        await Router().KeyDownAsync(InputDispatch.CancelKeybind, null);
+
+        Assert.Equal([nameof(IFunctionsMapper.Close)], _calls);
+        Assert.Empty(_windowModeCalls);
+    }
+
+    [Fact]
+    public async Task Escape_MaximizedWithEscLeavesFullscreen_ClosesTheWindow()
+    {
+        Settings.WindowProperties.EscLeavesFullscreen = true;
+        _vm.WindowModeState.Value = WindowModeState.Opening(autoFit: false).ToggleMaximized();
+
+        await Router().KeyDownAsync(InputDispatch.CancelKeybind, null);
+
+        Assert.Equal([nameof(IFunctionsMapper.Close)], _calls);
+        Assert.Empty(_windowModeCalls);
+    }
+
+    [Fact]
+    public async Task Escape_FullscreenHeldDown_NeitherLeavesFullscreenNorCloses()
+    {
+        Settings.WindowProperties.EscLeavesFullscreen = true;
+        _vm.WindowModeState.Value = WindowModeState.Opening(autoFit: false).ToggleFullscreen();
+        var router = Router();
+        await router.KeyDownAsync(new Keybind(Key.Right), null);
+
+        await router.KeyDownAsync(InputDispatch.CancelKeybind, null);
+
+        Assert.Empty(_windowModeCalls);
+        Assert.DoesNotContain(nameof(IFunctionsMapper.Close), _calls);
+    }
+
+    [Fact]
+    public async Task Escape_SlideshowClaimsItInFullscreen_DoesNotLeaveFullscreen()
+    {
+        Settings.WindowProperties.EscLeavesFullscreen = true;
+        _state = new InputModeState(IsSlideshowRunning: true);
+        _vm.WindowModeState.Value = WindowModeState.Opening(autoFit: false).ToggleFullscreen();
+        var router = new KeybindRouter(() => _vm, () => _state, () => _keymap, _ => ClaimingContextualActions.Instance,
+            () => _secondaryWindow);
+
+        await router.KeyDownAsync(InputDispatch.CancelKeybind, null);
+
+        Assert.Empty(_windowModeCalls);
+        Assert.Empty(_calls);
     }
 
     [AvaloniaFact]
@@ -237,6 +307,13 @@ public class KeybindRouterTests
         public ValueTask<bool> TryRunAsync(InputMode mode, string contextualAction) => ValueTask.FromResult(false);
     }
 
+    private sealed class ClaimingContextualActions : IContextualActionHandler
+    {
+        public static ClaimingContextualActions Instance { get; } = new();
+
+        public ValueTask<bool> TryRunAsync(InputMode mode, string contextualAction) => ValueTask.FromResult(true);
+    }
+
     private sealed class RecordingContextualActions : IContextualActionHandler
     {
         public List<string> Asked { get; } = [];
@@ -261,7 +338,8 @@ public class KeybindRouterTests
     }
 
     /// <summary>
-    /// Records every mapper call by name, and every Action run by name through GetFunctionByName.
+    /// Records every mapper or Window Mode switcher call by name, and every Action run by name through
+    /// GetFunctionByName.
     /// </summary>
     public class RecordingMapper : DispatchProxy
     {

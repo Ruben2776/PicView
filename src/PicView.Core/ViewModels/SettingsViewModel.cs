@@ -212,6 +212,9 @@ public class SettingsViewModel : IDisposable
     public BindableReactiveProperty<bool> IsShowingConfirmationOnEsc { get; } =
         new(Settings.UIProperties.ShowConfirmationOnEsc);
 
+    public BindableReactiveProperty<bool> IsEscLeavingFullscreen { get; } =
+        new(Settings.WindowProperties.EscLeavesFullscreen);
+
     public BindableReactiveProperty<bool> IsStayingCentered { get; } = new(Settings.WindowProperties.KeepCentered);
 
     public BindableReactiveProperty<bool> IsUsingTouchpad { get; } = new(Settings.Zoom.IsUsingTouchPad);
@@ -274,6 +277,7 @@ public class SettingsViewModel : IDisposable
             IsAvoidingZoomingOut,
             IsBackButtonEnabled,
             IsConstrainingBackgroundColor,
+            IsEscLeavingFullscreen,
             IsForwardButtonEnabled,
             IsOpeningInSameWindow,
             IsShowingConfirmationOnEsc,
@@ -385,6 +389,9 @@ public class SettingsViewModel : IDisposable
 
         Observable.EveryValueChanged(this, x => x.IsShowingConfirmationOnEsc.CurrentValue)
             .Subscribe(x => Settings.UIProperties.ShowConfirmationOnEsc = x).AddTo(ref _disposables);
+
+        Observable.EveryValueChanged(this, x => x.IsEscLeavingFullscreen.CurrentValue)
+            .Subscribe(x => Settings.WindowProperties.EscLeavesFullscreen = x).AddTo(ref _disposables);
 
         Observable.EveryValueChanged(this, x => x.IsOpeningInSameWindow.CurrentValue)
             .Subscribe(x => Settings.UIProperties.OpenInSameWindow = x).AddTo(ref _disposables);

@@ -125,6 +125,7 @@
   "Enter": "Enter",
   "Esc": "Esc",
   "EscCloseTooltip": "Затвара тренутно отворени прозор/мени",
+  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
   "ExifVersion": "Exif верзија",
   "ExpandedGalleryItemSize": "Величина сличица",
   "ExposureBias": "Експозициона корекција",

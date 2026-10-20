@@ -114,5 +114,14 @@
                                        Mode=OneWay}" />
         </Border>
 
+        <Border ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.WindowEscFullscreenSearchTags}" Classes="searchBorder">
+            <customControls:TextToggleButton
+                x:Name="EscLeavesFullscreenToggleButton"
+                Classes="MenuItemHover settingsToggleButton"
+                IsChecked="{CompiledBinding SettingsViewModel.IsEscLeavingFullscreen.Value}"
+                Text="{CompiledBinding Translation.EscLeavesFullscreen.Value,
+                                       Mode=OneWay}" />
+        </Border>
+
     </StackPanel>
 </UserControl>

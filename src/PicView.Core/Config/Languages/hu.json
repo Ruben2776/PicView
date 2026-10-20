@@ -125,6 +125,7 @@
   "Enter": "Enter",
   "Esc": "Esc",
   "EscCloseTooltip": "Bezárja az aktuálisan megnyitott ablakot / menüt",
+  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
   "ExifVersion": "Exif verzió",
   "ExpandedGalleryItemSize": "A miniatűrök mérete",
   "ExposureBias": "Expozíciós torzítás",

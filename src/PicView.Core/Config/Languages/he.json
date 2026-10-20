@@ -125,6 +125,7 @@
   "Enter": "Enter",
   "Esc": "Esc",
   "EscCloseTooltip": "סוגר חלון/תפריט פתוח כעת",
+  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
   "ExifVersion": "גרסת Exif",
   "ExpandedGalleryItemSize": "גודל תמונות ממוזערות (גלריה מורחבת)",
   "ExposureBias": "פיצוי חשיפה",

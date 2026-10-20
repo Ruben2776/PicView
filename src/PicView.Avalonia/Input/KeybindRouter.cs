@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.IPlatform;
+using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Input;
@@ -192,7 +193,8 @@ public sealed class KeybindRouter
 
     /// <summary>
     /// What Escape does when no Input Mode claims it: closes the main menu (open while the UI is hidden), else the
-    /// newest secondary window this window opened, else this window unless Escape is held down.
+    /// newest secondary window this window opened, else, unless Escape is held down, leaves fullscreen when the
+    /// settings say so, or closes this window.
     /// </summary>
     private async ValueTask CloseOnEscapeAsync(MainWindowViewModel vm)
     {
@@ -209,7 +211,19 @@ public sealed class KeybindRouter
             return;
         }
 
-        if (!IsKeyHeldDown && vm.Mapper is not null)
+        if (IsKeyHeldDown)
+        {
+            return;
+        }
+
+        if (Settings.WindowProperties.EscLeavesFullscreen &&
+            vm.WindowModeState.CurrentValue.Mode is WindowMode.Fullscreen && vm.WindowModeSwitcher is { } switcher)
+        {
+            await switcher.LeaveTopMode().ConfigureAwait(false);
+            return;
+        }
+
+        if (vm.Mapper is not null)
         {
             await vm.Mapper.Close().ConfigureAwait(false);
         }

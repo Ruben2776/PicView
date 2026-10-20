@@ -246,6 +246,10 @@ public static class SettingsSearchIndex
         {
             list.Add(new SettingsSearchItem(t.ShowConfirmationOnEsc, data.WindowEscSearchTags));
         }
+        if (t.EscLeavesFullscreen != null)
+        {
+            list.Add(new SettingsSearchItem(t.EscLeavesFullscreen, data.WindowEscFullscreenSearchTags));
+        }
 
         // Zoom
         if (t.ResetZoomOnChange != null)

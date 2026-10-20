@@ -125,6 +125,7 @@
   "Enter": "Enter",
   "Esc": "Esc",
   "EscCloseTooltip": "현재 열려 있는 창/메뉴 닫기",
+  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
   "ExifVersion": "Exif 버전",
   "ExpandedGalleryItemSize": "썸네일 크기",
   "ExposureBias": "노출 보정",

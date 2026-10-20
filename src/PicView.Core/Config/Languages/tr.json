@@ -125,6 +125,7 @@
   "Enter": "Enter",
   "Esc": "Esc",
   "EscCloseTooltip": "Açık olan pencereyi/menüyü kapatır",
+  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
   "ExifVersion": "Exif sürümü",
   "ExpandedGalleryItemSize": "Küçük resim boyutu",
   "ExposureBias": "Pozlama yanlılığı",
