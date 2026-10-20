@@ -46,6 +46,12 @@ _Avoid_: New tab, uninitialized tab
 An image a tab shows on its own, without the files around it to browse: a clipboard image, a base64 image, a temporary file or a URL download. It has its own model, and showing a file again ends it.
 _Avoid_: Standalone image, loose image
 
+## Images
+
+**Side-by-Side Pair**:
+Two images a tab shows beside each other when Side-by-Side is on: the shown image and its partner, the next image in the list. The last image has no partner unless the list loops, and a file with no partner shows alone. Paired navigation moves by two images at a time.
+_Avoid_: Dual view, two-up, double view
+
 ## Saving
 
 **Save Source**:

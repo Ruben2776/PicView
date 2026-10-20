@@ -45,31 +45,27 @@ public class NavigationService(
                 return;
             }
 
-            if (!Settings.ImageScaling.ShowImageSideBySide)
+            if (!SideBySidePair.IsEnabled)
             {
                 tab.Display(model);
             }
 
             await Task.Yield();
             IReadOnlyList<FileInfo> retrieved = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
-            var index = Math.Max(0, FindIndex(fileInfo, retrieved));
+            var index = SideBySidePair.IndexOf(retrieved, fileInfo) ?? 0;
             tab.ImageIterator.Initialize(retrieved, index);
 
-            if (Settings.ImageScaling.ShowImageSideBySide)
+            if (SideBySidePair.IsEnabled)
             {
-                if (tab.ImageIterator.Files.Count > 0)
+                if (SideBySidePair.PartnerOf(index, tab.ImageIterator.Files.Count) is { } nextIteration)
                 {
-                    var (_, nextIteration, _) = IterationHelper.GetIterations(index, tab.ImageIterator.Files.Count, NavigateTo.Next, SkipAmount.None);
-                    if (nextIteration >= 0 && nextIteration < tab.ImageIterator.Files.Count)
+                    var secondaryFileInfo = tab.ImageIterator.Files[nextIteration];
+                    secondaryModel = await cache.GetAsync(tab.Id, secondaryFileInfo, ct.Token).ConfigureAwait(false);
+                    if (secondaryModel is null)
                     {
-                        var secondaryFileInfo = tab.ImageIterator.Files[nextIteration];
-                        secondaryModel = await cache.GetAsync(tab.Id, secondaryFileInfo, ct.Token).ConfigureAwait(false);
-                        if (secondaryModel is null)
-                        {
-                            return;
-                        }
-                        secondaryIndex = nextIteration;
+                        return;
                     }
+                    secondaryIndex = nextIteration;
                 }
                 tab.Display(model, secondaryModel);
             }
@@ -140,18 +136,10 @@ public class NavigationService(
             return;
         }
 
-        var index = FindIndex(fileInfo, tab.ImageIterator.Files);
-        if (index is not -1)
+        var index = SideBySidePair.IndexOf(tab.ImageIterator.Files, fileInfo);
+        if (index is { } found)
         {
-            if (Settings.ImageScaling.ShowImageSideBySide)
-            {
-                var (_, nextIteration, _) = IterationHelper.GetIterations(index, tab.ImageIterator.Files.Count, NavigateTo.Next, SkipAmount.None);
-                await tab.ImageIterator.IterateToIndicesAsync(index, nextIteration, ct).ConfigureAwait(false);
-            }
-            else
-            {
-                await tab.ImageIterator.IterateToIndexAsync(index, ct).ConfigureAwait(false);
-            }
+            await tab.ImageIterator.IterateToIndexAsync(found, ct).ConfigureAwait(false);
         }
         else
         {
@@ -294,7 +282,7 @@ public class NavigationService(
                     return false;
                 }
 
-                if (Settings.ImageScaling.ShowImageSideBySide && prep.EntryKeys.Length > 1)
+                if (SideBySidePair.ShownCount(prep.EntryKeys.Length) > 1)
                 {
                     var secondKey = prep.EntryKeys[1];
                     var secondPath = await tab.ArchiveExtractionService.ExtractEntryAsync(archivePath, secondKey, ct.Token).ConfigureAwait(false);
@@ -314,7 +302,7 @@ public class NavigationService(
                 FileHistoryManager.Add(archivePath);
 
                 // Kick off background extraction of remaining entries one by one without batching or progress indicator.
-                var initialCount = Settings.ImageScaling.ShowImageSideBySide && prep.EntryKeys.Length > 1 ? 2 : 1;
+                var initialCount = SideBySidePair.ShownCount(prep.EntryKeys.Length);
                 if (prep.EntryKeys.Length > initialCount)
                 {
                     var remainingKeys = prep.EntryKeys.Skip(initialCount).ToArray();
@@ -632,7 +620,7 @@ public class NavigationService(
             }
 
             // Update files in iterator, keeping the position on the current file
-            tab.ImageIterator.Initialize(newFiles, FindIndex(currentFile, newFiles));
+            tab.ImageIterator.Initialize(newFiles, SideBySidePair.IndexOf(newFiles, currentFile) ?? -1);
             
             // Update title
             tab.UpdateTabTitle();
@@ -644,8 +632,4 @@ public class NavigationService(
             DebugHelper.LogDebug(nameof(NavigationService), nameof(ApplySortAsync), e);
         }
     }
-
-    private static int FindIndex(FileInfo fileInfo, IReadOnlyList<FileInfo> files) =>
-        files.FindIndex(x =>
-            x.FullName.AsSpan().Equals(fileInfo.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase));
 }

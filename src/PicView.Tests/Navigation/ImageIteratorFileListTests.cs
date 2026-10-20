@@ -146,6 +146,81 @@ public class ImageIteratorFileListTests
         Assert.True(Assert.IsType<ProbeImage>(model!.Image).IsDisposed);
     }
 
+    [Fact]
+    public async Task IterateToIndex_AfterAPair_ClearsTheSecondary()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var files = new List<FileInfo> { File("a.jpg"), File("b.jpg"), File("c.jpg") };
+        _iterator.Initialize(files, 0);
+        _tab.Display(new ImageModel { FileInfo = files[0], Image = new ProbeImage() });
+        var ct = new CancellationTokenSource();
+        await _iterator.IterateToIndicesAsync(0, 1, ct);
+        Assert.Equal(1, _iterator.SecondaryCurrentIndex);
+        Assert.NotNull(_tab.SecondaryModel);
+
+        await _iterator.IterateToIndexAsync(2, ct);
+
+        Assert.Equal(-1, _iterator.SecondaryCurrentIndex);
+        Assert.Null(_tab.SecondaryModel);
+    }
+
+    [Fact]
+    public async Task IterateToIndex_WithAPartner_ShowsThePair()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var files = new List<FileInfo> { File("a.jpg"), File("b.jpg"), File("c.jpg") };
+        _iterator.Initialize(files, 0);
+        _tab.Display(new ImageModel { FileInfo = files[0], Image = new ProbeImage() });
+
+        await _iterator.IterateToIndexAsync(1, new CancellationTokenSource());
+
+        Assert.Equal(1, _iterator.CurrentIndex);
+        Assert.Equal(2, _iterator.SecondaryCurrentIndex);
+        Assert.NotNull(_tab.SecondaryModel);
+    }
+
+    [Fact]
+    public async Task RepeatNavigate_SideBySideNext_StepsByPairs()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var files = new List<FileInfo> { File("a.jpg"), File("b.jpg"), File("c.jpg"), File("d.jpg"), File("e.jpg") };
+        _iterator.Initialize(files, 0);
+        _tab.Display(new ImageModel { FileInfo = files[0], Image = new ProbeImage() });
+
+        await _iterator.RepeatNavigateAsync(NavigateTo.Next, TimeSpan.Zero, new CancellationTokenSource());
+
+        Assert.Equal(2, _iterator.CurrentIndex);
+        Assert.Equal(3, _iterator.SecondaryCurrentIndex);
+    }
+
+    [Fact]
+    public async Task RepeatNavigate_SideBySidePrevious_StepsByPairs()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var files = new List<FileInfo> { File("a.jpg"), File("b.jpg"), File("c.jpg"), File("d.jpg"), File("e.jpg") };
+        _iterator.Initialize(files, 2);
+        _tab.Display(new ImageModel { FileInfo = files[2], Image = new ProbeImage() });
+
+        await _iterator.RepeatNavigateAsync(NavigateTo.Previous, TimeSpan.Zero, new CancellationTokenSource());
+
+        Assert.Equal(0, _iterator.CurrentIndex);
+        Assert.Equal(1, _iterator.SecondaryCurrentIndex);
+    }
+
+    [Fact]
+    public async Task NavigateAsync_OneImageSideBySide_ShowsNoSecondary()
+    {
+        Settings.ImageScaling.ShowImageSideBySide = true;
+        var files = new List<FileInfo> { File("only.jpg") };
+        _iterator.Initialize(files, 0);
+        _tab.Display(new ImageModel { FileInfo = files[0], Image = new ProbeImage() });
+
+        await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.None, new CancellationTokenSource());
+
+        Assert.Equal(-1, _iterator.SecondaryCurrentIndex);
+        Assert.Null(_tab.SecondaryModel);
+    }
+
     private static FileInfo File(string name) => new(Path.Combine(TestDirectory, name));
 
     private string CurrentName() => _iterator.Files[_iterator.CurrentIndex].Name;

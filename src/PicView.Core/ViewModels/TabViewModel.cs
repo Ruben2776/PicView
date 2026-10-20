@@ -326,7 +326,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
 #endif
             return;
         }
-        var index = files.FindIndex(x => x.FullName.Equals(Model.FileInfo.FullName, StringComparison.Ordinal));
+        var index = SideBySidePair.IndexOf(files, Model.FileInfo) ?? -1;
         ImageIterator.Initialize(files, index);
 
         if (index > -1 && index < files.Count)
