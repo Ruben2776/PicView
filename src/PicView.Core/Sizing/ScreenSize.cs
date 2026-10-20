@@ -3,7 +3,8 @@
 namespace PicView.Core.Sizing;
 
 /// <summary>
-/// Represents screen dimensions and scaling information.
+/// The screen a window is on, in device-independent pixels: its whole area, the work area the taskbar, dock and menu
+/// bar leave free, and its scaling, which turns these into the pixels windows are positioned in.
 /// </summary>
 [StructLayout(LayoutKind.Auto)]
 public readonly record struct ScreenSize
@@ -38,6 +39,16 @@ public readonly record struct ScreenSize
     /// </summary>
     public double Y { get; init; }
     
+    /// <summary>
+    /// Gets the horizontal position of the screen's work area in device-independent pixels.
+    /// </summary>
+    public double WorkingAreaX { get; init; }
+
+    /// <summary>
+    /// Gets the vertical position of the screen's work area in device-independent pixels.
+    /// </summary>
+    public double WorkingAreaY { get; init; }
+
     /// <summary>
     /// Gets the DPI scaling factor of the screen.
     /// </summary>

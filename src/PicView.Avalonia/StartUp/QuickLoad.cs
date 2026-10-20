@@ -110,7 +110,7 @@ public static class QuickLoad
         SourceOpener.ShowHoverBarIfNeeded(tab);
         if (vm.WindowModeState.CurrentValue.AutoFit)
         {
-            await Dispatcher.UIThread.InvokeAsync(() => WindowFunctions.FastCenterWindow(mainWindow), DispatcherPriority.Send);
+            await Dispatcher.UIThread.InvokeAsync(() => mainWindow.WindowFitter.Center(), DispatcherPriority.Send);
         }
         return result;
     }

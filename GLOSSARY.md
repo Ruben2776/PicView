@@ -102,6 +102,14 @@ _Avoid_: UI size, chrome, container
 The largest area the image may fill: the screen in fullscreen, the work area minus the Screen Margin with AutoFit, else the window's current size, each minus the Reserved Space.
 _Avoid_: Max size, container size
 
+**Work Area**:
+The part of a window's own screen that the taskbar, dock and menu bar leave free. Each window uses the screen it is on now, so windows on different monitors fit and center independently.
+_Avoid_: Monitor size, screen size, working area
+
+**Stay Centered**:
+The setting that keeps an AutoFit window centered in its Work Area as it changes size. With it off, the window keeps its own center as it resizes.
+_Avoid_: Keep centered, center window
+
 **Screen Margin**:
 The total gap AutoFit keeps free around the window, beyond what the taskbar, dock and menu bar already take. It looks the same at any display scaling.
 _Avoid_: Window margin, padding

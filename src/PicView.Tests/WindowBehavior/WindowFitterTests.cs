@@ -107,14 +107,61 @@ public class WindowFitterTests
         Assert.True(double.IsNaN(vm.WindowMaxWidth.Value));
     }
 
-    private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateWindow()
+    [AvaloniaFact]
+    public void Refit_AutoFitWindowsOnDifferentScreens_EachFitsItsOwnWorkArea()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var (smallFitter, small, _) = CreateWindow(() => Screen(1280, 760));
+        var (largeFitter, large, _) = CreateWindow(() => Screen(2560, 1400));
+        small.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 4000, 3000));
+        large.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 4000, 3000));
+
+        smallFitter.Refit();
+        largeFitter.Refit();
+        var smallAfterTheOther = small.ImageWidth.Value;
+        smallFitter.Refit();
+
+        Assert.True(small.ImageWidth.Value < 1280);
+        Assert.True(large.ImageWidth.Value < 2560);
+        Assert.True(small.ImageWidth.Value < large.ImageWidth.Value);
+        Assert.Equal(smallAfterTheOther, small.ImageWidth.Value);
+    }
+
+    [AvaloniaFact]
+    public void IsOnAnotherScreen_AfterTheWindowMovesToAnotherMonitor_IsTrueUntilItIsFittedThere()
+    {
+        var screen = Screen(1920, 1040);
+        var (fitter, vm, _) = CreateWindow(() => screen);
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        var beforeFitting = fitter.IsOnAnotherScreen();
+        fitter.Refit();
+        var afterFitting = fitter.IsOnAnotherScreen();
+
+        screen = Screen(2560, 1400) with { X = 1920, WorkingAreaX = 1920 };
+        var afterMoving = fitter.IsOnAnotherScreen();
+        fitter.Refit();
+
+        Assert.False(beforeFitting);
+        Assert.False(afterFitting);
+        Assert.True(afterMoving);
+        Assert.False(fitter.IsOnAnotherScreen());
+    }
+
+    private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateWindow(
+        Func<ScreenSize>? readScreen = null)
     {
         var window = new TestMainWindow(new NativeStateAdapter());
         var vm = new MainWindowViewModel(_core, _core.Translation, window, _core.GlobalSettings!,
             _core.GallerySettings);
         window.DataContext = vm;
-        return (new WindowFitter(window, () => ContentSize), vm, window);
+        return (new WindowFitter(window, () => ContentSize, readScreen), vm, window);
     }
+
+    private static ScreenSize Screen(double workAreaWidth, double workAreaHeight) => new()
+    {
+        Width = workAreaWidth, Height = workAreaHeight + 40, WorkingAreaWidth = workAreaWidth,
+        WorkingAreaHeight = workAreaHeight, Scaling = 1
+    };
 
     private static ImageModel Model(string name, uint width, uint height) =>
         new() { FileInfo = new FileInfo(name), PixelWidth = width, PixelHeight = height };

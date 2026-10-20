@@ -139,7 +139,7 @@ public sealed class MainWindowLifecycle
             new OpenOptions(IsStartup: true, ContinueFromLeftOff: continueFromLeftOff)).AsTask());
         if (window.WindowModeState.AutoFit)
         {
-            Dispatcher.UIThread.Post(() => WindowFunctions.FastCenterWindow(window), DispatcherPriority.Input);
+            Dispatcher.UIThread.Post(() => window.WindowFitter.Center(), DispatcherPriority.Input);
         }
     }
 
@@ -337,9 +337,8 @@ public sealed class MainWindowLifecycle
                 {
                     ToggleUIVisibility.FullscreenHideInterface(vm);
                 }
-                ScreenHelper.UpdateScreenSize(window);
                 window.WindowFitter.Refit();
-                WindowFunctions.CenterWindowOnScreen(true, true, window);
+                WindowFunctions.CenterWindowOnScreen(window, top: true);
             }, DispatcherPriority.ApplicationIdle);
         }
 

@@ -1,10 +1,12 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
+using R3;
 using Timer = System.Timers.Timer;
 
 namespace PicView.Avalonia.Navigation;
@@ -14,6 +16,7 @@ public static class Slideshow
     public static bool IsRunning { get; private set; }
     
     private static Timer? _timer;
+    private static IDisposable? _leavingFullscreen;
     public static async Task StartSlideshow(MainWindowViewModel vm)
     {
         if (!InitiateAndStart(vm))
@@ -44,7 +47,9 @@ public static class Slideshow
     public static void StopSlideshow(MainWindowViewModel vm)
     {
         IsRunning = false;
-        
+        _leavingFullscreen?.Dispose();
+        _leavingFullscreen = null;
+
         if (_timer is null)
         {
             return;
@@ -53,6 +58,7 @@ public static class Slideshow
         _ = LeaveSlideshowAsync(vm);
         
         _timer.Stop();
+        _timer.Dispose();
         _timer = null;
         if (Application.Current.DataContext is CoreViewModel core)
         {
@@ -85,9 +91,10 @@ public static class Slideshow
         }
         else if (_timer.Enabled)
         {
+            // Starting it again while it runs stops it, unless the key is only being held down
             if (!IsKeyHeldDown(vm))
             {
-                _timer = null;
+                StopSlideshow(vm);
             }
 
             return false;
@@ -115,6 +122,13 @@ public static class Slideshow
         {
             await vm.WindowModeSwitcher.EnterSlideshow();
         }
+
+        // Leaving the slideshow's fullscreen any other way, as by toggling fullscreen, ends the slideshow too
+        _leavingFullscreen?.Dispose();
+        _leavingFullscreen = vm.WindowModeState
+            .Where(static state => state.Mode is not WindowMode.Fullscreen)
+            .Take(1)
+            .Subscribe(_ => Dispatcher.UIThread.Post(() => StopSlideshow(vm)));
     }
 
     private static async Task LeaveSlideshowAsync(MainWindowViewModel vm)
@@ -129,7 +143,10 @@ public static class Slideshow
         if (before is not WindowMode.Normal &&
             vm.WindowModeState.CurrentValue is { Mode: WindowMode.Normal, AutoFit: true })
         {
-            WindowFunctions.CenterWindowOnScreen();
+            if (vm.PlatformWindowService is MainWindow window)
+            {
+                WindowFunctions.CenterWindowOnScreen(window);
+            }
         }
     }
 }

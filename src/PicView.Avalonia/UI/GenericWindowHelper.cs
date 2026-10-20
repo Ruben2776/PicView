@@ -86,9 +86,6 @@ public static class GenericWindowHelper
             else
             {
                 window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                var screenSize = ScreenHelper.ScreenSize;
-                var centerPixelPoint = new PixelPoint((int)(screenSize.Width / 2), (int)(screenSize.Height / 2));
-                window.Position = centerPixelPoint;
             }
         }
             

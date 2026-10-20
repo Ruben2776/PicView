@@ -339,7 +339,6 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 
     private void OnScalingChanged(object? sender, EventArgs e)
     {
-        ScreenHelper.UpdateScreenSize(this);
         WindowFitter.Refit();
     }
 
@@ -588,12 +587,11 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 
         // macOS reports dragging the window to another monitor as a resize by the user, which must not turn AutoFit
         // off: the window is fitted to the new monitor instead
-        if (ScreenHelper.IsOnAnotherScreen(this))
+        if (WindowFitter.IsOnAnotherScreen())
         {
-            ScreenHelper.UpdateScreenSize(this);
             if (WindowModeState.AutoFit && Settings.WindowProperties.KeepCentered)
             {
-                WindowFunctions.FastCenterWindow(this);
+                WindowFitter.Center();
             }
             WindowFitter.Refit();
             return;
@@ -617,7 +615,8 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
             return;
         }
 
-        if (vm.WindowModeState.CurrentValue.AutoFit && WindowFunctions.KeepCenteredWhileResizing(this, size))
+        if (vm.WindowModeState.CurrentValue.AutoFit && size.OldValue.HasValue && size.NewValue.HasValue &&
+            Equals(size.Sender, this) && WindowFitter.PlaceAfterResize(size.OldValue.Value, size.NewValue.Value))
         {
             SetCursorOnButton.AfterResize(this, vm, size.NewValue.Value.Width);
         }

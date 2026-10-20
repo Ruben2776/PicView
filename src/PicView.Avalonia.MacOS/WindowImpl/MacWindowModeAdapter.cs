@@ -19,7 +19,6 @@ public sealed class MacWindowModeAdapter : IWindowModeAdapter
 
     public void EnterNativeState(MainWindow window, WindowModeState state)
     {
-        ScreenHelper.UpdateScreenSize(window);
         if (state.Mode is not WindowMode.Normal)
         {
             WindowModeSwitcher.SetNativeState(window, state.Mode);
@@ -35,7 +34,7 @@ public sealed class MacWindowModeAdapter : IWindowModeAdapter
             if (state.AutoFit)
             {
                 window.WindowFitter.FollowContent();
-                WindowFunctions.FastCenterWindow(window);
+                window.WindowFitter.Center();
             }
         });
     }
