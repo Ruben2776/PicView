@@ -270,16 +270,8 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     public async ValueTask Search() =>
         await Dispatcher.UIThread.InvokeAsync(mainWindow.AddFileSearchDialog);
     
-    public async ValueTask Up()
-    {
-        if (vm.WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value)
-        {
-            await vm.WindowTabs.NavigateDirectionalAsync(mainWindow.KeybindRouter.IsKeyHeldDown, NavigateTo.Up).ConfigureAwait(false);
-            return;
-        }
-
-        await RotateRight().ConfigureAwait(false);
-    }
+    public ValueTask Up() =>
+        ArrowKeyNavigation.Up(IsGalleryExpanded, NavigateDirectional, RotateRight);
 
     /// <inheritdoc cref="RotationManager.RotateRight(MainWindowViewModel)" />
     public ValueTask RotateRight()
@@ -325,16 +317,13 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
         return ValueTask.CompletedTask;
     }
 
-    public async ValueTask Down()
-    {
-        if (vm.WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value)
-        {
-            await vm.WindowTabs.NavigateDirectionalAsync(mainWindow.KeybindRouter.IsKeyHeldDown, NavigateTo.Down).ConfigureAwait(false);
-            return;
-        }
+    public ValueTask Down() =>
+        ArrowKeyNavigation.Down(IsGalleryExpanded, NavigateDirectional, RotateLeft);
 
-        await RotateLeft().ConfigureAwait(false);
-    }
+    private bool IsGalleryExpanded() => vm.WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value;
+
+    private ValueTask NavigateDirectional(NavigateTo direction) =>
+        vm.WindowTabs.NavigateDirectionalAsync(mainWindow.KeybindRouter.IsKeyHeldDown, direction);
     
     public async ValueTask ScrollDown()
     {
