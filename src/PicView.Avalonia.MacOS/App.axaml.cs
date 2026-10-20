@@ -195,6 +195,8 @@ public class App : Application, IPlatformSpecificService
         return !File.Exists(path); 
     }
 
+    public bool CanMoveToRecycleBin(string path) => true;
+
     public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)
     {
         return ShellThumbnailNative.GetShellThumbnailBytes(path, width, height, out pixelWidth, out pixelHeight);
