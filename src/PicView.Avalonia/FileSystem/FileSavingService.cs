@@ -4,6 +4,7 @@ using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ViewModels;
+using Orientation = PicView.Core.ImageTransformations.Orientation;
 
 namespace PicView.Avalonia.FileSystem;
 
@@ -64,8 +65,8 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
     {
         var file = tab.FileInfo.CurrentValue;
         using var effectsRender = CloneEffectsRender(tab);
-        if (effectsRender is null && file is not null && file.IsCommon() && tab.RotationAngle.CurrentValue is 0 &&
-            tab.ScaleX.CurrentValue is not -1)
+        if (effectsRender is null && file is not null && file.IsCommon() &&
+            tab.Orientation.Current.CurrentValue == Orientation.Upright)
         {
             return file.FullName;
         }
@@ -82,8 +83,9 @@ public class FileSavingService(ISavePathPicker pathPicker, Func<EffectsViewModel
     /// <param name="effectsRender">A copy of the Effects Render of the tab's file, if it has one.</param>
     private async ValueTask<bool> SaveToAsync(TabViewModel tab, string destination, MagickImage? effectsRender)
     {
-        var angle = tab.RotationAngle.CurrentValue;
-        var isFlipped = tab.ScaleX.CurrentValue is -1;
+        var orientation = tab.Orientation.Current.CurrentValue;
+        var angle = orientation.Degrees;
+        var isFlipped = orientation.IsFlipped;
         var file = tab.FileInfo.CurrentValue;
 
         bool isSaved;

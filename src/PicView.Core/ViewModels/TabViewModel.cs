@@ -10,6 +10,7 @@ using PicView.Core.Preloading;
 using PicView.Core.Titles;
 using PicView.Core.Generators;
 using PicView.Core.ImageDecoding;
+using PicView.Core.ImageTransformations;
 using PicView.Core.IPlatform;
 using PicView.Core.Sizing;
 using R3;
@@ -110,14 +111,12 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
         Image.Value = primary.Image;
         ImageType.Value = primary.ImageType;
     }
-    public BindableReactiveProperty<int> RotationAngle { get; } = new(0);
-    public BindableReactiveProperty<bool> IsRotated0 { get; } = new(true);
-    public BindableReactiveProperty<bool> IsRotated90 { get; } = new(false);
-    public BindableReactiveProperty<bool> IsRotated180 { get; } = new(false);
-    public BindableReactiveProperty<bool> IsRotated270 { get; } = new(false);
+    /// <summary>
+    /// The tab's Quarter Turn and flip.
+    /// </summary>
+    public TabOrientation Orientation { get; } = new(parentWindowContext?.Translation);
     public BindableReactiveProperty<bool> ShouldCropBeEnabled { get; } = new(false);
     public BindableReactiveProperty<bool> ShouldOptimizeImageBeEnabled { get; } = new(false);
-    public BindableReactiveProperty<double> ScaleX { get; } = new(1);
     public BindableReactiveProperty<double> InitialZoom { get; } = new(1);
     public BindableReactiveProperty<int> ZoomLevel { get; } = new();
 
@@ -406,6 +405,7 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
         GalleryCoordinator?.Dispose();
 
         NavigationCts.Dispose();
+        Orientation.Dispose();
         Disposables.Dispose();
         
         GC.SuppressFinalize(this);

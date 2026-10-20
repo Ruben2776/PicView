@@ -18,7 +18,7 @@
             DockPanel.Dock="Left">
             <LayoutTransformControl x:Name="MainTransform">
                 <LayoutTransformControl.LayoutTransform>
-                    <RotateTransform Angle="{Binding RotationAngle.Value}" />
+                    <RotateTransform Angle="{Binding Orientation.Degrees.Value}" />
                 </LayoutTransformControl.LayoutTransform>
                 <customControls:ZoomPanControl x:Name="ZoomPanControl" FittingScale="{Binding InitialZoom.Value}">
                     <customControls:AutoScrollViewer

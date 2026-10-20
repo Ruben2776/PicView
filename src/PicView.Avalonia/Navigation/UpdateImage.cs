@@ -112,8 +112,7 @@ public static class UpdateImage
         if (Settings.Zoom.ResetZoomOnChange)
         {
             imageViewer.ResetZoomSlim();
-            tabViewModel.RotationAngle.Value = 0;
-            Dispatcher.UIThread.Invoke(imageViewer.ResetFlip, DispatcherPriority.Send);
+            tabViewModel.Orientation.Reset();
         }
         
         if (tabViewModel.Model.ImageType is ImageType.Svg)
@@ -168,6 +167,8 @@ public static class UpdateImage
         var width = (uint)image.PixelSize.Width;
         var height = (uint)image.PixelSize.Height;
 
+        // Upright before fitting, since the new image is shown unturned and unflipped
+        tabViewModel.Orientation.Reset();
         // Its own model, so the previous file's cached model keeps its own size
         tabViewModel.DisplaySingleImage(new ImageModel
         {
@@ -191,7 +192,7 @@ public static class UpdateImage
             }
 
             imageViewer.ResetZoomSlim();
-            imageViewer.Rotate(0);
+            mainWindow.WindowFitter.Refit();
             imageViewer.UpdateMotionPhoto(tabViewModel);
         });
         

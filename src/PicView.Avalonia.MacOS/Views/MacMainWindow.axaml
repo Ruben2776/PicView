@@ -210,7 +210,7 @@
                 <NativeMenu>
 
                     <!--  Flip image  -->
-                    <NativeMenuItem Command="{Binding FlipCommand}" Header="{Binding Translation.IsFlipped.Value}" />
+                    <NativeMenuItem Command="{Binding FlipCommand}" Header="{Binding WindowTabs.ActiveTab.Value.Orientation.FlipLabel.Value}" />
 
                     <!--  Rotate left  -->
                     <NativeMenuItem Command="{Binding RotateLeftCommand}" Header="{Binding Translation.RotateLeft.Value}" />
@@ -223,7 +223,7 @@
                         Command="{Binding RotateRightCommand}"
                         CommandParameter="0"
                         Header="0°"
-                        IsChecked="{Binding WindowTabs.ActiveTab.Value.IsRotated0.Value}"
+                        IsChecked="{Binding WindowTabs.ActiveTab.Value.Orientation.IsRotated0.Value, Mode=OneWay}"
                         ToggleType="Radio" />
 
                     <!--  Rotate 90  -->
@@ -231,7 +231,7 @@
                         Command="{Binding RotateRightCommand}"
                         CommandParameter="90"
                         Header="90°"
-                        IsChecked="{Binding WindowTabs.ActiveTab.Value.IsRotated90.Value}"
+                        IsChecked="{Binding WindowTabs.ActiveTab.Value.Orientation.IsRotated90.Value, Mode=OneWay}"
                         ToggleType="Radio" />
 
                     <!--  Rotate 180  -->
@@ -239,7 +239,7 @@
                         Command="{Binding RotateRightCommand}"
                         CommandParameter="180"
                         Header="180°"
-                        IsChecked="{Binding WindowTabs.ActiveTab.Value.IsRotated180.Value}"
+                        IsChecked="{Binding WindowTabs.ActiveTab.Value.Orientation.IsRotated180.Value, Mode=OneWay}"
                         ToggleType="Radio" />
 
                     <!--  Rotate 270  -->
@@ -247,7 +247,7 @@
                         Command="{Binding RotateRightCommand}"
                         CommandParameter="270"
                         Header="270°"
-                        IsChecked="{Binding WindowTabs.ActiveTab.Value.IsRotated270.Value}"
+                        IsChecked="{Binding WindowTabs.ActiveTab.Value.Orientation.IsRotated270.Value, Mode=OneWay}"
                         ToggleType="Radio" />
 
                     <NativeMenuItemSeparator />

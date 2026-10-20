@@ -95,7 +95,7 @@ public class FileSavingServiceTests : IDisposable
     {
         var destination = Path.Combine(_tempDir, "rotated.png");
         var tab = CreateClipboardTab(8, 6);
-        tab.RotationAngle.Value = 90;
+        tab.Orientation.TurnTo(1);
         var service = new FileSavingService(new StubSavePathPicker(destination), () => null);
 
         var isSaved = RunWithDispatcher(service.SaveAsAsync(tab));
@@ -132,7 +132,7 @@ public class FileSavingServiceTests : IDisposable
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
         var tab = new TabViewModel(null!, vm);
         tab.FileInfo.Value = new FileInfo(path);
-        tab.RotationAngle.Value = 90;
+        tab.Orientation.TurnTo(1);
         var picker = new StubSavePathPicker(null);
         var service = new FileSavingService(picker, () => null);
 
@@ -224,7 +224,7 @@ public class FileSavingServiceTests : IDisposable
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
         var tab = new TabViewModel(null!, vm);
         tab.FileInfo.Value = new FileInfo(source);
-        tab.RotationAngle.Value = 90;
+        tab.Orientation.TurnTo(1);
         var service = new FileSavingService(new StubSavePathPicker(null), () => null);
 
         var exported = RunWithDispatcher(service.ExportCommonFormatAsync(tab));

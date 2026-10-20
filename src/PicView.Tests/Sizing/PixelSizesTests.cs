@@ -89,7 +89,7 @@ public class PixelSizesTests
     public void Of_RotatedTab_HasItsQuarterTurns(int angle, int quarterTurns)
     {
         _tab.Display(Model("a.jpg", 400, 300));
-        _tab.RotationAngle.Value = angle;
+        _tab.Orientation.TurnTo(angle / 90);
 
         Assert.Equal(quarterTurns, PixelSizes.Of(_tab, null, sideBySide: false)?.QuarterTurns);
     }

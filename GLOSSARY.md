@@ -118,6 +118,10 @@ _Avoid_: Aspect ratio, initial zoom
 A rotation by a multiple of 90°, the only rotation a tab has. One or three quarter turns swap the image's width and height for fitting.
 _Avoid_: Rotation angle, arbitrary rotation
 
+**Orientation**:
+A tab's Quarter Turn and whether its image is flipped. It goes back to upright and unflipped when a Single Image is shown, and when the tab moves to another image while zoom resets on image change.
+_Avoid_: Rotation, transform, ScaleX
+
 ## Effects
 
 **Effects Render**:

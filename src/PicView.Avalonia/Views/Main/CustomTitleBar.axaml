@@ -439,14 +439,14 @@
                     <!--  Flip  -->
                     <customControls:StyledMenuItem
                         Command="{Binding FlipCommand}"
-                        Header="{Binding Translation.IsFlipped.Value, Mode=OneWay}"
+                        Header="{Binding WindowTabs.ActiveTab.Value.Orientation.FlipLabel.Value, Mode=OneWay}"
                         IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
                         StaysOpenOnClick="True"
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image Classes="FlipImage">
                                 <Image.RenderTransform>
-                                    <ScaleTransform ScaleX="{Binding WindowTabs.ActiveTab.Value.ScaleX.Value}" />
+                                    <ScaleTransform ScaleX="{Binding WindowTabs.ActiveTab.Value.Orientation.ScaleX.Value}" />
                                 </Image.RenderTransform>
                             </Image>
                         </MenuItem.Icon>

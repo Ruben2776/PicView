@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using PicView.Avalonia.CustomControls;
+using PicView.Core.ImageTransformations;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.Crop;
@@ -53,7 +54,7 @@ public static class CropManager
             return false;
         }
         
-        if (tab.RotationAngle.CurrentValue is 0 && tab.ScaleX.CurrentValue is 1)
+        if (tab.Orientation.Current.CurrentValue == Orientation.Upright)
         {
             tab.ShouldCropBeEnabled.Value = true;
             return true;

@@ -233,8 +233,9 @@ public class ResizeImageViewModel : IDisposable
         }
 
         var destination = fileInfo.FullName;
-        var isFlipped = tab.ScaleX.CurrentValue < 0;
-        var rotationAngle = tab.RotationAngle.CurrentValue;
+        var orientation = tab.Orientation.Current.CurrentValue;
+        var isFlipped = orientation.IsFlipped;
+        var rotationAngle = orientation.Degrees;
 
         await SaveImageInternal(fileInfo, destination, isFlipped, rotationAngle).ConfigureAwait(false);
         CloseAction?.Invoke();
@@ -256,8 +257,9 @@ public class ResizeImageViewModel : IDisposable
         var destination = await PickFileAction(fileInfo.FullName, ext).ConfigureAwait(false);
         if (destination == null) return;
 
-        var isFlipped = tab.ScaleX.CurrentValue < 0;
-        var rotationAngle = tab.RotationAngle.CurrentValue;
+        var orientation = tab.Orientation.Current.CurrentValue;
+        var isFlipped = orientation.IsFlipped;
+        var rotationAngle = orientation.Degrees;
 
         await SaveImageInternal(fileInfo, destination, isFlipped, rotationAngle).ConfigureAwait(false);
         CloseAction?.Invoke();
@@ -388,8 +390,9 @@ public class ResizeImageViewModel : IDisposable
             return;
         }
 
-        var isFlipped = tab.ScaleX.CurrentValue < 0;
-        var rotationAngle = tab.RotationAngle.CurrentValue;
+        var orientation = tab.Orientation.Current.CurrentValue;
+        var isFlipped = orientation.IsFlipped;
+        var rotationAngle = orientation.Degrees;
 
         var dummyDest = fileInfo.FullName;
         var ext = GetSelectedFileExtension(fileInfo, ref dummyDest);

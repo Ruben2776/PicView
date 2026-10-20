@@ -240,32 +240,32 @@
                 Command="{Binding Rotate0Command}"
                 GroupName="RotationGroup"
                 Header="0°"
-                IsChecked="{Binding WindowTabs.ActiveTab.Value.IsRotated0.Value}"
+                IsChecked="{Binding WindowTabs.ActiveTab.Value.Orientation.IsRotated0.Value, Mode=OneWay}"
                 ToggleType="Radio"
                 x:Name="Rotation0Item" />
             <customControls:StyledMenuItem
                 Command="{Binding Rotate90Command}"
                 GroupName="RotationGroup"
                 Header="90°"
-                IsChecked="{Binding WindowTabs.ActiveTab.Value.IsRotated90.Value}"
+                IsChecked="{Binding WindowTabs.ActiveTab.Value.Orientation.IsRotated90.Value, Mode=OneWay}"
                 ToggleType="Radio"
                 x:Name="Rotation90Item" />
             <customControls:StyledMenuItem
                 Command="{Binding Rotate180Command}"
                 GroupName="RotationGroup"
                 Header="180°"
-                IsChecked="{Binding WindowTabs.ActiveTab.Value.IsRotated180.Value}"
+                IsChecked="{Binding WindowTabs.ActiveTab.Value.Orientation.IsRotated180.Value, Mode=OneWay}"
                 ToggleType="Radio"
                 x:Name="Rotation180Item" />
             <customControls:StyledMenuItem
                 Command="{Binding Rotate270Command}"
                 GroupName="RotationGroup"
                 Header="270°"
-                IsChecked="{Binding WindowTabs.ActiveTab.Value.IsRotated270.Value}"
+                IsChecked="{Binding WindowTabs.ActiveTab.Value.Orientation.IsRotated270.Value, Mode=OneWay}"
                 ToggleType="Radio"
                 x:Name="Rotation270Item" />
             <Separator />
-            <customControls:StyledMenuItem Command="{CompiledBinding FlipCommand}" Header="{CompiledBinding Translation.IsFlipped.Value}">
+            <customControls:StyledMenuItem Command="{CompiledBinding FlipCommand}" Header="{CompiledBinding WindowTabs.ActiveTab.Value.Orientation.FlipLabel.Value}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource FlipGeometry}"
@@ -274,7 +274,7 @@
                         Stretch="Fill"
                         Width="12">
                         <Path.RenderTransform>
-                            <ScaleTransform ScaleX="{CompiledBinding WindowTabs.ActiveTab.Value.ScaleX.Value}" />
+                            <ScaleTransform ScaleX="{CompiledBinding WindowTabs.ActiveTab.Value.Orientation.ScaleX.Value}" />
                         </Path.RenderTransform>
                     </Path>
                 </MenuItem.Icon>
@@ -867,12 +867,12 @@
                     IsRepeatEnabled="False"
                     Margin="0"
                     ToolTip.HorizontalOffset="15"
-                    ToolTip.Tip="{CompiledBinding Translation.IsFlipped.Value,
+                    ToolTip.Tip="{CompiledBinding WindowTabs.ActiveTab.Value.Orientation.FlipLabel.Value,
                                                   Mode=OneWay}"
                     Width="38"
                     x:Name="FlipButton">
                     <Button.RenderTransform>
-                        <ScaleTransform ScaleX="{Binding WindowTabs.ActiveTab.Value.ScaleX.Value}" />
+                        <ScaleTransform ScaleX="{Binding WindowTabs.ActiveTab.Value.Orientation.ScaleX.Value}" />
                     </Button.RenderTransform>
                 </customControls:IconButton>
 

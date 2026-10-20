@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
@@ -21,8 +22,11 @@ namespace PicView.Avalonia.Views.UC;
 
 public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 {
-    private RotationTransformer? _imageTransformer;
+    private bool _isInitialized;
     private DisposableBag _disposables;
+    private IDisposable? _flipSubscription;
+    private ScaleTransform? _flipTransform;
+    private bool _animatesNextFlip;
     
     public ImageViewer()
     {
@@ -313,24 +317,12 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 
     private void InitializeImageTransformer()
     {
-        if (_imageTransformer is not null)
+        if (_isInitialized || Application.Current.DataContext is not CoreViewModel core)
         {
             return;
         }
 
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-
-        // The image is not flipped by default, update translation to reflect that
-        core.Translation.IsFlipped.Value = TranslationManager.Translation.Flip;
-
-        _imageTransformer = new RotationTransformer(
-            MainTransform,
-            MainImage,
-            core.MainWindows.ActiveWindow.CurrentValue,
-            TopLevel.GetTopLevel(this) as MainWindow);
+        _isInitialized = true;
         ZoomPanControl.Initialize(ZoomPreview);
 
         Observable.EveryValueChanged(ZoomPanControl, zoom => zoom.Scale)
@@ -411,10 +403,56 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     #endregion
 
     #region Image Transformation
-    public void Rotate(bool clockWise) => _imageTransformer?.Rotate(clockWise);
-    public void Rotate(int angle) => _imageTransformer?.Rotate(angle);
-    public void Flip(bool animate) => _imageTransformer?.Flip(animate);
-    public void ResetFlip() => _imageTransformer?.ResetFlip();
+
+    /// <summary>
+    /// Whether an image is shown, so that turning or flipping it means something.
+    /// </summary>
+    public bool HasImage => MainImage.Source is not null;
+
+    /// <summary>
+    /// Animates the next change of the tab's flip, as the Flip Action does; resetting it on a new image does not.
+    /// </summary>
+    public void AnimateNextFlip() => _animatesNextFlip = true;
+
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        base.OnDataContextChanged(e);
+        _flipSubscription?.Dispose();
+        _flipSubscription = (DataContext as TabViewModel)?.Orientation.Current
+            .Select(static orientation => orientation.IsFlipped)
+            .DistinctUntilChanged()
+            .Subscribe(isFlipped => ShowFlip(isFlipped ? -1 : 1),
+                DebugHelper.LogError(nameof(ImageViewer), nameof(ShowFlip)));
+    }
+
+    /// <summary>
+    /// Mirrors the image as its tab's Orientation asks. The rotation is bound in the view instead.
+    /// </summary>
+    private void ShowFlip(double scaleX)
+    {
+        if (!Dispatcher.UIThread.CheckAccess())
+        {
+            Dispatcher.UIThread.Invoke(() => ShowFlip(scaleX), DispatcherPriority.Send);
+            return;
+        }
+
+        if (_flipTransform is null)
+        {
+            if (scaleX is 1)
+            {
+                return;
+            }
+
+            _flipTransform = new ScaleTransform();
+            MainTransform.RenderTransform = _flipTransform;
+        }
+
+        _flipTransform.Transitions = _animatesNextFlip
+            ? [new DoubleTransition { Property = ScaleTransform.ScaleXProperty, Duration = TimeSpan.FromSeconds(.2) }]
+            : null;
+        _animatesNextFlip = false;
+        _flipTransform.ScaleX = scaleX;
+    }
         
     #endregion
 
@@ -436,6 +474,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SecondaryMotionPhotoView.FirstFrameShown -= OnMotionPhotoFirstFrameShown;
         SecondaryMotionPhotoView.Dispose();
         _disposables.Dispose();
+        _flipSubscription?.Dispose();
         HoverBar.Dispose();
         MainPanel.PointerEntered -= OnPointerMoved;
         MainPanel.PointerExited -= OnPointerExited;

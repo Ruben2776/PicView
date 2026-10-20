@@ -796,7 +796,6 @@ public class TranslationViewModel
 
     #region Dynamic Translation strings
 
-    public BindableReactiveProperty<string?> IsFlipped { get; } = new();
 
     public BindableReactiveProperty<string?> IsLooping { get; } = new();
 

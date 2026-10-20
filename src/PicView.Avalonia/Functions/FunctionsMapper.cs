@@ -273,41 +273,41 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     public ValueTask Up() =>
         ArrowKeyNavigation.Up(IsGalleryExpanded, NavigateDirectional, RotateRight);
 
-    /// <inheritdoc cref="RotationManager.RotateRight(MainWindowViewModel)" />
+    /// <inheritdoc cref="RotationManager.RotateRight(MainWindowViewModel, MainWindow)" />
     public ValueTask RotateRight()
     {
         RotationManager.RotateRight(vm, mainWindow);
         return ValueTask.CompletedTask;
     }
 
-    /// <inheritdoc cref="RotationManager.RotateLeft(MainWindowViewModel)" />
+    /// <inheritdoc cref="RotationManager.RotateLeft(MainWindowViewModel, MainWindow)" />
     public ValueTask RotateLeft()
     {
         RotationManager.RotateLeft(vm, mainWindow);
         return ValueTask.CompletedTask;
     }
-    /// <inheritdoc cref="RotationManager.Rotate(MainWindowViewModel, int)" />
+    /// <inheritdoc cref="RotationManager.Rotate(MainWindowViewModel, int, MainWindow)" />
     public ValueTask Rotate0()
     {
         RotationManager.Rotate(vm, 0, mainWindow);
         return ValueTask.CompletedTask;
     }
-    /// <inheritdoc cref="RotationManager.Rotate(MainWindowViewModel, int)" />
+    /// <inheritdoc cref="RotationManager.Rotate(MainWindowViewModel, int, MainWindow)" />
     public ValueTask Rotate90()
     {
-        RotationManager.Rotate(vm, 90, mainWindow);
+        RotationManager.Rotate(vm, 1, mainWindow);
         return ValueTask.CompletedTask;
     }
-    /// <inheritdoc cref="RotationManager.Rotate(MainWindowViewModel, int)" />
+    /// <inheritdoc cref="RotationManager.Rotate(MainWindowViewModel, int, MainWindow)" />
     public ValueTask Rotate180()
     {
-        RotationManager.Rotate(vm, 180, mainWindow);
+        RotationManager.Rotate(vm, 2, mainWindow);
         return ValueTask.CompletedTask;
     }
-    /// <inheritdoc cref="RotationManager.Rotate(MainWindowViewModel, int)" />
+    /// <inheritdoc cref="RotationManager.Rotate(MainWindowViewModel, int, MainWindow)" />
     public ValueTask Rotate270()
     {
-        RotationManager.Rotate(vm, 270, mainWindow);
+        RotationManager.Rotate(vm, 3, mainWindow);
         return ValueTask.CompletedTask;
     }
     /// <inheritdoc cref="RotationManager.Flip(MainWindowViewModel)" />

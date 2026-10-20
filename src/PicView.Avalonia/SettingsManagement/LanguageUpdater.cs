@@ -19,7 +19,6 @@ public static class LanguageUpdater
         translationViewModel.UpdateLanguage();
         translationViewModel.SubscribeToDynamicTranslationUpdates();
 
-        translationViewModel.IsFlipped.Value = TranslationManager.Translation.Flip;
         translationViewModel.IsShowingUI.Value = !Settings.UIProperties.ShowInterface ? translationViewModel.ShowUI.CurrentValue : translationViewModel.HideUI.CurrentValue;
     
         translationViewModel.IsScrolling.Value = Settings.Zoom.ScrollEnabled ?

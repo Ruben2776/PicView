@@ -55,10 +55,10 @@
 
             <LayoutTransformControl>
                 <LayoutTransformControl.LayoutTransform>
-                    <RotateTransform Angle="{CompiledBinding RotationAngle.Value}" />
+                    <RotateTransform Angle="{CompiledBinding Orientation.Degrees.Value}" />
                 </LayoutTransformControl.LayoutTransform>
                 <LayoutTransformControl.RenderTransform>
-                    <ScaleTransform ScaleX="{Binding ScaleX.Value}" />
+                    <ScaleTransform ScaleX="{Binding Orientation.ScaleX.Value}" />
                 </LayoutTransformControl.RenderTransform>
                 <Panel>
                     <DockPanel

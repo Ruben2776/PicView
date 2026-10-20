@@ -120,10 +120,10 @@
                 IconHeight="17"
                 IconWidth="17"
                 IsRepeatEnabled="False"
-                ToolTip.Tip="{CompiledBinding ParentWindowContext.Translation.IsFlipped.Value,
+                ToolTip.Tip="{CompiledBinding Orientation.FlipLabel.Value,
                                               Mode=OneWay}">
                 <Button.RenderTransform>
-                    <ScaleTransform ScaleX="{Binding ScaleX.Value}" />
+                    <ScaleTransform ScaleX="{Binding Orientation.ScaleX.Value}" />
                 </Button.RenderTransform>
             </customControls:IconButton>
 

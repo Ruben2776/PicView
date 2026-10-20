@@ -44,7 +44,7 @@ public readonly record struct PixelSizes(
         }
 
         return new PixelSizes(first.Width, first.Height, second.Width, second.Height,
-            (int)Math.Round(tab.RotationAngle.CurrentValue / 90d));
+            tab.Orientation.Current.CurrentValue.QuarterTurns);
     }
 
     private static (double Width, double Height)? SizeOf(ImageModel model, SharedImageCache? cache)
