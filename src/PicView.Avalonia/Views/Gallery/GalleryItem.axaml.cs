@@ -298,12 +298,13 @@ public partial class GalleryItem : NavigateAbleItem
 
     private void DeleteFile_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item)
+        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item ||
+            TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
         }
         var fileName = item.FileLocation.CurrentValue;
-        _ = core.PlatformService.DeleteFile(fileName, recycle: true);
+        _ = FileManager.DeleteFileWithOptionalDialog(recycle: true, fileName, core.PlatformService, mainWindow);
     }
     
     #endregion
