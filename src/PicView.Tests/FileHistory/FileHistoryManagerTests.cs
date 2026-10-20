@@ -6,6 +6,7 @@ namespace PicView.Tests.FileHistory;
 [Collection("Sequential")]
 public class FileHistoryManagerTests : IDisposable
 {
+    private readonly FileHistoryFileBackup _fileHistoryBackup = new();
     private readonly string _tempRoot;
     private readonly string _configPath;
 
@@ -32,6 +33,8 @@ public class FileHistoryManagerTests : IDisposable
                 // Ignore cleanup errors
             }
         }
+
+        _fileHistoryBackup.Dispose();
     }
 
     [Fact]

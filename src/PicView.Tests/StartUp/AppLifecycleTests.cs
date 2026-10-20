@@ -14,14 +14,17 @@ using PicView.Core.Models;
 using PicView.Core.Sizing;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
+using PicView.Tests.FileHistory;
 using PicView.Tests.WindowBehavior;
 using R3;
 
 namespace PicView.Tests.StartUp;
 
 [Collection("Sequential")]
-public class AppLifecycleTests : IDisposable
+public class AppLifecycleTests : IAsyncDisposable
 {
+    private readonly FileHistoryFileBackup _fileHistoryBackup = new();
+    private readonly List<AppLifecycle> _apps = [];
     private readonly string _folder;
     private readonly CoreViewModel _core;
     private readonly FolderSharedFiles _sharedFiles;
@@ -40,8 +43,14 @@ public class AppLifecycleTests : IDisposable
         _sharedFiles = new FolderSharedFiles(_folder);
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
+        // Shut down before deleting the folder, since a late save to a missing folder goes to the user's own
+        foreach (var app in _apps)
+        {
+            await app.ShutdownAsync();
+        }
+
         foreach (var window in _provider.Created)
         {
             window.Close();
@@ -51,6 +60,8 @@ public class AppLifecycleTests : IDisposable
         {
             Directory.Delete(_folder, true);
         }
+
+        _fileHistoryBackup.Dispose();
     }
 
     [AvaloniaFact]
@@ -182,7 +193,12 @@ public class AppLifecycleTests : IDisposable
 
     private static MainWindowViewModel ViewModelOf(MainWindow window) => (MainWindowViewModel)window.DataContext!;
 
-    private AppLifecycle CreateApp() => new(_core, _provider, _sharedFiles, () => _exits++);
+    private AppLifecycle CreateApp()
+    {
+        var app = new AppLifecycle(_core, _provider, _sharedFiles, () => _exits++);
+        _apps.Add(app);
+        return app;
+    }
 
     /// <summary>
     /// Keeps file history and favorites in a temp folder, and leaves the user's settings and Keymap alone.

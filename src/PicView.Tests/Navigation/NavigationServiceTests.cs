@@ -10,12 +10,14 @@ using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 using R3;
+using PicView.Tests.FileHistory;
 
 namespace PicView.Tests.Navigation;
 
 [Collection("Sequential")]
 public class NavigationServiceTests : IDisposable
 {
+    private readonly FileHistoryFileBackup _fileHistoryBackup = new();
     private readonly MockImageModelLoader _mockImageModelLoader;
     private readonly SharedImageCache _cache;
     private readonly MockFileWatcherService _mockFileWatcherService;
@@ -59,6 +61,8 @@ public class NavigationServiceTests : IDisposable
                 // Ignore cleanup errors
             }
         }
+
+        _fileHistoryBackup.Dispose();
     }
 
     [Fact]
