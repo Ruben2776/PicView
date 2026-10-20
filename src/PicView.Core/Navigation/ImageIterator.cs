@@ -166,14 +166,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         {
             var isLooping = Settings.UIProperties.Looping;
             var isExtracting = _tab.IsArchiveExtracting.Value;
-            if (Settings.ImageScaling.ShowImageSideBySide)
-            {
-                _tab.CanNavigateForwards.Value = isLooping || isExtracting || index < count - 2;
-            }
-            else
-            {
-                _tab.CanNavigateForwards.Value = isLooping || isExtracting || index < count - 1;
-            }
+            _tab.CanNavigateForwards.Value = SideBySidePair.CanNavigateForwards(index, count, isExtracting);
 
             _tab.CanNavigateBackwards.Value = isLooping || index > 0;
         }
@@ -183,11 +176,18 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
     public async ValueTask NavigateAsync(NavigateTo navigateTo, SkipAmount skipAmount, CancellationTokenSource ct)
     {
-        if (Settings.ImageScaling.ShowImageSideBySide)
+        if (SideBySidePair.IsEnabled)
         {
-            var (currentIndex, secondaryIndex, isReversed) = IterationHelper.GetIterations(CurrentIndex, Files.Count, navigateTo, skipAmount);
+            var (currentIndex, secondaryIndex, isReversed) = SideBySidePair.Navigate(CurrentIndex, Files.Count, navigateTo, skipAmount);
             IsReversed = isReversed;
-            await IterateToIndicesAsync(currentIndex, secondaryIndex, ct).ConfigureAwait(false);
+            if (secondaryIndex is { } secondary)
+            {
+                await IterateToIndicesAsync(currentIndex, secondary, ct).ConfigureAwait(false);
+            }
+            else
+            {
+                await IterateToIndexAsync(currentIndex, ct).ConfigureAwait(false);
+            }
         }
         else
         {
@@ -238,7 +238,16 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             return;
         }
 
+        // An image with a partner is shown as a pair, wherever the navigation came from
+        if (SideBySidePair.PartnerOf(index, Files.Count) is { } partner)
+        {
+            await IterateToIndicesAsync(index, partner, ct).ConfigureAwait(false);
+            return;
+        }
+
         CurrentIndex = index;
+        // A single image has no secondary, and a pair that is still loading is no longer the current one
+        SecondaryCurrentIndex = -1;
         var targetFile = Files[index];
         var request = Cache.GetAsync(_tab.Id, targetFile, ct.Token);
         if (!request.IsCompleted)
@@ -272,7 +281,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
         // Handle internal TIFF navigation
         // TODO: Figure out how to handle multi-page TIFF files when side-by-side is enabled
-        if (_tab.Model.TiffNavigation is not null && ShouldNavigateTiffEntry(_tab.Model, IsReversed))
+        if (_tab.Model?.TiffNavigation is not null && ShouldNavigateTiffEntry(_tab.Model, IsReversed))
         {
             return;
         }
@@ -357,17 +366,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             Cache.ReleaseImages(_tab.Id);
         }
         var ct = _tab.GetTabCancellation();
-        if (Settings.ImageScaling.ShowImageSideBySide)
-        {
-            // Need to update SecondaryCurrentIndex
-            var (_, nextIteration, _) = IterationHelper.GetIterations(CurrentIndex, Files.Count, NavigateTo.Next, SkipAmount.None);
-            SecondaryCurrentIndex = nextIteration;
-            await IterateToIndicesAsync(CurrentIndex, SecondaryCurrentIndex, ct).ConfigureAwait(false);
-        }
-        else
-        {
-            await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
-        }
+        await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
     }
 
     #endregion
@@ -390,6 +389,11 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         {
             iteration = CurrentIndex + 1;
             isReversed = false;
+        }
+        else if (SideBySidePair.IsEnabled)
+        {
+            // A pair moves by two images, as NavigateAsync does; IterateToIndexAsync shows the partner beside it
+            (iteration, _, isReversed) = SideBySidePair.Navigate(CurrentIndex, Files.Count, to, SkipAmount.One);
         }
         else
         {
@@ -473,8 +477,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             UpdateImageFromPage(newModel);
         }
 
-        // Keep the secondary when side by side: this path only moves the primary (e.g., repeated navigation)
-        _tab.Display(newModel, Settings.ImageScaling.ShowImageSideBySide ? _tab.SecondaryModel : null);
+        // Only single images reach here, so no secondary is shown; a pair goes through UpdateModels
+        _tab.Display(newModel);
         UpdateNavigationProperties();
         TriggerPreload();
 

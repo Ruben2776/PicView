@@ -132,9 +132,9 @@ public static class QuickLoad
         var listFrom = rootDirectory is null ? fileInfo : new FileInfo(rootDirectory);
         var isGalleryEnabled = TabNavigationInitializer.PrepareDockedGallery(tab);
 
-        if (Settings.ImageScaling.ShowImageSideBySide)
+        if (SideBySidePair.IsEnabled)
         {
-            await LoadSideBySideAsync(mainWindow, core, vm, tab, fileInfo, files ?? core.PlatformService.GetFiles(listFrom))
+            await LoadSideBySideAsync(mainWindow, core, vm, tab, fileInfo, files ?? core.PlatformService.GetFiles(listFrom), listFrom)
                 .ConfigureAwait(false);
         }
         else
@@ -221,16 +221,22 @@ public static class QuickLoad
     /// is sized for both images before it is shown; without it, the window shows at once and the images follow.
     /// </summary>
     private static async ValueTask LoadSideBySideAsync(MainWindow mainWindow, CoreViewModel core, MainWindowViewModel vm,
-        TabViewModel tab, FileInfo fileInfo, List<FileInfo> files)
+        TabViewModel tab, FileInfo fileInfo, List<FileInfo> files, FileInfo listFrom)
     {
+        var index = SideBySidePair.IndexOf(files, fileInfo) ?? 0;
+
+        // Without another image there is no pair to size or show, so the image loads as a single one
+        if (SideBySidePair.PartnerOf(index, files.Count) is not { } nextIndex)
+        {
+            await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, files, listFrom).ConfigureAwait(false);
+            return;
+        }
+
         if (!vm.WindowModeState.CurrentValue.AutoFit)
         {
             ShowNow(mainWindow);
         }
 
-        var index = Math.Max(0, files.FindIndex(x =>
-            x.FullName.AsSpan().Equals(fileInfo.FullName.AsSpan(), StringComparison.OrdinalIgnoreCase)));
-        var (_, nextIndex, _) = IterationHelper.GetIterations(index, files.Count, NavigateTo.Next, SkipAmount.None);
         var nextFileInfo = files[nextIndex];
 
         using var firstMagick = new MagickImage();
