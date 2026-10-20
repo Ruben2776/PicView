@@ -1,8 +1,11 @@
 using Avalonia.Input.Platform;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
+using PicView.Avalonia.ImageTransformations;
 using PicView.Core.DebugTools;
 using PicView.Core.IPlatform;
+using PicView.Core.ViewModels;
+using Orientation = PicView.Core.ImageTransformations.Orientation;
 
 namespace PicView.Avalonia.Clipboard;
 
@@ -52,6 +55,18 @@ public class ClipboardCopyService(
             DebugHelper.LogDebug(nameof(ClipboardCopyService), nameof(CopyImageAsync), ex);
             return false;
         }
+    }
+
+    public Task<bool> CopyImageAsync(TabViewModel tab)
+    {
+        if (tab.Image.CurrentValue is not Bitmap bitmap)
+        {
+            return Task.FromResult(false);
+        }
+
+        var orientation = tab.Orientation.Current.CurrentValue;
+        // A turned copy is never disposed here, since pasting in PicView can show that same bitmap in a tab
+        return CopyImageAsync(orientation == Orientation.Upright ? bitmap : OrientedBitmap.Render(bitmap, orientation));
     }
 
     public async Task<bool> CopyFileAsync(string? filePath)

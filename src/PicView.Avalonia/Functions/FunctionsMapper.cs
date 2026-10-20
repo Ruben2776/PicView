@@ -780,15 +780,15 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
             .ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="ICopyClipboard.CopyImageAsync(object)" />
+    /// <inheritdoc cref="ICopyClipboard.CopyImageAsync(TabViewModel)" />
     public async ValueTask CopyImage()
     {
-        if (mainWindow.ClipboardCopyService is null)
+        if (mainWindow.ClipboardCopyService is null || vm.WindowTabs.ActiveTab.CurrentValue is not { } tab)
         {
             return;
         }
         await mainWindow.ClipboardCopyService
-            .CopyImageAsync(vm.WindowTabs.ActiveTab.CurrentValue?.Image?.CurrentValue)
+            .CopyImageAsync(tab)
             .ConfigureAwait(false);
     }
 
