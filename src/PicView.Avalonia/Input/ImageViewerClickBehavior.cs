@@ -11,6 +11,7 @@ namespace PicView.Avalonia.Input;
 /// <summary>
 /// What clicking does while the image viewer is shown: a left double-click resets the zoom or toggles fullscreen,
 /// a left click navigates when navigating by clicking is on, and the middle and side buttons run their Keybinds.
+/// On the start menu a left double-click on empty space toggles fullscreen when that is the double-click setting.
 /// </summary>
 public static class ImageViewerClickBehavior
 {
@@ -41,7 +42,8 @@ public static class ImageViewerClickBehavior
             if (e.ClickCount is 2)
             {
                 // Prevent unintended behavior when double-clicking
-                if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+                var view = vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue;
+                if (view is ImageViewer imageViewer)
                 {
                     if (imageViewer.GalleryView.IsPointerOver)
                     {
@@ -53,18 +55,22 @@ public static class ImageViewerClickBehavior
                         return;
                     }
                 }
+                else if (view is StartUpMenu startUpMenu && startUpMenu.Buttons.IsPointerOver)
+                {
+                    return;
+                }
 
                 if (window.SharedBottomBar.IsPointerOver || window.SharedTitleBar.IsPointerOver)
                 {
                     return;
                 }
-            
-                switch (Settings.UIProperties.DoubleClickBehavior)
+
+                switch (DoubleClickActionFor(Settings.UIProperties.DoubleClickBehavior, canResetZoom: view is ImageViewer))
                 {
-                    case 1:
+                    case DoubleClickAction.ResetZoom:
                         await vm.Mapper.ResetZoom().ConfigureAwait(false);
                         return;
-                    case 2:
+                    case DoubleClickAction.ToggleFullscreen:
                         await vm.Mapper.ToggleFullscreen().ConfigureAwait(false);
                         return;
                 }
@@ -119,4 +125,23 @@ public static class ImageViewerClickBehavior
 
         await window.KeybindRouter.MouseButtonAsync(currentKeys.Value).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// What a left double-click does with <paramref name="doubleClickBehavior"/> (1 resets the zoom, 2 toggles
+    /// fullscreen). Resetting the zoom only applies where there is an image to zoom, so it does nothing on the start menu.
+    /// </summary>
+    internal static DoubleClickAction DoubleClickActionFor(int doubleClickBehavior, bool canResetZoom) =>
+        doubleClickBehavior switch
+        {
+            1 when canResetZoom => DoubleClickAction.ResetZoom,
+            2 => DoubleClickAction.ToggleFullscreen,
+            _ => DoubleClickAction.None
+        };
+}
+
+internal enum DoubleClickAction
+{
+    None,
+    ResetZoom,
+    ToggleFullscreen
 }
