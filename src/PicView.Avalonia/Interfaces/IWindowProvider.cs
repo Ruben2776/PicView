@@ -8,7 +8,11 @@ namespace PicView.Avalonia.Interfaces;
 
 public interface IWindowProvider
 {
-    MainWindow CreateMainWindow();
+    /// <summary>
+    /// Creates a Main Window, which opens with <paramref name="firstTab"/> when a tab moved out of another one, or
+    /// with a new tab otherwise.
+    /// </summary>
+    MainWindow CreateMainWindow(TabViewModel? firstTab = null);
 
     /// <summary>
     /// Creates what this platform does natively when a main window changes Window Mode.

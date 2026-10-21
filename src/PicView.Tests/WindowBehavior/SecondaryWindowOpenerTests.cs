@@ -239,7 +239,7 @@ public class SecondaryWindowOpenerTests
     {
         public bool NoFileAssociations { get; set; }
 
-        public MainWindow CreateMainWindow() => throw new NotSupportedException();
+        public MainWindow CreateMainWindow(TabViewModel? firstTab = null) => throw new NotSupportedException();
         public IWindowModeAdapter CreateWindowModeAdapter() => throw new NotSupportedException();
         public Window CreateAboutWindow() => new();
         public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => new();

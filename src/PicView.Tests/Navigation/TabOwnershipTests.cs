@@ -1,4 +1,5 @@
 using ImageMagick;
+using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -13,24 +14,131 @@ namespace PicView.Tests.Navigation;
 [Collection("Sequential")]
 public class TabOwnershipTests
 {
+    private readonly CoreViewModel _core;
+
     public TabOwnershipTests()
     {
         SetDefaults();
         TranslationManager.Init();
+        _core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
+    }
+
+    [Fact]
+    public void MoveTab_ToAnotherWindow_IsOwnedAndSelectedThereAndTheNeighbourHere()
+    {
+        var source = CreateWindow();
+        var target = CreateWindow();
+        var remaining = source.WindowTabs.ActiveTab.Value;
+        var tab = source.WindowTabs.CreateTab();
+
+        var moved = source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        Assert.True(moved);
+        Assert.Equal([remaining], source.WindowTabs.Tabs.Value);
+        Assert.Same(remaining, source.WindowTabs.ActiveTab.Value);
+        Assert.Contains(tab, target.WindowTabs.Tabs.Value);
+        Assert.Same(tab, target.WindowTabs.ActiveTab.Value);
+        Assert.Same(target, tab.ParentWindowContext);
+    }
+
+    [Fact]
+    public void MoveTab_WhenDragPreviewAlreadyAddedIt_DoesNotDuplicateIt()
+    {
+        var source = CreateWindow();
+        var target = CreateWindow();
+        var tab = source.WindowTabs.CreateTab();
+        target.WindowTabs.Tabs.Value.Add(tab);
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        Assert.Single(target.WindowTabs.Tabs.Value, t => ReferenceEquals(t, tab));
+        Assert.Same(tab, target.WindowTabs.ActiveTab.Value);
+    }
+
+    [Fact]
+    public void MoveTab_LastTab_StaysWhereItIs()
+    {
+        var source = CreateWindow();
+        var target = CreateWindow();
+        var tab = source.WindowTabs.ActiveTab.Value;
+
+        var moved = source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        Assert.False(moved);
+        Assert.Equal([tab], source.WindowTabs.Tabs.Value);
+        Assert.Same(source, tab.ParentWindowContext);
+    }
+
+    [Fact]
+    public void MoveTab_OpenedTab_IsAttachedThereAndDetachedHere()
+    {
+        var sourceHookups = new RecordingHookups();
+        var targetHookups = new RecordingHookups();
+        var source = CreateWindow(sourceHookups);
+        var target = CreateWindow(targetHookups);
+        var tab = source.WindowTabs.CreateTab();
+        source.WindowTabs.HookUp(tab);
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        Assert.Equal([tab], sourceHookups.Detached);
+        Assert.Equal([tab], targetHookups.Attached);
+    }
+
+    [Fact]
+    public void MoveTab_FreshTab_StaysUnattached()
+    {
+        var targetHookups = new RecordingHookups();
+        var source = CreateWindow(new RecordingHookups());
+        var target = CreateWindow(targetHookups);
+        var tab = source.WindowTabs.CreateTab();
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        Assert.Empty(targetHookups.Attached);
+    }
+
+    [Fact]
+    public void NewWindow_OpenedWithAMovedTab_HasOnlyThatTabAndAttachesIt()
+    {
+        var source = CreateWindow(new RecordingHookups());
+        var tab = source.WindowTabs.CreateTab();
+        source.WindowTabs.HookUp(tab);
+        var hookups = new RecordingHookups();
+
+        source.WindowTabs.MoveOut(tab);
+        var window = CreateWindow(hookups, firstTab: tab);
+
+        Assert.Equal([tab], window.WindowTabs.Tabs.Value);
+        Assert.Same(tab, window.WindowTabs.ActiveTab.Value);
+        Assert.Same(window, tab.ParentWindowContext);
+        Assert.Equal([tab], hookups.Attached);
+    }
+
+    [Fact]
+    public void HookUp_CalledTwice_AttachesTheTabOnce()
+    {
+        var hookups = new RecordingHookups();
+        var window = CreateWindow(hookups);
+        var tab = window.WindowTabs.ActiveTab.Value;
+
+        window.WindowTabs.HookUp(tab);
+        window.WindowTabs.HookUp(tab);
+
+        Assert.True(tab.IsInitialized);
+        Assert.Equal([tab], hookups.Attached);
     }
 
     [Fact]
     public void CloseTab_AfterMovingToAnotherWindow_ClosesItInThatWindow()
     {
-        var core = CreateCore();
-        var source = CreateWindowViewModel(core);
-        var target = CreateWindowViewModel(core);
+        var source = CreateWindow();
+        var target = CreateWindow();
         var sourceTab = source.WindowTabs.ActiveTab.Value;
         var targetTab = target.WindowTabs.ActiveTab.Value;
         var tab = source.WindowTabs.CreateTab();
 
-        source.WindowTabs.RemoveTab(tab);
-        target.WindowTabs.Adopt(tab);
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
         tab.CloseTab();
 
         Assert.Equal([targetTab], target.WindowTabs.Tabs.Value);
@@ -39,26 +147,23 @@ public class TabOwnershipTests
     }
 
     [Fact]
-    public void Adopt_TabFromAnotherWindow_IsOwnedAndSelectedThere()
+    public void CloseTab_OpenedTab_DetachesIt()
     {
-        var core = CreateCore();
-        var source = CreateWindowViewModel(core);
-        var target = CreateWindowViewModel(core);
-        var tab = source.WindowTabs.CreateTab();
+        var hookups = new RecordingHookups();
+        var window = CreateWindow(hookups);
+        var tab = window.WindowTabs.CreateTab();
+        window.WindowTabs.HookUp(tab);
 
-        source.WindowTabs.RemoveTab(tab);
-        target.WindowTabs.Adopt(tab);
+        window.WindowTabs.CloseTab(tab);
 
-        Assert.Same(target, tab.ParentWindowContext);
-        Assert.Same(tab, target.WindowTabs.ActiveTab.Value);
+        Assert.Equal([tab], hookups.Detached);
     }
 
     [Fact]
     public void CloseTab_TabOfAnotherWindow_LeavesItOpen()
     {
-        var core = CreateCore();
-        var source = CreateWindowViewModel(core);
-        var other = CreateWindowViewModel(core);
+        var source = CreateWindow();
+        var other = CreateWindow();
         var tab = source.WindowTabs.CreateTab();
         other.WindowTabs.CreateTab();
 
@@ -71,7 +176,7 @@ public class TabOwnershipTests
     [Fact]
     public void CloseTab_LastTab_StaysOpen()
     {
-        var window = CreateWindowViewModel(CreateCore());
+        var window = CreateWindow();
         var tab = window.WindowTabs.ActiveTab.Value;
 
         window.WindowTabs.CloseTab(tab);
@@ -96,14 +201,36 @@ public class TabOwnershipTests
         Assert.Equal([first.Id, second.Id], thumbnails.RemovedOwners);
     }
 
-    private static CoreViewModel CreateCore() =>
-        new(null, _ => ValueTask.FromResult(new ImageModel()));
-
-    private static MainWindowViewModel CreateWindowViewModel(CoreViewModel core) =>
-        new(core, core.Translation, null!, core.GlobalSettings!, core.GallerySettings);
+    private MainWindowViewModel CreateWindow(ITabHookups? hookups = null, TabViewModel? firstTab = null)
+    {
+        var vm = new MainWindowViewModel(_core, _core.Translation, null!, _core.GlobalSettings!, _core.GallerySettings,
+            firstTab);
+        if (hookups is not null)
+        {
+            vm.WindowTabs.SetHookups(hookups);
+        }
+        return vm;
+    }
 
     private static ValueTask<ImageModel> LoadNothing(FileInfo file) =>
         ValueTask.FromResult(new ImageModel { FileInfo = file });
+
+    private sealed class RecordingHookups : ITabHookups
+    {
+        public List<TabViewModel> Attached { get; } = [];
+        public List<TabViewModel> Detached { get; } = [];
+
+        public IDisposable Attach(TabViewModel tab)
+        {
+            Attached.Add(tab);
+            return new Detaching(() => Detached.Add(tab));
+        }
+
+        private sealed class Detaching(Action detach) : IDisposable
+        {
+            public void Dispose() => detach();
+        }
+    }
 
     private sealed class RecordingFileWatcher : IFileWatcherService
     {

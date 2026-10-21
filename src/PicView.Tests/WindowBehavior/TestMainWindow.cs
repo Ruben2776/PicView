@@ -17,7 +17,7 @@ internal sealed class TestMainWindow(IWindowModeAdapter adapter, IWindowProvider
 
     private sealed class TestWindowProvider(IWindowModeAdapter adapter) : IWindowProvider
     {
-        public MainWindow CreateMainWindow() => throw new NotSupportedException();
+        public MainWindow CreateMainWindow(TabViewModel? firstTab = null) => throw new NotSupportedException();
         public IWindowModeAdapter CreateWindowModeAdapter() => adapter;
         public Window CreateAboutWindow() => throw new NotSupportedException();
         public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => throw new NotSupportedException();

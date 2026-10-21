@@ -12,7 +12,7 @@ namespace PicView.Avalonia.Win32.WindowImpl;
 
 public class Win32WindowProvider : IWindowProvider
 {
-    public MainWindow CreateMainWindow() => new WinMainWindow();
+    public MainWindow CreateMainWindow(TabViewModel? firstTab = null) => new WinMainWindow(firstTab);
 
     public IWindowModeAdapter CreateWindowModeAdapter() => new Win32WindowModeAdapter();
 

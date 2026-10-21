@@ -12,7 +12,7 @@ namespace PicView.Avalonia.MacOS.WindowImpl;
 
 public class MacWindowProvider : IWindowProvider
 {
-    public MainWindow CreateMainWindow() => new MacMainWindow();
+    public MainWindow CreateMainWindow(TabViewModel? firstTab = null) => new MacMainWindow(null, firstTab);
 
     public IWindowModeAdapter CreateWindowModeAdapter() => new MacWindowModeAdapter();
 

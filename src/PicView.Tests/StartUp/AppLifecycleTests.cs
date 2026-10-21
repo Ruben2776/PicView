@@ -95,23 +95,42 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
-    public async Task OpenNewAsyncAndOpenDetachedAsync_GiveTheWindowTheBarsOfTheFirstMainWindow()
+    public async Task OpenNewAsyncAndOpenForMovedTabAsync_GiveTheWindowTheBarsOfTheFirstMainWindow()
     {
         var app = CreateApp();
         await app.StartAsync(settingsExists: true, []);
         var first = ViewModelOf(app.MainWindows.Open[0]);
 
         var opened = ViewModelOf(await app.MainWindows.OpenNewAsync());
-        var detached = ViewModelOf(await app.MainWindows.OpenDetachedAsync(new PixelPoint(40, 40), 800, 600));
+        var tab = first.WindowTabs.CreateTab();
+        first.WindowTabs.MoveOut(tab);
+        var moved = ViewModelOf(await app.MainWindows.OpenForMovedTabAsync(tab, new PixelPoint(40, 40), 800, 600));
 
         Assert.Equal(SizeDefaults.MainTitlebarHeight, first.TitlebarHeight.CurrentValue);
         Assert.Equal(SizeDefaults.BottombarHeight, first.BottombarHeight.CurrentValue);
-        foreach (var vm in new[] { opened, detached })
+        foreach (var vm in new[] { opened, moved })
         {
             Assert.Equal(first.TitlebarHeight.CurrentValue, vm.TitlebarHeight.CurrentValue);
             Assert.Equal(first.BottombarHeight.CurrentValue, vm.BottombarHeight.CurrentValue);
             Assert.True(vm.IsUIShown.CurrentValue);
         }
+    }
+
+    [AvaloniaFact]
+    public async Task OpenForMovedTabAsync_TabMovedOutOfAMainWindow_OpensWithOnlyThatTab()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = ViewModelOf(app.MainWindows.Open[0]);
+        var tab = first.WindowTabs.CreateTab();
+
+        first.WindowTabs.MoveOut(tab);
+        var moved = ViewModelOf(await app.MainWindows.OpenForMovedTabAsync(tab, new PixelPoint(40, 40), 800, 600));
+
+        Assert.Equal([tab], moved.WindowTabs.Tabs.CurrentValue);
+        Assert.Same(tab, moved.WindowTabs.ActiveTab.CurrentValue);
+        Assert.Same(moved, tab.ParentWindowContext);
+        Assert.DoesNotContain(tab, first.WindowTabs.Tabs.CurrentValue);
     }
 
     [AvaloniaFact]
@@ -230,11 +249,11 @@ public class AppLifecycleTests : IAsyncDisposable
         public int AboutWindowsCreated { get; private set; }
         public List<Window> ConvertWindows { get; } = [];
 
-        public MainWindow CreateMainWindow()
+        public MainWindow CreateMainWindow(TabViewModel? firstTab = null)
         {
             var window = new TestMainWindow(new NoOpModeAdapter(), this);
             window.DataContext = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!,
-                core.GallerySettings);
+                core.GallerySettings, firstTab);
             Created.Add(window);
             return window;
         }

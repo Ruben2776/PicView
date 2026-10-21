@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using PicView.Core.DebugTools;
 using PicView.Core.FileSorting;
+using PicView.Core.IPlatform;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using R3;
@@ -29,13 +30,76 @@ public class TabOverviewViewModel
 
     // The Main Window these tabs belong to
     private readonly MainWindowViewModel _parentVm;
+    private ITabHookups? _hookups;
     private bool _isTornDown;
 
-    public TabOverviewViewModel(MainWindowViewModel parentVm)
+    /// <param name="parentVm">The Main Window these tabs belong to.</param>
+    /// <param name="firstTab">A tab moved out of another Main Window, for a window that opens with it; otherwise the
+    /// window opens with a new tab.</param>
+    public TabOverviewViewModel(MainWindowViewModel parentVm, TabViewModel? firstTab = null)
     {
         _parentVm = parentVm;
-        ActiveTab = new BindableReactiveProperty<TabViewModel>(CreateInitialTab());
+        if (firstTab is null)
+        {
+            ActiveTab = new BindableReactiveProperty<TabViewModel>(CreateInitialTab());
+        }
+        else
+        {
+            firstTab.ParentWindowContext = parentVm;
+            Tabs.Value.Add(firstTab);
+            ActiveTab = new BindableReactiveProperty<TabViewModel>(firstTab);
+        }
         ActiveTab.Value.IsSelected = true;
+    }
+
+    /// <summary>
+    /// Gives this window what it does when its tabs change, and attaches every tab already opened, such as a tab it
+    /// opened with after a move. Called once, when the window is created.
+    /// </summary>
+    public void SetHookups(ITabHookups hookups)
+    {
+        _hookups = hookups;
+        foreach (var tab in Tabs.Value)
+        {
+            Attach(tab);
+        }
+    }
+
+    /// <summary>
+    /// Marks one of this window's tabs as opened, the first time it opens a source, and attaches it to the window.
+    /// </summary>
+    public void HookUp(TabViewModel tab)
+    {
+        tab.IsInitialized = true;
+        Attach(tab);
+    }
+
+    private void Attach(TabViewModel tab)
+    {
+        if (_hookups is null || !tab.IsInitialized || tab.Hookups is not null)
+        {
+            return;
+        }
+        tab.Hookups = _hookups.Attach(tab);
+    }
+
+    private static void Detach(TabViewModel tab)
+    {
+        tab.Hookups?.Dispose();
+        tab.Hookups = null;
+    }
+
+    /// <summary>
+    /// Shares the services of <paramref name="other"/>, for a window opened with a tab moved out of it, so tabs opened
+    /// in this window share the same caches.
+    /// </summary>
+    public void ShareServicesOf(TabOverviewViewModel other)
+    {
+        if (other is { SharedNavigation: { } navigation, SharedCache: { } cache, SharedThumbnailLoader: { } loader,
+                SharedFileWatcher: { } watcher, SharedThumbnailCache: { } thumbnails })
+        {
+            Initialize(navigation, cache, loader, watcher, thumbnails);
+        }
     }
 
     /// <summary>
@@ -110,10 +174,59 @@ public class TabOverviewViewModel
     }
     
     /// <summary>
-    /// Makes a tab moved from another Main Window one of this window's tabs, owned by this window, and selects it.
-    /// The drag preview may already have added it to <see cref="Tabs"/>.
+    /// Moves one of this window's tabs to the Main Window of <paramref name="target"/>, where it is selected and
+    /// attached. The last tab stays.
     /// </summary>
-    public void Adopt(TabViewModel tab)
+    /// <returns>Whether the tab moved.</returns>
+    public bool MoveTab(TabViewModel tab, TabOverviewViewModel target)
+    {
+        if (ReferenceEquals(target, this) || !MoveOut(tab))
+        {
+            return false;
+        }
+
+        target.Adopt(tab);
+        return true;
+    }
+
+    /// <summary>
+    /// Takes one of this window's tabs out, for a new Main Window that opens with it. The last tab stays.
+    /// </summary>
+    /// <returns>Whether the tab was taken out.</returns>
+    public bool MoveOut(TabViewModel tab)
+    {
+        if (!ReferenceEquals(tab.ParentWindowContext, _parentVm))
+        {
+            return false;
+        }
+
+        // The tab strip removes a dragged-out tab itself, before it is dropped
+        var index = Tabs.Value.IndexOf(tab);
+        if (index >= 0)
+        {
+            if (Tabs.Value.Count <= 1)
+            {
+                return false;
+            }
+            Tabs.Value.RemoveAt(index);
+        }
+
+        Detach(tab);
+        if (ReferenceEquals(tab, ActiveTab.Value) && Tabs.Value.Count > 0)
+        {
+            // Target the previous tab
+            var targetIndex = Math.Max(0, index - 1);
+            SelectTab(Tabs.Value[Math.Clamp(targetIndex, 0, Tabs.Value.Count - 1)]);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Makes a tab moved from another Main Window one of this window's tabs, owned by and attached to this window, and
+    /// selects it. The drag preview may already have added it to <see cref="Tabs"/>.
+    /// </summary>
+    private void Adopt(TabViewModel tab)
     {
         if (!Tabs.Value.Contains(tab))
         {
@@ -121,6 +234,7 @@ public class TabOverviewViewModel
         }
 
         tab.ParentWindowContext = _parentVm;
+        Attach(tab);
         SelectTab(tab);
     }
 
@@ -194,31 +308,10 @@ public class TabOverviewViewModel
 
     private void Release(TabViewModel tab)
     {
+        Detach(tab);
         SharedCache?.ReleaseOwner(tab.Id);
         // Also removes the tab as a thumbnail owner and stops watching its folder
         tab.Dispose();
-    }
-
-    // Used when detaching the tab
-    public void RemoveTab(TabViewModel tab)
-    {
-        var wasActive = ReferenceEquals(tab, ActiveTab.Value);
-    
-        // Capture index
-        var indexToRemove = Tabs.Value.IndexOf(tab);
-    
-        Tabs.Value.Remove(tab);
-
-        if (!wasActive || Tabs.Value.Count <= 0)
-        {
-            return;
-        }
-
-        // Target the previous tab
-        var targetIndex = Math.Max(0, indexToRemove - 1);
-        var newIndex = Math.Clamp(targetIndex, 0, Tabs.Value.Count - 1);
-        
-        SelectTab(Tabs.Value[newIndex]);
     }
 
     #region Navigation

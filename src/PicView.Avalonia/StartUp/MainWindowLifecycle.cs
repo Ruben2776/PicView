@@ -78,12 +78,13 @@ public sealed class MainWindowLifecycle
     }
 
     /// <summary>
-    /// Opens a Main Window for a tab dragged out of another one, placed where the tab was dropped.
+    /// Opens a Main Window with a tab moved out of another one, placed where the tab was dropped.
     /// </summary>
+    /// <param name="tab">The tab, already taken out of its window, that the new window opens with.</param>
     /// <returns>Completes once the window is set up, after it is shown.</returns>
-    public async Task<MainWindow> OpenDetachedAsync(PixelPoint position, double width, double height)
+    public async Task<MainWindow> OpenForMovedTabAsync(TabViewModel tab, PixelPoint position, double width, double height)
     {
-        var window = Create();
+        var window = Create(tab);
         var vm = ViewModelOf(window);
         var settingUp = ApplyWindowSettingsAsync(vm, isAppStart: false);
         window.Position = position;
@@ -264,10 +265,11 @@ public sealed class MainWindowLifecycle
         }
     }
 
-    private MainWindow Create()
+    private MainWindow Create(TabViewModel? firstTab = null)
     {
-        var window = _provider.CreateMainWindow();
+        var window = _provider.CreateMainWindow(firstTab);
         var vm = ViewModelOf(window);
+        vm.WindowTabs.SetHookups(new NavigationSubscriptions(window, _core));
         _core.MainWindows.MainWindows.Add(vm);
         _core.MainWindows.ActiveWindow.Value = vm;
         _open.Add(window);

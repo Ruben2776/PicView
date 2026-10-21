@@ -9,7 +9,12 @@ namespace PicView.Avalonia.Linux.Views;
 
 public partial class LinuxMainWindow : MainWindow
 {
-    public LinuxMainWindow()
+    public LinuxMainWindow() : this(null)
+    {
+    }
+
+    /// <param name="firstTab">A tab moved out of another Main Window, for a window that opens with it.</param>
+    public LinuxMainWindow(TabViewModel? firstTab)
     {
         if (Application.Current!.DataContext is not CoreViewModel core)
         {
@@ -17,7 +22,7 @@ public partial class LinuxMainWindow : MainWindow
         }
 
         Debug.Assert(core.GlobalSettings != null);
-        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, this, core.GlobalSettings, core.GallerySettings);
+        var mainWindowViewModel = new MainWindowViewModel(core, core.Translation, this, core.GlobalSettings, core.GallerySettings, firstTab);
         DataContext = mainWindowViewModel;
 
         InitializeComponent();

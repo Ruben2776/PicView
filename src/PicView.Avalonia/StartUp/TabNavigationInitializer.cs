@@ -1,9 +1,7 @@
 using System.Diagnostics;
 using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Navigation.Services;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.Navigation;
@@ -45,7 +43,7 @@ public static class TabNavigationInitializer
         var tabOverView = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs;
         var tab = tabOverView.ActiveTab.CurrentValue;
         tabOverView.LoadAndInitializeFromPath(files, core.SharedNavigationService, sharedCache, thumbnailCache, thumbnailService, fileWatcher);
-        InitializeNewTab(tab, core.MainWindows.ActiveWindow.CurrentValue, mainWindow, core);
+        InitializeNewTab(tab);
         tab.Gallery.Initialize();
         core.GallerySettings.Initialize();
     }
@@ -96,54 +94,30 @@ public static class TabNavigationInitializer
 
     public static void InitializeConsecutiveTab(CoreViewModel core, MainWindow mainWindow, TabViewModel tab)
     {
-        InitializeNewTab(tab, core.MainWindows.ActiveWindow.CurrentValue, mainWindow, core);
+        InitializeNewTab(tab);
         tab.Gallery.Initialize();
         core.GallerySettings.Initialize();
     }
     
-    public static void InitializeDetachedWindow(MainWindow mainWindow, MainWindowViewModel parentVm, MainWindowViewModel newVm, TabViewModel tab, CoreViewModel core)
+    /// <summary>
+    /// Sets up a Main Window that opened with a tab moved out of <paramref name="from"/>: it shares that window's
+    /// services, so the tabs it opens share the same caches, and the moved tab gets its title and navigation back.
+    /// </summary>
+    public static void InitializeMovedTabWindow(MainWindowViewModel newVm, TabOverviewViewModel from, TabViewModel tab)
     {
-        // The new window opened with a blank tab of its own, which the moved tab replaces
-        var blankTab = newVm.WindowTabs.ActiveTab.CurrentValue;
-        newVm.WindowTabs.Adopt(tab);
-        newVm.WindowTabs.CloseTab(blankTab);
-
-        // Initialize the NEW window's tabs with the OLD window's services
-        // This ensures both windows share the same memory cache
-        if (parentVm.WindowTabs.SharedCache is not { } cache ||
-            parentVm.WindowTabs.SharedThumbnailCache is not { } thumbCache || 
-            parentVm.WindowTabs.SharedNavigation is not { } nav ||
-            parentVm.WindowTabs.SharedThumbnailLoader is not { } thumbLoader ||
-            parentVm.WindowTabs.SharedFileWatcher is not { } fileWatcher)
-        {
-            return;
-        }
-        
+        newVm.WindowTabs.ShareServicesOf(from);
         if (tab.FileInfo.CurrentValue is not null)
         {
-            newVm.WindowTabs.LoadAndInitializeFromPath(tab.ImageIterator.Files, nav, cache, thumbCache, thumbLoader, fileWatcher);
-            newVm.WindowTabs.ActiveTab.CurrentValue.UpdateTabTitle();
+            tab.UpdateTabTitle();
         }
         else
         {
-            newVm.WindowTabs.ActiveTab.CurrentValue.SetNewTabTitle();
-            
-            newVm.WindowTabs.LoadAndInitialize(nav, cache, thumbCache, thumbLoader, fileWatcher);
+            tab.SetNewTabTitle();
         }
-        newVm.WindowTabs.SelectTab(tab);
-        tab.ImageIterator.UpdateNavigationProperties();
-        
-        // Unsubscribe from the old and start listening to a new one
-        tab.Disposables.Clear();
-        NavigationSubscriptions.ModelSubscription(tab, newVm, mainWindow, core);
-        
-        // Need to properly remove it from the previous location
-        parentVm.WindowTabs.RemoveTab(tab);
-
-        mainWindow.WindowFitter.FollowContent();
+        tab.ImageIterator?.UpdateNavigationProperties();
     }
     
-    private static void InitializeNewTab(TabViewModel newTab, MainWindowViewModel mainWindowViewModel, MainWindow mainWindow, CoreViewModel core)
+    private static void InitializeNewTab(TabViewModel newTab)
     {
         if (newTab is null)
         {
@@ -157,7 +131,6 @@ public static class TabNavigationInitializer
             return;
         }
 
-        NavigationSubscriptions.ModelSubscription(newTab, mainWindowViewModel, mainWindow, core);
-        newTab.IsInitialized = true;
+        newTab.ParentWindowContext.WindowTabs.HookUp(newTab);
     }
 }

@@ -532,14 +532,15 @@ public class MainWindowViewModel : IDisposable
     
     #endregion
 
-    public MainWindowViewModel(CoreViewModel core, TranslationViewModel translations, IPlatformWindowService windowService, GlobalSettingsViewModel globalSettings, GallerySharedSettingsViewModel gallerySettings)
+    /// <param name="firstTab">A tab moved out of another Main Window, for a window that opens with it.</param>
+    public MainWindowViewModel(CoreViewModel core, TranslationViewModel translations, IPlatformWindowService windowService, GlobalSettingsViewModel globalSettings, GallerySharedSettingsViewModel gallerySettings, TabViewModel? firstTab = null)
     {
         Core = core;
         Translation = translations;
         PlatformWindowService = windowService;
         GlobalSettings = globalSettings;
         GallerySettings = gallerySettings;
-        WindowTabs = new TabOverviewViewModel(this);
+        WindowTabs = new TabOverviewViewModel(this, firstTab);
 
         // Window Mode
         IsAutoFit = WindowModeState.Select(static state => state.AutoFit).ToReadOnlyBindableReactiveProperty();

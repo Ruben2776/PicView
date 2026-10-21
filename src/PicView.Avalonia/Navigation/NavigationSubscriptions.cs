@@ -1,34 +1,36 @@
 ﻿using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.DebugTools;
+using PicView.Core.IPlatform;
 using PicView.Core.ViewModels;
 using PicView.Core.Gallery;
 using R3;
 
 namespace PicView.Avalonia.Navigation;
 
-public static class NavigationSubscriptions
+/// <summary>
+/// What one Main Window does when a tab it shows changes: shows the tab's new image, and loads and opens its gallery.
+/// </summary>
+public sealed class NavigationSubscriptions(MainWindow mainWindow, CoreViewModel core) : ITabHookups
 {
-    public static void ModelSubscription(TabViewModel tabViewModel, MainWindowViewModel mainWindowViewModel, MainWindow mainWindow, CoreViewModel core)
+    public IDisposable Attach(TabViewModel tabViewModel)
     {
+        var mainWindowViewModel = (MainWindowViewModel)mainWindow.DataContext!;
+
         // Subscribing with AvaloniaRenderingFrameProvider is faster and fixes not being able to navigate while gallery is loading
-        Dispatcher.UIThread.Invoke(() =>
-        {
+        return Dispatcher.UIThread.Invoke(() => Disposable.Combine(
             Observable.EveryValueChanged(tabViewModel, tab => tab.Model.FileInfo, mainWindow.FrameProvider)
                 .Skip(1)
                 .Subscribe(file =>
                 {
                     UpdateImage.UpdateFileInfo(tabViewModel, file);
-                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(UpdateImage)))
-                .AddTo(tabViewModel.Disposables);
+                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(UpdateImage))),
             Observable.EveryValueChanged(tabViewModel, tab => tab.Model.Image, mainWindow.FrameProvider)
                 .Skip(1)
                 .Subscribe(_ =>
                 {
                     UpdateImage.ChangeImageWithTitle(mainWindow, tabViewModel, mainWindowViewModel);
-                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(UpdateImage)))
-                .AddTo(tabViewModel.Disposables);
-
+                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(UpdateImage))),
             Observable.EveryValueChanged(tabViewModel, tab => tab.Gallery.ActiveGalleryMode.Value, mainWindow.FrameProvider)
                 .Skip(1)
                 .SubscribeAwait(async (mode, ct) =>
@@ -40,9 +42,7 @@ public static class NavigationSubscriptions
                             await Task.Run(() => tabViewModel.GalleryCoordinator.LoadGallery(tabViewModel.ImageIterator.Files, core), ct).ConfigureAwait(false);
                         }
                     }
-                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(tabViewModel.GalleryCoordinator.LoadGallery)))
-                .AddTo(tabViewModel.Disposables);
-            
+                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(tabViewModel.GalleryCoordinator.LoadGallery))),
             tabViewModel.Gallery.OpenSelectedItemCommand
                 .Skip(1)
                 .SubscribeAwait(async (index, _) =>
@@ -51,8 +51,6 @@ public static class NavigationSubscriptions
                     {
                         await tabViewModel.GalleryCoordinator.ToggleGalleryAndLoadItem(index).ConfigureAwait(false);
                     }
-                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(tabViewModel.GalleryCoordinator.ToggleGalleryAndLoadItem)))
-                .AddTo(tabViewModel.Disposables);
-        });
+                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(tabViewModel.GalleryCoordinator.ToggleGalleryAndLoadItem)))));
     }
 }

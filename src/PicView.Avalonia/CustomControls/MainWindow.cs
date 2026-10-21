@@ -219,7 +219,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 
     #endregion
 
-    #region Tab detaching
+    #region Moving tabs
 
     private void OnTabDetached(object? sender, TabDetachEventArgs e)
     {
@@ -239,7 +239,10 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
             .FirstOrDefault(window => window != this && window.ContainsScreenPoint(e.ScreenPosition));
         if (targetWindow?.DataContext is MainWindowViewModel targetVm)
         {
-            MoveTab(tab, parentVm, targetVm);
+            if (parentVm.WindowTabs.MoveTab(tab, targetVm.WindowTabs))
+            {
+                RefreshViewBinding(tab);
+            }
             return;
         }
 
@@ -248,8 +251,8 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
             return;
         }
 
-        // Dropped elsewhere: open the tab in a new window
-        if (Lifecycle is null)
+        // Dropped elsewhere: open a new window with the tab, taken out first so this window lets go of its view
+        if (Lifecycle is null || !parentVm.WindowTabs.MoveOut(tab))
         {
             return;
         }
@@ -257,42 +260,31 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         var lifecycle = Lifecycle;
         _ = Task.Run(() => Dispatcher.UIThread.InvokeAsync(async () =>
         {
-            var newWindow = await lifecycle.OpenDetachedAsync(
+            var newWindow = await lifecycle.OpenForMovedTabAsync(tab,
                 new PixelPoint(e.ScreenPosition.X - 100, e.ScreenPosition.Y - 50), Width, Height).ConfigureAwait(true);
             if (newWindow.DataContext is not MainWindowViewModel newVm)
             {
                 return;
             }
 
-            // Fix null DataContext
-            if (tab.CurrentView.CurrentValue is Control control)
-            {
-                control.DataContext = tab;
-            }
-
-            TabNavigationInitializer.InitializeDetachedWindow(this, parentVm, newVm, tab, newVm.Core);
+            RefreshViewBinding(tab);
+            TabNavigationInitializer.InitializeMovedTabWindow(newVm, parentVm.WindowTabs, tab);
         }, DispatcherPriority.Send));
+    }
+
+    private static void RefreshViewBinding(TabViewModel tab)
+    {
+        // The moved view can lose its DataContext when it leaves this window
+        if (tab.CurrentView.CurrentValue is Control control)
+        {
+            control.DataContext = tab;
+        }
     }
 
     private bool ContainsScreenPoint(PixelPoint screenPosition)
     {
         var clientPoint = this.PointToClient(screenPosition);
         return new Rect(0, 0, ClientSize.Width, ClientSize.Height).Contains(clientPoint);
-    }
-
-    /// <summary>
-    /// Moves a tab from one main window to another and selects it there.
-    /// </summary>
-    internal static void MoveTab(TabViewModel tab, MainWindowViewModel source, MainWindowViewModel target)
-    {
-        source.WindowTabs.RemoveTab(tab);
-        target.WindowTabs.Adopt(tab);
-
-        // Refresh bindings
-        if (tab.CurrentView.CurrentValue is Control control)
-        {
-            control.DataContext = tab;
-        }
     }
 
     #endregion

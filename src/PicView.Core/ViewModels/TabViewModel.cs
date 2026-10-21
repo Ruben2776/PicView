@@ -43,8 +43,16 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     public double TabHeight => SizeDefaults.TabHeight;
 #pragma warning restore CA1822
     
-    public CompositeDisposable Disposables { get; } = new();
-    public bool IsInitialized { get; set; }
+    /// <summary>
+    /// What the owning Main Window does when this tab changes, while it is attached there. Only the window's
+    /// <see cref="TabOverviewViewModel"/> sets it.
+    /// </summary>
+    internal IDisposable? Hookups { get; set; }
+
+    /// <summary>
+    /// Whether the tab has been opened, which attaches it to its window. A Fresh Tab is not.
+    /// </summary>
+    public bool IsInitialized { get; internal set; }
     
     public bool IsClosing { get; private set; }
     public bool IsSelected { get; set; }
@@ -411,7 +419,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
 
         NavigationCts.Dispose();
         Orientation.Dispose();
-        Disposables.Dispose();
+        Hookups?.Dispose();
         
         GC.SuppressFinalize(this);
     }
