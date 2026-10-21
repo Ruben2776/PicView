@@ -118,7 +118,7 @@ public class ClipboardCopyServiceTests
     private static TabViewModel CreateTab(Bitmap? image)
     {
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = new TabViewModel(null!, vm);
+        var tab = new TabViewModel(vm);
         tab.Image.Value = image;
         return tab;
     }

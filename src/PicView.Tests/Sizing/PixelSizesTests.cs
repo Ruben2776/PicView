@@ -17,7 +17,7 @@ public class PixelSizesTests
     {
         ObservableSystem.DefaultFrameProvider = new FakeFrameProvider();
         SetDefaults();
-        _tab = new TabViewModel(_ => { }, null!);
+        _tab = new TabViewModel(null!);
     }
 
     [Fact]

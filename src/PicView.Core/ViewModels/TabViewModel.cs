@@ -25,12 +25,15 @@ namespace PicView.Core.ViewModels;
 /// lifecycle of resources specific to this tab instance.
 /// </para>
 /// </summary>
-public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel parentWindowContext, IFileWatcherService? fileWatcherService = null) : IDisposable
+public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherService? fileWatcherService = null) : IDisposable
 {
     #region Tab logic
-    
-    /// The MainWindowViewModel that currently "owns" this tab
-    public MainWindowViewModel ParentWindowContext { get; set; } = parentWindowContext;
+
+    /// <summary>
+    /// The Main Window that owns this tab. Only that window's <see cref="TabOverviewViewModel"/> changes it, when the
+    /// tab moves there.
+    /// </summary>
+    public MainWindowViewModel ParentWindowContext { get; internal set; } = parentWindowContext;
 
     /// Unique identifier for this tab.
     public uint Id { get; } = TabIDGenerator.GetNextId();
@@ -357,11 +360,13 @@ public class TabViewModel(Action<TabViewModel> closeTab, MainWindowViewModel par
         await ImageIterator.NavigateAsync(NavigateTo.Previous, SkipAmount.One, NavigationCts).ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// Closes this tab in the Main Window that owns it now, which also disposes it.
+    /// </summary>
     public void CloseTab()
     {
         IsClosing = true; // Signal it to be removed from the UI
-        closeTab(this);
-        // Dispose has already been called in the CloseTab method
+        ParentWindowContext.WindowTabs.CloseTab(this);
     }
 
     public CancellationTokenSource GetTabCancellation()

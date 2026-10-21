@@ -117,7 +117,7 @@ public class DialogConfirmTests : IDisposable
         File.WriteAllText(oldPath, "x");
         var newPath = Path.Combine(_tempRoot, "new.txt");
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = new TabViewModel(null!, vm);
+        var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(oldPath);
         vm.WindowTabs.ActiveTab.Value = tab;
         var dialog = new RenameDialog { DataContext = vm };

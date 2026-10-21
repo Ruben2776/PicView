@@ -57,7 +57,7 @@ public class FileSavingServiceTests : IDisposable
     private static TabViewModel CreateClipboardTab(int width, int height)
     {
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = new TabViewModel(null!, vm);
+        var tab = new TabViewModel(vm);
         var bitmap = new WriteableBitmap(new PixelSize(width, height), new Vector(96, 96), PixelFormat.Bgra8888,
             AlphaFormat.Premul);
         tab.DisplaySingleImage(new ImageModel
@@ -130,7 +130,7 @@ public class FileSavingServiceTests : IDisposable
             image.Write(path);
         }
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = new TabViewModel(null!, vm);
+        var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(path);
         tab.Orientation.TurnTo(1);
         var picker = new StubSavePathPicker(null);
@@ -172,7 +172,7 @@ public class FileSavingServiceTests : IDisposable
         var source = WriteRedPng("source.png");
         var destination = Path.Combine(_tempDir, "copy.png");
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = new TabViewModel(null!, vm);
+        var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         using var effects = CreateEffectsWithRender(new FileInfo(source));
         var service = new FileSavingService(new StubSavePathPicker(null), () => effects);
@@ -190,7 +190,7 @@ public class FileSavingServiceTests : IDisposable
         var source = WriteRedPng("source.png");
         var destination = Path.Combine(_tempDir, "copy.jpg");
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = new TabViewModel(null!, vm);
+        var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         using var effects = CreateEffectsWithRender(new FileInfo(Path.Combine(_tempDir, "other.png")));
         var service = new FileSavingService(new StubSavePathPicker(null), () => effects);
@@ -208,7 +208,7 @@ public class FileSavingServiceTests : IDisposable
     {
         var source = WriteRedPng("source.png");
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = new TabViewModel(null!, vm);
+        var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         var service = new FileSavingService(new StubSavePathPicker(null), () => null);
 
@@ -222,7 +222,7 @@ public class FileSavingServiceTests : IDisposable
     {
         var source = WriteRedPng("source.png");
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = new TabViewModel(null!, vm);
+        var tab = new TabViewModel(vm);
         tab.FileInfo.Value = new FileInfo(source);
         tab.Orientation.TurnTo(1);
         var service = new FileSavingService(new StubSavePathPicker(null), () => null);
@@ -249,7 +249,7 @@ public class FileSavingServiceTests : IDisposable
     [InlineData("", "PicView 2026-10-17 230047.png")]
     public void GetSuggestedFileName_NotAFile_UsesTitleAndDate(string title, string expected)
     {
-        var tab = new TabViewModel(_ => { }, null!);
+        var tab = new TabViewModel(null!);
         tab.TabTitle.Value = title;
 
         var name = FileSavingService.GetSuggestedFileName(tab, new DateTime(2026, 10, 17, 23, 0, 47));
@@ -260,7 +260,7 @@ public class FileSavingServiceTests : IDisposable
     [Fact]
     public void GetSuggestedFileName_File_UsesFileName()
     {
-        var tab = new TabViewModel(_ => { }, null!);
+        var tab = new TabViewModel(null!);
         tab.FileInfo.Value = new FileInfo(Path.Combine(_tempDir, "photo.jpg"));
 
         var name = FileSavingService.GetSuggestedFileName(tab, DateTime.Now);

@@ -155,7 +155,6 @@ public sealed class MainWindowLifecycle
         {
             var vm = ViewModelOf(window);
             var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-            tab.ParentWindowContext = vm;
             tab.CurrentView.Value = new StartUpMenu
             {
                 Buttons =
@@ -204,10 +203,7 @@ public sealed class MainWindowLifecycle
         }
         // On macOS most Tool Windows have no owner, so they would outlive their Main Window
         window.MainWindowInitializer?.CloseToolWindows();
-        foreach (var tab in vm.WindowTabs.Tabs.CurrentValue)
-        {
-            tab.ArchiveExtractionService?.Cleanup();
-        }
+        vm.WindowTabs.TearDown();
 
         if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is IDisposable disposable)
         {

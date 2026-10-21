@@ -212,7 +212,7 @@ public class FavoritesManagerTests : IDisposable
         await File.WriteAllTextAsync(activeFile, "img", TestContext.Current.CancellationToken);
 
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var tab = new TabViewModel(null!, vm);
+        var tab = new TabViewModel(vm);
         tab.Model = new ImageModel { FileInfo = new FileInfo(activeFile) };
         vm.WindowTabs.ActiveTab.Value = tab;
 

@@ -286,15 +286,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     internal static void MoveTab(TabViewModel tab, MainWindowViewModel source, MainWindowViewModel target)
     {
         source.WindowTabs.RemoveTab(tab);
-
-        // The drag preview may already have added it
-        if (!target.WindowTabs.Tabs.Value.Contains(tab))
-        {
-            target.WindowTabs.Tabs.Value.Add(tab);
-        }
-
-        target.WindowTabs.SelectTab(tab);
-        tab.ParentWindowContext = target;
+        target.WindowTabs.Adopt(tab);
 
         // Refresh bindings
         if (tab.CurrentView.CurrentValue is Control control)

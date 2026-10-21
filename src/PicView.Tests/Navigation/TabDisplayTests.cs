@@ -14,7 +14,7 @@ public class TabDisplayTests
     {
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
-        _tab = new TabViewModel(_ => { }, null!);
+        _tab = new TabViewModel(null!);
     }
 
     [Fact]

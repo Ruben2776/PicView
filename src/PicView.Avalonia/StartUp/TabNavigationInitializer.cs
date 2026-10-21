@@ -45,7 +45,6 @@ public static class TabNavigationInitializer
         var tabOverView = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs;
         var tab = tabOverView.ActiveTab.CurrentValue;
         tabOverView.LoadAndInitializeFromPath(files, core.SharedNavigationService, sharedCache, thumbnailCache, thumbnailService, fileWatcher);
-        tabOverView.SetParentContext(core.MainWindows.ActiveWindow.CurrentValue);
         InitializeNewTab(tab, core.MainWindows.ActiveWindow.CurrentValue, mainWindow, core);
         tab.Gallery.Initialize();
         core.GallerySettings.Initialize();
@@ -104,8 +103,11 @@ public static class TabNavigationInitializer
     
     public static void InitializeDetachedWindow(MainWindow mainWindow, MainWindowViewModel parentVm, MainWindowViewModel newVm, TabViewModel tab, CoreViewModel core)
     {
-        newVm.WindowTabs.Tabs.Value[0] = tab;
-        
+        // The new window opened with a blank tab of its own, which the moved tab replaces
+        var blankTab = newVm.WindowTabs.ActiveTab.CurrentValue;
+        newVm.WindowTabs.Adopt(tab);
+        newVm.WindowTabs.CloseTab(blankTab);
+
         // Initialize the NEW window's tabs with the OLD window's services
         // This ensures both windows share the same memory cache
         if (parentVm.WindowTabs.SharedCache is not { } cache ||
@@ -127,7 +129,6 @@ public static class TabNavigationInitializer
             newVm.WindowTabs.ActiveTab.CurrentValue.SetNewTabTitle();
             
             newVm.WindowTabs.LoadAndInitialize(nav, cache, thumbCache, thumbLoader, fileWatcher);
-            newVm.WindowTabs.SetParentContext(newVm);
         }
         newVm.WindowTabs.SelectTab(tab);
         tab.ImageIterator.UpdateNavigationProperties();

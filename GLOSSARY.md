@@ -60,6 +60,10 @@ _Avoid_: Exit, quit, close
 
 ## Tabs
 
+**Tab**:
+A place in a Main Window that shows one image and browses the files around it. It belongs to exactly one Main Window at a time. Dragging it out moves it, onto the Main Window it is dropped on or into a new one opened for it, and closing or moving it never touches the other tabs. A Main Window always has at least one tab, and its tab strip shows only when it has two or more, so the last tab can be neither closed nor dragged out.
+_Avoid_: Page, document, view, detach (for moving a tab)
+
 **Fresh Tab**:
 A tab that has never browsed files. Opening a file into one continues from the remembered start-up directory when browsing subdirectories; showing a Single Image does not make a tab fresh again.
 _Avoid_: New tab, uninitialized tab
@@ -83,7 +87,7 @@ _Avoid_: Source file, input path
 ## Sizing
 
 **AutoFit**:
-The setting of a Normal window where the window takes its size from the shown image, worked out before the window resizes so it never visibly resizes twice. With it off, the window keeps the size the user gave it and the image fits inside it. Turning AutoFit on or off applies to every window, while resizing a window by hand turns it off for only that window.
+The setting of a Normal window where the window takes its size from the image its active tab shows, worked out before the window resizes so it never visibly resizes twice, and again whenever another tab becomes active. A tab that shows no image, such as a Fresh Tab's start-up menu, never changes the window's size: it fills the Available Area instead. With it off, the window keeps the size the user gave it and the image fits inside it. Turning AutoFit on or off applies to every window, while resizing a window by hand turns it off for only that window.
 _Avoid_: Auto-size, auto resize, Manual
 
 **Window Mode**:
@@ -95,7 +99,7 @@ The setting that lets an image scale past its native pixel size to fill the Avai
 _Avoid_: Stretch, upscale
 
 **Reserved Space**:
-The parts of the window that are not the image: titlebar, tab strip, bottom bar and a docked gallery. It is taken away before the image is fitted.
+The parts of the window that are not the image: titlebar, tab strip, bottom bar and a docked gallery. It is taken away before the image is fitted. The tab strip is part of it only while the window has two or more tabs, so the window is fitted again whenever the strip shows or hides, with AutoFit on or off.
 _Avoid_: UI size, chrome, container
 
 **Available Area**:

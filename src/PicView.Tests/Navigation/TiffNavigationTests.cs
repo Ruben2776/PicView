@@ -37,7 +37,7 @@ public class TiffNavigationTests : IDisposable
         _cache = new SharedImageCache(f =>
             ValueTask.FromResult(_models.TryGetValue(f.FullName, out var model) ? model : new ImageModel { FileInfo = f }));
         _mockThumbnailCache = new MockThumbnailCache();
-        _tab = new TabViewModel(_ => { }, null!);
+        _tab = new TabViewModel(null!);
         _iterator = new ImageIterator(_cache, _mockThumbnailCache, new MockThumbnailLoader(), _tab);
         _iterator.Initialize(_files);
     }

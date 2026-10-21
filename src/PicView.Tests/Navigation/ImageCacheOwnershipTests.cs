@@ -46,6 +46,19 @@ public class ImageCacheOwnershipTests
     }
 
     [Fact]
+    public async Task TearDown_TabHeldCachedImage_ImageIsDisposed()
+    {
+        var tab = _tabs.CreateTab(_fileA);
+        tab.ImageIterator.Initialize([_fileA]);
+        var image = Assert.IsType<ProbeImage>(await Task.Run(() => _tabs.GetSourceFromFile(_fileA), TestContext.Current.CancellationToken));
+
+        _tabs.TearDown();
+        _cache.ForceDisposalQueue();
+
+        Assert.True(image.IsDisposed, "Closing a Main Window should release the images its tabs held");
+    }
+
+    [Fact]
     public async Task GetSourceFromFile_FileNotCached_ReturnsThatFile()
     {
         var tab = _tabs.ActiveTab.Value;

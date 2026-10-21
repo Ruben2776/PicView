@@ -27,8 +27,9 @@ public class TabOverviewViewModel
     public IThumbnailLoader? SharedThumbnailLoader { get; private set; }
     public IFileWatcherService? SharedFileWatcher { get; private set; }
 
-    // Needed for correct context in multi-window scenarios
-    private MainWindowViewModel? _parentVm;
+    // The Main Window these tabs belong to
+    private readonly MainWindowViewModel _parentVm;
+    private bool _isTornDown;
 
     public TabOverviewViewModel(MainWindowViewModel parentVm)
     {
@@ -88,7 +89,7 @@ public class TabOverviewViewModel
     
     private TabViewModel CreateTabInternal(FileInfo? file = null)
     {
-        var tab = new TabViewModel(CloseTab, _parentVm, SharedFileWatcher);
+        var tab = new TabViewModel(_parentVm, SharedFileWatcher);
         if (file is not null)
         {
             tab.Model.FileInfo = file;
@@ -108,16 +109,21 @@ public class TabOverviewViewModel
         return tab;
     }
     
-    public void SetParentContext(MainWindowViewModel parent)
+    /// <summary>
+    /// Makes a tab moved from another Main Window one of this window's tabs, owned by this window, and selects it.
+    /// The drag preview may already have added it to <see cref="Tabs"/>.
+    /// </summary>
+    public void Adopt(TabViewModel tab)
     {
-        _parentVm = parent;
-        // Update existing tabs if any
-        foreach(var tab in Tabs.Value)
+        if (!Tabs.Value.Contains(tab))
         {
-            tab.ParentWindowContext = parent;
+            Tabs.Value.Add(tab);
         }
+
+        tab.ParentWindowContext = _parentVm;
+        SelectTab(tab);
     }
-    
+
     public void SelectTab(TabViewModel tab)
     {
         ActiveTab.Value = tab;
@@ -131,6 +137,9 @@ public class TabOverviewViewModel
     }
 
 
+    /// <summary>
+    /// Closes one of this window's tabs and disposes it. The last tab, or a tab of another window, stays open.
+    /// </summary>
     public void CloseTab(TabViewModel tab)
     {
         // 1. Guard Clause: Prevent closing if this is the last tab.
@@ -139,11 +148,15 @@ public class TabOverviewViewModel
             return;
         }
 
-        var wasActive = ReferenceEquals(tab, ActiveTab.Value);
-    
         // 2. Capture the index BEFORE removing the item
         var indexToRemove = Tabs.Value.IndexOf(tab);
-        Tabs.Value.Remove(tab);
+        if (indexToRemove < 0)
+        {
+            return;
+        }
+
+        var wasActive = ReferenceEquals(tab, ActiveTab.Value);
+        Tabs.Value.RemoveAt(indexToRemove);
 
         if (wasActive && Tabs.Value.Count > 0)
         {
@@ -157,8 +170,32 @@ public class TabOverviewViewModel
             SelectTab(Tabs.Value[newIndex]);
         }
 
+        Release(tab);
+    }
+
+    /// <summary>
+    /// Releases every tab when this window's Main Window closes: their cached images, thumbnails, watched folders and
+    /// extracted archives. Runs once; the tabs stay in <see cref="Tabs"/>, since the closing window still reads its
+    /// active tab.
+    /// </summary>
+    public void TearDown()
+    {
+        if (_isTornDown)
+        {
+            return;
+        }
+        _isTornDown = true;
+
+        foreach (var tab in Tabs.Value)
+        {
+            Release(tab);
+        }
+    }
+
+    private void Release(TabViewModel tab)
+    {
         SharedCache?.ReleaseOwner(tab.Id);
-        SharedThumbnailCache?.RemoveOwner(tab.Id);
+        // Also removes the tab as a thumbnail owner and stops watching its folder
         tab.Dispose();
     }
 

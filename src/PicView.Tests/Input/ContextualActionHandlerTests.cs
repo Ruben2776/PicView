@@ -36,7 +36,7 @@ public class ContextualActionHandlerTests
         SetDefaults();
         var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
         var crop = new FakeCropService();
-        var tab = new TabViewModel(null!, vm) { CropService = crop };
+        var tab = new TabViewModel(vm) { CropService = crop };
         vm.WindowTabs.ActiveTab.Value = tab;
 
         // The crop meanings only use the view model, not the window

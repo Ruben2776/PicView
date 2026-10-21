@@ -70,7 +70,7 @@ public class AvaloniaHeadlessSavingTests
 
             // 2. Show the JPEG in a tab
             var vm = CreateDummyVm();
-            var tab = new TabViewModel(null!, vm);
+            var tab = new TabViewModel(vm);
             tab.FileInfo.Value = new FileInfo(sourceJpg);
             var savingService = new FileSavingService(new StubSavePathPicker(null), () => null);
 

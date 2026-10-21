@@ -21,7 +21,7 @@ public class MainWindowTests
         var source = CreateWindowViewModel(core);
         var target = CreateWindowViewModel(core);
         var remaining = source.WindowTabs.ActiveTab.Value;
-        var tab = new TabViewModel(_ => { }, source, null);
+        var tab = new TabViewModel(source, null);
         source.WindowTabs.Tabs.Value.Add(tab);
         source.WindowTabs.SelectTab(tab);
 
@@ -40,7 +40,7 @@ public class MainWindowTests
         var core = CreateCore();
         var source = CreateWindowViewModel(core);
         var target = CreateWindowViewModel(core);
-        var tab = new TabViewModel(_ => { }, source, null);
+        var tab = new TabViewModel(source, null);
         source.WindowTabs.Tabs.Value.Add(tab);
         target.WindowTabs.Tabs.Value.Add(tab);
 

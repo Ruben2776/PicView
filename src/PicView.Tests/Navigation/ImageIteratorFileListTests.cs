@@ -28,7 +28,7 @@ public class ImageIteratorFileListTests
 
         _cache = new SharedImageCache(static f =>
             ValueTask.FromResult(new ImageModel { FileInfo = f, Image = new ProbeImage() }));
-        _tab = new TabViewModel(_ => { }, null!);
+        _tab = new TabViewModel(null!);
         _iterator = new ImageIterator(_cache, new ThumbnailCache(), new MockThumbnailLoader(), _tab);
     }
 
