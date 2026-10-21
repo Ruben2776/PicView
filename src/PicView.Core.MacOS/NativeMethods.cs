@@ -58,11 +58,11 @@ internal static partial class NativeMethods
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     internal static partial void cupsFreeOptions(int num_options, IntPtr options);
     
-    [LibraryImport(LibCups, StringMarshalling = StringMarshalling.Utf16)]
+    [LibraryImport(LibCups, StringMarshalling = StringMarshalling.Utf8)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     internal static partial IntPtr cupsGetPPD(string printerName);
 
-    [LibraryImport(LibCups, StringMarshalling = StringMarshalling.Utf16)]
+    [LibraryImport(LibCups, StringMarshalling = StringMarshalling.Utf8)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     internal static partial IntPtr ppdOpenFile(string filename);
 

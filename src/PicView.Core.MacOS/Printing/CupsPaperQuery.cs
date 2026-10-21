@@ -11,22 +11,9 @@ public static partial class CupsPaperQuery
 
     public static IEnumerable<string> GetPaperSizes(string printerName)
     {
-        // Try PPD → fallback → PaperSizeHelper
-        foreach (var ppdSize in TryGetSizesFromPpd(printerName))
-        {
-            yield return ppdSize;
-        }
-        
-        // If PPD fails → fallback to PaperSizeHelper
-        if (TryGetSizesFromPpd(printerName).Any())
-        {
-            yield break;
-        }
-
-        foreach (var name in PaperSizeHelper.GetAllNames())
-        {
-            yield return name;
-        }
+        // Try PPD → fallback → PaperSizeHelper. The PPD is read once, as CUPS fetches it again for each read.
+        var ppdSizes = TryGetSizesFromPpd(printerName).ToArray();
+        return ppdSizes.Length > 0 ? ppdSizes : PaperSizeHelper.GetAllNames();
     }
 
 
