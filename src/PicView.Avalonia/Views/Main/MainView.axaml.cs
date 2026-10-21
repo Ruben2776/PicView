@@ -46,7 +46,6 @@ public partial class MainView : UserControl
             LostFocus += HandleLostFocus;
             PointerPressed += PointerPressedBehavior;
             
-            //MainTabControl.TabDetached += MainTabControlOnTabDetached;
             MainTabControl.TabCreated += MainTabControlOnTabCreated;
             MainTabControl.SelectionChanged += MainTabControlOnSelectionChanged;
 

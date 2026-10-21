@@ -177,16 +177,40 @@ public class TabOverviewViewModel
     /// Moves one of this window's tabs to the Main Window of <paramref name="target"/>, where it is selected and
     /// attached. The last tab stays.
     /// </summary>
+    /// <param name="index">Where the tab goes among the target's tabs, or after them when null.</param>
     /// <returns>Whether the tab moved.</returns>
-    public bool MoveTab(TabViewModel tab, TabOverviewViewModel target)
+    public bool MoveTab(TabViewModel tab, TabOverviewViewModel target, int? index = null)
     {
         if (ReferenceEquals(target, this) || !MoveOut(tab))
         {
             return false;
         }
 
-        target.Adopt(tab);
+        target.Adopt(tab, index);
         return true;
+    }
+
+    /// <summary>
+    /// Moves one of this window's tabs to another place among them. The active tab stays active.
+    /// </summary>
+    public void Reorder(TabViewModel tab, int index)
+    {
+        var from = Tabs.Value.IndexOf(tab);
+        if (from < 0)
+        {
+            return;
+        }
+
+        var to = Math.Clamp(index, 0, Tabs.Value.Count - 1);
+        if (from == to)
+        {
+            return;
+        }
+
+        var active = ActiveTab.Value;
+        Tabs.Value.RemoveAt(from);
+        Tabs.Value.Insert(to, tab);
+        SelectTab(active);
     }
 
     /// <summary>
@@ -195,22 +219,13 @@ public class TabOverviewViewModel
     /// <returns>Whether the tab was taken out.</returns>
     public bool MoveOut(TabViewModel tab)
     {
-        if (!ReferenceEquals(tab.ParentWindowContext, _parentVm))
+        var index = Tabs.Value.IndexOf(tab);
+        if (index < 0 || Tabs.Value.Count <= 1)
         {
             return false;
         }
 
-        // The tab strip removes a dragged-out tab itself, before it is dropped
-        var index = Tabs.Value.IndexOf(tab);
-        if (index >= 0)
-        {
-            if (Tabs.Value.Count <= 1)
-            {
-                return false;
-            }
-            Tabs.Value.RemoveAt(index);
-        }
-
+        Tabs.Value.RemoveAt(index);
         Detach(tab);
         if (ReferenceEquals(tab, ActiveTab.Value) && Tabs.Value.Count > 0)
         {
@@ -223,16 +238,12 @@ public class TabOverviewViewModel
     }
 
     /// <summary>
-    /// Makes a tab moved from another Main Window one of this window's tabs, owned by and attached to this window, and
-    /// selects it. The drag preview may already have added it to <see cref="Tabs"/>.
+    /// Makes a tab moved from another Main Window one of this window's tabs at <paramref name="index"/>, or after them,
+    /// owned by and attached to this window, and selects it.
     /// </summary>
-    private void Adopt(TabViewModel tab)
+    private void Adopt(TabViewModel tab, int? index)
     {
-        if (!Tabs.Value.Contains(tab))
-        {
-            Tabs.Value.Add(tab);
-        }
-
+        Tabs.Value.Insert(Math.Clamp(index ?? Tabs.Value.Count, 0, Tabs.Value.Count), tab);
         tab.ParentWindowContext = _parentVm;
         Attach(tab);
         SelectTab(tab);

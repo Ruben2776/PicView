@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
@@ -16,7 +15,10 @@ using PicView.Core.ViewModels;
 namespace PicView.Avalonia.CustomControls;
 
 /// <summary>
-/// A horizontal custom TabControl that adds drag-to-reorder, drag-to-detach, and auto-scroll while dragging behavior.
+/// A horizontal custom TabControl that adds drag-to-reorder, dragging a tab out, and auto-scroll while dragging
+/// behavior. It only reports what the user did and never changes its items itself: dropping a tab inside the strip
+/// raises <see cref="TabReordered"/>, and dropping it outside raises <see cref="TabDraggedOut"/>. While a tab from
+/// another window hovers over it, it shows where the tab would go without adding it.
 /// </summary>
 [PseudoClasses(PseudoDragging, PseudoDetaching)]
 public class DraggableTabControl : TabControl
@@ -65,6 +67,14 @@ public class DraggableTabControl : TabControl
     private int _sourceIndex = -1;
     private Point _startClickPoint;
 
+    // A snapshot of the dragged tab, shown by the strip it hovers over
+    private Bitmap? _draggedTabSnapshot;
+
+    // The hover preview of a tab dragged from another window
+    private Canvas? _previewLayer;
+    private Image? _previewTab;
+    private int _previewIndex = -1;
+
     public DraggableTabControl()
     {
         // Initialize Auto-Scroll Timer
@@ -78,7 +88,15 @@ public class DraggableTabControl : TabControl
     protected override Type StyleKeyOverride => typeof(DraggableTabControl);
 
     // --- Events ---
-    public event EventHandler<TabDetachEventArgs>? TabDetached;
+    /// <summary>
+    /// A tab was dropped outside this strip: onto another window's strip, at the index that strip showed, or elsewhere.
+    /// </summary>
+    public event EventHandler<TabDraggedOutEventArgs>? TabDraggedOut;
+
+    /// <summary>
+    /// A tab was dragged to another place in this strip.
+    /// </summary>
+    public event EventHandler<TabReorderedEventArgs>? TabReordered;
     public event EventHandler<TabCreatedEventArgs>? TabCreated;
 
     #region Auto-Scroll Logic
@@ -354,26 +372,16 @@ public class DraggableTabControl : TabControl
 
         if (_isDetaching)
         {
-            if (TabDragContext.CurrentTarget != null && TabDragContext.CurrentTarget != this)
-            {
-                TabDragContext.CurrentTarget.ExternalDrop();
-                var item = ItemFromContainer(_pressedTab);
-                if (item != null)
-                {
-                    var screenPos = _pressedTab.PointToScreen(e.GetPosition(_pressedTab));
-                    TabDetached?.Invoke(this, new TabDetachEventArgs(item, screenPos));
-                }
-            }
-            else
-            {
-                PerformDetach(e);
-            }
+            var targetIndex = TabDragContext.CurrentTarget != null && TabDragContext.CurrentTarget != this
+                ? TabDragContext.CurrentTarget.ExternalDrop()
+                : (int?)null;
+            ReportDraggedOut(e, targetIndex);
         }
-        else if (_isDragging && _currentTargetIndex >= 0)
+        else if (_isDragging && _currentTargetIndex >= 0 && _currentTargetIndex != _sourceIndex)
         {
-            if (TryMoveItem(_sourceIndex, _currentTargetIndex))
+            if (ItemFromContainer(_pressedTab) is { } item)
             {
-                SelectedIndex = _currentTargetIndex;
+                TabReordered?.Invoke(this, new TabReorderedEventArgs(item, _currentTargetIndex));
             }
         }
 
@@ -439,6 +447,14 @@ public class DraggableTabControl : TabControl
                 _isDetaching = true;
                 PseudoClasses.Set(PseudoDetaching, true);
                 PseudoClasses.Set(PseudoDragging, false);
+                // Before it turns invisible, for the strip it hovers over to show, without the drag's offset
+                if (_draggedTabSnapshot is null)
+                {
+                    var dragTransform = _pressedTab.RenderTransform;
+                    _pressedTab.RenderTransform = null;
+                    _draggedTabSnapshot = CaptureVisual(_pressedTab);
+                    _pressedTab.RenderTransform = dragTransform;
+                }
                 _pressedTab.Opacity = 0;
                 CreateGhostWindow(_pressedTab);
                 break;
@@ -456,7 +472,7 @@ public class DraggableTabControl : TabControl
 
                     if (TabDragContext.CurrentTarget != null && TabDragContext.CurrentTarget != this)
                     {
-                        TabDragContext.CurrentTarget.ExternalDragLeave(TabDragContext.DraggingItem!);
+                        TabDragContext.CurrentTarget.ExternalDragLeave();
                         TabDragContext.CurrentTarget = null;
                     }
 
@@ -524,31 +540,24 @@ public class DraggableTabControl : TabControl
         }
     }
 
-    private void PerformDetach(PointerReleasedEventArgs e)
+    private void ReportDraggedOut(PointerReleasedEventArgs e, int? targetIndex)
     {
-        if (_pressedTab == null)
-        {
-            return;
-        }
-
-        var item = ItemFromContainer(_pressedTab);
-        if (item == null)
+        if (_pressedTab == null || ItemFromContainer(_pressedTab) is not { } item)
         {
             return;
         }
 
         var screenPos = _pressedTab.PointToScreen(e.GetPosition(_pressedTab));
-        var list = ItemsSource as IList ?? Items;
-        if (list != null && _sourceIndex >= 0 && _sourceIndex < list.Count)
-        {
-            list.RemoveAt(_sourceIndex);
-        }
-
-        TabDetached?.Invoke(this, new TabDetachEventArgs(item, screenPos));
+        TabDraggedOut?.Invoke(this, new TabDraggedOutEventArgs(item, screenPos, targetIndex));
     }
 
     private void EndDrag()
     {
+        // Also when the pointer was lost over another window's strip, which still shows the tab
+        if (TabDragContext.CurrentTarget != null && TabDragContext.CurrentTarget != this)
+        {
+            TabDragContext.CurrentTarget.ExternalDragLeave();
+        }
         TabDragContext.EndDrag();
         StopAutoScroll();
 
@@ -566,52 +575,22 @@ public class DraggableTabControl : TabControl
         }
 
         CloseGhostWindow();
+        _draggedTabSnapshot = null;
 
         _pressedTab = null;
         _isDragging = false;
         _isDetaching = false;
-        _isForeignDragging = false;
         _sourceIndex = -1;
         _currentTargetIndex = -1;
         _originalXPositions.Clear();
-    }
-
-    private bool TryMoveItem(int oldIndex, int newIndex)
-    {
-        if (oldIndex == newIndex)
-        {
-            return true;
-        }
-
-        var list = ItemsSource as IList ?? Items;
-        if (list == null || oldIndex < 0 || oldIndex >= list.Count)
-        {
-            return false;
-        }
-
-        newIndex = Math.Clamp(newIndex, 0, list.Count - 1);
-
-        try
-        {
-            var item = list[oldIndex];
-            list.RemoveAt(oldIndex);
-            list.Insert(newIndex, item);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
     }
 
     #endregion
 
     #region External Drag Logic
 
-    // Note: External drag logic generally doesn't require auto-scrolling of the SOURCE window
-    // but relies on the target window's scroll logic. 
-    // This implementation keeps external logic mostly as is, assuming 'UpdateTabReorderingVisuals'
-    // handles the transforms correctly.
+    // A tab dragged out of this strip hovers over other windows' strips, which preview where it would go without
+    // changing their items. The source window doesn't auto-scroll while the tab is outside it.
 
     private void HandleExternalDrag(PointerEventArgs e)
     {
@@ -649,13 +628,13 @@ public class DraggableTabControl : TabControl
                     {
                         if (TabDragContext.CurrentTarget != null && TabDragContext.CurrentTarget != this)
                         {
-                            TabDragContext.CurrentTarget.ExternalDragLeave(TabDragContext.DraggingItem!);
+                            TabDragContext.CurrentTarget.ExternalDragLeave();
                         }
 
                         TabDragContext.CurrentTarget = tabControl;
                         if (tabControl != this)
                         {
-                            tabControl.ExternalDragEnter(TabDragContext.DraggingItem!);
+                            tabControl.ExternalDragEnter(_draggedTabSnapshot, _draggedTabWidth);
                         }
                     }
 
@@ -677,7 +656,7 @@ public class DraggableTabControl : TabControl
 
         if (TabDragContext.CurrentTarget != null && TabDragContext.CurrentTarget != this)
         {
-            TabDragContext.CurrentTarget.ExternalDragLeave(TabDragContext.DraggingItem!);
+            TabDragContext.CurrentTarget.ExternalDragLeave();
         }
 
         TabDragContext.CurrentTarget = null;
@@ -685,88 +664,102 @@ public class DraggableTabControl : TabControl
         _ghostWindow?.Show();
     }
 
-    internal void ExternalDragEnter(object item)
+    /// <summary>
+    /// Starts showing where a tab dragged from another window would go, without adding it to this strip's items.
+    /// </summary>
+    internal void ExternalDragEnter(Bitmap? tabSnapshot, double tabWidth)
     {
-        var list = ItemsSource as IList ?? Items;
-        if (list == null || list.Contains(item))
+        if (_isForeignDragging)
         {
             return;
         }
 
         _isForeignDragging = true;
-        list.Add(item);
-        UpdateLayout();
-
-        if (ContainerFromItem(item) is not TabItem container)
-        {
-            return;
-        }
-
-        _pressedTab = container;
-        _sourceIndex = IndexFromContainer(container);
-        _draggedTabWidth = container.Bounds.Width;
-        _draggedTabStartX = container.Bounds.X;
-
-        // Center the dragged item under the mouse
-        _pointerOffsetWithinTab = _draggedTabWidth / 2;
+        _draggedTabWidth = tabWidth;
         CacheTabPositions();
+
+        _previewTab = new Image
+        {
+            Source = tabSnapshot,
+            Width = tabWidth,
+            Opacity = GhostOpacity,
+            IsHitTestVisible = false
+        };
+        _previewLayer = new Canvas { IsHitTestVisible = false, Children = { _previewTab } };
+        AdornerLayer.SetAdorner(this, _previewLayer);
     }
 
+    /// <summary>
+    /// Opens a gap where the hovering tab would be dropped, and shows the tab over it.
+    /// </summary>
     internal void ExternalDragOver(PixelPoint screenPos)
     {
-        if (!_isForeignDragging || _pressedTab == null)
+        if (!_isForeignDragging)
         {
             return;
         }
 
         var localPos = this.PointToClient(screenPos);
-
-        // Convert local pos (Viewport) to Content space
         var scrollX = _scrollViewer?.Offset.X ?? 0;
-        var contentX = localPos.X + scrollX;
-        var dragLeftPos = contentX - _pointerOffsetWithinTab;
+        var dragCenter = localPos.X + scrollX;
 
-        UpdateTabReorderingVisuals(dragLeftPos);
+        var realizedItems = GetRealizedContainers().OfType<TabItem>().ToArray();
+        var targetIndex = ItemCount;
+        foreach (var tab in realizedItems)
+        {
+            var tabStartX = _originalXPositions.GetValueOrDefault(tab, tab.Bounds.X);
+            if (dragCenter < tabStartX + tab.Bounds.Width / 2)
+            {
+                targetIndex = Math.Min(targetIndex, IndexFromContainer(tab));
+            }
+        }
+        _previewIndex = targetIndex;
+
+        foreach (var tab in realizedItems)
+        {
+            var offsetX = IndexFromContainer(tab) >= targetIndex ? _draggedTabWidth : 0;
+            tab.RenderTransform = new TranslateTransform(offsetX, 0);
+        }
+
+        if (_previewTab != null)
+        {
+            Canvas.SetLeft(_previewTab, localPos.X - _draggedTabWidth / 2);
+        }
     }
 
-    internal void ExternalDragLeave(object item)
+    /// <summary>
+    /// Stops showing a tab dragged from another window, which moved away.
+    /// </summary>
+    internal void ExternalDragLeave() => EndExternalDrag();
+
+    /// <summary>
+    /// Stops showing a tab dragged from another window, which was dropped here.
+    /// </summary>
+    /// <returns>The index the tab was shown at, or null when it never hovered over a tab.</returns>
+    internal int? ExternalDrop()
+    {
+        var index = _previewIndex >= 0 ? _previewIndex : (int?)null;
+        EndExternalDrag();
+        return index;
+    }
+
+    private void EndExternalDrag()
     {
         if (!_isForeignDragging)
         {
             return;
         }
 
-        var list = ItemsSource as IList ?? Items;
-        if (list != null && list.Contains(item))
-        {
-            list.Remove(item);
-        }
-
         _isForeignDragging = false;
-        _pressedTab = null;
-        _sourceIndex = -1;
-        _currentTargetIndex = -1;
-
+        _previewIndex = -1;
+        AdornerLayer.SetAdorner(this, null);
+        _previewLayer = null;
+        _previewTab = null;
         foreach (var c in GetRealizedContainers())
         {
             c.RenderTransform = null;
         }
-    }
-
-    internal void ExternalDrop()
-    {
-        if (!_isForeignDragging)
-        {
-            return;
-        }
-
-        _isForeignDragging = false;
-        foreach (var c in GetRealizedContainers())
-        {
-            c.RenderTransform = null;
-        }
-
-        _pressedTab = null;
+        _originalXPositions.Clear();
     }
 
     #endregion
@@ -872,10 +865,21 @@ public class DraggableTabControl : TabControl
     #endregion
 }
 
-public class TabDetachEventArgs(object detachedItem, PixelPoint screenPosition) : EventArgs
+public class TabDraggedOutEventArgs(object tab, PixelPoint screenPosition, int? targetIndex) : EventArgs
 {
-    public object DetachedItem { get; } = detachedItem;
+    public object Tab { get; } = tab;
     public PixelPoint ScreenPosition { get; } = screenPosition;
+
+    /// <summary>
+    /// Where the strip the tab was dropped on showed it, or null when it was not dropped on a strip.
+    /// </summary>
+    public int? TargetIndex { get; } = targetIndex;
+}
+
+public class TabReorderedEventArgs(object tab, int newIndex) : EventArgs
+{
+    public object Tab { get; } = tab;
+    public int NewIndex { get; } = newIndex;
 }
 
 public class TabCreatedEventArgs(object createdItem, int index) : EventArgs

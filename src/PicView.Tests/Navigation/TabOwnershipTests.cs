@@ -42,17 +42,60 @@ public class TabOwnershipTests
     }
 
     [Fact]
-    public void MoveTab_WhenDragPreviewAlreadyAddedIt_DoesNotDuplicateIt()
+    public void MoveTab_ToAnIndex_InsertsItThere()
     {
         var source = CreateWindow();
         var target = CreateWindow();
+        var first = target.WindowTabs.ActiveTab.Value;
+        var second = target.WindowTabs.CreateTab();
         var tab = source.WindowTabs.CreateTab();
-        target.WindowTabs.Tabs.Value.Add(tab);
 
-        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+        source.WindowTabs.MoveTab(tab, target.WindowTabs, index: 1);
 
-        Assert.Single(target.WindowTabs.Tabs.Value, t => ReferenceEquals(t, tab));
+        Assert.Equal([first, tab, second], target.WindowTabs.Tabs.Value);
         Assert.Same(tab, target.WindowTabs.ActiveTab.Value);
+    }
+
+    [Fact]
+    public void MoveOut_TabOfAnotherWindow_LeavesItThere()
+    {
+        var source = CreateWindow();
+        var other = CreateWindow();
+        var tab = source.WindowTabs.CreateTab();
+        other.WindowTabs.CreateTab();
+
+        var movedOut = other.WindowTabs.MoveOut(tab);
+
+        Assert.False(movedOut);
+        Assert.Contains(tab, source.WindowTabs.Tabs.Value);
+        Assert.Equal(2, other.WindowTabs.Tabs.Value.Count);
+    }
+
+    [Fact]
+    public void Reorder_TabToAnotherPlace_MovesItAndKeepsTheActiveTab()
+    {
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        var second = window.WindowTabs.CreateTab();
+        var third = window.WindowTabs.CreateTab();
+        window.WindowTabs.SelectTab(second);
+
+        window.WindowTabs.Reorder(first, 2);
+
+        Assert.Equal([second, third, first], window.WindowTabs.Tabs.Value);
+        Assert.Same(second, window.WindowTabs.ActiveTab.Value);
+    }
+
+    [Fact]
+    public void Reorder_PastTheLastTab_MovesItToTheEnd()
+    {
+        var window = CreateWindow();
+        var first = window.WindowTabs.ActiveTab.Value;
+        var second = window.WindowTabs.CreateTab();
+
+        window.WindowTabs.Reorder(first, 5);
+
+        Assert.Equal([second, first], window.WindowTabs.Tabs.Value);
     }
 
     [Fact]

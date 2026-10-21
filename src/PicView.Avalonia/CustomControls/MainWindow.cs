@@ -134,7 +134,11 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
                 vm.TopTitlebarViewModel.CloseDropDownMenu();
             }
         };
-        UIHelper.GetMainTabControl?.TabDetached += OnTabDetached;
+        if (UIHelper.GetMainTabControl is { } tabControl)
+        {
+            tabControl.TabDraggedOut += OnTabDraggedOut;
+            tabControl.TabReordered += OnTabReordered;
+        }
     }
 
     #region Platform adapter
@@ -221,9 +225,17 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 
     #region Moving tabs
 
-    private void OnTabDetached(object? sender, TabDetachEventArgs e)
+    private void OnTabReordered(object? sender, TabReorderedEventArgs e)
     {
-        if (e.DetachedItem is not TabViewModel tab || DataContext is not MainWindowViewModel parentVm)
+        if (e.Tab is TabViewModel tab && DataContext is MainWindowViewModel vm)
+        {
+            vm.WindowTabs.Reorder(tab, e.NewIndex);
+        }
+    }
+
+    private void OnTabDraggedOut(object? sender, TabDraggedOutEventArgs e)
+    {
+        if (e.Tab is not TabViewModel tab || DataContext is not MainWindowViewModel parentVm)
         {
             return;
         }
@@ -239,7 +251,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
             .FirstOrDefault(window => window != this && window.ContainsScreenPoint(e.ScreenPosition));
         if (targetWindow?.DataContext is MainWindowViewModel targetVm)
         {
-            if (parentVm.WindowTabs.MoveTab(tab, targetVm.WindowTabs))
+            if (parentVm.WindowTabs.MoveTab(tab, targetVm.WindowTabs, e.TargetIndex))
             {
                 RefreshViewBinding(tab);
             }
