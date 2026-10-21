@@ -158,6 +158,26 @@ public class TabOwnershipTests
     }
 
     [Fact]
+    public void IsTabStripShown_FollowsTheTabCount()
+    {
+        var source = CreateWindow();
+        var target = CreateWindow();
+        var withOne = source.WindowTabs.IsTabStripShown.CurrentValue;
+        var tab = source.WindowTabs.CreateTab();
+        var withTwo = source.WindowTabs.IsTabStripShown.CurrentValue;
+
+        source.WindowTabs.MoveTab(tab, target.WindowTabs);
+
+        Assert.False(withOne);
+        Assert.True(withTwo);
+        Assert.False(source.WindowTabs.IsTabStripShown.CurrentValue);
+        Assert.True(target.WindowTabs.IsTabStripShown.CurrentValue);
+
+        tab.CloseTab();
+        Assert.False(target.WindowTabs.IsTabStripShown.CurrentValue);
+    }
+
+    [Fact]
     public void HookUp_CalledTwice_AttachesTheTabOnce()
     {
         var hookups = new RecordingHookups();

@@ -87,7 +87,7 @@ _Avoid_: Source file, input path
 ## Sizing
 
 **AutoFit**:
-The setting of a Normal window where the window takes its size from the image its active tab shows, worked out before the window resizes so it never visibly resizes twice, and again whenever another tab becomes active. A tab that shows no image, such as a Fresh Tab's start-up menu, never changes the window's size: it fills the Available Area instead. With it off, the window keeps the size the user gave it and the image fits inside it. Turning AutoFit on or off applies to every window, while resizing a window by hand turns it off for only that window.
+The setting of a Normal window where the window takes its size from the image its active tab shows, worked out before the window resizes so it never visibly resizes twice, and again whenever another tab becomes active. A tab that shows no image, such as a Fresh Tab's start-up menu, never changes the window's size: it fills what the window leaves it after the Reserved Space instead. With it off, the window keeps the size the user gave it and the image fits inside it. Turning AutoFit on or off applies to every window, while resizing a window by hand turns it off for only that window.
 _Avoid_: Auto-size, auto resize, Manual
 
 **Window Mode**:

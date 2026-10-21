@@ -1,5 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Threading;
+using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.WindowBehavior;
@@ -128,6 +130,102 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void FollowTabs_NewBlankTabInAnAutoFitWindow_FillsTheWindowLessTheTabStrip()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowTabs();
+
+        var tab = vm.WindowTabs.CreateTab();
+        var menu = new StartUpMenu();
+        tab.CurrentView.Value = menu;
+        Dispatcher.UIThread.RunJobs();
+
+        var reserved = ReservedSpace.For(2, vm.TitlebarHeight.Value, vm.IsTopToolbarShown.Value,
+            Settings.UIProperties.ShowBottomNavBar, 0, 0);
+        Assert.Equal(800, menu.Width);
+        Assert.Equal(600 - reserved.Top - reserved.Bottom, menu.Height);
+        Assert.True(reserved.Top >= SizeDefaults.TabHeight, "The tab strip shows with two tabs");
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void FollowTabs_NewBlankTabAfterAnImage_FillsTheImagesAreaLessTheTabStrip()
+    {
+        // Not from the window's size as it is when fitted: it follows its content, so it may already have shrunk
+        // to the unsized menu by then
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowTabs();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+        fitter.Refit();
+
+        var tab = vm.WindowTabs.CreateTab();
+        var menu = new StartUpMenu();
+        tab.CurrentView.Value = menu;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(400, menu.Width);
+        Assert.Equal(300 - SizeDefaults.TabHeight, menu.Height);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void FollowTabs_BlankTabWithoutAutoFit_StretchesToTheWindow()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowTabs();
+
+        var tab = vm.WindowTabs.CreateTab();
+        var menu = new StartUpMenu { Width = 100, Height = 100 };
+        tab.CurrentView.Value = menu;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(double.IsNaN(menu.Width));
+        Assert.True(double.IsNaN(menu.Height));
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void FollowTabs_SwitchingToATabWithAnImage_FitsItsImage()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowTabs();
+        var first = vm.WindowTabs.ActiveTab.Value;
+        var second = vm.WindowTabs.CreateTab();
+        second.Display(Model("b.jpg", 400, 300));
+        Dispatcher.UIThread.RunJobs();
+
+        vm.WindowTabs.SelectTab(first);
+        vm.WindowTabs.SelectTab(second);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(400, vm.ImageWidth.Value);
+        Assert.Equal(300, vm.ImageHeight.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void FollowTabs_TabStripHides_FitsTheImageAgain()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowTabs();
+        var first = vm.WindowTabs.ActiveTab.Value;
+        first.Display(Model("a.jpg", 400, 300));
+        var second = vm.WindowTabs.CreateTab();
+        vm.WindowTabs.SelectTab(first);
+        Dispatcher.UIThread.RunJobs();
+        vm.ImageWidth.Value = double.NaN;
+
+        second.CloseTab();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(400, vm.ImageWidth.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public void IsOnAnotherScreen_AfterTheWindowMovesToAnotherMonitor_IsTrueUntilItIsFittedThere()
     {
         var screen = Screen(1920, 1040);
@@ -155,6 +253,17 @@ public class WindowFitterTests
             _core.GallerySettings);
         window.DataContext = vm;
         return (new WindowFitter(window, () => ContentSize, readScreen), vm, window);
+    }
+
+    private (WindowFitter Fitter, MainWindowViewModel Vm, MainWindow Window) CreateShownWindow(double width,
+        double height)
+    {
+        var (fitter, vm, window) = CreateWindow();
+        window.Width = width;
+        window.Height = height;
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        return (fitter, vm, window);
     }
 
     private static ScreenSize Screen(double workAreaWidth, double workAreaHeight) => new()

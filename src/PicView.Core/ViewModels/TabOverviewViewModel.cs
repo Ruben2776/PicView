@@ -31,6 +31,14 @@ public class TabOverviewViewModel
     public IThumbnailLoader? SharedThumbnailLoader => Core?.SharedThumbnailLoader;
     public IFileWatcherService? SharedFileWatcher => Core?.SharedFileWatcher;
 
+    private readonly ReactiveProperty<bool> _isTabStripShown = new(false);
+
+    /// <summary>
+    /// Whether the window shows its tab strip, which it does with two or more tabs. The strip is part of the Reserved
+    /// Space, so the window is fitted again when this changes.
+    /// </summary>
+    public ReadOnlyReactiveProperty<bool> IsTabStripShown => _isTabStripShown;
+
     // The Main Window these tabs belong to
     private readonly MainWindowViewModel _parentVm;
     private ITabHookups? _hookups;
@@ -53,6 +61,7 @@ public class TabOverviewViewModel
             ActiveTab = new BindableReactiveProperty<TabViewModel>(firstTab);
         }
         ActiveTab.Value.IsSelected = true;
+        Tabs.Value.CollectionChanged += (_, _) => _isTabStripShown.Value = Tabs.Value.Count > 1;
     }
 
     /// <summary>

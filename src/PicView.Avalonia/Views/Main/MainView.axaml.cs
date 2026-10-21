@@ -11,6 +11,7 @@ using PicView.Core.Conversion;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
+using R3;
 
 namespace PicView.Avalonia.Views.Main;
 
@@ -54,6 +55,14 @@ public partial class MainView : UserControl
                 return;
             }
             mainWindow.Disposables.Add(new HoverFadeButtonHandler(AltButtonsPanel));
+
+            if (DataContext is MainWindowViewModel vm)
+            {
+                // The buttons sit below the tab strip while it shows
+                mainWindow.Disposables.Add(vm.WindowTabs.IsTabStripShown.Subscribe(shown =>
+                    global::Avalonia.Threading.Dispatcher.UIThread.Post(() => AltButtonsPanel.Margin =
+                        shown ? new Thickness(0, SizeDefaults.TabHeight, 0, 0) : new Thickness(0))));
+            }
         };
     }
 
@@ -76,15 +85,7 @@ public partial class MainView : UserControl
             return;
         }
         var tabs = vm.WindowTabs.Tabs.CurrentValue;
-        if (tabs.Count >= 2)
-        {
-            AltButtonsPanel.Margin = new Thickness(0, SizeDefaults.TabHeight, 0, 0);
-        }
-        else
-        {
-            AltButtonsPanel.Margin = new Thickness(0);
-        }
-        
+
         // Only set the StartUpMenu if the View is currently null.
         // This prevents overwriting the view (e.g. an image) when reordering tabs,
         // as reordering triggers the TabCreated event again by recreating containers.
@@ -99,15 +100,12 @@ public partial class MainView : UserControl
         }
         else
         {
+            // Sized before it is laid out, so the window keeps its size
             var startUpMenu = new StartUpMenu();
-            
-            if (vm.WindowModeState.CurrentValue.AutoFit)
+            if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
             {
-                // Keep the StartUpMenu the same size when creating a new tab
-                startUpMenu.Width = Bounds.Width;
-                startUpMenu.Height = Bounds.Height - SizeDefaults.TabHeight;
+                mainWindow.WindowFitter.FitStartUpMenu(startUpMenu);
             }
-
             tabViewModel.CurrentView.Value = startUpMenu;
             tabViewModel.SetNewTabTitle();
         }

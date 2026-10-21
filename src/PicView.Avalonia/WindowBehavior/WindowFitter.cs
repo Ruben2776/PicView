@@ -3,8 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Avalonia.WindowBehavior;
 
@@ -29,6 +31,10 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     private readonly Func<ScreenSize> _readScreen = readScreen ?? (() => ScreenOf(window));
 
     private ScreenSize? _fittedScreen;
+    private int _isTabFitPending;
+
+    // The window size the last image's Fit gave, which a tab without an image keeps
+    private Size? _fittedWindowSize;
 
     /// <summary>
     /// The screen the window is on now. Read on the UI thread.
@@ -91,6 +97,82 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     }
 
     /// <summary>
+    /// Fits the window again whenever another tab becomes active or the tab strip shows or hides, once for changes
+    /// that come together, as when a new tab both shows the strip and becomes active.
+    /// </summary>
+    /// <returns>What stops following the tabs.</returns>
+    public IDisposable FollowTabs()
+    {
+        if (window.DataContext is not MainWindowViewModel vm)
+        {
+            return Disposable.Empty;
+        }
+
+        return Disposable.Combine(
+            vm.WindowTabs.ActiveTab.Skip(1).Subscribe(_ => FitActiveTabSoon()),
+            vm.WindowTabs.IsTabStripShown.Skip(1).Subscribe(_ => FitActiveTabSoon()));
+    }
+
+    private void FitActiveTabSoon()
+    {
+        if (Interlocked.Exchange(ref _isTabFitPending, 1) is 1)
+        {
+            return;
+        }
+
+        // After layout, so the window has the tab strip it now shows
+        Dispatcher.UIThread.Post(() =>
+        {
+            Interlocked.Exchange(ref _isTabFitPending, 0);
+            if (window.DataContext is not MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue: { } tab } vm)
+            {
+                return;
+            }
+
+            if (PixelSizes.Of(tab, vm.WindowTabs.SharedCache, Settings.ImageScaling.ShowImageSideBySide) is { } sizes)
+            {
+                Fit(vm, sizes);
+            }
+            else if (tab.CurrentView.CurrentValue is StartUpMenu menu)
+            {
+                FitStartUpMenu(menu);
+            }
+        }, DispatcherPriority.Background);
+    }
+
+    /// <summary>
+    /// Sizes a tab's start-up menu so the window keeps its size: in an AutoFit window it fills the size the last
+    /// image gave the window, less the Reserved Space as it is now, so the tab strip it shows takes room from the
+    /// menu. Otherwise it stretches to fill the window. Call on the UI thread, before the menu is laid out, as when it
+    /// is created.
+    /// </summary>
+    public void FitStartUpMenu(StartUpMenu menu)
+    {
+        if (window.DataContext is not MainWindowViewModel vm)
+        {
+            return;
+        }
+
+        if (vm.WindowModeState.CurrentValue.FitMode is not FitMode.AutoFit)
+        {
+            menu.Width = menu.Height = double.NaN;
+            return;
+        }
+
+        // Not the window's size as it is: it follows its content, so it may already have shrunk to an unsized menu
+        var windowSize = _fittedWindowSize ?? window.ClientSize;
+        if (windowSize.Width <= 0 || windowSize.Height <= 0)
+        {
+            return;
+        }
+
+        var (width, height) = ImageFitter.WindowAvailableArea(windowSize.Width, windowSize.Height,
+            GetReservedSpace(vm));
+        menu.Width = width;
+        menu.Height = height;
+    }
+
+    /// <summary>
     /// Fits the window to <paramref name="sizes"/> before it is shown, so it never appears at the wrong size.
     /// Call on the UI thread.
     /// </summary>
@@ -148,6 +230,7 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         }
 
         _fittedScreen = screen;
+        _fittedWindowSize = new Size(fit.WindowWidth, fit.WindowHeight);
         vm.WindowTabs.ActiveTab.CurrentValue.InitialZoom.Value = fit.Scale;
         vm.ScrollViewerWidth.Value = fit.ScrollViewerWidth;
         vm.ScrollViewerHeight.Value = fit.ScrollViewerHeight;

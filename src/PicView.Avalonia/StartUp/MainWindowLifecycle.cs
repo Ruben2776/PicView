@@ -327,6 +327,7 @@ public sealed class MainWindowLifecycle
     {
         var vm = ViewModelOf(window);
         window.WindowModeSwitcher.Start(isAppStart);
+        window.Disposables.Add(window.WindowFitter.FollowTabs());
         if (vm.IsFullscreen.Value)
         {
             Dispatcher.UIThread.Post(() =>

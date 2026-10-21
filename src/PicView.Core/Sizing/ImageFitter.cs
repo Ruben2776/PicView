@@ -84,6 +84,15 @@ public static class ImageFitter
         });
     }
 
+    /// <summary>
+    /// The Available Area of a window that keeps its size: the window minus the Reserved Space. A tab that shows no
+    /// image fills it, so an AutoFit window keeps the size the last image gave it.
+    /// </summary>
+    public static (double Width, double Height) WindowAvailableArea(double windowWidth, double windowHeight,
+        ReservedSpace reserved) =>
+        (Math.Max(0, windowWidth - reserved.GalleryWidth),
+            Math.Max(0, windowHeight - reserved.Top - reserved.Bottom - reserved.GalleryHeight));
+
     private static (double Width, double Height) GetAvailableArea(FitInput input)
     {
         var reserved = input.ReservedSpace;

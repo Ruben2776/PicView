@@ -244,4 +244,13 @@ public class ImageFitterTests
     }
 
     #endregion
+
+    [Fact]
+    public void WindowAvailableArea_TakesTheReservedSpaceFromTheWindow()
+    {
+        var (width, height) = ImageFitter.WindowAvailableArea(800, 600, Bars with { GalleryWidth = 100 });
+
+        Assert.Equal(700, width);
+        Assert.Equal(600 - 32 - 26, height);
+    }
 }
