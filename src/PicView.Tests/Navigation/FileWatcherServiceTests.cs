@@ -7,10 +7,15 @@ using R3;
 
 namespace PicView.Tests.Navigation;
 
+/// <summary>
+/// Pins how tabs follow the files in the folders they browse. Folder events are raised by hand through a fake
+/// <see cref="IFolderEvents"/>, except in the one test that checks the watcher on disk.
+/// </summary>
 [Collection("Sequential")]
 public class FileWatcherServiceTests : IDisposable
 {
     private readonly FileWatcherService _service;
+    private readonly FakeFolderEvents _folderEvents = new();
     private readonly SharedImageCache _cache;
     private readonly MockThumbnailCache _mockThumbnailCache;
     private readonly string _testDirectory;
@@ -28,238 +33,227 @@ public class FileWatcherServiceTests : IDisposable
         _cache = new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f }));
         _mockThumbnailCache = new MockThumbnailCache();
         // Use default ordinal comparison for tests
-        _service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache, _mockThumbnailCache, new MockThumbnailLoader());
+        _service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache, _mockThumbnailCache,
+            new MockThumbnailLoader(), _folderEvents);
     }
 
     [Fact]
-    public void Watch_AddsSubscriber()
+    public void Watch_TwoTabsInOneFolder_StartsOneWatch()
     {
-        var tab = CreateTab(_testDirectory);
-        _service.Watch(tab);
-        
-        // No direct way to verify internal state without reflection or observing behavior
-        // But we can verify no exception is thrown
+        Settings.Sorting.IncludeSubDirectories = true;
+        var first = CreateTab(_testDirectory);
+        var second = CreateTab(_testDirectory);
+
+        _service.Watch(first);
+        _service.Watch(second);
+
+        var watch = Assert.Single(_folderEvents.Watches);
+        Assert.Equal(_testDirectory, watch.Directory);
+        Assert.True(watch.IncludesSubdirectories);
+    }
+
+    [Fact]
+    public void Unwatch_LastTabOfAFolder_StopsTheWatch()
+    {
+        var first = CreateTab(_testDirectory);
+        var second = CreateTab(_testDirectory);
+        _service.Watch(first);
+        _service.Watch(second);
+        var watch = Assert.Single(_folderEvents.Watches);
+
+        _service.Unwatch(first);
+        var afterFirst = watch.IsDisposed;
+        _service.Unwatch(second);
+
+        Assert.False(afterFirst, "Another tab still watches the folder");
+        Assert.True(watch.IsDisposed);
     }
 
     [Fact]
     public async Task OnFileCreated_UpdatesTabFiles()
     {
         // Arrange
-        var existingFilePath = Path.Combine(_testDirectory, "existing.jpg");
-        await File.WriteAllTextAsync(existingFilePath, "dummy content", TestContext.Current.CancellationToken);
+        var existingFile = new FileInfo(Path.Combine(_testDirectory, "existing.jpg"));
+        var tab = CreateTab(_testDirectory, [existingFile], existingFile);
 
-        var tab = CreateTab(_testDirectory);
-        var files = new List<FileInfo> { new(existingFilePath) };
-        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
-        tab.Model = new ImageModel { FileInfo = files[0] };
-
-        _service.Watch(tab);
-
-        // Initial state: 1 file
-        Assert.Single(tab.ImageIterator.Files);
-
-        // Act: Create a file
-        var filePath = Path.Combine(_testDirectory, "test.jpg");
-        await File.WriteAllTextAsync(filePath, "dummy content", TestContext.Current.CancellationToken);
-
-        // Wait for watcher event (async nature of FileSystemWatcher)
-        await Task.Delay(500, TestContext.Current.CancellationToken);
+        // Act
+        Watch(tab).RaiseCreated("test.jpg");
 
         // Assert
-        Assert.Equal(2, tab.ImageIterator.Files.Count);
-        Assert.Contains(tab.ImageIterator.Files, f => f.FullName == filePath);
+        await WaitUntilAsync(() => tab.ImageIterator.Files.Count == 2);
+        Assert.Contains(tab.ImageIterator.Files, f => f.Name == "test.jpg");
     }
 
     [Fact]
     public async Task OnFileCreated_WhenFileAlreadyInList_DoesNotDuplicate()
     {
-        // Arrange: Tab already has this file in files list, but file does not exist on disk yet
-        var existingFilePath = Path.Combine(_testDirectory, "overwrite.jpg");
+        // Arrange: Tab already has this file in files list
+        var existingFile = new FileInfo(Path.Combine(_testDirectory, "overwrite.jpg"));
+        var tab = CreateTab(_testDirectory, [existingFile], existingFile);
+        var watch = Watch(tab);
 
-        var tab = CreateTab(_testDirectory);
-        var files = new List<FileInfo> { new(existingFilePath) };
-        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
-        tab.Model = new ImageModel { FileInfo = files[0] };
-
-        _service.Watch(tab);
-
-        // Initial state: 1 file
-        Assert.Single(tab.ImageIterator.Files);
-
-        // Act: Create the file on disk (triggers Created event)
-        await File.WriteAllTextAsync(existingFilePath, "created content", TestContext.Current.CancellationToken);
-
-        // Wait for watcher event
-        await Task.Delay(500, TestContext.Current.CancellationToken);
+        // Act: Events of one kind are handled in order, so the second shows the first was handled
+        watch.RaiseCreated("overwrite.jpg");
+        watch.RaiseCreated("later.jpg");
 
         // Assert: No duplicates should be inserted
-        Assert.Single(tab.ImageIterator.Files);
-        Assert.Equal(existingFilePath, tab.ImageIterator.Files[0].FullName);
+        await WaitUntilAsync(() => tab.ImageIterator.Files.Any(f => f.Name == "later.jpg"));
+        Assert.Single(tab.ImageIterator.Files, f => f.FullName == existingFile.FullName);
     }
 
     [Fact]
-    public async Task OnFileChanged_UpdatesTabFiles_AndResyncs()
+    public async Task OnFileChanged_ForgetsTheStaleImage()
     {
-        // Arrange
+        // Arrange: the file is on disk, so waiting for it to be ready ends at once
         var filePath = Path.Combine(_testDirectory, "change.jpg");
         await File.WriteAllTextAsync(filePath, "dummy content", TestContext.Current.CancellationToken);
+        var file = new FileInfo(filePath);
+        var tab = CreateTab(_testDirectory, [file], file);
+        _cache.Put(tab.Id, file, new ImageModel { FileInfo = file });
 
-        var tab = CreateTab(_testDirectory);
-        var files = new List<FileInfo> { new(filePath) };
-        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
-        tab.Model = new ImageModel { FileInfo = files[0] };
-
-        _service.Watch(tab);
-        _cache.Put(tab.Id, files[0], new ImageModel { FileInfo = files[0] });
-
-        // Act: Modify the file (triggers Changed event)
-        await File.WriteAllTextAsync(filePath, "dummy content modified", TestContext.Current.CancellationToken);
-        await Task.Delay(500, TestContext.Current.CancellationToken);
+        // Act
+        Watch(tab).RaiseChanged("change.jpg");
 
         // Assert
+        await WaitUntilAsync(() => _mockThumbnailCache.RemovedPaths.Contains(filePath));
         Assert.Single(tab.ImageIterator.Files);
-        Assert.False(_cache.TryGetReady(new FileInfo(filePath), out _), "The stale image should no longer be served");
-        Assert.Contains(filePath, _mockThumbnailCache.RemovedPaths);
+        Assert.False(_cache.TryGetReady(file, out _), "The stale image should no longer be served");
     }
 
     [Fact]
-    public async Task OnFileDeleted_UpdatesTabFiles_AndResyncs()
+    public async Task OnFileDeleted_UpdatesTabFiles_AndForgetsTheImage()
     {
         // Arrange
-        var filePath = Path.Combine(_testDirectory, "test1.jpg");
-        var filePath2 = Path.Combine(_testDirectory, "test2.jpg");
-        var filePath3 = Path.Combine(_testDirectory, "test3.jpg");
-        await File.WriteAllTextAsync(filePath, "dummy content", TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(filePath2, "dummy content", TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(filePath3, "dummy content", TestContext.Current.CancellationToken);
-        
-        var tab = CreateTab(_testDirectory);
-        
-        // Manually initialize tab with files
-        var files = new List<FileInfo> { new(filePath), new(filePath2), new(filePath3) };
-        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
-        tab.Model = new ImageModel { FileInfo = files[0] };
-        
-        _service.Watch(tab);
+        var files = Files("test1.jpg", "test2.jpg", "test3.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
         _cache.Put(tab.Id, files[0], new ImageModel { FileInfo = files[0] });
 
-        // Act: Delete file
-        File.Delete(filePath);
-        await Task.Delay(500, TestContext.Current.CancellationToken);
+        // Act
+        Watch(tab).RaiseDeleted("test1.jpg");
 
         // Assert
-        Assert.Equal(2, tab.ImageIterator.Files.Count);
-        Assert.DoesNotContain(tab.ImageIterator.Files, f => f.FullName == filePath);
-        Assert.False(_cache.TryGetReady(new FileInfo(filePath), out _), "The stale image should no longer be served");
-        Assert.Contains(filePath, _mockThumbnailCache.RemovedPaths);
-        
-        File.Delete(filePath2);
-        File.Delete(filePath3);
+        await WaitUntilAsync(() => tab.ImageIterator.Files.Count == 2);
+        Assert.DoesNotContain(tab.ImageIterator.Files, f => f.FullName == files[0].FullName);
+        Assert.False(_cache.TryGetReady(files[0], out _), "The stale image should no longer be served");
+        Assert.Contains(files[0].FullName, _mockThumbnailCache.RemovedPaths);
     }
-    
+
     [Fact]
     public async Task OnFileDeleted_TwoTabsInTheFolder_UpdatesBoth()
     {
         // Arrange
-        var filePath = Path.Combine(_testDirectory, "test1.jpg");
-        var filePath2 = Path.Combine(_testDirectory, "test2.jpg");
-        var filePath3 = Path.Combine(_testDirectory, "test3.jpg");
-        await File.WriteAllTextAsync(filePath, "dummy content", TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(filePath2, "dummy content", TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(filePath3, "dummy content", TestContext.Current.CancellationToken);
-        var files = new List<FileInfo> { new(filePath), new(filePath2), new(filePath3) };
-
-        var first = CreateTab(_testDirectory);
-        first.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
-        first.Model = new ImageModel { FileInfo = files[0] };
-        var second = CreateTab(_testDirectory);
-        second.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
-        second.Model = new ImageModel { FileInfo = files[2] };
-
-        _service.Watch(first);
+        var files = Files("test1.jpg", "test2.jpg", "test3.jpg");
+        var first = CreateTab(_testDirectory, files, files[0]);
+        var second = CreateTab(_testDirectory, files, files[2]);
+        var watch = Watch(first);
         _service.Watch(second);
 
         // Act: Delete a file both tabs browse
-        File.Delete(filePath2);
-        await Task.Delay(500, TestContext.Current.CancellationToken);
+        watch.RaiseDeleted("test2.jpg");
 
         // Assert
-        Assert.DoesNotContain(first.ImageIterator.Files, f => f.FullName == filePath2);
-        Assert.DoesNotContain(second.ImageIterator.Files, f => f.FullName == filePath2);
-
-        File.Delete(filePath);
-        File.Delete(filePath3);
+        await WaitUntilAsync(() => first.ImageIterator.Files.Count == 2 && second.ImageIterator.Files.Count == 2);
+        Assert.DoesNotContain(first.ImageIterator.Files, f => f.Name == "test2.jpg");
+        Assert.DoesNotContain(second.ImageIterator.Files, f => f.Name == "test2.jpg");
     }
 
     [Fact]
     public async Task OnFileDeleted_AfterTheFirstTabStopsWatching_UpdatesTheOtherTab()
     {
         // Arrange
-        var filePath = Path.Combine(_testDirectory, "test1.jpg");
-        var filePath2 = Path.Combine(_testDirectory, "test2.jpg");
-        await File.WriteAllTextAsync(filePath, "dummy content", TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(filePath2, "dummy content", TestContext.Current.CancellationToken);
-        var files = new List<FileInfo> { new(filePath), new(filePath2) };
-
+        var files = Files("test1.jpg", "test2.jpg");
         var first = CreateTab(_testDirectory);
-        _service.Watch(first);
-        var second = CreateTab(_testDirectory);
-        second.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
-        second.Model = new ImageModel { FileInfo = files[0] };
+        var watch = Watch(first);
+        var second = CreateTab(_testDirectory, files, files[0]);
         _service.Watch(second);
 
         // Act: The first tab moves on, then a file of the second tab is deleted
         _service.Unwatch(first);
-        File.Delete(filePath2);
-        await Task.Delay(500, TestContext.Current.CancellationToken);
+        watch.RaiseDeleted("test2.jpg");
 
         // Assert
-        Assert.DoesNotContain(second.ImageIterator.Files, f => f.FullName == filePath2);
-
-        File.Delete(filePath);
+        await WaitUntilAsync(() => second.ImageIterator.Files.Count == 1);
+        Assert.DoesNotContain(second.ImageIterator.Files, f => f.Name == "test2.jpg");
     }
 
     [Fact]
     public async Task OnFileRenamed_UpdatesTabFiles_AndModel()
     {
         // Arrange
-        var oldPath = Path.Combine(_testDirectory, "old.jpg");
+        var files = Files("old.jpg");
         var newPath = Path.Combine(_testDirectory, "new.jpg");
-        await File.WriteAllTextAsync(oldPath, "dummy content", TestContext.Current.CancellationToken);
-        
-        var tab = CreateTab(_testDirectory);
-        var files = new List<FileInfo> { new(oldPath) };
-        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
-        tab.Model = new ImageModel { FileInfo = files[0] };
-        
-        _service.Watch(tab);
+        var tab = CreateTab(_testDirectory, files, files[0]);
         _cache.Put(tab.Id, files[0], new ImageModel { FileInfo = files[0] });
 
         // Act
-        File.Move(oldPath, newPath);
-        await Task.Delay(500, TestContext.Current.CancellationToken);
+        Watch(tab).RaiseRenamed("old.jpg", "new.jpg");
 
         // Assert
-        Assert.Single(tab.ImageIterator.Files);
-        Assert.Equal(newPath, tab.ImageIterator.Files[0].FullName);
-        // Verify model update if it was current file
-        Assert.Equal(newPath, tab.Model.FileInfo.FullName);
-        Assert.False(_cache.TryGetReady(new FileInfo(oldPath), out _), "The stale image should no longer be served");
-        Assert.Contains(oldPath, _mockThumbnailCache.RemovedPaths);
+        await WaitUntilAsync(() => tab.Model.FileInfo?.FullName == newPath);
+        Assert.Equal(newPath, Assert.Single(tab.ImageIterator.Files).FullName);
+        Assert.False(_cache.TryGetReady(files[0], out _), "The stale image should no longer be served");
+        Assert.Contains(files[0].FullName, _mockThumbnailCache.RemovedPaths);
     }
 
-    private TabViewModel CreateTab(string directory)
+    [Fact]
+    public async Task OnFileCreated_OnDisk_ReachesTheTab()
+    {
+        // Arrange: the watcher PicView uses, on a real folder
+        using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
+            _mockThumbnailCache, new MockThumbnailLoader());
+        var existingFile = new FileInfo(Path.Combine(_testDirectory, "existing.jpg"));
+        var tab = new TabViewModel(null!, service);
+        tab.Model = new ImageModel { FileInfo = existingFile };
+        tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
+        tab.InitializeImageIterator([existingFile], _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
+            _mockThumbnailCache);
+
+        // Act
+        var filePath = Path.Combine(_testDirectory, "test.jpg");
+        await File.WriteAllTextAsync(filePath, "dummy content", TestContext.Current.CancellationToken);
+
+        // Assert
+        await WaitUntilAsync(() => tab.ImageIterator.Files.Any(f => f.FullName == filePath));
+    }
+
+    private FakeFolderWatch Watch(TabViewModel tab)
+    {
+        _service.Watch(tab);
+        return _folderEvents.Watches.Single(w => w.Directory == _testDirectory);
+    }
+
+    private List<FileInfo> Files(params string[] names) =>
+        names.Select(name => new FileInfo(Path.Combine(_testDirectory, name))).ToList();
+
+    private TabViewModel CreateTab(string directory, List<FileInfo>? files = null, FileInfo? shown = null)
     {
         var tab = new TabViewModel(null!, _service);
-        // We need to set a model so Watcher can find directory
-        // But usually Watch() is called after InitializeImageIterator which likely has files.
-        // If Model is null, Watch does nothing.
-        // So let's fake a model with a file in that directory
+        // Watch() finds the directory from the model, so give it a file in that directory
         var dummyFile = new FileInfo(Path.Combine(directory, "placeholder.png"));
         tab.Model = new ImageModel { FileInfo = dummyFile };
-        
+
         tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), _service, _mockThumbnailCache);
+        if (files is not null)
+        {
+            // Without the watcher, so a test decides which tab watches first
+            tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
+                _mockThumbnailCache);
+            tab.Model = new ImageModel { FileInfo = shown ?? files[0] };
+        }
         return tab;
+    }
+
+    /// <summary>
+    /// Waits for the events raised to be handled, which can finish on another thread.
+    /// </summary>
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        var deadline = Environment.TickCount64 + 5000;
+        while (!condition())
+        {
+            Assert.True(Environment.TickCount64 < deadline, "The folder event was not handled in time");
+            await Task.Delay(10, TestContext.Current.CancellationToken);
+        }
     }
 
     public void Dispose()
@@ -274,8 +268,58 @@ public class FileWatcherServiceTests : IDisposable
             catch { /* Best effort cleanup */ }
         }
     }
-    
+
     // Mocks
+    private sealed class FakeFolderEvents : IFolderEvents
+    {
+        public List<FakeFolderWatch> Watches { get; } = [];
+
+        public IFolderWatch Watch(string directory, bool includeSubdirectories)
+        {
+            var watch = new FakeFolderWatch(directory, includeSubdirectories);
+            Watches.Add(watch);
+            return watch;
+        }
+    }
+
+    private sealed class FakeFolderWatch(string directory, bool includeSubdirectories) : IFolderWatch
+    {
+        private readonly Subject<FileSystemEventArgs> _created = new();
+        private readonly Subject<FileSystemEventArgs> _changed = new();
+        private readonly Subject<RenamedEventArgs> _renamed = new();
+        private readonly Subject<FileSystemEventArgs> _deleted = new();
+
+        public string Directory { get; } = directory;
+        public bool IncludesSubdirectories { get; } = includeSubdirectories;
+        public bool IsDisposed { get; private set; }
+
+        public Observable<FileSystemEventArgs> Created => _created;
+        public Observable<FileSystemEventArgs> Changed => _changed;
+        public Observable<RenamedEventArgs> Renamed => _renamed;
+        public Observable<FileSystemEventArgs> Deleted => _deleted;
+
+        public void RaiseCreated(string name) =>
+            _created.OnNext(new FileSystemEventArgs(WatcherChangeTypes.Created, Directory, name));
+
+        public void RaiseChanged(string name) =>
+            _changed.OnNext(new FileSystemEventArgs(WatcherChangeTypes.Changed, Directory, name));
+
+        public void RaiseRenamed(string oldName, string newName) =>
+            _renamed.OnNext(new RenamedEventArgs(WatcherChangeTypes.Renamed, Directory, newName, oldName));
+
+        public void RaiseDeleted(string name) =>
+            _deleted.OnNext(new FileSystemEventArgs(WatcherChangeTypes.Deleted, Directory, name));
+
+        public void Dispose()
+        {
+            IsDisposed = true;
+            _created.Dispose();
+            _changed.Dispose();
+            _renamed.Dispose();
+            _deleted.Dispose();
+        }
+    }
+
     private class MockThumbnailLoader : IThumbnailLoader
     {
         public ValueTask<object?> GetThumbnailAsync(FileInfo file, CoreViewModel core) => ValueTask.FromResult<object?>(null);
@@ -283,7 +327,7 @@ public class FileWatcherServiceTests : IDisposable
         public object? GetExifThumbnail(FileInfo file) => null;
         public object? GetThumbQuick(FileInfo file, CoreViewModel? core = null) => null;
     }
-    
+
     private class MockThumbnailCache : IThumbnailCache
     {
         public List<string> RemovedPaths { get; } = new();

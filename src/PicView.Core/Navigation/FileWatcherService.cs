@@ -16,16 +16,18 @@ public class FileWatcherService(
     Func<string, string, int> stringComparer,
     SharedImageCache cache,
     IThumbnailCache? thumbnailCache = null,
-    IThumbnailLoader? thumbnailLoader = null)
+    IThumbnailLoader? thumbnailLoader = null,
+    IFolderEvents? folderEvents = null)
     : IFileWatcherService, IDisposable
 {
+    private readonly IFolderEvents _folderEvents = folderEvents ?? new FileSystemFolderEvents();
     private readonly SharedImageCache _cache = cache ?? throw new ArgumentNullException(nameof(cache));
     private readonly Lock _lock = new();
     private readonly Func<string, string, int> _stringComparer = stringComparer ?? throw new ArgumentNullException(nameof(stringComparer));
 
-    // Maps Directory Path -> (Watcher, Subscribers)
+    // Maps Directory Path -> (Watch, Subscribers)
     private readonly
-        ConcurrentDictionary<string, (FileSystemWatcher Watcher, IDisposable Subscription,
+        ConcurrentDictionary<string, (IFolderWatch Watch, IDisposable Subscription,
             List<WeakReference<TabViewModel>> Subscribers)> _watchers = new(StringComparer.OrdinalIgnoreCase);
 
     public void Watch(TabViewModel tab, string? directory = null)
@@ -68,61 +70,29 @@ public class FileWatcherService(
                 return;
             }
 
-            var watcher = new FileSystemWatcher(directory)
-            {
-                EnableRaisingEvents = true,
-                Filter = "*.*",
-                IncludeSubdirectories = Settings.Sorting.IncludeSubDirectories,
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size
-            };
-
-            // We use Observable.FromEvent to bridge standard .NET events to R3
-
-            var created = Observable.FromEvent<FileSystemEventHandler, FileSystemEventArgs>(
-                h => (s, e) => h(e),
-                h => watcher.Created += h,
-                h => watcher.Created -= h
-            );
-
-            var deleted = Observable.FromEvent<FileSystemEventHandler, FileSystemEventArgs>(
-                h => (s, e) => h(e),
-                h => watcher.Deleted += h,
-                h => watcher.Deleted -= h
-            );
-
-            var renamed = Observable.FromEvent<RenamedEventHandler, RenamedEventArgs>(
-                h => (s, e) => h(e),
-                h => watcher.Renamed += h,
-                h => watcher.Renamed -= h
-            );
-            
-            var changed = Observable.FromEvent<FileSystemEventHandler, FileSystemEventArgs>(
-                h => (s, e) => h(e),
-                h => watcher.Changed += h,
-                h => watcher.Changed -= h
-            );
+            var watch = _folderEvents.Watch(directory, Settings.Sorting.IncludeSubDirectories);
 
             // AwaitOperation.Sequential ensures we don't process two file events for the same folder at the exact same time, 
             // which protects the Integrity of the 'files' list and the CurrentIndex.
 
             // Each event goes to every tab watching the folder when it arrives, not only the tab that started the watch
             var watchedDirectory = directory;
-            var fileCreatedSub = created.SubscribeAwait(async (e, ct) =>
+            var fileCreatedSub = watch.Created.SubscribeAwait(async (e, ct) =>
                 await ForEachSubscriberAsync(watchedDirectory, t => OnFileCreatedAsync(t, e, ct), nameof(OnFileCreatedAsync))
                     .ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileCreatedAsync)));
 
-            var fileDeletedSub = deleted.SubscribeAwait(async (e, ct) =>
+            var fileDeletedSub = watch.Deleted.SubscribeAwait(async (e, ct) =>
                 await ForEachSubscriberAsync(watchedDirectory, t => OnFileDeletedAsync(t, e), nameof(OnFileDeletedAsync))
                     .ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileDeletedAsync)));
 
-            var fileRenamedSub = renamed.SubscribeAwait(async (e, ct) =>
+            var fileRenamedSub = watch.Renamed.SubscribeAwait(async (e, ct) =>
                 await ForEachSubscriberAsync(watchedDirectory, t => OnFileRenamedAsync(t, e, ct), nameof(OnFileRenamedAsync))
                     .ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileRenamedAsync)));
             
-            var fileChangedSub = changed.SubscribeAwait(async (e, ct) =>
+            var fileChangedSub = watch.Changed.SubscribeAwait(async (e, ct) =>
                 await ForEachSubscriberAsync(watchedDirectory, t => OnFileChangedAsync(t, e, ct), nameof(OnFileChangedAsync))
                     .ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileChangedAsync)));
@@ -130,7 +100,7 @@ public class FileWatcherService(
             // Combine disposables
             var subscription = Disposable.Combine(fileCreatedSub, fileDeletedSub, fileRenamedSub, fileChangedSub);
 
-            _watchers[directory] = (watcher, subscription, [new WeakReference<TabViewModel>(tab)]);
+            _watchers[directory] = (watch, subscription, [new WeakReference<TabViewModel>(tab)]);
         }
     }
 
@@ -186,7 +156,7 @@ public class FileWatcherService(
                     continue;
                 }
 
-                // Dispose R3 subscription AND Watcher
+                // Dispose the R3 subscription and the folder watch
                 subscription.Dispose();
                 watcher.Dispose();
                 keysToRemove.Add(kvp.Key);
