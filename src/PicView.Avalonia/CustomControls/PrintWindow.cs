@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using PicView.Core.Config;
+using PicView.Core.Printing;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.CustomControls;
@@ -27,16 +28,7 @@ public class PrintWindow: GenericWindow
         if (ps != null && config is { WindowProperties: not null })
         {
             var props = config.WindowProperties;
-            props.PrinterName = ps.PrinterName.Value;
-            props.PaperSize = ps.PaperSize.Value;
-            props.Orientation = ps.Orientation.Value;
-            props.ScaleMode = ps.ScaleMode.Value;
-            props.ColorMode = ps.ColorMode.Value;
-            props.Copies = ps.Copies.Value;
-            props.MarginTop = ps.MarginTop.Value;
-            props.MarginBottom = ps.MarginBottom.Value;
-            props.MarginLeft = ps.MarginLeft.Value;
-            props.MarginRight = ps.MarginRight.Value;
+            RememberedPrintSettings.Remember(ps, props);
 
             props.Width = Bounds.Width;
             props.Height = Bounds.Height;

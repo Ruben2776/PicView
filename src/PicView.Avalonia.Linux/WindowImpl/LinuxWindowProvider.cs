@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Printing;
 using PicView.Avalonia.Linux.PlatformUpdate;
 using PicView.Avalonia.Linux.Views;
 using PicView.Avalonia.Linux.Printing;
@@ -36,13 +37,7 @@ public class LinuxWindowProvider : IWindowProvider
 
     public Window CreatePrintPreviewWindow(PrintWindowConfig config) => new PrintPreviewWindow(config);
 
-    public async ValueTask InitializePrintAsync(MainWindowViewModel vm, string path, Window printPreviewWindow)
-    {
-        if (printPreviewWindow is PrintPreviewWindow win)
-        {
-            await LinuxPrintInitialization.InitializeAsync(vm, path);
-        }
-    }
+    public ISystemPrinters CreateSystemPrinters() => new LinuxPrinters();
 
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
     {

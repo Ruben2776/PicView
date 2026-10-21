@@ -29,6 +29,4 @@ public interface IPlatformWindowService
     void ShowFileAssociationsWindow();
 
     void ShowConvertWindow();
-    
-    Task ShowPrintWindow(string path);
 }

@@ -41,7 +41,7 @@
                     ItemsSource="{CompiledBinding PrintPreview.Printers.Value}"
                     Margin="0,0,0,4"
                     Padding="5,7,0,7"
-                    SelectedItem="{CompiledBinding PrintPreview.PrintSettings.Value.PrinterName.Value,
+                    SelectedItem="{CompiledBinding PrintPreview.PrintSettings.Value.Printer.Value,
                                                    Mode=TwoWay}" />
 
                 <!--  Paper Size  -->

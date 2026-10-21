@@ -4,6 +4,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Printing;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
@@ -293,27 +294,38 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         });
     }
 
-    public async Task ShowPrintWindow(string path, MainWindowViewModel vm)
+    /// <summary>
+    /// Opens the Print window on a Print Job of what this Main Window shows. The window shows with its spinner first;
+    /// the Print Job then loads off the UI thread.
+    /// </summary>
+    public async Task ShowPrintWindow(MainWindowViewModel vm)
     {
-        vm.PrintPreview ??= new PrintPreviewViewModel();
-        if (vm.PrintPreview.PrintWindowConfig is null)
-        {
-            vm.PrintPreview.PrintWindowConfig = new PrintWindowConfig();
-            await vm.PrintPreview.PrintWindowConfig.LoadAsync().ConfigureAwait(false);
-        }
+        // The window opens at its remembered size and place, so this small file is the only thing read before it shows
+        var config = new PrintWindowConfig();
+        await config.LoadAsync().ConfigureAwait(false);
 
-        var config = vm.PrintPreview.PrintWindowConfig;
+        var preview = new PrintPreviewViewModel { PrintWindowConfig = config };
         await _toolWindows.OpenAsync(SecondaryWindowKind.PrintPreview, new SecondaryWindowSpec(
             factory => factory.CreatePrintPreviewWindow(config), WindowOwner.MainWindowExceptMacOS)
         {
-            Configure = window => window.DataContext = vm,
-            OnOpened = async window =>
+            Configure = window =>
             {
-                vm.PrintPreview.CancelCommand.Subscribe(_ => window.Close())
-                    .AddTo(vm.PrintPreview.Disposables);
-                await provider.InitializePrintAsync(vm, path, window).ConfigureAwait(false);
+                vm.PrintPreview = preview;
+                window.DataContext = vm;
+            },
+            OnOpened = window =>
+            {
+                preview.Disposables.Add(PrintJob.Open(vm, preview, provider.CreateSystemPrinters(),
+                    new PdfSavePathPicker(window), config.WindowProperties, window.Close));
+                return Task.CompletedTask;
             }
         }).ConfigureAwait(false);
+
+        if (vm.PrintPreview != preview)
+        {
+            // The Print window was open already, with its own Print Job
+            preview.Dispose();
+        }
     }
 
     private CoreViewModel? CurrentCore() => (mainWindow.DataContext as MainWindowViewModel)?.Core;

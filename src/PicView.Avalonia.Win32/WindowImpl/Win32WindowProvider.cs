@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Printing;
 using PicView.Avalonia.Win32.PlatformUpdate;
 using PicView.Avalonia.Win32.Views;
 using PicView.Avalonia.Win32.Printing;
@@ -36,8 +37,7 @@ public class Win32WindowProvider : IWindowProvider
 
     public Window CreatePrintPreviewWindow(PrintWindowConfig config) => new PrintPreviewWindow(config);
 
-    public async ValueTask InitializePrintAsync(MainWindowViewModel vm, string path, Window printPreviewWindow) =>
-        await Win32PrintInitialization.InitializeAsync(vm, path);
+    public ISystemPrinters CreateSystemPrinters() => new Win32Printers();
 
     public async Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath)
     {

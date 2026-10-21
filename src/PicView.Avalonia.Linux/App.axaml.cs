@@ -92,8 +92,6 @@ public class App : Application, IPlatformSpecificService
         throw new NotImplementedException();
     }
 
-    public bool PrintWithoutPreview(string path) => false;
-
     public async Task SetAsWallpaper(string path, int wallpaperStyle)
     {
         throw new NotImplementedException();

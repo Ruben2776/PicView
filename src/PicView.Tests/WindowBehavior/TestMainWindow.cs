@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Printing;
 using PicView.Core.Config;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
@@ -30,8 +31,7 @@ internal sealed class TestMainWindow(IWindowModeAdapter adapter, IWindowProvider
         public Window CreateSingleImageResizeWindow(MainWindowViewModel vm) => throw new NotSupportedException();
         public Window CreatePrintPreviewWindow(PrintWindowConfig config) => throw new NotSupportedException();
 
-        public ValueTask InitializePrintAsync(MainWindowViewModel vm, string path, Window printPreviewWindow) =>
-            throw new NotSupportedException();
+        public ISystemPrinters CreateSystemPrinters() => throw new NotSupportedException();
 
         public Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath) => throw new NotSupportedException();
     }

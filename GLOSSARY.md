@@ -81,7 +81,7 @@ _Avoid_: Dual view, two-up, double view
 ## Saving
 
 **Save Source**:
-What a save writes out, decided by the save module rather than the caller: the Effects Render when there is one for the shown file, else the file on disk, else the in-memory bitmap of a Single Image. The tab's rotation and flip are applied to each. Setting a wallpaper writes out the same Save Source.
+What a save writes out, decided by the save module rather than the caller: the Effects Render when there is one for the shown file, else the file on disk, else the in-memory bitmap of a Single Image. The tab's rotation and flip are applied to each. Setting a wallpaper writes out the same Save Source, and a Print Job prints it.
 _Avoid_: Source file, input path
 
 ## Sizing
@@ -139,3 +139,29 @@ _Avoid_: Rotation, transform, ScaleX
 **Effects Render**:
 One file rendered with the current effects. It exists only while some effect differs from its default, and belongs to the file it was rendered from in the active tab: navigating to another image, or switching to another tab, discards it.
 _Avoid_: Processed image, effected image, edited image
+
+## Printing
+
+**Print Job**:
+The Save Source of the tab a Main Window shows, the Print Settings, and the Printed Page they make, until it is sent to a Printer. The Print window prepares one with a preview, following the Main Window's active tab and that tab's navigation, so what is sent is always the page the preview shows; printing with the preview off and Save as PDF from the menu send one straight away with the remembered Print Settings. There is none while Side-by-Side is on.
+_Avoid_: Print session, print dialog
+
+**Printed Page**:
+The page as it comes out of the Printer: the paper in its orientation, the margins, and the image placed inside them by the Scale Mode. The preview shows the same Printed Page that is sent.
+_Avoid_: Print image, print output, render
+
+**Print Settings**:
+The Printer, paper, orientation, Scale Mode, color mode, copies and margins of a Print Job. The last ones used in the Print window are remembered for every later Print Job, whether or not it opens the Print window.
+_Avoid_: Print options, page setup
+
+**Printer**:
+Where a Print Job is sent: one of the system's printers, or Save as PDF. A remembered Printer stays the same when the language changes.
+_Avoid_: Print engine, device
+
+**Save as PDF**:
+The Printer that writes the Printed Page to a PDF file instead of paper. It is always first among the Printers.
+_Avoid_: PDF printer, PDF export
+
+**Scale Mode**:
+How the image is placed inside the margins of a Printed Page. Fit shows all of it as large as it fits (not the window's Fit), Fill covers the area and crops what spills over, Stretch fills the area without keeping the image's proportions, and Center keeps the image at its size at 300 DPI, shrinking it only when it does not fit.
+_Avoid_: Print scaling, fit mode

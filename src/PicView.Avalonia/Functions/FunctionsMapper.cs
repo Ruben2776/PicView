@@ -12,6 +12,7 @@ using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.Printing;
 using PicView.Avalonia.Wallpaper;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Favorites;
@@ -657,21 +658,13 @@ public class FunctionsMapper(MainWindowViewModel vm, MainWindow mainWindow) : IF
     public async ValueTask OpenNextFileHistoryEntry() =>
         await UINavigationHelper.OpenNextFileHistoryEntry(mainWindow, vm).ConfigureAwait(false);
 
-    public async ValueTask Print()
-    {
-        if (vm.WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName is not { } path)
-        {
-            return;
-        }
+    /// <inheritdoc cref="PrintJobStarter.PrintAsync(MainWindowViewModel)" />
+    public async ValueTask Print() =>
+        await mainWindow.Printing.PrintAsync(vm).ConfigureAwait(false);
 
-        if (Settings.UIProperties.ShowPrintPreview || vm.Core.PlatformService?.PrintWithoutPreview(path) != true)
-        {
-            await mainWindow.ShowPrintWindow(path).ConfigureAwait(false);
-        }
-    }
-    
+    /// <inheritdoc cref="PrintJobStarter.SaveAsPdfAsync(MainWindowViewModel)" />
     public async ValueTask SaveAsPDF() =>
-        await PdfExport.SavePdfWithFilePicker(vm).ConfigureAwait(false);
+        await mainWindow.Printing.SaveAsPdfAsync(vm).ConfigureAwait(false);
 
     /// <inheritdoc cref="FilePicker.SelectAndLoadFile(MainWindow, MainWindowViewModel)" />
     public async ValueTask Open() => 

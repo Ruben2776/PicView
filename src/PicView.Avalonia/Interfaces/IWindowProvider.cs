@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Printing;
 using PicView.Core.Config;
 using PicView.Core.Update;
 using PicView.Core.ViewModels;
@@ -29,7 +30,10 @@ public interface IWindowProvider
     Window CreateSingleImageResizeWindow(MainWindowViewModel vm);
     Window CreatePrintPreviewWindow(PrintWindowConfig config);
 
-    ValueTask InitializePrintAsync(MainWindowViewModel vm, string path, Window printPreviewWindow);
+    /// <summary>
+    /// Creates the adapter to this platform's printers, which Print Jobs are sent to.
+    /// </summary>
+    ISystemPrinters CreateSystemPrinters();
 
     Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath);
 }

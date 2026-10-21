@@ -11,6 +11,7 @@ using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.Input;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Navigation;
+using PicView.Avalonia.Printing;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
@@ -71,6 +72,13 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     /// Fits this window to what its active tab shows.
     /// </summary>
     public WindowFitter WindowFitter => field ??= new WindowFitter(this);
+
+    /// <summary>
+    /// Starts this window's Print Jobs, for the Print and Save as PDF Actions.
+    /// </summary>
+    public PrintJobStarter Printing => field ??= new PrintJobStarter(CreateWindowProvider().CreateSystemPrinters(),
+        () => new PdfSavePathPicker(this), PrintJobStarter.ReadRememberedAsync,
+        vm => MainWindowInitializer?.ShowPrintWindow(vm) ?? Task.CompletedTask);
 
     /// <summary>
     /// This window's Window Mode. Read on the UI thread.
@@ -210,16 +218,6 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
 
     public void ShowConvertWindow() =>
         MainWindowInitializer?.ShowConvertWindow();
-
-    public async Task ShowPrintWindow(string path)
-    {
-        if (MainWindowInitializer is null)
-        {
-            return;
-        }
-        var vm = await Dispatcher.UIThread.InvokeAsync(() => DataContext as MainWindowViewModel);
-        await MainWindowInitializer.ShowPrintWindow(path, vm).ConfigureAwait(true);
-    }
 
     #endregion
 

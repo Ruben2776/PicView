@@ -131,12 +131,6 @@ public class App : Application, IPlatformSpecificService
         FileExplorer.ShowFileProperties(path);
     }
 
-    public bool PrintWithoutPreview(string path)
-    {
-        ProcessHelper.Print(path);
-        return true;
-    }
-
     public async Task SetAsWallpaper(string path, int wallpaperStyle)
     {
         await Task.Run(() =>

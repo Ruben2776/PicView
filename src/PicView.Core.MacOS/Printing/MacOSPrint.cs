@@ -1,6 +1,5 @@
 using System.Runtime.InteropServices;
 using PicView.Core.DebugTools;
-using PicView.Core.Localization;
 
 namespace PicView.Core.MacOS.Printing;
 
@@ -8,9 +7,7 @@ public static class MacOSPrint
 {
     public static List<string> GetAvailablePrinters()
     {
-        // 1. Add the dummy PDF printer first
-        var printers = new List<string> { TranslationManager.Translation.SaveAsPdf };
-        
+        var printers = new List<string>();
         var destsPtr = IntPtr.Zero;
         var count = 0;
 
@@ -60,13 +57,17 @@ public static class MacOSPrint
         return printers;
     }
 
-    public static void Print(string printerName, string filePath, string jobTitle, int copies)
+    /// <returns>Whether CUPS took the job.</returns>
+    public static bool Print(string printerName, string filePath, string jobTitle, int copies)
     {
         var jobId = NativeMethods.cupsPrintFile(printerName, filePath, jobTitle, copies, IntPtr.Zero);
         
         if (jobId == 0)
         {
             DebugHelper.LogDebug(nameof(MacOSPrint), nameof(Print), "CUPS failed to submit print job.");
+            return false;
         }
+
+        return true;
     }
 }

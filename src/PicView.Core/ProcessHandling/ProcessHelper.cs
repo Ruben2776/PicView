@@ -150,33 +150,6 @@ public static class ProcessHelper
     }
 
     /// <summary>
-    ///     Sends a file to the default printer for printing.
-    /// </summary>
-    /// <param name="path">The path to the file to be printed.</param>
-    public static void Print(string? path)
-    {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                return;
-            }
-
-            using var process = new Process();
-            process.StartInfo = new ProcessStartInfo(path)
-            {
-                Verb = "print",
-                UseShellExecute = true
-            };
-            process.Start();
-        }
-        catch (Exception e)
-        {
-            DebugHelper.LogDebug(nameof(ProcessHelper), nameof(Print), e);
-        }
-    }
-
-    /// <summary>
     ///     Opens a URL or file path in the default associated application.
     /// </summary>
     /// <param name="link">The URL or file path to open.</param>

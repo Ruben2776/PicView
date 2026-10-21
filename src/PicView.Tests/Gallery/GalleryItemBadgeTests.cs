@@ -103,6 +103,5 @@ public class GalleryItemBadgeTests
         public ValueTask ShowBatchResizeWindow() => ValueTask.CompletedTask;
         public void ShowFileAssociationsWindow() { }
         public void ShowConvertWindow() { }
-        public Task ShowPrintWindow(string path) => Task.CompletedTask;
     }
 }

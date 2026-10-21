@@ -37,7 +37,7 @@ public class PrintPreviewViewModel
 
     #region Bindable Properties
 
-    public BindableReactiveProperty<IEnumerable<string>> Printers { get; } = new();
+    public BindableReactiveProperty<IEnumerable<Printer>> Printers { get; } = new();
     public BindableReactiveProperty<IEnumerable<string>> PaperSizes { get; } = new();
     public BindableReactiveProperty<IEnumerable<string?>> ScaleModes { get; } = new();
     public BindableReactiveProperty<IEnumerable<string?>> ColorModes { get; } = new();
@@ -52,8 +52,6 @@ public class PrintPreviewViewModel
 
     public BindableReactiveProperty<bool> IsProcessing { get; } = new(true);
     public BindableReactiveProperty<double> Opacity { get; } = new(1.0);
-
-    public object? GrayCache { get; set; }
 
     #endregion
     

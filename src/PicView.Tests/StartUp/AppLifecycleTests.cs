@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Printing;
 using PicView.Avalonia.StartUp;
 using PicView.Core.Config;
 using PicView.Core.Favorites;
@@ -281,8 +282,7 @@ public class AppLifecycleTests : IAsyncDisposable
         public Window CreateSingleImageResizeWindow(MainWindowViewModel vm) => Track(new Window());
         public Window CreatePrintPreviewWindow(PrintWindowConfig config) => Track(new Window());
 
-        public ValueTask InitializePrintAsync(MainWindowViewModel vm, string path, Window printPreviewWindow) =>
-            ValueTask.CompletedTask;
+        public ISystemPrinters CreateSystemPrinters() => throw new NotSupportedException();
 
         public Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath) => Task.CompletedTask;
 
@@ -308,7 +308,6 @@ public class AppLifecycleTests : IAsyncDisposable
         public void OpenWith(string path) { }
         public void LocateOnDisk(string path) { }
         public void ShowFileProperties(string path) { }
-        public bool PrintWithoutPreview(string path) => false;
         public Task SetAsWallpaper(string path, int wallpaperStyle) => Task.CompletedTask;
         public bool SetAsLockScreen(string path) => false;
         public Task<bool> ExtractWithLocalSoftwareAsync(string path, string tempDirectory) => Task.FromResult(false);

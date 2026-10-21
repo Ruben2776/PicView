@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
+using PicView.Avalonia.Printing;
 using PicView.Avalonia.Services;
 using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Config;
@@ -252,8 +253,7 @@ public class SecondaryWindowOpenerTests
         public Window CreateSingleImageResizeWindow(MainWindowViewModel vm) => new();
         public Window CreatePrintPreviewWindow(PrintWindowConfig config) => new();
 
-        public ValueTask InitializePrintAsync(MainWindowViewModel vm, string path, Window printPreviewWindow) =>
-            ValueTask.CompletedTask;
+        public ISystemPrinters CreateSystemPrinters() => throw new NotSupportedException();
 
         public Task HandlePlatformUpdate(UpdateInfo updateInfo, string tempPath) => Task.CompletedTask;
     }
