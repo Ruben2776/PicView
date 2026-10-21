@@ -48,6 +48,15 @@ internal static partial class NativeMethods
     [LibraryImport(LibCups, StringMarshalling = StringMarshalling.Utf8)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
     internal static partial int cupsPrintFile(string name, string filename, string title, int num_options, IntPtr options);
+
+    /// <returns>The number of options in <paramref name="options"/>, which grows or moves as needed.</returns>
+    [LibraryImport(LibCups, StringMarshalling = StringMarshalling.Utf8)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    internal static partial int cupsAddOption(string name, string value, int num_options, ref IntPtr options);
+
+    [LibraryImport(LibCups)]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    internal static partial void cupsFreeOptions(int num_options, IntPtr options);
     
     [LibraryImport(LibCups, StringMarshalling = StringMarshalling.Utf16)]
     [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]

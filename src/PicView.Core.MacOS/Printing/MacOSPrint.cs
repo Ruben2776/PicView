@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Runtime.InteropServices;
 using PicView.Core.DebugTools;
 
@@ -60,14 +61,23 @@ public static class MacOSPrint
     /// <returns>Whether CUPS took the job.</returns>
     public static bool Print(string printerName, string filePath, string jobTitle, int copies)
     {
-        var jobId = NativeMethods.cupsPrintFile(printerName, filePath, jobTitle, copies, IntPtr.Zero);
-        
-        if (jobId == 0)
+        var options = IntPtr.Zero;
+        var optionCount = NativeMethods.cupsAddOption("copies", copies.ToString(CultureInfo.InvariantCulture), 0,
+            ref options);
+        try
         {
-            DebugHelper.LogDebug(nameof(MacOSPrint), nameof(Print), "CUPS failed to submit print job.");
-            return false;
-        }
+            var jobId = NativeMethods.cupsPrintFile(printerName, filePath, jobTitle, optionCount, options);
+            if (jobId == 0)
+            {
+                DebugHelper.LogDebug(nameof(MacOSPrint), nameof(Print), "CUPS failed to submit print job.");
+                return false;
+            }
 
-        return true;
+            return true;
+        }
+        finally
+        {
+            NativeMethods.cupsFreeOptions(optionCount, options);
+        }
     }
 }
