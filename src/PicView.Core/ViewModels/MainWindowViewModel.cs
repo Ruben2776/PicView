@@ -32,7 +32,9 @@ public class MainWindowViewModel : IDisposable
 
     public bool IsBottomToolbarRightRotationClicked { get; set; }
     public bool IsBottomToolbarLeftRotationClicked { get; set; }
-    public BindableReactiveProperty<bool> IsBottomToolbarShown { get; } = new(Settings.UIProperties.ShowBottomNavBar);
+    // Hidden with the interface, as the window applies its settings, so a Fit before that already leaves it out
+    public BindableReactiveProperty<bool> IsBottomToolbarShown { get; } =
+        new(Settings.UIProperties.ShowBottomNavBar && Settings.UIProperties.ShowInterface);
     public BindableReactiveProperty<bool> IsSideBySide { get; } = new(Settings.ImageScaling.ShowImageSideBySide);
     
     public BindableReactiveProperty<double> ScrollViewerWidth { get; } = new(double.NaN);

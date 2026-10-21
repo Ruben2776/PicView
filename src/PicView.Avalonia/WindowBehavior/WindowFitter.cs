@@ -295,7 +295,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     private static ReservedSpace GetReservedSpace(MainWindowViewModel vm)
     {
         var (galleryWidth, galleryHeight) = GalleryHelper.GetGallerySize(vm);
+        // What the window shows, not the settings: hiding the interface hides the bottom bar but keeps its setting
         return ReservedSpace.For(vm.WindowTabs.Tabs.CurrentValue.Count, vm.TitlebarHeight.CurrentValue,
-            vm.IsTopToolbarShown.Value, Settings.UIProperties.ShowBottomNavBar, galleryWidth, galleryHeight);
+            vm.IsTopToolbarShown.Value, vm.IsBottomToolbarShown.Value, galleryWidth, galleryHeight);
     }
 }

@@ -226,6 +226,24 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void Refit_BottomBarHiddenWithTheInterface_ReservesNoRoomForIt()
+    {
+        // Hiding the interface hides the bottom bar but keeps its setting
+        Settings.WindowProperties.AutoFit = true;
+        Settings.UIProperties.ShowBottomNavBar = true;
+        var (fitter, vm, _) = CreateWindow(() => Screen(1920, 1040));
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 3000, 4000));
+        vm.IsBottomToolbarShown.Value = true;
+        fitter.Refit();
+        var withBar = vm.ImageHeight.Value;
+
+        vm.IsBottomToolbarShown.Value = false;
+        fitter.Refit();
+
+        Assert.Equal(withBar + SizeDefaults.BottombarHeight, vm.ImageHeight.Value, 6);
+    }
+
+    [AvaloniaFact]
     public void IsOnAnotherScreen_AfterTheWindowMovesToAnotherMonitor_IsTrueUntilItIsFittedThere()
     {
         var screen = Screen(1920, 1040);
