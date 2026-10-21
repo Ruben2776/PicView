@@ -66,34 +66,55 @@ public class FileWatcherService(
                 return;
             }
 
-            var watch = _folderEvents.Watch(directory, Settings.Sorting.IncludeSubDirectories);
-
-            // AwaitOperation.Sequential ensures we don't process two file events for the same folder at the exact same time, 
-            // which protects the Integrity of the 'files' list and the CurrentIndex.
-
-            // Each event goes to every tab watching the folder when it arrives, not only the tab that started the watch
-            var watchedDirectory = directory;
-            var fileCreatedSub = watch.Created.SubscribeAwait(async (e, ct) =>
-                    await HandleAsync(watchedDirectory, FolderChangeKind.Created, e.FullPath, null, ct).ConfigureAwait(false),
-                DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Created)));
-
-            var fileDeletedSub = watch.Deleted.SubscribeAwait(async (e, ct) =>
-                    await HandleAsync(watchedDirectory, FolderChangeKind.Deleted, e.FullPath, null, ct).ConfigureAwait(false),
-                DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Deleted)));
-
-            var fileRenamedSub = watch.Renamed.SubscribeAwait(async (e, ct) =>
-                    await HandleAsync(watchedDirectory, FolderChangeKind.Renamed, e.FullPath, e.OldFullPath, ct).ConfigureAwait(false),
-                DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Renamed)));
-
-            var fileChangedSub = watch.Changed.SubscribeAwait(async (e, ct) =>
-                    await HandleAsync(watchedDirectory, FolderChangeKind.Changed, e.FullPath, null, ct).ConfigureAwait(false),
-                DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Changed)));
-
-            // Combine disposables
-            var subscription = Disposable.Combine(fileCreatedSub, fileDeletedSub, fileRenamedSub, fileChangedSub);
-
+            var (watch, subscription) = StartWatch(directory);
             _watchers[directory] = (watch, subscription, [new WeakReference<TabViewModel>(tab)]);
         }
+    }
+
+    /// <summary>
+    /// Starts every folder watch again with the current Include Subdirectories setting, keeping the tabs watching it.
+    /// </summary>
+    public void RestartWatches()
+    {
+        lock (_lock)
+        {
+            foreach (var directory in _watchers.Keys.ToArray())
+            {
+                var (watch, subscription, subscribers) = _watchers[directory];
+                subscription.Dispose();
+                watch.Dispose();
+
+                var (newWatch, newSubscription) = StartWatch(directory);
+                _watchers[directory] = (newWatch, newSubscription, subscribers);
+            }
+        }
+    }
+
+    private (IFolderWatch Watch, IDisposable Subscription) StartWatch(string directory)
+    {
+        var watch = _folderEvents.Watch(directory, Settings.Sorting.IncludeSubDirectories);
+
+        // AwaitOperation.Sequential ensures we don't process two file events for the same folder at the exact same time, 
+        // which protects the Integrity of the 'files' list and the CurrentIndex.
+
+        // Each event goes to every tab watching the folder when it arrives, not only the tab that started the watch
+        var fileCreatedSub = watch.Created.SubscribeAwait(async (e, ct) =>
+                await HandleAsync(directory, FolderChangeKind.Created, e.FullPath, null, ct).ConfigureAwait(false),
+            DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Created)));
+
+        var fileDeletedSub = watch.Deleted.SubscribeAwait(async (e, ct) =>
+                await HandleAsync(directory, FolderChangeKind.Deleted, e.FullPath, null, ct).ConfigureAwait(false),
+            DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Deleted)));
+
+        var fileRenamedSub = watch.Renamed.SubscribeAwait(async (e, ct) =>
+                await HandleAsync(directory, FolderChangeKind.Renamed, e.FullPath, e.OldFullPath, ct).ConfigureAwait(false),
+            DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Renamed)));
+
+        var fileChangedSub = watch.Changed.SubscribeAwait(async (e, ct) =>
+                await HandleAsync(directory, FolderChangeKind.Changed, e.FullPath, null, ct).ConfigureAwait(false),
+            DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Changed)));
+
+        return (watch, Disposable.Combine(fileCreatedSub, fileDeletedSub, fileRenamedSub, fileChangedSub));
     }
 
     /// <summary>
@@ -157,7 +178,7 @@ public class FileWatcherService(
 
             foreach (var kvp in _watchers)
             {
-                var (watcher, subscription, subscribers) = kvp.Value;
+                var (watch, subscription, subscribers) = kvp.Value;
 
                 // Remove the tab
                 subscribers.RemoveAll(wr => !wr.TryGetTarget(out var t) || ReferenceEquals(t, tab));
@@ -169,7 +190,7 @@ public class FileWatcherService(
 
                 // Dispose the R3 subscription and the folder watch
                 subscription.Dispose();
-                watcher.Dispose();
+                watch.Dispose();
                 keysToRemove.Add(kvp.Key);
             }
 
@@ -186,10 +207,10 @@ public class FileWatcherService(
     {
         lock (_lock)
         {
-            foreach (var (_, (watcher, subscription, _)) in _watchers)
+            foreach (var (_, (watch, subscription, _)) in _watchers)
             {
                 subscription.Dispose();
-                watcher.Dispose();
+                watch.Dispose();
             }
 
             _watchers.Clear();

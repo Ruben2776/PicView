@@ -73,6 +73,40 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public void RestartWatches_AfterIncludeSubdirectoriesChanged_WatchesWithTheNewSetting()
+    {
+        Settings.Sorting.IncludeSubDirectories = false;
+        var watch = Watch(CreateTab(_testDirectory));
+
+        Settings.Sorting.IncludeSubDirectories = true;
+        _service.RestartWatches();
+
+        Assert.True(watch.IsDisposed);
+        var restarted = _folderEvents.Watches[^1];
+        Assert.NotSame(watch, restarted);
+        Assert.Equal(_testDirectory, restarted.Directory);
+        Assert.True(restarted.IncludesSubdirectories);
+    }
+
+    [Fact]
+    public async Task RestartWatches_TabsStillFollowTheirFolders()
+    {
+        // Arrange
+        var files = Files("a.jpg", "b.jpg");
+        var first = CreateTab(_testDirectory, files, files[0]);
+        var second = CreateTab(_testDirectory, files, files[1]);
+        Watch(first);
+        _service.Watch(second);
+
+        // Act
+        _service.RestartWatches();
+        _folderEvents.Watches[^1].RaiseDeleted("a.jpg");
+
+        // Assert
+        await WaitUntilAsync(() => first.ImageIterator.Files.Count == 1 && second.ImageIterator.Files.Count == 1);
+    }
+
+    [Fact]
     public async Task OnFileCreated_UpdatesTabFiles()
     {
         // Arrange

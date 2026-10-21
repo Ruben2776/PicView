@@ -116,6 +116,8 @@ public static class SettingsUpdater
         {
             TurnOnSubdirectories(vm);
         }
+        // Every tab's folder watch follows the setting, not only the active tab's
+        vm.Core?.SharedFileWatcher?.RestartWatches();
 
         var windowTabs = vm.WindowTabs;
         var tab = windowTabs.ActiveTab.CurrentValue;

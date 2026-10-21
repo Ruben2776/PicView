@@ -374,6 +374,10 @@ public class NavigationServiceTests : IDisposable
         {
             UnwatchCalled = true;
         }
+
+        public void RestartWatches()
+        {
+        }
     }
 
     private class MockImageModelLoader : IImageModelLoader

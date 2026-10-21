@@ -293,6 +293,7 @@ public class TabOwnershipTests
         public List<TabViewModel> Unwatched { get; } = [];
         public void Watch(TabViewModel tab, string? directory = null) { }
         public void Unwatch(TabViewModel tab) => Unwatched.Add(tab);
+        public void RestartWatches() { }
     }
 
     private sealed class MockThumbnailLoader : IThumbnailLoader
