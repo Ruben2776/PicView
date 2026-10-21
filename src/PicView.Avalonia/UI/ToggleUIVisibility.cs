@@ -20,8 +20,6 @@ public static class ToggleUIVisibility
             vm.Translation.IsShowingBottomToolbar.Value = TranslationManager.Translation.ShowBottomToolbar;
             vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverbarVisible.Value =
                 Settings.UIProperties.ShowHoverNavigationBar;
-
-            mainWindow.WindowFitter.Refit();
         }
         else
         {
@@ -30,8 +28,6 @@ public static class ToggleUIVisibility
             vm.BottombarHeight.Value = SizeDefaults.BottombarHeight;
             vm.Translation.IsShowingBottomToolbar.Value = TranslationManager.Translation.HideBottomToolbar;
             vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverbarVisible.Value = false;
-
-            mainWindow.WindowFitter.Refit();
 
             Dispatcher.UIThread.Post(() => mainWindow.SharedBottomBar.ResponsiveNavigationBtnSize(mainWindow.Bounds.Width));
         }
@@ -97,11 +93,9 @@ public static class ToggleUIVisibility
         }
 
         vm.TopTitlebarViewModel.CloseDropDownMenu();
+        // The window's fitter fits it to the bars it now shows, with the gallery they show or hide along with them
         Dispatcher.UIThread.Post(() =>
-        {
-            mainWindow.WindowFitter.Refit();
-            mainWindow.SharedBottomBar.ResponsiveNavigationBtnSize(mainWindow.Bounds.Width);
-        }, DispatcherPriority.Render);
+            mainWindow.SharedBottomBar.ResponsiveNavigationBtnSize(mainWindow.Bounds.Width), DispatcherPriority.Render);
     }
 
     public static async ValueTask ToggleHoverBar(MainWindowViewModel vm)

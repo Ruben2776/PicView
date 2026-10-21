@@ -169,7 +169,7 @@ public sealed class WindowModeSwitcher(
             }
         }
 
-        window.WindowFitter.Refit();
+        // The window's fitter fits it to the new Window Mode
         Dispatcher.UIThread.Post(() =>
         {
             window.IsChangingWindowState = false;
@@ -190,8 +190,6 @@ public sealed class WindowModeSwitcher(
         {
             window.WindowFitter.KeepSize();
         }
-
-        window.WindowFitter.Refit();
     }
 
     private static WindowState ToWindowState(WindowMode mode) => mode switch

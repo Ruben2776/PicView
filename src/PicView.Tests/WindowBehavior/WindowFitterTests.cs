@@ -130,11 +130,11 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void FollowTabs_NewBlankTabInAnAutoFitWindow_FillsTheWindowLessTheTabStrip()
+    public void FollowFitInputs_NewBlankTabInAnAutoFitWindow_FillsTheWindowLessTheTabStrip()
     {
         Settings.WindowProperties.AutoFit = true;
         var (fitter, vm, window) = CreateShownWindow(800, 600);
-        using var following = fitter.FollowTabs();
+        using var following = fitter.FollowFitInputs();
 
         var tab = vm.WindowTabs.CreateTab();
         var menu = new StartUpMenu();
@@ -150,13 +150,13 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void FollowTabs_NewBlankTabAfterAnImage_FillsTheImagesAreaLessTheTabStrip()
+    public void FollowFitInputs_NewBlankTabAfterAnImage_FillsTheImagesAreaLessTheTabStrip()
     {
         // Not from the window's size as it is when fitted: it follows its content, so it may already have shrunk
         // to the unsized menu by then
         Settings.WindowProperties.AutoFit = true;
         var (fitter, vm, window) = CreateShownWindow(800, 600);
-        using var following = fitter.FollowTabs();
+        using var following = fitter.FollowFitInputs();
         vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
         fitter.Refit();
 
@@ -171,10 +171,10 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void FollowTabs_BlankTabWithoutAutoFit_StretchesToTheWindow()
+    public void FollowFitInputs_BlankTabWithoutAutoFit_StretchesToTheWindow()
     {
         var (fitter, vm, window) = CreateShownWindow(800, 600);
-        using var following = fitter.FollowTabs();
+        using var following = fitter.FollowFitInputs();
 
         var tab = vm.WindowTabs.CreateTab();
         var menu = new StartUpMenu { Width = 100, Height = 100 };
@@ -187,10 +187,10 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void FollowTabs_SwitchingToATabWithAnImage_FitsItsImage()
+    public void FollowFitInputs_SwitchingToATabWithAnImage_FitsItsImage()
     {
         var (fitter, vm, window) = CreateShownWindow(800, 600);
-        using var following = fitter.FollowTabs();
+        using var following = fitter.FollowFitInputs();
         var first = vm.WindowTabs.ActiveTab.Value;
         var second = vm.WindowTabs.CreateTab();
         second.Display(Model("b.jpg", 400, 300));
@@ -206,11 +206,11 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
-    public void FollowTabs_TabStripHides_FitsTheImageAgain()
+    public void FollowFitInputs_TabStripHides_FitsTheImageAgain()
     {
         Settings.WindowProperties.AutoFit = true;
         var (fitter, vm, window) = CreateShownWindow(800, 600);
-        using var following = fitter.FollowTabs();
+        using var following = fitter.FollowFitInputs();
         var first = vm.WindowTabs.ActiveTab.Value;
         first.Display(Model("a.jpg", 400, 300));
         var second = vm.WindowTabs.CreateTab();
@@ -241,6 +241,58 @@ public class WindowFitterTests
         fitter.Refit();
 
         Assert.Equal(withBar + SizeDefaults.BottombarHeight, vm.ImageHeight.Value, 6);
+    }
+
+    [AvaloniaFact]
+    public void FollowFitInputs_BottomBarHides_FitsTheImageToTheRoomItLeaves()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowFitInputs();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 3000, 4000));
+        vm.IsBottomToolbarShown.Value = true;
+        Dispatcher.UIThread.RunJobs();
+        fitter.Refit();
+        var withBar = vm.ImageHeight.Value;
+
+        vm.IsBottomToolbarShown.Value = false;
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(withBar + SizeDefaults.BottombarHeight, vm.ImageHeight.Value, 6);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void FollowFitInputs_AutoFitTurnedOff_FitsTheImageInsideTheWindow()
+    {
+        Settings.WindowProperties.AutoFit = true;
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowFitInputs();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 1600, 600));
+        fitter.Refit();
+        var withAutoFit = vm.ImageWidth.Value;
+
+        vm.WindowModeState.Value = vm.WindowModeState.Value.SetAutoFit(false);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.True(withAutoFit > ContentSize.Width, "AutoFit fits the image to the work area");
+        Assert.Equal(ContentSize.Width, vm.ImageWidth.Value);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void FollowFitInputs_WindowMinimized_FitsNothing()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowFitInputs();
+        vm.WindowTabs.ActiveTab.Value.Display(Model("a.jpg", 400, 300));
+
+        vm.WindowModeState.Value = vm.WindowModeState.Value.OnNativeState(WindowMode.Minimized);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(WindowMode.Minimized, vm.WindowModeState.Value.Mode);
+        Assert.True(double.IsNaN(vm.ImageWidth.Value));
+        window.Close();
     }
 
     [AvaloniaFact]

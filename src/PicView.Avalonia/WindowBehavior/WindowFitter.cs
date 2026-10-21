@@ -31,7 +31,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     private readonly Func<ScreenSize> _readScreen = readScreen ?? (() => ScreenOf(window));
 
     private ScreenSize? _fittedScreen;
-    private int _isTabFitPending;
+    private int _isFitBeforeFramePending;
+    private int _isFitAfterLayoutPending;
 
     // The window size the last image's Fit gave, which a tab without an image keeps
     private Size? _fittedWindowSize;
@@ -97,11 +98,14 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     }
 
     /// <summary>
-    /// Fits the window again whenever another tab becomes active or the tab strip shows or hides, once for changes
-    /// that come together, as when a new tab both shows the strip and becomes active.
+    /// Fits the window again whenever one of the Fit inputs it watches changes: another tab becomes active, the tab
+    /// strip or a bar shows or hides, or the Window Mode changes. Changes that come together give one Fit, before the
+    /// next frame is drawn, so the window never shows them at the old size. Without AutoFit the Fit reads the laid-out
+    /// view, so it is fitted once more after layout.
     /// </summary>
-    /// <returns>What stops following the tabs.</returns>
-    public IDisposable FollowTabs()
+    /// <remarks>Screen changes, resizing by hand, the gallery and the fit settings still ask for a Fit themselves.</remarks>
+    /// <returns>What stops following the inputs.</returns>
+    public IDisposable FollowFitInputs()
     {
         if (window.DataContext is not MainWindowViewModel vm)
         {
@@ -109,35 +113,57 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
         }
 
         return Disposable.Combine(
-            vm.WindowTabs.ActiveTab.Skip(1).Subscribe(_ => FitActiveTabSoon()),
-            vm.WindowTabs.IsTabStripShown.Skip(1).Subscribe(_ => FitActiveTabSoon()));
+            vm.WindowTabs.ActiveTab.Skip(1).Subscribe(_ => FitSoon()),
+            vm.WindowTabs.IsTabStripShown.Skip(1).Subscribe(_ => FitSoon()),
+            vm.IsTopToolbarShown.Skip(1).Subscribe(_ => FitSoon()),
+            vm.IsBottomToolbarShown.Skip(1).Subscribe(_ => FitSoon()),
+            vm.TitlebarHeight.Skip(1).Subscribe(_ => FitSoon()),
+            vm.WindowModeState.Skip(1).Subscribe(_ => FitSoon()));
     }
 
-    private void FitActiveTabSoon()
+    private void FitSoon()
     {
-        if (Interlocked.Exchange(ref _isTabFitPending, 1) is 1)
+        if (Interlocked.Exchange(ref _isFitBeforeFramePending, 1) is 0)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                Interlocked.Exchange(ref _isFitBeforeFramePending, 0);
+                FitWhatIsShown(afterLayout: false);
+            }, DispatcherPriority.Normal);
+        }
+
+        if (Interlocked.Exchange(ref _isFitAfterLayoutPending, 1) is 0)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                Interlocked.Exchange(ref _isFitAfterLayoutPending, 0);
+                FitWhatIsShown(afterLayout: true);
+            }, DispatcherPriority.Background);
+        }
+    }
+
+    private void FitWhatIsShown(bool afterLayout)
+    {
+        if (window.DataContext is not MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue: { } tab } vm)
         {
             return;
         }
 
-        // After layout, so the window has the tab strip it now shows
-        Dispatcher.UIThread.Post(() =>
+        var state = vm.WindowModeState.CurrentValue;
+        // Nothing is resized while the window is minimized, and only a Fit that reads the laid-out view needs layout
+        if (state.Mode is WindowMode.Minimized || afterLayout && state.FitMode is not FitMode.FixedWindow)
         {
-            Interlocked.Exchange(ref _isTabFitPending, 0);
-            if (window.DataContext is not MainWindowViewModel { WindowTabs.ActiveTab.CurrentValue: { } tab } vm)
-            {
-                return;
-            }
+            return;
+        }
 
-            if (PixelSizes.Of(tab, vm.WindowTabs.SharedCache, Settings.ImageScaling.ShowImageSideBySide) is { } sizes)
-            {
-                Fit(vm, sizes);
-            }
-            else if (tab.CurrentView.CurrentValue is StartUpMenu menu)
-            {
-                FitStartUpMenu(menu);
-            }
-        }, DispatcherPriority.Background);
+        if (PixelSizes.Of(tab, vm.WindowTabs.SharedCache, Settings.ImageScaling.ShowImageSideBySide) is { } sizes)
+        {
+            Fit(vm, sizes);
+        }
+        else if (tab.CurrentView.CurrentValue is StartUpMenu menu)
+        {
+            FitStartUpMenu(menu);
+        }
     }
 
     /// <summary>
