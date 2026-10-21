@@ -296,6 +296,44 @@ public class WindowFitterTests
     }
 
     [AvaloniaFact]
+    public void FollowFitInputs_ActiveTabTurned_FitsItsNewShape()
+    {
+        // 1600 by 400 fits the 800 by 600 window at half size; turned, its 1600 high side fits 600
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowFitInputs();
+        var tab = vm.WindowTabs.ActiveTab.Value;
+        tab.Display(Model("a.jpg", 1600, 400));
+        fitter.Refit();
+        var upright = vm.ImageWidth.Value;
+
+        tab.Orientation.TurnRight();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(800, upright);
+        Assert.Equal(600, vm.ImageWidth.Value, 6);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public void FollowFitInputs_TabInTheBackgroundTurned_FitsNothing()
+    {
+        var (fitter, vm, window) = CreateShownWindow(800, 600);
+        using var following = fitter.FollowFitInputs();
+        var background = vm.WindowTabs.ActiveTab.Value;
+        background.Display(Model("a.jpg", 1600, 400));
+        var shown = vm.WindowTabs.CreateTab();
+        Dispatcher.UIThread.RunJobs();
+        vm.ImageWidth.Value = double.NaN;
+
+        background.Orientation.TurnRight();
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Same(shown, vm.WindowTabs.ActiveTab.Value);
+        Assert.True(double.IsNaN(vm.ImageWidth.Value));
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public void IsOnAnotherScreen_AfterTheWindowMovesToAnotherMonitor_IsTrueUntilItIsFittedThere()
     {
         var screen = Screen(1920, 1040);

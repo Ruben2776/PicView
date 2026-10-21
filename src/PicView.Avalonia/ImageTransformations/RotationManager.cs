@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Views.UC;
 using PicView.Avalonia.WindowBehavior;
@@ -68,12 +69,13 @@ public static class RotationManager
             return;
         }
 
+        // The window's fitter fits it to the turned image
         turn(tab.Orientation);
-        mainWindow.WindowFitter.Refit();
         if (OperatingSystem.IsMacOS() && vm.IsFullscreen.Value)
         {
-            // Sometimes the window is off-center after rotating on macOS fullscreen view
-            WindowFunctions.CenterWindowOnScreen(mainWindow);
+            // Sometimes the window is off-center after rotating on macOS fullscreen view; after the Fit
+            Dispatcher.UIThread.Post(() => WindowFunctions.CenterWindowOnScreen(mainWindow),
+                DispatcherPriority.Background);
         }
     }
 }

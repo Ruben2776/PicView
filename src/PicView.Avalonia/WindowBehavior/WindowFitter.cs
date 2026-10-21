@@ -98,12 +98,13 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     }
 
     /// <summary>
-    /// Fits the window again whenever one of the Fit inputs it watches changes: another tab becomes active, the tab
-    /// strip or a bar shows or hides, or the Window Mode changes. Changes that come together give one Fit, before the
+    /// Fits the window again whenever one of the Fit inputs it watches changes: another tab becomes active, the active
+    /// tab is turned or flipped, the tab strip or a bar shows or hides, or the Window Mode changes. Changes that come together give one Fit, before the
     /// next frame is drawn, so the window never shows them at the old size. Without AutoFit the Fit reads the laid-out
     /// view, so it is fitted once more after layout.
     /// </summary>
-    /// <remarks>Screen changes, resizing by hand, the gallery and the fit settings still ask for a Fit themselves.</remarks>
+    /// <remarks>A new image, screen changes, resizing by hand, the gallery and the fit settings still ask for a Fit
+    /// themselves: the image path reads the Fit's zoom right after it.</remarks>
     /// <returns>What stops following the inputs.</returns>
     public IDisposable FollowFitInputs()
     {
@@ -114,6 +115,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
 
         return Disposable.Combine(
             vm.WindowTabs.ActiveTab.Skip(1).Subscribe(_ => FitSoon()),
+            // Only the shown tab's Orientation, so turning a tab in the background fits nothing
+            vm.WindowTabs.ActiveTab.Select(static tab => tab.Orientation.Current.Skip(1)).Switch()
+                .Subscribe(_ => FitSoon()),
             vm.WindowTabs.IsTabStripShown.Skip(1).Subscribe(_ => FitSoon()),
             vm.IsTopToolbarShown.Skip(1).Subscribe(_ => FitSoon()),
             vm.IsBottomToolbarShown.Skip(1).Subscribe(_ => FitSoon()),

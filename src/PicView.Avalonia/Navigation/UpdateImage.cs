@@ -178,10 +178,7 @@ public static class UpdateImage
             ImageType = ImageType.Bitmap
         }, type);
         
-        if (vm.WindowModeState.CurrentValue.AutoFit)
-        {
-            mainWindow.WindowFitter.Refit();
-        }
+        // Fitted once its view is ready, with AutoFit or without, as a file is
         Dispatcher.UIThread.Invoke(() =>
         {
             if (tabViewModel.CurrentView?.CurrentValue is not ImageViewer imageViewer)
