@@ -50,6 +50,17 @@ public static partial class NativeMethods
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool GetDefaultPrinter(IntPtr pszBuffer, ref uint pcchBuffer);
 
+    [LibraryImport("winspool.drv", EntryPoint = "OpenPrinterW", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool OpenPrinter(string pPrinterName, out IntPtr phPrinter, IntPtr pDefault);
+
+    [LibraryImport("winspool.drv", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool ClosePrinter(IntPtr hPrinter);
+
+    [LibraryImport("winspool.drv", EntryPoint = "DocumentPropertiesW", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
+    public static partial int DocumentProperties(IntPtr hWnd, IntPtr hPrinter, string pDeviceName, IntPtr pDevModeOutput, IntPtr pDevModeInput, uint fMode);
+
     [LibraryImport("winspool.drv", StringMarshalling = StringMarshalling.Utf16, SetLastError = true)]
     public static partial int DeviceCapabilitiesW(string pDevice, string pPort, ushort fwCapability, IntPtr pOutput, IntPtr pDevMode);
 
@@ -143,6 +154,19 @@ public static partial class NativeMethods
     public const int PHYSICALHEIGHT = 111;
     public const int PHYSICALOFFSETX = 112;
     public const int PHYSICALOFFSETY = 113;
+
+    public const uint DM_OUT_BUFFER = 2;
+    public const uint DM_IN_BUFFER = 8;
+
+    // Where DEVMODEW keeps the fields a print job sets, after its 32-character device name and four WORDs
+    public const int DEVMODE_FIELDS_OFFSET = 72;
+    public const int DEVMODE_ORIENTATION_OFFSET = 76;
+    public const int DEVMODE_PAPERSIZE_OFFSET = 78;
+
+    public const uint DM_ORIENTATION = 0x00000001;
+    public const uint DM_PAPERSIZE = 0x00000002;
+    public const short DMORIENT_PORTRAIT = 1;
+    public const short DMORIENT_LANDSCAPE = 2;
 
     public const uint DIB_RGB_COLORS = 0;
     public const uint SRCCOPY = 0x00CC0020;
