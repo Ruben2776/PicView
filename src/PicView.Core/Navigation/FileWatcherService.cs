@@ -105,26 +105,65 @@ public class FileWatcherService(
             // AwaitOperation.Sequential ensures we don't process two file events for the same folder at the exact same time, 
             // which protects the Integrity of the 'files' list and the CurrentIndex.
 
+            // Each event goes to every tab watching the folder when it arrives, not only the tab that started the watch
+            var watchedDirectory = directory;
             var fileCreatedSub = created.SubscribeAwait(async (e, ct) =>
-                await OnFileCreatedAsync(tab, e, ct).ConfigureAwait(false), 
+                await ForEachSubscriberAsync(watchedDirectory, t => OnFileCreatedAsync(t, e, ct), nameof(OnFileCreatedAsync))
+                    .ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileCreatedAsync)));
 
             var fileDeletedSub = deleted.SubscribeAwait(async (e, ct) =>
-                await OnFileDeletedAsync(tab, e).ConfigureAwait(false), 
+                await ForEachSubscriberAsync(watchedDirectory, t => OnFileDeletedAsync(t, e), nameof(OnFileDeletedAsync))
+                    .ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileDeletedAsync)));
 
             var fileRenamedSub = renamed.SubscribeAwait(async (e, ct) =>
-                await OnFileRenamedAsync(tab, e, ct).ConfigureAwait(false), 
+                await ForEachSubscriberAsync(watchedDirectory, t => OnFileRenamedAsync(t, e, ct), nameof(OnFileRenamedAsync))
+                    .ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileRenamedAsync)));
             
             var fileChangedSub = changed.SubscribeAwait(async (e, ct) =>
-                await OnFileChangedAsync(tab, e, ct).ConfigureAwait(false), 
+                await ForEachSubscriberAsync(watchedDirectory, t => OnFileChangedAsync(t, e, ct), nameof(OnFileChangedAsync))
+                    .ConfigureAwait(false), 
                 DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileChangedAsync)));
 
             // Combine disposables
             var subscription = Disposable.Combine(fileCreatedSub, fileDeletedSub, fileRenamedSub, fileChangedSub);
 
             _watchers[directory] = (watcher, subscription, [new WeakReference<TabViewModel>(tab)]);
+        }
+    }
+
+    /// <summary>
+    /// Handles one file event for each tab still watching <paramref name="directory"/>, one tab at a time, so a failure
+    /// in one tab does not keep the event from the others.
+    /// </summary>
+    private async ValueTask ForEachSubscriberAsync(string directory, Func<TabViewModel, ValueTask> handle,
+        string handlerName)
+    {
+        TabViewModel[] subscribers;
+        lock (_lock)
+        {
+            if (!_watchers.TryGetValue(directory, out var entry))
+            {
+                return;
+            }
+            subscribers = entry.Subscribers
+                .Select(static reference => reference.TryGetTarget(out var tab) ? tab : null)
+                .OfType<TabViewModel>()
+                .ToArray();
+        }
+
+        foreach (var tab in subscribers)
+        {
+            try
+            {
+                await handle(tab).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                DebugHelper.LogDebug(nameof(FileWatcherService), handlerName, exception);
+            }
         }
     }
 

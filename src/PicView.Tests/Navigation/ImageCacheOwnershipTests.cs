@@ -1,4 +1,5 @@
 using ImageMagick;
+using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
@@ -25,11 +26,14 @@ public class ImageCacheOwnershipTests
     {
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         SetDefaults();
+        TranslationManager.Init();
 
-        _cache = new SharedImageCache(LoadProbe);
-        _tabs = new TabOverviewViewModel(null!);
-        var thumbnailCache = new ThumbnailCache();
-        _tabs.LoadAndInitialize(null!, _cache, thumbnailCache, new MockThumbnailLoader(), null!);
+        var core = new CoreViewModel(null, LoadProbe);
+        core.InitializeNavigation(null!, new MockThumbnailLoader(), null!);
+        _cache = core.SharedCache;
+        _tabs = new MainWindowViewModel(core, core.Translation, null!, core.GlobalSettings!, core.GallerySettings)
+            .WindowTabs;
+        _tabs.InitializeActiveTab([]);
     }
 
     [Fact]

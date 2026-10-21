@@ -10,13 +10,13 @@ namespace PicView.Avalonia.Navigation;
 
 /// <summary>
 /// What one Main Window does when a tab it shows changes: shows the tab's new image, and loads and opens its gallery.
+/// Attaching may happen on any thread.
 /// </summary>
-public sealed class NavigationSubscriptions(MainWindow mainWindow, CoreViewModel core) : ITabHookups
+public sealed class NavigationSubscriptions(MainWindow mainWindow, MainWindowViewModel mainWindowViewModel,
+    CoreViewModel core) : ITabHookups
 {
     public IDisposable Attach(TabViewModel tabViewModel)
     {
-        var mainWindowViewModel = (MainWindowViewModel)mainWindow.DataContext!;
-
         // Subscribing with AvaloniaRenderingFrameProvider is faster and fixes not being able to navigate while gallery is loading
         return Dispatcher.UIThread.Invoke(() => Disposable.Combine(
             Observable.EveryValueChanged(tabViewModel, tab => tab.Model.FileInfo, mainWindow.FrameProvider)

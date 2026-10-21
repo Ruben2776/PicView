@@ -93,7 +93,7 @@ public class ClipboardPasteService(
         {
             var fileInfo = new FileInfo(path);
             var tab = vm.WindowTabs.CreateTab(fileInfo);
-            TabNavigationInitializer.InitializeConsecutiveTab(activeCore, mainWindow, tab);
+            TabNavigationInitializer.InitializeConsecutiveTab(activeCore, tab);
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 tab.CurrentView.Value = new ImageViewer();

@@ -272,15 +272,20 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         var lifecycle = Lifecycle;
         _ = Task.Run(() => Dispatcher.UIThread.InvokeAsync(async () =>
         {
-            var newWindow = await lifecycle.OpenForMovedTabAsync(tab,
+            await lifecycle.OpenForMovedTabAsync(tab,
                 new PixelPoint(e.ScreenPosition.X - 100, e.ScreenPosition.Y - 50), Width, Height).ConfigureAwait(true);
-            if (newWindow.DataContext is not MainWindowViewModel newVm)
-            {
-                return;
-            }
 
             RefreshViewBinding(tab);
-            TabNavigationInitializer.InitializeMovedTabWindow(newVm, parentVm.WindowTabs, tab);
+            // Show the moved tab's title and navigation buttons in the new window
+            if (tab.FileInfo.CurrentValue is not null)
+            {
+                tab.UpdateTabTitle();
+            }
+            else
+            {
+                tab.SetNewTabTitle();
+            }
+            tab.ImageIterator?.UpdateNavigationProperties();
         }, DispatcherPriority.Send));
     }
 

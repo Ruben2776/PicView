@@ -46,7 +46,7 @@ public static class SourceOpener
         {
             // Prepare the gallery before initializing, so the docked gallery stays visible and loads with the files
             TabNavigationInitializer.PrepareDockedGallery(tab);
-            TabNavigationInitializer.Initialize(core, [], mainWindow);
+            TabNavigationInitializer.Initialize(core, [], vm);
         }
         else if (tab.ImageIterator is null)
         {

@@ -13,7 +13,28 @@ public class CoreViewModel(
     public IPlatformSpecificService? PlatformService { get; } = platformSpecificService;
     public SharedImageCache SharedCache { get; } = new(imageLoader);
     public ThumbnailCache SharedThumbnailCache { get; } = new();
-    public INavigationService? SharedNavigationService { get; set; }
+
+    // Set once by InitializeNavigation, for every Main Window
+    public INavigationService? SharedNavigationService { get; private set; }
+    public IThumbnailLoader? SharedThumbnailLoader { get; private set; }
+    public IFileWatcherService? SharedFileWatcher { get; private set; }
+
+    /// <summary>
+    /// Sets up navigation for every Main Window, once, when the first tab opens a source: after the first window and
+    /// image are shown, so they show sooner. Later calls do nothing.
+    /// </summary>
+    public void InitializeNavigation(INavigationService navigation, IThumbnailLoader thumbnailLoader,
+        IFileWatcherService fileWatcher)
+    {
+        if (SharedNavigationService is not null)
+        {
+            return;
+        }
+
+        SharedThumbnailLoader = thumbnailLoader;
+        SharedFileWatcher = fileWatcher;
+        SharedNavigationService = navigation;
+    }
     
     // --- Globally Shared State ---
     public TranslationViewModel Translation { get; } = new();

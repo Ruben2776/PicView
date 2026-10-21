@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Avalonia.Controls;
-using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation.Services;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
@@ -11,38 +10,29 @@ namespace PicView.Avalonia.StartUp;
 
 public static class TabNavigationInitializer
 {
-    public static void Initialize(CoreViewModel core, FileInfo fileInfo, MainWindow mainWindow)
+    /// <inheritdoc cref="Initialize(CoreViewModel, List{FileInfo}, MainWindowViewModel)"/>
+    /// <param name="fileInfo">A file whose folder's files the tab browses.</param>
+    public static void Initialize(CoreViewModel core, FileInfo fileInfo, MainWindowViewModel vm)
     {
         Debug.Assert(core.PlatformService != null);
-        Initialize(core, core.PlatformService.GetFiles(fileInfo), mainWindow);
+        Initialize(core, core.PlatformService.GetFiles(fileInfo), vm);
     }
-    
-    public static void Initialize(CoreViewModel core, List<FileInfo> files, MainWindow mainWindow)
+
+    /// <summary>
+    /// Opens the active tab of <paramref name="vm"/>'s window for the first time, browsing <paramref name="files"/>.
+    /// May be called from any thread.
+    /// </summary>
+    public static void Initialize(CoreViewModel core, List<FileInfo> files, MainWindowViewModel vm)
     {
         // --- Initialization Logic ---
         // This is the initialization logic for the navigation system.
         // It is initialized after initial image load, to make it feel faster by showing the image asap. 
         
-        // 1. Create dependencies
-        var imageLoader = ServiceHelper.ImageLoader;
-        var thumbnailService = ServiceHelper.ThumbLoader;
+        InitializeNavigation(core);
 
-        // 2. Create SharedImageCache
-        // We use the same loading logic as AvaloniaImageLoader (via GetImageModel)
-        var sharedCache = core.SharedCache;
-        var thumbnailCache = core.SharedThumbnailCache;
-
-        Debug.Assert(core.PlatformService != null);
-        var fileWatcher = new FileWatcherService(core.PlatformService.CompareStrings, sharedCache, thumbnailCache, thumbnailService);
-
-        // 3. Create NavigationService (Core)
-        core.SharedNavigationService ??= new NavigationService(imageLoader, sharedCache, fileWatcher, core.PlatformService, core.PlatformService.CompareStrings);
-
-        // 4. Initialize ViewModel
-        Debug.Assert(core.MainWindows.ActiveWindow.CurrentValue != null);
-        var tabOverView = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs;
+        var tabOverView = vm.WindowTabs;
         var tab = tabOverView.ActiveTab.CurrentValue;
-        tabOverView.LoadAndInitializeFromPath(files, core.SharedNavigationService, sharedCache, thumbnailCache, thumbnailService, fileWatcher);
+        tabOverView.InitializeActiveTab(files);
         InitializeNewTab(tab);
         tab.Gallery.Initialize();
         core.GallerySettings.Initialize();
@@ -52,7 +42,7 @@ public static class TabNavigationInitializer
     /// Applies the docked-gallery settings to a tab before it is initialized: undocks when the interface is hidden and
     /// the docked gallery should not show then, and opens a docked gallery without animation.
     /// </summary>
-    /// <remarks>Call before <see cref="Initialize(CoreViewModel, List{FileInfo}, MainWindow)"/>, which subscribes to
+    /// <remarks>Call before <see cref="Initialize(CoreViewModel, List{FileInfo}, MainWindowViewModel)"/>, which subscribes to
     /// the gallery mode; changing it afterwards would hide the docked gallery.</remarks>
     /// <returns>Whether the docked gallery is shown and needs loading.</returns>
     public static bool PrepareDockedGallery(TabViewModel tab)
@@ -92,29 +82,31 @@ public static class TabNavigationInitializer
         tab.InitializeImageIterator([], cache, thumbCache, thumbLoader, tabs.SharedFileWatcher, thumbCache);
     }
 
-    public static void InitializeConsecutiveTab(CoreViewModel core, MainWindow mainWindow, TabViewModel tab)
+    /// <summary>
+    /// Sets up navigation for every Main Window the first time any tab opens a source; does nothing after that.
+    /// </summary>
+    private static void InitializeNavigation(CoreViewModel core)
+    {
+        if (core.SharedNavigationService is not null)
+        {
+            return;
+        }
+
+        Debug.Assert(core.PlatformService != null);
+        // The shared image cache loads through the same logic as AvaloniaImageLoader (via GetImageModel)
+        var thumbnailLoader = ServiceHelper.ThumbLoader;
+        var fileWatcher = new FileWatcherService(core.PlatformService.CompareStrings, core.SharedCache,
+            core.SharedThumbnailCache, thumbnailLoader);
+        var navigation = new NavigationService(ServiceHelper.ImageLoader, core.SharedCache, fileWatcher,
+            core.PlatformService, core.PlatformService.CompareStrings);
+        core.InitializeNavigation(navigation, thumbnailLoader, fileWatcher);
+    }
+
+    public static void InitializeConsecutiveTab(CoreViewModel core, TabViewModel tab)
     {
         InitializeNewTab(tab);
         tab.Gallery.Initialize();
         core.GallerySettings.Initialize();
-    }
-    
-    /// <summary>
-    /// Sets up a Main Window that opened with a tab moved out of <paramref name="from"/>: it shares that window's
-    /// services, so the tabs it opens share the same caches, and the moved tab gets its title and navigation back.
-    /// </summary>
-    public static void InitializeMovedTabWindow(MainWindowViewModel newVm, TabOverviewViewModel from, TabViewModel tab)
-    {
-        newVm.WindowTabs.ShareServicesOf(from);
-        if (tab.FileInfo.CurrentValue is not null)
-        {
-            tab.UpdateTabTitle();
-        }
-        else
-        {
-            tab.SetNewTabTitle();
-        }
-        tab.ImageIterator?.UpdateNavigationProperties();
     }
     
     private static void InitializeNewTab(TabViewModel newTab)

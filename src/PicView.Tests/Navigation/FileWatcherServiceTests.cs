@@ -158,6 +158,68 @@ public class FileWatcherServiceTests : IDisposable
     }
     
     [Fact]
+    public async Task OnFileDeleted_TwoTabsInTheFolder_UpdatesBoth()
+    {
+        // Arrange
+        var filePath = Path.Combine(_testDirectory, "test1.jpg");
+        var filePath2 = Path.Combine(_testDirectory, "test2.jpg");
+        var filePath3 = Path.Combine(_testDirectory, "test3.jpg");
+        await File.WriteAllTextAsync(filePath, "dummy content", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(filePath2, "dummy content", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(filePath3, "dummy content", TestContext.Current.CancellationToken);
+        var files = new List<FileInfo> { new(filePath), new(filePath2), new(filePath3) };
+
+        var first = CreateTab(_testDirectory);
+        first.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
+        first.Model = new ImageModel { FileInfo = files[0] };
+        var second = CreateTab(_testDirectory);
+        second.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
+        second.Model = new ImageModel { FileInfo = files[2] };
+
+        _service.Watch(first);
+        _service.Watch(second);
+
+        // Act: Delete a file both tabs browse
+        File.Delete(filePath2);
+        await Task.Delay(500, TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.DoesNotContain(first.ImageIterator.Files, f => f.FullName == filePath2);
+        Assert.DoesNotContain(second.ImageIterator.Files, f => f.FullName == filePath2);
+
+        File.Delete(filePath);
+        File.Delete(filePath3);
+    }
+
+    [Fact]
+    public async Task OnFileDeleted_AfterTheFirstTabStopsWatching_UpdatesTheOtherTab()
+    {
+        // Arrange
+        var filePath = Path.Combine(_testDirectory, "test1.jpg");
+        var filePath2 = Path.Combine(_testDirectory, "test2.jpg");
+        await File.WriteAllTextAsync(filePath, "dummy content", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(filePath2, "dummy content", TestContext.Current.CancellationToken);
+        var files = new List<FileInfo> { new(filePath), new(filePath2) };
+
+        var first = CreateTab(_testDirectory);
+        _service.Watch(first);
+        var second = CreateTab(_testDirectory);
+        second.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null, _mockThumbnailCache);
+        second.Model = new ImageModel { FileInfo = files[0] };
+        _service.Watch(second);
+
+        // Act: The first tab moves on, then a file of the second tab is deleted
+        _service.Unwatch(first);
+        File.Delete(filePath2);
+        await Task.Delay(500, TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.DoesNotContain(second.ImageIterator.Files, f => f.FullName == filePath2);
+
+        File.Delete(filePath);
+    }
+
+    [Fact]
     public async Task OnFileRenamed_UpdatesTabFiles_AndModel()
     {
         // Arrange

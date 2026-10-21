@@ -89,7 +89,7 @@ public static class QuickLoad
         }
 
         TabNavigationInitializer.PrepareDockedGallery(tab);
-        TabNavigationInitializer.Initialize(core, [], mainWindow);
+        TabNavigationInitializer.Initialize(core, [], vm);
 
         vm.IsLoadingIndicatorShown.Value = true;
         LoadResult result;
@@ -208,11 +208,11 @@ public static class QuickLoad
         UpdateImage.ChangeImage(mainWindow, tab, vm);
         if (files is null)
         {
-            TabNavigationInitializer.Initialize(core, listFrom, mainWindow);
+            TabNavigationInitializer.Initialize(core, listFrom, vm);
         }
         else
         {
-            TabNavigationInitializer.Initialize(core, files, mainWindow);
+            TabNavigationInitializer.Initialize(core, files, vm);
         }
     }
 
@@ -277,7 +277,7 @@ public static class QuickLoad
         tab.Display(firstModel, secondModel);
         await ShowImageViewerAsync(tab).ConfigureAwait(false);
 
-        TabNavigationInitializer.Initialize(core, files, mainWindow);
+        TabNavigationInitializer.Initialize(core, files, vm);
         UpdateImage.ChangeImage(mainWindow, tab, vm);
         UpdateImage.UpdateTabSideBySideTitles(tab, index, nextIndex, fileInfo, nextFileInfo, files);
         Dispatcher.UIThread.Post(() =>

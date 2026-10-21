@@ -2,7 +2,6 @@ using ImageMagick;
 using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
-using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 
@@ -231,17 +230,34 @@ public class TabOwnershipTests
     public void TearDown_CalledTwice_ReleasesEachTabOnce()
     {
         var watcher = new RecordingFileWatcher();
-        var thumbnails = new RecordingThumbnailCache();
-        var tabs = new TabOverviewViewModel(null!);
-        tabs.LoadAndInitialize(null!, new SharedImageCache(LoadNothing), thumbnails, new MockThumbnailLoader(), watcher);
+        _core.InitializeNavigation(null!, new MockThumbnailLoader(), watcher);
+        var tabs = CreateWindow().WindowTabs;
+        tabs.InitializeActiveTab([]);
         var first = tabs.ActiveTab.Value;
         var second = tabs.CreateTab();
+        _core.SharedThumbnailCache.Add(first.Id, "first.jpg", new object());
+        _core.SharedThumbnailCache.Add(second.Id, "second.jpg", new object());
 
         tabs.TearDown();
         tabs.TearDown();
 
         Assert.Equal([first, second], watcher.Unwatched);
-        Assert.Equal([first.Id, second.Id], thumbnails.RemovedOwners);
+        Assert.True(_core.SharedThumbnailCache.IsEmpty);
+    }
+
+    [Fact]
+    public void SharedServices_TwoMainWindows_AreTheSameInstances()
+    {
+        var watcher = new RecordingFileWatcher();
+        _core.InitializeNavigation(null!, new MockThumbnailLoader(), watcher);
+
+        var first = CreateWindow().WindowTabs;
+        var second = CreateWindow().WindowTabs;
+
+        Assert.Same(watcher, first.SharedFileWatcher);
+        Assert.Same(first.SharedFileWatcher, second.SharedFileWatcher);
+        Assert.Same(first.SharedCache, second.SharedCache);
+        Assert.Same(first.SharedThumbnailLoader, second.SharedThumbnailLoader);
     }
 
     private MainWindowViewModel CreateWindow(ITabHookups? hookups = null, TabViewModel? firstTab = null)
@@ -254,9 +270,6 @@ public class TabOwnershipTests
         }
         return vm;
     }
-
-    private static ValueTask<ImageModel> LoadNothing(FileInfo file) =>
-        ValueTask.FromResult(new ImageModel { FileInfo = file });
 
     private sealed class RecordingHookups : ITabHookups
     {
@@ -280,20 +293,6 @@ public class TabOwnershipTests
         public List<TabViewModel> Unwatched { get; } = [];
         public void Watch(TabViewModel tab, string? directory = null) { }
         public void Unwatch(TabViewModel tab) => Unwatched.Add(tab);
-    }
-
-    private sealed class RecordingThumbnailCache : IThumbnailCache
-    {
-        public List<uint> RemovedOwners { get; } = [];
-        public bool IsEmpty => true;
-        public void Add(uint ownerId, string path, object thumbnail) { }
-        public bool TryGet(string path, out object? thumbnail)
-        {
-            thumbnail = null;
-            return false;
-        }
-        public void Remove(string path) { }
-        public void RemoveOwner(uint ownerId) => RemovedOwners.Add(ownerId);
     }
 
     private sealed class MockThumbnailLoader : IThumbnailLoader

@@ -269,7 +269,7 @@ public sealed class MainWindowLifecycle
     {
         var window = _provider.CreateMainWindow(firstTab);
         var vm = ViewModelOf(window);
-        vm.WindowTabs.SetHookups(new NavigationSubscriptions(window, _core));
+        vm.WindowTabs.SetHookups(new NavigationSubscriptions(window, vm, _core));
         _core.MainWindows.MainWindows.Add(vm);
         _core.MainWindows.ActiveWindow.Value = vm;
         _open.Add(window);
