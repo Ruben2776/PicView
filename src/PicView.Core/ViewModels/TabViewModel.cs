@@ -369,6 +369,14 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     }
 
     /// <summary>
+    /// Follows a file event in a folder this tab browses: its file list, the file it shows, its title and its gallery.
+    /// </summary>
+    public ValueTask OnFolderChangedAsync(FolderChange change, CancellationToken ct = default) =>
+        (_folderChanges ??= new FolderChanges(this)).HandleAsync(change, ct);
+
+    private FolderChanges? _folderChanges;
+
+    /// <summary>
     /// Closes this tab in the Main Window that owns it now, which also disposes it.
     /// </summary>
     public void CloseTab()

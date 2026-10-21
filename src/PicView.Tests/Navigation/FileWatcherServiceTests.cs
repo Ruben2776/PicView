@@ -1,4 +1,6 @@
 using ImageMagick;
+using PicView.Core.Gallery;
+using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
@@ -26,6 +28,7 @@ public class FileWatcherServiceTests : IDisposable
 
         // Ensure Settings are initialized for FileWatcherService usage
         SetDefaults();
+        TranslationManager.LoadLanguage("en");
 
         _testDirectory = Path.Combine(Path.GetTempPath(), "PicViewTests_" + Guid.NewGuid());
         Directory.CreateDirectory(_testDirectory);
@@ -34,7 +37,7 @@ public class FileWatcherServiceTests : IDisposable
         _mockThumbnailCache = new MockThumbnailCache();
         // Use default ordinal comparison for tests
         _service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache, _mockThumbnailCache,
-            new MockThumbnailLoader(), _folderEvents);
+            _folderEvents);
     }
 
     [Fact]
@@ -196,11 +199,125 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnFileCreated_LoadedGallery_AddsTheFileInItsPlace()
+    {
+        // Arrange: a gallery that is not docked, but has loaded its items
+        var files = await FilesOnDiskAsync("a.jpg", "c.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        LoadGallery(tab);
+        await WriteFileAsync("b.jpg");
+
+        // Act
+        Watch(tab).RaiseCreated("b.jpg");
+
+        // Assert
+        await WaitUntilAsync(() => tab.Gallery.GalleryItems.Count == 3);
+        Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
+    }
+
+    [Fact]
+    public async Task OnFileCreated_GalleryNeverUsed_AddsNoItems()
+    {
+        // Arrange
+        var files = Files("a.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+
+        // Act
+        Watch(tab).RaiseCreated("b.jpg");
+
+        // Assert
+        await WaitUntilAsync(() => tab.ImageIterator.Files.Count == 2);
+        Assert.Empty(tab.Gallery.GalleryItems);
+    }
+
+    [Fact]
+    public async Task OnFileCreated_WhileTheGalleryLoads_LoadsItAgainWithTheFile()
+    {
+        // Arrange: a load in progress reads the file list as it goes
+        var files = await FilesOnDiskAsync("a.jpg", "c.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        tab.Gallery.LoadingState = GalleryLoadingState.Loading;
+        await WriteFileAsync("b.jpg");
+
+        // Act
+        Watch(tab).RaiseCreated("b.jpg");
+
+        // Assert
+        await WaitUntilAsync(() => tab.Gallery.LoadingState is GalleryLoadingState.Loaded &&
+                                   tab.Gallery.GalleryItems.Count == 3);
+        Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
+    }
+
+    [Fact]
+    public async Task OnFileChanged_LoadedGallery_RebuildsTheFilesItem()
+    {
+        // Arrange
+        var files = await FilesOnDiskAsync("a.jpg", "b.jpg");
+        var filePath = files[0].FullName;
+        var tab = CreateTab(_testDirectory, files, files[1]);
+        LoadGallery(tab);
+        var before = tab.Gallery.GalleryItems[0];
+
+        // Act
+        Watch(tab).RaiseChanged("a.jpg");
+
+        // Assert: a new item, whose thumbnail loads again when it is shown
+        await WaitUntilAsync(() => !ReferenceEquals(before, tab.Gallery.GalleryItems[0]));
+        Assert.Equal(filePath, tab.Gallery.GalleryItems[0].FileInfo!.FullName);
+        Assert.Null(tab.Gallery.GalleryItems[0].Image.Value);
+    }
+
+    [Fact]
+    public async Task OnFileRenamed_LoadedGallery_MovesTheFilesItem()
+    {
+        // Arrange
+        var files = await FilesOnDiskAsync("a.jpg", "b.jpg");
+        var tab = CreateTab(_testDirectory, files, files[1]);
+        LoadGallery(tab);
+        await WriteFileAsync("c.jpg");
+
+        // Act
+        Watch(tab).RaiseRenamed("a.jpg", "c.jpg");
+
+        // Assert
+        await WaitUntilAsync(() => tab.Gallery.GalleryItems.LastOrDefault()?.FileInfo?.Name == "c.jpg");
+        Assert.Equal(["b.jpg", "c.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
+    }
+
+    [Fact]
+    public async Task OnFileDeleted_LoadedGallery_RemovesTheFilesItem()
+    {
+        // Arrange
+        var files = await FilesOnDiskAsync("a.jpg", "b.jpg", "c.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        LoadGallery(tab);
+
+        // Act
+        Watch(tab).RaiseDeleted("b.jpg");
+
+        // Assert
+        await WaitUntilAsync(() => tab.Gallery.GalleryItems.Count == 2);
+        Assert.Equal(["a.jpg", "c.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
+    }
+
+    [Fact]
+    public void FileDetailsSource_AskedByTwoTabs_ReadsTheFileOnce()
+    {
+        var details = new FileDetailsSource(new FileInfo(Path.Combine(_testDirectory, "a.jpg")),
+            waitUntilReady: false);
+
+        var first = details.GetAsync(TestContext.Current.CancellationToken);
+        var second = details.GetAsync(TestContext.Current.CancellationToken);
+
+        Assert.Same(first, second);
+    }
+
+    [Fact]
     public async Task OnFileCreated_OnDisk_ReachesTheTab()
     {
         // Arrange: the watcher PicView uses, on a real folder
         using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
-            _mockThumbnailCache, new MockThumbnailLoader());
+            _mockThumbnailCache);
         var existingFile = new FileInfo(Path.Combine(_testDirectory, "existing.jpg"));
         var tab = new TabViewModel(null!, service);
         tab.Model = new ImageModel { FileInfo = existingFile };
@@ -214,6 +331,31 @@ public class FileWatcherServiceTests : IDisposable
 
         // Assert
         await WaitUntilAsync(() => tab.ImageIterator.Files.Any(f => f.FullName == filePath));
+    }
+
+    /// <summary>
+    /// Files that exist, as a gallery load reads each file's size and date.
+    /// </summary>
+    private async Task<List<FileInfo>> FilesOnDiskAsync(params string[] names)
+    {
+        foreach (var name in names)
+        {
+            await WriteFileAsync(name);
+        }
+        return Files(names);
+    }
+
+    private static void LoadGallery(TabViewModel tab) =>
+        tab.GalleryCoordinator!.LoadGallery(tab.ImageIterator.Files, null!);
+
+    /// <summary>
+    /// Writes a file the folder event is about, so waiting for it to be ready ends at once.
+    /// </summary>
+    private async Task<string> WriteFileAsync(string name)
+    {
+        var path = Path.Combine(_testDirectory, name);
+        await File.WriteAllTextAsync(path, "dummy content", TestContext.Current.CancellationToken);
+        return path;
     }
 
     private FakeFolderWatch Watch(TabViewModel tab)

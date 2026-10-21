@@ -96,7 +96,7 @@ public static class TabNavigationInitializer
         // The shared image cache loads through the same logic as AvaloniaImageLoader (via GetImageModel)
         var thumbnailLoader = ServiceHelper.ThumbLoader;
         var fileWatcher = new FileWatcherService(core.PlatformService.CompareStrings, core.SharedCache,
-            core.SharedThumbnailCache, thumbnailLoader);
+            core.SharedThumbnailCache);
         var navigation = new NavigationService(ServiceHelper.ImageLoader, core.SharedCache, fileWatcher,
             core.PlatformService, core.PlatformService.CompareStrings);
         core.InitializeNavigation(navigation, thumbnailLoader, fileWatcher);

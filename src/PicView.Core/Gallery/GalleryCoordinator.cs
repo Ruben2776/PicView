@@ -1,6 +1,7 @@
 using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.MotionPhoto;
+using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 
@@ -24,17 +25,12 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
         }
 
         tab.Gallery.LoadingState = GalleryLoadingState.Loading;
-        _cts = new CancellationTokenSource();
+        var cts = new CancellationTokenSource();
+        _cts = cts;
 
-        var ct = _cts.Token;
+        var ct = cts.Token;
         
-        var dockedHeight = Settings.Gallery.DockedGalleryItemSize;
-        var expandedHeight = Settings.Gallery.ExpandedGalleryItemSize;
-        var maxHeight = Math.Max(dockedHeight, expandedHeight);
-        if (maxHeight <= 0)
-        {
-            maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
-        }
+        var maxHeight = ThumbnailHeight();
 
         var parallelOptions = new ParallelOptions
         {
@@ -57,77 +53,23 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
                 Parallel.For(0, currentBatchSize, parallelOptions, j =>
                 {
                     var file = files[i + j];
-                    var item = new GalleryItemViewModel { FileInfo = file };
-                    string? xmpPacket = null;
-
-                    try
-                    {
-                        using var magick = new MagickImage();
-#pragma warning disable MA0042
-                        // ReSharper disable once MethodHasAsyncOverloadWithCancellation
-                        magick.Ping(file);
-#pragma warning restore MA0042
-                        item.PixelWidth = magick.Width;
-                        item.PixelHeight = magick.Height;
-
-                        var profile = magick.GetProfile("xmp");
-                        if (profile is not null)
-                        {
-                            var data = profile.ToByteArray();
-                            if (data is not null)
-                            {
-                                xmpPacket = System.Text.Encoding.UTF8.GetString(data);
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-#if DEBUG
-                        DebugHelper.LogDebug(nameof(GalleryCoordinator), nameof(LoadGallery), ex);
-#endif
-                    }
-
-                    var thumbData =
-                        GalleryThumbInfo.GalleryThumbHolder.GetThumbData(file, item.PixelWidth, item.PixelHeight);
-                    item.FileName.Value = thumbData.FileName;
-                    item.FileSize.Value = thumbData.FileSize;
-                    item.FileDate.Value = thumbData.FileDate;
-                    item.FileLocation.Value = thumbData.FileLocation;
-                    item.ImageSize.Value = thumbData.ImageSize;
-
-                    // 2. Assign the lazy-loading logic, but don't execute it!
-                    item.ThumbnailLoaderFunc = async cancellationToken =>
-                    {
-                        if (thumbnailCache.TryGet(file.FullName, out var cached) && cached is not null)
-                        {
-                            return cached;
-                        }
-
-                        return await Task.Run(async () =>
-                        {
-                            var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight, core)
-                                .ConfigureAwait(false);
-                            if (thumb is not null)
-                            {
-                                thumbnailCache.Add(tab.Id, file.FullName, thumb);
-                            }
-
-                            item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, xmpPacket, fastMode: true) is not null;
-
-                            return thumb;
-                        }, cancellationToken).ConfigureAwait(false);
-                    };
-
                     // Array assignment ensures perfect sorting order
-                    batchVms[j] = item;
+                    batchVms[j] = CreateItem(file, GalleryFileDetails.Read(file), maxHeight, core);
                 });
 
-                // 3. Add chunk directly to the UI
+                // 3. Add chunk directly to the UI, unless a restart cleared the items meanwhile
+                ct.ThrowIfCancellationRequested();
                 tab.Gallery.GalleryItems.AddRange(batchVms);
             }
         }
         catch (OperationCanceledException)
         {
+            if (_cts is not null && !ReferenceEquals(_cts, cts))
+            {
+                // A restart already started a newer load, which owns the items and the state
+                return;
+            }
+
             if (tab.Gallery.LoadingState is GalleryLoadingState.Restarting && tab.Gallery.GalleryItems.Count > 0)
             {
                 tab.Gallery.GalleryItems.Clear();
@@ -139,6 +81,137 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
 
         tab.Gallery.LoadingState = GalleryLoadingState.Loaded;
     }
+
+    /// <summary>
+    /// The one way to make a gallery item: its file's details now, and its thumbnail when the item is shown.
+    /// </summary>
+    private GalleryItemViewModel CreateItem(FileInfo file, GalleryFileDetails? details, double maxHeight,
+        CoreViewModel? core)
+    {
+        var item = new GalleryItemViewModel
+        {
+            FileInfo = file,
+            PixelWidth = details?.PixelWidth ?? 0,
+            PixelHeight = details?.PixelHeight ?? 0
+        };
+        var xmpPacket = details?.XmpPacket;
+
+        var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(file, item.PixelWidth, item.PixelHeight);
+        item.FileName.Value = thumbData.FileName;
+        item.FileSize.Value = thumbData.FileSize;
+        item.FileDate.Value = thumbData.FileDate;
+        item.FileLocation.Value = thumbData.FileLocation;
+        item.ImageSize.Value = thumbData.ImageSize;
+
+        // Assign the lazy-loading logic, but don't execute it!
+        item.ThumbnailLoaderFunc = async cancellationToken =>
+        {
+            if (thumbnailCache.TryGet(file.FullName, out var cached) && cached is not null)
+            {
+                return cached;
+            }
+
+            return await Task.Run(async () =>
+            {
+                var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight, core)
+                    .ConfigureAwait(false);
+                if (thumb is not null)
+                {
+                    thumbnailCache.Add(tab.Id, file.FullName, thumb);
+                }
+
+                item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, xmpPacket, fastMode: true) is not null;
+
+                return thumb;
+            }, cancellationToken).ConfigureAwait(false);
+        };
+
+        return item;
+    }
+
+    private static double ThumbnailHeight()
+    {
+        var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
+        return maxHeight <= 0 ? GalleryDefaults.DefaultDockedGalleryHeight : maxHeight;
+    }
+
+    #region File changes
+
+    // The gallery follows its tab's files once it has been used: a loaded gallery changes its items, and a loading
+    // one starts again from the changed list, since it reads that list as it goes.
+
+    /// <summary>
+    /// Adds an item for a file put at <paramref name="index"/> of the tab's files.
+    /// </summary>
+    public async ValueTask FileInsertedAsync(int index, FileInfo file, FileDetailsSource details,
+        CancellationToken ct = default)
+    {
+        if (RestartIfLoading())
+        {
+            return;
+        }
+
+        if (tab.Gallery.LoadingState is not GalleryLoadingState.Loaded || index < 0 ||
+            index > tab.Gallery.GalleryItems.Count)
+        {
+            return;
+        }
+
+        var item = CreateItem(file, await details.GetAsync(ct).ConfigureAwait(false), ThumbnailHeight(), Core);
+        tab.Gallery.GalleryItems.Insert(Math.Min(index, tab.Gallery.GalleryItems.Count), item);
+    }
+
+    /// <summary>
+    /// Builds the item at <paramref name="index"/> again, for a file whose contents changed.
+    /// </summary>
+    public async ValueTask FileReplacedAsync(int index, FileInfo file, FileDetailsSource details,
+        CancellationToken ct = default)
+    {
+        if (tab.Gallery.LoadingState is not (GalleryLoadingState.Loading or GalleryLoadingState.Loaded) ||
+            index < 0 || index >= tab.Gallery.GalleryItems.Count)
+        {
+            return;
+        }
+
+        var item = CreateItem(file, await details.GetAsync(ct).ConfigureAwait(false), ThumbnailHeight(), Core);
+        if (index < tab.Gallery.GalleryItems.Count)
+        {
+            tab.Gallery.GalleryItems[index] = item;
+        }
+    }
+
+    /// <summary>
+    /// Removes the item of a file taken out of <paramref name="index"/> of the tab's files.
+    /// </summary>
+    public void FileRemoved(int index)
+    {
+        if (RestartIfLoading())
+        {
+            return;
+        }
+
+        if (tab.Gallery.LoadingState is GalleryLoadingState.Loaded && index >= 0 &&
+            index < tab.Gallery.GalleryItems.Count)
+        {
+            tab.Gallery.GalleryItems.RemoveAt(index);
+        }
+    }
+
+    private CoreViewModel? Core => tab.ParentWindowContext?.Core;
+
+    private bool RestartIfLoading()
+    {
+        if (tab.Gallery.LoadingState is not GalleryLoadingState.Loading || tab.ImageIterator is not { } iterator)
+        {
+            return false;
+        }
+
+        var core = Core;
+        _ = Task.Run(() => ReloadGallery(iterator.Files, core!));
+        return true;
+    }
+
+    #endregion
 
     public void ReloadGallery(IReadOnlyList<FileInfo> files, CoreViewModel core)
     {

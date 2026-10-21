@@ -1,11 +1,8 @@
 using System.Collections.Concurrent;
-using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
-using PicView.Core.Gallery;
 using PicView.Core.Models;
-using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
 using R3;
@@ -16,7 +13,6 @@ public class FileWatcherService(
     Func<string, string, int> stringComparer,
     SharedImageCache cache,
     IThumbnailCache? thumbnailCache = null,
-    IThumbnailLoader? thumbnailLoader = null,
     IFolderEvents? folderEvents = null)
     : IFileWatcherService, IDisposable
 {
@@ -78,24 +74,20 @@ public class FileWatcherService(
             // Each event goes to every tab watching the folder when it arrives, not only the tab that started the watch
             var watchedDirectory = directory;
             var fileCreatedSub = watch.Created.SubscribeAwait(async (e, ct) =>
-                await ForEachSubscriberAsync(watchedDirectory, t => OnFileCreatedAsync(t, e, ct), nameof(OnFileCreatedAsync))
-                    .ConfigureAwait(false), 
-                DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileCreatedAsync)));
+                    await HandleAsync(watchedDirectory, FolderChangeKind.Created, e.FullPath, null, ct).ConfigureAwait(false),
+                DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Created)));
 
             var fileDeletedSub = watch.Deleted.SubscribeAwait(async (e, ct) =>
-                await ForEachSubscriberAsync(watchedDirectory, t => OnFileDeletedAsync(t, e), nameof(OnFileDeletedAsync))
-                    .ConfigureAwait(false), 
-                DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileDeletedAsync)));
+                    await HandleAsync(watchedDirectory, FolderChangeKind.Deleted, e.FullPath, null, ct).ConfigureAwait(false),
+                DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Deleted)));
 
             var fileRenamedSub = watch.Renamed.SubscribeAwait(async (e, ct) =>
-                await ForEachSubscriberAsync(watchedDirectory, t => OnFileRenamedAsync(t, e, ct), nameof(OnFileRenamedAsync))
-                    .ConfigureAwait(false), 
-                DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileRenamedAsync)));
-            
+                    await HandleAsync(watchedDirectory, FolderChangeKind.Renamed, e.FullPath, e.OldFullPath, ct).ConfigureAwait(false),
+                DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Renamed)));
+
             var fileChangedSub = watch.Changed.SubscribeAwait(async (e, ct) =>
-                await ForEachSubscriberAsync(watchedDirectory, t => OnFileChangedAsync(t, e, ct), nameof(OnFileChangedAsync))
-                    .ConfigureAwait(false), 
-                DebugHelper.LogError(nameof(FileWatcherService), nameof(OnFileChangedAsync)));
+                    await HandleAsync(watchedDirectory, FolderChangeKind.Changed, e.FullPath, null, ct).ConfigureAwait(false),
+                DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Changed)));
 
             // Combine disposables
             var subscription = Disposable.Combine(fileCreatedSub, fileDeletedSub, fileRenamedSub, fileChangedSub);
@@ -105,12 +97,26 @@ public class FileWatcherService(
     }
 
     /// <summary>
-    /// Handles one file event for each tab still watching <paramref name="directory"/>, one tab at a time, so a failure
-    /// in one tab does not keep the event from the others.
+    /// Handles one file event: forgets the file's stale image and thumbnail, then lets each tab still watching
+    /// <paramref name="directory"/> follow it, one tab at a time, so a failure in one tab does not keep it from the
+    /// others. The file's details are read at most once, for whichever tabs need them.
     /// </summary>
-    private async ValueTask ForEachSubscriberAsync(string directory, Func<TabViewModel, ValueTask> handle,
-        string handlerName)
+    private async ValueTask HandleAsync(string directory, FolderChangeKind kind, string fullPath, string? oldFullPath,
+        CancellationToken ct)
     {
+        if (!fullPath.IsSupported())
+        {
+            return;
+        }
+
+        var stalePath = kind is FolderChangeKind.Renamed ? oldFullPath ?? fullPath : fullPath;
+        thumbnailCache?.Remove(stalePath);
+        _cache.Invalidate(stalePath);
+
+        var file = new FileInfo(fullPath);
+        var change = new FolderChange(kind, file, oldFullPath,
+            new FileDetailsSource(file, waitUntilReady: kind is not FolderChangeKind.Deleted), _stringComparer);
+
         TabViewModel[] subscribers;
         lock (_lock)
         {
@@ -128,12 +134,17 @@ public class FileWatcherService(
         {
             try
             {
-                await handle(tab).ConfigureAwait(false);
+                await tab.OnFolderChangedAsync(change, ct).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                DebugHelper.LogDebug(nameof(FileWatcherService), handlerName, exception);
+                DebugHelper.LogDebug(nameof(FileWatcherService), kind.ToString(), exception);
             }
+        }
+
+        if (kind is FolderChangeKind.Renamed && oldFullPath is not null)
+        {
+            FileHistoryManager.Rename(oldFullPath, fullPath);
         }
     }
 
@@ -166,400 +177,6 @@ public class FileWatcherService(
             {
                 _watchers.TryRemove(key, out _);
             }
-        }
-    }
-
-    private static async ValueTask<bool> WaitForFileReadyAsync(string path, int maxWaitMs = 2000, CancellationToken ct = default)
-    {
-        var startTime = Environment.TickCount64;
-        while (Environment.TickCount64 - startTime < maxWaitMs)
-        {
-            if (ct.IsCancellationRequested)
-            {
-                return false;
-            }
-
-            try
-            {
-                if (File.Exists(path))
-                {
-                    var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                    await using (fs.ConfigureAwait(false))
-                    {
-                        if (fs.Length > 0)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            catch (IOException)
-            {
-                // File locked by writer
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // Access restriction or transient lock
-            }
-
-            try
-            {
-                await Task.Delay(50, ct).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                return false;
-            }
-        }
-
-        return false;
-    }
-
-    private async ValueTask OnFileCreatedAsync(TabViewModel tab, FileSystemEventArgs e, CancellationToken ct = default)
-    {
-        if (!e.FullPath.IsSupported())
-        {
-            return;
-        }
-
-        var newFile = new FileInfo(e.FullPath);
-
-        if (tab.ImageIterator is not { } iterator)
-        {
-            return;
-        }
-
-        var existingIndex = iterator.Replace(newFile);
-        if (existingIndex >= 0)
-        {
-            thumbnailCache?.Remove(newFile.FullName);
-            _cache.Invalidate(newFile.FullName);
-
-            var isCurrentFile = string.Equals(e.FullPath, tab.FileInfo?.CurrentValue?.FullName, StringComparison.OrdinalIgnoreCase);
-            if (isCurrentFile)
-            {
-                tab.Model.FileInfo = newFile;
-                tab.FileInfo.Value = newFile;
-                tab.UpdateTabTitle();
-            }
-
-            if (tab.Gallery.IsGalleryDocked.CurrentValue && existingIndex < tab.Gallery.GalleryItems.Count)
-            {
-                try
-                {
-                    await WaitForFileReadyAsync(newFile.FullName, ct: ct).ConfigureAwait(false);
-
-                    using var magick = new MagickImage();
-                    await magick.PingAsync(newFile).ConfigureAwait(false);
-                    var item = tab.Gallery.GalleryItems[existingIndex];
-                    item.FileInfo = newFile;
-
-                    var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFile, magick.Width, magick.Height);
-                    item.FileName.Value = thumbData.FileName;
-                    item.FileSize.Value = thumbData.FileSize;
-                    item.FileDate.Value = thumbData.FileDate;
-                    item.FileLocation.Value = thumbData.FileLocation;
-                    item.ImageSize.Value = thumbData.ImageSize;
-
-                    if (thumbnailLoader != null)
-                    {
-                        var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
-                        if (maxHeight <= 0)
-                        {
-                            maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
-                        }
-
-                        var thumb = await thumbnailLoader.GetThumbnailAsync(newFile, (uint)maxHeight).ConfigureAwait(false);
-                        if (thumb != null)
-                        {
-                            thumbnailCache?.Add(tab.Id, newFile.FullName, thumb);
-                        }
-                        item.Image.Value = thumb;
-                        item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(newFile, null) is not null;
-                    }
-                }
-                catch (Exception exception)
-                {
-                    DebugHelper.LogDebug(nameof(FileWatcherService), nameof(OnFileCreatedAsync), exception);
-                }
-            }
-            return;
-        }
-
-        var insertionIndex = iterator.Insert(newFile, _stringComparer);
-        iterator.NotifyFileAdded();
-        tab.UpdateTabTitle();
-
-        if (insertionIndex >= 0 && tab.Gallery.IsGalleryDocked.CurrentValue)
-        {
-            try
-            {
-                await WaitForFileReadyAsync(newFile.FullName, ct: ct).ConfigureAwait(false);
-
-                using var magick = new MagickImage();
-                await magick.PingAsync(newFile).ConfigureAwait(false);
-                var item = new GalleryItemViewModel
-                {
-                    FileInfo = newFile
-                };
-
-                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFile, magick.Width, magick.Height);
-                item.FileName.Value = thumbData.FileName;
-                item.FileSize.Value = thumbData.FileSize;
-                item.FileDate.Value = thumbData.FileDate;
-                item.FileLocation.Value = thumbData.FileLocation;
-                item.ImageSize.Value = thumbData.ImageSize;
-
-                tab.Gallery.GalleryItems.Insert(insertionIndex, item);
-
-                if (thumbnailLoader != null)
-                {
-                    var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
-                    if (maxHeight <= 0)
-                    {
-                        maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
-                    }
-
-                    var thumb = await thumbnailLoader.GetThumbnailAsync(newFile, (uint)maxHeight).ConfigureAwait(false);
-                    if (thumb != null)
-                    {
-                        thumbnailCache?.Add(tab.Id, newFile.FullName, thumb);
-                    }
-                    item.Image.Value = thumb;
-                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(newFile, null) is not null;
-                }
-            }
-            catch (Exception exception)
-            {
-                DebugHelper.LogDebug(nameof(FileWatcherService), nameof(OnFileCreatedAsync), exception);
-            }
-        }
-    }
-
-    private async ValueTask OnFileDeletedAsync(TabViewModel tab, FileSystemEventArgs e)
-    {
-        if (!e.FullPath.IsSupported())
-        {
-            return;
-        }
-        var fullPath = e.FullPath;
-
-        thumbnailCache?.Remove(fullPath);
-        _cache.Invalidate(fullPath);
-        
-        if (tab.ImageIterator is not { } iterator)
-        {
-            return;
-        }
-        var oldIndex = iterator.CurrentIndex;
-        var currentFile = tab.Model.FileInfo;
-        if (currentFile is null)
-        {
-            return;
-        }
-        var wasCurrentFileDeleted = currentFile.FullName.AsSpan().Equals(e.FullPath.AsSpan(), StringComparison.OrdinalIgnoreCase);
-
-        var removeIndex = iterator.Remove(fullPath);
-        if (removeIndex is -1)
-        {
-            return;
-        }
-        
-        if (iterator.Files.Count is 0)
-        {
-            if (tab.ParentWindowContext is not null)
-            {
-                await tab.ParentWindowContext.Mapper.ShowStartUpMenu().ConfigureAwait(false);
-            }
-            return;
-        }
-
-        if (wasCurrentFileDeleted)
-        {
-            var isNavigatingBackwards = Settings.Navigation.IsNavigatingBackwardsWhenDeleting;
-            var targetIndex = isNavigatingBackwards ? oldIndex - 1 : oldIndex;
-            targetIndex = Math.Clamp(targetIndex, 0, iterator.Files.Count - 1);
-            if (tab.IsFileWatcherNavigationEnabled)
-            {
-                await iterator.IterateToIndexAsync(targetIndex, tab.GetTabCancellation())
-                    .ConfigureAwait(false);
-            }
-            else
-            {
-                iterator.SetCurrentIndex(targetIndex);
-            }
-        }
-
-        tab.UpdateTabTitle();
-        
-        if (tab.Gallery.GalleryItems.Count > removeIndex)
-        {
-            tab.Gallery.GalleryItems.RemoveAt(removeIndex);
-        }
-    }
-
-    private async ValueTask OnFileRenamedAsync(TabViewModel tab, RenamedEventArgs e, CancellationToken ct = default)
-    {
-        if (!e.FullPath.IsSupported())
-        {
-            return;
-        }
-
-        thumbnailCache?.Remove(e.OldFullPath);
-        _cache.Invalidate(e.OldFullPath);
-
-        var newFileInfo = new FileInfo(e.FullPath);
-
-        var currentFile = tab.Model?.FileInfo;
-        var wasCurrentFileRenamed = currentFile?.FullName.AsSpan()
-            .Equals(e.OldFullPath.AsSpan(), StringComparison.OrdinalIgnoreCase) ?? false;
-
-        if (tab.ImageIterator is not { } iterator)
-        {
-            return;
-        }
-
-        var (removeIndex, insertionIndex) = iterator.Move(e.OldFullPath, newFileInfo, _stringComparer);
-        if (removeIndex >= 0 && tab.Gallery.GalleryItems.Count > removeIndex)
-        {
-            tab.Gallery.GalleryItems.RemoveAt(removeIndex);
-        }
-
-        if (insertionIndex >= 0 && tab.Gallery.IsGalleryDocked.CurrentValue && insertionIndex <= tab.Gallery.GalleryItems.Count)
-        {
-            try
-            {
-                await WaitForFileReadyAsync(newFileInfo.FullName, ct: ct).ConfigureAwait(false);
-
-                using var magick = new MagickImage();
-                await magick.PingAsync(newFileInfo).ConfigureAwait(false);
-                var item = new GalleryItemViewModel
-                {
-                    FileInfo = newFileInfo
-                };
-
-                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFileInfo, magick.Width, magick.Height);
-                item.FileName.Value = thumbData.FileName;
-                item.FileSize.Value = thumbData.FileSize;
-                item.FileDate.Value = thumbData.FileDate;
-                item.FileLocation.Value = thumbData.FileLocation;
-                item.ImageSize.Value = thumbData.ImageSize;
-
-                tab.Gallery.GalleryItems.Insert(insertionIndex, item);
-
-                if (thumbnailLoader != null)
-                {
-                    var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
-                    if (maxHeight <= 0)
-                    {
-                        maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
-                    }
-
-                    var thumb = await thumbnailLoader.GetThumbnailAsync(newFileInfo, (uint)maxHeight).ConfigureAwait(false);
-                    if (thumb != null)
-                    {
-                        thumbnailCache?.Add(tab.Id, newFileInfo.FullName, thumb);
-                    }
-                    item.Image.Value = thumb;
-                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(newFileInfo, null) is not null;
-                }
-            }
-            catch (Exception exception)
-            {
-                DebugHelper.LogDebug(nameof(FileWatcherService), nameof(OnFileRenamedAsync), exception);
-            }
-        }
-
-        if (wasCurrentFileRenamed)
-        {
-            var currentModel = tab.Model;
-            if (currentModel != null)
-            {
-                var newModel = new ImageModel
-                {
-                    FileInfo = newFileInfo,
-                    Image = currentModel.Image,
-                    ImageType = currentModel.ImageType
-                };
-                tab.Display(newModel, tab.SecondaryModel);
-            }
-        }
-
-        tab.UpdateTabTitle();
-        
-        FileHistoryManager.Rename(e.OldFullPath, e.FullPath);
-    }
-
-    /// Update the tabs FileInfo to reflect an updated new file size
-    private async ValueTask OnFileChangedAsync(TabViewModel tab, FileSystemEventArgs e, CancellationToken ct = default)
-    {
-        if (!e.FullPath.IsSupported())
-        {
-            return;
-        }
-
-        var newFile = new FileInfo(e.FullPath);
-        if (tab.ImageIterator is not { } iterator)
-        {
-            return;
-        }
-        var index = iterator.Replace(newFile);
-
-        var isCurrentFile = string.Equals(e.FullPath, tab.FileInfo?.CurrentValue?.FullName, StringComparison.OrdinalIgnoreCase);
-
-        thumbnailCache?.Remove(newFile.FullName);
-        _cache.Invalidate(newFile.FullName);
-
-        try
-        {
-            await WaitForFileReadyAsync(newFile.FullName, ct: ct).ConfigureAwait(false);
-
-            if (isCurrentFile)
-            {
-                using var magick = new MagickImage();
-                await magick.PingAsync(newFile, ct).ConfigureAwait(false);
-                tab.Model.PixelWidth = magick.Width;
-                tab.Model.PixelHeight = magick.Height;
-                tab.Model.FileInfo = newFile;
-                tab.FileInfo.Value = newFile;
-                tab.UpdateTabTitle();
-            }
-
-            if (tab.Gallery.IsGalleryDocked.CurrentValue && index >= 0 && index < tab.Gallery.GalleryItems.Count)
-            {
-                var item = tab.Gallery.GalleryItems[index];
-                item.FileInfo = newFile;
-
-                using var magick = new MagickImage();
-                await magick.PingAsync(newFile).ConfigureAwait(false);
-                var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(newFile, magick.Width, magick.Height);
-                item.FileName.Value = thumbData.FileName;
-                item.FileSize.Value = thumbData.FileSize;
-                item.FileDate.Value = thumbData.FileDate;
-                item.FileLocation.Value = thumbData.FileLocation;
-                item.ImageSize.Value = thumbData.ImageSize;
-
-                if (thumbnailLoader != null)
-                {
-                    var maxHeight = Math.Max(Settings.Gallery.DockedGalleryItemSize, Settings.Gallery.ExpandedGalleryItemSize);
-                    if (maxHeight <= 0)
-                    {
-                        maxHeight = GalleryDefaults.DefaultDockedGalleryHeight;
-                    }
-
-                    var thumb = await thumbnailLoader.GetThumbnailAsync(newFile, (uint)maxHeight).ConfigureAwait(false);
-                    if (thumb != null)
-                    {
-                        thumbnailCache?.Add(tab.Id, newFile.FullName, thumb);
-                    }
-                    item.Image.Value = thumb;
-                    item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(newFile, null) is not null;
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            DebugHelper.LogDebug(nameof(FileWatcherService), nameof(OnFileChangedAsync), exception);
         }
     }
 
