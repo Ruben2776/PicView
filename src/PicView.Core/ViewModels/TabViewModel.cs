@@ -128,6 +128,7 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     public TabOrientation Orientation { get; } = new(parentWindowContext?.Translation);
     public BindableReactiveProperty<bool> ShouldCropBeEnabled { get; } = new(false);
     public BindableReactiveProperty<bool> ShouldOptimizeImageBeEnabled { get; } = new(false);
+    public BindableReactiveProperty<bool> ShouldPrintBeEnabled { get; } = new(true);
     public BindableReactiveProperty<double> InitialZoom { get; } = new(1);
     public BindableReactiveProperty<int> ZoomLevel { get; } = new();
 

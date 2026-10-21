@@ -7,6 +7,7 @@ using ObservableCollections;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Navigation;
+using PicView.Core.Conversion;
 using PicView.Core.DebugTools;
 using PicView.Core.Localization;
 using PicView.Core.ViewModels;
@@ -140,6 +141,9 @@ public partial class DropDownMenu : AnimatedMenu
                         CropManager.SetIfCropEnabled(_mainWindow);
                     vm.FileHistory.UpdateHistory();
                     vm.Favorites.UpdateFavorites();
+                    var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+                    tab.ShouldPrintBeEnabled.Value =
+                        ConversionHelper.DetermineIfPrintMenuItemShouldBeEnabled(tab);
                 }
                 else
                 {

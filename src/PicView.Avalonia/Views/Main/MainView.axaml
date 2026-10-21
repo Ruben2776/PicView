@@ -55,10 +55,7 @@
                 Command="{CompiledBinding PrintCommand}"
                 Header="{CompiledBinding Translation.Print.Value,
                                          Mode=OneWay}"
-                IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
-                                            Converter={x:Static ObjectConverters.IsNotNull},
-                                            FallbackValue=False,
-                                            Mode=OneWay}"
+                IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldPrintBeEnabled.Value}"
                 x:Name="PrintMenuItem">
                 <MenuItem.Icon>
                     <Path Classes="PrintPath" />

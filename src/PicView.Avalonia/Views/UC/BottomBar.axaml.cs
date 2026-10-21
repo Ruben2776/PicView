@@ -7,6 +7,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.DragAndDrop;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.Conversion;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
@@ -128,6 +129,8 @@ public partial class BottomBar : UserControl, IDisposable
         else
         {
             vm.TopTitlebarViewModel.DropDownMenu.ToggleFileMenu();
+            vm.WindowTabs.ActiveTab.CurrentValue.ShouldPrintBeEnabled.Value =
+                ConversionHelper.DetermineIfPrintMenuItemShouldBeEnabled(vm.WindowTabs.ActiveTab.CurrentValue); 
         }
     }
 

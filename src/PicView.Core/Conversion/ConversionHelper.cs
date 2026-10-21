@@ -1,5 +1,6 @@
 ﻿using PicView.Core.DebugTools;
 using PicView.Core.ImageDecoding;
+using PicView.Core.ViewModels;
 
 namespace PicView.Core.Conversion;
 
@@ -46,4 +47,7 @@ public static class ConversionHelper
             return false;
         }
     }
+    
+    public static bool DetermineIfPrintMenuItemShouldBeEnabled(TabViewModel tab) =>
+        tab.Image.CurrentValue is not null && !Settings.ImageScaling.ShowImageSideBySide;
 }

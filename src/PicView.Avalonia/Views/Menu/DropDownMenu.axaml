@@ -529,6 +529,26 @@
                 Text="{Binding Translation.Crop.Value}"
                 x:Name="CropButton" />
 
+            <!--  Print  -->
+            <customControls:TextIconButton
+                Background="Transparent"
+                Classes="hover"
+                Click="Close_OnClick"
+                Command="{Binding PrintCommand}"
+                Data="{StaticResource PrintGeometry}"
+                DockPanel.Dock="Top"
+                Focusable="True"
+                Foreground="{DynamicResource MainTextColor}"
+                IconHeight="14"
+                IconMargin="0,0,7,0"
+                IconWidth="14"
+                IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldPrintBeEnabled.Value}"
+                IsTabStop="True"
+                IsVisible="{Binding TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value}"
+                Padding="15,7,15,7"
+                Text="{Binding Translation.Crop.Value}"
+                x:Name="PrintButton" />
+
             <Rectangle
                 DockPanel.Dock="Top"
                 Fill="{DynamicResource DropDownMenuButtonBorderColor}"
