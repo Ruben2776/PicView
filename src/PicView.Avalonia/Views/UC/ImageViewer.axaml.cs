@@ -250,7 +250,10 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     private void TouchMagnifyEvent(object? sender, PointerDeltaEventArgs e) =>
         ZoomPanControl.ZoomWithPointerWheelCore(e.Delta.Y > 0, e.GetPosition(this));
 
-    private async ValueTask PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
+    private void PreviewOnPointerWheelChanged(object? sender, PointerWheelEventArgs e) =>
+        _ = PreviewOnPointerWheelChangedAsync(e);
+
+    private async ValueTask PreviewOnPointerWheelChangedAsync(PointerWheelEventArgs e)
     {
         if (GalleryView.IsPointerOver)
         {

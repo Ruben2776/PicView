@@ -374,34 +374,35 @@ public sealed class MainWindowLifecycle
     private static void AddInputHandlers(MainWindow window)
     {
         // Using AddHandler fixes the first keydown event not firing properly
-        window.AddHandler(InputElement.KeyDownEvent, KeyDownAsync, RoutingStrategies.Tunnel);
-        window.AddHandler(InputElement.KeyUpEvent, KeyUpAsync, RoutingStrategies.Tunnel);
-        window.AddHandler(InputElement.PointerPressedEvent, PointerPressedAsync, RoutingStrategies.Tunnel);
+        // Typed handlers, since Avalonia calls an untyped Delegate through reflection on every event
+        window.AddHandler(InputElement.KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
+        window.AddHandler(InputElement.KeyUpEvent, OnKeyUp, RoutingStrategies.Tunnel);
+        window.AddHandler(InputElement.PointerPressedEvent, OnPointerPressed, RoutingStrategies.Tunnel);
         window.Deactivated += delegate { window.KeybindRouter.Deactivated(); };
     }
 
-    private static async ValueTask KeyDownAsync(object? sender, KeyEventArgs e)
+    private static void OnKeyDown(object? sender, KeyEventArgs e)
     {
         if (sender is MainWindow window)
         {
-            await window.KeybindRouter.KeyDownAsync(new Keybind(e.Key, e.KeyModifiers),
-                window.FocusManager?.GetFocusedElement()).ConfigureAwait(false);
+            _ = window.KeybindRouter.KeyDownAsync(new Keybind(e.Key, e.KeyModifiers),
+                window.FocusManager?.GetFocusedElement());
         }
     }
 
-    private static async ValueTask KeyUpAsync(object? sender, KeyEventArgs e)
+    private static void OnKeyUp(object? sender, KeyEventArgs e)
     {
         if (sender is MainWindow window)
         {
-            await window.KeybindRouter.KeyUpAsync(e.Key).ConfigureAwait(false);
+            _ = window.KeybindRouter.KeyUpAsync(e.Key);
         }
     }
 
-    private static async ValueTask PointerPressedAsync(object? sender, PointerPressedEventArgs e)
+    private static void OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (sender is MainWindow window)
         {
-            await ImageViewerClickBehavior.PointerPressedAsync(e, window).ConfigureAwait(false);
+            _ = ImageViewerClickBehavior.PointerPressedAsync(e, window);
         }
     }
 }
