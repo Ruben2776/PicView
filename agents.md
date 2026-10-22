@@ -49,6 +49,14 @@ Run tests in a specific class:
 dotnet test PicView.Tests\PicView.Tests.csproj --filter "FullyQualifiedName~PicView.Tests.Navigation.SharedImageCacheTests"
 ```
 
+Run the input allocation tests in Release. A Debug build makes every async state machine a class that allocates, so they skip themselves there (`-p:Optimize=true` does not help, since an incremental build does not recompile for it):
+
+```powershell
+dotnet test PicView.Tests\PicView.Tests.csproj -c Release --filter "FullyQualifiedName~PicView.Tests.Input.InputAllocationTests"
+```
+
+Tests that use Debug-only members (such as `UpdateManager.ForceUpdate`) go inside `#if DEBUG`, so the test project still builds in Release.
+
 ### Adding New Tests
 
 1. Create a `.cs` file in `PicView.Tests/` (or a subdirectory for organization, e.g., `Navigation/`).
@@ -89,6 +97,7 @@ public class TempFileTests
 - **Naming**: PascalCase for public members, `_camelCase` for private fields. Test methods use `MethodOrScenario_Condition_ExpectedResult` pattern.
 - **Async patterns**: `async Task` / `ValueTask` used extensively; avoid `async void`.
 - **Reactive extensions**: R3 (`ObservableCollections.R3`, `R3`) used for reactive patterns in ViewModels.
+- **Input hot path**: Turning a key press, mouse button or wheel step into its Action must not allocate per press. Don't build lists, LINQ queries, closures or objects per press; build them once and use hand-written if statements. `PicView.Tests/Input/InputAllocationTests.cs` guards it; run it in Release (see Running Tests).
 
 ## Project Structure
 

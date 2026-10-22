@@ -20,7 +20,9 @@ public class UpdateManagerTests
     [Fact]
     public async Task UpdateCurrentVersion_WhenVersionIsCurrent_ReturnsFalse()
     {
+#if DEBUG
         UpdateManager.ForceUpdate = false;
+#endif
 
         var dummyPlatformUpdate = new DummyPlatformUpdate();
 
@@ -32,6 +34,8 @@ public class UpdateManagerTests
         Assert.False(dummyPlatformUpdate.HandlePlatformUpdateCalled);
     }
 
+    // ForceUpdate exists only in Debug builds
+#if DEBUG
     [Fact]
     public async Task UpdateCurrentVersion_WhenVersionIsOld_ReturnsTrue()
     {
@@ -55,4 +59,5 @@ public class UpdateManagerTests
             UpdateManager.ForceUpdate = false;
         }
     }
+#endif
 }

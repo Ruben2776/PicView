@@ -61,7 +61,9 @@ public class AboutViewModelTests
         var mockUpdate = new MockPlatformSpecificUpdate();
         using var vm = new AboutViewModel(mockUpdate);
 
+#if DEBUG
         UpdateManager.ForceUpdate = false;
+#endif
         await vm.UpdateCurrentVersion();
 
         Assert.False(vm.IsUpdateAvailable.Value);

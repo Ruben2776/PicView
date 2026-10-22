@@ -243,6 +243,8 @@ public class KeybindingsFavoritesTests : IDisposable
         return controller;
     }
 
+    // ActionBox exists only in Debug builds
+#if DEBUG
     [AvaloniaFact]
     public void EditingActionBox_WithKeybindOfAnotherAction_TakesItImmediately()
     {
@@ -363,6 +365,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Assert.Equal([new Keybind(Key.Right)], controller.ActionBox("Next")!.Keybinds);
         Assert.Equal(live, Keymaps.Current);
     }
+#endif
 
     private static void Click(Button button) =>
         ((IInvokeProvider)ControlAutomationPeer.CreatePeerForElement(button)).Invoke();
