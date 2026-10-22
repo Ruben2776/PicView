@@ -48,7 +48,15 @@ public class GalleryItemBadgeTests
         }));
 
         Assert.NotNull(_badge);
-        Assert.True(_gallerySettings!.ShowMotionPhotoBadges.Value);
+        Assert.False(_gallerySettings!.ShowMotionPhotoBadges.Value);
+        Assert.False(_badge.IsVisible);
+
+        // Badges are off by default, turning the setting on shows the badge of a motion photo
+        RunWithDispatcher(Dispatcher.UIThread.InvokeAsync<bool>(() =>
+        {
+            _gallerySettings.ShowMotionPhotoBadges.Value = true;
+            return true;
+        }));
         Assert.True(_badge.IsVisible);
 
         // Turning the setting off hides the badge even though the item is a motion photo

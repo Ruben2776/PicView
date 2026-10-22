@@ -106,15 +106,19 @@ public static class SupportedFiles
     public static List<string> ConvertArchivesToGlobFormat() =>
         FileExtensionsArchives.Select(ext => $"*{ext}").ToList();
 
+    // Ignores case, since cameras write IMG_1234.JPG
+    private static bool IsCommonExtension(ReadOnlySpan<char> extension) =>
+        extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+        extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+        extension.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
+        extension.Equals(".bmp", StringComparison.OrdinalIgnoreCase) ||
+        extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) ||
+        extension.Equals(".jfif", StringComparison.OrdinalIgnoreCase);
+
     /// <param name="file">File to check</param>
     extension(string file)
     {
-        public bool IsCommon()
-            => Path.GetExtension(file).ToLowerInvariant() switch
-            {
-                ".jpg" or ".jpeg" or ".png" or ".bmp" or ".gif" or ".jfif" => true,
-                _ => false
-            };
+        public bool IsCommon() => IsCommonExtension(Path.GetExtension(file.AsSpan()));
 
         /// <summary>
         /// Extension method to check if a file is supported.
@@ -134,12 +138,7 @@ public static class SupportedFiles
     /// <param name="fileInfo">FileInfo to check</param>
     extension(FileInfo fileInfo)
     {
-        public bool IsCommon()
-            => fileInfo.Extension switch
-            {
-                ".jpg" or ".jpeg" or ".png" or ".bmp" or ".gif" or ".jfif" => true,
-                _ => false
-            };
+        public bool IsCommon() => IsCommonExtension(Path.GetExtension(fileInfo.FullName.AsSpan()));
         
         /// <summary>
         /// Extension method to check if a `FileInfo` is supported.

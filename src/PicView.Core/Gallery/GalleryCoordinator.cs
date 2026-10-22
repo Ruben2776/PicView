@@ -10,6 +10,12 @@ namespace PicView.Core.Gallery;
 public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache)
     : IDisposable
 {
+    /// <summary>
+    /// Shared by every gallery, so thumbnail loading never puts more than a few reads on the disk at once.
+    /// Without a cap each realized item starts its own read, the thread pool grows to match, and the disk thrashes.
+    /// </summary>
+    private static readonly SemaphoreSlim ThumbnailSlots = new(Math.Clamp(Environment.ProcessorCount / 2, 2, 4));
+
     private CancellationTokenSource? _cts;
 
     public void LoadGallery(IReadOnlyList<FileInfo> files, CoreViewModel core)
@@ -111,19 +117,33 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
                 return cached;
             }
 
-            return await Task.Run(async () =>
+            // Items that scroll out of view cancel while they wait, so the slots go to what is visible
+            await ThumbnailSlots.WaitAsync(cancellationToken).ConfigureAwait(false);
+            try
             {
-                var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight, core)
-                    .ConfigureAwait(false);
-                if (thumb is not null)
+                return await Task.Run(async () =>
                 {
-                    thumbnailCache.Add(tab.Id, file.FullName, thumb);
-                }
+                    var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight, core)
+                        .ConfigureAwait(false);
+                    if (thumb is not null)
+                    {
+                        thumbnailCache.Add(tab.Id, file.FullName, thumb);
+                    }
 
-                item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(item.FileInfo, xmpPacket, fastMode: true) is not null;
+                    // Detection reads the file again up to three times, so skip it while the badges are hidden
+                    if (Settings.Gallery.ShowMotionPhotoBadges)
+                    {
+                        item.IsMotionPhoto.Value =
+                            MotionPhotoDetector.TryDetect(item.FileInfo, xmpPacket, fastMode: true) is not null;
+                    }
 
-                return thumb;
-            }, cancellationToken).ConfigureAwait(false);
+                    return thumb;
+                }, cancellationToken).ConfigureAwait(false);
+            }
+            finally
+            {
+                ThumbnailSlots.Release();
+            }
         };
 
         return item;

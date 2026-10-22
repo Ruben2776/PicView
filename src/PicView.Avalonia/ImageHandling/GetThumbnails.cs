@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using ImageMagick;
+using ImageMagick.Formats;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.ImageReading;
@@ -13,7 +14,10 @@ namespace PicView.Avalonia.ImageHandling;
 
 public static class GetThumbnails
 {
-    public static async ValueTask<Bitmap?> GetThumbAsync(FileInfo fileInfo, uint height, CoreViewModel? core = null, MagickImage? magick = null)
+    public static ValueTask<Bitmap?> GetThumbAsync(FileInfo fileInfo, uint height, CoreViewModel? core = null, MagickImage? magick = null) =>
+        ValueTask.FromResult(GetThumb(fileInfo, height, core, magick));
+
+    private static Bitmap? GetThumb(FileInfo fileInfo, uint height, CoreViewModel? core, MagickImage? magick)
     {
         try
         {
@@ -40,20 +44,20 @@ public static class GetThumbnails
                     magick = new MagickImage();
 #pragma warning disable MA0042
                     // ReSharper disable once MethodHasAsyncOverload
-                    magick.Ping(fileInfo);
+                    magick.Ping(fileInfo, CreatePingSettings());
 #pragma warning restore MA0042
                 }
 
                 var profile = magick.GetExifProfile();
                 if (profile is null)
                 {
-                    return await CreateThumbAsync(magick, fileInfo, height).ConfigureAwait(false);
+                    return CreateThumb(magick, fileInfo, height);
                 }
 
                 using var thumbnail = profile.CreateThumbnail();
                 if (thumbnail is null || thumbnail.Height < height)
                 {
-                    return await CreateThumbAsync(magick, fileInfo, height).ConfigureAwait(false);
+                    return CreateThumb(magick, fileInfo, height);
                 }
 
                 thumbnail.AutoOrient();
@@ -165,7 +169,7 @@ public static class GetThumbnails
         }
     }
 
-    private static async ValueTask<Bitmap?> CreateThumbAsync(MagickImage magick, FileInfo fileInfo, uint height)
+    private static Bitmap? CreateThumb(MagickImage magick, FileInfo fileInfo, uint height)
     {
         switch (magick.Format)
         {
@@ -185,8 +189,6 @@ public static class GetThumbnails
             case MagickFormat.Jpeg:
             case MagickFormat.Pjpeg:
             case MagickFormat.Bmp:
-            case MagickFormat.Tif:
-            case MagickFormat.Tiff:
             case MagickFormat.Ico:
             case MagickFormat.Icon:
             case MagickFormat.Wbmp:
@@ -199,13 +201,80 @@ public static class GetThumbnails
                 return null;
             default:
             {
-                magick = await MagickPerformanceReader.ReadMagickImageWithSpanAsync(fileInfo, magick).ConfigureAwait(false);
-        
+                var rawPreviewThumb = GetRawPreviewThumb(magick, height);
+                if (rawPreviewThumb is not null)
+                {
+                    return rawPreviewThumb;
+                }
+
+                // Read the file natively instead of through a buffer the size of the file, and pass the pinged format
+                // so formats without a signature (TGA) are still recognized
+                var settings = new MagickReadSettings();
+                if (magick.Format is not MagickFormat.Unknown)
+                {
+                    settings.Format = magick.Format;
+                }
+#pragma warning disable MA0042
+                // ReSharper disable once MethodHasAsyncOverload
+                magick.Read(fileInfo, settings);
+#pragma warning restore MA0042
+
                 var geometry = new MagickGeometry(0, height);
                 magick.AutoOrient();
                 magick.Thumbnail(geometry);
                 return MagickBitmapConverter.ToBgraWriteableBitmap(magick);
             }
+        }
+    }
+
+    /// <summary>
+    /// Ping settings that also make the RAW coder keep the camera's embedded JPEG preview,
+    /// so a RAW thumbnail does not need the whole sensor demosaiced.
+    /// </summary>
+    private static MagickReadSettings CreatePingSettings()
+    {
+        var settings = new MagickReadSettings();
+        settings.SetDefines(new DngReadDefines { ReadThumbnail = true });
+        return settings;
+    }
+
+    /// <summary>
+    /// Makes the thumbnail from the embedded preview a RAW file was pinged with, decoding the JPEG at a reduced size.
+    /// Returns null when there is no preview or it is smaller than <paramref name="height"/>.
+    /// </summary>
+    private static Bitmap? GetRawPreviewThumb(MagickImage magick, uint height)
+    {
+        var data = magick.GetProfile("dng:thumbnail")?.ToByteArray();
+        if (data is null || data.Length == 0)
+        {
+            return null;
+        }
+
+        try
+        {
+            var settings = new MagickReadSettings { Format = MagickFormat.Jpeg };
+            // Both sides at least height, so the preview is still tall enough after a 90 degree rotation
+            settings.SetDefines(new JpegReadDefines { Size = new MagickGeometry(height, height) });
+            using var preview = new MagickImage(data, settings);
+
+            // The preview is stored in sensor orientation, the RAW file knows how the camera was held
+            if (magick.Orientation is not Orientation.Undefined)
+            {
+                preview.Orientation = magick.Orientation;
+            }
+            preview.AutoOrient();
+            if (preview.Height < height)
+            {
+                return null;
+            }
+
+            preview.Thumbnail(new MagickGeometry(0, height));
+            return MagickBitmapConverter.ToBgraWriteableBitmap(preview);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GetThumbnails), nameof(GetRawPreviewThumb), e);
+            return null;
         }
     }
 
