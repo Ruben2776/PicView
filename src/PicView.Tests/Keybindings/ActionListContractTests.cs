@@ -8,7 +8,7 @@ namespace PicView.Tests.Keybindings;
 
 public class ActionListContractTests
 {
-    // GetFunctionByName only builds delegates, so the constructor dependencies are never touched.
+    // The constructor only builds delegates, so its dependencies are never touched.
     private readonly FunctionsMapper _mapper = new(null!, null!);
 
     [Fact]
