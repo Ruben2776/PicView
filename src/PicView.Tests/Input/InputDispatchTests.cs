@@ -35,16 +35,11 @@ public class InputDispatchTests
         }
     }
 
-    private static async Task<(FakeHandler Handler, KeymapResolution? Ordinary)> Dispatch(
+    private static async Task<(FakeHandler Handler, KeymapResolution Ordinary)> Dispatch(
         Keybind keybind, InputModeState state, params (InputMode, string)[] claims)
     {
         var handler = new FakeHandler(claims);
-        KeymapResolution? ordinary = null;
-        await InputDispatch.DispatchAsync(keybind, state, Keymap, handler, resolution =>
-        {
-            ordinary = resolution;
-            return ValueTask.CompletedTask;
-        });
+        var ordinary = await InputDispatch.DispatchAsync(keybind, state, Keymap, handler);
         return (handler, ordinary);
     }
 
@@ -54,7 +49,7 @@ public class InputDispatchTests
         var (handler, ordinary) = await Dispatch(Enter, Crop, (InputMode.Crop, "Confirm"));
 
         Assert.Equal([(InputMode.Crop, "Confirm")], handler.Asked);
-        Assert.Null(ordinary);
+        Assert.Equal(KeymapResolution.None, ordinary);
     }
 
     [Fact]
@@ -71,7 +66,7 @@ public class InputDispatchTests
         var (handler, ordinary) = await Dispatch(Escape, Crop);
 
         Assert.Equal([(InputMode.Crop, "Cancel")], handler.Asked);
-        Assert.Null(ordinary);
+        Assert.Equal(KeymapResolution.None, ordinary);
     }
 
     [Fact]
@@ -102,7 +97,7 @@ public class InputDispatchTests
         var (handler, ordinary) = await Dispatch(Escape, MotionPhotoInSlideshow, (InputMode.Slideshow, "Cancel"));
 
         Assert.Equal([(InputMode.MotionPhoto, "Cancel"), (InputMode.Slideshow, "Cancel")], handler.Asked);
-        Assert.Null(ordinary);
+        Assert.Equal(KeymapResolution.None, ordinary);
     }
 
     [Fact]
@@ -119,7 +114,7 @@ public class InputDispatchTests
     {
         var (_, ordinary) = await Dispatch(Right, Dialog);
 
-        Assert.Null(ordinary);
+        Assert.Equal(KeymapResolution.None, ordinary);
     }
 
     private static readonly Keymap CopyKeymap = Keymap.FromJson(null,
@@ -129,44 +124,40 @@ public class InputDispatchTests
     public async Task CopyChord_InCrop_IsTheFixedCopyAction()
     {
         var handler = new FakeHandler((InputMode.Crop, ContextualActionHandler.Copy));
-        KeymapResolution? ordinary = null;
 
-        await InputDispatch.DispatchAsync(InputDispatch.CopyKeybind, Crop, CopyKeymap, handler, resolution =>
-        {
-            ordinary = resolution;
-            return ValueTask.CompletedTask;
-        });
+        var ordinary = await InputDispatch.DispatchAsync(InputDispatch.CopyKeybind, Crop, CopyKeymap, handler);
 
         Assert.Equal([(InputMode.Crop, ContextualActionHandler.Copy)], handler.Asked);
-        Assert.Null(ordinary);
+        Assert.Equal(KeymapResolution.None, ordinary);
     }
 
     [Fact]
     public async Task CopyChord_InNormal_FallsThroughToItsOrdinaryAction()
     {
         var handler = new FakeHandler();
-        KeymapResolution? ordinary = null;
 
-        await InputDispatch.DispatchAsync(InputDispatch.CopyKeybind, Normal, CopyKeymap, handler, resolution =>
-        {
-            ordinary = resolution;
-            return ValueTask.CompletedTask;
-        });
+        var ordinary = await InputDispatch.DispatchAsync(InputDispatch.CopyKeybind, Normal, CopyKeymap, handler);
 
         Assert.Equal(KeymapResolution.Action("CopyImage"), ordinary);
     }
 
     [Theory]
-    [InlineData(false, false, false, false, false, new[] { InputMode.Normal })]
-    [InlineData(true, false, true, false, false, new[] { InputMode.Dialog })]
-    [InlineData(false, false, false, false, true, new[] { InputMode.Slideshow, InputMode.Normal })]
-    [InlineData(false, false, false, true, true, new[] { InputMode.MotionPhoto, InputMode.Slideshow, InputMode.Normal })]
-    public void ContextualChain_IsTheBlockingModeOrEveryActiveNonBlockingModeThenNormal(
+    [InlineData(false, false, false, false, false, false, new[] { InputMode.Normal })]
+    [InlineData(true, false, true, false, false, false, new[] { InputMode.Dialog })]
+    [InlineData(false, false, false, false, true, false, new[] { InputMode.Slideshow, InputMode.Normal })]
+    [InlineData(false, false, false, true, true, false,
+        new[] { InputMode.MotionPhoto, InputMode.Slideshow, InputMode.Normal })]
+    [InlineData(false, false, false, false, true, true,
+        new[] { InputMode.AnimatedImage, InputMode.Slideshow, InputMode.Normal })]
+    public async Task UnclaimedContextualAction_AsksTheBlockingModeOrEveryActiveNonBlockingModeThenNormal(
         bool isDialogOpen, bool isRenaming, bool isCropping, bool isMotionPhotoActive, bool isSlideshowRunning,
-        InputMode[] expected)
+        bool isAnimatedImageActive, InputMode[] expected)
     {
-        var state = new InputModeState(isDialogOpen, isRenaming, isCropping, isMotionPhotoActive, isSlideshowRunning);
+        var state = new InputModeState(isDialogOpen, isRenaming, isCropping, isMotionPhotoActive, isSlideshowRunning,
+            isAnimatedImageActive);
 
-        Assert.Equal(expected, state.ContextualChain());
+        var (handler, _) = await Dispatch(Escape, state);
+
+        Assert.Equal(expected, handler.Asked.Select(asked => asked.Mode));
     }
 }

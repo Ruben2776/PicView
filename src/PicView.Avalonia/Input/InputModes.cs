@@ -34,7 +34,7 @@ public static class InputModes
     /// A pop-up stays in the main panel while it animates closed, and some are hidden instead of removed.
     /// </summary>
     private static bool IsPopUpOpen(MainWindow window) =>
-        window.UIHelper.GetMainView?.MainPanel.Children.OfType<AnimatedPopUp>().Any(popUp => popUp.IsVisible) ?? false;
+        ContextualActionHandler.TopPopUp(window.UIHelper.GetMainView?.MainPanel) is not null;
 
     private static bool IsMenuOpen(MainWindowViewModel vm) =>
         (vm.TopTitlebarViewModel.DropDownMenu?.IsDropDownMenuVisible.CurrentValue ?? false) ||

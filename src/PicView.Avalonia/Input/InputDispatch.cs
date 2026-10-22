@@ -44,29 +44,58 @@ public static class InputDispatch
         return keybind == CopyKeybind ? ContextualActionHandler.Copy : keymap.ResolveContextual(keybind);
     }
 
-    public static async ValueTask DispatchAsync(
+    /// <summary>
+    /// Runs the Contextual Action <paramref name="keybind"/> stands for when an Input Mode gives it a meaning.
+    /// </summary>
+    /// <returns>The ordinary Action to run, or <see cref="KeymapResolution.None"/> when a mode claimed
+    /// <paramref name="keybind"/> or a blocking mode blocks it.</returns>
+    public static async ValueTask<KeymapResolution> DispatchAsync(
         Keybind keybind,
         InputModeState state,
         Keymap keymap,
-        IContextualActionHandler handler,
-        Func<KeymapResolution, ValueTask> runOrdinary)
+        IContextualActionHandler handler)
     {
-        if (ContextualActionOf(keybind, keymap) is { } contextualAction)
+        var mode = state.Resolve();
+        if (ContextualActionOf(keybind, keymap) is { } contextualAction &&
+            await ClaimAsync(contextualAction, mode, state, handler).ConfigureAwait(false))
         {
-            foreach (var mode in state.ContextualChain())
-            {
-                // Stay on the UI thread: modes and ordinary Actions work on the window
-                if (await handler.TryRunAsync(mode, contextualAction).ConfigureAwait(false))
-                {
-                    return;
-                }
-            }
+            return KeymapResolution.None;
         }
 
-        var resolution = keymap.Resolve(keybind, state.Resolve());
-        if (resolution.Owner is not KeymapOwner.None)
+        return keymap.Resolve(keybind, mode);
+    }
+
+    /// <summary>
+    /// Asks a blocking <paramref name="mode"/> alone, else every active non-blocking mode from highest rank down,
+    /// then <see cref="InputMode.Normal"/>, whether it gives <paramref name="contextualAction"/> a meaning.
+    /// </summary>
+    private static async ValueTask<bool> ClaimAsync(
+        string contextualAction,
+        InputMode mode,
+        InputModeState state,
+        IContextualActionHandler handler)
+    {
+        // Stay on the UI thread: modes and ordinary Actions work on the window
+        if (mode.IsBlocking())
         {
-            await runOrdinary(resolution).ConfigureAwait(false);
+            return await handler.TryRunAsync(mode, contextualAction).ConfigureAwait(false);
         }
+
+        if (state.IsMotionPhotoActive && await handler.TryRunAsync(InputMode.MotionPhoto, contextualAction).ConfigureAwait(false))
+        {
+            return true;
+        }
+
+        if (state.IsAnimatedImageActive && await handler.TryRunAsync(InputMode.AnimatedImage, contextualAction).ConfigureAwait(false))
+        {
+            return true;
+        }
+
+        if (state.IsSlideshowRunning && await handler.TryRunAsync(InputMode.Slideshow, contextualAction).ConfigureAwait(false))
+        {
+            return true;
+        }
+
+        return await handler.TryRunAsync(InputMode.Normal, contextualAction).ConfigureAwait(false);
     }
 }

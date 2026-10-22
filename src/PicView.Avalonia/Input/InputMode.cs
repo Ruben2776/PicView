@@ -62,38 +62,6 @@ public readonly record struct InputModeState(
 
         return IsSlideshowRunning ? InputMode.Slideshow : InputMode.Normal;
     }
-
-    /// <summary>
-    /// The modes asked in turn to give a Contextual Action a meaning: a blocking mode alone, or every active
-    /// non-blocking mode from highest rank down, followed by <see cref="InputMode.Normal"/>.
-    /// </summary>
-    public IReadOnlyList<InputMode> ContextualChain()
-    {
-        var mode = Resolve();
-        if (mode.IsBlocking())
-        {
-            return [mode];
-        }
-
-        var chain = new List<InputMode>(3);
-        if (IsMotionPhotoActive)
-        {
-            chain.Add(InputMode.MotionPhoto);
-        }
-
-        if (IsAnimatedImageActive)
-        {
-            chain.Add(InputMode.AnimatedImage);
-        }
-
-        if (IsSlideshowRunning)
-        {
-            chain.Add(InputMode.Slideshow);
-        }
-
-        chain.Add(InputMode.Normal);
-        return chain;
-    }
 }
 
 public static class InputModeExtensions

@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Core.IPlatform;
 using PicView.Core.Sizing;
@@ -23,6 +22,7 @@ public sealed class KeybindRouter
     private readonly Func<Window?> _newestSecondaryWindow;
 
     private readonly HashSet<Key> _ignoredUntilReleased = [];
+    private IContextualActionHandler? _contextualActionHandler;
     private Keybind _lastKeyDown;
     private int _keyDownCount;
 
@@ -86,7 +86,8 @@ public sealed class KeybindRouter
             return;
         }
 
-        await DispatchAsync(keybind, state, vm).ConfigureAwait(false);
+        var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm));
+        await Keymaps.ExecuteAsync(ordinary, vm.Mapper).ConfigureAwait(false);
     }
 
     public async ValueTask KeyUpAsync(Key key)
@@ -124,7 +125,8 @@ public sealed class KeybindRouter
             return;
         }
 
-        await DispatchAsync(keybind, state, vm).ConfigureAwait(false);
+        var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm));
+        await Keymaps.ExecuteAsync(ordinary, vm.Mapper).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -152,22 +154,21 @@ public sealed class KeybindRouter
         }
 
         var isTouchPad = isTouch || Settings.Zoom.IsUsingTouchPad;
-        await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm), async resolution =>
+        var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm)).ConfigureAwait(false);
+        switch (ordinary.Value)
         {
-            switch (resolution.Value)
-            {
-                case nameof(IFunctionsMapper.ZoomIn) or nameof(IFunctionsMapper.ZoomOut):
-                    var zoomIn = resolution.Value is nameof(IFunctionsMapper.ZoomIn);
-                    await Dispatcher.UIThread.InvokeAsync(() => viewer.ZoomAt(zoomIn, pointer));
-                    break;
-                default:
-                    if (!isTouchPad)
-                    {
-                        await Keymaps.ExecuteAsync(resolution, vm.Mapper).ConfigureAwait(false);
-                    }
-                    break;
-            }
-        }).ConfigureAwait(false);
+            case nameof(IFunctionsMapper.ZoomIn) or nameof(IFunctionsMapper.ZoomOut):
+                // Dispatch stays on the UI thread
+                viewer.ZoomAt(zoomIn: ordinary.Value is nameof(IFunctionsMapper.ZoomIn), pointer);
+                break;
+            default:
+                if (!isTouchPad)
+                {
+                    await Keymaps.ExecuteAsync(ordinary, vm.Mapper).ConfigureAwait(false);
+                }
+                break;
+        }
+
         return true;
     }
 
@@ -185,11 +186,12 @@ public sealed class KeybindRouter
     /// </summary>
     public void IgnoreUntilReleased(Key key) => _ignoredUntilReleased.Add(key);
 
-    private ValueTask DispatchAsync(Keybind keybind, InputModeState state, MainWindowViewModel vm) =>
-        InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm),
-            resolution => Keymaps.ExecuteAsync(resolution, vm.Mapper));
-
-    private EscapeFallback ContextualActions(MainWindowViewModel vm) => new(this, vm, _contextualActions(vm));
+    /// <summary>
+    /// The window's Contextual Actions, with Escape's last meaning. They are built on the first Keybind and kept,
+    /// since a main window keeps its view model.
+    /// </summary>
+    private IContextualActionHandler ContextualActions(MainWindowViewModel vm) =>
+        _contextualActionHandler ??= new EscapeFallback(this, vm, _contextualActions(vm));
 
     /// <summary>
     /// What Escape does when no Input Mode claims it: closes the main menu (open while the UI is hidden), else the
@@ -249,13 +251,13 @@ public sealed class KeybindRouter
     private sealed class EscapeFallback(KeybindRouter router, MainWindowViewModel vm, IContextualActionHandler inner)
         : IContextualActionHandler
     {
-        public async ValueTask<bool> TryRunAsync(InputMode mode, string contextualAction)
-        {
-            if (mode is not InputMode.Normal || contextualAction is not ContextualActionHandler.Cancel)
-            {
-                return await inner.TryRunAsync(mode, contextualAction).ConfigureAwait(false);
-            }
+        public ValueTask<bool> TryRunAsync(InputMode mode, string contextualAction) =>
+            mode is InputMode.Normal && contextualAction is ContextualActionHandler.Cancel
+                ? CloseOnEscapeAsync()
+                : inner.TryRunAsync(mode, contextualAction);
 
+        private async ValueTask<bool> CloseOnEscapeAsync()
+        {
             await router.CloseOnEscapeAsync(vm).ConfigureAwait(false);
             return true;
         }

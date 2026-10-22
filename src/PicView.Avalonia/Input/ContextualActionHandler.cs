@@ -100,6 +100,23 @@ public sealed class ContextualActionHandler(MainWindow window, MainWindowViewMod
     /// <summary>
     /// Returns the visible pop-up drawn on top in <paramref name="mainPanel"/>, if any.
     /// </summary>
-    internal static AnimatedPopUp? TopPopUp(Panel? mainPanel) =>
-        mainPanel?.Children.OfType<AnimatedPopUp>().LastOrDefault(popUp => popUp.IsVisible);
+    internal static AnimatedPopUp? TopPopUp(Panel? mainPanel)
+    {
+        if (mainPanel is null)
+        {
+            return null;
+        }
+
+        // Indexed, since every Keybind asks
+        var children = mainPanel.Children;
+        for (var i = children.Count - 1; i >= 0; i--)
+        {
+            if (children[i] is AnimatedPopUp { IsVisible: true } popUp)
+            {
+                return popUp;
+            }
+        }
+
+        return null;
+    }
 }

@@ -266,7 +266,7 @@ public class KeybindRouterTests
         Assert.Empty(_calls);
     }
 
-    [AvaloniaFact]
+    [Fact]
     public async Task Wheel_Zoom_ZoomsTowardsThePointerEvenOnATouchpad()
     {
         _keymap = Keymap.Empty.Assign(new Keybind(MouseButton.WheelUp), "ZoomIn");

@@ -74,12 +74,4 @@ public class InputModeTests
         Assert.False(InputMode.AnimatedImage.IsBlocking());
         Assert.True(InputMode.AnimatedImage.DisallowsStillImageActions());
     }
-
-    [Fact]
-    public void ContextualChain_AnimatedImageInSlideshow_AsksAnimatedImageThenSlideshowThenNormal()
-    {
-        var state = new InputModeState(IsSlideshowRunning: true, IsAnimatedImageActive: true);
-
-        Assert.Equal([InputMode.AnimatedImage, InputMode.Slideshow, InputMode.Normal], state.ContextualChain());
-    }
 }
