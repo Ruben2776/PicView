@@ -1,10 +1,10 @@
 <Project>
     <PropertyGroup>
         <Nullable>enable</Nullable>
-        <VersionPrefix>5.1.4</VersionPrefix>
-        <VersionSuffix></VersionSuffix>
-        <AssemblyVersion>5.1.4.0</AssemblyVersion>
-        <FileVersion>5.1.4</FileVersion>
+        <VersionPrefix>5.2</VersionPrefix>
+        <VersionSuffix>development-build</VersionSuffix>
+        <AssemblyVersion>5.2.0.0</AssemblyVersion>
+        <FileVersion>5.2</FileVersion>
     </PropertyGroup>
 
     <PropertyGroup>

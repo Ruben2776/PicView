@@ -81,7 +81,8 @@ public class GetImageTests : IDisposable
     {
         var path = CreateGradientImage(extension, withAlpha: extension != "jpg", width: 800, height: 600);
 
-        using var expected = Bitmap.DecodeToHeight(File.OpenRead(path), (int)height);
+        using var stream = File.OpenRead(path);
+        using var expected = Bitmap.DecodeToHeight(stream, (int)height);
         using var actual = await GetThumbnails.GetThumbAsync(new FileInfo(path), height);
 
         Assert.NotNull(actual);
@@ -109,6 +110,25 @@ public class GetImageTests : IDisposable
         Assert.Equal(PixelFormat.Bgra8888, actual.Format);
         Assert.Equal(expected.PixelSize, actual.PixelSize);
         Assert.Equal(ReadPremulBgra(expected), ReadPremulBgra(actual));
+    }
+
+    [AvaloniaTheory]
+    [InlineData("tif", MagickFormat.Tiff)]
+    [InlineData("TIF", MagickFormat.Tiff)]
+    [InlineData("tga", MagickFormat.Tga)]
+    public async Task GetThumbAsync_FormatSkiaCannotDecode_ReturnsThumbnail(string extension, MagickFormat format)
+    {
+        var path = CreateGradientImage("png", withAlpha: true, width: 800, height: 600);
+        using (var image = new MagickImage(path))
+        {
+            path = Path.Combine(_directory, $"gradient.{extension}");
+            image.Write(path, format);
+        }
+
+        using var actual = await GetThumbnails.GetThumbAsync(new FileInfo(path), 100);
+
+        Assert.NotNull(actual);
+        Assert.Equal(new PixelSize(133, 100), actual.PixelSize);
     }
 
     private string CreateGradientImage(string extension, bool withAlpha, int width = 61, int height = 37)

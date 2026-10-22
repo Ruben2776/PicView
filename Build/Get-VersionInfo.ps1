@@ -1,7 +1,20 @@
 # Get-VersionInfo.ps1
+param (
+    [switch]$ClearVersionSuffix
+)
+
+$propsPath = (Resolve-Path "$PSScriptRoot/../src/Directory.Build.props").Path
 
 # Load Directory.Build.props as an XML
-[xml]$xml = Get-Content "$PSScriptRoot/../src/Directory.Build.props"
+[xml]$xml = Get-Content $propsPath
+
+if ($ClearVersionSuffix) {
+    $suffixNode = $xml.SelectSingleNode("//VersionSuffix")
+    if ($null -ne $suffixNode) {
+        $suffixNode.InnerText = ""
+        $xml.Save($propsPath)
+    }
+}
 
 # Extract VersionPrefix, VersionSuffix, and FileVersion
 $versionPrefix = $xml.SelectSingleNode("//VersionPrefix")?.InnerText?.Trim()

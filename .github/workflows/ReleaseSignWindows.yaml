@@ -18,10 +18,10 @@ jobs:
         with:
           dotnet-version: '11.x'
 
-      # Step 3: Get version from Directory.Build.props using PowerShell
+      # Step 3: Clear VersionSuffix and get version from Directory.Build.props using PowerShell
       - name: Get version from Directory.Build.props
         id: get-version
-        run: pwsh -File "${{ github.workspace }}/Build/Get-VersionInfo.ps1"
+        run: pwsh -File "${{ github.workspace }}/Build/Get-VersionInfo.ps1" -ClearVersionSuffix
 
       # Step 3.1: Restore or build picview-ffmpeg, the statically-linked FFmpeg used
       # for motion photo playback. Outputs are cached; a full build takes roughly ten
