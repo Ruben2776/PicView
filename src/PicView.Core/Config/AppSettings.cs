@@ -274,7 +274,7 @@ public class Gallery
     /// <summary>
     /// Determines whether gallery thumbnails of motion photos display the motion photo badge.
     /// </summary>
-    public bool ShowMotionPhotoBadges { get; set; } = true;
+    public bool ShowMotionPhotoBadges { get; set; } = false;
 
     /// <summary>
     /// Specifies the height/width of the gallery items displayed at the docked section of the gallery view.
