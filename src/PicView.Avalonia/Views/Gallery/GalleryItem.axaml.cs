@@ -1,14 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
-using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Styling;
 using Avalonia.Threading;
-using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Gallery;
@@ -23,12 +22,11 @@ public partial class GalleryItem : NavigateAbleItem
 {
     private CancellationTokenSource? _loadCts;
     private DisposableBag _disposables;
+    private ContextMenu? _contextMenu;
 
     public GalleryItem()
     {
         InitializeComponent();
-        GalleryContextMenu.Opened += GalleryContextMenuOnOpened;
-        GalleryContextMenu.Closed += GalleryContextMenuOnClosed;
         if (Application.Current.DataContext is not CoreViewModel core)
         {
             return;
@@ -65,6 +63,23 @@ public partial class GalleryItem : NavigateAbleItem
             };
         }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.DockedGalleryStretchMode)))
         .AddTo(ref _disposables);
+    }
+    
+    private void InitContextMenu()
+    {
+        // Snapshot analysis from timeline profiling shows a lot of allocations from ContextMenu bindings,
+        // so we lazily initialize the context menu.
+        if (_contextMenu is not null ||
+            !Resources.TryGetResource("GalleryContextMenu", ThemeVariant.Default, out var contextMenu)
+            || contextMenu is not ContextMenu cm)
+        {
+            return;
+        }
+        
+        _contextMenu = cm;
+        _contextMenu.Opened += GalleryContextMenuOnOpened;
+        _contextMenu.Closed += GalleryContextMenuOnClosed;
+        ContextMenu = _contextMenu;
     }
 
     public async Task LoadImage()
@@ -134,7 +149,7 @@ public partial class GalleryItem : NavigateAbleItem
 
     private void ShowGalleryItemSizeSlider(object? sender, PointerPressedEventArgs e)
     {
-        GalleryContextMenu.Close();
+        _contextMenu.Close();
         if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
@@ -149,6 +164,10 @@ public partial class GalleryItem : NavigateAbleItem
 
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
         {
+            if (_contextMenu is null)
+            {
+                InitContextMenu();
+            }
             return;
         }
 
@@ -312,8 +331,8 @@ public partial class GalleryItem : NavigateAbleItem
     protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
     {
         base.OnDetachedFromLogicalTree(e);
-        GalleryContextMenu.Opened -= GalleryContextMenuOnOpened;
-        GalleryContextMenu.Closed -= GalleryContextMenuOnClosed;
+        _contextMenu?.Opened -= GalleryContextMenuOnOpened;
+        _contextMenu?.Closed -= GalleryContextMenuOnClosed;
         _disposables.Dispose();
     }
 }
