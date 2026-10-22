@@ -42,6 +42,13 @@ public static class SettingsManager
     /// </remarks>
     public static AppSettings? Settings { get; private set; }
 
+    /// <summary>
+    /// The settings version of the loaded settings file, before <see cref="EnsureSettings"/> migrated it to
+    /// <see cref="SettingsConfiguration.CurrentSettingsVersion"/>. Other config files, such as the keybindings,
+    /// use it to migrate themselves. It is the current version when no settings file was loaded.
+    /// </summary>
+    public static double LoadedSettingsVersion { get; private set; } = SettingsConfiguration.CurrentSettingsVersion;
+
     private static SettingsConfiguration? Configuration { get; set; }
 
     /// <summary>
@@ -63,6 +70,7 @@ public static class SettingsManager
                 var bytes = File.ReadAllBytes(path);
                 var settings = JsonSerializer.Deserialize<AppSettings>(
                     bytes, SettingsGenerationContext.Default.AppSettings);
+                LoadedSettingsVersion = settings.Version;
                 Settings = EnsureSettings(settings);
             }
             else

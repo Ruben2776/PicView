@@ -10,6 +10,11 @@ namespace PicView.Avalonia.Input;
 /// </summary>
 public static class Keymaps
 {
+    /// <summary>
+    /// The settings version that introduced mouse Keybinds.
+    /// </summary>
+    private const double MouseKeybindsVersion = 3.0;
+
     private static Keymap _current = Keymap.Empty;
 
     /// <summary>
@@ -27,7 +32,14 @@ public static class Keymaps
     public static void Load(IPlatformSpecificService? platform)
     {
         var bytes = KeybindingFunctions.SetKeyBindingsFileAndReturnBytes();
-        Replace(Keymap.FromJson(bytes is null ? null : DecodeUtf8(bytes), DefaultJson(platform)));
+        var keymap = Keymap.FromJson(bytes is null ? null : DecodeUtf8(bytes), DefaultJson(platform));
+        if (bytes is not null && LoadedSettingsVersion < MouseKeybindsVersion)
+        {
+            // Keybindings files from before mouse Keybinds existed get the default ones
+            keymap = keymap.WithDefaultMouseKeybinds(Defaults(platform));
+        }
+
+        Replace(keymap);
     }
 
     /// <summary>

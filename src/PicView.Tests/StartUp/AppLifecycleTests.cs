@@ -314,6 +314,7 @@ public class AppLifecycleTests : IAsyncDisposable
         public string DefaultJsonKeyMap() => "{}";
         public void InitiateFileAssociationService() { }
         public Task<bool> DeleteFile(string path, bool recycle) => Task.FromResult(false);
+        public bool CanMoveToRecycleBin(string path) => true;
         public Task<bool> CutFile(string path) => Task.FromResult(false);
 
         public byte[]? GetShellThumbnail(string path, int width, int height, out int pixelWidth, out int pixelHeight)

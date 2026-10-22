@@ -168,4 +168,41 @@ public class KeymapTests
 
         Assert.Equal(KeymapResolution.Action("Crop"), keymap.Resolve(new Keybind(Key.C), InputMode.Normal));
     }
+
+    private const string DefaultsWithMouse = """
+                                             {
+                                               "Right": "Next",
+                                               "WheelUp": "Prev",
+                                               "Ctrl+WheelDown": "ZoomOut",
+                                               "Contextual": {
+                                                 "Return": "Confirm",
+                                                 "XButton1": "Confirm"
+                                               }
+                                             }
+                                             """;
+
+    [Fact]
+    public void WithDefaultMouseKeybinds_NoMouseKeybinds_AddsDefaultMouseKeybinds()
+    {
+        var defaults = Keymap.FromJson(null, DefaultsWithMouse);
+        var keymap = Keymap.FromJson("""{ "Left": "Next", "Contextual": { "Return": "Confirm" } }""", DefaultsWithMouse)
+            .WithDefaultMouseKeybinds(defaults);
+
+        Assert.Equal(KeymapResolution.Action("Next"), keymap.Resolve(new Keybind(Key.Left)));
+        Assert.Equal(KeymapResolution.Action("Prev"), keymap.Resolve(new Keybind(MouseButton.WheelUp)));
+        Assert.Equal(KeymapResolution.Action("ZoomOut"),
+            keymap.Resolve(new Keybind(MouseButton.WheelDown, KeyModifiers.Control)));
+        Assert.Equal("Confirm", keymap.ResolveContextual(new Keybind(MouseButton.XButton1)));
+        // Key Keybinds of the defaults stay out
+        Assert.Equal(KeymapResolution.None, keymap.Resolve(new Keybind(Key.Right)));
+    }
+
+    [Fact]
+    public void WithDefaultMouseKeybinds_HasMouseKeybind_ReturnsSameKeymap()
+    {
+        var defaults = Keymap.FromJson(null, DefaultsWithMouse);
+        var keymap = Keymap.FromJson("""{ "Left": "Next", "XButton2": "Next" }""", DefaultsWithMouse);
+
+        Assert.Same(keymap, keymap.WithDefaultMouseKeybinds(defaults));
+    }
 }

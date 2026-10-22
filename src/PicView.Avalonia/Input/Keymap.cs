@@ -248,6 +248,51 @@ public sealed class Keymap : IEquatable<Keymap>
         return keymap;
     }
 
+    /// <summary>
+    /// Returns a keymap with the mouse Keybinds of <paramref name="defaults"/> added, in both layers, when this
+    /// keymap has no mouse Keybinds at all. Otherwise returns this keymap unchanged.
+    /// </summary>
+    public Keymap WithDefaultMouseKeybinds(Keymap defaults)
+    {
+        if (HasMouseKeybind(_actions) || HasMouseKeybind(_contextual))
+        {
+            return this;
+        }
+
+        var actions = new Dictionary<Keybind, string>(_actions);
+        var contextual = new Dictionary<Keybind, string>(_contextual);
+        var added = AddMouseKeybinds(defaults._actions, actions) | AddMouseKeybinds(defaults._contextual, contextual);
+        return added ? new Keymap(actions.ToFrozenDictionary(), contextual.ToFrozenDictionary()) : this;
+
+        static bool HasMouseKeybind(FrozenDictionary<Keybind, string> layer)
+        {
+            foreach (var keybind in layer.Keys)
+            {
+                if (keybind.MouseButton is not MouseButton.None)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        static bool AddMouseKeybinds(FrozenDictionary<Keybind, string> from, Dictionary<Keybind, string> to)
+        {
+            var added = false;
+            foreach (var (keybind, action) in from)
+            {
+                if (keybind.MouseButton is not MouseButton.None)
+                {
+                    to[keybind] = action;
+                    added = true;
+                }
+            }
+
+            return added;
+        }
+    }
+
     private FrozenDictionary<Keybind, string> LayerOf(string canonicalAction) =>
         KeybindCategoryDefinition.IsContextualAction(canonicalAction) ? _contextual : _actions;
 
