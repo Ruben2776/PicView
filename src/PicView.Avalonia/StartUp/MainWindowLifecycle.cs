@@ -105,10 +105,10 @@ public sealed class MainWindowLifecycle
     /// <returns>The window, and a task that completes once it is set up.</returns>
     internal (MainWindow Window, Task SetUp) OpenAtAppStart(string? source, Func<bool>? launchFileArrived)
     {
-        var window = Create();
+        var window = Create(null, false);
         var vm = ViewModelOf(window);
         var settingUp = ApplyWindowSettingsAsync(vm, isAppStart: true);
-        WindowFunctions.HandleWindowScalingMode(window, isAppStart: true);
+        WindowFunctions.HandleWindowScalingMode(window, isAppStart: true, adjustPos: !Settings.WindowProperties.AutoFit);
         if (source is not null)
         {
             OpenStartSource(window, source, continueFromLeftOff: false);
@@ -138,10 +138,6 @@ public sealed class MainWindowLifecycle
     {
         _ = Task.Run(() => SourceOpener.OpenAsync(window, _core, source,
             new OpenOptions(IsStartup: true, ContinueFromLeftOff: continueFromLeftOff)).AsTask());
-        if (window.WindowModeState.AutoFit)
-        {
-            Dispatcher.UIThread.Post(() => window.WindowFitter.Center(), DispatcherPriority.Input);
-        }
     }
 
     private void ShowStartUpMenuOrLastFile(MainWindow window)
@@ -265,7 +261,7 @@ public sealed class MainWindowLifecycle
         }
     }
 
-    private MainWindow Create(TabViewModel? firstTab = null)
+    private MainWindow Create(TabViewModel? firstTab = null, bool setMainWindow = true)
     {
         var window = _provider.CreateMainWindow(firstTab);
         var vm = ViewModelOf(window);
@@ -281,8 +277,9 @@ public sealed class MainWindowLifecycle
             _open.Remove(window);
             _closing.Remove(window);
         };
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        if (setMainWindow && Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            // If setting the main window with no window shown, it will force the window to be shown.
             desktop.MainWindow = window;
         }
 

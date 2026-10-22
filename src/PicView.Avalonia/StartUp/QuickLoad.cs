@@ -1,5 +1,4 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using ImageMagick;
@@ -63,7 +62,7 @@ public static class QuickLoad
                 ViewChangeHelper.SwitchToStartUpMenu(core.MainWindows.ActiveWindow.CurrentValue);
                 mainWindow.Show();
             }
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = mainWindow;
             }
@@ -147,7 +146,10 @@ public static class QuickLoad
 
         if (vm.WindowModeState.CurrentValue.AutoFit)
         {
-            WindowFunctions.CenterWindowOnScreen(mainWindow);
+            Dispatcher.UIThread.Post(() =>
+            {
+                mainWindow.WindowFitter.Center();
+            });
         }
 
         SourceOpener.ShowHoverBarIfNeeded(tab);

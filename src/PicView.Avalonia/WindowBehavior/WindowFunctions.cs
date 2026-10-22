@@ -4,15 +4,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Input;
-using PicView.Avalonia.StartUp;
-using PicView.Avalonia.UI;
-using PicView.Avalonia.Views.UC;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
-using PicView.Core.FileHandling;
-using PicView.Core.FileHistory;
-using PicView.Core.Models;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
@@ -42,8 +35,23 @@ public static class WindowFunctions
         }
         else if (starting.AutoFit)
         {
-            window.WindowStartupLocation = adjustPos ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
-            window.WindowFitter.FollowContent();
+            window.SizeToContent = SizeToContent.WidthAndHeight;
+            if (adjustPos)
+            {
+                if (!Settings.WindowProperties.KeepCentered)
+                {
+                    window.WindowStartupLocation = WindowStartupLocation.Manual;
+                    InitializeWindowSizeAndPosition(window);
+                }
+                else
+                {
+                    CenterWindowOnScreen(window);
+                }
+            }
+            else
+            {
+                window.WindowStartupLocation = isAppStart ? WindowStartupLocation.CenterScreen : WindowStartupLocation.Manual;
+            }
         }
         else
         {
@@ -102,7 +110,7 @@ public static class WindowFunctions
             }
 
             var wasAutoFit = windowVm.WindowModeState.CurrentValue.AutoFit;
-            await window.WindowModeSwitcher.SetAutoFit(autoFit);
+            await window.WindowModeSwitcher.SetAutoFit(autoFit).ConfigureAwait(true);
             if (autoFit && !wasAutoFit)
             {
                 CenterWindowOnScreen(window);

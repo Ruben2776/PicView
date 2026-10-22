@@ -43,6 +43,8 @@ public sealed class AppLifecycle
 
     /// <param name="sharedFiles">Loads and saves what every Main Window shares.</param>
     /// <param name="exit">Ends the process, last of all at App Shutdown.</param>
+    /// <param name="core">The view model every Main Window shares.</param>
+    /// <param name="provider">Creates this platform's windows.</param>
     internal AppLifecycle(CoreViewModel core, IWindowProvider provider, ISharedFiles sharedFiles, Action exit)
     {
         _core = core;
