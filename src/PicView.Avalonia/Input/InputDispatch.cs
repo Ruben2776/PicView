@@ -57,7 +57,7 @@ public static class InputDispatch
     {
         var mode = state.Resolve();
         if (ContextualActionOf(keybind, keymap) is { } contextualAction &&
-            await ClaimAsync(contextualAction, mode, state, handler).ConfigureAwait(false))
+            await ClaimAsync(contextualAction, mode, state, handler).ConfigureAwait(true))
         {
             return KeymapResolution.None;
         }
@@ -78,24 +78,24 @@ public static class InputDispatch
         // Stay on the UI thread: modes and ordinary Actions work on the window
         if (mode.IsBlocking())
         {
-            return await handler.TryRunAsync(mode, contextualAction).ConfigureAwait(false);
+            return await handler.TryRunAsync(mode, contextualAction).ConfigureAwait(true);
         }
 
-        if (state.IsMotionPhotoActive && await handler.TryRunAsync(InputMode.MotionPhoto, contextualAction).ConfigureAwait(false))
+        if (state.IsMotionPhotoActive && await handler.TryRunAsync(InputMode.MotionPhoto, contextualAction).ConfigureAwait(true))
         {
             return true;
         }
 
-        if (state.IsAnimatedImageActive && await handler.TryRunAsync(InputMode.AnimatedImage, contextualAction).ConfigureAwait(false))
+        if (state.IsAnimatedImageActive && await handler.TryRunAsync(InputMode.AnimatedImage, contextualAction).ConfigureAwait(true))
         {
             return true;
         }
 
-        if (state.IsSlideshowRunning && await handler.TryRunAsync(InputMode.Slideshow, contextualAction).ConfigureAwait(false))
+        if (state.IsSlideshowRunning && await handler.TryRunAsync(InputMode.Slideshow, contextualAction).ConfigureAwait(true))
         {
             return true;
         }
 
-        return await handler.TryRunAsync(InputMode.Normal, contextualAction).ConfigureAwait(false);
+        return await handler.TryRunAsync(InputMode.Normal, contextualAction).ConfigureAwait(true);
     }
 }

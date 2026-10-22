@@ -86,7 +86,7 @@ public sealed class KeybindRouter
             return;
         }
 
-        var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm));
+        var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm)).ConfigureAwait(true);
         await Keymaps.ExecuteAsync(ordinary, vm.Mapper).ConfigureAwait(false);
     }
 
@@ -125,7 +125,7 @@ public sealed class KeybindRouter
             return;
         }
 
-        var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm));
+        var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm)).ConfigureAwait(true);
         await Keymaps.ExecuteAsync(ordinary, vm.Mapper).ConfigureAwait(false);
     }
 
@@ -154,7 +154,7 @@ public sealed class KeybindRouter
         }
 
         var isTouchPad = isTouch || Settings.Zoom.IsUsingTouchPad;
-        var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm)).ConfigureAwait(false);
+        var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm)).ConfigureAwait(true);
         switch (ordinary.Value)
         {
             case nameof(IFunctionsMapper.ZoomIn) or nameof(IFunctionsMapper.ZoomOut):
