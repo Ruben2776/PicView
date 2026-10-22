@@ -93,7 +93,6 @@ public static class ImageViewerClickBehavior
                     var isRightSide = point.X >= imageViewer.Bounds.Width / 2;
                     if (isLeftSide)
                     {
-                        imageViewer.Cursor = new Cursor(StandardCursorType.LeftSide);
                         await vm.Mapper.Prev().ConfigureAwait(false);
                     }
                     else if (isRightSide)

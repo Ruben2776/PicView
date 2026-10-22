@@ -43,8 +43,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         AddHandler(PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
-        MainPanel.PointerMoved += OnPointerMoved;
-        MainPanel.PointerExited += OnPointerExited;
 
         Dispatcher.UIThread.Post(InitializeMotionPhoto, DispatcherPriority.ApplicationIdle);
     }
@@ -289,31 +287,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 
     void IZoomScrollTarget.ZoomAt(bool zoomIn, Point pointer) =>
         ZoomPanControl.ZoomWithPointerWheelCore(zoomIn, pointer);
-    
-    private void OnPointerExited(object? sender, PointerEventArgs e)
-    {
-        Cursor = new Cursor(StandardCursorType.Arrow);
-    }
-
-    private void OnPointerMoved(object? sender, PointerEventArgs e)
-    {
-        if (!Settings.Navigation.IsNavigatingByClicking)
-        {
-            return;
-        }
-        var point = e.GetPosition(this);
-        var isLeftSide = point.X < Bounds.Width / 2;
-        var isRightSide = point.X >= Bounds.Width / 2;
-        if (isLeftSide)
-        {
-            Cursor = new Cursor(StandardCursorType.LeftSide);
-        }
-        else if (isRightSide)
-        {
-            Cursor = new Cursor(StandardCursorType.RightSide);
-        }
-    }
-    
 
     private void InitializeImageTransformer()
     {
@@ -476,7 +449,5 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         _disposables.Dispose();
         _flipSubscription?.Dispose();
         HoverBar.Dispose();
-        MainPanel.PointerEntered -= OnPointerMoved;
-        MainPanel.PointerExited -= OnPointerExited;
     }
 }
