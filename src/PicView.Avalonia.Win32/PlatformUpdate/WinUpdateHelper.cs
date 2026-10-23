@@ -78,7 +78,7 @@ public static class WinUpdateHelper
         };
 
         process.Start();
-        await (AppLifecycle.Current?.ShutdownAsync() ?? Task.CompletedTask);
+        await AppLifecycle.Current.ShutdownAsync();
     }
 
     /// <summary>

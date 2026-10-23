@@ -1,6 +1,4 @@
-using System.Runtime;
 using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.StartUp;
@@ -50,7 +48,7 @@ public class App : Application, IPlatformSpecificService
     /// The taskbar button of the Main Window the user activated last.
     /// </summary>
     private static IntPtr ActiveMainWindowHandle() =>
-        AppLifecycle.Current?.MainWindows.MostRecentlyActive?.TryGetPlatformHandle()?.Handle ?? IntPtr.Zero;
+        AppLifecycle.Current.MainWindows.MostRecentlyActive?.TryGetPlatformHandle()?.Handle ?? IntPtr.Zero;
 
     #region Interface Implementations
     

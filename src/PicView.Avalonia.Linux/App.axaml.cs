@@ -29,11 +29,6 @@ public class App : Application, IPlatformSpecificService
     public override void OnFrameworkInitializationCompleted()
     {
         base.OnFrameworkInitializationCompleted();
-
-        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime)
-        {
-            return;
-        }
         var settingsExists = LoadSettings();
         _coreViewModel = new CoreViewModel(this, GetImageModel.GetImageModelAsync);
         DataContext = _coreViewModel;

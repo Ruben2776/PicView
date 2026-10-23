@@ -9,8 +9,6 @@ using PicView.Core.DebugTools;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
-// ReSharper disable CompareOfFloatsByEqualityOperator
-
 namespace PicView.Avalonia.WindowBehavior;
 
 public static class WindowFunctions
@@ -73,7 +71,7 @@ public static class WindowFunctions
 
     public static async Task ToggleTopMost(MainWindowViewModel vm)
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
         }
@@ -97,7 +95,7 @@ public static class WindowFunctions
     /// </summary>
     public static async Task SetAutoFitInEveryWindow(bool autoFit)
     {
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
         }

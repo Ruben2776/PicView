@@ -66,7 +66,7 @@ public static class MacUpdateHelper
             await Task.Delay(1000);
             
             // Close the application
-            await (AppLifecycle.Current?.ShutdownAsync() ?? Task.CompletedTask);
+            await AppLifecycle.Current?.ShutdownAsync();
         }
         catch (Exception ex)
         {

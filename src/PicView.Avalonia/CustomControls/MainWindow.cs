@@ -238,7 +238,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
             return;
         }
 
-        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
+        if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
         {
             return;
         }
