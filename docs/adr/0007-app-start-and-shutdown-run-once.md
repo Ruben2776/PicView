@@ -10,7 +10,8 @@
 ## Consequences
 
 - The shared files load at App Start and are never read again while PicView runs. Closing any Main Window still saves them, so a crash loses less, but only App Shutdown deletes temp files and exits.
-- **App Windows** (Settings, Keybindings, About, File Associations) have one opener for the whole app and no owner. **Tool Windows** (Print, Effects, Image Information, Resize Image, Batch Resize, Convert) have one opener per Main Window and close with it on every platform.
-- Closing the last Main Window, quitting and installing an update all go through App Shutdown. It closes every Main Window, and the most recently active one decides the remembered file and size.
+- **App Windows** (Settings, Keybindings, About, File Associations) have one opener for the whole app and no owner. **Tool Windows** (Print, Effects, Image Information, Resize Image, Convert) have one opener per Main Window and close with it on every platform.
+- Batch Resize is the one Tool Window that belongs to the whole app: it works on files the user picks rather than on what a Main Window shows, so it has one opener for the whole app and no owner, like the App Windows. A long run should not be lost by closing the window it was started from.
+- Closing the last Main Window, quitting and installing an update all go through App Shutdown. It closes every Main Window, and the most recently active one decides the remembered file and size. The exception is closing the last Main Window while Batch Resize is open: the App Windows close, Batch Resize stays open and PicView keeps running, and closing Batch Resize then runs App Shutdown. Quitting and installing an update still cancel a running Batch Resize.
 - The platform `App` files keep no reference to a first window. The print preview opens on the Main Window that asked for it, while taskbar progress and later launches go to the most recently active one, since Core reports download progress without knowing its window.
 - The startup order inside `QuickLoad` (ADR-0005) is unchanged.

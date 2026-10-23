@@ -39,11 +39,11 @@ _Avoid_: Overlay mode, passive mode
 ## Windows
 
 **Main Window**:
-A window that shows tabs of images. PicView can have several: one opens at App Start, and more open as a new window or when a tab is dragged out of one. Closing one that is not the last ends only that window; closing the last one is App Shutdown.
+A window that shows tabs of images. PicView can have several: one opens at App Start, and more open as a new window or when a tab is dragged out of one. Closing one that is not the last ends only that window. Closing the last one is App Shutdown, unless Batch Resize is open: then PicView keeps running until Batch Resize closes too.
 _Avoid_: Viewer window, image window
 
 **Tool Window**:
-A window that works on what its Main Window shows: Print, Effects, Image Information, Resize Image, Batch Resize and Convert. A Main Window has at most one of each, and they close with it.
+A window that works on images. Most work on what their Main Window shows: Print, Effects, Image Information, Resize Image and Convert. A Main Window has at most one of each, and they close with it. Batch Resize works on files the user picks instead: PicView has at most one, it belongs to no Main Window, and it stays open when the Main Window it was opened from closes.
 _Avoid_: Secondary window, child window, dialog
 
 **App Window**:
@@ -55,7 +55,7 @@ What runs once when the PicView process starts, around its first Main Window: lo
 _Avoid_: Initialization, boot
 
 **App Shutdown**:
-What runs once when the PicView process ends, whether the last Main Window closes, the user quits, or an update is installed. It closes every Main Window, saves what they share and deletes the temp files. The most recently active Main Window is the one whose file and size are remembered.
+What runs once when the PicView process ends, whether the last Main Window closes (or Batch Resize, when it outlives them), the user quits, or an update is installed. It closes every Main Window, saves what they share and deletes the temp files. The most recently active Main Window is the one whose file and size are remembered.
 _Avoid_: Exit, quit, close
 
 ## Tabs
@@ -165,3 +165,13 @@ _Avoid_: PDF printer, PDF export
 **Scale Mode**:
 How the image is placed inside the margins of a Printed Page. Fit shows all of it as large as it fits (not the window's Fit), Fill covers the area and crops what spills over, Stretch fills the area without keeping the image's proportions, and Center keeps the image at its size at 300 DPI, shrinking it only when it does not fit.
 _Avoid_: Print scaling, fit mode
+
+## Batch Resize
+
+**Batch Resize Job**:
+The files, output folder, conversion, compression, quality, resize and thumbnails of one Batch Resize run, fixed when it starts. Changing the settings while it runs changes only the next one. A file whose output would overwrite an existing file is copied to a backup folder first.
+_Avoid_: Batch settings, batch options
+
+**Batch Thumbnail**:
+An extra, smaller copy of each file a Batch Resize Job writes, into its own subfolder of the output folder. It is resized from the source file by a percentage, a width or a height, and takes the job's conversion, quality and compression. A job has at most seven.
+_Avoid_: Thumb, preview

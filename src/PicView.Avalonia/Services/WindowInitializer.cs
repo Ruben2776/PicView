@@ -32,9 +32,16 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
     private SecondaryWindowOpener AppWindows => mainWindow.Lifecycle?.AppWindows ?? _toolWindows;
 
     /// <summary>
+    /// Opens Batch Resize, the Tool Window that belongs to the whole app. A window opened outside the lifecycle opens
+    /// it as its own.
+    /// </summary>
+    private SecondaryWindowOpener BatchResizeWindows => mainWindow.Lifecycle?.AppToolWindows ?? _toolWindows;
+
+    /// <summary>
     /// The Tool Window this main window opened most recently that is still open, else the newest App Window.
     /// </summary>
-    public Window? NewestOpenWindow => _toolWindows.NewestOpenWindow ?? AppWindows.NewestOpenWindow;
+    public Window? NewestOpenWindow =>
+        _toolWindows.NewestOpenWindow ?? BatchResizeWindows.NewestOpenWindow ?? AppWindows.NewestOpenWindow;
 
     /// <summary>
     /// Closes this window's Tool Windows, as it closes.
@@ -227,31 +234,58 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
             return;
         }
 
-        // Reopening while the window is open must keep the config it is editing
-        if (!_toolWindows.IsOpen(SecondaryWindowKind.BatchResize))
+        var windows = BatchResizeWindows;
+        if (windows.IsOpen(SecondaryWindowKind.BatchResize))
         {
-            core.BatchResize ??= new BatchResizeViewModel(
-                FilePicker.SelectDirectory, FilePicker.SelectFile,
-                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.FileInfo?.CurrentValue ?? null,
-                core.PlatformService.GetFiles);
-            core.BatchResize.Config = new BatchResizeWindowConfig();
-            await core.BatchResize.Config.LoadAsync().ConfigureAwait(false);
+            // Brought to the front, keeping the files and settings it is editing
+            await windows.OpenAsync(SecondaryWindowKind.BatchResize, new SecondaryWindowSpec(_ => null))
+                .ConfigureAwait(false);
+            return;
         }
 
-        var config = core.BatchResize.Config;
-        await _toolWindows.OpenAsync(SecondaryWindowKind.BatchResize, new SecondaryWindowSpec(
+        var config = new BatchResizeWindowConfig();
+        // Back on the UI thread, which reads the Main Window's tab
+        await config.LoadAsync().ConfigureAwait(true);
+        var batch = new BatchResizeViewModel(FilePicker.SelectDirectory, FilePicker.SelectFile,
+            core.PlatformService.GetFiles, core.PlatformService.LocateOnDisk,
+            config.WindowProperties ?? new BatchResizeWindowConfig.BatchResizeWindowProperties());
+        // The files around what this Main Window shows
+        if ((mainWindow.DataContext as MainWindowViewModel)?.WindowTabs.ActiveTab.CurrentValue is { } tab)
+        {
+            batch.Prefill(tab.FileInfo?.CurrentValue, tab.Model.PixelWidth, tab.Model.PixelHeight);
+        }
+
+        core.BatchResize = batch;
+        await windows.OpenAsync(SecondaryWindowKind.BatchResize, new SecondaryWindowSpec(
             factory => factory.CreateBatchResizeWindow(config))
         {
-            Configure = window => window.DataContext = core,
-            OnClosing = window =>
+            Configure = window =>
+            {
+                window.DataContext = core;
+                // After its opener lets go of it, so the last window to close runs App Shutdown
+                window.Closed += async (_, _) =>
+                {
+                    if (mainWindow.Lifecycle is { } lifecycle)
+                    {
+                        await lifecycle.ShutdownIfNothingIsOpenAsync().ConfigureAwait(true);
+                    }
+                };
+            },
+            OnClosing = async window =>
             {
                 if (window is IDisposable disposable)
                 {
                     disposable.Dispose();
                 }
 
-                _ = config.SaveAsync();
-                return Task.CompletedTask;
+                batch.RememberSettings();
+                batch.Dispose();
+                if (core.BatchResize == batch)
+                {
+                    core.BatchResize = null;
+                }
+
+                await config.SaveAsync().ConfigureAwait(false);
             }
         }).ConfigureAwait(false);
     }

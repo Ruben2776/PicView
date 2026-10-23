@@ -1,228 +1,353 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using ImageMagick;
 using PicView.Core.BatchResize;
-using PicView.Core.Config;
 using PicView.Core.DebugTools;
-using PicView.Core.Extensions;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using R3;
+using RememberedSettings = PicView.Core.Config.BatchResizeWindowConfig.BatchResizeWindowProperties;
+using RememberedThumbnail = PicView.Core.Config.BatchResizeWindowConfig.RememberedThumbnail;
 
 namespace PicView.Core.ViewModels;
 
-public class BatchResizeViewModel : IDisposable
+/// <summary>
+/// The settings of the next Batch Resize Job as the user edits them, and the progress of the running one. There is one
+/// for the whole app, like its window.
+/// </summary>
+public sealed class BatchResizeViewModel : IDisposable
 {
-    private readonly FileInfo? _fileInfo;
-
     private readonly Func<FileInfo, List<FileInfo>> _getFiles;
-
+    private readonly RememberedSettings _remembered;
     private readonly Lock _lock = new();
     private CancellationTokenSource? _cts;
-    public BatchThumb[] Thumbs = new BatchThumb[7];
     private DisposableBag _disposables;
-        
-    public BatchResizeWindowConfig? Config { get; set; }
-        
-    public int ThumbnailAmount { get; set; }
+    private double _aspectRatio;
+    private bool _isLinkingSize;
 
-    // Commands
-    public ReactiveCommand StartCommand { get; }
-    public ReactiveCommand CancelCommand { get; }
-    public ReactiveCommand CloseProgressCommand { get; }
-    public ReactiveCommand ResetCommand { get; }
-    public ReactiveCommand SelectAndAddFolderCommand { get; }
-    public ReactiveCommand SelectAndAddFileCommand { get; }
-    public ReactiveCommand PickOutputFolderCommand { get; }
-    public ReactiveCommand ToggleAspectRatioCommand { get; }
-
-    public ReactiveCommand? ClearFilterCommand { get; }
-    public ReactiveCommand? RemoveAllCommand { get; }
-
-    public ReactiveCommand<FileInfo> RemoveFileFromListCommand { get; }
-
-    // Bindable properties (R3) \\
-    public BindableReactiveProperty<string?> SourceFolder { get; } = new();
-    public BindableReactiveProperty<string?> OutputFolder { get; } = new();
-
-    // Progress
-    public BindableReactiveProperty<bool> IsIndeterminate { get; } = new(true);
-    public BindableReactiveProperty<bool> IsRunning { get; } = new(false);
-    public BindableReactiveProperty<bool> IsFinished { get; } = new(false);
-    public BindableReactiveProperty<double> Progress { get; } = new();
-    public BindableReactiveProperty<double> ProgressMaximum { get; } = new();
-
-    public BindableReactiveProperty<ConversionTarget> Conversion { get; } = new();
-    public BindableReactiveProperty<CompressionMode> Compression { get; } = new();
-
-    // Quality
-    public BindableReactiveProperty<bool> IsQualityEnabled { get; } = new();
-    public BindableReactiveProperty<uint> Quality { get; } = new();
-
-    // Resize
-    public BindableReactiveProperty<ResizeMode> Resize { get; } = new();
-    public BindableReactiveProperty<uint> SingleWidthValue { get; } = new();
-    public BindableReactiveProperty<uint> SingleHeightValue { get; } = new();
-    public BindableReactiveProperty<uint> WidthValue { get; } = new();
-    public BindableReactiveProperty<uint> HeightValue { get; } = new();
-    public BindableReactiveProperty<double> PercentageValue { get; } = new(100);
-    public BindableReactiveProperty<bool> IsKeepingAspectRatio { get; } = new(true);
-    public BindableReactiveProperty<bool> IsPercentageResizing { get; } = new();
-    public BindableReactiveProperty<bool> IsWidthAndHeightResizing { get; } = new();
-    public BindableReactiveProperty<bool> IsWidthResizing { get; } = new();
-    public BindableReactiveProperty<bool> IsHeightResizing { get; } = new();
-
-    public BindableReactiveProperty<string?> FilterText { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
-
-    public BindableReactiveProperty<string[]> ConversionTargets { get; }
-    public BindableReactiveProperty<string[]> ResizeModes { get; }
-    public BindableReactiveProperty<string[]> CompressionModes { get; }
-    public BindableReactiveProperty<string[]> ThumbnailAmounts { get; }
-
-
-    // Logs
-    public BindableReactiveProperty<ObservableCollection<FileInfo>> SelectedFiles { get; } = new([]);
-    public BindableReactiveProperty<ObservableCollection<FileInfo>> FilteredFiles { get; } = new([]);
-    public BindableReactiveProperty<ObservableCollection<BatchLogEntry>>? ProcessedFiles { get; } = new([]);
-    public BindableReactiveProperty<bool> IsFiltering { get; } = new(false);
-
-    public BatchResizeViewModel(
-        Func<Task<string>> selectDirectory, 
-        Func<Task<string?>> selectFile, FileInfo? fileInfo,
-        Func<FileInfo, List<FileInfo>> getFiles)
+    /// <param name="selectDirectory">Asks the user for a folder.</param>
+    /// <param name="selectFile">Asks the user for a file.</param>
+    /// <param name="getFiles">Lists the images in the folder of a file.</param>
+    /// <param name="locateOnDisk">Shows a folder in the file manager.</param>
+    /// <param name="remembered">The settings the last Batch Resize window left, which <see cref="RememberSettings"/>
+    /// writes back to.</param>
+    public BatchResizeViewModel(Func<Task<string>> selectDirectory, Func<Task<string?>> selectFile,
+        Func<FileInfo, List<FileInfo>> getFiles, Action<string> locateOnDisk, RememberedSettings remembered)
     {
-        _fileInfo = fileInfo;
         _getFiles = getFiles;
+        _remembered = remembered;
 
-        // Commands
-        StartCommand = new ReactiveCommand(async (_, x) => 
-            await StartBatchResizeAsync(x).ConfigureAwait(false));
-        _disposables.Add(StartCommand);
-        
+        ConversionChoices =
+        [
+            new(ConversionTarget.NoConversion, TranslationManager.Translation.NoConversion ?? string.Empty),
+            new(ConversionTarget.Png, nameof(ConversionTarget.Png)),
+            new(ConversionTarget.Jpg, nameof(ConversionTarget.Jpg)),
+            new(ConversionTarget.Webp, nameof(ConversionTarget.Webp)),
+            new(ConversionTarget.Avif, nameof(ConversionTarget.Avif)),
+            new(ConversionTarget.Heic, nameof(ConversionTarget.Heic)),
+            new(ConversionTarget.Jxl, nameof(ConversionTarget.Jxl))
+        ];
+        CompressionChoices =
+        [
+            new(CompressionMode.None, TranslationManager.Translation.None ?? string.Empty),
+            new(CompressionMode.Lossless, TranslationManager.Translation.Lossless ?? string.Empty),
+            new(CompressionMode.Lossy, TranslationManager.Translation.Lossy ?? string.Empty)
+        ];
+        ResizeChoices =
+        [
+            new(ResizeMode.None, TranslationManager.Translation.NoResize ?? string.Empty),
+            new(ResizeMode.Percentage, TranslationManager.Translation.Percentage ?? string.Empty),
+            new(ResizeMode.WidthAndHeight, TranslationManager.Translation.WidthAndHeight ?? string.Empty),
+            new(ResizeMode.Width, TranslationManager.Translation.Width ?? string.Empty),
+            new(ResizeMode.Height, TranslationManager.Translation.Height ?? string.Empty)
+        ];
+        ThumbnailSizeChoices =
+        [
+            new(ThumbnailSize.Percentage, TranslationManager.Translation.Percentage ?? string.Empty),
+            new(ThumbnailSize.Width, TranslationManager.Translation.Width ?? string.Empty),
+            new(ThumbnailSize.Height, TranslationManager.Translation.Height ?? string.Empty)
+        ];
+        ThumbnailAmountChoices =
+        [
+            new(0, TranslationManager.Translation.None ?? string.Empty),
+            .. Enumerable.Range(1, BatchThumbnail.Max).Select(static amount =>
+                new Choice<int>(amount, amount.ToString(System.Globalization.CultureInfo.InvariantCulture)))
+        ];
+
+        IsPercentageResizing = IsResizing(ResizeMode.Percentage);
+        IsWidthAndHeightResizing = IsResizing(ResizeMode.WidthAndHeight);
+        IsWidthResizing = IsResizing(ResizeMode.Width);
+        IsHeightResizing = IsResizing(ResizeMode.Height);
+
+        Restore();
+
+        StartCommand = new ReactiveCommand(async (_, _) => await StartAsync().ConfigureAwait(false));
         CancelCommand = new ReactiveCommand(async (_, _) => await CancelAsync().ConfigureAwait(false));
-        _disposables.Add(CancelCommand);
-        
         CloseProgressCommand = new ReactiveCommand(_ =>
         {
             IsFinished.Value = false;
             IsRunning.Value = false;
         });
-        _disposables.Add(CloseProgressCommand);
-        
-        ResetCommand = new ReactiveCommand(_ =>
+        SelectAndAddFolderCommand = new ReactiveCommand(async (_, _) =>
         {
-            Reset();
-        });
-        _disposables.Add(ResetCommand);
-        
-        SelectAndAddFolderCommand = new ReactiveCommand(async (_, _) => await SelectAndAddFolder(selectDirectory).ConfigureAwait(false));
-        _disposables.Add(SelectAndAddFolderCommand);
-        
-        SelectAndAddFileCommand = new ReactiveCommand(async (_, _) => await SelectAndAddFile(selectFile).ConfigureAwait(false));
-        _disposables.Add(SelectAndAddFileCommand);
-        
-        PickOutputFolderCommand = new ReactiveCommand(async (_, _) => await PickOutputFolder(selectDirectory).ConfigureAwait(false));
-        _disposables.Add(PickOutputFolderCommand);
-        
-        ToggleAspectRatioCommand = new ReactiveCommand(_ =>
-        {
-            IsKeepingAspectRatio.Value = !IsKeepingAspectRatio.Value;
-        });
-        _disposables.Add(ToggleAspectRatioCommand);
-        
-        ClearFilterCommand = new ReactiveCommand(_ =>
-        {
-            FilterText.Value = string.Empty;
-        });
-        _disposables.Add(ClearFilterCommand);
-        
-        RemoveFileFromListCommand = new ReactiveCommand<FileInfo>((value, _) =>
-        {
-            SelectedFiles.Value.Remove(value);
-            return ValueTask.CompletedTask;
-        });
-        _disposables.Add(RemoveFileFromListCommand);
-        
-        RemoveAllCommand = new ReactiveCommand(_ =>
-        {
-            SelectedFiles.Value.Clear();
-        });
-        _disposables.Add(RemoveAllCommand);
-
-        Debug.Assert(TranslationManager.Translation.NoConversion != null);
-
-        ConversionTargets = new BindableReactiveProperty<string[]>([
-            TranslationManager.Translation.NoConversion,
-            nameof(ConversionTarget.Png),
-            nameof(ConversionTarget.Jpg),
-            nameof(ConversionTarget.Webp),
-            nameof(ConversionTarget.Avif),
-            nameof(ConversionTarget.Heic),
-            nameof(ConversionTarget.Jxl)
-        ]);
-        _disposables.Add(ConversionTargets);
-
-        Debug.Assert(TranslationManager.Translation.NoResize != null);
-        Debug.Assert(TranslationManager.Translation.Width != null);
-        Debug.Assert(TranslationManager.Translation.Height != null);
-        Debug.Assert(TranslationManager.Translation.WidthAndHeight != null);
-        Debug.Assert(TranslationManager.Translation.Percentage != null);
-
-        ResizeModes = new BindableReactiveProperty<string[]>([
-            TranslationManager.Translation.NoResize,
-            TranslationManager.Translation.Width,
-            TranslationManager.Translation.Height,
-            TranslationManager.Translation.WidthAndHeight,
-            TranslationManager.Translation.Percentage
-        ]);
-        _disposables.Add(ResizeModes);
-
-        ResizeModes = new BindableReactiveProperty<string[]>([
-            TranslationManager.Translation.NoResize,
-            TranslationManager.Translation.Percentage,
-            TranslationManager.Translation.WidthAndHeight,
-            TranslationManager.Translation.Width,
-            TranslationManager.Translation.Height
-        ]);
-        _disposables.Add(ResizeModes);
-
-        Debug.Assert(TranslationManager.Translation.None != null);
-        Debug.Assert(TranslationManager.Translation.Lossless != null);
-        Debug.Assert(TranslationManager.Translation.Lossy != null);
-        CompressionModes = new BindableReactiveProperty<string[]>([
-            TranslationManager.Translation.None,
-            TranslationManager.Translation.Lossless,
-            TranslationManager.Translation.Lossy
-        ]);
-        _disposables.Add(CompressionModes);
-
-        ThumbnailAmounts = new BindableReactiveProperty<string[]>([
-            TranslationManager.Translation.None,
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7"
-        ]);
-        _disposables.Add(ThumbnailAmounts);
-
-        // defaults
-        IsKeepingAspectRatio.Value = true;
-        Quality.Value = 75;
-        Compression.Value = CompressionMode.Lossless;
-        Conversion.Value = ConversionTarget.NoConversion;
-        Resize.Value = ResizeMode.None;
-
-#pragma warning disable MA0040
-        Observable.EveryValueChanged(FilterText, x => x.CurrentValue).Skip(1)
-#pragma warning restore MA0040
-            .Subscribe(_ =>
+            var directory = await selectDirectory().ConfigureAwait(false);
+            if (!string.IsNullOrWhiteSpace(directory))
             {
-                UpdateFilteredFiles();
-            }, DebugHelper.LogError(nameof(BatchResizeViewModel), nameof(UpdateFilteredFiles)))
+                foreach (var file in _getFiles(new FileInfo(directory)))
+                {
+                    SelectedFiles.Value.Add(file);
+                }
+            }
+        });
+        SelectAndAddFileCommand = new ReactiveCommand(async (_, _) =>
+        {
+            var file = await selectFile().ConfigureAwait(false);
+            if (!string.IsNullOrWhiteSpace(file))
+            {
+                SelectedFiles.Value.Add(new FileInfo(file));
+            }
+        });
+        PickOutputFolderCommand = new ReactiveCommand(async (_, _) =>
+        {
+            var directory = await selectDirectory().ConfigureAwait(false);
+            if (!string.IsNullOrWhiteSpace(directory))
+            {
+                OutputFolder.Value = directory;
+            }
+        });
+        ShowInFolderCommand = new ReactiveCommand(_ =>
+        {
+            if (!string.IsNullOrWhiteSpace(OutputFolder.Value))
+            {
+                locateOnDisk(OutputFolder.Value);
+            }
+        });
+        ToggleAspectRatioCommand = new ReactiveCommand(_ => IsKeepingAspectRatio.Value = !IsKeepingAspectRatio.Value);
+        ClearFilterCommand = new ReactiveCommand(_ => FilterText.Value = string.Empty);
+        RemoveAllCommand = new ReactiveCommand(_ => SelectedFiles.Value.Clear());
+        RemoveFileFromListCommand = new ReactiveCommand<FileInfo>(file => SelectedFiles.Value.Remove(file));
+        foreach (var command in new IDisposable[]
+                 {
+                     StartCommand, CancelCommand, CloseProgressCommand, SelectAndAddFolderCommand,
+                     SelectAndAddFileCommand, PickOutputFolderCommand, ShowInFolderCommand, ToggleAspectRatioCommand,
+                     ClearFilterCommand, RemoveAllCommand, RemoveFileFromListCommand
+                 })
+        {
+            _disposables.Add(command);
+        }
+
+        Width.Skip(1).Subscribe(width => LinkSize(fromWidth: true, width)).AddTo(ref _disposables);
+        Height.Skip(1).Subscribe(height => LinkSize(fromWidth: false, height)).AddTo(ref _disposables);
+        IsKeepingAspectRatio.Where(static isKeeping => isKeeping).Subscribe(_ =>
+        {
+            if (Width.Value > 0 && Height.Value > 0)
+            {
+                _aspectRatio = (double)Width.Value / Height.Value;
+            }
+        }).AddTo(ref _disposables);
+        ThumbnailAmount.Skip(1).Subscribe(amount => SetThumbnails(BatchThumbnail.Defaults(amount)))
             .AddTo(ref _disposables);
+        FilterText.Skip(1).Subscribe(_ => UpdateFilteredFiles(),
+            DebugHelper.LogError(nameof(BatchResizeViewModel), nameof(UpdateFilteredFiles))).AddTo(ref _disposables);
+    }
+
+    public IReadOnlyList<Choice<ConversionTarget>> ConversionChoices { get; }
+    public IReadOnlyList<Choice<CompressionMode>> CompressionChoices { get; }
+    public IReadOnlyList<Choice<ResizeMode>> ResizeChoices { get; }
+    public IReadOnlyList<Choice<ThumbnailSize>> ThumbnailSizeChoices { get; }
+    public IReadOnlyList<Choice<int>> ThumbnailAmountChoices { get; }
+
+    // Commands
+    public ReactiveCommand StartCommand { get; }
+    public ReactiveCommand CancelCommand { get; }
+    public ReactiveCommand CloseProgressCommand { get; }
+    public ReactiveCommand SelectAndAddFolderCommand { get; }
+    public ReactiveCommand SelectAndAddFileCommand { get; }
+    public ReactiveCommand PickOutputFolderCommand { get; }
+    public ReactiveCommand ShowInFolderCommand { get; }
+    public ReactiveCommand ToggleAspectRatioCommand { get; }
+    public ReactiveCommand ClearFilterCommand { get; }
+    public ReactiveCommand RemoveAllCommand { get; }
+    public ReactiveCommand<FileInfo> RemoveFileFromListCommand { get; }
+
+    // Files
+    public BindableReactiveProperty<ObservableCollection<FileInfo>> SelectedFiles { get; } = new([]);
+    public BindableReactiveProperty<ObservableCollection<FileInfo>> FilteredFiles { get; } = new([]);
+    public BindableReactiveProperty<string?> FilterText { get; } = new(string.Empty, StringComparer.OrdinalIgnoreCase);
+    public BindableReactiveProperty<bool> IsFiltering { get; } = new(false);
+    public BindableReactiveProperty<string?> OutputFolder { get; } = new();
+
+    // Settings
+    public BindableReactiveProperty<ConversionTarget> Conversion { get; } = new();
+    public BindableReactiveProperty<CompressionMode> Compression { get; } = new();
+    public BindableReactiveProperty<bool> IsQualityEnabled { get; } = new();
+    public BindableReactiveProperty<uint> Quality { get; } = new(75);
+    public BindableReactiveProperty<ResizeMode> Resize { get; } = new();
+    public BindableReactiveProperty<uint> Width { get; } = new();
+    public BindableReactiveProperty<uint> Height { get; } = new();
+    public BindableReactiveProperty<double> Percentage { get; } = new(100);
+    public BindableReactiveProperty<bool> IsKeepingAspectRatio { get; } = new(true);
+    public IReadOnlyBindableReactiveProperty<bool> IsPercentageResizing { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsWidthAndHeightResizing { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsWidthResizing { get; }
+    public IReadOnlyBindableReactiveProperty<bool> IsHeightResizing { get; }
+
+    /// <summary>
+    /// How many Batch Thumbnails the job makes. Changing it replaces <see cref="Thumbnails"/> with that many defaults.
+    /// </summary>
+    public BindableReactiveProperty<int> ThumbnailAmount { get; } = new();
+
+    public ObservableCollection<BatchThumbnailRow> Thumbnails { get; } = [];
+
+    // Progress
+    public BindableReactiveProperty<bool> IsIndeterminate { get; } = new(true);
+
+    /// <summary>
+    /// Whether the progress of a run is shown, from when it starts until the user closes it.
+    /// </summary>
+    public BindableReactiveProperty<bool> IsRunning { get; } = new(false);
+    public BindableReactiveProperty<bool> IsFinished { get; } = new(false);
+    public BindableReactiveProperty<double> Progress { get; } = new();
+    public BindableReactiveProperty<double> ProgressMaximum { get; } = new();
+    public BindableReactiveProperty<ObservableCollection<BatchLogEntry>> ProcessedFiles { get; } = new([]);
+
+    /// <summary>
+    /// Fills the file list and output folder from the folder of a file, and the size from its image.
+    /// </summary>
+    public void Prefill(FileInfo? file, uint pixelWidth, uint pixelHeight)
+    {
+        SelectedFiles.Value = file is null ? [] : new ObservableCollection<FileInfo>(_getFiles(file));
+        if (!string.IsNullOrWhiteSpace(file?.DirectoryName))
+        {
+            OutputFolder.Value = Path.Combine(file.DirectoryName, TranslationManager.Translation.BatchResize ?? "");
+        }
+
+        _isLinkingSize = true;
+        Width.Value = pixelWidth;
+        Height.Value = pixelHeight;
+        _isLinkingSize = false;
+        _aspectRatio = pixelWidth > 0 && pixelHeight > 0 ? (double)pixelWidth / pixelHeight : 0;
+    }
+
+    /// <summary>
+    /// The Batch Resize Job the current settings make.
+    /// </summary>
+    public BatchResizeJob CreateJob() => new()
+    {
+        Files = [.. SelectedFiles.Value],
+        OutputFolder = OutputFolder.Value ?? string.Empty,
+        Conversion = Conversion.Value,
+        Compression = Compression.Value,
+        Quality = IsQualityEnabled.Value ? Quality.Value : null,
+        Resize = Resize.Value,
+        Width = Width.Value,
+        Height = Height.Value,
+        Percentage = Percentage.Value,
+        KeepAspectRatio = IsKeepingAspectRatio.Value,
+        Thumbnails = [.. Thumbnails.Select(static row => row.ToThumbnail())]
+    };
+
+    /// <summary>
+    /// Writes the current settings to the remembered settings, for the next Batch Resize window.
+    /// </summary>
+    public void RememberSettings()
+    {
+        _remembered.Conversion = Conversion.Value.ToString();
+        _remembered.Compression = Compression.Value.ToString();
+        _remembered.Resize = Resize.Value.ToString();
+        _remembered.IsQualityEnabled = IsQualityEnabled.Value;
+        _remembered.Quality = Quality.Value;
+        _remembered.KeepAspectRatio = IsKeepingAspectRatio.Value;
+        _remembered.Thumbnails = [.. Thumbnails.Select(static row => new RememberedThumbnail
+        {
+            Subfolder = row.Subfolder.Value,
+            Size = row.Size.Value.ToString(),
+            Value = row.Value.Value
+        })];
+        _remembered.ConvertToIndex = null;
+        _remembered.CompressionIndex = null;
+        _remembered.ResizeIndex = null;
+        _remembered.GenerateThumbnailsIndex = null;
+    }
+
+    private void Restore()
+    {
+        Conversion.Value = Parse(_remembered.Conversion, _remembered.ConvertToIndex, ConversionTarget.NoConversion);
+        Compression.Value = Parse(_remembered.Compression, _remembered.CompressionIndex, CompressionMode.Lossless);
+        Resize.Value = Parse(_remembered.Resize, _remembered.ResizeIndex, ResizeMode.None);
+        IsQualityEnabled.Value = _remembered.IsQualityEnabled;
+        Quality.Value = _remembered.Quality ?? 75;
+        IsKeepingAspectRatio.Value = _remembered.KeepAspectRatio;
+
+        var thumbnails = _remembered.Thumbnails?.Take(BatchThumbnail.Max).Select(static thumbnail =>
+                new BatchThumbnail(thumbnail.Subfolder, Parse(thumbnail.Size, null, ThumbnailSize.Percentage),
+                    thumbnail.Value)).ToList() ??
+            BatchThumbnail.Defaults(Math.Clamp(_remembered.GenerateThumbnailsIndex ?? 0, 0, BatchThumbnail.Max));
+        SetThumbnails(thumbnails);
+        ThumbnailAmount.Value = thumbnails.Count;
+    }
+
+    private static T Parse<T>(string? name, int? index, T fallback) where T : struct, Enum
+    {
+        if (Enum.TryParse<T>(name, out var value))
+        {
+            return value;
+        }
+
+        // Remembered by index, in the order the drop-downs had, which is the order of the enums
+        if (index is { } i && (T)(object)i is var byIndex && Enum.IsDefined(byIndex))
+        {
+            return byIndex;
+        }
+
+        return fallback;
+    }
+
+    private IReadOnlyBindableReactiveProperty<bool> IsResizing(ResizeMode mode)
+    {
+        var isResizing = Resize.Select(current => current == mode).ToReadOnlyBindableReactiveProperty();
+        _disposables.Add(isResizing);
+        return isResizing;
+    }
+
+    private void SetThumbnails(IEnumerable<BatchThumbnail> thumbnails)
+    {
+        foreach (var row in Thumbnails)
+        {
+            row.Dispose();
+        }
+
+        Thumbnails.Clear();
+        foreach (var thumbnail in thumbnails)
+        {
+            Thumbnails.Add(new BatchThumbnailRow(Thumbnails.Count + 1, thumbnail, ThumbnailSizeChoices));
+        }
+    }
+
+    /// <summary>
+    /// Keeps the width and height in the image's proportions while the aspect ratio is kept.
+    /// </summary>
+    private void LinkSize(bool fromWidth, uint changed)
+    {
+        if (_isLinkingSize || !IsKeepingAspectRatio.Value || _aspectRatio <= 0 || changed == 0)
+        {
+            return;
+        }
+
+        _isLinkingSize = true;
+        try
+        {
+            if (fromWidth)
+            {
+                Height.Value = (uint)Math.Max(1, Math.Round(changed / _aspectRatio));
+            }
+            else
+            {
+                Width.Value = (uint)Math.Max(1, Math.Round(changed * _aspectRatio));
+            }
+        }
+        finally
+        {
+            _isLinkingSize = false;
+        }
     }
 
     private void UpdateFilteredFiles()
@@ -234,332 +359,106 @@ public class BatchResizeViewModel : IDisposable
             return;
         }
 
-        var filtered = SelectedFiles.CurrentValue
-            .Where(file => file.Name.Contains(FilterText.CurrentValue, StringComparison.OrdinalIgnoreCase));
-
-        FilteredFiles.Value = new ObservableCollection<FileInfo>(filtered);
+        FilteredFiles.Value = new ObservableCollection<FileInfo>(SelectedFiles.CurrentValue
+            .Where(file => file.Name.Contains(FilterText.CurrentValue, StringComparison.OrdinalIgnoreCase)));
         IsFiltering.Value = true;
     }
 
-    private async ValueTask PickOutputFolder(Func<Task<string>> selectDirectory)
+    private async ValueTask StartAsync()
     {
-        var dir = await selectDirectory().ConfigureAwait(false);
-        if (!string.IsNullOrWhiteSpace(dir))
-        {
-            OutputFolder.Value = dir;
-        }
-    }
-
-    private async ValueTask SelectAndAddFolder(Func<Task<string>> selectDirectory)
-    {
-        var directory = await selectDirectory().ConfigureAwait(false);
-        if (string.IsNullOrWhiteSpace(directory))
+        if (IsRunning.Value || SelectedFiles.Value.Count == 0 || string.IsNullOrWhiteSpace(OutputFolder.Value))
         {
             return;
         }
 
-        var files = _getFiles.Invoke(new FileInfo(directory));
-        foreach (var file in files)
+        var job = CreateJob();
+        var context = SynchronizationContext.Current;
+        _cts?.Dispose();
+        _cts = new CancellationTokenSource();
+        var token = _cts.Token;
+
+        ProcessedFiles.Value.Clear();
+        Progress.Value = 0;
+        ProgressMaximum.Value = job.Files.Count;
+        IsIndeterminate.Value = false;
+        IsFinished.Value = false;
+        IsRunning.Value = true;
+
+        try
         {
-            SelectedFiles.Value.Add(file);
+            await Task.Run(() => BatchResizer.RunAsync(job, entry => OnUiThread(context, () => Log(entry)), token),
+                token).ConfigureAwait(false);
+            OnUiThread(context, () => IsFinished.Value = true);
+        }
+        catch (OperationCanceledException)
+        {
+            OnUiThread(context, () =>
+            {
+                Progress.Value = 0;
+                IsRunning.Value = false;
+            });
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(BatchResizeViewModel), nameof(StartAsync), e);
+            OnUiThread(context, () =>
+            {
+                Log(new BatchLogEntry { FileName = e.Message, OldSize = "--", NewSize = "--" });
+                IsFinished.Value = true;
+            });
         }
     }
 
-    private async ValueTask SelectAndAddFile(Func<Task<string?>> selectFile)
+    private void Log(BatchLogEntry entry)
     {
-        var file = await selectFile().ConfigureAwait(false);
-        if (!string.IsNullOrWhiteSpace(file))
+        lock (_lock)
         {
-            SelectedFiles.Value.Add(new FileInfo(file));
+            ProcessedFiles.Value.Add(entry);
+            if (!entry.IsThumbnail)
+            {
+                Progress.Value += 1;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Runs on the thread the run was started from, so the bound collection and progress are changed there.
+    /// </summary>
+    private static void OnUiThread(SynchronizationContext? context, Action action)
+    {
+        if (context is null)
+        {
+            action();
+        }
+        else
+        {
+            context.Post(static state => ((Action)state!)(), action);
         }
     }
 
     private async ValueTask CancelAsync()
     {
-        await (_cts?.CancelAsync()).ConfigureAwait(false);
+        if (_cts is not null)
+        {
+            await _cts.CancelAsync().ConfigureAwait(false);
+        }
+
         IsFinished.Value = false;
         IsRunning.Value = false;
     }
 
-    private void Reset()
-    {
-        IsKeepingAspectRatio.Value = true;
-        Progress.Value = 0;
-        ProgressMaximum.Value = 100;
-        IsRunning.Value = false;
-
-        Conversion.Value = ConversionTarget.NoConversion;
-        Compression.Value = CompressionMode.Lossless;
-        IsQualityEnabled.Value = false;
-        Quality.Value = 75;
-        Resize.Value = ResizeMode.None;
-
-        SourceFolder.Value = _fileInfo.DirectoryName ?? string.Empty;
-    }
-
-    private async ValueTask StartBatchResizeAsync(CancellationToken cancellationToken)
-    {
-        if (IsRunning.Value)
-        {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(OutputFolder.Value))
-        {
-            return;
-        }
-
-        IsRunning.Value = true;
-
-        await Task.Run(async () =>
-        {
-            _cts?.Dispose();
-            _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-
-            string? backupCopyDir = null;
-
-            try
-            {
-                var destinationDirectory = OutputFolder.CurrentValue;
-
-                if (!Directory.Exists(destinationDirectory))
-                {
-                    Directory.CreateDirectory(destinationDirectory);
-                }
-
-                var options = new ParallelOptions
-                {
-                    MaxDegreeOfParallelism = Environment.ProcessorCount - 2,
-                    CancellationToken = cancellationToken
-                };
-
-                if (SelectedFiles.Value.FirstOrDefault().DirectoryName.Equals(destinationDirectory))
-                {
-                    // First create a backup directory in case something goes wrong
-                    var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss", System.Globalization.CultureInfo.InvariantCulture);
-                    var backupDirName = $"PicView {TranslationManager.Translation.BatchResize} backup {timestamp}";
-                    backupCopyDir = Path.Combine(destinationDirectory, backupDirName);
-
-                    if (!Directory.Exists(backupCopyDir))
-                    {
-                        Directory.CreateDirectory(backupCopyDir);
-                    }
-
-                    // Copy all files to backup directory
-                    await Parallel.ForEachAsync(SelectedFiles.Value, options, (file, _) =>
-                    {
-                        var destFileName = Path.Combine(backupCopyDir, file.Name);
-                        File.Copy(file.FullName, destFileName, false);
-                        return ValueTask.CompletedTask;
-                    }).ConfigureAwait(false);
-                }
-
-
-                Progress.Value = 0;
-                ProgressMaximum.Value = SelectedFiles.Value.Count;
-                ProcessedFiles.Value.Clear();
-
-                IsIndeterminate.Value = false;
-                await Parallel.ForEachAsync(SelectedFiles.Value, options, (file, _) =>
-                {
-                    _cts.Token.ThrowIfCancellationRequested();
-
-                    var sourceFileName = file.FullName;
-
-                    var outputLogFileName = Path.Combine(file.Directory.Name, file.Name);
-                    var oldSize = file.Length.GetReadableFileSize();
-
-                    try
-                    {
-                        var magick = new MagickImage(sourceFileName);
-                        string destinationFileName;
-                        switch (Conversion.Value)
-                        {
-                            default:
-                            case ConversionTarget.NoConversion:
-                                destinationFileName = Path.Combine(destinationDirectory, file.Name);
-                                break;
-                            case ConversionTarget.Avif:
-                                destinationFileName = Path.Combine(destinationDirectory,
-                                    Path.ChangeExtension(file.Name, ".avif"));
-                                magick.Format = MagickFormat.Avif;
-                                break;
-                            case ConversionTarget.Heic:
-                                destinationFileName = Path.Combine(destinationDirectory,
-                                    Path.ChangeExtension(file.Name, ".heic"));
-                                magick.Format = MagickFormat.Heic;
-                                break;
-                            case ConversionTarget.Jpg:
-                                destinationFileName = Path.Combine(destinationDirectory,
-                                    Path.ChangeExtension(file.Name, ".jpg"));
-                                magick.Format = MagickFormat.Jpg;
-                                break;
-                            case ConversionTarget.Jxl:
-                                destinationFileName = Path.Combine(destinationDirectory,
-                                    Path.ChangeExtension(file.Name, ".jxl"));
-                                magick.Format = MagickFormat.Jxl;
-                                break;
-                            case ConversionTarget.Png:
-                                destinationFileName = Path.Combine(destinationDirectory,
-                                    Path.ChangeExtension(file.Name, ".png"));
-                                magick.Format = MagickFormat.Png;
-                                break;
-                            case ConversionTarget.Webp:
-                                destinationFileName = Path.Combine(destinationDirectory,
-                                    Path.ChangeExtension(file.Name, ".webp"));
-                                magick.Format = MagickFormat.WebP;
-                                break;
-                        }
-
-                        if (IsPercentageResizing.Value)
-                        {
-                            if (PercentageValue.Value > 0)
-                            {
-                                magick.Resize(new Percentage(PercentageValue.Value));
-                            }
-                        }
-                        else if (IsWidthAndHeightResizing.Value)
-                        {
-                            var w = WidthValue.CurrentValue;
-                            var h = HeightValue.CurrentValue;
-                            if (w > 0 && h > 0)
-                            {
-                                if (IsKeepingAspectRatio.Value)
-                                {
-                                    magick.Resize(w, h);
-                                }
-                                else
-                                {
-                                    var geometry = new MagickGeometry(w, h) { IgnoreAspectRatio = true };
-                                    magick.Resize(geometry);
-                                }
-                            }
-                        }
-                        else if (IsWidthResizing.Value)
-                        {
-                            magick.Resize(SingleWidthValue.Value, 0);
-                        }
-                        else if (IsHeightResizing.Value)
-                        {
-                            magick.Resize(0, SingleHeightValue.Value);
-                        } 
-                            
-                        if (IsQualityEnabled.Value)
-                        {
-                            magick.Quality = Quality.Value;
-                        }
-
-#pragma warning disable MA0042
-                        magick.Write(destinationFileName);
-#pragma warning restore MA0042
-                        if (Compression.Value is CompressionMode.Lossless or CompressionMode.Lossy)
-                        {
-                            ImageOptimizer imageOptimizer = new()
-                            {
-                                OptimalCompression = Compression.Value is CompressionMode.Lossless
-                            };
-                            if (imageOptimizer.IsSupported(destinationFileName))
-                            {
-                                imageOptimizer.Compress(destinationFileName);
-                            }
-                        }
-
-                        var newFile = new FileInfo(destinationFileName);
-
-                        var newSize = newFile.Length.GetReadableFileSize();
-                        var entry = new BatchLogEntry
-                        {
-                            FileName = outputLogFileName,
-                            NewSize = newSize,
-                            OldSize = oldSize
-                        };
-                        for (var i = 0; i < ThumbnailAmount; i++)
-                        {
-                            var thumb = Thumbs[i];
-                            var thumbDir = Path.Combine(destinationDirectory, thumb.SaveDestination);
-                            var thumbPath = Path.Combine(thumbDir, Path.GetFileName(destinationFileName));
-                            if (thumb.Percentage is not null)
-                            {
-                                magick.Resize(thumb.Percentage.Value);
-                            }
-                            else if (thumb.Width is not null)
-                            {
-                                magick.Resize((uint)thumb.Width.Value, 0);
-                            }
-                            else if (thumb.Height is not null)
-                            {
-                                magick.Resize(0, (uint)thumb.Height.Value);
-                            }
-
-                            if (!Directory.Exists(thumbDir))
-                            {
-                                Directory.CreateDirectory(thumbDir);
-                            }
-
-                            magick.Write(thumbPath);
-                            var thumbSize = new FileInfo(thumbPath).Length.GetReadableFileSize();
-                            lock (_lock)
-                            {
-                                ProcessedFiles.Value.Add(new BatchLogEntry
-                                {
-                                    FileName =
-                                        $"{TranslationManager.Translation.Thumbnail}: {Path.Combine(thumb.SaveDestination, outputLogFileName)}",
-                                    NewSize = thumbSize,
-                                    OldSize = oldSize
-                                });
-                            }
-                        }
-
-                        // Update output and progress. Needs to lock to not overwhelm UI.
-                        lock (_lock)
-                        {
-                            ProcessedFiles.Value.Add(entry);
-                            Progress.Value += 1;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        DebugHelper.LogDebug(nameof(BatchResizeViewModel), nameof(StartBatchResizeAsync), e);
-                        lock (_lock)
-                        {
-                            ProcessedFiles.Value.Add(new BatchLogEntry
-                            {
-                                FileName = outputLogFileName + Environment.NewLine + e.Message,
-                                NewSize = "--",
-                                OldSize = oldSize
-                            });
-
-                            Progress.Value += 1;
-                        }
-                    }
-
-                    return ValueTask.CompletedTask;
-                }).ConfigureAwait(false);
-                IsFinished.Value = true;
-            }
-            catch (OperationCanceledException)
-            {
-                // canceled
-                DebugHelper.LogDebug(nameof(BatchResizeViewModel), nameof(StartBatchResizeAsync), "Cancelled");
-                Progress.Value = 0;
-            }
-            catch (Exception ex)
-            {
-                DebugHelper.LogDebug(nameof(BatchResizeViewModel), nameof(StartBatchResizeAsync), ex);
-            }
-        }, cancellationToken).ConfigureAwait(false);
-    }
-        
-    #region IDisposable
-    
+    /// <summary>
+    /// Cancels a run that is still going, as when the window closes or App Shutdown ends it.
+    /// </summary>
     public void Dispose()
     {
         _cts?.Cancel();
         _cts?.Dispose();
+        foreach (var row in Thumbnails)
+        {
+            row.Dispose();
+        }
+
         _disposables.Dispose();
-            
-        GC.SuppressFinalize(this);
     }
-    
-    #endregion
 }

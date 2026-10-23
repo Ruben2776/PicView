@@ -6,6 +6,11 @@ public class BatchLogEntry
     public string OldSize { get; set; } = string.Empty;
     public string NewSize { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Whether the entry is for a Batch Thumbnail rather than for a file of the job.
+    /// </summary>
+    public bool IsThumbnail { get; init; }
+
     public override string ToString()
     {
         var fn = FileName.AsSpan();

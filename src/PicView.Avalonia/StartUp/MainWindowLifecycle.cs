@@ -45,6 +45,12 @@ public sealed class MainWindowLifecycle
     /// </summary>
     internal SecondaryWindowOpener AppWindows => _app.AppWindows;
 
+    /// <inheritdoc cref="AppLifecycle.AppToolWindows"/>
+    internal SecondaryWindowOpener AppToolWindows => _app.AppToolWindows;
+
+    /// <inheritdoc cref="AppLifecycle.ShutdownIfNothingIsOpenAsync"/>
+    internal Task ShutdownIfNothingIsOpenAsync() => _app.ShutdownIfNothingIsOpenAsync();
+
     /// <summary>
     /// The Main Windows that are open, in the order they opened.
     /// </summary>
@@ -221,7 +227,7 @@ public sealed class MainWindowLifecycle
 
         if (_open.Count == 0 && !_app.IsShuttingDown)
         {
-            await _app.ShutdownAsync().ConfigureAwait(true);
+            await _app.ShutdownIfNothingIsOpenAsync().ConfigureAwait(true);
         }
         else if (!_app.IsShuttingDown)
         {

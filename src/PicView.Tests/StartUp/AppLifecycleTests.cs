@@ -25,6 +25,7 @@ namespace PicView.Tests.StartUp;
 public class AppLifecycleTests : IAsyncDisposable
 {
     private readonly FileHistoryFileBackup _fileHistoryBackup = new();
+    private readonly ConfigFileBackup _batchResizeConfigBackup = new(new BatchResizeWindowConfig());
     private readonly List<AppLifecycle> _apps = [];
     private readonly string _folder;
     private readonly CoreViewModel _core;
@@ -63,6 +64,7 @@ public class AppLifecycleTests : IAsyncDisposable
         }
 
         _fileHistoryBackup.Dispose();
+        _batchResizeConfigBackup.Dispose();
     }
 
     [AvaloniaFact]
@@ -167,6 +169,62 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task ShowBatchResizeWindow_FromTwoMainWindows_OpensOneThatOutlivesTheFirst()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync();
+
+        await first.ShowBatchResizeWindow();
+        await second.ShowBatchResizeWindow();
+        await app.MainWindows.CloseAsync(first);
+
+        var batchResize = Assert.Single(_provider.BatchResizeWindows);
+        Assert.True(batchResize.IsVisible);
+        Assert.NotNull(_core.BatchResize);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_LastMainWindowWithBatchResizeOpen_KeepsRunningUntilBatchResizeCloses()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var main = app.MainWindows.Open[0];
+        main.ShowAboutWindow();
+        await main.ShowBatchResizeWindow();
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        var about = Assert.Single(_provider.AboutWindows);
+        var aboutClosed = false;
+        about.Closed += (_, _) => aboutClosed = true;
+
+        await app.MainWindows.CloseAsync(main);
+        var exitsWhileOpen = _exits;
+        Assert.Single(_provider.BatchResizeWindows).Close();
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.True(aboutClosed);
+        Assert.Equal(0, exitsWhileOpen);
+        Assert.Equal(1, _exits);
+        Assert.Null(_core.BatchResize);
+    }
+
+    [AvaloniaFact]
+    public async Task ShutdownAsync_WithBatchResizeOpen_ClosesIt()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        await app.MainWindows.Open[0].ShowBatchResizeWindow();
+        var closed = false;
+        Assert.Single(_provider.BatchResizeWindows).Closed += (_, _) => closed = true;
+
+        await app.ShutdownAsync();
+
+        Assert.True(closed);
+        Assert.Equal(1, _exits);
+    }
+
+    [AvaloniaFact]
     public async Task ShutdownAsync_ClosesEveryMainWindowAndRemembersTheMostRecentlyActiveOne()
     {
         var app = CreateApp();
@@ -247,7 +305,9 @@ public class AppLifecycleTests : IAsyncDisposable
     private sealed class LifecycleWindowProvider(CoreViewModel core) : IWindowProvider
     {
         public List<Window> Created { get; } = [];
-        public int AboutWindowsCreated { get; private set; }
+        public int AboutWindowsCreated => AboutWindows.Count;
+        public List<Window> AboutWindows { get; } = [];
+        public List<Window> BatchResizeWindows { get; } = [];
         public List<Window> ConvertWindows { get; } = [];
 
         public MainWindow CreateMainWindow(TabViewModel? firstTab = null)
@@ -262,11 +322,17 @@ public class AppLifecycleTests : IAsyncDisposable
         public IWindowModeAdapter CreateWindowModeAdapter() => new NoOpModeAdapter();
         public Window CreateAboutWindow()
         {
-            AboutWindowsCreated++;
-            return Track(new Window());
+            var window = Track(new Window());
+            AboutWindows.Add(window);
+            return window;
         }
 
-        public Window CreateBatchResizeWindow(BatchResizeWindowConfig config) => Track(new Window());
+        public Window CreateBatchResizeWindow(BatchResizeWindowConfig config)
+        {
+            var window = Track(new Window());
+            BatchResizeWindows.Add(window);
+            return window;
+        }
         public Window CreateFileAssociationsWindow() => Track(new Window());
         public Window CreateConvertWindow()
         {

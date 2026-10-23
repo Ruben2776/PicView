@@ -52,6 +52,8 @@ public sealed class AppLifecycle
         _exit = exit;
         MainWindows = new MainWindowLifecycle(core, provider, this);
         AppWindows = new SecondaryWindowOpener(() => MainWindows.MostRecentlyActive, provider, () => null, () => core);
+        AppToolWindows = new SecondaryWindowOpener(() => MainWindows.MostRecentlyActive, provider, () => null,
+            () => core);
     }
 
     /// <summary>
@@ -70,9 +72,38 @@ public sealed class AppLifecycle
     internal SecondaryWindowOpener AppWindows { get; }
 
     /// <summary>
+    /// Opens the Tool Windows that belong to the whole app rather than to a Main Window: Batch Resize. They stay open
+    /// when the last Main Window closes, and PicView keeps running until they close too.
+    /// </summary>
+    // TODO: allow opening Batch Resize at App Start without a Main Window (e.g. from the file manager's context
+    // menu); its file list would then start empty.
+    internal SecondaryWindowOpener AppToolWindows { get; }
+
+    /// <summary>
     /// Whether App Shutdown has begun.
     /// </summary>
     internal bool IsShuttingDown { get; private set; }
+
+    /// <summary>
+    /// Runs App Shutdown once the last Main Window and the Tool Windows that outlive it are all closed.
+    /// </summary>
+    internal async Task ShutdownIfNothingIsOpenAsync()
+    {
+        if (IsShuttingDown || MainWindows.Open.Count > 0)
+        {
+            return;
+        }
+
+        if (AppToolWindows.NewestOpenWindow is not null)
+        {
+            // Only the App Windows go with the last Main Window; PicView runs on for the Tool Windows left
+            AppWindows.CloseAll();
+            await SaveSharedFilesAsync().ConfigureAwait(true);
+            return;
+        }
+
+        await ShutdownAsync().ConfigureAwait(true);
+    }
 
     /// <summary>
     /// Runs App Shutdown: closes every Main Window, remembering the file and size of the most recently active one, saves
@@ -92,6 +123,8 @@ public sealed class AppLifecycle
         }
 
         IsShuttingDown = true;
+        // Closing Batch Resize cancels a run that is still going
+        AppToolWindows.CloseAll();
         var mostRecent = MainWindows.MostRecentlyActive;
         if (mostRecent is not null)
         {
