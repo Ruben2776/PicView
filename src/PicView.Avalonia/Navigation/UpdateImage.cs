@@ -1,12 +1,10 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Svg.Skia;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Views.UC;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;

@@ -203,13 +203,13 @@ public sealed class AppLifecycle
             await OpenLaunchFileAsync(early).ConfigureAwait(true);
         }
 
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Quitting, as from the macOS app menu, goes through App Shutdown, which ends the process itself
-            desktop.ShutdownRequested += (_, e) =>
+            desktop.ShutdownRequested += async (_, e) =>
             {
                 e.Cancel = true;
-                _ = ShutdownAsync();
+                await ShutdownAsync().ConfigureAwait(true);
             };
         }
 

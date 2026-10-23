@@ -1,4 +1,5 @@
-﻿using PicView.Core.FileHandling;
+﻿using System.Runtime.InteropServices;
+using PicView.Core.FileHandling;
 using PicView.Core.ImageDecoding;
 
 namespace PicView.Core.Navigation;
@@ -12,6 +13,7 @@ public static class FileTypeResolver
     /// <summary>
     /// Represents a structure containing a loadable file type and its associated data.
     /// </summary>
+    [StructLayout(LayoutKind.Auto)]
     public readonly record struct FileTypeStruct(LoadAbleFileType Type, string Data);
 
     /// <summary>

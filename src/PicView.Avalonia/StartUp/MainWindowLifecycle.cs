@@ -1,5 +1,4 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -144,6 +143,11 @@ public sealed class MainWindowLifecycle
     {
         _ = Task.Run(() => SourceOpener.OpenAsync(window, _core, source,
             new OpenOptions(IsStartup: true, ContinueFromLeftOff: continueFromLeftOff)).AsTask());
+        if (window.WindowModeState.AutoFit)
+        {
+            // If this is not called, the window will have jerky behavior on next resize.
+            Dispatcher.UIThread.Post(() => window.WindowFitter.Center(), DispatcherPriority.Input);
+        }
     }
 
     private void ShowStartUpMenuOrLastFile(MainWindow window)

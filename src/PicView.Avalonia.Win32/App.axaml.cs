@@ -14,7 +14,6 @@ using PicView.Core.WindowsNT.FileHandling;
 using PicView.Core.WindowsNT.Imaging;
 using PicView.Core.WindowsNT.Taskbar;
 using PicView.Core.WindowsNT.Wallpaper;
-using ShellThumbnailNative = PicView.Core.WindowsNT.Imaging.ShellThumbnailNative;
 
 namespace PicView.Avalonia.Win32;
 

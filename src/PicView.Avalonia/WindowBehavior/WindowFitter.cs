@@ -28,7 +28,8 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
     private readonly Func<Size> _readContentSize =
         readContentSize ?? (() => window.UIHelper.GetMainView?.Bounds.Size ?? default);
 
-    private readonly Func<ScreenSize> _readScreen = readScreen ?? (() => ScreenOf(window));
+    private readonly Func<ScreenSize> _readScreen = readScreen ?? (() =>
+        ScreenOf(window));
 
     private ScreenSize? _fittedScreen;
     private int _isFitBeforeFramePending;
