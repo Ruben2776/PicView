@@ -5,6 +5,7 @@ using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.ViewModels;
+using PicView.Core.Keybindings;
 
 namespace PicView.Avalonia.Input;
 
@@ -68,10 +69,10 @@ public static class ImageViewerClickBehavior
                 switch (DoubleClickActionFor(Settings.UIProperties.DoubleClickBehavior, canResetZoom: view is ImageViewer))
                 {
                     case DoubleClickAction.ResetZoom:
-                        await vm.Mapper.ResetZoom().ConfigureAwait(false);
+                        await vm.Mapper.Run(Actions.ResetZoom).ConfigureAwait(false);
                         return;
                     case DoubleClickAction.ToggleFullscreen:
-                        await vm.Mapper.ToggleFullscreen().ConfigureAwait(false);
+                        await vm.Mapper.Run(Actions.ToggleFullscreen).ConfigureAwait(false);
                         return;
                 }
             }
@@ -93,11 +94,11 @@ public static class ImageViewerClickBehavior
                     var isRightSide = point.X >= imageViewer.Bounds.Width / 2;
                     if (isLeftSide)
                     {
-                        await vm.Mapper.Prev().ConfigureAwait(false);
+                        await vm.Mapper.Run(Actions.Prev).ConfigureAwait(false);
                     }
                     else if (isRightSide)
                     {
-                        await vm.Mapper.Next().ConfigureAwait(false);
+                        await vm.Mapper.Run(Actions.Next).ConfigureAwait(false);
                     }
                 }
             }

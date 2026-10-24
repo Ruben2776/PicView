@@ -5,6 +5,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 using R3;
+using PicView.Core.Keybindings;
 
 namespace PicView.Avalonia.Views.UC.PopUps;
 
@@ -184,7 +185,7 @@ public partial class NavigationDialog : AnimatedPopUp
                 }); 
                 var vm = await Dispatcher.UIThread.InvokeAsync(() => DataContext as MainWindowViewModel);
 
-                await vm.Mapper.NextFolder().ConfigureAwait(false);
+                await vm.Mapper.Run(Actions.NextFolder).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(ImageViewer), nameof(NextFolderButton)), AwaitOperation.Drop)
             .AddTo(ref _disposables);
         
@@ -198,7 +199,7 @@ public partial class NavigationDialog : AnimatedPopUp
                 }); 
                 var vm = await Dispatcher.UIThread.InvokeAsync(() => DataContext as MainWindowViewModel);
 
-                await vm.Mapper.PrevFolder().ConfigureAwait(false);
+                await vm.Mapper.Run(Actions.PrevFolder).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(ImageViewer), nameof(PrevFolderButton)), AwaitOperation.Drop)
             .AddTo(ref _disposables);
 
@@ -213,7 +214,7 @@ public partial class NavigationDialog : AnimatedPopUp
                 }); 
                 var vm = await Dispatcher.UIThread.InvokeAsync(() => DataContext as MainWindowViewModel);
 
-                await vm.Mapper.NextArchive().ConfigureAwait(false);
+                await vm.Mapper.Run(Actions.NextArchive).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(ImageViewer), nameof(NextArchiveButton)), AwaitOperation.Drop)
             .AddTo(ref _disposables);
 
@@ -227,7 +228,7 @@ public partial class NavigationDialog : AnimatedPopUp
                 }); 
                 var vm = await Dispatcher.UIThread.InvokeAsync(() => DataContext as MainWindowViewModel);
 
-                await vm.Mapper.PrevArchive().ConfigureAwait(false);
+                await vm.Mapper.Run(Actions.PrevArchive).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(ImageViewer), nameof(PrevArchiveButton)), AwaitOperation.Drop)
             .AddTo(ref _disposables);
     }

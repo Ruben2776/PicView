@@ -23,6 +23,7 @@ using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
 using MainWindowViewModel = PicView.Core.ViewModels.MainWindowViewModel;
 using ShellThumbnailNative = PicView.Core.MacOS.Imaging.ShellThumbnailNative;
+using PicView.Core.Keybindings;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 
@@ -93,7 +94,7 @@ public class App : Application, IPlatformSpecificService
    public async Task<bool> CutFile(string filePath)
    {
        // Cut isn't a supported operation on macOS
-       await _coreViewModel.MainWindows.ActiveWindow.CurrentValue.Mapper.CopyFile();
+       await _coreViewModel.MainWindows.ActiveWindow.CurrentValue.Mapper.Run(Actions.CopyFile);
        return true;
    }
     
