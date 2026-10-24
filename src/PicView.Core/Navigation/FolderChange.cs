@@ -6,7 +6,13 @@ public enum FolderChangeKind
     Created,
     Changed,
     Renamed,
-    Deleted
+    Deleted,
+
+    /// <summary>
+    /// A subfolder was deleted or moved away with its files, which raises no event for each of them when it goes to
+    /// the Recycle Bin. <see cref="FolderChange.File"/> is the subfolder.
+    /// </summary>
+    SubfolderDeleted
 }
 
 /// <summary>

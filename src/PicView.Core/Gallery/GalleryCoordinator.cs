@@ -314,6 +314,16 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
         }
     }
 
+    /// <summary>
+    /// Forgets the gallery's items when the tab browses no files anymore, so the files it browses next load their own.
+    /// </summary>
+    public void Clear()
+    {
+        Cancel();
+        tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
+        tab.Gallery.GalleryItems.Clear();
+    }
+
     public void Dispose()
     {
         Cancel();

@@ -114,7 +114,44 @@ public class FileWatcherService(
                 await HandleAsync(directory, FolderChangeKind.Changed, e.FullPath, null, ct).ConfigureAwait(false),
             DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Changed)));
 
-        return (watch, Disposable.Combine(fileCreatedSub, fileDeletedSub, fileRenamedSub, fileChangedSub));
+        var folderGoneSub = watch.Gone.SubscribeAwait(async (_, _) =>
+                await FolderGoneAsync(directory).ConfigureAwait(false),
+            DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderGoneAsync)));
+
+        return (watch, Disposable.Combine(fileCreatedSub, fileDeletedSub, fileRenamedSub, fileChangedSub, folderGoneSub));
+    }
+
+    /// <summary>
+    /// Makes every tab still watching <paramref name="directory"/> fresh, now that the folder is gone.
+    /// </summary>
+    private async ValueTask FolderGoneAsync(string directory)
+    {
+        foreach (var tab in SubscribersOf(directory))
+        {
+            try
+            {
+                await tab.BecomeFreshAsync().ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                DebugHelper.LogDebug(nameof(FileWatcherService), nameof(FolderGoneAsync), exception);
+            }
+        }
+    }
+
+    private TabViewModel[] SubscribersOf(string directory)
+    {
+        lock (_lock)
+        {
+            if (!_watchers.TryGetValue(directory, out var entry))
+            {
+                return [];
+            }
+            return entry.Subscribers
+                .Select(static reference => reference.TryGetTarget(out var tab) ? tab : null)
+                .OfType<TabViewModel>()
+                .ToArray();
+        }
     }
 
     /// <summary>
@@ -127,7 +164,12 @@ public class FileWatcherService(
     {
         if (!fullPath.IsSupported())
         {
-            return;
+            // A deleted path that is not an image may be a subfolder, whose files go with it
+            if (kind is not FolderChangeKind.Deleted)
+            {
+                return;
+            }
+            kind = FolderChangeKind.SubfolderDeleted;
         }
 
         var stalePath = kind is FolderChangeKind.Renamed ? oldFullPath ?? fullPath : fullPath;
@@ -138,20 +180,7 @@ public class FileWatcherService(
         var change = new FolderChange(kind, file, oldFullPath,
             new FileDetailsSource(file, waitUntilReady: kind is not FolderChangeKind.Deleted), _stringComparer);
 
-        TabViewModel[] subscribers;
-        lock (_lock)
-        {
-            if (!_watchers.TryGetValue(directory, out var entry))
-            {
-                return;
-            }
-            subscribers = entry.Subscribers
-                .Select(static reference => reference.TryGetTarget(out var tab) ? tab : null)
-                .OfType<TabViewModel>()
-                .ToArray();
-        }
-
-        foreach (var tab in subscribers)
+        foreach (var tab in SubscribersOf(directory))
         {
             try
             {

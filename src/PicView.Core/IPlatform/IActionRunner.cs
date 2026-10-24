@@ -1,4 +1,6 @@
-﻿namespace PicView.Core.IPlatform;
+﻿using PicView.Core.ViewModels;
+
+namespace PicView.Core.IPlatform;
 
 /// <summary>
 /// The window's one seam for running Actions, plus the few operations that are not Actions.
@@ -22,7 +24,7 @@ public interface IActionRunner
     ValueTask StopRepeatedNavigation();
 
     /// <summary>
-    /// Shows the start-up menu, such as when the shown folder is emptied.
+    /// Shows the start-up menu in <paramref name="tab"/>, such as when all the files it browsed were deleted.
     /// </summary>
-    ValueTask ShowStartUpMenu();
+    ValueTask ShowStartUpMenu(TabViewModel tab);
 }

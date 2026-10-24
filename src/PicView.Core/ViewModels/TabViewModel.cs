@@ -50,9 +50,16 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     internal IDisposable? Hookups { get; set; }
 
     /// <summary>
-    /// Whether the tab has been opened, which attaches it to its window. A Fresh Tab is not.
+    /// Whether the tab has been opened, which attaches it to its window. A tab that never browsed files is not.
     /// </summary>
     public bool IsInitialized { get; internal set; }
+
+    /// <summary>
+    /// Whether this is a Fresh Tab: one that has never browsed files, or whose files were all deleted.
+    /// </summary>
+    public bool IsFresh => !IsInitialized || _hasLostItsFiles;
+
+    private bool _hasLostItsFiles;
     
     public bool IsClosing { get; private set; }
     public bool IsSelected { get; set; }
@@ -330,6 +337,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         }
         ImageIterator ??= new ImageIterator(cache, thumbCache, thumbnailLoader, this);
         GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, thumbnailLoader, ThumbnailCache ?? thumbCache);
+        // Browsing files again, so it is no longer fresh
+        _hasLostItsFiles = false;
         if (Model?.FileInfo is null)
         {
 #if DEBUG
@@ -376,6 +385,27 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         (_folderChanges ??= new FolderChanges(this)).HandleAsync(change, ct);
 
     private FolderChanges? _folderChanges;
+
+    /// <summary>
+    /// Makes the tab fresh again once all the files it browsed were deleted: it stops following their folder, forgets
+    /// its files, the image it shows and its gallery, and shows the start-up menu.
+    /// </summary>
+    internal async ValueTask BecomeFreshAsync()
+    {
+        _fileWatcherService?.Unwatch(this);
+        ResetNavigationCts();
+        GalleryCoordinator?.Clear();
+        ThumbnailCache?.RemoveOwner(Id);
+        DisposeImageIterator();
+        Display(new ImageModel());
+        SetNewTabTitle();
+        _hasLostItsFiles = true;
+
+        if (ParentWindowContext?.ActionRunner is { } actionRunner)
+        {
+            await actionRunner.ShowStartUpMenu(this).ConfigureAwait(false);
+        }
+    }
 
     /// <summary>
     /// Closes this tab in the Main Window that owns it now, which also disposes it.

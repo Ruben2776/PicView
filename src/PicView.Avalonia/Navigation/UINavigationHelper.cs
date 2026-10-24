@@ -24,7 +24,7 @@ public static class UINavigationHelper
         }
 
         // Continue from the remembered start-up directory only when opening into a fresh tab
-        var isFreshTab = !vm.WindowTabs.ActiveTab.CurrentValue.IsInitialized;
+        var isFreshTab = vm.WindowTabs.ActiveTab.CurrentValue.IsFresh;
         await SourceOpener.OpenAsync(mainWindow, core, path, new OpenOptions(ContinueFromLeftOff: isFreshTab)).ConfigureAwait(false);
     }
 

@@ -1,4 +1,5 @@
 using PicView.Core.IPlatform;
+using PicView.Core.ViewModels;
 
 namespace PicView.Tests.Input;
 
@@ -15,7 +16,16 @@ public sealed class RecordingActionRunner : IActionRunner
 
     public ValueTask StopRepeatedNavigation() => Record(nameof(StopRepeatedNavigation));
 
-    public ValueTask ShowStartUpMenu() => Record(nameof(ShowStartUpMenu));
+    /// <summary>
+    /// The tabs the start-up menu was shown in, in order.
+    /// </summary>
+    public List<TabViewModel> StartUpMenuTabs { get; } = [];
+
+    public ValueTask ShowStartUpMenu(TabViewModel tab)
+    {
+        StartUpMenuTabs.Add(tab);
+        return Record(nameof(ShowStartUpMenu));
+    }
 
     private ValueTask Record(string call)
     {

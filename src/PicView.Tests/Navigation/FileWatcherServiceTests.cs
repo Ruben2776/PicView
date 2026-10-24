@@ -1,5 +1,6 @@
 using ImageMagick;
 using PicView.Core.Gallery;
+using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -367,6 +368,187 @@ public class FileWatcherServiceTests : IDisposable
         await WaitUntilAsync(() => tab.ImageIterator.Files.Any(f => f.FullName == filePath));
     }
 
+    [Fact]
+    public async Task OnFileDeleted_LastFile_MakesTheTabFresh()
+    {
+        // Arrange
+        var actionRunner = new Input.RecordingActionRunner();
+        var files = await FilesOnDiskAsync("a.jpg", "b.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0], WindowWith(actionRunner));
+        LoadGallery(tab);
+        var watch = Watch(tab);
+
+        // Act
+        watch.RaiseDeleted("a.jpg");
+        watch.RaiseDeleted("b.jpg");
+
+        // Assert: it no longer browses the folder or shows its file, as a tab that never browsed files
+        await WaitUntilAsync(() => actionRunner.StartUpMenuTabs.Count == 1);
+        Assert.Same(tab, actionRunner.StartUpMenuTabs[0]);
+        Assert.True(tab.IsFresh);
+        Assert.Null(tab.ImageIterator);
+        Assert.Null(tab.Model.FileInfo);
+        Assert.Null(tab.FileInfo.Value);
+        Assert.Empty(tab.Gallery.GalleryItems);
+        Assert.True(watch.IsDisposed, "A fresh tab follows no folder");
+    }
+
+    [Fact]
+    public async Task OnFileDeleted_LastFile_ShowsTheStartUpMenuInEveryTabOfTheFolderOnly()
+    {
+        // Arrange: two tabs in the emptied folder, and the window's active tab in another folder
+        var actionRunner = new Input.RecordingActionRunner();
+        var window = WindowWith(actionRunner);
+        var files = Files("a.jpg");
+        var first = CreateTab(_testDirectory, files, files[0], window);
+        var second = CreateTab(_testDirectory, files, files[0], window);
+        var otherDirectory = Path.Combine(_testDirectory, "other");
+        var otherFiles = new List<FileInfo> { new(Path.Combine(otherDirectory, "x.jpg")) };
+        var other = CreateTab(otherDirectory, otherFiles, otherFiles[0], window);
+        var watch = Watch(first);
+        _service.Watch(second);
+        _service.Watch(other);
+
+        // Act
+        watch.RaiseDeleted("a.jpg");
+
+        // Assert
+        await WaitUntilAsync(() => actionRunner.StartUpMenuTabs.Count == 2);
+        Assert.Equal([first, second], actionRunner.StartUpMenuTabs);
+        Assert.True(first.IsFresh);
+        Assert.True(second.IsFresh);
+        Assert.Single(other.ImageIterator!.Files);
+    }
+
+    [Fact]
+    public async Task OnSubfolderDeleted_RemovesItsFiles()
+    {
+        // Arrange: browsing subdirectories, showing a file in the subfolder
+        Settings.Sorting.IncludeSubDirectories = true;
+        var files = Files("a.jpg", Path.Combine("sub", "b.jpg"), Path.Combine("sub", "c.jpg"), "d.jpg");
+        var tab = CreateTab(_testDirectory, files, files[1]);
+
+        // Act
+        Watch(tab).RaiseDeleted("sub");
+
+        // Assert
+        await WaitUntilAsync(() => tab.ImageIterator!.Files.Count == 2);
+        Assert.Equal(["a.jpg", "d.jpg"], tab.ImageIterator!.Files.Select(f => f.Name));
+    }
+
+    [Fact]
+    public async Task OnSubfolderDeleted_OnDisk_SubfolderSentToTheRecycleBin_RemovesItsFiles()
+    {
+        // Arrange
+        Settings.Sorting.IncludeSubDirectories = true;
+        var subfolder = Path.Combine(_testDirectory, "sub");
+        Directory.CreateDirectory(subfolder);
+        var files = await FilesOnDiskAsync("a.jpg", Path.Combine("sub", "b.jpg"));
+        using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
+            _mockThumbnailCache);
+        var tab = new TabViewModel(null!, service);
+        tab.Model = new ImageModel { FileInfo = files[0] };
+        tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
+        tab.InitializeImageIterator(files, _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
+            _mockThumbnailCache);
+
+        // Act: moved out of the watched folder, as the Recycle Bin does, so no event comes for its files
+        var outside = Path.Combine(Path.GetTempPath(), "PicViewTests_Moved_" + Guid.NewGuid());
+        Directory.Move(subfolder, outside);
+
+        try
+        {
+            // Assert
+            await WaitUntilAsync(() => tab.ImageIterator!.Files.Count == 1);
+            Assert.Equal("a.jpg", tab.ImageIterator!.Files[0].Name);
+        }
+        finally
+        {
+            Directory.Delete(outside, true);
+        }
+    }
+
+    [Fact]
+    public async Task OnFolderGone_MakesEveryTabOfTheFolderFresh()
+    {
+        // Arrange
+        var actionRunner = new Input.RecordingActionRunner();
+        var window = WindowWith(actionRunner);
+        var files = Files("a.jpg", "b.jpg");
+        var first = CreateTab(_testDirectory, files, files[0], window);
+        var second = CreateTab(_testDirectory, files, files[1], window);
+        var watch = Watch(first);
+        _service.Watch(second);
+
+        // Act
+        watch.RaiseGone();
+
+        // Assert
+        await WaitUntilAsync(() => actionRunner.StartUpMenuTabs.Count == 2);
+        Assert.Equal([first, second], actionRunner.StartUpMenuTabs);
+        Assert.Null(first.ImageIterator);
+        Assert.Null(second.ImageIterator);
+        Assert.True(watch.IsDisposed);
+    }
+
+    [Fact]
+    public async Task OnFolderGone_OnDisk_FolderSentToTheRecycleBin_MakesTheTabFresh()
+    {
+        // Arrange: moving the folder away, as the Recycle Bin does, raises no event for its files
+        var folder = Path.Combine(_testDirectory, "watched");
+        Directory.CreateDirectory(folder);
+        var file = new FileInfo(Path.Combine(folder, "a.jpg"));
+        await File.WriteAllTextAsync(file.FullName, "dummy content", TestContext.Current.CancellationToken);
+        using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
+            _mockThumbnailCache);
+        var actionRunner = new Input.RecordingActionRunner();
+        var tab = new TabViewModel(WindowWith(actionRunner), service);
+        tab.Model = new ImageModel { FileInfo = file };
+        tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
+        tab.InitializeImageIterator([file], _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
+            _mockThumbnailCache);
+
+        // Act
+        Directory.Move(folder, Path.Combine(_testDirectory, "moved"));
+
+        // Assert
+        await WaitUntilAsync(() => actionRunner.StartUpMenuTabs.Count == 1);
+        Assert.Null(tab.ImageIterator);
+    }
+
+    [Fact]
+    public async Task OnFileDeleted_OnDisk_AllFilesAtOnce_MakesTheTabFresh()
+    {
+        // Arrange: the watcher PicView uses, and a loader that fails for a file that is gone, as PicView's does
+        var cache = new SharedImageCache(static f =>
+            ValueTask.FromResult(File.Exists(f.FullName)
+                ? new ImageModel { FileInfo = f, Image = new object() }
+                : new ImageModel { FileInfo = f, ImageType = ImageType.Invalid }));
+        using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), cache,
+            _mockThumbnailCache);
+        var actionRunner = new Input.RecordingActionRunner();
+        var files = await FilesOnDiskAsync(Enumerable.Range(1, 30).Select(i => $"{i:D2}.jpg").ToArray());
+        var tab = new TabViewModel(WindowWith(actionRunner), service);
+        tab.Model = new ImageModel { FileInfo = files[0] };
+        tab.Initialize(cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
+        tab.InitializeImageIterator(files, cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
+            _mockThumbnailCache);
+
+        // Act
+        foreach (var file in files)
+        {
+            File.Delete(file.FullName);
+        }
+
+        // Assert
+        await WaitUntilAsync(() => actionRunner.StartUpMenuTabs.Count == 1);
+        Assert.True(tab.IsFresh);
+        Assert.Null(tab.ImageIterator);
+    }
+
+    private static MainWindowViewModel WindowWith(Input.RecordingActionRunner actionRunner) =>
+        new(null!, null!, null!, null!, null!) { ActionRunner = actionRunner };
+
     /// <summary>
     /// Files that exist, as a gallery load reads each file's size and date.
     /// </summary>
@@ -401,9 +583,10 @@ public class FileWatcherServiceTests : IDisposable
     private List<FileInfo> Files(params string[] names) =>
         names.Select(name => new FileInfo(Path.Combine(_testDirectory, name))).ToList();
 
-    private TabViewModel CreateTab(string directory, List<FileInfo>? files = null, FileInfo? shown = null)
+    private TabViewModel CreateTab(string directory, List<FileInfo>? files = null, FileInfo? shown = null,
+        MainWindowViewModel? window = null)
     {
-        var tab = new TabViewModel(null!, _service);
+        var tab = new TabViewModel(window!, _service);
         // Watch() finds the directory from the model, so give it a file in that directory
         var dummyFile = new FileInfo(Path.Combine(directory, "placeholder.png"));
         tab.Model = new ImageModel { FileInfo = dummyFile };
@@ -464,6 +647,7 @@ public class FileWatcherServiceTests : IDisposable
         private readonly Subject<FileSystemEventArgs> _changed = new();
         private readonly Subject<RenamedEventArgs> _renamed = new();
         private readonly Subject<FileSystemEventArgs> _deleted = new();
+        private readonly Subject<Unit> _gone = new();
 
         public string Directory { get; } = directory;
         public bool IncludesSubdirectories { get; } = includeSubdirectories;
@@ -473,6 +657,7 @@ public class FileWatcherServiceTests : IDisposable
         public Observable<FileSystemEventArgs> Changed => _changed;
         public Observable<RenamedEventArgs> Renamed => _renamed;
         public Observable<FileSystemEventArgs> Deleted => _deleted;
+        public Observable<Unit> Gone => _gone;
 
         public void RaiseCreated(string name) =>
             _created.OnNext(new FileSystemEventArgs(WatcherChangeTypes.Created, Directory, name));
@@ -486,6 +671,8 @@ public class FileWatcherServiceTests : IDisposable
         public void RaiseDeleted(string name) =>
             _deleted.OnNext(new FileSystemEventArgs(WatcherChangeTypes.Deleted, Directory, name));
 
+        public void RaiseGone() => _gone.OnNext(Unit.Default);
+
         public void Dispose()
         {
             IsDisposed = true;
@@ -493,6 +680,7 @@ public class FileWatcherServiceTests : IDisposable
             _changed.Dispose();
             _renamed.Dispose();
             _deleted.Dispose();
+            _gone.Dispose();
         }
     }
 

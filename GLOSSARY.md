@@ -69,8 +69,8 @@ A place in a Main Window that shows one image and browses the files around it. I
 _Avoid_: Page, document, view, detach (for moving a tab)
 
 **Fresh Tab**:
-A tab that has never browsed files. Opening a file into one continues from the remembered start-up directory when browsing subdirectories; showing a Single Image does not make a tab fresh again.
-_Avoid_: New tab, uninitialized tab
+A tab that has never browsed files, or whose files were all deleted, which makes it fresh again: it shows the start-up menu and no longer follows that folder. Opening a file into one continues from the remembered start-up directory when browsing subdirectories; showing a Single Image does not make a tab fresh again.
+_Avoid_: New tab, uninitialized tab, empty tab
 
 **Single Image**:
 An image a tab shows on its own, without the files around it to browse: a clipboard image, a base64 image, a temporary file or a URL download. It has its own model, and showing a file again ends it.

@@ -15,8 +15,29 @@ internal sealed class FolderChanges(TabViewModel tab)
         FolderChangeKind.Changed => ChangedAsync(change, ct),
         FolderChangeKind.Renamed => RenamedAsync(change, ct),
         FolderChangeKind.Deleted => DeletedAsync(change),
+        FolderChangeKind.SubfolderDeleted => SubfolderDeletedAsync(change),
         _ => ValueTask.CompletedTask
     };
+
+    /// <summary>
+    /// Follows each file the tab browses in the deleted subfolder as if it were deleted on its own.
+    /// </summary>
+    private async ValueTask SubfolderDeletedAsync(FolderChange change)
+    {
+        if (tab.ImageIterator is not { } iterator)
+        {
+            return;
+        }
+
+        var subfolder = Path.TrimEndingDirectorySeparator(change.File.FullName) + Path.DirectorySeparatorChar;
+        var deleted = iterator.Files
+            .Where(file => file.FullName.StartsWith(subfolder, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        foreach (var file in deleted)
+        {
+            await DeletedAsync(change with { Kind = FolderChangeKind.Deleted, File = file }).ConfigureAwait(false);
+        }
+    }
 
     private async ValueTask CreatedAsync(FolderChange change, CancellationToken ct)
     {
@@ -130,10 +151,7 @@ internal sealed class FolderChanges(TabViewModel tab)
 
         if (iterator.Files.Count is 0)
         {
-            if (tab.ParentWindowContext is not null)
-            {
-                await tab.ParentWindowContext.ActionRunner.ShowStartUpMenu().ConfigureAwait(false);
-            }
+            await tab.BecomeFreshAsync().ConfigureAwait(false);
             return;
         }
 
