@@ -17,6 +17,6 @@ Next to `Run`, the seam keeps the few operations that are not Actions: `OpenPath
 ## Consequences
 
 - A new Action is added in two places: a constant (in a category or `HiddenActionNames`) and an arm in the dispatch switch.
-- Settings and window toggles that were only on `IFunctionsMapper` (such as `ToggleSubdirectories` or `Minimize`) are Hidden Actions now, so a user can bind them in `keybindings.json`.
+- Settings and window toggles that were only on `IFunctionsMapper`, now `IActionRunner`, such as `ToggleSubdirectories` or `Minimize`, are Hidden Actions now, so a user can bind them in `keybindings.json`.
 - `Run` only dispatches. Input Mode rules such as "a playing motion photo disallows `Crop`" apply to Keybinds in `KeybindRouter`, not to clicks, as before.
 - An unknown name, such as a stale one in a user's `keybindings.json`, is logged and does nothing.

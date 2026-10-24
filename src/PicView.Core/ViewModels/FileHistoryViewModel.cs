@@ -28,7 +28,7 @@ public class FileHistoryViewModel
 
     private async ValueTask OpenFileHistory(Unit arg1, CancellationToken arg2)
     {
-        await _vm.Mapper.Run(Actions.ShowRecentHistoryFile).ConfigureAwait(false);
+        await _vm.ActionRunner.Run(Actions.ShowRecentHistoryFile).ConfigureAwait(false);
     }
 
     private void ToggleSort(Unit obj)

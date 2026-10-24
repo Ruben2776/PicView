@@ -87,7 +87,7 @@ public sealed class KeybindRouter
         }
 
         var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm)).ConfigureAwait(true);
-        await Keymaps.ExecuteAsync(ordinary, vm.Mapper).ConfigureAwait(false);
+        await Keymaps.ExecuteAsync(ordinary, vm.ActionRunner).ConfigureAwait(false);
     }
 
     public async ValueTask KeyUpAsync(Key key)
@@ -106,9 +106,9 @@ public sealed class KeybindRouter
             vm.TopTitlebarViewModel.ToggleMenu();
         }
 
-        if (vm.Mapper is not null)
+        if (vm.ActionRunner is not null)
         {
-            await vm.Mapper.StopRepeatedNavigation().ConfigureAwait(false);
+            await vm.ActionRunner.StopRepeatedNavigation().ConfigureAwait(false);
         }
     }
 
@@ -126,7 +126,7 @@ public sealed class KeybindRouter
         }
 
         var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm)).ConfigureAwait(true);
-        await Keymaps.ExecuteAsync(ordinary, vm.Mapper).ConfigureAwait(false);
+        await Keymaps.ExecuteAsync(ordinary, vm.ActionRunner).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -164,7 +164,7 @@ public sealed class KeybindRouter
             default:
                 if (!isTouchPad)
                 {
-                    await Keymaps.ExecuteAsync(ordinary, vm.Mapper).ConfigureAwait(false);
+                    await Keymaps.ExecuteAsync(ordinary, vm.ActionRunner).ConfigureAwait(false);
                 }
                 break;
         }
@@ -225,9 +225,9 @@ public sealed class KeybindRouter
             return;
         }
 
-        if (vm.Mapper is not null)
+        if (vm.ActionRunner is not null)
         {
-            await vm.Mapper.Run(Actions.Close).ConfigureAwait(false);
+            await vm.ActionRunner.Run(Actions.Close).ConfigureAwait(false);
         }
     }
 

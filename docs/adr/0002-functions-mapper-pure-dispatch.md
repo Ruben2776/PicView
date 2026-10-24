@@ -4,4 +4,4 @@
 
 ## Superseded In Part
 
-The typed methods of `IFunctionsMapper` are replaced by one `Run(action)` seam (ADR-0009). The rule above is unchanged: `FunctionsMapper` stays a pure dispatch table.
+The typed methods of `IFunctionsMapper` are replaced by one `Run(action)` seam, and the interface is now `IActionRunner` (ADR-0009). The rule above is unchanged: `FunctionsMapper` stays a pure dispatch table.

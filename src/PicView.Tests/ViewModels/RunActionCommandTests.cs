@@ -1,6 +1,4 @@
-using System.Reflection;
 using System.Windows.Input;
-using PicView.Core.IPlatform;
 using PicView.Core.Keybindings;
 using PicView.Core.ViewModels;
 using PicView.Tests.Input;
@@ -17,9 +15,9 @@ public class RunActionCommandTests
     {
         SetDefaults();
         _vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var mapper = DispatchProxy.Create<IFunctionsMapper, KeybindRouterTests.RecordingMapper>();
-        _calls = ((KeybindRouterTests.RecordingMapper)(object)mapper).Calls;
-        _vm.Mapper = mapper;
+        var actionRunner = new RecordingActionRunner();
+        _calls = actionRunner.Calls;
+        _vm.ActionRunner = actionRunner;
     }
 
     [Fact]
@@ -35,9 +33,9 @@ public class RunActionCommandTests
     }
 
     [Fact]
-    public void Execute_WithoutMapper_DoesNothing()
+    public void Execute_WithoutActionRunner_DoesNothing()
     {
-        _vm.Mapper = null;
+        _vm.ActionRunner = null;
 
         ((ICommand)_vm.RunActionCommand).Execute(Actions.Next);
 

@@ -28,11 +28,11 @@ public class KeybindRouterTests
     {
         SetDefaults();
         _vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
-        var mapper = DispatchProxy.Create<IFunctionsMapper, RecordingMapper>();
-        _calls = ((RecordingMapper)(object)mapper).Calls;
-        _vm.Mapper = mapper;
-        var switcher = DispatchProxy.Create<IWindowModeSwitcher, RecordingMapper>();
-        _windowModeCalls = ((RecordingMapper)(object)switcher).Calls;
+        var actionRunner = new RecordingActionRunner();
+        _calls = actionRunner.Calls;
+        _vm.ActionRunner = actionRunner;
+        var switcher = DispatchProxy.Create<IWindowModeSwitcher, RecordingProxy>();
+        _windowModeCalls = ((RecordingProxy)(object)switcher).Calls;
         _vm.WindowModeSwitcher = switcher;
     }
 
@@ -66,7 +66,7 @@ public class KeybindRouterTests
 
         await router.KeyUpAsync(Key.Right);
 
-        Assert.Equal(["Next", nameof(IFunctionsMapper.StopRepeatedNavigation)], _calls);
+        Assert.Equal(["Next", nameof(RecordingActionRunner.StopRepeatedNavigation)], _calls);
     }
 
     [Fact]
@@ -339,17 +339,15 @@ public class KeybindRouterTests
     }
 
     /// <summary>
-    /// Records every mapper or Window Mode switcher call by name, and every Action run through Run by the
-    /// Action's name.
+    /// Records every Window Mode switcher call by name.
     /// </summary>
-    public class RecordingMapper : DispatchProxy
+    public class RecordingProxy : DispatchProxy
     {
         public List<string> Calls { get; } = [];
 
         protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
         {
-            // An Action is recorded by its name, any other call by the method's name
-            Calls.Add(targetMethod!.Name is nameof(IFunctionsMapper.Run) ? (string)args![0]! : targetMethod.Name);
+            Calls.Add(targetMethod!.Name);
             if (targetMethod.ReturnType == typeof(ValueTask))
             {
                 return ValueTask.CompletedTask;

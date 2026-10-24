@@ -8,7 +8,7 @@ public class MainWindowViewModel : IDisposable
 {
     #region Properties
     public CoreViewModel Core { get; }
-    public IFunctionsMapper? Mapper { get; set; }
+    public IActionRunner? ActionRunner { get; set; }
     public IPlatformWindowService? PlatformWindowService { get; }
     public FileHistoryViewModel? FileHistory { get; set; }
     public FavoritesViewModel? Favorites { get; set; }
@@ -103,7 +103,7 @@ public class MainWindowViewModel : IDisposable
     /// Runs the Action its parameter names, one of <see cref="Keybindings.Actions"/>.
     /// </summary>
     public ReactiveCommand<string> RunActionCommand { get; }
-    private async ValueTask RunAction(string action, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.Run(action).ConfigureAwait(false); }
+    private async ValueTask RunAction(string action, CancellationToken cancellationToken) { if (ActionRunner is null) return; await ActionRunner.Run(action).ConfigureAwait(false); }
 
     #endregion
 

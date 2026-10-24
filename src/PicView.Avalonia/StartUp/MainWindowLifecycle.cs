@@ -350,7 +350,7 @@ public sealed class MainWindowLifecycle
 
         var settingUp = Task.Run(() =>
         {
-            vm.Mapper = new FunctionsMapper(vm, window);
+            vm.ActionRunner = new FunctionsMapper(vm, window);
             vm.IsScrollingEnabled.Value = Settings.Zoom.ScrollEnabled;
             if (Settings.WindowProperties.TopMost)
             {
