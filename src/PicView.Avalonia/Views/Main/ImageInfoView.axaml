@@ -2,9 +2,9 @@
     x:Class="PicView.Avalonia.Views.Main.ImageInfoView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:coreVm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     x:DataType="coreVm:MainWindowViewModel"
     Background="Transparent"
@@ -25,7 +25,8 @@
 
             <!--  Save  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Save}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.Save}"
                 Header="{CompiledBinding Translation.Save.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -38,7 +39,8 @@
 
             <!--  Save as  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SaveAs}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.SaveAs}"
                 Header="{CompiledBinding Translation.SaveAs.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -53,7 +55,8 @@
             <!--  Print  -->
             <customControls:StyledMenuItem
                 x:Name="PrintMenuItem"
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Print}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.Print}"
                 Header="{CompiledBinding Translation.Print.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -67,7 +70,8 @@
             <!--  Open with  -->
             <customControls:StyledMenuItem
                 x:Name="OpenWithMenuItem"
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.OpenWith}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.OpenWith}"
                 Header="{CompiledBinding Translation.OpenWith.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -80,7 +84,8 @@
 
             <!--  Locate on disk  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.OpenInExplorer}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.OpenInExplorer}"
                 Header="{CompiledBinding Translation.ShowInFolder.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -124,7 +129,8 @@
 
                 <!--  Set as wallpaper filled  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperFilled}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperFilled}"
                     Header="{CompiledBinding Translation.Fill.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -138,7 +144,8 @@
 
                 <!--  Set as wallpaper fit  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperFitted}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperFitted}"
                     Header="{CompiledBinding Translation.Fit.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -152,7 +159,8 @@
 
                 <!--  Set as wallpaper stretched  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperStretched}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperStretched}"
                     Header="{CompiledBinding Translation.Stretch.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -167,7 +175,8 @@
 
                 <!--  Set as wallpaper centered  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperCentered}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperCentered}"
                     Header="{CompiledBinding Translation.Center.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -181,7 +190,8 @@
 
                 <!--  Set as wallpaper tiled  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperTiled}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperTiled}"
                     Header="{CompiledBinding Translation.Tile.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -196,7 +206,8 @@
 
             <!--  File properties  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ShowFileProperties}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.ShowFileProperties}"
                 Header="{CompiledBinding Translation.FileProperties.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -213,7 +224,8 @@
 
             <!--  Optimize image  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.OptimizeImage}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.OptimizeImage}"
                 Header="{CompiledBinding Translation.OptimizeImage.Value,
                                          Mode=OneWay}"
                 IsEnabled="True">
@@ -227,7 +239,8 @@
 
             <!--  Convert image  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ConvertWindow}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.ConvertWindow}"
                 Header="{CompiledBinding Translation.ConvertTo.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -246,7 +259,8 @@
 
             <!--  Delete file  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.DeleteFile}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.DeleteFile}"
                 Header="{CompiledBinding Translation.DeleteFile.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -260,14 +274,19 @@
             <Separator />
 
             <!--  Copy  -->
-            <customControls:StyledMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyFile}" Header="{CompiledBinding Translation.Copy.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.CopyFile}"
+                Header="{CompiledBinding Translation.Copy.Value,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path Classes="CopyPath Xl" />
                 </MenuItem.Icon>
 
                 <!--  Copy file  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyFile}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.CopyFile}"
                     Header="{CompiledBinding Translation.CopyFile.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -280,7 +299,8 @@
 
                 <!--  Copy image  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyImage}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.CopyImage}"
                     Header="{CompiledBinding Translation.CopyImage.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -293,7 +313,8 @@
 
                 <!--  Copy file path  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyFilePath}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.CopyFilePath}"
                     Header="{Binding Translation.FileCopyPath, Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                                 Converter={x:Static ObjectConverters.IsNotNull},
@@ -304,7 +325,12 @@
                 </customControls:StyledMenuItem>
 
                 <!--  Copy base64  -->
-                <customControls:StyledMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyBase64}" IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}">
+                <customControls:StyledMenuItem
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.CopyBase64}"
+                    IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
+                                                Converter={x:Static ObjectConverters.IsNotNull},
+                                                FallbackValue=False}">
                     <MenuItem.Header>
                         <TextBlock>
                             <Run Text="{CompiledBinding Translation.Copy, Mode=OneWay}" />
@@ -320,7 +346,8 @@
 
                 <!--  Duplicate file  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.DuplicateFile}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.DuplicateFile}"
                     Header="{CompiledBinding Translation.DuplicateFile,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,

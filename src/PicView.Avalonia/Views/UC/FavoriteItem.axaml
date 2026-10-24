@@ -1,11 +1,11 @@
 <UserControl
     x:Class="PicView.Avalonia.Views.UC.FavoriteItem"
-    x:DataType="vm:FavoritesEntryViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="vm:FavoritesEntryViewModel">
     <UserControl.Resources>
         <converters:FavoriteSlotKeybindConverter x:Key="FavoriteSlotKeybindConverter" />
     </UserControl.Resources>
@@ -40,55 +40,58 @@
 
     </UserControl.Styles>
 
-    <Border Classes.isCurrent="{CompiledBinding IsCurrentItem.Value}" x:Name="AppBorder">
+    <Border x:Name="AppBorder" Classes.isCurrent="{CompiledBinding IsCurrentItem.Value}">
         <DockPanel LastChildFill="True">
 
             <StackPanel
+                x:Name="ButtonPanel"
+                HorizontalAlignment="Right"
                 Background="Transparent"
                 DockPanel.Dock="Right"
-                HorizontalAlignment="Right"
                 IsVisible="False"
-                Orientation="Horizontal"
-                x:Name="ButtonPanel">
+                Orientation="Horizontal">
 
                 <customControls:IconButton
+                    Padding="7,0"
+                    HorizontalAlignment="Right"
                     Background="{DynamicResource AccentColor}"
                     Classes="accentHover"
                     ClickMode="Release"
                     Command="{CompiledBinding OpenEditDialogCommand}"
                     Foreground="{StaticResource SecondaryTextColor}"
-                    HorizontalAlignment="Right"
                     Icon="{StaticResource CogImage}"
                     IconHeight="12"
                     IconWidth="12"
-                    Padding="7,0"
                     ToolTip.Tip="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.Edit.Value}" />
 
                 <customControls:IconButton
+                    x:Name="RemoveButton"
+                    Padding="7,0"
+                    HorizontalAlignment="Right"
                     Background="{DynamicResource AccentColor}"
                     Classes="errorHover"
                     ClickMode="Release"
                     Command="{CompiledBinding RemoveCommand}"
                     Data="{StaticResource CloseGeometry}"
                     Foreground="{StaticResource SecondaryTextColor}"
-                    HorizontalAlignment="Right"
                     IconHeight="12"
                     IconWidth="12"
-                    Padding="7,0"
-                    ToolTip.Tip="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.Remove.Value}"
-                    x:Name="RemoveButton" />
+                    ToolTip.Tip="{Binding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.Remove.Value}" />
 
             </StackPanel>
 
             <DockPanel DockPanel.Dock="Left">
 
                 <TextBlock
+                    Padding="10,0"
                     Classes="txt"
                     DockPanel.Dock="Right"
-                    Padding="10,0"
-                    Text="{CompiledBinding Slot.Value, Converter={StaticResource FavoriteSlotKeybindConverter}}" />
+                    Text="{CompiledBinding Slot.Value,
+                                           Converter={StaticResource FavoriteSlotKeybindConverter}}" />
 
                 <customControls:TextIconButton
+                    x:Name="MainButton"
+                    Padding="5,6"
                     Background="Transparent"
                     Command="{CompiledBinding OpenCommand}"
                     Data="{StaticResource FolderGeometry}"
@@ -97,10 +100,8 @@
                     IconHeight="12"
                     IconMargin="10,0,5,0"
                     IconWidth="12"
-                    Padding="5,6"
                     Text="{CompiledBinding FolderName.Value}"
-                    ToolTip.Tip="{CompiledBinding FilePath.Value}"
-                    x:Name="MainButton" />
+                    ToolTip.Tip="{CompiledBinding FilePath.Value}" />
 
             </DockPanel>
 

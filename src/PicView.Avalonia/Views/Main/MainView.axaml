@@ -1,26 +1,27 @@
 <UserControl
-    Background="Transparent"
-    DragDrop.AllowDrop="True"
-    Focusable="True"
     x:Class="PicView.Avalonia.Views.Main.MainView"
-    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:buttons="clr-namespace:PicView.Avalonia.Views.UC.Buttons"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:keybindings="using:PicView.Core.Keybindings">
+    x:DataType="viewModels:MainWindowViewModel"
+    Background="Transparent"
+    DragDrop.AllowDrop="True"
+    Focusable="True">
     <UserControl.Resources>
 
         <ContextMenu x:Key="MainContextMenu">
 
             <!--  Open  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Open}"
+                MinWidth="180"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.Open}"
                 Header="{CompiledBinding Translation.Open.Value,
-                                         Mode=OneWay}"
-                MinWidth="180">
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image Classes="OpenImage" />
                 </MenuItem.Icon>
@@ -28,7 +29,8 @@
 
             <!--  Save  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Save}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.Save}"
                 Header="{CompiledBinding Translation.Save.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -41,7 +43,8 @@
 
             <!--  Save as  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SaveAs}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.SaveAs}"
                 Header="{CompiledBinding Translation.SaveAs.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -53,11 +56,12 @@
 
             <!--  Print  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Print}"
+                x:Name="PrintMenuItem"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.Print}"
                 Header="{CompiledBinding Translation.Print.Value,
                                          Mode=OneWay}"
-                IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldPrintBeEnabled.Value}"
-                x:Name="PrintMenuItem">
+                IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldPrintBeEnabled.Value}">
                 <MenuItem.Icon>
                     <Path Classes="PrintPath" />
                 </MenuItem.Icon>
@@ -65,24 +69,26 @@
 
             <!--  Open with  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.OpenWith}"
+                x:Name="OpenWithMenuItem"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.OpenWith}"
                 Header="{CompiledBinding Translation.OpenWith.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull},
-                                            FallbackValue=False}"
-                x:Name="OpenWithMenuItem">
+                                            FallbackValue=False}">
                 <MenuItem.Icon>
                     <Image
+                        Width="12"
                         Height="12"
-                        Source="{StaticResource OpenExternalImage}"
-                        Width="12" />
+                        Source="{StaticResource OpenExternalImage}" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
 
             <!--  Locate on disk  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.OpenInExplorer}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.OpenInExplorer}"
                 Header="{CompiledBinding Translation.ShowInFolder.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -103,7 +109,8 @@
 
                 <!--  Sort files by name  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesByName}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SortFilesByName}"
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.FileName.Value,
                                              Mode=OneWay}"
@@ -112,7 +119,8 @@
 
                 <!--  Sort files by size  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesBySize}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SortFilesBySize}"
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.FileSize.Value,
                                              Mode=OneWay}"
@@ -121,7 +129,8 @@
 
                 <!--  Sort files by extension  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesByExtension}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SortFilesByExtension}"
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.FileExtension.Value,
                                              Mode=OneWay}"
@@ -130,7 +139,8 @@
 
                 <!--  Sort files by creation time  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesByCreationTime}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SortFilesByCreationTime}"
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.Created.Value,
                                              Mode=OneWay}"
@@ -139,7 +149,8 @@
 
                 <!--  Sort files by last access time  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SortFilesByLastAccessTime}"
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.LastAccessTime.Value,
                                              Mode=OneWay}"
@@ -148,7 +159,8 @@
 
                 <!--  Sort files by last write time  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesByLastWriteTime}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SortFilesByLastWriteTime}"
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.Modified.Value,
                                              Mode=OneWay}"
@@ -157,7 +169,8 @@
 
                 <!--  Sort files randomly  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesRandomly}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SortFilesRandomly}"
                     GroupName="SortType"
                     Header="{CompiledBinding Translation.Random.Value,
                                              Mode=OneWay}"
@@ -168,7 +181,8 @@
 
                 <!--  Sort files ascending  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesAscending}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SortFilesAscending}"
                     GroupName="SortDirection"
                     Header="{CompiledBinding Translation.Ascending.Value,
                                              Mode=OneWay}"
@@ -177,7 +191,8 @@
 
                 <!--  Sort files descending  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SortFilesDescending}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SortFilesDescending}"
                     GroupName="SortDirection"
                     Header="{CompiledBinding Translation.Descending.Value,
                                              Mode=OneWay}"
@@ -191,16 +206,17 @@
             <customControls:StyledMenuItem Header="{CompiledBinding Translation.Settings.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
+                        Width="12"
+                        Height="12"
                         Data="{StaticResource WrenchGeometry}"
                         Fill="{DynamicResource MainTextColor}"
-                        Height="12"
-                        Stretch="Fill"
-                        Width="12" />
+                        Stretch="Fill" />
                 </MenuItem.Icon>
 
                 <!--  Toggle Subdirectories  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleSubdirectories}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ToggleSubdirectories}"
                     Header="{CompiledBinding Translation.SearchSubdirectory.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding GlobalSettings.IsIncludingSubdirectories.Value, Mode=OneWay}"
@@ -210,7 +226,8 @@
 
                 <!--  Toggle looping  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
                     Header="{CompiledBinding Translation.IsLooping.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=OneWay}"
@@ -220,7 +237,8 @@
 
                 <!--  Toggle scrolling  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
                     Header="{CompiledBinding Translation.IsScrolling.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding IsScrollingEnabled.Value, Mode=OneWay}"
@@ -228,7 +246,8 @@
 
                 <!--  Zoom to fit  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                     Header="{CompiledBinding Translation.ZoomToFit.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding IsZoomedToFit.Value, Mode=OneWay}"
@@ -236,7 +255,8 @@
 
                 <!--  Toggle side-by-side  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SideBySide}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SideBySide}"
                     Header="{CompiledBinding Translation.SideBySide.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding IsSideBySide.Value, Mode=OneWay}"
@@ -246,7 +266,8 @@
 
                 <!--  Toggle topmost  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                     Header="{CompiledBinding Translation.StayTopMost.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding IsTopMost.Value, Mode=OneWay}"
@@ -254,7 +275,8 @@
 
                 <!--  Toggle auto fit  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.AutoFitWindow}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.AutoFitWindow}"
                     Header="{CompiledBinding Translation.AutoFitWindow.Value,
                                              Mode=OneWay}"
                     IsChecked="{Binding IsAutoFit.Value, Mode=OneWay}"
@@ -264,44 +286,47 @@
 
                 <!--  Toggle UI  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
                     Header="{CompiledBinding Translation.IsShowingUI.Value,
                                              Mode=OneWay}"
                     IsVisible="{CompiledBinding IsUIShown.Value,
                                                 Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource EyeOffImage}"
-                            Width="12" />
+                            Source="{StaticResource EyeOffImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
                     Header="{CompiledBinding Translation.IsShowingUI.Value,
                                              Mode=OneWay}"
                     IsVisible="{CompiledBinding !IsUIShown.Value,
                                                 Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource EyeImage}"
-                            Width="12" />
+                            Source="{StaticResource EyeImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Change background  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ChangeBackground}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ChangeBackground}"
                     Header="{CompiledBinding Translation.ChangeBackground.Value,
                                              Mode=OneWay}"
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource PaletteImage}"
-                            Width="12" />
+                            Source="{StaticResource PaletteImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
@@ -309,15 +334,16 @@
                 <customControls:StyledMenuItem Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.OpenOrCloseDockedGalleryCommand}" Header="{CompiledBinding Translation.IsShowingDockedGallery.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource GalleryImage}"
-                            Width="12" />
+                            Source="{StaticResource GalleryImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Toggle bottom bar  -->
                 <customControls:StyledMenuItem
-                    Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleBottomToolbar}"
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ToggleBottomToolbar}"
                     Header="{CompiledBinding Translation.ShowBottomToolbar.Value,
                                              Mode=OneWay}"
                     IsChecked="{CompiledBinding IsBottomToolbarShown.Value}"
@@ -325,16 +351,20 @@
                     ToggleType="CheckBox">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource Panel-Bottom}"
-                            Width="12" />
+                            Source="{StaticResource Panel-Bottom}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <Separator />
 
                 <!--  Show Settings window  -->
-                <customControls:StyledMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SettingsWindow}" Header="{CompiledBinding Translation.ShowAllSettingsWindow.Value, Mode=OneWay}">
+                <customControls:StyledMenuItem
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SettingsWindow}"
+                    Header="{CompiledBinding Translation.ShowAllSettingsWindow.Value,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image Classes="CogImage" />
                     </MenuItem.Icon>
@@ -347,14 +377,15 @@
             <customControls:StyledMenuItem Header="{CompiledBinding Translation.Navigation.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
+                        Width="14"
                         Height="14"
-                        Source="{StaticResource SignPostImage}"
-                        Width="14" />
+                        Source="{StaticResource SignPostImage}" />
                 </MenuItem.Icon>
 
                 <!--  Next  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Next}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.Next}"
                     Header="{CompiledBinding Translation.NextImage.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value,
@@ -362,15 +393,16 @@
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource NextImage}"
-                            Width="12" />
+                            Source="{StaticResource NextImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Prev  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Prev}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.Prev}"
                     Header="{CompiledBinding Translation.PrevImage.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value,
@@ -378,9 +410,9 @@
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource PrevImage}"
-                            Width="12" />
+                            Source="{StaticResource PrevImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
@@ -388,61 +420,65 @@
 
                 <!--  Next 10  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Next10}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.Next10}"
                     Header="{CompiledBinding Translation.AdvanceBy10Images.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource NextImage}"
-                            Width="12" />
+                            Source="{StaticResource NextImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Next 100  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Next100}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.Next100}"
                     Header="{CompiledBinding Translation.AdvanceBy100Images.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}"
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource NextImage}"
-                            Width="12" />
+                            Source="{StaticResource NextImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Prev 10  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Prev10}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.Prev10}"
                     Header="{CompiledBinding Translation.GoBackBy10Images.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value}"
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource PrevImage}"
-                            Width="12" />
+                            Source="{StaticResource PrevImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Prev 100  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Prev100}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.Prev100}"
                     Header="{CompiledBinding Translation.GoBackBy100Images.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value}"
                     StaysOpenOnClick="True">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource PrevImage}"
-                            Width="12" />
+                            Source="{StaticResource PrevImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
@@ -450,29 +486,31 @@
 
                 <!--  First Image  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.First}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.First}"
                     Header="{CompiledBinding Translation.FirstImage.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateBackwards.Value}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource FirstImage}"
-                            Width="12" />
+                            Source="{StaticResource FirstImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Last Image  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Last}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.Last}"
                     Header="{CompiledBinding Translation.LastImage.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.CanNavigateForwards.Value}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource LastImage}"
-                            Width="12" />
+                            Source="{StaticResource LastImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
@@ -480,7 +518,8 @@
 
                 <!--  Next folder  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.NextFolder}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.NextFolder}"
                     Header="{CompiledBinding Translation.NextFolder.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -489,15 +528,16 @@
                                                 Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="14"
                             Height="14"
-                            Source="{StaticResource NextFolderImage}"
-                            Width="14" />
+                            Source="{StaticResource NextFolderImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Prev folder  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.PrevFolder}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.PrevFolder}"
                     Header="{CompiledBinding Translation.PrevFolder.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -506,37 +546,39 @@
                                                 Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="14"
                             Height="14"
-                            Source="{StaticResource PrevFolderImage}"
-                            Width="14" />
+                            Source="{StaticResource PrevFolderImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Next archive  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.NextArchive}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.NextArchive}"
                     Header="{CompiledBinding Translation.NextArchive.Value,
                                              Mode=OneWay}"
                     IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
                     <MenuItem.Icon>
                         <Image
+                            Width="14"
                             Height="14"
-                            Source="{StaticResource ArchiveFile}"
-                            Width="14" />
+                            Source="{StaticResource ArchiveFile}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Prev archive  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.PrevArchive}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.PrevArchive}"
                     Header="{CompiledBinding Translation.PrevArchive.Value,
                                              Mode=OneWay}"
                     IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
                     <MenuItem.Icon>
                         <Image
+                            Width="14"
                             Height="14"
-                            Source="{StaticResource ArchiveFile}"
-                            Width="14" />
+                            Source="{StaticResource ArchiveFile}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
             </customControls:StyledMenuItem>
@@ -545,20 +587,21 @@
 
             <!--  Set as wallpaper  -->
             <customControls:StyledMenuItem
+                x:Name="WallpaperMenuItem"
                 Header="{CompiledBinding Translation.SetAsWallpaper.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
                                             Converter={x:Static ObjectConverters.IsNotNull},
                                             FallbackValue=False}"
-                IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}"
-                x:Name="WallpaperMenuItem">
+                IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
                 <MenuItem.Icon>
                     <Image Classes="WallpaperImage" />
                 </MenuItem.Icon>
 
                 <!--  Set as wallpaper filled  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperFilled}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperFilled}"
                     Header="{CompiledBinding Translation.Fill.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -572,7 +615,8 @@
 
                 <!--  Set as wallpaper fit  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperFitted}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperFitted}"
                     Header="{CompiledBinding Translation.Fit.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -586,7 +630,8 @@
 
                 <!--  Set as wallpaper stretched  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperStretched}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperStretched}"
                     Header="{CompiledBinding Translation.Stretch.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -601,7 +646,8 @@
 
                 <!--  Set as wallpaper centered  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperCentered}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperCentered}"
                     Header="{CompiledBinding Translation.Center.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -615,7 +661,8 @@
 
                 <!--  Set as wallpaper tiled  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperTiled}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperTiled}"
                     Header="{CompiledBinding Translation.Tile.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -632,14 +679,15 @@
             <customControls:StyledMenuItem Header="{CompiledBinding Translation.Image.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
+                        Width="13"
                         Height="13"
-                        Source="{StaticResource ImageOutLine}"
-                        Width="13" />
+                        Source="{StaticResource ImageOutLine}" />
                 </MenuItem.Icon>
 
                 <!--  File properties  -->
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ShowFileProperties}"
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ShowFileProperties}"
                     Header="{CompiledBinding Translation.FileProperties.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -648,9 +696,9 @@
                                                 Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource FileUserImage}"
-                            Width="12" />
+                            Source="{StaticResource FileUserImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
@@ -658,17 +706,18 @@
 
                 <!--  Optimize image  -->
                 <customControls:StyledMenuItem
-                    Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.OptimizeImage}"
+                    x:Name="OptimizeMenuItem"
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.OptimizeImage}"
                     Header="{CompiledBinding Translation.OptimizeImage.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.ShouldOptimizeImageBeEnabled.Value,
-                                                Mode=OneWay}"
-                    x:Name="OptimizeMenuItem">
+                                                Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource PortalImage}"
-                            Width="12" />
+                            Source="{StaticResource PortalImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
@@ -676,11 +725,12 @@
 
                 <!--  Crop  -->
                 <customControls:StyledMenuItem
-                    Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Crop}"
+                    x:Name="CropMenuItem"
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.Crop}"
                     Header="{Binding Translation.Crop.Value, Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.ShouldCropBeEnabled.Value,
-                                                Mode=OneWay}"
-                    x:Name="CropMenuItem">
+                                                Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image Classes="CropImage" />
                     </MenuItem.Icon>
@@ -690,7 +740,8 @@
 
                 <!--  Flip  -->
                 <customControls:StyledMenuItem
-                    Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Flip}"
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.Flip}"
                     Header="{CompiledBinding WindowTabs.ActiveTab.Value.Orientation.FlipLabel.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -709,7 +760,8 @@
 
                 <!--  Rotate left  -->
                 <customControls:StyledMenuItem
-                    Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.RotateLeft}"
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.RotateLeft}"
                     Header="{CompiledBinding Translation.RotateLeft.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -724,7 +776,8 @@
 
                 <!--  Rotate right  -->
                 <customControls:StyledMenuItem
-                    Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.RotateRight}"
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.RotateRight}"
                     Header="{CompiledBinding Translation.RotateRight.Value,
                                              Mode=OneWay}"
                     IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.Image.Value,
@@ -744,53 +797,66 @@
             <customControls:StyledMenuItem Header="{CompiledBinding Translation.ToolWindows.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
+                        Width="12"
                         Height="12"
-                        Source="{StaticResource BrushImage}"
-                        Width="12" />
+                        Source="{StaticResource BrushImage}" />
                 </MenuItem.Icon>
 
                 <!--  Exif window  -->
-                <customControls:StyledMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ImageInfoWindow}" Header="{CompiledBinding Translation.ImageInfo.Value, Mode=OneWay}">
+                <customControls:StyledMenuItem
+                    Command="{CompiledBinding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ImageInfoWindow}"
+                    Header="{CompiledBinding Translation.ImageInfo.Value,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource CameraImage}"
-                            Width="12" />
+                            Source="{StaticResource CameraImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Image effects  -->
                 <customControls:StyledMenuItem
-                    Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.EffectsWindow}"
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.EffectsWindow}"
                     Header="{CompiledBinding Translation.Effects.Value,
                                              Mode=OneWay}"
                     ToolTip.Tip="{CompiledBinding Translation.EffectsTooltip.Value,
                                                   Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource SparklesImage}"
-                            Width="12" />
+                            Source="{StaticResource SparklesImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Resize  Image  -->
-                <customControls:StyledMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ResizeWindow}" Header="{CompiledBinding Translation.ResizeImage.Value, Mode=OneWay}">
+                <customControls:StyledMenuItem
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ResizeWindow}"
+                    Header="{CompiledBinding Translation.ResizeImage.Value,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource UpscaleImage}"
-                            Width="12" />
+                            Source="{StaticResource UpscaleImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
 
                 <!--  Batch Resize  Images  -->
-                <customControls:StyledMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.BatchResizeWindow}" Header="{CompiledBinding Translation.BatchResize.Value, Mode=OneWay}">
+                <customControls:StyledMenuItem
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.BatchResizeWindow}"
+                    Header="{CompiledBinding Translation.BatchResize.Value,
+                                             Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
+                            Width="12"
                             Height="12"
-                            Source="{StaticResource BatchResizeImage}"
-                            Width="12" />
+                            Source="{StaticResource BatchResizeImage}" />
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
             </customControls:StyledMenuItem>
@@ -799,7 +865,8 @@
 
             <!--  Delete file  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.DeleteFile}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.DeleteFile}"
                 Header="{CompiledBinding Translation.DeleteFile.Value,
                                          Mode=OneWay}"
                 IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value,
@@ -814,7 +881,11 @@
             <Separator />
 
             <!--  Paste  -->
-            <customControls:StyledMenuItem Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Paste}" Header="{CompiledBinding Translation.Paste.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.Paste}"
+                Header="{CompiledBinding Translation.Paste.Value,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path Classes="PastePath" />
                 </MenuItem.Icon>
@@ -824,16 +895,17 @@
             <customControls:StyledMenuItem Header="{Binding Translation.Copy.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
+                        Width="12"
+                        Height="12"
                         Data="{StaticResource CopyGeometry}"
                         Fill="{DynamicResource MainTextColor}"
-                        Height="12"
-                        Stretch="Fill"
-                        Width="12" />
+                        Stretch="Fill" />
                 </MenuItem.Icon>
 
                 <!--  Copy image  -->
                 <customControls:StyledMenuItem
-                    Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyImage}"
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.CopyImage}"
                     Header="{Binding Translation.CopyImage.Value, Mode=OneWay}"
                     IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}">
                     <MenuItem.Icon>
@@ -843,7 +915,8 @@
 
                 <!--  Copy file path  -->
                 <customControls:StyledMenuItem
-                    Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyFilePath}"
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.CopyFilePath}"
                     Header="{Binding Translation.FileCopyPath.Value, Mode=OneWay}"
                     IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}">
                     <MenuItem.Icon>
@@ -852,7 +925,10 @@
                 </customControls:StyledMenuItem>
 
                 <!--  Copy base64  -->
-                <customControls:StyledMenuItem Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyBase64}" IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}">
+                <customControls:StyledMenuItem
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.CopyBase64}"
+                    IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}">
                     <MenuItem.Header>
                         <TextBlock>
                             <Run Text="{Binding Translation.Copy.Value, Mode=OneWay}" />
@@ -868,7 +944,8 @@
 
                 <!--  Duplicate file  -->
                 <customControls:StyledMenuItem
-                    Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.DuplicateFile}"
+                    Command="{Binding RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.DuplicateFile}"
                     Header="{Binding Translation.DuplicateFile.Value, Mode=OneWay}"
                     IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}">
                     <MenuItem.Icon>
@@ -880,7 +957,8 @@
 
             <!--  Copy file  -->
             <customControls:StyledMenuItem
-                Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyFile}"
+                Command="{Binding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.CopyFile}"
                 Header="{Binding Translation.CopyFile.Value, Mode=OneWay}"
                 IsEnabled="{Binding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False, Mode=OneWay}">
                 <MenuItem.Icon>
@@ -892,7 +970,8 @@
 
             <!--  Fullscreen  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleFullscreen}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.ToggleFullscreen}"
                 Header="{CompiledBinding Translation.Fullscreen.Value,
                                          Mode=OneWay}"
                 IsVisible="{CompiledBinding !IsFullscreen.Value,
@@ -904,12 +983,13 @@
 
             <!--  Maximize  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Maximize}"
+                x:Name="MaximizeMenuItem"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.Maximize}"
                 Header="{CompiledBinding Translation.Maximize.Value,
                                          Mode=OneWay}"
                 IsVisible="{CompiledBinding ShouldMaximizeBeShown.Value,
-                                            Mode=OneWay}"
-                x:Name="MaximizeMenuItem">
+                                            Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image Classes="MaximizeImage" />
                 </MenuItem.Icon>
@@ -917,7 +997,8 @@
 
             <!--  Restore  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Restore}"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.Restore}"
                 Header="{CompiledBinding Translation.RestoreDown.Value,
                                          Mode=OneWay}"
                 IsVisible="{CompiledBinding ShouldRestoreBeShown.Value,
@@ -929,16 +1010,17 @@
 
             <!--  Close  -->
             <customControls:StyledMenuItem
-                Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CloseWindow}"
+                x:Name="CloseMenuItem"
+                Command="{CompiledBinding RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.CloseWindow}"
                 Header="{CompiledBinding Translation.Close.Value,
-                                         Mode=OneWay}"
-                x:Name="CloseMenuItem">
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <PathIcon
-                        Data="{StaticResource CloseGeometry}"
-                        Foreground="{DynamicResource MainTextColor}"
+                        Width="12"
                         Height="12"
-                        Width="12" />
+                        Data="{StaticResource CloseGeometry}"
+                        Foreground="{DynamicResource MainTextColor}" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
         </ContextMenu>
@@ -946,12 +1028,12 @@
 
     <Panel x:Name="MainPanel">
         <customControls:DraggableTabControl
+            x:Name="MainTabControl"
             Background="{DynamicResource BehindTabBackground}"
             DataContext="{CompiledBinding WindowTabs}"
             ItemsSource="{CompiledBinding Tabs.Value,
                                           Mode=TwoWay}"
-            SelectedItem="{Binding ActiveTab.Value, Mode=TwoWay}"
-            x:Name="MainTabControl">
+            SelectedItem="{Binding ActiveTab.Value, Mode=TwoWay}">
 
             <customControls:DraggableTabControl.Styles>
                 <Style Selector="TabItem">
@@ -963,34 +1045,34 @@
                 <DataTemplate>
                     <DockPanel Background="Transparent" LastChildFill="True">
                         <customControls:IconButton
+                            Height="{Binding TabHeight}"
+                            Padding="9,0"
                             Background="Transparent"
                             Classes="AltHover"
                             Command="{CompiledBinding CloseTab}"
                             Data="{StaticResource CloseGeometry}"
                             DockPanel.Dock="Right"
                             Foreground="{DynamicResource MainTextColor}"
-                            Height="{Binding TabHeight}"
                             IconHeight="12"
-                            IconWidth="12"
-                            Padding="9,0" />
+                            IconWidth="12" />
                         <TextBlock
-                            Classes="txt"
                             Margin="7,0,0,0"
+                            Classes="txt"
                             Text="{CompiledBinding TabTitle.Value,
                                                    Mode=OneWay}"
                             TextWrapping="NoWrap" />
                         <ToolTip.Tip>
-                            <DockPanel Height="235" Width="140">
+                            <DockPanel Width="140" Height="235">
                                 <TextBlock
+                                    MaxWidth="135"
+                                    HorizontalAlignment="Center"
                                     Classes="txt bold"
                                     DockPanel.Dock="Top"
                                     FontSize="12"
-                                    HorizontalAlignment="Center"
-                                    MaxWidth="135"
                                     Text="{Binding TabTitle.Value, Mode=OneWay}" />
                                 <customControls:ThumbImage
-                                    DockPanel.Dock="Bottom"
                                     HorizontalAlignment="Center"
+                                    DockPanel.Dock="Bottom"
                                     Source="{CompiledBinding Image.Value,
                                                              TargetNullValue={StaticResource LogoImage}}" />
                             </DockPanel>
@@ -1009,45 +1091,45 @@
 
         <uc:SpinWaiter
             HorizontalAlignment="Center"
-            IsVisible="{Binding IsLoadingIndicatorShown.Value, Mode=OneWay}"
             VerticalAlignment="Center"
+            IsVisible="{Binding IsLoadingIndicatorShown.Value, Mode=OneWay}"
             ZIndex="9" />
 
         <DockPanel
+            x:Name="AltButtonsPanel"
             Height="150"
+            VerticalAlignment="Top"
             IsHitTestVisible="{Binding !IsUIShown.Value, Mode=OneWay}"
             IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}"
             LastChildFill="True"
             Opacity="0"
-            VerticalAlignment="Top"
-            ZIndex="9"
-            x:Name="AltButtonsPanel">
+            ZIndex="9">
             <buttons:AltClose
-                DockPanel.Dock="Right"
-                IsVisible="{Binding !IsUIShown.Value}"
+                x:Name="AltClose"
                 VerticalAlignment="Top"
-                x:Name="AltClose" />
+                DockPanel.Dock="Right"
+                IsVisible="{Binding !IsUIShown.Value}" />
             <buttons:AltRestore
-                DockPanel.Dock="Right"
-                IsVisible="{Binding !IsUIShown.Value}"
+                x:Name="AltRestore"
                 VerticalAlignment="Top"
-                x:Name="AltRestore" />
+                DockPanel.Dock="Right"
+                IsVisible="{Binding !IsUIShown.Value}" />
             <buttons:AltMinimize
-                DockPanel.Dock="Right"
-                IsVisible="{Binding !IsUIShown.Value}"
+                x:Name="AltMinimize"
                 VerticalAlignment="Top"
-                x:Name="AltMinimize" />
+                DockPanel.Dock="Right"
+                IsVisible="{Binding !IsUIShown.Value}" />
             <Border
+                x:Name="AltTitleBorder"
+                Height="{StaticResource TopBorderHeight}"
+                Padding="2,0"
+                VerticalAlignment="Top"
                 Background="{DynamicResource PopUpBackgroundColor}"
                 BorderBrush="{DynamicResource PopUpMainBorderColor}"
                 BorderThickness="0,0,0,1"
                 DockPanel.Dock="Left"
-                Height="{StaticResource TopBorderHeight}"
                 IsVisible="{Binding !IsUIShown.Value}"
-                Padding="2,0"
-                PointerPressed="DragMove"
-                VerticalAlignment="Top"
-                x:Name="AltTitleBorder">
+                PointerPressed="DragMove">
                 <TextBlock
                     Classes="txt"
                     Text="{Binding WindowTabs.ActiveTab.Value.Title.Value}"
@@ -1056,40 +1138,40 @@
         </DockPanel>
 
         <uc:ToolTipMessage
+            x:Name="ToolTipMessage"
             HorizontalAlignment="Center"
-            Opacity="0"
             VerticalAlignment="Center"
-            ZIndex="9"
-            x:Name="ToolTipMessage" />
+            Opacity="0"
+            ZIndex="9" />
 
         <!--  Bottom-right Archive Extraction Progress Indicator  -->
         <Border
+            Margin="0,0,16,16"
+            Padding="8,4"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
             Background="{DynamicResource PopUpBackgroundColor}"
             BorderBrush="{DynamicResource PopUpMainBorderColor}"
             BorderThickness="1"
             CornerRadius="4"
-            HorizontalAlignment="Right"
             IsHitTestVisible="False"
             IsVisible="{Binding WindowTabs.ActiveTab.Value.ArchiveExtractionProgressText.Value, Mode=OneWay, Converter={x:Static ObjectConverters.IsNotNull}}"
-            Margin="0,0,16,16"
-            Padding="8,4"
-            VerticalAlignment="Bottom"
             ZIndex="10">
             <StackPanel
+                VerticalAlignment="Center"
                 Orientation="Horizontal"
-                Spacing="6"
-                VerticalAlignment="Center">
+                Spacing="6">
                 <Viewbox
+                    Width="14"
                     Height="14"
-                    VerticalAlignment="Center"
-                    Width="14">
+                    VerticalAlignment="Center">
                     <uc:SpinWaiter />
                 </Viewbox>
                 <TextBlock
+                    VerticalAlignment="Center"
                     Classes="txt"
                     FontSize="12"
-                    Text="{Binding WindowTabs.ActiveTab.Value.ArchiveExtractionProgressText.Value, Mode=OneWay}"
-                    VerticalAlignment="Center" />
+                    Text="{Binding WindowTabs.ActiveTab.Value.ArchiveExtractionProgressText.Value, Mode=OneWay}" />
             </StackPanel>
         </Border>
     </Panel>

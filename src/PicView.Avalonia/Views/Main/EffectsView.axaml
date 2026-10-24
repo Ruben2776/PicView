@@ -1,12 +1,12 @@
 <UserControl
     x:Class="PicView.Avalonia.Views.Main.EffectsView"
-    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:keybindings="using:PicView.Core.Keybindings">
+    x:DataType="viewModels:CoreViewModel">
 
     <UserControl.Styles>
         <Styles>
@@ -62,39 +62,51 @@
     </UserControl.Styles>
     <UserControl.ContextMenu>
         <ContextMenu x:Name="EffectsContextMenu">
-            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Save}" Header="{CompiledBinding Translation.Save.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem
+                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.Save}"
+                Header="{CompiledBinding Translation.Save.Value,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
+                        Width="12"
+                        Height="12"
                         Data="{StaticResource SaveGeometry}"
                         Fill="{DynamicResource MainTextColor}"
-                        Height="12"
-                        Stretch="Fill"
-                        Width="12" />
+                        Stretch="Fill" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
-            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SaveAs}" Header="{CompiledBinding Translation.SaveAs.Value}">
+            <customControls:StyledMenuItem
+                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.SaveAs}"
+                Header="{CompiledBinding Translation.SaveAs.Value}">
                 <MenuItem.Icon>
                     <Path
+                        Width="12"
+                        Height="12"
                         Data="{StaticResource SaveGeometry}"
                         Fill="{DynamicResource MainTextColor}"
-                        Height="12"
-                        Stretch="Fill"
-                        Width="12" />
+                        Stretch="Fill" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
-            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyImage}" Header="{CompiledBinding Translation.CopyImage.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem
+                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.CopyImage}"
+                Header="{CompiledBinding Translation.CopyImage.Value,
+                                         Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
+                        Width="12"
+                        Height="12"
                         Data="{StaticResource CopyGeometry}"
                         Fill="{DynamicResource MainTextColor}"
-                        Height="12"
-                        Stretch="Fill"
-                        Width="12" />
+                        Stretch="Fill" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
             <Separator />
             <customControls:StyledMenuItem
-                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaper}"
+                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                CommandParameter="{x:Static keybindings:Actions.SetAsWallpaper}"
                 Header="{CompiledBinding Translation.SetAsWallpaper.Value,
                                          Mode=OneWay}"
                 IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
@@ -103,77 +115,77 @@
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
             <Separator IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}" />
-            <customControls:StyledMenuItem Header="{CompiledBinding Translation.ClearEffects.Value, Mode=OneWay}" x:Name="ClearEffectsItem">
+            <customControls:StyledMenuItem x:Name="ClearEffectsItem" Header="{CompiledBinding Translation.ClearEffects.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Image
+                        Width="12"
                         Height="12"
-                        Source="{StaticResource ClearImage}"
-                        Width="12" />
+                        Source="{StaticResource ClearImage}" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
             <Separator />
-            <customControls:StyledMenuItem Header="{CompiledBinding Translation.Close.Value, Mode=OneWay}" x:Name="CloseItem">
+            <customControls:StyledMenuItem x:Name="CloseItem" Header="{CompiledBinding Translation.Close.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
+                        Width="12"
+                        Height="12"
                         Data="{StaticResource CloseGeometry}"
                         Fill="{DynamicResource MainTextColor}"
-                        Height="12"
-                        Stretch="Fill"
-                        Width="12" />
+                        Stretch="Fill" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
 
     <UserControl.Resources>
-        <SolidColorBrush Color="{DynamicResource MainTextColor}" x:Key="CancelBrush" />
+        <SolidColorBrush x:Key="CancelBrush" Color="{DynamicResource MainTextColor}" />
 
-        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%" x:Key="CB_CyanRed">
-            <GradientStop Color="#4FC3F7" Offset="0" />
-            <GradientStop Color="#E0E0E0" Offset="0.5" />
-            <GradientStop Color="#E57373" Offset="1" />
+        <LinearGradientBrush x:Key="CB_CyanRed" StartPoint="0%,50%" EndPoint="100%,50%">
+            <GradientStop Offset="0" Color="#4FC3F7" />
+            <GradientStop Offset="0.5" Color="#E0E0E0" />
+            <GradientStop Offset="1" Color="#E57373" />
         </LinearGradientBrush>
 
-        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%" x:Key="CB_MagentaGreen">
-            <GradientStop Color="#CE93D8" Offset="0" />
-            <GradientStop Color="#E0E0E0" Offset="0.5" />
-            <GradientStop Color="#81C784" Offset="1" />
+        <LinearGradientBrush x:Key="CB_MagentaGreen" StartPoint="0%,50%" EndPoint="100%,50%">
+            <GradientStop Offset="0" Color="#CE93D8" />
+            <GradientStop Offset="0.5" Color="#E0E0E0" />
+            <GradientStop Offset="1" Color="#81C784" />
         </LinearGradientBrush>
 
-        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%" x:Key="CB_YellowBlue">
-            <GradientStop Color="#FFF176" Offset="0" />
-            <GradientStop Color="#E0E0E0" Offset="0.5" />
-            <GradientStop Color="#64B5F6" Offset="1" />
+        <LinearGradientBrush x:Key="CB_YellowBlue" StartPoint="0%,50%" EndPoint="100%,50%">
+            <GradientStop Offset="0" Color="#FFF176" />
+            <GradientStop Offset="0.5" Color="#E0E0E0" />
+            <GradientStop Offset="1" Color="#64B5F6" />
         </LinearGradientBrush>
 
     </UserControl.Resources>
 
     <Panel>
         <uc:SpinWaiter
+            x:Name="SpinWaiter"
             HorizontalAlignment="Center"
-            IsVisible="{CompiledBinding Effects.IsLoading.Value,
-                                        Mode=OneWay}"
             VerticalAlignment="Center"
-            x:Name="SpinWaiter" />
+            IsVisible="{CompiledBinding Effects.IsLoading.Value,
+                                        Mode=OneWay}" />
 
         <DockPanel x:Name="ParentContainer">
 
             <!--  Footer (always visible)  -->
             <StackPanel
+                x:Name="LowerPanel"
+                Height="80"
                 Background="{DynamicResource ToolWindowFooterBackground}"
                 DockPanel.Dock="Bottom"
-                Height="80"
                 Orientation="Horizontal"
-                PointerPressed="MoveWindow"
-                x:Name="LowerPanel">
+                PointerPressed="MoveWindow">
 
                 <Button
+                    x:Name="ResetButton"
+                    Width="195"
+                    Margin="30,0,60,0"
                     Classes="ToolButtonStyle ToolButtonHover"
                     CornerRadius="4"
-                    IsVisible="{CompiledBinding Effects.IsResetVisible.Value}"
-                    Margin="30,0,60,0"
-                    Width="195"
-                    x:Name="ResetButton">
+                    IsVisible="{CompiledBinding Effects.IsResetVisible.Value}">
                     <TextBlock
                         Classes="txt"
                         Foreground="{StaticResource CancelBrush}"
@@ -183,12 +195,12 @@
                 </Button>
 
                 <Button
+                    x:Name="CancelButton"
+                    Width="195"
+                    Margin="30,0,60,0"
                     Classes="ToolButtonStyle ToolButtonHover"
                     CornerRadius="4"
-                    IsVisible="{CompiledBinding !Effects.IsResetVisible.Value}"
-                    Margin="30,0,60,0"
-                    Width="195"
-                    x:Name="CancelButton">
+                    IsVisible="{CompiledBinding !Effects.IsResetVisible.Value}">
                     <TextBlock
                         Classes="txt"
                         Foreground="{StaticResource CancelBrush}"
@@ -199,12 +211,13 @@
 
 
                 <SplitButton
+                    x:Name="SaveButton"
+                    Width="195"
                     Background="{DynamicResource AccentColor}"
                     Classes="ToolButtonStyle accentHover"
-                    Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Save}"
-                    CornerRadius="4"
-                    Width="195"
-                    x:Name="SaveButton">
+                    Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.Save}"
+                    CornerRadius="4">
                     <TextBlock
                         Classes="txt"
                         Foreground="{StaticResource SecondaryTextColor}"
@@ -214,11 +227,12 @@
                     <SplitButton.Flyout>
                         <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
                             <MenuItem
-                                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SaveAs}"
-                                Header="{CompiledBinding Translation.SaveAs.Value,
-                                                         Mode=OneWay}"
+                                Width="195"
                                 HorizontalAlignment="Center"
-                                Width="195" />
+                                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                                CommandParameter="{x:Static keybindings:Actions.SaveAs}"
+                                Header="{CompiledBinding Translation.SaveAs.Value,
+                                                         Mode=OneWay}" />
                         </MenuFlyout>
                     </SplitButton.Flyout>
                 </SplitButton>
@@ -229,15 +243,18 @@
 
                 <!--  COLOR TAB  -->
                 <TabItem
+                    Margin="0"
                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                     BorderThickness="0,0,1,1"
-                    Header="{Binding Translation.Color.Value}"
-                    Margin="0">
+                    Header="{Binding Translation.Color.Value}">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="15,10">
 
-                            <DockPanel LastChildFill="True" Margin="0,0,-10,0">
+                            <DockPanel Margin="0,0,-10,0" LastChildFill="True">
                                 <customControls:IconButton
+                                    x:Name="ResetColorTabBtn"
+                                    Width="30"
+                                    Height="30"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -245,13 +262,10 @@
                                     Command="{Binding Effects.ResetColor}"
                                     DockPanel.Dock="Right"
                                     Foreground="{DynamicResource MainTextColor}"
-                                    Height="30"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
                                     IconWidth="12"
-                                    ToolTip.Tip="{Binding Translation.Reset.Value}"
-                                    Width="30"
-                                    x:Name="ResetColorTabBtn" />
+                                    ToolTip.Tip="{Binding Translation.Reset.Value}" />
 
                                 <TextBlock
                                     Classes="txt sectionHeader"
@@ -263,27 +277,27 @@
                             <TextBlock Classes="txt " Text="{Binding Translation.Hue.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="HueSlider"
+                                    Width="400"
                                     Height="30"
+                                    Margin="0,1,10,1"
                                     IsSnapToTickEnabled="False"
                                     LargeChange="10"
-                                    Margin="0,1,10,1"
                                     Maximum="180"
                                     Minimum="-180"
                                     SmallChange="1"
                                     Theme="{StaticResource SetBg}"
                                     TickFrequency="1"
-                                    Value="{CompiledBinding Effects.HueDegrees.Value}"
-                                    Width="400"
-                                    x:Name="HueSlider">
+                                    Value="{CompiledBinding Effects.HueDegrees.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#FF0000" Offset="0" />
-                                            <GradientStop Color="#FFFF00" Offset="0.17" />
-                                            <GradientStop Color="#00FF00" Offset="0.33" />
-                                            <GradientStop Color="#00FFFF" Offset="0.5" />
-                                            <GradientStop Color="#0000FF" Offset="0.67" />
-                                            <GradientStop Color="#FF00FF" Offset="0.83" />
-                                            <GradientStop Color="#FF0000" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#FF0000" />
+                                            <GradientStop Offset="0.17" Color="#FFFF00" />
+                                            <GradientStop Offset="0.33" Color="#00FF00" />
+                                            <GradientStop Offset="0.5" Color="#00FFFF" />
+                                            <GradientStop Offset="0.67" Color="#0000FF" />
+                                            <GradientStop Offset="0.83" Color="#FF00FF" />
+                                            <GradientStop Offset="1" Color="#FF0000" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -294,6 +308,9 @@
                                     Value="{Binding Path=Value, ElementName=HueSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetHueBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -302,33 +319,30 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetHueBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Saturation  -->
                             <TextBlock Classes="txt " Text="{Binding Translation.Saturation.Value, Mode=OneWay}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="SaturationSlider"
+                                    Width="400"
                                     Height="30"
+                                    Margin="0,1,10,1"
                                     IsSnapToTickEnabled="False"
                                     LargeChange="10"
-                                    Margin="0,1,10,1"
                                     Maximum="100"
                                     Minimum="-100"
                                     SmallChange="1"
                                     Theme="{StaticResource SetBg}"
                                     TickFrequency="1"
-                                    Value="{CompiledBinding Effects.Saturation.Value}"
-                                    Width="400"
-                                    x:Name="SaturationSlider">
+                                    Value="{CompiledBinding Effects.Saturation.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#808080" Offset="0" />
-                                            <GradientStop Color="#D0D0D0" Offset="0.6" />
-                                            <GradientStop Color="#F0F0F0" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#808080" />
+                                            <GradientStop Offset="0.6" Color="#D0D0D0" />
+                                            <GradientStop Offset="1" Color="#F0F0F0" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -339,6 +353,9 @@
                                     Value="{Binding Path=Value, ElementName=SaturationSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetSaturationBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -347,33 +364,30 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetSaturationBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Temperature  -->
                             <TextBlock Classes="txt " Text="{Binding Translation.Temperature.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="TemperatureSlider"
+                                    Width="400"
                                     Height="30"
+                                    Margin="0,1,10,1"
                                     IsSnapToTickEnabled="False"
                                     LargeChange="10"
-                                    Margin="0,1,10,1"
                                     Maximum="100"
                                     Minimum="-100"
                                     SmallChange="1"
                                     Theme="{StaticResource SetBg}"
                                     TickFrequency="1"
-                                    Value="{CompiledBinding Effects.Temperature.Value}"
-                                    Width="400"
-                                    x:Name="TemperatureSlider">
+                                    Value="{CompiledBinding Effects.Temperature.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#4D8CC9" Offset="0" />
-                                            <GradientStop Color="#FFFFFF" Offset="0.5" />
-                                            <GradientStop Color="#FFB36B" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#4D8CC9" />
+                                            <GradientStop Offset="0.5" Color="#FFFFFF" />
+                                            <GradientStop Offset="1" Color="#FFB36B" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -384,6 +398,9 @@
                                     Value="{Binding Path=Value, ElementName=TemperatureSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetTemperatureBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -392,33 +409,30 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetTemperatureBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Tint  -->
                             <TextBlock Classes="txt " Text="{Binding Translation.Tint.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="TintSlider"
+                                    Width="400"
                                     Height="30"
+                                    Margin="0,1,10,1"
                                     IsSnapToTickEnabled="False"
                                     LargeChange="10"
-                                    Margin="0,1,10,1"
                                     Maximum="100"
                                     Minimum="-100"
                                     SmallChange="1"
                                     Theme="{StaticResource SetBg}"
                                     TickFrequency="1"
-                                    Value="{CompiledBinding Effects.Tint.Value}"
-                                    Width="400"
-                                    x:Name="TintSlider">
+                                    Value="{CompiledBinding Effects.Tint.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#55FF55" Offset="0" />
-                                            <GradientStop Color="#FFFFFF" Offset="0.5" />
-                                            <GradientStop Color="#FF66CC" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#55FF55" />
+                                            <GradientStop Offset="0.5" Color="#FFFFFF" />
+                                            <GradientStop Offset="1" Color="#FF66CC" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -429,6 +443,9 @@
                                     Value="{Binding Path=Value, ElementName=TintSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetTintBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -437,33 +454,30 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetTintBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Vibrance  -->
                             <TextBlock Classes="txt " Text="{Binding Translation.Tint.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="VibranceSlider"
+                                    Width="400"
                                     Height="30"
+                                    Margin="0,1,10,1"
                                     IsSnapToTickEnabled="False"
                                     LargeChange="10"
-                                    Margin="0,1,10,1"
                                     Maximum="100"
                                     Minimum="-100"
                                     SmallChange="1"
                                     Theme="{StaticResource SetBg}"
                                     TickFrequency="1"
-                                    Value="{CompiledBinding Effects.Vibrance.Value}"
-                                    Width="400"
-                                    x:Name="VibranceSlider">
+                                    Value="{CompiledBinding Effects.Vibrance.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#909090" Offset="0" />
-                                            <GradientStop Color="#D8D8D8" Offset="0.7" />
-                                            <GradientStop Color="#F2F2F2" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#909090" />
+                                            <GradientStop Offset="0.7" Color="#D8D8D8" />
+                                            <GradientStop Offset="1" Color="#F2F2F2" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -474,6 +488,9 @@
                                     Value="{Binding Path=Value, ElementName=VibranceSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetVibranceBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -482,58 +499,58 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetVibranceBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <Border
-                                Background="{DynamicResource MainBorderColor}"
                                 Height="1"
-                                Margin="0,10,0,0" />
+                                Margin="0,10,0,0"
+                                Background="{DynamicResource MainBorderColor}" />
 
                             <!--  Color Balance  -->
                             <TextBlock Classes="txt sectionHeader" Text="{Binding Translation.ColorBalance.Value, Mode=OneWay}" />
 
-                            <TabControl Margin="0,6,0,0" x:Name="ColorBalanceTabs">
+                            <TabControl x:Name="ColorBalanceTabs" Margin="0,6,0,0">
 
                                 <TabItem
+                                    Margin="0"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="0,0,1,1"
-                                    Header="{Binding Translation.Shadows.Value}"
-                                    Margin="0">
+                                    Header="{Binding Translation.Shadows.Value}">
 
                                     <!--  Red  -->
-                                    <DockPanel LastChildFill="False" Margin="0,8,0,0">
+                                    <DockPanel Margin="0,8,0,0" LastChildFill="False">
 
                                         <TextBlock
+                                            VerticalAlignment="Bottom"
                                             Classes="txt "
                                             DockPanel.Dock="Top"
-                                            Text="{Binding Translation.Red.Value}"
-                                            VerticalAlignment="Bottom" />
+                                            Text="{Binding Translation.Red.Value}" />
 
                                         <DockPanel DockPanel.Dock="Top" LastChildFill="False">
 
                                             <customControls:CustomSlider
+                                                x:Name="CBShadowsCR"
+                                                Width="400"
+                                                Height="30"
                                                 Background="{StaticResource CB_CyanRed}"
                                                 DockPanel.Dock="Left"
-                                                Height="30"
                                                 Maximum="100"
                                                 Minimum="-100"
                                                 Theme="{StaticResource SetBg}"
-                                                Value="{CompiledBinding Effects.CBShadowsCR.Value}"
-                                                Width="400"
-                                                x:Name="CBShadowsCR" />
+                                                Value="{CompiledBinding Effects.CBShadowsCR.Value}" />
 
                                             <NumericUpDown
-                                                DockPanel.Dock="Left"
                                                 Margin="10,0"
+                                                DockPanel.Dock="Left"
                                                 Maximum="{Binding Path=Maximum, ElementName=CBShadowsCR}"
                                                 Minimum="{Binding Path=Minimum, ElementName=CBShadowsCR}"
                                                 Value="{Binding Path=Value, ElementName=CBShadowsCR}" />
 
                                             <customControls:IconButton
+                                                x:Name="ResetCBShadowsBtn"
+                                                Width="30"
+                                                Height="30"
                                                 Background="{DynamicResource ToolWindowButtonBackground}"
                                                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                                 BorderThickness="1"
@@ -541,42 +558,41 @@
                                                 Command="{Binding Effects.ResetCBShadowsCR}"
                                                 DockPanel.Dock="Left"
                                                 Foreground="{DynamicResource MainTextColor}"
-                                                Height="30"
                                                 Icon="{StaticResource UndoImage}"
                                                 IconHeight="12"
                                                 IconWidth="12"
-                                                ToolTip.Tip="{Binding Translation.Reset.Value}"
-                                                Width="30"
-                                                x:Name="ResetCBShadowsBtn" />
+                                                ToolTip.Tip="{Binding Translation.Reset.Value}" />
                                         </DockPanel>
 
                                         <!--  Green  -->
                                         <TextBlock
+                                            Margin="0,8,0,0"
                                             Classes="txt "
                                             DockPanel.Dock="Top"
-                                            Margin="0,8,0,0"
                                             Text="{Binding Translation.Green.Value}" />
 
                                         <DockPanel DockPanel.Dock="Top">
                                             <customControls:CustomSlider
+                                                x:Name="CBShadowsMG"
+                                                Width="400"
+                                                Height="30"
                                                 Background="{StaticResource CB_MagentaGreen}"
                                                 DockPanel.Dock="Left"
-                                                Height="30"
                                                 Maximum="100"
                                                 Minimum="-100"
                                                 Theme="{StaticResource SetBg}"
-                                                Value="{CompiledBinding Effects.CBShadowsMG.Value}"
-                                                Width="400"
-                                                x:Name="CBShadowsMG" />
+                                                Value="{CompiledBinding Effects.CBShadowsMG.Value}" />
 
                                             <NumericUpDown
-                                                DockPanel.Dock="Left"
                                                 Margin="10,0"
+                                                DockPanel.Dock="Left"
                                                 Maximum="{Binding Path=Maximum, ElementName=CBShadowsMG}"
                                                 Minimum="{Binding Path=Minimum, ElementName=CBShadowsMG}"
                                                 Value="{Binding Path=Value, ElementName=CBShadowsMG}" />
 
                                             <customControls:IconButton
+                                                Width="30"
+                                                Height="30"
                                                 Background="{DynamicResource ToolWindowButtonBackground}"
                                                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                                 BorderThickness="1"
@@ -584,41 +600,41 @@
                                                 Command="{Binding Effects.ResetCBShadowsMG}"
                                                 DockPanel.Dock="Left"
                                                 Foreground="{DynamicResource MainTextColor}"
-                                                Height="30"
                                                 Icon="{StaticResource UndoImage}"
                                                 IconHeight="12"
                                                 IconWidth="12"
-                                                ToolTip.Tip="{Binding Translation.Reset.Value}"
-                                                Width="30" />
+                                                ToolTip.Tip="{Binding Translation.Reset.Value}" />
                                         </DockPanel>
 
                                         <!--  Blue  -->
                                         <TextBlock
+                                            Margin="0,8,0,0"
                                             Classes="txt "
                                             DockPanel.Dock="Top"
-                                            Margin="0,8,0,0"
                                             Text="{Binding Translation.Blue.Value}" />
 
                                         <DockPanel DockPanel.Dock="Top">
                                             <customControls:CustomSlider
+                                                x:Name="CBShadowsYB"
+                                                Width="400"
+                                                Height="30"
                                                 Background="{StaticResource CB_YellowBlue}"
                                                 DockPanel.Dock="Left"
-                                                Height="30"
                                                 Maximum="100"
                                                 Minimum="-100"
                                                 Theme="{StaticResource SetBg}"
-                                                Value="{CompiledBinding Effects.CBShadowsYB.Value}"
-                                                Width="400"
-                                                x:Name="CBShadowsYB" />
+                                                Value="{CompiledBinding Effects.CBShadowsYB.Value}" />
 
                                             <NumericUpDown
-                                                DockPanel.Dock="Left"
                                                 Margin="10,0"
+                                                DockPanel.Dock="Left"
                                                 Maximum="{Binding Path=Maximum, ElementName=CBShadowsYB}"
                                                 Minimum="{Binding Path=Minimum, ElementName=CBShadowsYB}"
                                                 Value="{Binding Path=Value, ElementName=CBShadowsYB}" />
 
                                             <customControls:IconButton
+                                                Width="30"
+                                                Height="30"
                                                 Background="{DynamicResource ToolWindowButtonBackground}"
                                                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                                 BorderThickness="1"
@@ -626,12 +642,10 @@
                                                 Command="{Binding Effects.ResetCBShadowsYB}"
                                                 DockPanel.Dock="Left"
                                                 Foreground="{DynamicResource MainTextColor}"
-                                                Height="30"
                                                 Icon="{StaticResource UndoImage}"
                                                 IconHeight="12"
                                                 IconWidth="12"
-                                                ToolTip.Tip="{Binding Translation.Reset.Value}"
-                                                Width="30" />
+                                                ToolTip.Tip="{Binding Translation.Reset.Value}" />
                                         </DockPanel>
 
                                     </DockPanel>
@@ -639,37 +653,39 @@
 
                                 <!--  Midtones  -->
                                 <TabItem
+                                    Margin="0"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="0,0,1,1"
-                                    Header="{Binding Translation.Midtones.Value}"
-                                    Margin="0">
+                                    Header="{Binding Translation.Midtones.Value}">
                                     <StackPanel Margin="0,8,0,0">
 
                                         <!--  Red  -->
                                         <TextBlock
+                                            VerticalAlignment="Bottom"
                                             Classes="txt "
-                                            Text="{Binding Translation.Red.Value}"
-                                            VerticalAlignment="Bottom" />
+                                            Text="{Binding Translation.Red.Value}" />
 
                                         <DockPanel DockPanel.Dock="Top">
                                             <customControls:CustomSlider
-                                                Background="{StaticResource CB_CyanRed}"
+                                                x:Name="CBMidCR"
+                                                Width="400"
                                                 Height="30"
+                                                Background="{StaticResource CB_CyanRed}"
                                                 Maximum="100"
                                                 Minimum="-100"
                                                 Theme="{StaticResource SetBg}"
-                                                Value="{CompiledBinding Effects.CBMidCR.Value}"
-                                                Width="400"
-                                                x:Name="CBMidCR" />
+                                                Value="{CompiledBinding Effects.CBMidCR.Value}" />
 
                                             <NumericUpDown
-                                                DockPanel.Dock="Left"
                                                 Margin="10,0"
+                                                DockPanel.Dock="Left"
                                                 Maximum="{Binding Path=Maximum, ElementName=CBMidCR}"
                                                 Minimum="{Binding Path=Minimum, ElementName=CBMidCR}"
                                                 Value="{Binding Path=Value, ElementName=CBMidCR}" />
 
                                             <customControls:IconButton
+                                                Width="30"
+                                                Height="30"
                                                 Background="{DynamicResource ToolWindowButtonBackground}"
                                                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                                 BorderThickness="1"
@@ -677,39 +693,39 @@
                                                 Command="{Binding Effects.ResetCBMidCR}"
                                                 DockPanel.Dock="Left"
                                                 Foreground="{DynamicResource MainTextColor}"
-                                                Height="30"
                                                 Icon="{StaticResource UndoImage}"
                                                 IconHeight="12"
                                                 IconWidth="12"
-                                                ToolTip.Tip="{Binding Translation.Reset.Value}"
-                                                Width="30" />
+                                                ToolTip.Tip="{Binding Translation.Reset.Value}" />
                                         </DockPanel>
 
                                         <!--  Green  -->
                                         <TextBlock
-                                            Classes="txt "
                                             Margin="0,8,0,0"
+                                            Classes="txt "
                                             Text="{Binding Translation.Green.Value}" />
                                         <DockPanel>
                                             <customControls:CustomSlider
+                                                x:Name="CBMidMG"
+                                                Width="400"
+                                                Height="30"
                                                 Background="{StaticResource CB_MagentaGreen}"
                                                 DockPanel.Dock="Left"
-                                                Height="30"
                                                 Maximum="100"
                                                 Minimum="-100"
                                                 Theme="{StaticResource SetBg}"
-                                                Value="{CompiledBinding Effects.CBMidMG.Value}"
-                                                Width="400"
-                                                x:Name="CBMidMG" />
+                                                Value="{CompiledBinding Effects.CBMidMG.Value}" />
 
                                             <NumericUpDown
-                                                DockPanel.Dock="Left"
                                                 Margin="10,0"
+                                                DockPanel.Dock="Left"
                                                 Maximum="{Binding Path=Maximum, ElementName=CBMidMG}"
                                                 Minimum="{Binding Path=Minimum, ElementName=CBMidMG}"
                                                 Value="{Binding Path=Value, ElementName=CBMidMG}" />
 
                                             <customControls:IconButton
+                                                Width="30"
+                                                Height="30"
                                                 Background="{DynamicResource ToolWindowButtonBackground}"
                                                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                                 BorderThickness="1"
@@ -717,42 +733,42 @@
                                                 Command="{Binding Effects.ResetCBMidMG}"
                                                 DockPanel.Dock="Left"
                                                 Foreground="{DynamicResource MainTextColor}"
-                                                Height="30"
                                                 Icon="{StaticResource UndoImage}"
                                                 IconHeight="12"
                                                 IconWidth="12"
-                                                ToolTip.Tip="{Binding Translation.Reset.Value}"
-                                                Width="30" />
+                                                ToolTip.Tip="{Binding Translation.Reset.Value}" />
                                         </DockPanel>
 
                                         <!--  Blue  -->
                                         <TextBlock
+                                            Margin="0,8,0,0"
                                             Classes="txt "
                                             DockPanel.Dock="Top"
-                                            Margin="0,8,0,0"
                                             Text="{Binding Translation.Blue.Value}" />
 
                                         <DockPanel DockPanel.Dock="Top">
 
                                             <customControls:CustomSlider
+                                                x:Name="CBMidYB"
+                                                Width="400"
+                                                Height="30"
                                                 Background="{StaticResource CB_YellowBlue}"
                                                 DockPanel.Dock="Left"
-                                                Height="30"
                                                 Maximum="100"
                                                 Minimum="-100"
                                                 Theme="{StaticResource SetBg}"
-                                                Value="{CompiledBinding Effects.CBMidYB.Value}"
-                                                Width="400"
-                                                x:Name="CBMidYB" />
+                                                Value="{CompiledBinding Effects.CBMidYB.Value}" />
 
                                             <NumericUpDown
-                                                DockPanel.Dock="Left"
                                                 Margin="10,0"
+                                                DockPanel.Dock="Left"
                                                 Maximum="{Binding Path=Maximum, ElementName=CBMidYB}"
                                                 Minimum="{Binding Path=Minimum, ElementName=CBMidYB}"
                                                 Value="{Binding Path=Value, ElementName=CBMidYB}" />
 
                                             <customControls:IconButton
+                                                Width="30"
+                                                Height="30"
                                                 Background="{DynamicResource ToolWindowButtonBackground}"
                                                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                                 BorderThickness="1"
@@ -760,12 +776,10 @@
                                                 Command="{Binding Effects.ResetCBMidYB}"
                                                 DockPanel.Dock="Left"
                                                 Foreground="{DynamicResource MainTextColor}"
-                                                Height="30"
                                                 Icon="{StaticResource UndoImage}"
                                                 IconHeight="12"
                                                 IconWidth="12"
-                                                ToolTip.Tip="{Binding Translation.Reset.Value}"
-                                                Width="30" />
+                                                ToolTip.Tip="{Binding Translation.Reset.Value}" />
                                         </DockPanel>
 
                                     </StackPanel>
@@ -773,39 +787,41 @@
 
                                 <!--  Highlights  -->
                                 <TabItem
+                                    Margin="0"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="0,0,0,1"
-                                    Header="{Binding Translation.Highlights.Value}"
-                                    Margin="0">
+                                    Header="{Binding Translation.Highlights.Value}">
                                     <StackPanel Margin="0,8,0,0">
 
                                         <!--  Red  -->
                                         <TextBlock
+                                            VerticalAlignment="Bottom"
                                             Classes="txt "
                                             DockPanel.Dock="Left"
-                                            Text="{Binding Translation.Red.Value}"
-                                            VerticalAlignment="Bottom" />
+                                            Text="{Binding Translation.Red.Value}" />
 
                                         <DockPanel>
                                             <customControls:CustomSlider
+                                                x:Name="CBHighCR"
+                                                Width="400"
+                                                Height="30"
                                                 Background="{StaticResource CB_CyanRed}"
                                                 DockPanel.Dock="Left"
-                                                Height="30"
                                                 Maximum="100"
                                                 Minimum="-100"
                                                 Theme="{StaticResource SetBg}"
-                                                Value="{CompiledBinding Effects.CBHighCR.Value}"
-                                                Width="400"
-                                                x:Name="CBHighCR" />
+                                                Value="{CompiledBinding Effects.CBHighCR.Value}" />
 
                                             <NumericUpDown
-                                                DockPanel.Dock="Left"
                                                 Margin="10,0"
+                                                DockPanel.Dock="Left"
                                                 Maximum="{Binding Path=Maximum, ElementName=CBHighCR}"
                                                 Minimum="{Binding Path=Minimum, ElementName=CBHighCR}"
                                                 Value="{Binding Path=Value, ElementName=CBHighCR}" />
 
                                             <customControls:IconButton
+                                                Width="30"
+                                                Height="30"
                                                 Background="{DynamicResource ToolWindowButtonBackground}"
                                                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                                 BorderThickness="1"
@@ -813,41 +829,41 @@
                                                 Command="{Binding Effects.ResetCBHighCR}"
                                                 DockPanel.Dock="Left"
                                                 Foreground="{DynamicResource MainTextColor}"
-                                                Height="30"
                                                 Icon="{StaticResource UndoImage}"
                                                 IconHeight="12"
                                                 IconWidth="12"
-                                                ToolTip.Tip="{Binding Translation.Reset.Value}"
-                                                Width="30" />
+                                                ToolTip.Tip="{Binding Translation.Reset.Value}" />
                                         </DockPanel>
 
                                         <!--  Green  -->
                                         <TextBlock
-                                            Classes="txt "
                                             Margin="0,8,0,0"
+                                            Classes="txt "
                                             Text="{Binding Translation.Green.Value}" />
 
                                         <DockPanel>
 
                                             <customControls:CustomSlider
+                                                x:Name="CBHighMG"
+                                                Width="400"
+                                                Height="30"
                                                 Background="{StaticResource CB_MagentaGreen}"
                                                 DockPanel.Dock="Left"
-                                                Height="30"
                                                 Maximum="100"
                                                 Minimum="-100"
                                                 Theme="{StaticResource SetBg}"
-                                                Value="{CompiledBinding Effects.CBHighMG.Value}"
-                                                Width="400"
-                                                x:Name="CBHighMG" />
+                                                Value="{CompiledBinding Effects.CBHighMG.Value}" />
 
                                             <NumericUpDown
-                                                DockPanel.Dock="Left"
                                                 Margin="10,0"
+                                                DockPanel.Dock="Left"
                                                 Maximum="{Binding Path=Maximum, ElementName=CBHighMG}"
                                                 Minimum="{Binding Path=Minimum, ElementName=CBHighMG}"
                                                 Value="{Binding Path=Value, ElementName=CBHighMG}" />
 
                                             <customControls:IconButton
+                                                Width="30"
+                                                Height="30"
                                                 Background="{DynamicResource ToolWindowButtonBackground}"
                                                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                                 BorderThickness="1"
@@ -855,40 +871,40 @@
                                                 Command="{Binding Effects.ResetCBHighMG}"
                                                 DockPanel.Dock="Left"
                                                 Foreground="{DynamicResource MainTextColor}"
-                                                Height="30"
                                                 Icon="{StaticResource UndoImage}"
                                                 IconHeight="12"
                                                 IconWidth="12"
-                                                ToolTip.Tip="{Binding Translation.Reset.Value}"
-                                                Width="30" />
+                                                ToolTip.Tip="{Binding Translation.Reset.Value}" />
                                         </DockPanel>
 
                                         <!--  Blue  -->
                                         <TextBlock
-                                            Classes="txt "
                                             Margin="0,8,0,0"
+                                            Classes="txt "
                                             Text="{Binding Translation.Blue.Value}" />
 
                                         <DockPanel>
                                             <customControls:CustomSlider
+                                                x:Name="CBHighYB"
+                                                Width="400"
+                                                Height="30"
                                                 Background="{StaticResource CB_YellowBlue}"
                                                 DockPanel.Dock="Left"
-                                                Height="30"
                                                 Maximum="100"
                                                 Minimum="-100"
                                                 Theme="{StaticResource SetBg}"
-                                                Value="{CompiledBinding Effects.CBHighYB.Value}"
-                                                Width="400"
-                                                x:Name="CBHighYB" />
+                                                Value="{CompiledBinding Effects.CBHighYB.Value}" />
 
                                             <NumericUpDown
-                                                DockPanel.Dock="Left"
                                                 Margin="10,0"
+                                                DockPanel.Dock="Left"
                                                 Maximum="{Binding Path=Maximum, ElementName=CBHighYB}"
                                                 Minimum="{Binding Path=Minimum, ElementName=CBHighYB}"
                                                 Value="{Binding Path=Value, ElementName=CBHighYB}" />
 
                                             <customControls:IconButton
+                                                Width="30"
+                                                Height="30"
                                                 Background="{DynamicResource ToolWindowButtonBackground}"
                                                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                                 BorderThickness="1"
@@ -896,12 +912,10 @@
                                                 Command="{Binding Effects.ResetCBHighYB}"
                                                 DockPanel.Dock="Left"
                                                 Foreground="{DynamicResource MainTextColor}"
-                                                Height="30"
                                                 Icon="{StaticResource UndoImage}"
                                                 IconHeight="12"
                                                 IconWidth="12"
-                                                ToolTip.Tip="{Binding Translation.Reset.Value}"
-                                                Width="30" />
+                                                ToolTip.Tip="{Binding Translation.Reset.Value}" />
 
                                         </DockPanel>
 
@@ -917,15 +931,18 @@
 
                 <!--  LIGHTING TAB  -->
                 <TabItem
+                    Margin="0"
                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                     BorderThickness="0,0,1,1"
-                    Header="{Binding Translation.Lighting.Value}"
-                    Margin="0">
+                    Header="{Binding Translation.Lighting.Value}">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="15,10">
 
-                            <DockPanel LastChildFill="True" Margin="0,0,-10,0">
+                            <DockPanel Margin="0,0,-10,0" LastChildFill="True">
                                 <customControls:IconButton
+                                    x:Name="ResetLightingTabBtn"
+                                    Width="30"
+                                    Height="30"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -933,13 +950,10 @@
                                     Command="{Binding Effects.ResetLighting}"
                                     DockPanel.Dock="Right"
                                     Foreground="{DynamicResource MainTextColor}"
-                                    Height="30"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
                                     IconWidth="12"
-                                    ToolTip.Tip="Reset Lighting"
-                                    Width="30"
-                                    x:Name="ResetLightingTabBtn" />
+                                    ToolTip.Tip="Reset Lighting" />
 
                                 <TextBlock
                                     Classes="txt sectionHeader"
@@ -952,23 +966,23 @@
                             <TextBlock Classes="txt " Text="{Binding Translation.ExposureBias.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="ExposureSlider"
+                                    Width="400"
                                     Height="30"
+                                    Margin="0,1,10,1"
                                     IsSnapToTickEnabled="False"
                                     LargeChange="0.25"
-                                    Margin="0,1,10,1"
                                     Maximum="2"
                                     Minimum="-2"
                                     SmallChange="0.05"
                                     Theme="{StaticResource SetBg}"
                                     TickFrequency="0.05"
-                                    Value="{CompiledBinding Effects.ExposureStops.Value}"
-                                    Width="400"
-                                    x:Name="ExposureSlider">
+                                    Value="{CompiledBinding Effects.ExposureStops.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#101010" Offset="0" />
-                                            <GradientStop Color="#808080" Offset="0.5" />
-                                            <GradientStop Color="#FFFFFF" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#101010" />
+                                            <GradientStop Offset="0.5" Color="#808080" />
+                                            <GradientStop Offset="1" Color="#FFFFFF" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -980,6 +994,9 @@
                                     Value="{Binding Path=Value, ElementName=ExposureSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetExposureBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -988,32 +1005,29 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetExposureBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Brightness  -->
                             <TextBlock Classes="txt " Text="{CompiledBinding Translation.Brightness.Value, Mode=OneWay}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="BrightnessSlider"
+                                    Width="400"
                                     Height="30"
+                                    Margin="0,1,10,1"
                                     IsSnapToTickEnabled="False"
                                     LargeChange="10"
-                                    Margin="0,1,10,1"
                                     Maximum="100"
                                     Minimum="-100"
                                     SmallChange="1"
                                     Theme="{StaticResource SetBg}"
                                     TickFrequency="1"
-                                    Value="{CompiledBinding Effects.Brightness.Value}"
-                                    Width="400"
-                                    x:Name="BrightnessSlider">
+                                    Value="{CompiledBinding Effects.Brightness.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#111111" Offset="0" />
-                                            <GradientStop Color="#FFFFFF" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#111111" />
+                                            <GradientStop Offset="1" Color="#FFFFFF" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -1024,6 +1038,9 @@
                                     Value="{Binding Path=Value, ElementName=BrightnessSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetBrightnessBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1032,33 +1049,30 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetBrightnessBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Contrast  -->
                             <TextBlock Classes="txt " Text="{CompiledBinding Translation.Contrast.Value, Mode=OneWay}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="ContrastSlider"
+                                    Width="400"
                                     Height="30"
+                                    Margin="0,1,10,1"
                                     IsSnapToTickEnabled="False"
                                     LargeChange="10"
-                                    Margin="0,1,10,1"
                                     Maximum="100"
                                     Minimum="-100"
                                     SmallChange="1"
                                     Theme="{StaticResource SetBg}"
                                     TickFrequency="1"
-                                    Value="{CompiledBinding Effects.Contrast.Value}"
-                                    Width="400"
-                                    x:Name="ContrastSlider">
+                                    Value="{CompiledBinding Effects.Contrast.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#000000" Offset="0" />
-                                            <GradientStop Color="#808080" Offset="0.5" />
-                                            <GradientStop Color="#FFFFFF" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#000000" />
+                                            <GradientStop Offset="0.5" Color="#808080" />
+                                            <GradientStop Offset="1" Color="#FFFFFF" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -1069,6 +1083,9 @@
                                     Value="{Binding Path=Value, ElementName=ContrastSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetContrastBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1077,33 +1094,30 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetContrastBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Gamma  -->
                             <TextBlock Classes="txt " Text="{Binding Translation.Gamma.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="GammaSlider"
+                                    Width="400"
                                     Height="30"
+                                    Margin="0,1,10,1"
                                     IsSnapToTickEnabled="False"
                                     LargeChange="0.1"
-                                    Margin="0,1,10,1"
                                     Maximum="3"
                                     Minimum="0.3"
                                     SmallChange="0.01"
                                     Theme="{StaticResource SetBg}"
                                     TickFrequency="0.01"
-                                    Value="{CompiledBinding Effects.Gamma.Value}"
-                                    Width="400"
-                                    x:Name="GammaSlider">
+                                    Value="{CompiledBinding Effects.Gamma.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#1A1A1A" Offset="0" />
-                                            <GradientStop Color="#A0A0A0" Offset="0.5" />
-                                            <GradientStop Color="#F5F5F5" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#1A1A1A" />
+                                            <GradientStop Offset="0.5" Color="#A0A0A0" />
+                                            <GradientStop Offset="1" Color="#F5F5F5" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -1115,6 +1129,9 @@
                                     Value="{Binding Path=Value, ElementName=GammaSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetGammaBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1123,10 +1140,7 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetGammaBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <TextBlock Classes="txt sectionHeader" Text="{Binding Translation.Tonal.Value}" />
@@ -1135,17 +1149,17 @@
                             <TextBlock Classes="txt " Text="{Binding Translation.Highlights.Value}" />
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <customControls:CustomSlider
+                                    x:Name="HighlightsSlider"
+                                    Width="400"
                                     Height="30"
                                     Maximum="100"
                                     Minimum="-100"
                                     Theme="{StaticResource SetBg}"
-                                    Value="{CompiledBinding Effects.Highlights.Value}"
-                                    Width="400"
-                                    x:Name="HighlightsSlider">
+                                    Value="{CompiledBinding Effects.Highlights.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#C0C0C0" Offset="0" />
-                                            <GradientStop Color="#FFFFFF" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#C0C0C0" />
+                                            <GradientStop Offset="1" Color="#FFFFFF" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -1154,6 +1168,8 @@
                                     Minimum="{Binding Path=Minimum, ElementName=HighlightsSlider}"
                                     Value="{Binding Path=Value, ElementName=HighlightsSlider}" />
                                 <customControls:IconButton
+                                    x:Name="ResetHighlightsBtn"
+                                    Width="30"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1162,26 +1178,24 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Width="30"
-                                    x:Name="ResetHighlightsBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Shadows  -->
                             <TextBlock Classes="txt " Text="{Binding Translation.Shadows.Value}" />
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <customControls:CustomSlider
+                                    x:Name="ShadowsSlider"
+                                    Width="400"
                                     Height="30"
                                     Maximum="100"
                                     Minimum="-100"
                                     Theme="{StaticResource SetBg}"
-                                    Value="{CompiledBinding Effects.Shadows.Value}"
-                                    Width="400"
-                                    x:Name="ShadowsSlider">
+                                    Value="{CompiledBinding Effects.Shadows.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#000000" Offset="0" />
-                                            <GradientStop Color="#808080" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#000000" />
+                                            <GradientStop Offset="1" Color="#808080" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -1190,6 +1204,8 @@
                                     Minimum="{Binding Path=Minimum, ElementName=ShadowsSlider}"
                                     Value="{Binding Path=Value, ElementName=ShadowsSlider}" />
                                 <customControls:IconButton
+                                    x:Name="ResetShadowsBtn"
+                                    Width="30"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1198,27 +1214,25 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Width="30"
-                                    x:Name="ResetShadowsBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Blacks / Whites  -->
                             <TextBlock Classes="txt " Text="{Binding Translation.Blacks.Value}" />
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <customControls:CustomSlider
+                                    x:Name="BlacksSlider"
+                                    Width="400"
                                     Height="30"
                                     Maximum="50"
                                     Minimum="-50"
                                     Theme="{StaticResource SetBg}"
-                                    Value="{CompiledBinding Effects.Blacks.Value}"
-                                    Width="400"
-                                    x:Name="BlacksSlider">
+                                    Value="{CompiledBinding Effects.Blacks.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#000000" Offset="0" />
-                                            <GradientStop Color="#404040" Offset="0.5" />
-                                            <GradientStop Color="#808080" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#000000" />
+                                            <GradientStop Offset="0.5" Color="#404040" />
+                                            <GradientStop Offset="1" Color="#808080" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -1227,6 +1241,8 @@
                                     Minimum="{Binding Path=Minimum, ElementName=BlacksSlider}"
                                     Value="{Binding Path=Value, ElementName=BlacksSlider}" />
                                 <customControls:IconButton
+                                    x:Name="ResetBlacksBtn"
+                                    Width="30"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1235,25 +1251,23 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Width="30"
-                                    x:Name="ResetBlacksBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <TextBlock Classes="txt " Text="{Binding Translation.Whites.Value}" />
                             <StackPanel Orientation="Horizontal" Spacing="10">
                                 <customControls:CustomSlider
+                                    x:Name="WhitesSlider"
+                                    Width="400"
                                     Height="30"
                                     Maximum="50"
                                     Minimum="-50"
                                     Theme="{StaticResource SetBg}"
-                                    Value="{CompiledBinding Effects.Whites.Value}"
-                                    Width="400"
-                                    x:Name="WhitesSlider">
+                                    Value="{CompiledBinding Effects.Whites.Value}">
                                     <customControls:CustomSlider.Background>
-                                        <LinearGradientBrush EndPoint="100%,50%" StartPoint="0%,50%">
-                                            <GradientStop Color="#D0D0D0" Offset="0" />
-                                            <GradientStop Color="#FFFFFF" Offset="1" />
+                                        <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                                            <GradientStop Offset="0" Color="#D0D0D0" />
+                                            <GradientStop Offset="1" Color="#FFFFFF" />
                                         </LinearGradientBrush>
                                     </customControls:CustomSlider.Background>
                                 </customControls:CustomSlider>
@@ -1262,6 +1276,8 @@
                                     Minimum="{Binding Path=Minimum, ElementName=WhitesSlider}"
                                     Value="{Binding Path=Value, ElementName=WhitesSlider}" />
                                 <customControls:IconButton
+                                    x:Name="ResetWhitesBtn"
+                                    Width="30"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1270,9 +1286,7 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Width="30"
-                                    x:Name="ResetWhitesBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                         </StackPanel>
@@ -1281,15 +1295,18 @@
 
                 <!--  EFFECTS TAB  -->
                 <TabItem
+                    Margin="0"
                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                     BorderThickness="0,0,1,1"
-                    Header="{Binding Translation.Effects.Value}"
-                    Margin="0">
+                    Header="{Binding Translation.Effects.Value}">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="15,10">
 
-                            <DockPanel LastChildFill="True" Margin="0,0,-10,0">
+                            <DockPanel Margin="0,0,-10,0" LastChildFill="True">
                                 <customControls:IconButton
+                                    x:Name="ResetEffectsTabBtn"
+                                    Width="30"
+                                    Height="30"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1297,13 +1314,10 @@
                                     Command="{Binding Effects.ResetEffects}"
                                     DockPanel.Dock="Right"
                                     Foreground="{DynamicResource MainTextColor}"
-                                    Height="30"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
                                     IconWidth="12"
-                                    ToolTip.Tip="{Binding Translation.ResetButtonText.Value}"
-                                    Width="30"
-                                    x:Name="ResetEffectsTabBtn" />
+                                    ToolTip.Tip="{Binding Translation.ResetButtonText.Value}" />
 
                                 <TextBlock
                                     Classes="txt sectionHeader"
@@ -1316,13 +1330,13 @@
                             <TextBlock Classes="txt " Text="{Binding Translation.Dehaze.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="DehazeSlider"
+                                    Width="400"
                                     Height="30"
                                     Margin="0,1,10,1"
                                     Maximum="100"
                                     Minimum="0"
-                                    Value="{CompiledBinding Effects.Dehaze.Value}"
-                                    Width="400"
-                                    x:Name="DehazeSlider" />
+                                    Value="{CompiledBinding Effects.Dehaze.Value}" />
 
                                 <NumericUpDown
                                     Maximum="{Binding Path=Maximum, ElementName=DehazeSlider}"
@@ -1330,6 +1344,9 @@
                                     Value="{Binding Path=Value, ElementName=DehazeSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetDehazeBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1338,23 +1355,20 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetDehazeBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Clarity  -->
                             <TextBlock Classes="txt " Text="{Binding Translation.Clarity.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="ClaritySlider"
+                                    Width="400"
                                     Height="30"
                                     Margin="0,1,10,1"
                                     Maximum="100"
                                     Minimum="0"
-                                    Value="{CompiledBinding Effects.Clarity.Value}"
-                                    Width="400"
-                                    x:Name="ClaritySlider" />
+                                    Value="{CompiledBinding Effects.Clarity.Value}" />
 
                                 <NumericUpDown
                                     Maximum="{Binding Path=Maximum, ElementName=ClaritySlider}"
@@ -1362,6 +1376,9 @@
                                     Value="{Binding Path=Value, ElementName=ClaritySlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetClarityBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1370,23 +1387,20 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetClarityBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Grain  -->
                             <TextBlock Classes="txt " Text="{Binding Translation.FilmGrain.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="GrainSlider"
+                                    Width="400"
                                     Height="30"
                                     Margin="0,1,10,1"
                                     Maximum="100"
                                     Minimum="0"
-                                    Value="{CompiledBinding Effects.Grain.Value}"
-                                    Width="400"
-                                    x:Name="GrainSlider" />
+                                    Value="{CompiledBinding Effects.Grain.Value}" />
 
                                 <NumericUpDown
                                     Maximum="{Binding Path=Maximum, ElementName=GrainSlider}"
@@ -1394,6 +1408,9 @@
                                     Value="{Binding Path=Value, ElementName=GrainSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetGrainBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1402,23 +1419,20 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetGrainBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Sharpen  -->
                             <TextBlock Classes="txt " Text="{Binding Translation.Sharpen.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="SharpenSlider"
+                                    Width="400"
                                     Height="30"
                                     Margin="0,1,10,1"
                                     Maximum="100"
                                     Minimum="0"
-                                    Value="{CompiledBinding Effects.Sharpen.Value}"
-                                    Width="400"
-                                    x:Name="SharpenSlider" />
+                                    Value="{CompiledBinding Effects.Sharpen.Value}" />
 
                                 <NumericUpDown
                                     Maximum="{Binding Path=Maximum, ElementName=SharpenSlider}"
@@ -1426,6 +1440,9 @@
                                     Value="{Binding Path=Value, ElementName=SharpenSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetSharpenBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1434,23 +1451,20 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetSharpenBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Vignette  -->
                             <TextBlock Classes="txt " Text="{Binding Translation.Vignette.Value}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="VignetteSlider"
+                                    Width="400"
                                     Height="30"
                                     Margin="0,1,10,1"
                                     Maximum="100"
                                     Minimum="0"
-                                    Value="{CompiledBinding Effects.Vignette.Value}"
-                                    Width="400"
-                                    x:Name="VignetteSlider" />
+                                    Value="{CompiledBinding Effects.Vignette.Value}" />
 
                                 <NumericUpDown
                                     Maximum="{Binding Path=Maximum, ElementName=VignetteSlider}"
@@ -1458,6 +1472,9 @@
                                     Value="{Binding Path=Value, ElementName=VignetteSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetVignetteBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1466,26 +1483,23 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetVignetteBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Blur  -->
                             <TextBlock Classes="txt " Text="{CompiledBinding Translation.Blur.Value, Mode=OneWay}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="BlurSlider"
+                                    Width="400"
                                     Height="30"
-                                    LargeChange="1"
                                     Margin="0,1,10,1"
+                                    LargeChange="1"
                                     Maximum="30"
                                     Minimum="0"
                                     SmallChange="0.1"
                                     TickFrequency="0.1"
-                                    Value="{CompiledBinding Effects.BlurLevel.Value}"
-                                    Width="400"
-                                    x:Name="BlurSlider" />
+                                    Value="{CompiledBinding Effects.BlurLevel.Value}" />
 
                                 <NumericUpDown
                                     Maximum="{Binding Path=Maximum, ElementName=BlurSlider}"
@@ -1493,6 +1507,9 @@
                                     Value="{Binding Path=Value, ElementName=BlurSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetBlurBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1501,26 +1518,23 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetBlurBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Pencil Sketch  -->
                             <TextBlock Classes="txt " Text="{CompiledBinding Translation.PencilSketch.Value, Mode=OneWay}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="PencilSketchSlider"
+                                    Width="400"
                                     Height="30"
-                                    LargeChange="0.5"
                                     Margin="0,1,10,1"
+                                    LargeChange="0.5"
                                     Maximum="6"
                                     Minimum="0"
                                     SmallChange="0.1"
                                     TickFrequency="0.1"
-                                    Value="{CompiledBinding Effects.SketchStrokeWidth.Value}"
-                                    Width="400"
-                                    x:Name="PencilSketchSlider" />
+                                    Value="{CompiledBinding Effects.SketchStrokeWidth.Value}" />
 
                                 <NumericUpDown
                                     Maximum="{Binding Path=Maximum, ElementName=PencilSketchSlider}"
@@ -1528,6 +1542,9 @@
                                     Value="{Binding Path=Value, ElementName=PencilSketchSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetPencilSketchBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1536,26 +1553,23 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetPencilSketchBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Posterize  -->
                             <TextBlock Classes="txt " Text="{CompiledBinding Translation.Posterize.Value, Mode=OneWay}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="PosterizeSlider"
+                                    Width="400"
                                     Height="30"
-                                    LargeChange="2"
                                     Margin="0,1,10,1"
+                                    LargeChange="2"
                                     Maximum="32"
                                     Minimum="0"
                                     SmallChange="1"
                                     TickFrequency="1"
-                                    Value="{CompiledBinding Effects.PosterizeLevel.Value}"
-                                    Width="400"
-                                    x:Name="PosterizeSlider" />
+                                    Value="{CompiledBinding Effects.PosterizeLevel.Value}" />
 
                                 <NumericUpDown
                                     Maximum="{Binding Path=Maximum, ElementName=PosterizeSlider}"
@@ -1563,6 +1577,9 @@
                                     Value="{Binding Path=Value, ElementName=PosterizeSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetPosterizeBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1571,26 +1588,23 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetPosterizeBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Solarize  -->
                             <TextBlock Classes="txt " Text="{CompiledBinding Translation.Solarize.Value, Mode=OneWay}" />
                             <StackPanel Orientation="Horizontal">
                                 <customControls:CustomSlider
+                                    x:Name="SolarizeSlider"
+                                    Width="400"
                                     Height="30"
-                                    LargeChange="5"
                                     Margin="0,1,10,1"
+                                    LargeChange="5"
                                     Maximum="100"
                                     Minimum="0"
                                     SmallChange="1"
                                     TickFrequency="5"
-                                    Value="{CompiledBinding Effects.Solarize.Value}"
-                                    Width="400"
-                                    x:Name="SolarizeSlider" />
+                                    Value="{CompiledBinding Effects.Solarize.Value}" />
 
                                 <NumericUpDown
                                     Maximum="{Binding Path=Maximum, ElementName=SolarizeSlider}"
@@ -1598,6 +1612,9 @@
                                     Value="{Binding Path=Value, ElementName=SolarizeSlider}" />
 
                                 <customControls:IconButton
+                                    x:Name="ResetSolarizeBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1606,42 +1623,39 @@
                                     Foreground="{DynamicResource MainTextColor}"
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
-                                    IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    Width="30"
-                                    x:Name="ResetSolarizeBtn" />
+                                    IconWidth="12" />
                             </StackPanel>
 
                             <!--  Black And White Toggle  -->
                             <customControls:TextToggleButton
+                                x:Name="BlackAndWhiteToggleButton"
+                                Margin="0,12,0,0"
                                 Background="Transparent"
                                 Classes="AltHover"
                                 Foreground="{DynamicResource MainTextColor}"
                                 IsChecked="{CompiledBinding Effects.BlackAndWhite.Value}"
-                                Margin="0,12,0,0"
                                 Text="{CompiledBinding Translation.BlackAndWhite.Value,
-                                                       Mode=OneWay}"
-                                x:Name="BlackAndWhiteToggleButton" />
+                                                       Mode=OneWay}" />
 
                             <!--  Negative Toggle  -->
                             <customControls:TextToggleButton
+                                x:Name="NegativeToggleButton"
                                 Background="Transparent"
                                 Classes="AltHover"
                                 Foreground="{DynamicResource MainTextColor}"
                                 IsChecked="{CompiledBinding Effects.Negative.Value}"
                                 Text="{CompiledBinding Translation.NegativeColors.Value,
-                                                       Mode=OneWay}"
-                                x:Name="NegativeToggleButton" />
+                                                       Mode=OneWay}" />
 
                             <!--  Old Movie  -->
                             <customControls:TextToggleButton
+                                x:Name="OldMovieToggleButton"
                                 Background="Transparent"
                                 Classes="AltHover"
                                 Foreground="{DynamicResource MainTextColor}"
                                 IsChecked="{CompiledBinding Effects.OldMovie.Value}"
                                 Text="{CompiledBinding Translation.OldMovie.Value,
-                                                       Mode=OneWay}"
-                                x:Name="OldMovieToggleButton" />
+                                                       Mode=OneWay}" />
 
                         </StackPanel>
                     </ScrollViewer>
@@ -1649,28 +1663,31 @@
 
                 <!--  PRESETS TAB  -->
                 <TabItem
+                    Margin="0"
                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                     BorderThickness="0,0,0,1"
-                    Header="{Binding Translation.Presets.Value}"
-                    Margin="0">
+                    Header="{Binding Translation.Presets.Value}">
                     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="15,10">
                             <TextBlock Classes="txt sectionHeader" Text="{Binding Translation.SmartPresets.Value}" />
 
                             <TextBlock
+                                Margin="0,0,0,10"
                                 Classes="txt"
                                 Foreground="{StaticResource SecondaryTextColor}"
-                                Margin="0,0,0,10"
                                 Text="{Binding Translation.PresetDescription.Value}" />
 
                             <StackPanel Orientation="Horizontal">
                                 <ComboBox
-                                    ItemsSource="{CompiledBinding Effects.Presets}"
-                                    Padding="8"
-                                    SelectedItem="{CompiledBinding Effects.SelectedPreset.Value}"
+                                    x:Name="PresetCombo"
                                     Width="460"
-                                    x:Name="PresetCombo" />
+                                    Padding="8"
+                                    ItemsSource="{CompiledBinding Effects.Presets}"
+                                    SelectedItem="{CompiledBinding Effects.SelectedPreset.Value}" />
                                 <customControls:IconButton
+                                    x:Name="ResetAllBtn"
+                                    Width="30"
+                                    Margin="5,0,0,0"
                                     Background="{DynamicResource ToolWindowButtonBackground}"
                                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                                     BorderThickness="1"
@@ -1680,10 +1697,7 @@
                                     Icon="{StaticResource UndoImage}"
                                     IconHeight="12"
                                     IconWidth="12"
-                                    Margin="5,0,0,0"
-                                    ToolTip.Tip="{Binding Translation.ResetPreset.Value}"
-                                    Width="30"
-                                    x:Name="ResetAllBtn" />
+                                    ToolTip.Tip="{Binding Translation.ResetPreset.Value}" />
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>

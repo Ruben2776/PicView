@@ -786,7 +786,8 @@
                                             Width="125"
                                             Margin="8,0,0,0"
                                             Classes="txt"
-                                            Text="{CompiledBinding #MainTabControl.((viewModels:CoreViewModel)DataContext).Translation.Resize.Value, Mode=OneWay}" />
+                                            Text="{CompiledBinding #MainTabControl.((viewModels:CoreViewModel)DataContext).Translation.Resize.Value,
+                                                                   Mode=OneWay}" />
                                         <ComboBox
                                             Width="195"
                                             Height="30"
