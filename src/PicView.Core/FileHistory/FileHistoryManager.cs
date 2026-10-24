@@ -311,6 +311,8 @@ public static class FileHistoryManager
         return true;
     }
 
+    // TODO: Rename the entries of the files in a renamed folder too. FileWatcherService only renames single files here,
+    // so a folder rename (FolderChangeKind.FolderRenamed) leaves its files' entries under the old paths.
     /// <summary>
     ///     Renames a file in the history, replacing the old entry with the new one.
     /// </summary>
