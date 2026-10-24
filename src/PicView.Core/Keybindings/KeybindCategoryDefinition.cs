@@ -26,12 +26,16 @@ public static class KeybindCategoryDefinition
     /// </summary>
     private static readonly string[] HiddenActionNames =
     [
-        "CheckForUpdates", "ColorPicker", "CutFile", "FileAssociationsWindow", "ResetZoomAndRotations",
-        "ResizeImage", "Restart", "Restore", "Rotate0", "Rotate90", "Rotate180", "Rotate270", "RotateLeft",
-        "RotateRight", "SaveAsPDF", "SetAsLockScreen", "SetAsLockscreenCentered", "SetAsWallpaper",
-        "SetAsWallpaperCentered", "SetAsWallpaperFilled", "SetAsWallpaperFitted", "SetAsWallpaperStretched",
-        "SetAsWallpaperTiled", "ShowFavoritesFile", "ShowKeybindingsFile", "ShowRecentHistoryFile",
-        "ShowSettingsFile", "SortFilesByLastWriteTime",
+        Actions.CheckForUpdates, Actions.ColorPicker, Actions.CutFile, Actions.FileAssociationsWindow, Actions.ResetZoomAndRotations,
+        Actions.ResizeImage, Actions.Restart, Actions.Restore, Actions.Rotate0, Actions.Rotate90, Actions.Rotate180, Actions.Rotate270, Actions.RotateLeft,
+        Actions.RotateRight, Actions.SaveAsPDF, Actions.SetAsLockScreen, Actions.SetAsLockscreenCentered, Actions.SetAsWallpaper,
+        Actions.SetAsWallpaperCentered, Actions.SetAsWallpaperFilled, Actions.SetAsWallpaperFitted, Actions.SetAsWallpaperStretched,
+        Actions.SetAsWallpaperTiled, Actions.ShowFavoritesFile, Actions.ShowKeybindingsFile, Actions.ShowRecentHistoryFile,
+        Actions.ShowSettingsFile, Actions.SortFilesByLastWriteTime,
+        Actions.CloseWindow, Actions.Minimize, Actions.OpenCloseDockedGallery, Actions.ResetSettings,
+        Actions.ToggleBottomToolbar, Actions.ToggleConstrainBackgroundColor, Actions.ToggleDockedGalleryInHiddenUI,
+        Actions.ToggleFileHistory, Actions.ToggleHoverBar, Actions.ToggleOpeningInSameWindow,
+        Actions.ToggleShowFullPathInTitleBar, Actions.ToggleSubdirectories, Actions.ToggleTaskbarProgress,
     ];
 
     private const string FavoriteActionPrefix = "OpenFavorite";
@@ -106,150 +110,150 @@ public static class KeybindCategoryDefinition
 
     public static List<(string FunctionName, string DisplayName)> GetNavigationEntries(LanguageModel t) =>
     [
-        ("Next", t.NextImage ?? string.Empty),
-        ("Next10", t.AdvanceBy10Images ?? string.Empty),
-        ("Next100", t.AdvanceBy100Images ?? string.Empty),
-        ("Prev", t.PrevImage ?? string.Empty),
-        ("Prev10", t.GoBackBy10Images ?? string.Empty),
-        ("Prev100", t.GoBackBy100Images ?? string.Empty),
-        ("Last", t.LastImage ?? string.Empty),
-        ("First", t.FirstImage ?? string.Empty),
-        ("NextFolder", t.NextFolder ?? string.Empty),
-        ("PrevFolder", t.PrevFolder ?? string.Empty),
-        ("NextArchive", t.NextArchive ?? string.Empty),
-        ("PrevArchive", t.PrevArchive ?? string.Empty),
-        ("FileHistoryNext", t.NextFileInHistory ?? string.Empty),
-        ("FileHistoryPrev", t.PreviousFileInHistory ?? string.Empty),
-        ("Search", t.Search ?? string.Empty),
-        ("ToggleLooping", t.ToggleLooping ?? string.Empty),
+        (Actions.Next, t.NextImage ?? string.Empty),
+        (Actions.Next10, t.AdvanceBy10Images ?? string.Empty),
+        (Actions.Next100, t.AdvanceBy100Images ?? string.Empty),
+        (Actions.Prev, t.PrevImage ?? string.Empty),
+        (Actions.Prev10, t.GoBackBy10Images ?? string.Empty),
+        (Actions.Prev100, t.GoBackBy100Images ?? string.Empty),
+        (Actions.Last, t.LastImage ?? string.Empty),
+        (Actions.First, t.FirstImage ?? string.Empty),
+        (Actions.NextFolder, t.NextFolder ?? string.Empty),
+        (Actions.PrevFolder, t.PrevFolder ?? string.Empty),
+        (Actions.NextArchive, t.NextArchive ?? string.Empty),
+        (Actions.PrevArchive, t.PrevArchive ?? string.Empty),
+        (Actions.FileHistoryNext, t.NextFileInHistory ?? string.Empty),
+        (Actions.FileHistoryPrev, t.PreviousFileInHistory ?? string.Empty),
+        (Actions.Search, t.Search ?? string.Empty),
+        (Actions.ToggleLooping, t.ToggleLooping ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetScrollAndRotateEntries(LanguageModel t) =>
     [
-        ("Up", t.RotateRight ?? string.Empty),
-        ("ScrollUp", t.ScrollUp ?? string.Empty),
-        ("Down", t.RotateLeft ?? string.Empty),
-        ("ScrollDown", t.ScrollDown ?? string.Empty),
-        ("ScrollToTop", t.ScrollToTop ?? string.Empty),
-        ("ScrollToBottom", t.ScrollToBottom ?? string.Empty),
-        ("ToggleScroll", t.ToggleScroll ?? string.Empty),
+        (Actions.Up, t.RotateRight ?? string.Empty),
+        (Actions.ScrollUp, t.ScrollUp ?? string.Empty),
+        (Actions.Down, t.RotateLeft ?? string.Empty),
+        (Actions.ScrollDown, t.ScrollDown ?? string.Empty),
+        (Actions.ScrollToTop, t.ScrollToTop ?? string.Empty),
+        (Actions.ScrollToBottom, t.ScrollToBottom ?? string.Empty),
+        (Actions.ToggleScroll, t.ToggleScroll ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetZoomEntries(LanguageModel t) =>
     [
-        ("ZoomIn", t.ZoomIn ?? string.Empty),
-        ("ZoomOut", t.ZoomOut ?? string.Empty),
-        ("ResetZoom", t.ResetZoom ?? string.Empty),
+        (Actions.ZoomIn, t.ZoomIn ?? string.Empty),
+        (Actions.ZoomOut, t.ZoomOut ?? string.Empty),
+        (Actions.ResetZoom, t.ResetZoom ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetImageControlEntries(LanguageModel t) =>
     [
-        ("SideBySide", t.SideBySide ?? string.Empty),
-        ("ZoomToFit", t.ZoomToFit ?? string.Empty),
-        ("Flip", t.Flip ?? string.Empty),
-        ("Crop", t.Crop ?? string.Empty),
-        ("ChangeBackground", t.ChangeBackground ?? string.Empty),
-        ("OptimizeImage", t.OptimizeImage ?? string.Empty),
+        (Actions.SideBySide, t.SideBySide ?? string.Empty),
+        (Actions.ZoomToFit, t.ZoomToFit ?? string.Empty),
+        (Actions.Flip, t.Flip ?? string.Empty),
+        (Actions.Crop, t.Crop ?? string.Empty),
+        (Actions.ChangeBackground, t.ChangeBackground ?? string.Empty),
+        (Actions.OptimizeImage, t.OptimizeImage ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetInterfaceConfigurationEntries(LanguageModel t) =>
     [
-        ("ToggleInterface", t.HideUI ?? string.Empty),
-        ("Slideshow", t.Slideshow ?? string.Empty),
-        ("ToggleGallery", t.ShowImageGallery ?? string.Empty),
+        (Actions.ToggleInterface, t.HideUI ?? string.Empty),
+        (Actions.Slideshow, t.Slideshow ?? string.Empty),
+        (Actions.ToggleGallery, t.ShowImageGallery ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetFileManagementEntries(LanguageModel t) =>
     [
-        ("Open", t.Open ?? string.Empty),
-        ("OpenWith", t.OpenWith ?? string.Empty),
-        ("OpenInExplorer", t.ShowInFolder ?? string.Empty),
-        ("Reload", t.Reload ?? string.Empty),
-        ("Save", t.Save ?? string.Empty),
-        ("SaveAs", t.SaveAs ?? string.Empty),
-        ("Print", t.Print ?? string.Empty),
-        ("DeleteFile", t.DeleteFile ?? string.Empty),
-        ("DeleteFilePermanently", t.PermanentlyDelete ?? string.Empty),
-        ("Rename", t.RenameFile ?? string.Empty),
-        ("ShowFileProperties", t.FileProperties ?? string.Empty),
+        (Actions.Open, t.Open ?? string.Empty),
+        (Actions.OpenWith, t.OpenWith ?? string.Empty),
+        (Actions.OpenInExplorer, t.ShowInFolder ?? string.Empty),
+        (Actions.Reload, t.Reload ?? string.Empty),
+        (Actions.Save, t.Save ?? string.Empty),
+        (Actions.SaveAs, t.SaveAs ?? string.Empty),
+        (Actions.Print, t.Print ?? string.Empty),
+        (Actions.DeleteFile, t.DeleteFile ?? string.Empty),
+        (Actions.DeleteFilePermanently, t.PermanentlyDelete ?? string.Empty),
+        (Actions.Rename, t.RenameFile ?? string.Empty),
+        (Actions.ShowFileProperties, t.FileProperties ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetSortFilesEntries(LanguageModel t) =>
     [
-        ("SortFilesByName", t.FileName ?? string.Empty),
-        ("SortFilesBySize", t.FileSize ?? string.Empty),
-        ("SortFilesByExtension", t.FileExtension ?? string.Empty),
-        ("SortFilesByCreationTime", t.Created ?? string.Empty),
-        ("SortFilesByLastAccessTime", t.LastAccessTime ?? string.Empty),
-        ("SortFilesRandomly", t.Random ?? string.Empty),
-        ("SortFilesAscending", t.Ascending ?? string.Empty),
-        ("SortFilesDescending", t.Descending ?? string.Empty),
+        (Actions.SortFilesByName, t.FileName ?? string.Empty),
+        (Actions.SortFilesBySize, t.FileSize ?? string.Empty),
+        (Actions.SortFilesByExtension, t.FileExtension ?? string.Empty),
+        (Actions.SortFilesByCreationTime, t.Created ?? string.Empty),
+        (Actions.SortFilesByLastAccessTime, t.LastAccessTime ?? string.Empty),
+        (Actions.SortFilesRandomly, t.Random ?? string.Empty),
+        (Actions.SortFilesAscending, t.Ascending ?? string.Empty),
+        (Actions.SortFilesDescending, t.Descending ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetCopyEntries(LanguageModel t) =>
         OperatingSystem.IsMacOS()
             ?
             [
-                ("CopyFile", t.CopyFile ?? string.Empty),
-                ("CopyFilePath", t.FileCopyPath ?? string.Empty),
-                ("CopyImage", t.CopyImage ?? string.Empty),
-                ("CopyBase64", (t.Copy ?? "Copy") + " base64"),
-                ("Paste", t.FilePaste ?? string.Empty),
-                ("DuplicateFile", t.DuplicateFile ?? string.Empty),
+                (Actions.CopyFile, t.CopyFile ?? string.Empty),
+                (Actions.CopyFilePath, t.FileCopyPath ?? string.Empty),
+                (Actions.CopyImage, t.CopyImage ?? string.Empty),
+                (Actions.CopyBase64, (t.Copy ?? "Copy") + " base64"),
+                (Actions.Paste, t.FilePaste ?? string.Empty),
+                (Actions.DuplicateFile, t.DuplicateFile ?? string.Empty),
             ]
             :
             [
-                ("CopyFile", t.CopyFile ?? string.Empty),
-                ("CutFile", t.Cut ?? string.Empty),
-                ("CopyFilePath", t.FileCopyPath ?? string.Empty),
-                ("CopyImage", t.CopyImage ?? string.Empty),
-                ("CopyBase64", (t.Copy ?? "Copy") + " base64"),
-                ("Paste", t.FilePaste ?? string.Empty),
-                ("DuplicateFile", t.DuplicateFile ?? string.Empty),
+                (Actions.CopyFile, t.CopyFile ?? string.Empty),
+                (Actions.CutFile, t.Cut ?? string.Empty),
+                (Actions.CopyFilePath, t.FileCopyPath ?? string.Empty),
+                (Actions.CopyImage, t.CopyImage ?? string.Empty),
+                (Actions.CopyBase64, (t.Copy ?? "Copy") + " base64"),
+                (Actions.Paste, t.FilePaste ?? string.Empty),
+                (Actions.DuplicateFile, t.DuplicateFile ?? string.Empty),
             ];
 
     public static List<(string FunctionName, string DisplayName)> GetTabManagementEntries(LanguageModel t) =>
     [
-        ("NewTab", t.NewTab ?? string.Empty),
-        ("CloseTab", t.CloseTab ?? string.Empty),
+        (Actions.NewTab, t.NewTab ?? string.Empty),
+        (Actions.CloseTab, t.CloseTab ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetToolWindowsEntries(LanguageModel t) =>
     [
-        ("AboutWindow", t.About ?? string.Empty),
-        ("SettingsWindow", t.Settings ?? string.Empty),
-        ("ImageInfoWindow", t.ImageInfo ?? string.Empty),
-        ("EffectsWindow", t.Effects ?? string.Empty),
-        ("ConvertWindow", t.FileConversion ?? string.Empty),
-        ("KeybindingsWindow", t.ApplicationShortcuts ?? string.Empty),
-        ("BatchResizeWindow", t.BatchResize ?? string.Empty),
-        ("ResizeWindow", t.Resize ?? string.Empty),
+        (Actions.AboutWindow, t.About ?? string.Empty),
+        (Actions.SettingsWindow, t.Settings ?? string.Empty),
+        (Actions.ImageInfoWindow, t.ImageInfo ?? string.Empty),
+        (Actions.EffectsWindow, t.Effects ?? string.Empty),
+        (Actions.ConvertWindow, t.FileConversion ?? string.Empty),
+        (Actions.KeybindingsWindow, t.ApplicationShortcuts ?? string.Empty),
+        (Actions.BatchResizeWindow, t.BatchResize ?? string.Empty),
+        (Actions.ResizeWindow, t.Resize ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetWindowManagementEntries(LanguageModel t) =>
     [
-        ("Close", t.Close ?? string.Empty),
-        ("NewWindow", t.NewWindow ?? string.Empty),
-        ("Center", t.CenterWindow ?? string.Empty),
-        ("SetTopMost", t.StayTopMost ?? string.Empty),
-        ("ToggleFullscreen", t.ToggleFullscreen ?? string.Empty),
-        ("Maximize", t.Maximize ?? string.Empty),
+        (Actions.Close, t.Close ?? string.Empty),
+        (Actions.NewWindow, t.NewWindow ?? string.Empty),
+        (Actions.Center, t.CenterWindow ?? string.Empty),
+        (Actions.SetTopMost, t.StayTopMost ?? string.Empty),
+        (Actions.ToggleFullscreen, t.ToggleFullscreen ?? string.Empty),
+        (Actions.Maximize, t.Maximize ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetWindowScalingEntries(LanguageModel t) =>
     [
-        ("AutoFitWindow", t.AutoFitWindow ?? string.Empty),
-        ("NormalWindow", t.NormalWindow ?? string.Empty),
+        (Actions.AutoFitWindow, t.AutoFitWindow ?? string.Empty),
+        (Actions.NormalWindow, t.NormalWindow ?? string.Empty),
     ];
 
     public static List<(string FunctionName, string DisplayName)> GetStarRatingEntries(LanguageModel t) =>
     [
-        ("Set1Star", t._1Star ?? string.Empty),
-        ("Set2Star", t._2Star ?? string.Empty),
-        ("Set3Star", t._3Star ?? string.Empty),
-        ("Set4Star", t._4Star ?? string.Empty),
-        ("Set5Star", t._5Star ?? string.Empty),
-        ("Set0Star", t.RemoveStarRating ?? string.Empty),
+        (Actions.Set1Star, t._1Star ?? string.Empty),
+        (Actions.Set2Star, t._2Star ?? string.Empty),
+        (Actions.Set3Star, t._3Star ?? string.Empty),
+        (Actions.Set4Star, t._4Star ?? string.Empty),
+        (Actions.Set5Star, t._5Star ?? string.Empty),
+        (Actions.Set0Star, t.RemoveStarRating ?? string.Empty),
     ];
 
     /// <summary>
