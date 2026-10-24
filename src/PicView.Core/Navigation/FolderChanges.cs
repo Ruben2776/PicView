@@ -132,7 +132,7 @@ internal sealed class FolderChanges(TabViewModel tab)
         {
             if (tab.ParentWindowContext is not null)
             {
-                await tab.ParentWindowContext.Mapper.ShowStartUpMenu().ConfigureAwait(false);
+                await tab.ParentWindowContext.ActionRunner.ShowStartUpMenu().ConfigureAwait(false);
             }
             return;
         }

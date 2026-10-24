@@ -79,18 +79,18 @@ public static class Keymaps
     }
 
     /// <summary>
-    /// Runs what <paramref name="resolution"/> points at. Does nothing until the mapper is available.
+    /// Runs what <paramref name="resolution"/> points at. Does nothing until the window's Action runner is available.
     /// </summary>
-    public static async ValueTask ExecuteAsync(KeymapResolution resolution, IFunctionsMapper? mapper)
+    public static async ValueTask ExecuteAsync(KeymapResolution resolution, IActionRunner? actionRunner)
     {
-        if (mapper is null)
+        if (actionRunner is null)
         {
             return;
         }
 
         if (resolution.Owner is KeymapOwner.Action)
         {
-            await mapper.Run(resolution.Value).ConfigureAwait(false);
+            await actionRunner.Run(resolution.Value).ConfigureAwait(false);
         }
     }
 

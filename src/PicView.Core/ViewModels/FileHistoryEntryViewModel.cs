@@ -38,9 +38,9 @@ public class FileHistoryEntryViewModel : IDisposable
 
     private async ValueTask Open(Unit unit, CancellationToken cancellationToken)
     {
-        if (_vm.Mapper is not null)
+        if (_vm.ActionRunner is not null)
         {
-            await _vm.Mapper.OpenPathAsync(FilePath.CurrentValue).ConfigureAwait(false);
+            await _vm.ActionRunner.OpenPathAsync(FilePath.CurrentValue).ConfigureAwait(false);
         }
     }
 

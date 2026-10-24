@@ -179,7 +179,7 @@ public class KeybindingsFavoritesTests : IDisposable
 
         _ = CreateCoreWithMainWindow(out var mainWindowVm);
         var spyMapper = new SpyFunctionsMapper(mainWindowVm);
-        mainWindowVm.Mapper = spyMapper;
+        mainWindowVm.ActionRunner = spyMapper;
 
         var router = Router(mainWindowVm, new InputModeState());
 
@@ -209,7 +209,7 @@ public class KeybindingsFavoritesTests : IDisposable
             .Assign(new Keybind(MouseButton.XButton1), "OpenFavorite1"));
         _ = CreateCoreWithMainWindow(out var mainWindowVm);
         var spyMapper = new SpyFunctionsMapper(mainWindowVm);
-        mainWindowVm.Mapper = spyMapper;
+        mainWindowVm.ActionRunner = spyMapper;
 
         var router = Router(mainWindowVm, state);
         RunWithDispatcher(router.KeyDownAsync(new Keybind(Key.F7), null));
@@ -224,7 +224,7 @@ public class KeybindingsFavoritesTests : IDisposable
         Keymaps.Replace(Keymap.Empty.Assign(new Keybind(Key.F7), "OpenFavorite3"));
         _ = CreateCoreWithMainWindow(out var mainWindowVm);
         var spyMapper = new SpyFunctionsMapper(mainWindowVm);
-        mainWindowVm.Mapper = spyMapper;
+        mainWindowVm.ActionRunner = spyMapper;
 
         RunWithDispatcher(Router(mainWindowVm, new InputModeState()).KeyDownAsync(new Keybind(Key.F7), null));
 

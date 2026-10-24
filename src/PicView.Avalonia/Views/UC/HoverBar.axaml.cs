@@ -256,7 +256,7 @@ public partial class HoverBar : UserControl, IDisposable
             }
             else if (props.IsLeftButtonPressed)
             {
-                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.Run(Actions.SettingsWindow).ConfigureAwait(true);
+                await core.MainWindows.ActiveWindow.CurrentValue.ActionRunner.Run(Actions.SettingsWindow).ConfigureAwait(true);
             }
         }
         else if (ImageMenuButton.IsPointerOver)

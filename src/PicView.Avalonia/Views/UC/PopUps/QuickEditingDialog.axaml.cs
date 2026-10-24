@@ -36,7 +36,7 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.Run(Actions.ResizeImage).ConfigureAwait(false);
+                await vm.ActionRunner.Run(Actions.ResizeImage).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.ResizeImage))
             .AddTo(ref _disposables);
         
@@ -49,7 +49,7 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.Run(Actions.BatchResizeWindow).ConfigureAwait(false);
+                await vm.ActionRunner.Run(Actions.BatchResizeWindow).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.BatchResizeWindow))
             .AddTo(ref _disposables);
             
@@ -62,7 +62,7 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.Run(Actions.ImageInfoWindow).ConfigureAwait(false);
+                await vm.ActionRunner.Run(Actions.ImageInfoWindow).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.ImageInfoWindow))
             .AddTo(ref _disposables);
         
@@ -75,7 +75,7 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.Run(Actions.EffectsWindow).ConfigureAwait(false);
+                await vm.ActionRunner.Run(Actions.EffectsWindow).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.EffectsWindow))
             .AddTo(ref _disposables);
         
@@ -88,7 +88,7 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.Run(Actions.Crop).ConfigureAwait(false);
+                await vm.ActionRunner.Run(Actions.Crop).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.Crop))
             .AddTo(ref _disposables);
         
@@ -101,7 +101,7 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.Run(Actions.Slideshow).ConfigureAwait(false);
+                await vm.ActionRunner.Run(Actions.Slideshow).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.Slideshow))
             .AddTo(ref _disposables);
                 
@@ -114,7 +114,7 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.Run(Actions.OpenCloseDockedGallery).ConfigureAwait(false);
+                await vm.ActionRunner.Run(Actions.OpenCloseDockedGallery).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.OpenCloseDockedGallery))
             .AddTo(ref _disposables);
         
@@ -127,7 +127,7 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.Run(Actions.SideBySide).ConfigureAwait(false);
+                await vm.ActionRunner.Run(Actions.SideBySide).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.SideBySide))
             .AddTo(ref _disposables);
     }
