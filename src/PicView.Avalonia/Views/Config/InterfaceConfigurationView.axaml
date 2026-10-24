@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.Config.InterfaceConfigurationView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
@@ -25,7 +26,7 @@
             <customControls:TextIconButton
                 x:Name="ShowBottomToolbarButton"
                 Classes="MenuItemHover settingsTextIconButton"
-                Command="{Binding MainWindows.ActiveWindow.Value.ToggleBottomToolbarCommand}"
+                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleBottomToolbar}"
                 Icon="{StaticResource Panel-Bottom}"
                 IconHeight="18"
                 IconMargin="10,0,10,0"
@@ -40,7 +41,7 @@
                 <customControls:TextIconButton
                     x:Name="HideUIButton"
                     Classes="MenuItemHover settingsTextIconButton"
-                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleInterfaceCommand}"
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
                     Icon="{StaticResource EyeImage}"
                     IconHeight="18"
                     IconMargin="10,0,10,0"
@@ -51,7 +52,7 @@
                 <customControls:TextIconButton
                     x:Name="ShowUIButton"
                     Classes="MenuItemHover settingsTextIconButton"
-                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleInterfaceCommand}"
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleInterface}"
                     Icon="{StaticResource EyeOffImage}"
                     IconHeight="18"
                     IconMargin="10,0,10,0"
@@ -81,7 +82,7 @@
             <customControls:TextIconButton
                 x:Name="ToggleHoverButton"
                 Classes="MenuItemHover settingsTextIconButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleHoverBarCommand}"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleHoverBar}"
                 Icon="{StaticResource CursorImage}"
                 IconHeight="18"
                 IconMargin="10,0,10,0"

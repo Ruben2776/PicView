@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.Config.ZoomSettingsView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
@@ -26,7 +27,7 @@
             <customControls:TextToggleButton
                 x:Name="ZoomToFitToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{Binding MainWindows.ActiveWindow.Value.ZoomToFitCommand}"
+                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                 IsChecked="{Binding MainWindows.ActiveWindow.Value.IsZoomedToFit.Value, Mode=TwoWay}"
                 Text="{CompiledBinding Translation.ZoomToFit.Value,
                                        Mode=OneWay}"

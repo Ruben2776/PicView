@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.Config.GeneralSettingsView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
@@ -78,7 +79,7 @@
             <customControls:TextToggleButton
                 x:Name="FileHistoryToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{Binding MainWindows.ActiveWindow.Value.ToggleFileHistoryCommand}"
+                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleFileHistory}"
                 IsChecked="{CompiledBinding SettingsViewModel.IsFileHistoryEnabled.Value,
                                             Mode=OneWay}"
                 Text="{CompiledBinding Translation.ToggleFileHistory.Value,
@@ -89,7 +90,7 @@
             <customControls:TextToggleButton
                 x:Name="ShowFullPathInTitleBarToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{Binding MainWindows.ActiveWindow.Value.ToggleShowFullPathInTitleBarCommand}"
+                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleShowFullPathInTitleBar}"
                 IsChecked="{CompiledBinding SettingsViewModel.IsShowingFullPathInTitleBar.Value,
                                             Mode=OneWay}"
                 Text="{CompiledBinding Translation.ShowFullPathInTitleBar.Value,

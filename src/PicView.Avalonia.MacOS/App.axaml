@@ -6,19 +6,20 @@
     x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings">
     <NativeMenu.Menu>
         <NativeMenu>
 
             <!--  Show about window  -->
-            <NativeMenuItem Command="{CompiledBinding MainWindows.ActiveWindow.Value.AboutWindowCommand}" Header="{CompiledBinding Translation.About.Value, Mode=OneWay}" />
+            <NativeMenuItem Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.AboutWindow}" Header="{CompiledBinding Translation.About.Value, Mode=OneWay}" />
 
             <!--  Check for updates  -->
-            <NativeMenuItem Command="{CompiledBinding MainWindows.ActiveWindow.Value.CheckForUpdatesCommand}" Header="{CompiledBinding Translation.CheckForUpdates.Value, Mode=OneWay}" />
+            <NativeMenuItem Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CheckForUpdates}" Header="{CompiledBinding Translation.CheckForUpdates.Value, Mode=OneWay}" />
 
             <!--  Show settings window  -->
             <NativeMenuItem
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.SettingsWindowCommand}"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SettingsWindow}"
                 Header="{CompiledBinding Translation.Settings.Value,
                                          Mode=OneWay}"
                 ToolTip="{CompiledBinding Translation.ShowAllSettingsWindow.Value,

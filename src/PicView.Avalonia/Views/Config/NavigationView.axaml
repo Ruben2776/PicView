@@ -5,7 +5,8 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings">
 
     <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
 
@@ -25,7 +26,7 @@
         <Border Classes="searchBorder" ui:SearchProperties.Keywords="{Binding SettingsViewModel.SearchData.NavigationSubdirectorySearchTags}">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{Binding MainWindows.ActiveWindow.Value.ToggleSubdirectoriesCommand}"
+                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleSubdirectories}"
                 IsChecked="{Binding GlobalSettings.IsIncludingSubdirectories.Value, Mode=OneWay}"
                 Text="{Binding Translation.SearchSubdirectory.Value, Mode=OneWay}"
                 x:Name="IncludeSubdirToggleButton" />
@@ -35,7 +36,7 @@
         <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.NavigationLoopSearchTags}">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{Binding MainWindows.ActiveWindow.Value.ToggleLoopingCommand}"
+                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
                 IsChecked="{Binding GlobalSettings.IsLooping.Value, Mode=TwoWay}"
                 Text="{CompiledBinding Translation.IsLooping.Value,
                                        Mode=OneWay}"
@@ -48,7 +49,7 @@
         <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.NavigationTaskbarSearchTags}">
             <customControls:TextToggleButton
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{Binding MainWindows.ActiveWindow.CurrentValue.ToggleTaskbarProgressCommand}"
+                Command="{Binding MainWindows.ActiveWindow.CurrentValue.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleTaskbarProgress}"
                 IsChecked="{CompiledBinding SettingsViewModel.IsShowingTaskbarProgress.Value,
                                             Mode=OneWay}"
                 Text="{CompiledBinding Translation.ToggleTaskbarProgress.Value,

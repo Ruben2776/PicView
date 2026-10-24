@@ -99,6 +99,12 @@ public class MainWindowViewModel : IDisposable
 
     #region Commands
 
+    /// <summary>
+    /// Runs the Action its parameter names, one of <see cref="Keybindings.Actions"/>.
+    /// </summary>
+    public ReactiveCommand<string> RunActionCommand { get; }
+    private async ValueTask RunAction(string action, CancellationToken cancellationToken) { if (Mapper is null) return; await Mapper.Run(action).ConfigureAwait(false); }
+
     #region Navigation
 
     public ReactiveCommand NextCommand { get; }
@@ -554,6 +560,8 @@ public class MainWindowViewModel : IDisposable
         ShouldMaximizeBeShown = mode.Select(static m => m is not WindowMode.Maximized)
             .ToReadOnlyBindableReactiveProperty();
         
+        RunActionCommand = new ReactiveCommand<string>(RunAction);
+
         // Navigation
         NextCommand = new ReactiveCommand(Next);
         NextFolderCommand = new ReactiveCommand(NextFolder);
@@ -730,6 +738,7 @@ public class MainWindowViewModel : IDisposable
             IsUIShown,
             IsTopToolbarShown,
             IsEditableTitlebarOpen,
+            RunActionCommand,
             NextCommand,
             NextFolderCommand,
             NextArchiveCommand,

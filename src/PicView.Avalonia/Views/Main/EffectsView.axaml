@@ -5,7 +5,8 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings">
 
     <UserControl.Styles>
         <Styles>
@@ -61,7 +62,7 @@
     </UserControl.Styles>
     <UserControl.ContextMenu>
         <ContextMenu x:Name="EffectsContextMenu">
-            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.SaveCommand}" Header="{CompiledBinding Translation.Save.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Save}" Header="{CompiledBinding Translation.Save.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource SaveGeometry}"
@@ -71,7 +72,7 @@
                         Width="12" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
-            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.SaveAsCommand}" Header="{CompiledBinding Translation.SaveAs.Value}">
+            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SaveAs}" Header="{CompiledBinding Translation.SaveAs.Value}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource SaveGeometry}"
@@ -81,7 +82,7 @@
                         Width="12" />
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
-            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.CopyImageCommand}" Header="{CompiledBinding Translation.CopyImage.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyImage}" Header="{CompiledBinding Translation.CopyImage.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Data="{StaticResource CopyGeometry}"
@@ -93,7 +94,7 @@
             </customControls:StyledMenuItem>
             <Separator />
             <customControls:StyledMenuItem
-                Command="{Binding MainWindows.ActiveWindow.Value.SetAsWallpaperCommand}"
+                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaper}"
                 Header="{CompiledBinding Translation.SetAsWallpaper.Value,
                                          Mode=OneWay}"
                 IsVisible="{CompiledBinding GlobalSettings.ShowSetAsWallpaper.Value}">
@@ -200,7 +201,7 @@
                 <SplitButton
                     Background="{DynamicResource AccentColor}"
                     Classes="ToolButtonStyle accentHover"
-                    Command="{Binding MainWindows.ActiveWindow.Value.SaveCommand}"
+                    Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Save}"
                     CornerRadius="4"
                     Width="195"
                     x:Name="SaveButton">
@@ -213,7 +214,7 @@
                     <SplitButton.Flyout>
                         <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
                             <MenuItem
-                                Command="{Binding MainWindows.ActiveWindow.Value.SaveAsCommand}"
+                                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SaveAs}"
                                 Header="{CompiledBinding Translation.SaveAs.Value,
                                                          Mode=OneWay}"
                                 HorizontalAlignment="Center"

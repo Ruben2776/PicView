@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.UC.Buttons.AltClose"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     Height="{StaticResource TopBorderHeight}"
     x:DataType="viewModels:MainWindowViewModel"
@@ -16,7 +17,7 @@
         BorderThickness="1,0,0,1"
         Classes="hover"
         ClickMode="Release"
-        Command="{CompiledBinding CloseWindowCommand}"
+        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CloseWindow}"
         CornerRadius="0,0,0,0"
         IsVisible="{CompiledBinding !IsUIShown.Value}"
         ToolTip.Tip="{CompiledBinding Translation.Close.Value,
