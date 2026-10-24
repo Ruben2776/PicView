@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.Main.SettingsView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:config="clr-namespace:PicView.Avalonia.Views.Config"
     xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
@@ -35,7 +36,7 @@
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
             <customControls:StyledMenuItem
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.ResetSettingsCommand}"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ResetSettings}"
                 Foreground="{DynamicResource MainTextColor}"
                 Header="{CompiledBinding Translation.ResetButtonText.Value,
                                          Mode=OneWay}">

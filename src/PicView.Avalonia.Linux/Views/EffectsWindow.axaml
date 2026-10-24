@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Linux.Views.EffectsWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
@@ -81,7 +82,7 @@
                     IconWidth="16">
                     <customControls:IconButton.Flyout>
                         <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
-                            <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.SaveCommand}" Header="{Binding Translation.Save.Value, Mode=OneWay}">
+                            <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Save}" Header="{Binding Translation.Save.Value, Mode=OneWay}">
                                 <MenuItem.Icon>
                                     <Path
                                         Width="12"
@@ -91,7 +92,7 @@
                                         Stretch="Fill" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.SaveAsCommand}" Header="{Binding Translation.SaveAs.Value, Mode=OneWay}">
+                            <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SaveAs}" Header="{Binding Translation.SaveAs.Value, Mode=OneWay}">
                                 <MenuItem.Icon>
                                     <Path
                                         Width="12"
@@ -101,7 +102,7 @@
                                         Stretch="Fill" />
                                 </MenuItem.Icon>
                             </MenuItem>
-                            <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.CopyImageCommand}" Header="{Binding Translation.CopyImage.Value, Mode=OneWay}">
+                            <MenuItem Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CopyImage}" Header="{Binding Translation.CopyImage.Value, Mode=OneWay}">
                                 <MenuItem.Icon>
                                     <Path
                                         Width="12"
@@ -113,7 +114,7 @@
                             </MenuItem>
                             <Separator />
                             <MenuItem
-                                Command="{Binding MainWindows.ActiveWindow.Value.SetAsWallpaperFilledCommand}"
+                                Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetAsWallpaperFilled}"
                                 Header="{Binding Translation.SetAsWallpaper.Value, Mode=OneWay}"
                                 IsVisible="{Binding GlobalSettings.ShowSetAsWallpaper.Value}">
                                 <MenuItem.Icon>

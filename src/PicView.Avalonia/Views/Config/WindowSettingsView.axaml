@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.Config.WindowSettingsView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
@@ -33,7 +34,7 @@
                 <customControls:TextToggleButton
                     x:Name="AutoFitToggleButton"
                     Classes="MenuItemHover settingsToggleButton"
-                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.AutoFitWindowCommand}"
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.AutoFitWindow}"
                     IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.IsAutoFit.Value, Mode=OneWay}"
                     Text="{CompiledBinding Translation.AutoFitWindow.Value,
                                            Mode=OneWay}" />
@@ -79,7 +80,7 @@
             <customControls:TextToggleButton
                 x:Name="TopMostToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.SetTopMostCommand}"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                 IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.IsTopMost.Value}"
                 Text="{CompiledBinding Translation.StayTopMost.Value,
                                        Mode=OneWay}" />
@@ -99,7 +100,7 @@
             <customControls:TextToggleButton
                 x:Name="OpenInSameWindowToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleOpeningInSameWindowCommand}"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleOpeningInSameWindow}"
                 IsChecked="{CompiledBinding SettingsViewModel.IsOpeningInSameWindow.Value}"
                 Text="{CompiledBinding Translation.OpenInSameWindow.Value,
                                        Mode=OneWay}" />

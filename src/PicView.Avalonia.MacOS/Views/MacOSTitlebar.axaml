@@ -8,7 +8,8 @@
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings">
 
     <DockPanel
         Background="{DynamicResource TitleBarBackgroundColor}"
@@ -39,7 +40,7 @@
             BorderBrush="{DynamicResource TitleBarBorderColor}"
             BorderThickness="0"
             Classes="AltHover"
-            Command="{CompiledBinding NewTabCommand}"
+            Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.NewTab}"
             DockPanel.Dock="Right"
             Foreground="{DynamicResource MainTextColor}"
             Icon="{StaticResource PlusImage}"
@@ -57,7 +58,7 @@
             BorderBrush="{DynamicResource TitleBarBorderColor}"
             BorderThickness="0"
             Classes="AltHover"
-            Command="{Binding SearchCommand}"
+            Command="{Binding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Search}"
             DockPanel.Dock="Right"
             Foreground="{DynamicResource TitleBarForeground}"
             Icon="{StaticResource SearchImage}"

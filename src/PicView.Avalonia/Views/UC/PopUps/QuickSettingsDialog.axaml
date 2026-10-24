@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.UC.PopUps.QuickSettingsDialog"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:vm="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     Padding="20"
@@ -75,7 +76,7 @@
                     Margin="6,0,4,8"
                     Background="{DynamicResource MenuButtonBackground}"
                     Classes="AltHover"
-                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).ToggleScrollCommand}"
+                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
                     Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsScrollingEnabled.Value}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.IsScrolling.Value,
@@ -92,7 +93,7 @@
                     Margin="6,0,4,8"
                     Background="{DynamicResource MenuButtonBackground}"
                     Classes="AltHover"
-                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).ZoomToFitCommand}"
+                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ZoomToFit}"
                     Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsZoomedToFit.Value,
                                                 Mode=TwoWay}"
@@ -109,7 +110,7 @@
                     Margin="6,0,4,8"
                     Background="{DynamicResource MenuButtonBackground}"
                     Classes="AltHover"
-                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).ToggleLoopingCommand}"
+                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleLooping}"
                     Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsLooping.Value}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.IsLooping.Value,
@@ -125,7 +126,7 @@
                     Margin="6,0,4,8"
                     Background="{DynamicResource MenuButtonBackground}"
                     Classes="AltHover"
-                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).AutoFitWindowCommand}"
+                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.AutoFitWindow}"
                     Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsAutoFit.Value,
                                                 Mode=OneWay}"
@@ -142,7 +143,7 @@
                     Margin="6,0,4,8"
                     Background="{DynamicResource MenuButtonBackground}"
                     Classes="AltHover"
-                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).SetTopMostCommand}"
+                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SetTopMost}"
                     Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).IsTopMost.Value}"
                     Text="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).Translation.StayTopMost.Value,
@@ -158,7 +159,7 @@
                     Margin="6,0,4,8"
                     Background="{DynamicResource MenuButtonBackground}"
                     Classes="AltHover"
-                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).ToggleSubdirectoriesCommand}"
+                    Command="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleSubdirectories}"
                     Foreground="{DynamicResource MainTextColor}"
                     IsChecked="{CompiledBinding $parent[Window].((vm:MainWindowViewModel)DataContext).GlobalSettings.IsIncludingSubdirectories.Value,
                                                 Mode=TwoWay}"

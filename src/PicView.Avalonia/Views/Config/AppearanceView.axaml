@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.Config.AppearanceView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:color="clr-namespace:PicView.Core.ColorHandling;assembly=PicView.Core"
     xmlns:converters="clr-namespace:PicView.Avalonia.Converters"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
@@ -72,7 +73,7 @@
                     Height="NaN"
                     Margin="0,0,0,20"
                     Classes="errorHover ToolButtonStyle"
-                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RestartCommand}">
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Restart}">
                     <TextBlock
                         Margin="5"
                         Padding="2,1"
@@ -420,7 +421,7 @@
             <customControls:TextToggleButton
                 x:Name="ConstrainingBackgroundColorToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleConstrainBackgroundColorCommand}"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleConstrainBackgroundColor}"
                 IsChecked="{CompiledBinding SettingsViewModel.IsConstrainingBackgroundColor.Value}"
                 Text="{CompiledBinding Translation.ConstrainBackgroundToImage.Value,
                                        Mode=OneWay}" />

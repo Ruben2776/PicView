@@ -2,6 +2,7 @@
     x:Class="PicView.Avalonia.Views.Config.ImageSettingsView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
@@ -26,7 +27,7 @@
             <customControls:TextToggleButton
                 x:Name="ScrollToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.ToggleScrollCommand}"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleScroll}"
                 IsChecked="{CompiledBinding MainWindows.ActiveWindow.Value.IsScrollingEnabled.Value}"
                 Text="{CompiledBinding Translation.IsScrolling.Value,
                                        Mode=OneWay}" />
@@ -37,7 +38,7 @@
             <customControls:TextToggleButton
                 x:Name="SideBySideToggleButton"
                 Classes="MenuItemHover settingsToggleButton"
-                Command="{CompiledBinding MainWindows.ActiveWindow.Value.SideBySideCommand}"
+                Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.SideBySide}"
                 IsChecked="{Binding MainWindows.ActiveWindow.Value.IsSideBySide.Value, Mode=OneWay}"
                 Text="{CompiledBinding Translation.SideBySide.Value,
                                        Mode=OneWay}" />

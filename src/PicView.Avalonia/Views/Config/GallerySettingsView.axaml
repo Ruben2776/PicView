@@ -6,7 +6,8 @@
     xmlns:gallery="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:ui="clr-namespace:PicView.Avalonia.UI"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:keybindings="using:PicView.Core.Keybindings">
 
     <StackPanel HorizontalAlignment="Center">
 
@@ -108,7 +109,7 @@
 
                 <customControls:TextToggleButton
                     Classes="MenuItemHover settingsToggleButton"
-                    Command="{Binding MainWindows.ActiveWindow.Value.ToggleDockedGalleryInHiddenUICommand}"
+                    Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ToggleDockedGalleryInHiddenUI}"
                     IsChecked="{CompiledBinding GallerySettings.IsDockedGalleryShownInHiddenUI.Value,
                                                 Mode=OneWay}"
                     Text="{CompiledBinding Translation.ShowDockedGalleryWhenUiIsHidden.Value,
