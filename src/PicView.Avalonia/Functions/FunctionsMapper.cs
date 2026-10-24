@@ -1,11 +1,11 @@
 using System.Collections.Frozen;
 using Avalonia;
 using Avalonia.Threading;
+using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
-using PicView.Avalonia.Gallery;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Avalonia.SettingsManagement;
@@ -73,7 +73,8 @@ public class FunctionsMapper : IActionRunner
         return ValueTask.CompletedTask;
     }
 
-    internal Func<ValueTask>? GetFunctionByName(string functionName) => _functions.GetValueOrDefault(functionName);
+    internal Func<ValueTask>? GetFunctionByName(string functionName) =>
+        _functions.GetValueOrDefault(functionName);
 
     private Func<ValueTask>? CreateFunction(string functionName)
     {
@@ -462,7 +463,7 @@ public class FunctionsMapper : IActionRunner
 
     #region Toggle UI functions
     
-    /// <inheritdoc cref="SettingsUpdater.ToggleScroll(MainWindowViewModel)" />
+    /// <inheritdoc cref="SettingsUpdater.ToggleScroll(MainWindowViewModel, MainWindow)" />
     private async ValueTask ToggleScroll()
     {
         await SettingsUpdater.ToggleScroll(_vm, _mainWindow).ConfigureAwait(false);
@@ -786,7 +787,7 @@ public class FunctionsMapper : IActionRunner
             .ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="ClipboardTextOperations.CopyTextToClipboard(string, MainWindow)" />
+    /// <inheritdoc cref="ClipboardCopyService.CopyTextAsync(string)" />
     private async ValueTask CopyFilePath()
     {
         if (_mainWindow.ClipboardCopyService is null)
