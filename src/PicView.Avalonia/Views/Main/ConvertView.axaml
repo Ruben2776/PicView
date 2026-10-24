@@ -9,7 +9,7 @@
     <UserControl.Resources>
         <SolidColorBrush x:Key="CancelBrush" Color="{DynamicResource MainTextColor}" />
     </UserControl.Resources>
-    <Panel x:Name="BgPanel" Background="{DynamicResource TertiaryBackgroundColor}">
+    <Panel x:Name="BgPanel" Background="{DynamicResource PopUpBackgroundColor}">
         <uc:SpinWaiter x:Name="SpinWaiter" IsVisible="False" />
 
         <StackPanel x:Name="ParentContainer" IsEnabled="{CompiledBinding WindowTabs.ActiveTab.Value.FileInfo.Value, Converter={x:Static ObjectConverters.IsNotNull}}">
@@ -27,7 +27,7 @@
                         x:Name="ConversionComboBox"
                         Width="140"
                         Padding="5,7,0,7"
-                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderBrush="{DynamicResource PopUpMainBorderColor}"
                         BorderThickness="1"
                         CornerRadius="2"
                         FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"

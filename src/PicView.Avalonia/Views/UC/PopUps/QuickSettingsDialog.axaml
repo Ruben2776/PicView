@@ -13,8 +13,8 @@
         <StackPanel Background="Transparent">
 
             <Border
-                Background="{DynamicResource MainBackgroundColor}"
-                BorderBrush="{DynamicResource MainBorderColor}"
+                Background="{DynamicResource PopUpBackgroundColor}"
+                BorderBrush="{DynamicResource PopUpMainBorderColor}"
                 BorderThickness="1"
                 CornerRadius="4">
                 <WrapPanel Orientation="Horizontal">
@@ -24,7 +24,7 @@
                         Width="185"
                         Padding="15,10"
                         Background="Transparent"
-                        BorderBrush="{DynamicResource MainBorderColor}"
+                        BorderBrush="{DynamicResource PopUpMainBorderColor}"
                         BorderThickness="0,0,1,0"
                         Classes="AltHover"
                         CornerRadius="4,0,0,4"
