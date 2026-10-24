@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
-using PicView.Core.IPlatform;
+using PicView.Core.Keybindings;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 
@@ -157,9 +157,9 @@ public sealed class KeybindRouter
         var ordinary = await InputDispatch.DispatchAsync(keybind, state, _keymap(), ContextualActions(vm)).ConfigureAwait(true);
         switch (ordinary.Value)
         {
-            case nameof(IFunctionsMapper.ZoomIn) or nameof(IFunctionsMapper.ZoomOut):
+            case Actions.ZoomIn or Actions.ZoomOut:
                 // Dispatch stays on the UI thread
-                viewer.ZoomAt(zoomIn: ordinary.Value is nameof(IFunctionsMapper.ZoomIn), pointer);
+                viewer.ZoomAt(zoomIn: ordinary.Value is Actions.ZoomIn, pointer);
                 break;
             default:
                 if (!isTouchPad)

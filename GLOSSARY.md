@@ -8,6 +8,10 @@ An image viewer. This glossary covers the language of input (how key presses, mo
 A named thing the viewer can do in response to input, such as `Next` or `ZoomIn`.
 _Avoid_: Function, command, shortcut
 
+**Hidden Action**:
+An Action that can be bound in the Keymap but is not listed in the keybindings view, such as `Rotate90` or `ToggleSubdirectories`. Buttons and menus run it like any other Action.
+_Avoid_: Internal action, unlisted action
+
 **Keybind**:
 One input chord: a key or mouse button (including the wheel) together with its modifiers.
 _Avoid_: Hotkey, shortcut, key binding

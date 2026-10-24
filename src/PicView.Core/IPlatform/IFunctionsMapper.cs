@@ -3,7 +3,11 @@ namespace PicView.Core.IPlatform;
 
 public interface IFunctionsMapper
 {
-    Func<ValueTask>? GetFunctionByName(string functionName);
+    /// <summary>
+    /// Runs the Action named <paramref name="action"/>, one of <see cref="Keybindings.Actions"/>. An unknown name is
+    /// logged and does nothing.
+    /// </summary>
+    ValueTask Run(string action);
 
     // Navigation
     ValueTask Next();

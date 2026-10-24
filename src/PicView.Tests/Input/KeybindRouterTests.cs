@@ -338,8 +338,8 @@ public class KeybindRouterTests
     }
 
     /// <summary>
-    /// Records every mapper or Window Mode switcher call by name, and every Action run by name through
-    /// GetFunctionByName.
+    /// Records every mapper or Window Mode switcher call by name, and every Action run through Run by the
+    /// Action's name.
     /// </summary>
     public class RecordingMapper : DispatchProxy
     {
@@ -347,17 +347,8 @@ public class KeybindRouterTests
 
         protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
         {
-            if (targetMethod!.Name is nameof(IFunctionsMapper.GetFunctionByName))
-            {
-                var action = (string)args![0]!;
-                return (Func<ValueTask>)(() =>
-                {
-                    Calls.Add(action);
-                    return ValueTask.CompletedTask;
-                });
-            }
-
-            Calls.Add(targetMethod.Name);
+            // An Action is recorded by its name, any other call by the method's name
+            Calls.Add(targetMethod!.Name is nameof(IFunctionsMapper.Run) ? (string)args![0]! : targetMethod.Name);
             if (targetMethod.ReturnType == typeof(ValueTask))
             {
                 return ValueTask.CompletedTask;

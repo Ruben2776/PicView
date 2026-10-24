@@ -88,9 +88,9 @@ public static class Keymaps
             return;
         }
 
-        if (resolution.Owner is KeymapOwner.Action && mapper.GetFunctionByName(resolution.Value) is { } function)
+        if (resolution.Owner is KeymapOwner.Action)
         {
-            await function.Invoke().ConfigureAwait(false);
+            await mapper.Run(resolution.Value).ConfigureAwait(false);
         }
     }
 

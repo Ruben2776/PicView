@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Reflection;
 using PicView.Avalonia.Functions;
 using PicView.Core.Favorites;
 using PicView.Core.Keybindings;
@@ -34,6 +35,32 @@ public class ActionListContractTests
             .ToList();
 
         Assert.Empty(unresolved);
+    }
+
+    [Fact]
+    public void ActionsConstants_AreAllActionNames()
+    {
+        var constants = typeof(Actions).GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Where(field => field.IsLiteral)
+            .Select(field => (string)field.GetRawConstantValue()!)
+            .ToList();
+
+        Assert.NotEmpty(constants);
+        Assert.Empty(constants.Where(name => !KeybindCategoryDefinition.ActionNames.Contains(name)));
+    }
+
+    [Fact]
+    public void ActionNames_AreAllActionsConstants()
+    {
+        var constants = typeof(Actions).GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Select(field => field.Name)
+            .ToHashSet(StringComparer.Ordinal);
+
+        var missing = KeybindCategoryDefinition.ActionNames
+            .Where(name => KeybindCategoryDefinition.FavoriteSlot(name) is null && !constants.Contains(name))
+            .ToList();
+
+        Assert.Empty(missing);
     }
 
     [Fact]

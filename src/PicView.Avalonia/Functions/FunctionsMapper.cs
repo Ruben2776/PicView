@@ -15,6 +15,7 @@ using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Printing;
 using PicView.Avalonia.Wallpaper;
 using PicView.Avalonia.WindowBehavior;
+using PicView.Core.DebugTools;
 using PicView.Core.Favorites;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
@@ -60,7 +61,19 @@ public class FunctionsMapper : IFunctionsMapper
         _functions = functions.ToFrozenDictionary(StringComparer.Ordinal);
     }
 
-    public Func<ValueTask>? GetFunctionByName(string functionName) => _functions.GetValueOrDefault(functionName);
+    /// <inheritdoc />
+    public ValueTask Run(string action)
+    {
+        if (_functions.TryGetValue(action, out var function))
+        {
+            return function();
+        }
+
+        DebugHelper.LogDebug(nameof(FunctionsMapper), nameof(Run), $"Unknown Action \"{action}\"");
+        return ValueTask.CompletedTask;
+    }
+
+    internal Func<ValueTask>? GetFunctionByName(string functionName) => _functions.GetValueOrDefault(functionName);
 
     private Func<ValueTask>? CreateFunction(string functionName)
     {
@@ -68,161 +81,174 @@ public class FunctionsMapper : IFunctionsMapper
         return functionName switch
         {
             // Navigation values
-            "Next" => Next,
-            "Prev" => Prev,
+            Actions.Next => Next,
+            Actions.Prev => Prev,
             
-            "NextFolder" => NextFolder,
-            "PrevFolder" => PrevFolder,
+            Actions.NextFolder => NextFolder,
+            Actions.PrevFolder => PrevFolder,
             
-            "Up" => Up,
-            "Down" => Down,
+            Actions.Up => Up,
+            Actions.Down => Down,
             
-            "Last" => Last,
-            "First" => First,
+            Actions.Last => Last,
+            Actions.First => First,
             
-            "Next10" => Next10,
-            "Prev10" => Prev10,
+            Actions.Next10 => Next10,
+            Actions.Prev10 => Prev10,
             
-            "Next100" => Next100,
-            "Prev100" => Prev100,
+            Actions.Next100 => Next100,
+            Actions.Prev100 => Prev100,
 
-            "Search" => Search,
+            Actions.Search => Search,
 
-            "NextArchive" => NextArchive,
-            "PrevArchive" => PrevArchive,
+            Actions.NextArchive => NextArchive,
+            Actions.PrevArchive => PrevArchive,
             
-            "FileHistoryNext" => FileHistoryNext,
-            "FileHistoryPrev" => FileHistoryPrev,
+            Actions.FileHistoryNext => FileHistoryNext,
+            Actions.FileHistoryPrev => FileHistoryPrev,
             
             // Rotate
-            "RotateLeft" => RotateLeft,
-            "RotateRight" => RotateRight,
-            "Rotate0" => Rotate0,
-            "Rotate90" => Rotate90,
-            "Rotate180" => Rotate180,
-            "Rotate270" => Rotate270,
+            Actions.RotateLeft => RotateLeft,
+            Actions.RotateRight => RotateRight,
+            Actions.Rotate0 => Rotate0,
+            Actions.Rotate90 => Rotate90,
+            Actions.Rotate180 => Rotate180,
+            Actions.Rotate270 => Rotate270,
 
             // Scroll
-            "ScrollUp" => ScrollUp,
-            "ScrollDown" => ScrollDown,
-            "ScrollToTop" => ScrollToTop,
-            "ScrollToBottom" => ScrollToBottom,
+            Actions.ScrollUp => ScrollUp,
+            Actions.ScrollDown => ScrollDown,
+            Actions.ScrollToTop => ScrollToTop,
+            Actions.ScrollToBottom => ScrollToBottom,
 
             // Zoom
-            "ZoomIn" => ZoomIn,
-            "ZoomOut" => ZoomOut,
-            "ResetZoom" => ResetZoom,
-            "ResetZoomAndRotations" => ResetZoomAndRotations,
+            Actions.ZoomIn => ZoomIn,
+            Actions.ZoomOut => ZoomOut,
+            Actions.ResetZoom => ResetZoom,
+            Actions.ResetZoomAndRotations => ResetZoomAndRotations,
 
             // Toggles
-            "ToggleScroll" => ToggleScroll,
-            "ToggleLooping" => ToggleLooping,
-            "ToggleGallery" => ToggleGallery,
+            Actions.ToggleScroll => ToggleScroll,
+            Actions.ToggleLooping => ToggleLooping,
+            Actions.ToggleGallery => ToggleGallery,
 
             // Scale Window
-            "AutoFitWindow" => AutoFitWindow,
-            "NormalWindow" => NormalWindow,
+            Actions.AutoFitWindow => AutoFitWindow,
+            Actions.NormalWindow => NormalWindow,
 
             // Window functions
-            "Fullscreen" => Fullscreen,
-            "ToggleFullscreen" => ToggleFullscreen,
-            "SetTopMost" => SetTopMost,
-            "Close" => Close,
-            "ToggleInterface" => ToggleInterface,
-            "NewWindow" => NewWindow,
-            "Center" => Center,
-            "Maximize" => Maximize,
-            "Restore" => Restore,
+            Actions.ToggleFullscreen => ToggleFullscreen,
+            Actions.SetTopMost => SetTopMost,
+            Actions.Close => Close,
+            Actions.ToggleInterface => ToggleInterface,
+            Actions.NewWindow => NewWindow,
+            Actions.Center => Center,
+            Actions.Maximize => Maximize,
+            Actions.Restore => Restore,
 
             // Windows
-            "AboutWindow" => AboutWindow,
-            "CheckForUpdates" => CheckForUpdates,
-            "EffectsWindow" => EffectsWindow,
-            "ImageInfoWindow" => ImageInfoWindow,
-            "ResizeWindow" => ResizeWindow,
-            "SettingsWindow" => SettingsWindow,
-            "KeybindingsWindow" => KeybindingsWindow,
-            "BatchResizeWindow" => BatchResizeWindow,
-            "FileAssociationsWindow" => FileAssociationsWindow,
-            "ConvertWindow" => ConvertWindow,
+            Actions.AboutWindow => AboutWindow,
+            Actions.CheckForUpdates => CheckForUpdates,
+            Actions.EffectsWindow => EffectsWindow,
+            Actions.ImageInfoWindow => ImageInfoWindow,
+            Actions.ResizeWindow => ResizeWindow,
+            Actions.SettingsWindow => SettingsWindow,
+            Actions.KeybindingsWindow => KeybindingsWindow,
+            Actions.BatchResizeWindow => BatchResizeWindow,
+            Actions.FileAssociationsWindow => FileAssociationsWindow,
+            Actions.ConvertWindow => ConvertWindow,
 
             // Open functions
-            "Open" => Open,
-            "OpenWith" => OpenWith,
-            "OpenInExplorer" => OpenInExplorer,
-            "Save" => Save,
-            "SaveAs" => SaveAs,
-            "SaveAsPDF" => SaveAsPDF,
-            "Print" => Print,
-            "Reload" => Reload,
+            Actions.Open => Open,
+            Actions.OpenWith => OpenWith,
+            Actions.OpenInExplorer => OpenInExplorer,
+            Actions.Save => Save,
+            Actions.SaveAs => SaveAs,
+            Actions.SaveAsPDF => SaveAsPDF,
+            Actions.Print => Print,
+            Actions.Reload => Reload,
 
             // Copy functions
-            "CopyFile" => CopyFile,
-            "CopyFilePath" => CopyFilePath,
-            "CopyImage" => CopyImage,
-            "CopyBase64" => CopyBase64,
-            "DuplicateFile" => DuplicateFile,
-            "CutFile" => CutFile,
-            "Paste" => Paste,
+            Actions.CopyFile => CopyFile,
+            Actions.CopyFilePath => CopyFilePath,
+            Actions.CopyImage => CopyImage,
+            Actions.CopyBase64 => CopyBase64,
+            Actions.DuplicateFile => DuplicateFile,
+            Actions.CutFile => CutFile,
+            Actions.Paste => Paste,
 
             // File functions
-            "DeleteFile" => DeleteFile,
-            "DeleteFilePermanently" => DeleteFilePermanently,
-            "Rename" => Rename,
-            "ShowFileProperties" => ShowFileProperties,
-            "ShowSettingsFile" => ShowSettingsFile,
-            "ShowKeybindingsFile" => ShowKeybindingsFile,
-            "ShowRecentHistoryFile" => ShowRecentHistoryFile,
-            "ShowFavoritesFile" => ShowFavoritesFile,
+            Actions.DeleteFile => DeleteFile,
+            Actions.DeleteFilePermanently => DeleteFilePermanently,
+            Actions.Rename => Rename,
+            Actions.ShowFileProperties => ShowFileProperties,
+            Actions.ShowSettingsFile => ShowSettingsFile,
+            Actions.ShowKeybindingsFile => ShowKeybindingsFile,
+            Actions.ShowRecentHistoryFile => ShowRecentHistoryFile,
+            Actions.ShowFavoritesFile => ShowFavoritesFile,
             
             // Sorting functions
-            "SortFilesByName" => SortFilesByName,
-            "SortFilesByCreationTime" => SortFilesByCreationTime,
-            "SortFilesByLastAccessTime" => SortFilesByLastAccessTime,
-            "SortFilesByLastWriteTime" => SortFilesByLastWriteTime,
-            "SortFilesBySize" => SortFilesBySize,
-            "SortFilesByExtension" => SortFilesByExtension,
-            "SortFilesRandomly" => SortFilesRandomly,
+            Actions.SortFilesByName => SortFilesByName,
+            Actions.SortFilesByCreationTime => SortFilesByCreationTime,
+            Actions.SortFilesByLastAccessTime => SortFilesByLastAccessTime,
+            Actions.SortFilesByLastWriteTime => SortFilesByLastWriteTime,
+            Actions.SortFilesBySize => SortFilesBySize,
+            Actions.SortFilesByExtension => SortFilesByExtension,
+            Actions.SortFilesRandomly => SortFilesRandomly,
             
-            "SortFilesAscending" => SortFilesAscending,
-            "SortFilesDescending" => SortFilesDescending,
+            Actions.SortFilesAscending => SortFilesAscending,
+            Actions.SortFilesDescending => SortFilesDescending,
             
             // Image functions
-            "ResizeImage" => ResizeImage,
-            "Crop" => Crop,
-            "Flip" => Flip,
-            "OptimizeImage" => OptimizeImage,
-            "ZoomToFit" => ZoomToFit,
-            "Stretch" => ZoomToFit,
+            Actions.ResizeImage => ResizeImage,
+            Actions.Crop => Crop,
+            Actions.Flip => Flip,
+            Actions.OptimizeImage => OptimizeImage,
+            Actions.ZoomToFit => ZoomToFit,
 
             // Set stars
-            "Set0Star" => Set0Star,
-            "Set1Star" => Set1Star,
-            "Set2Star" => Set2Star,
-            "Set3Star" => Set3Star,
-            "Set4Star" => Set4Star,
-            "Set5Star" => Set5Star,
+            Actions.Set0Star => Set0Star,
+            Actions.Set1Star => Set1Star,
+            Actions.Set2Star => Set2Star,
+            Actions.Set3Star => Set3Star,
+            Actions.Set4Star => Set4Star,
+            Actions.Set5Star => Set5Star,
             
             // Background and lock screen image
-            "SetAsLockScreen" => SetAsLockScreen,
-            "SetAsLockscreenCentered" => SetAsLockscreenCentered,
-            "SetAsWallpaper" => SetAsWallpaper,
-            "SetAsWallpaperFitted" => SetAsWallpaperFitted,
-            "SetAsWallpaperStretched" => SetAsWallpaperStretched,
-            "SetAsWallpaperFilled" => SetAsWallpaperFilled,
-            "SetAsWallpaperCentered" => SetAsWallpaperCentered,
-            "SetAsWallpaperTiled" => SetAsWallpaperTiled,
+            Actions.SetAsLockScreen => SetAsLockScreen,
+            Actions.SetAsLockscreenCentered => SetAsLockscreenCentered,
+            Actions.SetAsWallpaper => SetAsWallpaper,
+            Actions.SetAsWallpaperFitted => SetAsWallpaperFitted,
+            Actions.SetAsWallpaperStretched => SetAsWallpaperStretched,
+            Actions.SetAsWallpaperFilled => SetAsWallpaperFilled,
+            Actions.SetAsWallpaperCentered => SetAsWallpaperCentered,
+            Actions.SetAsWallpaperTiled => SetAsWallpaperTiled,
             
             // Tabs
-            "NewTab" => NewTab,
-            "CloseTab" => CloseTab,
+            Actions.NewTab => NewTab,
+            Actions.CloseTab => CloseTab,
 
             // Misc
-            "ChangeBackground" => ChangeBackground,
-            "SideBySide" => SideBySide,
-            "Slideshow" => Slideshow,
-            "ColorPicker" => ColorPicker,
-            "Restart" => Restart,
+            Actions.ChangeBackground => ChangeBackground,
+            Actions.SideBySide => SideBySide,
+            Actions.Slideshow => Slideshow,
+            Actions.ColorPicker => ColorPicker,
+            Actions.Restart => Restart,
+
+            // Hidden Actions of buttons, menus and settings
+            Actions.CloseWindow => CloseWindow,
+            Actions.Minimize => Minimize,
+            Actions.OpenCloseDockedGallery => OpenCloseDockedGallery,
+            Actions.ResetSettings => ResetSettings,
+            Actions.ToggleBottomToolbar => ToggleBottomToolbar,
+            Actions.ToggleConstrainBackgroundColor => ToggleConstrainBackgroundColor,
+            Actions.ToggleDockedGalleryInHiddenUI => ToggleDockedGalleryInHiddenUI,
+            Actions.ToggleFileHistory => ToggleFileHistory,
+            Actions.ToggleHoverBar => ToggleHoverBar,
+            Actions.ToggleOpeningInSameWindow => ToggleOpeningInSameWindow,
+            Actions.ToggleShowFullPathInTitleBar => ToggleShowFullPathInTitleBar,
+            Actions.ToggleSubdirectories => ToggleSubdirectories,
+            Actions.ToggleTaskbarProgress => ToggleTaskbarProgress,
 
             _ when KeybindCategoryDefinition.FavoriteSlot(functionName) is { } slot => () => OpenFavorite(slot),
 
