@@ -16,8 +16,50 @@ internal sealed class FolderChanges(TabViewModel tab)
         FolderChangeKind.Renamed => RenamedAsync(change, ct),
         FolderChangeKind.Deleted => DeletedAsync(change),
         FolderChangeKind.SubfolderDeleted => SubfolderDeletedAsync(change),
+        FolderChangeKind.FolderRenamed => FolderRenamed(change),
         _ => ValueTask.CompletedTask
     };
+
+    /// <summary>
+    /// Follows the files the tab browses in a renamed folder to their new paths, showing the same file.
+    /// </summary>
+    private ValueTask FolderRenamed(FolderChange change)
+    {
+        if (tab.ImageIterator is not { } iterator || change.OldFullPath is not { } oldFolder)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var newFolder = change.File.FullName;
+        var moved = iterator.RenameFolder(oldFolder, newFolder);
+        if (moved.Length is 0)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        foreach (var index in moved)
+        {
+            var file = iterator.Files[index];
+            Gallery(g => g.FileMoved(index, file));
+        }
+
+        // The shown images are the same, only their paths changed
+        if (tab.Model.FileInfo is { } shown &&
+            FolderChange.PathInRenamedFolder(shown.FullName, oldFolder, newFolder) is { } shownPath)
+        {
+            tab.Model.FileInfo = new FileInfo(shownPath);
+            tab.FileInfo.Value = tab.Model.FileInfo;
+        }
+        if (tab.SecondaryModel?.FileInfo is { } secondary &&
+            FolderChange.PathInRenamedFolder(secondary.FullName, oldFolder, newFolder) is { } secondaryPath)
+        {
+            tab.SecondaryModel.FileInfo = new FileInfo(secondaryPath);
+            tab.SecondaryFileInfo.Value = tab.SecondaryModel.FileInfo;
+        }
+
+        tab.UpdateTabTitle();
+        return ValueTask.CompletedTask;
+    }
 
     /// <summary>
     /// Follows each file the tab browses in the deleted subfolder as if it were deleted on its own.

@@ -469,6 +469,119 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnSubfolderRenamed_ItsFilesFollowIt()
+    {
+        // Arrange: browsing subdirectories, showing a file in the subfolder
+        Settings.Sorting.IncludeSubDirectories = true;
+        var files = Files("a.jpg", Path.Combine("sub", "b.jpg"), Path.Combine("sub", "c.jpg"));
+        var tab = CreateTab(_testDirectory, files, files[1]);
+        var renamed = Path.Combine(_testDirectory, "renamed");
+
+        // Act
+        Watch(tab).RaiseRenamed("sub", "renamed");
+
+        // Assert: in the same order, still showing the same file
+        await WaitUntilAsync(() => tab.ImageIterator!.Files[1].DirectoryName == renamed);
+        Assert.Equal(
+            [files[0].FullName, Path.Combine(renamed, "b.jpg"), Path.Combine(renamed, "c.jpg")],
+            tab.ImageIterator!.Files.Select(f => f.FullName));
+        Assert.Equal(Path.Combine(renamed, "b.jpg"), tab.Model.FileInfo?.FullName);
+        Assert.Equal(Path.Combine(renamed, "b.jpg"), tab.FileInfo.Value?.FullName);
+    }
+
+    [Fact]
+    public async Task OnSubfolderRenamed_LoadedGallery_ItsItemsFollowIt()
+    {
+        // Arrange
+        Settings.Sorting.IncludeSubDirectories = true;
+        Directory.CreateDirectory(Path.Combine(_testDirectory, "sub"));
+        var files = await FilesOnDiskAsync("a.jpg", Path.Combine("sub", "b.jpg"));
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        LoadGallery(tab);
+        var renamed = Path.Combine(_testDirectory, "renamed");
+        var watch = Watch(tab);
+
+        // Act: the item reads its file's size and date there
+        Directory.Move(Path.Combine(_testDirectory, "sub"), renamed);
+        watch.RaiseRenamed("sub", "renamed");
+
+        // Assert
+        await WaitUntilAsync(() => tab.Gallery.GalleryItems[1].FileInfo?.DirectoryName == renamed);
+        Assert.Equal(["a.jpg", "b.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
+    }
+
+    [Fact]
+    public async Task OnFolderRenamed_EveryTabOfTheFolderFollowsIt()
+    {
+        // Arrange
+        var files = Files("a.jpg", "b.jpg");
+        var first = CreateTab(_testDirectory, files, files[1]);
+        var second = CreateTab(_testDirectory, files, files[0]);
+        var watch = Watch(first);
+        _service.Watch(second);
+        var renamed = _testDirectory + "_renamed";
+
+        // Act
+        watch.RaiseMoved(renamed);
+
+        // Assert: both tabs browse the folder under its new name, showing the same files
+        await WaitUntilAsync(() => first.ImageIterator!.Files[0].DirectoryName == renamed &&
+                                   second.ImageIterator!.Files[0].DirectoryName == renamed);
+        Assert.Equal(Path.Combine(renamed, "b.jpg"), first.Model.FileInfo?.FullName);
+        Assert.Equal(Path.Combine(renamed, "a.jpg"), second.Model.FileInfo?.FullName);
+    }
+
+    [Fact]
+    public async Task OnFolderRenamed_WatchesTheFolderUnderItsNewName()
+    {
+        // Arrange
+        var files = Files("a.jpg", "b.jpg");
+        var first = CreateTab(_testDirectory, files, files[0]);
+        var second = CreateTab(_testDirectory, files, files[0]);
+        var watch = Watch(first);
+        _service.Watch(second);
+        var renamed = _testDirectory + "_renamed";
+
+        // Act
+        watch.RaiseMoved(renamed);
+        await WaitUntilAsync(() => _folderEvents.Watches.Count == 2);
+        var restarted = _folderEvents.Watches[^1];
+        restarted.RaiseDeleted("b.jpg");
+
+        // Assert: one watch under the new name, which still reaches both tabs
+        Assert.True(watch.IsDisposed);
+        Assert.Equal(renamed, restarted.Directory);
+        await WaitUntilAsync(() => first.ImageIterator!.Files.Count == 1 && second.ImageIterator!.Files.Count == 1);
+    }
+
+    [Fact]
+    public async Task OnFolderRenamed_OnDisk_TabFollowsIt()
+    {
+        // Arrange
+        var folder = Path.Combine(_testDirectory, "watched");
+        Directory.CreateDirectory(folder);
+        var file = new FileInfo(Path.Combine(folder, "a.jpg"));
+        await File.WriteAllTextAsync(file.FullName, "dummy content", TestContext.Current.CancellationToken);
+        using var service = new FileWatcherService((s1, s2) => string.CompareOrdinal(s1, s2), _cache,
+            _mockThumbnailCache);
+        var tab = new TabViewModel(null!, service);
+        tab.Model = new ImageModel { FileInfo = file };
+        tab.Initialize(_cache, _mockThumbnailCache, new MockThumbnailLoader(), service, _mockThumbnailCache);
+        tab.InitializeImageIterator([file], _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
+            _mockThumbnailCache);
+        var renamed = Path.Combine(_testDirectory, "renamed");
+
+        // Act
+        Directory.Move(folder, renamed);
+        await WaitUntilAsync(() => tab.Model.FileInfo?.DirectoryName == renamed);
+        var created = Path.Combine(renamed, "b.jpg");
+        await File.WriteAllTextAsync(created, "dummy content", TestContext.Current.CancellationToken);
+
+        // Assert: the folder is watched under its new name
+        await WaitUntilAsync(() => tab.ImageIterator!.Files.Any(f => f.FullName == created));
+    }
+
+    [Fact]
     public async Task OnFolderGone_MakesEveryTabOfTheFolderFresh()
     {
         // Arrange
@@ -508,8 +621,10 @@ public class FileWatcherServiceTests : IDisposable
         tab.InitializeImageIterator([file], _cache, _mockThumbnailCache, new MockThumbnailLoader(), null,
             _mockThumbnailCache);
 
-        // Act
-        Directory.Move(folder, Path.Combine(_testDirectory, "moved"));
+        // Act: into another folder, as the Recycle Bin does
+        var otherFolder = Path.Combine(_testDirectory, "other");
+        Directory.CreateDirectory(otherFolder);
+        Directory.Move(folder, Path.Combine(otherFolder, "watched"));
 
         // Assert
         await WaitUntilAsync(() => actionRunner.StartUpMenuTabs.Count == 1);
@@ -648,6 +763,7 @@ public class FileWatcherServiceTests : IDisposable
         private readonly Subject<RenamedEventArgs> _renamed = new();
         private readonly Subject<FileSystemEventArgs> _deleted = new();
         private readonly Subject<Unit> _gone = new();
+        private readonly Subject<string> _moved = new();
 
         public string Directory { get; } = directory;
         public bool IncludesSubdirectories { get; } = includeSubdirectories;
@@ -658,6 +774,7 @@ public class FileWatcherServiceTests : IDisposable
         public Observable<RenamedEventArgs> Renamed => _renamed;
         public Observable<FileSystemEventArgs> Deleted => _deleted;
         public Observable<Unit> Gone => _gone;
+        public Observable<string> Moved => _moved;
 
         public void RaiseCreated(string name) =>
             _created.OnNext(new FileSystemEventArgs(WatcherChangeTypes.Created, Directory, name));
@@ -673,6 +790,8 @@ public class FileWatcherServiceTests : IDisposable
 
         public void RaiseGone() => _gone.OnNext(Unit.Default);
 
+        public void RaiseMoved(string newDirectory) => _moved.OnNext(newDirectory);
+
         public void Dispose()
         {
             IsDisposed = true;
@@ -681,6 +800,7 @@ public class FileWatcherServiceTests : IDisposable
             _renamed.Dispose();
             _deleted.Dispose();
             _gone.Dispose();
+            _moved.Dispose();
         }
     }
 

@@ -133,6 +133,30 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         return (removed, inserted);
     }
 
+    /// <inheritdoc />
+    public int[] RenameFolder(string oldFolder, string newFolder)
+    {
+        lock (_filesLock)
+        {
+            var files = (FileInfo[])_files.Clone();
+            var moved = new List<int>();
+            for (var i = 0; i < files.Length; i++)
+            {
+                if (FolderChange.PathInRenamedFolder(files[i].FullName, oldFolder, newFolder) is { } newPath)
+                {
+                    files[i] = new FileInfo(newPath);
+                    moved.Add(i);
+                }
+            }
+
+            if (moved.Count > 0)
+            {
+                Publish(files);
+            }
+            return moved.ToArray();
+        }
+    }
+
     /// <summary>
     /// Makes <paramref name="files"/> the current list and tells the cache. Callers hold <see cref="_filesLock"/>.
     /// </summary>

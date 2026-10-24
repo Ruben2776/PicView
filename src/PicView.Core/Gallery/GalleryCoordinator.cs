@@ -217,6 +217,35 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
         }
     }
 
+    /// <summary>
+    /// Points the item at <paramref name="index"/> to <paramref name="file"/>, the same file in a renamed folder. It
+    /// keeps its image's size and its thumbnail, as the file itself did not change.
+    /// </summary>
+    public void FileMoved(int index, FileInfo file)
+    {
+        if (RestartIfLoading())
+        {
+            return;
+        }
+
+        if (tab.Gallery.LoadingState is not GalleryLoadingState.Loaded || index < 0 ||
+            index >= tab.Gallery.GalleryItems.Count)
+        {
+            return;
+        }
+
+        var old = tab.Gallery.GalleryItems[index];
+        var item = CreateItem(file, new GalleryFileDetails(old.PixelWidth, old.PixelHeight, null), ThumbnailHeight(),
+            Core);
+        item.Image.Value = old.Image.Value;
+        item.IsMotionPhoto.Value = old.IsMotionPhoto.Value;
+        if (old.Image.Value is { } thumbnail)
+        {
+            thumbnailCache.Add(tab.Id, file.FullName, thumbnail);
+        }
+        tab.Gallery.GalleryItems[index] = item;
+    }
+
     private CoreViewModel? Core => tab.ParentWindowContext?.Core;
 
     private bool RestartIfLoading()

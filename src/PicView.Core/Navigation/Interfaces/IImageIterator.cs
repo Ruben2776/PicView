@@ -68,6 +68,13 @@ public interface IImageIterator : IDisposable
     (int Removed, int Inserted) Move(string oldPath, FileInfo newFile, Func<string, string, int> compareNames);
 
     /// <summary>
+    /// Gives the files in the folder <paramref name="oldFolder"/> their paths under <paramref name="newFolder"/>, after
+    /// the folder was renamed. The files keep their positions, as the sort orders never compare folders.
+    /// </summary>
+    /// <returns>The positions of the files that moved.</returns>
+    int[] RenameFolder(string oldFolder, string newFolder);
+
+    /// <summary>
     /// Asynchronously navigates the image collection based on the specified navigation direction and skip amount.
     /// </summary>
     /// <param name="to">The direction to navigate, represented by the <see cref="NavigateTo"/> enumeration.</param>

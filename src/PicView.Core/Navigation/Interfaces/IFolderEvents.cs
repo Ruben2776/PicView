@@ -25,8 +25,14 @@ public interface IFolderWatch : IDisposable
     Observable<FileSystemEventArgs> Deleted { get; }
 
     /// <summary>
-    /// The folder itself was deleted, moved or renamed, which raises no event for its files when it goes to the
-    /// Recycle Bin.
+    /// The folder itself was deleted or moved into another folder, which raises no event for its files when it goes
+    /// to the Recycle Bin.
     /// </summary>
     Observable<Unit> Gone { get; }
+
+    /// <summary>
+    /// The folder itself was renamed, to the path given. Its files' events still name the old path until the folder
+    /// is watched under the new one.
+    /// </summary>
+    Observable<string> Moved { get; }
 }

@@ -118,7 +118,56 @@ public class FileWatcherService(
                 await FolderGoneAsync(directory).ConfigureAwait(false),
             DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderGoneAsync)));
 
-        return (watch, Disposable.Combine(fileCreatedSub, fileDeletedSub, fileRenamedSub, fileChangedSub, folderGoneSub));
+        var folderMovedSub = watch.Moved.SubscribeAwait(async (newDirectory, _) =>
+                await FolderRenamedAsync(directory, newDirectory).ConfigureAwait(false),
+            DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderRenamedAsync)));
+
+        return (watch, Disposable.Combine(fileCreatedSub, fileDeletedSub, fileRenamedSub, fileChangedSub, folderGoneSub,
+            folderMovedSub));
+    }
+
+    /// <summary>
+    /// Watches <paramref name="directory"/> under its new name, as its watch still reports the old paths, and lets
+    /// every tab watching it follow its files there.
+    /// </summary>
+    private async ValueTask FolderRenamedAsync(string directory, string newDirectory)
+    {
+        lock (_lock)
+        {
+            if (!_watchers.TryRemove(directory, out var entry))
+            {
+                return;
+            }
+
+            entry.Subscription.Dispose();
+            entry.Watch.Dispose();
+            try
+            {
+                var (watch, subscription) = StartWatch(newDirectory);
+                _watchers[newDirectory] = (watch, subscription, entry.Subscribers);
+            }
+            catch (Exception exception)
+            {
+                // Renamed again or gone already; the tabs keep their files until they browse elsewhere
+                DebugHelper.LogDebug(nameof(FileWatcherService), nameof(FolderRenamedAsync), exception);
+                return;
+            }
+        }
+
+        var change = new FolderChange(FolderChangeKind.FolderRenamed, new FileInfo(newDirectory), directory,
+            new FileDetailsSource(new FileInfo(newDirectory), waitUntilReady: false), _stringComparer);
+        foreach (var tab in SubscribersOf(newDirectory))
+        {
+            try
+            {
+                // Not with the old watch's token, which stopping that watch cancelled
+                await tab.OnFolderChangedAsync(change).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                DebugHelper.LogDebug(nameof(FileWatcherService), nameof(FolderRenamedAsync), exception);
+            }
+        }
     }
 
     /// <summary>
@@ -164,12 +213,18 @@ public class FileWatcherService(
     {
         if (!fullPath.IsSupported())
         {
-            // A deleted path that is not an image may be a subfolder, whose files go with it
-            if (kind is not FolderChangeKind.Deleted)
+            // A deleted or renamed path that is not an image may be a subfolder, whose files go with it
+            switch (kind)
             {
-                return;
+                case FolderChangeKind.Deleted:
+                    kind = FolderChangeKind.SubfolderDeleted;
+                    break;
+                case FolderChangeKind.Renamed when oldFullPath is not null && !oldFullPath.IsSupported():
+                    kind = FolderChangeKind.FolderRenamed;
+                    break;
+                default:
+                    return;
             }
-            kind = FolderChangeKind.SubfolderDeleted;
         }
 
         var stalePath = kind is FolderChangeKind.Renamed ? oldFullPath ?? fullPath : fullPath;

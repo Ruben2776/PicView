@@ -71,21 +71,24 @@ public sealed class FileSystemFolderEvents : IFolderEvents
                 h => watcher.Deleted += h,
                 h => watcher.Deleted -= h);
 
-        // The parent's filter matches the folder's name, so a rename away from it or a deletion is the folder going
+        // The parent's filter matches the folder's name. Moving the folder into another folder, as the Recycle Bin
+        // does, is reported to the parent as a deletion
         public Observable<Unit> Gone { get; } = parentWatcher is null
             ? Observable.Never<Unit>()
-            : Observable.Merge(
-                Observable.FromEvent<FileSystemEventHandler, FileSystemEventArgs>(
+            : Observable.FromEvent<FileSystemEventHandler, FileSystemEventArgs>(
+                h => (_, e) => h(e),
+                h => parentWatcher.Deleted += h,
+                h => parentWatcher.Deleted -= h).Select(static _ => Unit.Default);
+
+        public Observable<string> Moved { get; } = parentWatcher is null
+            ? Observable.Never<string>()
+            : Observable.FromEvent<RenamedEventHandler, RenamedEventArgs>(
                     h => (_, e) => h(e),
-                    h => parentWatcher.Deleted += h,
-                    h => parentWatcher.Deleted -= h).Select(static _ => Unit.Default),
-                Observable.FromEvent<RenamedEventHandler, RenamedEventArgs>(
-                        h => (_, e) => h(e),
-                        h => parentWatcher.Renamed += h,
-                        h => parentWatcher.Renamed -= h)
-                    .Where(e => string.Equals(Path.TrimEndingDirectorySeparator(e.OldFullPath), folderPath,
-                        StringComparison.OrdinalIgnoreCase))
-                    .Select(static _ => Unit.Default));
+                    h => parentWatcher.Renamed += h,
+                    h => parentWatcher.Renamed -= h)
+                .Where(e => string.Equals(Path.TrimEndingDirectorySeparator(e.OldFullPath), folderPath,
+                    StringComparison.OrdinalIgnoreCase))
+                .Select(static e => Path.TrimEndingDirectorySeparator(e.FullPath));
 
         public void Dispose()
         {
