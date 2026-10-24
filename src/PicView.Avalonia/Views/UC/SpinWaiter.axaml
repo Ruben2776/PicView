@@ -1,24 +1,24 @@
 <UserControl
     x:Class="PicView.Avalonia.Views.UC.SpinWaiter"
     xmlns="https://github.com/avaloniaui"
-    xmlns:PicView="clr-namespace:PicView.Avalonia.Views.UC"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:PicView="clr-namespace:PicView.Avalonia.Views.UC">
 
     <UserControl.Styles>
         <Style Selector="PicView|SpinWaiter">
             <Style.Setters>
                 <Setter Property="Transitions">
                     <Transitions>
-                        <DoubleTransition Duration="0:0:0.35" Property="Opacity" />
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.35" />
                     </Transitions>
                 </Setter>
             </Style.Setters>
             <Style.Animations>
                 <Animation
-                    Duration="0:0:1.5"
                     FillMode="None"
                     IterationCount="INFINITE"
-                    PlaybackDirection="Normal">
+                    PlaybackDirection="Normal"
+                    Duration="0:0:1.5">
                     <Animation.Easing>
                         <QuadraticEaseInOut />
                     </Animation.Easing>
@@ -38,23 +38,23 @@
                 <ControlTemplate>
 
                     <Arc
-                        Height="52"
                         Name="PART_Arc"
+                        Width="52"
+                        Height="52"
                         StartAngle="270"
                         Stretch="None"
                         Stroke="{DynamicResource AccentColor}"
                         StrokeJoin="Round"
                         StrokeLineCap="Round"
                         StrokeThickness="4"
-                        SweepAngle="30"
-                        Width="52">
+                        SweepAngle="30">
 
                         <Arc.Transitions>
                             <Transitions>
                                 <DoubleTransition
-                                    Duration="0:0:0.8"
                                     Easing="CircularEaseOut"
-                                    Property="SweepAngle" />
+                                    Property="SweepAngle"
+                                    Duration="0:0:0.8" />
                             </Transitions>
                         </Arc.Transitions>
                     </Arc>
@@ -66,11 +66,11 @@
 
             <Style.Animations>
                 <Animation
-                    Duration="0:0:1.5"
                     Easing="QuadraticEaseInOut"
                     FillMode="None"
                     IterationCount="INFINITE"
-                    PlaybackDirection="Normal">
+                    PlaybackDirection="Normal"
+                    Duration="0:0:1.5">
                     <KeyFrame Cue="0%">
                         <Setter Property="SweepAngle" Value="60" />
                     </KeyFrame>

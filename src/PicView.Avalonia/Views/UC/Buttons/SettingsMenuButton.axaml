@@ -2,8 +2,8 @@
     x:Class="PicView.Avalonia.Views.UC.Buttons.SettingsMenuButton"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:keybindings="using:PicView.Core.Keybindings"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:CoreViewModel">
     <customControls:IconButton
@@ -21,7 +21,8 @@
             <MenuFlyout FlyoutPresenterClasses="noCornerRadius" Placement="Bottom">
                 <customControls:StyledMenuItem
                     x:Name="UserSettingsItem"
-                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ShowSettingsFile}"
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ShowSettingsFile}"
                     Foreground="{DynamicResource MainTextColor}"
                     Header="UserSettings.json">
                     <MenuItem.Icon>
@@ -33,7 +34,8 @@
                 </customControls:StyledMenuItem>
                 <customControls:StyledMenuItem
                     x:Name="KeybindingsItem"
-                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ShowKeybindingsFile}"
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ShowKeybindingsFile}"
                     Foreground="{DynamicResource MainTextColor}"
                     Header="keybindings.json">
                     <MenuItem.Icon>
@@ -44,7 +46,8 @@
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
                 <customControls:StyledMenuItem
-                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.ResetSettings}"
+                    Command="{CompiledBinding MainWindows.ActiveWindow.Value.RunActionCommand}"
+                    CommandParameter="{x:Static keybindings:Actions.ResetSettings}"
                     Foreground="{DynamicResource MainTextColor}"
                     Header="{CompiledBinding Translation.ResetButtonText.Value,
                                              Mode=OneWay}">

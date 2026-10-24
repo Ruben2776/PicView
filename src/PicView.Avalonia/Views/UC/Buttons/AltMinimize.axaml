@@ -17,7 +17,8 @@
         BorderThickness="1,0,0,1"
         Classes="hover"
         ClickMode="Release"
-        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.Minimize}"
+        Command="{CompiledBinding RunActionCommand}"
+        CommandParameter="{x:Static keybindings:Actions.Minimize}"
         IsVisible="{CompiledBinding !IsUIShown.Value}"
         ZIndex="99">
         <Viewbox Width="15" Height="15">

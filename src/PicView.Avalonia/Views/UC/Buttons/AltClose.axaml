@@ -17,7 +17,8 @@
         BorderThickness="1,0,0,1"
         Classes="hover"
         ClickMode="Release"
-        Command="{CompiledBinding RunActionCommand}" CommandParameter="{x:Static keybindings:Actions.CloseWindow}"
+        Command="{CompiledBinding RunActionCommand}"
+        CommandParameter="{x:Static keybindings:Actions.CloseWindow}"
         CornerRadius="0,0,0,0"
         IsVisible="{CompiledBinding !IsUIShown.Value}"
         ToolTip.Tip="{CompiledBinding Translation.Close.Value,

@@ -1,11 +1,11 @@
 <UserControl
     x:Class="PicView.Avalonia.Views.Main.KeybindingsView"
-    x:DataType="viewModels:CoreViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:CoreViewModel">
 
     <UserControl.Styles>
 
@@ -27,53 +27,53 @@
         <!--  Loading  -->
         <uc:SpinWaiter
             HorizontalAlignment="Center"
-            IsVisible="{Binding Keybindings.IsLoading.Value}"
             VerticalAlignment="Center"
+            IsVisible="{Binding Keybindings.IsLoading.Value}"
             ZIndex="9" />
 
         <DockPanel IsVisible="{Binding !Keybindings.IsLoading.Value}">
 
             <!--  Filter  -->
-            <Panel DockPanel.Dock="Top" Margin="7,5,7,0">
+            <Panel Margin="7,5,7,0" DockPanel.Dock="Top">
                 <Image
+                    Width="14"
                     Height="14"
-                    HorizontalAlignment="Left"
                     Margin="15,0,0,0"
-                    Source="{StaticResource SearchImage}"
-                    Width="14" />
+                    HorizontalAlignment="Left"
+                    Source="{StaticResource SearchImage}" />
 
                 <TextBox
+                    x:Name="FilterBox"
+                    Padding="40,7,4,7"
+                    VerticalAlignment="Center"
                     Background="Transparent"
                     BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                     BorderThickness="1"
                     CornerRadius="4"
                     FontFamily="/Assets/Fonts/Roboto-Regular.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    Padding="40,7,4,7"
                     PlaceholderText="{CompiledBinding Translation.Filter.Value,
                                                       Mode=OneWay}"
                     Text="{CompiledBinding Keybindings.FilterText.Value,
                                            FallbackValue='',
-                                           Mode=TwoWay}"
-                    VerticalAlignment="Center"
-                    x:Name="FilterBox" />
+                                           Mode=TwoWay}" />
 
                 <!--  clear  -->
                 <customControls:IconButton
+                    x:Name="ClearButton"
+                    Padding="10,3,10,3"
+                    HorizontalAlignment="Right"
                     Classes="AltHover"
                     Command="{CompiledBinding Keybindings.ClearFilteringCommand}"
                     Data="{StaticResource CloseGeometry}"
                     Foreground="{DynamicResource MainTextColorFaded}"
-                    HorizontalAlignment="Right"
                     IconHeight="12"
                     IconWidth="12"
                     IsVisible="{CompiledBinding Keybindings.FilterText.Value,
-                                                Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                    Padding="10,3,10,3"
-                    x:Name="ClearButton" />
+                                                Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
             </Panel>
 
-            <customControls:AutoScrollViewer DockPanel.Dock="Top" Margin="0,0,0,65">
+            <customControls:AutoScrollViewer Margin="0,0,0,65" DockPanel.Dock="Top">
                 <StackPanel Margin="15,5">
 
                     <TextBlock
@@ -83,24 +83,24 @@
                                                Mode=OneWay}" />
 
                     <!--  Gallery Mouse wheel  -->
-                    <DockPanel IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}" Margin="10,0,10,50">
+                    <DockPanel Margin="10,0,10,50" IsVisible="{CompiledBinding !Keybindings.IsFiltering.Value}">
                         <TextBlock
+                            MinWidth="220"
+                            Margin="0,0,5,0"
                             Classes="txt"
                             DockPanel.Dock="Left"
-                            Margin="0,0,5,0"
-                            MinWidth="220"
                             Text="{CompiledBinding Translation.GalleryMouseWheel.Value,
                                                    Mode=OneWay}" />
 
                         <ComboBox
+                            x:Name="GalleryMouseWheelBox"
+                            Padding="5,7,0,7"
                             BorderThickness="1"
                             DockPanel.Dock="Right"
                             FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                             Foreground="{DynamicResource MainTextColor}"
-                            Padding="5,7,0,7"
                             SelectedIndex="{CompiledBinding GlobalSettings.GalleryMouseWheelBehavior.Value,
-                                                            Mode=TwoWay}"
-                            x:Name="GalleryMouseWheelBox">
+                                                            Mode=TwoWay}">
                             <ComboBoxItem Content="{CompiledBinding Translation.Scroll.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                             <ComboBoxItem Content="{CompiledBinding Translation.Navigate.Value, Mode=OneWay}" Foreground="{DynamicResource MainTextColor}" />
                         </ComboBox>
@@ -108,10 +108,10 @@
 
                     <!--  Navigation  -->
                     <TextBlock
+                        x:Name="NavigationHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.Navigation.Value,
-                                               Mode=OneWay}"
-                        x:Name="NavigationHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="NavigationItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -122,10 +122,10 @@
 
                     <!--  Scroll and rotate  -->
                     <TextBlock
+                        x:Name="ScrollAndRotateHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.ScrollAndRotate.Value,
-                                               Mode=OneWay}"
-                        x:Name="ScrollAndRotateHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="ScrollAndRotateItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -136,10 +136,10 @@
 
                     <!--  Zoom  -->
                     <TextBlock
+                        x:Name="ZoomHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.Zoom.Value,
-                                               Mode=OneWay}"
-                        x:Name="ZoomHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="ZoomItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -150,10 +150,10 @@
 
                     <!--  Image control  -->
                     <TextBlock
+                        x:Name="ImageControlHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.ImageControl.Value,
-                                               Mode=OneWay}"
-                        x:Name="ImageControlHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="ImageControlItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -164,10 +164,10 @@
 
                     <!--  Interface configuration  -->
                     <TextBlock
+                        x:Name="InterfaceConfigurationHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.InterfaceConfiguration.Value,
-                                               Mode=OneWay}"
-                        x:Name="InterfaceConfigurationHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="InterfaceConfigurationItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -178,10 +178,10 @@
 
                     <!--  File management  -->
                     <TextBlock
+                        x:Name="FileManagementHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.FileManagement.Value,
-                                               Mode=OneWay}"
-                        x:Name="FileManagementHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="FileManagementItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -192,10 +192,10 @@
 
                     <!--  Copy  -->
                     <TextBlock
+                        x:Name="CopyHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.Copy.Value,
-                                               Mode=OneWay}"
-                        x:Name="CopyHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="CopyItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -206,10 +206,10 @@
 
                     <!--  Tab management  -->
                     <TextBlock
+                        x:Name="TabManagementHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.TabManagement.Value,
-                                               Mode=OneWay}"
-                        x:Name="TabManagementHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="TabManagementItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -220,10 +220,10 @@
 
                     <!--  Tool Windows  -->
                     <TextBlock
+                        x:Name="ToolWindowsHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.ToolWindows.Value,
-                                               Mode=OneWay}"
-                        x:Name="ToolWindowsHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="ToolWindowsItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -234,10 +234,10 @@
 
                     <!--  Window management  -->
                     <TextBlock
+                        x:Name="WindowManagementHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.WindowManagement.Value,
-                                               Mode=OneWay}"
-                        x:Name="WindowManagementHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="WindowManagementItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -248,10 +248,10 @@
 
                     <!--  Window scaling  -->
                     <TextBlock
+                        x:Name="WindowScalingHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.WindowScaling.Value,
-                                               Mode=OneWay}"
-                        x:Name="WindowScalingHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="WindowScalingItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -262,10 +262,10 @@
 
                     <!--  Sort files by  -->
                     <TextBlock
+                        x:Name="SortFilesByHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.SortFilesBy.Value,
-                                               Mode=OneWay}"
-                        x:Name="SortFilesByHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="SortFilesByItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -276,10 +276,10 @@
 
                     <!--  Set star rating  -->
                     <TextBlock
+                        x:Name="SetStarRatingHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.SetStarRating.Value,
-                                               Mode=OneWay}"
-                        x:Name="SetStarRatingHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="SetStarRatingItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -290,10 +290,10 @@
 
                     <!--  Contextual actions  -->
                     <TextBlock
+                        x:Name="ContextualHeader"
                         Classes="txt bold keyBindHeader"
                         Text="{CompiledBinding Translation.ContextualActions.Value,
-                                               Mode=OneWay}"
-                        x:Name="ContextualHeader" />
+                                               Mode=OneWay}" />
                     <ItemsControl x:Name="ContextualItems">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -304,12 +304,12 @@
 
                     <!--  Favorites  -->
                     <TextBlock
+                        x:Name="FavoritesHeader"
                         Classes="txt bold keyBindHeader"
                         IsVisible="False"
                         Text="{CompiledBinding Translation.Favorites.Value,
-                                               Mode=OneWay}"
-                        x:Name="FavoritesHeader" />
-                    <ItemsControl IsVisible="False" x:Name="FavoritesItems">
+                                               Mode=OneWay}" />
+                    <ItemsControl x:Name="FavoritesItems" IsVisible="False">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Classes="keyBindHeader" />
@@ -322,29 +322,29 @@
 
             <!--  Footer  -->
             <Border
+                x:Name="BottomBorder"
+                Height="65"
+                VerticalAlignment="Bottom"
                 Background="{DynamicResource ToolWindowFooterBackground}"
                 BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                 BorderThickness="0,1,0,0"
                 DockPanel.Dock="Bottom"
-                Height="65"
-                PointerPressed="MoveWindow"
-                VerticalAlignment="Bottom"
-                x:Name="BottomBorder">
+                PointerPressed="MoveWindow">
                 <Panel>
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 
                         <Button
+                            x:Name="CancelButton"
+                            Height="35"
+                            Margin="15,0,10,0"
+                            Padding="10,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
                             Background="{DynamicResource ToolWindowButtonBackground}"
                             BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                             BorderThickness="1"
                             Classes="MenuItemHover"
-                            CornerRadius="4"
-                            Height="35"
-                            HorizontalAlignment="Left"
-                            Margin="15,0,10,0"
-                            Padding="10,0"
-                            VerticalAlignment="Center"
-                            x:Name="CancelButton">
+                            CornerRadius="4">
                             <TextBlock
                                 Classes="txt"
                                 Text="{Binding Translation.Cancel.Value, Mode=OneWay}"
@@ -352,16 +352,16 @@
                         </Button>
 
                         <Button
+                            x:Name="DefaultButton"
+                            Height="35"
+                            Padding="10,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
                             Background="{DynamicResource ToolWindowButtonBackground}"
                             BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                             BorderThickness="1"
                             Classes="MenuItemHover"
-                            CornerRadius="4"
-                            Height="35"
-                            HorizontalAlignment="Left"
-                            Padding="10,0"
-                            VerticalAlignment="Center"
-                            x:Name="DefaultButton">
+                            CornerRadius="4">
                             <TextBlock
                                 Classes="txt"
                                 Text="{Binding Translation.ResetButtonText.Value, Mode=OneWay}"
@@ -371,23 +371,23 @@
                     </StackPanel>
 
                     <StackPanel
-                        HorizontalAlignment="Right"
                         Margin="0,0,20,0"
+                        HorizontalAlignment="Right"
                         Orientation="Horizontal"
                         Spacing="10">
 
                         <Button
+                            x:Name="ApplyButton"
+                            Height="35"
+                            MinWidth="100"
+                            Padding="10,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
                             Background="{DynamicResource ToolWindowButtonBackground}"
                             BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                             BorderThickness="1"
                             Classes="MenuItemHover"
-                            CornerRadius="4"
-                            Height="35"
-                            HorizontalAlignment="Right"
-                            MinWidth="100"
-                            Padding="10,0"
-                            VerticalAlignment="Center"
-                            x:Name="ApplyButton">
+                            CornerRadius="4">
                             <TextBlock
                                 Classes="txt"
                                 Text="{Binding Translation.Apply.Value, Mode=OneWay}"
@@ -395,17 +395,17 @@
                         </Button>
 
                         <Button
+                            x:Name="SaveButton"
+                            Height="35"
+                            MinWidth="140"
+                            Padding="10,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
                             Background="{DynamicResource AccentColor}"
                             BorderBrush="{DynamicResource ToolWindowButtonBorderColor}"
                             BorderThickness="1"
                             Classes="accentHover"
-                            CornerRadius="4"
-                            Height="35"
-                            HorizontalAlignment="Right"
-                            MinWidth="140"
-                            Padding="10,0"
-                            VerticalAlignment="Center"
-                            x:Name="SaveButton">
+                            CornerRadius="4">
                             <TextBlock
                                 Classes="txt"
                                 Text="{Binding Translation.Save.Value, Mode=OneWay}"

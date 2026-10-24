@@ -1,38 +1,38 @@
 <UserControl
-    Background="{StaticResource AltBackgroundColor}"
-    IsHitTestVisible="False"
-    ZIndex="99"
-    mc:Ignorable="d"
     x:Class="PicView.Avalonia.Views.UC.DragDropView"
-    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    x:DataType="viewModels:MainWindowViewModel"
+    Background="{StaticResource AltBackgroundColor}"
+    IsHitTestVisible="False"
+    ZIndex="99"
+    mc:Ignorable="d">
     <Panel>
         <customControls:BlurMask BlurRadius="9" />
 
         <StackPanel
+            x:Name="ParentPanel"
             HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            x:Name="ParentPanel">
+            VerticalAlignment="Center">
 
             <Border
+                x:Name="ContentHolder"
                 ClipToBounds="True"
                 CornerRadius="6"
-                RenderOptions.BitmapInterpolationMode="HighQuality"
-                x:Name="ContentHolder" />
+                RenderOptions.BitmapInterpolationMode="HighQuality" />
 
             <TextBlock
+                x:Name="TxtDragToView"
+                Margin="0,20,0,0"
+                HorizontalAlignment="Center"
                 Classes="txt"
                 FontFamily="/Assets/Fonts/Roboto-Black.ttf#Roboto"
                 FontSize="16"
-                HorizontalAlignment="Center"
-                Margin="0,20,0,0"
-                TextAlignment="Center"
-                x:Name="TxtDragToView" />
+                TextAlignment="Center" />
         </StackPanel>
     </Panel>
 </UserControl>
