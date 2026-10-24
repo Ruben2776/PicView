@@ -2,10 +2,10 @@ using Avalonia;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Functions;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 using R3;
+using PicView.Core.Keybindings;
 
 namespace PicView.Avalonia.Views.UC.PopUps;
 
@@ -36,8 +36,8 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.ResizeImage().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(QuickEditingDialog), nameof(FunctionsMapper.ResizeImage)))
+                await vm.Mapper.Run(Actions.ResizeImage).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.ResizeImage))
             .AddTo(ref _disposables);
         
         Observable.FromEventHandler<RoutedEventArgs>(h => BatchResizeButton.Click += h,
@@ -49,8 +49,8 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.BatchResizeWindow().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(QuickEditingDialog), nameof(FunctionsMapper.BatchResizeWindow)))
+                await vm.Mapper.Run(Actions.BatchResizeWindow).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.BatchResizeWindow))
             .AddTo(ref _disposables);
             
         Observable.FromEventHandler<RoutedEventArgs>(h => ImageInfoButton.Click += h,
@@ -62,8 +62,8 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.ImageInfoWindow().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(QuickEditingDialog), nameof(FunctionsMapper.ImageInfoWindow)))
+                await vm.Mapper.Run(Actions.ImageInfoWindow).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.ImageInfoWindow))
             .AddTo(ref _disposables);
         
         Observable.FromEventHandler<RoutedEventArgs>(h => ImageEffectsButton.Click += h,
@@ -75,8 +75,8 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.EffectsWindow().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(QuickEditingDialog), nameof(FunctionsMapper.EffectsWindow)))
+                await vm.Mapper.Run(Actions.EffectsWindow).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.EffectsWindow))
             .AddTo(ref _disposables);
         
         Observable.FromEventHandler<RoutedEventArgs>(h => CropButton.Click += h,
@@ -88,8 +88,8 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.Crop().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(QuickEditingDialog), nameof(FunctionsMapper.Crop)))
+                await vm.Mapper.Run(Actions.Crop).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.Crop))
             .AddTo(ref _disposables);
         
         Observable.FromEventHandler<RoutedEventArgs>(h => SlideshowButton.Click += h,
@@ -101,8 +101,8 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.Slideshow().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(QuickEditingDialog), nameof(FunctionsMapper.Slideshow)))
+                await vm.Mapper.Run(Actions.Slideshow).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.Slideshow))
             .AddTo(ref _disposables);
                 
         Observable.FromEventHandler<RoutedEventArgs>(h => ShowDockedGalleryButton.Click += h,
@@ -114,8 +114,8 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.OpenCloseDockedGallery().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(QuickEditingDialog), nameof(FunctionsMapper.OpenCloseDockedGallery)))
+                await vm.Mapper.Run(Actions.OpenCloseDockedGallery).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.OpenCloseDockedGallery))
             .AddTo(ref _disposables);
         
         Observable.FromEventHandler<RoutedEventArgs>(h => SideBySideButton.Click += h,
@@ -127,8 +127,8 @@ public partial class QuickEditingDialog : AnimatedPopUp
                 {
                     return;
                 }
-                await vm.Mapper.SideBySide().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(QuickEditingDialog), nameof(FunctionsMapper.SideBySide)))
+                await vm.Mapper.Run(Actions.SideBySide).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(QuickEditingDialog), Actions.SideBySide))
             .AddTo(ref _disposables);
     }
 

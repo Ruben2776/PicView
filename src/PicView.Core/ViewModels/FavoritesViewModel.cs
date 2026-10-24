@@ -1,6 +1,7 @@
 using ObservableCollections;
 using PicView.Core.Favorites;
 using R3;
+using PicView.Core.Keybindings;
 
 namespace PicView.Core.ViewModels;
 
@@ -27,7 +28,7 @@ public class FavoritesViewModel : IDisposable
 
     private async ValueTask OpenFavoritesFile(Unit arg1, CancellationToken arg2)
     {
-        await _vm.Mapper.ShowFavoritesFile().ConfigureAwait(false);
+        await _vm.Mapper.Run(Actions.ShowFavoritesFile).ConfigureAwait(false);
     }
 
     private async ValueTask ClearFavorites(Unit arg1, CancellationToken arg2)

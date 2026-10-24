@@ -7,6 +7,7 @@ using PicView.Core.IPlatform;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using MouseButton = PicView.Avalonia.Input.MouseButton;
+using PicView.Core.Keybindings;
 
 namespace PicView.Tests.Input;
 
@@ -86,7 +87,7 @@ public class KeybindRouterTests
 
         await Router().KeyDownAsync(InputDispatch.CancelKeybind, null);
 
-        Assert.Equal([nameof(IFunctionsMapper.Close)], _calls);
+        Assert.Equal([Actions.Close], _calls);
     }
 
     [Fact]
@@ -97,7 +98,7 @@ public class KeybindRouterTests
 
         await router.KeyDownAsync(InputDispatch.CancelKeybind, null);
 
-        Assert.DoesNotContain(nameof(IFunctionsMapper.Close), _calls);
+        Assert.DoesNotContain(Actions.Close, _calls);
     }
 
     [Fact]
@@ -120,7 +121,7 @@ public class KeybindRouterTests
 
         await Router().KeyDownAsync(InputDispatch.CancelKeybind, null);
 
-        Assert.Equal([nameof(IFunctionsMapper.Close)], _calls);
+        Assert.Equal([Actions.Close], _calls);
         Assert.Empty(_windowModeCalls);
     }
 
@@ -132,7 +133,7 @@ public class KeybindRouterTests
 
         await Router().KeyDownAsync(InputDispatch.CancelKeybind, null);
 
-        Assert.Equal([nameof(IFunctionsMapper.Close)], _calls);
+        Assert.Equal([Actions.Close], _calls);
         Assert.Empty(_windowModeCalls);
     }
 
@@ -147,7 +148,7 @@ public class KeybindRouterTests
         await router.KeyDownAsync(InputDispatch.CancelKeybind, null);
 
         Assert.Empty(_windowModeCalls);
-        Assert.DoesNotContain(nameof(IFunctionsMapper.Close), _calls);
+        Assert.DoesNotContain(Actions.Close, _calls);
     }
 
     [Fact]
@@ -179,12 +180,12 @@ public class KeybindRouterTests
         await router.KeyDownAsync(InputDispatch.CancelKeybind, null);
 
         Assert.True(closed);
-        Assert.DoesNotContain(nameof(IFunctionsMapper.Close), _calls);
+        Assert.DoesNotContain(Actions.Close, _calls);
 
         await router.KeyUpAsync(Key.Escape);
         await router.KeyDownAsync(InputDispatch.CancelKeybind, null);
 
-        Assert.Contains(nameof(IFunctionsMapper.Close), _calls);
+        Assert.Contains(Actions.Close, _calls);
     }
 
     [Fact]
@@ -214,7 +215,7 @@ public class KeybindRouterTests
 
         Assert.False(router.IsKeyHeldDown);
         await router.KeyDownAsync(InputDispatch.CancelKeybind, null);
-        Assert.Contains(nameof(IFunctionsMapper.Close), _calls);
+        Assert.Contains(Actions.Close, _calls);
     }
 
     [AvaloniaFact]

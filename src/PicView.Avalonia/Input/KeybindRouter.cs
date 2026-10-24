@@ -227,7 +227,7 @@ public sealed class KeybindRouter
 
         if (vm.Mapper is not null)
         {
-            await vm.Mapper.Close().ConfigureAwait(false);
+            await vm.Mapper.Run(Actions.Close).ConfigureAwait(false);
         }
     }
 

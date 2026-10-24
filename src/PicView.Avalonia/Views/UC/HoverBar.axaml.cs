@@ -13,6 +13,7 @@ using PicView.Core.DebugTools;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using R3;
+using PicView.Core.Keybindings;
 
 namespace PicView.Avalonia.Views.UC;
 
@@ -255,7 +256,7 @@ public partial class HoverBar : UserControl, IDisposable
             }
             else if (props.IsLeftButtonPressed)
             {
-                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.SettingsWindow().ConfigureAwait(true);
+                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.Run(Actions.SettingsWindow).ConfigureAwait(true);
             }
         }
         else if (ImageMenuButton.IsPointerOver)

@@ -2,10 +2,10 @@
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Functions;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
 using R3;
+using PicView.Core.Keybindings;
 
 namespace PicView.Avalonia.Views.UC.PopUps;
 
@@ -30,8 +30,8 @@ public partial class QuickSettingsDialog : AnimatedPopUp
                     return;
                 }
 
-                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.SettingsWindow().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(QuickSettingsDialog), nameof(FunctionsMapper.SettingsWindow)))
+                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.Run(Actions.SettingsWindow).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(QuickSettingsDialog), Actions.SettingsWindow))
             .AddTo(ref _disposables);
         
         Observable.FromEventHandler<RoutedEventArgs>(h => AboutButton.Click += h,
@@ -44,8 +44,8 @@ public partial class QuickSettingsDialog : AnimatedPopUp
                     return;
                 }
 
-                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.AboutWindow().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(QuickSettingsDialog), nameof(FunctionsMapper.AboutWindow)))
+                await core.MainWindows.ActiveWindow.CurrentValue.Mapper.Run(Actions.AboutWindow).ConfigureAwait(false);
+            }, DebugHelper.LogError(nameof(QuickSettingsDialog), Actions.AboutWindow))
             .AddTo(ref _disposables);
     }
 
