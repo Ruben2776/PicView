@@ -1,8 +1,4 @@
-﻿#if DEBUG
-using System.Diagnostics;
-#endif
-using System.IO.Pipes;
-using System.Runtime.InteropServices;
+﻿using System.IO.Pipes;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
@@ -10,6 +6,9 @@ using PicView.Avalonia.CustomControls;
 using PicView.Core.DebugTools;
 using PicView.Core.ProcessHandling;
 using PicView.Core.ViewModels;
+#if DEBUG
+using System.Diagnostics;
+#endif
 
 namespace PicView.Avalonia.Navigation;
 
@@ -28,7 +27,7 @@ public static class IPC
     private const string PipeName = "PicViewPipe";
 
     private static bool? _isRunning;
-    
+
     public static void SendWithArgs(string[] args)
     {
         if (OperatingSystem.IsMacOS())
@@ -41,7 +40,7 @@ public static class IPC
             RetrySendingArgs(args);
         }
     }
-    
+
 
     private static void RetrySendingArgs(string[] args)
     {
@@ -107,6 +106,7 @@ public static class IPC
                 DebugHelper.LogDebug(nameof(IPC), nameof(SendArgumentToRunningInstance), ex);
                 return false;
             }
+
             return true;
         }
     }
@@ -128,7 +128,7 @@ public static class IPC
             _isRunning = true;
             return;
         }
-        
+
         _isRunning = true;
         do
         {
@@ -137,47 +137,46 @@ public static class IPC
                 var pipeServer = new NamedPipeServerStream(PipeName);
                 await using (pipeServer.ConfigureAwait(false))
                 {
-
                     // Wait for a connection from another instance
                     await pipeServer.WaitForConnectionAsync().ConfigureAwait(false);
 
-                using var reader = new StreamReader(pipeServer);
+                    using var reader = new StreamReader(pipeServer);
 
-                // Read and process incoming arguments
-                while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line)
-                {
-                    if (!_isRunning.Value)
+                    // Read and process incoming arguments
+                    while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line)
                     {
-                        // Setting to open in same window turned off, start new process instead
-                        ProcessHelper.StartNewProcess(line);
-                        return;
-                    }
-                    // Log the received argument if in debug mode
+                        if (!_isRunning.Value)
+                        {
+                            // Setting to open in same window turned off, start new process instead
+                            ProcessHelper.StartNewProcess(line);
+                            return;
+                        }
+                        // Log the received argument if in debug mode
 #if DEBUG
-                    Trace.WriteLine("Received argument: " + line);
+                        Trace.WriteLine("Received argument: " + line);
 #endif
 
-                    var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
-                    if (core is null)
-                    {
-                        return;
+                        var core = await Dispatcher.UIThread.InvokeAsync(() =>
+                            Application.Current.DataContext as CoreViewModel);
+                        if (core is null)
+                        {
+                            return;
+                        }
+
+                        // Need to stop taskbar progress if it's running
+                        // Otherwise the new taskbar progress will not be updated
+                        core.PlatformService.StopTaskbarProgress();
+                        var desktop = await Dispatcher.UIThread.InvokeAsync(() =>
+                            Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
+                        var mainWindow = await Dispatcher.UIThread.InvokeAsync(() => desktop?.MainWindow as MainWindow);
+                        if (mainWindow is null)
+                        {
+                            return;
+                        }
+
+                        await SourceOpener.OpenAsync(mainWindow, core, line).ConfigureAwait(false);
+                        await Dispatcher.UIThread.InvokeAsync(mainWindow.Activate, DispatcherPriority.Render);
                     }
-                    // Need to stop taskbar progress if it's running
-                    // Otherwise the new taskbar progress will not be updated
-                    core.PlatformService.StopTaskbarProgress();
-                    var desktop = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime);
-                    var activeWindow = core.MainWindows.ActiveWindow.CurrentValue;
-                    var mainWindow = await Dispatcher.UIThread.InvokeAsync(() => desktop?.MainWindow as MainWindow);
-                    if (mainWindow is null)
-                    {
-                        return;
-                    }
-                    await SourceOpener.OpenAsync(mainWindow, core, line).ConfigureAwait(false);
-                    await Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        desktop?.MainWindow.Activate();
-                    });
-                }
                 }
             }
             catch (Exception ex)
@@ -185,8 +184,7 @@ public static class IPC
                 DebugHelper.LogDebug(nameof(IPC), nameof(StartListeningForArguments), ex);
                 return;
             }
-        }
-        while (true); // Continuously listen for incoming connections
+        } while (true); // Continuously listen for incoming connections
     }
 
     public static void StopListening()
