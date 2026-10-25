@@ -85,7 +85,7 @@ public static class UpdateImage
         {
             return;
         }
-        ChangeImageInternal(mainWindow, tabViewModel, vm, imageViewer);
+        ChangeImageInternal(mainWindow, tabViewModel, imageViewer);
     }
     
     public static void ChangeImageWithTitle(MainWindow mainWindow, TabViewModel tabViewModel, MainWindowViewModel vm)
@@ -94,7 +94,7 @@ public static class UpdateImage
         {
             return;
         }
-        ChangeImageInternal(mainWindow, tabViewModel, vm, imageViewer);
+        ChangeImageInternal(mainWindow, tabViewModel, imageViewer);
         ChangeTabTitleToNewImage(tabViewModel);
     }
 
@@ -104,8 +104,7 @@ public static class UpdateImage
         tabViewModel.UpdateTabTitle();
     }
 
-    private static void ChangeImageInternal(MainWindow mainWindow, TabViewModel tabViewModel, MainWindowViewModel vm,
-        ImageViewer imageViewer)
+    private static void ChangeImageInternal(MainWindow mainWindow, TabViewModel tabViewModel, ImageViewer imageViewer)
     {
         if (Settings.Zoom.ResetZoomOnChange)
         {

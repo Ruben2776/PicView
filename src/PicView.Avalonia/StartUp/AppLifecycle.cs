@@ -194,8 +194,7 @@ public sealed class AppLifecycle
         // Without a launch file to wait for, every one that arrives is a later launch
         _launchFileArrived = !launchFileMayFollow;
         ApplySharedSettings(settingsExists);
-        var (window, settingUp) = MainWindows.OpenAtAppStart(source,
-            launchFileMayFollow ? () => _launchFileArrived : null);
+        var (window, settingUp) = MainWindows.OpenAtAppStart(source, launchFileMayFollow ? () => _launchFileArrived : null);
         _firstWindow = window;
         if (_launchFileBeforeStart is { } early)
         {

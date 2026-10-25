@@ -1,5 +1,4 @@
-﻿using Avalonia.Media.Imaging;
-using PicView.Avalonia.CustomControls;
+﻿using PicView.Avalonia.CustomControls;
 using PicView.Core.ImageDecoding;
 using PicView.Core.ImageTransformations;
 using PicView.Core.ViewModels;

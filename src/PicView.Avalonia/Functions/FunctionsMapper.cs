@@ -478,7 +478,7 @@ public class FunctionsMapper : IActionRunner
     /// <inheritdoc cref="ToggleUIVisibility.ToggleInterface(MainWindowViewModel, MainWindow)" />
     private async ValueTask ToggleInterface()
     {
-        await ToggleUIVisibility.ToggleInterface(_vm, _mainWindow).ConfigureAwait(false);
+        ToggleUIVisibility.ToggleInterface(_vm, _mainWindow);
         await SaveSettingsAsync().ConfigureAwait(false);
     }
     

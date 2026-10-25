@@ -33,7 +33,7 @@ public static class ToggleUIVisibility
         }
     }
 
-    public static async ValueTask ToggleInterface(MainWindowViewModel vm, MainWindow mainWindow)
+    public static void ToggleInterface(MainWindowViewModel vm, MainWindow mainWindow)
     {
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         if (Settings.UIProperties.ShowInterface)
