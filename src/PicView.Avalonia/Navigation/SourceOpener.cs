@@ -71,6 +71,13 @@ public static class SourceOpener
         try
         {
             result = await tabs.LoadFromStringAsync(source, rootDirectory: rootDirectory).ConfigureAwait(false);
+            if (Settings.WindowProperties.AutoFit)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    mainWindow.WindowFitter.Center();
+                });
+            }
         }
         finally
         {

@@ -183,12 +183,21 @@ public static class UpdateImage
             {
                 tabViewModel.CurrentView.Value = new ImageViewer();
                 mainWindow.WindowFitter.Refit();
+                if (Settings.WindowProperties.KeepCentered)
+                {
+                    mainWindow.WindowFitter.Center();
+                }
                 return;
             }
 
             imageViewer.ResetZoomSlim();
             mainWindow.WindowFitter.Refit();
             imageViewer.UpdateMotionPhoto(tabViewModel);
+
+            if (Settings.WindowProperties.KeepCentered)
+            {
+                mainWindow.WindowFitter.Center();
+            }
         });
         
         var zoom = tabViewModel.ZoomLevel.CurrentValue;

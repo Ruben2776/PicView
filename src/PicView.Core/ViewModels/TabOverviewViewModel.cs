@@ -483,35 +483,6 @@ public class TabOverviewViewModel
     public async ValueTask LoadFromFileAsync(string file, TabViewModel? senderTab = null) => 
         await LoadFromFileAsync(new FileInfo(file), senderTab).ConfigureAwait(false);
 
-    public async ValueTask LoadFromDirectoryAsync(string file, TabViewModel? senderTab = null)
-    {
-        if (SharedNavigation is null)
-        {
-            return;
-        }
-        var tab = senderTab ?? ActiveTab.Value;
-        var ct = tab.GetTabCancellation();
-        await SharedNavigation.LoadFromDirectoryAsync(new FileInfo(file), tab, ct).ConfigureAwait(false);
-    }
-    
-    public async ValueTask LoadFromIndexAsync(int index, TabViewModel? senderTab = null)
-    {
-        var tab = senderTab ?? ActiveTab.Value;
-        var ct = tab.GetTabCancellation();
-        await tab.ImageIterator.IterateToIndexAsync(index, ct).ConfigureAwait(false);
-    }
-    
-    public async ValueTask<bool> LoadLastFileAsync()
-    {
-        if (SharedNavigation is null)
-        {
-            return false;
-        }
-        var tab = ActiveTab.Value;
-        var ct = tab.GetTabCancellation();
-        return await SharedNavigation.LoadLastFileAsync(tab, ct).ConfigureAwait(false);
-    }
-
     public async ValueTask<bool> LoadFromArchiveAsync(string source, TabViewModel? senderTab = null)
     {
         if (SharedNavigation is null)

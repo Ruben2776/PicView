@@ -460,23 +460,24 @@ public class NavigationService(
         try
         {
             await client.StartDownloadAsync(ct.Token).ConfigureAwait(false);
-            
+
             platformService.StopTaskbarProgress();
 
             if (ct.IsCancellationRequested)
             {
                 return LoadResult.Failed();
             }
-            
-            var model = await imageModelLoader.GetImageModelAsync(new FileInfo(destPath), ct.Token).ConfigureAwait(false);
+
+            var model = await imageModelLoader.GetImageModelAsync(new FileInfo(destPath), ct.Token)
+                .ConfigureAwait(false);
             tab.Display(model);
-            
+
             // Set titles to filename after successful load
             tab.SourceURL = url;
             tab.SingleImageType = SingleImageType.Url;
             tab.Gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
             tab.UpdateTabTitle();
-            
+
             tab.CanNavigateBackwards.Value = false;
             tab.CanNavigateForwards.Value = false;
 
@@ -495,6 +496,10 @@ public class NavigationService(
             platformService.StopTaskbarProgress();
             tab.TabTitle.Value = TranslationManager.Translation?.ErrorLoadingImage ?? "Error";
             return LoadResult.Failed(e.Message);
+        }
+        finally
+        {
+            tab.UpdateTabTitle();
         }
     }
 

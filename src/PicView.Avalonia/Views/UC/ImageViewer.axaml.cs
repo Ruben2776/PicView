@@ -61,18 +61,17 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         ImageScrollViewer.ScrollChanged += OnMotionPhotoBadgeScrollChanged;
         UpdateMotionPhotoBadgePositions();
 
+        if (Application.Current.ApplicationLifetime is not ClassicDesktopStyleApplicationLifetime 
+                { MainWindow: MainWindow mainWindow })
+        {
+            return;
+        }
         // Zooming and panning move the images through render transforms without
         // triggering layout, so observe the transform values while they change. The
         // child's render transform is read because animated zooms interpolate it
         // while the control's own properties already hold the target values.
         // The frame provider ticks with the render loop, so this only runs while
         // frames are actually being rendered (i.e. while something visually moves)
-        //var frameProvider = (TopLevel.GetTopLevel(this) as MainWindow)?.FrameProvider;
-        if (Application.Current.ApplicationLifetime is not ClassicDesktopStyleApplicationLifetime 
-                { MainWindow: MainWindow mainWindow })
-        {
-            return;
-        }
         Observable.EveryValueChanged(ZoomPanControl, zoom =>
             {
                 if (zoom.Child?.RenderTransform is TransformGroup group &&
