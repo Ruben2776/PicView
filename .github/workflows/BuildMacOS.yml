@@ -19,7 +19,7 @@ jobs:
 
       # Step 2: Setup .NET 11 SDK
       - name: Setup .NET 11 SDK
-        uses: actions/setup-dotnet@v7
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '11.x'
 
