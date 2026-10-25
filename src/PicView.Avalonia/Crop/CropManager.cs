@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using PicView.Avalonia.CustomControls;
+using PicView.Core.ImageDecoding;
 using PicView.Core.ImageTransformations;
 using PicView.Core.ViewModels;
 
@@ -32,18 +33,14 @@ public static class CropManager
 
     public static bool SetIfCropEnabled(MainWindow mainWindow)
     {
-        if (mainWindow.UIHelper.GetMainView.DataContext is not MainWindowViewModel vm)
+        if (IsCropping(mainWindow) || mainWindow.UIHelper.GetMainView.DataContext is not MainWindowViewModel vm)
         {
             return false;
         }
-        if (IsCropping(mainWindow))
-        {
-            return false;
-        }
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         
-        var tab = vm.WindowTabs.ActiveTab.Value;
-        
-        if (tab.Image.CurrentValue is not Bitmap || Settings.ImageScaling.ShowImageSideBySide)
+        // Only allow cropping of bitmaps, not animated images or SVGs. TODO add support for cropping animated images
+        if (tab.ImageType.CurrentValue is not ImageType.Bitmap || Settings.ImageScaling.ShowImageSideBySide)
         {
             tab.ShouldCropBeEnabled.Value = false;
             return false;
