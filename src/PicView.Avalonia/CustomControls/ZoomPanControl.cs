@@ -365,11 +365,6 @@ public class ZoomPanControl : Decorator
     private void UpdateZoomLevel()
     {
         ZoomLevel = Scale * FittingScale * 100;
-        // if (DataContext is TabViewModel vm)
-        // {
-        //     vm.PicViewer.ZoomValue.Value = ZoomLevel;
-        //     vm.ZoomLevel.Value = ZoomLevel;
-        // }
     }
 
     /// <summary>

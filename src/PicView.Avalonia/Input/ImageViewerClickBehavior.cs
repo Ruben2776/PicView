@@ -89,6 +89,13 @@ public static class ImageViewerClickBehavior
                     {
                         return;
                     }
+
+                    if (imageViewer.ZoomPanControl.Scale is not 1.0)
+                    {
+                        // Don't conflict with panning when zoomed
+                        return;
+                    }
+                    
                     var point = e.GetPosition(imageViewer);
                     var isLeftSide = point.X < imageViewer.Bounds.Width / 2;
                     var isRightSide = point.X >= imageViewer.Bounds.Width / 2;

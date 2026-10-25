@@ -3,9 +3,9 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Core.DebugTools;
+using PicView.Core.ImageTransformations;
 using PicView.Core.IPlatform;
 using PicView.Core.ViewModels;
-using Orientation = PicView.Core.ImageTransformations.Orientation;
 
 namespace PicView.Avalonia.Clipboard;
 
