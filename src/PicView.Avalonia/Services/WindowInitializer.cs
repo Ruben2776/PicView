@@ -156,7 +156,7 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         if (core.SettingsViewModel.SettingsWindowConfig is null)
         {
             core.SettingsViewModel.SettingsWindowConfig = new SettingsWindowConfig();
-            await core.SettingsViewModel.SettingsWindowConfig.LoadAsync().ConfigureAwait(false);
+            core.SettingsViewModel.SettingsWindowConfig.Load();
         }
 
         var config = core.SettingsViewModel.SettingsWindowConfig;

@@ -11,16 +11,16 @@ public class SettingsWindowConfig() : ConfigFile("SettingsWindow.json")
 {
     public SettingsWindowProperties? WindowProperties { get; private set;  }
 
-    public async Task LoadAsync()
+    public void Load()
     {
         CorrectPath ??= ConfigFileManager.ResolveDefaultConfigPath(this);
         try
         {
             if (File.Exists(CorrectPath))
             {
-                var jsonString = await File.ReadAllTextAsync(CorrectPath).ConfigureAwait(false);
+                var bytes = File.ReadAllBytes(CorrectPath);
                 if (JsonSerializer.Deserialize(
-                        jsonString, typeof(SettingsWindowProperties), SettingsWindowGenerationContext.Default) is SettingsWindowProperties settings)
+                        bytes, typeof(SettingsWindowProperties), SettingsWindowGenerationContext.Default) is SettingsWindowProperties settings)
                 {
                     WindowProperties = settings;
                 }
