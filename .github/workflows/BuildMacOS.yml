@@ -15,11 +15,11 @@ jobs:
     steps:
       # Step 1: Checkout the code
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       # Step 2: Setup .NET 11 SDK
       - name: Setup .NET 11 SDK
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v7
         with:
           dotnet-version: '11.x'
 
@@ -33,14 +33,14 @@ jobs:
       # minutes, cache hits are instant.
       - name: Cache picview-ffmpeg (osx-arm64)
         id: cache-ffmpeg-osx-arm64
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: Build/ffmpeg-native/osx-arm64
           key: picview-ffmpeg-osx-arm64-${{ hashFiles('Build/Build-FFmpegNative.ps1', 'Build/ffmpeg/**', 'Native/ffmpeg/**') }}
 
       - name: Cache picview-ffmpeg (osx-x64)
         id: cache-ffmpeg-osx-x64
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: Build/ffmpeg-native/osx-x64
           key: picview-ffmpeg-osx-x64-${{ hashFiles('Build/Build-FFmpegNative.ps1', 'Build/ffmpeg/**', 'Native/ffmpeg/**') }}
@@ -112,7 +112,7 @@ jobs:
 
       # Step 10: Upload x64 artifacts
       - name: Upload x64 artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: PicView-v${{steps.get-version.outputs.version}}-macOS-x64
           path: |
