@@ -146,7 +146,7 @@ public sealed class MainWindowLifecycle
         if (window.WindowModeState.AutoFit)
         {
             // If this is not called, the window will have jerky behavior on next resize.
-            Dispatcher.UIThread.Post(() => window.WindowFitter.Center(), DispatcherPriority.Input);
+            Dispatcher.UIThread.Post(() => window.WindowFitter.Center(), DispatcherPriority.Render);
         }
     }
 
