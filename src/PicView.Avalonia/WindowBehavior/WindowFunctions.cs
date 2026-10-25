@@ -248,8 +248,10 @@ public static class WindowFunctions
             else if (properties is { Left: not null, Top: not null })
             {
                 window.WindowStartupLocation = WindowStartupLocation.Manual;
-                window.Position = new PixelPoint(properties.Left.GetValueOrDefault(),
-                    properties.Top.GetValueOrDefault());
+                // If the values are negative, they can be outside the screen
+                var left = properties.Left < 0 ? 0 : properties.Left.Value;
+                var top = properties.Top < 0 ? 0 : properties.Top.Value;
+                window.Position = new PixelPoint(left, top);
             }
             else
             {
