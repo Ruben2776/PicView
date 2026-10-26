@@ -45,7 +45,7 @@ public class NavigationService(
                 return;
             }
 
-            if (!SideBySidePair.IsEnabled)
+            if (!Settings.ImageScaling.ShowImageSideBySide)
             {
                 tab.Display(model);
             }
@@ -55,7 +55,7 @@ public class NavigationService(
             var index = SideBySidePair.IndexOf(retrieved, fileInfo) ?? 0;
             tab.ImageIterator.Initialize(retrieved, index);
 
-            if (SideBySidePair.IsEnabled)
+            if (Settings.ImageScaling.ShowImageSideBySide)
             {
                 if (SideBySidePair.PartnerOf(index, tab.ImageIterator.Files.Count) is { } nextIteration)
                 {
