@@ -401,11 +401,11 @@ public class GalleryAnimationControl : UserControl
 
     private void SetDockedThumbPosition(GalleryDockPosition dock)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (TabViewModel is not { } tab)
         {
             return;
         }
-        var gallery = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.Value.Gallery;
+        var gallery = tab.Gallery;
 
         // Reset all dock flags
         gallery.IsTopDocked.Value = gallery.IsBottomDocked.Value =

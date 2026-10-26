@@ -502,7 +502,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         }
 
         vm.TopTitlebarViewModel.CloseDropDownMenu();
-        UIHelper.GetMainView.MainPanel.Children.Add(new GalleryItemSizeSlider());
+        UIHelper.GetMainView.MainPanel.Children.Add(new GalleryItemSizeSlider(vm.WindowTabs.ActiveTab.CurrentValue.Gallery));
     }
     
     public void AddFavoriteDialog(string? initialPath = null)

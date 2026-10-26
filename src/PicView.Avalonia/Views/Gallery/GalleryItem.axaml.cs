@@ -27,14 +27,21 @@ public partial class GalleryItem : NavigateAbleItem
     public GalleryItem()
     {
         InitializeComponent();
-        if (Application.Current.DataContext is not CoreViewModel core)
+    }
+
+    protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToLogicalTree(e);
+        // The gallery this item is shown in, which belongs to the tab of its image viewer
+        if (Application.Current.DataContext is not CoreViewModel core
+            || this.FindLogicalAncestorOfType<GalleryAnimationControl>()?.DataContext is not TabViewModel { Gallery: var gallery })
         {
             return;
         }
 
         core.GallerySettings.DockedGalleryStretchMode.Subscribe(x =>
         {
-            if (!core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked.CurrentValue)
+            if (!gallery.IsGalleryDocked.CurrentValue)
             {
                 return;
             }
@@ -50,7 +57,7 @@ public partial class GalleryItem : NavigateAbleItem
         
         core.GallerySettings.ExpandedGalleryStretchMode.Subscribe(x =>
         {
-            if (!core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryExpanded.CurrentValue)
+            if (!gallery.IsGalleryExpanded.CurrentValue)
             {
                 return;
             }
@@ -334,5 +341,7 @@ public partial class GalleryItem : NavigateAbleItem
         _contextMenu?.Opened -= GalleryContextMenuOnOpened;
         _contextMenu?.Closed -= GalleryContextMenuOnClosed;
         _disposables.Dispose();
+        // A disposed bag disposes what is added to it, so start a new one for when the item is shown again
+        _disposables = default;
     }
 }
