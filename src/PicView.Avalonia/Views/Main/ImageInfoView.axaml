@@ -1077,7 +1077,8 @@
                                     Width="{CompiledBinding InfoWindow.TextWidth}"
                                     Margin="0,8,2,0"
                                     Classes="txt"
-                                    Text="Comment" />
+                                    Text="{CompiledBinding Translation.Comment.Value,
+                                                           Mode=OneWay}" />
                                 <customControls:FuncTextBox
                                     x:Name="CommentBox"
                                     Width="{CompiledBinding InfoWindow.TextBoxXxlWidth.Value}"
