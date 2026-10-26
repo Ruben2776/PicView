@@ -183,12 +183,26 @@ public class SharedImageCacheTests
         var old = await _cache.GetAsync(Owner, files[0], TestContext.Current.CancellationToken);
 
         _cache.Invalidate(files[0].FullName);
-        _cache.ForceDisposalQueue();
         var fresh = await _cache.GetAsync(Owner, files[0], TestContext.Current.CancellationToken);
+        _cache.ForceDisposalQueue();
 
         Assert.True(Probe(old!).IsDisposed);
         Assert.NotSame(old, fresh);
         Assert.Equal(2, _loadCounts[files[0].FullName]);
+    }
+
+    [Fact]
+    public async Task Invalidate_ImageStillHeldByOwner_IsNotDisposed()
+    {
+        // A file changed on disk, e.g. by writing its rating, while its tab still shows the old image
+        var files = Files(1);
+        _cache.SetFiles(Owner, files);
+        var shown = await _cache.GetAsync(Owner, files[0], TestContext.Current.CancellationToken);
+
+        _cache.Invalidate(files[0].FullName);
+        _cache.ForceDisposalQueue();
+
+        Assert.False(Probe(shown!).IsDisposed);
     }
 
     [Fact]

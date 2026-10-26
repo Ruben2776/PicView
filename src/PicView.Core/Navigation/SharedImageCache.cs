@@ -138,6 +138,10 @@ public sealed class SharedImageCache
     /// <summary>
     /// Drops the cached image of a file, e.g., after it was changed on disk, so the next request loads it again.
     /// </summary>
+    /// <remarks>
+    /// Owners keep their reference to the old image, as a tab may still be showing it; it is released when the new
+    /// image takes its place in the owner, or when the owner moves away from it, like any other image.
+    /// </remarks>
     public void Invalidate(string path)
     {
         if (!_pathLookup.TryRemove(path, out var value))
@@ -145,7 +149,10 @@ public sealed class SharedImageCache
             return;
         }
 
-        Detach(value);
+        if (value.ReferenceCount is 0 && !value.IsLoading)
+        {
+            ScheduleDisposal(value);
+        }
     }
 
     #endregion
