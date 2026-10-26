@@ -125,7 +125,7 @@
   "Enter": "Enter",
   "Esc": "Esc",
   "EscCloseTooltip": "Zapre trenutno odprto okno/meni",
-  "EscLeavesFullscreen": "Leave fullscreen instead of closing when pressing 'Esc'",
+  "EscLeavesFullscreen": "Ob pritisku na tipko 'Esc' zapusti celozaslonski način, namesto da bi program zaprl",
   "ExifVersion": "Exif različica",
   "ExpandedGalleryItemSize": "Velikost sličic",
   "ExposureBias": "Kompenzacija osvetlitve",
