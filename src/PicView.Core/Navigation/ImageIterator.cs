@@ -360,7 +360,18 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             Cache.ReleaseImages(_tab.Id);
         }
 
+        if (Settings.ImageScaling.ShowImageSideBySide)
+        {
+            var (iteration,  secondary, _) = SideBySidePair.Navigate(index, Files.Count, 
+                NavigateTo.Next, SkipAmount.None);
+            if (secondary.HasValue)
+            {
+                await IterateToIndicesAsync(iteration, secondary.Value, ct).ConfigureAwait(false);
+            }
+            return;
+        }
         await IterateToIndexAsync(index, ct).ConfigureAwait(false);
+        
     }
 
     public async ValueTask NavigateByIncrementsAsync(SkipAmount skipAmount, bool forwards, CancellationTokenSource ct)

@@ -279,7 +279,7 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
             GalleryManager.ToggleGallery(gallery);
         }
 
-        await tab.ImageIterator!.SkipToIndexAsync(index, tab.GetTabCancellation())
+        await tab.ImageIterator.SkipToIndexAsync(index, tab.GetTabCancellation())
             .ConfigureAwait(false);
     }
 

@@ -204,8 +204,20 @@ internal sealed class FolderChanges(TabViewModel tab)
             targetIndex = Math.Clamp(targetIndex, 0, iterator.Files.Count - 1);
             if (tab.IsFileWatcherNavigationEnabled)
             {
-                await iterator.IterateToIndexAsync(targetIndex, tab.GetTabCancellation())
-                    .ConfigureAwait(false);
+                if (Settings.ImageScaling.ShowImageSideBySide)
+                {
+                    var (iteration,  secondary, _) = SideBySidePair.Navigate(targetIndex,
+                        tab.ImageIterator.Files.Count, NavigateTo.Next, SkipAmount.None);
+                    if (secondary.HasValue)
+                    {
+                        await iterator.IterateToIndicesAsync(iteration, secondary.Value, tab.GetTabCancellation()).ConfigureAwait(false);
+                    }
+                }
+                else
+                {
+                    await iterator.IterateToIndexAsync(targetIndex, tab.GetTabCancellation())
+                        .ConfigureAwait(false);
+                }
             }
             else
             {
