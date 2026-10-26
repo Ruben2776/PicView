@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using PicView.Avalonia.CustomControls;
@@ -24,13 +25,15 @@ public partial class QuickSettingsDialog : AnimatedPopUp
                 h => AllSettingsButton.Click -= h)
             .SubscribeAwait(async (_, _) =>
             {
+                // Taken before closing, which takes the dialog out of its window
+                var vm = (TopLevel.GetTopLevel(this) as MainWindow)?.ViewModel;
                 _ = AnimatedClosing();
-                if (Application.Current.DataContext is not CoreViewModel core)
+                if (vm is null)
                 {
                     return;
                 }
 
-                await core.MainWindows.ActiveWindow.CurrentValue.ActionRunner.Run(Actions.SettingsWindow).ConfigureAwait(false);
+                await vm.ActionRunner.Run(Actions.SettingsWindow).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickSettingsDialog), Actions.SettingsWindow))
             .AddTo(ref _disposables);
         
@@ -38,13 +41,15 @@ public partial class QuickSettingsDialog : AnimatedPopUp
                 h => AboutButton.Click -= h)
             .SubscribeAwait(async (_, _) =>
             {
+                // Taken before closing, which takes the dialog out of its window
+                var vm = (TopLevel.GetTopLevel(this) as MainWindow)?.ViewModel;
                 _ = AnimatedClosing();
-                if (Application.Current.DataContext is not CoreViewModel core)
+                if (vm is null)
                 {
                     return;
                 }
 
-                await core.MainWindows.ActiveWindow.CurrentValue.ActionRunner.Run(Actions.AboutWindow).ConfigureAwait(false);
+                await vm.ActionRunner.Run(Actions.AboutWindow).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(QuickSettingsDialog), Actions.AboutWindow))
             .AddTo(ref _disposables);
     }

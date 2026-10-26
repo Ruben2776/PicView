@@ -12,14 +12,10 @@ namespace PicView.Avalonia.Views.UC.PopUps;
 public partial class QuickEditingDialog : AnimatedPopUp
 {
     private DisposableBag _disposables;
-    public QuickEditingDialog()
+    /// <param name="vm">The Main Window the dialog is shown in.</param>
+    public QuickEditingDialog(MainWindowViewModel vm)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-
-        DataContext = core.MainWindows.ActiveWindow.CurrentValue;
+        DataContext = vm;
         InitializeComponent();
         Loaded += OnLoaded;
     }

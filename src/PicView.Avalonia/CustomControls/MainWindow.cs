@@ -480,7 +480,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         }
         
         vm.TopTitlebarViewModel.CloseDropDownMenu();
-        UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog());
+        UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog(vm));
     }
     
     public void AddQuickSettingsDialog()

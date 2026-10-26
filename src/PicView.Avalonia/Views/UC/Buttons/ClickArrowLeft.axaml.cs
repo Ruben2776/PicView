@@ -19,15 +19,20 @@ public partial class ClickArrowLeft : UserControl
             {
                 ApplyLightTheme();
             }
-            if (Application.Current.DataContext is not CoreViewModel core)
+            if (Application.Current.DataContext is not CoreViewModel)
             {
                 return;
             }
             AddHandler(PointerPressedEvent, ManagePointerPressed, RoutingStrategies.Tunnel);
             PolyButton.Click += (_, _) =>
             {
-                core.MainWindows.ActiveWindow.CurrentValue.IsClickArrowLeftClicked = true;
-                core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.CloseDropDownMenu();
+                if (DataContext is not TabViewModel { ParentWindowContext: var vm })
+                {
+                    return;
+                }
+
+                vm.IsClickArrowLeftClicked = true;
+                vm.TopTitlebarViewModel.CloseDropDownMenu();
                 UIHelper.SetButtonInterval(PolyButton);
             };
             
