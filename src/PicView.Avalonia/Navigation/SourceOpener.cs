@@ -88,7 +88,7 @@ public static class SourceOpener
         {
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                ShowError(result);
+                ShowError(vm, result);
                 if (wasStartUpMenu)
                 {
                     tab.CurrentView.Value = new StartUpMenu();
@@ -113,11 +113,11 @@ public static class SourceOpener
     /// <summary>
     /// Tells the user why a source could not be opened, when there is a reason to tell. Call on the UI thread.
     /// </summary>
-    internal static void ShowError(LoadResult result)
+    internal static void ShowError(MainWindowViewModel vm, LoadResult result)
     {
         if (!string.IsNullOrWhiteSpace(result.Error))
         {
-            TooltipHelper.ShowTooltipMessage(result.Error, center: true, TimeSpan.FromSeconds(10));
+            TooltipHelper.ShowTooltipMessage(vm, result.Error, center: true, TimeSpan.FromSeconds(10));
         }
     }
 

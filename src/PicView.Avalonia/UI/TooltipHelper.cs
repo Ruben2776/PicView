@@ -130,18 +130,14 @@ public static class TooltipHelper
     /// <summary>
     /// Displays a tooltip message with the specified configuration.
     /// </summary>
+    /// <param name="vm">The Main Window to show the tooltip in.</param>
     /// <param name="message">The message content to be displayed in the tooltip.</param>
     /// <param name="center">Indicates whether the tooltip should be centered. Defaults to false.</param>
     /// <param name="interval">The time interval for which the tooltip is displayed. If null, a default interval is used.</param>
-    public static void ShowTooltipMessage(object message, bool center = false, TimeSpan? interval = null)
+    public static void ShowTooltipMessage(MainWindowViewModel vm, object message, bool center = false,
+        TimeSpan? interval = null)
     {
-        var core = Dispatcher.UIThread.Invoke(() => Application.Current.DataContext as CoreViewModel);
-        if (core is null)
-        {
-            return;
-        }
-
-        var toolTip = core.MainWindows.ActiveWindow.CurrentValue.ToolTip;
+        var toolTip = vm.ToolTip;
 
         if (interval is not null)
         {

@@ -384,23 +384,23 @@ public class PicBox : Control
 
     private Bitmap? GetBitmapFromAlternativeSources()
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not TabViewModel tab)
         {
             return null;
         }
 
-        return core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.GetCurrentSource() as Bitmap;
+        return tab.ParentWindowContext.WindowTabs.GetSourceFromFile(tab.Model?.FileInfo) as Bitmap;
     }
 
     private Size GetSizeFromAlternativeSources()
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not TabViewModel tab)
         {
             return new Size();
         }
 
-        var tabs = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs;
-        var model = tabs.ActiveTab.CurrentValue.Model;
+        var tabs = tab.ParentWindowContext.WindowTabs;
+        var model = tab.Model;
         
         if (model.FileInfo?.Exists != true)
         {

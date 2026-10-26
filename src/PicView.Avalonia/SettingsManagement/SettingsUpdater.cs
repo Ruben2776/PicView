@@ -255,7 +255,7 @@ public static class SettingsUpdater
         {
             return;
         }
-        var vm = core.MainWindows.ActiveWindow.Value;
+        var vm = mainWindow.ViewModel!;
         var tab = vm.WindowTabs.ActiveTab.Value;
         
         var showSideBySide = !Settings.ImageScaling.ShowImageSideBySide;
@@ -336,7 +336,7 @@ public static class SettingsUpdater
         var msg = value
             ? TranslationManager.Translation.LoopingEnabled
             : TranslationManager.Translation.LoopingDisabled;
-        TooltipHelper.ShowTooltipMessage(msg);
+        TooltipHelper.ShowTooltipMessage(vm, msg);
 
         var windowTabs = vm.WindowTabs;
         var tab = windowTabs.ActiveTab.CurrentValue;

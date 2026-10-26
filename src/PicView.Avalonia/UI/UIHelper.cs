@@ -17,11 +17,11 @@ namespace PicView.Avalonia.UI;
 public static class UIHelper
 {
     
-    public static void CloseMenus(CoreViewModel core)
+    public static void CloseMenus(MainWindowViewModel vm)
     {
-        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.CloseMenu();
-        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.CloseDropDownMenu();
-        core.MainWindows.ActiveWindow.CurrentValue.TopTitlebarViewModel.DropDownMenu.CloseMenus();
+        vm.TopTitlebarViewModel.CloseMenu();
+        vm.TopTitlebarViewModel.CloseDropDownMenu();
+        vm.TopTitlebarViewModel.DropDownMenu.CloseMenus();
     }
     
     public static ClickArrowRight? GetClickArrowRight(MainWindowViewModel vm)
@@ -42,14 +42,9 @@ public static class UIHelper
         return null;
     }
     
-    public static HoverBar? GetHoverBar()
+    public static HoverBar? GetHoverBar(MainWindowViewModel vm)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return null;
-        }
-
-        if (core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
         {
             return imageViewer.HoverBar;
         }

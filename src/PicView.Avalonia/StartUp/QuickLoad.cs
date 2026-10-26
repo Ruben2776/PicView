@@ -58,7 +58,7 @@ public static class QuickLoad
         {
             if (!result.IsLoaded)
             {
-                SourceOpener.ShowError(result);
+                SourceOpener.ShowError(mainWindow.ViewModel!, result);
                 ViewChangeHelper.SwitchToStartUpMenu(mainWindow.ViewModel!);
                 mainWindow.Show();
             }

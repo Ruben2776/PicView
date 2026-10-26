@@ -22,8 +22,7 @@ namespace PicView.Avalonia.Services;
 /// <param name="mainWindow">The Main Window whose Tool Windows this opens.</param>
 public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) : IPlatformSpecificUpdate
 {
-    private readonly SecondaryWindowOpener _toolWindows = new(() => mainWindow, provider, () => mainWindow,
-        () => (mainWindow.DataContext as MainWindowViewModel)?.Core);
+    private readonly SecondaryWindowOpener _toolWindows = new(() => mainWindow, provider, () => mainWindow);
 
     /// <summary>
     /// Opens the App Windows, shared by every Main Window. A window opened outside the lifecycle, as in some tests,
@@ -213,15 +212,14 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
 
     public void ShowSingleImageResizeWindow()
     {
-        if (CurrentCore() is not { } core)
+        if (mainWindow.ViewModel is not { } vm)
         {
             return;
         }
 
-        var activeWindow = core.MainWindows.ActiveWindow.CurrentValue;
-        activeWindow.ResizeImageViewModel ??= new ResizeImageViewModel();
+        vm.ResizeImageViewModel ??= new ResizeImageViewModel();
         _ = _toolWindows.OpenAsync(SecondaryWindowKind.SingleImageResize, new SecondaryWindowSpec(
-            factory => factory.CreateSingleImageResizeWindow(activeWindow), WindowOwner.MainWindowExceptMacOS)
+            factory => factory.CreateSingleImageResizeWindow(vm), WindowOwner.MainWindowExceptMacOS)
         {
             Configure = window => window.WindowStartupLocation = WindowStartupLocation.CenterOwner
         });

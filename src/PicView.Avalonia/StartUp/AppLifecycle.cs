@@ -51,9 +51,8 @@ public sealed class AppLifecycle
         _sharedFiles = sharedFiles;
         _exit = exit;
         MainWindows = new MainWindowLifecycle(core, provider, this);
-        AppWindows = new SecondaryWindowOpener(() => MainWindows.MostRecentlyActive, provider, () => null, () => core);
-        AppToolWindows = new SecondaryWindowOpener(() => MainWindows.MostRecentlyActive, provider, () => null,
-            () => core);
+        AppWindows = new SecondaryWindowOpener(() => MainWindows.MostRecentlyActive, provider, () => null);
+        AppToolWindows = new SecondaryWindowOpener(() => MainWindows.MostRecentlyActive, provider, () => null);
     }
 
     /// <summary>
