@@ -73,8 +73,9 @@ public sealed class WindowFitter(MainWindow window, Func<Size>? readContentSize 
 
         var position = WindowPlacement.AfterResize(_readScreen(), new PixelPosition(window.Position.X, window.Position.Y),
             oldSize.Width, oldSize.Height, newSize.Width, newSize.Height, Settings.WindowProperties.KeepCentered);
+        var prevPos = window.Position;
         window.Position = new PixelPoint(position.X, position.Y);
-        return true;
+        return window.Position != prevPos;
     }
 
     /// <summary>

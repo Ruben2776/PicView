@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using PicView.Core.DebugTools;
-using PicView.Core.Extensions;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSearch;
@@ -11,7 +10,6 @@ using PicView.Core.IPlatform;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation.Interfaces;
-using PicView.Core.Preloading;
 using PicView.Core.ViewModels;
 using R3;
 

@@ -619,14 +619,6 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         {
             SetCursorOnButton.AfterResize(this, vm, size.NewValue.Value.Width);
         }
-        if (vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDockedGalleryVisible.CurrentValue
-            && vm.WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue is ImageViewer imageViewer)
-        {
-            Dispatcher.UIThread.Post(() =>
-            {
-                imageViewer.GalleryView.GalleryItemsControl.ScrollToCenterOfCurrentItem();
-            }, DispatcherPriority.Render);
-        }
         var newWidth = size.NewValue.Value.Width;
         if (newWidth == Bounds.Width || 
             size.OldValue.Value.Width >= SizeDefaults.FullBtnBp && size.NewValue.Value.Width >= SizeDefaults.FullBtnBp)

@@ -140,17 +140,19 @@ public static class QuickLoad
         {
             await LoadSingleAsync(mainWindow, core, vm, tab, fileInfo, files, listFrom).ConfigureAwait(false);
         }
-
-        vm.IsLoadingIndicatorShown.Value = false;
-        UpdateImage.ChangeTabTitleToNewImage(tab);
-
+        
         if (vm.WindowModeState.CurrentValue.AutoFit)
         {
             Dispatcher.UIThread.Post(() =>
             {
                 mainWindow.WindowFitter.Center();
-            });
+            }, DispatcherPriority.Send);
         }
+
+        vm.IsLoadingIndicatorShown.Value = false;
+        UpdateImage.ChangeTabTitleToNewImage(tab);
+
+
 
         SourceOpener.ShowHoverBarIfNeeded(tab);
         if (Settings.UIProperties.IsTaskbarProgressEnabled)
@@ -190,10 +192,23 @@ public static class QuickLoad
 
             // Need to set size for the Maximize or fullscreen functions to work
             // Predict window size and center beforehand for pleasant opening when double-clicking a file
-            Dispatcher.UIThread.Post(() =>
+            if (vm.WindowModeState.CurrentValue.AutoFit)
             {
-                ShowSized(mainWindow, new PixelSizes(tab.Model.PixelWidth, tab.Model.PixelHeight));
-            }, DispatcherPriority.Send);
+                // Using await and DispatcherPriority.Render fixes cases where the window is not staying in place
+                // after resizing the next image
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    ShowSized(mainWindow, new PixelSizes(tab.Model.PixelWidth, tab.Model.PixelHeight));
+                }, DispatcherPriority.Render);
+            }
+            else
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    ShowSized(mainWindow, new PixelSizes(tab.Model.PixelWidth, tab.Model.PixelHeight));
+                }, DispatcherPriority.Send);
+            }
+
         }
         catch (Exception e)
         {

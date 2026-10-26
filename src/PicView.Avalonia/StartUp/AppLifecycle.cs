@@ -226,7 +226,7 @@ public sealed class AppLifecycle
                 }
             }
 
-            Application.Current?.Name = "PicView";
+            Application.Current.Name = "PicView";
         }, DispatcherPriority.Background);
 
         await Task.WhenAll(settingUp, loading).ConfigureAwait(true);

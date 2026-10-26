@@ -80,7 +80,7 @@ public static class SetCursorOnButton
                 continue;
             }
 
-            if (button.Find(window, vm) is { } control && Application.Current?.DataContext is CoreViewModel core)
+            if (button.Find(window, vm) is { } control && Application.Current.DataContext is CoreViewModel core)
             {
                 var offset = button.Offset(windowWidth);
                 Dispatcher.CurrentDispatcher.Post(() =>

@@ -40,14 +40,14 @@ public static class WindowPlacement
 
         var scaling = ScalingOf(screen);
         return new PixelPosition(
-            position.X + (int)Math.Round((oldWidth - newWidth) / 2 * scaling),
-            position.Y + (int)Math.Round((oldHeight - newHeight) / 2 * scaling));
+            (int)(position.X + (int)(oldWidth - newWidth) / 2 * scaling),
+            (int)(position.Y + (int)(oldHeight - newHeight) / 2 * scaling));
     }
 
     private static PixelPosition ToPixels(ScreenSize screen, double x, double y)
     {
         var scaling = ScalingOf(screen);
-        return new PixelPosition((int)Math.Round(x * scaling), (int)Math.Round(y * scaling));
+        return new PixelPosition((int)(x * scaling), (int)(y * scaling));
     }
 
     private static double ScalingOf(ScreenSize screen) => screen.Scaling > 0 ? screen.Scaling : 1;
