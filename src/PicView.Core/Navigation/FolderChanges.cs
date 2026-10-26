@@ -146,6 +146,14 @@ internal sealed class FolderChanges(TabViewModel tab)
             return;
         }
 
+        // A temp file renamed over a file in the list, as when Windows Explorer saves an edited property: the
+        // original was renamed aside first, which is ignored as it is not an image, so it is still in the list
+        if (!Contains(iterator, change.OldFullPath) && Contains(iterator, file.FullName))
+        {
+            await ChangedAsync(change, ct).ConfigureAwait(false);
+            return;
+        }
+
         var (removeIndex, insertionIndex) = iterator.Move(change.OldFullPath, file, change.CompareNames);
         if (removeIndex >= 0)
         {
@@ -227,6 +235,18 @@ internal sealed class FolderChanges(TabViewModel tab)
 
         tab.UpdateTabTitle();
         Gallery(g => g.FileRemoved(removeIndex));
+    }
+
+    private static bool Contains(Interfaces.IImageIterator iterator, string path)
+    {
+        foreach (var file in iterator.Files)
+        {
+            if (string.Equals(file.FullName, path, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private bool IsShown(string path) =>
