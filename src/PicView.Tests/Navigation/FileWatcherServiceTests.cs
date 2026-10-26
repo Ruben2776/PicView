@@ -320,6 +320,27 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnFileReplacedThroughTempFile_LoadedGallery_KeepsOneItem()
+    {
+        // Arrange: how Windows Explorer saves an edited property, with ReplaceFile
+        var files = await FilesOnDiskAsync("a.jpg", "b.jpg");
+        var tab = CreateTab(_testDirectory, files, files[0]);
+        LoadGallery(tab);
+        var before = tab.Gallery.GalleryItems[0];
+        var watch = Watch(tab);
+
+        // Act: the original moves aside, the temp file takes its name, and the backup is deleted
+        watch.RaiseRenamed("a.jpg", "a.jpg~RF303ff78.TMP");
+        watch.RaiseRenamed("a.jpg~RF1a2b.TMP", "a.jpg");
+        watch.RaiseDeleted("a.jpg~RF303ff78.TMP");
+
+        // Assert: the file's item is rebuilt in its place, not added again
+        await WaitUntilAsync(() => !ReferenceEquals(before, tab.Gallery.GalleryItems[0]));
+        Assert.Equal(["a.jpg", "b.jpg"], tab.ImageIterator.Files.Select(file => file.Name));
+        Assert.Equal(["a.jpg", "b.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
+    }
+
+    [Fact]
     public async Task OnFileDeleted_LoadedGallery_RemovesTheFilesItem()
     {
         // Arrange

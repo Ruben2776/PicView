@@ -41,20 +41,49 @@ public static class ExifFunctions
         };
     }
 
+    /// <summary>
+    /// How long an update keeps retrying while another reader, such as the gallery or the file watcher reacting to
+    /// the previous update, has the file open.
+    /// </summary>
+    private const int FileBusyTimeoutMs = 3000;
+
+    private const int FileBusyRetryDelayMs = 50;
+
+    /// <summary>
+    /// Lets one update at a time touch the disk, so two updates of the same file don't race each other.
+    /// </summary>
+    private static readonly SemaphoreSlim UpdateGate = new(1, 1);
+
     public static async Task<bool> TryUpdateImageProfileAsync(FileInfo fileInfo, Func<MagickImage, bool> updateAction,
         string callingClassName, string callingMethodName)
     {
+        if (fileInfo is null || !File.Exists(fileInfo.FullName))
+        {
+            return false;
+        }
+
+        await UpdateGate.WaitAsync().ConfigureAwait(false);
         try
         {
-            using var magickImage = new MagickImage(fileInfo);
+            var startTime = Environment.TickCount64;
+            using var magickImage = await RetryWhileBusyAsync(() => new MagickImage(fileInfo), startTime)
+                .ConfigureAwait(false);
 
             // If the update action returns false, it means no changes were made that require saving.
             if (!updateAction(magickImage))
             {
                 return false;
             }
-            
-            await magickImage.WriteAsync(fileInfo).ConfigureAwait(false);
+
+            // Encode before opening the file, so the file is truncated for as short a time as possible
+            var bytes = magickImage.ToByteArray();
+            await RetryWhileBusyAsync(() =>
+            {
+                using var stream = new FileStream(fileInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
+                stream.Write(bytes);
+                return true;
+            }, startTime).ConfigureAwait(false);
+            fileInfo.Refresh();
             return true;
         }
         catch (Exception e)
@@ -62,7 +91,41 @@ public static class ExifFunctions
             DebugHelper.LogDebug(callingClassName, callingMethodName, e);
             return false;
         }
+        finally
+        {
+            UpdateGate.Release();
+        }
     }
+
+    /// <summary>
+    /// Runs <paramref name="action"/>, trying again while the file is open elsewhere, until
+    /// <see cref="FileBusyTimeoutMs"/> has passed since <paramref name="startTime"/>.
+    /// </summary>
+    private static async Task<T> RetryWhileBusyAsync<T>(Func<T> action, long startTime)
+    {
+        while (true)
+        {
+            try
+            {
+                return action();
+            }
+            catch (Exception e) when (IsFileBusy(e) && Environment.TickCount64 - startTime < FileBusyTimeoutMs)
+            {
+                await Task.Delay(FileBusyRetryDelayMs).ConfigureAwait(false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Whether <paramref name="e"/> means another handle has the file open: a sharing violation for .NET, or
+    /// "Permission denied" when ImageMagick opens it.
+    /// </summary>
+    private static bool IsFileBusy(Exception e) => e switch
+    {
+        FileNotFoundException or DirectoryNotFoundException => false,
+        IOException or UnauthorizedAccessException or MagickBlobErrorException => true,
+        _ => false
+    };
 
     public static bool TryParseRational(string input, out Rational result)
     {
