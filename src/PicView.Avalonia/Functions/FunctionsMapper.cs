@@ -888,7 +888,7 @@ public class FunctionsMapper : IActionRunner
 
     private ValueTask ColorPicker()
     {
-        throw new NotImplementedException();
+        return ValueTask.CompletedTask;
     }
     
     #endregion

@@ -24,7 +24,7 @@ public static class Slideshow
             return;
         }
         
-        await Start(vm, TimeSpan.FromSeconds(Settings.UIProperties.SlideShowTimer).TotalMilliseconds);
+        await Start(vm, TimeSpan.FromSeconds(Settings.UIProperties.SlideShowTimer).TotalMilliseconds).ConfigureAwait(false);
     }
 
     public static async Task StartSlideshow(MainWindowViewModel vm, int milliseconds)
@@ -36,11 +36,11 @@ public static class Slideshow
 
         if (milliseconds <= 0)
         {
-            await Start(vm, TimeSpan.FromSeconds(Settings.UIProperties.SlideShowTimer).TotalMilliseconds);
+            await Start(vm, TimeSpan.FromSeconds(Settings.UIProperties.SlideShowTimer).TotalMilliseconds).ConfigureAwait(false);
         }
         else
         {
-            await Start(vm, milliseconds);
+            await Start(vm, milliseconds).ConfigureAwait(false);
         }
     }
     
@@ -86,7 +86,7 @@ public static class Slideshow
                 // https://docs.avaloniaui.net/docs/guides/graphics-and-animation/page-transitions/how-to-create-a-custom-page-transition
                 // https://docs.avaloniaui.net/docs/guides/graphics-and-animation/page-transitions/page-slide-transition
                 // https://docs.avaloniaui.net/docs/reference/controls/transitioningcontentcontrol
-                await vm.WindowTabs.NextFile();
+                await vm.WindowTabs.NextFile().ConfigureAwait(false);
             };
         }
         else if (_timer.Enabled)
@@ -120,7 +120,7 @@ public static class Slideshow
 
         if (vm.WindowModeSwitcher is not null)
         {
-            await vm.WindowModeSwitcher.EnterSlideshow();
+            await vm.WindowModeSwitcher.EnterSlideshow().ConfigureAwait(false);
         }
 
         // Leaving the slideshow's fullscreen any other way, as by toggling fullscreen, ends the slideshow too
@@ -139,7 +139,7 @@ public static class Slideshow
         }
 
         var before = vm.WindowModeState.CurrentValue.Mode;
-        await vm.WindowModeSwitcher.LeaveSlideshow();
+        await vm.WindowModeSwitcher.LeaveSlideshow().ConfigureAwait(false);
         if (before is not WindowMode.Normal &&
             vm.WindowModeState.CurrentValue is { Mode: WindowMode.Normal, AutoFit: true })
         {

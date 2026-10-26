@@ -165,18 +165,19 @@ public class ImageIteratorFileListTests
     }
 
     [Fact]
-    public async Task IterateToIndex_WithAPartner_ShowsThePair()
+    public async Task NavigateAsync_SideBySide_UsesIterateToIndicesNotIterateToIndex()
     {
         Settings.ImageScaling.ShowImageSideBySide = true;
-        var files = new List<FileInfo> { File("a.jpg"), File("b.jpg"), File("c.jpg") };
+        var files = new List<FileInfo> { File("a.jpg"), File("b.jpg"), File("c.jpg"), File("d.jpg") };
         _iterator.Initialize(files, 0);
         _tab.Display(new ImageModel { FileInfo = files[0], Image = new ProbeImage() });
 
-        await _iterator.IterateToIndexAsync(1, new CancellationTokenSource());
+        await _iterator.NavigateAsync(NavigateTo.Next, SkipAmount.One, new CancellationTokenSource());
 
-        Assert.Equal(1, _iterator.CurrentIndex);
-        Assert.Equal(2, _iterator.SecondaryCurrentIndex);
-        Assert.NotNull(_tab.SecondaryModel);
+        // IterateToIndexAsync always clears the secondary, so a secondary means the pair path was taken
+        Assert.Equal(2, _iterator.CurrentIndex);
+        Assert.Equal(3, _iterator.SecondaryCurrentIndex);
+        Assert.Same(files[3], _tab.SecondaryModel?.FileInfo);
     }
 
     [Fact]

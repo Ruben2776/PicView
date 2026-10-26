@@ -23,7 +23,7 @@ public sealed class TabOrientation : IDisposable
             ? new BindableReactiveProperty<string?>()
             : _current.CombineLatest(translation.Flip, translation.UnFlip,
                     static (o, flip, unflip) => o.IsFlipped ? unflip : flip)
-                .ToReadOnlyBindableReactiveProperty();
+                .ToReadOnlyBindableReactiveProperty(StringComparer.Ordinal);
     }
 
     public ReadOnlyReactiveProperty<Orientation> Current => _current;

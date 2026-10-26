@@ -131,7 +131,7 @@ public static class QuickLoad
         var listFrom = rootDirectory is null ? fileInfo : new FileInfo(rootDirectory);
         var isGalleryEnabled = TabNavigationInitializer.PrepareDockedGallery(tab);
 
-        if (SideBySidePair.IsEnabled)
+        if (Settings.ImageScaling.ShowImageSideBySide)
         {
             await LoadSideBySideAsync(mainWindow, core, vm, tab, fileInfo, files ?? core.PlatformService.GetFiles(listFrom), listFrom)
                 .ConfigureAwait(false);

@@ -11,18 +11,13 @@ namespace PicView.Core.Navigation;
 public static class SideBySidePair
 {
     /// <summary>
-    /// Whether images are shown side by side.
-    /// </summary>
-    public static bool IsEnabled => Settings.ImageScaling.ShowImageSideBySide;
-
-    /// <summary>
     /// The index of the image shown beside the one at <paramref name="index"/>, or null when there is none: side-by-side
     /// is off, the index is out of range, or there is no other image to show (a one-file list, or the last image
     /// without looping).
     /// </summary>
     public static int? PartnerOf(int index, int count)
     {
-        if (!IsEnabled || index < 0 || index >= count || count < 2)
+        if (!Settings.ImageScaling.ShowImageSideBySide || index < 0 || index >= count || count < 2)
         {
             return null;
         }
@@ -115,14 +110,14 @@ public static class SideBySidePair
     public static bool CanNavigateForwards(int index, int count, bool isExtracting)
     {
         var isLooping = Settings.UIProperties.Looping;
-        return isLooping || isExtracting || index < count - (IsEnabled ? 2 : 1);
+        return isLooping || isExtracting || index < count - (Settings.ImageScaling.ShowImageSideBySide ? 2 : 1);
     }
 
     /// <summary>
     /// The number of images shown at once from a list of <paramref name="entryCount"/> entries: two when side-by-side
     /// is on and there is more than one entry, otherwise one.
     /// </summary>
-    public static int ShownCount(int entryCount) => IsEnabled && entryCount > 1 ? 2 : 1;
+    public static int ShownCount(int entryCount) => Settings.ImageScaling.ShowImageSideBySide && entryCount > 1 ? 2 : 1;
 
     /// <summary>
     /// The index of <paramref name="file"/> in <paramref name="files"/>, or null when it is not in the list.

@@ -200,7 +200,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
     public async ValueTask NavigateAsync(NavigateTo navigateTo, SkipAmount skipAmount, CancellationTokenSource ct)
     {
-        if (SideBySidePair.IsEnabled)
+        if (Settings.ImageScaling.ShowImageSideBySide)
         {
             var (currentIndex, secondaryIndex, isReversed) = SideBySidePair.Navigate(CurrentIndex, Files.Count, navigateTo, skipAmount);
             IsReversed = isReversed;
@@ -259,13 +259,6 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         // Handle internal TIFF navigation
         if (_tab.Model?.TiffNavigation is not null && ShouldNavigateTiffEntry(_tab.Model, IsReversed))
         {
-            return;
-        }
-
-        // An image with a partner is shown as a pair, wherever the navigation came from
-        if (SideBySidePair.PartnerOf(index, Files.Count) is { } partner)
-        {
-            await IterateToIndicesAsync(index, partner, ct).ConfigureAwait(false);
             return;
         }
 
@@ -390,6 +383,16 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             Cache.ReleaseImages(_tab.Id);
         }
         var ct = _tab.GetTabCancellation();
+        if (Settings.ImageScaling.ShowImageSideBySide)
+        {
+            var (iteration,  secondary, _) = SideBySidePair.Navigate(CurrentIndex, Files.Count, 
+                NavigateTo.Next, SkipAmount.None);
+            if (secondary.HasValue)
+            {
+                await IterateToIndicesAsync(iteration, secondary.Value, ct).ConfigureAwait(false);
+            }
+            return;
+        }
         await IterateToIndexAsync(CurrentIndex, ct).ConfigureAwait(false);
     }
 
@@ -409,20 +412,17 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
         int iteration;
         bool isReversed;
-        if (to == NavigateTo.Next && CurrentIndex >= Files.Count - 1 && _tab.IsArchiveExtracting.Value)
+        if (Settings.ImageScaling.ShowImageSideBySide)
         {
-            iteration = CurrentIndex + 1;
-            isReversed = false;
+            (iteration, var secondary, isReversed) = SideBySidePair.Navigate(CurrentIndex, Files.Count, to, SkipAmount.One);
+            IsReversed = isReversed;
+            if (secondary.HasValue)
+            {
+                await IterateToIndicesAsync(iteration, secondary.Value, ct).ConfigureAwait(false);
+            }
+            return;
         }
-        else if (SideBySidePair.IsEnabled)
-        {
-            // A pair moves by two images, as NavigateAsync does; IterateToIndexAsync shows the partner beside it
-            (iteration, _, isReversed) = SideBySidePair.Navigate(CurrentIndex, Files.Count, to, SkipAmount.One);
-        }
-        else
-        {
-            (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, to, SkipAmount.One);
-        }
+        (iteration, isReversed) = IterationHelper.GetIteration(CurrentIndex, Files.Count, to, SkipAmount.One);
         IsReversed = isReversed;
         await IterateToIndexAsync(iteration, ct).ConfigureAwait(false);
     }

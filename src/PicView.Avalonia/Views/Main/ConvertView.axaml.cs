@@ -32,7 +32,7 @@ public partial class ConvertView : UserControl
             {
                 var source = vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue.FullName;
                 var suggestedFileName = GetDestinationWithChangedExtension(source);
-                var file =  await FilePicker.PickFileForSavingAsync(suggestedFileName);
+                var file =  await FilePicker.PickFileForSavingAsync(suggestedFileName).ConfigureAwait(false);
                 if (file is null)
                 {
                     return;

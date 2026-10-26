@@ -1,8 +1,11 @@
+using System.Runtime.InteropServices;
+
 namespace PicView.Core.Sizing;
 
 /// <summary>
 /// A window's position in physical pixels, as the operating system places windows.
 /// </summary>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct PixelPosition(int X, int Y);
 
 /// <summary>

@@ -16,8 +16,8 @@ public static class FocusedInput
 
     /// <summary>
     /// Whether <paramref name="focused"/> uses <paramref name="keybind"/> itself: a recording
-    /// <see cref="KeybindBox"/> records every key, and a text box edits text with every key except Enter, Escape and
-    /// chords, which stay Confirm, Cancel and the window's Keybinds.
+    /// <see cref="KeybindBox"/> records every key, and a text box edits text with every key except Enter, Escape, and
+    /// chords, which stay Confirm, Cancel, and the window's Keybinds.
     /// </summary>
     public static bool OwnsKeybind(IInputElement? focused, Keybind keybind)
     {
@@ -27,7 +27,7 @@ public static class FocusedInput
             return keybindBox.IsRecording;
         }
 
-        if (focused is not TextBox textBox || (keybind.Modifiers & ChordModifiers) != 0)
+        if (focused is not TextBox textBox || (keybind.Modifiers & ChordModifiers) != KeyModifiers.None)
         {
             return false;
         }

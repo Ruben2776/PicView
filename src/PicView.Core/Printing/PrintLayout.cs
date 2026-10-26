@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace PicView.Core.Printing;
 
 /// <summary>
@@ -9,6 +11,7 @@ namespace PicView.Core.Printing;
 /// <param name="Content">The area inside the margins.</param>
 /// <param name="Source">The part of the image to draw. Smaller than the image only when Fill crops it.</param>
 /// <param name="Destination">Where <see cref="Source"/> is drawn. Always inside <see cref="Content"/>.</param>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct PrintLayout(
     double PageWidthPx,
     double PageHeightPx,
@@ -101,9 +104,11 @@ public readonly record struct PrintLayout(
 /// <summary>
 /// A rectangle on a printed page or in an image, in pixels.
 /// </summary>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct PrintRect(double X, double Y, double Width, double Height);
 
 /// <summary>
 /// The size of a sheet of paper as it lies for printing, in millimeters.
 /// </summary>
+[StructLayout(LayoutKind.Auto)]
 public readonly record struct Paper(double WidthMm, double HeightMm);
