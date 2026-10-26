@@ -292,11 +292,6 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
 
     public void ShowConvertWindow()
     {
-        if (CurrentCore() is not { } core)
-        {
-            return;
-        }
-
         _ = _toolWindows.OpenAsync(SecondaryWindowKind.Convert, new SecondaryWindowSpec(
             factory => factory.CreateConvertWindow(), WindowOwner.MainWindowExceptMacOS)
         {
