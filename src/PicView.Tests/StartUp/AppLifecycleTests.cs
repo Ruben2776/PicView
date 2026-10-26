@@ -4,7 +4,9 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Printing;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.StartUp;
+using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Core.Config;
 using PicView.Core.Favorites;
 using PicView.Core.FileHandling;
@@ -40,7 +42,7 @@ public class AppLifecycleTests : IAsyncDisposable
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         _folder = Path.Combine(Path.GetTempPath(), "PicViewAppLifecycleTests_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_folder);
-        _core = new CoreViewModel(new NoPlatform(), _ => ValueTask.FromResult(new ImageModel()));
+        _core = new CoreViewModel(new NoPlatform(), file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
         _provider = new LifecycleWindowProvider(_core);
         _sharedFiles = new FolderSharedFiles(_folder);
     }
@@ -264,6 +266,83 @@ public class AppLifecycleTests : IAsyncDisposable
 
         Assert.NotSame(firstView, ViewOf(first));
         Assert.Same(secondView, ViewOf(second));
+    }
+
+    [AvaloniaFact]
+    public async Task SourceOpenerOpenAsync_IntoMainWindowThatIsNotActive_OpensInThatMainWindow()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync();
+        await ActivateAsync(first);
+        var firstView = ViewOf(first);
+        var secondView = ViewOf(second);
+
+        await SourceOpener.OpenAsync(second, _core, Path.Combine(_folder, "opened.jpg"));
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Same(firstView, ViewOf(first));
+        Assert.NotSame(secondView, ViewOf(second));
+    }
+
+    [AvaloniaFact]
+    public async Task SourceOpenerOpenAsync_AtStartupIntoMainWindowThatIsNotActive_LeavesTheActiveOneAlone()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync();
+        await ActivateAsync(first);
+        var firstView = ViewOf(first);
+
+        await SourceOpener.OpenAsync(second, _core, Path.Combine(_folder, "missing.jpg"), new OpenOptions(IsStartup: true));
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Same(firstView, ViewOf(first));
+    }
+
+    [AvaloniaFact]
+    public async Task FileSearchDialog_FilePickedInMainWindowThatIsNotActive_LoadsInThatMainWindow()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync();
+        var path = Path.Combine(_folder, "found.jpg");
+        await File.WriteAllTextAsync(path, "image");
+        // The dialog is only shown while browsing
+        TabNavigationInitializer.Initialize(_core, [], ViewModelOf(first));
+        TabNavigationInitializer.Initialize(_core, [], ViewModelOf(second));
+        // The dialog reads the core from the app, as it does in PicView
+        Application.Current!.DataContext = _core;
+        try
+        {
+            var dialog = new FileSearchDialog();
+            second.Content = dialog;
+            await ActivateAsync(first);
+
+            await dialog.LoadSelectedFileAsync(path, CancellationToken.None);
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+            Assert.Null(ViewModelOf(first).WindowTabs.ActiveTab.CurrentValue.Model.FileInfo);
+            Assert.Equal(path, ViewModelOf(second).WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    /// <summary>
+    /// Makes <paramref name="window"/> the Active Main Window. The headless app has no core to set it from when a
+    /// window is activated.
+    /// </summary>
+    private async Task ActivateAsync(MainWindow window)
+    {
+        window.Activate();
+        _core.MainWindows.ActiveWindow.Value = ViewModelOf(window);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
     }
 
     private static object? ViewOf(MainWindow window) =>

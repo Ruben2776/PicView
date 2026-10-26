@@ -44,10 +44,15 @@ _Avoid_: Overlay mode, passive mode
 
 **Main Window**:
 A window that shows tabs of images. PicView can have several: one opens at App Start, and more open as a new window or when a tab is dragged out of one. Closing one that is not the last ends only that window. Closing the last one is App Shutdown, unless Batch Resize is open: then PicView keeps running until Batch Resize closes too.
+What sits inside a Main Window (its buttons, menus, views and pop-ups) acts on that Main Window, even while another one is the Active Main Window.
 _Avoid_: Viewer window, image window
 
+**Active Main Window**:
+The Main Window the user focused most recently. Only what sits outside every Main Window acts on it, such as Effects and the macOS app menu.
+_Avoid_: Current window, focused window
+
 **Tool Window**:
-A window that works on images. Most work on what their Main Window shows: Print, Effects, Image Information, Resize Image and Convert. A Main Window has at most one of each, and they close with it. Batch Resize works on files the user picks instead: PicView has at most one, it belongs to no Main Window, and it stays open when the Main Window it was opened from closes.
+A window that works on images. Most work on what their Main Window shows: Print, Image Information, Resize Image and Convert. A Main Window has at most one of each, and they close with it. Effects works on the active tab of the Active Main Window instead, following it as the user switches windows: PicView has at most one, and it stays open until it is closed or the last Main Window closes. Batch Resize works on files the user picks: PicView has at most one, it belongs to no Main Window, and it stays open when the Main Window it was opened from closes.
 _Avoid_: Secondary window, child window, dialog
 
 **App Window**:

@@ -34,7 +34,7 @@ public static class SourceOpener
     public static async ValueTask<LoadResult> OpenAsync(MainWindow mainWindow, CoreViewModel core, string source,
         OpenOptions options = default)
     {
-        var vm = core.MainWindows.ActiveWindow.CurrentValue;
+        var vm = mainWindow.ViewModel!;
         var tabs = vm.WindowTabs;
         var tab = tabs.ActiveTab.CurrentValue;
         if (options.IsStartup && !tab.IsInitialized)

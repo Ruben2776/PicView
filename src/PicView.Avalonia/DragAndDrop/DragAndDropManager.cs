@@ -53,7 +53,7 @@ public static class DragAndDropManager
             _ = Task.Run(() => HandleAdditionalFiles(files.Skip(1)));
         }
         
-        SwitchToImageViewerIfNecessary();
+        SwitchToImageViewerIfNecessary(tabOverview);
         var path = firstFile.Path.LocalPath;
         var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         if (path.IsSupported())
@@ -66,7 +66,7 @@ public static class DragAndDropManager
         }
         else
         {
-            SwitchStartUpMenuIfNecessary();
+            SwitchStartUpMenuIfNecessary(tabOverview);
         }
     }
 
@@ -118,33 +118,23 @@ public static class DragAndDropManager
 
     #region Private Helpers
     
-    private static void SwitchToImageViewerIfNecessary()
+    private static void SwitchToImageViewerIfNecessary(TabOverviewViewModel tabOverview)
     {
         Dispatcher.UIThread.Post(() =>
         {
-            if (Application.Current.DataContext is not CoreViewModel core)
-            {
-                return;
-            }
-
-            var currentView = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.CurrentView;
+            var currentView = tabOverview.ActiveTab.CurrentValue.CurrentView;
             if (currentView.CurrentValue is StartUpMenu)
             {
                 currentView.Value = new ImageViewer();
             }
         });
     }
-    
-    private static void SwitchStartUpMenuIfNecessary()
+
+    private static void SwitchStartUpMenuIfNecessary(TabOverviewViewModel tabOverview)
     {
         Dispatcher.UIThread.Invoke(() =>
         {
-            if (Application.Current.DataContext is not CoreViewModel core)
-            {
-                return;
-            }
-            
-            var tab = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue;
+            var tab = tabOverview.ActiveTab.CurrentValue;
             if (tab.Image.CurrentValue is not null)
             {
                 // Image is being viewed, return

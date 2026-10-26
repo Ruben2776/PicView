@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Animation;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -61,8 +60,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         ImageScrollViewer.ScrollChanged += OnMotionPhotoBadgeScrollChanged;
         UpdateMotionPhotoBadgePositions();
 
-        if (Application.Current.ApplicationLifetime is not ClassicDesktopStyleApplicationLifetime 
-                { MainWindow: MainWindow mainWindow })
+        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
         }
@@ -321,11 +319,14 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
                 ZoomPreview.Margin = HoverBar.Opacity > 0 ? new Thickness(0,0,25,HoverBar.Bounds.Height / 2 + 25) : new Thickness(0, 0, 25, 25);
             }, DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer))).AddTo(ref _disposables);
         
-        core.MainWindows.ActiveWindow.CurrentValue.IsScrollingEnabled.Subscribe(isScrolling =>
+        if (TopLevel.GetTopLevel(this) is MainWindow { ViewModel: { } vm })
         {
-            ImageScrollViewer.VerticalScrollBarVisibility = isScrolling ?
-                ScrollBarVisibility.Visible : ScrollBarVisibility.Disabled;
-        }, DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer))).AddTo(ref _disposables);
+            vm.IsScrollingEnabled.Subscribe(isScrolling =>
+            {
+                ImageScrollViewer.VerticalScrollBarVisibility = isScrolling ?
+                    ScrollBarVisibility.Visible : ScrollBarVisibility.Disabled;
+            }, DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer))).AddTo(ref _disposables);
+        }
         
         // Correspond to change when index clicked on track
         Observable.FromEvent<EventHandler<int>, int>(
