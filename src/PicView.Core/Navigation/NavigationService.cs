@@ -55,7 +55,7 @@ public class NavigationService(
             }
 
             await Task.Yield();
-            IReadOnlyList<FileInfo> retrieved = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
+            var retrieved = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
             if (!tab.IsLatestLoad(load))
             {
                 return;
