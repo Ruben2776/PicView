@@ -1,14 +1,14 @@
 using Avalonia;
 using Avalonia.Controls;
-using PicView.Avalonia.ColorManagement;
+using PicView.Avalonia.Crop;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.UI;
+using PicView.Core.Conversion;
 using PicView.Core.DebugTools;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
 using R3;
 
-namespace PicView.Avalonia.Views.Main;
+namespace PicView.Avalonia.Views.Menu;
 
 public partial class CustomTitleBar : MainTitleBar
 {
@@ -50,6 +50,9 @@ public partial class CustomTitleBar : MainTitleBar
                     {
                         OpenRegularSizedMenu(vm);
                     }
+                    var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+                    tab.ShouldCropBeEnabled.Value = CropManager.SetIfCropEnabled(mainWindow);
+                    tab.ShouldPrintBeEnabled.Value = ConversionHelper.DetermineIfPrintMenuItemShouldBeEnabled(tab);
                 }
                 else
                 {

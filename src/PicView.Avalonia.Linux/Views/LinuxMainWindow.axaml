@@ -1,23 +1,24 @@
 <customControls:MainWindow
-    MaxHeight="{Binding WindowMaxHeight.Value}"
-    MaxWidth="{Binding WindowMaxWidth.Value}"
-    MinHeight="{Binding WindowMinHeight}"
-    MinWidth="{Binding WindowMinWidth}"
-    Title="{Binding WindowTabs.ActiveTab.Value.WindowTitle.Value, FallbackValue=''}"
-    WindowDecorations="None"
     x:Class="PicView.Avalonia.Linux.Views.LinuxMainWindow"
-    x:DataType="viewModels:MainWindowViewModel"
     xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls;assembly=PicView.Avalonia"
     xmlns:main="clr-namespace:PicView.Avalonia.Views.Main;assembly=PicView.Avalonia"
+    xmlns:menu="clr-namespace:PicView.Avalonia.Views.Menu;assembly=PicView.Avalonia"
     xmlns:uc="clr-namespace:PicView.Avalonia.Views.UC;assembly=PicView.Avalonia"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     xmlns:views="clr-namespace:PicView.Avalonia.Linux.Views"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    Title="{Binding WindowTabs.ActiveTab.Value.WindowTitle.Value, FallbackValue=''}"
+    MinWidth="{Binding WindowMinWidth}"
+    MinHeight="{Binding WindowMinHeight}"
+    MaxWidth="{Binding WindowMaxWidth.Value}"
+    MaxHeight="{Binding WindowMaxHeight.Value}"
+    x:DataType="viewModels:MainWindowViewModel"
+    WindowDecorations="None">
     <Border BorderBrush="{DynamicResource WindowBorderColor}" BorderThickness="1">
         <DockPanel LastChildFill="True">
-            <main:CustomTitleBar DockPanel.Dock="Top" x:Name="Titlebar" />
-            <uc:BottomBar DockPanel.Dock="Bottom" x:Name="BottomBar" />
+            <menu:CustomTitleBar x:Name="Titlebar" DockPanel.Dock="Top" />
+            <uc:BottomBar x:Name="BottomBar" DockPanel.Dock="Bottom" />
             <main:MainView x:Name="MainView" />
         </DockPanel>
     </Border>
