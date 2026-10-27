@@ -34,6 +34,9 @@ public sealed class PrintJob : IDisposable
     private Printer[] _printers = [];
     private string[] _paperSizes = [];
     private PrintSettings _settings = new();
+
+    // What Reset puts back; the Print window can reset while the Print Settings differ from it
+    private PrintSettings _defaults = new();
     private PrintSource? _source;
     private bool _isSourceStale = true;
 
@@ -119,6 +122,7 @@ public sealed class PrintJob : IDisposable
         try
         {
             Restore(remembered, toSaveAsPdf: false);
+            _defaults = RememberedPrintSettings.Restore(null, _printers, GetDefaultPrinter(), GetPaperSizes);
             var image = await DrawPreviewAsync().ConfigureAwait(false);
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -131,6 +135,7 @@ public sealed class PrintJob : IDisposable
                 _preview!.Printers.Value = _printers;
                 _preview.PaperSizes.Value = _paperSizes;
                 _preview.PrintSettings.Value = _settings;
+                _preview.CanReset.Value = !_settings.Matches(_defaults);
                 if (image is not null)
                 {
                     ShowPreview(image);
@@ -247,6 +252,13 @@ public sealed class PrintJob : IDisposable
                 DebugHelper.LogError(nameof(PrintJob), nameof(RefreshPreviewAsync)), AwaitOperation.Switch, false)
             .AddTo(_subscriptions);
 
+        Observable.Merge(
+                settingChanges,
+                _settings.Printer.Skip(1).AsUnitObservable(),
+                _settings.Copies.Skip(1).AsUnitObservable())
+            .Subscribe(_ => _preview!.CanReset.Value = !_settings.Matches(_defaults))
+            .AddTo(_subscriptions);
+
         _settings.Printer.Skip(1)
             .Where(static printer => printer is not null)
             .DistinctUntilChanged()
@@ -259,6 +271,40 @@ public sealed class PrintJob : IDisposable
             .SubscribeAwait(async (_, _) => await SendAsync().ConfigureAwait(false),
                 DebugHelper.LogError(nameof(PrintJob), nameof(SendAsync)), AwaitOperation.Drop)
             .AddTo(_subscriptions);
+
+        _preview.ResetCommand
+            .ObserveOnThreadPool()
+            .SubscribeAwait(async (_, ct) => await ResetAsync(ct).ConfigureAwait(false),
+                DebugHelper.LogError(nameof(PrintJob), nameof(ResetAsync)), AwaitOperation.Switch, false)
+            .AddTo(_subscriptions);
+    }
+
+    /// <summary>
+    /// Puts the Print Settings back to the defaults, with the default Printer and its paper. They are remembered when
+    /// the Print window closes.
+    /// </summary>
+    private async Task ResetAsync(CancellationToken ct)
+    {
+        var paperSizes = _paperSizes;
+        var defaults = RememberedPrintSettings.Restore(null, _printers, GetDefaultPrinter(),
+            printer => paperSizes = GetPaperSizes(printer));
+        ct.ThrowIfCancellationRequested();
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (ct.IsCancellationRequested || _disposed.IsCancellationRequested)
+            {
+                return;
+            }
+
+            // The paper is offered before it is chosen, as a list without it clears the selection
+            _paperSizes = paperSizes;
+            _preview!.PaperSizes.Value = paperSizes;
+            _defaults = defaults;
+            _settings.CopyFrom(defaults);
+
+            // Set here too, as nothing changes when the settings were already these defaults
+            _preview.CanReset.Value = false;
+        });
     }
 
     private async Task RefreshPreviewAsync(CancellationToken ct)
