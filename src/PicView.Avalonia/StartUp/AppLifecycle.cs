@@ -66,7 +66,8 @@ public sealed class AppLifecycle
     public MainWindowLifecycle MainWindows { get; }
 
     /// <summary>
-    /// Opens the App Windows, at most one of each for the whole app, owned by no Main Window.
+    /// Opens the App Windows and Effects, at most one of each for the whole app, owned by no Main Window. They close
+    /// with the last Main Window.
     /// </summary>
     internal SecondaryWindowOpener AppWindows { get; }
 
@@ -124,6 +125,8 @@ public sealed class AppLifecycle
         IsShuttingDown = true;
         // Closing Batch Resize cancels a run that is still going
         AppToolWindows.CloseAll();
+        // Closing Effects records where it is, and saves it
+        AppWindows.Close(SecondaryWindowKind.Effects);
         var mostRecent = MainWindows.MostRecentlyActive;
         if (mostRecent is not null)
         {

@@ -28,6 +28,7 @@ public class AppLifecycleTests : IAsyncDisposable
 {
     private readonly FileHistoryFileBackup _fileHistoryBackup = new();
     private readonly ConfigFileBackup _batchResizeConfigBackup = new(new BatchResizeWindowConfig());
+    private readonly ConfigFileBackup _effectsConfigBackup = new(new EffectsWindowConfig());
     private readonly List<AppLifecycle> _apps = [];
     private readonly string _folder;
     private readonly CoreViewModel _core;
@@ -67,6 +68,7 @@ public class AppLifecycleTests : IAsyncDisposable
 
         _fileHistoryBackup.Dispose();
         _batchResizeConfigBackup.Dispose();
+        _effectsConfigBackup.Dispose();
     }
 
     [AvaloniaFact]
@@ -151,6 +153,50 @@ public class AppLifecycleTests : IAsyncDisposable
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
         Assert.Equal(1, _provider.AboutWindowsCreated);
+    }
+
+    [AvaloniaFact]
+    public async Task ShowEffectsWindow_FromTwoMainWindows_OpensOneEffectsWindow()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync();
+
+        await first.MainWindowInitializer!.ShowEffectsWindow();
+        await second.MainWindowInitializer!.ShowEffectsWindow();
+
+        Assert.Single(_provider.EffectsWindows);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_MainWindowEffectsWasOpenedFrom_KeepsEffectsOpenForTheOtherMainWindow()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await app.MainWindows.OpenNewAsync();
+        await first.MainWindowInitializer!.ShowEffectsWindow();
+        var effects = Assert.Single(_provider.EffectsWindows);
+
+        await app.MainWindows.CloseAsync(first);
+
+        Assert.True(effects.IsVisible);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_LastMainWindowWithEffectsOpen_ClosesEffectsAndRunsAppShutdown()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var main = app.MainWindows.Open[0];
+        await main.MainWindowInitializer!.ShowEffectsWindow();
+        var effects = Assert.Single(_provider.EffectsWindows);
+
+        await app.MainWindows.CloseAsync(main);
+
+        Assert.False(effects.IsVisible);
+        Assert.Equal(1, _exits);
     }
 
     [AvaloniaFact]
@@ -388,6 +434,7 @@ public class AppLifecycleTests : IAsyncDisposable
         public List<Window> AboutWindows { get; } = [];
         public List<Window> BatchResizeWindows { get; } = [];
         public List<Window> ConvertWindows { get; } = [];
+        public List<Window> EffectsWindows { get; } = [];
 
         public MainWindow CreateMainWindow(TabViewModel? firstTab = null)
         {
@@ -420,7 +467,12 @@ public class AppLifecycleTests : IAsyncDisposable
             return window;
         }
 
-        public Window CreateEffectsWindow(EffectsWindowConfig config) => Track(new Window());
+        public Window CreateEffectsWindow(EffectsWindowConfig config)
+        {
+            var window = Track(new Window());
+            EffectsWindows.Add(window);
+            return window;
+        }
         public Window CreateImageInfoWindow(MainWindowViewModel vm) => Track(new Window());
         public Window CreateKeybindingsWindow(KeybindingWindowConfig config) => Track(new Window());
         public Window CreateSettingsWindow(SettingsWindowConfig config) => Track(new Window());

@@ -25,8 +25,8 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
     private readonly SecondaryWindowOpener _toolWindows = new(() => mainWindow, provider, () => mainWindow);
 
     /// <summary>
-    /// Opens the App Windows, shared by every Main Window. A window opened outside the lifecycle, as in some tests,
-    /// opens them as its own.
+    /// Opens the App Windows, shared by every Main Window, and Effects. A window opened outside the lifecycle, as in
+    /// some tests, opens them as its own.
     /// </summary>
     private SecondaryWindowOpener AppWindows => mainWindow.Lifecycle?.AppWindows ?? _toolWindows;
 
@@ -198,8 +198,10 @@ public class WindowInitializer(IWindowProvider provider, MainWindow mainWindow) 
         }
 
         var config = core.Effects.WindowConfig;
-        await _toolWindows.OpenAsync(SecondaryWindowKind.Effects, new SecondaryWindowSpec(
-            factory => factory.CreateEffectsWindow(config), WindowOwner.MainWindowExceptMacOS)
+        // Effects works on the Active Main Window, so like the App Windows there is one for the whole app, owned by no
+        // Main Window, and it closes with the last one
+        await AppWindows.OpenAsync(SecondaryWindowKind.Effects, new SecondaryWindowSpec(
+            factory => factory.CreateEffectsWindow(config))
         {
             Configure = window =>
             {

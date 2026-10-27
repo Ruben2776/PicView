@@ -43,6 +43,17 @@ public sealed class SecondaryWindowOpener(
     }
 
     /// <summary>
+    /// Closes the window of this kind, if this opener has one open.
+    /// </summary>
+    public void Close(SecondaryWindowKind kind)
+    {
+        if (_open.TryGetValue(kind, out var window))
+        {
+            window.Close();
+        }
+    }
+
+    /// <summary>
     /// Whether a window of this kind is open.
     /// </summary>
     public bool IsOpen(SecondaryWindowKind kind) => _open.ContainsKey(kind);
