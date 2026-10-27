@@ -34,6 +34,7 @@ public class AppLifecycleTests : IAsyncDisposable
     private readonly CoreViewModel _core;
     private readonly FolderSharedFiles _sharedFiles;
     private readonly LifecycleWindowProvider _provider;
+    private readonly List<string> _steps = [];
     private int _exits;
 
     public AppLifecycleTests()
@@ -295,6 +296,60 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task ShutdownAsync_StartsNoNewPicView()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+
+        await app.ShutdownAsync();
+
+        Assert.Equal(["exit"], _steps);
+    }
+
+    [AvaloniaFact]
+    public async Task RestartAsync_RunsAppShutdownBeforeStartingANewPicView()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await app.MainWindows.OpenNewAsync();
+        var firstFile = Path.Combine(_folder, "first.jpg");
+        ViewModelOf(first).WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(firstFile) });
+        first.Activate();
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        var tempFile = TempFileManager.GetNewTempFilePath("download.jpg");
+        await File.WriteAllTextAsync(tempFile, "image");
+        var savesBeforeStart = 0;
+        var tempFileKept = true;
+
+        await app.RestartAsync(() =>
+        {
+            savesBeforeStart = _sharedFiles.Saves;
+            tempFileKept = File.Exists(tempFile);
+            _steps.Add("before start");
+            return Task.CompletedTask;
+        });
+
+        Assert.Empty(app.MainWindows.Open);
+        Assert.Equal(firstFile, Settings.StartUp.LastFile);
+        Assert.Equal(1, savesBeforeStart);
+        Assert.False(tempFileKept);
+        Assert.Equal(["before start", "start new PicView", "exit"], _steps);
+    }
+
+    [AvaloniaFact]
+    public async Task RestartAsync_AfterAppShutdownBegan_StartsNoNewPicView()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+
+        await app.ShutdownAsync();
+        await app.RestartAsync();
+
+        Assert.Equal(["exit"], _steps);
+    }
+
+    [AvaloniaFact]
     public async Task OpenLaunchFileAsync_AfterAppStart_OpensInTheMostRecentlyActiveMainWindow()
     {
         Settings.UIProperties.OpenInSameWindow = true;
@@ -398,7 +453,11 @@ public class AppLifecycleTests : IAsyncDisposable
 
     private AppLifecycle CreateApp()
     {
-        var app = new AppLifecycle(_core, _provider, _sharedFiles, () => _exits++);
+        var app = new AppLifecycle(_core, _provider, _sharedFiles, () =>
+        {
+            _exits++;
+            _steps.Add("exit");
+        }, () => _steps.Add("start new PicView"));
         _apps.Add(app);
         return app;
     }

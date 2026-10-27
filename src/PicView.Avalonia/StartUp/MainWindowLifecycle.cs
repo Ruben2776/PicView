@@ -50,6 +50,9 @@ public sealed class MainWindowLifecycle
     /// <inheritdoc cref="AppLifecycle.ShutdownIfNothingIsOpenAsync"/>
     internal Task ShutdownIfNothingIsOpenAsync() => _app.ShutdownIfNothingIsOpenAsync();
 
+    /// <inheritdoc cref="AppLifecycle.RestartAsync"/>
+    internal Task RestartAsync(Func<Task>? beforeStart = null) => _app.RestartAsync(beforeStart);
+
     /// <summary>
     /// The Main Windows that are open, in the order they opened.
     /// </summary>

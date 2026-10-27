@@ -64,7 +64,7 @@ What runs once when the PicView process starts, around its first Main Window: lo
 _Avoid_: Initialization, boot
 
 **App Shutdown**:
-What runs once when the PicView process ends, whether the last Main Window closes (or Batch Resize, when it outlives them), the user quits, or an update is installed. It closes every Main Window, saves what they share and deletes the temp files. The most recently active Main Window is the one whose file and size are remembered.
+What runs once when the PicView process ends, whether the last Main Window closes (or Batch Resize, when it outlives them), the user quits, an update is installed, or PicView restarts. It closes every Main Window, saves what they share and deletes the temp files. The most recently active Main Window is the one whose file and size are remembered.
 _Avoid_: Exit, quit, close
 
 ## Tabs
