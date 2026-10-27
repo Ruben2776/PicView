@@ -28,7 +28,13 @@ public class NavigationService(
     public ReactiveCommand<string>? LoadFromStringCommand { get; set; }
     private FileAndDirectoryNavigator? _navigator;
 
-    public async ValueTask RepopulateIterator(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct, List<FileInfo>? files = null)
+    public ValueTask RepopulateIterator(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct, List<FileInfo>? files = null) =>
+        RepopulateIterator(fileInfo, tab, ct, files, tab.BeginLoad());
+
+    /// <param name="load">The version of the load this is part of. Once a newer load begins, this one stops before
+    /// changing the tab's image, files or gallery, so a slow load that finishes last cannot overwrite a newer one.</param>
+    private async ValueTask RepopulateIterator(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct,
+        IReadOnlyList<FileInfo>? files, int load)
     {
         try
         {
@@ -38,7 +44,7 @@ public class NavigationService(
             ImageModel? secondaryModel = null;
             var secondaryIndex = 0;
             var model = await cache.GetAsync(tab.Id, fileInfo, ct.Token).ConfigureAwait(false);
-            if (model is null)
+            if (model is null || !tab.IsLatestLoad(load))
             {
                 return;
             }
@@ -50,6 +56,10 @@ public class NavigationService(
 
             await Task.Yield();
             IReadOnlyList<FileInfo> retrieved = files ?? FileListRetriever.RetrieveFiles(fileInfo, stringComparer);
+            if (!tab.IsLatestLoad(load))
+            {
+                return;
+            }
             var index = SideBySidePair.IndexOf(retrieved, fileInfo) ?? 0;
             tab.ImageIterator.Initialize(retrieved, index);
 
@@ -59,7 +69,7 @@ public class NavigationService(
                 {
                     var secondaryFileInfo = tab.ImageIterator.Files[nextIteration];
                     secondaryModel = await cache.GetAsync(tab.Id, secondaryFileInfo, ct.Token).ConfigureAwait(false);
-                    if (secondaryModel is null)
+                    if (secondaryModel is null || !tab.IsLatestLoad(load))
                     {
                         return;
                     }
@@ -68,6 +78,11 @@ public class NavigationService(
                 tab.Display(model, secondaryModel);
             }
 
+            // A newer load that begins after this sets its own files and gallery after these
+            if (!tab.IsLatestLoad(load))
+            {
+                return;
+            }
             tab.UpdateTabTitle();
             fileWatcherService.Watch(tab, fileInfo.DirectoryName);
             cache.ReleaseImages(tab.Id);
@@ -125,6 +140,7 @@ public class NavigationService(
             await LoadFromArchiveAsync(fileInfo.FullName, tab, ct).ConfigureAwait(false);
             return;
         }
+        var load = tab.BeginLoad();
         var iterator = tab.ImageIterator;
 
         if (iterator?.Files is null || iterator.Files.Count is 0)
@@ -143,7 +159,7 @@ public class NavigationService(
             {
                 index = SideBySidePair.IndexOf(tab.ImageIterator.Files, fileInfo);
             }
-            if (ct.IsCancellationRequested)
+            if (ct.IsCancellationRequested || !tab.IsLatestLoad(load))
             {
                 return;
             }
@@ -164,7 +180,7 @@ public class NavigationService(
 
         async Task Repopulate()
         {
-            await Task.Run(() => RepopulateIterator(fileInfo, tab, ct).ConfigureAwait(false), ct.Token).ConfigureAwait(false);
+            await Task.Run(() => RepopulateIterator(fileInfo, tab, ct, null, load).ConfigureAwait(false), ct.Token).ConfigureAwait(false);
         }
     }
 
@@ -183,6 +199,7 @@ public class NavigationService(
 
     public async Task<bool> LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct)
     {
+        var load = tab.BeginLoad();
         var files = await Task.Run(() =>
         {
             var files = FileListRetriever.RetrieveFiles(source, stringComparer);
@@ -192,7 +209,7 @@ public class NavigationService(
         {
             return false;
         }
-        await RepopulateIterator(files[0], tab, ct, files).ConfigureAwait(false);
+        await RepopulateIterator(files[0], tab, ct, files, load).ConfigureAwait(false);
         tab.ArchiveExtractionService.Cleanup();
         return true;
     }
@@ -220,9 +237,10 @@ public class NavigationService(
                 }
                 else
                 {
+                    var load = tab.BeginLoad();
                     var files = await Task.Run(() => FileListRetriever.RetrieveFiles(new FileInfo(rootDirectory), stringComparer), ct.Token)
                         .ConfigureAwait(false);
-                    await RepopulateIterator(new FileInfo(check.Value.Data), tab, ct, files.Count > 0 ? files : null).ConfigureAwait(false);
+                    await RepopulateIterator(new FileInfo(check.Value.Data), tab, ct, files.Count > 0 ? files : null, load).ConfigureAwait(false);
                     tab.ArchiveExtractionService.Cleanup();
                 }
                 return LoadResult.Loaded;
@@ -446,6 +464,8 @@ public class NavigationService(
 
     public async ValueTask<LoadResult> LoadFromUrlAsync(string url, TabViewModel tab, CancellationTokenSource ct)
     {
+        // Showing the downloaded image supersedes loading files still running
+        tab.BeginLoad();
         tab.ImageIterator?.Dispose();
 
         platformService.StopTaskbarProgress();

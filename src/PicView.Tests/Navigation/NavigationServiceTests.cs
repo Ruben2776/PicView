@@ -194,6 +194,65 @@ public class NavigationServiceTests : IDisposable
         Assert.Equal(1, tab.ImageIterator.CurrentIndex);
     }
 
+    [Fact]
+    public async Task LoadFromFileAsync_OtherFolderWithLoadedGallery_GalleryShowsTheOtherFolder()
+    {
+        var first = Directory.CreateDirectory(Path.Combine(_testDirectory, "first")).FullName;
+        var second = Directory.CreateDirectory(Path.Combine(_testDirectory, "second")).FullName;
+        string[] firstFiles = [Path.Combine(first, "a.jpg"), Path.Combine(first, "b.jpg")];
+        string[] secondFiles = [Path.Combine(second, "c.jpg"), Path.Combine(second, "d.jpg"), Path.Combine(second, "e.jpg")];
+        foreach (var path in firstFiles.Concat(secondFiles))
+        {
+            await File.WriteAllTextAsync(path, "x", TestContext.Current.CancellationToken);
+        }
+        var tab = CreateTab(first);
+        tab.Gallery.IsDockedGalleryVisible.Value = true;
+        await _navigationService.LoadFromFileAsync(firstFiles[0], tab, tab.GetTabCancellation());
+        await WaitUntil(() => tab.Gallery.LoadingState is GalleryLoadingState.Loaded && tab.Gallery.GalleryItems.Count == 2);
+
+        await _navigationService.LoadFromFileAsync(secondFiles[0], tab, tab.GetTabCancellation());
+
+        await WaitUntil(() => tab.Gallery.LoadingState is GalleryLoadingState.Loaded &&
+                              tab.Gallery.GalleryItems.Select(i => i.FileInfo!.FullName).SequenceEqual(secondFiles));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(5)]
+    [InlineData(20)]
+    public async Task LoadFromFileAsync_OtherFolderWhileGalleryLoads_GalleryShowsTheOtherFolder(int delayMs)
+    {
+        var first = Directory.CreateDirectory(Path.Combine(_testDirectory, "first")).FullName;
+        var second = Directory.CreateDirectory(Path.Combine(_testDirectory, "second")).FullName;
+        var firstFiles = Enumerable.Range(0, 300).Select(i => Path.Combine(first, $"{i:D3}.jpg")).ToArray();
+        string[] secondFiles = [Path.Combine(second, "c.jpg"), Path.Combine(second, "d.jpg"), Path.Combine(second, "e.jpg")];
+        foreach (var path in firstFiles.Concat(secondFiles))
+        {
+            await File.WriteAllTextAsync(path, "x", TestContext.Current.CancellationToken);
+        }
+        var tab = CreateTab(first);
+        tab.Gallery.IsDockedGalleryVisible.Value = true;
+
+        await _navigationService.LoadFromFileAsync(firstFiles[0], tab, tab.GetTabCancellation());
+        await Task.Delay(delayMs, TestContext.Current.CancellationToken);
+        await _navigationService.LoadFromFileAsync(secondFiles[0], tab, tab.GetTabCancellation());
+
+        await WaitUntil(() => tab.Gallery.LoadingState is GalleryLoadingState.Loaded &&
+                              tab.Gallery.GalleryItems.Select(i => i.FileInfo!.FullName).SequenceEqual(secondFiles),
+            () => $"state {tab.Gallery.LoadingState}, {tab.Gallery.GalleryItems.Count} items, first {tab.Gallery.GalleryItems.FirstOrDefault()?.FileInfo?.FullName}, iterator {tab.ImageIterator.Files.Count} files, shown {tab.Model?.FileInfo?.FullName}");
+    }
+
+    private static async Task WaitUntil(Func<bool> condition, Func<string>? describe = null)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(5);
+        while (!condition())
+        {
+            Assert.True(DateTime.UtcNow < deadline, "Timed out waiting for the gallery: " + describe?.Invoke());
+            await Task.Delay(20, TestContext.Current.CancellationToken);
+        }
+    }
+
     private TabViewModel CreateTab(string directory, MainWindowViewModel? parentVm = null)
     {
         var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!, null!);
