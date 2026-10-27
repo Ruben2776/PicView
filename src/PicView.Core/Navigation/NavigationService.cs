@@ -135,6 +135,20 @@ public class NavigationService(
         }
 
         var index = SideBySidePair.IndexOf(tab.ImageIterator.Files, fileInfo);
+        if (index is null && IsInShownFolder(fileInfo, tab))
+        {
+            // A file just written next to the shown one, such as a duplicate, is added by the folder watcher,
+            // which also adds it to the gallery, so wait for it rather than rebuilding the list and the gallery
+            if (await iterator.WaitForFileAsync(fileInfo.FullName, FolderWatcherWait, ct.Token).ConfigureAwait(false))
+            {
+                index = SideBySidePair.IndexOf(tab.ImageIterator.Files, fileInfo);
+            }
+            if (ct.IsCancellationRequested)
+            {
+                return;
+            }
+        }
+
         if (index is { } found)
         {
             await tab.ImageIterator.IterateToIndexAsync(found, ct).ConfigureAwait(false);
@@ -153,6 +167,19 @@ public class NavigationService(
             await Task.Run(() => RepopulateIterator(fileInfo, tab, ct).ConfigureAwait(false), ct.Token).ConfigureAwait(false);
         }
     }
+
+    /// <summary>
+    /// How long to wait for the folder watcher to add a new file before rebuilding the file list instead.
+    /// </summary>
+    private static readonly TimeSpan FolderWatcherWait = TimeSpan.FromSeconds(2);
+
+    /// <summary>
+    /// Whether <paramref name="fileInfo"/> is an image in the folder of the file the tab shows, which the folder
+    /// watcher reports when it is created.
+    /// </summary>
+    private static bool IsInShownFolder(FileInfo fileInfo, TabViewModel tab) =>
+        fileInfo.FullName.IsSupported() &&
+        string.Equals(fileInfo.DirectoryName, tab.Model?.FileInfo?.DirectoryName, StringComparison.OrdinalIgnoreCase);
 
     public async Task<bool> LoadFromDirectoryAsync(FileInfo source, TabViewModel tab, CancellationTokenSource ct)
     {

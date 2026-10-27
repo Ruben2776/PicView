@@ -170,6 +170,30 @@ public class NavigationServiceTests : IDisposable
         }
     }
 
+    [Fact]
+    public async Task LoadFromFileAsync_NewFileInShownFolder_WaitsForWatcherInsteadOfRepopulating()
+    {
+        var tab = CreateTab(_testDirectory);
+        var a = new FileInfo(Path.Combine(_testDirectory, "a.jpg"));
+        var c = new FileInfo(Path.Combine(_testDirectory, "c.jpg"));
+        var copy = new FileInfo(Path.Combine(_testDirectory, "b.jpg"));
+        await File.WriteAllTextAsync(a.FullName, "x", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(c.FullName, "x", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(copy.FullName, "x", TestContext.Current.CancellationToken);
+        tab.Model = new ImageModel { FileInfo = a };
+        tab.ImageIterator.Initialize([a, c]);
+
+        // A duplicate is loaded as soon as it is written, before the folder watcher reports it
+        var load = _navigationService.LoadFromFileAsync(copy, tab, new CancellationTokenSource()).AsTask();
+        await tab.OnFolderChangedAsync(new FolderChange(FolderChangeKind.Created, copy, null,
+            new FileDetailsSource(copy, waitUntilReady: false), string.CompareOrdinal), TestContext.Current.CancellationToken);
+        await load;
+
+        Assert.False(_mockFileWatcherService.UnwatchCalled, "The file list should not be rebuilt");
+        Assert.Equal([a.FullName, copy.FullName, c.FullName], tab.ImageIterator.Files.Select(f => f.FullName));
+        Assert.Equal(1, tab.ImageIterator.CurrentIndex);
+    }
+
     private TabViewModel CreateTab(string directory, MainWindowViewModel? parentVm = null)
     {
         var dummyParent = parentVm ?? new MainWindowViewModel(null!, null!, null!, null!, null!);

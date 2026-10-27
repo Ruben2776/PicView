@@ -164,6 +164,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     {
         Volatile.Write(ref _files, files);
         Cache.SetFiles(_tab.Id, files);
+        SignalFilesChanged();
     }
 
     private static int IndexOf(FileInfo[] files, string path) =>
@@ -445,46 +446,94 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     }
 
     private readonly Lock _fileWaitLock = new();
-    private TaskCompletionSource<bool>? _fileAddedTcs;
+    private TaskCompletionSource? _filesChangedTcs;
 
-    public void NotifyFileAdded()
+    public void NotifyFileAdded() => SignalFilesChanged();
+
+    /// <summary>
+    /// Wakes everyone waiting for the file list to change.
+    /// </summary>
+    private void SignalFilesChanged()
     {
         lock (_fileWaitLock)
         {
-            _fileAddedTcs?.TrySetResult(true);
+            _filesChangedTcs?.TrySetResult();
+            _filesChangedTcs = null;
+        }
+    }
+
+    /// <summary>
+    /// A task that completes the next time the file list changes, shared by everyone waiting for it.
+    /// Get it before looking at <see cref="Files"/>, so a change in between is not missed.
+    /// </summary>
+    private Task FilesChanged()
+    {
+        lock (_fileWaitLock)
+        {
+            return (_filesChangedTcs ??= new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
         }
     }
 
     private async Task<bool> WaitForFileIndexAsync(int targetIndex, CancellationToken ct)
     {
-        while (targetIndex >= Files.Count && _tab.IsArchiveExtracting.Value && !ct.IsCancellationRequested)
+        while (_tab.IsArchiveExtracting.Value && !ct.IsCancellationRequested)
         {
-            TaskCompletionSource<bool> tcs;
-            lock (_fileWaitLock)
+            var changed = FilesChanged();
+            if (targetIndex < Files.Count)
             {
-                _fileAddedTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-                tcs = _fileAddedTcs;
+                break;
             }
 
-            var reg = ct.Register(() => tcs.TrySetCanceled(ct));
-            await using (reg.ConfigureAwait(false))
+            try
             {
-                try
-                {
-                    var completedTask = await Task.WhenAny(tcs.Task, Task.Delay(3000, ct)).ConfigureAwait(false);
-                    if (completedTask != tcs.Task)
-                    {
-                        break;
-                    }
-                }
-                catch (OperationCanceledException)
-                {
-                    return false;
-                }
+                await changed.WaitAsync(TimeSpan.FromSeconds(3), ct).ConfigureAwait(false);
+            }
+            catch (TimeoutException)
+            {
+                break;
+            }
+            catch (OperationCanceledException)
+            {
+                return false;
             }
         }
 
         return targetIndex < Files.Count;
+    }
+
+    /// <inheritdoc />
+    public async ValueTask<bool> WaitForFileAsync(string path, TimeSpan timeout, CancellationToken ct)
+    {
+        var deadline = DateTime.UtcNow + timeout;
+        while (!ct.IsCancellationRequested)
+        {
+            var changed = FilesChanged();
+            if (IndexOf(Volatile.Read(ref _files), path) >= 0)
+            {
+                return true;
+            }
+
+            var remaining = deadline - DateTime.UtcNow;
+            if (remaining <= TimeSpan.Zero)
+            {
+                return false;
+            }
+
+            try
+            {
+                await changed.WaitAsync(remaining, ct).ConfigureAwait(false);
+            }
+            catch (TimeoutException)
+            {
+                return false;
+            }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     private bool IsTargetActive(FileInfo targetFile, int targetIndex)
