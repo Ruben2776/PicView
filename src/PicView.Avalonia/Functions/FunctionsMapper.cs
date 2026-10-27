@@ -1021,14 +1021,22 @@ public class FunctionsMapper : IActionRunner
 
     #region Other settings
 
-    /// <inheritdoc cref="SettingsUpdater.ResetSettings()" />
-    private async ValueTask ResetSettings() =>
-        await SettingsUpdater.ResetSettings().ConfigureAwait(false);
-
-    private ValueTask Restart()
+    /// <inheritdoc cref="SettingsUpdater.ResetSettings" />
+    private async ValueTask ResetSettings()
     {
-        AppFunctions.Restart(_vm.WindowTabs.ActiveTab.CurrentValue);
-        return ValueTask.CompletedTask;
+        if (_mainWindow.Lifecycle is { } lifecycle)
+        {
+            await SettingsUpdater.ResetSettings(lifecycle).ConfigureAwait(false);
+        }
+    }
+
+    /// <inheritdoc cref="AppLifecycle.RestartAsync" />
+    private async ValueTask Restart()
+    {
+        if (_mainWindow.Lifecycle is { } lifecycle)
+        {
+            await lifecycle.RestartAsync().ConfigureAwait(false);
+        }
     }
     
     private ValueTask ShowSettingsFile()

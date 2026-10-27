@@ -29,6 +29,7 @@ public sealed class AppLifecycle
     private readonly CoreViewModel _core;
     private readonly ISharedFiles _sharedFiles;
     private readonly Action _exit;
+    private readonly Action _startNewProcess;
     private MainWindow? _firstWindow;
     private bool _launchFileArrived;
     private string? _launchFileBeforeStart;
@@ -36,20 +37,24 @@ public sealed class AppLifecycle
     /// <param name="core">The view model every Main Window shares.</param>
     /// <param name="provider">Creates this platform's windows.</param>
     public AppLifecycle(CoreViewModel core, IWindowProvider provider)
-        : this(core, provider, new SharedFiles(core.PlatformService), () => Environment.Exit(0))
+        : this(core, provider, new SharedFiles(core.PlatformService), () => Environment.Exit(0),
+            ProcessHelper.StartNewProcess)
     {
         Current = this;
     }
 
     /// <param name="sharedFiles">Loads and saves what every Main Window shares.</param>
     /// <param name="exit">Ends the process, last of all at App Shutdown.</param>
+    /// <param name="startNewProcess">Starts a new PicView with no arguments, when restarting.</param>
     /// <param name="core">The view model every Main Window shares.</param>
     /// <param name="provider">Creates this platform's windows.</param>
-    internal AppLifecycle(CoreViewModel core, IWindowProvider provider, ISharedFiles sharedFiles, Action exit)
+    internal AppLifecycle(CoreViewModel core, IWindowProvider provider, ISharedFiles sharedFiles, Action exit,
+        Action startNewProcess)
     {
         _core = core;
         _sharedFiles = sharedFiles;
         _exit = exit;
+        _startNewProcess = startNewProcess;
         MainWindows = new MainWindowLifecycle(core, provider, this);
         AppWindows = new SecondaryWindowOpener(() => MainWindows.MostRecentlyActive, provider, () => null, () => core);
         AppToolWindows = new SecondaryWindowOpener(() => MainWindows.MostRecentlyActive, provider, () => null,
@@ -109,11 +114,23 @@ public sealed class AppLifecycle
     /// Runs App Shutdown: closes every Main Window, remembering the file and size of the most recently active one, saves
     /// what they share, deletes the temp files and ends the process.
     /// </summary>
-    public async Task ShutdownAsync()
+    public Task ShutdownAsync() => ShutdownAsync(restart: null);
+
+    /// <summary>
+    /// Restarts PicView: runs App Shutdown, then starts a new PicView with no file, whose App Start follows the
+    /// settings as usual. Does nothing once App Shutdown has begun.
+    /// </summary>
+    /// <param name="beforeStart">Runs once App Shutdown has saved what every Main Window shares, before the new
+    /// PicView starts.</param>
+    public Task RestartAsync(Func<Task>? beforeStart = null) =>
+        ShutdownAsync(beforeStart ?? (() => Task.CompletedTask));
+
+    /// <param name="restart">Runs before a new PicView starts, or <see langword="null"/> to start none.</param>
+    private async Task ShutdownAsync(Func<Task>? restart)
     {
         if (!Dispatcher.UIThread.CheckAccess())
         {
-            await Dispatcher.UIThread.InvokeAsync(ShutdownAsync).ConfigureAwait(false);
+            await Dispatcher.UIThread.InvokeAsync(() => ShutdownAsync(restart)).ConfigureAwait(false);
             return;
         }
 
@@ -144,6 +161,12 @@ public sealed class AppLifecycle
 
         await SaveSharedFilesAsync().ConfigureAwait(true);
         TempFileManager.Cleanup();
+        if (restart is not null)
+        {
+            await restart().ConfigureAwait(true);
+            _startNewProcess();
+        }
+
         _exit();
     }
 
