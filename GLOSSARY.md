@@ -87,6 +87,20 @@ _Avoid_: Standalone image, loose image
 Two images a tab shows beside each other when Side-by-Side is on: the shown image and its partner, the next image in the list. The last image has no partner unless the list loops, and a file with no partner shows alone. Paired navigation moves by two images at a time.
 _Avoid_: Dual view, two-up, double view
 
+## Gallery
+
+**Docked Gallery**:
+The strip of thumbnails along one edge of a Main Window, top, bottom, left or right, beside the image.
+_Avoid_: Bottom gallery, gallery bar
+
+**Expanded Gallery**:
+The gallery filling the Main Window in place of the image.
+_Avoid_: Full gallery, fullscreen gallery
+
+**Thumbnail Stretch**:
+How a gallery's thumbnails are shaped and filled. Uniform shows each whole image in its own proportions, Uniform to Fill fills the thumbnail and crops what spills over, Square shows the whole image inside a square, and Fill Square fills a square and crops what spills over. The Docked Gallery and the Expanded Gallery each have their own, and every Main Window uses the same two.
+_Avoid_: Gallery stretch, stretch mode
+
 ## Saving
 
 **Save Source**:
@@ -108,7 +122,7 @@ The setting that lets an image scale past its native pixel size to fill the Avai
 _Avoid_: Stretch, upscale
 
 **Reserved Space**:
-The parts of the window that are not the image: titlebar, tab strip, bottom bar and a docked gallery. It is taken away before the image is fitted. The tab strip is part of it only while the window has two or more tabs, so the window is fitted again whenever the strip shows or hides, with AutoFit on or off.
+The parts of the window that are not the image: titlebar, tab strip, bottom bar and a Docked Gallery. It is taken away before the image is fitted. The tab strip is part of it only while the window has two or more tabs, so the window is fitted again whenever the strip shows or hides, with AutoFit on or off.
 _Avoid_: UI size, chrome, container
 
 **Available Area**:
@@ -128,8 +142,12 @@ The total gap AutoFit keeps free around the window, beyond what the taskbar, doc
 _Avoid_: Window margin, padding
 
 **Fit**:
-The result of fitting an image, or a side-by-side pair, into the Available Area: its shown size, its Fit Scale, the scrollable area's size, and the window size that AutoFit applies. A side-by-side pair is fitted as one image made of both, scaled to the same height. A pair whose second size is not known yet has no Fit, so the window waits instead of resizing twice.
+The result of fitting an image, or a side-by-side pair, into the Available Area: its shown size, its Fit Scale, its Scroll Area, and the window size that AutoFit applies. A side-by-side pair is fitted as one image made of both, scaled to the same height. A pair whose second size is not known yet has no Fit, so the window waits instead of resizing twice.
 _Avoid_: Target size, image size, layout
+
+**Scroll Area**:
+With scrolling on, the area the image scrolls in. It fills the Available Area, except with AutoFit, where it takes the image's shown width and as much of its height as the Available Area allows. The image keeps its Fit Scale and sits centered in it.
+_Avoid_: Scroll viewer size, scrollable area
 
 **Fit Scale**:
 The factor that takes an image from its pixel size to its shown size when it is fitted. It becomes the starting zoom.

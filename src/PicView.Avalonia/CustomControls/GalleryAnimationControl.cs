@@ -3,10 +3,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
-using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.Sizing;
@@ -148,8 +146,15 @@ public class GalleryAnimationControl : UserControl
             .Subscribe(UpdateDockedItemHeight, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(UpdateDockedItemHeight)))
             .AddTo(ref _disposables);
         
+        // The Settings window can change either gallery's stretch, whichever one is shown. The other one takes it when
+        // it is shown next, from SetExpandedThumbs or SetDockedThumbPosition
         core.GallerySettings.ExpandedGalleryStretchMode.Skip(1).Subscribe(mode =>
             {
+                if (ActiveGalleryMode is not GalleryMode.Expanded)
+                {
+                    return;
+                }
+
                 SetExpandedThumbs(mode);
                 _itemsPanel.InvalidateMeasure();
                 Dispatcher.UIThread.Invoke(() =>
@@ -161,6 +166,11 @@ public class GalleryAnimationControl : UserControl
         
         core.GallerySettings.DockedGalleryStretchMode.Skip(1).Subscribe(mode =>
             {
+                if (ActiveGalleryMode is not (GalleryMode.Docked or GalleryMode.DockedNoAnimation))
+                {
+                    return;
+                }
+
                 SetDockedThumbs(mode);
                 _itemsPanel.InvalidateMeasure();
                 _viewer.ScrollToCenterOfCurrentItem();
@@ -482,25 +492,10 @@ public class GalleryAnimationControl : UserControl
         }
         var settings = core.GallerySettings;
         settings.ItemHeight.Value = size;
-        switch (mode)
-        {
-            case GalleryStretchMode.Uniform:
-                settings.GalleryStretch.Value = Stretch.Uniform;
-                settings.ItemWidth.Value = double.NaN;
-                break;
-            case GalleryStretchMode.UniformToFill:
-                settings.GalleryStretch.Value = Stretch.UniformToFill;
-                settings.ItemWidth.Value = double.NaN;
-                break;
-            case GalleryStretchMode.Square:
-                settings.GalleryStretch.Value = Stretch.Uniform;
-                settings.ItemWidth.Value = size;
-                break;
-            case GalleryStretchMode.FillSquare:
-                settings.GalleryStretch.Value = Stretch.Fill;
-                settings.ItemWidth.Value = size;
-                break;
-        }
+        settings.ItemWidth.Value = mode is GalleryStretchMode.Square or GalleryStretchMode.FillSquare
+            ? size
+            : double.NaN;
+        settings.ThumbnailStretch.Value = mode;
 
         if (spacing > 0)
         {

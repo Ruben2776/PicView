@@ -13,7 +13,6 @@ using PicView.Avalonia.UI;
 using PicView.Core.Config;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
-using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -23,7 +22,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 {
     private bool _isInitialized;
     private DisposableBag _disposables;
-    private IDisposable? _flipSubscription;
     private ScaleTransform? _flipTransform;
     private bool _animatesNextFlip;
     
@@ -36,13 +34,12 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
-        InitializeImageTransformer();
-
         AddHandler(PointerWheelChangedEvent, PreviewOnPointerWheelChanged, RoutingStrategies.Tunnel);
         AddHandler(PointerTouchPadGestureMagnifyEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
         AddHandler(PinchEvent, TouchMagnifyEvent, RoutingStrategies.Bubble);
-        _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
-
+        
+        Dispatcher.UIThread.Post(InitializeImageTransformer, DispatcherPriority.Background);
+        
         Dispatcher.UIThread.Post(InitializeMotionPhoto, DispatcherPriority.ApplicationIdle);
     }
 
@@ -270,6 +267,11 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             e.Pointer.Type is PointerType.Touch, e.GetPosition(ZoomPanControl), this).ConfigureAwait(true);
     }
 
+    /// <summary>
+    /// Whether the shown image is taller than the scroll viewer, so there is something to scroll.
+    /// </summary>
+    public bool IsImageTallerThanViewer => ImageScrollViewer.Extent.Height > ImageScrollViewer.Viewport.Height;
+
     bool IZoomScrollTarget.CanScrollVertically =>
         ImageScrollViewer.VerticalScrollBarVisibility is ScrollBarVisibility.Visible or ScrollBarVisibility.Auto;
 
@@ -297,15 +299,16 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
 
         _isInitialized = true;
         ZoomPanControl.Initialize(ZoomPreview);
+        
+        if (DataContext is not TabViewModel tab)
+        {
+            return;
+        }
 
         Observable.EveryValueChanged(ZoomPanControl, zoom => zoom.Scale)
             .Skip(1)
             .Subscribe(zoomLevel =>
             {
-                if (DataContext is not TabViewModel tab)
-                {
-                    return;
-                }
                 var adjustedZoomLevel = Convert.ToInt32(tab.InitialZoom.CurrentValue * (zoomLevel * 100));
                 tab.ZoomLevel.Value = adjustedZoomLevel;
                 tab.UpdateTabTitle();
@@ -335,10 +338,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
                 handler => HoverBar.ProgressBar.ClickedOnTrack -= handler)
             .SubscribeAwait(async (x, _) =>
             {
-                if (DataContext is not TabViewModel tab)
-                {
-                    return;
-                }
                 await tab.ImageIterator.SkipToIndexAsync(x, tab.GetTabCancellation()).ConfigureAwait(false);
             }, DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer)), AwaitOperation.Drop)
             .AddTo(ref _disposables);
@@ -351,13 +350,20 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             .Debounce(TimeSpan.FromMilliseconds(25)) // Debounce handles rapid events during drag
             .SubscribeAwait(async (x, _) =>
             {
-                if (DataContext is not TabViewModel tab)
-                {
-                    return;
-                }
                 await tab.ImageIterator.SkipToIndexAsync(x, tab.GetTabCancellation()).ConfigureAwait(false);
             },DebugHelper.LogError(nameof(ImageViewer), nameof(InitializeImageTransformer)), AwaitOperation.Drop)
             .AddTo(ref _disposables);
+        
+        tab.Orientation.Current
+            .Select(static orientation => orientation.IsFlipped)
+            .DistinctUntilChanged()
+            .Subscribe(isFlipped =>
+            {
+                ShowFlip(isFlipped ? -1 : 1);
+            },
+            DebugHelper.LogError(nameof(ImageViewer), nameof(ShowFlip)))            
+            .AddTo(ref _disposables);
+        _disposables.Add(new HoverFadeButtonHandler(GalleryShortcut, GalleryShortcut.InnerButton));
     }
 
     #region Zoom
@@ -389,17 +395,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     /// Animates the next change of the tab's flip, as the Flip Action does; resetting it on a new image does not.
     /// </summary>
     public void AnimateNextFlip() => _animatesNextFlip = true;
-
-    protected override void OnDataContextChanged(EventArgs e)
-    {
-        base.OnDataContextChanged(e);
-        _flipSubscription?.Dispose();
-        _flipSubscription = (DataContext as TabViewModel)?.Orientation.Current
-            .Select(static orientation => orientation.IsFlipped)
-            .DistinctUntilChanged()
-            .Subscribe(isFlipped => ShowFlip(isFlipped ? -1 : 1),
-                DebugHelper.LogError(nameof(ImageViewer), nameof(ShowFlip)));
-    }
 
     /// <summary>
     /// Mirrors the image as its tab's Orientation asks. The rotation is bound in the view instead.
@@ -450,7 +445,6 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
         SecondaryMotionPhotoView.FirstFrameShown -= OnMotionPhotoFirstFrameShown;
         SecondaryMotionPhotoView.Dispose();
         _disposables.Dispose();
-        _flipSubscription?.Dispose();
         HoverBar.Dispose();
     }
 }

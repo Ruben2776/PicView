@@ -9,10 +9,15 @@ public class GallerySharedSettingsViewModel
 {
     private bool _isInitialized;
 
+    // TODO: ItemHeight, ItemWidth and ThumbnailStretch are shared by every Main Window, but whether a gallery is docked
+    // or expanded belongs to its tab, so two windows with their galleries in different states take each other's.
     public BindableReactiveProperty<double> ItemHeight { get; } = new(0);
     public BindableReactiveProperty<double> ItemWidth { get; } = new(0);
 
-    public BindableReactiveProperty<object> GalleryStretch { get; } = new();
+    /// <summary>
+    /// The Thumbnail Stretch of the gallery that is shown, docked or expanded. Its thumbnails follow it.
+    /// </summary>
+    public BindableReactiveProperty<GalleryStretchMode> ThumbnailStretch { get; } = new(GalleryStretchMode.Uniform);
     public ReactiveCommand<GalleryStretchMode> SetDockedStretchModeCommand { get; } = new();
     public ReactiveCommand<GalleryStretchMode> SetExpandedStretchModeCommand { get; } = new();
     
@@ -117,13 +122,13 @@ public class GallerySharedSettingsViewModel
         Observable.EveryValueChanged(Settings.Gallery, x => x.DockedGalleryStretchMode)
             .Subscribe(x =>
             {
-                DockedGalleryStretchMode.Value = x;
+                GallerySettingsConverter.UpdateDockedGalleryStretchMode(this, x);
             }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(DockedGalleryStretchMode)));
 
         Observable.EveryValueChanged(Settings.Gallery, x => x.ExpandedGalleryStretchMode)
             .Subscribe(x =>
             {
-                ExpandedGalleryStretchMode.Value = x;
+                GallerySettingsConverter.UpdateExpandedGalleryStretchMode(this, x);
             }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(ExpandedGalleryStretchMode)));
 
 
@@ -164,33 +169,6 @@ public class GallerySharedSettingsViewModel
                     await SaveSettingsAsync().ConfigureAwait(false);
                 }
             }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(GalleryLineSpacing)));
-
-        DockedGalleryStretchMode
-            .Skip(1)
-            .SubscribeAwait(async (newMode, _) =>
-            {
-                if (Settings.Gallery.DockedGalleryStretchMode == newMode)
-                {
-                    return;
-                }
-
-                GallerySettingsConverter.UpdateDockedGalleryStretchMode(this, newMode);
-                await SaveSettingsAsync().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(DockedGalleryStretchMode)));
-
-        ExpandedGalleryStretchMode
-            .Skip(1)
-            .SubscribeAwait(async (newMode, _) =>
-            {
-                if (Settings.Gallery.ExpandedGalleryStretchMode == newMode)
-                {
-                    return;
-                }
-                
-                GallerySettingsConverter.UpdateExpandedGalleryStretchMode(this, newMode);
-                await SaveSettingsAsync().ConfigureAwait(false);
-            }, DebugHelper.LogError(nameof(GallerySharedSettingsViewModel), nameof(ExpandedGalleryStretchMode)));
-
     }
 
     private void ToggleGalleryVisibilitySubscription()

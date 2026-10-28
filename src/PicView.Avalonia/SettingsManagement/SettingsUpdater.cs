@@ -126,10 +126,15 @@ public static class SettingsUpdater
         var tab = windowTabs.ActiveTab.CurrentValue;
         if (tab.ImageIterator?.Files.Count > 0)
         {
-            var ct = tab.GetTabCancellation();
-            await windowTabs.SharedNavigation.RepopulateIterator(tab.FileInfo.CurrentValue, tab, ct).ConfigureAwait(false);
-            await tab.ImageIterator.ReloadAsync().ConfigureAwait(false);
-            tab.UpdateTabTitle();
+            await Task.Run(async () =>
+            {
+                // TODO: Make toggling subdirectories skip loading if no subdirectories are included
+                // and if subdirectories exist, don't reload them but progressively add them
+                var ct = tab.GetTabCancellation();
+                await windowTabs.SharedNavigation.RepopulateIterator(tab.FileInfo.CurrentValue, tab, ct)
+                    .ConfigureAwait(false);
+                tab.UpdateTabTitle();
+            }).ConfigureAwait(false);
         }
         
         await SaveSettingsAsync().ConfigureAwait(false);

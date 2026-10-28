@@ -327,7 +327,7 @@ public class FunctionsMapper : IActionRunner
         await Dispatcher.UIThread.InvokeAsync(_mainWindow.AddFileSearchDialog);
     
     private ValueTask Up() =>
-        ArrowKeyNavigation.Up(IsGalleryExpanded, NavigateDirectional, RotateRight);
+        ArrowKeyNavigation.Up(IsGalleryExpanded, NavigateDirectional, CanScrollImage, ScrollUp, RotateRight);
 
     /// <inheritdoc cref="RotationManager.RotateRight(MainWindowViewModel, MainWindow)" />
     private ValueTask RotateRight()
@@ -374,9 +374,12 @@ public class FunctionsMapper : IActionRunner
     }
 
     private ValueTask Down() =>
-        ArrowKeyNavigation.Down(IsGalleryExpanded, NavigateDirectional, RotateLeft);
+        ArrowKeyNavigation.Down(IsGalleryExpanded, NavigateDirectional, CanScrollImage, ScrollDown, RotateLeft);
 
     private bool IsGalleryExpanded() => _vm.WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value;
+
+    private bool CanScrollImage() =>
+        _vm.WindowTabs.ActiveTab.Value.CurrentView.CurrentValue is ImageViewer { IsImageTallerThanViewer: true };
 
     private ValueTask NavigateDirectional(NavigateTo direction) =>
         _vm.WindowTabs.NavigateDirectionalAsync(_mainWindow.KeybindRouter.IsKeyHeldDown, direction);

@@ -403,6 +403,100 @@ public class PrintJobTests : IDisposable
     }
 
     [AvaloniaFact]
+    public void Reset_PutsDefaultsBackWithDefaultPrinterAndRedrawsPreview()
+    {
+        ShowRedBlueImage();
+        var printers = new FakeSystemPrinters
+        {
+            PrinterNames = ["Office printer", "Photo printer"],
+            DefaultPrinterName = "Photo printer",
+            PaperSizes =
+            {
+                ["Office printer"] = ["A4", "Letter"],
+                ["Photo printer"] = ["4x6", "Letter"]
+            }
+        };
+        var remembered = new PrintWindowProperties
+        {
+            PrinterName = "Office printer",
+            PaperSize = "Letter",
+            Orientation = (int)Orientations.Landscape,
+            ScaleMode = (int)ScaleModes.Fill,
+            ColorMode = (int)ColorModes.BlackAndWhite,
+            Copies = 3,
+            MarginTop = 25,
+            MarginBottom = 25,
+            MarginLeft = 25,
+            MarginRight = 25
+        };
+        var job = Open(printers, remembered);
+        RunWithDispatcher(job.Loaded);
+        var settings = _preview.PrintSettings.Value;
+        Assert.True(_preview.PageWidth.Value > _preview.PageHeight.Value);
+
+        _preview.ResetCommand.Execute(R3.Unit.Default);
+        WaitUntil(() => settings.Printer.Value?.Id == "Photo printer");
+
+        Assert.Same(settings, _preview.PrintSettings.Value);
+        Assert.Equal(["4x6", "Letter"], _preview.PaperSizes.Value);
+        Assert.Equal("4x6", settings.PaperSize.Value);
+        Assert.Equal((int)Orientations.Portrait, settings.Orientation.Value);
+        Assert.Equal((int)ScaleModes.Fit, settings.ScaleMode.Value);
+        Assert.Equal((int)ColorModes.Auto, settings.ColorMode.Value);
+        Assert.Equal(1, settings.Copies.Value);
+        Assert.Equal((10, 10, 10, 10),
+            (settings.MarginTop.Value, settings.MarginBottom.Value, settings.MarginLeft.Value,
+                settings.MarginRight.Value));
+        WaitUntil(() => _preview.PageHeight.Value > _preview.PageWidth.Value);
+    }
+
+    [AvaloniaFact]
+    public void CanReset_FollowsWhetherSettingsDifferFromDefaults()
+    {
+        ShowRedBlueImage();
+        var printers = new FakeSystemPrinters
+        {
+            PrinterNames = ["Office printer", "Photo printer"],
+            DefaultPrinterName = "Photo printer",
+            PaperSizes =
+            {
+                ["Office printer"] = ["A4", "Letter"],
+                ["Photo printer"] = ["4x6", "Letter"]
+            }
+        };
+        var job = Open(printers, A4Fit());
+        Assert.False(_preview.CanReset.Value);
+        RunWithDispatcher(job.Loaded);
+        var settings = _preview.PrintSettings.Value;
+        Assert.True(_preview.CanReset.Value);
+
+        _preview.ResetCommand.Execute(R3.Unit.Default);
+        WaitUntil(() => !_preview.CanReset.Value);
+        Assert.Equal("Photo printer", settings.Printer.Value?.Id);
+
+        settings.MarginLeft.Value = 20;
+        Assert.True(_preview.CanReset.Value);
+
+        settings.MarginLeft.Value = 10;
+        Assert.False(_preview.CanReset.Value);
+    }
+
+    [AvaloniaFact]
+    public void CanReset_RememberedSettingsAreDefaults_IsFalse()
+    {
+        ShowRedBlueImage();
+        var printers = new FakeSystemPrinters
+        {
+            DefaultPrinterName = "Office printer",
+            PaperSizes = { ["Office printer"] = ["A4", "Letter"] }
+        };
+        var job = Open(printers, A4Fit());
+        RunWithDispatcher(job.Loaded);
+
+        Assert.False(_preview.CanReset.Value);
+    }
+
+    [AvaloniaFact]
     public void Cancel_ClosesWindow()
     {
         ShowRedBlueImage();

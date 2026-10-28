@@ -198,9 +198,10 @@ public class LanguageAndSettingsUnitTest
     [InlineData("sl-SI", "sl")]
     [InlineData("en-US", "en")]
     [InlineData("en-GB", "en")]
+    [InlineData("ar-SA", "ar")]
+    [InlineData("ar-EG", "ar")]
     // Unsupported/custom cultures fallback to English
     [InlineData("fi-FI", "en")]
-    [InlineData("ar-SA", "en")]
     [InlineData("is-IS", "en")]
     [InlineData("sw-KE", "en")]
     [InlineData("xx-YY", "en")]

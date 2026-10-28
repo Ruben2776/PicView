@@ -1,5 +1,5 @@
 <customControls:MainTitleBar
-    x:Class="PicView.Avalonia.Views.Main.CustomTitleBar"
+    x:Class="PicView.Avalonia.Views.Menu.CustomTitleBar"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
@@ -102,7 +102,7 @@
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.Print}"
                         Header="{Binding Translation.Print.Value, Mode=OneWay}"
-                        IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
+                        IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldPrintBeEnabled.Value}"
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Path Classes="PrintPath" />
@@ -459,7 +459,7 @@
                         Command="{Binding RunActionCommand}"
                         CommandParameter="{x:Static keybindings:Actions.Crop}"
                         Header="{Binding Translation.Crop.Value, Mode=OneWay}"
-                        IsEnabled="{Binding WindowTabs.ActiveTab.Value.Image.Value, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        IsEnabled="{Binding WindowTabs.ActiveTab.Value.ShouldCropBeEnabled.Value}"
                         Theme="{StaticResource MainBg}">
                         <MenuItem.Icon>
                             <Image Classes="CropImage" />

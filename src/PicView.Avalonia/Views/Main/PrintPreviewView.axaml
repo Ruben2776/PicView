@@ -266,6 +266,28 @@
                 Height="1"
                 VerticalAlignment="Top"
                 Fill="{DynamicResource ToolWindowButtonBorderColor}" />
+
+            <Button
+                x:Name="ResetButton"
+                Width="140"
+                Height="42"
+                Margin="10,0,0,0"
+                HorizontalAlignment="Left"
+                Background="{DynamicResource ToolWindowButtonBackground}"
+                Classes="ToolWindowBorderStyle ToolButtonHover"
+                Command="{CompiledBinding PrintPreview.ResetCommand}"
+                Foreground="{DynamicResource MainTextColor}"
+                IsEnabled="{CompiledBinding PrintPreview.CanReset.Value,
+                                            Mode=OneWay}"
+                ToolTip.Tip="{CompiledBinding Translation.Reset.Value,
+                                              Mode=OneWay}">
+                <TextBlock
+                    Classes="txt"
+                    Text="{CompiledBinding Translation.Reset.Value,
+                                           Mode=OneWay}"
+                    TextAlignment="Center" />
+            </Button>
+
             <StackPanel
                 Margin="0,1,25,0"
                 HorizontalAlignment="Right"
@@ -289,6 +311,8 @@
                                                Mode=OneWay}"
                         TextAlignment="Center" />
                 </Button>
+
+
 
                 <Button
                     x:Name="PrintButton"

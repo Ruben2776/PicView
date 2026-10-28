@@ -161,7 +161,7 @@ public sealed class SecondaryWindowOpener(
 
     private static void Bring(Window window)
     {
-        if (window.WindowState == WindowState.Minimized)
+        if (window.WindowState is WindowState.Minimized)
         {
             WindowFunctions.ShowMinimizedWindow(window);
         }

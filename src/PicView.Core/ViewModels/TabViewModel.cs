@@ -162,7 +162,21 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     /// Should be used when changing directory or closing the tab
     /// </summary>
     private CancellationTokenSource NavigationCts { get; set; } = new();
-    
+
+    private int _loadVersion;
+
+    /// <summary>
+    /// Starts loading a new source into the tab, which supersedes any load still running.
+    /// </summary>
+    /// <returns>The load's version, to check with <see cref="IsLatestLoad"/>.</returns>
+    internal int BeginLoad() => Interlocked.Increment(ref _loadVersion);
+
+    /// <summary>
+    /// Whether no load began after the one with <paramref name="version"/>, so it may still change the tab's image,
+    /// files and gallery.
+    /// </summary>
+    internal bool IsLatestLoad(int version) => Volatile.Read(ref _loadVersion) == version;
+
     #endregion
 
     #region Titles

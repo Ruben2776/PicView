@@ -52,6 +52,7 @@ public class PrintPreviewViewModel
 
     public BindableReactiveProperty<bool> IsProcessing { get; } = new(true);
     public BindableReactiveProperty<double> Opacity { get; } = new(1.0);
+    public BindableReactiveProperty<bool> CanReset { get; } = new(false);
 
     #endregion
     
@@ -59,6 +60,7 @@ public class PrintPreviewViewModel
 
     public ReactiveCommand<Unit> PrintCommand { get; } = new();
     public ReactiveCommand<Unit> CancelCommand { get; } = new();
+    public ReactiveCommand<Unit> ResetCommand { get; } = new();
 
     #endregion
 
@@ -79,8 +81,10 @@ public class PrintPreviewViewModel
             Zoom,
             IsProcessing,
             Opacity,
+            CanReset,
             PrintCommand,
-            CancelCommand);
+            CancelCommand,
+            ResetCommand);
     }
 
     #endregion

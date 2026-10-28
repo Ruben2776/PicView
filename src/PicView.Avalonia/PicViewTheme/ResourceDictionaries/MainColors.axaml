@@ -57,7 +57,7 @@
             <Color x:Key="MenuButtonBackground">#303030</Color>
             <Color x:Key="MenuBorderColor">#373535</Color>
 
-            <Color x:Key="DisabledMenuBackgroundColor">#E3DFE7</Color>
+            <Color x:Key="DisabledMenuBackgroundColor">#FA373737</Color>
             <Color x:Key="DisabledMenuForegroundColor">#A9A5AC</Color>
 
             <Color x:Key="ContextMenuBackgroundColor">#EE2b2b2b</Color>

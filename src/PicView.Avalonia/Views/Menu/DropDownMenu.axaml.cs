@@ -135,15 +135,15 @@ public partial class DropDownMenu : AnimatedMenu
             {
                 if (isVisible)
                 {
+                    var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+                    
                     vm.TopTitlebarViewModel.DropDownMenu.CloseMenus(Unit.Default);
                     MaxHeight = _mainWindow.UIHelper.GetMainView.Bounds.Height - 1;
-                    vm.WindowTabs.ActiveTab.CurrentValue.ShouldCropBeEnabled.Value =
-                        CropManager.SetIfCropEnabled(_mainWindow);
+                    tab.ShouldCropBeEnabled.Value = CropManager.SetIfCropEnabled(_mainWindow);
                     vm.FileHistory.UpdateHistory();
                     vm.Favorites.UpdateFavorites();
-                    var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-                    tab.ShouldPrintBeEnabled.Value =
-                        ConversionHelper.DetermineIfPrintMenuItemShouldBeEnabled(tab);
+                    
+                    tab.ShouldPrintBeEnabled.Value = ConversionHelper.DetermineIfPrintMenuItemShouldBeEnabled(tab);
                 }
                 else
                 {

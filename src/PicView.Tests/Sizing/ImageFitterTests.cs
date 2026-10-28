@@ -152,6 +152,71 @@ public class ImageFitterTests
         Assert.Equal(967, fit.ScrollViewerHeight, Precision);
     }
 
+    [Fact]
+    public void Fit_ScrollInFixedWindowWithShortImage_ScrollAreaFillsAvailableArea()
+    {
+        var fit = Fit(Input(500, 300, FitMode.FixedWindow) with
+        {
+            ScrollEnabled = true,
+            WindowContentWidth = 800,
+            WindowContentHeight = 600
+        });
+
+        Assert.Equal(500, fit.Width, Precision);
+        Assert.Equal(300, fit.Height, Precision);
+        Assert.Equal(800, fit.ScrollViewerWidth, Precision);
+        Assert.Equal(600, fit.ScrollViewerHeight, Precision);
+    }
+
+    [Fact]
+    public void Fit_ScrollInFixedWindowWithNarrowTallImage_ScrollAreaFillsAvailableWidth()
+    {
+        var fit = Fit(Input(500, 3000, FitMode.FixedWindow) with
+        {
+            ScrollEnabled = true,
+            WindowContentWidth = 800,
+            WindowContentHeight = 600
+        });
+
+        Assert.Equal(500, fit.Width, Precision);
+        Assert.Equal(3000, fit.Height, Precision);
+        Assert.Equal(800, fit.ScrollViewerWidth, Precision);
+        Assert.Equal(600, fit.ScrollViewerHeight, Precision);
+    }
+
+    [Fact]
+    public void Fit_ScrollAndZoomToFitInFixedWindowWithShortImage_ScrollAreaFillsAvailableHeight()
+    {
+        // Scaled 1.6 to fill the 800 wide area, which leaves it 480 high
+        var fit = Fit(Input(500, 300, FitMode.FixedWindow) with
+        {
+            ScrollEnabled = true,
+            ZoomToFit = true,
+            WindowContentWidth = 800,
+            WindowContentHeight = 600
+        });
+
+        Assert.Equal(800, fit.Width, Precision);
+        Assert.Equal(480, fit.Height, Precision);
+        Assert.Equal(800, fit.ScrollViewerWidth, Precision);
+        Assert.Equal(600, fit.ScrollViewerHeight, Precision);
+    }
+
+    [Fact]
+    public void Fit_ScrollInFullscreenWithShortImage_ScrollAreaFillsScreenBesideDockedGallery()
+    {
+        var fit = Fit(Input(500, 300, FitMode.Fullscreen) with
+        {
+            ScrollEnabled = true,
+            ReservedSpace = Bars with { GalleryHeight = 100 }
+        });
+
+        Assert.Equal(500, fit.Width, Precision);
+        Assert.Equal(300, fit.Height, Precision);
+        Assert.Equal(1920, fit.ScrollViewerWidth, Precision);
+        Assert.Equal(980, fit.ScrollViewerHeight, Precision);
+    }
+
     [Theory]
     [InlineData(0, 500)]
     [InlineData(500, 0)]

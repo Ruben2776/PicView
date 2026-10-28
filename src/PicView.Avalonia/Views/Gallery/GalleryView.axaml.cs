@@ -178,9 +178,24 @@ public partial class GalleryView : GalleryAnimationControl
                 }
                 break;
             case NotifyCollectionChangedAction.Reset:
+                // Sorting resets the list as well as clearing it, so show what it holds now
+                var resetItems = _tab?.Gallery.GalleryItems.ToArray() ?? [];
                 RunOnUI(() =>
                 {
                     _galleryItems.Clear();
+                    if (resetItems.Length <= 0)
+                    {
+                        return;
+                    }
+
+                    _galleryItems.AddRange(resetItems);
+                    EventHandler? layoutUpdatedHandler = null;
+                    layoutUpdatedHandler = (_, _) =>
+                    {
+                        GalleryItemsControl.LayoutUpdated -= layoutUpdatedHandler;
+                        GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                    };
+                    GalleryItemsControl.LayoutUpdated += layoutUpdatedHandler;
                 }, DispatcherPriority.Render, CancellationToken.None);
                 break;
             case NotifyCollectionChangedAction.Remove:

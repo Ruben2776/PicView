@@ -123,4 +123,11 @@ public interface IImageIterator : IDisposable
     /// Notifies the iterator that a new file has been added to the file list.
     /// </summary>
     void NotifyFileAdded();
+
+    /// <summary>
+    /// Waits for <paramref name="path"/> to join the file list, as when the folder watcher adds a file just
+    /// created in the folder.
+    /// </summary>
+    /// <returns>Whether the file is in the list, false when it did not join within <paramref name="timeout"/>.</returns>
+    ValueTask<bool> WaitForFileAsync(string path, TimeSpan timeout, CancellationToken ct);
 }

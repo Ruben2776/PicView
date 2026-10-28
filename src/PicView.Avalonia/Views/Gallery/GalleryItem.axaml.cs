@@ -27,48 +27,21 @@ public partial class GalleryItem : NavigateAbleItem
     public GalleryItem()
     {
         InitializeComponent();
-    }
-
-    protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
-    {
-        base.OnAttachedToLogicalTree(e);
-        // The gallery this item is shown in, which belongs to the tab of its image viewer
-        if (Application.Current.DataContext is not CoreViewModel core
-            || this.FindLogicalAncestorOfType<GalleryAnimationControl>()?.DataContext is not TabViewModel { Gallery: var gallery })
+        if (Application.Current.DataContext is not CoreViewModel core)
         {
             return;
         }
 
-        core.GallerySettings.DockedGalleryStretchMode.Subscribe(x =>
+        // Follows the gallery that is shown, so switching between docked and expanded restretches the thumbnails too
+        core.GallerySettings.ThumbnailStretch.Subscribe(x =>
         {
-            if (!gallery.IsGalleryDocked.CurrentValue)
-            {
-                return;
-            }
-
             GalleryImage.Stretch = x switch
             {
                 GalleryStretchMode.Uniform or GalleryStretchMode.Square => Stretch.Uniform,
                 GalleryStretchMode.UniformToFill or GalleryStretchMode.FillSquare => Stretch.UniformToFill,
                 _ => GalleryImage.Stretch
             };
-        }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.DockedGalleryStretchMode)))
-        .AddTo(ref _disposables);
-        
-        core.GallerySettings.ExpandedGalleryStretchMode.Subscribe(x =>
-        {
-            if (!gallery.IsGalleryExpanded.CurrentValue)
-            {
-                return;
-            }
-
-            GalleryImage.Stretch = x switch
-            {
-                GalleryStretchMode.Uniform or GalleryStretchMode.Square => Stretch.Uniform,
-                GalleryStretchMode.UniformToFill or GalleryStretchMode.FillSquare => Stretch.UniformToFill,
-                _ => GalleryImage.Stretch
-            };
-        }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.DockedGalleryStretchMode)))
+        }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.ThumbnailStretch)))
         .AddTo(ref _disposables);
     }
     
@@ -341,7 +314,5 @@ public partial class GalleryItem : NavigateAbleItem
         _contextMenu?.Opened -= GalleryContextMenuOnOpened;
         _contextMenu?.Closed -= GalleryContextMenuOnClosed;
         _disposables.Dispose();
-        // A disposed bag disposes what is added to it, so start a new one for when the item is shown again
-        _disposables = default;
     }
 }
