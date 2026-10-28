@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.VisualTree;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
 using PicView.Core.ViewModels;
@@ -21,15 +20,6 @@ public partial class GallerySettingsView : UserControl
     {
         base.OnAttachedToVisualTree(e);
         FollowStretchModes();
-    }
-
-    protected override void OnDataContextChanged(EventArgs e)
-    {
-        base.OnDataContextChanged(e);
-        if (this.IsAttachedToVisualTree())
-        {
-            FollowStretchModes();
-        }
     }
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)

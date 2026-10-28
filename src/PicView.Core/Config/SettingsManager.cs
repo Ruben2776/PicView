@@ -258,13 +258,13 @@ public static class SettingsManager
         {
             existingSettings.Gallery.DockedGalleryItemSize = GalleryDefaults.DefaultDockedGalleryHeight;
         }
-
-        if (existingSettings.Version < 2.0)
-        {
-            existingSettings.Gallery.DockPosition = GalleryDockPosition.Bottom;
-        }
+        
         if (existingSettings.Version < 3.0)
         {
+            if (existingSettings.Version < 2.0)
+            {
+                existingSettings.Gallery.DockPosition = GalleryDockPosition.Bottom;
+            }
             // Fill and None stretch mode existed in older version
             // and were deleted in 5.1.0, so we reset them to default
             existingSettings.Gallery.ExpandedGalleryStretchMode = GalleryStretchMode.Uniform;
