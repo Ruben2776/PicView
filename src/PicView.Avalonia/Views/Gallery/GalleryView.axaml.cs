@@ -16,6 +16,7 @@ namespace PicView.Avalonia.Views.Gallery;
 public partial class GalleryView : GalleryAnimationControl
 {
     private readonly AvaloniaList<GalleryItemViewModel> _galleryItems = [];
+    private readonly GalleryViewModel? _gallery;
     private readonly DisposableBag _disposables;
 
     public GalleryView()
@@ -29,6 +30,7 @@ public partial class GalleryView : GalleryAnimationControl
         GalleryItemsControl.ItemsSource = _galleryItems;
 
         var gallery = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery;
+        _gallery = gallery;
         gallery.GalleryItems.CollectionChanged += CurrentValueOnCollectionChanged;
         gallery.NavigateGalleryCommand.Subscribe(x =>
         {
@@ -147,9 +149,24 @@ public partial class GalleryView : GalleryAnimationControl
                 }
                 break;
             case NotifyCollectionChangedAction.Reset:
+                // Sorting resets the list as well as clearing it, so show what it holds now
+                var resetItems = _gallery?.GalleryItems.ToArray() ?? [];
                 RunOnUI(() =>
                 {
                     _galleryItems.Clear();
+                    if (resetItems.Length <= 0)
+                    {
+                        return;
+                    }
+
+                    _galleryItems.AddRange(resetItems);
+                    EventHandler? layoutUpdatedHandler = null;
+                    layoutUpdatedHandler = (_, _) =>
+                    {
+                        GalleryItemsControl.LayoutUpdated -= layoutUpdatedHandler;
+                        GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                    };
+                    GalleryItemsControl.LayoutUpdated += layoutUpdatedHandler;
                 }, DispatcherPriority.Render, CancellationToken.None);
                 break;
             case NotifyCollectionChangedAction.Remove:
