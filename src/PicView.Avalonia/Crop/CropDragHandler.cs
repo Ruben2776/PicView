@@ -55,7 +55,7 @@ public class CropDragHandler(CropControl control)
             return;
         }
         
-        if (control.DataContext is not TabViewModel tab || Application.Current.DataContext is not CoreViewModel core)
+        if (control.DataContext is not TabViewModel tab)
         {
             return;
         }
@@ -70,7 +70,7 @@ public class CropDragHandler(CropControl control)
             return;
         }
         
-        var vm = core.MainWindows.ActiveWindow.CurrentValue;
+        var vm = tab.ParentWindowContext;
         if (vm == null)
         {
             return;

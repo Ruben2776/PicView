@@ -22,12 +22,12 @@ public partial class EditableTitlebar : UserControl
 
     private void HandlePointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
         if (!e.GetCurrentPoint(this).Properties.IsRightButtonPressed ||
-            core.MainWindows.ActiveWindow.CurrentValue.IsEditableTitlebarOpen.CurrentValue)
+            vm.IsEditableTitlebarOpen.CurrentValue)
         {
             return;
         }
@@ -37,12 +37,12 @@ public partial class EditableTitlebar : UserControl
 
     private void HandlePointerEntered(object? sender, PointerEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
         
-        Cursor = core.MainWindows.ActiveWindow.CurrentValue.IsEditableTitlebarOpen.CurrentValue
+        Cursor = vm.IsEditableTitlebarOpen.CurrentValue
             ? new Cursor(StandardCursorType.Ibeam)
             : new Cursor(StandardCursorType.Arrow);
     }
@@ -52,25 +52,25 @@ public partial class EditableTitlebar : UserControl
     public void CloseTitlebar()
     {
         TextBox.ClearSelection();
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        core.MainWindows.ActiveWindow.CurrentValue.IsEditableTitlebarOpen.Value = false;
+        vm.IsEditableTitlebarOpen.Value = false;
         Cursor = new Cursor(StandardCursorType.Arrow);
-        TextBlock.Text = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Title
+        TextBlock.Text = vm.WindowTabs.ActiveTab.CurrentValue.Title
             .CurrentValue;
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        if (!core.MainWindows.ActiveWindow.CurrentValue.IsEditableTitlebarOpen.CurrentValue)
+        if (!vm.IsEditableTitlebarOpen.CurrentValue)
         {
             e.Handled = true;
             return;
@@ -91,13 +91,13 @@ public partial class EditableTitlebar : UserControl
     {
         base.OnKeyUp(e);
         
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not MainWindowViewModel vm
+        if (DataContext is not MainWindowViewModel vm
             || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
         {
             return;
         }
         
-        if (!core.MainWindows.ActiveWindow.CurrentValue.IsEditableTitlebarOpen.CurrentValue)
+        if (!vm.IsEditableTitlebarOpen.CurrentValue)
         {
             if (e.Key != Key.Escape)
             {
@@ -121,12 +121,12 @@ public partial class EditableTitlebar : UserControl
 
     public void SelectFileName()
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        var file = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Model
+        var file = vm.WindowTabs.ActiveTab.CurrentValue.Model
             .FileInfo;
         if (file is null)
         {
@@ -141,7 +141,7 @@ public partial class EditableTitlebar : UserControl
         TextBox.SelectionStart = start;
         TextBox.SelectionEnd = end;
 
-        core.MainWindows.ActiveWindow.CurrentValue.IsEditableTitlebarOpen.Value = true;
+        vm.IsEditableTitlebarOpen.Value = true;
         Cursor = new Cursor(StandardCursorType.Ibeam);
         TextBox.Focus();
     }

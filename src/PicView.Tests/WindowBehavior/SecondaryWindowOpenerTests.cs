@@ -211,7 +211,7 @@ public class SecondaryWindowOpenerTests
     }
 
     private SecondaryWindowOpener CreateOpener(Func<Window?>? ownerWindow = null) =>
-        new(() => _mainWindow, _provider, ownerWindow ?? (() => _mainWindow), () => null);
+        new(() => _mainWindow, _provider, ownerWindow ?? (() => _mainWindow));
 
     private SecondaryWindowSpec Spec(WindowOwner owner = WindowOwner.None) =>
         new(provider =>

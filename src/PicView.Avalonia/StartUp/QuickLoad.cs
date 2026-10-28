@@ -58,8 +58,8 @@ public static class QuickLoad
         {
             if (!result.IsLoaded)
             {
-                SourceOpener.ShowError(result);
-                ViewChangeHelper.SwitchToStartUpMenu(core.MainWindows.ActiveWindow.CurrentValue);
+                SourceOpener.ShowError(mainWindow.ViewModel!, result);
+                ViewChangeHelper.SwitchToStartUpMenu(mainWindow.ViewModel!);
                 mainWindow.Show();
             }
             if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -75,7 +75,7 @@ public static class QuickLoad
     /// </summary>
     private static async ValueTask<LoadResult> LoadThroughCoreAsync(MainWindow mainWindow, CoreViewModel core, string source)
     {
-        var vm = core.MainWindows.ActiveWindow.CurrentValue;
+        var vm = mainWindow.ViewModel!;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -122,7 +122,7 @@ public static class QuickLoad
         bool continueFromLeftOff,
         List<FileInfo>? files = null)
     {
-        var vm = core.MainWindows.ActiveWindow.CurrentValue;
+        var vm = mainWindow.ViewModel!;
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         vm.IsLoadingIndicatorShown.Value = !vm.IsTopToolbarShown.Value;
         tab.SingleImageType = SingleImageType.None;

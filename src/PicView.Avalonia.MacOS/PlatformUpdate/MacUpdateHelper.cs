@@ -71,7 +71,13 @@ public static class MacUpdateHelper
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(MacUpdateHelper), nameof(DownloadAndOpenDmg), ex);
-            UI.TooltipHelper.ShowTooltipMessage($"Failed to download or open update: {ex.Message}");
+            // Updating is not done from a Main Window, so tell the user in the active one
+            var vm = await Dispatcher.UIThread.InvokeAsync(() =>
+                (Application.Current?.DataContext as CoreViewModel)?.MainWindows.ActiveWindow.CurrentValue);
+            if (vm is not null)
+            {
+                UI.TooltipHelper.ShowTooltipMessage(vm, $"Failed to download or open update: {ex.Message}");
+            }
         }
     }
 }

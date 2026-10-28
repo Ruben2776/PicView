@@ -4,7 +4,9 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Printing;
+using PicView.Avalonia.Navigation;
 using PicView.Avalonia.StartUp;
+using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Core.Config;
 using PicView.Core.Favorites;
 using PicView.Core.FileHandling;
@@ -26,11 +28,13 @@ public class AppLifecycleTests : IAsyncDisposable
 {
     private readonly FileHistoryFileBackup _fileHistoryBackup = new();
     private readonly ConfigFileBackup _batchResizeConfigBackup = new(new BatchResizeWindowConfig());
+    private readonly ConfigFileBackup _effectsConfigBackup = new(new EffectsWindowConfig());
     private readonly List<AppLifecycle> _apps = [];
     private readonly string _folder;
     private readonly CoreViewModel _core;
     private readonly FolderSharedFiles _sharedFiles;
     private readonly LifecycleWindowProvider _provider;
+    private readonly List<string> _steps = [];
     private int _exits;
 
     public AppLifecycleTests()
@@ -40,7 +44,7 @@ public class AppLifecycleTests : IAsyncDisposable
         ObservableSystem.DefaultFrameProvider = new MockFrameProvider();
         _folder = Path.Combine(Path.GetTempPath(), "PicViewAppLifecycleTests_" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_folder);
-        _core = new CoreViewModel(new NoPlatform(), _ => ValueTask.FromResult(new ImageModel()));
+        _core = new CoreViewModel(new NoPlatform(), file => ValueTask.FromResult(new ImageModel { FileInfo = file }));
         _provider = new LifecycleWindowProvider(_core);
         _sharedFiles = new FolderSharedFiles(_folder);
     }
@@ -65,6 +69,7 @@ public class AppLifecycleTests : IAsyncDisposable
 
         _fileHistoryBackup.Dispose();
         _batchResizeConfigBackup.Dispose();
+        _effectsConfigBackup.Dispose();
     }
 
     [AvaloniaFact]
@@ -149,6 +154,50 @@ public class AppLifecycleTests : IAsyncDisposable
         await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
 
         Assert.Equal(1, _provider.AboutWindowsCreated);
+    }
+
+    [AvaloniaFact]
+    public async Task ShowEffectsWindow_FromTwoMainWindows_OpensOneEffectsWindow()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync();
+
+        await first.MainWindowInitializer!.ShowEffectsWindow();
+        await second.MainWindowInitializer!.ShowEffectsWindow();
+
+        Assert.Single(_provider.EffectsWindows);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_MainWindowEffectsWasOpenedFrom_KeepsEffectsOpenForTheOtherMainWindow()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await app.MainWindows.OpenNewAsync();
+        await first.MainWindowInitializer!.ShowEffectsWindow();
+        var effects = Assert.Single(_provider.EffectsWindows);
+
+        await app.MainWindows.CloseAsync(first);
+
+        Assert.True(effects.IsVisible);
+    }
+
+    [AvaloniaFact]
+    public async Task CloseAsync_LastMainWindowWithEffectsOpen_ClosesEffectsAndRunsAppShutdown()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var main = app.MainWindows.Open[0];
+        await main.MainWindowInitializer!.ShowEffectsWindow();
+        var effects = Assert.Single(_provider.EffectsWindows);
+
+        await app.MainWindows.CloseAsync(main);
+
+        Assert.False(effects.IsVisible);
+        Assert.Equal(1, _exits);
     }
 
     [AvaloniaFact]
@@ -247,6 +296,60 @@ public class AppLifecycleTests : IAsyncDisposable
     }
 
     [AvaloniaFact]
+    public async Task ShutdownAsync_StartsNoNewPicView()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+
+        await app.ShutdownAsync();
+
+        Assert.Equal(["exit"], _steps);
+    }
+
+    [AvaloniaFact]
+    public async Task RestartAsync_RunsAppShutdownBeforeStartingANewPicView()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        await app.MainWindows.OpenNewAsync();
+        var firstFile = Path.Combine(_folder, "first.jpg");
+        ViewModelOf(first).WindowTabs.ActiveTab.CurrentValue.Display(new ImageModel { FileInfo = new FileInfo(firstFile) });
+        first.Activate();
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+        var tempFile = TempFileManager.GetNewTempFilePath("download.jpg");
+        await File.WriteAllTextAsync(tempFile, "image");
+        var savesBeforeStart = 0;
+        var tempFileKept = true;
+
+        await app.RestartAsync(() =>
+        {
+            savesBeforeStart = _sharedFiles.Saves;
+            tempFileKept = File.Exists(tempFile);
+            _steps.Add("before start");
+            return Task.CompletedTask;
+        });
+
+        Assert.Empty(app.MainWindows.Open);
+        Assert.Equal(firstFile, Settings.StartUp.LastFile);
+        Assert.Equal(1, savesBeforeStart);
+        Assert.False(tempFileKept);
+        Assert.Equal(["before start", "start new PicView", "exit"], _steps);
+    }
+
+    [AvaloniaFact]
+    public async Task RestartAsync_AfterAppShutdownBegan_StartsNoNewPicView()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+
+        await app.ShutdownAsync();
+        await app.RestartAsync();
+
+        Assert.Equal(["exit"], _steps);
+    }
+
+    [AvaloniaFact]
     public async Task OpenLaunchFileAsync_AfterAppStart_OpensInTheMostRecentlyActiveMainWindow()
     {
         Settings.UIProperties.OpenInSameWindow = true;
@@ -266,6 +369,83 @@ public class AppLifecycleTests : IAsyncDisposable
         Assert.Same(secondView, ViewOf(second));
     }
 
+    [AvaloniaFact]
+    public async Task SourceOpenerOpenAsync_IntoMainWindowThatIsNotActive_OpensInThatMainWindow()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync();
+        await ActivateAsync(first);
+        var firstView = ViewOf(first);
+        var secondView = ViewOf(second);
+
+        await SourceOpener.OpenAsync(second, _core, Path.Combine(_folder, "opened.jpg"));
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Same(firstView, ViewOf(first));
+        Assert.NotSame(secondView, ViewOf(second));
+    }
+
+    [AvaloniaFact]
+    public async Task SourceOpenerOpenAsync_AtStartupIntoMainWindowThatIsNotActive_LeavesTheActiveOneAlone()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync();
+        await ActivateAsync(first);
+        var firstView = ViewOf(first);
+
+        await SourceOpener.OpenAsync(second, _core, Path.Combine(_folder, "missing.jpg"), new OpenOptions(IsStartup: true));
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+        Assert.Same(firstView, ViewOf(first));
+    }
+
+    [AvaloniaFact]
+    public async Task FileSearchDialog_FilePickedInMainWindowThatIsNotActive_LoadsInThatMainWindow()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var first = app.MainWindows.Open[0];
+        var second = await app.MainWindows.OpenNewAsync();
+        var path = Path.Combine(_folder, "found.jpg");
+        await File.WriteAllTextAsync(path, "image");
+        // The dialog is only shown while browsing
+        TabNavigationInitializer.Initialize(_core, [], ViewModelOf(first));
+        TabNavigationInitializer.Initialize(_core, [], ViewModelOf(second));
+        // The dialog reads the core from the app, as it does in PicView
+        Application.Current!.DataContext = _core;
+        try
+        {
+            var dialog = new FileSearchDialog();
+            second.Content = dialog;
+            await ActivateAsync(first);
+
+            await dialog.LoadSelectedFileAsync(path, CancellationToken.None);
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+            Assert.Null(ViewModelOf(first).WindowTabs.ActiveTab.CurrentValue.Model.FileInfo);
+            Assert.Equal(path, ViewModelOf(second).WindowTabs.ActiveTab.CurrentValue.Model.FileInfo?.FullName);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
+    /// <summary>
+    /// Makes <paramref name="window"/> the Active Main Window. The headless app has no core to set it from when a
+    /// window is activated.
+    /// </summary>
+    private async Task ActivateAsync(MainWindow window)
+    {
+        window.Activate();
+        _core.MainWindows.ActiveWindow.Value = ViewModelOf(window);
+        await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+    }
+
     private static object? ViewOf(MainWindow window) =>
         ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue.CurrentView.CurrentValue;
 
@@ -273,7 +453,11 @@ public class AppLifecycleTests : IAsyncDisposable
 
     private AppLifecycle CreateApp()
     {
-        var app = new AppLifecycle(_core, _provider, _sharedFiles, () => _exits++);
+        var app = new AppLifecycle(_core, _provider, _sharedFiles, () =>
+        {
+            _exits++;
+            _steps.Add("exit");
+        }, () => _steps.Add("start new PicView"));
         _apps.Add(app);
         return app;
     }
@@ -309,6 +493,7 @@ public class AppLifecycleTests : IAsyncDisposable
         public List<Window> AboutWindows { get; } = [];
         public List<Window> BatchResizeWindows { get; } = [];
         public List<Window> ConvertWindows { get; } = [];
+        public List<Window> EffectsWindows { get; } = [];
 
         public MainWindow CreateMainWindow(TabViewModel? firstTab = null)
         {
@@ -341,7 +526,12 @@ public class AppLifecycleTests : IAsyncDisposable
             return window;
         }
 
-        public Window CreateEffectsWindow(EffectsWindowConfig config) => Track(new Window());
+        public Window CreateEffectsWindow(EffectsWindowConfig config)
+        {
+            var window = Track(new Window());
+            EffectsWindows.Add(window);
+            return window;
+        }
         public Window CreateImageInfoWindow(MainWindowViewModel vm) => Track(new Window());
         public Window CreateKeybindingsWindow(KeybindingWindowConfig config) => Track(new Window());
         public Window CreateSettingsWindow(SettingsWindowConfig config) => Track(new Window());

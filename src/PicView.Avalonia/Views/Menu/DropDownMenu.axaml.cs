@@ -158,94 +158,94 @@ public partial class DropDownMenu : AnimatedMenu
     {
         CloseDropDownMenu();
 
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        _ = Slideshow.StartSlideshow(core.MainWindows.ActiveWindow.CurrentValue, 120000);
+        _ = Slideshow.StartSlideshow(vm, 120000);
     }
 
     private void SlideShow90SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
 
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        _ = Slideshow.StartSlideshow(core.MainWindows.ActiveWindow.CurrentValue, 90000);
+        _ = Slideshow.StartSlideshow(vm, 90000);
     }
 
     private void SlideShow60SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
 
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        _ = Slideshow.StartSlideshow(core.MainWindows.ActiveWindow.CurrentValue, 60000);
+        _ = Slideshow.StartSlideshow(vm, 60000);
     }
 
     private void SlideShow30SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
 
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        _ = Slideshow.StartSlideshow(core.MainWindows.ActiveWindow.CurrentValue, 30000);
+        _ = Slideshow.StartSlideshow(vm, 30000);
     }
 
     private void SlideShow20SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
 
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        _ = Slideshow.StartSlideshow(core.MainWindows.ActiveWindow.CurrentValue, 20000);
+        _ = Slideshow.StartSlideshow(vm, 20000);
     }
 
     private void SlideShow10SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
 
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        _ = Slideshow.StartSlideshow(core.MainWindows.ActiveWindow.CurrentValue, 10000);
+        _ = Slideshow.StartSlideshow(vm, 10000);
     }
 
     private void SlideShow5SecOnClick(object? sender, RoutedEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        _ = Slideshow.StartSlideshow(core.MainWindows.ActiveWindow.CurrentValue, 5000);
+        _ = Slideshow.StartSlideshow(vm, 5000);
     }
 
     private void SlideShow2SecOnClick(object? sender, RoutedEventArgs e)
     {
         CloseDropDownMenu();
         
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (DataContext is not MainWindowViewModel vm)
         {
             return;
         }
 
-        _ = Slideshow.StartSlideshow(core.MainWindows.ActiveWindow.CurrentValue, 2000);
+        _ = Slideshow.StartSlideshow(vm, 2000);
     }
 
     private void PinnedEntriesOnCollectionChanged(in NotifyCollectionChangedEventArgs<FileHistoryEntryViewModel> e)

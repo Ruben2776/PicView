@@ -44,11 +44,11 @@ public static class SetCursorOnButton
             static _ => new Point(20, 10)),
         new(static vm => Hoverbar(vm).IsHoverNavigationButtonNextClicked,
             static vm => Hoverbar(vm).IsHoverNavigationButtonNextClicked = false,
-            static (_, _) => UIHelper.GetHoverBar().NextButton,
+            static (_, vm) => UIHelper.GetHoverBar(vm)?.NextButton,
             static _ => new Point(50, 10)),
         new(static vm => Hoverbar(vm).IsHoverNavigationButtonPreviousClicked,
             static vm => Hoverbar(vm).IsHoverNavigationButtonPreviousClicked = false,
-            static (_, _) => UIHelper.GetHoverBar().PreviousButton,
+            static (_, vm) => UIHelper.GetHoverBar(vm)?.PreviousButton,
             static _ => new Point(50, 10)),
         new(static vm => vm.IsClickArrowLeftClicked,
             static vm => vm.IsClickArrowLeftClicked = false,
@@ -60,11 +60,11 @@ public static class SetCursorOnButton
             static _ => new Point(65, 95)),
         new(static vm => Hoverbar(vm).IsHoverRotateRightClicked,
             static vm => Hoverbar(vm).IsHoverRotateRightClicked = false,
-            static (_, _) => UIHelper.GetHoverBar().RotateRightButton,
+            static (_, vm) => UIHelper.GetHoverBar(vm)?.RotateRightButton,
             static _ => new Point(11, 7)),
         new(static vm => Hoverbar(vm).IsHoverRotateLeftClicked,
             static vm => Hoverbar(vm).IsHoverRotateLeftClicked = false,
-            static (_, _) => UIHelper.GetHoverBar().RotateLeftButton,
+            static (_, vm) => UIHelper.GetHoverBar(vm)?.RotateLeftButton,
             static _ => new Point(11, 7))
     ];
 

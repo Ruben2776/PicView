@@ -31,7 +31,7 @@ public class FilePickerService(IStorageProvider? storageProvider = null) : ISave
         {
             return;
         }
-        UIHelper.CloseMenus(core);
+        UIHelper.CloseMenus(vm);
         await SourceOpener.OpenAsync(mainWindow, core, file).ConfigureAwait(false);
     }
 

@@ -33,7 +33,7 @@ public class CropResizeHandler(CropControl control)
 
     public void OnResizeMove(object? sender, PointerEventArgs e, CropResizeMode mode)
     {
-        if (!_isResizing || control.DataContext is not TabViewModel tab || Application.Current.DataContext is not CoreViewModel core)
+        if (!_isResizing || control.DataContext is not TabViewModel tab)
         {
             return;
         }
@@ -43,7 +43,7 @@ public class CropResizeHandler(CropControl control)
             return;
         }
 
-        CropResizer.Resize(control, e, _resizeStart, _originalRect, core.MainWindows.ActiveWindow.CurrentValue, tab.Crop, mode);
+        CropResizer.Resize(control, e, _resizeStart, _originalRect, tab.ParentWindowContext, tab.Crop, mode);
     }
 
     public void OnResizeEnd(object? sender, PointerReleasedEventArgs e)

@@ -85,7 +85,7 @@ public class CropLayoutManager(CropControl control)
 
     private void UpdateSurroundingRectangles()
     {
-        if (control.DataContext is not TabViewModel tab || Application.Current.DataContext is not CoreViewModel core)
+        if (control.DataContext is not TabViewModel tab)
         {
             return;
         }
@@ -95,7 +95,7 @@ public class CropLayoutManager(CropControl control)
             return;
         }
         
-        var vm = core.MainWindows.ActiveWindow.CurrentValue;
+        var vm = tab.ParentWindowContext;
         
         // Converting to int fixes black border
         var left = Convert.ToInt32(Canvas.GetLeft(control.MainRectangle));

@@ -17,23 +17,25 @@ public partial class FileSearchDialog : AnimatedPopUp
 {
     private DisposableBag _disposables;
 
+    /// <summary>
+    /// The files matching the search, in the active tab of this dialog's Main Window.
+    /// </summary>
+    public BindableReactiveProperty<ObservableCollection<FileSearchResult>?> FilteredFileInfos { get; } = new();
+
+    /// <summary>
+    /// Opens the picked file in this dialog's Main Window.
+    /// </summary>
+    public ReactiveCommand<string> LoadFromStringCommand { get; }
+
     public FileSearchDialog()
     {
+        LoadFromStringCommand = new ReactiveCommand<string>(LoadSelectedFileAsync);
         if (Application.Current.DataContext is not CoreViewModel core)
         {
             return;
         }
 
         DataContext = core;
-        if (core.SharedNavigationService is null)
-        {
-            return;
-        }
-
-        core.SharedNavigationService.FilteredFileInfos ??=
-            new BindableReactiveProperty<ObservableCollection<FileSearchResult>?>();
-        core.SharedNavigationService.LoadFromStringCommand ??= new ReactiveCommand<string>(LoadSelectedFile);
-
         InitializeComponent();
         if (OperatingSystem.IsMacOS())
         {
@@ -44,15 +46,20 @@ public partial class FileSearchDialog : AnimatedPopUp
         Loaded += OnLoaded;
     }
 
-    private static async ValueTask LoadSelectedFile(string source, CancellationToken ct)
+    internal async ValueTask LoadSelectedFileAsync(string source, CancellationToken ct)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (OwnTabs is not { } tabs)
         {
             return;
         }
 
-        await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.LoadFromStringAsync(source).ConfigureAwait(false);
+        await tabs.LoadFromStringAsync(source).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// The tabs of the Main Window this dialog is shown in. Read on the UI thread.
+    /// </summary>
+    private TabOverviewViewModel? OwnTabs => (TopLevel.GetTopLevel(this) as MainWindow)?.ViewModel?.WindowTabs;
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
@@ -66,7 +73,7 @@ public partial class FileSearchDialog : AnimatedPopUp
             return;
         }
 
-        core.SharedNavigationService.LoadFromStringCommand.Subscribe(_ => CloseMenu(sender, e)).AddTo(ref _disposables);
+        LoadFromStringCommand.Subscribe(_ => CloseMenu(sender, e)).AddTo(ref _disposables);
         
         if (OperatingSystem.IsMacOS())
         {
@@ -80,11 +87,6 @@ public partial class FileSearchDialog : AnimatedPopUp
 
     private async ValueTask KeysDownAsync(object? sender, KeyEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
-        {
-            return;
-        }
-
         switch (e.Key)
         {
             case Key.Down:
@@ -98,12 +100,11 @@ public partial class FileSearchDialog : AnimatedPopUp
             case Key.Enter:
                 if (SearchBox.IsFocused)
                 {
-                    if (string.IsNullOrWhiteSpace(SearchBox.Text))
+                    if (string.IsNullOrWhiteSpace(SearchBox.Text) || OwnTabs is not { } tabs)
                     {
                         return;
                     }
 
-                    var tabs = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs;
                     await tabs.LoadFromFileAsync(SearchBox.Text).ConfigureAwait(false);
                 }
                 else
@@ -146,7 +147,8 @@ public partial class FileSearchDialog : AnimatedPopUp
 
     private void SetupSearchSubscription()
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        // Captured on the UI thread, since the search below runs off it
+        if (OwnTabs is not { } tabs)
         {
             return;
         }
@@ -161,20 +163,19 @@ public partial class FileSearchDialog : AnimatedPopUp
                 {
                     if (string.IsNullOrWhiteSpace(text))
                     {
-                        core.SharedNavigationService.FilteredFileInfos.Value?.Clear();
+                        FilteredFileInfos.Value?.Clear();
                         return;
                     }
 
                     const int batchSize = 25;
 
-                    var tabs = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs;
                     var tab = tabs.ActiveTab.CurrentValue;
                     IEnumerable<FileSearchResult>? results = null;
                     await Task.Run(
                         () => { results = FileSearcher.GetFileSearchResults(tab.ImageIterator.Files, text); }, ct).ConfigureAwait(false);
 
                     var fileSearchResults = results as FileSearchResult[] ?? results.ToArray();
-                    core.SharedNavigationService.FilteredFileInfos.Value =
+                    FilteredFileInfos.Value =
                         new ObservableCollection<FileSearchResult>(fileSearchResults.Take(batchSize));
                     if (fileSearchResults.Length < batchSize)
                     {
@@ -193,7 +194,7 @@ public partial class FileSearchDialog : AnimatedPopUp
                             ct.ThrowIfCancellationRequested();
                             if (!ct.IsCancellationRequested)
                             {
-                                core.SharedNavigationService.FilteredFileInfos.Value.Add(item);
+                                FilteredFileInfos.Value.Add(item);
                             }
                         }
                     }
@@ -212,7 +213,7 @@ public partial class FileSearchDialog : AnimatedPopUp
             return;
         }
 
-        core.SharedNavigationService?.FilteredFileInfos?.CurrentValue?.Clear();
+        FilteredFileInfos.CurrentValue?.Clear();
     }
 
     private void CloseMenu(object? sender, RoutedEventArgs e)

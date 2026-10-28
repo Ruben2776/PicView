@@ -13,15 +13,15 @@ namespace PicView.Avalonia.Services;
 /// Opens each kind of secondary window at most once per main window. Opening one that is already open brings it to
 /// the front. It creates, tracks, owns and shows the window, and clears its slot when the window closes.
 /// </summary>
-/// <param name="mainWindow">The main window focus returns to when one of these windows closes.</param>
+/// <param name="mainWindow">
+/// The main window focus returns to when one of these windows closes, and whose menus close when one opens.
+/// </param>
 /// <param name="provider">Creates the windows for this platform.</param>
 /// <param name="ownerWindow">The window a secondary window is owned by, when its spec asks for one.</param>
-/// <param name="core">Used to close the menus after an open. When it returns null, the menus are left alone.</param>
 public sealed class SecondaryWindowOpener(
     Func<MainWindow?> mainWindow,
     IWindowProvider provider,
-    Func<Window?> ownerWindow,
-    Func<CoreViewModel?> core)
+    Func<Window?> ownerWindow)
 {
     private readonly Dictionary<SecondaryWindowKind, Window> _open = [];
     private readonly List<Window> _openWindows = [];
@@ -37,6 +37,17 @@ public sealed class SecondaryWindowOpener(
     public void CloseAll()
     {
         foreach (var window in _openWindows.ToArray())
+        {
+            window.Close();
+        }
+    }
+
+    /// <summary>
+    /// Closes the window of this kind, if this opener has one open.
+    /// </summary>
+    public void Close(SecondaryWindowKind kind)
+    {
+        if (_open.TryGetValue(kind, out var window))
         {
             window.Close();
         }
@@ -142,7 +153,7 @@ public sealed class SecondaryWindowOpener(
 
     private void CloseMenus()
     {
-        if (core() is { } vm)
+        if (mainWindow()?.ViewModel is { } vm)
         {
             UIHelper.CloseMenus(vm);
         }

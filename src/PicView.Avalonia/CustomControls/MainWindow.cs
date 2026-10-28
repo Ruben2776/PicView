@@ -167,6 +167,12 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     /// <inheritdoc />
     public void Minimize() => WindowState = WindowState.Minimized;
 
+    /// <summary>
+    /// This window's view model, set once as the window opens. Unlike <see cref="StyledElement.DataContext"/>, it can
+    /// be read from any thread.
+    /// </summary>
+    public MainWindowViewModel? ViewModel { get; internal set; }
+
     #endregion
 
     #region Secondary windows
@@ -465,7 +471,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         }
         
         vm.TopTitlebarViewModel.CloseDropDownMenu();
-        UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog());
+        UIHelper.GetMainView.MainPanel.Children.Add(new QuickEditingDialog(vm));
     }
     
     public void AddQuickSettingsDialog()
@@ -487,7 +493,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         }
 
         vm.TopTitlebarViewModel.CloseDropDownMenu();
-        UIHelper.GetMainView.MainPanel.Children.Add(new GalleryItemSizeSlider());
+        UIHelper.GetMainView.MainPanel.Children.Add(new GalleryItemSizeSlider(vm.WindowTabs.ActiveTab.CurrentValue.Gallery));
     }
     
     public void AddFavoriteDialog(string? initialPath = null)

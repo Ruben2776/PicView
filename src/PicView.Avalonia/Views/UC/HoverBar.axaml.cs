@@ -44,7 +44,7 @@ public partial class HoverBar : UserControl, IDisposable
                 GlassThemeUpdates();
             }
 
-            if (Application.Current.DataContext is not CoreViewModel core)
+            if (mainWindow.ViewModel is not { } vm)
             {
                 return;
             }
@@ -55,8 +55,8 @@ public partial class HoverBar : UserControl, IDisposable
                     h => NextButton.Click -= h)
                 .SubscribeAwait(async (_, c) =>
                 {
-                    core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverNavigationButtonNextClicked = true;
-                    await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.NextFile().ConfigureAwait(false);
+                    vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverNavigationButtonNextClicked = true;
+                    await vm.ActionRunner.Run(Actions.Next).ConfigureAwait(false);
                 }, static result =>
                 {
 #if DEBUG
@@ -71,8 +71,8 @@ public partial class HoverBar : UserControl, IDisposable
                     h => PreviousButton.Click -= h)
                 .SubscribeAwait(async (_, c) =>
                 {
-                    core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverNavigationButtonPreviousClicked = true;
-                    await core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.PrevFile().ConfigureAwait(false);
+                    vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverNavigationButtonPreviousClicked = true;
+                    await vm.ActionRunner.Run(Actions.Prev).ConfigureAwait(false);
                 }, static result =>
                 {
 #if DEBUG
@@ -219,7 +219,7 @@ public partial class HoverBar : UserControl, IDisposable
 
     private async Task ManagePointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        if (TopLevel.GetTopLevel(this) is not MainWindow { ViewModel: { } vm } mainWindow)
         {
             return;
         }
@@ -256,7 +256,7 @@ public partial class HoverBar : UserControl, IDisposable
             }
             else if (props.IsLeftButtonPressed)
             {
-                await core.MainWindows.ActiveWindow.CurrentValue.ActionRunner.Run(Actions.SettingsWindow).ConfigureAwait(true);
+                await vm.ActionRunner.Run(Actions.SettingsWindow).ConfigureAwait(true);
             }
         }
         else if (ImageMenuButton.IsPointerOver)
@@ -270,14 +270,14 @@ public partial class HoverBar : UserControl, IDisposable
         {
             if (props.IsLeftButtonPressed)
             {
-                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverRotateLeftClicked = true;
+                vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverRotateLeftClicked = true;
             }
         }
         else if (RotateRightButton.IsPointerOver)
         {
             if (props.IsLeftButtonPressed)
             {
-                core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverRotateRightClicked = true;
+                vm.WindowTabs.ActiveTab.CurrentValue.Hoverbar.IsHoverRotateRightClicked = true;
             }
         }
         else if (ProgressBar.IsPointerOver)

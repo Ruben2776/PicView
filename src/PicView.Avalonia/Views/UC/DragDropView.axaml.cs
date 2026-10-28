@@ -26,11 +26,11 @@ public partial class DragDropView : UserControl
     
     public DragDropView(MainWindow mainWindow)
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (Application.Current.DataContext is not CoreViewModel)
         {
             return;
         }
-        DataContext = core.MainWindows.ActiveWindow.CurrentValue;
+        DataContext = mainWindow.ViewModel;
         InitializeComponent();
         InitializeView(mainWindow);
     }

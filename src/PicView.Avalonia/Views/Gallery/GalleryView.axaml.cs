@@ -16,21 +16,48 @@ namespace PicView.Avalonia.Views.Gallery;
 public partial class GalleryView : GalleryAnimationControl
 {
     private readonly AvaloniaList<GalleryItemViewModel> _galleryItems = [];
-    private readonly GalleryViewModel? _gallery;
-    private readonly DisposableBag _disposables;
+    private DisposableBag _disposables;
+
+    /// <summary>
+    /// The tab whose gallery this view shows: the tab its image viewer belongs to, once it is placed in one.
+    /// </summary>
+    private TabViewModel? _tab;
 
     public GalleryView()
     {
-        if (Application.Current.DataContext is not CoreViewModel core)
+        if (Application.Current.DataContext is not CoreViewModel)
         {
             return;
         }
         InitializeComponent();
 
         GalleryItemsControl.ItemsSource = _galleryItems;
+    }
 
-        var gallery = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery;
-        _gallery = gallery;
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        base.OnDataContextChanged(e);
+        // Keep showing the tab's gallery while the view is away from it, as when the tab is not shown
+        if (GalleryItemsControl is null || DataContext is not TabViewModel tab || tab == _tab)
+        {
+            return;
+        }
+
+        if (_tab is not null)
+        {
+            _tab.Gallery.GalleryItems.CollectionChanged -= CurrentValueOnCollectionChanged;
+            _disposables.Dispose();
+            _disposables = default;
+            _galleryItems.Clear();
+            _galleryItems.AddRange(tab.Gallery.GalleryItems);
+        }
+
+        _tab = tab;
+        SubscribeTo(tab.Gallery);
+    }
+
+    private void SubscribeTo(GalleryViewModel gallery)
+    {
         gallery.GalleryItems.CollectionChanged += CurrentValueOnCollectionChanged;
         gallery.NavigateGalleryCommand.Subscribe(x =>
         {
@@ -91,8 +118,10 @@ public partial class GalleryView : GalleryAnimationControl
 
     private void CurrentValueOnCollectionChanged(in NotifyCollectionChangedEventArgs<GalleryItemViewModel> e)
     {
-        var tab = Dispatcher.UIThread.Invoke(() =>
-            Application.Current.DataContext is not CoreViewModel core ? null : core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue);
+        if (_tab is not { } tab)
+        {
+            return;
+        }
         var cancellationToken = tab.GetTabCancellation().Token;
 
         switch (e.Action)
@@ -150,7 +179,7 @@ public partial class GalleryView : GalleryAnimationControl
                 break;
             case NotifyCollectionChangedAction.Reset:
                 // Sorting resets the list as well as clearing it, so show what it holds now
-                var resetItems = _gallery?.GalleryItems.ToArray() ?? [];
+                var resetItems = _tab?.Gallery.GalleryItems.ToArray() ?? [];
                 RunOnUI(() =>
                 {
                     _galleryItems.Clear();

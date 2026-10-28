@@ -4,7 +4,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.ColorManagement;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.Functions;
+using PicView.Avalonia.StartUp;
 using PicView.Avalonia.Navigation;
 using PicView.Avalonia.Navigation.Services;
 using PicView.Avalonia.UI;
@@ -21,9 +21,14 @@ namespace PicView.Avalonia.SettingsManagement;
 
 public static class SettingsUpdater
 {
-    public static async Task ResetSettings()
+    /// <summary>
+    /// Restarts PicView with the default settings. The settings file is deleted after App Shutdown has saved it, so
+    /// App Start finds none and uses the defaults.
+    /// </summary>
+    public static Task ResetSettings(MainWindowLifecycle lifecycle) => lifecycle.RestartAsync(DeleteSettingsAsync);
+
+    private static async Task DeleteSettingsAsync()
     {
-        var core = Application.Current.DataContext as CoreViewModel;
         if (File.Exists(CurrentSettingsPath))
         {
             try
@@ -33,22 +38,20 @@ public static class SettingsUpdater
             catch (Exception e)
             {
                 DebugHelper.LogDebug(nameof(SettingsUpdater), nameof(ResetSettings), e);
-                await SetAndSave().ConfigureAwait(false);
+                await SetAndSave().ConfigureAwait(true);
             }
         }
         else
         {
-            await SetAndSave().ConfigureAwait(false);
+            await SetAndSave().ConfigureAwait(true);
         }
 
-        AppFunctions.Restart(core?.MainWindows.ActiveWindow.Value.WindowTabs.ActiveTab?.Value);
-        
         return;
 
         async Task SetAndSave()
         {
             ResetDefaults();
-            await SaveSettingsAsync().ConfigureAwait(false);
+            await SaveSettingsAsync().ConfigureAwait(true);
         }
     }
     
@@ -260,7 +263,7 @@ public static class SettingsUpdater
         {
             return;
         }
-        var vm = core.MainWindows.ActiveWindow.Value;
+        var vm = mainWindow.ViewModel!;
         var tab = vm.WindowTabs.ActiveTab.Value;
         
         var showSideBySide = !Settings.ImageScaling.ShowImageSideBySide;
@@ -341,7 +344,7 @@ public static class SettingsUpdater
         var msg = value
             ? TranslationManager.Translation.LoopingEnabled
             : TranslationManager.Translation.LoopingDisabled;
-        TooltipHelper.ShowTooltipMessage(msg);
+        TooltipHelper.ShowTooltipMessage(vm, msg);
 
         var windowTabs = vm.WindowTabs;
         var tab = windowTabs.ActiveTab.CurrentValue;

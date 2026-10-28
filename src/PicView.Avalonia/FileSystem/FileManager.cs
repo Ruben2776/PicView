@@ -51,11 +51,11 @@ public static class FileManager
                     var msg = recycle
                         ? TranslationManager.Translation.SentFileToRecycleBin
                         : TranslationManager.Translation.DeletedFile;
-                    TooltipHelper.ShowTooltipMessage(msg + Environment.NewLine + Path.GetFileName(path));
+                    TooltipHelper.ShowTooltipMessage(mainWindow.ViewModel!, msg + Environment.NewLine + Path.GetFileName(path));
                 }
                 else if (File.Exists(path))
                 {
-                    TooltipHelper.ShowTooltipMessage(TranslationManager.Translation.UnexpectedError, true);
+                    TooltipHelper.ShowTooltipMessage(mainWindow.ViewModel!, TranslationManager.Translation.UnexpectedError, true);
                 }
             }
         }
@@ -177,7 +177,7 @@ public static class FileManager
         catch (Exception ex)
         {
             DebugHelper.LogDebug(nameof(FileManager), nameof(DuplicateFileAsync), ex);
-            TooltipHelper.ShowTooltipMessage(TranslationManager.Translation?.UnexpectedError);
+            TooltipHelper.ShowTooltipMessage(vm, TranslationManager.Translation?.UnexpectedError);
         }
         finally
         {

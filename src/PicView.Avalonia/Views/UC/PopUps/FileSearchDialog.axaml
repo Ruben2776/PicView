@@ -3,6 +3,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:PicView.Avalonia.CustomControls"
+    xmlns:popUps="clr-namespace:PicView.Avalonia.Views.UC.PopUps"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:CoreViewModel"
     Background="Transparent"
@@ -82,7 +83,7 @@
                 BorderBrush="{DynamicResource MenuBorderColor}"
                 BorderThickness="0,1,1,1"
                 CornerRadius="6"
-                IsVisible="{Binding !!SharedNavigationService.FilteredFileInfos.Value.Count}">
+                IsVisible="{Binding !!$parent[popUps:FileSearchDialog].FilteredFileInfos.Value.Count}">
                 <customControls:AutoScrollViewer MaxHeight="550">
                     <Border
                         Background="{DynamicResource MenuBackgroundColor}"
@@ -91,7 +92,7 @@
                         CornerRadius="6">
                         <ItemsControl
                             x:Name="SearchItemsControl"
-                            ItemsSource="{CompiledBinding SharedNavigationService.FilteredFileInfos.Value}"
+                            ItemsSource="{Binding $parent[popUps:FileSearchDialog].FilteredFileInfos.Value}"
                             KeyboardNavigation.TabNavigation="Cycle">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
@@ -101,7 +102,7 @@
                                         BorderBrush="{DynamicResource MenuBorderColor}"
                                         BorderThickness="0,0,0,1"
                                         Classes="MenuItemHover"
-                                        Command="{Binding #SearchBox.((viewModels:CoreViewModel)DataContext).SharedNavigationService.LoadFromStringCommand}"
+                                        Command="{Binding $parent[popUps:FileSearchDialog].LoadFromStringCommand}"
                                         CommandParameter="{Binding File.FullName}"
                                         Focusable="True"
                                         IsTabStop="True">

@@ -58,15 +58,14 @@ public partial class StartUpMenu : UserControl
 
     private async ValueTask PasteClick(object? sender, RoutedEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not TabViewModel tab
-            || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        if (DataContext is not TabViewModel tab || TopLevel.GetTopLevel(this) is not MainWindow { ViewModel: { } vm } mainWindow)
         {
             return;
         }
 
         tab.CurrentView.Value = new ImageViewer();
         var isPastedSuccessfully = mainWindow.ClipboardPasteService is not null
-            && await mainWindow.ClipboardPasteService.PasteAsync(core.MainWindows.ActiveWindow.CurrentValue).ConfigureAwait(true);
+            && await mainWindow.ClipboardPasteService.PasteAsync(vm).ConfigureAwait(true);
         if (!isPastedSuccessfully)
         {
             tab.CurrentView.Value = new StartUpMenu();
@@ -75,11 +74,11 @@ public partial class StartUpMenu : UserControl
 
     private void OpenLastFileButtonOnClick(object? sender, RoutedEventArgs e)
     {
-        if (Application.Current.DataContext is not CoreViewModel core || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        if (TopLevel.GetTopLevel(this) is not MainWindow { ViewModel: { } vm } mainWindow)
         {
             return;
         }
-        _ = UINavigationHelper.OpenLastFile(mainWindow, core.MainWindows.ActiveWindow.CurrentValue).ConfigureAwait(false);
+        _ = UINavigationHelper.OpenLastFile(mainWindow, vm).ConfigureAwait(false);
     }
 
     private void PasteButtonOnPointerExited(object? sender, PointerEventArgs e)
@@ -139,11 +138,11 @@ public partial class StartUpMenu : UserControl
     private void SelectFileButtonOnClick(object? sender, RoutedEventArgs e)
     {
         // There is problems with DataContext and commands, so just use event
-        if (Application.Current.DataContext is not CoreViewModel core || TopLevel.GetTopLevel(this) is not MainWindow mainWindow)
+        if (TopLevel.GetTopLevel(this) is not MainWindow { ViewModel: { } vm } mainWindow)
         {
             return;
-        } 
-        _ = FilePicker.SelectAndLoadFile(mainWindow, core.MainWindows.ActiveWindow.CurrentValue).ConfigureAwait(false);
+        }
+        _ = FilePicker.SelectAndLoadFile(mainWindow, vm).ConfigureAwait(false);
     }
 
     private void SelectFileButtonOnPointerExited(object? sender, PointerEventArgs e)

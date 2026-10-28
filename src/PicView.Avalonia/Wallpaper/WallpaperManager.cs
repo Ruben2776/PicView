@@ -33,7 +33,7 @@ public static class WallpaperManager
         }
         catch (Exception e)
         {
-            TooltipHelper.ShowTooltipMessage(e.Message, true);
+            TooltipHelper.ShowTooltipMessage(vm, e.Message, true);
 #if DEBUG
             Console.WriteLine(e);   
 #endif

@@ -67,9 +67,9 @@ public partial class CropControl : UserControl
         }
         
         InitializeResizeHandlers();
-        if (Application.Current.DataContext is CoreViewModel core)
+        if (DataContext is TabViewModel tab)
         {
-            _layoutManager.InitializeLayout(core.MainWindows.ActiveWindow.CurrentValue);
+            _layoutManager.InitializeLayout(tab.ParentWindowContext);
         }
 
         

@@ -13,7 +13,8 @@ namespace PicView.Avalonia.Views.Gallery;
 public partial class GalleryItemSizeSlider : AnimatedPopUp
 {
     private IDisposable? _disposable;
-    public GalleryItemSizeSlider()
+    /// <param name="gallery">The gallery of the tab shown in the Main Window the slider is shown in.</param>
+    public GalleryItemSizeSlider(GalleryViewModel gallery)
     {
         InitializeComponent();
         if (Application.Current.DataContext is not CoreViewModel core)
@@ -21,7 +22,6 @@ public partial class GalleryItemSizeSlider : AnimatedPopUp
             return;
         }
 
-        var gallery = core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery;
         var gallerySettings = core.GallerySettings;
         var isExpanded = gallery.IsGalleryExpanded.CurrentValue;
         if (isExpanded)

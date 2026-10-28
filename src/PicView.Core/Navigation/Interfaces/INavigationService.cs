@@ -23,7 +23,6 @@ public interface INavigationService
     /// when browsing subdirectories.
     /// </param>
     ValueTask<LoadResult> LoadFromStringAsync(string source, TabViewModel tab, CancellationTokenSource ct, string? rootDirectory = null);
-    ReactiveCommand<string>? LoadFromStringCommand { get; set; }
     
     ValueTask<LoadResult> LoadFromUrlAsync(string source, TabViewModel tab, CancellationTokenSource ct);
 
@@ -75,6 +74,5 @@ public interface INavigationService
     /// </summary>
     ValueTask NavigateToPreviousArchiveAsync(TabViewModel tab, CancellationTokenSource ct);
 
-    public BindableReactiveProperty<ObservableCollection<FileSearchResult>?>? FilteredFileInfos { get; set; }
 
 }

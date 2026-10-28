@@ -24,8 +24,6 @@ public class NavigationService(
     : INavigationService
 {
     
-    public BindableReactiveProperty<ObservableCollection<FileSearchResult>?>? FilteredFileInfos { get; set; }
-    public ReactiveCommand<string>? LoadFromStringCommand { get; set; }
     private FileAndDirectoryNavigator? _navigator;
 
     public ValueTask RepopulateIterator(FileInfo fileInfo, TabViewModel tab, CancellationTokenSource ct, List<FileInfo>? files = null) =>

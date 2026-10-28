@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Views.UC;
@@ -23,12 +22,7 @@ public static class ImageViewerClickBehavior
         {
             return;
         }
-        if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            return;
-        }
-        var topLevel = TopLevel.GetTopLevel(desktop.MainWindow);
-        var prop = e.GetCurrentPoint(topLevel).Properties;
+        var prop = e.GetCurrentPoint(window).Properties;
 
         if (window.DataContext is not MainWindowViewModel vm)
         {

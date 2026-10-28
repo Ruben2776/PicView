@@ -50,6 +50,9 @@ public sealed class MainWindowLifecycle
     /// <inheritdoc cref="AppLifecycle.ShutdownIfNothingIsOpenAsync"/>
     internal Task ShutdownIfNothingIsOpenAsync() => _app.ShutdownIfNothingIsOpenAsync();
 
+    /// <inheritdoc cref="AppLifecycle.RestartAsync"/>
+    internal Task RestartAsync(Func<Task>? beforeStart = null) => _app.RestartAsync(beforeStart);
+
     /// <summary>
     /// The Main Windows that are open, in the order they opened.
     /// </summary>
@@ -270,6 +273,9 @@ public sealed class MainWindowLifecycle
     {
         var window = _provider.CreateMainWindow(firstTab);
         var vm = ViewModelOf(window);
+        // A window keeps the view model it is created with, so hand it over once here
+        window.ViewModel = vm;
+        vm.WindowModeSwitcher = window.WindowModeSwitcher;
         vm.WindowTabs.SetHookups(new NavigationSubscriptions(window, vm, _core));
         _core.MainWindows.MainWindows.Add(vm);
         _core.MainWindows.ActiveWindow.Value = vm;
