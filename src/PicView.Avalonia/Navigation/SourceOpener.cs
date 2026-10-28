@@ -1,10 +1,8 @@
-using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.StartUp;
 using PicView.Avalonia.UI;
 using PicView.Avalonia.Views.UC;
-using PicView.Avalonia.WindowBehavior;
 using PicView.Core.Navigation;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;

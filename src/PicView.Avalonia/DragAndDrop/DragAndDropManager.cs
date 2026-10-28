@@ -8,10 +8,8 @@ using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.ImageHandling;
 using PicView.Avalonia.Navigation;
-using PicView.Avalonia.StartUp;
 using PicView.Avalonia.Views.UC;
 using PicView.Core.FileHandling;
-using PicView.Core.Preloading;
 using PicView.Core.ProcessHandling;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;
@@ -58,7 +56,7 @@ public static class DragAndDropManager
         var core = await Dispatcher.UIThread.InvokeAsync(() => Application.Current.DataContext as CoreViewModel);
         if (path.IsSupported())
         {
-            await LoadSupportedFile(mainWindow, path, tabOverview, core).ConfigureAwait(false);
+            await LoadSupportedFile(mainWindow, path, core).ConfigureAwait(false);
         }
         else if (Directory.Exists(path) || path.IsArchive())
         {
@@ -366,10 +364,8 @@ public static class DragAndDropManager
         });
     }
 
-    private static async ValueTask LoadSupportedFile(MainWindow mainWindow, string path, TabOverviewViewModel tabOverview,
-        CoreViewModel core)
+    private static async ValueTask LoadSupportedFile(MainWindow mainWindow, string path, CoreViewModel core)
     {
-        var tab = tabOverview.ActiveTab.CurrentValue;
         if (OperatingSystem.IsWindows())
         {
             // We need to determine if the path is a temporary file, since it might be deleted shortly after

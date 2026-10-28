@@ -106,11 +106,18 @@ public class NavigationService(
                     ct.Cancel();
 #pragma warning restore MA0042
                     tab.ResetNavigationCts();
-                    tab.GalleryCoordinator?.ReloadGallery(tab.ImageIterator.Files, tab.ParentWindowContext.Core);
+                    if (tab.GalleryCoordinator is not null)
+                    {
+                        // We don't want to await this task
+                        _ = Task.Run(() =>
+                            tab.GalleryCoordinator.ReloadGallery(tab.ImageIterator.Files, tab.ParentWindowContext.Core),
+                            ct.Token).ConfigureAwait(false);
+                    }
                     return;
                 }
                 tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
-                await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files, tab.ParentWindowContext.Core), ct.Token).ConfigureAwait(false);
+                _ = Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files, tab.ParentWindowContext.Core),
+                    ct.Token).ConfigureAwait(false);
             }
         }
         catch (Exception e)
