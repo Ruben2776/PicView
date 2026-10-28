@@ -82,6 +82,20 @@ _Avoid_: Standalone image, loose image
 Two images a tab shows beside each other when Side-by-Side is on: the shown image and its partner, the next image in the list. The last image has no partner unless the list loops, and a file with no partner shows alone. Paired navigation moves by two images at a time.
 _Avoid_: Dual view, two-up, double view
 
+## Gallery
+
+**Docked Gallery**:
+The strip of thumbnails along one edge of a Main Window, top, bottom, left or right, beside the image.
+_Avoid_: Bottom gallery, gallery bar
+
+**Expanded Gallery**:
+The gallery filling the Main Window in place of the image.
+_Avoid_: Full gallery, fullscreen gallery
+
+**Thumbnail Stretch**:
+How a gallery's thumbnails are shaped and filled. Uniform shows each whole image in its own proportions, Uniform to Fill fills the thumbnail and crops what spills over, Square shows the whole image inside a square, and Fill Square fills a square and crops what spills over. The Docked Gallery and the Expanded Gallery each have their own, and every Main Window uses the same two.
+_Avoid_: Gallery stretch, stretch mode
+
 ## Saving
 
 **Save Source**:
@@ -103,7 +117,7 @@ The setting that lets an image scale past its native pixel size to fill the Avai
 _Avoid_: Stretch, upscale
 
 **Reserved Space**:
-The parts of the window that are not the image: titlebar, tab strip, bottom bar and a docked gallery. It is taken away before the image is fitted. The tab strip is part of it only while the window has two or more tabs, so the window is fitted again whenever the strip shows or hides, with AutoFit on or off.
+The parts of the window that are not the image: titlebar, tab strip, bottom bar and a Docked Gallery. It is taken away before the image is fitted. The tab strip is part of it only while the window has two or more tabs, so the window is fitted again whenever the strip shows or hides, with AutoFit on or off.
 _Avoid_: UI size, chrome, container
 
 **Available Area**:

@@ -263,7 +263,14 @@ public static class SettingsManager
         {
             existingSettings.Gallery.DockPosition = GalleryDockPosition.Bottom;
         }
-
+        if (existingSettings.Version < 3.0)
+        {
+            // Fill and None stretch mode existed in older version
+            // and were deleted in 5.1.0, so we reset them to default
+            existingSettings.Gallery.ExpandedGalleryStretchMode = GalleryStretchMode.Uniform;
+            existingSettings.Gallery.DockedGalleryStretchMode = GalleryStretchMode.UniformToFill;
+        }
+        
         existingSettings.Theme ??= new Theme();
         existingSettings.Sorting ??= new Sorting();
         existingSettings.ImageScaling ??= new ImageScaling();

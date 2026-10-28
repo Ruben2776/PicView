@@ -247,27 +247,31 @@
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    SelectedIndex="{CompiledBinding GallerySettings.ExpandedGalleryStretchMode.Value}">
+                    SelectionChanged="StretchComboBox_OnSelectionChanged">
                     <ComboBoxItem
                         x:Name="FullGalleryUniformItem"
                         Content="{CompiledBinding Translation.Uniform.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
+                        Foreground="{DynamicResource MainTextColor}"
+                        Tag="{x:Static gallery:GalleryStretchMode.Uniform}" />
                     <ComboBoxItem
                         x:Name="FullGalleryUniformToFillItem"
                         Content="{CompiledBinding Translation.UniformToFill.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
+                        Foreground="{DynamicResource MainTextColor}"
+                        Tag="{x:Static gallery:GalleryStretchMode.UniformToFill}" />
                     <ComboBoxItem
                         x:Name="FullGallerySquareItem"
                         Content="{CompiledBinding Translation.Square.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
+                        Foreground="{DynamicResource MainTextColor}"
+                        Tag="{x:Static gallery:GalleryStretchMode.Square}" />
                     <ComboBoxItem
                         x:Name="FullGalleryFillSquareItem"
                         Content="{CompiledBinding Translation.FillSquare.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
+                        Foreground="{DynamicResource MainTextColor}"
+                        Tag="{x:Static gallery:GalleryStretchMode.FillSquare}" />
                 </ComboBox>
 
                 <TextBlock
@@ -285,27 +289,31 @@
                     BorderThickness="1"
                     FontFamily="/Assets/Fonts/Roboto-Medium.ttf#Roboto"
                     Foreground="{DynamicResource MainTextColor}"
-                    SelectedIndex="{CompiledBinding GallerySettings.DockedGalleryStretchMode.Value}">
+                    SelectionChanged="StretchComboBox_OnSelectionChanged">
                     <ComboBoxItem
                         x:Name="DockedGalleryUniformItem"
                         Content="{CompiledBinding Translation.Uniform.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
+                        Foreground="{DynamicResource MainTextColor}"
+                        Tag="{x:Static gallery:GalleryStretchMode.Uniform}" />
                     <ComboBoxItem
                         x:Name="DockedGalleryUniformToFillItem"
                         Content="{CompiledBinding Translation.UniformToFill.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
+                        Foreground="{DynamicResource MainTextColor}"
+                        Tag="{x:Static gallery:GalleryStretchMode.UniformToFill}" />
                     <ComboBoxItem
                         x:Name="DockedGallerySquareItem"
                         Content="{CompiledBinding Translation.Square.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
+                        Foreground="{DynamicResource MainTextColor}"
+                        Tag="{x:Static gallery:GalleryStretchMode.Square}" />
                     <ComboBoxItem
                         x:Name="DockedGalleryFillSquareItem"
                         Content="{CompiledBinding Translation.FillSquare.Value,
                                                   Mode=OneWay}"
-                        Foreground="{DynamicResource MainTextColor}" />
+                        Foreground="{DynamicResource MainTextColor}"
+                        Tag="{x:Static gallery:GalleryStretchMode.FillSquare}" />
                 </ComboBox>
             </StackPanel>
         </Border>

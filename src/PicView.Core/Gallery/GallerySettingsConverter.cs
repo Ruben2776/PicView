@@ -43,8 +43,8 @@ public static class GallerySettingsConverter
                 break;
         }
 
-        gallerySettings.DockedGalleryStretchMode.Value = mode;
         Settings.Gallery.DockedGalleryStretchMode = mode;
+        gallerySettings.DockedGalleryStretchMode.Value = mode;
     }
 
     public static void UpdateExpandedGalleryStretchMode(GallerySharedSettingsViewModel gallerySettings, GalleryStretchMode mode)
@@ -76,7 +76,7 @@ public static class GallerySettingsConverter
                 gallerySettings.IsExpandedStretchSquareFill.Value = true;
                 break;
         }
-        gallerySettings.ExpandedGalleryStretchMode.Value = mode;
         Settings.Gallery.ExpandedGalleryStretchMode = mode;
+        gallerySettings.ExpandedGalleryStretchMode.Value = mode;
     }
 }

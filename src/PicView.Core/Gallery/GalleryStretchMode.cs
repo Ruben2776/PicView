@@ -1,5 +1,9 @@
 namespace PicView.Core.Gallery;
 
+/// <summary>
+/// The Thumbnail Stretch of a gallery. The settings file stores these as numbers, so a value keeps its number, and a
+/// removed number is never reused.
+/// </summary>
 public enum GalleryStretchMode
 {
     /// <summary>

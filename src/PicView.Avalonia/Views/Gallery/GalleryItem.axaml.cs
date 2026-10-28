@@ -32,36 +32,16 @@ public partial class GalleryItem : NavigateAbleItem
             return;
         }
 
-        core.GallerySettings.DockedGalleryStretchMode.Subscribe(x =>
+        // Follows the gallery that is shown, so switching between docked and expanded restretches the thumbnails too
+        core.GallerySettings.ThumbnailStretch.Subscribe(x =>
         {
-            if (!core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked.CurrentValue)
-            {
-                return;
-            }
-
             GalleryImage.Stretch = x switch
             {
                 GalleryStretchMode.Uniform or GalleryStretchMode.Square => Stretch.Uniform,
                 GalleryStretchMode.UniformToFill or GalleryStretchMode.FillSquare => Stretch.UniformToFill,
                 _ => GalleryImage.Stretch
             };
-        }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.DockedGalleryStretchMode)))
-        .AddTo(ref _disposables);
-        
-        core.GallerySettings.ExpandedGalleryStretchMode.Subscribe(x =>
-        {
-            if (!core.MainWindows.ActiveWindow.CurrentValue.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryExpanded.CurrentValue)
-            {
-                return;
-            }
-
-            GalleryImage.Stretch = x switch
-            {
-                GalleryStretchMode.Uniform or GalleryStretchMode.Square => Stretch.Uniform,
-                GalleryStretchMode.UniformToFill or GalleryStretchMode.FillSquare => Stretch.UniformToFill,
-                _ => GalleryImage.Stretch
-            };
-        }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.DockedGalleryStretchMode)))
+        }, DebugHelper.LogError(nameof(GalleryItem), nameof(core.GallerySettings.ThumbnailStretch)))
         .AddTo(ref _disposables);
     }
     
