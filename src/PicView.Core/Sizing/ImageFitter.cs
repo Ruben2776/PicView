@@ -30,7 +30,8 @@ public static class ImageFitter
         var shownWidth = isTurned ? imageHeight : imageWidth;
         var shownHeight = isTurned ? imageWidth : imageHeight;
 
-        var (maxAvailableWidth, maxAvailableHeight) = GetAvailableArea(input);
+        var (availableWidth, availableHeight) = GetAvailableArea(input);
+        var (maxAvailableWidth, maxAvailableHeight) = (availableWidth, availableHeight);
         if (!input.ZoomToFit)
         {
             // Never scale the image beyond 100%
@@ -43,8 +44,13 @@ public static class ImageFitter
         {
             // Fit the available width and scroll the rest of the height
             scale = maxAvailableWidth / shownWidth;
-            scrollWidth = viewWidth = Math.Min(shownWidth * scale, maxAvailableWidth);
-            scrollHeight = viewHeight = Math.Min(shownHeight * scale, maxAvailableHeight);
+            viewWidth = Math.Min(shownWidth * scale, maxAvailableWidth);
+            viewHeight = Math.Min(shownHeight * scale, maxAvailableHeight);
+
+            // An AutoFit window takes the image's size, while a window that keeps its size scrolls in all of it
+            (scrollWidth, scrollHeight) = input.Mode is FitMode.AutoFit
+                ? (viewWidth, viewHeight)
+                : (availableWidth, availableHeight);
         }
         else
         {

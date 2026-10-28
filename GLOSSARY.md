@@ -123,8 +123,12 @@ The total gap AutoFit keeps free around the window, beyond what the taskbar, doc
 _Avoid_: Window margin, padding
 
 **Fit**:
-The result of fitting an image, or a side-by-side pair, into the Available Area: its shown size, its Fit Scale, the scrollable area's size, and the window size that AutoFit applies. A side-by-side pair is fitted as one image made of both, scaled to the same height. A pair whose second size is not known yet has no Fit, so the window waits instead of resizing twice.
+The result of fitting an image, or a side-by-side pair, into the Available Area: its shown size, its Fit Scale, its Scroll Area, and the window size that AutoFit applies. A side-by-side pair is fitted as one image made of both, scaled to the same height. A pair whose second size is not known yet has no Fit, so the window waits instead of resizing twice.
 _Avoid_: Target size, image size, layout
+
+**Scroll Area**:
+With scrolling on, the area the image scrolls in. It fills the Available Area, except with AutoFit, where it takes the image's shown width and as much of its height as the Available Area allows. The image keeps its Fit Scale and sits centered in it.
+_Avoid_: Scroll viewer size, scrollable area
 
 **Fit Scale**:
 The factor that takes an image from its pixel size to its shown size when it is fitted. It becomes the starting zoom.
