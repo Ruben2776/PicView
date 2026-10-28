@@ -3,6 +3,9 @@ using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using ImageMagick;
+#if MAGICK_LEGACY
+using Orientation = ImageMagick.OrientationType;
+#endif
 using ImageMagick.Formats;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;

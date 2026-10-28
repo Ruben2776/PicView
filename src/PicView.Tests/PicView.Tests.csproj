@@ -15,6 +15,10 @@
         <Platforms>arm64;x64</Platforms>
     </PropertyGroup>
 
+    <ItemGroup Condition="'$(MagickLegacy)' == 'true'">
+        <Using Include="ImageMagick.AlphaOption" Alias="AlphaAction" />
+    </ItemGroup>
+
     <ItemGroup>
         <PackageReference Include="Avalonia.Headless" Version="12.1.4" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />

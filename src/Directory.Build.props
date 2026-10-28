@@ -7,6 +7,17 @@
         <FileVersion>5.2</FileVersion>
     </PropertyGroup>
 
+    <!-- Magick.NET 15 dropped Intel macOS, so the x64 macOS build passes -p:MagickLegacy=true to stay on 14.x -->
+    <PropertyGroup Condition="'$(MagickLegacy)' == 'true'">
+        <MagickNetVersion>14.17.2</MagickNetVersion>
+        <MagickAvaloniaVersion>1.1.16</MagickAvaloniaVersion>
+        <DefineConstants>$(DefineConstants);MAGICK_LEGACY</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(MagickLegacy)' != 'true'">
+        <MagickNetVersion>15.0.0</MagickNetVersion>
+        <MagickAvaloniaVersion>2.0.0</MagickAvaloniaVersion>
+    </PropertyGroup>
+
     <PropertyGroup>
         <NoWarn>$(NoWarn);AVLN3001</NoWarn>
     </PropertyGroup>

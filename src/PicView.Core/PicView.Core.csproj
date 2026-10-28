@@ -41,7 +41,7 @@
     <Features>$(Features);runtime-async=on</Features>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Magick.NET-Q8-x64" Version="15.0.0" />
+    <PackageReference Include="Magick.NET-Q8-arm64" Version="$(MagickNetVersion)" />
     <PackageReference Include="Meziantou.Analyzer" Version="3.0.317">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -60,6 +60,9 @@
     <None Update="Licenses\LICENSE.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup Condition="'$(MagickLegacy)' == 'true'">
+    <Using Include="ImageMagick.AlphaOption" Alias="AlphaAction" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="PicView.Tests" />

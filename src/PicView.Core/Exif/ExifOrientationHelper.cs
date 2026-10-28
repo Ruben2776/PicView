@@ -1,4 +1,7 @@
 ﻿using ImageMagick;
+#if MAGICK_LEGACY
+using Orientation = ImageMagick.OrientationType;
+#endif
 
 namespace PicView.Core.Exif;
 
