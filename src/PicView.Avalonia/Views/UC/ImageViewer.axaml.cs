@@ -272,6 +272,11 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
             e.Pointer.Type is PointerType.Touch, e.GetPosition(ZoomPanControl), this).ConfigureAwait(true);
     }
 
+    /// <summary>
+    /// Whether the shown image is taller than the scroll viewer, so there is something to scroll.
+    /// </summary>
+    public bool IsImageTallerThanViewer => ImageScrollViewer.Extent.Height > ImageScrollViewer.Viewport.Height;
+
     bool IZoomScrollTarget.CanScrollVertically =>
         ImageScrollViewer.VerticalScrollBarVisibility is ScrollBarVisibility.Visible or ScrollBarVisibility.Auto;
 
