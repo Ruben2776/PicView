@@ -167,15 +167,6 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     /// <inheritdoc />
     public void Minimize() => WindowState = WindowState.Minimized;
 
-    protected override void OnDataContextChanged(EventArgs e)
-    {
-        base.OnDataContextChanged(e);
-        if (DataContext is MainWindowViewModel vm)
-        {
-            vm.WindowModeSwitcher = WindowModeSwitcher;
-        }
-    }
-
     #endregion
 
     #region Secondary windows
