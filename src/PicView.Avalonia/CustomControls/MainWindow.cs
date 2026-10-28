@@ -168,19 +168,10 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
     public void Minimize() => WindowState = WindowState.Minimized;
 
     /// <summary>
-    /// This window's view model. Unlike <see cref="StyledElement.DataContext"/>, it can be read from any thread.
+    /// This window's view model, set once as the window opens. Unlike <see cref="StyledElement.DataContext"/>, it can
+    /// be read from any thread.
     /// </summary>
-    public MainWindowViewModel? ViewModel { get; private set; }
-
-    protected override void OnDataContextChanged(EventArgs e)
-    {
-        base.OnDataContextChanged(e);
-        ViewModel = DataContext as MainWindowViewModel;
-        if (ViewModel is { } vm)
-        {
-            vm.WindowModeSwitcher = WindowModeSwitcher;
-        }
-    }
+    public MainWindowViewModel? ViewModel { get; internal set; }
 
     #endregion
 
