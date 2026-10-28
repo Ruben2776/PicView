@@ -34,6 +34,7 @@ public class SettingsSearchData
     public string GalleryDockSearchTags { get; }
     public string GallerySizeSearchTags { get; }
     public string GalleryStretchSearchTags { get; }
+    public string GalleryMouseWheelSearchTags { get; }
     public string SlideshowSearchTags { get; }
     public string WindowScalingSearchTags { get; }
     public string WindowTopMostSearchTags { get; }
@@ -335,6 +336,17 @@ public class SettingsSearchData
         sb.Append(space);
         sb.Append("Stretch Fill Uniform");
         GalleryStretchSearchTags = sb.ToString();
+        
+        sb.Clear();
+        
+        sb.Append(TranslationManager.Translation.GallerySettings);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.GalleryMouseWheel);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.Mouse);
+        sb.Append(space);
+        sb.Append(TranslationManager.Translation.MouseWheel);
+        GalleryMouseWheelSearchTags = sb.ToString();
         
         sb.Clear();
 
