@@ -249,20 +249,17 @@ public class ResizeImageViewModel : IDisposable
 
     private async Task ReplaceOriginalAsync(TabViewModel tab, string originalPath, string convertedPath)
     {
-        tab.IsFileWatcherNavigationEnabled = false;
         try
         {
-            File.Delete(originalPath);
+            // Show the converted file before deleting the original, so the folder watcher removes a file that is no
+            // longer shown instead of navigating away from it
             await _mainVm.WindowTabs.LoadFromFileAsync(convertedPath, tab).ConfigureAwait(false);
+            File.Delete(originalPath);
             FileHistoryManager.Rename(originalPath, convertedPath);
         }
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(ResizeImageViewModel), nameof(ReplaceOriginalAsync), e);
-        }
-        finally
-        {
-            tab.IsFileWatcherNavigationEnabled = true;
         }
     }
 

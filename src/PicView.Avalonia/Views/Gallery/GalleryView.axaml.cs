@@ -141,8 +141,8 @@ public partial class GalleryView : GalleryAnimationControl
                         {
                             _galleryItems.Add(newItem);
                         }
-                        
-                        GalleryItemsControl.ScrollToCenterOfCurrentItem();
+
+                        SyncCurrentItem();
                     }, DispatcherPriority.Background, cancellationToken);
                 }
                 else
@@ -205,7 +205,7 @@ public partial class GalleryView : GalleryAnimationControl
                     RunOnUI(() =>
                     {
                         _galleryItems.Remove(oldItem);
-                        GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                        SyncCurrentItem();
                     }, DispatcherPriority.Background, cancellationToken);
                 }
                 else
@@ -214,7 +214,7 @@ public partial class GalleryView : GalleryAnimationControl
                     RunOnUI(() =>
                     {
                         _galleryItems.RemoveAll(oldItems);
-                        GalleryItemsControl.ScrollToCenterOfCurrentItem();
+                        SyncCurrentItem();
                     }, DispatcherPriority.Background, cancellationToken);
                 }
                 break;
@@ -227,13 +227,7 @@ public partial class GalleryView : GalleryAnimationControl
                         newMoveIndex >= 0 && newMoveIndex < _galleryItems.Count)
                     {
                         _galleryItems.Move(oldMoveIndex, newMoveIndex);
-                        EventHandler? layoutUpdatedHandler = null;
-                        layoutUpdatedHandler = (s, args) =>
-                        {
-                            GalleryItemsControl.LayoutUpdated -= layoutUpdatedHandler;
-                            GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                        };
-                        GalleryItemsControl.LayoutUpdated += layoutUpdatedHandler;
+                        SyncCurrentItem();
                     }
                 }, DispatcherPriority.Background, cancellationToken);
                 break;
@@ -252,6 +246,22 @@ public partial class GalleryView : GalleryAnimationControl
         }
     }
     
+    /// <summary>
+    /// Marks the current item again and centers it once laid out. The tab's index can change before the items it
+    /// points into do, as when a renamed file moves to its sorted place, which leaves the mark on the wrong item.
+    /// </summary>
+    private void SyncCurrentItem()
+    {
+        GalleryItemsControl.UpdateCurrentVisualState();
+        EventHandler? layoutUpdatedHandler = null;
+        layoutUpdatedHandler = (_, _) =>
+        {
+            GalleryItemsControl.LayoutUpdated -= layoutUpdatedHandler;
+            GalleryItemsControl.ScrollToCenterOfCurrentItem();
+        };
+        GalleryItemsControl.LayoutUpdated += layoutUpdatedHandler;
+    }
+
     private void ShowGalleryItemSizeSlider(object? sender, PointerPressedEventArgs e)
     {
         if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow)

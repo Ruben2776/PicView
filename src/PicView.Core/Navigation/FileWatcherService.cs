@@ -94,25 +94,19 @@ public class FileWatcherService(
     {
         var watch = _folderEvents.Watch(directory, Settings.Sorting.IncludeSubDirectories);
 
-        // AwaitOperation.Sequential ensures we don't process two file events for the same folder at the exact same time, 
-        // which protects the Integrity of the 'files' list and the CurrentIndex.
+        // The file events of a folder share one queue, and AwaitOperation.Sequential handles them one at a time in the
+        // order they came. A file converted to another format is created and then its original deleted: handled
+        // side by side, each would change the files list and the gallery by indices the other one has made stale.
 
         // Each event goes to every tab watching the folder when it arrives, not only the tab that started the watch
-        var fileCreatedSub = watch.Created.SubscribeAwait(async (e, ct) =>
-                await HandleAsync(directory, FolderChangeKind.Created, e.FullPath, null, ct).ConfigureAwait(false),
-            DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Created)));
-
-        var fileDeletedSub = watch.Deleted.SubscribeAwait(async (e, ct) =>
-                await HandleAsync(directory, FolderChangeKind.Deleted, e.FullPath, null, ct).ConfigureAwait(false),
-            DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Deleted)));
-
-        var fileRenamedSub = watch.Renamed.SubscribeAwait(async (e, ct) =>
-                await HandleAsync(directory, FolderChangeKind.Renamed, e.FullPath, e.OldFullPath, ct).ConfigureAwait(false),
-            DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Renamed)));
-
-        var fileChangedSub = watch.Changed.SubscribeAwait(async (e, ct) =>
-                await HandleAsync(directory, FolderChangeKind.Changed, e.FullPath, null, ct).ConfigureAwait(false),
-            DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderChangeKind.Changed)));
+        var fileSub = Observable.Merge(
+                watch.Created.Select(static e => (Kind: FolderChangeKind.Created, e.FullPath, OldFullPath: (string?)null)),
+                watch.Deleted.Select(static e => (Kind: FolderChangeKind.Deleted, e.FullPath, OldFullPath: (string?)null)),
+                watch.Renamed.Select(static e => (Kind: FolderChangeKind.Renamed, e.FullPath, OldFullPath: (string?)e.OldFullPath)),
+                watch.Changed.Select(static e => (Kind: FolderChangeKind.Changed, e.FullPath, OldFullPath: (string?)null)))
+            .SubscribeAwait(async (e, ct) =>
+                    await HandleAsync(directory, e.Kind, e.FullPath, e.OldFullPath, ct).ConfigureAwait(false),
+                DebugHelper.LogError(nameof(FileWatcherService), nameof(HandleAsync)));
 
         var folderGoneSub = watch.Gone.SubscribeAwait(async (_, _) =>
                 await FolderGoneAsync(directory).ConfigureAwait(false),
@@ -122,8 +116,7 @@ public class FileWatcherService(
                 await FolderRenamedAsync(directory, newDirectory).ConfigureAwait(false),
             DebugHelper.LogError(nameof(FileWatcherService), nameof(FolderRenamedAsync)));
 
-        return (watch, Disposable.Combine(fileCreatedSub, fileDeletedSub, fileRenamedSub, fileChangedSub, folderGoneSub,
-            folderMovedSub));
+        return (watch, Disposable.Combine(fileSub, folderGoneSub, folderMovedSub));
     }
 
     /// <summary>

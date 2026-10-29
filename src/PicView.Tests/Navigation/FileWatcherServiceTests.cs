@@ -341,6 +341,31 @@ public class FileWatcherServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnFileConvertedToAnotherFormat_LoadedGallery_KeepsTheItemsInTheFilesOrder()
+    {
+        // Arrange: converting writes the new file, then deletes the original. The new file is still being
+        // written, so its item waits for it to be readable
+        var files = await FilesOnDiskAsync("a.png", "c.jpg");
+        var tab = CreateTab(_testDirectory, files, files[1]);
+        LoadGallery(tab);
+        var convertedPath = Path.Combine(_testDirectory, "b.jpg");
+        await File.WriteAllBytesAsync(convertedPath, [], TestContext.Current.CancellationToken);
+        var watch = Watch(tab);
+
+        // Act: the original is deleted while the converted file's item still waits
+        watch.RaiseCreated("b.jpg");
+        await WaitUntilAsync(() => tab.ImageIterator.Files.Any(f => f.Name == "b.jpg"));
+        watch.RaiseDeleted("a.png");
+        await Task.Delay(100, TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(convertedPath, "dummy content", TestContext.Current.CancellationToken);
+
+        // Assert: the events are handled one at a time, so the items follow the files
+        await WaitUntilAsync(() => tab.ImageIterator.Files.Count == 2 && tab.Gallery.GalleryItems.Count == 2);
+        Assert.Equal(["b.jpg", "c.jpg"], tab.ImageIterator.Files.Select(file => file.Name));
+        Assert.Equal(["b.jpg", "c.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
+    }
+
+    [Fact]
     public async Task OnFileDeleted_LoadedGallery_RemovesTheFilesItem()
     {
         // Arrange

@@ -57,10 +57,9 @@ public partial class EditableTitlebar : UserControl
             return;
         }
 
+        // The TextBlock is bound to the tab's title, so it shows the new name once the file is renamed
         vm.IsEditableTitlebarOpen.Value = false;
         Cursor = new Cursor(StandardCursorType.Arrow);
-        TextBlock.Text = vm.WindowTabs.ActiveTab.CurrentValue.Title
-            .CurrentValue;
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -111,7 +110,10 @@ public partial class EditableTitlebar : UserControl
         switch (e.Key)
         {
             case Key.Enter:
-                _ = RenameHelper.RenameAction(vm, TextBox.Text, mainWindow);
+                var newName = TextBox.Text;
+                CloseTitlebar();
+                mainWindow.UIHelper.GetMainView.Focus();
+                _ = RenameHelper.RenameAction(vm, newName, mainWindow);
                 break;
             case Key.Escape:
                 mainWindow.UIHelper.GetMainView.Focus();
