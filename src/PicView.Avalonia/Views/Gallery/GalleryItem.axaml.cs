@@ -262,6 +262,7 @@ public partial class GalleryItem : NavigateAbleItem
 
     private void CopyImage_OnClick(object? sender, RoutedEventArgs e)
     {
+        // TODO: This copies the thumbnail, not the original image.
         if (DataContext is not GalleryItemViewModel item)
         {
             return;
