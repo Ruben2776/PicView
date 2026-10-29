@@ -1,10 +1,10 @@
 <Project>
     <PropertyGroup>
         <Nullable>enable</Nullable>
-        <VersionPrefix>5.2</VersionPrefix>
+        <VersionPrefix>5.2.0.1</VersionPrefix>
         <VersionSuffix>development-build</VersionSuffix>
-        <AssemblyVersion>5.2.0.0</AssemblyVersion>
-        <FileVersion>5.2</FileVersion>
+        <AssemblyVersion>5.2.0.1</AssemblyVersion>
+        <FileVersion>5.2.0.1</FileVersion>
     </PropertyGroup>
 
     <!-- Magick.NET 15 dropped Intel macOS, so the x64 macOS build passes -p:MagickLegacy=true to stay on 14.x -->
