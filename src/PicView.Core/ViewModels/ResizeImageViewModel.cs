@@ -3,6 +3,7 @@ using ImageMagick;
 using PicView.Core.DebugTools;
 using PicView.Core.Extensions;
 using PicView.Core.FileHandling;
+using PicView.Core.FileHistory;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Models;
 using R3;
@@ -232,13 +233,37 @@ public class ResizeImageViewModel : IDisposable
             return;
         }
 
-        var destination = fileInfo.FullName;
+        var originalPath = fileInfo.FullName;
         var orientation = tab.Orientation.Current.CurrentValue;
         var isFlipped = orientation.IsFlipped;
         var rotationAngle = orientation.Degrees;
 
-        await SaveImageInternal(fileInfo, destination, isFlipped, rotationAngle).ConfigureAwait(false);
+        var savedPath = await SaveImageInternal(fileInfo, originalPath, isFlipped, rotationAngle).ConfigureAwait(false);
+        if (savedPath is not null && !string.Equals(savedPath, originalPath, StringComparison.OrdinalIgnoreCase))
+        {
+            // Converted to another format: the converted file takes the place of the original
+            await ReplaceOriginalAsync(tab, originalPath, savedPath).ConfigureAwait(false);
+        }
         CloseAction?.Invoke();
+    }
+
+    private async Task ReplaceOriginalAsync(TabViewModel tab, string originalPath, string convertedPath)
+    {
+        tab.IsFileWatcherNavigationEnabled = false;
+        try
+        {
+            File.Delete(originalPath);
+            await _mainVm.WindowTabs.LoadFromFileAsync(convertedPath, tab).ConfigureAwait(false);
+            FileHistoryManager.Rename(originalPath, convertedPath);
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(ResizeImageViewModel), nameof(ReplaceOriginalAsync), e);
+        }
+        finally
+        {
+            tab.IsFileWatcherNavigationEnabled = true;
+        }
     }
 
     public async Task SaveImageAs()
@@ -265,7 +290,8 @@ public class ResizeImageViewModel : IDisposable
         CloseAction?.Invoke();
     }
 
-    private async Task SaveImageInternal(FileInfo fileInfo, string destination, bool isFlipped, int rotationAngle)
+    /// <returns>The path the image was written to, with the selected format's extension; <c>null</c> when it failed.</returns>
+    private async Task<string?> SaveImageInternal(FileInfo fileInfo, string destination, bool isFlipped, int rotationAngle)
     {
         IsLoading.Value = true;
 
@@ -296,10 +322,12 @@ public class ResizeImageViewModel : IDisposable
 
             magickImage.Resize(w, h);
             await magickImage.WriteAsync(destination).ConfigureAwait(false);
+            return destination;
         }
         catch (Exception e)
         {
             DebugHelper.LogDebug(nameof(ResizeImageViewModel), nameof(SaveImageInternal), e);
+            return null;
         }
         finally
         {

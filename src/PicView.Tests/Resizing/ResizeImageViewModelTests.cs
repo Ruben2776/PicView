@@ -208,6 +208,90 @@ public class ResizeImageViewModelTests
     }
 
     [Fact]
+    public async Task SaveImage_OtherFormatSelected_ReplacesOriginalWithConvertedFile()
+    {
+        var tempFile = Path.Combine(Path.GetTempPath(), $"test_resize_{Guid.NewGuid():N}.png");
+        var convertedFile = Path.ChangeExtension(tempFile, ".webp");
+        try
+        {
+            using (var image = new MagickImage(MagickColors.Red, 200, 200))
+            {
+                image.Format = MagickFormat.Png;
+                image.Write(tempFile);
+            }
+
+            var fileInfo = new FileInfo(tempFile);
+            var (mainVm, resizeVm) = CreateViewModels();
+            var model = new ImageModel
+            {
+                PixelWidth = 200,
+                PixelHeight = 200,
+                FileInfo = fileInfo
+            };
+
+            mainVm.WindowTabs.ActiveTab.Value.Model = model;
+            mainVm.WindowTabs.ActiveTab.Value.FileInfo.Value = fileInfo;
+            _frameProvider.Tick();
+
+            // WebP
+            resizeVm.SelectedConversionIndex.Value = 3;
+            _frameProvider.Tick();
+
+            await resizeVm.SaveImage();
+
+            Assert.False(File.Exists(tempFile));
+            Assert.True(File.Exists(convertedFile));
+            using var converted = new MagickImage(convertedFile);
+            Assert.Equal(MagickFormat.WebP, converted.Format);
+        }
+        finally
+        {
+            File.Delete(tempFile);
+            File.Delete(convertedFile);
+        }
+    }
+
+    [Fact]
+    public async Task SaveImage_OriginalFormat_OverwritesOriginal()
+    {
+        var tempFile = Path.Combine(Path.GetTempPath(), $"test_resize_{Guid.NewGuid():N}.png");
+        try
+        {
+            using (var image = new MagickImage(MagickColors.Red, 200, 200))
+            {
+                image.Format = MagickFormat.Png;
+                image.Write(tempFile);
+            }
+
+            var fileInfo = new FileInfo(tempFile);
+            var (mainVm, resizeVm) = CreateViewModels();
+            var model = new ImageModel
+            {
+                PixelWidth = 200,
+                PixelHeight = 200,
+                FileInfo = fileInfo
+            };
+
+            mainVm.WindowTabs.ActiveTab.Value.Model = model;
+            mainVm.WindowTabs.ActiveTab.Value.FileInfo.Value = fileInfo;
+            _frameProvider.Tick();
+
+            resizeVm.DesiredPixelWidth.Value = "100";
+            _frameProvider.Tick();
+
+            await resizeVm.SaveImage();
+
+            Assert.True(File.Exists(tempFile));
+            using var saved = new MagickImage(tempFile);
+            Assert.Equal(100u, saved.Width);
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
+
+    [Fact]
     public async Task UpdateOutputFileSizeAsync_ValidImage_UpdatesOutputFileSize()
     {
         var tempFile = Path.Combine(Path.GetTempPath(), $"test_resize_{Guid.NewGuid():N}.png");
