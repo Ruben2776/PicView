@@ -177,12 +177,16 @@ public partial class DateTimePickerButtons : UserControl
     /// </summary>
     private void OnCalendarAccepted(object? sender, EventArgs e)
     {
-        if (!_calendarContainer.SelectedDate.HasValue || _calendarContainer.PartCalendar.SelectedDate is null)
+        if (_calendarContainer.PartCalendar.SelectedDate is not { } selectedDate)
         {
             return;
         }
 
-        var newDate = _calendarContainer.PartCalendar.SelectedDate.Value.Date;
+        // Picking a year or month in the calendar's header only moves DisplayDate, and clicking a day of another
+        // month moves DisplayDate to it, so the shown year and month win, keeping the selected day where it exists
+        var displayDate = _calendarContainer.PartCalendar.DisplayDate;
+        var day = Math.Min(selectedDate.Day, DateTime.DaysInMonth(displayDate.Year, displayDate.Month));
+        var newDate = new DateTime(displayDate.Year, displayDate.Month, day);
         var oldTime = SelectedDateTime?.TimeOfDay ?? DateTime.Now.TimeOfDay;
         SelectedDateTime = newDate + oldTime;
 
