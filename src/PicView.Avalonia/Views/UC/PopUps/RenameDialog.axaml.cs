@@ -34,10 +34,17 @@ public partial class RenameDialog : AnimatedPopUp
     }
 
     /// <summary>
-    /// Renames the file and closes, as the Apply button does.
+    /// Renames the file and closes, as the Apply button does. Stays open when another file has the name, so it can be
+    /// changed.
     /// </summary>
     public override async ValueTask<bool> ConfirmAsync()
     {
+        if (DataContext is MainWindowViewModel vm && RenameHelper.IsNameTaken(vm, RenameBox.Text))
+        {
+            RenameBox.Focus();
+            return true;
+        }
+
         _ = RenameHelper.RenameAction(DataContext as MainWindowViewModel, RenameBox.Text, TopLevel.GetTopLevel(this) as MainWindow);
         await AnimatedClosing().ConfigureAwait(true);
         return true;

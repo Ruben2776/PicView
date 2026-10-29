@@ -133,6 +133,7 @@
   "ExposureTime": "Timp de expunere",
   "FNumber": "Număr F",
   "File": "fișier",
+  "FileAlreadyExists": "Există deja un fișier cu acest nume",
   "FileAssociations": "Asocieri de fișiere",
   "FileConversion": "Conversie fișiere",
   "FileCopy": "Fișier adăugat în memoria temporară",

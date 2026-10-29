@@ -133,6 +133,7 @@
   "ExposureTime": "Belichtingstijd",
   "FNumber": "F-getal",
   "File": "bestand",
+  "FileAlreadyExists": "Er bestaat al een bestand met deze naam",
   "FileAssociations": "Bestandsassociaties",
   "FileConversion": "Bestandsconversie",
   "FileCopy": "Bestand toegevoegd aan klembord",

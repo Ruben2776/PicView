@@ -133,6 +133,7 @@
   "ExposureTime": "Eksponeringstid",
   "FNumber": "F nummer",
   "File": "fil",
+  "FileAlreadyExists": "Der findes allerede en fil med det navn",
   "FileAssociations": "Filtilknytninger",
   "FileConversion": "Filkonvertering",
   "FileCopy": "Fil tilføjet til udklipsholderen",

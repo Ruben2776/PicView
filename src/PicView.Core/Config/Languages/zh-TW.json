@@ -133,6 +133,7 @@
   "ExposureTime": "曝光時間",
   "FNumber": "F 數",
   "File": "檔案",
+  "FileAlreadyExists": "已存在同名檔案",
   "FileAssociations": "檔案關聯",
   "FileConversion": "檔案轉換",
   "FileCopy": "檔案已複製",

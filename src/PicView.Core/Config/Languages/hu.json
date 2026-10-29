@@ -133,6 +133,7 @@
   "ExposureTime": "Expozíciós idő",
   "FNumber": "F szám",
   "File": "fájl",
+  "FileAlreadyExists": "Már létezik ilyen nevű fájl",
   "FileAssociations": "Fájl társítások",
   "FileConversion": "Fájlkonvertálás",
   "FileCopy": "Fájl hozzáadva a vágólaphoz",

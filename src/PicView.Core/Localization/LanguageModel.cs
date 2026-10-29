@@ -146,6 +146,7 @@ public class LanguageModel
     public string? ExposureTime { get; set; }
     public string? Favorites { get; set; }
     public string? File { get; set; }
+    public string? FileAlreadyExists { get; set; }
     public string? FileAssociations { get; set; }
     public string? FileConversion { get; set; }
     public string? FileCopy { get; set; }

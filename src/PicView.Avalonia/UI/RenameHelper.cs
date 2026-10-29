@@ -4,6 +4,7 @@ using PicView.Avalonia.CustomControls;
 using PicView.Core.DebugTools;
 using PicView.Core.FileHandling;
 using PicView.Core.FileHistory;
+using PicView.Core.Localization;
 using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.UI;
@@ -25,10 +26,8 @@ public static class RenameHelper
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
         var oldPath = tab.FileInfo.CurrentValue.FullName;
         var newPath = Path.Combine(tab.FileInfo.CurrentValue.DirectoryName, newName);
-        if (string.Equals(newPath, oldPath, StringComparison.Ordinal))
+        if (string.Equals(newPath, oldPath, StringComparison.Ordinal) || IsNameTaken(vm, newName))
         {
-            // TODO
-            //ShowFileExistsError(vm);
             return false;
         }
 
@@ -57,6 +56,29 @@ public static class RenameHelper
             await Dispatcher.UIThread.InvokeAsync(() => mainWindow.UIHelper.GetMainView.Focus());
         }
         return isRenamed;
+    }
+
+    /// <summary>
+    /// Whether another file in the active tab's folder already has <paramref name="newName"/>, in which case it tells the
+    /// user, since renaming would replace that file.
+    /// </summary>
+    public static bool IsNameTaken(MainWindowViewModel vm, string? newName)
+    {
+        var fileInfo = vm.WindowTabs.ActiveTab.CurrentValue.FileInfo.CurrentValue;
+        if (fileInfo?.DirectoryName is null || string.IsNullOrWhiteSpace(newName))
+        {
+            return false;
+        }
+
+        var newPath = Path.Combine(fileInfo.DirectoryName, newName);
+        if (!FileHelper.IsNameTaken(fileInfo.FullName, newPath))
+        {
+            return false;
+        }
+
+        TooltipHelper.ShowTooltipMessage(vm,
+            TranslationManager.Translation.FileAlreadyExists + Environment.NewLine + Path.GetFileName(newPath), true);
+        return true;
     }
 
     /// <summary>

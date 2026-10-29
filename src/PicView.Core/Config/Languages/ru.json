@@ -133,6 +133,7 @@
   "ExposureTime": "Время экспозиции",
   "FNumber": "Число F",
   "File": "Файл",
+  "FileAlreadyExists": "Файл с таким именем уже существует",
   "FileAssociations": "Ассоциации файлов",
   "FileConversion": "Преобразование файлов",
   "FileCopy": "Файл добавлен в буфер обмена",

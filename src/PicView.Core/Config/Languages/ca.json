@@ -133,6 +133,7 @@
   "ExposureTime": "Temps d'exposició",
   "FNumber": "Número F",
   "File": "fitxer",
+  "FileAlreadyExists": "Ja existeix un fitxer amb aquest nom",
   "FileAssociations": "Associacions de fitxers",
   "FileConversion": "Conversió de fitxer",
   "FileCopy": "Fitxer afegit al porta-retalls",

@@ -133,6 +133,7 @@
   "ExposureTime": "זמן חשיפה",
   "FNumber": "מספר F",
   "File": "קובץ",
+  "FileAlreadyExists": "כבר קיים קובץ בשם זה",
   "FileAssociations": "שיוכי קבצים",
   "FileConversion": "המרת קבצים",
   "FileCopy": "קובץ הועתק ללוח",

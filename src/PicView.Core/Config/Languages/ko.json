@@ -133,6 +133,7 @@
   "ExposureTime": "노출 시간",
   "FNumber": "F 번호",
   "File": "파일",
+  "FileAlreadyExists": "같은 이름의 파일이 이미 있습니다",
   "FileAssociations": "파일 연결",
   "FileConversion": "파일 변환",
   "FileCopy": "클립보드에 파일 추가",

@@ -133,6 +133,7 @@
   "ExposureTime": "Tempo di esposizione",
   "FNumber": "Numero F",
   "File": "File",
+  "FileAlreadyExists": "Esiste già un file con questo nome",
   "FileAssociations": "Associazioni di file",
   "FileConversion": "Conversione file",
   "FileCopy": "File aggiunto agli appunti",

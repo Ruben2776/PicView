@@ -133,6 +133,7 @@
   "ExposureTime": "曝露時間",
   "FNumber": "絞り",
   "File": "ファイル",
+  "FileAlreadyExists": "同じ名前のファイルが既に存在します",
   "FileAssociations": "ファイルの関連付け",
   "FileConversion": "ファイル変換",
   "FileCopy": "ファイルをクリップボードにコピー",

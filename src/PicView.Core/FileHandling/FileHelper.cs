@@ -7,6 +7,7 @@ public static partial class FileHelper
 {
     /// <summary>
     ///     Renames a file by moving it to a new path. Creates the destination directory if it does not exist.
+    ///     Never replaces another file: the rename fails when <paramref name="newPath" /> is taken.
     /// </summary>
     /// <param name="path">The current path of the file.</param>
     /// <param name="newPath">The new path to which the file will be moved.</param>
@@ -17,6 +18,11 @@ public static partial class FileHelper
     {
         try
         {
+            if (IsNameTaken(path, newPath))
+            {
+                return false;
+            }
+
             // 1. Get the directory part of the new file path
             var directoryPath = Path.GetDirectoryName(newPath);
 
@@ -28,8 +34,8 @@ public static partial class FileHelper
                 Directory.CreateDirectory(directoryPath);
             }
 
-            // 4. Move the file (the 'true' allows overwriting if newPath already exists)
-            File.Move(path, newPath, true);
+            // 4. Move the file, failing instead of overwriting if newPath was taken since the check
+            File.Move(path, newPath, false);
         }
         catch (Exception e)
         {
@@ -38,6 +44,42 @@ public static partial class FileHelper
         }
 
         return true;
+    }
+
+    /// <summary>
+    ///     Whether moving <paramref name="path" /> to <paramref name="newPath" /> would replace another file or folder.
+    ///     A rename that only changes the letter case is not taken on a case-insensitive file system, where
+    ///     <paramref name="newPath" /> already points at the file itself.
+    /// </summary>
+    public static bool IsNameTaken(string path, string newPath)
+    {
+        if (!Path.Exists(newPath))
+        {
+            return false;
+        }
+
+        if (!string.Equals(path, newPath, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        // Same path apart from letter case: taken only if an entry spelled exactly like newPath exists next to it
+        var directory = Path.GetDirectoryName(newPath);
+        var newName = Path.GetFileName(newPath);
+        if (string.IsNullOrEmpty(directory))
+        {
+            return false;
+        }
+
+        foreach (var entry in Directory.EnumerateFileSystemEntries(directory))
+        {
+            if (string.Equals(Path.GetFileName(entry), newName, StringComparison.Ordinal))
+            {
+                return !string.Equals(path, newPath, StringComparison.Ordinal);
+            }
+        }
+
+        return false;
     }
 
     [GeneratedRegex(@"\b(?:https?://|www\.)\S+\b", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]

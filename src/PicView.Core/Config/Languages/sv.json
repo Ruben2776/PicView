@@ -133,6 +133,7 @@
   "ExposureTime": "Exponeringstid",
   "FNumber": "Bländare",
   "File": "fil",
+  "FileAlreadyExists": "Det finns redan en fil med det namnet",
   "FileAssociations": "Filassociationer",
   "FileConversion": "Filkonvertering",
   "FileCopy": "Filen tillagd till urklipp",

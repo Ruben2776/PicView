@@ -133,6 +133,7 @@
   "ExposureTime": "Belichtungszeit",
   "FNumber": "F-Nummer",
   "File": "Datei",
+  "FileAlreadyExists": "Eine Datei mit diesem Namen existiert bereits",
   "FileAssociations": "Dateizuordnungen",
   "FileConversion": "Dateikonvertierung",
   "FileCopy": "In der Zwischenablage gespeichert",

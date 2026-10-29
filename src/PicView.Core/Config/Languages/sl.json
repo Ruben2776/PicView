@@ -133,6 +133,7 @@
   "ExposureTime": "Čas osvetlitve",
   "FNumber": "F število",
   "File": "datoteka",
+  "FileAlreadyExists": "Datoteka s tem imenom že obstaja",
   "FileAssociations": "Povezave datotek",
   "FileConversion": "Pretvorba datotek",
   "FileCopy": "Datoteka dodana v odložišče",

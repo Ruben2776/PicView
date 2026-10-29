@@ -133,6 +133,7 @@
   "ExposureTime": "Exposure time",
   "FNumber": "F number",
   "File": "file",
+  "FileAlreadyExists": "A file with that name already exists",
   "FileAssociations": "File associations",
   "FileConversion": "File conversion",
   "FileCopy": "File added to clipboard",

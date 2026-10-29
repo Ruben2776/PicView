@@ -133,6 +133,7 @@
   "ExposureTime": "زمن التعريض",
   "FNumber": "رقم F",
   "File": "ملف",
+  "FileAlreadyExists": "يوجد ملف بهذا الاسم بالفعل",
   "FileAssociations": "اقترانات الملفات",
   "FileConversion": "تحويل الملفات",
   "FileCopy": "تمت إضافة الملف إلى الحافظة",

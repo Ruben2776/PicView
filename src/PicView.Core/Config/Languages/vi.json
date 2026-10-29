@@ -133,6 +133,7 @@
   "ExposureTime": "Thời gian Phơi sáng",
   "FNumber": "Khẩu độ",
   "File": "Tệp",
+  "FileAlreadyExists": "Đã có tệp có tên này",
   "FileAssociations": "Liên kết Tệp",
   "FileConversion": "Chuyển đổi Tệp",
   "FileCopy": "Đã Thêm Tệp vào Bảng nhớ tạm",

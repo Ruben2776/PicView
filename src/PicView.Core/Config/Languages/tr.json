@@ -133,6 +133,7 @@
   "ExposureTime": "Pozlama süresi",
   "FNumber": "F numarası",
   "File": "Dosya",
+  "FileAlreadyExists": "Bu adda bir dosya zaten var",
   "FileAssociations": "Dosya ilişkilendirmeleri",
   "FileConversion": "Dosya dönüştürme",
   "FileCopy": "Dosya panoya eklendi",

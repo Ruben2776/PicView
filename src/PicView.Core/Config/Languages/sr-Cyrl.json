@@ -133,6 +133,7 @@
   "ExposureTime": "Време експозиције",
   "FNumber": "F број",
   "File": "фајл",
+  "FileAlreadyExists": "Датотека са тим именом већ постоји",
   "FileAssociations": "Асоцијације фајлова",
   "FileConversion": "Конверзија фајлова",
   "FileCopy": "Фајл додат у clipboard",
