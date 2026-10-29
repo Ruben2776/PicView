@@ -1,0 +1,34 @@
+name: Submit to winget
+
+# Opens a pull request on microsoft/winget-pkgs that updates Ruben2776.PicView to a
+# published GitHub release. Uses Komac (through winget-releaser) instead of
+# wingetcreate, which walks winget-pkgs through the REST contents API and gets
+# rate limited with "gitmon refuses to schedule us: too-many-processes".
+#
+# Needs the WINGET_TOKEN secret: a classic personal access token with the
+# public_repo scope, from an account that has a fork of microsoft/winget-pkgs.
+on:
+  workflow_dispatch:
+    inputs:
+      release-tag:
+        description: 'Release tag to submit (e.g. 5.2.0.1)'
+        required: true
+        type: string
+      version:
+        description: 'Package version, if it differs from the tag'
+        required: false
+        type: string
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Submit release to winget-pkgs
+        uses: vedantmgoyal9/winget-releaser@v2
+        with:
+          identifier: Ruben2776.PicView
+          release-tag: ${{ inputs.release-tag }}
+          version: ${{ inputs.version || inputs.release-tag }}
+          installers-regex: '^Setup-PicView-.*-win-(x64|arm64)\.exe$'
+          token: ${{ secrets.WINGET_TOKEN }}
