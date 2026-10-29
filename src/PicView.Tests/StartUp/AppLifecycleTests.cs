@@ -435,6 +435,36 @@ public class AppLifecycleTests : IAsyncDisposable
         }
     }
 
+    [AvaloniaFact]
+    public async Task FileSearchDialog_FilePickedWhileShowingSingleImage_LoadsIt()
+    {
+        var app = CreateApp();
+        await app.StartAsync(settingsExists: true, []);
+        var window = app.MainWindows.Open[0];
+        var path = Path.Combine(_folder, "found.jpg");
+        await File.WriteAllTextAsync(path, "image");
+        TabNavigationInitializer.Initialize(_core, [], ViewModelOf(window));
+        var tab = ViewModelOf(window).WindowTabs.ActiveTab.CurrentValue;
+        // Showing a single image, such as a clipboard image or a URL, drops the iterator
+        tab.DisposeImageIterator();
+        Application.Current!.DataContext = _core;
+        try
+        {
+            var dialog = new FileSearchDialog();
+            window.Content = dialog;
+
+            await dialog.LoadSelectedFileAsync(path, CancellationToken.None);
+            await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background);
+
+            Assert.NotNull(tab.ImageIterator);
+            Assert.Equal(path, tab.Model.FileInfo?.FullName);
+        }
+        finally
+        {
+            Application.Current.DataContext = null;
+        }
+    }
+
     /// <summary>
     /// Makes <paramref name="window"/> the Active Main Window. The headless app has no core to set it from when a
     /// window is activated.

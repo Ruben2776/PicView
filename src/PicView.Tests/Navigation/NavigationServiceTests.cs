@@ -146,6 +146,17 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task LoadFromStringAsync_Url_DropsImageIterator()
+    {
+        var tab = CreateTab(_testDirectory);
+
+        await _navigationService.LoadFromStringAsync("http://127.0.0.1:9/image.jpg", tab, new CancellationTokenSource());
+
+        // Opening a file afterwards recreates it and docks the gallery again, as after a clipboard image
+        Assert.Null(tab.ImageIterator);
+    }
+
+    [Fact]
     public async Task LoadFromStringAsync_FileWithRootDirectory_ListsFilesFromRoot()
     {
         Settings.Sorting.IncludeSubDirectories = true;

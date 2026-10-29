@@ -472,9 +472,10 @@ public class NavigationService(
 
     public async ValueTask<LoadResult> LoadFromUrlAsync(string url, TabViewModel tab, CancellationTokenSource ct)
     {
-        // Showing the downloaded image supersedes loading files still running
+        // Showing the downloaded image supersedes loading files still running.
+        // Drops the iterator, as for a clipboard image, so SourceOpener docks the gallery again when browsing files
         tab.BeginLoad();
-        tab.ImageIterator?.Dispose();
+        tab.DisposeImageIterator();
 
         platformService.StopTaskbarProgress();
         var safeFileName = HttpManager.GetSafeFileName(url);

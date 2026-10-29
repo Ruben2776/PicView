@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Navigation;
 using PicView.Core.DebugTools;
 using PicView.Core.FileSearch;
 using PicView.Core.ViewModels;
@@ -48,12 +49,13 @@ public partial class FileSearchDialog : AnimatedPopUp
 
     internal async ValueTask LoadSelectedFileAsync(string source, CancellationToken ct)
     {
-        if (OwnTabs is not { } tabs)
+        // Through SourceOpener, so a tab showing a single image gets a new iterator and its docked gallery back
+        if (TopLevel.GetTopLevel(this) is not MainWindow mainWindow || DataContext is not CoreViewModel core)
         {
             return;
         }
 
-        await tabs.LoadFromStringAsync(source).ConfigureAwait(false);
+        await SourceOpener.OpenAsync(mainWindow, core, source).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -100,12 +102,12 @@ public partial class FileSearchDialog : AnimatedPopUp
             case Key.Enter:
                 if (SearchBox.IsFocused)
                 {
-                    if (string.IsNullOrWhiteSpace(SearchBox.Text) || OwnTabs is not { } tabs)
+                    if (string.IsNullOrWhiteSpace(SearchBox.Text))
                     {
                         return;
                     }
 
-                    await tabs.LoadFromFileAsync(SearchBox.Text).ConfigureAwait(false);
+                    await LoadSelectedFileAsync(SearchBox.Text, CancellationToken.None).ConfigureAwait(false);
                 }
                 else
                 {
@@ -169,10 +171,16 @@ public partial class FileSearchDialog : AnimatedPopUp
 
                     const int batchSize = 25;
 
-                    var tab = tabs.ActiveTab.CurrentValue;
+                    // A tab showing a single image has no files to search
+                    if (tabs.ActiveTab.CurrentValue.ImageIterator is not { } iterator)
+                    {
+                        FilteredFileInfos.Value?.Clear();
+                        return;
+                    }
+
                     IEnumerable<FileSearchResult>? results = null;
                     await Task.Run(
-                        () => { results = FileSearcher.GetFileSearchResults(tab.ImageIterator.Files, text); }, ct).ConfigureAwait(false);
+                        () => { results = FileSearcher.GetFileSearchResults(iterator.Files, text); }, ct).ConfigureAwait(false);
 
                     var fileSearchResults = results as FileSearchResult[] ?? results.ToArray();
                     FilteredFileInfos.Value =
