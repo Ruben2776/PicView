@@ -9,6 +9,8 @@ namespace PicView.Avalonia.Wallpaper;
 
 public static class WallpaperManager
 {
+    // TODO: Sometimes when saving wallpaper with effects applied, the wallpaper will be entirely black (tested on Windows 10).
+    
     /// <summary>
     /// Sets the active tab's image as the wallpaper, as a save would write it.
     /// </summary>
