@@ -156,7 +156,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     public BindableReactiveProperty<int> MaxIndex { get; } = new(0);
     public BindableReactiveProperty<bool> CanNavigateForwards { get; } = new();
     public BindableReactiveProperty<bool> CanNavigateBackwards { get; } = new();
-    public bool IsFileWatcherNavigationEnabled { get; set; } = true;
     
     /// <summary>
     /// Should be used when changing directory or closing the tab
