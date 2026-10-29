@@ -108,10 +108,13 @@ public class NavigationService(
                     tab.ResetNavigationCts();
                     if (tab.GalleryCoordinator is not null)
                     {
-                        // We don't want to await this task
+                        // We don't want to await this task. ct is not passed: it was just canceled, so the reload
+                        // would never run. The coordinator cancels a reload that a newer one replaces
+#pragma warning disable MA0040
                         _ = Task.Run(() =>
-                            tab.GalleryCoordinator.ReloadGallery(tab.ImageIterator.Files, tab.ParentWindowContext.Core),
-                            ct.Token).ConfigureAwait(false);
+                                tab.GalleryCoordinator.ReloadGallery(tab.ImageIterator.Files, tab.ParentWindowContext.Core))
+                            .ConfigureAwait(false);
+#pragma warning restore MA0040
                     }
                     return;
                 }

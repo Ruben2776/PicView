@@ -103,8 +103,8 @@ public class NavigationServiceTests : IDisposable
         await _navigationService.RepopulateIterator(fileInfo, tab, cts, files);
 
         // Assert
-        // GalleryLoader.LoadGalleryAsync sets lazy ThumbnailLoaderFunc which calls GetThumbnailAsync when invoked
-        Assert.NotEmpty(tab.Gallery.GalleryItems);
+        // The gallery loads in the background; LoadGallery sets lazy ThumbnailLoaderFunc which calls GetThumbnailAsync when invoked
+        await WaitUntil(() => tab.Gallery.LoadingState is GalleryLoadingState.Loaded && tab.Gallery.GalleryItems.Count > 0);
         Assert.NotNull(tab.Gallery.GalleryItems[0].ThumbnailLoaderFunc);
         await tab.Gallery.GalleryItems[0].ThumbnailLoaderFunc!(cts.Token);
         Assert.True(_mockThumbnailLoader.GetThumbnailAsyncCalledCount > 0, "Gallery should be reloaded (GetThumbnailAsync called)");
