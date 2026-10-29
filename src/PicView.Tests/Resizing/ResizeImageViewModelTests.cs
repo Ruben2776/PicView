@@ -291,6 +291,50 @@ public class ResizeImageViewModelTests
         }
     }
 
+    [Theory]
+    [InlineData(1, 0, 0)]
+    [InlineData(3, 1, 1)]
+    public async Task SaveImage_FlippedTab_SavesItTurnedThenMirrored(int quarterTurns, int markedX, int markedY)
+    {
+        var tempFile = Path.Combine(Path.GetTempPath(), $"test_resize_{Guid.NewGuid():N}.png");
+        try
+        {
+            using (var image = new MagickImage(MagickColors.Black, 2, 2))
+            {
+                using (var pixels = image.GetPixels())
+                {
+                    pixels.SetPixel(0, 0, [255, 0, 0]);
+                }
+                image.Format = MagickFormat.Png;
+                image.Write(tempFile);
+            }
+
+            var fileInfo = new FileInfo(tempFile);
+            var (mainVm, resizeVm) = CreateViewModels();
+            var tab = mainVm.WindowTabs.ActiveTab.Value;
+            tab.Model = new ImageModel
+            {
+                PixelWidth = 2,
+                PixelHeight = 2,
+                FileInfo = fileInfo
+            };
+            tab.FileInfo.Value = fileInfo;
+            tab.Orientation.TurnTo(quarterTurns);
+            tab.Orientation.Flip();
+            _frameProvider.Tick();
+
+            await resizeVm.SaveImage();
+
+            using var saved = new MagickImage(tempFile);
+            using var savedPixels = saved.GetPixels();
+            Assert.Equal(MagickColors.Red, savedPixels.GetPixel(markedX, markedY).ToColor());
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
+
     [Fact]
     public async Task UpdateOutputFileSizeAsync_ValidImage_UpdatesOutputFileSize()
     {

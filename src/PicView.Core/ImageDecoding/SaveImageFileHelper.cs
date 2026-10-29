@@ -56,11 +56,6 @@ public static class SaveImageFileHelper
                 magickImage.Quality = quality.Value;
             }
 
-            if (flipImage)
-            {
-                magickImage.Flop();
-            }
-
             if (percentage.HasValue)
             {
                 magickImage.Resize(percentage.Value);
@@ -119,6 +114,12 @@ public static class SaveImageFileHelper
             if (rotationAngle is not null && rotationAngle.Value is not 0)
             {
                 magickImage.Rotate(rotationAngle.Value);
+            }
+
+            // Turn, then mirror, as the view does
+            if (flipImage)
+            {
+                magickImage.Flop();
             }
 
             var keepExt = string.IsNullOrEmpty(ext);

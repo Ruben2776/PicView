@@ -145,6 +145,48 @@ public class FileSavingServiceTests : IDisposable
     }
 
     /// <summary>
+    /// A black 3x2 PNG whose top-left pixel is red.
+    /// </summary>
+    private string WriteMarkedPng(string name)
+    {
+        var path = Path.Combine(_tempDir, name);
+        using var image = new MagickImage(MagickColors.Black, 3, 2);
+        using (var pixels = image.GetPixels())
+        {
+            pixels.SetPixel(0, 0, [255, 0, 0]);
+        }
+        image.Write(path);
+        return path;
+    }
+
+    [AvaloniaTheory]
+    [InlineData(0, 3, 2, 2, 0)]
+    [InlineData(1, 2, 3, 0, 0)]
+    [InlineData(2, 3, 2, 0, 1)]
+    [InlineData(3, 2, 3, 1, 2)]
+    public void SaveToAsync_FlippedTab_SavesItTurnedThenMirrored(int quarterTurns, int width, int height,
+        int markedX, int markedY)
+    {
+        var source = WriteMarkedPng("source.png");
+        var destination = Path.Combine(_tempDir, "flipped.png");
+        var vm = new MainWindowViewModel(null!, null!, null!, null!, null!);
+        var tab = new TabViewModel(vm);
+        tab.FileInfo.Value = new FileInfo(source);
+        tab.Orientation.TurnTo(quarterTurns);
+        tab.Orientation.Flip();
+        var service = new FileSavingService(new StubSavePathPicker(null), () => null);
+
+        var isSaved = RunWithDispatcher(service.SaveToAsync(tab, destination));
+
+        Assert.True(isSaved);
+        using var saved = new MagickImage(destination);
+        Assert.Equal((uint)width, saved.Width);
+        Assert.Equal((uint)height, saved.Height);
+        using var pixels = saved.GetPixels();
+        Assert.Equal(MagickColors.Red, pixels.GetPixel(markedX, markedY).ToColor());
+    }
+
+    /// <summary>
     /// Effects whose Effects Render of <paramref name="file"/> is a 3x2 blue image.
     /// </summary>
     private static EffectsViewModel CreateEffectsWithRender(FileInfo file)

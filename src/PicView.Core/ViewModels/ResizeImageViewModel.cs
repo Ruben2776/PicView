@@ -304,14 +304,15 @@ public class ResizeImageViewModel : IDisposable
                 magickImage.Quality = quality.Value;
             }
 
-            if (isFlipped)
-            {
-                magickImage.Flop();
-            }
-
+            // Turn, then mirror, as the view does
             if (rotationAngle != 0)
             {
                 magickImage.Rotate(rotationAngle);
+            }
+
+            if (isFlipped)
+            {
+                magickImage.Flop();
             }
 
             var w = Convert.ToUInt32(DesiredPixelWidth.CurrentValue, CultureInfo.InvariantCulture);
@@ -434,14 +435,15 @@ public class ResizeImageViewModel : IDisposable
                 magickImage.Quality = quality.Value;
             }
 
-            if (isFlipped)
-            {
-                magickImage.Flop();
-            }
-
+            // Turn, then mirror, as the view does
             if (rotationAngle != 0)
             {
                 magickImage.Rotate(rotationAngle);
+            }
+
+            if (isFlipped)
+            {
+                magickImage.Flop();
             }
 
             magickImage.Resize(w, h);
