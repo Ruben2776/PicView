@@ -21,4 +21,11 @@
     <PropertyGroup>
         <NoWarn>$(NoWarn);AVLN3001</NoWarn>
     </PropertyGroup>
+
+    <!-- The .NET 11 SDK's optimized AOT publish runs PrepareResources before ResolveReferences, but Avalonia
+         adds its !AvaloniaResources embedded resource BeforeTargets="ResolveReferences". The XAML is then never
+         embedded or compiled, and the app crashes at startup with "No precompiled XAML found". -->
+    <PropertyGroup>
+        <UseOptimizedPublish>false</UseOptimizedPublish>
+    </PropertyGroup>
 </Project>
