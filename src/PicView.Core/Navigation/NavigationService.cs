@@ -502,7 +502,6 @@ public class NavigationService(
             // Set titles to filename after successful load
             tab.SourceURL = url;
             tab.SingleImageType = SingleImageType.Url;
-            tab.Gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
             tab.UpdateTabTitle();
 
             tab.CanNavigateBackwards.Value = false;

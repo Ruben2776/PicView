@@ -58,7 +58,7 @@
                             Background="Transparent"
                             Classes="hover"
                             Click="Close_OnClick"
-                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.ToggleGalleryCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.ToggleExpandedCommand}"
                             CornerRadius="8,0,0,0"
                             Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
@@ -102,7 +102,7 @@
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="hover"
-                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.DockAtCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
                             DockPanel.Dock="Top"
                             Focusable="True"
@@ -119,7 +119,7 @@
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="hover"
-                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.DockAtCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Top}"
                             Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
@@ -135,7 +135,7 @@
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="hover"
-                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.DockAtCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Right}"
                             Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
@@ -151,7 +151,7 @@
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="hover"
-                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.DockAtCommand}"
                             CommandParameter="{x:Static gallery:GalleryDockPosition.Left}"
                             Focusable="True"
                             Foreground="{DynamicResource MainTextColor}"
@@ -166,7 +166,7 @@
                             Padding="15,7,15,7"
                             Background="Transparent"
                             Classes="hover"
-                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.CloseGalleryCommand}"
+                            Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.CloseCommand}"
                             CornerRadius="0,0,8,8"
                             Data="{StaticResource CloseGeometry}"
                             DockPanel.Dock="Top"
@@ -175,7 +175,7 @@
                             IconHeight="12"
                             IconMargin="0,0,7,0"
                             IconWidth="12"
-                            IsEnabled="{Binding WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}"
+                            IsEnabled="{Binding WindowTabs.ActiveTab.Value.Gallery.IsDocked.Value}"
                             IsTabStop="True"
                             Text="{CompiledBinding Translation.HideDockedGallery.Value}" />
                     </StackPanel>
@@ -188,7 +188,7 @@
                 Background="Transparent"
                 Classes="hover"
                 Click="Close_OnClick"
-                Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.SetDockPositionCommand}"
+                Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.DockAtCommand}"
                 CommandParameter="{x:Static gallery:GalleryDockPosition.Bottom}"
                 CornerRadius="8,0,0,0"
                 DockPanel.Dock="Top"
@@ -202,7 +202,7 @@
                 Text="{CompiledBinding Translation.ShowDockedGalleryAtBottom.Value}">
                 <customControls:TextIconButton.IsVisible>
                     <MultiBinding Converter="{x:Static BoolConverters.And}">
-                        <Binding Path="!WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value" />
+                        <Binding Path="!WindowTabs.ActiveTab.Value.Gallery.IsDocked.Value" />
                         <Binding Path="TopTitlebarViewModel.DropDownMenu.IsExtraButtonsVisible.Value" />
                     </MultiBinding>
                 </customControls:TextIconButton.IsVisible>
@@ -214,7 +214,7 @@
                 Background="Transparent"
                 Classes="hover"
                 Click="Close_OnClick"
-                Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.CloseGalleryCommand}"
+                Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.CloseCommand}"
                 CornerRadius="8,0,0,0"
                 Data="{StaticResource CloseGeometry}"
                 DockPanel.Dock="Top"

@@ -7,7 +7,7 @@
     xmlns:gallerySettings="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:TabViewModel"
-    ActiveGalleryMode="{CompiledBinding Gallery.ActiveGalleryMode.Value}"
+    ActiveGalleryMode="{CompiledBinding Gallery.ShownMode.Value}"
     Background="{DynamicResource GalleryBackgroundColor}"
     BorderBrush="{DynamicResource GalleryBorderColor}">
     <Panel>
@@ -78,7 +78,7 @@
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
                 <Separator />
-                <customControls:StyledMenuItem Command="{Binding Gallery.ToggleGalleryCommand}" Header="{CompiledBinding ParentWindowContext.Translation.ShowImageGallery.Value, Mode=OneWay}">
+                <customControls:StyledMenuItem Command="{Binding Gallery.ToggleExpandedCommand}" Header="{CompiledBinding ParentWindowContext.Translation.ShowImageGallery.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Path
                             Width="12"
@@ -89,7 +89,7 @@
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
                 <customControls:StyledMenuItem
-                    Command="{Binding Gallery.ContractToDockedOrCloseGalleryCommand}"
+                    Command="{Binding Gallery.ContractCommand}"
                     Header="{CompiledBinding ParentWindowContext.Translation.HideDockedGallery.Value,
                                              Mode=OneWay}"
                     IsVisible="{CompiledBinding !Gallery.IsGalleryExpanded.Value}">
@@ -103,7 +103,7 @@
                     </MenuItem.Icon>
                 </customControls:StyledMenuItem>
                 <customControls:StyledMenuItem
-                    Command="{Binding Gallery.ContractToDockedOrCloseGalleryCommand}"
+                    Command="{Binding Gallery.ContractCommand}"
                     Header="{CompiledBinding ParentWindowContext.Translation.CloseGallery.Value,
                                              Mode=OneWay}"
                     IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}">
@@ -128,7 +128,7 @@
             BorderBrush="{DynamicResource MenuBorderColor}"
             BorderThickness="1,0,0,0"
             Classes="hover"
-            Command="{CompiledBinding Gallery.ToggleGalleryCommand}"
+            Command="{CompiledBinding Gallery.ToggleExpandedCommand}"
             CornerRadius="0,0,0,45"
             DockPanel.Dock="Right"
             IsVisible="{CompiledBinding Gallery.IsGalleryExpanded.Value}"

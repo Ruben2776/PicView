@@ -4,15 +4,6 @@ namespace PicView.Core.Gallery;
 
 public static class GallerySettingsConverter
 {
-    public static void UpdateDockPositionProperties(GalleryViewModel gallery)
-    {
-        var pos = Settings.Gallery.DockPosition;
-        gallery.IsTopDocked.Value = pos == GalleryDockPosition.Top;
-        gallery.IsBottomDocked.Value = pos == GalleryDockPosition.Bottom;
-        gallery.IsLeftDocked.Value = pos == GalleryDockPosition.Left;
-        gallery.IsRightDocked.Value = pos == GalleryDockPosition.Right;
-    }
-
     public static void UpdateDockedGalleryStretchMode(GallerySharedSettingsViewModel gallerySettings, GalleryStretchMode mode)
     {
         switch (mode)

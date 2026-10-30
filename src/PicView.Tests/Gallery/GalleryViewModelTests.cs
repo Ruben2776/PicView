@@ -1,5 +1,4 @@
 using PicView.Core.ViewModels;
-using PicView.Core.Config;
 using PicView.Core.Gallery;
 using Xunit;
 using R3;
@@ -10,6 +9,7 @@ namespace PicView.Tests.Gallery;
 public class GalleryViewModelTests
 {
     private readonly ManualFrameProvider _frameProvider;
+    private static readonly Func<ValueTask<bool>> NoSave = static () => ValueTask.FromResult(true);
 
     public GalleryViewModelTests()
     {
@@ -19,44 +19,74 @@ public class GalleryViewModelTests
     }
 
     [Fact]
-    public void ActiveGalleryMode_WhenChangedFromExpandedToDocked_ResetsSelectedGalleryItemIndex()
+    public void ShownMode_WhenChangedFromExpandedToDocked_ResetsSelectedGalleryItemIndex()
     {
-        using var gallery = new GalleryViewModel();
+        using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize();
+        gallery.Switcher.Start(true);
 
-        gallery.ActiveGalleryMode.Value = GalleryMode.Expanded;
+        gallery.Switcher.ToggleExpanded();
         gallery.SelectedGalleryItemIndex.Value = 5;
         Assert.Equal(5, gallery.SelectedGalleryItemIndex.Value);
 
-        gallery.ActiveGalleryMode.Value = GalleryMode.Docked;
+        gallery.Switcher.ToggleExpanded();
         Assert.Equal(-1, gallery.SelectedGalleryItemIndex.Value);
     }
 
     [Fact]
-    public void ActiveGalleryMode_WhenChangedFromExpandedToClosed_ResetsSelectedGalleryItemIndex()
+    public async Task ShownMode_WhenChangedFromExpandedToClosed_ResetsSelectedGalleryItemIndex()
     {
-        using var gallery = new GalleryViewModel();
+        using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize();
 
-        gallery.ActiveGalleryMode.Value = GalleryMode.Expanded;
+        gallery.Switcher.ToggleExpanded();
         gallery.SelectedGalleryItemIndex.Value = 3;
         Assert.Equal(3, gallery.SelectedGalleryItemIndex.Value);
 
-        gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
+        await gallery.Switcher.Close();
         Assert.Equal(-1, gallery.SelectedGalleryItemIndex.Value);
     }
 
     [Fact]
-    public void ContractToDockedOrCloseGalleryCommand_WhenExpanded_ResetsSelectedGalleryItemIndex()
+    public void ContractCommand_WhenExpanded_ResetsSelectedGalleryItemIndex()
     {
-        using var gallery = new GalleryViewModel();
+        using var gallery = new GalleryViewModel(NoSave);
         gallery.Initialize();
 
-        gallery.ActiveGalleryMode.Value = GalleryMode.Expanded;
+        gallery.Switcher.ToggleExpanded();
         gallery.SelectedGalleryItemIndex.Value = 4;
 
-        gallery.ContractToDockedOrCloseGalleryCommand.Execute(Unit.Default);
+        gallery.ContractCommand.Execute(Unit.Default);
         Assert.Equal(-1, gallery.SelectedGalleryItemIndex.Value);
+    }
+
+    [Fact]
+    public void DockFlags_WhenDockedAtLeft_OnlyLeftIsTrue()
+    {
+        Settings.Gallery.DockPosition = GalleryDockPosition.Left;
+        using var gallery = new GalleryViewModel(NoSave);
+
+        gallery.Switcher.Start(true);
+
+        Assert.True(gallery.IsLeftDocked.Value);
+        Assert.False(gallery.IsRightDocked.Value);
+        Assert.False(gallery.IsTopDocked.Value);
+        Assert.False(gallery.IsBottomDocked.Value);
+    }
+
+    [Fact]
+    public void DockFlags_WhenHidden_AllFalse()
+    {
+        using var gallery = new GalleryViewModel(NoSave);
+        gallery.Switcher.Start(true);
+
+        gallery.Switcher.SetHidden(true);
+
+        Assert.False(gallery.IsLeftDocked.Value);
+        Assert.False(gallery.IsRightDocked.Value);
+        Assert.False(gallery.IsTopDocked.Value);
+        Assert.False(gallery.IsBottomDocked.Value);
+        Assert.False(gallery.IsDockedGalleryVisible.Value);
     }
 
     private class ManualFrameProvider : FrameProvider

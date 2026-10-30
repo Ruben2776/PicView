@@ -24,7 +24,7 @@ public class GalleryNavigationTests
         var tabOverview = new TabOverviewViewModel(null!);
         var tab = tabOverview.ActiveTab.Value;
         
-        tab.Gallery.IsGalleryExpanded.Value = true;
+        tab.Gallery.Switcher.ToggleExpanded();
         
         NavigateTo? capturedNavigation = null;
         tab.Gallery.NavigateGalleryCommand.Subscribe(x => capturedNavigation = x);
@@ -44,7 +44,7 @@ public class GalleryNavigationTests
         var tabOverview = new TabOverviewViewModel(null!);
         var tab = tabOverview.ActiveTab.Value;
         
-        tab.Gallery.IsGalleryExpanded.Value = true;
+        tab.Gallery.Switcher.ToggleExpanded();
         
         NavigateTo? capturedNavigation = null;
         tab.Gallery.NavigateGalleryCommand.Subscribe(x => capturedNavigation = x);
@@ -64,7 +64,7 @@ public class GalleryNavigationTests
         var tabOverview = new TabOverviewViewModel(null!);
         var tab = tabOverview.ActiveTab.Value;
         
-        tab.Gallery.IsGalleryExpanded.Value = false;
+        Assert.False(tab.Gallery.IsGalleryExpanded.Value);
         
         bool wasCalled = false;
         tab.Gallery.NavigateGalleryCommand.Subscribe(x => wasCalled = true);

@@ -17,7 +17,7 @@
         BorderBrush="{DynamicResource PopUpMainBorderColor}"
         BorderThickness="1,0,0,0"
         Classes="hover"
-        Command="{Binding Gallery.ToggleGalleryCommand}"
+        Command="{Binding Gallery.ToggleExpandedCommand}"
         CornerRadius="45,0,0,0">
         <Canvas>
             <Canvas

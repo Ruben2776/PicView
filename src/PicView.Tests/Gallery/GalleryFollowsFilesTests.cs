@@ -68,7 +68,7 @@ public class GalleryFollowsFilesTests : IDisposable
         var tab = CreateTab();
         tab.ImageIterator.Initialize(await FilesAsync("a.jpg", "b.jpg"));
 
-        tab.Gallery.ActiveGalleryMode.Value = GalleryMode.Expanded;
+        tab.Gallery.Switcher.ToggleExpanded();
 
         await WaitUntilLoadedAsync(tab, "a.jpg", "b.jpg");
     }
@@ -328,9 +328,9 @@ public class GalleryFollowsFilesTests : IDisposable
 
     private static Task IdleAsync(TabViewModel tab) => tab.GalleryCoordinator!.Idle;
 
-    private static void Show(TabViewModel tab) => tab.Gallery.ActiveGalleryMode.Value = GalleryMode.Docked;
+    private static void Show(TabViewModel tab) => tab.Gallery.Switcher.Start(true);
 
-    private static void Hide(TabViewModel tab) => tab.Gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
+    private static void Hide(TabViewModel tab) => tab.Gallery.Switcher.Start(false);
 
     /// <summary>
     /// Files that exist, as a gallery load reads each file's size and date.

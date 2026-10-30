@@ -255,7 +255,7 @@
 
             <Separator />
 
-            <customControls:StyledMenuItem Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.ToggleGalleryCommand}" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ShowImageGallery.Value, Mode=OneWay}">
+            <customControls:StyledMenuItem Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.ToggleExpandedCommand}" Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.ShowImageGallery.Value, Mode=OneWay}">
                 <MenuItem.Icon>
                     <Path
                         Width="12"
@@ -267,7 +267,7 @@
             </customControls:StyledMenuItem>
             <Separator />
             <customControls:StyledMenuItem
-                Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.ContractToDockedOrCloseGalleryCommand}"
+                Command="{Binding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.ContractCommand}"
                 Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.HideDockedGallery.Value,
                                          Mode=OneWay}"
                 IsVisible="{CompiledBinding !$parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}">
@@ -281,7 +281,7 @@
                 </MenuItem.Icon>
             </customControls:StyledMenuItem>
             <customControls:StyledMenuItem
-                Command="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.ContractToDockedOrCloseGalleryCommand}"
+                Command="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.ContractCommand}"
                 Header="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).Translation.CloseGallery.Value,
                                          Mode=OneWay}"
                 IsVisible="{CompiledBinding $parent[Window].((viewModels:MainWindowViewModel)DataContext).WindowTabs.ActiveTab.Value.Gallery.IsGalleryExpanded.Value}">

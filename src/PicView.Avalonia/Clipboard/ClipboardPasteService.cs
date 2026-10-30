@@ -83,7 +83,7 @@ public class ClipboardPasteService(
 
         await SourceOpener.OpenAsync(mainWindow, activeCore, firstItem).ConfigureAwait(false);
 
-        if (vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked.CurrentValue)
+        if (vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDocked.Value)
         {
             return true;
         }

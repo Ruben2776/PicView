@@ -159,7 +159,6 @@ public static class UpdateImage
     public static void SetSingleImage(MainWindowViewModel vm, MainWindow mainWindow, Bitmap image, SingleImageType type, string name)
     {
         var tabViewModel = vm.WindowTabs.ActiveTab.CurrentValue;
-        tabViewModel.Gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
 
         var width = (uint)image.PixelSize.Width;
         var height = (uint)image.PixelSize.Height;

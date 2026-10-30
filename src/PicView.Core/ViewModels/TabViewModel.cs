@@ -64,7 +64,21 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     public bool IsClosing { get; private set; }
     public bool IsSelected { get; set; }
     
-    public SingleImageType SingleImageType { get; set; }
+    /// <summary>
+    /// What the tab shows instead of a file it browses. A Single Image hides the gallery without changing its mode.
+    /// </summary>
+    public SingleImageType SingleImageType
+    {
+        get => _singleImageType;
+        set
+        {
+            _singleImageType = value;
+            UpdateGalleryHidden();
+        }
+    }
+
+    private SingleImageType _singleImageType;
+
     public string? SourceURL { get; set; }
     
     #endregion
@@ -75,8 +89,25 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     public HoverbarViewModel Hoverbar { get; } = new();
     public GalleryViewModel Gallery { get; } = new();
     
-    public CropViewModel? Crop { get; set; }
+    /// <summary>
+    /// The crop the tab is in, if any. Cropping hides the gallery without changing its mode.
+    /// </summary>
+    public CropViewModel? Crop
+    {
+        get => _crop;
+        set
+        {
+            _crop = value;
+            UpdateGalleryHidden();
+        }
+    }
+
+    private CropViewModel? _crop;
+
     public ICropService? CropService { get; set; }
+
+    private void UpdateGalleryHidden() =>
+        Gallery.Switcher.SetHidden(_crop is not null || _singleImageType is not SingleImageType.None);
     
     public Gallery.GalleryCoordinator? GalleryCoordinator { get; private set; }
     

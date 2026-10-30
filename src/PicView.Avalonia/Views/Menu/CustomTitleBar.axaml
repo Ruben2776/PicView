@@ -1061,7 +1061,7 @@
                 IconHeight="13"
                 IconWidth="13"
                 IsTabStop="False"
-                IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsGalleryDocked.Value}" />
+                IsVisible="{Binding !WindowTabs.ActiveTab.Value.Gallery.IsDocked.Value}" />
 
             <uc:EditableTitlebar
                 x:Name="EditableTitlebar"

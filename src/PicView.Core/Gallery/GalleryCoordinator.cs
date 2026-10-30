@@ -48,7 +48,7 @@ public class GalleryCoordinator : IDisposable
         _tab = tab;
         _thumbnailLoader = thumbnailLoader;
         _thumbnailCache = thumbnailCache;
-        _shownSubscription = tab.Gallery.ActiveGalleryMode
+        _shownSubscription = tab.Gallery.Switcher.Mode
             .Select(mode => mode is not GalleryMode.Closed)
             .DistinctUntilChanged()
             .Subscribe(OnShownChanged, DebugHelper.LogError(nameof(GalleryCoordinator), nameof(OnShownChanged)));
@@ -481,7 +481,7 @@ public class GalleryCoordinator : IDisposable
         gallery.SelectedGalleryItemIndex.Value = -1;
         if (gallery.IsGalleryExpanded.Value)
         {
-            GalleryManager.ToggleGallery(gallery);
+            gallery.Switcher.ToggleExpanded();
         }
 
         await _tab.ImageIterator.SkipToIndexAsync(index, _tab.GetTabCancellation())

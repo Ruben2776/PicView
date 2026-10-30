@@ -42,14 +42,13 @@ public static class SourceOpener
 
         if (!tab.IsInitialized)
         {
-            // Prepare the gallery before initializing, so the docked gallery stays visible and loads with the files
-            TabNavigationInitializer.PrepareDockedGallery(tab);
+            // A new tab starts in the gallery mode the settings remember, without animation
+            tab.Gallery.Switcher.Start(Settings.Gallery.IsGalleryDocked);
             TabNavigationInitializer.Initialize(core, [], vm);
         }
         else if (tab.ImageIterator is null)
         {
             // Showing a single image (clipboard, base64) disposed the iterator, browse files with a new one
-            TabNavigationInitializer.PrepareDockedGallery(tab);
             TabNavigationInitializer.RecreateImageIterator(tabs, tab);
         }
 

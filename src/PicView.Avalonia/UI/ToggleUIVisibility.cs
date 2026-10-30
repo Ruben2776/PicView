@@ -65,14 +65,6 @@ public static class ToggleUIVisibility
 
             Settings.UIProperties.ShowInterface = true;
             vm.TitlebarHeight.Value = SizeDefaults.MainTitlebarHeight;
-            if (Settings.Gallery.IsGalleryDocked)
-            {
-                tab.Gallery.IsDockedGalleryVisible.Value = true;
-            }
-            else
-            {
-                tab.Gallery.IsGalleryDocked.Value = false;
-            }
         }
 
         vm.TopTitlebarViewModel.CloseDropDownMenu();

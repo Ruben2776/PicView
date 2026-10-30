@@ -39,29 +39,6 @@ public static class TabNavigationInitializer
     }
     
     /// <summary>
-    /// Applies the docked-gallery settings to a tab before it is initialized: undocks when the interface is hidden and
-    /// the docked gallery should not show then, and opens a docked gallery without animation.
-    /// </summary>
-    /// <remarks>Call before <see cref="Initialize(CoreViewModel, List{FileInfo}, MainWindowViewModel)"/>, which subscribes to
-    /// the gallery mode; changing it afterwards would hide the docked gallery.</remarks>
-    /// <returns>Whether the docked gallery is shown and needs loading.</returns>
-    public static bool PrepareDockedGallery(TabViewModel tab)
-    {
-        var gallery = tab.Gallery;
-        if (Settings.Gallery.IsGalleryDocked)
-        {
-            if (Settings.Gallery.DockPosition is GalleryDockPosition.Closed)
-            {
-                Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;
-            }
-            gallery.ActiveGalleryMode.Value = GalleryMode.DockedNoAnimation;
-            return true;
-        }
-        Settings.Gallery.DockPosition = GalleryDockPosition.Closed;
-        return false;
-    }
-
-    /// <summary>
     /// Gives an initialized tab a new, empty image iterator from the window's shared services, for a tab whose
     /// iterator was disposed to show a single image. Does not subscribe to the tab again.
     /// </summary>

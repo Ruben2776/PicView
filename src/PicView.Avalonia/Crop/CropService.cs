@@ -27,8 +27,6 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
     private object? _backUpView;
     private bool _couldNavigateBackwards;
     private bool _couldNavigateForwards;
-    private bool _wasGalleryDocked;
-    private GalleryDockPosition _previousDockPosition;
 
     public async Task StartCropControlAsync()
     {
@@ -38,30 +36,19 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         }
         
         _backUpView = tabViewModel.CurrentView.Value;
-        _wasGalleryDocked = Settings.Gallery.IsGalleryDocked;
-        _previousDockPosition = Settings.Gallery.DockPosition;
 
-        // Hide gallery when entering crop mode
-        if (_wasGalleryDocked)
-        {
-            // Reset setting before resizing
-            Settings.Gallery.IsGalleryDocked = false;
-            mainWindow.WindowFitter.Refit();
-        }
-        
-        var size = new Size(vm.ImageWidth.CurrentValue, vm.ImageHeight.CurrentValue);
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            tabViewModel.Crop = new CropViewModel
-            {
-                AspectRatio = tabViewModel.InitialZoom.CurrentValue,
-            };
-            
+            // Cropping hides the gallery, so fit before reading the size the crop area takes
+            tabViewModel.Crop = new CropViewModel();
+            mainWindow.WindowFitter.Refit();
+            tabViewModel.Crop.AspectRatio = tabViewModel.InitialZoom.CurrentValue;
+
             var cropControl = new CropControl
             {
                 DataContext = tabViewModel,
-                Width = size.Width,
-                Height = size.Height,
+                Width = vm.ImageWidth.CurrentValue,
+                Height = vm.ImageHeight.CurrentValue,
                 Margin = new Thickness(0)
             };
             tabViewModel.CurrentView.Value = cropControl;
@@ -137,14 +124,7 @@ public class CropService(TabViewModel tabViewModel, MainWindow mainWindow) : ICr
         tabViewModel.CanNavigateBackwards.Value = _couldNavigateBackwards;
         tabViewModel.CanNavigateForwards.Value = _couldNavigateForwards;
 
-        if (!_wasGalleryDocked)
-        {
-            return;
-        }
-
-        Settings.Gallery.DockPosition = _previousDockPosition;
-        Settings.Gallery.IsGalleryDocked = true;
-        _wasGalleryDocked = false;
+        // Leaving crop shows the gallery again, if the tab has one
         mainWindow.WindowFitter.Refit();
     }
 

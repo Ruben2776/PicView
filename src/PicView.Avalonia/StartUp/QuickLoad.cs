@@ -87,7 +87,7 @@ public static class QuickLoad
             WindowFunctions.CenterWindowOnScreen(mainWindow);
         }
 
-        TabNavigationInitializer.PrepareDockedGallery(tab);
+        tab.Gallery.Switcher.Start(Settings.Gallery.IsGalleryDocked);
         TabNavigationInitializer.Initialize(core, [], vm);
 
         vm.IsLoadingIndicatorShown.Value = true;
@@ -129,7 +129,7 @@ public static class QuickLoad
 
         var rootDirectory = continueFromLeftOff ? SourceOpener.GetStartUpDirectory(fileInfo.FullName) : null;
         var listFrom = rootDirectory is null ? fileInfo : new FileInfo(rootDirectory);
-        TabNavigationInitializer.PrepareDockedGallery(tab);
+        tab.Gallery.Switcher.Start(Settings.Gallery.IsGalleryDocked);
 
         if (Settings.ImageScaling.ShowImageSideBySide)
         {

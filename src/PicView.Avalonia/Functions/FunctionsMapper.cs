@@ -519,15 +519,11 @@ public class FunctionsMapper : IActionRunner
 
     private ValueTask ToggleGallery()
     {
-        _vm.WindowTabs.ActiveTab.CurrentValue.Gallery.ToggleGalleryCommand.Execute(Unit.Default);
+        _vm.WindowTabs.ActiveTab.CurrentValue.Gallery.Switcher.ToggleExpanded();
         return ValueTask.CompletedTask;
     }
 
-    private ValueTask OpenCloseDockedGallery()
-    {
-        _vm.WindowTabs.ActiveTab.CurrentValue.Gallery.ContractToDockedOrCloseGalleryCommand.Execute(Unit.Default);
-        return ValueTask.CompletedTask;
-    }
+    private ValueTask OpenCloseDockedGallery() => _vm.WindowTabs.ActiveTab.CurrentValue.Gallery.Switcher.Contract();
 
     #endregion
     
@@ -1001,7 +997,7 @@ public class FunctionsMapper : IActionRunner
 
     private ValueTask NewTab()
     {
-        if (_vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsGalleryDocked.CurrentValue)
+        if (_vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDocked.Value)
         {
             // TODO: Consecutive tabs or windows currently not supported when gallery is enabled
             return ValueTask.CompletedTask;
