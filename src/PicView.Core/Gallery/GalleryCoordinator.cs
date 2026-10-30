@@ -198,7 +198,7 @@ public class GalleryCoordinator : IDisposable
     private void Relocate(int index, FileInfo file)
     {
         var old = Gallery.GalleryItems[index];
-        var item = CreateItem(file, new GalleryFileDetails(old.PixelWidth, old.PixelHeight, null));
+        var item = CreateItem(file, old.Details);
         item.Image.Value = old.Image.Value;
         item.IsMotionPhoto.Value = old.IsMotionPhoto.Value;
         if (old.Image.Value is { } thumbnail)
@@ -412,20 +412,19 @@ public class GalleryCoordinator : IDisposable
     private GalleryItemViewModel CreateItem(FileInfo file, GalleryFileDetails? details, double maxHeight)
     {
         var core = _tab.ParentWindowContext?.Core;
-        var item = new GalleryItemViewModel
-        {
-            FileInfo = file,
-            PixelWidth = details?.PixelWidth ?? 0,
-            PixelHeight = details?.PixelHeight ?? 0
-        };
-        var xmpPacket = details?.XmpPacket;
+        var item = new GalleryItemViewModel { FileInfo = file };
 
-        var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(file, item.PixelWidth, item.PixelHeight);
+        var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(
+            file, details?.PixelWidth ?? 0, details?.PixelHeight ?? 0);
         item.FileName.Value = thumbData.FileName;
         item.FileSize.Value = thumbData.FileSize;
         item.FileDate.Value = thumbData.FileDate;
         item.FileLocation.Value = thumbData.FileLocation;
         item.ImageSize.Value = thumbData.ImageSize;
+        if (details is not null)
+        {
+            item.SetDetails(details);
+        }
 
         // Assign the lazy-loading logic, but don't execute it!
         item.ThumbnailLoaderFunc = async cancellationToken =>
@@ -451,8 +450,8 @@ public class GalleryCoordinator : IDisposable
                     // Detection reads the file again up to three times, so skip it while the badges are hidden
                     if (Settings.Gallery.ShowMotionPhotoBadges)
                     {
-                        item.IsMotionPhoto.Value =
-                            MotionPhotoDetector.TryDetect(item.FileInfo, xmpPacket, fastMode: true) is not null;
+                        item.IsMotionPhoto.Value = MotionPhotoDetector.TryDetect(
+                            item.FileInfo, item.Details?.XmpPacket, fastMode: true) is not null;
                     }
 
                     return thumb;

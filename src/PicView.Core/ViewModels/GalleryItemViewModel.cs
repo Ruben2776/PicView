@@ -1,3 +1,5 @@
+using PicView.Core.Extensions;
+using PicView.Core.Gallery;
 using R3;
 
 namespace PicView.Core.ViewModels;
@@ -26,8 +28,23 @@ public class GalleryItemViewModel : IDisposable
     public BindableReactiveProperty<bool> IsMotionPhoto { get; } = new(false);
     
     public FileInfo? FileInfo { get; set; }
-    public uint PixelWidth { get; set; }
-    public uint PixelHeight { get; set; }
+
+    private GalleryFileDetails? _details;
+
+    /// <summary>
+    /// What the item's file said about itself, or null until it is read. <see cref="SetDetails"/> replaces it whole, so
+    /// read it once and use that reference: its width and height are then from the same read.
+    /// </summary>
+    public GalleryFileDetails? Details => Volatile.Read(ref _details);
 
     public Func<CancellationToken, ValueTask<object?>>? ThumbnailLoaderFunc { get; set; }
+
+    /// <summary>
+    /// Replaces the item's <see cref="Details"/> and the size text that shows them.
+    /// </summary>
+    internal void SetDetails(GalleryFileDetails details)
+    {
+        Volatile.Write(ref _details, details);
+        ImageSize.Value = StringExtensions.CombineSize(details.PixelWidth, details.PixelHeight);
+    }
 }

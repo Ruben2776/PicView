@@ -238,8 +238,9 @@ public class GalleryFollowsFilesTests : IDisposable
 
         tab.ImageIterator.Insert(file, string.CompareOrdinal, new FileDetailsSource(file, waitUntilReady: false));
 
-        await WaitUntilAsync(() => tab.Gallery.GalleryItems.Count == 2 && tab.Gallery.GalleryItems[1].PixelWidth == 3u);
-        Assert.Equal(2u, tab.Gallery.GalleryItems[1].PixelHeight);
+        await WaitUntilAsync(() => tab.Gallery.GalleryItems.Count == 2 &&
+                                   tab.Gallery.GalleryItems[1].Details?.PixelWidth == 3u);
+        Assert.Equal(2u, tab.Gallery.GalleryItems[1].Details!.PixelHeight);
     }
 
     [Fact]
