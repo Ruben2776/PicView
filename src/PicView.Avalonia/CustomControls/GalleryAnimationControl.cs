@@ -27,17 +27,10 @@ public class GalleryAnimationControl : UserControl
     private NavigateAbleItemsViewer? _viewer;
     private VirtualizingGallery? _itemsPanel;
 
-    /// Tracks the previous mode to determine the animation transition
-    private GalleryMode _previousMode = GalleryMode.Closed;
-
-    public static readonly StyledProperty<GalleryMode> ActiveGalleryModeProperty =
-        AvaloniaProperty.Register<GalleryAnimationControl, GalleryMode>(nameof(ActiveGalleryMode));
-
-    public GalleryMode ActiveGalleryMode
-    {
-        get => GetValue(ActiveGalleryModeProperty);
-        set => SetValue(ActiveGalleryModeProperty, value);
-    }
+    /// <summary>
+    /// The mode this control shows, which follows the tab's <see cref="GalleryModeSwitcher.ShownMode"/>.
+    /// </summary>
+    private GalleryMode _shownMode = GalleryMode.Closed;
 
     public bool IsInAnimation { get; private set; }
 
@@ -123,14 +116,33 @@ public class GalleryAnimationControl : UserControl
             return;
         }
 
-        // Change layout corresponding to DockPositions
+        if (TabViewModel is not { } tab)
+        {
+            return;
+        }
+
+        // Follow the tab's switcher, and show what it already shows, such as a gallery started docked (ADR-0005)
+        tab.Gallery.Switcher.Changes
+            .Subscribe(change => Dispatcher.UIThread.Post(() => _ = OnGalleryModeChanged(change)),
+                DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(OnGalleryModeChanged)))
+            .AddTo(ref _disposables);
+        if (tab.Gallery.ShownMode.Value is not GalleryMode.Closed)
+        {
+            _ = OnGalleryModeChanged(new GalleryModeChange(GalleryMode.Closed, tab.Gallery.ShownMode.Value, false));
+        }
+
+        // Change layout corresponding to DockPositions; a gallery that is not docked takes it when it docks
         Observable.EveryValueChanged(Settings.Gallery, gallery => gallery.DockPosition, mainWindow.FrameProvider)
             .Skip(1)
             .Subscribe(position =>
             {
+                if (_shownMode is not GalleryMode.Docked)
+                {
+                    return;
+                }
+
                 // Size directly when already docked, collapsing to 0x0 first causes an extra, expensive layout pass
-                var setSize = ActiveGalleryMode is GalleryMode.Docked && !IsInAnimation;
-                SetDockedLayout(position, setSize);
+                SetDockedLayout(position, !IsInAnimation);
             }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(SetDockedLayout)))
             .AddTo(ref _disposables);
         
@@ -150,7 +162,7 @@ public class GalleryAnimationControl : UserControl
         // it is shown next, from SetExpandedThumbs or SetDockedThumbPosition
         core.GallerySettings.ExpandedGalleryStretchMode.Skip(1).Subscribe(mode =>
             {
-                if (ActiveGalleryMode is not GalleryMode.Expanded)
+                if (_shownMode is not GalleryMode.Expanded)
                 {
                     return;
                 }
@@ -166,7 +178,7 @@ public class GalleryAnimationControl : UserControl
         
         core.GallerySettings.DockedGalleryStretchMode.Skip(1).Subscribe(mode =>
             {
-                if (ActiveGalleryMode is not (GalleryMode.Docked or GalleryMode.DockedNoAnimation))
+                if (_shownMode is not GalleryMode.Docked)
                 {
                     return;
                 }
@@ -186,11 +198,7 @@ public class GalleryAnimationControl : UserControl
     {
         base.OnPropertyChanged(change);
 
-        if (change.Property == ActiveGalleryModeProperty && change.NewValue is GalleryMode mode)
-        {
-            _ = Dispatcher.UIThread.InvokeAsync(async () => await OnGalleryModeChanged(mode).ConfigureAwait(false));
-        }
-        else if (change.Property == DockPanel.DockProperty && change.NewValue is Dock)
+        if (change.Property == DockPanel.DockProperty && change.NewValue is Dock)
         {
             _itemsPanel.WrapHeightOverride = GetDockedSize(Settings.Gallery.DockPosition);
             Dispatcher.UIThread.Post(() =>
@@ -201,7 +209,11 @@ public class GalleryAnimationControl : UserControl
         }
     }
 
-    private async ValueTask OnGalleryModeChanged(GalleryMode newMode)
+    /// <summary>
+    /// Shows a change the tab's switcher published, animated or not as it says. A change that arrives during an
+    /// animation is caught up without animation once the animation ends.
+    /// </summary>
+    private async ValueTask OnGalleryModeChanged(GalleryModeChange change)
     {
         if (IsInAnimation)
         {
@@ -210,23 +222,23 @@ public class GalleryAnimationControl : UserControl
         try
         {
             IsInAnimation = true;
-            var oldMode = _previousMode;
-            _previousMode = newMode;
+            var from = _shownMode;
+            _shownMode = change.To;
 
-            switch (oldMode, newMode)
+            switch (from, change.To)
             {
-                case (GalleryMode.Closed, GalleryMode.DockedNoAnimation): ClosedToDockedNoAnim(); break;
-                case (GalleryMode.DockedNoAnimation, GalleryMode.Closed): await DockedToClosed().ConfigureAwait(false); break;
-                
-                case (GalleryMode.Closed, GalleryMode.Docked): await ClosedToDocked().ConfigureAwait(false); break;
-                case (GalleryMode.Closed, GalleryMode.Expanded): await ClosedToExpanded().ConfigureAwait(false); break;
-                
-                case (GalleryMode.Docked, GalleryMode.Expanded): await DockedToExpanded().ConfigureAwait(false); break;
-                case (GalleryMode.Docked, GalleryMode.Closed): await DockedToClosed().ConfigureAwait(false); break;
-                
-                case (GalleryMode.Expanded, GalleryMode.Docked): await ExpandedToDocked().ConfigureAwait(false); break;
-                case (GalleryMode.Expanded, GalleryMode.Closed): await ExpandedToClosed().ConfigureAwait(false); break;
-                
+                case var _ when !change.Animate: ShowWithoutAnimation(); break;
+
+
+                case (GalleryMode.Closed, GalleryMode.Docked): await ClosedToDocked().ConfigureAwait(true); break;
+                case (GalleryMode.Closed, GalleryMode.Expanded): await ClosedToExpanded().ConfigureAwait(true); break;
+
+                case (GalleryMode.Docked, GalleryMode.Expanded): await DockedToExpanded().ConfigureAwait(true); break;
+                case (GalleryMode.Docked, GalleryMode.Closed): await DockedToClosed().ConfigureAwait(true); break;
+
+                case (GalleryMode.Expanded, GalleryMode.Docked): await ExpandedToDocked().ConfigureAwait(true); break;
+                case (GalleryMode.Expanded, GalleryMode.Closed): await ExpandedToClosed().ConfigureAwait(true); break;
+
                 default: UpdateLayoutForCurrentState(); break;
             }
         }
@@ -239,14 +251,37 @@ public class GalleryAnimationControl : UserControl
         {
             IsInAnimation = false;
         }
+
+        if (TabViewModel is { } tab && _shownMode != tab.Gallery.ShownMode.Value)
+        {
+            await OnGalleryModeChanged(new GalleryModeChange(_shownMode, tab.Gallery.ShownMode.Value, false))
+                .ConfigureAwait(true);
+        }
+    }
+
+    private void ShowWithoutAnimation()
+    {
+        UpdateLayoutForCurrentState();
+        if (_shownMode is GalleryMode.Docked)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                _viewer?.ScrollToCenterOfCurrentItem();
+            }, DispatcherPriority.Render);
+        }
+
+        if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
+        {
+            mainWindow.WindowFitter.Refit();
+        }
     }
 
     private void UpdateLayoutForCurrentState()
     {
         var dock = Settings.Gallery.DockPosition;
-        IsVisible = ActiveGalleryMode != GalleryMode.Closed;
+        IsVisible = _shownMode != GalleryMode.Closed;
 
-        switch (ActiveGalleryMode)
+        switch (_shownMode)
         {
             case GalleryMode.Closed:
                 Width = Height = ZeroSize;
@@ -332,7 +367,7 @@ public class GalleryAnimationControl : UserControl
     private void ParentSizeChanged(object? sender, SizeChangedEventArgs e)
     {
         // Keep the layout correct when the view is resized
-        if (ActiveGalleryMode == GalleryMode.Expanded)
+        if (_shownMode == GalleryMode.Expanded)
         {
             UpdateLayoutForCurrentState();
         }
@@ -413,39 +448,21 @@ public class GalleryAnimationControl : UserControl
 
     private void SetDockedThumbPosition(GalleryDockPosition dock)
     {
-        if (TabViewModel is not { } tab)
-        {
-            return;
-        }
-        var gallery = tab.Gallery;
-
-        // Reset all dock flags
-        gallery.IsTopDocked.Value = gallery.IsBottomDocked.Value =
-        gallery.IsLeftDocked.Value = gallery.IsRightDocked.Value = false;
-
+        // The tab's dock flags follow its switcher; this only places the control
         switch (dock)
         {
             case GalleryDockPosition.Top:
                 DockPanel.SetDock(this, Dock.Top);
-                gallery.IsTopDocked.Value = true;
                 break;
             case GalleryDockPosition.Left:
                 DockPanel.SetDock(this, Dock.Left);
-                gallery.IsLeftDocked.Value = true;
                 break;
             case GalleryDockPosition.Right:
                 DockPanel.SetDock(this, Dock.Right);
-                gallery.IsRightDocked.Value = true;
                 break;
-            case GalleryDockPosition.Bottom:
-                DockPanel.SetDock(this, Dock.Bottom);
-                gallery.IsBottomDocked.Value = true;
-                break;
-            case GalleryDockPosition.Closed:
             default:
-                if (Settings.Gallery.IsGalleryDocked) goto case GalleryDockPosition.Bottom;
-                IsVisible = false;
-                return;
+                DockPanel.SetDock(this, Dock.Bottom);
+                break;
         }
 
         IsVisible = true;
@@ -511,47 +528,8 @@ public class GalleryAnimationControl : UserControl
 
     #region Animations
 
-    private void ClosedToDockedNoAnim()
-    {
-        if (!Settings.Gallery.IsGalleryDocked)
-        {
-            return;
-        }
-
-        var dock = Settings.Gallery.DockPosition;
-        IsVisible = true;
-        SetDockedLayoutCore(dock, true);
-        SetDockedThumbPosition(dock);
-
-        if (IsHorizontalDock(dock))
-        {
-            Height = GetDockedSize(dock);
-            Width = double.NaN;
-        }
-        else
-        {
-            Width = GetDockedSize(dock);
-            Height = double.NaN;
-        }
-        
-        Dispatcher.UIThread.Post(() =>
-        {
-            _viewer.ScrollToCenterOfCurrentItem();
-        }, DispatcherPriority.Render);
-
-        if (TopLevel.GetTopLevel(this) is MainWindow mainWindow)
-        {
-            mainWindow.WindowFitter.Refit();
-        }
-    }
-
     private async Task ClosedToDocked()
     {
-        if (!Settings.Gallery.IsGalleryDocked)
-        {
-            return;
-        }
-
         var dock = Settings.Gallery.DockPosition;
         IsVisible = true;
         SetDockedLayoutCore(dock, false);

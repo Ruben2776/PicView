@@ -7,7 +7,6 @@
     xmlns:gallerySettings="clr-namespace:PicView.Core.Gallery;assembly=PicView.Core"
     xmlns:viewModels="clr-namespace:PicView.Core.ViewModels;assembly=PicView.Core"
     x:DataType="viewModels:TabViewModel"
-    ActiveGalleryMode="{CompiledBinding Gallery.ShownMode.Value}"
     Background="{DynamicResource GalleryBackgroundColor}"
     BorderBrush="{DynamicResource GalleryBorderColor}">
     <Panel>
