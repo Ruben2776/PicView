@@ -102,7 +102,7 @@
                     IconHeight="16"
                     IconMargin="7,0,7,0"
                     IconWidth="16"
-                    Text="{CompiledBinding Translation.IsShowingDockedGallery.Value,
+                    Text="{CompiledBinding MainWindows.ActiveWindow.Value.DockedGalleryToggleHeader.Value,
                                            Mode=OneWay}"
                     TextMargin="5,0,5,0"
                     TextMaxWidth="240" />

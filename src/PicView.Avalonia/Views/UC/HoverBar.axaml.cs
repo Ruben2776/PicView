@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -84,8 +83,10 @@ public partial class HoverBar : UserControl, IDisposable
                 })
                 .AddTo(ref _disposables);
 
-            Debug.Assert(Settings.Gallery is not null);
-            Observable.EveryValueChanged(Settings.Gallery, x => x.IsGalleryDocked)
+            // Stay above the active tab's Docked Gallery while it shows
+            vm.WindowTabs.ActiveTab
+                .Select(static tab => tab.Gallery.IsDockedGalleryVisible.AsObservable())
+                .Switch()
                 .Skip(1)
                 .Subscribe(_ =>
                 {
@@ -212,7 +213,9 @@ public partial class HoverBar : UserControl, IDisposable
         }
 
         // Make sure hover bar is above the bottom gallery if needed
-        var newHeight = Settings.Gallery.IsGalleryDocked ? 50 : 160;
+        var isDockedGalleryShown = mainWindow.ViewModel is { } vm &&
+                                   vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDockedGalleryVisible.CurrentValue;
+        var newHeight = isDockedGalleryShown ? 50 : 160;
         Height = mainWindow.UIHelper.GetMainView.Bounds.Height > SizeDefaults.WindowMinSize ? newHeight : double.NaN;
     }
 

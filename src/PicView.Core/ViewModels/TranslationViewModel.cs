@@ -1,7 +1,5 @@
-using System.Diagnostics;
 using System.Globalization;
 using PicView.Core.Config;
-using PicView.Core.DebugTools;
 using PicView.Core.Localization;
 using R3;
 
@@ -9,7 +7,6 @@ namespace PicView.Core.ViewModels;
 
 public class TranslationViewModel
 {
-    private bool _isSubscribed;
     public void UpdateLanguage()
     {
         var t = TranslationManager.Translation;
@@ -386,35 +383,6 @@ public class TranslationViewModel
         ZoomIn.Value = t.ZoomIn;
         ZoomOut.Value = t.ZoomOut;
         ZoomToFit.Value = t.ZoomToFit;
-    }
-
-    public void SubscribeToDynamicTranslationUpdates()
-    {
-        if (_isSubscribed)
-        {
-            return;
-        }
-
-        _isSubscribed = true;
-#if DEBUG
-        Debug.Assert(SettingsManager.Settings?.Gallery is not null);
-#endif
-        Observable.EveryValueChanged(SettingsManager.Settings.Gallery, gallery => gallery.IsGalleryDocked)
-            .Subscribe(isDocked =>
-            {
-                IsShowingDockedGallery.Value = isDocked
-                    ? TranslationManager.Translation.HideDockedGallery
-                    : TranslationManager.Translation.ShowDockedGallery;
-            }, result =>
-            {
-#if DEBUG
-                if (result is { IsFailure: true, Exception: not null })
-                {
-                    DebugHelper.LogDebug(nameof(TranslationViewModel), nameof(SubscribeToDynamicTranslationUpdates),
-                        result.Exception);
-                }
-#endif
-            });
     }
 
     #region Static Translation Strings
@@ -800,8 +768,6 @@ public class TranslationViewModel
     public BindableReactiveProperty<string?> IsLooping { get; } = new();
 
     public BindableReactiveProperty<string?> IsScrolling { get; } = new();
-
-    public BindableReactiveProperty<string?> IsShowingDockedGallery { get; } = new();
 
     public BindableReactiveProperty<string?> IsShowingBottomToolbar { get; } = new();
 

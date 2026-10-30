@@ -17,16 +17,11 @@ public static class LanguageUpdater
         }
         
         translationViewModel.UpdateLanguage();
-        translationViewModel.SubscribeToDynamicTranslationUpdates();
 
         translationViewModel.IsShowingUI.Value = !Settings.UIProperties.ShowInterface ? translationViewModel.ShowUI.CurrentValue : translationViewModel.HideUI.CurrentValue;
     
         translationViewModel.IsScrolling.Value = Settings.Zoom.ScrollEnabled ?
             TranslationManager.Translation.ScrollingEnabled : TranslationManager.Translation.ScrollingDisabled;
-    
-        translationViewModel.IsShowingDockedGallery.Value = Settings.Gallery.IsGalleryDocked ?
-            TranslationManager.Translation.HideDockedGallery :
-            TranslationManager.Translation.ShowDockedGallery;
     
         translationViewModel.IsLooping.Value = Settings.UIProperties.Looping
             ? TranslationManager.Translation.LoopingEnabled

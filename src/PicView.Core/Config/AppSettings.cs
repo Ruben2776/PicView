@@ -252,14 +252,15 @@ public class Theme
 public class Gallery
 {
     /// <summary>
-    /// A property indicating whether the docked gallery is currently visible in the application.
+    /// Whether a new tab starts with its gallery docked: the last choice the user made by hand in any tab. Not a
+    /// tab's current state; see <see cref="GalleryModeSwitcher"/>.
     /// </summary>
     public bool IsGalleryDocked { get; set; } = false;
 
     /// <summary>
-    /// Determines how images will be stretched or scaled, in docked mode.
+    /// The edge every Docked Gallery sits at.
     /// </summary>
-    public GalleryDockPosition DockPosition { get; set; } = GalleryDockPosition.Closed;
+    public GalleryDockPosition DockPosition { get; set; } = GalleryDockPosition.Bottom;
     /// <summary>
     /// Determines how images will be stretched or scaled, when the gallery is in full/expanded mode.
     /// </summary>

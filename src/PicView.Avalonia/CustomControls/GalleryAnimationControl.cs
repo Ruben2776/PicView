@@ -42,7 +42,6 @@ public class GalleryAnimationControl : UserControl
         switch (dock)
         {
             default:
-            case GalleryDockPosition.Closed:
                 return 0;
             case GalleryDockPosition.Bottom:
             case GalleryDockPosition.Top:

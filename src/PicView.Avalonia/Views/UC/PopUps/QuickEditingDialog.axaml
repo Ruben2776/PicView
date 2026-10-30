@@ -225,10 +225,10 @@
                     IconHeight="15"
                     IconMargin="15,0,10,0"
                     IconWidth="15"
-                    Text="{CompiledBinding Translation.IsShowingDockedGallery.Value,
+                    Text="{CompiledBinding DockedGalleryToggleHeader.Value,
                                            Mode=OneWay}"
                     TextMaxWidth="145"
-                    ToolTip.Tip="{CompiledBinding Translation.IsShowingDockedGallery.Value,
+                    ToolTip.Tip="{CompiledBinding DockedGalleryToggleHeader.Value,
                                                   Mode=OneWay}" />
 
                 <!--  Side by side  -->

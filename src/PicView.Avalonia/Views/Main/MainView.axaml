@@ -331,7 +331,7 @@
                 </customControls:StyledMenuItem>
 
                 <!--  Toggle docked gallery  -->
-                <customControls:StyledMenuItem Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.ToggleDockedCommand}" Header="{CompiledBinding Translation.IsShowingDockedGallery.Value, Mode=OneWay}">
+                <customControls:StyledMenuItem Command="{CompiledBinding WindowTabs.ActiveTab.Value.Gallery.ToggleDockedCommand}" Header="{CompiledBinding DockedGalleryToggleHeader.Value, Mode=OneWay}">
                     <MenuItem.Icon>
                         <Image
                             Width="12"

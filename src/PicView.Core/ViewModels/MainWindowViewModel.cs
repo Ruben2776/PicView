@@ -80,6 +80,11 @@ public class MainWindowViewModel : IDisposable
 
     public IReadOnlyBindableReactiveProperty<bool> ShouldMaximizeBeShown { get; }
 
+    /// <summary>
+    /// The text of the menu item that docks or closes the active tab's Docked Gallery.
+    /// </summary>
+    public IReadOnlyBindableReactiveProperty<string?> DockedGalleryToggleHeader { get; }
+
     public BindableReactiveProperty<bool> IsLoadingIndicatorShown { get; } = new();
 
     public BindableReactiveProperty<bool> IsUIShown { get; } = new();
@@ -127,6 +132,14 @@ public class MainWindowViewModel : IDisposable
         ShouldMaximizeBeShown = mode.Select(static m => m is not WindowMode.Maximized)
             .ToReadOnlyBindableReactiveProperty();
 
+        // Each tab has its own gallery mode, and every window shares one TranslationViewModel, so the text is per window
+        var isDocked = WindowTabs.ActiveTab.Select(static tab => tab.Gallery.Switcher.IsDocked.AsObservable()).Switch();
+        DockedGalleryToggleHeader = (translations is null
+                ? isDocked.Select(static _ => (string?)null)
+                : Observable.CombineLatest(isDocked, translations.HideDockedGallery, translations.ShowDockedGallery,
+                    static (docked, hide, show) => docked ? hide : show))
+            .ToReadOnlyBindableReactiveProperty(StringComparer.Ordinal);
+
         RunActionCommand = new ReactiveCommand<string>(RunAction);
     }
 
@@ -147,6 +160,7 @@ public class MainWindowViewModel : IDisposable
             IsMaximized,
             ShouldRestoreBeShown,
             ShouldMaximizeBeShown,
+            DockedGalleryToggleHeader,
             IsLoadingIndicatorShown,
             IsUIShown,
             IsTopToolbarShown,

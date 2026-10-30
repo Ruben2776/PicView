@@ -270,7 +270,15 @@ public static class SettingsManager
             existingSettings.Gallery.ExpandedGalleryStretchMode = GalleryStretchMode.Uniform;
             existingSettings.Gallery.DockedGalleryStretchMode = GalleryStretchMode.UniformToFill;
         }
-        
+
+        // The dock position once had a Closed value (0) that doubled as "not docked"; whether the gallery starts
+        // docked is IsGalleryDocked alone now
+        if (existingSettings.Gallery.DockPosition is not (GalleryDockPosition.Bottom or GalleryDockPosition.Top
+            or GalleryDockPosition.Left or GalleryDockPosition.Right))
+        {
+            existingSettings.Gallery.DockPosition = GalleryDockPosition.Bottom;
+        }
+
         existingSettings.Theme ??= new Theme();
         existingSettings.Sorting ??= new Sorting();
         existingSettings.ImageScaling ??= new ImageScaling();
