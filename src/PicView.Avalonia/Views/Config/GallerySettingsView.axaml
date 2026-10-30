@@ -108,16 +108,6 @@
                     TextMaxWidth="240" />
 
                 <customControls:TextToggleButton
-                    x:Name="UIHiddenDockedGalleryToggleButton"
-                    Classes="MenuItemHover settingsToggleButton"
-                    Command="{Binding MainWindows.ActiveWindow.Value.RunActionCommand}"
-                    CommandParameter="{x:Static keybindings:Actions.ToggleDockedGalleryInHiddenUI}"
-                    IsChecked="{CompiledBinding GallerySettings.IsDockedGalleryShownInHiddenUI.Value,
-                                                Mode=OneWay}"
-                    Text="{CompiledBinding Translation.ShowDockedGalleryWhenUiIsHidden.Value,
-                                           Mode=OneWay}" />
-
-                <customControls:TextToggleButton
                     x:Name="MotionPhotoBadgesToggleButton"
                     Classes="MenuItemHover settingsToggleButton"
                     IsChecked="{CompiledBinding GallerySettings.ShowMotionPhotoBadges.Value,

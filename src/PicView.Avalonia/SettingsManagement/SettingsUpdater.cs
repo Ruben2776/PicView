@@ -55,30 +55,6 @@ public static class SettingsUpdater
         }
     }
     
-    public static async ValueTask ToggleDockedGalleryInHiddenUI(MainWindowViewModel vm)
-    {
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
-        var gallery = tab.Gallery;
-        if (Settings.Gallery.ShowDockedGalleryInHiddenUI)
-        {
-            Settings.Gallery.ShowDockedGalleryInHiddenUI = false;
-            if (!Settings.UIProperties.ShowInterface)
-            {
-                gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
-            }
-        }
-        else
-        {
-            Settings.Gallery.ShowDockedGalleryInHiddenUI = true;
-            if (!Settings.UIProperties.ShowInterface && Settings.Gallery.IsGalleryDocked)
-            {
-                gallery.ActiveGalleryMode.Value = GalleryMode.Docked;
-            }
-        }
-
-        await SaveSettingsAsync().ConfigureAwait(false);
-    }
-    
     public static async ValueTask ToggleZoomToFit(MainWindowViewModel vm, MainWindow mainWindow)
     {
         if (Settings.ImageScaling.ZoomToFit)

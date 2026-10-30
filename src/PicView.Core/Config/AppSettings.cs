@@ -265,11 +265,6 @@ public class Gallery
     /// </summary>
     public GalleryStretchMode ExpandedGalleryStretchMode { get; set; } = GalleryStretchMode.Uniform;
     public GalleryStretchMode DockedGalleryStretchMode { get; set; } = GalleryStretchMode.UniformToFill;
-    
-    /// <summary>
-    /// Determines whether the docked gallery is shown when the user interface is hidden.
-    /// </summary>
-    public bool ShowDockedGalleryInHiddenUI { get; set; } = false;
 
     /// <summary>
     /// Determines whether gallery thumbnails of motion photos display the motion photo badge.

@@ -60,7 +60,6 @@ public static class Actions
     public const string Slideshow = nameof(Slideshow);
     public const string ToggleGallery = nameof(ToggleGallery);
     public const string OpenCloseDockedGallery = nameof(OpenCloseDockedGallery);
-    public const string ToggleDockedGalleryInHiddenUI = nameof(ToggleDockedGalleryInHiddenUI);
     public const string ToggleBottomToolbar = nameof(ToggleBottomToolbar);
     public const string ToggleHoverBar = nameof(ToggleHoverBar);
     public const string ToggleConstrainBackgroundColor = nameof(ToggleConstrainBackgroundColor);

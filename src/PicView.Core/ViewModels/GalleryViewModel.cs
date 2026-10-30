@@ -162,25 +162,12 @@ public class GalleryViewModel : IDisposable
     
     public void SetActiveGallery(bool isDocked)
     {
-        switch (isDocked)
+        ActiveGalleryMode.Value = isDocked switch
         {
-            case true when ActiveGalleryMode.Value is GalleryMode.Closed:
-            {
-                if (!Settings.UIProperties.ShowInterface && !Settings.Gallery.ShowDockedGalleryInHiddenUI)
-                {
-                    ActiveGalleryMode.Value = GalleryMode.Closed;
-                }
-                else
-                {
-                    ActiveGalleryMode.Value = GalleryMode.Docked;
-                }
-
-                break;
-            }
-            case false when ActiveGalleryMode.Value is GalleryMode.Docked:
-                ActiveGalleryMode.Value = GalleryMode.Closed;
-                break;
-        }
+            true when ActiveGalleryMode.Value is GalleryMode.Closed => GalleryMode.Docked,
+            false when ActiveGalleryMode.Value is GalleryMode.Docked => GalleryMode.Closed,
+            _ => ActiveGalleryMode.Value
+        };
     }
     
     public void Dispose()

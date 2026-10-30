@@ -50,11 +50,6 @@ public static class TabNavigationInitializer
         var gallery = tab.Gallery;
         if (Settings.Gallery.IsGalleryDocked)
         {
-            if (!Settings.UIProperties.ShowInterface && !Settings.Gallery.ShowDockedGalleryInHiddenUI)
-            {
-                gallery.IsGalleryDocked.Value = false;
-                return false;
-            }
             if (Settings.Gallery.DockPosition is GalleryDockPosition.Closed)
             {
                 Settings.Gallery.DockPosition = GalleryDockPosition.Bottom;

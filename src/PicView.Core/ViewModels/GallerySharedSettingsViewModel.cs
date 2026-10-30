@@ -39,9 +39,6 @@ public class GallerySharedSettingsViewModel
     public BindableReactiveProperty<bool> IsExpandedStretchSquareFill { get; } =
         new(Settings.Gallery.ExpandedGalleryStretchMode == GalleryStretchMode.FillSquare);
 
-    public BindableReactiveProperty<bool> IsDockedGalleryShownInHiddenUI { get; } =
-        new(Settings.Gallery.ShowDockedGalleryInHiddenUI);
-
     public BindableReactiveProperty<bool> ShowMotionPhotoBadges { get; } =
         new(Settings.Gallery.ShowMotionPhotoBadges);
 
@@ -176,38 +173,6 @@ public class GallerySharedSettingsViewModel
 #if DEBUG
         Debug.Assert(Settings?.Gallery is not null);
 #endif
-
-        IsDockedGalleryShownInHiddenUI
-            .Skip(1)
-            .SubscribeAwait(async (x, _) =>
-            {
-                if (Settings.Gallery.ShowDockedGalleryInHiddenUI != x)
-                {
-                    Settings.Gallery.ShowDockedGalleryInHiddenUI = x;
-                    await SaveSettingsAsync().ConfigureAwait(false);
-                }
-            }, result =>
-            {
-#if DEBUG
-                if (result is { IsFailure: true, Exception: not null })
-                {
-                    DebugHelper.LogDebug(nameof(GallerySharedSettingsViewModel), nameof(Initialize),
-                        result.Exception);
-                }
-#endif
-            });
-
-        Observable.EveryValueChanged(Settings.Gallery, x => x.ShowDockedGalleryInHiddenUI)
-            .Subscribe(x => { IsDockedGalleryShownInHiddenUI.Value = x; }, result =>
-            {
-#if DEBUG
-                if (result is { IsFailure: true, Exception: not null })
-                {
-                    DebugHelper.LogDebug(nameof(GallerySharedSettingsViewModel), nameof(Initialize),
-                        result.Exception);
-                }
-#endif
-            });
 
         ShowMotionPhotoBadges
             .Skip(1)

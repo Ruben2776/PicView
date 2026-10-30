@@ -243,7 +243,6 @@ public class FunctionsMapper : IActionRunner
             Actions.ResetSettings => ResetSettings,
             Actions.ToggleBottomToolbar => ToggleBottomToolbar,
             Actions.ToggleConstrainBackgroundColor => ToggleConstrainBackgroundColor,
-            Actions.ToggleDockedGalleryInHiddenUI => ToggleDockedGalleryInHiddenUI,
             Actions.ToggleFileHistory => ToggleFileHistory,
             Actions.ToggleHoverBar => ToggleHoverBar,
             Actions.ToggleOpeningInSameWindow => ToggleOpeningInSameWindow,
@@ -529,9 +528,6 @@ public class FunctionsMapper : IActionRunner
         _vm.WindowTabs.ActiveTab.CurrentValue.Gallery.ContractToDockedOrCloseGalleryCommand.Execute(Unit.Default);
         return ValueTask.CompletedTask;
     }
-    
-    private async ValueTask ToggleDockedGalleryInHiddenUI() =>
-        await SettingsUpdater.ToggleDockedGalleryInHiddenUI(_vm).ConfigureAwait(false);
 
     #endregion
     

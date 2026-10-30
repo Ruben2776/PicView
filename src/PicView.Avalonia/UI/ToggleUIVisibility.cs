@@ -46,12 +46,6 @@ public static class ToggleUIVisibility
             vm.IsBottomToolbarShown.Value = false;
             vm.Translation.IsShowingUI.Value = TranslationManager.Translation.ShowUI;
             tab.Hoverbar.IsHoverbarVisible.Value = Settings.UIProperties.ShowHoverNavigationBar;
-            if (!Settings.Gallery.ShowDockedGalleryInHiddenUI)
-            {
-                // Hide gallery if not enabled
-                tab.Gallery.ActiveGalleryMode.Value = GalleryMode.Closed;
-                tab.Gallery.IsGalleryDocked.Value = false;
-            }
         }
         else
         {
