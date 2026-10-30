@@ -5,12 +5,9 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.UI;
-using PicView.Avalonia.Views.UC.PopUps;
 using PicView.Core.DebugTools;
 using PicView.Core.Sizing;
-using PicView.Core.ViewModels;
 using R3;
 using PicView.Core.Keybindings;
 

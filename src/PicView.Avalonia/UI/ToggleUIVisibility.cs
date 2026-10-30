@@ -1,8 +1,5 @@
-using Avalonia.Controls;
 using Avalonia.Threading;
 using PicView.Avalonia.CustomControls;
-using PicView.Avalonia.WindowBehavior;
-using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.Sizing;
 using PicView.Core.ViewModels;

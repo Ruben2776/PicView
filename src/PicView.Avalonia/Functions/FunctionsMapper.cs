@@ -24,7 +24,6 @@ using PicView.Core.Keybindings;
 using PicView.Core.Navigation;
 using PicView.Avalonia.StartUp;
 using PicView.Core.ViewModels;
-using R3;
 
 namespace PicView.Avalonia.Functions;
 

@@ -1,8 +1,6 @@
 using System.Diagnostics;
-using Avalonia.Controls;
 using PicView.Avalonia.Navigation.Services;
 using PicView.Core.DebugTools;
-using PicView.Core.Gallery;
 using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 
