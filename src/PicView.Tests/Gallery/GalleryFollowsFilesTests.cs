@@ -110,17 +110,25 @@ public class GalleryFollowsFilesTests : IDisposable
     }
 
     [Fact]
-    public async Task SameFilesInAnotherOrder_WhileLoading_LoadsThemAgainInTheNewOrder()
+    public async Task SameFilesInAnotherOrder_WhileLoading_SortsTheItems()
     {
         var tab = CreateTab();
+        var reader = UseRecordingReader(tab);
+        reader.Pause(afterReads: 21); // the first file and the 20 after it
         Show(tab);
-        var files = await FilesAsync(Enumerable.Range(0, 300).Select(i => $"{i:D3}.jpg").ToArray());
-
+        var files = await FilesAsync(Names(0, 300));
         tab.ImageIterator.Initialize(files);
+        await WaitUntilAsync(() => tab.Gallery.GalleryItems.Count == 300);
+        var items = tab.Gallery.GalleryItems.ToArray();
+
         files.Reverse();
         tab.ImageIterator.Initialize(files);
+        await IdleAsync(tab);
+        reader.Release();
 
         await WaitUntilLoadedAsync(tab, files.Select(file => file.Name).ToArray());
+        // Enumerable.Reverse: array.Reverse() binds to the in-place span overload in C# 14
+        Assert.Equal(Enumerable.Reverse(items), tab.Gallery.GalleryItems);
     }
 
     [Fact]
@@ -165,18 +173,45 @@ public class GalleryFollowsFilesTests : IDisposable
     }
 
     [Fact]
-    public async Task FileInserted_WhileLoading_LoadsAgainWithTheFile()
+    public async Task FileInserted_WhileLoading_InsertsItsItem()
     {
         var tab = CreateTab();
+        var reader = UseRecordingReader(tab);
+        reader.Pause(afterReads: 21);
         Show(tab);
-        var files = await FilesAsync(Enumerable.Range(0, 300).Select(i => $"{i:D3}.jpg").ToArray());
+        var files = await FilesAsync(Names(0, 300));
         var inserted = (await FilesAsync("150a.jpg"))[0];
-
         tab.ImageIterator.Initialize(files);
+        await WaitUntilAsync(() => tab.Gallery.GalleryItems.Count == 300);
+        var items = tab.Gallery.GalleryItems.ToArray();
+
         tab.ImageIterator.Insert(inserted, string.CompareOrdinal);
+        await IdleAsync(tab);
+        reader.Release();
 
         await WaitUntilLoadedAsync(tab, tab.ImageIterator.Files.Select(file => file.Name).ToArray());
         Assert.Equal(301, tab.Gallery.GalleryItems.Count);
+        Assert.Equal(items, tab.Gallery.GalleryItems.Where(item => item.FileInfo!.Name != "150a.jpg"));
+    }
+
+    [Fact]
+    public async Task FileInserted_BeforeTheItemsAreAdded_LoadsAgainWithTheFile()
+    {
+        var tab = CreateTab();
+        var reader = UseRecordingReader(tab);
+        reader.Pause(afterReads: 0);
+        Show(tab);
+        var files = await FilesAsync(Names(0, 30));
+        var inserted = (await FilesAsync("015a.jpg"))[0];
+        tab.ImageIterator.Initialize(files);
+        await WaitUntilAsync(() => tab.Gallery.LoadingState is GalleryLoadingState.Starting);
+
+        tab.ImageIterator.Insert(inserted, string.CompareOrdinal);
+        await IdleAsync(tab);
+        reader.Release();
+
+        await WaitUntilLoadedAsync(tab, tab.ImageIterator.Files.Select(file => file.Name).ToArray());
+        Assert.Equal(31, tab.Gallery.GalleryItems.Count);
     }
 
     [Fact]
@@ -228,7 +263,7 @@ public class GalleryFollowsFilesTests : IDisposable
     }
 
     [Fact]
-    public async Task FileInserted_Loaded_ReadsItsDetailsFromTheChange()
+    public async Task FileInserted_Loaded_WritesTheChangesDetailsOntoItsItem()
     {
         var tab = await LoadedTabAsync("a.jpg");
         var path = Path.Combine(_directory, "b.png");
@@ -239,10 +274,12 @@ public class GalleryFollowsFilesTests : IDisposable
         var file = new FileInfo(path);
 
         tab.ImageIterator.Insert(file, string.CompareOrdinal, new FileDetailsSource(file, waitUntilReady: false));
+        await IdleAsync(tab);
+        var item = tab.Gallery.GalleryItems[1];
 
-        await WaitUntilAsync(() => tab.Gallery.GalleryItems.Count == 2 &&
-                                   tab.Gallery.GalleryItems[1].Details?.PixelWidth == 3u);
-        Assert.Equal(2u, tab.Gallery.GalleryItems[1].Details!.PixelHeight);
+        await WaitUntilAsync(() => item.Details is not null);
+        Assert.Same(item, tab.Gallery.GalleryItems[1]);
+        Assert.Equal((3u, 2u), (item.Details!.PixelWidth, item.Details.PixelHeight));
     }
 
     [Fact]
@@ -320,6 +357,8 @@ public class GalleryFollowsFilesTests : IDisposable
         var changes = RecordChanges(tab);
         Show(tab);
 
+        // Initialize sets the tab's index only after it lists the files, and the first batch is read around that index
+        tab.NavigationIndex.Value = 150;
         tab.ImageIterator.Initialize(await FilesAsync(Names(0, 200)), 150);
         await WaitUntilLoadedAsync(tab, Names(0, 200));
 
@@ -339,6 +378,8 @@ public class GalleryFollowsFilesTests : IDisposable
         reader.Pause(afterReads: 61);
         Show(tab);
 
+        // Initialize sets the tab's index only after it lists the files, and the first batch is read around that index
+        tab.NavigationIndex.Value = 150;
         tab.ImageIterator.Initialize(await FilesAsync(Names(0, 200)), 150);
         // A held read means the batch after the first 61 reads was already chosen around image 150
         await WaitUntilAsync(() => reader.Started > 61);
@@ -449,6 +490,8 @@ public class GalleryFollowsFilesTests : IDisposable
             : new GalleryFileDetails(200, 100, null);
         Show(tab);
 
+        // Initialize sets the tab's index only after it lists the files, and the first batch is read around that index
+        tab.NavigationIndex.Value = 150;
         tab.ImageIterator.Initialize(await FilesAsync(Names(0, 200)), 150);
         await WaitUntilAsync(() => reader.Reads.Contains("100.jpg"));
         await Task.Delay(100, TestContext.Current.CancellationToken);
@@ -547,7 +590,11 @@ public class GalleryFollowsFilesTests : IDisposable
         var deadline = Environment.TickCount64 + 5000;
         while (!condition())
         {
-            Assert.True(Environment.TickCount64 < deadline, "The gallery did not settle in time. " + describe?.Invoke());
+            if (Environment.TickCount64 >= deadline)
+            {
+                // Described only now: the items change on another thread, and walking them on every poll could throw
+                Assert.Fail("The gallery did not settle in time. " + describe?.Invoke());
+            }
             await Task.Delay(10, TestContext.Current.CancellationToken);
         }
     }

@@ -10,7 +10,8 @@ namespace PicView.Core.Gallery;
 
 /// <summary>
 /// Keeps a tab's Gallery Items following its file list (ADR-0010): it hears every change to the list from the tab's
-/// iterator, and loads the items the first time the gallery is shown. Nothing outside it starts, restarts, sorts or
+/// iterator, and loads the items the first time the gallery is shown. A loading gallery edits its items like a loaded
+/// one, and a load that has not added its items yet starts again. Nothing outside it starts, restarts, sorts or
 /// clears a load.
 /// </summary>
 public class GalleryCoordinator : IDisposable
@@ -75,8 +76,8 @@ public class GalleryCoordinator : IDisposable
 
     /// <summary>
     /// Applies one change to the tab's file list. The iterator calls this while it holds its list, so the changes queue
-    /// in the order they were made and the items follow the list: a loaded gallery edits its items, and a loading one
-    /// starts again from the changed list.
+    /// in the order they were made and the items follow the list: a loading gallery edits its items like a loaded one,
+    /// and a load that has not added its items yet starts again from the changed list.
     /// </summary>
     internal void FilesChanged(FileListChange change) => _ = Enqueue(() =>
     {
@@ -89,13 +90,10 @@ public class GalleryCoordinator : IDisposable
         _files = change.Files;
         switch (Gallery.LoadingState)
         {
-            case GalleryLoadingState.Loading when change.Kind is FileListChangeKind.Replaced:
-                Replace(change.Index, change.File!, change.Details);
-                break;
             case GalleryLoadingState.Starting:
-            case GalleryLoadingState.Loading:
                 StartLoad(_tab.NavigationIndex.CurrentValue);
                 break;
+            case GalleryLoadingState.Loading:
             case GalleryLoadingState.Loaded:
                 Edit(change);
                 break;
@@ -167,9 +165,10 @@ public class GalleryCoordinator : IDisposable
             return;
         }
 
-        if (Gallery.LoadingState is GalleryLoadingState.Loaded && SameFiles(previous, files))
+        var hasItems = Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded;
+        if (hasItems && SameFiles(previous, files))
         {
-            // Sorted again: the items keep their thumbnails
+            // Sorted again: the items keep their thumbnails, and a load carries on reading their sizes
             SortItems(files);
             return;
         }
@@ -238,29 +237,20 @@ public class GalleryCoordinator : IDisposable
     }
 
     /// <summary>
-    /// Puts the item of a changed file in place first, so the items keep matching the list, and swaps in the item
-    /// with the file's details once they are read.
+    /// Reads the details of a changed file, off the caller's thread, and writes them onto its item. The item is in
+    /// place already, so the items keep matching the list. A file that cannot be read counts as read and stays square.
     /// </summary>
-    private void FillDetails(GalleryItemViewModel placeholder, FileInfo file, FileDetailsSource? source)
+    private void FillDetails(GalleryItemViewModel item, FileInfo file, FileDetailsSource? source)
     {
         _ = Task.Run(async () =>
         {
             var details = source is null
-                ? GalleryFileDetails.Read(file)
+                ? ReadDetails(file)
                 : await source.GetAsync().ConfigureAwait(false);
-            if (details is null)
-            {
-                return;
-            }
-
-            var item = CreateItem(file, details);
             _ = Enqueue(() =>
             {
-                var index = Gallery.GalleryItems.IndexOf(placeholder);
-                if (index >= 0)
-                {
-                    Gallery.GalleryItems[index] = item;
-                }
+                item.SetDetails(details ?? GalleryFileDetails.Unreadable);
+                Gallery.RaiseSizesChanged();
             });
         });
     }
@@ -417,7 +407,14 @@ public class GalleryCoordinator : IDisposable
 
                 // Chosen on the queue, from the items as they are then, so navigation and edits steer the next batch
                 var batch = await Enqueue(() => NextUnread(BatchSize)).ConfigureAwait(false);
-                if (batch is not { Length: > 0 })
+                if (batch is null)
+                {
+                    // Choosing the batch threw, and the queue logged it. The items still waiting stay square, and
+                    // the state stays Loading
+                    return;
+                }
+
+                if (batch.Length is 0)
                 {
                     break;
                 }
