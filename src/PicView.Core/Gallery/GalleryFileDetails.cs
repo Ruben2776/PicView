@@ -5,9 +5,16 @@ namespace PicView.Core.Gallery;
 
 /// <summary>
 /// What a gallery item reads from its file: the image's pixel size, and its XMP packet for the motion photo badge.
+/// A class, so an item holds it as one reference that another thread replaces whole: a reader never pairs a width
+/// from one read with a height from another.
 /// </summary>
-public readonly record struct GalleryFileDetails(uint PixelWidth, uint PixelHeight, string? XmpPacket)
+public sealed record GalleryFileDetails(uint PixelWidth, uint PixelHeight, string? XmpPacket)
 {
+    /// <summary>
+    /// The details of a file that could not be read as an image: no pixel size and no XMP packet.
+    /// </summary>
+    public static GalleryFileDetails Unreadable { get; } = new(0, 0, null);
+
     /// <summary>
     /// Pings <paramref name="file"/> for its details.
     /// </summary>

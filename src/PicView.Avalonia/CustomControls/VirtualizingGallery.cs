@@ -268,9 +268,9 @@ public class VirtualizingGallery : VirtualizingPanel
                 itemWidth = ItemWidth;
             }
             // 2. Otherwise, dynamically calculate based on aspect ratio
-            else if (item is GalleryItemViewModel { PixelHeight: > 0 } vm)
+            else if (item is GalleryItemViewModel { Details: { PixelHeight: > 0 } details })
             {
-                var aspectRatio = (double)vm.PixelWidth / vm.PixelHeight;
+                var aspectRatio = (double)details.PixelWidth / details.PixelHeight;
                 itemWidth = ItemHeight * aspectRatio;
             }
 
