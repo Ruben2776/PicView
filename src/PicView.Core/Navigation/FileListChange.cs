@@ -3,7 +3,8 @@ namespace PicView.Core.Navigation;
 public enum FileListChangeKind
 {
     /// <summary>
-    /// A whole new list: another folder, or the same files sorted again.
+    /// A whole new list: another folder, or the same files sorted again. <see cref="FileListChange.Index"/> is the
+    /// iterator's current index in it.
     /// </summary>
     Listed,
 
