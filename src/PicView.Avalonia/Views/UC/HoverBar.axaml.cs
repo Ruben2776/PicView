@@ -90,7 +90,8 @@ public partial class HoverBar : UserControl, IDisposable
                 .Skip(1)
                 .Subscribe(_ =>
                 {
-                    ApplyResponsiveResize(Bounds.Width);
+                    // A Single Image can hide the gallery from a background thread
+                    Dispatcher.UIThread.Post(() => ApplyResponsiveResize(Bounds.Width));
                 }, static result =>
                 {
 #if DEBUG

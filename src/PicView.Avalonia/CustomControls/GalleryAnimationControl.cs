@@ -687,7 +687,7 @@ public class GalleryAnimationControl : UserControl
         }
 
         SetDockedLayout(dock, true);
-        
+
         // Unlock the layout before scrolling so measurements match docked mode
         _itemsPanel.WrapHeightOverride = double.NaN;
         _itemsPanel.InvalidateMeasure();
@@ -696,6 +696,12 @@ public class GalleryAnimationControl : UserControl
         {
             _viewer?.ScrollToCenterOfCurrentItem();
         }, DispatcherPriority.Render);
+
+        // A fit while expanded reserved no space for the gallery, which is docked again now
+        if (TopLevel.GetTopLevel(this) is MainWindow window)
+        {
+            window.WindowFitter.Refit();
+        }
     }
 
     private async Task ClosedToExpanded()
