@@ -216,6 +216,8 @@ public class GalleryAnimationControl : UserControl
             switch (oldMode, newMode)
             {
                 case (GalleryMode.Closed, GalleryMode.DockedNoAnimation): ClosedToDockedNoAnim(); break;
+                case (GalleryMode.DockedNoAnimation, GalleryMode.Closed): await DockedToClosed().ConfigureAwait(false); break;
+                
                 case (GalleryMode.Closed, GalleryMode.Docked): await ClosedToDocked().ConfigureAwait(false); break;
                 case (GalleryMode.Closed, GalleryMode.Expanded): await ClosedToExpanded().ConfigureAwait(false); break;
                 
