@@ -34,7 +34,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         {
             CurrentIndex = initialIndex;
             var list = files?.ToArray() ?? [];
-            Publish(list, new FileListChange(FileListChangeKind.Listed, list));
+            Publish(list, new FileListChange(FileListChangeKind.Listed, list, CurrentIndex));
         }
         UpdateNavigationProperties();
     }

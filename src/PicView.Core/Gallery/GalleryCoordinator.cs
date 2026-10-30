@@ -21,6 +21,16 @@ public class GalleryCoordinator : IDisposable
     /// </summary>
     private static readonly SemaphoreSlim ThumbnailSlots = new(Math.Clamp(Environment.ProcessorCount / 2, 2, 4));
 
+    /// <summary>
+    /// How many files on each side of the current image a load reads before it adds the items.
+    /// </summary>
+    private const int NeighborsEachSide = 20;
+
+    /// <summary>
+    /// How many files a load reads in each batch after that.
+    /// </summary>
+    private const int BatchSize = 20;
+
     private readonly TabViewModel _tab;
     private readonly IThumbnailLoader _thumbnailLoader;
     private readonly IThumbnailCache _thumbnailCache;
@@ -30,8 +40,8 @@ public class GalleryCoordinator : IDisposable
 
     /// <summary>
     /// Every change to the items, the loading state and <see cref="_files"/> runs here, one at a time and in the order
-    /// it came. Nothing waits for it: the gallery view copies each change to the UI thread synchronously, so a caller
-    /// on the UI thread that waited here could wait on itself.
+    /// it came. Only a load waits for it, off the UI thread: the gallery view copies each change to the UI thread
+    /// synchronously, so a caller on the UI thread that waited here could wait on itself.
     /// </summary>
     private Task _queue = Task.CompletedTask;
 
@@ -54,6 +64,11 @@ public class GalleryCoordinator : IDisposable
             .Subscribe(OnShownChanged, DebugHelper.LogError(nameof(GalleryCoordinator), nameof(OnShownChanged)));
     }
 
+    /// <summary>
+    /// Reads the details of one file. Tests replace it to record and pause the reads.
+    /// </summary>
+    internal Func<FileInfo, GalleryFileDetails?> ReadDetails { get; set; } = GalleryFileDetails.Read;
+
     private GalleryViewModel Gallery => _tab.Gallery;
 
     #region Following the file list
@@ -63,11 +78,11 @@ public class GalleryCoordinator : IDisposable
     /// in the order they were made and the items follow the list: a loaded gallery edits its items, and a loading one
     /// starts again from the changed list.
     /// </summary>
-    internal void FilesChanged(FileListChange change) => Enqueue(() =>
+    internal void FilesChanged(FileListChange change) => _ = Enqueue(() =>
     {
         if (change.Kind is FileListChangeKind.Listed)
         {
-            Listed(change.Files);
+            Listed(change.Files, change.Index);
             return;
         }
 
@@ -77,8 +92,9 @@ public class GalleryCoordinator : IDisposable
             case GalleryLoadingState.Loading when change.Kind is FileListChangeKind.Replaced:
                 Replace(change.Index, change.File!, change.Details);
                 break;
+            case GalleryLoadingState.Starting:
             case GalleryLoadingState.Loading:
-                StartLoad();
+                StartLoad(_tab.NavigationIndex.CurrentValue);
                 break;
             case GalleryLoadingState.Loaded:
                 Edit(change);
@@ -100,25 +116,38 @@ public class GalleryCoordinator : IDisposable
         }
     }
 
-    private void Enqueue(Action work)
+    private Task Enqueue(Action work) => Enqueue<bool>(() =>
+    {
+        work();
+        return true;
+    });
+
+    /// <summary>
+    /// Runs <paramref name="work"/> on the queue. Awaiting the task never throws: a failure is logged, and the result
+    /// is the default.
+    /// </summary>
+    private Task<T?> Enqueue<T>(Func<T> work)
     {
         lock (_queueLock)
         {
-            _queue = _queue.ContinueWith(_ =>
+            var task = _queue.ContinueWith<T?>(_ =>
             {
                 try
                 {
-                    work();
+                    return work();
                 }
                 catch (Exception e)
                 {
                     DebugHelper.LogDebug(nameof(GalleryCoordinator), nameof(Enqueue), e);
+                    return default;
                 }
             }, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Default);
+            _queue = task;
+            return task;
         }
     }
 
-    private void Listed(IReadOnlyList<FileInfo> files)
+    private void Listed(IReadOnlyList<FileInfo> files, int currentIndex)
     {
         if (files.Count is 0)
         {
@@ -133,7 +162,7 @@ public class GalleryCoordinator : IDisposable
         {
             if (Gallery.LoadingState is GalleryLoadingState.NotLoaded && _isShown)
             {
-                StartLoad();
+                StartLoad(currentIndex);
             }
             return;
         }
@@ -148,7 +177,7 @@ public class GalleryCoordinator : IDisposable
         Drop();
         if (_isShown)
         {
-            StartLoad();
+            StartLoad(currentIndex);
         }
     }
 
@@ -225,7 +254,7 @@ public class GalleryCoordinator : IDisposable
             }
 
             var item = CreateItem(file, details);
-            Enqueue(() =>
+            _ = Enqueue(() =>
             {
                 var index = Gallery.GalleryItems.IndexOf(placeholder);
                 if (index >= 0)
@@ -295,12 +324,12 @@ public class GalleryCoordinator : IDisposable
 
     #region Loading
 
-    private void OnShownChanged(bool isShown) => Enqueue(() =>
+    private void OnShownChanged(bool isShown) => _ = Enqueue(() =>
     {
         _isShown = isShown;
         if (isShown && Gallery.LoadingState is GalleryLoadingState.NotLoaded && _files.Count > 0)
         {
-            StartLoad();
+            StartLoad(_tab.NavigationIndex.CurrentValue);
         }
     });
 
@@ -321,7 +350,8 @@ public class GalleryCoordinator : IDisposable
     /// <summary>
     /// Loads the items of <see cref="_files"/> again from the start, off the caller's thread.
     /// </summary>
-    private void StartLoad()
+    /// <param name="currentIndex">The index of the current image, which the load reads the sizes around first.</param>
+    private void StartLoad(int currentIndex)
     {
         Cancel();
         if (Gallery.GalleryItems.Count > 0)
@@ -331,55 +361,96 @@ public class GalleryCoordinator : IDisposable
 
         var cts = new CancellationTokenSource();
         _cts = cts;
-        Gallery.LoadingState = GalleryLoadingState.Loading;
+        Gallery.LoadingState = GalleryLoadingState.Starting;
         var files = _files;
-        _ = Task.Run(() => Load(files, cts.Token));
+        // Taken now, as a restart can dispose the source before the thread pool runs the load
+        var ct = cts.Token;
+        _ = Task.Run(() => LoadAsync(files, currentIndex, ct));
     }
 
-    private void Load(IReadOnlyList<FileInfo> files, CancellationToken ct)
+    /// <summary>
+    /// Makes an item for every file and adds them all at once, then reads the files' details onto them: first those
+    /// around the current image, before the items are shared, then the rest in batches, nearest the current image
+    /// first.
+    /// </summary>
+    private async Task LoadAsync(IReadOnlyList<FileInfo> files, int currentIndex, CancellationToken ct)
     {
-        var maxHeight = ThumbnailHeight();
-        var parallelOptions = new ParallelOptions
-        {
-            CancellationToken = ct,
-            MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount - 1)
-        };
-
-        const int batchSize = 20;
-
         try
         {
-            for (var i = 0; i < files.Count; i += batchSize)
+            var maxHeight = ThumbnailHeight();
+            var parallelOptions = new ParallelOptions
+            {
+                CancellationToken = ct,
+                MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount - 1)
+            };
+
+            // The array keeps the items in the files' order
+            var items = new GalleryItemViewModel[files.Count];
+            Parallel.For(0, items.Length, parallelOptions, i =>
+            {
+                items[i] = CreateItem(files[i], null, maxHeight);
+            });
+
+            // The current image and the files around it come first. Nothing else sees these items yet, so their
+            // details need no queue
+            var center = Math.Clamp(currentIndex, 0, Math.Max(0, files.Count - 1));
+            var start = Math.Max(0, center - NeighborsEachSide);
+            var end = Math.Min(files.Count, center + NeighborsEachSide + 1);
+            Parallel.For(start, end, parallelOptions, i =>
+            {
+                items[i].SetDetails(ReadDetails(files[i]) ?? GalleryFileDetails.Unreadable);
+            });
+
+            // Cancellation happens on the queue too, so a change that started the load again owns the items
+            await Enqueue(() =>
+            {
+                if (!ct.IsCancellationRequested)
+                {
+                    Gallery.GalleryItems.AddRange(items);
+                    Gallery.LoadingState = GalleryLoadingState.Loading;
+                }
+            }).ConfigureAwait(false);
+
+            while (true)
             {
                 ct.ThrowIfCancellationRequested();
 
-                var currentBatchSize = Math.Min(batchSize, files.Count - i);
-                var batchVms = new GalleryItemViewModel[currentBatchSize];
-
-                // Read the files' details in parallel; the array keeps them in the files' order
-                Parallel.For(0, currentBatchSize, parallelOptions, j =>
+                // Chosen on the queue, from the items as they are then, so navigation and edits steer the next batch
+                var batch = await Enqueue(() => NextUnread(BatchSize)).ConfigureAwait(false);
+                if (batch is not { Length: > 0 })
                 {
-                    var file = files[i + j];
-                    batchVms[j] = CreateItem(file, GalleryFileDetails.Read(file), maxHeight);
+                    break;
+                }
+
+                // Read the batch's details in parallel; the array keeps them in the batch's order
+                var details = new GalleryFileDetails[batch.Length];
+                Parallel.For(0, batch.Length, parallelOptions, i =>
+                {
+                    details[i] = ReadDetails(batch[i].FileInfo!) ?? GalleryFileDetails.Unreadable;
                 });
 
-                // Cancellation happens on the queue too, so a change that started the load again owns the items
-                Enqueue(() =>
+                await Enqueue(() =>
                 {
-                    if (!ct.IsCancellationRequested)
+                    if (ct.IsCancellationRequested)
                     {
-                        Gallery.GalleryItems.AddRange(batchVms);
+                        return;
                     }
-                });
+
+                    for (var i = 0; i < batch.Length; i++)
+                    {
+                        batch[i].SetDetails(details[i]);
+                    }
+                    Gallery.RaiseSizesChanged();
+                }).ConfigureAwait(false);
             }
 
-            Enqueue(() =>
+            await Enqueue(() =>
             {
                 if (!ct.IsCancellationRequested)
                 {
                     Gallery.LoadingState = GalleryLoadingState.Loaded;
                 }
-            });
+            }).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -387,8 +458,46 @@ public class GalleryCoordinator : IDisposable
         }
         catch (Exception e)
         {
-            DebugHelper.LogDebug(nameof(GalleryCoordinator), nameof(Load), e);
+            DebugHelper.LogDebug(nameof(GalleryCoordinator), nameof(LoadAsync), e);
         }
+    }
+
+    /// <summary>
+    /// The next <paramref name="count"/> items whose details are not read yet, nearest the current image first. It
+    /// walks outward from the current image, one item after it and then one before it, until it has enough or has
+    /// passed both ends of the list, so near an end the other side makes up the difference.
+    /// </summary>
+    private GalleryItemViewModel[] NextUnread(int count)
+    {
+        // Only the queue changes the items, and this runs on it, so the count holds while it walks
+        var items = Gallery.GalleryItems;
+        var total = items.Count;
+        if (total is 0)
+        {
+            return [];
+        }
+
+        var center = Math.Clamp(_tab.NavigationIndex.CurrentValue, 0, total - 1);
+        var batch = new List<GalleryItemViewModel>(count);
+        for (var distance = 0; batch.Count < count; distance++)
+        {
+            var after = center + distance;
+            var before = center - distance;
+            if (after >= total && before < 0)
+            {
+                break;
+            }
+
+            if (after < total && items[after] is { Details: null } unreadAfter)
+            {
+                batch.Add(unreadAfter);
+            }
+            if (distance > 0 && before >= 0 && batch.Count < count && items[before] is { Details: null } unreadBefore)
+            {
+                batch.Add(unreadBefore);
+            }
+        }
+        return [.. batch];
     }
 
     private void Cancel()
@@ -490,7 +599,7 @@ public class GalleryCoordinator : IDisposable
     public void Dispose()
     {
         _shownSubscription.Dispose();
-        Enqueue(Cancel);
+        _ = Enqueue(Cancel);
         GC.SuppressFinalize(this);
     }
 }

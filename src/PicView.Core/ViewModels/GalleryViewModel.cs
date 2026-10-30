@@ -9,6 +9,7 @@ namespace PicView.Core.ViewModels;
 public class GalleryViewModel : IDisposable
 {
     private DisposableBag _disposables;
+    private readonly Subject<Unit> _sizesChanged = new();
 
     /// <param name="saveSettings">Saves the settings once the remembered docked choice changed; the settings file by default.</param>
     public GalleryViewModel(Func<ValueTask<bool>>? saveSettings = null)
@@ -67,6 +68,13 @@ public class GalleryViewModel : IDisposable
     public BindableReactiveProperty<bool> IsRightDocked { get; } = new();
 
     public GalleryLoadingState LoadingState { get; internal set; }
+
+    /// <summary>
+    /// Raised, on the coordinator's queue, once for each batch of items that got their sizes.
+    /// </summary>
+    public Observable<Unit> SizesChanged => _sizesChanged;
+
+    internal void RaiseSizesChanged() => _sizesChanged.OnNext(Unit.Default);
 
     public void Initialize()
     {
@@ -164,6 +172,7 @@ public class GalleryViewModel : IDisposable
             IsBottomDocked,
             IsLeftDocked,
             IsRightDocked,
+            _sizesChanged,
             Switcher
         );
         GC.SuppressFinalize(this);
