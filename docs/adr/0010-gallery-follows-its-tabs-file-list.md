@@ -9,7 +9,7 @@ A tab's **Gallery Items** change only because its file list changed: the tab's `
 
 ## Consequences
 
-- A folder switch while the gallery is closed drops its items, and the new folder loads when it opens. A sort during a load restarts the load in the new order.
+- A folder switch while the gallery is closed drops its items, and the new folder loads when it opens. A sort or an edit during a load applies to the items, and the load keeps reading sizes outward from the current image.
 - Showing a Single Image disposes the tab's iterator, but the gallery keeps its items. When the next iterator reports its first list, the gallery keeps them if it is the same files in the same order and reloads otherwise.
 - The gallery's mode (closed, docked, expanded) is unchanged by this decision: the gallery only reads whether it is shown.
 - The startup order of ADR-0005 holds: the gallery loads once navigation starts, after the image.
