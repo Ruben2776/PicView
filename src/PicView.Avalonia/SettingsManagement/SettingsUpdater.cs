@@ -74,14 +74,6 @@ public static class SettingsUpdater
             {
                 gallery.ActiveGalleryMode.Value = GalleryMode.Docked;
             }
-
-            if (gallery.LoadingState is GalleryLoadingState.NotLoaded)
-            {
-                if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
-                {
-                    await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files, vm.Core)).ConfigureAwait(false);
-                }
-            }
         }
 
         await SaveSettingsAsync().ConfigureAwait(false);

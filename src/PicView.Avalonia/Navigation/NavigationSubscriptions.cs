@@ -9,11 +9,12 @@ using R3;
 namespace PicView.Avalonia.Navigation;
 
 /// <summary>
-/// What one Main Window does when a tab it shows changes: shows the tab's new image, and loads and opens its gallery.
+/// What one Main Window does when a tab it shows changes: shows the tab's new image, and opens the gallery item the
+/// user picks. The gallery loads its items by itself (ADR-0010).
 /// Attaching may happen on any thread.
 /// </summary>
-public sealed class NavigationSubscriptions(MainWindow mainWindow, MainWindowViewModel mainWindowViewModel,
-    CoreViewModel core) : ITabHookups
+public sealed class NavigationSubscriptions(MainWindow mainWindow, MainWindowViewModel mainWindowViewModel)
+    : ITabHookups
 {
     public IDisposable Attach(TabViewModel tabViewModel)
     {
@@ -31,18 +32,6 @@ public sealed class NavigationSubscriptions(MainWindow mainWindow, MainWindowVie
                 {
                     UpdateImage.ChangeImageWithTitle(mainWindow, tabViewModel, mainWindowViewModel);
                 }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(UpdateImage))),
-            Observable.EveryValueChanged(tabViewModel, tab => tab.Gallery.ActiveGalleryMode.Value, mainWindow.FrameProvider)
-                .Skip(1)
-                .SubscribeAwait(async (mode, ct) =>
-                {
-                    if (mode is GalleryMode.Docked or GalleryMode.Expanded)
-                    {
-                        if (tabViewModel.Gallery.LoadingState is GalleryLoadingState.NotLoaded && tabViewModel is { GalleryCoordinator: not null, ImageIterator: not null })
-                        {
-                            await Task.Run(() => tabViewModel.GalleryCoordinator.LoadGallery(tabViewModel.ImageIterator.Files, core), ct).ConfigureAwait(false);
-                        }
-                    }
-                }, DebugHelper.LogError(nameof(NavigationSubscriptions), nameof(tabViewModel.GalleryCoordinator.LoadGallery))),
             tabViewModel.Gallery.OpenSelectedItemCommand
                 .Skip(1)
                 .SubscribeAwait(async (index, _) =>

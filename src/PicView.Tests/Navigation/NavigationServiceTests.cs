@@ -2,7 +2,6 @@ using ImageMagick;
 using PicView.Core.FileHandling.Interfaces;
 using PicView.Core.FileHistory;
 using PicView.Core.FileSorting;
-using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.IPlatform;
 using PicView.Core.Models;
@@ -83,32 +82,6 @@ public class NavigationServiceTests : IDisposable
         Assert.Equal(tab, _mockFileWatcherService.WatchedTab);
     }
 
-    [Fact]
-    public async Task RepopulateIterator_ReloadsGallery_WhenVisible()
-    {
-        // Arrange
-        var tab = CreateTab(_testDirectory);
-        // Ensure gallery is considered visible
-        tab.Gallery.IsDockedGalleryVisible.Value = true;
-        
-        var fileInfo = new FileInfo(Path.Combine(_testDirectory, "test.jpg"));
-        // Create a dummy file so there is something to load
-        await File.Create(fileInfo.FullName).DisposeAsync();
-        
-        var cts = new CancellationTokenSource();
-        // Provide files list to avoid RetrieveFiles attempting to read directory
-        var files = new List<FileInfo> { fileInfo };
-
-        // Act
-        await _navigationService.RepopulateIterator(fileInfo, tab, cts, files);
-
-        // Assert
-        // The gallery loads in the background; LoadGallery sets lazy ThumbnailLoaderFunc which calls GetThumbnailAsync when invoked
-        await WaitUntil(() => tab.Gallery.LoadingState is GalleryLoadingState.Loaded && tab.Gallery.GalleryItems.Count > 0);
-        Assert.NotNull(tab.Gallery.GalleryItems[0].ThumbnailLoaderFunc);
-        await tab.Gallery.GalleryItems[0].ThumbnailLoaderFunc!(cts.Token);
-        Assert.True(_mockThumbnailLoader.GetThumbnailAsyncCalledCount > 0, "Gallery should be reloaded (GetThumbnailAsync called)");
-    }
 
     [Theory]
     [InlineData("")]
@@ -205,54 +178,7 @@ public class NavigationServiceTests : IDisposable
         Assert.Equal(1, tab.ImageIterator.CurrentIndex);
     }
 
-    [Fact]
-    public async Task LoadFromFileAsync_OtherFolderWithLoadedGallery_GalleryShowsTheOtherFolder()
-    {
-        var first = Directory.CreateDirectory(Path.Combine(_testDirectory, "first")).FullName;
-        var second = Directory.CreateDirectory(Path.Combine(_testDirectory, "second")).FullName;
-        string[] firstFiles = [Path.Combine(first, "a.jpg"), Path.Combine(first, "b.jpg")];
-        string[] secondFiles = [Path.Combine(second, "c.jpg"), Path.Combine(second, "d.jpg"), Path.Combine(second, "e.jpg")];
-        foreach (var path in firstFiles.Concat(secondFiles))
-        {
-            await File.WriteAllTextAsync(path, "x", TestContext.Current.CancellationToken);
-        }
-        var tab = CreateTab(first);
-        tab.Gallery.IsDockedGalleryVisible.Value = true;
-        await _navigationService.LoadFromFileAsync(firstFiles[0], tab, tab.GetTabCancellation());
-        await WaitUntil(() => tab.Gallery.LoadingState is GalleryLoadingState.Loaded && tab.Gallery.GalleryItems.Count == 2);
 
-        await _navigationService.LoadFromFileAsync(secondFiles[0], tab, tab.GetTabCancellation());
-
-        await WaitUntil(() => tab.Gallery.LoadingState is GalleryLoadingState.Loaded &&
-                              tab.Gallery.GalleryItems.Select(i => i.FileInfo!.FullName).SequenceEqual(secondFiles));
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    [InlineData(5)]
-    [InlineData(20)]
-    public async Task LoadFromFileAsync_OtherFolderWhileGalleryLoads_GalleryShowsTheOtherFolder(int delayMs)
-    {
-        var first = Directory.CreateDirectory(Path.Combine(_testDirectory, "first")).FullName;
-        var second = Directory.CreateDirectory(Path.Combine(_testDirectory, "second")).FullName;
-        var firstFiles = Enumerable.Range(0, 300).Select(i => Path.Combine(first, $"{i:D3}.jpg")).ToArray();
-        string[] secondFiles = [Path.Combine(second, "c.jpg"), Path.Combine(second, "d.jpg"), Path.Combine(second, "e.jpg")];
-        foreach (var path in firstFiles.Concat(secondFiles))
-        {
-            await File.WriteAllTextAsync(path, "x", TestContext.Current.CancellationToken);
-        }
-        var tab = CreateTab(first);
-        tab.Gallery.IsDockedGalleryVisible.Value = true;
-
-        await _navigationService.LoadFromFileAsync(firstFiles[0], tab, tab.GetTabCancellation());
-        await Task.Delay(delayMs, TestContext.Current.CancellationToken);
-        await _navigationService.LoadFromFileAsync(secondFiles[0], tab, tab.GetTabCancellation());
-
-        await WaitUntil(() => tab.Gallery.LoadingState is GalleryLoadingState.Loaded &&
-                              tab.Gallery.GalleryItems.Select(i => i.FileInfo!.FullName).SequenceEqual(secondFiles),
-            () => $"state {tab.Gallery.LoadingState}, {tab.Gallery.GalleryItems.Count} items, first {tab.Gallery.GalleryItems.FirstOrDefault()?.FileInfo?.FullName}, iterator {tab.ImageIterator.Files.Count} files, shown {tab.Model?.FileInfo?.FullName}");
-    }
 
     private static async Task WaitUntil(Func<bool> condition, Func<string>? describe = null)
     {
@@ -355,7 +281,7 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ApplySortAsync_SortsLoadedGalleryItems()
+    public async Task SortAsync_Descending_SortsTheFilesAndKeepsTheShownOne()
     {
         // Arrange
         var tab = CreateTab(_testDirectory);
@@ -370,14 +296,6 @@ public class NavigationServiceTests : IDisposable
         tab.Model = new ImageModel { FileInfo = file1 };
         tab.ImageIterator.Initialize([file1, file2, file3]);
 
-        var item1 = new GalleryItemViewModel { FileInfo = file1 };
-        var item2 = new GalleryItemViewModel { FileInfo = file2 };
-        var item3 = new GalleryItemViewModel { FileInfo = file3 };
-
-        tab.Gallery.GalleryItems.Add(item1);
-        tab.Gallery.GalleryItems.Add(item2);
-        tab.Gallery.GalleryItems.Add(item3);
-
         var cts = new CancellationTokenSource();
 
         // Act - sort descending
@@ -390,64 +308,7 @@ public class NavigationServiceTests : IDisposable
         Assert.Equal(file2.FullName, tab.ImageIterator.Files[1].FullName);
         Assert.Equal(file1.FullName, tab.ImageIterator.Files[2].FullName);
 
-        Assert.Equal(3, tab.Gallery.GalleryItems.Count);
-        Assert.Same(item3, tab.Gallery.GalleryItems[0]);
-        Assert.Same(item2, tab.Gallery.GalleryItems[1]);
-        Assert.Same(item1, tab.Gallery.GalleryItems[2]);
-
         Assert.Equal(2, tab.ImageIterator.CurrentIndex);
-    }
-
-    [Fact]
-    public void SortLoadedGallery_ReordersGalleryItems_ToMatchFileList()
-    {
-        // Arrange
-        var tab = CreateTab(_testDirectory);
-        var fileA = new FileInfo(Path.Combine(_testDirectory, "a.jpg"));
-        var fileB = new FileInfo(Path.Combine(_testDirectory, "b.jpg"));
-        var fileC = new FileInfo(Path.Combine(_testDirectory, "c.jpg"));
-        var fileD = new FileInfo(Path.Combine(_testDirectory, "d.jpg"));
-
-        var itemA = new GalleryItemViewModel { FileInfo = fileA };
-        var itemB = new GalleryItemViewModel { FileInfo = fileB };
-        var itemC = new GalleryItemViewModel { FileInfo = fileC };
-        var itemD = new GalleryItemViewModel { FileInfo = fileD };
-
-        tab.Gallery.GalleryItems.Add(itemA);
-        tab.Gallery.GalleryItems.Add(itemB);
-        tab.Gallery.GalleryItems.Add(itemC);
-        tab.Gallery.GalleryItems.Add(itemD);
-
-        var targetOrder = new List<FileInfo> { fileC, fileA, fileD, fileB };
-
-        // Act
-        tab.GalleryCoordinator?.SortLoadedGallery(targetOrder);
-
-        // Assert
-        Assert.Equal(4, tab.Gallery.GalleryItems.Count);
-        Assert.Same(itemC, tab.Gallery.GalleryItems[0]);
-        Assert.Same(itemA, tab.Gallery.GalleryItems[1]);
-        Assert.Same(itemD, tab.Gallery.GalleryItems[2]);
-        Assert.Same(itemB, tab.Gallery.GalleryItems[3]);
-    }
-
-    [Fact]
-    public void SortLoadedGallery_HandlesEmptyOrSingleItem()
-    {
-        // Arrange
-        var tab = CreateTab(_testDirectory);
-        var file = new FileInfo(Path.Combine(_testDirectory, "single.jpg"));
-        var item = new GalleryItemViewModel { FileInfo = file };
-
-        // Act & Assert - Empty
-        tab.GalleryCoordinator?.SortLoadedGallery(new List<FileInfo> { file });
-        Assert.Empty(tab.Gallery.GalleryItems);
-
-        // Act & Assert - Single item
-        tab.Gallery.GalleryItems.Add(item);
-        tab.GalleryCoordinator?.SortLoadedGallery(new List<FileInfo> { file });
-        Assert.Single(tab.Gallery.GalleryItems);
-        Assert.Same(item, tab.Gallery.GalleryItems[0]);
     }
 
     private class MockFileWatcherService : IFileWatcherService

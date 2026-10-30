@@ -4,11 +4,16 @@ using PicView.Core.MotionPhoto;
 using PicView.Core.Navigation;
 using PicView.Core.Navigation.Interfaces;
 using PicView.Core.ViewModels;
+using R3;
 
 namespace PicView.Core.Gallery;
 
-public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache)
-    : IDisposable
+/// <summary>
+/// Keeps a tab's Gallery Items following its file list (ADR-0010): it hears every change to the list from the tab's
+/// iterator, and loads the items the first time the gallery is shown. Nothing outside it starts, restarts, sorts or
+/// clears a load.
+/// </summary>
+public class GalleryCoordinator : IDisposable
 {
     /// <summary>
     /// Shared by every gallery, so thumbnail loading never puts more than a few reads on the disk at once.
@@ -16,28 +21,324 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
     /// </summary>
     private static readonly SemaphoreSlim ThumbnailSlots = new(Math.Clamp(Environment.ProcessorCount / 2, 2, 4));
 
-    private CancellationTokenSource? _cts;
+    private readonly TabViewModel _tab;
+    private readonly IThumbnailLoader _thumbnailLoader;
+    private readonly IThumbnailCache _thumbnailCache;
+    private readonly IDisposable _shownSubscription;
 
-    public void LoadGallery(IReadOnlyList<FileInfo> files, CoreViewModel core)
+    private readonly Lock _queueLock = new();
+
+    /// <summary>
+    /// Every change to the items, the loading state and <see cref="_files"/> runs here, one at a time and in the order
+    /// it came. Nothing waits for it: the gallery view copies each change to the UI thread synchronously, so a caller
+    /// on the UI thread that waited here could wait on itself.
+    /// </summary>
+    private Task _queue = Task.CompletedTask;
+
+    /// <summary>
+    /// The file list the items follow. It outlives the tab's iterator, which a Single Image disposes.
+    /// </summary>
+    private IReadOnlyList<FileInfo> _files = [];
+
+    private CancellationTokenSource? _cts;
+    private bool _isShown;
+
+    public GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoader, IThumbnailCache thumbnailCache)
     {
-        if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
+        _tab = tab;
+        _thumbnailLoader = thumbnailLoader;
+        _thumbnailCache = thumbnailCache;
+        _shownSubscription = tab.Gallery.ActiveGalleryMode
+            .Select(mode => mode is not GalleryMode.Closed)
+            .DistinctUntilChanged()
+            .Subscribe(OnShownChanged, DebugHelper.LogError(nameof(GalleryCoordinator), nameof(OnShownChanged)));
+    }
+
+    private GalleryViewModel Gallery => _tab.Gallery;
+
+    #region Following the file list
+
+    /// <summary>
+    /// Applies one change to the tab's file list. The iterator calls this while it holds its list, so the changes queue
+    /// in the order they were made and the items follow the list: a loaded gallery edits its items, and a loading one
+    /// starts again from the changed list.
+    /// </summary>
+    internal void FilesChanged(FileListChange change) => Enqueue(() =>
+    {
+        if (change.Kind is FileListChangeKind.Listed)
+        {
+            Listed(change.Files);
+            return;
+        }
+
+        _files = change.Files;
+        switch (Gallery.LoadingState)
+        {
+            case GalleryLoadingState.Loading when change.Kind is FileListChangeKind.Replaced:
+                Replace(change.Index, change.File!, change.Details);
+                break;
+            case GalleryLoadingState.Loading:
+                StartLoad();
+                break;
+            case GalleryLoadingState.Loaded:
+                Edit(change);
+                break;
+        }
+    });
+
+    /// <summary>
+    /// Completes once the changes queued so far are applied. For tests.
+    /// </summary>
+    internal Task Idle
+    {
+        get
+        {
+            lock (_queueLock)
+            {
+                return _queue;
+            }
+        }
+    }
+
+    private void Enqueue(Action work)
+    {
+        lock (_queueLock)
+        {
+            _queue = _queue.ContinueWith(_ =>
+            {
+                try
+                {
+                    work();
+                }
+                catch (Exception e)
+                {
+                    DebugHelper.LogDebug(nameof(GalleryCoordinator), nameof(Enqueue), e);
+                }
+            }, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Default);
+        }
+    }
+
+    private void Listed(IReadOnlyList<FileInfo> files)
+    {
+        if (files.Count is 0)
+        {
+            // A new iterator starts empty before it lists its files, as after a Single Image. A tab never browses an
+            // empty list: when its last file is deleted, the removal empties the items
+            return;
+        }
+
+        var previous = _files;
+        _files = files;
+        if (SameOrder(previous, files))
+        {
+            if (Gallery.LoadingState is GalleryLoadingState.NotLoaded && _isShown)
+            {
+                StartLoad();
+            }
+            return;
+        }
+
+        if (Gallery.LoadingState is GalleryLoadingState.Loaded && SameFiles(previous, files))
+        {
+            // Sorted again: the items keep their thumbnails
+            SortItems(files);
+            return;
+        }
+
+        Drop();
+        if (_isShown)
+        {
+            StartLoad();
+        }
+    }
+
+    private void Edit(FileListChange change)
+    {
+        var items = Gallery.GalleryItems;
+        switch (change.Kind)
+        {
+            case FileListChangeKind.Inserted when change.Index >= 0 && change.Index <= items.Count:
+                var inserted = CreateItem(change.File!, null);
+                items.Insert(change.Index, inserted);
+                FillDetails(inserted, change.File!, change.Details);
+                break;
+            case FileListChangeKind.Removed when change.Index >= 0 && change.Index < items.Count:
+                items.RemoveAt(change.Index);
+                break;
+            case FileListChangeKind.Replaced:
+                Replace(change.Index, change.File!, change.Details);
+                break;
+            case FileListChangeKind.Relocated when change.Index >= 0 && change.Index < items.Count:
+                Relocate(change.Index, change.File!);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Builds the item at <paramref name="index"/> again, for a file whose contents changed, so its thumbnail loads
+    /// again when it is shown.
+    /// </summary>
+    private void Replace(int index, FileInfo file, FileDetailsSource? details)
+    {
+        var items = Gallery.GalleryItems;
+        if (index < 0 || index >= items.Count)
         {
             return;
         }
 
-        if (tab.Gallery.GalleryItems.Count > 0)
+        var item = CreateItem(file, null);
+        items[index] = item;
+        FillDetails(item, file, details);
+    }
+
+    /// <summary>
+    /// Points the item at <paramref name="index"/> to <paramref name="file"/>, the same file in a renamed folder. It
+    /// keeps its image's size and its thumbnail, as the file itself did not change.
+    /// </summary>
+    private void Relocate(int index, FileInfo file)
+    {
+        var old = Gallery.GalleryItems[index];
+        var item = CreateItem(file, new GalleryFileDetails(old.PixelWidth, old.PixelHeight, null));
+        item.Image.Value = old.Image.Value;
+        item.IsMotionPhoto.Value = old.IsMotionPhoto.Value;
+        if (old.Image.Value is { } thumbnail)
         {
-            tab.Gallery.GalleryItems.Clear();
+            _thumbnailCache.Add(_tab.Id, file.FullName, thumbnail);
+        }
+        Gallery.GalleryItems[index] = item;
+    }
+
+    /// <summary>
+    /// Puts the item of a changed file in place first, so the items keep matching the list, and swaps in the item
+    /// with the file's details once they are read.
+    /// </summary>
+    private void FillDetails(GalleryItemViewModel placeholder, FileInfo file, FileDetailsSource? source)
+    {
+        _ = Task.Run(async () =>
+        {
+            var details = source is null
+                ? GalleryFileDetails.Read(file)
+                : await source.GetAsync().ConfigureAwait(false);
+            if (details is null)
+            {
+                return;
+            }
+
+            var item = CreateItem(file, details);
+            Enqueue(() =>
+            {
+                var index = Gallery.GalleryItems.IndexOf(placeholder);
+                if (index >= 0)
+                {
+                    Gallery.GalleryItems[index] = item;
+                }
+            });
+        });
+    }
+
+    private void SortItems(IReadOnlyList<FileInfo> files)
+    {
+        var order = new Dictionary<string, int>(files.Count, StringComparer.OrdinalIgnoreCase);
+        for (var i = 0; i < files.Count; i++)
+        {
+            order.TryAdd(files[i].FullName, i);
         }
 
-        tab.Gallery.LoadingState = GalleryLoadingState.Loading;
+        Gallery.GalleryItems.Sort(Comparer<GalleryItemViewModel>.Create((x, y) =>
+            Position(x).CompareTo(Position(y))));
+        return;
+
+        int Position(GalleryItemViewModel item) =>
+            item.FileInfo is { } file && order.TryGetValue(file.FullName, out var index) ? index : int.MaxValue;
+    }
+
+    private static bool SameOrder(IReadOnlyList<FileInfo> a, IReadOnlyList<FileInfo> b)
+    {
+        if (a.Count != b.Count)
+        {
+            return false;
+        }
+
+        for (var i = 0; i < a.Count; i++)
+        {
+            if (!string.Equals(a[i].FullName, b[i].FullName, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static bool SameFiles(IReadOnlyList<FileInfo> a, IReadOnlyList<FileInfo> b)
+    {
+        if (a.Count != b.Count)
+        {
+            return false;
+        }
+
+        var paths = new HashSet<string>(a.Count, StringComparer.OrdinalIgnoreCase);
+        foreach (var file in a)
+        {
+            paths.Add(file.FullName);
+        }
+        foreach (var file in b)
+        {
+            if (!paths.Contains(file.FullName))
+            {
+                return false;
+            }
+        }
+        return paths.Count == b.Count;
+    }
+
+    #endregion
+
+    #region Loading
+
+    private void OnShownChanged(bool isShown) => Enqueue(() =>
+    {
+        _isShown = isShown;
+        if (isShown && Gallery.LoadingState is GalleryLoadingState.NotLoaded && _files.Count > 0)
+        {
+            StartLoad();
+        }
+    });
+
+    /// <summary>
+    /// Forgets the items and their thumbnails, for a list they no longer match.
+    /// </summary>
+    private void Drop()
+    {
+        Cancel();
+        Gallery.LoadingState = GalleryLoadingState.NotLoaded;
+        if (Gallery.GalleryItems.Count > 0)
+        {
+            Gallery.GalleryItems.Clear();
+        }
+        _thumbnailCache.RemoveOwner(_tab.Id);
+    }
+
+    /// <summary>
+    /// Loads the items of <see cref="_files"/> again from the start, off the caller's thread.
+    /// </summary>
+    private void StartLoad()
+    {
+        Cancel();
+        if (Gallery.GalleryItems.Count > 0)
+        {
+            Gallery.GalleryItems.Clear();
+        }
+
         var cts = new CancellationTokenSource();
         _cts = cts;
+        Gallery.LoadingState = GalleryLoadingState.Loading;
+        var files = _files;
+        _ = Task.Run(() => Load(files, cts.Token));
+    }
 
-        var ct = cts.Token;
-        
+    private void Load(IReadOnlyList<FileInfo> files, CancellationToken ct)
+    {
         var maxHeight = ThumbnailHeight();
-
         var parallelOptions = new ParallelOptions
         {
             CancellationToken = ct,
@@ -55,45 +356,62 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
                 var currentBatchSize = Math.Min(batchSize, files.Count - i);
                 var batchVms = new GalleryItemViewModel[currentBatchSize];
 
-                // 1. Parallelize the metadata extraction (Massive speed boost)
+                // Read the files' details in parallel; the array keeps them in the files' order
                 Parallel.For(0, currentBatchSize, parallelOptions, j =>
                 {
                     var file = files[i + j];
-                    // Array assignment ensures perfect sorting order
-                    batchVms[j] = CreateItem(file, GalleryFileDetails.Read(file), maxHeight, core);
+                    batchVms[j] = CreateItem(file, GalleryFileDetails.Read(file), maxHeight);
                 });
 
-                // 3. Add chunk directly to the UI, unless a restart cleared the items meanwhile
-                ct.ThrowIfCancellationRequested();
-                tab.Gallery.GalleryItems.AddRange(batchVms);
+                // Cancellation happens on the queue too, so a change that started the load again owns the items
+                Enqueue(() =>
+                {
+                    if (!ct.IsCancellationRequested)
+                    {
+                        Gallery.GalleryItems.AddRange(batchVms);
+                    }
+                });
             }
+
+            Enqueue(() =>
+            {
+                if (!ct.IsCancellationRequested)
+                {
+                    Gallery.LoadingState = GalleryLoadingState.Loaded;
+                }
+            });
         }
         catch (OperationCanceledException)
         {
-            if (_cts is not null && !ReferenceEquals(_cts, cts))
-            {
-                // A restart already started a newer load, which owns the items and the state
-                return;
-            }
+            // Whatever canceled the load set the items and the state
+        }
+        catch (Exception e)
+        {
+            DebugHelper.LogDebug(nameof(GalleryCoordinator), nameof(Load), e);
+        }
+    }
 
-            if (tab.Gallery.LoadingState is GalleryLoadingState.Restarting && tab.Gallery.GalleryItems.Count > 0)
-            {
-                tab.Gallery.GalleryItems.Clear();
-            }
-
-            tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
+    private void Cancel()
+    {
+        if (_cts is null)
+        {
             return;
         }
 
-        tab.Gallery.LoadingState = GalleryLoadingState.Loaded;
+        _cts.Cancel();
+        _cts.Dispose();
+        _cts = null;
     }
+
+    private GalleryItemViewModel CreateItem(FileInfo file, GalleryFileDetails? details) =>
+        CreateItem(file, details, ThumbnailHeight());
 
     /// <summary>
     /// The one way to make a gallery item: its file's details now, and its thumbnail when the item is shown.
     /// </summary>
-    private GalleryItemViewModel CreateItem(FileInfo file, GalleryFileDetails? details, double maxHeight,
-        CoreViewModel? core)
+    private GalleryItemViewModel CreateItem(FileInfo file, GalleryFileDetails? details, double maxHeight)
     {
+        var core = _tab.ParentWindowContext?.Core;
         var item = new GalleryItemViewModel
         {
             FileInfo = file,
@@ -112,7 +430,7 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
         // Assign the lazy-loading logic, but don't execute it!
         item.ThumbnailLoaderFunc = async cancellationToken =>
         {
-            if (thumbnailCache.TryGet(file.FullName, out var cached) && cached is not null)
+            if (_thumbnailCache.TryGet(file.FullName, out var cached) && cached is not null)
             {
                 return cached;
             }
@@ -123,11 +441,11 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
             {
                 return await Task.Run(async () =>
                 {
-                    var thumb = await thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight, core)
+                    var thumb = await _thumbnailLoader.GetThumbnailAsync(file, (uint)maxHeight, core)
                         .ConfigureAwait(false);
                     if (thumb is not null)
                     {
-                        thumbnailCache.Add(tab.Id, file.FullName, thumb);
+                        _thumbnailCache.Add(_tab.Id, file.FullName, thumb);
                     }
 
                     // Detection reads the file again up to three times, so skip it while the badges are hidden
@@ -155,206 +473,25 @@ public class GalleryCoordinator(TabViewModel tab, IThumbnailLoader thumbnailLoad
         return maxHeight <= 0 ? GalleryDefaults.DefaultDockedGalleryHeight : maxHeight;
     }
 
-    #region File changes
-
-    // The gallery follows its tab's files once it has been used: a loaded gallery changes its items, and a loading
-    // one starts again from the changed list, since it reads that list as it goes.
-
-    /// <summary>
-    /// Adds an item for a file put at <paramref name="index"/> of the tab's files.
-    /// </summary>
-    public async ValueTask FileInsertedAsync(int index, FileInfo file, FileDetailsSource details,
-        CancellationToken ct = default)
-    {
-        if (RestartIfLoading())
-        {
-            return;
-        }
-
-        if (tab.Gallery.LoadingState is not GalleryLoadingState.Loaded || index < 0 ||
-            index > tab.Gallery.GalleryItems.Count)
-        {
-            return;
-        }
-
-        var item = CreateItem(file, await details.GetAsync(ct).ConfigureAwait(false), ThumbnailHeight(), Core);
-        tab.Gallery.GalleryItems.Insert(Math.Min(index, tab.Gallery.GalleryItems.Count), item);
-    }
-
-    /// <summary>
-    /// Builds the item at <paramref name="index"/> again, for a file whose contents changed.
-    /// </summary>
-    public async ValueTask FileReplacedAsync(int index, FileInfo file, FileDetailsSource details,
-        CancellationToken ct = default)
-    {
-        if (tab.Gallery.LoadingState is not (GalleryLoadingState.Loading or GalleryLoadingState.Loaded) ||
-            index < 0 || index >= tab.Gallery.GalleryItems.Count)
-        {
-            return;
-        }
-
-        var item = CreateItem(file, await details.GetAsync(ct).ConfigureAwait(false), ThumbnailHeight(), Core);
-        if (index < tab.Gallery.GalleryItems.Count)
-        {
-            tab.Gallery.GalleryItems[index] = item;
-        }
-    }
-
-    /// <summary>
-    /// Removes the item of a file taken out of <paramref name="index"/> of the tab's files.
-    /// </summary>
-    public void FileRemoved(int index)
-    {
-        if (RestartIfLoading())
-        {
-            return;
-        }
-
-        if (tab.Gallery.LoadingState is GalleryLoadingState.Loaded && index >= 0 &&
-            index < tab.Gallery.GalleryItems.Count)
-        {
-            tab.Gallery.GalleryItems.RemoveAt(index);
-        }
-    }
-
-    /// <summary>
-    /// Points the item at <paramref name="index"/> to <paramref name="file"/>, the same file in a renamed folder. It
-    /// keeps its image's size and its thumbnail, as the file itself did not change.
-    /// </summary>
-    public void FileMoved(int index, FileInfo file)
-    {
-        if (RestartIfLoading())
-        {
-            return;
-        }
-
-        if (tab.Gallery.LoadingState is not GalleryLoadingState.Loaded || index < 0 ||
-            index >= tab.Gallery.GalleryItems.Count)
-        {
-            return;
-        }
-
-        var old = tab.Gallery.GalleryItems[index];
-        var item = CreateItem(file, new GalleryFileDetails(old.PixelWidth, old.PixelHeight, null), ThumbnailHeight(),
-            Core);
-        item.Image.Value = old.Image.Value;
-        item.IsMotionPhoto.Value = old.IsMotionPhoto.Value;
-        if (old.Image.Value is { } thumbnail)
-        {
-            thumbnailCache.Add(tab.Id, file.FullName, thumbnail);
-        }
-        tab.Gallery.GalleryItems[index] = item;
-    }
-
-    private CoreViewModel? Core => tab.ParentWindowContext?.Core;
-
-    private bool RestartIfLoading()
-    {
-        if (tab.Gallery.LoadingState is not GalleryLoadingState.Loading || tab.ImageIterator is not { } iterator)
-        {
-            return false;
-        }
-
-        var core = Core;
-        _ = Task.Run(() => ReloadGallery(iterator.Files, core!));
-        return true;
-    }
-
     #endregion
-
-    public void ReloadGallery(IReadOnlyList<FileInfo> files, CoreViewModel core)
-    {
-        tab.Gallery.LoadingState = GalleryLoadingState.Restarting;
-        tab.Gallery.GalleryItems.Clear();
-        Cancel();
-        LoadGallery(files, core);
-    }
 
     public async ValueTask ToggleGalleryAndLoadItem(int index)
     {
-        var gallery = tab.Gallery;
+        var gallery = Gallery;
         gallery.SelectedGalleryItemIndex.Value = -1;
         if (gallery.IsGalleryExpanded.Value)
         {
             GalleryManager.ToggleGallery(gallery);
         }
 
-        await tab.ImageIterator.SkipToIndexAsync(index, tab.GetTabCancellation())
+        await _tab.ImageIterator.SkipToIndexAsync(index, _tab.GetTabCancellation())
             .ConfigureAwait(false);
-    }
-
-    public void SortLoadedGallery(IReadOnlyList<FileInfo> files)
-    {
-        if (tab.Gallery.GalleryItems is null || tab.Gallery.GalleryItems.Count <= 1 || files is null ||
-            files.Count is 0)
-        {
-            return;
-        }
-
-        var orderMap = new Dictionary<string, int>(files.Count, StringComparer.OrdinalIgnoreCase);
-        for (var i = 0; i < files.Count; i++)
-        {
-            orderMap.TryAdd(files[i].FullName, i);
-        }
-
-        var comparer = Comparer<GalleryItemViewModel>.Create((x, y) =>
-        {
-            if (ReferenceEquals(x, y))
-            {
-                return 0;
-            }
-
-            if (x is null)
-            {
-                return 1;
-            }
-
-            if (y is null)
-            {
-                return -1;
-            }
-
-            var xPath = x.FileInfo?.FullName;
-            var yPath = y.FileInfo?.FullName;
-
-            var indexX = -1;
-            var indexY = -1;
-            var hasX = xPath is not null && orderMap.TryGetValue(xPath, out indexX);
-            var hasY = yPath is not null && orderMap.TryGetValue(yPath, out indexY);
-
-            return hasX switch
-            {
-                true when hasY => indexX.CompareTo(indexY),
-                true => -1,
-                _ => hasY ? 1 : 0
-            };
-        });
-
-        tab.Gallery.GalleryItems.Sort(comparer);
-    }
-
-    public void Cancel()
-    {
-        if (_cts != null)
-        {
-            _cts.Cancel();
-            _cts.Dispose();
-            _cts = null;
-        }
-    }
-
-    /// <summary>
-    /// Forgets the gallery's items when the tab browses no files anymore, so the files it browses next load their own.
-    /// </summary>
-    public void Clear()
-    {
-        Cancel();
-        tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
-        tab.Gallery.GalleryItems.Clear();
     }
 
     public void Dispose()
     {
-        Cancel();
+        _shownSubscription.Dispose();
+        Enqueue(Cancel);
+        GC.SuppressFinalize(this);
     }
 }

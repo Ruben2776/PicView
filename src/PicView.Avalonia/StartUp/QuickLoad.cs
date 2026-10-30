@@ -129,7 +129,7 @@ public static class QuickLoad
 
         var rootDirectory = continueFromLeftOff ? SourceOpener.GetStartUpDirectory(fileInfo.FullName) : null;
         var listFrom = rootDirectory is null ? fileInfo : new FileInfo(rootDirectory);
-        var isGalleryEnabled = TabNavigationInitializer.PrepareDockedGallery(tab);
+        TabNavigationInitializer.PrepareDockedGallery(tab);
 
         if (Settings.ImageScaling.ShowImageSideBySide)
         {
@@ -165,11 +165,6 @@ public static class QuickLoad
         if (rootDirectory is not null)
         {
             Settings.StartUp.StartUpDirectory = rootDirectory;
-        }
-
-        if (isGalleryEnabled && tab is { GalleryCoordinator: not null, ImageIterator: not null })
-        {
-            await Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files, vm.Core)).ConfigureAwait(false);
         }
         return LoadResult.Loaded;
     }

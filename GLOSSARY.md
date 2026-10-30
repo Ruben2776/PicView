@@ -97,6 +97,10 @@ _Avoid_: Bottom gallery, gallery bar
 The gallery filling the Main Window in place of the image.
 _Avoid_: Full gallery, fullscreen gallery
 
+**Gallery Items**:
+The thumbnails a tab's gallery shows: one for each file the tab browses, always in the order of its file list. They change only when that list changes. A tab keeps them while it shows a Single Image, and a gallery that is closed when its tab moves to another folder drops them and loads the new folder when it opens.
+_Avoid_: Thumbnails list, gallery list
+
 **Thumbnail Stretch**:
 How a gallery's thumbnails are shaped and filled. Uniform shows each whole image in its own proportions, Uniform to Fill fills the thumbnail and crops what spills over, Square shows the whole image inside a square, and Fill Square fills a square and crops what spills over. The Docked Gallery and the Expanded Gallery each have their own, and every Main Window uses the same two.
 _Avoid_: Gallery stretch, stretch mode

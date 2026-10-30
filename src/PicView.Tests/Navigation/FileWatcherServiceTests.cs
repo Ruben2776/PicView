@@ -1,5 +1,4 @@
 using ImageMagick;
-using PicView.Core.Gallery;
 using PicView.Core.ImageDecoding;
 using PicView.Core.Localization;
 using PicView.Core.Models;
@@ -233,100 +232,18 @@ public class FileWatcherServiceTests : IDisposable
         Assert.Contains(files[0].FullName, _mockThumbnailCache.RemovedPaths);
     }
 
-    [Fact]
-    public async Task OnFileCreated_LoadedGallery_AddsTheFileInItsPlace()
-    {
-        // Arrange: a gallery that is not docked, but has loaded its items
-        var files = await FilesOnDiskAsync("a.jpg", "c.jpg");
-        var tab = CreateTab(_testDirectory, files, files[0]);
-        LoadGallery(tab);
-        await WriteFileAsync("b.jpg");
 
-        // Act
-        Watch(tab).RaiseCreated("b.jpg");
 
-        // Assert
-        await WaitUntilAsync(() => tab.Gallery.GalleryItems.Count == 3);
-        Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
-    }
+
+
 
     [Fact]
-    public async Task OnFileCreated_GalleryNeverUsed_AddsNoItems()
-    {
-        // Arrange
-        var files = Files("a.jpg");
-        var tab = CreateTab(_testDirectory, files, files[0]);
-
-        // Act
-        Watch(tab).RaiseCreated("b.jpg");
-
-        // Assert
-        await WaitUntilAsync(() => tab.ImageIterator.Files.Count == 2);
-        Assert.Empty(tab.Gallery.GalleryItems);
-    }
-
-    [Fact]
-    public async Task OnFileCreated_WhileTheGalleryLoads_LoadsItAgainWithTheFile()
-    {
-        // Arrange: a load in progress reads the file list as it goes
-        var files = await FilesOnDiskAsync("a.jpg", "c.jpg");
-        var tab = CreateTab(_testDirectory, files, files[0]);
-        tab.Gallery.LoadingState = GalleryLoadingState.Loading;
-        await WriteFileAsync("b.jpg");
-
-        // Act
-        Watch(tab).RaiseCreated("b.jpg");
-
-        // Assert
-        await WaitUntilAsync(() => tab.Gallery.LoadingState is GalleryLoadingState.Loaded &&
-                                   tab.Gallery.GalleryItems.Count == 3);
-        Assert.Equal(["a.jpg", "b.jpg", "c.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
-    }
-
-    [Fact]
-    public async Task OnFileChanged_LoadedGallery_RebuildsTheFilesItem()
-    {
-        // Arrange
-        var files = await FilesOnDiskAsync("a.jpg", "b.jpg");
-        var filePath = files[0].FullName;
-        var tab = CreateTab(_testDirectory, files, files[1]);
-        LoadGallery(tab);
-        var before = tab.Gallery.GalleryItems[0];
-
-        // Act
-        Watch(tab).RaiseChanged("a.jpg");
-
-        // Assert: a new item, whose thumbnail loads again when it is shown
-        await WaitUntilAsync(() => !ReferenceEquals(before, tab.Gallery.GalleryItems[0]));
-        Assert.Equal(filePath, tab.Gallery.GalleryItems[0].FileInfo!.FullName);
-        Assert.Null(tab.Gallery.GalleryItems[0].Image.Value);
-    }
-
-    [Fact]
-    public async Task OnFileRenamed_LoadedGallery_MovesTheFilesItem()
-    {
-        // Arrange
-        var files = await FilesOnDiskAsync("a.jpg", "b.jpg");
-        var tab = CreateTab(_testDirectory, files, files[1]);
-        LoadGallery(tab);
-        await WriteFileAsync("c.jpg");
-
-        // Act
-        Watch(tab).RaiseRenamed("a.jpg", "c.jpg");
-
-        // Assert
-        await WaitUntilAsync(() => tab.Gallery.GalleryItems.LastOrDefault()?.FileInfo?.Name == "c.jpg");
-        Assert.Equal(["b.jpg", "c.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
-    }
-
-    [Fact]
-    public async Task OnFileReplacedThroughTempFile_LoadedGallery_KeepsOneItem()
+    public async Task OnFileReplacedThroughTempFile_KeepsTheFileOnceInItsPlace()
     {
         // Arrange: how Windows Explorer saves an edited property, with ReplaceFile
         var files = await FilesOnDiskAsync("a.jpg", "b.jpg");
         var tab = CreateTab(_testDirectory, files, files[0]);
-        LoadGallery(tab);
-        var before = tab.Gallery.GalleryItems[0];
+        var before = tab.ImageIterator.Files[0];
         var watch = Watch(tab);
 
         // Act: the original moves aside, the temp file takes its name, and the backup is deleted
@@ -334,51 +251,32 @@ public class FileWatcherServiceTests : IDisposable
         watch.RaiseRenamed("a.jpg~RF1a2b.TMP", "a.jpg");
         watch.RaiseDeleted("a.jpg~RF303ff78.TMP");
 
-        // Assert: the file's item is rebuilt in its place, not added again
-        await WaitUntilAsync(() => !ReferenceEquals(before, tab.Gallery.GalleryItems[0]));
+        // Assert: the file's entry is replaced in its place, not added again
+        await WaitUntilAsync(() => !ReferenceEquals(before, tab.ImageIterator.Files[0]));
         Assert.Equal(["a.jpg", "b.jpg"], tab.ImageIterator.Files.Select(file => file.Name));
-        Assert.Equal(["a.jpg", "b.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
     }
 
     [Fact]
-    public async Task OnFileConvertedToAnotherFormat_LoadedGallery_KeepsTheItemsInTheFilesOrder()
+    public async Task OnFileConvertedToAnotherFormat_KeepsTheFilesInOrder()
     {
-        // Arrange: converting writes the new file, then deletes the original. The new file is still being
-        // written, so its item waits for it to be readable
+        // Arrange: converting writes the new file, then deletes the original, while the new file is still being
+        // written
         var files = await FilesOnDiskAsync("a.png", "c.jpg");
         var tab = CreateTab(_testDirectory, files, files[1]);
-        LoadGallery(tab);
         var convertedPath = Path.Combine(_testDirectory, "b.jpg");
         await File.WriteAllBytesAsync(convertedPath, [], TestContext.Current.CancellationToken);
         var watch = Watch(tab);
 
-        // Act: the original is deleted while the converted file's item still waits
+        // Act: the original is deleted before the converted file can be read
         watch.RaiseCreated("b.jpg");
         await WaitUntilAsync(() => tab.ImageIterator.Files.Any(f => f.Name == "b.jpg"));
         watch.RaiseDeleted("a.png");
         await Task.Delay(100, TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(convertedPath, "dummy content", TestContext.Current.CancellationToken);
 
-        // Assert: the events are handled one at a time, so the items follow the files
-        await WaitUntilAsync(() => tab.ImageIterator.Files.Count == 2 && tab.Gallery.GalleryItems.Count == 2);
-        Assert.Equal(["b.jpg", "c.jpg"], tab.ImageIterator.Files.Select(file => file.Name));
-        Assert.Equal(["b.jpg", "c.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
-    }
-
-    [Fact]
-    public async Task OnFileDeleted_LoadedGallery_RemovesTheFilesItem()
-    {
-        // Arrange
-        var files = await FilesOnDiskAsync("a.jpg", "b.jpg", "c.jpg");
-        var tab = CreateTab(_testDirectory, files, files[0]);
-        LoadGallery(tab);
-
-        // Act
-        Watch(tab).RaiseDeleted("b.jpg");
-
         // Assert
-        await WaitUntilAsync(() => tab.Gallery.GalleryItems.Count == 2);
-        Assert.Equal(["a.jpg", "c.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
+        await WaitUntilAsync(() => tab.ImageIterator.Files.Count == 2);
+        Assert.Equal(["b.jpg", "c.jpg"], tab.ImageIterator.Files.Select(file => file.Name));
     }
 
     [Fact]
@@ -421,7 +319,6 @@ public class FileWatcherServiceTests : IDisposable
         var actionRunner = new Input.RecordingActionRunner();
         var files = await FilesOnDiskAsync("a.jpg", "b.jpg");
         var tab = CreateTab(_testDirectory, files, files[0], WindowWith(actionRunner));
-        LoadGallery(tab);
         var watch = Watch(tab);
 
         // Act
@@ -435,7 +332,6 @@ public class FileWatcherServiceTests : IDisposable
         Assert.Null(tab.ImageIterator);
         Assert.Null(tab.Model.FileInfo);
         Assert.Null(tab.FileInfo.Value);
-        Assert.Empty(tab.Gallery.GalleryItems);
         Assert.True(watch.IsDisposed, "A fresh tab follows no folder");
     }
 
@@ -535,26 +431,6 @@ public class FileWatcherServiceTests : IDisposable
         Assert.Equal(Path.Combine(renamed, "b.jpg"), tab.FileInfo.Value?.FullName);
     }
 
-    [Fact]
-    public async Task OnSubfolderRenamed_LoadedGallery_ItsItemsFollowIt()
-    {
-        // Arrange
-        Settings.Sorting.IncludeSubDirectories = true;
-        Directory.CreateDirectory(Path.Combine(_testDirectory, "sub"));
-        var files = await FilesOnDiskAsync("a.jpg", Path.Combine("sub", "b.jpg"));
-        var tab = CreateTab(_testDirectory, files, files[0]);
-        LoadGallery(tab);
-        var renamed = Path.Combine(_testDirectory, "renamed");
-        var watch = Watch(tab);
-
-        // Act: the item reads its file's size and date there
-        Directory.Move(Path.Combine(_testDirectory, "sub"), renamed);
-        watch.RaiseRenamed("sub", "renamed");
-
-        // Assert
-        await WaitUntilAsync(() => tab.Gallery.GalleryItems[1].FileInfo?.DirectoryName == renamed);
-        Assert.Equal(["a.jpg", "b.jpg"], tab.Gallery.GalleryItems.Select(item => item.FileInfo!.Name));
-    }
 
     [Fact]
     public async Task OnFolderRenamed_EveryTabOfTheFolderFollowsIt()
@@ -721,9 +597,6 @@ public class FileWatcherServiceTests : IDisposable
         }
         return Files(names);
     }
-
-    private static void LoadGallery(TabViewModel tab) =>
-        tab.GalleryCoordinator!.LoadGallery(tab.ImageIterator.Files, null!);
 
     /// <summary>
     /// Writes a file the folder event is about, so waiting for it to be ready ends at once.

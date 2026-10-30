@@ -234,13 +234,12 @@ public partial class GalleryView : GalleryAnimationControl
             case NotifyCollectionChangedAction.Replace:
                 var replaceIndex = e.NewStartingIndex;
                 var replaceItem = e.NewItem;
-                if (replaceIndex < 0 && replaceIndex > _galleryItems.Count)
-                {
-                    return;
-                }
                 RunOnUI(() =>
                 {
-                    _galleryItems[replaceIndex] = replaceItem;
+                    if (replaceIndex >= 0 && replaceIndex < _galleryItems.Count)
+                    {
+                        _galleryItems[replaceIndex] = replaceItem;
+                    }
                 }, DispatcherPriority.Loaded, cancellationToken);
                 break;
         }

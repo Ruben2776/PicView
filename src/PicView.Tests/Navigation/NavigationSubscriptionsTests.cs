@@ -26,7 +26,7 @@ public class NavigationSubscriptionsTests
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
-        var hookups = new NavigationSubscriptions(window, vm, core);
+        var hookups = new NavigationSubscriptions(window, vm);
         var tab = vm.WindowTabs.ActiveTab.CurrentValue;
 
         // Opening the first source sets up a tab off the UI thread, as QuickLoad does

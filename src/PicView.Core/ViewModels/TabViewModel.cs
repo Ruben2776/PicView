@@ -334,8 +334,9 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         {
             ThumbnailCache = thumbnailCache;
         }
-        ImageIterator = new ImageIterator(cache, thumbCache, thumbnailLoader, this);
+        GalleryCoordinator?.Dispose();
         GalleryCoordinator = new Gallery.GalleryCoordinator(this, thumbnailLoader, ThumbnailCache ?? thumbCache);
+        ImageIterator = new ImageIterator(cache, thumbCache, thumbnailLoader, this, GalleryCoordinator.FilesChanged);
     }
 
     public void InitializeImageIterator(IReadOnlyList<FileInfo> files, SharedImageCache cache, IThumbnailCache thumbCache,  IThumbnailLoader thumbnailLoader, IFileWatcherService? fileWatcherService = null, IThumbnailCache? thumbnailCache = null)
@@ -348,8 +349,8 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
         {
             ThumbnailCache = thumbnailCache;
         }
-        ImageIterator ??= new ImageIterator(cache, thumbCache, thumbnailLoader, this);
         GalleryCoordinator ??= new Gallery.GalleryCoordinator(this, thumbnailLoader, ThumbnailCache ?? thumbCache);
+        ImageIterator ??= new ImageIterator(cache, thumbCache, thumbnailLoader, this, GalleryCoordinator.FilesChanged);
         // Browsing files again, so it is no longer fresh
         _hasLostItsFiles = false;
         if (Model?.FileInfo is null)
@@ -407,7 +408,6 @@ public class TabViewModel(MainWindowViewModel parentWindowContext, IFileWatcherS
     {
         _fileWatcherService?.Unwatch(this);
         ResetNavigationCts();
-        GalleryCoordinator?.Clear();
         ThumbnailCache?.RemoveOwner(Id);
         DisposeImageIterator();
         Display(new ImageModel());

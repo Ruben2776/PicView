@@ -4,14 +4,15 @@ using PicView.Core.ViewModels;
 namespace PicView.Core.Navigation;
 
 /// <summary>
-/// What a file event in its folder means for one tab: its file list, the file it shows, its title and its gallery.
-/// The watcher has already removed the file's stale image and thumbnail from the shared caches.
+/// What a file event in its folder means for one tab: its file list, the file it shows and its title. The gallery
+/// follows the file list by itself (ADR-0010). The watcher has already removed the file's stale image and thumbnail
+/// from the shared caches.
 /// </summary>
 internal sealed class FolderChanges(TabViewModel tab)
 {
     public ValueTask HandleAsync(FolderChange change, CancellationToken ct) => change.Kind switch
     {
-        FolderChangeKind.Created => CreatedAsync(change, ct),
+        FolderChangeKind.Created => CreatedAsync(change),
         FolderChangeKind.Changed => ChangedAsync(change, ct),
         FolderChangeKind.Renamed => RenamedAsync(change, ct),
         FolderChangeKind.Deleted => DeletedAsync(change),
@@ -35,12 +36,6 @@ internal sealed class FolderChanges(TabViewModel tab)
         if (moved.Length is 0)
         {
             return ValueTask.CompletedTask;
-        }
-
-        foreach (var index in moved)
-        {
-            var file = iterator.Files[index];
-            Gallery(g => g.FileMoved(index, file));
         }
 
         // The shown images are the same, only their paths changed
@@ -81,18 +76,17 @@ internal sealed class FolderChanges(TabViewModel tab)
         }
     }
 
-    private async ValueTask CreatedAsync(FolderChange change, CancellationToken ct)
+    private ValueTask CreatedAsync(FolderChange change)
     {
         if (tab.ImageIterator is not { } iterator)
         {
-            return;
+            return ValueTask.CompletedTask;
         }
 
         var file = change.File;
 
         // A file created over one in the list, as when overwriting it
-        var existingIndex = iterator.Replace(file);
-        if (existingIndex >= 0)
+        if (iterator.Replace(file, change.Details) >= 0)
         {
             if (IsShown(file.FullName))
             {
@@ -100,16 +94,13 @@ internal sealed class FolderChanges(TabViewModel tab)
                 tab.FileInfo.Value = file;
                 tab.UpdateTabTitle();
             }
-
-            await Gallery(g => g.FileReplacedAsync(existingIndex, file, change.Details, ct)).ConfigureAwait(false);
-            return;
+            return ValueTask.CompletedTask;
         }
 
-        var insertionIndex = iterator.Insert(file, change.CompareNames);
+        iterator.Insert(file, change.CompareNames, change.Details);
         iterator.NotifyFileAdded();
         tab.UpdateTabTitle();
-
-        await Gallery(g => g.FileInsertedAsync(insertionIndex, file, change.Details, ct)).ConfigureAwait(false);
+        return ValueTask.CompletedTask;
     }
 
     private async ValueTask ChangedAsync(FolderChange change, CancellationToken ct)
@@ -120,7 +111,7 @@ internal sealed class FolderChanges(TabViewModel tab)
         }
 
         var file = change.File;
-        var index = iterator.Replace(file);
+        iterator.Replace(file, change.Details);
 
         // Update the shown file's details to reflect its new size
         if (IsShown(file.FullName) && await change.Details.GetAsync(ct).ConfigureAwait(false) is { } details)
@@ -131,8 +122,6 @@ internal sealed class FolderChanges(TabViewModel tab)
             tab.FileInfo.Value = file;
             tab.UpdateTabTitle();
         }
-
-        await Gallery(g => g.FileReplacedAsync(index, file, change.Details, ct)).ConfigureAwait(false);
     }
 
     private async ValueTask RenamedAsync(FolderChange change, CancellationToken ct)
@@ -154,15 +143,7 @@ internal sealed class FolderChanges(TabViewModel tab)
             return;
         }
 
-        var (removeIndex, insertionIndex) = iterator.Move(change.OldFullPath, file, change.CompareNames);
-        if (removeIndex >= 0)
-        {
-            Gallery(g => g.FileRemoved(removeIndex));
-        }
-        if (insertionIndex >= 0)
-        {
-            await Gallery(g => g.FileInsertedAsync(insertionIndex, file, change.Details, ct)).ConfigureAwait(false);
-        }
+        iterator.Move(change.OldFullPath, file, change.CompareNames, change.Details);
 
         if (wasShownFileRenamed && tab.Model is { } currentModel)
         {
@@ -227,7 +208,6 @@ internal sealed class FolderChanges(TabViewModel tab)
         }
 
         tab.UpdateTabTitle();
-        Gallery(g => g.FileRemoved(removeIndex));
     }
 
     private static bool Contains(Interfaces.IImageIterator iterator, string path)
@@ -244,15 +224,4 @@ internal sealed class FolderChanges(TabViewModel tab)
 
     private bool IsShown(string path) =>
         string.Equals(path, tab.FileInfo?.CurrentValue?.FullName, StringComparison.OrdinalIgnoreCase);
-
-    private ValueTask Gallery(Func<Gallery.GalleryCoordinator, ValueTask> change) =>
-        tab.GalleryCoordinator is { } coordinator ? change(coordinator) : ValueTask.CompletedTask;
-
-    private void Gallery(Action<Gallery.GalleryCoordinator> change)
-    {
-        if (tab.GalleryCoordinator is { } coordinator)
-        {
-            change(coordinator);
-        }
-    }
 }

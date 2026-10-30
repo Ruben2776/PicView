@@ -76,7 +76,7 @@ public class NavigationService(
                 tab.Display(model, secondaryModel);
             }
 
-            // A newer load that begins after this sets its own files and gallery after these
+            // A newer load that begins after this sets its own files after these
             if (!tab.IsLatestLoad(load))
             {
                 return;
@@ -95,33 +95,6 @@ public class NavigationService(
                 cache.Preload(tab.Id, currentFile, false, tab.GetTabCancellation().Token);
             }
             FileHistoryManager.Add(fileInfo.FullName);
-
-            if ((tab.Gallery.IsDockedGalleryVisible.CurrentValue || tab.Gallery.IsGalleryExpanded.CurrentValue) && tab.ThumbnailCache is not null)
-            {
-                tab.ThumbnailCache.RemoveOwner(tab.Id);
-                if (tab.Gallery.LoadingState is GalleryLoadingState.Loading or GalleryLoadingState.Loaded)
-                {
-#pragma warning disable MA0042
-                    // ReSharper disable once MethodHasAsyncOverload
-                    ct.Cancel();
-#pragma warning restore MA0042
-                    tab.ResetNavigationCts();
-                    if (tab.GalleryCoordinator is not null)
-                    {
-                        // We don't want to await this task. ct is not passed: it was just canceled, so the reload
-                        // would never run. The coordinator cancels a reload that a newer one replaces
-#pragma warning disable MA0040
-                        _ = Task.Run(() =>
-                                tab.GalleryCoordinator.ReloadGallery(tab.ImageIterator.Files, tab.ParentWindowContext.Core))
-                            .ConfigureAwait(false);
-#pragma warning restore MA0040
-                    }
-                    return;
-                }
-                tab.Gallery.LoadingState = GalleryLoadingState.NotLoaded;
-                _ = Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files, tab.ParentWindowContext.Core),
-                    ct.Token).ConfigureAwait(false);
-            }
         }
         catch (Exception e)
         {
@@ -681,10 +654,8 @@ public class NavigationService(
             // Update files in iterator, keeping the position on the current file
             tab.ImageIterator.Initialize(newFiles, SideBySidePair.IndexOf(newFiles, currentFile) ?? -1);
             
-            // Update title
+            // Update title; the gallery follows the sorted list by itself
             tab.UpdateTabTitle();
-            
-            tab.GalleryCoordinator?.SortLoadedGallery(newFiles);
         }
         catch (Exception e)
         {

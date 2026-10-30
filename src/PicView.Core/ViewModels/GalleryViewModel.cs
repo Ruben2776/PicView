@@ -33,7 +33,7 @@ public class GalleryViewModel : IDisposable
     public BindableReactiveProperty<bool> IsRightDocked { get; } = new();
     public BindableReactiveProperty<bool> IsGalleryDocked { get; } = new(Settings.Gallery.IsGalleryDocked);
 
-    public GalleryLoadingState LoadingState { get; set; }
+    public GalleryLoadingState LoadingState { get; internal set; }
 
     public void Initialize()
     {

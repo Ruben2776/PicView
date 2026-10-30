@@ -73,17 +73,6 @@ public static class ToggleUIVisibility
             vm.TitlebarHeight.Value = SizeDefaults.MainTitlebarHeight;
             if (Settings.Gallery.IsGalleryDocked)
             {
-                if (tab.ImageIterator.Files.Count > 0)
-                {
-                    if (tab.Gallery.LoadingState is GalleryLoadingState.NotLoaded)
-                    {
-                        if (tab is { GalleryCoordinator: not null, ImageIterator: not null })
-                        {
-                            _ = Task.Run(() => tab.GalleryCoordinator.LoadGallery(tab.ImageIterator.Files, vm.Core)).ConfigureAwait(false);
-                        }
-                    }
-                }
-
                 tab.Gallery.IsDockedGalleryVisible.Value = true;
             }
             else

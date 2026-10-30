@@ -276,7 +276,7 @@ public sealed class MainWindowLifecycle
         // A window keeps the view model it is created with, so hand it over once here
         window.ViewModel = vm;
         vm.WindowModeSwitcher = window.WindowModeSwitcher;
-        vm.WindowTabs.SetHookups(new NavigationSubscriptions(window, vm, _core));
+        vm.WindowTabs.SetHookups(new NavigationSubscriptions(window, vm));
         _core.MainWindows.MainWindows.Add(vm);
         _core.MainWindows.ActiveWindow.Value = vm;
         _open.Add(window);

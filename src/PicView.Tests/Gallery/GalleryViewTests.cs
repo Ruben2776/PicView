@@ -30,7 +30,7 @@ public class GalleryViewTests
     }
 
     [AvaloniaFact]
-    public void SortLoadedGallery_ShownGallery_ShowsItsItemsInTheNewOrder()
+    public void Sorted_ShownGallery_ShowsItsItemsInTheNewOrder()
     {
         WithGalleryView((tab, viewer) =>
         {
@@ -43,7 +43,9 @@ public class GalleryViewTests
             tab.Gallery.GalleryItems.AddRange([a, b, c]);
             Dispatcher.UIThread.RunJobs();
 
-            tab.GalleryCoordinator!.SortLoadedGallery([fileC, fileA, fileB]);
+            var order = new[] { fileC, fileA, fileB };
+            tab.Gallery.GalleryItems.Sort(Comparer<GalleryItemViewModel>.Create((x, y) =>
+                Array.IndexOf(order, x.FileInfo).CompareTo(Array.IndexOf(order, y.FileInfo))));
             Dispatcher.UIThread.RunJobs();
 
             Assert.Equal([c, a, b], viewer.Items.Cast<GalleryItemViewModel>());
@@ -51,7 +53,7 @@ public class GalleryViewTests
     }
 
     [AvaloniaFact]
-    public void Clear_ShownGallery_ShowsNoItems()
+    public void Cleared_ShownGallery_ShowsNoItems()
     {
         WithGalleryView((tab, viewer) =>
         {
@@ -61,10 +63,28 @@ public class GalleryViewTests
             ]);
             Dispatcher.UIThread.RunJobs();
 
-            tab.GalleryCoordinator!.Clear();
+            tab.Gallery.GalleryItems.Clear();
             Dispatcher.UIThread.RunJobs();
 
             Assert.Empty(viewer.Items);
+        });
+    }
+
+    [AvaloniaFact]
+    public void Replaced_ShownGallery_ShowsTheNewItem()
+    {
+        WithGalleryView((tab, viewer) =>
+        {
+            var a = new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") };
+            var b = new GalleryItemViewModel { FileInfo = new FileInfo("b.jpg") };
+            tab.Gallery.GalleryItems.AddRange([a, b]);
+            Dispatcher.UIThread.RunJobs();
+            var rebuilt = new GalleryItemViewModel { FileInfo = new FileInfo("b.jpg") };
+
+            tab.Gallery.GalleryItems[1] = rebuilt;
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal([a, rebuilt], viewer.Items.Cast<GalleryItemViewModel>());
         });
     }
 

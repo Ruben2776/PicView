@@ -6,7 +6,10 @@ using PicView.Core.ViewModels;
 
 namespace PicView.Core.Navigation;
 
-public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, TabViewModel tab) : IImageIterator
+/// <param name="filesChanged">Hears every change to the file list, in order, while the list is locked. The gallery
+/// follows the list through it (ADR-0010), so it must not call back into the iterator.</param>
+public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, IThumbnailLoader thumbnailLoader, TabViewModel tab,
+    Action<FileListChange>? filesChanged = null) : IImageIterator
 {
     public SharedImageCache Cache { get; } = cache ?? throw new ArgumentNullException(nameof(cache));
     public string? CurrentDirectory => Files.Count > 0 ? Files[0].DirectoryName : null;
@@ -30,7 +33,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
         lock (_filesLock)
         {
             CurrentIndex = initialIndex;
-            Publish(files?.ToArray() ?? []);
+            var list = files?.ToArray() ?? [];
+            Publish(list, new FileListChange(FileListChangeKind.Listed, list));
         }
         UpdateNavigationProperties();
     }
@@ -38,7 +42,7 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
     #region File list changes
 
     /// <inheritdoc />
-    public int Insert(FileInfo file, Func<string, string, int> compareNames)
+    public int Insert(FileInfo file, Func<string, string, int> compareNames, FileDetailsSource? details = null)
     {
         int index;
         lock (_filesLock)
@@ -49,7 +53,8 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             {
                 CurrentIndex++;
             }
-            Publish(list.ToArray());
+            var files = list.ToArray();
+            Publish(files, new FileListChange(FileListChangeKind.Inserted, files, index, file, details));
         }
         UpdateNavigationProperties();
         return index;
@@ -78,14 +83,14 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
             {
                 CurrentIndex = remaining.Length - 1;
             }
-            Publish(remaining);
+            Publish(remaining, new FileListChange(FileListChangeKind.Removed, remaining, index));
         }
         UpdateNavigationProperties();
         return index;
     }
 
     /// <inheritdoc />
-    public int Replace(FileInfo file)
+    public int Replace(FileInfo file, FileDetailsSource? details = null)
     {
         lock (_filesLock)
         {
@@ -97,13 +102,14 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
             var files = (FileInfo[])_files.Clone();
             files[index] = file;
-            Publish(files);
+            Publish(files, new FileListChange(FileListChangeKind.Replaced, files, index, file, details));
             return index;
         }
     }
 
     /// <inheritdoc />
-    public (int Removed, int Inserted) Move(string oldPath, FileInfo newFile, Func<string, string, int> compareNames)
+    public (int Removed, int Inserted) Move(string oldPath, FileInfo newFile, Func<string, string, int> compareNames,
+        FileDetailsSource? details = null)
     {
         int removed, inserted;
         lock (_filesLock)
@@ -127,7 +133,16 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
                     CurrentIndex = index;
                 }
             }
-            Publish(list.ToArray());
+            var files = list.ToArray();
+            Volatile.Write(ref _files, files);
+            Cache.SetFiles(_tab.Id, files);
+            // The gallery hears it as the two edits it is
+            if (removed >= 0)
+            {
+                filesChanged?.Invoke(new FileListChange(FileListChangeKind.Removed, files, removed));
+            }
+            filesChanged?.Invoke(new FileListChange(FileListChangeKind.Inserted, files, inserted, newFile, details));
+            SignalFilesChanged();
         }
         UpdateNavigationProperties();
         return (removed, inserted);
@@ -151,19 +166,27 @@ public class ImageIterator(SharedImageCache cache, IThumbnailCache thumbCache, I
 
             if (moved.Count > 0)
             {
-                Publish(files);
+                Volatile.Write(ref _files, files);
+                Cache.SetFiles(_tab.Id, files);
+                foreach (var index in moved)
+                {
+                    filesChanged?.Invoke(new FileListChange(FileListChangeKind.Relocated, files, index, files[index]));
+                }
+                SignalFilesChanged();
             }
             return moved.ToArray();
         }
     }
 
     /// <summary>
-    /// Makes <paramref name="files"/> the current list and tells the cache. Callers hold <see cref="_filesLock"/>.
+    /// Makes <paramref name="files"/> the current list and tells the cache and the gallery. Callers hold
+    /// <see cref="_filesLock"/>, so the gallery hears the changes in the order they were made.
     /// </summary>
-    private void Publish(FileInfo[] files)
+    private void Publish(FileInfo[] files, FileListChange change)
     {
         Volatile.Write(ref _files, files);
         Cache.SetFiles(_tab.Id, files);
+        filesChanged?.Invoke(change);
         SignalFilesChanged();
     }
 
