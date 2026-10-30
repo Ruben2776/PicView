@@ -89,6 +89,10 @@ _Avoid_: Dual view, two-up, double view
 
 ## Gallery
 
+**Gallery Mode**:
+The state a tab's gallery is in, exactly one at a time: Closed, Docked or Expanded. Each tab has its own, and closing the Expanded Gallery gives back the mode the tab had before it expanded. Cropping or showing a Single Image hides the gallery without changing its mode, and the mode cannot change while it is hidden; hiding the interface does not hide it. The settings only remember whether a new tab starts docked, which is the last choice the user made by hand in any tab, and where every Docked Gallery sits.
+_Avoid_: Gallery state, `ActiveGalleryMode`, `IsGalleryDocked` (as a tab's current state)
+
 **Docked Gallery**:
 The strip of thumbnails along one edge of a Main Window, top, bottom, left or right, beside the image.
 _Avoid_: Bottom gallery, gallery bar
