@@ -13,7 +13,7 @@ using R3;
 
 namespace PicView.Avalonia.Views.Gallery;
 
-public partial class GalleryView : GalleryAnimationControl
+public partial class GalleryView : GalleryAnimationControl, IDisposable
 {
     private readonly AvaloniaList<GalleryItemViewModel> _galleryItems = [];
     private DisposableBag _disposables;
@@ -49,7 +49,11 @@ public partial class GalleryView : GalleryAnimationControl
         }
 
         var gallery = tab.Gallery;
-        gallery.GalleryItems.CollectionChanged += (in e) => OnGalleryItemsChanged(tab, in e);
+        NotifyCollectionChangedEventHandler<GalleryItemViewModel> onItemsChanged =
+            (in e) => OnGalleryItemsChanged(tab, in e);
+        gallery.GalleryItems.CollectionChanged += onItemsChanged;
+        Disposable.Create(() => gallery.GalleryItems.CollectionChanged -= onItemsChanged)
+            .AddTo(ref _disposables);
         gallery.NavigateGalleryCommand.Subscribe(x =>
         {
             var direction = x switch
@@ -247,4 +251,10 @@ public partial class GalleryView : GalleryAnimationControl
         }
         mainWindow.AddGalleryItemSizeSlider();
     }
+
+    /// <summary>
+    /// Stops following the tab's gallery, as when another view replaces the image viewer that holds this view. The
+    /// tab outlives its views, so it would keep this view in step with it otherwise.
+    /// </summary>
+    public void Dispose() => _disposables.Dispose();
 }

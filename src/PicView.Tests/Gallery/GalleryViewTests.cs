@@ -5,6 +5,7 @@ using ImageMagick;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.Interfaces;
 using PicView.Avalonia.Views.Gallery;
+using PicView.Avalonia.Views.UC;
 using PicView.Core.Localization;
 using PicView.Core.Models;
 using PicView.Core.Navigation;
@@ -111,12 +112,69 @@ public class GalleryViewTests
         });
     }
 
+    [AvaloniaFact]
+    public void Replaced_ImageViewer_StopsFollowingItsTabsGallery()
+    {
+        WithImageViewer((tab, imageViewer, viewer) =>
+        {
+            var a = new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") };
+            var b = new GalleryItemViewModel { FileInfo = new FileInfo("b.jpg") };
+            tab.Gallery.GalleryItems.AddRange([a, b]);
+            Dispatcher.UIThread.RunJobs();
+            tab.CurrentView.Value = imageViewer;
+
+            tab.CurrentView.Value = new StartUpMenu();
+            tab.Gallery.GalleryItems.Add(new GalleryItemViewModel { FileInfo = new FileInfo("c.jpg") });
+            tab.Gallery.NavigateGalleryCommand.Execute(NavigateTo.Last);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal([a, b], viewer.Items.Cast<GalleryItemViewModel>());
+            Assert.Equal(-1, viewer.SelectedItemIndex);
+        });
+    }
+
+    [AvaloniaFact]
+    public void CroppedAndBack_ImageViewer_StillFollowsItsTabsGallery()
+    {
+        WithImageViewer((tab, imageViewer, viewer) =>
+        {
+            var a = new GalleryItemViewModel { FileInfo = new FileInfo("a.jpg") };
+            tab.Gallery.GalleryItems.Add(a);
+            Dispatcher.UIThread.RunJobs();
+            tab.CurrentView.Value = imageViewer;
+
+            tab.CurrentView.Value = new CropControl();
+            tab.CurrentView.Value = imageViewer;
+            var b = new GalleryItemViewModel { FileInfo = new FileInfo("b.jpg") };
+            tab.Gallery.GalleryItems.Add(b);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal([a, b], viewer.Items.Cast<GalleryItemViewModel>());
+        });
+    }
+
     private static void WithGalleryView(Action<TabViewModel, NavigateAbleItemsViewer> test) =>
         WithGalleryView(static vm => vm.WindowTabs.ActiveTab.CurrentValue, (tab, _, viewer) => test(tab, viewer));
 
-    // The gallery view loads its XAML only when the application's DataContext is a CoreViewModel
     private static void WithGalleryView(Func<MainWindowViewModel, TabViewModel> tabOf,
-        Action<TabViewModel, MainWindowViewModel, NavigateAbleItemsViewer> test)
+        Action<TabViewModel, MainWindowViewModel, NavigateAbleItemsViewer> test) =>
+        WithTab(tabOf, (tab, vm) =>
+        {
+            var view = new GalleryView();
+            view.Initialize(tab);
+            test(tab, vm, view.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!);
+        });
+
+    private static void WithImageViewer(Action<TabViewModel, ImageViewer, NavigateAbleItemsViewer> test) =>
+        WithTab(static vm => vm.WindowTabs.ActiveTab.CurrentValue, (tab, _) =>
+        {
+            var imageViewer = new ImageViewer(tab);
+            test(tab, imageViewer, imageViewer.GalleryView.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!);
+        });
+
+    // The gallery view loads its XAML only when the application's DataContext is a CoreViewModel
+    private static void WithTab(Func<MainWindowViewModel, TabViewModel> tabOf,
+        Action<TabViewModel, MainWindowViewModel> test)
     {
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
         var window = new TestMainWindow(new NoOpModeAdapter());
@@ -133,13 +191,12 @@ public class GalleryViewTests
         application.DataContext = core;
         try
         {
-            var view = new GalleryView();
-            view.Initialize(tab);
-            test(tab, vm, view.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!);
+            test(tab, vm);
         }
         finally
         {
             application.DataContext = previous;
+            window.Close();
         }
     }
 
