@@ -120,10 +120,11 @@ public static class DragAndDropManager
     {
         Dispatcher.UIThread.Post(() =>
         {
-            var currentView = tabOverview.ActiveTab.CurrentValue.CurrentView;
+            var tab = tabOverview.ActiveTab.CurrentValue;
+            var currentView = tab.CurrentView;
             if (currentView.CurrentValue is StartUpMenu)
             {
-                currentView.Value = new ImageViewer();
+                currentView.Value = new ImageViewer(tab);
             }
         });
     }
@@ -196,7 +197,7 @@ public static class DragAndDropManager
             
             if (tab.CurrentView.CurrentValue is not ImageViewer)
             {
-                tab.CurrentView.Value = new ImageViewer();
+                tab.CurrentView.Value = new ImageViewer(tab);
             }
 
             var vm = mainWindow.DataContext as MainWindowViewModel;
@@ -214,7 +215,7 @@ public static class DragAndDropManager
         {
             if (tab.CurrentView.CurrentValue is not ImageViewer)
             {
-                tab.CurrentView.Value = new ImageViewer();
+                tab.CurrentView.Value = new ImageViewer(tab);
             }
             await tabOverview.LoadFromUrlAsync(url).ConfigureAwait(false);
         }

@@ -25,12 +25,19 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
     private ScaleTransform? _flipTransform;
     private bool _animatesNextFlip;
     
-    public ImageViewer()
+    /// <param name="tab">The tab this viewer shows, which is not always the active one: a viewer is also created for a
+    /// tab that opens in the background.</param>
+    public ImageViewer(TabViewModel tab)
     {
+        DataContext = tab;
         InitializeComponent();
+        GalleryView.Initialize(tab);
         ImageControlHelper.TriggerScalingModeUpdate(MainImage, true);
         Loaded += OnLoaded;
     }
+
+    [Obsolete("For the XAML designer only: pass the tab the viewer shows.", error: true)]
+    public ImageViewer() => InitializeComponent();
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {

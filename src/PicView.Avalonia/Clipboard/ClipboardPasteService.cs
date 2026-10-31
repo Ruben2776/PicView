@@ -96,7 +96,7 @@ public class ClipboardPasteService(
             TabNavigationInitializer.InitializeConsecutiveTab(activeCore, tab);
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                tab.CurrentView.Value = new ImageViewer();
+                tab.CurrentView.Value = new ImageViewer(tab);
             });
 
             if (fileInfo.IsArchive())

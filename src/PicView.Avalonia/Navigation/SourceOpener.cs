@@ -58,7 +58,7 @@ public static class SourceOpener
             {
                 return false;
             }
-            tab.CurrentView.Value = new ImageViewer();
+            tab.CurrentView.Value = new ImageViewer(tab);
             return true;
         });
 

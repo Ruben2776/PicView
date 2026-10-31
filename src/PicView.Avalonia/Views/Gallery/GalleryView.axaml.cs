@@ -19,9 +19,9 @@ public partial class GalleryView : GalleryAnimationControl
     private DisposableBag _disposables;
 
     /// <summary>
-    /// The tab whose gallery this view shows: the tab its image viewer belongs to, once it is placed in one.
+    /// 1 while a re-layout of the panel waits to run on the UI thread, so a burst of size batches costs one layout.
     /// </summary>
-    private TabViewModel? _tab;
+    private int _isRelayoutPosted;
 
     public GalleryView()
     {
@@ -34,31 +34,22 @@ public partial class GalleryView : GalleryAnimationControl
         GalleryItemsControl.ItemsSource = _galleryItems;
     }
 
-    protected override void OnDataContextChanged(EventArgs e)
+    /// <summary>
+    /// Shows the gallery of <paramref name="tab"/> and follows it from now on. The image viewer that holds this view
+    /// calls it once, as it is created, with the tab the viewer shows. The view is given the tab instead of looking up
+    /// the active one, since a viewer is also created for a tab that is not active, and it doesn't wait for a
+    /// DataContext, which is set once and never handled when it changes.
+    /// </summary>
+    public void Initialize(TabViewModel tab)
     {
-        base.OnDataContextChanged(e);
-        // Keep showing the tab's gallery while the view is away from it, as when the tab is not shown
-        if (GalleryItemsControl is null || DataContext is not TabViewModel tab || tab == _tab)
+        // The designer loads no XAML
+        if (GalleryItemsControl is null)
         {
             return;
         }
 
-        if (_tab is not null)
-        {
-            _tab.Gallery.GalleryItems.CollectionChanged -= CurrentValueOnCollectionChanged;
-            _disposables.Dispose();
-            _disposables = default;
-            _galleryItems.Clear();
-            _galleryItems.AddRange(tab.Gallery.GalleryItems);
-        }
-
-        _tab = tab;
-        SubscribeTo(tab.Gallery);
-    }
-
-    private void SubscribeTo(GalleryViewModel gallery)
-    {
-        gallery.GalleryItems.CollectionChanged += CurrentValueOnCollectionChanged;
+        var gallery = tab.Gallery;
+        gallery.GalleryItems.CollectionChanged += (in e) => OnGalleryItemsChanged(tab, in e);
         gallery.NavigateGalleryCommand.Subscribe(x =>
         {
             var direction = x switch
@@ -74,19 +65,25 @@ public partial class GalleryView : GalleryAnimationControl
             GalleryItemsControl.Navigate(direction);
         }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.NavigateGalleryCommand)))
             .AddTo(ref _disposables);
-        
-         gallery.ItemSpacing.Subscribe(_ =>
-         {
-             RecalculateGalleryIfNeeded(gallery);
-         }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.ItemSpacing)))
-         .AddTo(ref _disposables);
-         gallery.LineSpacing.Subscribe(_ =>
-         {
-             RecalculateGalleryIfNeeded(gallery);
-         }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.LineSpacing)))
-         .AddTo(ref _disposables);
+
+        gallery.ItemSpacing.Subscribe(_ =>
+        {
+            RecalculateGalleryIfNeeded(gallery);
+        }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.ItemSpacing)))
+        .AddTo(ref _disposables);
+        gallery.LineSpacing.Subscribe(_ =>
+        {
+            RecalculateGalleryIfNeeded(gallery);
+        }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.LineSpacing)))
+        .AddTo(ref _disposables);
+
+        gallery.SizesChanged.Subscribe(_ =>
+        {
+            PostRelayout();
+        }, DebugHelper.LogError(nameof(GalleryView), nameof(gallery.SizesChanged)))
+        .AddTo(ref _disposables);
     }
-    
+
     private void RecalculateGalleryIfNeeded(GalleryViewModel gallery)
     {
         if (!gallery.IsGalleryExpanded.CurrentValue || IsInAnimation)
@@ -116,12 +113,8 @@ public partial class GalleryView : GalleryAnimationControl
         }
     }
 
-    private void CurrentValueOnCollectionChanged(in NotifyCollectionChangedEventArgs<GalleryItemViewModel> e)
+    private void OnGalleryItemsChanged(TabViewModel tab, in NotifyCollectionChangedEventArgs<GalleryItemViewModel> e)
     {
-        if (_tab is not { } tab)
-        {
-            return;
-        }
         var cancellationToken = tab.GetTabCancellation().Token;
 
         switch (e.Action)
@@ -159,43 +152,16 @@ public partial class GalleryView : GalleryAnimationControl
                         {
                             _galleryItems.AddRange(newItems);
                         }
-                        
-                        var navIndex = tab.NavigationIndex.Value;
-                        if (navIndex < index || navIndex >= index + newItems.Length)
-                        {
-                            return;
-                        }
-
-                        GalleryItemsControl.CurrentItemIndex = navIndex;
-                        EventHandler? layoutUpdatedHandler = null;
-                        layoutUpdatedHandler = (_, _) =>
-                        {
-                            GalleryItemsControl.LayoutUpdated -= layoutUpdatedHandler;
-                            GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                        };
-                        GalleryItemsControl.LayoutUpdated += layoutUpdatedHandler;
                     }, DispatcherPriority.Background, cancellationToken);
                 }
                 break;
             case NotifyCollectionChangedAction.Reset:
                 // Sorting resets the list as well as clearing it, so show what it holds now
-                var resetItems = _tab?.Gallery.GalleryItems.ToArray() ?? [];
+                var resetItems = tab.Gallery.GalleryItems.ToArray();
                 RunOnUI(() =>
                 {
                     _galleryItems.Clear();
-                    if (resetItems.Length <= 0)
-                    {
-                        return;
-                    }
-
                     _galleryItems.AddRange(resetItems);
-                    EventHandler? layoutUpdatedHandler = null;
-                    layoutUpdatedHandler = (_, _) =>
-                    {
-                        GalleryItemsControl.LayoutUpdated -= layoutUpdatedHandler;
-                        GalleryItemsControl.ScrollToCenterOfCurrentItem();
-                    };
-                    GalleryItemsControl.LayoutUpdated += layoutUpdatedHandler;
                 }, DispatcherPriority.Render, CancellationToken.None);
                 break;
             case NotifyCollectionChangedAction.Remove:
@@ -246,19 +212,31 @@ public partial class GalleryView : GalleryAnimationControl
     }
     
     /// <summary>
-    /// Marks the current item again and centers it once laid out. The tab's index can change before the items it
-    /// points into do, as when a renamed file moves to its sorted place, which leaves the mark on the wrong item.
+    /// Marks the current item again. The tab's index can change before the items it points into do, as when a
+    /// renamed file moves to its sorted place, which leaves the mark on the wrong item.
     /// </summary>
     private void SyncCurrentItem()
     {
         GalleryItemsControl.UpdateCurrentVisualState();
-        EventHandler? layoutUpdatedHandler = null;
-        layoutUpdatedHandler = (_, _) =>
+    }
+
+    /// <summary>
+    /// Lays out the panel again, since the sizes of its items changed. The sizes arrive in batches on another thread,
+    /// and only one layout waits at a time, so a burst of batches costs one layout.
+    /// </summary>
+    private void PostRelayout()
+    {
+        if (Interlocked.Exchange(ref _isRelayoutPosted, 1) is 1)
         {
-            GalleryItemsControl.LayoutUpdated -= layoutUpdatedHandler;
-            GalleryItemsControl.ScrollToCenterOfCurrentItem();
-        };
-        GalleryItemsControl.LayoutUpdated += layoutUpdatedHandler;
+            return;
+        }
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            // Clear it first, so a batch that arrives from here on posts another layout
+            Interlocked.Exchange(ref _isRelayoutPosted, 0);
+            GalleryItemsControl.ItemsPanelRoot?.InvalidateMeasure();
+        }, DispatcherPriority.Background);
     }
 
     private void ShowGalleryItemSizeSlider(object? sender, PointerPressedEventArgs e)
