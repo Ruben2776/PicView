@@ -23,10 +23,12 @@ public readonly record struct GalleryLayoutOptions(Orientation Orientation, bool
 ///     <para>
 ///         Widths and spacings are whole device pixels, so along a row and across the Expanded Gallery's columns every
 ///         item starts on a device pixel, where layout rounding puts its container, and a width read later moves the
-///         items after it by whole device pixels. The offsets that center an item, and the moves of a view, are whole
-///         device pixels too. A view that moves with the items then keeps each one it shows on its pixel: layout rounds
-///         the strip's origin and each container on their own, and anything off the pixels would round them a pixel
-///         apart.
+///         items after it by whole device pixels. The offsets that center an item there, and the moves of a view, are
+///         whole device pixels too. A view that moves with the items then keeps each one it shows on its pixel: layout
+///         rounds the strip's origin and each container on their own, and anything off the pixels would round them a
+///         pixel apart. The side-docked strip stacks its items at their height, which is not rounded, so when the item
+///         height is not a whole number of device pixels its items and centering offsets lie between them; sizes read
+///         never move those items.
 ///     </para>
 /// </summary>
 public sealed class GalleryLayout
@@ -199,8 +201,9 @@ public sealed class GalleryLayout
 
     /// <summary>
     ///     The scroll offset that puts the item in the middle of a view, clamped to what the view can scroll over: the
-    ///     extent and the panel's margin around it. It is on whole device pixels, a fraction of a pixel off the exact
-    ///     middle at most, and moves by exactly as much as the item when sizes read before it move it.
+    ///     extent and the panel's margin around it. It moves by exactly as much as the item when sizes read before it
+    ///     move it. It is on whole device pixels, a fraction of a pixel off the exact middle at most, wherever the item
+    ///     starts on one: everywhere but a side-docked strip whose item height is not a whole number of them.
     /// </summary>
     /// <param name="index">An index into <see cref="Bounds" />.</param>
     /// <param name="viewportLength">The length of the view along the scroll axis.</param>
@@ -213,7 +216,8 @@ public sealed class GalleryLayout
     ///     The scroll offset that puts the item at a distance from the middle of a view, clamped to what the view can
     ///     scroll over: the extent and the panel's margin around it. It is exact, not rounded to device pixels: a held
     ///     view is where the user scrolled, often between pixels, and the panel tells from the exact offset whether the
-    ///     view has to move at all. <see cref="HoldOffsetOnDevicePixels" /> is where it moves when it does.
+    ///     view has to move at all. When it does, a view on pixels moves to <see cref="HoldOffsetOnDevicePixels" />, and
+    ///     a view between pixels moves to <see cref="OnDevicePixels" /> of this offset and holds from where it lands.
     /// </summary>
     /// <param name="index">An index into <see cref="Bounds" />.</param>
     /// <param name="distanceFromMiddle">How far the item's middle is past the middle of the view. Negative when before it.</param>
@@ -368,7 +372,9 @@ public sealed class GalleryLayout
 
     /// <summary>
     ///     Keeps an offset within what the view can scroll to: from the start of the margin before the items to the end
-    ///     of the margin after them. The end is on whole device pixels, and moves by as much as the extent does.
+    ///     of the margin after them. The end moves by as much as the extent does, and is on whole device pixels wherever
+    ///     the extent is. It can be a pixel past the scroll viewer's own end, as at 150% with margins of 15, which layout
+    ///     rounds one by one where this rounds their sum; the scroll viewer then stops the view at its end.
     /// </summary>
     private double Clamp(double offset, double viewportLength, double marginBefore, double marginAfter)
     {
