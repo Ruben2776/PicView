@@ -7,8 +7,11 @@ namespace PicView.Avalonia.CustomControls;
 /// <summary>
 ///     What <see cref="GalleryLayout" /> reads from the panel it lays out for.
 /// </summary>
+/// <param name="LayoutScale">
+///     Device pixels per DIP, as layout rounding uses it: <see cref="LayoutHelper.GetLayoutScale" /> of the panel.
+/// </param>
 public readonly record struct GalleryLayoutOptions(Orientation Orientation, bool IsExpanded, double ItemHeight,
-    double ItemWidth, double ItemSpacing, double LineSpacing, double WrapHeightOverride);
+    double ItemWidth, double ItemSpacing, double LineSpacing, double WrapHeightOverride, double LayoutScale = 1);
 
 /// <summary>
 ///     Where each Gallery Item sits, and the offsets along the scroll axis that center or hold one.
@@ -17,10 +20,29 @@ public readonly record struct GalleryLayoutOptions(Orientation Orientation, bool
 ///         The bounds are in the panel's coordinates. The offsets are the scroll viewer's, which scrolls over the
 ///         panel's margin too, as the Expanded Gallery has one: the items start that margin into what it scrolls.
 ///     </para>
+///     <para>
+///         Widths and spacings are whole device pixels, so along a row and across the Expanded Gallery's columns every
+///         item starts on a device pixel, where layout rounding puts its container, and a width read later moves the
+///         items after it by whole device pixels. The offsets that center an item, and the moves of a view, are whole
+///         device pixels too. A view that moves with the items then keeps each one it shows on its pixel: layout rounds
+///         the strip's origin and each container on their own, and anything off the pixels would round them a pixel
+///         apart.
+///     </para>
 /// </summary>
 public sealed class GalleryLayout
 {
+    /// <summary>
+    ///     How far from a device pixel, in device pixels, an offset can be and still count as on it. Sums of widths
+    ///     in DIPs carry rounding errors far below this.
+    /// </summary>
+    private const double OnPixelTolerance = 1e-6;
+
     private readonly List<Rect> _bounds = [];
+
+    /// <summary>
+    ///     The last <see cref="Calculate" />'s <see cref="GalleryLayoutOptions.LayoutScale" />.
+    /// </summary>
+    private double _scale = 1;
 
     /// <summary>
     ///     The bounds of every item, in item order. <see cref="Calculate" /> and <see cref="Clear" /> change the list
@@ -51,7 +73,7 @@ public sealed class GalleryLayout
     /// <param name="items">
     ///     The items in order. Each is <see cref="GalleryLayoutOptions.ItemWidth" /> wide when that is set. Otherwise a
     ///     <see cref="GalleryItemViewModel" /> that has its details takes its width from their aspect ratio, and any
-    ///     other item is a square.
+    ///     other item is a square. Each width is rounded to whole device pixels.
     /// </param>
     /// <param name="options">The panel's layout properties.</param>
     /// <param name="availableSize">The size the panel was given.</param>
@@ -59,6 +81,9 @@ public sealed class GalleryLayout
     {
         _bounds.Clear();
         ScrollsVertically = ScrollsVerticallyFor(options.Orientation, options.IsExpanded);
+        _scale = options.LayoutScale > 0 && double.IsFinite(options.LayoutScale) ? options.LayoutScale : 1;
+        var itemSpacing = Snap(options.ItemSpacing);
+        var lineSpacing = Snap(options.LineSpacing);
 
         double currentX = 0;
         double currentY = 0;
@@ -88,6 +113,8 @@ public sealed class GalleryLayout
                 itemWidth = options.ItemHeight * aspectRatio;
             }
 
+            itemWidth = Snap(itemWidth);
+
             if (options.IsExpanded)
             {
                 // Vertical Wrapping: Use the locked availableHeight
@@ -100,15 +127,15 @@ public sealed class GalleryLayout
                     }
 
                     currentY = 0;
-                    currentX += currentColumnMaxWidth + options.LineSpacing;
+                    currentX += currentColumnMaxWidth + lineSpacing;
                     currentColumnMaxWidth = 0; // Reset for the new column
                     currentColumnStartIndex = _bounds.Count;
                 }
 
                 _bounds.Add(new Rect(currentX, currentY, itemWidth, options.ItemHeight));
-                currentY += options.ItemHeight + options.ItemSpacing;
+                currentY += options.ItemHeight + itemSpacing;
                 currentColumnMaxWidth = Math.Max(currentColumnMaxWidth, itemWidth);
-                maxExtentY = Math.Max(maxExtentY, currentY - options.ItemSpacing);
+                maxExtentY = Math.Max(maxExtentY, currentY - itemSpacing);
             }
             else if (options.Orientation == Orientation.Vertical)
             {
@@ -157,6 +184,7 @@ public sealed class GalleryLayout
         _bounds.Clear();
         Extent = default;
         ScrollsVertically = false;
+        _scale = 1;
     }
 
     /// <summary>
@@ -171,18 +199,21 @@ public sealed class GalleryLayout
 
     /// <summary>
     ///     The scroll offset that puts the item in the middle of a view, clamped to what the view can scroll over: the
-    ///     extent and the panel's margin around it.
+    ///     extent and the panel's margin around it. It is on whole device pixels, a fraction of a pixel off the exact
+    ///     middle at most, and moves by exactly as much as the item when sizes read before it move it.
     /// </summary>
     /// <param name="index">An index into <see cref="Bounds" />.</param>
     /// <param name="viewportLength">The length of the view along the scroll axis.</param>
     /// <param name="marginBefore">The panel's margin before its items along the scroll axis.</param>
     /// <param name="marginAfter">The panel's margin after its items along the scroll axis.</param>
     public double CenterOffset(int index, double viewportLength, double marginBefore = 0, double marginAfter = 0)
-        => Clamp(marginBefore + Middle(index) - viewportLength / 2, viewportLength, marginBefore, marginAfter);
+        => HoldOffsetOnDevicePixels(index, 0, viewportLength, marginBefore, marginAfter);
 
     /// <summary>
     ///     The scroll offset that puts the item at a distance from the middle of a view, clamped to what the view can
-    ///     scroll over: the extent and the panel's margin around it.
+    ///     scroll over: the extent and the panel's margin around it. It is exact, not rounded to device pixels: a held
+    ///     view is where the user scrolled, often between pixels, and the panel tells from the exact offset whether the
+    ///     view has to move at all. <see cref="HoldOffsetOnDevicePixels" /> is where it moves when it does.
     /// </summary>
     /// <param name="index">An index into <see cref="Bounds" />.</param>
     /// <param name="distanceFromMiddle">How far the item's middle is past the middle of the view. Negative when before it.</param>
@@ -193,6 +224,24 @@ public sealed class GalleryLayout
         double marginAfter = 0)
         => Clamp(marginBefore + Middle(index) - distanceFromMiddle - viewportLength / 2, viewportLength, marginBefore,
             marginAfter);
+
+    /// <summary>
+    ///     <see cref="HoldOffset" /> on whole device pixels, a fraction of a pixel off it at most. It moves by exactly as
+    ///     much as the item when sizes read before it move it, and its rounding never adds up over many changes of the
+    ///     view's length, as a window resized a pixel at a time makes, since the item's distance stays exact.
+    /// </summary>
+    /// <inheritdoc cref="HoldOffset" />
+    public double HoldOffsetOnDevicePixels(int index, double distanceFromMiddle, double viewportLength,
+        double marginBefore = 0, double marginAfter = 0)
+    {
+        // The item starts on a device pixel, unless it is in a side-docked strip whose item height is not a whole
+        // number of them, so only what holding adds to its start is rounded. Rounding the sum would round a half pixel
+        // up or down by the start's parity
+        var bounds = _bounds[index];
+        var (start, length) = ScrollsVertically ? (bounds.Y, bounds.Height) : (bounds.X, bounds.Width);
+        return Clamp(start + Snap(marginBefore + length / 2 - distanceFromMiddle - viewportLength / 2),
+            viewportLength, marginBefore, marginAfter);
+    }
 
     /// <summary>
     ///     The index of the item whose <see cref="Middle" /> is nearest the position. When two are equally near, or
@@ -283,12 +332,48 @@ public sealed class GalleryLayout
     }
 
     /// <summary>
+    ///     Where a view at <paramref name="offset" /> moves to on its way to <paramref name="target" />, on whole device
+    ///     pixels: the target itself when it is on them, or else the pixel the view shows now moved by the whole device
+    ///     pixels nearest the way there. A held view that the user left between pixels then moves by exactly as much
+    ///     as the items do, when they move by whole device pixels.
+    /// </summary>
+    /// <param name="offset">The view's offset along the scroll axis now.</param>
+    /// <param name="target">The offset the view should be at.</param>
+    public double OnDevicePixels(double offset, double target)
+    {
+        if (IsOnDevicePixel(target))
+        {
+            return Snap(target);
+        }
+
+        // Layout shows an offset between pixels at its rounded pixel
+        return Snap(offset) + Snap(target - offset);
+    }
+
+    /// <summary>
+    ///     Whether an offset or position is on a whole device pixel, where layout rounding leaves it as it is.
+    /// </summary>
+    public bool IsOnDevicePixel(double value) => Math.Abs(Snap(value) - value) * _scale <= OnPixelTolerance;
+
+    /// <summary>
+    ///     Whether a view at <paramref name="other" /> shows another device pixel than a view at
+    ///     <paramref name="offset" />. Layout shows each at its offset rounded to whole device pixels.
+    /// </summary>
+    public bool ShowsAnotherPixel(double offset, double other) => Math.Abs(Snap(other) - Snap(offset)) * _scale >= 0.5;
+
+    /// <summary>
+    ///     The value rounded to whole device pixels, as layout rounding rounds a position.
+    /// </summary>
+    private double Snap(double value) => LayoutHelper.RoundLayoutValue(value, _scale);
+
+    /// <summary>
     ///     Keeps an offset within what the view can scroll to: from the start of the margin before the items to the end
-    ///     of the margin after them.
+    ///     of the margin after them. The end is on whole device pixels, and moves by as much as the extent does.
     /// </summary>
     private double Clamp(double offset, double viewportLength, double marginBefore, double marginAfter)
     {
         var extentLength = ScrollsVertically ? Extent.Height : Extent.Width;
-        return Math.Clamp(offset, 0, Math.Max(0, marginBefore + extentLength + marginAfter - viewportLength));
+        return Math.Clamp(offset, 0,
+            Math.Max(0, extentLength + Snap(marginBefore + marginAfter - viewportLength)));
     }
 }

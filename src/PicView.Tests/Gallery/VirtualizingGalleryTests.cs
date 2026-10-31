@@ -506,7 +506,8 @@ public class VirtualizingGalleryTests
             // Item 105's middle, 10550, sits a pixel past the middle of the view
             strip.ScrollTo(10549 - strip.ViewportWidth / 2);
 
-            // Item 0 a pixel and a half wider moves the held item, and so the view, by that much
+            // Item 0 a pixel and a half wider, which rounds to two whole pixels, moves the held item, and so the view, by
+            // that much
             strip.Items[0].SetDetails(new GalleryFileDetails(203, 200, null));
             strip.Gallery.InvalidateMeasure();
             Dispatcher.UIThread.RunJobs();
@@ -619,14 +620,160 @@ public class VirtualizingGalleryTests
         }
     }
 
+    // As a folder opens: the current image and its neighbours are read before the strip is shown, and the rest arrive
+    // in batches nearest the current image while it follows. Each batch to the left moves the items on screen and the
+    // view by the same amount, so no thumbnail may move on screen, not even by a device pixel
+    [AvaloniaTheory]
+    [InlineData(1.0, false)]
+    [InlineData(1.25, false)]
+    [InlineData(1.5, false)]
+    [InlineData(1.0, true)]
+    [InlineData(1.25, true)]
+    [InlineData(1.5, true)]
+    public void SizesReadInBatches_WhileFollowing_LeaveEveryShownThumbnailOnItsDevicePixel(double renderScaling,
+        bool expanded)
+    {
+        var strip = ShowStrip(300, 150, show: false);
+        strip.Window.SetRenderScaling(renderScaling);
+        if (expanded)
+        {
+            // As ShowExpanded does, with spacings that are fractions of a device pixel at 125%
+            strip.Gallery.IsExpanded = true;
+            strip.Gallery.Orientation = Orientation.Vertical;
+            strip.Gallery.Margin = new Thickness(15, 40, 15, 5);
+            strip.Gallery.ItemSpacing = 5;
+            strip.Gallery.LineSpacing = 5;
+            strip.Window.Height = 400;
+        }
+
+        try
+        {
+            ReadNeighbours(strip, renderScaling);
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+            var shownAt = ShownLeftEdges(strip, renderScaling);
+            Assert.NotEmpty(shownAt);
+
+            var moves = ReadTheRestInBatches(strip, shownAt, renderScaling, () =>
+            {
+                var middle = strip.Gallery.Margin.Left + strip.Gallery.GetItemBounds(150)!.Value.Center.X;
+                Assert.Equal(middle - strip.ViewportWidth / 2, strip.ScrollViewer.Offset.X, Tolerance);
+            });
+
+            Assert.True(moves.Count is 0, $"Shown thumbnails moved, in device pixels: {string.Join("; ", moves)}");
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    // A wheel step of 50 lands halfway between two device pixels at 125%, and layout shows the view at one of them. The
+    // panel then holds what the user scrolled to while the batches move it, and must move it from that pixel
+    [AvaloniaTheory]
+    [InlineData(1.0)]
+    [InlineData(1.25)]
+    [InlineData(1.5)]
+    public void SizesReadInBatches_AfterTheUserScrolledBetweenPixels_LeaveEveryShownThumbnailOnItsDevicePixel(
+        double renderScaling)
+    {
+        var strip = ShowStrip(300, 150, show: false);
+        strip.Window.SetRenderScaling(renderScaling);
+        try
+        {
+            ReadNeighbours(strip, renderScaling);
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+            strip.ScrollTo(strip.ScrollViewer.Offset.X - 400 - 0.5 / renderScaling);
+            var shownAt = ShownLeftEdges(strip, renderScaling);
+            Assert.NotEmpty(shownAt);
+
+            var moves = ReadTheRestInBatches(strip, shownAt, renderScaling, () => { });
+
+            Assert.True(moves.Count is 0, $"Shown thumbnails moved, in device pixels: {string.Join("; ", moves)}");
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    // Three device pixels more move the middle of the view by one and a half. The view moves by whole pixels, rounding
+    // each time, and the roundings must not add up and take the held item away from the middle
+    [AvaloniaTheory]
+    [InlineData(1.0)]
+    [InlineData(1.25)]
+    public void ScrolledByTheUser_WindowGrowingThreeDevicePixelsAtATime_KeepsTheHeldItemInTheMiddle(
+        double renderScaling)
+    {
+        var strip = ShowStrip(200, 150, show: false);
+        strip.Window.SetRenderScaling(renderScaling);
+        try
+        {
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+            // Item 140 sits in the middle of the view
+            strip.ScrollTo(14050 - strip.ViewportWidth / 2);
+
+            var width = (int)Math.Round(1000 * renderScaling);
+            for (var step = 1; step <= 20; step++)
+            {
+                strip.Window.Width = (width + 3 * step) / renderScaling;
+                Dispatcher.UIThread.RunJobs();
+            }
+
+            Assert.Equal(14050 - strip.ViewportWidth / 2, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    // At 225%, items 113 high are 254.25 device pixels, so the offsets that center one lie between pixels. The panel
+    // moves the view by whole device pixels, by as few as two, which is under a DIP, and such moves are still its own
+    [AvaloniaFact]
+    public void DockedAtTheSide_WindowGrowingInSmallStepsAt225Percent_KeepsFollowing()
+    {
+        var strip = ShowStrip(200, 150, show: false);
+        strip.Gallery.ItemHeight = 113;
+        strip.Window.SetRenderScaling(2.25);
+        try
+        {
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+            strip.Viewer.SetVerticalScrolling();
+            strip.Gallery.Orientation = Orientation.Vertical;
+            strip.Window.Width = 150;
+            strip.Window.Height = 1000;
+            Dispatcher.UIThread.RunJobs();
+            for (var step = 1; step <= 10; step++)
+            {
+                strip.Window.Height = 1000 + 1.6 * step;
+                Dispatcher.UIThread.RunJobs();
+            }
+
+            // Following centers whatever item is current now, where holding would go with the moved item
+            strip.Items.Move(150, 10);
+            Dispatcher.UIThread.RunJobs();
+
+            var middle = strip.Gallery.GetItemBounds(150)!.Value.Center.Y;
+            Assert.Equal(middle - strip.ScrollViewer.Viewport.Height / 2, strip.ScrollViewer.Offset.Y, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
     [AvaloniaFact]
     public void WindowGrowingAPixelAtATime_WhileFollowingAcrossFractionalWidths_KeepsFollowing()
     {
         var strip = ShowStrip(200, 150);
         try
         {
-            // Items 133.33 wide put the centered offset on fractions of a pixel, and a window that grows by two pixels
-            // a layout moves it by one at a time
+            // Items of 133.33, which round to 133 whole pixels, and a window that grows by two pixels a layout moves the
+            // centered offset by one at a time
             foreach (var item in strip.Items.Take(150))
             {
                 item.SetDetails(new GalleryFileDetails(400, 300, null));
@@ -762,6 +909,142 @@ public class VirtualizingGalleryTests
     /// </summary>
     private static void AssertCenteredOn(int index, Strip strip) =>
         Assert.Equal(100 * index + 50 - strip.ViewportWidth / 2, strip.ScrollViewer.Offset.X, Tolerance);
+
+    /// <summary>
+    /// Image sizes whose widths at an item height of 100 fall on fractions of a pixel, or whole pixels that are
+    /// fractions of a device pixel at 125% or 150%, as a folder of photos, scans and illustrations has.
+    /// </summary>
+    private static readonly (uint Width, uint Height)[] MixedImageSizes =
+    [
+        (4000, 3000), (2000, 3000), (1920, 1080), (3000, 4000), (2480, 3508), (1500, 2100), (3000, 2000), (1080, 1920),
+        (2100, 1500), (2560, 1440), (1600, 2400), (3508, 2480), (1000, 1000)
+    ];
+
+    /// <summary>
+    /// Gives the item at <paramref name="index"/> one of <see cref="MixedImageSizes"/>, as reading its file does.
+    /// </summary>
+    private static void ReadDetails(GalleryItemViewModel item, int index)
+    {
+        var (width, height) = MixedImageSizes[index % MixedImageSizes.Length];
+        item.SetDetails(new GalleryFileDetails(width, height, null));
+    }
+
+    /// <summary>
+    /// Reads the current item, 150, and the 20 on each side of it, as the gallery coordinator does before it adds the
+    /// items. The current item is an odd number of device pixels wide, twice its height and one more, so its exact
+    /// middle, and the exact offset that centers it, fall between two device pixels.
+    /// </summary>
+    private static void ReadNeighbours(Strip strip, double renderScaling)
+    {
+        for (var index = 130; index <= 170; index++)
+        {
+            ReadDetails(strip.Items[index], index);
+        }
+
+        var height = (uint)Math.Round(100 * renderScaling);
+        strip.Items[150].SetDetails(new GalleryFileDetails((2 * height + 1) * 10, height * 10, null));
+    }
+
+    /// <summary>
+    /// Reads every unread item in batches of 20 nearest the current item, laying the strip out after each batch as
+    /// GalleryView does when the batch's sizes arrive, and calls <paramref name="afterEachBatch"/> then.
+    /// </summary>
+    /// <returns>
+    /// Every move of a container in <paramref name="shownAt"/> away from its left edge there, by batch.
+    /// </returns>
+    private static List<string> ReadTheRestInBatches(Strip strip, Dictionary<int, int> shownAt, double renderScaling,
+        Action afterEachBatch)
+    {
+        var moves = new List<string>();
+        for (var batch = 1; NearestUnread(strip, 20) is { Count: > 0 } unread; batch++)
+        {
+            foreach (var index in unread)
+            {
+                ReadDetails(strip.Items[index], index);
+            }
+
+            strip.Gallery.InvalidateMeasure();
+            Dispatcher.UIThread.RunJobs();
+
+            foreach (var (index, left) in shownAt)
+            {
+                var now = LeftEdge(strip, index, renderScaling);
+                if (now != left)
+                {
+                    moves.Add($"batch {batch}: item {index} from {left} to {now?.ToString() ?? "no container"}");
+                }
+            }
+
+            afterEachBatch();
+        }
+
+        return moves;
+    }
+
+    /// <summary>
+    /// Up to <paramref name="count"/> indices of unread items nearest the current item, one after it then one before
+    /// it, as the gallery coordinator picks its next batch.
+    /// </summary>
+    private static List<int> NearestUnread(Strip strip, int count)
+    {
+        var current = strip.Viewer.CurrentItemIndex;
+        var unread = new List<int>();
+        for (var distance = 0; unread.Count < count; distance++)
+        {
+            var after = current + distance;
+            var before = current - distance;
+            if (after >= strip.Items.Count && before < 0)
+            {
+                break;
+            }
+
+            if (after < strip.Items.Count && strip.Items[after].Details is null)
+            {
+                unread.Add(after);
+            }
+
+            if (distance > 0 && before >= 0 && unread.Count < count && strip.Items[before].Details is null)
+            {
+                unread.Add(before);
+            }
+        }
+
+        return unread;
+    }
+
+    /// <summary>
+    /// Where each container that the view shows, even in part, starts on screen: device pixels from the window's left
+    /// edge, by item index.
+    /// </summary>
+    private static Dictionary<int, int> ShownLeftEdges(Strip strip, double renderScaling)
+    {
+        var edges = new Dictionary<int, int>();
+        foreach (var realized in strip.Gallery.RealizedItems)
+        {
+            var inView = realized.Element.TranslatePoint(default, strip.ScrollViewer)!.Value.X;
+            if (inView + realized.Element.Bounds.Width > 0 && inView < strip.ViewportWidth)
+            {
+                edges[realized.Index] = LeftEdge(strip, realized.Index, renderScaling)!.Value;
+            }
+        }
+
+        return edges;
+    }
+
+    /// <summary>
+    /// Where the container of the item at <paramref name="index"/> starts on screen, in device pixels from the
+    /// window's left edge, or null when it has no container.
+    /// </summary>
+    private static int? LeftEdge(Strip strip, int index, double renderScaling)
+    {
+        var container = strip.Viewer.ContainerFromIndex(index);
+        if (container?.TranslatePoint(default, strip.Window) is not { } left)
+        {
+            return null;
+        }
+
+        return (int)Math.Round(left.X * renderScaling);
+    }
 
     /// <summary>
     /// Where the current item's container is in the scroll viewer, which is where the user sees it.

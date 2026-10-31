@@ -20,6 +20,15 @@ public class GalleryLayoutTests
 
     private static object?[] Squares(int count) => Enumerable.Range(0, count).Select(_ => (object?)Item(100, 100)).ToArray();
 
+    /// <summary>
+    /// DIPs as device pixels at <paramref name="scale"/>, to six decimals, which drops the rounding errors of DIPs that
+    /// are not whole numbers.
+    /// </summary>
+    private static double DevicePixels(double dips, double scale) => Math.Round(dips * scale, 6);
+
+    private static double[] DevicePixels(IEnumerable<double> dips, double scale) =>
+        dips.Select(value => DevicePixels(value, scale)).ToArray();
+
     [Fact]
     public void Calculate_HorizontalDocked_PlacesItemsSideBySideAtTheirAspectRatio()
     {
@@ -246,6 +255,84 @@ public class GalleryLayoutTests
         layout.Calculate(Squares(9), Docked with { IsExpanded = true }, new Size(1000, 300)); // three columns of three
         // The top of the first two columns: items 0 and 3 reach it, and items 1 and 2 below item 0 do not
         Assert.Equal((0, 3), layout.IndicesIn(new Rect(50, 0, 100, 50)));
+    }
+
+    // At 125% a device pixel is 0.8 DIP: 133.33 and 66.67 DIPs are 166.67 and 83.33 device pixels
+    [Fact]
+    public void Calculate_AtAFractionalScale_RoundsEveryWidthToWholeDevicePixels()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate([Item(4000, 3000), Item(2000, 3000), new GalleryItemViewModel()],
+            Docked with { LayoutScale = 1.25 }, new Size(1000, 100));
+        Assert.Equal<double>([0, 167, 250], DevicePixels(layout.Bounds.Select(bounds => bounds.X), 1.25));
+        Assert.Equal<double>([167, 83, 125], DevicePixels(layout.Bounds.Select(bounds => bounds.Width), 1.25));
+        Assert.Equal(375, DevicePixels(layout.Extent.Width, 1.25));
+    }
+
+    // Spacings of 5 DIPs are 6.25 device pixels at 125%, which layout rounds to 6
+    [Fact]
+    public void Calculate_ExpandedAtAFractionalScale_RoundsColumnWidthsAndSpacingsToWholeDevicePixels()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate([Item(4000, 3000), Item(2000, 3000), Item(1000, 1000)],
+            Docked with { IsExpanded = true, ItemSpacing = 5, LineSpacing = 5, LayoutScale = 1.25 },
+            new Size(1000, 250));
+        Assert.Equal<double>([0, 0, 173], DevicePixels(layout.Bounds.Select(bounds => bounds.X), 1.25)); // 167 + 6
+        Assert.Equal<double>([0, 131, 0], DevicePixels(layout.Bounds.Select(bounds => bounds.Y), 1.25)); // 125 + 6
+        Assert.Equal<double>([167, 167, 125], DevicePixels(layout.Bounds.Select(bounds => bounds.Width), 1.25));
+    }
+
+    // At 125%, item 5 is 250 device pixels wide and the view 375, so the exact centered offset is half a pixel off the
+    // device pixels. Rounding it whole would go up or down with the item's start
+    [Fact]
+    public void CenterOffset_AtAFractionalScaleWhenAnItemBeforeWidensByADevicePixel_MovesByExactlyThatPixel()
+    {
+        object?[] items = [new GalleryItemViewModel(), .. Enumerable.Range(0, 9).Select(_ => Item(2000, 1000))];
+        var layout = new GalleryLayout();
+        var options = Docked with { LayoutScale = 1.25 };
+        layout.Calculate(items, options, new Size(300, 100));
+        var centered = DevicePixels(layout.CenterOffset(5, 300), 1.25);
+
+        ((GalleryItemViewModel)items[0]!).SetDetails(new GalleryFileDetails(1008, 1000, null)); // 126 device pixels, not 125
+        layout.Calculate(items, options, new Size(300, 100));
+
+        Assert.Equal(1063, centered); // 125 + 4 × 250 + 125 − 187.5, rounded to even
+        Assert.Equal(1064, DevicePixels(layout.CenterOffset(5, 300), 1.25));
+    }
+
+    // Margins of 15 are 18.75 device pixels each at 125%, which would end what the view can scroll over between pixels
+    [Fact]
+    public void CenterOffset_ClampedAtTheEndWithMarginsAtAFractionalScale_IsOnAWholeDevicePixel()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(10), Docked with { LayoutScale = 1.25 }, new Size(300, 100));
+        // 1250 + 37.5 − 375 device pixels, with the margins and the view rounded to even
+        Assert.Equal(912, DevicePixels(layout.CenterOffset(9, 300, marginBefore: 15, marginAfter: 15), 1.25));
+    }
+
+    // At 200%, a view at 62.75 is 125.5 device pixels in, which layout shows at the even pixel, 126
+    [Theory]
+    [InlineData(62.75, 70, 70)]      // a target on a device pixel is where the view goes
+    [InlineData(62.75, 63.25, 63.5)] // 126.5 would show at 126 too; one pixel on from the 126 shown is 127
+    [InlineData(62.75, 61.25, 61.5)] // 122.5 would show at 122; three pixels back from the 126 shown is 123
+    public void OnDevicePixels_AtTwoHundredPercent_MovesWhatTheViewShowsByWholeDevicePixels(double offset,
+        double target, double expected)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(100), Docked with { LayoutScale = 2 }, new Size(300, 100));
+        Assert.Equal(expected, layout.OnDevicePixels(offset, target));
+    }
+
+    [Theory]
+    [InlineData(100, 100.2, false)] // 200 and 200.4 device pixels show at 200
+    [InlineData(100, 99.75, false)] // 199.5 shows at the even pixel, 200
+    [InlineData(100, 100.5, true)]  // 201
+    public void ShowsAnotherPixel_AtTwoHundredPercent_IsTrueOnlyWhenLayoutRoundsToAnotherDevicePixel(double offset,
+        double other, bool expected)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(10), Docked with { LayoutScale = 2 }, new Size(300, 100));
+        Assert.Equal(expected, layout.ShowsAnotherPixel(offset, other));
     }
 
     [Fact]

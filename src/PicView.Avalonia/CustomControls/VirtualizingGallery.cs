@@ -391,12 +391,13 @@ public class VirtualizingGallery : VirtualizingPanel
         _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty,
             scrollsVertically ? offset.WithY(pendingOffset) : offset.WithX(pendingOffset));
 
-        // Only a view that moves brings a viewport to tell apart. An offset the scroll viewer kept in place, as when it
-        // coerced the new one back, would otherwise stay remembered and pass a later scroll that lands there for the
-        // panel's own
+        // Only a view that moves to another device pixel brings a viewport to tell apart. An offset the scroll viewer
+        // kept in place, as when it coerced the new one back, would otherwise stay remembered and pass a later scroll
+        // that lands there for the panel's own. A move rounded to device pixels can be under the tolerance, as two
+        // pixels at 225% are, and is still the panel's own
         var before = scrollsVertically ? offset.Y : offset.X;
         var taken = scrollsVertically ? _scrollViewer.Offset.Y : _scrollViewer.Offset.X;
-        _offsetSetByPanel = Math.Abs(taken - before) > SamePositionTolerance ? taken : double.NaN;
+        _offsetSetByPanel = _layout.ShowsAnotherPixel(before, taken) ? taken : double.NaN;
     }
 
     private static bool HasSize(Rect viewport) => viewport.Width > 0 && viewport.Height > 0;
@@ -426,10 +427,10 @@ public class VirtualizingGallery : VirtualizingPanel
             return new Size();
         }
 
-        // 1. Calculate all layout boundaries instantly in memory
+        // 1. Calculate all layout boundaries instantly in memory, on the device pixels layout rounding puts them on
         _layout.Calculate(items,
             new GalleryLayoutOptions(Orientation, IsExpanded, ItemHeight, ItemWidth, ItemSpacing, LineSpacing,
-                WrapHeightOverride),
+                WrapHeightOverride, LayoutHelper.GetLayoutScale(this)),
             availableSize);
 
         _viewer ??= this.FindAncestorOfType<NavigateAbleItemsViewer>();
@@ -453,11 +454,27 @@ public class VirtualizingGallery : VirtualizingPanel
         var viewStart = _scrollViewer is { } scrollViewer
             ? (scrollsVertically ? scrollViewer.Offset.Y : scrollViewer.Offset.X) - marginBefore
             : scrollsVertically ? _viewport.Y : _viewport.X;
-        var (target, anchor) = ChooseView(viewStart, length, marginBefore, marginAfter);
+        var (target, targetOnPixels, anchor) = ChooseView(viewStart, length, marginBefore, marginAfter);
 
-        // The scroll viewer takes the new offset once the layout pass is done, when its extent has caught up
-        if (Math.Abs(target - (viewStart + marginBefore)) > SamePositionTolerance)
+        // The scroll viewer takes the new offset once the layout pass is done, when its extent has caught up. The view
+        // moves by whole device pixels, as the items do when sizes are read, so the items it shows keep their pixels
+        var offset = viewStart + marginBefore;
+        var heldView = target;
+        if (Math.Abs(target - offset) > SamePositionTolerance)
         {
+            if (_layout.IsOnDevicePixel(offset))
+            {
+                // A view on pixels goes to the target's own pixels, which move by exactly as much as the items
+                target = _layout.OnDevicePixels(offset, targetOnPixels);
+            }
+            else
+            {
+                // A view between pixels is where the user left it, and layout shows it at the nearest pixel. It moves
+                // from that pixel, and holds its item from where it lands, so its later moves start on pixels
+                target = _layout.OnDevicePixels(offset, target);
+                heldView = target;
+            }
+
             _pendingOffset = target;
         }
 
@@ -503,8 +520,9 @@ public class VirtualizingGallery : VirtualizingPanel
             }
         }
 
-        // 7. Hold the item nearest the middle of that view, for when someone else scrolls it
-        HoldItemNearest(targetStart + length / 2);
+        // 7. Hold the item nearest the middle of that view, for when someone else scrolls it. A view on pixels holds it
+        // at its exact distance, not where rounding put the view, so roundings never add up over many moves
+        HoldItemNearest(heldView - marginBefore + length / 2);
 
         return _layout.Extent;
     }
@@ -518,22 +536,29 @@ public class VirtualizingGallery : VirtualizingPanel
     /// <param name="length">The length of the view along the scroll axis.</param>
     /// <param name="marginBefore">The panel's margin before its items along the scroll axis.</param>
     /// <param name="marginAfter">The panel's margin after its items along the scroll axis.</param>
-    private (double Target, int Anchor) ChooseView(double viewStart, double length, double marginBefore,
-        double marginAfter)
+    /// <returns>
+    ///     The exact offset, which tells whether the view moves at all, and the offset on whole device pixels that a
+    ///     view on them moves to. A centering offset is both.
+    /// </returns>
+    private (double Target, double TargetOnPixels, int Anchor) ChooseView(double viewStart, double length,
+        double marginBefore, double marginAfter)
     {
         var current = _viewer?.CurrentItemIndex ?? -1;
         if (_isFollowing && current >= 0 && current < _layout.Bounds.Count)
         {
-            return (_layout.CenterOffset(current, length, marginBefore, marginAfter), current);
+            var centered = _layout.CenterOffset(current, length, marginBefore, marginAfter);
+            return (centered, centered, current);
         }
 
         var held = !_isFollowing && _heldItem is not null ? IndexOf(_heldItem) : -1;
         if (held is not -1)
         {
-            return (_layout.HoldOffset(held, _heldDistance, length, marginBefore, marginAfter), held);
+            return (_layout.HoldOffset(held, _heldDistance, length, marginBefore, marginAfter),
+                _layout.HoldOffsetOnDevicePixels(held, _heldDistance, length, marginBefore, marginAfter), held);
         }
 
-        return (viewStart + marginBefore, _layout.IndexNearest(viewStart + length / 2));
+        var offset = viewStart + marginBefore;
+        return (offset, offset, _layout.IndexNearest(viewStart + length / 2));
     }
 
     /// <summary>
