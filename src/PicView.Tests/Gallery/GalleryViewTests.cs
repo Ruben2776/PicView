@@ -88,15 +88,42 @@ public class GalleryViewTests
         });
     }
 
-    // The gallery view finds its tab through the application's DataContext, as the active tab of the active window
-    private static void WithGalleryView(Action<TabViewModel, NavigateAbleItemsViewer> test)
+    [AvaloniaFact]
+    public void Initialize_ForATabThatIsNotTheActiveOne_ShowsThatTabsItems()
+    {
+        WithGalleryView(vm =>
+        {
+            var first = vm.WindowTabs.ActiveTab.CurrentValue;
+            var second = vm.WindowTabs.CreateTab();
+            vm.WindowTabs.SelectTab(first);
+            return second;
+        }, (tab, vm, viewer) =>
+        {
+            var active = vm.WindowTabs.ActiveTab.CurrentValue;
+            Assert.NotSame(tab, active);
+            var own = new GalleryItemViewModel { FileInfo = new FileInfo("own.jpg") };
+
+            tab.Gallery.GalleryItems.Add(own);
+            active.Gallery.GalleryItems.Add(new GalleryItemViewModel { FileInfo = new FileInfo("other.jpg") });
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal([own], viewer.Items.Cast<GalleryItemViewModel>());
+        });
+    }
+
+    private static void WithGalleryView(Action<TabViewModel, NavigateAbleItemsViewer> test) =>
+        WithGalleryView(static vm => vm.WindowTabs.ActiveTab.CurrentValue, (tab, _, viewer) => test(tab, viewer));
+
+    // The gallery view loads its XAML only when the application's DataContext is a CoreViewModel
+    private static void WithGalleryView(Func<MainWindowViewModel, TabViewModel> tabOf,
+        Action<TabViewModel, MainWindowViewModel, NavigateAbleItemsViewer> test)
     {
         var core = new CoreViewModel(null, _ => ValueTask.FromResult(new ImageModel()));
         var window = new TestMainWindow(new NoOpModeAdapter());
         var vm = new MainWindowViewModel(core, core.Translation, window, core.GlobalSettings!, core.GallerySettings);
         window.DataContext = vm;
         core.MainWindows.ActiveWindow.Value = vm;
-        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        var tab = tabOf(vm);
         var thumbCache = new MockThumbnailCache();
         tab.Initialize(new SharedImageCache(static f => ValueTask.FromResult(new ImageModel { FileInfo = f })),
             thumbCache, new MockThumbnailLoader());
@@ -106,8 +133,9 @@ public class GalleryViewTests
         application.DataContext = core;
         try
         {
-            var view = new GalleryView { DataContext = tab };
-            test(tab, view.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!);
+            var view = new GalleryView();
+            view.Initialize(tab);
+            test(tab, vm, view.FindControl<NavigateAbleItemsViewer>("GalleryItemsControl")!);
         }
         finally
         {

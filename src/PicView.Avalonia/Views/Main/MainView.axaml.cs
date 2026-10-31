@@ -97,7 +97,7 @@ public partial class MainView : UserControl
 
         if (tabViewModel.Model?.FileInfo is not null)
         {
-            tabViewModel.CurrentView.Value = new ImageViewer();
+            tabViewModel.CurrentView.Value = new ImageViewer(tabViewModel);
         }
         else
         {

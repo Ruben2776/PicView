@@ -63,7 +63,7 @@ public partial class StartUpMenu : UserControl
             return;
         }
 
-        tab.CurrentView.Value = new ImageViewer();
+        tab.CurrentView.Value = new ImageViewer(tab);
         var isPastedSuccessfully = mainWindow.ClipboardPasteService is not null
             && await mainWindow.ClipboardPasteService.PasteAsync(vm).ConfigureAwait(true);
         if (!isPastedSuccessfully)

@@ -80,7 +80,7 @@ public static class QuickLoad
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             mainWindow.Show();
-            tab.CurrentView.Value = new ImageViewer();
+            tab.CurrentView.Value = new ImageViewer(tab);
         }, DispatcherPriority.Send);
         if (vm.WindowModeState.CurrentValue.AutoFit)
         {
@@ -328,6 +328,6 @@ public static class QuickLoad
     private static async ValueTask ShowImageViewerAsync(TabViewModel tab) =>
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            tab.CurrentView.Value = new ImageViewer();
+            tab.CurrentView.Value = new ImageViewer(tab);
         }, DispatcherPriority.Send);
 }

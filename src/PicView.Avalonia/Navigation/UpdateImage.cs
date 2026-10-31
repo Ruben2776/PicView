@@ -179,7 +179,7 @@ public static class UpdateImage
         {
             if (tabViewModel.CurrentView?.CurrentValue is not ImageViewer imageViewer)
             {
-                tabViewModel.CurrentView.Value = new ImageViewer();
+                tabViewModel.CurrentView.Value = new ImageViewer(tabViewModel);
                 mainWindow.WindowFitter.Refit();
                 if (Settings.WindowProperties.KeepCentered)
                 {
