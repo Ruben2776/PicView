@@ -271,17 +271,25 @@ public static class SettingsUpdater
         {
             return;
         }
-        
+
+        bool value;
         if (Settings.Zoom.ScrollEnabled)
         {
             TurnOffScroll(vm);
+            value = false;
         }
         else
         {
             TurnOnScroll(vm);
+            value = true;
         }
         
         mainWindow.WindowFitter.Refit();
+        
+        var msg = value
+            ? TranslationManager.Translation.ScrollingEnabled
+            : TranslationManager.Translation.ScrollingDisabled;
+        _ = TooltipHelper.ShowTooltipMessageAsync(msg, false, mainWindow, TimeSpan.FromSeconds(1.5));
         
         await SaveSettingsAsync().ConfigureAwait(false);
     }
@@ -300,7 +308,7 @@ public static class SettingsUpdater
         Settings.Zoom.ScrollEnabled = true;
     }
     
-    public static async Task ToggleLooping(MainWindowViewModel vm)
+    public static async Task ToggleLooping(MainWindowViewModel vm, MainWindow mainWindow)
     {
         var value = !Settings.UIProperties.Looping;
         Settings.UIProperties.Looping = value;
@@ -312,7 +320,7 @@ public static class SettingsUpdater
         var msg = value
             ? TranslationManager.Translation.LoopingEnabled
             : TranslationManager.Translation.LoopingDisabled;
-        TooltipHelper.ShowTooltipMessage(vm, msg);
+        _ = TooltipHelper.ShowTooltipMessageAsync(msg, false, mainWindow, TimeSpan.FromSeconds(1.5));
 
         var windowTabs = vm.WindowTabs;
         var tab = windowTabs.ActiveTab.CurrentValue;

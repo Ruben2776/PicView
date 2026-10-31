@@ -2,9 +2,9 @@
 using Avalonia.Threading;
 using PicView.Avalonia.Animations;
 using PicView.Avalonia.CustomControls;
+using PicView.Avalonia.Gallery;
 using PicView.Core.DebugTools;
 using PicView.Core.ViewModels;
-using R3;
 using VerticalAlignment = Avalonia.Layout.VerticalAlignment;
 
 namespace PicView.Avalonia.UI;
@@ -19,58 +19,32 @@ public static class TooltipHelper
     private static bool _isRunning;
     
     private static CancellationTokenSource? _cancellationTokenSource;
-
-    public static void StartTooltipSubscription(ToolTipViewModel model, MainWindow mainWindow)
+    
+    /// <summary>
+    /// Displays a tooltip message with the specified configuration.
+    /// </summary>
+    /// <param name="vm">The Main Window to show the tooltip in.</param>
+    /// <param name="message">The message content to be displayed in the tooltip.</param>
+    /// <param name="center">Indicates whether the tooltip should be centered. Defaults to false.</param>
+    /// <param name="interval">The time interval for which the tooltip is displayed. If null, a default interval is used.</param>
+    public static void ShowTooltipMessage(MainWindowViewModel vm, object message, bool center = false,
+        TimeSpan? interval = null)
     {
-        model.ToolTipMessageSource
-            .Where(msg => !string.IsNullOrWhiteSpace(msg)) // Ignore empty messages
-            .Select(message => Observable.FromAsync(token => ShowToolTipAsync(
-                message,
-                model.ToolTipMessageCentered.CurrentValue,
-                mainWindow,
-                model.ToolTipMessageInterval.CurrentValue,
-                token)))
-            .Switch() // Switch to the latest message, cancelling the previous animation
-            .Subscribe();
-    }
-    private static async ValueTask ShowToolTipAsync(string message, bool center, MainWindow mainWindow, TimeSpan interval, CancellationToken cancellationToken)
-    {
-        mainWindow.UIHelper.GetToolTipMessage.ToolTipMessageText.Text = message;
-        mainWindow.UIHelper.GetToolTipMessage.IsVisible = true;
-        
-        mainWindow.UIHelper.GetToolTipMessage.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
-        mainWindow.UIHelper.GetToolTipMessage.VerticalAlignment =
-            center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
+        var toolTip = vm.ToolTip;
 
-        // 2. Create and run the fade-in animation
-        var fadeIn = AnimationsHelper.OpacityAnimation(0, 1, Speed);
-        await fadeIn.RunAsync(mainWindow.UIHelper.GetToolTipMessage, cancellationToken).ConfigureAwait(true);
-
-        // Exit if a new message cancelled this task
-        if (cancellationToken.IsCancellationRequested) return;
-
-        // 3. Wait for a few seconds
-        await Task.Delay(interval, cancellationToken).ConfigureAwait(true);
-
-        // Exit if a new message cancelled this task
-        if (cancellationToken.IsCancellationRequested)
+        if (interval is not null)
         {
-            // If cancelled here, we still want to fade out smoothly
-            var instantFadeOut = AnimationsHelper.OpacityAnimation(mainWindow.UIHelper.GetToolTipMessage.Opacity, 0, Speed);
-            await instantFadeOut.RunAsync(mainWindow.UIHelper.GetToolTipMessage, cancellationToken).ConfigureAwait(true);
-            mainWindow.UIHelper.GetToolTipMessage.IsVisible = false;
-            return;
+            toolTip.ToolTipMessageInterval.Value = interval.Value;
         }
-
-        // 4. Create and run the fade-out animation
-        var fadeOut = AnimationsHelper.OpacityAnimation(1, 0, 0.3);
-        await fadeOut.RunAsync(mainWindow.UIHelper.GetToolTipMessage, cancellationToken).ConfigureAwait(true);
-            
-        // 5. Hide the control
-        mainWindow.UIHelper.GetToolTipMessage.IsVisible = false;
+        else
+        {
+            toolTip.ToolTipMessageInterval.Value = TimeSpan.FromSeconds(Speed);
+        }
+        toolTip.ToolTipMessageCentered.Value = center;
+        toolTip.ToolTipMessageSource.Value = message.ToString();
     }
     
-    public static async Task ShowTooltipMessageContinuallyAsync(object message, bool center, MainWindow mainWindow, TimeSpan interval)
+    public static async Task ShowTooltipMessageAsync(object message, bool center, MainWindow mainWindow, TimeSpan interval)
     {
         try
         {
@@ -92,7 +66,24 @@ public static class TooltipHelper
                 
                 if (!_isRunning)
                 {
-                    mainWindow.UIHelper.GetToolTipMessage.Margin = center ? new Thickness(0) : new Thickness(0, 0, 0, 15);
+                    Thickness tooltipMargin;
+                    if (center)
+                    {
+                        tooltipMargin = new Thickness(0);
+                    }
+                    else
+                    {
+                        if (mainWindow.DataContext is MainWindowViewModel vm && vm.WindowTabs.ActiveTab.CurrentValue.Gallery.IsDockedGalleryVisible.CurrentValue)
+                        {
+                            var gallerySize = GalleryHelper.GetGallerySize(vm);
+                            tooltipMargin = new Thickness(0, 0, 0,  gallerySize.height + 15);
+                        }
+                        else
+                        {
+                            tooltipMargin = new Thickness(0, 0, 0, 15);
+                        }
+                    }
+                    mainWindow.UIHelper.GetToolTipMessage.Margin = tooltipMargin;
                     mainWindow.UIHelper.GetToolTipMessage.VerticalAlignment =  
                         center ? VerticalAlignment.Center : VerticalAlignment.Bottom;
                 }
@@ -119,35 +110,11 @@ public static class TooltipHelper
         }
         catch (Exception e)
         {
-            DebugHelper.LogDebug(nameof(TooltipHelper), nameof(ShowTooltipMessageContinuallyAsync), e);
+            DebugHelper.LogDebug(nameof(TooltipHelper), nameof(ShowTooltipMessageAsync), e);
         }
         finally
         {
             _isRunning = false;
         }
-    }
-
-    /// <summary>
-    /// Displays a tooltip message with the specified configuration.
-    /// </summary>
-    /// <param name="vm">The Main Window to show the tooltip in.</param>
-    /// <param name="message">The message content to be displayed in the tooltip.</param>
-    /// <param name="center">Indicates whether the tooltip should be centered. Defaults to false.</param>
-    /// <param name="interval">The time interval for which the tooltip is displayed. If null, a default interval is used.</param>
-    public static void ShowTooltipMessage(MainWindowViewModel vm, object message, bool center = false,
-        TimeSpan? interval = null)
-    {
-        var toolTip = vm.ToolTip;
-
-        if (interval is not null)
-        {
-            toolTip.ToolTipMessageInterval.Value = interval.Value;
-        }
-        else
-        {
-            toolTip.ToolTipMessageInterval.Value = TimeSpan.FromSeconds(Speed);
-        }
-        toolTip.ToolTipMessageCentered.Value = center;
-        toolTip.ToolTipMessageSource.Value = message.ToString();
     }
 }

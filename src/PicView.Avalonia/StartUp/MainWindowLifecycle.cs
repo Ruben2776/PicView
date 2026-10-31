@@ -373,7 +373,6 @@ public sealed class MainWindowLifecycle
             }
 
             vm.ToolTip ??= new ToolTipViewModel();
-            TooltipHelper.StartTooltipSubscription(vm.ToolTip, window);
         }, DispatcherPriority.Background);
 
         return settingUp;

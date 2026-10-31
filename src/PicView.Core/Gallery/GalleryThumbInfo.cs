@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Runtime.InteropServices;
 using PicView.Core.Extensions;
 using PicView.Core.Localization;
 
@@ -9,6 +10,7 @@ public static class GalleryThumbInfo
     /// <summary>
     /// Represents the data for a gallery thumbnail.
     /// </summary>
+    [StructLayout(LayoutKind.Auto)]
     public readonly struct GalleryThumbHolder : IEquatable<GalleryThumbHolder>
     {
         public string FileLocation { get; }

@@ -470,10 +470,10 @@ public class FunctionsMapper : IActionRunner
         await SettingsUpdater.ToggleScroll(_vm, _mainWindow).ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="SettingsUpdater.ToggleLooping(MainWindowViewModel)" />
+    /// <inheritdoc cref="SettingsUpdater.ToggleLooping(MainWindowViewModel, MainWindow)" />
     private async ValueTask ToggleLooping()
     {
-        await SettingsUpdater.ToggleLooping(_vm).ConfigureAwait(false);
+        await SettingsUpdater.ToggleLooping(_vm, _mainWindow).ConfigureAwait(false);
     }
     
     /// <inheritdoc cref="ToggleUIVisibility.ToggleInterface(MainWindowViewModel, MainWindow)" />

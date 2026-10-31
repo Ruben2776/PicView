@@ -315,7 +315,7 @@ public partial class ImageViewer : UserControl, IDisposable, IZoomScrollTarget
                 if (Settings.Zoom.IsShowingZoomPercentagePopup)
                 {
                     var message = StringExtensions.CombineWithPercentage(adjustedZoomLevel);
-                    _ = TooltipHelper.ShowTooltipMessageContinuallyAsync(message, true,
+                    _ = TooltipHelper.ShowTooltipMessageAsync(message, true,
                         TopLevel.GetTopLevel(this) as MainWindow, TimeSpan.FromSeconds(1));
                 }
 
