@@ -342,6 +342,7 @@
   "ResizeSettings": "调整大小设置",
   "Resolution": "分辨率",
   "ResolutionUnit": "分辨率单位",
+  "RespectArchiveFolderStructure": "遵循压缩包内的文件夹结构",
   "RestartApp": "重新启动应用程序",
   "RestoreDown": "退出全屏",
   "Reverse": "逆转",

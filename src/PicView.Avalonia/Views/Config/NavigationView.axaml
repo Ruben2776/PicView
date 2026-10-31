@@ -68,6 +68,17 @@
                 x:Name="AlwaysUncompressEntireArchiveToggleButton" />
         </Border>
 
+        <!--  Respect folder structure inside archives  -->
+        <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.NavigationArchiveSearchTags}">
+            <customControls:TextToggleButton
+                Classes="MenuItemHover settingsToggleButton"
+                IsChecked="{CompiledBinding SettingsViewModel.IsRespectingArchiveStructure.Value,
+                                            Mode=TwoWay}"
+                Text="{CompiledBinding Translation.RespectArchiveFolderStructure.Value,
+                                       Mode=OneWay}"
+                x:Name="RespectArchiveFolderStructureToggleButton" />
+        </Border>
+
         <!--  Is navigating by clicking  -->
         <Border Classes="searchBorder" ui:SearchProperties.Keywords="{CompiledBinding SettingsViewModel.SearchData.IsNavigatingByClickingSearchTags}">
             <customControls:TextToggleButton
