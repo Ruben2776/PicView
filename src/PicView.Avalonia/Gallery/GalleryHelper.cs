@@ -10,17 +10,19 @@ public static class GalleryHelper
     {
         var tabs = vm.WindowTabs;
         var tab = tabs.ActiveTab.CurrentValue;
-
-        if (tab.Gallery.IsLeftDocked.CurrentValue || tab.Gallery.IsRightDocked.CurrentValue)
+        if (!tab.Gallery.IsDockedGalleryVisible.CurrentValue)
         {
-            return (GalleryDefaults.GetDockedGalleryWidth, 0);
-        }
-        if (tab.Gallery.IsBottomDocked.CurrentValue|| tab.Gallery.IsTopDocked.CurrentValue)
-        {
-            return (0, GalleryDefaults.GetDockedGalleryHeight);
+            return (0, 0);
         }
 
-        return (0, 0);
+        // From the setting, not the tab's dock flags: they follow it on a frame of their own, which can come after
+        // the gallery has moved and asked for a Fit
+        return Settings.Gallery.DockPosition switch
+        {
+            GalleryDockPosition.Left or GalleryDockPosition.Right => (GalleryDefaults.GetDockedGalleryWidth, 0),
+            GalleryDockPosition.Top or GalleryDockPosition.Bottom => (0, GalleryDefaults.GetDockedGalleryHeight),
+            _ => (0, 0)
+        };
     }
 
     public static void CenterGallery(MainWindowViewModel main)
