@@ -360,12 +360,24 @@ public class VirtualizingGallery : VirtualizingPanel
             return true;
         }
 
+        var length = scrollsVertically ? newViewport.Height : newViewport.Width;
+        var (marginBefore, marginAfter) = MarginAlong(scrollsVertically);
+        var current = _viewer?.CurrentItemIndex ?? -1;
+        if (_isFollowing && current >= 0 && current < _layout.Bounds.Count &&
+            Math.Abs(offset - _layout.CenterOffset(current, length, marginBefore, marginAfter)) <= SamePositionTolerance)
+        {
+            // The view went where following puts it, so it still shows the current item as following does. The scroll
+            // viewer moves it there late when the window shrinks with the view at the end of the strip: its own viewport
+            // lags the layout's, so it coerces the panel's move back to its old end, then takes the move once its
+            // viewport catches up
+            return true;
+        }
+
         // Hold the item now in the middle of the view, as the last layout placed it, which is what the user sees. Sizes
         // read since that layout then move the items around it, not it. The middle comes from the scroll viewer's
         // offset, since layout puts the viewport on device pixels, a fraction of a pixel off it at 125% or 150%
         _isFollowing = false;
-        var (marginBefore, _) = MarginAlong(scrollsVertically);
-        HoldItemNearest(offset - marginBefore + (scrollsVertically ? newViewport.Height : newViewport.Width) / 2);
+        HoldItemNearest(offset - marginBefore + length / 2);
         return true;
     }
 
