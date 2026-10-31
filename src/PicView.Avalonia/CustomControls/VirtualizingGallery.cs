@@ -99,6 +99,12 @@ public class VirtualizingGallery : VirtualizingPanel
     /// </summary>
     private double _offsetSetByPanel = double.NaN;
 
+    /// <summary>
+    ///     The scroll viewer's offset at the last viewport change, to tell a scroll from a viewport that moved over the
+    ///     panel for another reason, such as a new margin or scroll axis.
+    /// </summary>
+    private Vector _lastScrollOffset;
+
     /// <inheritdoc cref="WrapPanel" />
     public Orientation Orientation
     {
@@ -294,38 +300,26 @@ public class VirtualizingGallery : VirtualizingPanel
         }
 
         // A viewport arriving for the first time, as when the panel is shown, isn't a scroll
-        if (HasSize(_viewport))
+        if (HasSize(_viewport) && _scrollViewer is not null)
         {
-            HoldIfScrolled(newViewport);
+            HoldIfScrolled(newViewport, _scrollViewer);
         }
 
         _viewport = newViewport;
+        _lastScrollOffset = _scrollViewer?.Offset ?? default;
         InvalidateMeasure();
     }
 
     /// <summary>
     ///     Stops following when someone other than the panel scrolled the view, as the user does with the wheel, the
     ///     scroll bar, middle-click auto-scroll or keyboard selection, and holds the item in the middle of the new view.
+    ///     It compares the scroll viewer's offsets, not the viewports: a new margin or scroll axis, as between the Docked
+    ///     and the Expanded Gallery, moves the viewport over the panel without anyone scrolling.
     /// </summary>
-    private void HoldIfScrolled(Rect newViewport)
+    private void HoldIfScrolled(Rect newViewport, ScrollViewer scrollViewer)
     {
-        if (_scrollViewer is null)
-        {
-            return;
-        }
-
         var scrollsVertically = ScrollsVertically;
-        var oldPosition = scrollsVertically ? _viewport.Y : _viewport.X;
-        var newPosition = scrollsVertically ? newViewport.Y : newViewport.X;
-        if (Math.Abs(newPosition - oldPosition) <= SamePositionTolerance)
-        {
-            // Not moved along the scroll axis, as when the view is only resized
-            return;
-        }
-
-        // Compare what the scroll viewer took, not the viewport: the panel's own coordinates start after its margin,
-        // which the Expanded Gallery has
-        var offset = scrollsVertically ? _scrollViewer.Offset.Y : _scrollViewer.Offset.X;
+        var offset = scrollsVertically ? scrollViewer.Offset.Y : scrollViewer.Offset.X;
         if (Math.Abs(offset - _offsetSetByPanel) <= SamePositionTolerance)
         {
             // The view arrived where the panel put it
@@ -333,9 +327,16 @@ public class VirtualizingGallery : VirtualizingPanel
             return;
         }
 
-        var extent = scrollsVertically ? _scrollViewer.Extent.Height : _scrollViewer.Extent.Width;
-        var viewport = scrollsVertically ? _scrollViewer.Viewport.Height : _scrollViewer.Viewport.Width;
-        if (newPosition < oldPosition && offset >= Math.Max(0, extent - viewport) - SamePositionTolerance)
+        var lastOffset = scrollsVertically ? _lastScrollOffset.Y : _lastScrollOffset.X;
+        if (Math.Abs(offset - lastOffset) <= SamePositionTolerance)
+        {
+            // Not scrolled, as when the view is only resized
+            return;
+        }
+
+        var extent = scrollsVertically ? scrollViewer.Extent.Height : scrollViewer.Extent.Width;
+        var viewport = scrollsVertically ? scrollViewer.Viewport.Height : scrollViewer.Viewport.Width;
+        if (offset < lastOffset && offset >= Math.Max(0, extent - viewport) - SamePositionTolerance)
         {
             // The strip got shorter than the view reached, as when its items are cleared, so the scroll viewer pulled
             // the view back to its new end. No one scrolled
@@ -345,7 +346,7 @@ public class VirtualizingGallery : VirtualizingPanel
         // Hold the item now in the middle of the view, as the last layout placed it, which is what the user sees. Sizes
         // read since that layout then move the items around it, not it
         _isFollowing = false;
-        HoldItemNearest(newPosition + (scrollsVertically ? newViewport.Height : newViewport.Width) / 2);
+        HoldItemNearest(scrollsVertically ? newViewport.Center.Y : newViewport.Center.X);
     }
 
     /// <summary>
@@ -370,9 +371,9 @@ public class VirtualizingGallery : VirtualizingPanel
         _scrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty,
             scrollsVertically ? offset.WithY(pendingOffset) : offset.WithX(pendingOffset));
 
-        // Only a view that moves brings a viewport to tell apart. One the scroll viewer kept in place, as it does when
-        // the Expanded Gallery's margin keeps the target a little off the viewport, would otherwise stay remembered
-        // and pass a later scroll that lands there for the panel's own
+        // Only a view that moves brings a viewport to tell apart. An offset the scroll viewer kept in place, as when it
+        // coerced the new one back, would otherwise stay remembered and pass a later scroll that lands there for the
+        // panel's own
         var before = scrollsVertically ? offset.Y : offset.X;
         var taken = scrollsVertically ? _scrollViewer.Offset.Y : _scrollViewer.Offset.X;
         _offsetSetByPanel = Math.Abs(taken - before) > SamePositionTolerance ? taken : double.NaN;
@@ -420,20 +421,25 @@ public class VirtualizingGallery : VirtualizingPanel
             return _layout.Extent;
         }
 
-        // 3. Decide where the view goes, and which item it is about
+        // 3. Decide where the view goes, as the scroll viewer's offset, and which item it is about. The scroll viewer
+        // scrolls over the panel's margin too, so its offset is a position in the panel's coordinates plus the margin
+        // before the items
         var scrollsVertically = ScrollsVertically;
-        var position = scrollsVertically ? _viewport.Y : _viewport.X;
+        var viewStart = scrollsVertically ? _viewport.Y : _viewport.X;
         var length = scrollsVertically ? _viewport.Height : _viewport.Width;
-        var (target, anchor) = ChooseView(position, length);
+        var (marginBefore, marginAfter) = MarginAlong(scrollsVertically);
+        var (target, anchor) = ChooseView(viewStart, length, marginBefore, marginAfter);
 
         // The scroll viewer takes the new offset once the layout pass is done, when its extent has caught up
-        if (Math.Abs(target - position) > SamePositionTolerance)
+        if (Math.Abs(target - (viewStart + marginBefore)) > SamePositionTolerance)
         {
             _pendingOffset = target;
         }
 
-        // 4. Find which indices fall inside that view (inflate by 2x ItemHeight to buffer scrolling)
-        var view = scrollsVertically ? _viewport.WithY(target) : _viewport.WithX(target);
+        // 4. Find which indices fall inside that view, in the panel's coordinates (inflate by 2x ItemHeight to buffer
+        // scrolling)
+        var targetStart = target - marginBefore;
+        var view = scrollsVertically ? _viewport.WithY(targetStart) : _viewport.WithX(targetStart);
         var (startIndex, endIndex) = _layout.IndicesIn(view.Inflate(new Thickness(ItemHeight * 2)));
 
         if (startIndex is -1)
@@ -473,31 +479,46 @@ public class VirtualizingGallery : VirtualizingPanel
         }
 
         // 7. Hold the item nearest the middle of that view, for when someone else scrolls it
-        HoldItemNearest(target + length / 2);
+        HoldItemNearest(targetStart + length / 2);
 
         return _layout.Extent;
     }
 
     /// <summary>
-    ///     Where the view goes along the scroll axis, and the item it is about. While following, it centers the
+    ///     The scroll viewer's offset for the view, and the item the view is about. While following, it centers the
     ///     current item. While holding, it puts the held item back at its distance from the middle. Otherwise, as when
-    ///     the current index is out of range or the held item was removed, it stays where it is.
+    ///     the current index is out of range or the held item was removed, the view stays where it is.
     /// </summary>
-    private (double Target, int Anchor) ChooseView(double position, double length)
+    /// <param name="viewStart">Where the view starts along the scroll axis, in the panel's coordinates.</param>
+    /// <param name="length">The length of the view along the scroll axis.</param>
+    /// <param name="marginBefore">The panel's margin before its items along the scroll axis.</param>
+    /// <param name="marginAfter">The panel's margin after its items along the scroll axis.</param>
+    private (double Target, int Anchor) ChooseView(double viewStart, double length, double marginBefore,
+        double marginAfter)
     {
         var current = _viewer?.CurrentItemIndex ?? -1;
         if (_isFollowing && current >= 0 && current < _layout.Bounds.Count)
         {
-            return (_layout.CenterOffset(current, length), current);
+            return (_layout.CenterOffset(current, length, marginBefore, marginAfter), current);
         }
 
         var held = !_isFollowing && _heldItem is not null ? IndexOf(_heldItem) : -1;
         if (held is not -1)
         {
-            return (_layout.HoldOffset(held, _heldDistance, length), held);
+            return (_layout.HoldOffset(held, _heldDistance, length, marginBefore, marginAfter), held);
         }
 
-        return (position, _layout.IndexNearest(position + length / 2));
+        return (viewStart + marginBefore, _layout.IndexNearest(viewStart + length / 2));
+    }
+
+    /// <summary>
+    ///     The panel's margin before and after its items along the scroll axis, as the Expanded Gallery has. The scroll
+    ///     viewer scrolls over it too.
+    /// </summary>
+    private (double Before, double After) MarginAlong(bool scrollsVertically)
+    {
+        var margin = Margin;
+        return scrollsVertically ? (margin.Top, margin.Bottom) : (margin.Left, margin.Right);
     }
 
     /// <summary>

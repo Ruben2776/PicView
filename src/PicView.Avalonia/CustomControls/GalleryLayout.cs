@@ -13,6 +13,10 @@ public readonly record struct GalleryLayoutOptions(Orientation Orientation, bool
 /// <summary>
 ///     Where each Gallery Item sits, and the offsets along the scroll axis that center or hold one.
 ///     The scroll axis is Y in the vertical Docked Gallery and X everywhere else.
+///     <para>
+///         The bounds are in the panel's coordinates. The offsets are the scroll viewer's, which scrolls over the
+///         panel's margin too, as the Expanded Gallery has one: the items start that margin into what it scrolls.
+///     </para>
 /// </summary>
 public sealed class GalleryLayout
 {
@@ -25,7 +29,7 @@ public sealed class GalleryLayout
     public IReadOnlyList<Rect> Bounds => _bounds;
 
     /// <summary>
-    ///     The size the panel measures to, which is what its scroll viewer scrolls over.
+    ///     The size the panel measures to. Its scroll viewer scrolls over this and the panel's margin.
     /// </summary>
     public Size Extent { get; private set; }
 
@@ -166,21 +170,29 @@ public sealed class GalleryLayout
     }
 
     /// <summary>
-    ///     The scroll offset that puts the item in the middle of a view, clamped to the extent.
+    ///     The scroll offset that puts the item in the middle of a view, clamped to what the view can scroll over: the
+    ///     extent and the panel's margin around it.
     /// </summary>
     /// <param name="index">An index into <see cref="Bounds" />.</param>
     /// <param name="viewportLength">The length of the view along the scroll axis.</param>
-    public double CenterOffset(int index, double viewportLength)
-        => Clamp(Middle(index) - viewportLength / 2, viewportLength);
+    /// <param name="marginBefore">The panel's margin before its items along the scroll axis.</param>
+    /// <param name="marginAfter">The panel's margin after its items along the scroll axis.</param>
+    public double CenterOffset(int index, double viewportLength, double marginBefore = 0, double marginAfter = 0)
+        => Clamp(marginBefore + Middle(index) - viewportLength / 2, viewportLength, marginBefore, marginAfter);
 
     /// <summary>
-    ///     The scroll offset that puts the item at a distance from the middle of a view, clamped to the extent.
+    ///     The scroll offset that puts the item at a distance from the middle of a view, clamped to what the view can
+    ///     scroll over: the extent and the panel's margin around it.
     /// </summary>
     /// <param name="index">An index into <see cref="Bounds" />.</param>
     /// <param name="distanceFromMiddle">How far the item's middle is past the middle of the view. Negative when before it.</param>
     /// <param name="viewportLength">The length of the view along the scroll axis.</param>
-    public double HoldOffset(int index, double distanceFromMiddle, double viewportLength)
-        => Clamp(Middle(index) - distanceFromMiddle - viewportLength / 2, viewportLength);
+    /// <param name="marginBefore">The panel's margin before its items along the scroll axis.</param>
+    /// <param name="marginAfter">The panel's margin after its items along the scroll axis.</param>
+    public double HoldOffset(int index, double distanceFromMiddle, double viewportLength, double marginBefore = 0,
+        double marginAfter = 0)
+        => Clamp(marginBefore + Middle(index) - distanceFromMiddle - viewportLength / 2, viewportLength, marginBefore,
+            marginAfter);
 
     /// <summary>
     ///     The index of the item whose <see cref="Middle" /> is nearest the position. When two are equally near, or
@@ -271,11 +283,12 @@ public sealed class GalleryLayout
     }
 
     /// <summary>
-    ///     Keeps an offset within what the view can scroll to: from the start to the end of the extent.
+    ///     Keeps an offset within what the view can scroll to: from the start of the margin before the items to the end
+    ///     of the margin after them.
     /// </summary>
-    private double Clamp(double offset, double viewportLength)
+    private double Clamp(double offset, double viewportLength, double marginBefore, double marginAfter)
     {
         var extentLength = ScrollsVertically ? Extent.Height : Extent.Width;
-        return Math.Clamp(offset, 0, Math.Max(0, extentLength - viewportLength));
+        return Math.Clamp(offset, 0, Math.Max(0, marginBefore + extentLength + marginAfter - viewportLength));
     }
 }
