@@ -1,9 +1,13 @@
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using PicView.Avalonia.CustomControls;
+using PicView.Core.Gallery;
+using PicView.Core.ViewModels;
 using System.Linq;
 using Xunit;
 
@@ -212,4 +216,320 @@ public class VirtualizingGalleryTests
             window.Close();
         }));
     }
+
+    [AvaloniaFact]
+    public void Shown_CurrentItemFarAlong_CreatesItsContainerFirstAndCentersIt()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            Assert.Equal(150, strip.Prepared[0]);
+            Assert.All(strip.Prepared, index => Assert.InRange(index, 140, 160));
+            AssertCenteredOn(150, strip);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void WidthsChangeToTheLeft_WhileFollowing_KeepsTheCurrentItemCentered()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            Widen(strip.Items.Take(150), strip.Gallery);
+
+            Assert.Equal(30050 - strip.ViewportWidth / 2, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void ScrolledByTheUser_WidthsChangeToTheLeft_HoldTheMiddleItemUntilACenterRequest()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            // Item 105 sits in the middle of the view
+            strip.ScrollTo(10550 - strip.ViewportWidth / 2);
+
+            Widen(strip.Items.Take(50), strip.Gallery);
+            Assert.Equal(15550 - strip.ViewportWidth / 2, strip.ScrollViewer.Offset.X, Tolerance);
+
+            strip.Viewer.ScrollToCenterOfCurrentItem();
+            Dispatcher.UIThread.RunJobs();
+            Assert.Equal(20050 - strip.ViewportWidth / 2, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void MeasuredWithoutAViewport_CreatesNoContainersUntilShown()
+    {
+        var strip = ShowStrip(200, 150, show: false);
+        try
+        {
+            strip.Viewer.ApplyTemplate();
+            strip.Viewer.Measure(new Size(1000, 150));
+            Assert.Empty(strip.Prepared);
+
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.Equal(150, strip.Prepared[0]);
+            AssertCenteredOn(150, strip);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void DockedAtTheSide_AfterTheUserScrolled_CentersTheCurrentItem()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            strip.ScrollTo(0);
+
+            strip.Viewer.SetVerticalScrolling();
+            strip.Gallery.Orientation = Orientation.Vertical;
+            strip.Window.Width = 150;
+            strip.Window.Height = 1000;
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal(15050 - strip.ScrollViewer.Viewport.Height / 2, strip.ScrollViewer.Offset.Y, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void WindowResized_WhileFollowing_KeepsTheCurrentItemCentered()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            strip.Window.Width = 600;
+            Dispatcher.UIThread.RunJobs();
+
+            AssertCenteredOn(150, strip);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void ItemsReset_AfterTheUserScrolled_CentersTheCurrentItem()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            strip.ScrollTo(0);
+
+            strip.Items.Clear();
+            strip.Items.AddRange(Enumerable.Range(0, 200).Select(_ => new GalleryItemViewModel()));
+            Dispatcher.UIThread.RunJobs();
+
+            AssertCenteredOn(150, strip);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void HeldItemRemoved_KeepsTheOffset()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            strip.ScrollTo(10550 - strip.ViewportWidth / 2);
+            var offset = strip.ScrollViewer.Offset.X;
+
+            strip.Items.RemoveAt(105);
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal(offset, strip.ScrollViewer.Offset.X);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void ItemsClearedInALayoutOfTheirOwn_AfterTheUserScrolled_CentersTheNewItems()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            strip.ScrollTo(5000);
+
+            // A folder change clears the strip and fills it later, so the empty strip gets a layout of its own, in
+            // which the scroll viewer pulls the view back to the start of the now empty strip
+            strip.Items.Clear();
+            Dispatcher.UIThread.RunJobs();
+            strip.Items.AddRange(Enumerable.Range(0, 200).Select(_ => new GalleryItemViewModel()));
+            Dispatcher.UIThread.RunJobs();
+
+            AssertCenteredOn(150, strip);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void Reattached_AfterTheUserScrolled_CentersTheCurrentItem()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            strip.ScrollTo(0);
+
+            // A tab switch takes the tab's gallery out of the window, and brings it back when the tab is shown again
+            strip.Window.Content = null;
+            Dispatcher.UIThread.RunJobs();
+            strip.Window.Content = strip.Viewer;
+            Dispatcher.UIThread.RunJobs();
+
+            AssertCenteredOn(150, strip);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void ExpandedGallery_WidthsChangeToTheLeft_KeepsTheCurrentItemInPlace()
+    {
+        var strip = ShowExpanded(200, 150);
+        try
+        {
+            var shownAt = CurrentItemX(strip);
+
+            Widen(strip.Items.Take(150), strip.Gallery);
+
+            Assert.Equal(shownAt, CurrentItemX(strip), Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void ExpandedGallery_ScrolledAwayAndBack_StaysWhereTheUserScrolled()
+    {
+        var strip = ShowExpanded(200, 150);
+        try
+        {
+            var centered = strip.ScrollViewer.Offset.X;
+
+            // A wheel step away and one back, which lands where the panel put the view
+            strip.ScrollTo(centered + 50);
+            strip.ScrollTo(centered);
+
+            Assert.Equal(centered, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    private const double Tolerance = 1;
+
+    private sealed record Strip(Window Window, NavigateAbleItemsViewer Viewer, VirtualizingGallery Gallery,
+        AvaloniaList<GalleryItemViewModel> Items, List<int> Prepared)
+    {
+        public ScrollViewer ScrollViewer => Gallery.FindAncestorOfType<ScrollViewer>()!;
+        public double ViewportWidth => ScrollViewer.Viewport.Width;
+
+        public void ScrollTo(double x)
+        {
+            ScrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, new Vector(x, 0));
+            Dispatcher.UIThread.RunJobs();
+        }
+    }
+
+    /// <summary>
+    /// <paramref name="count"/> unsized items, so 100-wide squares, in a 1000-wide horizontal Docked Gallery. The current
+    /// item is <paramref name="currentIndex"/>, and the strip records the index of every container it prepares.
+    /// </summary>
+    private static Strip ShowStrip(int count, int currentIndex, bool show = true)
+    {
+        var items = new AvaloniaList<GalleryItemViewModel>(Enumerable.Range(0, count).Select(_ => new GalleryItemViewModel()));
+        var gallery = new VirtualizingGallery { ItemHeight = 100, Orientation = Orientation.Horizontal };
+        var viewer = new NavigateAbleItemsViewer
+        {
+            ItemsPanel = new FuncTemplate<Panel?>(() => gallery),
+            ItemTemplate = new FuncDataTemplate<GalleryItemViewModel>((_, _) => new Border()),
+            ItemsSource = items,
+            CurrentItemIndex = currentIndex
+        };
+        var strip = new Strip(new Window { Width = 1000, Height = 150, Content = viewer }, viewer, gallery, items, []);
+        viewer.ContainerPrepared += (_, e) => strip.Prepared.Add(e.Index);
+        if (show)
+        {
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+        }
+        return strip;
+    }
+
+    /// <summary>
+    /// <see cref="ShowStrip"/>'s items in the Expanded Gallery's columns instead. Its margin is the app's, which puts the
+    /// panel 15 pixels into what the scroll viewer scrolls.
+    /// </summary>
+    private static Strip ShowExpanded(int count, int currentIndex)
+    {
+        var strip = ShowStrip(count, currentIndex, show: false);
+        strip.Gallery.IsExpanded = true;
+        strip.Gallery.Orientation = Orientation.Vertical;
+        strip.Gallery.Margin = new Thickness(15, 40, 15, 5);
+        strip.Window.Height = 400;
+        strip.Window.Show();
+        Dispatcher.UIThread.RunJobs();
+        return strip;
+    }
+
+    private static void Widen(IEnumerable<GalleryItemViewModel> items, VirtualizingGallery gallery)
+    {
+        foreach (var item in items)
+        {
+            item.SetDetails(new GalleryFileDetails(200, 100, null));
+        }
+        gallery.InvalidateMeasure();
+        Dispatcher.UIThread.RunJobs();
+    }
+
+    /// <summary>
+    /// Item <paramref name="index"/> spans 100 * index to 100 * index + 100, so the strip is centered on it when the
+    /// view's middle is at 100 * index + 50.
+    /// </summary>
+    private static void AssertCenteredOn(int index, Strip strip) =>
+        Assert.Equal(100 * index + 50 - strip.ViewportWidth / 2, strip.ScrollViewer.Offset.X, Tolerance);
+
+    /// <summary>
+    /// Where the current item's container is in the scroll viewer, which is where the user sees it.
+    /// </summary>
+    private static double CurrentItemX(Strip strip) =>
+        strip.Viewer.ContainerFromIndex(strip.Viewer.CurrentItemIndex)!.TranslatePoint(default, strip.ScrollViewer)!.Value.X;
 }

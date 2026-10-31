@@ -29,8 +29,6 @@ public class NavigateAbleItemsViewer : ItemsControl
 
     private IDisposable? _viewportSubscription;
 
-    private bool _isScrollToCenterDeferred;
-
     protected override Type StyleKeyOverride => typeof(NavigateAbleItemsViewer);
 
     public static readonly StyledProperty<int> SelectedItemIndexProperty =
@@ -159,94 +157,24 @@ public class NavigateAbleItemsViewer : ItemsControl
         _scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
     }
 
+    /// <summary>
+    ///     A center request: the panel centers the current item in its next layout, and in every layout after that
+    ///     until someone else scrolls it. A request made before the panel exists needs nothing more, since a new panel
+    ///     centers the current item.
+    /// </summary>
     public void ScrollToCenterOfCurrentItem()
     {
         if (Dispatcher.CheckAccess())
         {
-            ScrollToCenterOfCurrentItemInternal();
+            CenterCurrentItem();
         }
         else
         {
-            Dispatcher.UIThread.Post(ScrollToCenterOfCurrentItemInternal, DispatcherPriority.Render);
+            Dispatcher.UIThread.Post(CenterCurrentItem, DispatcherPriority.Render);
         }
     }
 
-    private void ScrollToCenterOfCurrentItemInternal()
-    {
-        // Ask the VirtualizingGallery for the exact bounds, realized or not!
-        if (ItemsPanelRoot is not VirtualizingGallery gallery)
-        {
-            return;
-        }
-
-        var itemRect = gallery.GetItemBounds(CurrentItemIndex);
-        if (itemRect is null)
-        {
-            return;
-        }
-
-        var viewportWidth = _scrollViewer!.Viewport.Width;
-        var viewportHeight = _scrollViewer.Viewport.Height;
-
-        // If viewport is not yet measured, defer until the ScrollViewer has been laid out.
-        // Re-posting on the dispatcher here spins forever (starving input and layout)
-        // while the gallery is hidden or not yet measured, e.g. when returning from crop mode.
-        if (viewportWidth <= 0 && viewportHeight <= 0)
-        {
-            DeferScrollToCenterUntilMeasured();
-            return;
-        }
-
-        var pos = itemRect.Value;
-        var offset = _scrollViewer.Offset;
-        var newX = offset.X;
-        var newY = offset.Y;
-
-        // Center Horizontally if scrolling is possible
-        if (_scrollViewer.Extent.Width > viewportWidth && viewportWidth > 0)
-        {
-            var itemCenter = pos.X + pos.Width / 2;
-            var viewportCenter = viewportWidth / 2;
-            var maxScrollX = _scrollViewer.Extent.Width - viewportWidth;
-                
-            newX = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollX);
-        }
-
-        // Center Vertically if scrolling is possible
-        if (_scrollViewer.Extent.Height > viewportHeight && viewportHeight > 0)
-        {
-            var itemCenter = pos.Y + pos.Height / 2;
-            var viewportCenter = viewportHeight / 2;
-            var maxScrollY = _scrollViewer.Extent.Height - viewportHeight;
-                
-            newY = Math.Clamp(itemCenter - viewportCenter, 0, maxScrollY);
-        }
-
-        _scrollViewer.Offset = new Vector(newX, newY);
-    }
-
-    private void DeferScrollToCenterUntilMeasured()
-    {
-        if (_isScrollToCenterDeferred || _scrollViewer is null)
-        {
-            return;
-        }
-
-        _isScrollToCenterDeferred = true;
-        _scrollViewer.ScrollChanged += OnDeferredScrollChanged;
-    }
-
-    private void OnDeferredScrollChanged(object? sender, ScrollChangedEventArgs e)
-    {
-        if (_scrollViewer is null || (_scrollViewer.Viewport.Width <= 0 && _scrollViewer.Viewport.Height <= 0))
-        {
-            return;
-        }
-
-        _scrollViewer.ScrollChanged -= OnDeferredScrollChanged;
-        _isScrollToCenterDeferred = false;
-        ScrollToCenterOfCurrentItemInternal();
-    }
+    private void CenterCurrentItem() => (ItemsPanelRoot as VirtualizingGallery)?.CenterCurrentItem();
 
     private void OnPointerWheelChanged(object? sender, PointerWheelEventArgs e)
     {
