@@ -100,8 +100,9 @@ public class VirtualizingGallery : VirtualizingPanel
     private double _offsetSetByPanel = double.NaN;
 
     /// <summary>
-    ///     The scroll viewer's offset at the last viewport change, to tell a scroll from a viewport that moved over the
-    ///     panel for another reason, such as a new margin or scroll axis.
+    ///     The scroll viewer's offset for the next viewport to compare with, to tell a scroll from a viewport that moved
+    ///     over the panel for another reason, such as a new margin or scroll axis. Along the scroll axis it is the offset
+    ///     from the last move that counted, so slow steps add up.
     /// </summary>
     private Vector _lastScrollOffset;
 
@@ -300,13 +301,24 @@ public class VirtualizingGallery : VirtualizingPanel
         }
 
         // A viewport arriving for the first time, as when the panel is shown, isn't a scroll
+        var moveCounted = true;
         if (HasSize(_viewport) && _scrollViewer is not null)
         {
-            HoldIfScrolled(newViewport, _scrollViewer);
+            moveCounted = HoldIfScrolled(newViewport, _scrollViewer);
         }
 
         _viewport = newViewport;
-        _lastScrollOffset = _scrollViewer?.Offset ?? default;
+        var scrollOffset = _scrollViewer?.Offset ?? default;
+        if (!moveCounted)
+        {
+            // Keep the offset from before the move along the scroll axis, so slow steps add up to a scroll. Across the
+            // axis, take the new one: the next viewport compares with it if the scroll axis changes
+            scrollOffset = ScrollsVertically
+                ? scrollOffset.WithY(_lastScrollOffset.Y)
+                : scrollOffset.WithX(_lastScrollOffset.X);
+        }
+
+        _lastScrollOffset = scrollOffset;
         InvalidateMeasure();
     }
 
@@ -316,7 +328,11 @@ public class VirtualizingGallery : VirtualizingPanel
     ///     It compares the scroll viewer's offsets, not the viewports: a new margin or scroll axis, as between the Docked
     ///     and the Expanded Gallery, moves the viewport over the panel without anyone scrolling.
     /// </summary>
-    private void HoldIfScrolled(Rect newViewport, ScrollViewer scrollViewer)
+    /// <returns>
+    ///     False when the offset moved too little to count, so the next viewport compares with the offset from before
+    ///     this move, and slow steps add up to a scroll.
+    /// </returns>
+    private bool HoldIfScrolled(Rect newViewport, ScrollViewer scrollViewer)
     {
         var scrollsVertically = ScrollsVertically;
         var offset = scrollsVertically ? scrollViewer.Offset.Y : scrollViewer.Offset.X;
@@ -324,14 +340,15 @@ public class VirtualizingGallery : VirtualizingPanel
         {
             // The view arrived where the panel put it
             _offsetSetByPanel = double.NaN;
-            return;
+            return true;
         }
 
         var lastOffset = scrollsVertically ? _lastScrollOffset.Y : _lastScrollOffset.X;
         if (Math.Abs(offset - lastOffset) <= SamePositionTolerance)
         {
-            // Not scrolled, as when the view is only resized
-            return;
+            // Not scrolled, or not far enough yet to count, as when the view is only resized or a slow step moves it
+            // under a pixel
+            return false;
         }
 
         var extent = scrollsVertically ? scrollViewer.Extent.Height : scrollViewer.Extent.Width;
@@ -340,13 +357,14 @@ public class VirtualizingGallery : VirtualizingPanel
         {
             // The strip got shorter than the view reached, as when its items are cleared, so the scroll viewer pulled
             // the view back to its new end. No one scrolled
-            return;
+            return true;
         }
 
         // Hold the item now in the middle of the view, as the last layout placed it, which is what the user sees. Sizes
         // read since that layout then move the items around it, not it
         _isFollowing = false;
         HoldItemNearest(scrollsVertically ? newViewport.Center.Y : newViewport.Center.X);
+        return true;
     }
 
     /// <summary>

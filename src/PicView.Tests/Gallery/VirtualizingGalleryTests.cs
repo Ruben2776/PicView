@@ -580,6 +580,72 @@ public class VirtualizingGalleryTests
         }
     }
 
+    [AvaloniaTheory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ScrolledInStepsUnderAPixel_WhileFollowingOrHolding_AdvancesByTheirSum(bool holding)
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            if (holding)
+            {
+                strip.ScrollTo(14050);
+            }
+
+            var start = strip.ScrollViewer.Offset.X;
+
+            // Middle-click auto-scroll near where it was clicked, or a slow touchpad, moves the view under a pixel a step
+            for (var step = 0; step < 10; step++)
+            {
+                strip.ScrollTo(strip.ScrollViewer.Offset.X + 0.9);
+            }
+
+            Assert.Equal(start + 9, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void DockedAtTheSideAgain_AfterAnExpandedGalleryThatFits_CentersTheCurrentItem()
+    {
+        var strip = ShowStrip(20, 10);
+        try
+        {
+            // Docked at the side, centered on item 10
+            strip.Viewer.SetVerticalScrolling();
+            strip.Gallery.Orientation = Orientation.Vertical;
+            strip.Window.Width = 150;
+            strip.Window.Height = 1000;
+            Dispatcher.UIThread.RunJobs();
+
+            // Expanded, where all 20 items fit, so the panel never moves the view
+            strip.Viewer.SetHorizontalScrolling();
+            strip.Gallery.IsExpanded = true;
+            strip.Gallery.Margin = new Thickness(15, 40, 15, 5);
+            strip.Window.Width = 1000;
+            strip.Window.Height = 400;
+            Dispatcher.UIThread.RunJobs();
+
+            // Docked at the side again, after the expanded columns kept the vertical offset at 0
+            strip.Viewer.SetVerticalScrolling();
+            strip.Gallery.IsExpanded = false;
+            strip.Gallery.Margin = default;
+            strip.Window.Width = 150;
+            strip.Window.Height = 1000;
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal(1050 - strip.ScrollViewer.Viewport.Height / 2, strip.ScrollViewer.Offset.Y, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
     private const double Tolerance = 1;
 
     private sealed record Strip(Window Window, NavigateAbleItemsViewer Viewer, VirtualizingGallery Gallery,
