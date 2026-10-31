@@ -42,7 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Magick.NET-Q8-x64" Version="$(MagickNetVersion)" />
-    <PackageReference Include="Meziantou.Analyzer" Version="3.0.317">
+    <PackageReference Include="Meziantou.Analyzer" Version="3.0.318">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

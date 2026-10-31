@@ -281,7 +281,7 @@
         <PackageReference Include="Magick.NET.AvaloniaMediaImaging" Version="$(MagickAvaloniaVersion)" />
         <PackageReference Include="Ruben2776.R3Extensions.Avalonia" Version="1.3.1" />
         <PackageReference Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.17" />
-        <PackageReference Include="Meziantou.Analyzer" Version="3.0.317">
+        <PackageReference Include="Meziantou.Analyzer" Version="3.0.318">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
