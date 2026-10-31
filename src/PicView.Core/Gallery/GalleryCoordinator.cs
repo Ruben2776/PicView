@@ -435,7 +435,12 @@ public class GalleryCoordinator : IDisposable
 
                     for (var i = 0; i < batch.Length; i++)
                     {
-                        batch[i].SetDetails(details[i]);
+                        // A changed file's details come from FillDetails, which reads the file once it is ready, so
+                        // its write wins in either order. Only an item still without details takes this batch's read
+                        if (batch[i].Details is null)
+                        {
+                            batch[i].SetDetails(details[i]);
+                        }
                     }
                     Gallery.RaiseSizesChanged();
                 }).ConfigureAwait(false);
