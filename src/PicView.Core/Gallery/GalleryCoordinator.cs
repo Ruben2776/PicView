@@ -525,8 +525,7 @@ public class GalleryCoordinator : IDisposable
         var core = _tab.ParentWindowContext?.Core;
         var item = new GalleryItemViewModel { FileInfo = file };
 
-        var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(
-            file, details?.PixelWidth ?? 0, details?.PixelHeight ?? 0);
+        var thumbData = GalleryThumbInfo.GalleryThumbHolder.GetThumbData(file);
         item.FileName.Value = thumbData.FileName;
         item.FileSize.Value = thumbData.FileSize;
         item.FileDate.Value = thumbData.FileDate;

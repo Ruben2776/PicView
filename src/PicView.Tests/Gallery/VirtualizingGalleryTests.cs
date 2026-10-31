@@ -961,6 +961,42 @@ public class VirtualizingGalleryTests
         }
     }
 
+    // The last item can't be centered, so the view that follows it stays at the end of the strip, which moves by as much
+    // as the window shrinks. Holding would move the view by half that, and the strip's end would leave the view
+    [AvaloniaTheory]
+    [InlineData(1.0, 1)]
+    [InlineData(1.0, 2)]
+    [InlineData(1.25, 1)]
+    [InlineData(1.25, 2)]
+    [InlineData(1.5, 1)]
+    [InlineData(1.5, 2)]
+    [InlineData(2.0, 1)]
+    [InlineData(2.0, 2)]
+    public void WindowShrinkingInDevicePixels_WhileFollowingTheLastItem_StaysAtTheEndOfTheStrip(double renderScaling,
+        int devicePixelsPerStep)
+    {
+        var strip = ShowStrip(200, 199, show: false);
+        strip.Window.SetRenderScaling(renderScaling);
+        try
+        {
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+
+            var width = (int)Math.Round(1000 * renderScaling);
+            for (var step = 1; step <= 20; step++)
+            {
+                strip.Window.Width = (width - devicePixelsPerStep * step) / renderScaling;
+                Dispatcher.UIThread.RunJobs();
+            }
+
+            Assert.Equal(strip.ScrollViewer.Extent.Width - strip.ViewportWidth, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
     [AvaloniaFact]
     public void DockedAtTheSideAgain_AfterAnExpandedGalleryThatFits_CentersTheCurrentItem()
     {
