@@ -158,6 +158,38 @@ public class GalleryLayoutTests
         Assert.Equal(expected, layout.HoldOffset(5, distanceFromMiddle, 300));
     }
 
+    // The scroll viewer scrolls over the panel's margin too, so the items start the margin before into it
+    [Theory]
+    [InlineData(5, 440)] // middle 550, after the margin before, 40
+    [InlineData(0, 0)]   // clamped at the start of the margin before
+    [InlineData(9, 745)] // clamped at the end of the margin after: 40 + 1000 + 5 − 300
+    public void CenterOffset_TenSquaresWithMarginsInA300View_CentersOrClampsToTheMargins(int index, double expected)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(10), Docked, new Size(300, 100));
+        Assert.Equal(expected, layout.CenterOffset(index, 300, marginBefore: 40, marginAfter: 5));
+    }
+
+    [Fact]
+    public void CenterOffset_StripAndMarginsShorterThanTheView_IsZero()
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(2), Docked, new Size(300, 100));
+        Assert.Equal(0, layout.CenterOffset(1, 300, marginBefore: 40, marginAfter: 5)); // 40 + 200 + 5 is under 300
+    }
+
+    [Theory]
+    [InlineData(40, 400)]    // item 5's middle, 40 + 550, is 40 past the middle of the view at 400, which is 550
+    [InlineData(1000, 0)]    // clamped at the start of the margin before
+    [InlineData(-1000, 745)] // clamped at the end of the margin after: 40 + 1000 + 5 − 300
+    public void HoldOffset_WithMargins_PutsTheItemBackAtThatDistanceWithinTheMargins(double distanceFromMiddle,
+        double expected)
+    {
+        var layout = new GalleryLayout();
+        layout.Calculate(Squares(10), Docked, new Size(300, 100));
+        Assert.Equal(expected, layout.HoldOffset(5, distanceFromMiddle, 300, marginBefore: 40, marginAfter: 5));
+    }
+
     [Theory]
     [InlineData(599, 5)]
     [InlineData(600, 5)] // as near the middle of item 5, 550, as of item 6, 650: the lower index wins
