@@ -141,6 +141,12 @@ public class GalleryAnimationControl : UserControl
 
                 // Size directly when already docked, collapsing to 0x0 first causes an extra, expensive layout pass
                 SetDockedLayout(position, !IsInAnimation);
+
+                // The Reserved Space moves with the gallery; an animation fits the window once it ends
+                if (!IsInAnimation && TopLevel.GetTopLevel(this) is MainWindow window)
+                {
+                    window.WindowFitter.Refit();
+                }
             }, DebugHelper.LogError(nameof(GalleryAnimationControl), nameof(SetDockedLayout)))
             .AddTo(ref _disposables);
         
