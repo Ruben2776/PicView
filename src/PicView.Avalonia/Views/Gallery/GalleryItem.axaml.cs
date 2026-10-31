@@ -8,11 +8,14 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using PicView.Avalonia.Clipboard;
 using PicView.Avalonia.CustomControls;
 using PicView.Avalonia.FileSystem;
 using PicView.Avalonia.Gallery;
+using PicView.Avalonia.ImageHandling;
 using PicView.Core.DebugTools;
 using PicView.Core.Gallery;
+using PicView.Core.Navigation;
 using PicView.Core.ViewModels;
 using R3;
 
@@ -262,16 +265,36 @@ public partial class GalleryItem : NavigateAbleItem
 
     private void CopyImage_OnClick(object? sender, RoutedEventArgs e)
     {
-        // TODO: This copies the thumbnail, not the original image.
-        if (DataContext is not GalleryItemViewModel item)
+        if (Application.Current.DataContext is not CoreViewModel core || DataContext is not GalleryItemViewModel item ||
+            TopLevel.GetTopLevel(this) is not MainWindow { DataContext: MainWindowViewModel vm } mainWindow)
         {
             return;
         }
 
-        if (item.Image.CurrentValue is Bitmap image && TopLevel.GetTopLevel(this) is MainWindow mainWindow)
+        // The image open in the viewer is copied as it is shown there, turned and flipped
+        var tab = vm.WindowTabs.ActiveTab.CurrentValue;
+        if (item.FileLocation.CurrentValue.Equals(tab.FileInfo.CurrentValue.FullName, StringComparison.Ordinal))
         {
-            _ = mainWindow.ClipboardCopyService.CopyImageAsync(image).ConfigureAwait(false);
+            _ = mainWindow.ClipboardCopyService.CopyImageAsync(tab).ConfigureAwait(false);
+            return;
         }
+
+        _ = CopyOriginalImageAsync(new FileInfo(item.FileLocation.CurrentValue), core.SharedCache,
+            mainWindow.ClipboardCopyService);
+    }
+
+    private static async Task CopyOriginalImageAsync(FileInfo fileInfo, SharedImageCache cache,
+        ClipboardCopyService? clipboardCopyService)
+    {
+        if (clipboardCopyService is null)
+        {
+            return;
+        }
+
+        // A decoded bitmap is never disposed here, since pasting in PicView can show that same bitmap in a tab
+        var bitmap = await GetOriginalImage.GetBitmapAsync(fileInfo, cache).ConfigureAwait(false);
+        // The clipboard must be set on the UI thread, and a decode resumes on the thread pool
+        await Dispatcher.UIThread.InvokeAsync(() => clipboardCopyService.CopyImageAsync(bitmap).ConfigureAwait(true));
     }
 
     private void CopyBase64_OnClick(object? sender, RoutedEventArgs e)
