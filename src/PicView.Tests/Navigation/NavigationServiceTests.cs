@@ -281,6 +281,47 @@ public class NavigationServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task LoadFromArchiveAsync_ImagesInSeveralFolders_OpensFirstFolderAndKeepsFolderOrder()
+    {
+        Settings.Navigation.AlwaysUncompressEntireArchive = true;
+        var tempZipPath = Path.Combine(_testDirectory, "volumes.zip");
+        var archiveSourceDir = Path.Combine(_testDirectory, "volumes_source");
+
+        foreach (var volume in new[] { "Volume 01", "Volume 02" })
+        {
+            Directory.CreateDirectory(Path.Combine(archiveSourceDir, volume));
+            for (var i = 1; i <= 3; i++)
+            {
+                await File.WriteAllBytesAsync(Path.Combine(archiveSourceDir, volume, $"{i:D3}.jpg"), [0xFF, 0xD8, 0xFF], TestContext.Current.CancellationToken);
+            }
+        }
+
+        System.IO.Compression.ZipFile.CreateFromDirectory(archiveSourceDir, tempZipPath);
+
+        var tab = CreateTab(_testDirectory);
+        var cts = new CancellationTokenSource();
+
+        try
+        {
+            var success = await _navigationService.LoadFromArchiveAsync(tempZipPath, tab, cts);
+
+            Assert.True(success);
+            Assert.Equal("Volume 01 - 001.jpg", tab.Model?.FileInfo?.Name);
+            Assert.Equal(
+                [
+                    "Volume 01 - 001.jpg", "Volume 01 - 002.jpg", "Volume 01 - 003.jpg",
+                    "Volume 02 - 001.jpg", "Volume 02 - 002.jpg", "Volume 02 - 003.jpg"
+                ],
+                tab.ImageIterator.Files.Select(f => f.Name));
+        }
+        finally
+        {
+            tab.ArchiveExtractionService.Cleanup();
+            Settings.Navigation.AlwaysUncompressEntireArchive = false;
+        }
+    }
+
+    [Fact]
     public async Task SortAsync_Descending_SortsTheFilesAndKeepsTheShownOne()
     {
         // Arrange

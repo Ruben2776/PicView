@@ -395,6 +395,343 @@ public class ArchiveExtractionServiceTests
 
     #endregion
 
+    #region Archive folder structure
+
+    private static readonly string[] TwoVolumeEntries =
+    [
+        "Volume 01/001.jpg", "Volume 01/002.jpg", "Volume 01/003.jpg",
+        "Volume 02/001.jpg", "Volume 02/002.jpg", "Volume 02/003.jpg"
+    ];
+
+    private static readonly string[] TwoVolumeFileNames =
+    [
+        "Volume 01 - 001.jpg", "Volume 01 - 002.jpg", "Volume 01 - 003.jpg",
+        "Volume 02 - 001.jpg", "Volume 02 - 002.jpg", "Volume 02 - 003.jpg"
+    ];
+
+    /// <summary>
+    ///     Creates a zip whose files sit at the given relative paths, the way a comic archive with
+    ///     one folder per volume is built.
+    /// </summary>
+    private static string CreateZipWithEntries(params string[] relativePaths)
+    {
+        var tempZipPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.zip");
+        var sourceDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        try
+        {
+            foreach (var relativePath in relativePaths)
+            {
+                var path = Path.Combine(sourceDir, relativePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                File.WriteAllBytes(path, [0xFF, 0xD8, 0xFF]);
+            }
+
+            System.IO.Compression.ZipFile.CreateFromDirectory(sourceDir, tempZipPath);
+            return tempZipPath;
+        }
+        finally
+        {
+            if (Directory.Exists(sourceDir)) Directory.Delete(sourceDir, true);
+        }
+    }
+
+    /// <summary>
+    ///     A natural string comparer like the one the platforms pass in, so <c>2</c> sorts before <c>10</c>.
+    /// </summary>
+    private static int NaturalCompare(string? x, string? y)
+    {
+        x ??= string.Empty;
+        y ??= string.Empty;
+        int i = 0, j = 0;
+        while (i < x.Length && j < y.Length)
+        {
+            if (char.IsDigit(x[i]) && char.IsDigit(y[j]))
+            {
+                var startX = i;
+                var startY = j;
+                while (i < x.Length && char.IsDigit(x[i])) i++;
+                while (j < y.Length && char.IsDigit(y[j])) j++;
+                var result = long.Parse(x[startX..i]).CompareTo(long.Parse(y[startY..j]));
+                if (result != 0)
+                {
+                    return result;
+                }
+            }
+            else
+            {
+                var result = char.ToUpperInvariant(x[i]).CompareTo(char.ToUpperInvariant(y[j]));
+                if (result != 0)
+                {
+                    return result;
+                }
+                i++;
+                j++;
+            }
+        }
+        return (x.Length - i).CompareTo(y.Length - j);
+    }
+
+    private static string[] Normalize(IEnumerable<string> keys) => keys.Select(k => k.Replace('\\', '/')).ToArray();
+
+    private static async Task<(string[] Keys, string[] FileNames)> PrepareAndExtractAllAsync(
+        ArchiveExtractionService service, string zipPath, Func<string, string, int> comparer)
+    {
+        var prep = await service.PrepareArchiveAsync(zipPath, (_, _) => Task.FromResult(false), comparer);
+        Assert.NotNull(prep);
+        var extracted = await service.ExtractEntriesAsync(zipPath, prep.Value.EntryKeys, TestContext.Current.CancellationToken);
+        return (Normalize(prep.Value.EntryKeys), extracted.Select(Path.GetFileName).ToArray()!);
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_RespectingStructure_SortsKeysByFolderThenFile()
+    {
+        var zipPath = CreateZipWithEntries(TwoVolumeEntries);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (keys, _) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+
+            Assert.Equal(TwoVolumeEntries, keys);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractEntriesAsync_RespectingStructure_NamesFilesAfterTheirFolders()
+    {
+        var zipPath = CreateZipWithEntries(TwoVolumeEntries);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+
+            Assert.Equal(TwoVolumeFileNames, fileNames);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractedFileNames_RespectingStructure_SortByNameIntoArchiveOrder()
+    {
+        var zipPath = CreateZipWithEntries(TwoVolumeEntries);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+
+            // The iterator and file watcher order the temp folder by file name, so the names alone must give the archive order.
+            var sorted = fileNames.ToList();
+            sorted.Sort(NaturalCompare);
+            Assert.Equal(TwoVolumeFileNames, sorted);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractRemainingAsync_RespectingStructure_NamesFilesAfterTheirFolders()
+    {
+        var zipPath = CreateZipWithEntries(TwoVolumeEntries);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var prep = await service.PrepareArchiveAsync(zipPath, (_, _) => Task.FromResult(false), NaturalCompare);
+            Assert.NotNull(prep);
+
+            await service.ExtractEntriesAsync(zipPath, prep.Value.EntryKeys.Take(2).ToArray(), TestContext.Current.CancellationToken);
+            await service.ExtractRemainingAsync(zipPath, prep.Value.EntryKeys.Skip(2).ToArray(), ct: TestContext.Current.CancellationToken);
+
+            var fileNames = Directory.GetFiles(service.TempZipDirectory!).Select(Path.GetFileName).Order(StringComparer.Ordinal);
+            Assert.Equal(TwoVolumeFileNames, fileNames);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_RespectingStructure_SortsFolderNumbersNaturally()
+    {
+        var zipPath = CreateZipWithEntries("Volume 10/001.jpg", "Volume 2/001.jpg");
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+
+            Assert.Equal(["Volume 2/001.jpg", "Volume 10/001.jpg"], keys);
+            Assert.Equal(["Volume 2 - 001.jpg", "Volume 10 - 001.jpg"], fileNames);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractEntriesAsync_RespectingStructure_DropsTheFolderAllEntriesShare()
+    {
+        var zipPath = CreateZipWithEntries(TwoVolumeEntries.Select(e => "Comic/" + e).ToArray());
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+
+            Assert.Equal(TwoVolumeFileNames, fileNames);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractEntriesAsync_RespectingStructure_SingleSharedFolderGivesPlainNames()
+    {
+        var zipPath = CreateZipWithEntries("Comic/001.jpg", "Comic/002.jpg");
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+
+            Assert.Equal(["001.jpg", "002.jpg"], fileNames);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task ExtractEntriesAsync_RespectingStructure_RootFilesKeepTheirName()
+    {
+        var zipPath = CreateZipWithEntries("cover.jpg", "Volume 01/001.jpg");
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+
+            Assert.Equal(["cover.jpg", "Volume 01/001.jpg"], keys);
+            Assert.Equal(["cover.jpg", "Volume 01 - 001.jpg"], fileNames);
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_RespectingStructureDescending_ReversesTheWholeOrder()
+    {
+        Settings.Sorting.Ascending = false;
+        var zipPath = CreateZipWithEntries(TwoVolumeEntries);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+
+            Assert.Equal(Enumerable.Reverse(TwoVolumeEntries), keys);
+            Assert.Equal(Enumerable.Reverse(TwoVolumeFileNames), fileNames);
+        }
+        finally
+        {
+            Settings.Sorting.Ascending = true;
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_NotRespectingStructure_KeepsFileNameOrderAndFlatNames()
+    {
+        Settings.Navigation.IsRespectingArchiveStructure = false;
+        var zipPath = CreateZipWithEntries(TwoVolumeEntries);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (keys, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+
+            Assert.Equal(["001.jpg", "001.jpg", "002.jpg", "002.jpg", "003.jpg", "003.jpg"], keys.Select(Path.GetFileName));
+            Assert.Equal(["001.jpg", "001_1.jpg", "002.jpg", "002_1.jpg", "003.jpg", "003_1.jpg"], fileNames);
+        }
+        finally
+        {
+            Settings.Navigation.IsRespectingArchiveStructure = true;
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_RespectingStructureNotSortedByName_KeepsFlatNames()
+    {
+        Settings.Sorting.SortPreference = 1;
+        var zipPath = CreateZipWithEntries(TwoVolumeEntries);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            var (_, fileNames) = await PrepareAndExtractAllAsync(service, zipPath, NaturalCompare);
+
+            Assert.Equal(["001.jpg", "001_1.jpg", "002.jpg", "002_1.jpg", "003.jpg", "003_1.jpg"], fileNames.Order(StringComparer.Ordinal));
+        }
+        finally
+        {
+            Settings.Sorting.SortPreference = 0;
+            service.Cleanup();
+            File.Delete(zipPath);
+        }
+    }
+
+    [Fact]
+    public async Task PrepareArchiveAsync_RespectingStructureFullyExtracted_SortsByRelativePath()
+    {
+        var archivePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.7z");
+        await File.WriteAllBytesAsync(archivePath, [], TestContext.Current.CancellationToken);
+        var service = new ArchiveExtractionService();
+        try
+        {
+            // Stands in for the local software, which extracts the archive into real nested folders.
+            var prep = await service.PrepareArchiveAsync(archivePath, (_, destination) =>
+            {
+                foreach (var entry in Enumerable.Reverse(TwoVolumeEntries))
+                {
+                    var path = Path.Combine(destination, entry);
+                    Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                    File.WriteAllBytes(path, [0xFF, 0xD8, 0xFF]);
+                }
+                return Task.FromResult(true);
+            }, NaturalCompare);
+
+            Assert.NotNull(prep);
+            Assert.True(prep.Value.IsFullyExtracted);
+            var relative = prep.Value.EntryKeys.Select(k => Path.GetRelativePath(prep.Value.TempDirectory, k));
+            Assert.Equal(TwoVolumeEntries, Normalize(relative));
+        }
+        finally
+        {
+            service.Cleanup();
+            File.Delete(archivePath);
+        }
+    }
+
+    #endregion
+
     #region Cleanup
 
     [Fact]
