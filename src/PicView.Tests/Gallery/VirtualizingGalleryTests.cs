@@ -497,21 +497,29 @@ public class VirtualizingGalleryTests
         }
     }
 
+    // At 125%, the panel's own correction of a held view can be under two DIPs: the panel remembers it, and must forget
+    // it once the view arrives there, or a later scroll back to it would pass for the panel's own and be undone
     [AvaloniaFact]
-    public void HoldCorrectedByUnderTwoPixels_ScrolledAwayAndBack_StaysWhereTheUserScrolled()
+    public void HoldCorrectedByUnderTwoDipsAt125Percent_ScrolledAwayAndBack_StaysWhereTheUserScrolled()
     {
-        var strip = ShowStrip(200, 150);
+        var strip = ShowStrip(200, 150, show: false);
+        strip.Window.SetRenderScaling(1.25);
         try
         {
-            // Item 105's middle, 10550, sits a pixel past the middle of the view
-            strip.ScrollTo(10549 - strip.ViewportWidth / 2);
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+            // Item 105's middle, 10550, sits a DIP past the middle of the view, which is between device pixels
+            var scrolledTo = 10549 - strip.ViewportWidth / 2;
+            strip.ScrollTo(scrolledTo);
 
-            // Item 0 a pixel and a half wider, which rounds to two whole pixels, moves the held item, and so the view, by
-            // that much
+            // Item 0 at 203 by 200 is 126.875 device pixels wide, which rounds to 127, two more than the square's 125.
+            // That moves the held item by 1.6 DIPs, and the view from the pixel it showed by as much: 1.4 DIPs from
+            // where the user left it
             strip.Items[0].SetDetails(new GalleryFileDetails(203, 200, null));
             strip.Gallery.InvalidateMeasure();
             Dispatcher.UIThread.RunJobs();
             var corrected = strip.ScrollViewer.Offset.X;
+            Assert.InRange(corrected - scrolledTo, Tolerance, 2);
 
             // A wheel step away and one back, which lands where the panel put the view
             strip.ScrollTo(corrected + 50);
@@ -698,6 +706,159 @@ public class VirtualizingGalleryTests
         }
     }
 
+    // A batch whose widths before the view add up to one device pixel moves the target by under a DIP. A view that
+    // nothing else moved must still move with the items, or the whole strip shifts by that pixel
+    [AvaloniaTheory]
+    [InlineData(1.0, false)]
+    [InlineData(1.25, false)]
+    [InlineData(1.5, false)]
+    [InlineData(2.0, false)]
+    [InlineData(1.0, true)]
+    [InlineData(1.25, true)]
+    [InlineData(1.5, true)]
+    [InlineData(2.0, true)]
+    public void SizesReadAddingUpToOneDevicePixel_WhileFollowingOrHolding_LeaveEveryShownThumbnailOnItsDevicePixel(
+        double renderScaling, bool holding)
+    {
+        var strip = ShowStrip(300, 150, show: false);
+        strip.Window.SetRenderScaling(renderScaling);
+        try
+        {
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+            if (holding)
+            {
+                // The user scrolls to a view on device pixels, as a wheel step at 100% does
+                strip.ScrollTo(strip.ScrollViewer.Offset.X - 400);
+            }
+
+            var shownAt = ShownLeftEdges(strip, renderScaling);
+            Assert.NotEmpty(shownAt);
+
+            var height = (uint)Math.Round(100 * renderScaling);
+            var moves = new List<string>();
+            for (var batch = 1; batch <= 6; batch++)
+            {
+                // An item far before the view is read one device pixel wider than the square it was
+                strip.Items[99 + batch].SetDetails(new GalleryFileDetails((height + 1) * 10, height * 10, null));
+                strip.Gallery.InvalidateMeasure();
+                Dispatcher.UIThread.RunJobs();
+                AddMoves(strip, shownAt, renderScaling, batch, moves);
+            }
+
+            Assert.True(moves.Count is 0, $"Shown thumbnails moved, in device pixels: {string.Join("; ", moves)}");
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    // Steps of one device pixel land the view on pixels, each under the tolerance until two add up. A view that a step
+    // moved is not still, though it and its target are on pixels, and the panel must not take the step back
+    [AvaloniaTheory]
+    [InlineData(1.0, false)]
+    [InlineData(1.25, false)]
+    [InlineData(1.5, false)]
+    [InlineData(2.0, false)]
+    [InlineData(1.0, true)]
+    [InlineData(1.25, true)]
+    [InlineData(1.5, true)]
+    [InlineData(2.0, true)]
+    public void ScrolledInStepsOfOneDevicePixel_WhileFollowingOrHolding_AdvancesByTheirSum(double renderScaling,
+        bool holding)
+    {
+        var strip = ShowStrip(200, 150, show: false);
+        strip.Window.SetRenderScaling(renderScaling);
+        try
+        {
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+            if (holding)
+            {
+                // On device pixels at every scale here
+                strip.ScrollTo(14000);
+            }
+
+            var start = strip.ScrollViewer.Offset.X;
+            for (var step = 0; step < 10; step++)
+            {
+                strip.ScrollTo(strip.ScrollViewer.Offset.X + 1 / renderScaling);
+            }
+
+            Assert.Equal(start + 10 / renderScaling, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    // A view the user left between device pixels is still too, but only a view on pixels follows changes under the
+    // tolerance. The panel must not round this one to a pixel, which would take back part of each slow step after it
+    [AvaloniaTheory]
+    [InlineData(1.25)]
+    [InlineData(1.75)]
+    public void ScrolledByTheUserBetweenPixels_ThenInTinySteps_StaysWhereTheUserScrolled(double renderScaling)
+    {
+        var strip = ShowStrip(200, 150, show: false);
+        strip.Window.SetRenderScaling(renderScaling);
+        try
+        {
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+            // Half a device pixel past a whole one at both scales
+            strip.ScrollTo(14050);
+            Assert.Equal(14050, strip.ScrollViewer.Offset.X, 6);
+
+            for (var step = 0; step < 30; step++)
+            {
+                strip.ScrollTo(strip.ScrollViewer.Offset.X + 0.05);
+            }
+
+            Assert.Equal(14051.5, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    // A window an odd number of device pixels wider moves the middle of the view, and so the held item's exact offset,
+    // by a half pixel. A held view on pixels moves to the held item's own pixels, which batches then move by whole
+    // pixels. The exact offset's half pixel would round up or down from batch to batch
+    [AvaloniaTheory]
+    [InlineData(1.0, 1)]
+    [InlineData(1.25, 1)]
+    [InlineData(1.5, 3)]
+    [InlineData(2.0, 3)]
+    public void SizesReadInBatches_AfterTheWindowGrewByAnOddNumberOfDevicePixelsWhileHolding_LeaveEveryShownThumbnailOnItsDevicePixel(
+        double renderScaling, int devicePixels)
+    {
+        var strip = ShowStrip(300, 150, show: false);
+        strip.Window.SetRenderScaling(renderScaling);
+        try
+        {
+            ReadNeighbours(strip, renderScaling);
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+            // The user scrolls to a view on device pixels, and the window then grows
+            strip.ScrollTo(strip.ScrollViewer.Offset.X - 400);
+            strip.Window.Width = (Math.Round(1000 * renderScaling) + devicePixels) / renderScaling;
+            Dispatcher.UIThread.RunJobs();
+            var shownAt = ShownLeftEdges(strip, renderScaling);
+            Assert.NotEmpty(shownAt);
+
+            var moves = ReadTheRestInBatches(strip, shownAt, renderScaling, () => { });
+
+            Assert.True(moves.Count is 0, $"Shown thumbnails moved, in device pixels: {string.Join("; ", moves)}");
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
     // Three device pixels more move the middle of the view by one and a half. The view moves by whole pixels, rounding
     // each time, and the roundings must not add up and take the held item away from the middle
     [AvaloniaTheory]
@@ -767,7 +928,7 @@ public class VirtualizingGalleryTests
     }
 
     [AvaloniaFact]
-    public void WindowGrowingAPixelAtATime_WhileFollowingAcrossFractionalWidths_KeepsFollowing()
+    public void WindowGrowingTwoPixelsAtATime_WhileFollowingFourByThreeItems_KeepsFollowing()
     {
         var strip = ShowStrip(200, 150);
         try
@@ -965,20 +1126,28 @@ public class VirtualizingGalleryTests
 
             strip.Gallery.InvalidateMeasure();
             Dispatcher.UIThread.RunJobs();
-
-            foreach (var (index, left) in shownAt)
-            {
-                var now = LeftEdge(strip, index, renderScaling);
-                if (now != left)
-                {
-                    moves.Add($"batch {batch}: item {index} from {left} to {now?.ToString() ?? "no container"}");
-                }
-            }
-
+            AddMoves(strip, shownAt, renderScaling, batch, moves);
             afterEachBatch();
         }
 
         return moves;
+    }
+
+    /// <summary>
+    /// Adds every container in <paramref name="shownAt"/> that is no longer at its left edge there to
+    /// <paramref name="moves"/>, as moved in batch <paramref name="batch"/>.
+    /// </summary>
+    private static void AddMoves(Strip strip, Dictionary<int, int> shownAt, double renderScaling, int batch,
+        List<string> moves)
+    {
+        foreach (var (index, left) in shownAt)
+        {
+            var now = LeftEdge(strip, index, renderScaling);
+            if (now != left)
+            {
+                moves.Add($"batch {batch}: item {index} from {left} to {now?.ToString() ?? "no container"}");
+            }
+        }
     }
 
     /// <summary>

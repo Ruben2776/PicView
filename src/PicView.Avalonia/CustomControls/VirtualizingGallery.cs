@@ -457,10 +457,12 @@ public class VirtualizingGallery : VirtualizingPanel
         var (target, targetOnPixels, anchor) = ChooseView(viewStart, length, marginBefore, marginAfter);
 
         // The scroll viewer takes the new offset once the layout pass is done, when its extent has caught up. The view
-        // moves by whole device pixels, as the items do when sizes are read, so the items it shows keep their pixels
+        // moves by whole device pixels, as the items do when sizes are read, so the items it shows keep their pixels. It
+        // moves when the target is further than the tolerance, or by a pixel or more when it is still
         var offset = viewStart + marginBefore;
         var heldView = target;
-        if (Math.Abs(target - offset) > SamePositionTolerance)
+        if (Math.Abs(target - offset) > SamePositionTolerance || IsStill(offset, targetOnPixels, scrollsVertically) &&
+            _layout.ShowsAnotherPixel(offset, targetOnPixels))
         {
             if (_layout.IsOnDevicePixel(offset))
             {
@@ -559,6 +561,32 @@ public class VirtualizingGallery : VirtualizingPanel
 
         var offset = viewStart + marginBefore;
         return (offset, offset, _layout.IndexNearest(viewStart + length / 2));
+    }
+
+    /// <summary>
+    ///     Whether the view follows its target by as little as a device pixel, under the tolerance in DIPs, as when a size
+    ///     read before the view widens an item by one. That needs a view that nothing has moved since its last move that
+    ///     counted, the panel's own or the user's, so no slow steps are pending to be pulled back. It needs the view on
+    ///     device pixels: a view the user left between them stays there, where rounding it would take back part of each
+    ///     slow step after it. And it needs the target on device pixels, which then depends on the layout alone, not on
+    ///     where the view is, so following it can't alternate between two pixels from one layout to the next. A
+    ///     side-docked strip whose item height is not a whole number of pixels keeps to the tolerance.
+    /// </summary>
+    /// <param name="offset">The view's offset along the scroll axis.</param>
+    /// <param name="targetOnPixels">The offset on whole device pixels that the view moves to.</param>
+    /// <param name="scrollsVertically">Whether the scroll axis is Y.</param>
+    private bool IsStill(double offset, double targetOnPixels, bool scrollsVertically)
+    {
+        if (_scrollViewer is null)
+        {
+            return false;
+        }
+
+        // The scroll viewer's own offset, which the offset of the last move that counted was copied from
+        var scrollOffset = scrollsVertically ? _scrollViewer.Offset.Y : _scrollViewer.Offset.X;
+        var lastScrollOffset = scrollsVertically ? _lastScrollOffset.Y : _lastScrollOffset.X;
+        return scrollOffset.Equals(lastScrollOffset) && _layout.IsOnDevicePixel(offset) &&
+               _layout.IsOnDevicePixel(targetOnPixels);
     }
 
     /// <summary>

@@ -296,7 +296,7 @@ public class GalleryLayoutTests
         ((GalleryItemViewModel)items[0]!).SetDetails(new GalleryFileDetails(1008, 1000, null)); // 126 device pixels, not 125
         layout.Calculate(items, options, new Size(300, 100));
 
-        Assert.Equal(1063, centered); // 125 + 4 × 250 + 125 − 187.5, rounded to even
+        Assert.Equal(1063, centered); // the item's start, 1125, plus 125 − 187.5 rounded to even, −62
         Assert.Equal(1064, DevicePixels(layout.CenterOffset(5, 300), 1.25));
     }
 
@@ -313,6 +313,7 @@ public class GalleryLayoutTests
     // At 200%, a view at 62.75 is 125.5 device pixels in, which layout shows at the even pixel, 126
     [Theory]
     [InlineData(62.75, 70, 70)]      // a target on a device pixel is where the view goes
+    [InlineData(62.75, 70.5, 70.5)]  // 141 is a pixel too; 15.5 pixels on from the 126 shown would round to 142
     [InlineData(62.75, 63.25, 63.5)] // 126.5 would show at 126 too; one pixel on from the 126 shown is 127
     [InlineData(62.75, 61.25, 61.5)] // 122.5 would show at 122; three pixels back from the 126 shown is 123
     public void OnDevicePixels_AtTwoHundredPercent_MovesWhatTheViewShowsByWholeDevicePixels(double offset,
