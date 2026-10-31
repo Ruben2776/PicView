@@ -300,8 +300,8 @@ public class VirtualizingGallery : VirtualizingPanel
             return;
         }
 
-        // A viewport arriving for the first time, as when the panel is shown, isn't a scroll
         var moveCounted = true;
+        // A viewport arriving for the first time, as when the panel is shown, isn't a scroll
         if (HasSize(_viewport) && _scrollViewer is not null)
         {
             moveCounted = HoldIfScrolled(newViewport, _scrollViewer);
@@ -361,9 +361,11 @@ public class VirtualizingGallery : VirtualizingPanel
         }
 
         // Hold the item now in the middle of the view, as the last layout placed it, which is what the user sees. Sizes
-        // read since that layout then move the items around it, not it
+        // read since that layout then move the items around it, not it. The middle comes from the scroll viewer's
+        // offset, since layout puts the viewport on device pixels, a fraction of a pixel off it at 125% or 150%
         _isFollowing = false;
-        HoldItemNearest(scrollsVertically ? newViewport.Center.Y : newViewport.Center.X);
+        var (marginBefore, _) = MarginAlong(scrollsVertically);
+        HoldItemNearest(offset - marginBefore + (scrollsVertically ? newViewport.Height : newViewport.Width) / 2);
         return true;
     }
 
@@ -443,9 +445,14 @@ public class VirtualizingGallery : VirtualizingPanel
         // scrolls over the panel's margin too, so its offset is a position in the panel's coordinates plus the margin
         // before the items
         var scrollsVertically = ScrollsVertically;
-        var viewStart = scrollsVertically ? _viewport.Y : _viewport.X;
         var length = scrollsVertically ? _viewport.Height : _viewport.Width;
         var (marginBefore, marginAfter) = MarginAlong(scrollsVertically);
+        // Where the view starts comes from the scroll viewer's offset when there is one. Layout puts the viewport on
+        // device pixels, a fraction of a pixel off the offset at 125% or 150%, and measuring from it would pull slow
+        // scroll steps back, or take the panel's own small corrections for scrolls
+        var viewStart = _scrollViewer is { } scrollViewer
+            ? (scrollsVertically ? scrollViewer.Offset.Y : scrollViewer.Offset.X) - marginBefore
+            : scrollsVertically ? _viewport.Y : _viewport.X;
         var (target, anchor) = ChooseView(viewStart, length, marginBefore, marginAfter);
 
         // The scroll viewer takes the new offset once the layout pass is done, when its extent has caught up
