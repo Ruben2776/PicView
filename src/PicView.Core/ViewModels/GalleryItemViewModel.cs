@@ -23,7 +23,8 @@ public class GalleryItemViewModel : IDisposable
     public BindableReactiveProperty<string> FileLocation { get; } = new();
     public BindableReactiveProperty<string> FileSize { get; } = new();
     public BindableReactiveProperty<string> FileDate { get; } = new();
-    public BindableReactiveProperty<string> ImageSize { get; } = new();
+    /// <summary>The image's pixel size as text. Empty until <see cref="SetDetails"/> gives the item its details.</summary>
+    public BindableReactiveProperty<string> ImageSize { get; } = new(string.Empty, StringComparer.Ordinal);
     /// <summary>Whether the file carries a motion photo video (drives the gallery badge).</summary>
     public BindableReactiveProperty<bool> IsMotionPhoto { get; } = new(false);
     

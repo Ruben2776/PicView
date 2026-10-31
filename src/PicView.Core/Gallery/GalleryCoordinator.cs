@@ -531,7 +531,7 @@ public class GalleryCoordinator : IDisposable
         item.FileSize.Value = thumbData.FileSize;
         item.FileDate.Value = thumbData.FileDate;
         item.FileLocation.Value = thumbData.FileLocation;
-        item.ImageSize.Value = thumbData.ImageSize;
+        // The size text comes with the details, so an item whose details aren't read yet shows no size rather than 0 x 0
         if (details is not null)
         {
             item.SetDetails(details);

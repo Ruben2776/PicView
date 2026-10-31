@@ -1,6 +1,7 @@
 using System.Collections.Specialized;
 using ImageMagick;
 using ObservableCollections;
+using PicView.Core.Extensions;
 using PicView.Core.Gallery;
 using PicView.Core.Localization;
 using PicView.Core.Models;
@@ -425,6 +426,32 @@ public class GalleryFollowsFilesTests : IDisposable
 
         Assert.Equal(1, reader.Reads.Count(name => name == "045.jpg"));
         Assert.Same(GalleryFileDetails.Unreadable, tab.Gallery.GalleryItems[45].Details);
+    }
+
+    [Fact]
+    public async Task ItemsNotReadYet_WhileLoading_ShowNoSizeUntilTheirBatchIsRead()
+    {
+        var tab = CreateTab();
+        var reader = UseRecordingReader(tab);
+        reader.DetailsOf = name => name == "000.jpg" ? null : new GalleryFileDetails(200, 100, null);
+        reader.Pause(afterReads: 41); // the current image and the 20 files on each side, read before the items are added
+        Show(tab);
+
+        // Initialize sets the tab's index only after it lists the files, and the first batch is read around that index
+        tab.NavigationIndex.Value = 150;
+        tab.ImageIterator.Initialize(await FilesAsync(Names(0, 200)), 150);
+        await WaitUntilAsync(() => tab.Gallery.GalleryItems.Count == 200);
+        var unreadable = tab.Gallery.GalleryItems[0];
+        var readable = tab.Gallery.GalleryItems[1];
+        Assert.Empty(unreadable.ImageSize.Value);
+        Assert.Empty(readable.ImageSize.Value);
+
+        reader.Release();
+        await WaitUntilLoadedAsync(tab, Names(0, 200));
+
+        Assert.Equal(StringExtensions.CombineSize(200, 100), readable.ImageSize.Value);
+        // A file whose details can't be read shows the zero size it always has
+        Assert.Equal(StringExtensions.CombineSize(0, 0), unreadable.ImageSize.Value);
     }
 
     [Theory]
