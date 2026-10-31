@@ -1,6 +1,7 @@
 using Avalonia.Input.Platform;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using PicView.Avalonia.ImageTransformations;
 using PicView.Core.DebugTools;
 using PicView.Core.ImageTransformations;
@@ -43,10 +44,20 @@ public class ClipboardCopyService(
             return false;
         }
 
+#pragma warning disable MA0004
+        // The clipboard and onCopied must be used on the UI thread, so a call from elsewhere, like after a decode, is
+        // moved there
+        if (!Dispatcher.UIThread.CheckAccess())
+        {
+            return await Dispatcher.UIThread.InvokeAsync(() => CopyImageAsync(bitmap));
+        }
+
         try
         {
-            await clipboard.ClearAsync().ConfigureAwait(false);
-            await clipboard.SetBitmapAsync(bitmap).ConfigureAwait(false);
+            // Continuations stay on the UI thread
+            await clipboard.ClearAsync();
+            await clipboard.SetBitmapAsync(bitmap);
+#pragma warning restore MA0004
             onCopied?.Invoke();
             return true;
         }

@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input.Platform;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using PicView.Avalonia.Clipboard;
 using PicView.Core.IPlatform;
 using PicView.Core.ViewModels;
@@ -107,6 +108,22 @@ public class ClipboardCopyServiceTests
 
         Assert.False(result);
         Assert.False(copiedInvoked);
+    }
+
+    [AvaloniaFact]
+    public async Task CopyImageAsync_FromBackgroundThread_CopiesItOnTheUIThread()
+    {
+        var window = new Window();
+        bool? copiedOnUIThread = null;
+        // The headless clipboard works on any thread, unlike the platform ones, so the thread is checked when it is done
+        var service = new ClipboardCopyService(window.Clipboard,
+            onCopied: () => copiedOnUIThread = Dispatcher.UIThread.CheckAccess());
+        var bitmap = CreateBitmap(4, 3);
+
+        var result = await Task.Run(() => service.CopyImageAsync(bitmap));
+
+        Assert.True(result);
+        Assert.True(copiedOnUIThread);
     }
 
     private const int Black = unchecked((int)0xFF000000);

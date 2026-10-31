@@ -293,8 +293,7 @@ public partial class GalleryItem : NavigateAbleItem
 
         // A decoded bitmap is never disposed here, since pasting in PicView can show that same bitmap in a tab
         var bitmap = await GetOriginalImage.GetBitmapAsync(fileInfo, cache).ConfigureAwait(false);
-        // The clipboard must be set on the UI thread, and a decode resumes on the thread pool
-        await Dispatcher.UIThread.InvokeAsync(() => clipboardCopyService.CopyImageAsync(bitmap).ConfigureAwait(true));
+        await clipboardCopyService.CopyImageAsync(bitmap).ConfigureAwait(false);
     }
 
     private void CopyBase64_OnClick(object? sender, RoutedEventArgs e)
