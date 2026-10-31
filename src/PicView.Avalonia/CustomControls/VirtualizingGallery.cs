@@ -7,7 +7,6 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.VisualTree;
 using PicView.Core.Gallery;
-using PicView.Core.ViewModels;
 
 namespace PicView.Avalonia.CustomControls;
 
@@ -53,7 +52,7 @@ public class VirtualizingGallery : VirtualizingPanel
     
     public readonly record struct RealizedGalleryItem(int Index, Control Element);
 
-    private readonly List<Rect> _itemBounds = [];
+    private readonly GalleryLayout _layout = new();
 
     private readonly List<RealizedGalleryItem> _realizedItems = [];
     public IReadOnlyList<RealizedGalleryItem> RealizedItems => _realizedItems;
@@ -119,16 +118,16 @@ public class VirtualizingGallery : VirtualizingPanel
 
     public Rect? GetItemBounds(int index)
     {
-        if (index >= 0 && index < _itemBounds.Count)
+        if (index >= 0 && index < _layout.Bounds.Count)
         {
-            return _itemBounds[index];
+            return _layout.Bounds[index];
         }
         return null;
     }
 
     public IReadOnlyList<double> GetIrregularSnapPoints(Orientation orientation, SnapPointsAlignment snapPointsAlignment)
     {
-        if (_itemBounds.Count is 0)
+        if (_layout.Bounds.Count is 0)
         {
             return [];
         }
@@ -145,7 +144,7 @@ public class VirtualizingGallery : VirtualizingPanel
         if (!IsExpanded)
         {
             // Docked mode: Snap to individual items
-            foreach (var bounds in _itemBounds)
+            foreach (var bounds in _layout.Bounds)
             {
                 var point = isVerticalDocked
                     ? snapPointsAlignment switch
@@ -169,7 +168,7 @@ public class VirtualizingGallery : VirtualizingPanel
         {
             // Expanded mode: Snap to the start of each column
             var lastX = -1.0;
-            foreach (var bounds in _itemBounds.Where(bounds => Math.Abs(bounds.X - lastX) > 1.0))
+            foreach (var bounds in _layout.Bounds.Where(bounds => Math.Abs(bounds.X - lastX) > 1.0))
             {
                 lastX = bounds.X;
                 var point = snapPointsAlignment switch
@@ -235,103 +234,7 @@ public class VirtualizingGallery : VirtualizingPanel
             RemoveInternalChild(realized.Element);
         }
         _realizedItems.Clear();
-        _itemBounds.Clear();
-    }
-
-    private Size CalculateBounds(Size availableSize)
-    {
-        _itemBounds.Clear();
-
-        if (Items is not IEnumerable<object> items)
-        {
-            return new Size();
-        }
-
-        double currentX = 0;
-        double currentY = 0;
-        double currentColumnMaxWidth = 0;
-        double maxExtentY = 0;
-        var currentColumnStartIndex = 0; // Track where the current column starts
-
-        // Use the override if provided, otherwise use the actual available height
-        var availableHeight = double.IsNaN(WrapHeightOverride) || WrapHeightOverride <= 0
-            ? availableSize.Height
-            : WrapHeightOverride;
-
-        foreach (var item in items)
-        {
-            var itemWidth = ItemHeight; // Fallback for square
-
-            // 1. Check if the user forced a specific width (e.g., Square Stretch Mode)
-            if (!double.IsNaN(ItemWidth))
-            {
-                itemWidth = ItemWidth;
-            }
-            // 2. Otherwise, dynamically calculate based on aspect ratio
-            else if (item is GalleryItemViewModel { Details: { PixelHeight: > 0 } details })
-            {
-                var aspectRatio = (double)details.PixelWidth / details.PixelHeight;
-                itemWidth = ItemHeight * aspectRatio;
-            }
-
-            if (IsExpanded)
-            {
-                // Vertical Wrapping: Use the locked availableHeight
-                if (currentY + ItemHeight > availableHeight && currentY > 0)
-                {
-                    for (var j = currentColumnStartIndex; j < _itemBounds.Count; j++)
-                    {
-                        var rect = _itemBounds[j];
-                        _itemBounds[j] = new Rect(rect.X, rect.Y, currentColumnMaxWidth, rect.Height);
-                    }
-
-                    currentY = 0;
-                    currentX += currentColumnMaxWidth + LineSpacing;
-                    currentColumnMaxWidth = 0; // Reset for the new column
-                    currentColumnStartIndex = _itemBounds.Count;
-                }
-
-                _itemBounds.Add(new Rect(currentX, currentY, itemWidth, ItemHeight));
-                currentY += ItemHeight + ItemSpacing;
-                currentColumnMaxWidth = Math.Max(currentColumnMaxWidth, itemWidth);
-                maxExtentY = Math.Max(maxExtentY, currentY - ItemSpacing);
-            }
-            else if (Orientation == Orientation.Vertical)
-            {
-                // Vertical Docked Mode (Single Column) - items fill available width
-                _itemBounds.Add(new Rect(currentX, currentY, availableSize.Width, ItemHeight));
-                currentY += ItemHeight;
-            }
-            else
-            {
-                // Horizontal Docked Mode (Single Row) - NO SPACING
-                _itemBounds.Add(new Rect(currentX, currentY, itemWidth, ItemHeight));
-                currentX += itemWidth;
-            }
-        }
-
-        if (IsExpanded && currentColumnStartIndex < _itemBounds.Count)
-        {
-            // Apply max width to the very last column
-            for (var j = currentColumnStartIndex; j < _itemBounds.Count; j++)
-            {
-                var rect = _itemBounds[j];
-                _itemBounds[j] = new Rect(rect.X, rect.Y, currentColumnMaxWidth, rect.Height);
-            }
-        }
-
-        if (!IsExpanded)
-        {
-            // Return exact extent without deducting spacing
-            return Orientation == Orientation.Vertical
-                ? new Size(availableSize.Width, currentY)
-                : new Size(currentX, ItemHeight);
-        }
-
-        var totalWidth = currentX + currentColumnMaxWidth;
-        // Guard against Infinity if height is temporarily unconstrained during layout passes
-        var totalHeight = double.IsInfinity(availableSize.Height) ? maxExtentY : availableSize.Height;
-        return new Size(totalWidth, totalHeight);
+        _layout.Clear();
     }
 
     /// <inheritdoc />
@@ -344,7 +247,10 @@ public class VirtualizingGallery : VirtualizingPanel
         }
 
         // 1. Calculate all layout boundaries instantly in memory
-        var extentSize = CalculateBounds(availableSize);
+        _layout.Calculate(Items,
+            new GalleryLayoutOptions(Orientation, IsExpanded, ItemHeight, ItemWidth, ItemSpacing, LineSpacing,
+                WrapHeightOverride),
+            availableSize);
 
         _viewer ??= this.FindAncestorOfType<NavigateAbleItemsViewer>();
         
@@ -361,32 +267,11 @@ public class VirtualizingGallery : VirtualizingPanel
         visibleRect = visibleRect.Inflate(new Thickness(ItemHeight * 2));
 
         // 3. Find which indices fall inside the visible rect
-        var startIndex = -1;
-        var endIndex = -1;
-
-        for (var i = 0; i < _itemBounds.Count; i++)
-        {
-            if (visibleRect.Intersects(_itemBounds[i]))
-            {
-                if (startIndex is -1) startIndex = i;
-                {
-                    endIndex = i;
-                }
-            }
-            else if (startIndex is not -1)
-            {
-                // Early exit: We've completely passed the visible viewport
-                var pastViewport = Orientation == Orientation.Vertical && !IsExpanded
-                    ? _itemBounds[i].Y > visibleRect.Bottom
-                    : _itemBounds[i].X > visibleRect.Right;
-                if (pastViewport)
-                    break;
-            }
-        }
+        var (startIndex, endIndex) = _layout.IndicesIn(visibleRect);
 
         if (startIndex is -1)
         {
-            return extentSize;
+            return _layout.Extent;
         }
 
         // 4. Recycle items that are no longer visible
@@ -443,10 +328,10 @@ public class VirtualizingGallery : VirtualizingPanel
             }
 
             // Measure the container using the exact bounds we already calculated
-            container?.Measure(_itemBounds[i].Size);
+            container?.Measure(_layout.Bounds[i].Size);
         }
 
-        return extentSize;
+        return _layout.Extent;
     }
 
     /// <inheritdoc />
@@ -457,9 +342,9 @@ public class VirtualizingGallery : VirtualizingPanel
             return new Size();
         }
 
-        foreach (var realized in _realizedItems.Where(realized => realized.Index >= 0 && realized.Index < _itemBounds.Count))
+        foreach (var realized in _realizedItems.Where(realized => realized.Index >= 0 && realized.Index < _layout.Bounds.Count))
         {
-            realized.Element.Arrange(_itemBounds[realized.Index]);
+            realized.Element.Arrange(_layout.Bounds[realized.Index]);
         }
 
         return finalSize;
