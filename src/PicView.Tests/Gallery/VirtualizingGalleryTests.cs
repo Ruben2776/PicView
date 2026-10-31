@@ -272,16 +272,21 @@ public class VirtualizingGalleryTests
     }
 
     [AvaloniaFact]
-    public void MeasuredWithoutAViewport_CreatesNoContainersUntilShown()
+    public void ShownAtZeroHeight_UntilItGrows_CreatesNoContainersThenCentersTheCurrentItem()
     {
         var strip = ShowStrip(200, 150, show: false);
+        var host = new Border { Height = 0 };
+        strip.Window.Content = host;
+        host.Child = strip.Viewer;
         try
         {
-            strip.Viewer.ApplyTemplate();
-            strip.Viewer.Measure(new Size(1000, 150));
-            Assert.Empty(strip.Prepared);
-
+            // Shown, but without a viewport, as a gallery is while it is collapsed
             strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
+            Assert.Empty(strip.Prepared);
+            Assert.Empty(strip.Gallery.RealizedItems);
+
+            host.Height = 150;
             Dispatcher.UIThread.RunJobs();
             Assert.Equal(150, strip.Prepared[0]);
             AssertCenteredOn(150, strip);
@@ -447,6 +452,127 @@ public class VirtualizingGalleryTests
             strip.ScrollTo(centered);
 
             Assert.Equal(centered, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void ExpandedGallery_ScrolledToTheEnd_StaysAtTheEnd()
+    {
+        var strip = ShowExpanded(200, 150);
+        try
+        {
+            // The end shows the margin after the last column
+            var end = strip.ScrollViewer.Extent.Width - strip.ViewportWidth;
+
+            strip.ScrollTo(end);
+
+            Assert.Equal(end, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void ScrolledByTheUser_ToTheEndOfTheStrip_StaysThere()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            var end = strip.ScrollViewer.Extent.Width - strip.ViewportWidth;
+
+            strip.ScrollTo(end);
+
+            Assert.Equal(end, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void HoldCorrectedByUnderTwoPixels_ScrolledAwayAndBack_StaysWhereTheUserScrolled()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            // Item 105's middle, 10550, sits a pixel past the middle of the view
+            strip.ScrollTo(10549 - strip.ViewportWidth / 2);
+
+            // Item 0 a pixel and a half wider moves the held item, and so the view, by that much
+            strip.Items[0].SetDetails(new GalleryFileDetails(203, 200, null));
+            strip.Gallery.InvalidateMeasure();
+            Dispatcher.UIThread.RunJobs();
+            var corrected = strip.ScrollViewer.Offset.X;
+
+            // A wheel step away and one back, which lands where the panel put the view
+            strip.ScrollTo(corrected + 50);
+            strip.ScrollTo(corrected);
+
+            Assert.Equal(corrected, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void ExpandedFromTheSide_AfterTheUserScrolled_CentersTheCurrentItem()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            // Docked at the side, and scrolled to its start by the user
+            strip.Viewer.SetVerticalScrolling();
+            strip.Gallery.Orientation = Orientation.Vertical;
+            strip.Window.Width = 150;
+            strip.Window.Height = 1000;
+            Dispatcher.UIThread.RunJobs();
+            strip.ScrollViewer.SetCurrentValue(ScrollViewer.OffsetProperty, new Vector(0, 0));
+            Dispatcher.UIThread.RunJobs();
+
+            // Expanded as GalleryAnimationControl does it, which keeps the vertical orientation and adds the margin
+            strip.Viewer.SetHorizontalScrolling();
+            strip.Gallery.IsExpanded = true;
+            strip.Gallery.Margin = new Thickness(15, 40, 15, 5);
+            strip.Window.Width = 1000;
+            strip.Window.Height = 400;
+            Dispatcher.UIThread.RunJobs();
+
+            // The scroll viewer scrolls over the margin before the items too
+            var middle = 15 + strip.Gallery.GetItemBounds(150)!.Value.Center.X;
+            Assert.Equal(middle - strip.ViewportWidth / 2, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void DockedAtTheSideFromExpanded_AfterTheUserScrolled_CentersTheCurrentItem()
+    {
+        var strip = ShowExpanded(200, 150);
+        try
+        {
+            strip.ScrollTo(0);
+
+            // Docked as GalleryAnimationControl does it, which keeps the vertical orientation and drops the margin
+            strip.Viewer.SetVerticalScrolling();
+            strip.Gallery.IsExpanded = false;
+            strip.Gallery.Margin = default;
+            strip.Window.Width = 150;
+            strip.Window.Height = 1000;
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Equal(15050 - strip.ScrollViewer.Viewport.Height / 2, strip.ScrollViewer.Offset.Y, Tolerance);
         }
         finally
         {
