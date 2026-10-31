@@ -35,6 +35,13 @@ public sealed class GalleryLayout
     public bool ScrollsVertically { get; private set; }
 
     /// <summary>
+    ///     Whether a panel with these properties stacks its items in a single column, so its scroll axis is Y. That is
+    ///     the vertical Docked Gallery; the horizontal one and the Expanded Gallery's columns scroll along X.
+    /// </summary>
+    public static bool ScrollsVerticallyFor(Orientation orientation, bool isExpanded)
+        => !isExpanded && orientation == Orientation.Vertical;
+
+    /// <summary>
     ///     Places every item, replacing the earlier bounds and extent.
     /// </summary>
     /// <param name="items">
@@ -47,7 +54,7 @@ public sealed class GalleryLayout
     public void Calculate(IReadOnlyList<object?> items, GalleryLayoutOptions options, Size availableSize)
     {
         _bounds.Clear();
-        ScrollsVertically = !options.IsExpanded && options.Orientation == Orientation.Vertical;
+        ScrollsVertically = ScrollsVerticallyFor(options.Orientation, options.IsExpanded);
 
         double currentX = 0;
         double currentY = 0;
