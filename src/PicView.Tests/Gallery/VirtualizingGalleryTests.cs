@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using Avalonia.Headless;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -580,14 +581,23 @@ public class VirtualizingGalleryTests
         }
     }
 
+    // At 125% and 150%, layout puts the viewport on device pixels, so it lies a fraction of a pixel off the offset
     [AvaloniaTheory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void ScrolledInStepsUnderAPixel_WhileFollowingOrHolding_AdvancesByTheirSum(bool holding)
+    [InlineData(1.0, false)]
+    [InlineData(1.0, true)]
+    [InlineData(1.25, false)]
+    [InlineData(1.25, true)]
+    [InlineData(1.5, false)]
+    [InlineData(1.5, true)]
+    public void ScrolledInStepsUnderAPixel_WhileFollowingOrHolding_AdvancesByTheirSum(double renderScaling,
+        bool holding)
     {
-        var strip = ShowStrip(200, 150);
+        var strip = ShowStrip(200, 150, show: false);
+        strip.Window.SetRenderScaling(renderScaling);
         try
         {
+            strip.Window.Show();
+            Dispatcher.UIThread.RunJobs();
             if (holding)
             {
                 strip.ScrollTo(14050);
@@ -602,6 +612,40 @@ public class VirtualizingGalleryTests
             }
 
             Assert.Equal(start + 9, strip.ScrollViewer.Offset.X, Tolerance);
+        }
+        finally
+        {
+            strip.Window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void WindowGrowingAPixelAtATime_WhileFollowingAcrossFractionalWidths_KeepsFollowing()
+    {
+        var strip = ShowStrip(200, 150);
+        try
+        {
+            // Items 133.33 wide put the centered offset on fractions of a pixel, and a window that grows by two pixels
+            // a layout moves it by one at a time
+            foreach (var item in strip.Items.Take(150))
+            {
+                item.SetDetails(new GalleryFileDetails(400, 300, null));
+            }
+
+            strip.Gallery.InvalidateMeasure();
+            Dispatcher.UIThread.RunJobs();
+            for (var step = 1; step <= 10; step++)
+            {
+                strip.Window.Width = 1000 + 2 * step;
+                Dispatcher.UIThread.RunJobs();
+            }
+
+            // Following centers whatever item is current now, where holding would go with the moved item
+            strip.Items.Move(150, 10);
+            Dispatcher.UIThread.RunJobs();
+
+            var middle = strip.Gallery.GetItemBounds(150)!.Value.Center.X;
+            Assert.Equal(middle - strip.ViewportWidth / 2, strip.ScrollViewer.Offset.X, Tolerance);
         }
         finally
         {
