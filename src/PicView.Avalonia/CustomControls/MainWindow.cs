@@ -598,10 +598,10 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         WindowFitter.Refit();
     }
     
-    // Window is being resized
+    // Window is being resized. The size changes of every window come through here, so only this window's count
     private void HandleWindowResize(AvaloniaPropertyChangedEventArgs<Size> size)
     {
-        if (IsChangingWindowState || WindowState != WindowState.Normal || size.Sender is not MainWindow)
+        if (!Equals(size.Sender, this) || IsChangingWindowState || WindowState != WindowState.Normal)
         {
             return;
         }
@@ -612,7 +612,7 @@ public abstract class MainWindow : Window, IMainWindow, IPlatformWindowService
         }
 
         if (vm.WindowModeState.CurrentValue.AutoFit && size.OldValue.HasValue && size.NewValue.HasValue &&
-            Equals(size.Sender, this) && WindowFitter.PlaceAfterResize(size.OldValue.Value, size.NewValue.Value))
+            WindowFitter.PlaceAfterResize(size.OldValue.Value, size.NewValue.Value))
         {
             SetCursorOnButton.AfterResize(this, vm, size.NewValue.Value.Width);
         }
